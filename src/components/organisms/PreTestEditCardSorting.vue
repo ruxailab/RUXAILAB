@@ -16,7 +16,11 @@
     </v-col>
 
     <!-- Right Menu -->
-    <v-col cols="4" class="pl-0" style="height: 19vh;">
+    <v-col
+      cols="4"
+      class="pl-0"
+      style="height: 19vh;"
+    >
       <!-- Welcom Message -->
       <CardForm
         title="Welcome Message"
@@ -58,7 +62,10 @@
     </v-col>
 
     <!-- Pre Form -->
-    <v-col cols="8" class="pt-0 pb-0">
+    <v-col
+      cols="8"
+      class="pt-0 pb-0"
+    >
       <CardForm 
         title="Pre-Form"
         subtitle="This is a pre-questions you make to get participants data"

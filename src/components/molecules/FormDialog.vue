@@ -1,20 +1,37 @@
 <template>
-  <v-dialog v-model="dialog" width="70%" persistent>
+  <v-dialog
+    :model-value="dialog"
+    width="70%"
+    persistent
+    @update:model-value="$emit('update:dialog', $event)"
+  >
     <v-card class="dataCard">
       <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
         New task
       </p>
       <v-divider />
       <v-card-text>
-        <FormTask ref="form" :task="task" @validate="submit" />
+        <FormTask
+          ref="form"
+          :task="localTask"
+          @update:task="Object.assign(localTask, $event)"
+          @validate="submit"
+        />
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn color="red lighten-1 white--text" text @click="$emit('closeDialog'), reset()">
+        <v-btn
+          color="red-lighten-1"
+          variant="text"
+          @click="$emit('update:dialog', false); reset()"
+        >
           {{ $t('buttons.cancel') }}
         </v-btn>
-        <v-btn color="#f9a826" class="white--text" @click="validate()">
+        <v-btn
+          class="text-white bg-orange"
+          @click="validate"
+        >
           {{ $t('common.save') }}
         </v-btn>
       </v-card-actions>
@@ -22,41 +39,48 @@
   </v-dialog>
 </template>
 
-<script>
-import FormTask from '../atoms/FormTask'
+<script setup>
+import { ref, reactive, watch } from 'vue';
+import FormTask from '../atoms/FormTask';
 
-export default {
-  components: {
-    FormTask,
-  },
-  props: {
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
-    // eslint-disable-next-line vue/require-default-prop
-    task: {
-      type: Object,
-    },
-  },
-  data: () => ({}),
-  methods: {
-    validate() {
-      this.$refs.form.validate()
-    },
-    submit(valid) {
-      if (valid) {
-        this.$emit('addTask')
-        this.$emit('closeDialog')
-        this.reset()
-      }
-    },
-    reset() {
-      this.$refs.form.resetVal()
-    },
-  },
-}
+const props = defineProps({
+  dialog: Boolean,
+  task: Object,
+});
+
+const emit = defineEmits(['update:dialog', 'update:task', 'addTask']);
+
+// Make a local copy of task
+const localTask = reactive({ ...props.task });
+
+// Sync props.task -> localTask whenever dialog opens
+watch(() => props.dialog, (val) => {
+  if (val) {
+    Object.assign(localTask, props.task);
+  }
+});
+
+// Form reference
+const form = ref(null);
+
+// Emit validated task on submit
+const validate = () => {
+  form.value?.valida();
+};
+
+const submit = (valid) => {
+  if (valid) {
+    emit('addTask', { ...localTask });
+    emit('update:dialog', false);
+    reset();
+  }
+};
+
+const reset = () => {
+  form.value?.resetVal();
+};
 </script>
+
 
 <style scoped>
 .subtitleView {

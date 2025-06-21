@@ -3,20 +3,20 @@
     v-model="dialog"
     persistent
     :max-width="dialogMaxWidth"
-    :value="true"
+    :model-value="true"
   >
     <v-card class="rounded-xl">
-      <v-card-title class="text-h5 pb-0">Desconexão Detectada!</v-card-title>
+      <v-card-title class="text-h5 pb-0">
+        Desconexão Detectada!
+      </v-card-title>
       <v-container fluid>
         <v-row no-gutters>
           <v-col class="text-center cardSubtitle">
-            <span
-              >Infelizmente ocorreu uma desconexão. Você precisará realizar a
-              conexão novamente!</span
-            >
+            <span>Infelizmente ocorreu uma desconexão. Você precisará realizar a
+              conexão novamente!</span>
           </v-col>
           <v-col class="text-center">
-            <v-img
+            piel            <v-img
               draggable="false"
               src="../../../public/Disconnected.svg"
               alt="Disconnected image"
@@ -28,11 +28,11 @@
       </v-container>
       <v-card-actions class="text-center">
         <v-btn
-          color="orange darken-1"
-          depressed
-          large
-          @click="reconnect"
+          color="orange-darken-1"
+          variant="flat"
+          size="large"
           class="mx-auto my-3"
+          @click="reconnect"
         >
           Recomeçar
         </v-btn>
@@ -41,41 +41,37 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      dialog: true,
-      dialogMaxWidth: '40vw', // Define o valor inicial para desktop
-    }
-  },
-  methods: {
-    reconnect() {
-      location.reload()
-    },
-    updateDialogMaxWidth() {
-      // Atualiza o valor máximo do diálogo com base no tamanho da viewport
-      if (window.innerWidth <= 600) {
-        this.dialogMaxWidth = '80vw' // Define o valor para telas menores que 600px de largura
-      }
-      if (window.innerWidth <= 900) {
-        this.dialogMaxWidth = '60vw' // Define o valor para telas menores que 600px de largura
-      } else {
-        this.dialogMaxWidth = '40vw' // Define o valor para telas maiores que 600px de largura
-      }
-    },
-  },
-  mounted() {
-    // Chama a função para definir o valor inicial de dialogMaxWidth
-    this.updateDialogMaxWidth()
-    // Adiciona um listener para ajustar o dialogMaxWidth quando a tela for redimensionada
-    window.addEventListener('resize', this.updateDialogMaxWidth)
-  },
-  beforeDestroy() {
-    // Remove o listener do evento resize para evitar vazamentos de memória
-    window.removeEventListener('resize', this.updateDialogMaxWidth)
-  },
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+// Reactive state
+const dialog = ref(true)
+const dialogMaxWidth = ref('40vw')
+
+// Methods
+const reconnect = () => {
+  location.reload()
 }
+
+const updateDialogMaxWidth = () => {
+  if (window.innerWidth <= 600) {
+    dialogMaxWidth.value = '80vw'
+  } else if (window.innerWidth <= 900) {
+    dialogMaxWidth.value = '60vw'
+  } else {
+    dialogMaxWidth.value = '40vw'
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  updateDialogMaxWidth()
+  window.addEventListener('resize', updateDialogMaxWidth)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateDialogMaxWidth)
+})
 </script>
 
 <style scoped>

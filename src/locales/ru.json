@@ -129,7 +129,6 @@
     "incorrectPassword": "Неверный пароль",
     "incorrectCredential": "Неверное имя пользователя или пароль.",
     "globalError": "Произошла ошибка, извините за неудобства."
-    
   },
   "Introduction": {
     "title": "Удаленная лаборатория UX",
@@ -511,7 +510,8 @@
     "screenRecord": "Запись экрана",
     "camera": "Камера",
     "eyeTracker": "Трекер глаз",
-    "audioRecord": "Запись звука"
+    "audioRecord": "Запись звука",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Форма согласия",

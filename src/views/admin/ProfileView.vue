@@ -2,72 +2,76 @@
   <div class="container px-4 py-8">
     <v-row>
       <!-- Left Section: Profile Details -->
-      <v-col cols="12" md="4" lg="3">
-        <v-card outlined class="rounded-lg h-100">
+      <v-col
+        cols="12"
+        md="4"
+        lg="3"
+      >
+        <v-card
+          border
+          class="rounded-lg h-100"
+        >
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
-              <v-hover v-slot="{ hover }">
+              <v-hover v-slot="{ isHovered }">
                 <v-avatar
                   size="128"
-                  class="elevation-4 primary--text transition-swing"
-                  :class="{ 'transform-avatar': hover }"
+                  class="elevation-4 text-primary"
+                  :class="{ 'transform-avatar': isHovered }"
                 >
                   <v-img
                     :src="userprofile.profileImage || defaultImage"
                     :alt="$t('PROFILE.title')"
-                    class="white--text"
-                  ></v-img>
+                    class="text-white"
+                  />
                 </v-avatar>
               </v-hover>
-              <div class="profile-glow"></div>
+              <div class="profile-glow" />
             </div>
 
             <h2 class="text-h5 mb-2 font-weight-bold">
-              {{ userprofile.username || $t('user') }}
+              {{ userprofile.username || $t('PROFILE.user') }}
             </h2>
             <v-chip
-              small
-              class="mb-6 primary"
-              text-color="white"
+              size="small"
+              class="mb-6 bg-primary"
+              color="white"
               :ripple="true"
             >
               {{ $t('PROFILE.admin') }}
             </v-chip>
 
-            <v-divider class="my-4"></v-divider>
+            <v-divider class="my-4" />
 
             <div>
-              <v-list dense>
+              <v-list density="compact">
                 <v-hover
-                  v-slot="{ hover }"
                   v-for="(item, index) in profileItems"
+                  v-slot="{ isHovered }"
                   :key="index"
                 >
                   <v-list-item
-                    class="rounded-lg pa-2 transition-swing"
-                    :class="{ 'grey lighten-4': hover }"
+                    class="rounded-lg pa-2"
+                    :class="{ 'grey lighten-4': isHovered }"
                   >
-                    <v-list-item-content>
-                      <v-list-item-subtitle
-                        class="caption text-uppercase font-weight-medium grey--text text--darken-1"
-                      >
-                        {{ item.label }}:
-                      </v-list-item-subtitle>
-                      <v-list-item-title
-                        v-if="!loading"
-                        :class="{
-                          'font-italic red--text text--darken-1': !item.value,
-                          'font-weight-medium': item.value,
-                        }"
-                      >
-                        {{ item.value || $t('PROFILE.missingInfo') }}
-                      </v-list-item-title>
-                    </v-list-item-content>
+                    <v-list-item-subtitle
+                      class="text-caption text-uppercase font-weight-medium text-grey-darken-1"
+                    >
+                      {{ item.label }}:
+                    </v-list-item-subtitle>
+                    <v-list-item-title
+                      v-if="!loading"
+                      :class="{
+                        'font-italic red--text text--darken-1': !item.value,
+                        'font-weight-medium': item.value,
+                      }"
+                    >
+                      {{ item.value || $t('PROFILE.missingInfo') }}
+                    </v-list-item-title>
                     <v-list-item-action>
                       <v-icon
-                        small
-                        :color="hover ? 'primary' : 'grey lighten-1'"
-                        class="transition-swing"
+                        size="small"
+                        :color="isHovered ? 'primary' : 'grey lighten-1'"
                       >
                         {{ item.icon }}
                       </v-icon>
@@ -81,93 +85,120 @@
       </v-col>
 
       <!-- Right Section: Tabs and Content -->
-      <v-col cols="12" md="8" lg="9">
-        <v-card flat class="w-100">
+      <v-col
+        cols="12"
+        md="8"
+        lg="9"
+      >
+        <v-card
+          flat
+          class="w-100"
+        >
           <!-- Tabs Section -->
           <v-tabs
             v-if="!isSmallScreen"
             v-model="activeTab"
-            background-color="transparent"
+            bg-color="transparent"
             color="primary"
             slider-color="primary"
             grow
           >
-            <v-tab
-              class="text-subtitle-1 font-weight-medium px-4 transition-swing"
-            >
-              <v-icon small class="mr-2">
+            <v-tab class="text-subtitle-1 font-weight-medium px-4">
+              <v-icon
+                size="small"
+                class="mr-2"
+              >
                 mdi-account
               </v-icon>
-              {{ $t('account') }}
+              {{ $t('PROFILE.account') }}
             </v-tab>
-            <v-tab
-              class="text-subtitle-1 font-weight-medium px-4 transition-swing"
-            >
-              <v-icon small class="mr-2">
+            <v-tab class="text-subtitle-1 font-weight-medium px-4">
+              <v-icon
+                size="small"
+                class="mr-2"
+              >
                 mdi-shield-lock
               </v-icon>
-              {{ $t('security') }}
+              {{ $t('PROFILE.security') }}
             </v-tab>
           </v-tabs>
 
-          <v-tabs-items v-model="activeTab" class="mt-3">
-            <v-tab-item transition="fade-transition">
+          <v-window
+            v-model="activeTab"
+            class="mt-3"
+          >
+            <v-window-item transition="fade-transition">
               <!-- Account Tab Content -->
-              <v-hover v-slot="{ hover }">
+              <v-hover v-slot="{ isHovered }">
                 <v-card
-                  outlined
+                  border
                   flat
                   class="mt-4 rounded-lg"
-                  :class="{ 'transform-card': hover }"
+                  :class="{ 'transform-card': isHovered }"
                 >
-                  <v-card-title class="mb-4 grey lighten-4">
-                    <v-icon left color="primary">
+                  <v-card-title class="mb-4 bg-grey-lighten-4">
+                    <v-icon
+                      start
+                      color="primary"
+                    >
                       mdi-account-details
                     </v-icon>
-                    {{ $t('personalInfo') }}
+                    {{ $t('PROFILE.personalInfo') }}
                   </v-card-title>
                   <v-card-text>
                     <v-form>
                       <v-row>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="userprofile.username"
-                            :label="$t('username')"
-                            outlined
-                            dense
+                            :label="$t('PROFILE.username')"
+                            variant="outlined"
+                            density="compact"
                             prepend-inner-icon="mdi-account"
                             readonly
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="user.email"
-                            :label="$t('SIGNIN.email')"
-                            outlined
-                            dense
+                            :label="$t('PROFILE.email')"
+                            variant="outlined"
+                            density="compact"
                             prepend-inner-icon="mdi-email"
                             readonly
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="userprofile.contactNo"
-                            :label="$t('contact')"
-                            outlined
-                            dense
+                            :label="$t('PROFILE.contact')"
+                            variant="outlined"
+                            density="compact"
                             prepend-inner-icon="mdi-phone"
                             readonly
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="userprofile.country"
-                            :label="$t('country')"
-                            outlined
-                            dense
+                            :label="$t('PROFILE.country')"
+                            variant="outlined"
+                            density="compact"
                             prepend-inner-icon="mdi-map-marker"
                             readonly
                             class="input-field-hover"
@@ -176,36 +207,39 @@
                       </v-row>
                     </v-form>
 
-                    <v-hover v-slot="{ hover }">
+                    <v-hover v-slot="{ isHoveredBtn }">
                       <v-btn
                         color="primary"
-                        class="mt-4 text-none font-weight-medium transition-swing"
-                        :elevation="hover ? 6 : 2"
+                        class="mt-4 text-none font-weight-medium"
+                        :elevation="isHoveredBtn ? 6 : 2"
+                        :class="{ 'transform-button': isHoveredBtn }"
                         @click="openEditProfileDialog"
-                        :class="{ 'transform-button': hover }"
                       >
-                        <v-icon left>
+                        <v-icon start>
                           mdi-pencil
                         </v-icon>
-                        {{ $t('editDetails') }}
+                        {{ $t('PROFILE.editDetails') }}
                       </v-btn>
                     </v-hover>
                   </v-card-text>
                 </v-card>
               </v-hover>
-            </v-tab-item>
+            </v-window-item>
 
-            <v-tab-item transition="fade-transition">
+            <v-window-item transition="fade-transition">
               <!-- Security Tab Content -->
-              <v-hover v-slot="{ hover }">
+              <v-hover v-slot="{ isHovered }">
                 <v-card
-                  outlined
+                  border
                   flat
                   class="mt-4 rounded-lg"
-                  :class="{ 'transform-card': hover }"
+                  :class="{ 'transform-card': isHovered }"
                 >
-                  <v-card-title class="mb-4 grey lighten-4">
-                    <v-icon left color="primary">
+                  <v-card-title class="mb-4 bg-grey-lighten-4">
+                    <v-icon
+                      start
+                      color="primary"
+                    >
                       mdi-lock
                     </v-icon>
                     {{ $t('PROFILE.changePassword') }}
@@ -213,8 +247,8 @@
                   <v-card-text>
                     <v-alert
                       type="warning"
-                      colored-border
-                      border="left"
+                      border="start"
+                      border-color="warning"
                       class="mb-3"
                     >
                       <div class="text-h6 font-weight-medium mb-2">
@@ -226,11 +260,9 @@
                       <div>
                         <div class="d-flex align-center mb-1">
                           <v-icon
-                            small
-                            class="mr-2 transition-swing"
-                            :color="
-                              newPassword.length >= 8 ? 'success' : 'grey'
-                            "
+                            size="small"
+                            class="mr-2"
+                            :color="newPassword.length >= 8 ? 'success' : 'grey'"
                           >
                             {{
                               newPassword.length >= 8
@@ -242,11 +274,9 @@
                         </div>
                         <div class="d-flex align-center mb-1">
                           <v-icon
-                            small
-                            class="mr-2 transition-swing"
-                            :color="
-                              /[A-Z]/.test(newPassword) ? 'success' : 'grey'
-                            "
+                            size="small"
+                            class="mr-2"
+                            :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey'"
                           >
                             {{
                               /[A-Z]/.test(newPassword)
@@ -258,8 +288,8 @@
                         </div>
                         <div class="d-flex align-center">
                           <v-icon
-                            small
-                            class="mr-2 transition-swing"
+                            size="small"
+                            class="mr-2"
                             :color="specialCharColor"
                           >
                             {{ specialCharIcon }}
@@ -269,57 +299,64 @@
                       </div>
                     </v-alert>
 
-                    <v-form ref="passwordForm" v-model="valid" lazy-validation>
+                    <v-form
+                      ref="passwordForm"
+                      v-model="valid"
+                    >
                       <v-row dense>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="newPassword"
                             :rules="passwordRules"
                             :label="$t('PROFILE.newPassword')"
                             :type="showPassword ? 'text' : 'password'"
-                            outlined
-                            dense
+                            variant="outlined"
+                            density="compact"
                             required
                             prepend-inner-icon="mdi-lock"
-                            :append-icon="
-                              showPassword ? 'mdi-eye' : 'mdi-eye-off'
-                            "
-                            @click:append="showPassword = !showPassword"
+                            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                             class="input-field-hover"
+                            @click:append="showPassword = !showPassword"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="confirmPassword"
                             :rules="confirmPasswordRules"
                             :label="$t('PROFILE.confirmNewPassword')"
                             :type="showConfirmPassword ? 'text' : 'password'"
-                            outlined
-                            dense
+                            variant="outlined"
+                            density="compact"
                             required
                             prepend-inner-icon="mdi-lock-check"
                             :append-icon="
                               showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'
                             "
+                            class="input-field-hover"
                             @click:append="
                               showConfirmPassword = !showConfirmPassword
                             "
-                            class="input-field-hover"
                           />
                         </v-col>
                       </v-row>
 
                       <div class="mt-2">
-                        <v-hover v-slot="{ hover }">
+                        <v-hover v-slot="{ isHoveredBtn }">
                           <v-btn
                             :disabled="!valid"
                             color="primary"
-                            class="text-none font-weight-medium transition-swing"
-                            :elevation="hover ? 6 : 2"
+                            class="text-none font-weight-medium"
+                            :elevation="isHoveredBtn ? 6 : 2"
+                            :class="{ 'transform-button': isHoveredBtn }"
                             @click="changePassword"
-                            :class="{ 'transform-button': hover }"
                           >
-                            <v-icon left>
+                            <v-icon start>
                               mdi-key
                             </v-icon>
                             {{ $t('PROFILE.changePassword') }}
@@ -332,15 +369,18 @@
               </v-hover>
 
               <!-- Delete Account Section -->
-              <v-hover v-slot="{ hover }">
+              <v-hover v-slot="{ isHovered }">
                 <v-card
-                  class="mt-6 rounded-lg error--text"
-                  outlined
-                  :elevation="hover ? 3 : 1"
-                  :class="{ 'danger-card-hover': hover }"
+                  class="mt-6 rounded-lg text-error"
+                  border
+                  :elevation="isHovered ? 3 : 1"
+                  :class="{ 'danger-card-hover': isHovered }"
                 >
-                  <v-card-title class="error lighten-5">
-                    <v-icon left color="error">
+                  <v-card-title class="bg-error-lighten-5">
+                    <v-icon
+                      start
+                      color="error"
+                    >
                       mdi-alert-circle
                     </v-icon>
                     {{ $t('PROFILE.deleteAccountTitle') }}
@@ -349,27 +389,27 @@
                     <p class="text-body-1 mb-4">
                       {{ $t('PROFILE.deleteAccountWarning') }}
                     </p>
-                    <v-hover v-slot="{ hover }">
+                    <v-hover v-slot="{ isHoveredBtn }">
                       <v-btn
                         color="error"
-                        class="text-none font-weight-medium transition-swing"
+                        class="text-none font-weight-medium"
                         :block="isSmallScreen"
+                        :variant="!isHoveredBtn ? 'outlined' : undefined"
+                        :class="{ 'transform-button': isHoveredBtn }"
+                        :elevation="isHoveredBtn ? 2 : 0"
                         @click="deleteAccountDialog = true"
-                        :outlined="!hover"
-                        :class="{ 'transform-button': hover }"
-                        :elevation="hover ? 2 : 0"
                       >
-                        <v-icon left>
+                        <v-icon start>
                           mdi-delete
                         </v-icon>
-                        <span>{{ $t('deleteAccount') }}</span>
+                        <span>{{ $t('PROFILE.deleteAccount') }}</span>
                       </v-btn>
                     </v-hover>
                   </v-card-text>
                 </v-card>
               </v-hover>
-            </v-tab-item>
-          </v-tabs-items>
+            </v-window-item>
+          </v-window>
         </v-card>
       </v-col>
     </v-row>
@@ -381,45 +421,73 @@
       transition="dialog-bottom-transition"
     >
       <v-card class="rounded-lg elevation-12">
-        <v-card-title class="grey lighten-4">
-          <v-icon left color="primary">
+        <v-card-title class="bg-grey-lighten-4">
+          <v-icon
+            start
+            color="primary"
+          >
             mdi-account-edit
           </v-icon>
           {{ $t('PROFILE.editProfile') }}
         </v-card-title>
         <v-card-text>
-          <v-form ref="editProfileForm" v-model="editProfileValid">
+          <div class="text-center">
+            <v-avatar size="100">
+              <img
+                :src="editProfileData.profileImage || defaultImage"
+                alt="Profile Image"
+              >
+            </v-avatar>
+            <v-btn
+              icon
+              class="ml-2"
+              @click="selectImage"
+            >
+              <v-icon>mdi-camera</v-icon>
+            </v-btn>
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              style="display: none"
+              @change="uploadProfileImage"
+            >
+          </div>
+          <v-form
+            ref="editProfileForm"
+            v-model="editProfileValid"
+          >
             <v-text-field
               v-model="editProfileData.username"
-              :label="$t('username')"
-              outlined
-              dense
+              :label="$t('PROFILE.username')"
+              variant="outlined"
+              density="compact"
               prepend-inner-icon="mdi-account"
               :rules="usernameRules"
               class="mt-4 input-field-hover"
             />
             <v-text-field
               v-model="editProfileData.contactNo"
-              :label="$t('SIGNIN.contact')"
-              outlined
-              dense
+              :label="$t('PROFILE.contact')"
+              variant="outlined"
+              density="compact"
               prepend-inner-icon="mdi-phone"
               :rules="contactRules"
-              :hint="$t('enterValidPhoneNumber')"
+              :hint="$t('PROFILE.enterValidPhoneNumber')"
               persistent-hint
               class="input-field-hover"
             />
             <v-autocomplete
               v-model="editProfileData.country"
               :label="$t('PROFILE.country')"
-              outlined
-              dense
+              variant="outlined"
+              density="compact"
               prepend-inner-icon="mdi-map-marker"
               :rules="countryRules"
               :items="countries"
-              item-text="name"
+              item-title="name"
               item-value="name"
-              :filter="countryFilter"
+              :custom-filter="countryFilter"
               clearable
               :menu-props="{
                 maxHeight: '400px',
@@ -427,42 +495,38 @@
                 closeOnContentClick: true,
               }"
             >
-              <template v-slot:selection="{ item }">
-                {{ item.emoji }} {{ item.name }}
+              <template #selection="{ item }">
+                {{ item.raw.emoji }} {{ item.raw.name }}
               </template>
-              <template v-slot:item="{ item }">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ item.emoji }} {{ item.name }}
-                  </v-list-item-title>
-                </v-list-item-content>
+              <template #item="{ item }">
+                <v-list-item-title>
+                  {{ item.raw.emoji }} {{ item.raw.name }}
+                </v-list-item-title>
               </template>
             </v-autocomplete>
           </v-form>
         </v-card-text>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-hover v-slot="{ hover }">
+          <v-spacer />
+          <v-hover v-slot="{ isHovered }">
             <v-btn
-              text
+              variant="text"
+              :class="{ 'scale-button': isHovered }"
               @click="editProfileDialog = false"
-              :class="{ 'scale-button': hover }"
-              class="transition-swing"
             >
-              {{ $t('cancel') }}
+              {{ $t('PROFILE.cancel') }}
             </v-btn>
           </v-hover>
-          <v-hover v-slot="{ hover }">
+          <v-hover v-slot="{ isHovered }">
             <v-btn
               color="primary"
-              @click="saveProfile"
               :disabled="!editProfileValid"
-              :elevation="hover ? 4 : 2"
-              :class="{ 'transform-button': hover }"
-              class="transition-swing"
+              :elevation="isHovered ? 4 : 2"
+              :class="{ 'transform-button': isHovered }"
+              @click="saveProfile"
             >
-              <v-icon left>
+              <v-icon start>
                 mdi-content-save
               </v-icon>
               {{ $t('PROFILE.saveChanges') }}
@@ -480,13 +544,20 @@
       persistent
     >
       <v-card class="rounded-lg elevation-12">
-        <v-card-title class="error lighten-5">
-          <v-icon left color="error">
+        <v-card-title class="bg-error-lighten-5">
+          <v-icon
+            start
+            color="error"
+          >
             mdi-alert-circle
           </v-icon>
           {{ $t('PROFILE.deleteAccountTitle') }}
-          <v-spacer></v-spacer>
-          <v-btn icon @click="closeDeleteDialog" :disabled="isDeleting">
+          <v-spacer />
+          <v-btn
+            icon
+            :disabled="isDeleting"
+            @click="closeDeleteDialog"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -494,7 +565,11 @@
         <!-- Step 1: Initial Confirmation -->
         <div v-if="deleteStep === 1">
           <v-card-text>
-            <v-alert type="error" class="mb-4" outlined>
+            <v-alert
+              type="error"
+              class="mb-4"
+              variant="outlined"
+            >
               {{ $t('PROFILE.deleteAccountConfirm') }}
             </v-alert>
             <p class="text-body-1 mb-4">
@@ -503,45 +578,49 @@
 
             <div class="text-center mb-4">
               <p class="font-weight-bold">
-                {{ $t('typeDeleteToConfirm') }}
+                {{ $t('PROFILE.typeDeleteToConfirm') }}
               </p>
               <v-text-field
                 v-model="deleteConfirmText"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 hide-details
                 class="mt-2 input-field-hover"
                 :rules="[
-                  (v) => v === 'DELETE' || $t('pleaseTypeDeleteToConfirm'),
+                  (v) =>
+                    v === 'DELETE' ||
+                    $t('PROFILE.pleaseTypeDeleteToConfirm'),
                 ]"
-              ></v-text-field>
+              />
             </div>
           </v-card-text>
           <v-card-actions class="justify-center pb-6">
-            <v-hover v-slot="{ hover }">
+            <v-hover v-slot="{ isHovered }">
               <v-btn
-                outlined
-                @click="closeDeleteDialog"
+                variant="outlined"
                 min-width="120"
-                class="mx-2 transition-swing"
-                :class="{ 'scale-button': hover }"
+                class="mx-2"
+                :class="{ 'scale-button': isHovered }"
+                @click="closeDeleteDialog"
               >
-                {{ $t('cancel') }}
+                {{ $t('PROFILE.cancel') }}
               </v-btn>
             </v-hover>
-            <v-hover v-slot="{ hover }">
+            <v-hover v-slot="{ isHovered }">
               <v-btn
                 color="error"
-                class="mx-2 transition-swing"
-                @click="deleteStep = 2"
+                class="mx-2"
                 min-width="120"
                 :disabled="deleteConfirmText !== 'DELETE'"
-                :elevation="hover && deleteConfirmText === 'DELETE' ? 4 : 2"
+                :elevation="
+                  isHovered && deleteConfirmText === 'DELETE' ? 4 : 2
+                "
                 :class="{
-                  'transform-button': hover && deleteConfirmText === 'DELETE',
+                  'transform-button': isHovered && deleteConfirmText === 'DELETE',
                 }"
+                @click="deleteStep = 2"
               >
-                {{ $t('proceed') }}
+                {{ $t('PROFILE.proceed') }}
               </v-btn>
             </v-hover>
           </v-card-actions>
@@ -550,57 +629,65 @@
         <!-- Step 2: Enter password -->
         <div v-else>
           <v-card-text>
-            <v-alert type="error" class="mb-4" outlined>
-              {{ $t('finalStepVerifyIdentity') }}
+            <v-alert
+              type="error"
+              class="mb-4"
+              variant="outlined"
+            >
+              {{ $t('PROFILE.finalStepVerifyIdentity') }}
             </v-alert>
 
             <div class="mb-4">
               <p class="text-center font-weight-bold mb-4">
-                {{ $t('enterPasswordForAccountDeletion') }}
+                {{ $t('PROFILE.enterPasswordForAccountDeletion') }}
               </p>
               <v-text-field
                 v-model="userPassword"
-                :label="$t('yourPassword')"
+                :label="$t('PROFILE.yourPassword')"
                 type="password"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 prepend-inner-icon="mdi-lock"
                 :disabled="isDeleting"
-                :rules="[(v) => !!v || $t('PROFILE.passwordRequired')]"
+                :rules="[
+                  (v) => !!v || $t('PROFILE.passwordRequired'),
+                ]"
                 class="input-field-hover"
-              ></v-text-field>
+              />
             </div>
           </v-card-text>
           <v-card-actions class="justify-center pb-6">
-            <v-hover v-slot="{ hover }">
+            <v-hover v-slot="{ isHovered }">
               <v-btn
-                outlined
-                class="mx-2 transition-swing"
-                @click="deleteStep = 1"
+                variant="outlined"
+                class="mx-2"
                 :disabled="isDeleting"
                 min-width="120"
-                :class="{ 'scale-button': hover && !isDeleting }"
+                :class="{ 'scale-button': isHovered && !isDeleting }"
+                @click="deleteStep = 1"
               >
-                {{ $t('back') }}
+                {{ $t('PROFILE.back') }}
               </v-btn>
             </v-hover>
-            <v-hover v-slot="{ hover }">
+            <v-hover v-slot="{ isHovered }">
               <v-btn
                 color="error"
-                class="mx-2 transition-swing"
-                @click="deleteAccount"
+                class="mx-2"
                 :loading="isDeleting"
                 :disabled="!userPassword || isDeleting"
                 min-width="120"
-                :elevation="hover && userPassword && !isDeleting ? 4 : 2"
+                :elevation="
+                  isHovered && userPassword && !isDeleting ? 4 : 2
+                "
                 :class="{
-                  'transform-button': hover && userPassword && !isDeleting,
+                  'transform-button': isHovered && userPassword && !isDeleting,
                 }"
+                @click="deleteAccount"
               >
-                <v-icon left>
+                <v-icon start>
                   mdi-delete
                 </v-icon>
-                {{ $t('deleteForever') }}
+                {{ $t('PROFILE.deleteForever') }}
               </v-btn>
             </v-hover>
           </v-card-actions>
@@ -610,13 +697,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
 import {
   getAuth,
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
-} from 'firebase/auth'
+} from 'firebase/auth';
 import {
   getFirestore,
   collection,
@@ -627,351 +718,396 @@ import {
   deleteDoc,
   getDoc,
   updateDoc,
-} from 'firebase/firestore'
-import { countries } from '@/utils/countries'
+} from 'firebase/firestore';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { countries } from '@/utils/countries';
 
-export default {
-  name: 'ProfileView',
+const store = useStore();
+const user = computed(() => store.getters.user || { email: '' });
 
-  data() {
-    return {
-      userprofile: {
-        profileImage: '',
-        username: null,
-        contactNo: null,
-        country: null,
-      },
-      editProfileData: {
-        username: null,
-        contactNo: null,
-        country: null, // This will now store just the country name
-      },
-      countries: countries,
-      usernameRules: [
-        (v) => !!v || $t('usernameRequired'),
-        (v) => (v && v.length >= 3) || $t('usernameMinLength'),
-      ],
-      countryRules: [(v) => !!v || $t('countryRequired')],
-      contactRules: [
-        (v) => !!v || $t('contactNumberRequired'),
-        (v) => /^\d{9,15}$/.test(v) || $t('enterValidPhoneNumber'),
-      ],
-      defaultImage:
-        'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
-      displayMissingInfo: this.$t('PROFILE.infoMissing'),
-      loading: true,
-      valid: false,
-      showPassword: false,
-      showConfirmPassword: false,
-      newPassword: '',
-      confirmPassword: '',
-      passwordRules: [
-        (v) => !!v || this.$t('PROFILE.passwordRequired'),
-        (v) => v.length >= 8 || this.$t('PROFILE.passwordMinLength'),
-        (v) => /[A-Z]/.test(v) || this.$t('PROFILE.passwordUppercase'),
-        (v) => this.hasSpecialChar(v) || this.$t('PROFILE.passwordSymbol'),
-      ],
-      confirmPasswordRules: [
-        (v) => !!v || this.$t('PROFILE.confirmPasswordRequired'),
-        (v) => v === this.newPassword || this.$t('PROFILE.passwordsMatch'),
-      ],
-      editProfileDialog: false,
-      deleteAccountDialog: false,
-      activeTab: 0,
-      userPassword: '',
-      isDeleting: false,
-      deleteStep: 1,
-      deleteConfirmText: '',
-      countrySearch: null,
-      isSmallScreen: false,
-      editProfileValid: false,
+const { t } = useI18n();
+const toast = useToast();
+
+const userprofile = ref({
+  profileImage: '',
+  username: null,
+  contactNo: null,
+  country: null,
+});
+const editProfileData = ref({
+  username: null,
+  contactNo: null,
+  country: null,
+  profileImage: null,
+});
+const defaultImage = ref(
+  'https://static.vecteezy.com/system/resources/previews/024rically/983/914/large_2x/simple-user-default-icon-free-png.png'
+);
+const loading = ref(true);
+const valid = ref(false);
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+const newPassword = ref('');
+const confirmPassword = ref('');
+const editProfileDialog = ref(false);
+const deleteAccountDialog = ref(false);
+const activeTab = ref(0);
+const userPassword = ref('');
+const isDeleting = ref(false);
+const deleteStep = ref(1);
+const deleteConfirmText = ref('');
+const isSmallScreen = ref(false);
+const editProfileValid = ref(false);
+
+const passwordForm = ref(null);
+const editProfileForm = ref(null);
+const fileInput = ref(null);
+
+// Validation rules
+const usernameRules = [
+  (v) => !!v || t('PROFILE.usernameRequired'),
+  (v) => (v && v.length >= 3) || t('PROFILE.usernameMinLength'),
+];
+const countryRules = [(v) => !!v || t('PROFILE.countryRequired')];
+const contactRules = [
+  (v) => !!v || t('PROFILE.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || t('PROFILE.enterValidPhoneNumber'),
+];
+const passwordRules = [
+  (v) => !!v || t('PROFILE.passwordRequired'),
+  (v) => v.length >= 8 || t('PROFILE.passwordMinLength'),
+  (v) => /[A-Z]/.test(v) || t('PROFILE.passwordUppercase'),
+  (v) => hasSpecialChar(v) || t('PROFILE.passwordSymbol'),
+];
+const confirmPasswordRules = [
+  (v) => !!v || t('PROFILE.confirmPasswordRequired'),
+  (v) => v === newPassword.value || t('PROFILE.passwordsMatch'),
+];
+
+const specialCharColor = computed(() =>
+  hasSpecialChar(newPassword.value) ? 'success' : 'grey'
+);
+const specialCharIcon = computed(() =>
+  hasSpecialChar(newPassword.value) ? 'mdi-check-circle' : 'mdi-circle-outline'
+);
+const profileItems = computed(() => [
+  {
+    label: t('PROFILE.username'),
+    value: userprofile.value.username,
+    icon: 'mdi-account',
+  },
+  {
+    label: t('PROFILE.email'),
+    value: user.value.email,
+    icon: 'mdi-email',
+  },
+  {
+    label: t('PROFILE.contact'),
+    value: userprofile.value.contactNo,
+    icon: 'mdi-phone',
+  },
+  {
+    label: t('PROFILE.country'),
+    value: userprofile.value.country,
+    icon: 'mdi-map-marker',
+  },
+]);
+
+const hasSpecialChar = (str) => {
+  const specialChars = /[!@#$%^&*(),.{}|<>]/;
+  return specialChars.test(str);
+};
+
+const selectImage = () => {
+  fileInput.value.click();
+};
+
+const uploadProfileImage = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error(t('PROFILE.noUserSignedIn'));
+
+    const storage = getStorage();
+    const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+
+    const snapshot = await uploadBytes(storageReference, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    const db = getFirestore();
+    const userDocRef = doc(db, 'users', user.uid);
+    await updateDoc(userDocRef, { profileImage: downloadURL });
+
+    userprofile.value.profileImage = downloadURL;
+    editProfileData.value.profileImage = downloadURL;
+    toast.success(t('PROFILE.profileImageUpdatedSuccess'));
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    toast.error(t('PROFILE.profileImageUploadFailed'));
+  }
+};
+
+const checkScreenSize = () => {
+  isSmallScreen.value = window.innerWidth < 960;
+};
+
+const fetchUserProfile = async () => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const db = getFirestore();
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        userprofile.value = {
+          profileImage: data.profileImage || '',
+          username: data.username || null,
+          contactNo: data.contactNo || null,
+          country: data.country || null,
+        };
+      }
     }
-  },
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    toast.error(t('PROFILE.profileLoadFailed'));
+  } finally {
+    loading.value = false;
+  }
+};
 
-  computed: {
-    user() {
-      return this.$store.getters.user || { email: '' }
-    },
-    specialCharColor() {
-      return this.hasSpecialChar(this.newPassword) ? 'success' : 'grey'
-    },
-    specialCharIcon() {
-      return this.hasSpecialChar(this.newPassword)
-        ? 'mdi-check-circle'
-        : 'mdi-circle-outline'
-    },
-    profileItems() {
-      return [
-        {
-          label: this.$t('username'),
-          value: this.userprofile.username,
-          icon: 'mdi-account',
-        },
-        {
-          label: this.$t('email'),
-          value: this.user.email,
-          icon: 'mdi-email',
-        },
-        {
-          label: this.$t('contact'),
-          value: this.userprofile.contactNo,
-          icon: 'mdi-phone',
-        },
-        {
-          label: this.$t('country'),
-          value: this.userprofile.country,
-          icon: 'mdi-map-marker',
-        },
-      ]
-    },
-  },
+const openEditProfileDialog = () => {
+  editProfileData.value = {
+    username: userprofile.value.username,
+    contactNo: userprofile.value.contactNo,
+    country: userprofile.value.country,
+    profileImage: userprofile.value.profileImage,
+  };
+  editProfileDialog.value = true;
+};
 
-  async created() {
-    this.fetchUserProfile()
-    this.checkScreenSize()
-    window.addEventListener('resize', this.checkScreenSize)
-  },
+const saveProfile = async () => {
+  if (!editProfileForm.value.validate()) return;
 
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkScreenSize)
-  },
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-  methods: {
-    hasSpecialChar(str) {
-      const specialChars = /[!@#$%^&*(),.{}|<>]/
-      return specialChars.test(str)
-    },
+    if (user) {
+      const db = getFirestore();
+      const userDocRef = doc(db, 'users', user.uid);
 
-    checkScreenSize() {
-      this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
-    },
+      await updateDoc(userDocRef, {
+        username: editProfileData.value.username,
+        contactNo: editProfileData.value.contactNo,
+        country: editProfileData.value.country,
+      });
 
-    async fetchUserProfile() {
-      try {
-        const auth = getAuth()
-        const user = auth.currentUser
+      userprofile.value = {
+        ...userprofile.value,
+        username: editProfileData.value.username,
+        contactNo: editProfileData.value.contactNo,
+        country: editProfileData.value.country,
+      };
 
-        if (user) {
-          const db = getFirestore()
-          const userDoc = await getDoc(doc(db, 'users', user.uid))
+      toast.success(t('PROFILE.profileUpdatedSuccess'));
+      editProfileDialog.value = false;
+    }
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    toast.error(t('PROFILE.profileUpdateFailed'));
+  }
+};
 
-          if (userDoc.exists()) {
-            const data = userDoc.data()
-            this.userprofile = {
-              profileImage: data.profileImage || '',
-              username: data.username || null,
-              contactNo: data.contactNo || null,
-              country: data.country || null,
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error)
-        this.$toast.error(i18n.t(errors.globalError))
-      } finally {
-        this.loading = false
-      }
-    },
-
-    openEditProfileDialog() {
-      // Simplified country handling
-      this.editProfileData = {
-        username: this.userprofile.username,
-        contactNo: this.userprofile.contactNo,
-        country: this.userprofile.country, // Store just the country name
-      }
-      this.editProfileDialog = true
-    },
-
-    async saveProfile() {
-      if (!this.$refs.editProfileForm.validate()) return
-
-      try {
-        const auth = getAuth()
-        const user = auth.currentUser
-
-        if (user) {
-          const db = getFirestore()
-          const userDocRef = doc(db, 'users', user.uid)
-
-          await updateDoc(userDocRef, {
-            username: this.editProfileData.username,
-            contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country,
-          })
-
-          this.userprofile = {
-            ...this.userprofile,
-            username: this.editProfileData.username,
-            contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country,
-          }
-
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
-          this.editProfileDialog = false
-        }
-      } catch (error) {
-        console.error('Error updating profile:', error)
-        this.$toast.error(i18n.t(errors.globalError))
-      }
-    },
-
-    async changePassword() {
-      if (this.$refs.passwordForm.validate()) {
-        try {
-          const auth = getAuth()
-          const user = auth.currentUser
-
-          if (user) {
-            await updatePassword(user, this.newPassword)
-            this.$toast.success(i18n.$t('alerts.genericSuccess'))
-            this.newPassword = ''
-            this.confirmPassword = ''
-            this.$refs.passwordForm.reset()
-          }
-        } catch (error) {
-          this.$toast.error(i18n.t(errors.globalError))
-        }
-      }
-    },
-
-    async deleteAccount() {
-      if (!this.userPassword) {
-        this.$toast.error(i18n.t(errors.globalError))
-        return
-      }
-
-      const auth = getAuth()
-      const user = auth.currentUser
+const changePassword = async () => {
+  if (passwordForm.value.validate()) {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
 
       if (user) {
-        try {
-          this.isDeleting = true
-          const email = user.email
-          const credential = EmailAuthProvider.credential(
-            email,
-            this.userPassword,
-          )
+        await updatePassword(user, newPassword.value);
+        toast.success(t('PROFILE.passwordChangedSuccess'));
+        newPassword.value = '';
+        confirmPassword.value = '';
+        passwordForm.value.reset();
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      toast.error(t('PROFILE.passwordChangeFailed'));
+    }
+  }
+};
 
-          await reauthenticateWithCredential(user, credential)
+const deleteAccount = async () => {
+  if (!userPassword.value) {
+    toast.error(t('PROFILE.passwordRequired'));
+    return;
+  }
 
-          const db = getFirestore()
-          const userDocId = user.uid
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-          // Clean up related data
-          const testsCollectionRef = collection(db, 'tests')
-          const testsQuery = query(
-            testsCollectionRef,
-            where('testAdmin.userDocId', '==', userDocId),
-          )
+  if (user) {
+    try {
+      isDeleting.value = true;
+      const email = user.email;
+      const credential = EmailAuthProvider.credential(email, userPassword.value);
 
-          const testsSnapshot = await getDocs(testsQuery)
+      await reauthenticateWithCredential(user, credential);
 
-          if (!testsSnapshot.empty) {
-            for (const testDoc of testsSnapshot.docs) {
-              const testData = testDoc.data()
-              const answersDocId = testData.answersDocId
+      const db = getFirestore();
+      const userDocId = user.uid;
 
-              if (answersDocId) {
-                const answersDocRef = doc(db, 'answers', answersDocId)
-                await deleteDoc(answersDocRef)
-              }
+      const testsCollectionRef = collection(db, 'tests');
+      const testsQuery = query(
+        testsCollectionRef,
+        where('testAdmin.userDocId', '==', userDocId)
+      );
+      const testsSnapshot = await getDocs(testsQuery);
 
-              const testDocRef = doc(db, 'tests', testDoc.id)
-              await deleteDoc(testDocRef)
-            }
+      if (!testsSnapshot.empty) {
+        for (const testDoc of testsSnapshot.docs) {
+          const testData = testDoc.data();
+          const answersDocId = testData.answersDocId;
+
+          if (answersDocId) {
+            const answersDocRef = doc(db, 'answers', answersDocId);
+            await deleteDoc(answersDocRef);
           }
 
-          // Delete user document from Firestore
-          const userDocRef = doc(db, 'users', userDocId)
-          await deleteDoc(userDocRef)
-
-          // Delete the Firebase Auth user
-          await user.delete()
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
-          this.deleteAccountDialog = false
-          this.signOut()
-        } catch (error) {
-          console.error('Error during account deletion:', error)
-          this.$toast.error(i18n.t(errors.globalError))
-        } finally {
-          this.isDeleting = false
+          const testDocRef = doc(db, 'tests', testDoc.id);
+          await deleteDoc(testDocRef);
         }
-      } else {
-        this.$toast.error(i18n.t(errors.globalError))
       }
-    },
 
-    closeDeleteDialog() {
-      this.deleteAccountDialog = false
-      this.userPassword = ''
-      this.deleteConfirmText = ''
-      this.deleteStep = 1
-    },
+      const userDocRef = doc(db, 'users', userDocId);
+      await deleteDoc(userDocRef);
 
-    async signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.$router.push('/').catch((error) => {
-          console.log(error)
-        })
-      })
-    },
+      await user.delete();
+      toast.success(t('PROFILE.accountDeletedSuccess'));
+      deleteAccountDialog.value = false;
+      signOut();
+    } catch (error) {
+      console.error('Error during account deletion:', error);
+      toast.error(t('PROFILE.accountDeletionFailed'));
+    } finally {
+      isDeleting.value = false;
+    }
+  } else {
+    toast.error(t('PROFILE.noUserSignedIn'));
+  }
+};
 
-    countryFilter(item, queryText) {
-      if (!queryText) return true
+const closeDeleteDialog = () => {
+  deleteAccountDialog.value = false;
+  userPassword.value = '';
+  deleteConfirmText.value = '';
+  deleteStep.value = 1;
+};
 
-      const searchText = queryText.toLowerCase()
-      const countryName = item.name.toLowerCase()
-      return countryName.includes(searchText)
-    },
-  },
-}
+const signOut = async () => {
+  try {
+    await store.dispatch('logout');
+    window.location.href = '/';
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const countryFilter = (item, queryText) => {
+  if (!queryText) return true;
+
+  const searchText = queryText.toLowerCase();
+  const countryName = item.name.toLowerCase();
+  return countryName.includes(searchText);
+};
+
+onMounted(() => {
+  fetchUserProfile();
+  checkScreenSize();
+  window.addEventListener('resize', checkScreenSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenSize);
+});
 </script>
 
-<style>
-/* Basic transitions */
-.transition-swing {
-  transition: all 0.3s ease;
+<style scoped>
+/* Custom transitions to replace transition-swing */
+.transform-button {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Simple card hover effect */
-.profile-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Simple button hover effect */
 .transform-button:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Basic avatar hover effect */
+.transform-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.transform-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transform-avatar {
+  transition: transform 0.3s ease;
+}
+
 .transform-avatar:hover {
   transform: scale(1.05);
 }
 
-/* Simple input field hover */
-.input-field-hover:hover {
+.scale-button {
+  transition: transform 0.3s ease;
+}
+
+.scale-button:hover {
+  transform: scale(1.05);
+}
+
+.danger-card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.danger-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+}
+
+.input-field-hover:hover .v-input__control {
   border-color: var(--v-primary-base);
 }
 
-/* Basic list item hover */
+.v-list-item {
+  transition: background-color 0.3s ease;
+}
+
 .v-list-item:hover {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-/* Simple dialog transition */
 .dialog-bottom-transition-enter-active,
 .dialog-bottom-transition-leave-active {
   transition: transform 0.3s ease-in-out;
 }
 
-/* Media query for mobile */
 @media (max-width: 600px) {
   .transform-button:hover,
   .transform-avatar:hover,
-  .profile-card-hover:hover {
+  .transform-card:hover,
+  .danger-card-hover:hover {
     transform: none;
+    box-shadow: none;
   }
 }
 </style>
