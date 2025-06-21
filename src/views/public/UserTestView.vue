@@ -329,7 +329,9 @@
             <v-row>
               <v-col cols="6" class="mx-auto">
                 <!-- Full Name Input -->
-                <v-text-field v-model="fullName" label="Full Name" outlined dense
+                <v-text-field 
+                :disabled="localTestAnswer.consentCompleted"
+                v-model="fullName" label="Full Name" outlined dense
                   :rules="[v => !!v || 'Name is required']" />
               </v-col>
             </v-row>
@@ -337,8 +339,8 @@
             <v-row>
               <v-col cols="6" class="mx-auto">
                 <!-- Accept / Decline Checkboxes in a Group -->
-                <v-radio-group v-model="localTestAnswer.consentCompleted">
-                  <v-radio :label="'I accept the consent terms'" :disabled="fullName == ''" :value="true" />
+                <v-radio-group v-model="localTestAnswer.consentCompleted" :disabled="localTestAnswer.consentCompleted">
+                  <v-radio :label="'I accept the consent terms'" :value="true" />
                   <v-radio :label="'I do not accept the consent terms'" :value="false" />
                 </v-radio-group>
               </v-col>
@@ -346,7 +348,7 @@
 
             <v-row>
               <v-col cols="6" class="mx-auto text-center">
-                <v-btn color="primary" :disabled="!localTestAnswer.consentCompleted || fullName == ''"
+                <v-btn color="primary" :disabled="localTestAnswer.consentCompleted || fullName == ''"
                   @click="completeStep(taskIndex, 'consent'), (taskIndex = 1)">
                   Continue
                 </v-btn>
@@ -454,12 +456,13 @@
                   <v-row class="paragraph" justify="space-around">
                     <v-col class="mb-0 pb-0" v-if="test.testStructure.userTasks[taskIndex].taskType === 'textArea'">
                       <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
-                        v-model="localTestAnswer.tasks[taskIndex].taskAnswer" outlined label="answer" />
+                        v-model="localTestAnswer.tasks[taskIndex].taskAnswer" outlined label="answer"
+                        :disabled="localTestAnswer.submitted" />
                     </v-col>
                     <v-col class="mb-0 pb-0">
                       <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
                         v-model="localTestAnswer.tasks[taskIndex].taskObservations" outlined
-                        label="observation (optional)" />
+                        label="observation (optional)" :disabled="localTestAnswer.submitted" />
                     </v-col>
                   </v-row>
                 </v-col>
@@ -492,13 +495,13 @@
               <div class="pa-2 text-end">
                 <v-row>
                   <v-col cols="6">
-                    <v-btn block dark color="red lighten-1"
+                    <v-btn block dark color="red lighten-1" :disabled="localTestAnswer.submitted"
                       @click="completeStep(taskIndex, 'tasks', false), callTimerSave()">
                       {{ $t('buttons.couldNotFinish') }}
                     </v-btn>
                   </v-col>
                   <v-col cols="6">
-                    <v-btn block dark color="orange lighten-1"
+                    <v-btn block dark color="orange lighten-1" :disabled="localTestAnswer.submitted"
                       @click="completeStep(taskIndex, 'tasks', true), callTimerSave()">
                       {{ $t('UserTestView.buttons.done') }}
                     </v-btn>
