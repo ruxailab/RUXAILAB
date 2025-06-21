@@ -1,4 +1,20 @@
 {
+  "choose": {
+  "title": "ما نوع الاختبار الذي ترغب في البدء به؟",
+  "testing": "اختبار",
+  "inspection": "تفتيش",
+  "inquiry": "استفسار",
+  "userTesting": "اختبار المستخدم",
+  "abTesting": "اختبار أ/ب",
+  "eyeTracking": "تتبع العين",
+  "heuristic": "تقييم إرشادي",
+  "cognitive": "جولة معرفية",
+  "automated": "تقييمات آلية",
+  "interviews": "مقابلات",
+  "focusGroups": "مجموعات التركيز",
+  "surveys": "استبيانات واستطلاعات"
+},
+  "category": "الفئة",
   "language": "اللغة",
   "SIGNIN": {
     "sign-in": "تسجيل الدخول",

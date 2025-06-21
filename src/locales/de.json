@@ -1,4 +1,20 @@
 {
+  "choose": {
+  "title": "Welche Art von Test möchten Sie starten?",
+  "testing": "Test",
+  "inspection": "Inspektion",
+  "inquiry": "Befragung",
+  "userTesting": "Benutzertest",
+  "abTesting": "A/B-Test",
+  "eyeTracking": "Blickverfolgung",
+  "heuristic": "Heuristische Bewertung",
+  "cognitive": "Kognitiver Durchlauf",
+  "automated": "Automatisierte Bewertungen",
+  "interviews": "Interviews",
+  "focusGroups": "Fokusgruppen",
+  "surveys": "Umfragen und Fragebögen"
+},
+  "category": "Kategorie",
   "language": "Sprache",
   "SIGNIN": {
     "sign-in": "Anmelden",
