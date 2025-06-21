@@ -9,6 +9,8 @@ import Reports from '@/store/modules/Reports'
 import Heuristic from '@/store/modules/Heuristic'
 import Answer from '@/store/modules/Answer'
 import Language from './modules/Language'
+import Assessment from './modules/Assessment'
+import ManualAccessibilityTest from './modules/ManualAccessibilityTest'
 
 export default createStore({
   state: {
@@ -47,6 +49,8 @@ export default createStore({
     },
   },
   modules: {
+    manualAccessibility: ManualAccessibilityTest,
+    Assessment,
     Auth,
     Templates,
     Tests,
