@@ -41,7 +41,7 @@
                   color="#F9A826"
                   rounded
                   class="white--text"
-                  :loading="loading"
+                  :loading="loadingEmail"
                   @click="onSignIn()"
                 >
                   {{ $t('SIGNIN.sign-in') }}
@@ -55,7 +55,7 @@
               <div class="mx-3">
                 <google-sign-in-button 
                   :button-text="$t('SIGNIN.continueWithGoogle')"
-                  :loading="loading"
+                  :loading="loadingGoogle"
                   @google-sign-in-start="onGoogleSignInStart"
                   @google-sign-in-success="onGoogleSignInSuccess"
                   @google-sign-in-error="onGoogleSignInError"
@@ -103,6 +103,8 @@ export default {
   },
   data: () => ({
     showPassword: false,
+    loadingEmail: false,
+    loadingGoogle: false,
     email: '',
     password: '',
     emailRules: [
@@ -129,6 +131,7 @@ export default {
     async onSignIn() {
       const result = this.checkForm()
       if (result) {
+        this.loadingEmail = true
         try {
         await this.$store.dispatch('signin', {
           email: this.email,
@@ -139,6 +142,8 @@ export default {
         }
       } catch (error) {
         console.error('Erro de autenticação:', error)
+      } finally {
+        this.loadingEmail = false
       }
       }
      
@@ -148,15 +153,18 @@ export default {
     },
     onGoogleSignInStart() {
       // Event when Google sign-in starts
+      this.loadingGoogle = true
     },
     async onGoogleSignInSuccess() {
       // Event when Google sign-in is successful
+      this.loadingGoogle = false
       if (this.$store.getters.user) {
         this.$router.push('/testslist').catch(() => {})
       }
     },
     onGoogleSignInError(error) {
       // Event when Google sign-in fails
+      this.loadingGoogle = false
       console.error('Google sign-in error:', error)
       },
     redirectToForgotPassword() {
