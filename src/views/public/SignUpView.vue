@@ -56,7 +56,7 @@
                   color="#F9A826"
                   rounded
                   class="white--text"
-                  :loading="loading"
+                  :loading="loadingEmail"
                   @click="onSignUp()"
                 >
                   Sign-up
@@ -70,7 +70,7 @@
               <div class="mx-3">
                 <google-sign-in-button 
                   :button-text="$t('SIGNIN.continueWithGoogle')"
-                  :loading="loading"
+                  :loading="loadingGoogle"
                   @google-sign-in-start="onGoogleSignInStart"
                   @google-sign-in-success="onGoogleSignInSuccess"
                   @google-sign-in-error="onGoogleSignInError"
@@ -111,6 +111,8 @@ export default {
   data: () => ({
     email: '',
     password: '',
+    loadingEmail: false,
+    loadingGoogle: false,
 
     valid: true,
 
@@ -146,6 +148,7 @@ export default {
   methods: {
     async onSignUp() {
       if (this.valid) {
+        this.loadingEmail = true
         try {
           await this.$store.dispatch('signup', {
             email: this.email,
@@ -155,6 +158,8 @@ export default {
         } catch (error) {
           console.error('Signup failed:', error)
           this.errorMessage = 'Signup failed. Please check your credentials.'
+        } finally {
+          this.loadingEmail = false
         }
       }
     },
@@ -163,13 +168,16 @@ export default {
     },
     onGoogleSignInStart() {
       // Event when Google sign-in starts
+      this.loadingGoogle = true
     },
     async onGoogleSignInSuccess() {
       // Event when Google sign-in is successful
+      this.loadingGoogle = false
       await this.$router.push('/')
     },
     onGoogleSignInError(error) {
       // Event when Google sign-in fails
+      this.loadingGoogle = false
       console.error('Google sign-in error:', error)
     }
   },
