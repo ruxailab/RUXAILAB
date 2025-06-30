@@ -39,7 +39,7 @@ export default class ManualAccessibilityTest {
     this.updatedAt = data.updatedAt || new Date().toISOString();
 
     // Test-specific data
-    this.testType = 'MANUAL';
+    this.testType = data.type || 'MANUAL';
     this.isPublic = data.isPublic || false;
   }
 
@@ -53,7 +53,7 @@ export default class ManualAccessibilityTest {
       if (!obj || typeof obj !== 'object') return obj;
       if (typeof obj.toFirestore === 'function') return obj.toFirestore();
       if (Array.isArray(obj)) return obj.map(item => toPlainObject(item));
-      
+
       const plainObj = {};
       for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {

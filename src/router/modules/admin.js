@@ -20,6 +20,13 @@ import Accessibility from '@/views/admin/Accessibility.vue'
 import Assessment from '@/views/admin/Assessment.vue'
 import Sample from '@/views/public/Sample.vue'
 import AccessibilityManagerView from '@/views/admin/AccessibilityManagerView.vue'
+import AutomatedAccessibilityManager from '@/views/admin/AutomatedAccessibilityManager.vue'
+import AutomatedAccessibilityHome from '@/views/admin/AutomatedAccessibility/AutomatedAccessibilityHome.vue'
+import Analyse from '@/views/admin/AutomatedAccessibility/EditTest.vue'
+import Answers from '@/views/admin/AutomatedAccessibility/Answers.vue'
+import Report from '@/views/admin/AutomatedAccessibility/Report.vue'
+import Cooperation from '@/views/admin/AutomatedAccessibility/Cooperation.vue'
+import Settings from '@/views/admin/AutomatedAccessibility/Settings.vue'
 export default [
   {
     path: '/testslist',
@@ -151,6 +158,51 @@ export default [
     name: 'Create from template',
     meta: { authorize: [1] },
     component: CreateFromTemplate,
+  },
+  {
+    path: '/accessibility/automatic//:testId',
+    name: 'AutomatedAccessibility',
+    component: AutomatedAccessibilityManager,
+    meta: { authorize: [1] },
+    props: true,
+    children: [
+      {
+        path: '',
+        name: 'AutomatedAccessibilityHome',
+        component: AutomatedAccessibilityHome,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/analyse/:testId',
+        name: 'Analyse',
+        component: Analyse,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/answers/:testId',
+        name: 'AccessibilityAnswers',
+        component: Answers,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/report/:testId',
+        name: 'AccessibilityReport',
+        component: Report,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/cooperation/:testId',
+        name: 'AccessibilityCooperation',
+        component: Cooperation,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/settings/:testId',
+        name: 'AccessibilitySettings',
+        component: Settings,
+        meta: { authorize: [1] }
+      }
+    ]
   },
   {
     path: '/accessibility/manual/:testId',
