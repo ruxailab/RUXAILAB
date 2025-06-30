@@ -69,6 +69,7 @@ import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
+import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 
 const props = defineProps({
   isOpen: {
@@ -173,6 +174,12 @@ const handleTestType = () => {
     return;
   }
 
+  if (props.testType === 'AUTOMATIC') {
+    console.log('Automatic test type detected');
+    submitAutomaticAccessibility();
+    return;
+  }
+
   if (['HEURISTICS'].includes(props.testType)) {
     submit();
   }
@@ -221,6 +228,45 @@ const submitAccessibility = async () => {
     console.error('Error creating accessibility test:', error);
 
     console.log(error.message);
+    toast.error(error.message);
+  }
+};
+
+const submitAutomaticAccessibility = async () => {
+  console.log('Creating new automatic accessibility test:', test.value);
+
+  try {
+    // Create new automatic accessibility test
+    const newTest = new AutomaticAccessibilityTest({
+      title: test.value.title,
+      description: test.value.description,
+      isPublic: test.value.isPublic || false,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      status: 'draft',
+      websiteUrl: '', // This can be set later when configuring the test
+      collaborators: {
+        [user.value.id]: 'admin'
+      },
+      type: 'AUTOMATIC'
+    });
+
+    console.log('Creating automatic test with data:', newTest);
+
+    // Use the correct store module to create the test
+    const createdTest = await store.dispatch('automaticAccessibility/addTest', newTest);
+
+    console.log('Automatic test created successfully:', createdTest);
+
+    // Navigate to the automatic test editor
+    router.push(`/accessibility/automatic/${createdTest.id}`);
+
+    // Close the dialog
+    userDialog.value = false;
+  } catch (error) {
+    console.error('Error creating automatic accessibility test:', error);
     toast.error(error.message);
   }
 };

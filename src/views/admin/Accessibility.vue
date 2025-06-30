@@ -21,7 +21,7 @@
               'Automated tools scan for common issues',
               'Quick feedback and workflow integration',
               'Ideal for WCAG violations and regression',
-            ]" @click="navigateToTest('automatic')" />
+            ]" @click="setTestType('AUTOMATIC')" />
         </v-col>
         <v-col cols="10" md="4" sm="10" class="card">
           <CardTypeTest :img="require('../../../public/human.svg')" title="AI Powered Testing" type="Accessibility"
@@ -35,8 +35,11 @@
     </v-col>
   </div>
 
-  <CreateTestNameDialog :is-open="nameDialog" :test-type="testType" :heading="'Create Manual Accessibility Test'"
-    :sub-heading="'Please provide a name and description for your accessibility test'" :test-name="'Test Name'"
+  <CreateTestNameDialog :is-open="nameDialog" :test-type="testType"
+    :heading="testType === 'AUTOMATIC' ? 'Create Automatic Accessibility Test' : 'Create Manual Accessibility Test'"
+    :sub-heading="testType === 'AUTOMATIC'
+      ? 'Please provide a name and description for your automatic accessibility test'
+      : 'Please provide a name and description for your accessibility test'" :test-name="'Test Name'"
     :test-description="'Test Description'" :test-label="'Create Test'" @close="nameDialog = false" />
 </template>
 
@@ -55,7 +58,12 @@ const setTestType = (type) => {
   if (type === 'MANUAL') {
     nameDialog.value = true;
     console.log('Manual test type selected');
-  } else {
+  }
+  if (type === 'AUTOMATIC') {
+    nameDialog.value = true;
+    console.log('Automatic test type selected');
+  }
+  else {
     navigateToTest(type.toLowerCase());
   }
 };
