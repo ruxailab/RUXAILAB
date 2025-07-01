@@ -33,6 +33,8 @@
                   <v-list-item
                     v-for="(item, i) in testTasks"
                     :key="i"
+                    :value="i"
+                    @click="taskSelect = i"
                   >
                     <v-list-item-title>{{ item }}</v-list-item-title>
                   </v-list-item>
