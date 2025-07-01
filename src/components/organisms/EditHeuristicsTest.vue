@@ -1,85 +1,126 @@
 <template>
   <div>
-    <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0 responsive-tabs">
-      <v-tab @click="tabClicked(0)" class="tab-content">
-          {{ $t('HeuristicsEditTest.titles.heuristics') }}
-          <v-icon v-if="index === 0" class="tab-icon">mdi-chevron-down</v-icon>
+    <v-tabs
+      bg-color="transparent"
+      color="#FCA326"
+      class="pb-0 mb-0 responsive-tabs"
+    >
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(0)"
+      >
+        {{ $t('HeuristicsEditTest.titles.heuristics') }}
+        <v-icon
+          v-if="index === 0"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab @click="tabClicked(1)" class="tab-content">
-          {{ $t('HeuristicsEditTest.titles.options') }}
-          <v-icon v-if="index === 1" class="tab-icon">mdi-chevron-down</v-icon>
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(1)"
+      >
+        {{ $t('HeuristicsEditTest.titles.options') }}
+        <v-icon
+          v-if="index === 1"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab @click="tabClicked(2)" class="tab-content" >
-          {{ $t('HeuristicsEditTest.titles.weights') }}
-          <v-icon v-if="index === 2" class="tab-icon">mdi-chevron-down</v-icon>
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(2)"
+      >
+        {{ $t('HeuristicsEditTest.titles.weights') }}
+        <v-icon
+          v-if="index === 2"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab @click="tabClicked(3)" class="tab-content">
-          {{ $t('HeuristicsEditTest.titles.settings') }}
-          <v-icon v-if="index === 3" class="tab-icon">mdi-chevron-down</v-icon>
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(3)"
+      >
+        {{ $t('HeuristicsEditTest.titles.settings') }}
+        <v-icon
+          v-if="index === 3"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
     </v-tabs>
 
     <div class="mt-responsive">
-      <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="change" />
-      <OptionsTable v-if="index == 1" :options="object.options" />
-      <WeightTable v-if="index == 2" :options="object.weight" />
-      <Settings v-if="index == 3" :options="object.settings" />
+      <Heuristic
+        v-if="index == 0"
+        :heuristics="object.heuristics"
+        @change="change"
+      />
+      <OptionsTable
+        v-if="index == 1"
+        :options="object.options"
+      />
+      <WeightTable
+        v-if="index == 2"
+        :options="object.weight"
+      />
+      <Settings
+        v-if="index == 3"
+        :options="object.settings"
+      />
     </div>
   </div>
 </template>
 
-<script>
-import Heuristic from '@/components/molecules/HeuristicsTable'
-import OptionsTable from '@/components/molecules/OptionsTable'
-import Settings from '@/components/molecules/HeuristicsSenttings.vue'
-import WeightTable from '@/components/molecules/WeightTable.vue'
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import Heuristic from '@/components/molecules/HeuristicsTable.vue';
+import OptionsTable from '@/components/molecules/OptionsTable.vue';
+import Settings from '@/components/molecules/HeuristicsSenttings.vue';
+import WeightTable from '@/components/molecules/WeightTable.vue';
 
-export default {
-  components: {
-    Heuristic,
-    OptionsTable,
-    Settings,
-    WeightTable,
+defineProps({
+  type: {
+    type: String,
+    required: true,
   },
-  props: {
-    type: {
-      type: String,
-      required: true,
-    },
+  object: {
+    type: Object,
+    default: () => ({}),
+  },
+  index: {
+    type: Number,
+    default: 0,
+  },
+});
 
-    object: {
-      type: Object,
-      default: () => {},
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-  },
-  computed: {
-    currentTest() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-  },
-  methods: {
-    tabClicked(index) {
-      this.$emit('tabClicked', index)
-    },
-    change(){
-      this.$emit('change')
-    }
-  },
-  
-}
+const emit = defineEmits(['tabClicked', 'change']);
+
+const store = useStore();
+
+const currentTest = computed(() => store.state.Tests.Test.testStructure);
+
+const tabClicked = (index) => {
+  emit('tabClicked', index);
+};
+
+const change = () => {
+  emit('change');
+};
 </script>
 
 <style scoped>
 /* Mobile-responsive styles */
 @media (max-width: 960px) {
-
   .responsive-tabs {
     margin-top: 16px;
     padding: 6px;
@@ -88,22 +129,22 @@ export default {
     border-radius: 4px;
   }
   
-  .responsive-tabs >>> .v-tabs-slider {
+  .responsive-tabs :deep(.v-tabs-slider) {
     display: none;
   }
 
-  .responsive-tabs >>> .v-tabs-bar {
+  .responsive-tabs :deep(.v-tabs-bar) {
     height: auto;
     flex-direction: column;
   }
 
-  .responsive-tabs >>> .v-tabs-bar__content {
+  .responsive-tabs :deep(.v-tabs-bar__content) {
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
   }
 
-  .responsive-tabs >>> .v-tab {
+  .responsive-tabs :deep(.v-tab) {
     min-width: 100%;
     justify-content: space-between;
     padding-left: 0;
@@ -123,19 +164,19 @@ export default {
     display: block;
   }
 
-  .responsive-tabs >>> .v-slide-group__wrapper {
+  .responsive-tabs :deep(.v-slide-group__wrapper) {
     overflow: visible;
   }
 
   .mt-responsive {
-  margin-top: 16px;
+    margin-top: 16px;
   }
 }
 
 /* Desktop-responsive styles */
 @media (min-width: 960px) {
-    .tab-icon {
-      display: none; /* Hide icon on larger screens */
-    }
+  .tab-icon {
+    display: none; /* Hide icon on larger screens */
   }
+}
 </style>

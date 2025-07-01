@@ -1,334 +1,403 @@
 <template>
-  <v-container class="pa-0 ma-0" fluid>
-    <v-overlay v-if="this.$route.path.includes('manager')" v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+  <v-container
+    class="pa-0 ma-0"
+    fluid
+  >
+    <v-overlay
+      v-if="$route.path.includes('manager')"
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         {{ $t('common.loading') }}
       </div>
     </v-overlay>
 
-    <v-dialog :value="flagToken && flagUser && !logined" width="500" persistent>
-      <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>
+    <v-dialog
+      :model-value="flagToken && flagUser && !logined"
+      width="500"
+      persistent
+    >
+      <v-card>
+        <v-row
+          class="ma-0 pa-0 pt-5"
+          justify="center"
+        >
+          <v-avatar
+            class="justify-center"
+            color="orange-lighten-4"
+            size="150"
+          >
+            <v-icon size="120">
               mdi-account
             </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+          <v-btn
+            class="text-white bg-orange"
+            @click="setTest"
+          >
             {{ $t('common.continueAs') }} {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             {{ $t('common.notUser', { userEmail: user.email }) }}
-            <a style="color: #f9a826" @click="signOut()">
-              {{ $t('common.changeAccount') }}
-            </a>
+            <a
+              style="color: #f9a826"
+              @click="signOut"
+            >{{
+              $t('common.changeAccount')
+            }}</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
-      <Drawer :items="navigator" />
-
-      <!-- View -->
-      <v-col class="background pa-0 ma-0">
-        <div v-if="this.$route.path.includes('manager')">
-          <div class="back-gradient">
-            <v-row align="center" justify="center" class="manager-bg">
-              <v-col class="text-div">
-                <div v-if="accessLevel == 0" class="white--text">
-                  <p class="mobile-center" style="font-size: 58px; font-weight: 500">
-                    {{ $t('titles.manager') }}
-                  </p>
-                  <p style="font-size: 22px" class="mobile-center">
-                    {{ test.testTitle }}
-                  </p>
-                </div>
-                <div v-else class="white--text mobile-center" style="font-size: 58px; font-weight: 500">
+    <template v-if="test">
+      <Drawer
+        v-if="mdAndUp"
+        :items="navigator"
+      />
+      <v-container
+        fluid
+        :class="['background pa-0 ma-0', { 'pl-drawer': mdAndUp }]"
+        style="min-height: 100vh; overflow-y: auto"
+      >
+        <template v-if="$route.path.includes('manager')">
+          <v-row
+            align="center"
+            justify="center"
+            class="manager-bg back-gradient pa-6"
+          >
+            <!-- Text Column -->
+            <v-col
+              cols="12"
+              md="6"
+              class="text-white text-center text-md-left"
+            >
+              <div v-if="accessLevel === 0">
+                <p class="font-weight-medium text-h4 text-md-h2">
+                  {{ $t('titles.manager') }}
+                </p>
+                <p class="text-subtitle-1 text-md-subtitle-1">
                   {{ test.testTitle }}
-                </div>
-                <v-img class="hidden-md-and-up" style="max-height: 40vh" contain
-                  src="@/assets/manager/IntroManager.svg" />
-              </v-col>
-              <v-img class="hidden-sm-and-down" contain max-width="40%" max-height="85%"
-                src="@/assets/manager/IntroManager.svg" />
-            </v-row>
-          </div>
-          <div>
-            <v-container class="card-container">
-              <div v-if="accessLevel == 0">
-                <div class="presentation-text">
-                  {{ $t('common.editAndInvite') }}
-                </div>
-
-                <!-- Top Cards -->
-                <CardsManager :cards="topCards" :per-row="2" @click="go" />
+                </p>
               </div>
-
-              <div v-if="accessLevel == 0">
-                <div class="presentation-text mt-5">
-                  {{ $t('common.analyzeProject') }}
-                </div>
-
-                <!-- Bottom Cards -->
-                <CardsManager :cards="bottomCards" :per-row="3" @click="go" />
+              <div v-else>
+                <p class="font-weight-medium text-h4 text-md-h2">
+                  {{ test.testTitle }}
+                </p>
               </div>
-            </v-container>
-          </div>
-        </div>
+            </v-col>
+
+            <!-- Image Column -->
+            <v-col
+              cols="12"
+              md="6"
+              class="d-flex justify-center"
+            >
+              <v-img
+                :src="require('@/assets/manager/IntroManager.svg')"
+                max-height="300"
+                max-width="100%"
+              />
+            </v-col>
+          </v-row>
+
+          <!-- Cards Section -->
+          <v-container class="card-container pt-6 pb-10">
+            <div v-if="accessLevel == 0">
+              <p class="presentation-text text-center text-md-left mb-4">
+                {{ $t('common.editAndInvite') }}
+              </p>
+              <CardsManager
+                :cards="topCards"
+                :per-row="mdAndUp ? 2 : 1"
+                @click="go"
+              />
+            </div>
+
+            <div
+              v-if="accessLevel == 0"
+              class="mt-10"
+            >
+              <p class="presentation-text text-center text-md-left mb-4">
+                {{ $t('common.analyzeProject') }}
+              </p>
+              <CardsManager
+                :cards="bottomCards"
+                :per-row="mdAndUp ? 3 : 1"
+                @click="go"
+              />
+            </div>
+          </v-container>
+        </template>
         <router-view v-else />
-      </v-col>
-    </v-row>
+      </v-container>
+    </template>
   </v-container>
 </template>
 
-<script>
-import Drawer from '@/components/atoms/Drawer.vue'
+<script setup>
+import { ref, computed, onBeforeMount, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import { statistics } from '@/utils/statistics'
-import i18n from '@/i18n'
+import { useDisplay } from 'vuetify'
+import Drawer from '@/components/atoms/Drawer.vue'
 import CardsManager from '@/components/atoms/CardsManager'
 
-export default {
-  components: {
-    Drawer,
-    CardsManager,
-  },
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
+const toast = useToast()
+const { mdAndUp } = useDisplay()
 
-  data: () => ({
-    flagUser: false,
-    flagToken: false,
-    flagNewUser: false,
-    logined: false,
-  }),
+const flagUser = ref(false)
+const flagToken = ref(false)
+const flagNewUser = ref(false)
+const logined = ref(false)
+const token = ref('')
 
-  computed: {
-    test() {
-      this.$store.dispatch('processStatistics', {
-        resultEvaluator: statistics(),
-        percentage: this.percentage,
-        answers: this.$store.getters.testAnswerDocument,
-      })
-      return this.$store.getters.test
+const test = computed(() => {
+  const testData = store.getters.test
+  if (!testData) return null
+  store.dispatch('processStatistics', {
+    resultEvaluator: statistics(),
+    percentage: store.getters.percentage,
+    answers: store.getters.testAnswerDocument,
+  })
+  return testData
+})
+
+const user = computed(() => store.getters.user)
+
+const cooperators = computed(() => store.getters.cooperators)
+const loading = computed(() => store.getters.loading)
+
+const accessLevel = computed(() => {
+  if (!user.value) return 1
+  if (user.value.accessLevel === 0) return 0
+  const isTestOwner = test.value?.testAdmin?.userDocId === user.value.id
+  if (isTestOwner) return 0
+  const coopsInfo = test.value?.cooperators?.find(
+    (coops) => coops.userDocId === user.value.id
+  )
+  if (coopsInfo) return coopsInfo.accessLevel
+  return test.value?.isPublic ? 1 : 2
+})
+
+const topCards = computed(() => {
+  if (!test.value) return []
+  return [
+    {
+      image: 'IntroEdit.svg',
+      title: 'test',
+      imageStyle: 'transform: rotateY(180deg);',
+      bottom: '#000',
+      description: 'edit',
+      cardStyle:
+        'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
+      path: `/edittest/${test.value.id}`,
     },
-
-    topCards() {
-      return [
-        {
-          image: 'IntroEdit.svg',
-          title: 'test',
-          imageStyle: 'transform: rotateY(180deg);',
-          bottom: '#000',
-          description: 'edit',
-          cardStyle:
-            'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
-          path: `/edittest/${this.test.id}`,
-        },
-        {
-          image: 'IntroCoops.svg',
-          title: 'cooperators',
-          imageStyle: '',
-          bottom: '#000',
-          description: 'cooperators',
-          cardStyle:
-            'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
-          path: `/cooperators/${this.test.cooperators}`,
-        },
-      ]
+    {
+      image: 'IntroCoops.svg',
+      title: 'cooperators',
+      imageStyle: '',
+      bottom: '#000',
+      description: 'cooperators',
+      cardStyle:
+        'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
+      path: `/cooperators/${test.value.cooperators}`,
     },
+  ]
+})
 
-    bottomCards() {
-      let bottomCards = []
-      if (this.accessLevel == 0) {
-        bottomCards = [
-          {
-            image: 'IntroReports.svg',
-            title: 'reports',
-            imageStyle: 'height: 250px',
-            bottom: '#000',
-            description: 'reports',
-            cardStyle:
-              'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
-            path: `/reportview/${this.test.answersDocId}`,
-          },
-          {
-            image: 'IntroAnswer.svg',
-            title: 'answers',
-            imageStyle: 'height: 250px',
-            bottom: '#000',
-            description: 'answers',
-            cardStyle:
-              'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
-            path: `/answerview/${this.test.answersDocId}`,
-          },
-          {
-            image: 'FinalReport.png',
-            title: 'finalReport',
-            imageStyle: 'height: 250px',
-            bottom: '#000',
-            description: 'finalReport',
-            cardStyle:
-              'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
-            path: `/finalreportview/${this.test.id}`,
-          }]
+const bottomCards = computed(() => {
+  const tVal = test.value
+  if (!tVal || !tVal.answersDocId) return []
+
+  const cards = [
+    {
+      image: 'IntroReports.svg',
+      title: 'reports',
+      imageStyle: 'height: 250px',
+      bottom: '#000',
+      description: 'reports',
+      cardStyle:
+        'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
+      path: `/reportview/${tVal.answersDocId}`,
+    },
+    {
+      image: 'IntroAnswer.svg',
+      title: 'answers',
+      imageStyle: 'height: 250px',
+      bottom: '#000',
+      description: 'answers',
+      cardStyle:
+        'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
+      path: `/answerview/${tVal.answersDocId}`,
+    },
+  ]
+
+  if (accessLevel.value === 0) {
+    cards.push({
+      image: 'FinalReport.png',
+      title: 'finalReport',
+      imageStyle: 'height: 250px',
+      bottom: '#000',
+      description: 'finalReport',
+      cardStyle:
+        'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
+      path: `/finalreportview/${tVal.id}`,
+    })
+  }
+
+  return cards
+})
+
+const navigator = computed(() => {
+  if (!test.value) return []
+  const items = [
+    { title: 'Manager', icon: 'mdi-home', path: `/managerview/${test.value.id}` },
+  ]
+  if (test.value.template) {
+    items.push({
+      title: 'Template',
+      icon: 'mdi-file-compare',
+      path: `/templateview/${test.value.template.id}`,
+    })
+  }
+  if (accessLevel.value === 0) {
+    items.push(
+      { title: 'Test', icon: 'mdi-file-document-edit', path: `/edittest/${test.value.id}` },
+      { title: 'Preview', icon: 'mdi-file-eye', path: `/testview/${test.value.id}` },
+      { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${test.value.id}` },
+      {
+        title: 'Answers',
+        icon: 'mdi-order-bool-ascending-variant',
+        path: `/answerview/${test.value.id}`,
+      },
+      {
+        title: 'Final Report',
+        icon: 'mdi-file-document',
+        path: `/finalreportview/${test.value.id}`,
+      },
+      {
+        title: 'Cooperators',
+        icon: 'mdi-account-group',
+        path: `/cooperators/${test.value.id}`,
+      },
+      { title: 'Settings', icon: 'mdi-cog', path: `/settingsview/${test.value.id}` }
+    )
+  }
+  if (accessLevel.value === 1) {
+    items.push(
+      {
+        title: 'Answer Test',
+        icon: 'mdi-file-document',
+        path: `/testview/${test.value.id}`,
+      },
+      { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${test.value.id}` },
+      {
+        title: 'Answers',
+        icon: 'mdi-order-bool-ascending-variant',
+        path: `/answerview/${test.value.id}`,
       }
-      return bottomCards
-    },
+    )
+  }
+  return items
+})
 
-    user() {
-      if (this.$store.getters.user) this.setFlag('flagUser', true)
-      return this.$store.getters.user
-    },
-
-    cooperators() {
-      return this.$store.getters.cooperators
-    },
-
-    loading() {
-      return this.$store.getters.loading
-    },
-
-    accessLevel() {
-      return this.$store.getters.getUserAccessLevel(this.test)
-    },
-
-    navigator() {
-      if (!this.test) return []
-
-      const items = [
-        { title: 'Manager', icon: 'mdi-home', path: `/managerview/${this.test.id}` },
-      ]
-
-      if (this.test.template) {
-        items.push({ title: 'Template', icon: 'mdi-file-compare', path: `/templateview/${this.test.template.id}` })
-      }
-
-      if (this.accessLevel == 0) {
-        items.push(
-          { title: 'Test', icon: 'mdi-file-document-edit', path: `/edittest/${this.test.id}` },
-          { title: 'Preview', icon: 'mdi-file-eye', path: `/testview/${this.test.id}` },
-          { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
-          { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
-          { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },
-          { title: 'Cooperators', icon: 'mdi-account-group', path: `/cooperators/${this.test.id}` },
-          { title: 'Settings', icon: 'mdi-cog', path: `/settingsview/${this.test.id}` },
-        )
-      }
-
-      if (this.accessLevel == 1) {
-        items.push(
-          { title: 'Answer Test', icon: 'mdi-file-document', path: `/testview/${this.test.id}` },
-          // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
-          // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
-        )
-      }
-
-      return items
-    },
-  },
-
-  watch: {
-    user() {
-      if (this.user) {
-        this.setFlag('flagUser', true)
-      }
-      if (this.user.myCoops && this.flagNewUser) {
-        this.setTest()
-        this.flagNewUser = false
-      }
-    },
-  },
-
-  async created() {
-    await this.$store.dispatch('getTest', { id: this.$route.params.id })
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-    if (this.accessLevel == 2) {
-      this.$toast.warning('You don\'t have permission to access this test!')
-      this.$router.push('/testslist')
-    }
-  },
-
-  methods: {
-    go(item) {
-      if (item.id === undefined) return this.$router.push(item).catch(() => { })
-      if (item.id === 2) return window.open(item.path)
-      return this.$router.push(item.path).catch(() => { })
-    },
-
-    setFlag(flag, value) {
-      this[flag] = value
-    },
-
-    signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.setFlag('flagUser', false)
-      })
-    },
-
-    async setTest() {
-      if (this.user.myAnswers && this.test) {
-        const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((a) => {
-          answers.push(a[1])
-        })
-        // Check if test has already been accepted by the user
-        const alreadyAccepted = answers.find(
-          (a) => a.testDocId === this.test.id,
-        )
-        if (!alreadyAccepted) {
-          console.log('Caiu como !alreadyAccepted')
-          // Get invitation
-          const invitation = this.test.cooperators.find(
-            (coop) => coop.token === this.token,
-          )
-          if (invitation) {
-            // User invited, and they have an account
-            if (this.user.email === invitation.email) {
-              // Accept Collaboration
-              await this.$store.dispatch('acceptTestCollaboration', {
-                test: this.test,
-                cooperator: this.user,
-              })
-              this.flagToken = false
-            }
-            // User invited, but they don't have an account
-            else {
-              this.$store.commit('setError', {
-                errorCode: 'inviteError',
-                message: i18n.t('errors.signupWithInvitationEmail'),
-              })
-              await this.$store.dispatch('logout')
-              this.$router.push({ path: '/' })
-            }
-          } else {
-            this.$store.commit('setError', {
-              errorCode: 'inviteError',
-              message: i18n.t('errors.invalidInvitation'),
-            })
-            this.$router.push({ path: '/' })
-          }
-        } else {
-          this.flagToken = false
-        }
-      }
-    },
-  },
-
-  beforeRouteEnter(to, from, next) {
-    if (to.params.token)
-      next((vm) => {
-        vm.setFlag('flagToken', true)
-        vm.token = to.params.token
-      })
-    next()
-  },
+const go = (path) => {
+  router.push(path).catch(() => {})
 }
+
+const signOut = async () => {
+  await store.dispatch('logout')
+  flagUser.value = false
+}
+
+const setTest = async () => {
+  if (user.value.myAnswers && test.value) {
+    const answers = Object.entries(user.value.myAnswers).map(([, value]) => value)
+    const alreadyAccepted = answers.find((a) => a.testDocId === test.value.id)
+    if (!alreadyAccepted) {
+      const invitation = test.value.cooperators.find((coop) => coop.token === token.value)
+      if (invitation) {
+        if (user.value.email === invitation.email) {
+          await store.dispatch('acceptTestCollaboration', {
+            test: test.value,
+            cooperator: user.value,
+          })
+          flagToken.value = false
+          logined.value = true
+        } else {
+          store.commit('setError', {
+            errorCode: 'inviteError',
+            message: t('errors.signupWithInvitationEmail'),
+          })
+          await store.dispatch('logout')
+          router.push({ path: '/' })
+        }
+      } else {
+        store.commit('setError', {
+          errorCode: 'inviteError',
+          message: t('errors.invalidInvitation'),
+        })
+        router.push({ path: '/' })
+      }
+    } else {
+      flagToken.value = false
+    }
+  }
+}
+
+onBeforeMount(async () => {
+  if (route.params.token) {
+    flagToken.value = true
+    token.value = route.params.token
+  }
+
+  if (user.value) {
+    flagUser.value = true
+  }
+
+  await store.dispatch('getTest', { id: route.params.id })
+
+  if (!store.getters.test) {
+    toast.error('Test data could not be loaded.')
+    router.push('/testslist')
+    return
+  }
+
+  await store.dispatch('getCurrentTestAnswerDoc')
+
+  if (accessLevel.value === 2) {
+    toast.warning("You don't have permission to access this test!")
+    router.push('/testslist')
+  }
+})
+
+watch(user, () => {
+  if (user.value) {
+    flagUser.value = true
+    if (flagToken.value && !logined.value) {
+      setTest()
+    }
+  }
+})
 </script>
+
 <style>
 .background {
   background-color: #e8eaf2;

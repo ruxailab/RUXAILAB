@@ -1,7 +1,8 @@
+const webpack = require('webpack')
+
 module.exports = {
-  'transpileDependencies': [
+  transpileDependencies: [
     'vuetify',
-    'vue-clamp',
     'resize-detector',
   ],
 
@@ -13,4 +14,23 @@ module.exports = {
       enableInSFC: true,
     },
   },
-}
+
+  configureWebpack: {
+    plugins: [
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser',
+      }),
+    ],
+    resolve: {
+      fallback: {
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        buffer: require.resolve('buffer/'),
+        process: require.resolve('process'),
+        "vm": false,
+
+      },
+    },
+  },
+};
