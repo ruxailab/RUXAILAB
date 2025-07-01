@@ -2,13 +2,23 @@
   <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
-        <p class="titles ma-16">What kind of test are you looking to start?</p>
+        <p class="titles ma-16">
+          What kind of test are you looking to start?
+        </p>
       </v-row>
     </v-col>
 
-    <v-col cols="12" class="mt-6">
-      <v-row justify="center">
-        <v-col cols="12" sm="6" md="4" class="card">
+    <v-col
+      cols="12"
+      class="mt-6"
+    >
+      <v-row>
+        <v-col
+          cols="10"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Testing"
@@ -19,7 +29,12 @@
           />
         </v-col>
 
-        <v-col cols="12" sm="6" md="4" class="card">
+        <v-col
+          cols="10"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Inspection"
@@ -30,7 +45,12 @@
           />
         </v-col>
 
-        <v-col cols="12" sm="6" md="4" class="card">
+        <v-col
+          cols="10"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Inquiry"
@@ -51,27 +71,20 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import CardTypeTest from '@/components/atoms/CardTypeTest'
 import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-export default {
-  components: {
-    CardTypeTest,
-    CreateTestNameDialog,
-  },
+const router = useRouter()
 
-  data: () => ({
-    nameDialog: false,
-    testType: '',
-  }),
+const nameDialog = ref(false)
+const testType = ref('')
 
-  methods: {
-    navigateToTest(type) {
-      this.testType = type;
-      this.$router.push(`/${type}`); // Navigates to /inspection, /inquiry, or /testing
-    },
-  },
+const navigateToTest = (type) => {
+  testType.value = type;
+  router.push(`/${type}`);  // Navigates to /inspection, /inquiry, or /testing
 }
 </script>
 

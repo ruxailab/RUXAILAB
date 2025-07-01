@@ -1,13 +1,30 @@
 <template>
   <div>
-    <v-row justify="start" align="center">
-      <v-col cols="10" sm="11" class="py-0">
+    <v-row
+      justify="start"
+      align="center"
+    >
+      <v-col
+        cols="10"
+        sm="11"
+        class="py-0"
+      >
         <slot name="answer" />
       </v-col>
-      <v-col cols="1" class="mb-6 py-0">
-        <v-tooltip v-if="!show" bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+      <v-col
+        cols="1"
+        class="mb-6 py-0"
+      >
+        <v-tooltip
+          v-if="!show"
+          location="bottom"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              icon
+              v-bind="props"
+              @click="show = !show"
+            >
               <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
@@ -20,9 +37,16 @@
             $t('HeuristicsTable.AddCommentBtn.addComment')
           }}</span>
         </v-tooltip>
-        <v-tooltip v-else bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+        <v-tooltip
+          v-else
+          location="bottom"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              icon
+              v-bind="props"
+              @click="show = !show"
+            >
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>
@@ -30,84 +54,100 @@
         </v-tooltip>
       </v-col>
 
-      <v-col cols="12" class="py-0">
+      <v-col
+        cols="12"
+        class="py-0"
+      >
         <v-textarea
           v-if="show"
-          v-model="answerHeu.heuristicComment"
-          outlined
-          dense
+          v-model="localComment"
+          variant="outlined"
+          density="compact"
           auto-grow
           clearable
           clear-icon="mdi-close"
           :label="$t('common.comment')"
-          @change="updateComment"
+          @update:model-value="updateComment"
         />
         <ImageImport
           v-if="show"
           :heuristic-id="test.testStructure[heurisIndex]"
           :question-id="answerHeu.heuristicId"
-          :test-id="this.$store.getters.test.id"
-          @imageUploaded="handleImageUploaded"
+          :test-id="store.getters.test.id"
+          @image-uploaded="handleImageUploaded"
         />
       </v-col>
     </v-row>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import ImageImport from '@/components/atoms/ImportImage.vue'
-export default {
-  components: { ImageImport },
-  props: {
-    answerHeu: {
-      type: Object,
-      default: () => {},
-      require: true,
-    },
-    heurisIndex: {
-      type: Number,
-      default: 0,
-    },
+
+const props = defineProps({
+  answerHeu: {
+    type: Object,
+    default: () => ({}),
+    required: true,
   },
-  data: () => ({
-    show: false,
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    hasContent() {
-      return this.answerHeu.heuristicComment || this.answerHeu.answerImageUrl
-    },
+  heurisIndex: {
+    type: Number,
+    default: 0,
   },
-  watch: {
-    heurisIndex() {
-      this.show = false //close comment when changing heuristic
-    },
-    'answerHeu.heuristicComment'(newVal) {
-      if (newVal && !this.show) {
-        this.show = true
-      }
-    },
-    'answerHeu.answerImageUrl'(newVal) {
-      if (newVal && !this.show) {
-        this.show = true
-      }
-    },
-  },
-  mounted() {
-    if (this.hasContent) {
-      this.show = true
+})
+
+const emit = defineEmits(['updateComment'])
+
+const store = useStore()
+
+const show = ref(false)
+const localComment = ref('')
+
+const test = computed(() => store.getters.test)
+const hasContent = computed(
+  () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl
+)
+
+watch(
+  () => props.heurisIndex,
+  () => {
+    show.value = false
+    localComment.value = props.answerHeu.heuristicComment || ''
+  }
+)
+
+watch(
+  () => props.answerHeu.heuristicComment,
+  (newVal) => {
+    localComment.value = newVal || ''
+    if (newVal && !show.value) {
+      show.value = true
     }
-  },
-  methods: {
-    updateComment(input) {
-      this.$emit('updateComment', input)
-    },
-    handleImageUploaded() {
-      // Handle the image URL from the event emitted by ImportImage
-      this.updateComment('')
-    },
-  },
+  }
+)
+
+watch(
+  () => props.answerHeu.answerImageUrl,
+  (newVal) => {
+    if (newVal && !show.value) {
+      show.value = true
+    }
+  }
+)
+
+onMounted(() => {
+  if (hasContent.value) {
+    show.value = true
+  }
+})
+
+const updateComment = (input) => {
+  emit('updateComment', input)
+}
+
+const handleImageUploaded = () => {
+  updateComment('')
 }
 </script>

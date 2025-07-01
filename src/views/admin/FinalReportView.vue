@@ -1,29 +1,46 @@
 <template>
   <div class="finalReportView">
-    <v-container v-if="test.testType == 'HEURISTICS'">
+    <v-container v-if="test.testType === 'HEURISTICS'">
       <ShowInfo
         style="padding: 0!important;"
         :title="$t('titles.drawer.Final Report')"
       />
 
       <v-stepper
-        v-model="step"
+        :model-value="step"
         style="background-color:#F5F7FF"
         class="final-report-box rounded pt-0 mb-4"
         elevation="0"
       >
-        <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
-          <v-stepper-step :complete="step > 1" step="1" color="orange">
+        <v-stepper-header
+          style="background-color: #F5F7FF;"
+          class="pt-2"
+        >
+          <v-stepper-item
+            :complete="value > 1"
+            value="1"
+            color="orange"
+          >
             Conclusion
-          </v-stepper-step>
+          </v-stepper-item>
           <v-divider />
-          <v-stepper-step :complete="step > 2" step="2" color="orange">
+          <v-stepper-item
+            :complete="value > 2"
+            value="2"
+            color="orange"
+          >
             Elements
-          </v-stepper-step>
+          </v-stepper-item>
         </v-stepper-header>
 
-        <v-stepper-items style="background-color:#F5F7FF" class="mt-0">
-          <v-stepper-content step="1" class="align-mid pt-2">
+        <v-stepper-window
+          style="background-color:#F5F7FF"
+          class="mt-0"
+        >
+          <v-stepper-window-item
+            value="1"
+            class="align-mid pt-5"
+          >
             <div class="container">
               <div class="row">
                 <TextControls />
@@ -31,7 +48,11 @@
 
               <div class="row">
                 <div class="col">
-                  <div id="myTextarea" contenteditable class="form-control" />
+                  <div
+                    id="myTextarea"
+                    contenteditable
+                    class="form-control"
+                  />
                 </div>
               </div>
               <v-btn
@@ -39,38 +60,41 @@
                 align="right"
                 color="orange"
                 elevation="0"
-                dark
-                @click="step++, update()"
+                @click="handleNext"
               >
                 {{ $t('buttons.next') }}
               </v-btn>
             </div>
-          </v-stepper-content>
+          </v-stepper-window-item>
 
-          <v-stepper-content step="2">
-            <div>
+          <v-stepper-window-item value="2">
+            <div class="pt-10">
               <FinalReportSelectionBox @return-step="step--" />
             </div>
-          </v-stepper-content>
-        </v-stepper-items>
+          </v-stepper-window-item>
+        </v-stepper-window>
       </v-stepper>
     </v-container>
 
     <v-container
-      v-else-if="test.testType == 'User'"
+      v-else-if="test.testType === 'User'"
       fluid
       fill-height
       class="mt-10"
     >
       <v-row>
         <v-col class="text-center">
-          <v-icon size="100" color="primary" class="mb-4">
+          <v-icon
+            size="100"
+            color="primary"
+            class="mb-4"
+          >
             mdi-tools
           </v-icon>
-          <h1 class="display-1">
+          <h1 class="text-h4">
             {{ $t('pages.finalReport.ConstructionHeading') }}
           </h1>
-          <p class="subtitle-1">
+          <p class="text-subtitle-1">
             {{ $t('pages.finalReport.ConstructionParagraph') }}
           </p>
         </v-col>
@@ -79,51 +103,44 @@
   </div>
 </template>
 
-<script>
-import TextControls from '@/components/atoms/FinalReportControls.vue'
-import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue'
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import TextControls from '@/components/atoms/FinalReportControls.vue';
+import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
 
-export default {
-  components: {
-    TextControls,
-    FinalReportSelectionBox,
-    ShowInfo,
-  },
+const store = useStore();
 
-  data: () => ({
-    title: 'Final report',
-    object: {},
-    step: 1,
-  }),
+const step = ref(0);
+const object = ref({});
 
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-  },
+const test = computed(() => store.getters.test);
 
-  mounted() {
-    this.setInnerHtml()
-  },
+const setInnerHtml = () => {
+  const textarea = document.getElementById('myTextarea');
+  if (textarea) {
+    textarea.innerHTML = test.value.finalReport || '';
+  }
+};
 
-  methods: {
-    setInnerHtml() {
-      const textarea = document.getElementById('myTextarea')
-      if (textarea) {
-        textarea.innerHTML = this.test.finalReport
-      }
-    },
-    async update() {
-      const contenteditable = document.getElementById('myTextarea'),
-        text = contenteditable.innerHTML
+const update = async () => {
+  const contenteditable = document.getElementById('myTextarea');
+  const text = contenteditable.innerHTML;
 
-      this.object.finalReport = text
-      const auxT = Object.assign(this.test, this.object)
-      this.$store.dispatch('updateTest', auxT)
-    },
-  },
-}
+  object.value.finalReport = text;
+  const updatedTest = { ...test.value, ...object.value };
+  await store.dispatch('updateTest', updatedTest);
+};
+
+const handleNext = async () => {
+  step.value++;
+  await update();
+};
+
+onMounted(() => {
+  setInnerHtml();
+});
 </script>
 
 <style scoped>

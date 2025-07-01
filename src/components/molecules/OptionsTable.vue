@@ -7,37 +7,53 @@
       :items="optionsWithFormattedValue"
       :items-per-page="-1"
     >
-      <template v-slot:[`item.actions`]="{ item }">
+      <template #[`item.actions`]="{ item }">
         <v-icon
-          :disabled="testAnswerDocLength > 0 ? true : false"
-          small
+          :disabled="testAnswerDocLength > 0"
+          size="small"
           @click="editItem(item)"
         >
           mdi-pencil
         </v-icon>
         <v-icon
-          :disabled="testAnswerDocLength > 0 ? true : false"
-          small
+          :disabled="testAnswerDocLength > 0"
+          size="small"
           @click="deleteItem(item)"
         >
           mdi-delete
         </v-icon>
       </template>
 
-      <template v-slot:top>
-        <v-row class="ma-0" align="center">
+      <template #top>
+        <v-row
+          class="ma-0"
+          align="center"
+        >
           <v-card-title class="subtitleView">
             {{ $t('HeuristicsOptionsTable.titles.options') }}
           </v-card-title>
-          <v-row justify="end" class="ma-0 pa-0 mr-4">
+          <v-row
+            justify="end"
+            class="ma-0 pa-0 mr-4"
+          >
+            <v-btn
+              rounded
+              color="#f9a826"
+              class="text-white"
+              size="small"
+              :disabled="testAnswerDocLength > 0"
+              :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+              @click="dialog = true"
+            >
+              {{ $t('HeuristicsTable.titles.addOption') }}
+            </v-btn>
             <AddOptionBtn
+              v-model:dialog="dialog"
               :option="option"
-              :dialog="dialog"
               :has-value="hasValue"
-              @changeHasValue="hasValue = !hasValue"
-              @addOption="updateOptions"
-              @dialog="changeDialog"
-              @change="emitChange()"
+              @change-has-value="updateHasValue"
+              @add-option="updateOptions"
+              @change="emitChange"
             />
           </v-row>
         </v-row>
@@ -47,124 +63,119 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
-import AddOptionBtn from '../atoms/AddOptionBtn'
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import AddOptionBtn from '../atoms/AddOptionBtn';
 
-export default {
-  components: {
-    AddOptionBtn,
-  },
-  data: () => ({
-    headers: [
-      {
-        text: i18n.t('common.text'),
-        align: 'start',
-        value: 'text',
-      },
-      {
-        text: i18n.t('common.description'),
-        align: 'end',
-        value: 'description',
-      },
-      { text: i18n.t('common.value'), align: 'end', value: 'value' },
-      {
-        text: i18n.t('common.editDelete'),
-        value: 'actions',
-        align: 'end',
-        sortable: false,
-      },
-    ],
-    option: {
-      text: '',
-      description: '',
-      value: null,
-    },
-    dialog: false,
-    editIndex: -1,
-    hasValue: true,
-  }),
-  computed: {
-    options() {
-      return this.$store.state.Tests.Test.testOptions
-    },
-    optionsWithFormattedValue() {
-      return this.options.map((option) => {
-        if (option.value === null) {
-          return { ...option, value: 'No value' }
-        } else {
-          return option
-        }
-      })
-    },
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+const store = useStore();
+const { t } = useI18n();
 
-      return heuristicAnswersCount
-    },
-  },
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.option = {
-          text: '',
-          value: null,
-        }
-        this.hasValue = true
-      }
-    },
-    options() {
-      this.$emit('change')
-    },
-  },
-  methods: {
-    changeDialog(payload) {
-      this.dialog = payload
-    },
-    updateOptions() {
-      if (this.editIndex == -1) {
-        this.option.timestamp = Date.now() // using the current timestamp as a unique identifier
-        this.options.push(this.option)
-      } else {
-        Object.assign(this.options[this.editIndex], this.option)
-        this.editIndex = -1
-      }
+const emit = defineEmits(['change']);
 
-      this.option = {
-        text: '',
-        value: null,
-      }
-      this.hasValue = true
-    },
-    deleteItem(item) {
-      const index = this.options.findIndex(
-        (option) => option.timestamp === item.timestamp,
-      )
-      if (index !== -1) {
-        this.options.splice(index, 1)
-      }
-    },
-    editItem(item) {
-      this.editIndex = this.options.findIndex(
-        (option) => option.timestamp === item.timestamp,
-      )
-      this.option.text = this.options[this.editIndex].text
-      this.option.value = this.options[this.editIndex].value
-
-      if (this.option.value === null) this.hasValue = false
-      else this.hasValue = true
-      this.dialog = true
-    },
-    emitChange() {
-      this.$emit('change')
-    },
+const headers = ref([
+  {
+    title: t('commoitle'),
+    align: 'start',
+    value: 'text',
   },
-}
+  {
+    title: t('common.description'),
+    align: 'end',
+    value: 'description',
+  },
+  {
+    title: t('common.value'),
+    align: 'end',
+    value: 'value',
+  },
+  {
+    title: t('common.editDelete'),
+    value: 'actions',
+    align: 'end',
+    sortable: false,
+  },
+]);
+
+const option = ref({
+  text: '',
+  description: '',
+  value: null,
+  timestamp: null,
+});
+
+const dialog = ref(false);
+const editIndex = ref(-1);
+const hasValue = ref(true);
+
+const optionsWithFormattedValue = computed(() =>
+  store.state.Tests.Test.testOptions.map((opt) => ({
+    ...opt,
+    value: opt.value === null ? 'No value' : opt.value,
+  })),
+);
+
+const testAnswerDocLength = computed(() => {
+  const testAnswerDocument = store.getters.testAnswerDocument;
+  if (!testAnswerDocument) return 0;
+  const heuristicAnswers = testAnswerDocument.heuristicAnswers;
+  return Object.keys(heuristicAnswers).length;
+});
+
+watch(dialog, (newVal) => {
+  if (!newVal) {
+    resetForm();
+  }
+});
+
+
+const updateHasValue = (newValue) => {
+  hasValue.value = newValue;
+};
+
+const updateOptions = (newOption) => {
+  console.log('Received newOption:', newOption);
+  if (editIndex.value === -1) {
+    store.state.Tests.Test.testOptions.push({
+      ...newOption,
+      timestamp: Date.now(),
+    });
+  } else {
+    store.state.Tests.Test.testOptions[editIndex.value] = {
+      ...newOption,
+      timestamp: store.state.Tests.Test.testOptions[editIndex.value].timestamp,
+    };
+    editIndex.value = -1;
+  }
+  resetForm();
+  emitChange();
+};
+
+const deleteItem = (item) => {
+  const index = store.state.Tests.Test.testOptions.findIndex((opt) => opt.timestamp === item.timestamp);
+  if (index !== -1) {
+    store.state.Tests.Test.testOptions.splice(index, 1);
+  }
+  emitChange();
+};
+
+const editItem = (item) => {
+  editIndex.value = store.state.Tests.Test.testOptions.findIndex((opt) => opt.timestamp === item.timestamp);
+  option.value = { ...store.state.Tests.Test.testOptions[editIndex.value] };
+  hasValue.value = option.value.value !== null;
+  dialog.value = true;
+};
+
+const emitChange = () => {
+  emit('change');
+};
+
+const resetForm = () => {
+  option.value = { text: '', value: null, description: '', timestamp: null };
+  hasValue.value = true;
+  editIndex.value = -1;
+};
 </script>
 
 <style scoped>
@@ -176,5 +187,8 @@ export default {
   color: #000000;
   margin-bottom: 4px;
   padding-bottom: 2px;
+}
+.disabledBtnBackground {
+  background-color: rgba(185, 185, 185, 0.308);
 }
 </style>
