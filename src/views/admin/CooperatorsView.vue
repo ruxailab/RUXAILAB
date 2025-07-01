@@ -14,19 +14,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import UnmoderatedCoopsView from '@/components/organisms/UnmoderatedCoopsView.vue'
 import ModeratedCoopsView from '@/components/organisms/ModeratedCoopsView.vue'
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-export default {
-  components: {
-    UnmoderatedCoopsView,
-    ModeratedCoopsView,
-  },
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-  },
-}
+const store = useStore()
+
+const test = computed(() => store.getters.test)
 </script>

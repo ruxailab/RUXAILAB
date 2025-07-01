@@ -3,10 +3,16 @@
     <Snackbar />
 
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
-          <!-- Are you sure you want to delete this report? -->
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           {{ $t('HeuristicsReport.messages.confirm_delete_report') }}
         </v-card-title>
 
@@ -16,13 +22,17 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialog = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialog = false"
+          >
             {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
+            class="bg-red text-white ml-1"
             :loading="loadingBtn"
-            text
+            variant="text"
             @click="removeReport(report), (loadingBtn = true)"
           >
             {{ $t('buttons.delete') }}
@@ -31,290 +41,295 @@
       </v-card>
     </v-dialog>
 
-    <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
+    <v-overlay
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
+      <div class="text-white mt-3">
         {{ $t('HeuristicsReport.messages.reports_loading') }}
       </div>
     </v-overlay>
 
-    <Intro v-if="reports.length == 0 && !loading" @goToCoops="goToCoops()" />
-    <ShowInfo v-else :title="$t('HeuristicsReport.titles.reports')">
-      <v-row slot="top" justify="end" dense class="mr-3">
-        <p class="subtitleView">
-          {{ $t('HeuristicsReport.titles.last_updated') }}:
-          {{ new Date().toLocaleString('en') }}
-        </p>
-      </v-row>
-
-      <div slot="content" class="ma-0 pa-0">
-        <v-data-table
-          style="background: #f5f7ff"
-          :headers="headers"
-          :items="reports"
-          :items-per-page="10"
-          height="420px"
+    <Intro
+      v-if="reports.length == 0 && !loading"
+      @go-to-coops="goToCoops"
+    />
+    <ShowInfo
+      v-else
+      :title="$t('HeuristicsReport.titles.reports')"
+    >
+      <template #top>
+        <v-row
+          justify="end"
           dense
+          class="mr-3"
         >
-          <template v-slot:item.more="{ item }">
-            <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list v-if="test.testAdmin.email == user.email">
-                <v-list-item @click=";(dialog = true), (report = item)">
-                  <v-list-item-title>
-                    {{ $t('HeuristicsReport.messages.remove_report') }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
+          <p class="subtitleView">
+            {{ $t('HeuristicsReport.titles.last_updated') }}:
+            {{ new Date().toLocaleString('en') }}
+          </p>
+        </v-row>
+      </template>
 
-          <template v-slot:item.userDocId="{ item, index }">
-            <!-- <div>{{ getCooperatorEmail(item.userDocId) }}</div> -->
-            {{ `Ev${index + 1}` }}
-          </template>
-          <template v-slot:item.progress="{ item }">
-            <div>{{ item.progress }}</div>
-          </template>
-          <template v-slot:item.submitted="{ item }">
-            <div>{{ item.submitted }}</div>
-          </template>
-          <template v-slot:item.lastUpdate="{ item }">
-            <div>{{ formatDate(item.lastUpdate) }}</div>
-          </template>
-        </v-data-table>
-      </div>
+      <template #content>
+        <div class="ma-0 pa-0">
+          <v-data-table
+            style="background: #f5f7ff"
+            :headers="headers"
+            :items="reports"
+            :items-per-page="10"
+            height="420px"
+            dense
+          >
+            <template #item.more="{ item }">
+              <v-menu :offset="[0, 4]">
+                <template #activator="{ props }">
+                  <v-icon
+                    icon="mdi-dots-vertical"
+                    v-bind="props"
+                  />
+                </template>
+                <v-list v-if="test.testAdmin.email == user.email">
+                  <v-list-item @click="dialog = true; report = item">
+                    <v-list-item-title>
+                      {{ $t('HeuristicsReport.messages.remove_report') }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+
+            <template #item.userDocId="{ index }">
+              <!-- <div>{{ getCooperatorEmail(item.userDocId) }}</div> -->
+              {{ `Ev${index + 1}` }}
+            </template>
+            <template #item.progress="{ item }">
+              <div>{{ item.progress }}</div>
+            </template>
+            <template #item.submitted="{ item }">
+              <div>{{ item.submitted }}</div>
+            </template>
+            <template #item.lastUpdate="{ item }">
+              <div>{{ formatDate(item.lastUpdate) }}</div>
+            </template>
+          </v-data-table>
+        </div>
+      </template>
     </ShowInfo>
   </div>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo'
-import Intro from '@/components/molecules/IntroReports'
-import Snackbar from '@/components/atoms/Snackbar'
-import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore'
-import { db } from '@/firebase'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useToast } from "vue-toastification"
+import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
+import { db } from '@/firebase';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import Intro from '@/components/molecules/IntroReports.vue';
+import Snackbar from '@/components/atoms/Snackbar.vue';
 
-export default {
-  components: {
-    ShowInfo,
-    Intro,
-    Snackbar,
+const store = useStore();
+const { t } = useI18n();
+const toast = useToast()
+
+const props = defineProps({
+  id: { type: String, default: '' },
+});
+
+const emit = defineEmits(['goToCoops']);
+
+const loading = ref(true);
+const dialog = ref(false);
+const loadingBtn = ref(false);
+const report = ref(null);
+
+const headers = computed(() => [
+  {
+    title: t('HeuristicsReport.headers.evaluator'),
+    value: 'userDocId',
   },
-
-  props: { id: { type: String, default: '' } },
-
-  data: () => ({
-    // headers: [
-    //   // { text: 'Evaluator', value: 'userDocId' },
-    //   {
-    //     text: 'evaluator',// key used in the translation file
-    //     value: 'userDocId',
-    //   },
-    //   { text: 'Last Update', value: 'lastUpdate' },
-    //   { text: 'Progress', value: 'progress', justify: 'center' },
-    //   { text: 'Status', value: 'submitted' },
-    //   { text: 'More', value: 'more', justify: 'end' },
-    // ],
-    loading: true,
-    dialog: false,
-    loadingBtn: false,
-    report: null,
-  }),
-
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('HeuristicsReport.headers.evaluator'),
-          value: 'userDocId',
-        },
-        {
-          text: this.$t('HeuristicsReport.headers.last_update'),
-          value: 'lastUpdate',
-        },
-        {
-          text: this.$t('HeuristicsReport.headers.progress'),
-          value: 'progress',
-          justify: 'center',
-        },
-        {
-          text: this.$t('HeuristicsReport.headers.status'),
-          value: 'submitted',
-        },
-        {
-          text: this.$t('HeuristicsReport.headers.more'),
-          value: 'more',
-          justify: 'end',
-        },
-      ]
-    },
-    reports() {
-      const testAnswerDocument = this.$store.getters.testAnswerDocument
-
-      // Verifica se testAnswerDocument é null ou undefined
-      if (!testAnswerDocument) {
-        return []
-      }
-
-      const type = testAnswerDocument.type
-
-      const rawReports =
-        type === 'User'
-          ? testAnswerDocument.taskAnswers || {}
-          : testAnswerDocument.heuristicAnswers || {}
-
-      const processedReports = []
-
-      for (const userId in rawReports) {
-        const report = rawReports[userId]
-        const processedReport = {
-          userDocId: report.userDocId,
-          total: report.total,
-          submitted: this.checkIfIsSubmitted(report.submitted),
-          progress: parseFloat(report.progress).toFixed(2) + '%',
-          lastUpdate: report.lastUpdate,
-        }
-
-        processedReports.push(processedReport)
-      }
-
-      return processedReports
-    },
-    // ... outros métodos
-
-    user() {
-      return this.$store.getters.user
-    },
-
-    test() {
-      return this.$store.getters.test
-    },
-
-    dialogText() {
-      return this.$t('HeuristicsReport.messages.sure_to_delete', {
-        user: this.report !== null ? this.report.email : '',
-      })
-    },
-    answers() {
-      return this.$store.getters.answers || {}
-    },
+  {
+    title: t('HeuristicsReport.headers.last_update'),
+    value: 'lastUpdate',
   },
-
-  watch: {
-    reports() {
-      if (Object.values(this.reports)) this.loading = false
-    },
+  {
+    title: t('HeuristicsReport.headers.progress'),
+    value: 'progress',
+    justify: 'center',
   },
-
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
+  {
+    title: t('HeuristicsReport.headers.status'),
+    value: 'submitted',
   },
-
-  methods: {
-    checkIfIsSubmitted(status) {
-      return status
-        ? this.$t('HeuristicsReport.status.submitted')
-        : this.$t('HeuristicsReport.status.in_progress')
-    },
-
-    async getCurrentAnswer() {
-      await this.$store.dispatch('getCurrentTestAnswerDoc')
-    },
-
-    async removeReport(report) {
-      const answerId = this.test.answersDocId
-      const userToRemoveId = report.userDocId
-      let testType = this.test.testType
-      const testId = this.test.id
-
-      if (testType === 'HEURISTIC') testType = 'heuristicAnswers'
-      if (testType === 'User') testType = 'taskAnswers'
-
-      try {
-        const userDocRef = doc(db, 'users', userToRemoveId)
-        const userDoc = await getDoc(userDocRef)
-
-        if (userDoc.exists()) {
-          const updateObject = {}
-          updateObject[`myAnswers.${testId}`] = deleteField()
-          await updateDoc(userDocRef, updateObject)
-        }
-
-        const answerDocRef = doc(db, 'answers', answerId)
-        const answerDoc = await getDoc(answerDocRef)
-
-        if (answerDoc.exists()) {
-          const updateObject = {}
-          updateObject[`${testType}.${userToRemoveId}`] = deleteField()
-          await updateDoc(answerDocRef, updateObject)
-        }
-      } catch (e) {
-        this.$store.commit('setError', {
-          errorCode: 'RemoveReportError',
-          message: e,
-        })
-      }
-
-      await this.getCurrentAnswer()
-      this.loadingBtn = false
-      this.dialog = false
-      this.$toast.success(i18n.$t('alerts.genericSuccess'))
-    },
-
-    formatDate(timestamp) {
-      const currentDate = new Date()
-      const startDate = new Date(timestamp)
-
-      const yearDiff = currentDate.getFullYear() - startDate.getFullYear()
-      const monthDiff = currentDate.getMonth() - startDate.getMonth()
-      const dayDiff = currentDate.getDate() - startDate.getDate()
-      const hourDiff = currentDate.getHours() - startDate.getHours()
-      const minuteDiff = currentDate.getMinutes() - startDate.getMinutes()
-
-      if (yearDiff > 0) {
-        return this.formatTimeAgo(yearDiff, 'years')
-      } else if (monthDiff > 0) {
-        return this.formatTimeAgo(monthDiff, 'months')
-      } else if (dayDiff > 0) {
-        return this.formatTimeAgo(dayDiff, 'days')
-      } else if (hourDiff > 0) {
-        return this.formatTimeAgo(hourDiff, 'hours')
-      } else if (minuteDiff > 0) {
-        return this.formatTimeAgo(minuteDiff, 'minutes')
-      } else {
-        return this.$t('common.timeAgo.now')
-      }
-    },
-
-    goToCoops() {
-      this.$emit('goToCoops')
-    },
-
-    getCooperatorEmail(userDocId) {
-      if (userDocId == this.user.id) return 'You'
-      let cooperatorEmail = null
-      if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
-        for (const element of this.test.cooperators) {
-          if (element && element.email && element.userDocId === userDocId) {
-            cooperatorEmail = element.email
-          }
-        }
-      }
-      return cooperatorEmail
-    },
-    formatTimeAgo(timeDiff, unit) {
-      const translationKey = `common.timeAgo.${unit}`
-      const translatedText = this.$t(translationKey, { count: timeDiff })
-
-      return translatedText
-    },
+  {
+    title: t('HeuristicsReport.headers.more'),
+    value: 'more',
+    justify: 'end',
   },
-}
+]);
+
+const checkIfIsSubmitted = (status) => {
+  return status
+    ? t('HeuristicsReport.status.submitted')
+    : t('HeuristicsReport.status.in_progress');
+};
+
+const reports = computed(() => {
+  const testAnswerDocument = store.getters.testAnswerDocument;
+
+  if (!testAnswerDocument) {
+    return [];
+  }
+
+  const type = testAnswerDocument.type;
+  const rawReports =
+    type === 'User'
+      ? testAnswerDocument.taskAnswers || {}
+      : testAnswerDocument.heuristicAnswers || {};
+
+  const processedReports = [];
+
+  for (const userId in rawReports) {
+    const report = rawReports[userId];
+    const processedReport = {
+      userDocId: report.userDocId,
+      total: report.total,
+      submitted: checkIfIsSubmitted(report.submitted),
+      progress: parseFloat(report.progress).toFixed(2) + '%',
+      lastUpdate: report.lastUpdate,
+    };
+
+    processedReports.push(processedReport);
+  }
+
+  return processedReports;
+});
+
+const user = computed(() => store.getters.user);
+const test = computed(() => store.getters.test);
+const answers = computed(() => store.getters.answers || {});
+const dialogText = computed(() =>
+  t('HeuristicsReport.messages.sure_to_delete', {
+    user: report.value !== null ? report.value.email : '',
+  })
+);
+
+watch(reports, () => {
+  if (Object.values(reports.value)) loading.value = false;
+});
+
+
+const getCurrentAnswer = async () => {
+  await store.dispatch('getCurrentTestAnswerDoc');
+};
+
+const removeReport = async (report) => {
+  const answerId = test.value.answersDocId;
+  const userToRemoveId = report.userDocId;
+  let testType = test.value.testType;
+  const testId = test.value.id;
+
+  if (testType === 'HEURISTIC') testType = 'heuristicAnswers';
+  if (testType === 'User') testType = 'taskAnswers';
+
+  try {
+    const userDocRef = doc(db, 'users', userToRemoveId);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const updateObject = {};
+      updateObject[`myAnswers.${testId}`] = deleteField();
+      await updateDoc(userDocRef, updateObject);
+    }
+
+    const answerDocRef = doc(db, 'answers', answerId);
+    const answerDoc = await getDoc(answerDocRef);
+
+    if (answerDoc.exists()) {
+      const updateObject = {};
+      updateObject[`${testType}.${userToRemoveId}`] = deleteField();
+      await updateDoc(answerDocRef, updateObject);
+    }
+  } catch (e) {
+    store.commit('setError', {
+      errorCode: 'RemoveReportError',
+      message: e,
+    });
+  }
+
+  await getCurrentAnswer();
+  loadingBtn.value = false;
+  dialog.value = false;
+  toast?.success(t('alerts.genericSuccess'));
+};
+
+const formatDate = (timestamp) => {
+  const currentDate = new Date();
+  const startDate = new Date(timestamp);
+
+  const yearDiff = currentDate.getFullYear() - startDate.getFullYear();
+  const monthDiff = currentDate.getMonth() - startDate.getMonth();
+  const dayDiff = currentDate.getDate() - startDate.getDate();
+  const hourDiff = currentDate.getHours() - startDate.getHours();
+  const minuteDiff = currentDate.getMinutes() - startDate.getMinutes();
+
+  if (yearDiff > 0) {
+    return formatTimeAgo(yearDiff, 'years');
+  } else if (monthDiff > 0) {
+    return formatTimeAgo(monthDiff, 'months');
+  } else if (dayDiff > 0) {
+    return formatTimeAgo(dayDiff, 'days');
+  } else if (hourDiff > 0) {
+    return formatTimeAgo(hourDiff, 'hours');
+  } else if (minuteDiff > 0) {
+    return formatTimeAgo(minuteDiff, 'minutes');
+  } else {
+    return t('common.timeAgo.now');
+  }
+};
+
+const formatTimeAgo = (timeDiff, unit) => {
+  const translationKey = `common.timeAgo.${unit}`;
+  const translatedText = t(translationKey, { count: timeDiff });
+  return translatedText;
+};
+
+const goToCoops = () => {
+  emit('goToCoops');
+};
+
+const getCooperatorEmail = (userDocId) => {
+  if (userDocId == user.value.id) return 'You';
+  let cooperatorEmail = null;
+  if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
+    for (const element of test.value.cooperators) {
+      if (element && element.email && element.userDocId === userDocId) {
+        cooperatorEmail = element.email;
+      }
+    }
+  }
+  return cooperatorEmail;
+};
+
+onMounted(async () => {
+  const timeout = setTimeout(() => {
+    loading.value = false;
+  }, 10000);
+  try {
+    await store.dispatch('getCurrentTestAnswerDoc');
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    clearTimeout(timeout);
+  }
+});
 </script>
 
 <style scoped>

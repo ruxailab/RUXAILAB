@@ -1,31 +1,42 @@
 <template>
   <section>
     <!-- Desktop -->
-    <v-container
-      style="display:contents; background-color:#f4b700; height:300px"
-      class="hidden-sm-and-down"
+    <v-container 
+      class="hidden-sm-and-down" 
+      style="display: contents; background-color: #f4b700; height: 300px"
     >
-      <v-img
-        v-if="desktopImagePreloaded"
-        src="@/assets/landing/introductionDesktop.svg"
+      <v-img 
+        v-if="desktopImagePreloaded" 
+        :src="desktopImage"
       >
         <v-container>
-          <v-row align="center" class="mb-10">
-            <v-col class="text-left" cols="12" md="6">
-              <h1 class="display-3 font-weight-regular mb-4 mt-16 white--text">
+          <v-row
+            align="center"
+            class="mb-10"
+          >
+            <v-col
+              class="text-left"
+              cols="12"
+              md="6"
+            >
+              <h1 class="text-h3 font-weight-regular mb-4 mt-16 text-white">
                 {{ $t('Introduction.title') }}
               </h1>
-              <h4 class="display-1 white--text mb-4">
+              <h4 class="text-h5 text-white mb-4">
                 {{ $t('Introduction.subtitle') }}
               </h4>
-              <p class="white--text mb-4" style="width: 80%" align="justify">
+              <p
+                class="text-white mb-4"
+                style="width: 80%"
+                align="justify"
+              >
                 {{ $t('Introduction.description') }}
               </p>
-              <v-btn
-                color="white"
-                outlined
-                rounded
-                class="mb-2"
+              <v-btn 
+                color="white" 
+                variant="outlined" 
+                rounded 
+                class="mb-2" 
                 @click="goTo('/signup')"
               >
                 {{ $t('Introduction.cta') }}
@@ -37,49 +48,51 @@
     </v-container>
 
     <!-- Mobile -->
-    <v-container class="hidden-md-and-up ma-0 pa-0">
+    <v-container class="d-md-none ma-0 pa-0">
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
           <v-col>
-            <h1
-              class="display-3 font-weight-regular white--text text-center mt-5"
-            >
+            <h1 class="text-h3 font-weight-regular text-white text-center mt-5">
               {{ $t('Introduction.title') }}
             </h1>
           </v-col>
         </div>
-        <v-img
-          v-if="mobileImagePreloaded"
-          src="@/assets/landing/introductionMobile.svg"
-          class="mb-4"
-          max-height="350"
-          contain
+        <v-img 
+          v-if="mobileImagePreloaded" 
+          :src="mobileImage" 
+          class="mb-4" 
+          max-height="350" 
+          cover
         />
-        <div style="background-color: #f4b700" class="mx-1">
-          <h4 class="display-1 white--text mb-4 text-center">
+        <div
+          style="background-color: #f4b700"
+          class="mx-1"
+        >
+          <h4 class="text-h5 text-white mb-4 text-center">
             {{ $t('Introduction.subtitle') }}
           </h4>
         </div>
-        <div style="background-color: #f4b700" class="mx-3">
+        <div
+          style="background-color: #f4b700"
+          class="mx-3"
+        >
           <v-row justify="center">
-            <p class="white--text mb-4 mx-4 text-center">
+            <p class="text-white mb-4 mx-4 text-center">
               {{ $t('Introduction.description') }}
             </p>
-            <v-btn
-              color="white"
-              outlined
-              rounded
-              class="mb-2"
+            <v-btn 
+              color="white" 
+              variant="outlined" 
+              rounded 
+              class="mb-2" 
               @click="goTo('/signup')"
             >
               {{ $t('Introduction.cta') }}
             </v-btn>
           </v-row>
         </div>
-        <!-- div for margin at bottom -->
         <div style="background-color: #f4b700; height: 40px" />
       </div>
-
       <div style="height: 10px" />
     </v-container>
 
@@ -96,7 +109,11 @@
       >
         <defs>
           <clipPath id="a">
-            <rect class="a" width="1920" height="75" />
+            <rect
+              class="a"
+              width="1920"
+              height="75"
+            />
           </clipPath>
         </defs>
         <title>wave</title>
@@ -118,7 +135,7 @@
             d="M1979,462-155,446V106C251.8,20.2,576.6,15.9,805,30c167.4,10.3,322.3,32.9,680,56,207,13.4,378,20.3,494,24"
           />
         </g>
-        <g class="b hidden-sm-and-down">
+        <g class="b d-none d-sm-block">
           <path
             class="d"
             d="M1998,484H-243V100c445.8,26.8,794.2-4.1,1035-39,141-20.4,231.1-40.1,378-45,349.6-11.6,636.7,73.8,828,150"
@@ -128,6 +145,53 @@
     </div>
   </section>
 </template>
+
+<script>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+export default {
+  setup() {
+    const router = useRouter();
+    const desktopImage = ref(null);
+    const mobileImage = ref(null);
+    const desktopImagePreloaded = ref(false);
+    const mobileImagePreloaded = ref(false);
+
+    const preloadImages = () => {
+      const dImage = new Image();
+      dImage.onload = () => {
+        desktopImage.value = require('@/assets/landing/introductionDesktop.svg');
+        desktopImagePreloaded.value = true;
+      };
+      dImage.onerror = () => console.error('Error loading desktop image');
+      dImage.src = require('@/assets/landing/introductionDesktop.svg');
+
+      const mImage = new Image();
+      mImage.onload = () => {
+        mobileImage.value = require('@/assets/landing/introductionMobile.svg');
+        mobileImagePreloaded.value = true;
+      };
+      mImage.onerror = () => console.error('Error loading mobile image');
+      mImage.src = require('@/assets/landing/introductionMobile.svg');
+    };
+
+    const goTo = (path) => {
+      router.push(path).catch(() => {});
+    };
+
+    onMounted(preloadImages);
+
+    return {
+      desktopImage,
+      mobileImage,
+      desktopImagePreloaded,
+      mobileImagePreloaded,
+      goTo,
+    };
+  },
+};
+</script>
 
 <style scoped>
 .a {
@@ -154,53 +218,3 @@ section {
   position: relative;
 }
 </style>
-
-<script>
-export default {
-  components: {},
-  data() {
-    return {
-      desktopImagePreloaded: false,
-      mobileImagePreloaded: false,
-    }
-  },
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    csvHeuristics() {
-      return this.$store.state.Tests.currentTest
-    },
-  },
-  mounted() {
-    this.preloadImages()
-  },
-  methods: {
-    preloadImages() {
-      const desktopImage = new Image()
-      desktopImage.onload = () => {
-        this.desktopImagePreloaded = true
-      }
-      desktopImage.onerror = () => {
-        console.error('Error loading desktop image')
-      }
-      desktopImage.src = require('@/assets/landing/introductionDesktop.svg')
-
-      const mobileImage = new Image()
-      mobileImage.onload = () => {
-        this.mobileImagePreloaded = true
-      }
-      mobileImage.onerror = () => {
-        console.error('Error loading mobile image')
-      }
-      mobileImage.src = require('@/assets/landing/introductionMobile.svg')
-    },
-    goTo(path) {
-      this.$router.push(path).catch(() => {})
-    },
-  },
-}
-</script>

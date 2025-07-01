@@ -1,25 +1,45 @@
 <template>
   <div class="background-grey">
     <Snackbar />
-    <v-row justify="center" style="height: 90%" align="center">
-      <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" rounded="xl" flat>
+    <v-row
+      justify="center"
+      style="height: 90%"
+      align="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <v-card
+          color="#f5f7ff"
+          rounded="xl"
+          flat
+        >
           <v-row>
-            <v-col cols="10" md="5" align-self="center" class="ma-8">
+            <v-col
+              cols="10"
+              md="5"
+              align-self="center"
+              class="ma-8"
+            >
               <div class="card-title">
                 {{ $t('FORGOT_PASSWORD.reset_password') }}
               </div>
 
               <div class="divider" />
 
-              <v-form ref="form" v-model="valid" lazy-validation class="mx-3">
+              <v-form
+                ref="form"
+                v-model="valid"
+                class="mx-3"
+              >
                 <v-text-field
                   v-model="email"
                   :label="$t('FORGOT_PASSWORD.email')"
                   :rules="emailRules"
-                  outlined
+                  variant="outlined"
                   prepend-inner-icon="mdi-email"
-                  dense
+                  density="compact"
                   required
                 />
 
@@ -32,9 +52,9 @@
                 <v-btn
                   color="#F9A826"
                   rounded
-                  class="white--text"
+                  class="text-white"
                   :loading="loading"
-                  @click="onResetRequest()"
+                  @click="onResetRequest"
                 >
                   {{ $t('FORGOT_PASSWORD.reset_button') }}
                 </v-btn>
@@ -59,44 +79,44 @@
   </div>
 </template>
 
-<script>
-import Snackbar from '@/components/atoms/Snackbar'
-import i18n from '@/i18n'
+<script setup>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import Snackbar from '@/components/atoms/Snackbar';
+import { useI18n } from 'vue-i18n'
 
-export default {
-  components: {
-    Snackbar,
-  },
-  data: () => ({
-    valid: false,
-    email: '',
-    emailRules: [
-      (v) => !!v || i18n.t('errors.emailIsRequired'),
-      (v) => /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) || i18n.t('errors.invalidEmail'),
-    ],
-  }),
-  computed: {
-    loading() {
-      return this.$store.getters.loading
-    },
-  },
-  methods: {
-    async onResetRequest() {
-      if (!this.$refs.form.validate()) {
-        return
-      }
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
 
-      try {
-        await this.$store.dispatch('resetPassword', { email: this.email })
-      } catch (error) {
-        console.error('Password reset error:', error)
-      }
-    },
-    redirectToSignin() {
-      this.$router.push('/signin')
-    },
-  },
-}
+const valid = ref(false);
+const email = ref('');
+const form = ref(null);
+
+// Email validation rules
+const emailRules = [
+  (v) => !!v || t('errors.emailIsRequired'),
+  (v) => /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) || t('errors.invalidEmail'),
+];
+
+const loading = computed(() => store.getters.loading);
+
+const onResetRequest = async () => {
+  if (!form.value.validate()) {
+    return;
+  }
+
+  try {
+    await store.dispatch('resetPassword', { email: email.value });
+  } catch (error) {
+    console.error('Password reset error:', error);
+  }
+};
+
+const redirectToSignin = () => {
+  router.push('/signin');
+};
 </script>
 
 <style scoped>
