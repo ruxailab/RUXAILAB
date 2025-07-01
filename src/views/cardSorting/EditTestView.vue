@@ -1,11 +1,14 @@
 <template>
   <v-container>
-    <ButtonSave :visible="change" @click="save" />
+    <ButtonSave
+      :visible="change"
+      @click="save"
+    />
     
     <v-row>
       <v-tabs
         v-model="tabIndex"
-        background-color="transparent"
+        bg-color="transparent"
         color="#FCA326"
         class="pb-0 mb-0"
       >
