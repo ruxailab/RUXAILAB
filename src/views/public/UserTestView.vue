@@ -230,7 +230,7 @@
               </v-row>
               <v-row>
                 <v-col cols="6" class="mx-auto">
-                  <v-radio-group v-model="localTestAnswer.consentCompleted" direction="vertical">
+                  <v-radio-group v-model="localTestAnswer.consentCompleted" direction="horizontal">
                     <v-radio label="I accept the consent terms" :value="true" :disabled="!fullName" />
                     <v-radio label="I do not accept the consent terms" :value="false" />
                   </v-radio-group>
