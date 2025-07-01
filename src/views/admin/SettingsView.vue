@@ -3,13 +3,19 @@
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
-    <LeaveAlert />
     <LeaveAlert @submit="onSubmit" />
 
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialogDel" width="600" persistent>
+    <v-dialog
+      v-model="dialogDel"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
@@ -19,13 +25,17 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogDel = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
+            class="bg-red text-white ml-1"
             :loading="loading"
-            text
+            variant="text"
             @click="deleteTest(object)"
           >
             {{ $t('buttons.delete') }}
@@ -35,51 +45,64 @@
     </v-dialog>
 
     <!-- Create Template Dialog -->
-    <v-dialog v-model="tempDialog" max-width="80%">
+    <v-dialog
+      v-model="tempDialog"
+      max-width="80%"
+    >
       <v-card>
-        <p class="ma-2 pa-2">
+        <p class="dialog-title ma-2 pa-2">
           Create Template
         </p>
         <v-divider />
-        <v-form ref="tempform" class="px-5">
-          <v-row justify="space-around" class="pa-2">
+        <v-form
+          ref="tempform"
+          class="px-5"
+        >
+          <v-row
+            justify="space-around"
+            class="pa-2"
+          >
             <v-col cols="12">
               <v-text-field
-                v-model="template.title"
+                :model-value="template.templateTitle"
                 autofocus
                 label="Title"
                 :rules="titleRequired"
                 counter="200"
-                outlined
-                dense
-                @input="$emit('change')"
+                variant="outlined"
+                density="compact"
+                @update:model-value="updateTemplateTitle($event)"
               />
 
               <v-textarea
-                v-model="template.description"
+                :model-value="template.templateDescription"
                 label="Description"
-                outlined
-                dense
-                @input="$emit('change')"
+                variant="outlined"
+                density="compact"
+                @update:model-value="updateTemplateDescription($event)"
               />
 
               <v-checkbox
-                v-model="template.isPublic"
+                :value="template.isTemplatePublic"
                 label="Make template public to all users"
                 color="#F9A826"
+                @input="updateTemplate({ isTemplatePublic: $event })"
               />
             </v-col>
           </v-row>
           <v-divider />
           <v-card-actions>
             <v-spacer />
-            <v-btn class="error" @click="closeDialog()">
+            <v-btn
+              class="bg-error"
+              @click="closeDialog()"
+            >
               {{ $t('buttons.cancel') }}
             </v-btn>
             <v-btn
-              text
+              variant="text"
               :disabled="hasTemplate ? true : false"
-              class="success"
+              class="bg-success"
               @click="createTemplate()"
             >
               {{ $t('buttons.create') }}
@@ -90,91 +113,106 @@
     </v-dialog>
 
     <ShowInfo :title="$t('pages.settings.title')">
-      <div slot="content">
-        <v-card style="background: #f5f7ff">
-          <v-col class="mb-1 pa-4 pb-1">
-            <p class="mb-0">
-              {{ $t('pages.settings.currentTest') }}
-            </p>
-          </v-col>
+      <template #content>
+        <div>
+          <v-card style="background: #f5f7ff">
+            <v-col class="mb-1 pa-4 pb-1">
+              <p class="subtitleView">
+                {{ $t('pages.settings.currentTest') }}
+              </p>
+            </v-col>
 
-          <v-divider />
-          <FormTestDescription
-            v-if="object"
-            ref="form1"
-            :test="object"
-            :lock="true"
-            @valForm="validate"
-            @change="change = true"
-          />
+            <v-divider />
+            <FormTestDescription
+              v-if="object"
+              ref="form1"
+              :test="object"
+              :lock="true"
+              @val-form="validate"
+              @update:test="updateObject"
+            />
 
-          <v-row justify="space-around" class="mx-4 mb-3">
-            <v-spacer />
-            <v-btn
-              style="margin-right: 25px"
-              outlined
-              color="green"
-              :disabled="hasTemplate || !object ? true : false"
-              @click="tempDialog = true"
+            <v-row
+              justify="space-around"
+              class="mx-4 mb-3"
             >
-              {{ $t('pages.settings.createTemplate') }}
-            </v-btn>
+              <v-spacer />
+              <v-btn
+                style="margin-right: 25px"
+                variant="outlined"
+                color="green"
+                :disabled="hasTemplate || !object ? true : false"
+                @click="tempDialog = true"
+              >
+                {{ $t('pages.settings.createTemplate') }}
+              </v-btn>
 
-            <v-btn
-              style="margin-right: 40px"
-              outlined
-              color="green"
-              @click="duplicateTest()"
+              <v-btn
+                style="margin-right: 40px"
+                variant="outlined"
+                color="green"
+                @click="duplicateTest()"
+              >
+                {{ $t('buttons.duplicateTest') }}
+              </v-btn>
+            </v-row>
+
+            <v-divider class="my-3 mx-2" />
+
+            <v-row
+              justify="center"
+              class="mt-3"
             >
-              {{ $t('buttons.duplicateTest') }}
-            </v-btn>
-          </v-row>
+              <v-btn
+                color="#f26363"
+                class="text-white mb-4"
+                style="justify-self: center"
+                @click="dialogDel = true"
+              >
+                <v-icon start>
+                  mdi-trash-can-outline
+                </v-icon>
+                {{ $t('pages.settings.deleteTest') }}
+              </v-btn>
+            </v-row>
+          </v-card>
 
-          <v-divider class="my-3 mx-2" />
-
-          <v-row justify="center" class="mt-3">
-            <v-btn
-              color="#f26363"
-              class="white--text mb-4"
-              style="justify-self: center"
-              @click="dialogDel = true"
-            >
-              <v-icon left>
-                mdi-trash-can-outline
-              </v-icon>
-              {{ $t('pages.settings.deleteTest') }}
-            </v-btn>
-          </v-row>
-        </v-card>
-
-        <v-tooltip v-if="change" left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-if="change"
-              large
-              dark
-              fab
-              fixed
-              bottom
-              right
-              color="#F9A826"
-              v-bind="attrs"
-              @click="submit()"
-              v-on="on"
-            >
-              <v-icon large>
-                mdi-content-save
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('buttons.save') }}</span>
-        </v-tooltip>
-      </div>
+          <v-tooltip
+            v-if="localChanges"
+            location="left"
+          >
+            <template #activator="{ props }">
+              <v-btn
+                v-if="localChanges"
+                size="large"
+                icon
+                position="fixed"
+                location="bottom right"
+                color="#F9A826"
+                v-bind="props"
+                @click="submit()"
+              >
+                <v-icon size="large">
+                  mdi-content-save
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('buttons.save') }}</span>
+          </v-tooltip>
+        </div>
+      </template>
     </ShowInfo>
   </v-container>
-
-  <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
-    <v-progress-circular indeterminate color="#fca326" size="50" />
+  <v-overlay
+    v-else-if="loadingPage"
+    v-model="loadingPage"
+    class="text-center"
+  >
+    <v-progress-circular
+      indeterminate
+      color="#fca326"
+      size="50"
+    />
     <div class="white-text mt-3">
       Loading Settings
     </div>
@@ -183,310 +221,288 @@
   <AccessNotAllowed v-else />
 </template>
 
-<script>
-import FormTestDescription from '@/components/atoms/FormTestDescription'
-import Snackbar from '@/components/atoms/Snackbar'
-import ShowInfo from '@/components/organisms/ShowInfo'
-import LeaveAlert from '@/components/atoms/LeaveAlert'
-import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
-import Test from '@/models/Test'
-import TemplateHeader from '@/models/TemplateHeader'
-import TemplateAuthor from '@/models/TemplateAuthor'
-import TemplateBody from '@/models/TemplateBody'
-import Template from '@/models/Template'
-import i18n from '@/i18n'
+<script setup>
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
+import FormTestDescription from '@/components/atoms/FormTestDescription';
+import Snackbar from '@/components/atoms/Snackbar';
+import ShowInfo from '@/components/organisms/ShowInfo';
+import LeaveAlert from '@/components/atoms/LeaveAlert';
+import AccessNotAllowed from '@/components/atoms/AccessNotAllowed';
+import Test from '@/models/Test';
+import TemplateHeader from '@/models/TemplateHeader';
+import TemplateAuthor from '@/models/TemplateAuthor';
+import TemplateBody from '@/models/TemplateBody';
+import Template from '@/models/Template';
+import TestAdmin from '@/models/TestAdmin';
+import { useI18n } from 'vue-i18n'
+import { useToast } from "vue-toastification"
 
-export default {
-  components: {
-    FormTestDescription,
-    Snackbar,
-    ShowInfo,
-    LeaveAlert,
-    AccessNotAllowed,
-  },
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
+const { t } = useI18n();
+const toast = useToast()
 
-  // eslint-disable-next-line vue/require-prop-types
-  props: ['id'],
+const props = defineProps(['id']);
 
-  data: () => ({
-    template: {
-      title: '',
-      description: '',
-      isPublic: false,
-    },
-    object: null,
-    valids: [false, true, true],
-    dialogDel: false,
-    loading: false,
-    loadingPage: true,
-    tempDialog: false,
-    titleRequired: [
-      (v) => !!v.trim() || i18n.t('errors.fieldRequired'),
-      (v) => v.length <= 200 || 'Max 200 characters',
-    ],
-  }),
+const template = ref({
+  templateTitle: '',
+  templateDescription: '',
+  isTemplatePublic: false,
+});
+const object = ref(null);
+const valids = ref([false, true, true]);
+const dialogDel = ref(false);
+const loading = ref(false);
+const loadingPage = ref(true);
+const tempDialog = ref(false);
+const form1 = ref(null);
+const tempform = ref(null);
 
-  computed: {
-    change() {
-      return this.$store.state.localChanges
-    },
+const titleRequired = [
+  v => !!v.trim() || t('errors.fieldRequired'),
+  v => v.length <= 200 || 'Max 200 characters',
+];
 
-    test() {
-      return this.$store.getters.test
-    },
+const localChanges = computed({
+  get: () => store.state.localChanges,
+  set: value => store.commit('SET_LOCAL_CHANGES', value),
+});
+const test = computed({
+  get: () => store.getters.test,
+  set: val => store.commit('SET_TEST', val),
+});
+const user = computed(() => store.getters.user);
+const answers = computed(() => store.getters.answers || []);
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+const answersNew = computed(() => {
+  if (testAnswerDocument.value) {
+    return Object.values(testAnswerDocument.value.heuristicAnswers);
+  }
+  return [];
+});
+const reports = computed(() => store.getters.reports || []);
+const cooperators = computed(() => store.getters.cooperators || {});
+const dialogText = computed(() => {
+  if (test.value) {
+    return `Are you sure you want to delete your test "${test.value.testTitle}"? This action can't be undone.`;
+  }
+  return "Are you sure you want to delete this test? This action can't be undone";
+});
+const hasTemplate = computed(() => {
+  if (object.value && 'template' in object.value) {
+    return object.value.template !== null;
+  }
+  return false;
+});
+const myObject = computed(() => {
+  if (user.value) {
+    let myObject = user.value.myTests.find(test => test.id === props.id);
+    if (!myObject) {
+      myObject = user.value.myCoops.find(test => test.id === props.id);
+    }
+    return myObject;
+  }
+  return null;
+});
 
-    user() {
-      return this.$store.getters.user
-    },
-    answers() {
-      return this.$store.getters.answers || []
-    },
-
-    testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument
-    },
-
-    reports() {
-      return this.$store.getters.reports || []
-    },
-
-    cooperators() {
-      return this.$store.getters.cooperators || {}
-    },
-
-    dialogText() {
-      if (this.test) return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
-      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
-    },
-
-    hasTemplate() {
-      return this.object?.template !== null
-    },
-
-    // myObject() {
-    //   if (this.user) {
-    //     let myObject
-    //     myObject = this.user.myTests.find((test) => test.id === this.id) //look for myTest
-
-    //     if (!myObject)
-    //       //if not found
-    //       myObject = this.user.myCoops.find((test) => test.id === this.id) //look for my coop
-
-    //     return myObject
-    //   }
-
-    //   return null
-    // },
-  },
-
-  watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.object = await Object.assign({}, this.test)
-      }
-    },
-  },
-
-  async created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      await this.$store.dispatch('getTest', { id: this.id })
+watch(
+  test,
+  newTest => {
+    if (newTest !== null && newTest !== undefined) {
+      object.value = { ...newTest };
     }
   },
+  { immediate: true }
+);
 
-  beforeMount() {
-    window.addEventListener('beforeunload', this.preventNav)
-  },
+onMounted(async () => {
+  if (!store.getters.test && props.id) {
+    await store.dispatch('getTest', { id: props.id });
+  }
+  loadingPage.value = false;
+});
 
-  beforeDestroy() {
-    window.removeEventListener('beforeunload', this.preventNav)
-  },
+onBeforeMount(() => {
+  store.commit('SET_LOCAL_CHANGES', false);
+  store.commit('SET_DIALOG_LEAVE', false);
+  window.addEventListener('beforeunload', preventNav);
+});
 
-  methods: {
-    validate(valid, index) {
-      this.valids[index] = valid
-    },
-    async onSubmit() {
-      await this.submit()
-      this.$store.commit('SET_LOCAL_CHANGES', false)
-      this.$router.push({ name: this.$store.state.pathTo })
-    },
-    async submit() {
-      const element = this.object.testTitle
-      if (element.length >= 200) return this.$toast.warning('Title must not exceed 200 characters.')
-      if (element.length < 0) return this.$toast.warning('Test must contain a title.')
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', preventNav);
+});
 
-      await this.$store.dispatch('updateTest', new Test(this.object))
-      this.$store.commit('SET_LOCAL_CHANGES', false)
-      this.$toast.success('Changes Saved')
+onBeforeRouteLeave((to, from) => {
+  if (localChanges.value) {
+    store.commit('SET_DIALOG_LEAVE', true);
+    store.commit('SET_PATH_TO', to.name);
+    return false;
+  }
+  return true;
+});
 
-      // await this.$store.dispatch("getAnswers", { id: this.test.answers });
-      // await this.$store.dispatch("getReports", { id: this.test.reports });
-      // delete this.object.id;
-      // this.$store
-      //   .dispatch("updateTest", {
-      //     docId: this.id,
-      //     data: this.object,
-      //   })
-      //   .then(() => {
-      //     let element = this.myObject;
-      //     //update attributes
-      //     element.title = this.object.title;
-      //     element.description = this.object.description;
-      //     if ("template" in this.object)
-      //       element = Object.assign(element, {
-      //         template: this.object.template,
-      //       });
-      //     else if ("template" in this.myObject) {
-      //       delete element.template;
-      //     }
-      //     this.$store.dispatch("updateMyTest", {
-      //       docId: this.object.admin.id,
-      //       element: element,
-      //     });
-      //     this.cooperators.cooperators.forEach((coop) => {
-      //       let isAdmin = coop.accessLevel.value <= 1;
-      //       if (isAdmin) {
-      //         element = Object.assign(
-      //           {},
-      //           {
-      //             id: this.id,
-      //             title: this.object.title,
-      //             type: this.object.type,
-      //             reports: this.object.reports,
-      //             answers: this.object.answers,
-      //             cooperators: this.object.cooperators,
-      //             accessLevel: coop.accessLevel,
-      //           }
-      //         );
-      //       } else {
-      // element = Object.assign(
-      //   {},
-      //   {
-      //     id: this.id,
-      //     title: this.object.title,
-      //     type: this.object.type,
-      //     reports: this.object.reports,
-      //     answers: this.object.answers,
-      //     cooperators: this.object.cooperators,
-      //     accessLevel: coop.accessLevel,
-      //     author: this.test.admin.email,
-      //     answersSheet: this.test.answersSheet,
-      //     date: new Date().toLocaleString("en-Us"),
-      //   }
-      // );
-      //       }
-      //       if ("template" in this.object && isAdmin)
-      //         element = Object.assign(element, {
-      //           template: this.object.template,
-      //         });
-      //       if (isAdmin)
-      //         this.$store.dispatch("updateMyCoops", {
-      //           docId: coop.id,
-      //           element: element,
-      //         });
-      //       else
-      //         this.$store.dispatch("updateMyAnswers", {
-      //           docId: coop.id,
-      //           element: element,
-      //         });
-      //     });
-      //     this.answers.test.title = this.object.title;
-      //     this.reports.test.title = this.object.title;
-      //     this.cooperators.test.title = this.object.title;
-      //     delete this.answers.id;
-      //     delete this.reports.id;
-      //     delete this.cooperators.id;
-      //     this.$store.dispatch("updateTestAnswer", {
-      //       docId: this.test.answers,
-      //       data: this.answers,
-      //     });
-      //     this.$store.dispatch("updateTestReport", {
-      //       docId: this.test.reports,
-      //       data: this.reports,
-      //     });
-      //     this.$store.dispatch("updateTestCooperators", {
-      //       docId: this.test.cooperators,
-      //       data: this.cooperators,
-      //     });
-      //     this.$store.commit("setSuccess", "Test updated succesfully");
-      //     this.change = false; //reset change
-      //   })
-      //   .catch((err) => {
-      //     this.$store.commit("setError", err);
-      //   });
-    },
+const validate = (valid, index) => {
+  valids.value[index] = valid;
+};
 
-    preventNav(event) {
-      if (!this.change) return
-      event.preventDefault()
-      event.returnValue = ''
-    },
+const onSubmit = async () => {
+  await submit();
+  store.commit('SET_LOCAL_CHANGES', false);
+  router.push({ name: store.state.pathTo });
+};
 
-    async deleteTest(item) {
-      const auxUser = { ...this.user } // Create a copy of user object
-      delete auxUser.myTests[item.id] // Remove the test with the given ID from auxUser.myTests
+const submit = async () => {
+  const title = object.value.testTitle;
+  if (title.length > 0 && title.length < 200) {
+    await store.dispatch('updateTest', new Test(object.value));
+    await store.dispatch('getTest', { id: props.id });
+    store.commit('SET_LOCAL_CHANGES', false);
+    toast.success(t('alerts.savedChanges'));
+  } else if (title.length >= 200) {
+    toast.warning('Title must not exceed 200 characters.');
+  } else {
+    toast.warning('Test must contain a title.');
+  }
+};
 
-      await this.$store.dispatch('deleteTest', { ...item, auxUser })
-      this.$router.push('/testslist')
-    },
+const preventNav = event => {
+  if (!localChanges.value) return;
+  event.preventDefault();
+  event.returnValue = '';
+};
 
-    async createTemplate() {
-      const tempHeader = new TemplateHeader({
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-        isTemplatePublic: this.template.isPublic,
-        templateDescription: this.template.description,
-        templateTitle: this.template.title,
-        templateType: this.test.testType,
-        templateVersion: '1.0.0',
-        templateAuthor: new TemplateAuthor({
-          userEmail: this.test.testAdmin.email,
-          userDocId: this.test.testAdmin.userDocId,
-        }),
-      })
+const deleteTest = async item => {
+  const auxUser = { ...user.value };
+  delete auxUser.myTests[item.id];
+  item.auxUser = auxUser;
+  await store.dispatch('deleteTest', item);
+  router.push({ name: 'TestList' });
+};
 
-      const template = new Template({
-        id: null,
-        header: tempHeader,
-        body: new TemplateBody(this.test),
-      })
+const createTemplate = async () => {
+  const tempHeader = new TemplateHeader({
+    creationDate: Date.now(),
+    updateDate: Date.now(),
+    isTemplatePublic: template.value.isTemplatePublic,
+    templateDescription: template.value.templateDescription,
+    templateTitle: template.value.templateTitle,
+    templateType: test.value.testType,
+    templateVersion: '1.0.0',
+    templateAuthor: new TemplateAuthor({
+      userEmail: test.value.testAdmin.email,
+      userDocId: test.value.testAdmin.userDocId,
+    }),
+  });
 
-      await this.$store.dispatch('createTemplate', template)
-      this.closeDialog()
-    },
+  const tempBody = new TemplateBody(test.value);
+  const templateObj = new Template({
+    id: null,
+    header: tempHeader,
+    body: tempBody,
+  });
 
-    closeDialog() {
-      this.tempDialog = false
-      this.$refs.tempform.resetValidation()
-      this.template.title = ''
-      this.template.description = ''
-    },
+  if (template.value.templateTitle.trim() !== '') {
+    await store.dispatch('createTemplate', templateObj);
+    closeDialog();
+  } else {
+    tempform.value.validate();
+  }
+};
 
-    async duplicateTest() {
-      const test = new Test({
-        ...this.test,
-        id: null,
-        testTitle: 'Copy of ' + this.test.testTitle,
-        userTestStatus: {},
-        id: null,
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-      })
+const closeDialog = () => {
+  tempDialog.value = false;
+  tempform.value.resetValidation();
+  template.value = {
+    templateTitle: '',
+    templateDescription: '',
+    isTemplatePublic: false,
+  };
+};
 
-      await this.$store.dispatch('duplicateTest', {
-        test: test,
-        answer: this.testAnswerDocument,
-      })
+const updateTemplate = updates => {
+  template.value = { ...template.value, ...updates };
+};
 
-      this.$router.push('/testslist')
-    },
-  },
+const updateTemplateTitle = value => {
+  updateTemplate({ templateTitle: value });
+  store.commit('SET_LOCAL_CHANGES', true);
+};
 
-  beforeRouteLeave(to, from, next) {
-    if (!this.$store.getters.localChanges) return next()
+const updateTemplateDescription = value => {
+  updateTemplate({ templateDescription: value });
+  store.commit('SET_LOCAL_CHANGES', true);
+};
 
-    this.$store.commit('SET_DIALOG_LEAVE', true)
-    this.$store.commit('SET_PATH_TO', to.name)
-  },
-}
+const updateObject = newObject => {
+  object.value = { ...newObject };
+  store.commit('SET_LOCAL_CHANGES', true);
+};
+
+const duplicateTest = async () => {
+  const testObj = new Test({
+    testTitle: 'Copy of ' + test.value.testTitle,
+    testDescription: test.value.testDescription,
+    testType: test.value.testType,
+    userTestType: test.value.userTestType,
+    testStructure: test.value.testStructure,
+    testOptions: test.value.testOptions,
+    userTestStatus: {},
+    id: null,
+    testAdmin: new TestAdmin({
+      userDocId: user.value.id,
+      email: user.value.email,
+    }),
+    creationDate: Date.now(),
+    updateDate: Date.now(),
+  });
+
+  await store.dispatch('duplicateTest', {
+    test: testObj,
+    answer: testAnswerDocument.value,
+  });
+
+  router.push('/testslist');
+};
 </script>
+
+<style scoped>
+.titleView {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+.subtitleView {
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  line-height: 21px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+.dialog-title {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+
+@media screen and (max-width: 960px) {
+  .dialog-title {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+}
+</style>

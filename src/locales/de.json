@@ -147,7 +147,6 @@
     "incorrectPassword": "Falsches Passwort",
     "incorrectCredential": "Falscher Benutzername oder Passwort.",
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten."
-    
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -529,7 +528,8 @@
     "screenRecord": "Bildschirmaufnahme",
     "camera": "Kamera",
     "eyeTracker": "Eye-Tracker",
-    "audioRecord": "Audioaufnahme"
+    "audioRecord": "Audioaufnahme",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Einverständniserklärung",

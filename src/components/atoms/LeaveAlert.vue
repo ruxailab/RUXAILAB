@@ -1,7 +1,14 @@
 <template>
-  <v-dialog v-model="dialogLeaveStatus" width="600" persistent>
+  <v-dialog
+    v-model="dialogLeaveStatus"
+    width="600"
+    persistent
+  >
     <v-card>
-      <v-card-title class="headline error accent-4 white--text" primary-title>
+      <v-card-title
+        class="text-h5 bg-red text-white"
+        primary-title
+      >
         {{ $t('alerts.leave') }}
       </v-card-title>
       <v-card-text>
@@ -10,20 +17,24 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn class="grey lighten-3" text @click="setDialog">
+        <v-btn
+          class="bg-grey-lighten-3"
+          variant="text"
+          @click="setDialog"
+        >
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn
-          class="error accent-4 white--text ml-1"
-          text
+          class="bg-red text-white ml-1"
+          variant="text"
           @click="handleLeave"
         >
           {{ $t('buttons.leave') }}
         </v-btn>
         <v-btn
-          class="green white--text ml-1"
-          text
-          @click="submit()"
+          class="bg-green text-white ml-1"
+          variant="text"
+          @click="submit"
         >
           {{ $t('buttons.saveandleave') }}
         </v-btn>
@@ -32,29 +43,35 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'LeaveAlert',
-  computed: {
-    dialogLeaveStatus() {
-      return this.$store.getters.getDialogLeaveStatus;
-    }
-  },
-  methods: {
-    setDialog() {
-      this.$store.commit('SET_DIALOG_LEAVE', false);
-    },
-    handleLeave() {
-      this.discardChanges();
-      this.$router.push({ name: this.$store.state.pathTo });
-    },
-    discardChanges() {
-      this.$store.commit('SET_LOCAL_CHANGES', false);
-      console.log(this.$store.state.pathTo);
-    },
-    submit() {
-      this.$emit('submit');
-    }
-  }
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+const emit = defineEmits(['submit']);
+
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
+
+const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus);
+
+const setDialog = () => {
+  store.commit('SET_DIALOG_LEAVE', false);
+};
+
+const discardChanges = () => {
+  store.commit('SET_LOCAL_CHANGES', false);
+  console.log(store.state.pathTo);
+};
+
+const handleLeave = () => {
+  discardChanges();
+  router.push({ name: store.state.pathTo });
+};
+
+const submit = () => {
+  emit('submit');
 };
 </script>

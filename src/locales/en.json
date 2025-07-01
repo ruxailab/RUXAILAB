@@ -62,11 +62,11 @@
     "unread": "unread",
     "inbox": "inbox",
     "timeAgo": {
-      "years": "{count} year{count !== 1 ? 's' : ''} ago",
-      "months": "{count} month{count !== 1 ? 's' : ''} ago",
-      "days": "{count} day{count !== 1 ? 's' : ''} ago",
-      "hours": "{count} hour{count !== 1 ? 's' : ''} ago",
-      "minutes": "{count} minute{count !== 1 ? 's' : ''} ago",
+      "years": "{count} year | {count} years",
+      "months": "{count} month | {count} months",
+      "days": "{count} day | {count} days",
+      "hours": "{count} hour | {count} hours",
+      "minutes": "{count} minute | {count} minutes",
       "now": "Now"
     },
     "viewAll": "View all",
@@ -533,6 +533,7 @@
     "save": "Save",
     "stay": "Stay",
     "leave": "Leave",
+    "saveandleave": "Save and Leave",
     "help": "Help",
     "delete": "Delete",
     "deleteAccount": "Delete Account",
@@ -550,7 +551,8 @@
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
-    "postForm": "Post Form"
+    "postForm": "Post Form",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Consent Form",
@@ -603,6 +605,13 @@
     "test-name": "Test Name",
     "test-description": "Test Description",
     "test-label": "Test public to all users"
+  },
+  "finishTest": {
+    "title": "Finish Test",
+    "finalMessage": "Final Message",
+    "congratulations": "Congratulations! You have completed the test, now you can submit your answers.",
+    "submitMessage": "Click here to submit your answers. After submitting, you will not be able to change your answers!",
+    "submitButton": "Submit"
   },
   "help": {
     "createtest": "How do I create a test?",

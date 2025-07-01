@@ -545,7 +545,8 @@
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Grabación de audio",
-    "postForm": "Formulario Posterior"
+    "postForm": "Formulario Posterior",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Formulario de Consentimiento",
@@ -598,6 +599,13 @@
     "test-name": "Nombre de la Prueba",
     "test-description": "Descripción de la Prueba",
     "test-label": "Prueba pública para todos los usuarios"
+  },
+  "finishTest": {
+    "title": "Finalizar Prueba",
+    "finalMessage": "Mensaje Final",
+    "congratulations": "Felicidades! Has completado la prueba, ahora puedes enviar tus respuestas.",
+    "submitMessage": "Haz clic aqui para enviar tus respuestas. Después de enviarlas, no podrás cambiar tus respuestas!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "¿Cómo creo una prueba?",

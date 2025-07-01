@@ -145,7 +145,6 @@
     "incorrectPassword": "Mot de passe incorrect",
     "incorrectCredential": "Nom d'utilisateur ou mot de passe incorrect.",
     "globalError": "Une erreur est survenue, désolé pour le désagrément."
-    
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -528,7 +527,8 @@
     "screenRecord": "Enregistrement d'écran",
     "camera": "Caméra",
     "eyeTracker": "Suivi oculaire",
-    "audioRecord": "Enregistrement audio"
+    "audioRecord": "Enregistrement audio",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Formulaire de consentement",

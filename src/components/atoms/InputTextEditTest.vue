@@ -4,7 +4,7 @@
       <v-text-field
         v-if="type === 'textField'"
         v-model="internalValue"
-        outlined
+        variant="outlined"
         color="orange"
         class="mx-3"
         :label="label"
@@ -15,7 +15,7 @@
         v-else
         v-model="internalValue"
         :rows="rows"
-        outlined
+        variant="outlined"
         color="orange"
         class="mx-3"
         :label="label"
@@ -49,6 +49,8 @@ export default {
     },
   },
 
+  emits: ['change', 'input'],
+
   computed: {
     internalValue: {
       get() {
@@ -63,7 +65,7 @@ export default {
 </script>
 
 <style scoped>
-.v-text-field--outlined >>> fieldset {
+.v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
 }
