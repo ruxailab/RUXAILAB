@@ -129,7 +129,6 @@
     "incorrectPassword": "密码错误",
     "incorrectCredential": "用户名或密码错误。",
     "globalError": "发生错误，给您带来不便，敬请谅解。"
-    
   },
   "Introduction": {
     "title": "UX远程实验室",
@@ -511,7 +510,8 @@
     "screenRecord": "屏幕录制",
     "camera": "摄像头",
     "eyeTracker": "眼动追踪",
-    "audioRecord": "音频录制"
+    "audioRecord": "音频录制",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "同意书",
@@ -523,7 +523,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",

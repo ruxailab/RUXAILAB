@@ -2,78 +2,94 @@
   <v-form ref="form">
     <v-row justify="space-around">
       <v-col class="mt-4" cols="5">
-        <v-text-field v-model="task.taskName" :label="$t('common.name')" :rules="requiredRule" outlined dense />
-        <v-textarea v-model="task.taskDescription" :label="$t('common.description')" :rules="requiredRule" outlined
-          dense />
-        <v-text-field v-model="task.taskTip" :label="$t('buttons.tip')" outlined dense />
-        <v-text-field v-model="task.taskLink" label="Link" outlined dense /> </v-col>
-      <v-col cols="5">
-        <v-radio-group v-model="task.taskType" :label="$t('titles.answerType')" :mandatory="false"
-          :rules="requiredRule">
-          <v-radio :label="$t('switches.noAnswer')" value="null" />
-          <v-radio :label="$t('switches.textArea')" value="textArea" />
-          <v-radio :label="$t('switches.postTest')" value="form" />
-          <v-radio :label="$t('switches.postForm')" value="postForm" />
-        </v-radio-group>
-        <v-text-field v-if="task.taskType === 'form'" v-model="task.postQuestion" :label="$t('switches.postTest')"
-          outlined dense />
-        <v-text-field v-if="task.taskType === 'postForm'" v-model="task.postForm" :label="$t('switches.postForm')"
-          outlined dense :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']" />
-        <v-row align="center">
-          {{ $t('switches.screenRecord') }}
-          <v-switch v-model="task.hasScreenRecord" class="ml-2" />
-        </v-row>
-        <v-row align="center">
-          {{ $t('switches.camera') }}
-          <v-switch v-model="task.hasCamRecord" class="ml-2" />
-        </v-row>
-        <!-- <v-row align="center"> FUTURE WORK
-          {{ $t('switches.eyeTracker') }}
-          <v-switch v-model="task.hasEye" class="ml-2" />
-        </v-row> -->
-        <v-row align="center">
-          {{ $t('switches.audioRecord') }}
-          <v-switch v-model="task.hasAudioRecord" class="ml-2" />
-        </v-row>
+        <v-text-field v-model="localTask.taskName" :label="$t('common.name')" :rules="requiredRule" variant="outlined"
+          density="compact" />
+        <quill-editor v-model:value="localTask.taskDescription" class="mb-5" style="height: 40%;" />
+        <v-text-field v-model="localTask.taskTip" :label="$t('buttons.tip')" variant="outlined" density="compact" />
+      </v-col>
+
+      <v-col class="mt-4" cols="5">
+
+        <v-text-field v-model="localTask.taskLink" label="Link" variant="outlined" density="compact" />
+        <span class="text-subtitle-1">{{ $t('titles.answerType') }}</span>
+        <v-select v-model="localTask.taskType" :items="selectItems" item-title="label" item-value="value"
+          :label="$t('titles.answerType')" :rules="requiredRule" variant="outlined" density="compact" class="mt-4" />
+
+        <v-text-field v-if="localTask.taskType === 'form'" v-model="localTask.postQuestion"
+          :label="$t('switches.postTest')" variant="outlined" density="compact" />
+        <v-text-field v-if="task.taskType === 'post-form'" v-model="localTask.postForm" :label="$t('switches.postForm')"
+          variant="outlined" density="compact"
+          :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']" />
+
+        <v-checkbox v-model="localTask.hasScreenRecord" :label="$t('switches.screenRecord')" />
+        <v-checkbox v-model="localTask.hasCamRecord" :label="$t('switches.camera')" />
+        <v-checkbox v-model="localTask.hasAudioRecord" :label="$t('switches.audioRecord')" />
       </v-col>
     </v-row>
   </v-form>
 </template>
-<script>
-export default {
-  props: {
-    task: {
-      type: Object,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      requiredRule: [(v) => !!v || 'Field Required'],
-      postQuestionRule: [
-        () =>
-          this.task.taskType !== 'form' ||
-          !!this.task.postQuestion ||
-          'Post Question is required for this answer type',
-      ],
-    }
-  },
-  watch: {
-    'task.taskType'(newValue) {
-      if (newValue !== 'form') {
-        this.task.postQuestion = ''
-      }
-    },
-  },
-  methods: {
-    validate() {
-      const valid = this.$refs.form.validate()
-      this.$emit('validate', valid)
-    },
-    resetVal() {
-      this.$refs.form.resetValidation()
-    },
-  },
-}
 
+<script setup>
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const props = defineProps({
+  task: {
+    type: Object,
+    required: true,
+  },
+});
+
+const { t } = useI18n();
+
+const selectItems = [
+  { label: t('switches.noAnswer'), value: 'no-answer' },
+  { label: t('switches.textArea'), value: 'text-area' },
+  { label: t('switches.postTest'), value: 'post-test' },
+  { label: t('switches.postForm'), value: 'post-form' },
+  { label: t('switches.nasa'), value: 'nasa-tlx' },
+  { label: 'System Usability Scale', value: 'sus' }
+];
+
+const emit = defineEmits(['validate', 'update:task']);
+
+const form = ref(null);
+const requiredRule = [(v) => !!v || 'Field Required'];
+const localTask = ref({ ...props.task });
+
+// Watch for changes in the task prop
+watch(
+  () => props.task,
+  (newTask) => {
+    localTask.value = { ...newTask };
+  },
+  { deep: true }
+);
+
+// Watch for changes in localTask and emit update
+watch(
+  localTask,
+  (newLocalTask) => {
+    emit('update:task', { ...newLocalTask });
+  },
+  { deep: true }
+);
+
+// Methods
+const valida = () => {
+  const valid = form.value.validate();
+  emit('validate', valid);
+};
+
+const resetVal = () => {
+  form.value.resetValidation();
+};
+
+// Expose methods to parent if needed
+defineExpose({
+  valida,
+  resetVal,
+});
 </script>
+
+<style></style>

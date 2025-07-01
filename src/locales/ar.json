@@ -514,7 +514,8 @@
     "screenRecord": "تسجيل الشاشة",
     "camera": "الكاميرا",
     "eyeTracker": "تتبع العين",
-    "audioRecord": "تسجيل الصوت"
+    "audioRecord": "تسجيل الصوت",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "نموذج الموافقة",
