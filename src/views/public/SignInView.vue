@@ -61,7 +61,7 @@
                   rounded
                   class="text-white"
                   style="background-color: #F9A826;"
-                  :loading="loading"
+                  :loading="loadingEmail"
                   @click="onSignIn"
                 >
                   {{ $t('SIGNIN.sign-in') }}
@@ -75,7 +75,7 @@
               <div class="mx-3">
                 <google-sign-in-button
                   :button-text="$t('SIGNIN.continueWithGoogle')"
-                  :loading="loading"
+                  :loading="loadingGoogle"
                   @google-sign-in-start="onGoogleSignInStart"
                   @google-sign-in-success="onGoogleSignInSuccess"
                   @google-sign-in-error="onGoogleSignInError"
@@ -134,6 +134,9 @@ const showPassword = ref(false)
 const email = ref('')
 const password = ref('')
 
+const loadingEmail = ref(false)
+const loadingGoogle = ref(false)
+
 const emailRules = [
   (v) => !!v || t('errors.emailIsRequired'),
   (v) => /.+@.+\..+/.test(v) || t('errors.invalidEmail'),
@@ -151,6 +154,7 @@ const checkForm = () => form.value.validate()
 const onSignIn = async () => {
   const isValid = checkForm()
   if (isValid) {
+    loadingEmail.value = true
     try {
       await store.dispatch('signin', {
         email: email.value,
@@ -161,6 +165,8 @@ const onSignIn = async () => {
       }
     } catch (error) {
       console.error('Erro de autenticação:', error)
+    } finally {
+      loadingEmail.value = false
     }
   }
 }
@@ -179,15 +185,18 @@ const redirectToForgotPassword = () => {
 
 const onGoogleSignInStart = () => {
   // Placeholder for Google sign-in start
+  loadingGoogle.value = true
 }
 
 const onGoogleSignInSuccess = async () => {
+  loadingGoogle.value = false
   if (store.getters.user) {
     router.push('/testslist').catch(() => {})
   }
 }
 
 const onGoogleSignInError = (error) => {
+  loadingGoogle.value = false
   console.error('Google sign-in error:', error)
 }
 </script>
