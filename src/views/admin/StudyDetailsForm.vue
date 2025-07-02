@@ -72,6 +72,28 @@
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
                     </v-col>
+                    <v-col v-if="method == 'HEURISTICS'" cols="12">
+                      <v-text-field
+                        v-model="websiteDetails.siteName"
+                        :rules="rules.siteName"
+                        label="Website Name"
+                        placeholder="Enter the website name"
+                        variant="outlined"
+                        :counter="200"
+                        prepend-inner-icon="mdi-alpha-n-box"
+                        @change="store.commit('SET_LOCAL_CHANGES', true)"
+                      />
+                      <v-text-field
+                        v-model="websiteDetails.siteURL"
+                        :rules="rules.siteUrl"
+                        label="Website URL (optional)"
+                        placeholder="Enter the website URL"
+                        variant="outlined"
+                        :counter="200"
+                        prepend-inner-icon="mdi-link-variant"
+                        @change="store.commit('SET_LOCAL_CHANGES', true)"
+                      />
+                    </v-col>
                   </v-row>
                 </v-form>
               </div>
@@ -182,13 +204,22 @@ const test = ref({
   userTestStatus: {},
 });
 
+const websiteDetails = ref({
+  siteName: '',
+  siteURL: ''
+})
+
 const category = computed(() => store.state.Tests.studyCategory)
 const method = computed(() => store.state.Tests.studyMethod)
 const studyType = computed(() => store.state.Tests.studyType)
 
+const siteUrlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
+
 const rules = {
   title: [(v) => !!v || 'Enter a Title', (v) => v.length <= 200 || 'Max 200 characters'],
   description: [(v) => v.length <= 600 || 'Max 600 characters'],
+  siteName: [(v) => !!v || 'Enter website name', (v) => v.length <= 200 || 'Max 200 characters'],
+  siteUrl: [(v) => !!v || 'Enter website URL', (v) => siteUrlRegex.test(v) || 'Enter a valid URL (e.g., https://example.com)'],
 };
 
 const heading = 'Study Details';

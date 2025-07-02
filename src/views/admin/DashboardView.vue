@@ -1,231 +1,115 @@
 <template>
-  <v-container class="mt-8">
-    <Snackbar />
+  <!-- NEW DESIGN LAYOUT -->
+  <div class="dashboard-layout">
+    <v-navigation-drawer width="280" class="sidebar" elevation="2">
+      <!-- Sidebar Header -->
+      <div class="sidebar-header pa-6">
+        <div class="d-flex align-center">
+          <v-avatar color="primary" size="40" class="mr-3">
+            <v-icon icon="mdi-view-dashboard" color="white" />
+          </v-avatar>
+          <div>
+            <h2 class="text-h6 font-weight-bold">Dashboard</h2>
+            <p class="text-caption text-grey-darken-1 ma-0">Manage your research</p>
+          </div>
+        </div>
+      </div>
+      <v-divider />
 
-    <!-- CREATE TEST BTN -->
-    <v-tooltip location="left">
-      <template #activator="{ props }">
-        <v-btn
-          data-testid="create-test-btn"
-          size="large"
-          icon
-          position="fixed"
-          location="bottom right"
-          color="#F9A826"
-          variant="elevated"
-          class="mr-4 mb-5"
-          rounded="circle"
-          v-bind="props"
-          @click="goToCreateTestRoute"
-        >
-          <v-icon size="large">
-            mdi-plus
-          </v-icon>
+      <!-- Navigation Menu -->
+      <v-list class="pa-4" nav>
+        <template v-for="section in navigationItems" :key="section.id">
+          <v-list-group :value="section.id">
+            <template #activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                :prepend-icon="section.icon"
+                :title="section.title"
+                class="section-header mb-2"
+                rounded="lg"
+              />
+            </template>
+            <v-list-item
+              v-for="child in section.children"
+              :key="child.id"
+              :title="child.title"
+              :prepend-icon="child.icon"
+              :active="activeSection === section.id && activeSubSection === child.id"
+              class="subsection-item ml-4 mb-1"
+              rounded="lg"
+              @click="selectNavigation(section.id, child.id)"
+            />
+          </v-list-group>
+        </template>
+      </v-list>
+
+      <!-- Create Button -->
+      <div class="pa-4 mt-auto">
+        <v-btn color="success" block size="large" prepend-icon="mdi-plus" @click="goToCreateTestRoute">
+          Create New Test
         </v-btn>
-      </template>
-      <span>{{ $t('Dashboard.createNewTest') }}</span>
-    </v-tooltip>
+      </div>
+    </v-navigation-drawer>
 
-    <!-- LOADING -->
-    <v-overlay v-model="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      />
-    </v-overlay>
+    <v-main class="main-content">
+      <v-container fluid class="pa-6">
+        <!-- Header -->
+        <div class="content-header mb-6">
+          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">{{ currentPageTitle }}</h1>
+          <p class="text-h6 text-grey-darken-1">{{ activeSection === 'studies' ? 'Manage your research studies' : 'Access study templates' }}</p>
+        </div>
 
-    <div>
-      <v-row
-        justify="center"
-        class="fill-height"
-      >
-        <v-col cols="10">
-          <!-- Mobile search button -->
-          <v-row
-            v-if="!searching"
-            align="center"
-          >
-            <span class="titleText ml-3 mb-2">{{ $t('Dashboard.tests') }}</span>
-            <v-spacer />
-            <v-btn
-              class="mr-3 hidden-md-and-up"
-              icon
-              @click="searching = true"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </v-row>
-          <v-text-field
-            v-else
-            v-model="search"
-            :autofocus="searching"
-            density="compact"
-            :label="$t('Dashboard.search')"
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            color="grey-darken-2"
-            @blur="searching = false"
-          />
-          <v-divider class="mb-1" />
-
-          <!-- Desktop Main Tabs -->
-          <v-tabs
-            v-model="mainIndex"
-            bg-color="transparent"
-            color="black"
-            class="hidden-sm-and-down mt-4"
-          >
-            <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
-
-            <v-spacer />
-
+        <!-- Search + Filters -->
+        <v-row class="mb-6" justify="space-between">
+          <v-col cols="12" md="8">
             <v-text-field
               v-model="search"
-              density="compact"
-              class="mt-1"
-              :label="$t('Dashboard.search')"
+              width="full"
               prepend-inner-icon="mdi-magnify"
-              :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
+              label="Search"
               variant="outlined"
-              color="grey-darken-2"
+              hide-details
+              rounded="lg"
             />
-          </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
-
-          <!-- Desktop Tests/Answers Sub tabs -->
-          <v-tabs
-            v-if="mainIndex === 0"
-            v-model="subIndex"
-            bg-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
-          >
-            <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sessions') }}</v-tab>
-
-            <v-spacer />
-          </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
-
-          <!-- Desktop Templates Sub tabs -->
-          <v-tabs
-            v-if="mainIndex == 1"
-            v-model="subIndex"
-            bg-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
-          >
-            <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
-
-            <v-spacer />
-          </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
-          <!-- Mobile Main Button -->
-          <v-select
-            v-model="mainIndex"
-            density="compact"
-            variant="outlined"
-            class="hidden-md-and-up mx-2 mt-4"
-            :items="buttonItems"
-          />
-
-          <!-- Mobile Sub Buttons -->
-          <v-select
-            v-if="mainIndex == 1"
-            v-model="subIndex"
-            density="compact"
-            variant="outlined"
-            class="hidden-md-and-up mx-2"
-            :items="templateButtonItems"
-          />
-          <v-select
-            v-else
-            v-model="subIndex"
-            density="compact"
-            variant="outlined"
-            class="hidden-md-and-up mx-2"
-            :items="testButtonItems"
-          />
-
-          <!-- Tests -> Personal  -->
-          <List
-            v-if="mainIndex == 0 && subIndex == 0"
-            :items="filteredTests"
-            type="myTests"
-            @clicked="goTo"
-          />
-
-          <!-- Tests -> Others  -->
-          <List
-            v-if="mainIndex == 0 && subIndex == 1"
-            :items="filteredTests"
-            type="sharedWithMe"
-            @clicked="goTo"
-          />
-
-          <!-- Tests -> Public Tests -->
-          <List
-            v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
-            :items="filteredTests"
-            type="publicTests"
-            @clicked="goTo"
-          />
-
-          <!-- Tests -> Sessions -->
-          <List
-            v-if="filteredModeratedSessions.length > 0 && mainIndex == 0 && subIndex == 3"
-            :items="filteredModeratedSessions"
-            type="sessions"
-            @clicked="goTo"
-          />
-          <v-col
-            v-if="filteredModeratedSessions.length == 0 && mainIndex == 0 && subIndex == 3"
-            align="center"
-            class="my-5"
-          >
-            <span style="color: #575757; font-size: 1.25rem !important;">
-              You don't have active sessions
-            </span>
-            <br>
-            <v-icon
-              style="color: #575757;"
-              class="mt-2"
-              size="large"
-            >
-              mdi-clock-remove-outline
-            </v-icon>
           </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="selectedMethodFilter"
+              :items="methodOptions"
+              label="Filter by Method"
+              variant="outlined"
+              hide-details
+              rounded="lg"
+            />
+          </v-col>
+        </v-row>
 
-          <!-- Templates -> Personal -->
-          <List
-            v-if="mainIndex == 1 && subIndex == 0"
-            :items="filteredTemplates"
-            type="myTemplates"
-            @clicked="setupTempDialog"
-          />
+        <!-- Content List -->
+        <div v-if="mainIndex === 0">
+          <List v-if="subIndex === 0" :items="filteredTests" type="myTests" @clicked="goTo" />
+          <List v-if="subIndex === 1" :items="filteredTests" type="sharedWithMe" @clicked="goTo" />
+          <List v-if="subIndex === 2" :items="filteredTests" type="publicTests" @clicked="goTo" />
+          <List v-if="filteredModeratedSessions.length > 0 && subIndex === 3" :items="filteredModeratedSessions" type="sessions" @clicked="goTo" />
+          <div v-if="filteredModeratedSessions.length === 0 && subIndex === 3" class="empty-state">
+            <v-icon icon="mdi-clock-remove-outline" size="48" color="grey-lighten-1" class="mb-2" />
+            <p class="text-h6">You don't have active sessions</p>
+          </div>
+        </div>
 
-          <!-- Templates -> Public Templates -->
-          <List
-            v-if="mainIndex == 1 && subIndex == 1"
-            :items="filteredTemplates"
-            type="publicTemplates"
-            @clicked="setupTempDialog"
-          />
-        </v-col>
-      </v-row>
+        <div v-if="mainIndex === 1">
+          <List v-if="subIndex === 0" :items="filteredTemplates" type="myTemplates" @clicked="setupTempDialog" />
+          <List v-if="subIndex === 1" :items="filteredTemplates" type="publicTemplates" @clicked="setupTempDialog" />
+        </div>
 
-      <TempDialog
-        v-model:dialog="tempDialog"
-        :template="temp"
-        :allow-create="true"
-        @close="tempDialog = false"
-      />
-    </div>
-  </v-container>
+        <TempDialog
+          v-model:dialog="tempDialog"
+          :template="temp"
+          :allow-create="true"
+          @close="tempDialog = false"
+        />
+      </v-container>
+    </v-main>
+  </div>
 </template>
 
 <script setup>
@@ -233,7 +117,6 @@ import { ref, computed, watch, onMounted, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import Snackbar from '@/components/atoms/Snackbar.vue';
 import List from '@/components/atoms/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 
@@ -244,106 +127,72 @@ const { t } = useI18n();
 const search = ref('');
 const mainIndex = ref(0);
 const subIndex = ref(0);
-const searching = ref(false);
 const tempDialog = ref(false);
 const temp = ref({});
 const filteredModeratedSessions = ref([]);
-const page = ref(1);
-const lastPage = ref(1);
-const itemsPerPage = ref(4);
-const exploreTemplates = ref([]);
-const disableNext = ref(false);
-const disablePrevious = ref(true);
+const selectedMethodFilter = ref('all')
 
-const buttonItems = ref([
-  { title: 'Tests', value: 0 },
-  { title: 'Templates', value: 1 },
-]);
-const testButtonItems = ref([
-  { title: 'My Tests', value: 0 },
-  { title: 'Shared With Me', value: 1 },
-  { title: 'Public Tests', value: 2 },
-]);
-const templateButtonItems = ref([
-  { title: 'Personal', value: 0 },
-  { title: 'Explore', value: 1 },
-]);
+const navigationItems = [
+  {
+    id: 'studies',
+    title: 'Studies',
+    icon: 'mdi-flask',
+    children: [
+      { id: 0, title: 'My Tests', icon: 'mdi-account' },
+      { id: 1, title: 'Shared With Me', icon: 'mdi-account-multiple' },
+      { id: 2, title: 'Public Tests', icon: 'mdi-earth' },
+      { id: 3, title: 'Sessions', icon: 'mdi-calendar-clock' }
+    ]
+  },
+  {
+    id: 'templates',
+    title: 'Templates',
+    icon: 'mdi-clipboard-text',
+    children: [
+      { id: 0, title: 'Personal', icon: 'mdi-file-document-edit' },
+      { id: 1, title: 'Explore', icon: 'mdi-compass' }
+    ]
+  }
+];
 
-const user = computed(() => store.getters.user);
-const test = computed(() => store.getters.test);
+const methodOptions = [
+  { value: 'all', title: 'All Methods' },
+  { value: 'unmoderated', title: 'Unmoderated Test' },
+  { value: 'moderated', title: 'Moderated Test' },
+  { value: 'HEURISTICS', title: 'Heuristic Evaluation' },
+];
+
+const activeSection = computed(() => mainIndex.value === 0 ? 'studies' : 'templates');
+const activeSubSection = computed(() => subIndex.value);
+const currentPageTitle = computed(() => mainIndex.value === 0 ? 'Studies' : 'Templates');
+
 const tests = computed(() => store.state.Tests.tests);
 const templates = computed(() => store.state.Templates.templates || []);
-const loading = computed(() => store.getters.loading);
-const showTempDetails = computed(() => !(mainIndex.value == 2 && subIndex.value == 0));
+const user = computed(() => store.getters.user);
 
 const filteredTests = computed(() => {
-  if (!tests.value) return tests.value;
-  return tests.value.filter(test =>
-    test.testTitle.toLowerCase().includes(search.value.toLowerCase())
-  );
+  return tests.value?.filter(test => {
+    const matchesSearch = test.testTitle.toLowerCase().includes(search.value.toLowerCase());
+
+    const method = selectedMethodFilter.value;
+    const testType = test.testType;
+    const userTestType = test.userTestType;
+
+    const matchesMethod =
+      method === 'all' ||
+      (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
+      (method === 'moderated' && testType === 'User' && userTestType === 'moderated') ||
+      (method === 'unmoderated' && testType === 'User' && userTestType === 'unmoderated');
+
+    return matchesSearch && matchesMethod;
+  });
 });
 
-const filteredTemplates = computed(() => {
-  return templates.value.filter(temp =>
-    temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())
-  );
-});
+const filteredTemplates = computed(() => templates.value.filter(temp => temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())));
 
-const cleanTestStore = async () => {
-  await store.dispatch('cleanTest');
-};
-
-const getMyPersonalTests = async () => {
-  await store.dispatch('getTestsAdminByUser');
-};
-
-const getPublicTests = async () => {
-  await store.dispatch('getPublicTests');
-};
-
-const getPublicTemplates = async () => {
-  await store.dispatch('getPublicTemplates');
-};
-
-const getMyTemplates = async () => {
-  await store.dispatch('getTemplatesOfUser');
-};
-
-const getSharedWithMeTests = async () => {
-  await store.dispatch('getSharedWithMeTests', user.value.id);
-};
-
-const filterModeratedSessions = async () => {
-  const userModeratedTests = Object.values(user.value.myAnswers).filter(
-    (answer) => answer.userTestType === 'moderated'
-  );
-
-  const cooperatorArray = [];
-
-  for (let i = 0; i < userModeratedTests.length; i++) {
-    const testId = userModeratedTests[i].testDocId;
-    const testObj = await store.dispatch('getTest', { id: testId });
-
-    if (testObj) {
-      const cooperatorObj = testObj.cooperators?.find(
-        (coop) => coop.userDocId == user.value.id
-      );
-      if (cooperatorObj) {
-        cooperatorObj.testTitle = testObj.testTitle;
-        cooperatorObj.testAdmin = testObj.testAdmin;
-        cooperatorObj.id = testObj.id;
-
-        const today = new Date();
-        const testDate = new Date(cooperatorObj.testDate);
-
-        if (testDate.getDate() === today.getDate()) {
-          cooperatorArray.push(cooperatorObj);
-        }
-      }
-    }
-  }
-  filteredModeratedSessions.value = cooperatorArray;
-  return cooperatorArray;
+const selectNavigation = (sectionId, childId) => {
+  mainIndex.value = sectionId === 'studies' ? 0 : 1;
+  subIndex.value = childId;
 };
 
 const goToCreateTestRoute = () => {
@@ -352,28 +201,10 @@ const goToCreateTestRoute = () => {
 
 const goTo = (test) => {
   if (mainIndex.value === 0) {
-    if (subIndex.value === 0) {
-      router.push({
-        name: 'ManagerView',
-        params: { id: test.testDocId },
-      });
-    } else if (subIndex.value === 1) {
-      if (test.accessLevel >= 2) {
-        router.push({
-          name: 'TestView',
-          params: { id: test.testDocId },
-        });
-      } else {
-        router.push({
-          name: 'ManagerView',
-          params: { id: test.testDocId },
-        });
-      }
-    } else if (subIndex.value === 2) {
-      router.push({
-        name: 'ManagerView',
-        params: { id: test.id },
-      });
+    if (subIndex.value === 0 || (subIndex.value === 1 && test.accessLevel < 2) || subIndex.value === 2) {
+      router.push({ name: 'ManagerView', params: { id: test.testDocId || test.id } });
+    } else if (subIndex.value === 1 && test.accessLevel >= 2) {
+      router.push({ name: 'TestView', params: { id: test.testDocId } });
     } else if (subIndex.value === 3) {
       router.push(`testview/${test.id}/${user.value.id}`);
     }
@@ -381,28 +212,56 @@ const goTo = (test) => {
 };
 
 const setupTempDialog = (template) => {
-  if (!template || !template.header || !template.body) {
-    console.warn('Invalid template provided to setupTempDialog:', template);
-    return;
-  }
-  temp.value = { ...template }; // Clone the template object
+  if (!template || !template.header || !template.body) return;
+  temp.value = { ...template };
   tempDialog.value = true;
 };
 
+const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
+const getSharedWithMeTests = () => store.dispatch('getSharedWithMeTests', user.value.id);
+const getPublicTests = () => store.dispatch('getPublicTests');
+const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
+const getPublicTemplates = () => store.dispatch('getPublicTemplates');
+
+const cleanTestStore = () => store.dispatch('cleanTest');
+
+const filterModeratedSessions = async () => {
+  const userModeratedTests = Object.values(user.value.myAnswers).filter(
+    (answer) => answer.userTestType === 'moderated'
+  );
+  const cooperatorArray = [];
+  for (const test of userModeratedTests) {
+    const testObj = await store.dispatch('getTest', { id: test.testDocId });
+    if (testObj) {
+      const cooperatorObj = testObj.cooperators.find(coop => coop.userDocId == user.value.id);
+      if (cooperatorObj) {
+        Object.assign(cooperatorObj, {
+          testTitle: testObj.testTitle,
+          testAdmin: testObj.testAdmin,
+          id: testObj.id
+        });
+        const today = new Date(), testDate = new Date(cooperatorObj.testDate);
+        if (testDate.getDate() === today.getDate()) cooperatorArray.push(cooperatorObj);
+      }
+    }
+  }
+  filteredModeratedSessions.value = cooperatorArray;
+};
+
 watch(mainIndex, async (val) => {
-  subIndex.value = 0; // Reset subIndex when mainIndex changes
+  subIndex.value = 0;
   if (val === 0) await getMyPersonalTests();
-  if (val === 1) await getMyTemplates();
+  else if (val === 1) await getMyTemplates();
 });
 
 watch(subIndex, async (val) => {
   if (mainIndex.value === 0) {
     if (val === 0) await getMyPersonalTests();
-    if (val === 1) await getSharedWithMeTests();
-    if (val === 2) await getPublicTests();
+    else if (val === 1) await getSharedWithMeTests();
+    else if (val === 2) await getPublicTests();
   } else if (mainIndex.value === 1) {
     if (val === 0) await getMyTemplates();
-    if (val === 1) await getPublicTemplates();
+    else if (val === 1) await getPublicTemplates();
   }
 });
 
@@ -417,15 +276,102 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.titleText {
-  font-size: 40px;
-  font-weight: 300;
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
-.v-tab--selected {
-  background-color: rgba(249, 168, 38, 0.2) !important;
-  border-radius: 4px;
-  color: #000000 !important;
-  font-weight: bold;
+.sidebar {
+  background-color: white !important;
+  border-right: 1px solid #e0e0e0 !important;
+}
+
+.sidebar .sidebar-header {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.main-content {
+  padding: 0;
+  flex: 1;
+  background-color: #f8f9fa;
+}
+
+.content-header {
+  background-color: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.study-card,
+.template-card {
+  border-radius: 16px !important;
+  border: 2px solid transparent !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.study-card:hover,
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  border-color: #2196F3 !important;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-btn {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 600;
+}
+
+/* Navigation Styling */
+.v-list-group__items .v-list-item {
+  margin-bottom: 4px;
+}
+
+.v-list-group__items .v-list-item.v-list-item--active {
+  background-color: rgba(33, 150, 243, 0.1) !important;
+  color: #2196F3 !important;
+}
+
+.v-list-group__items .v-list-item.v-list-item--active .v-list-item__prepend .v-icon {
+  color: #2196F3 !important;
+}
+
+.v-list-group__items .v-list-item:hover:not(.v-list-item--active) {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.section-header {
+  font-weight: 600 !important;
+}
+
+.section-header .v-list-item__prepend .v-icon {
+  margin-right: 12px;
+}
+
+.subsection-item {
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.subsection-item .v-list-item__prepend .v-icon {
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+.v-btn {
+  text-transform: none;
+  letter-spacing: normal;
 }
 </style>
+

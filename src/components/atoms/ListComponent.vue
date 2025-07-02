@@ -46,7 +46,7 @@
                 size="small"
                 style="color: grey"
               >
-                {{ item.header?.templateType ?? item.testType ?? 'User' }}
+                {{ item.header?.templateType ?? item.testType == 'HEURISTICS' ? 'HEURISTICS' : item.userTestType ?? 'User' }}
               </v-chip>
             </div>
 
@@ -152,7 +152,6 @@
 import { computed, onBeforeUpdate } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-// Props definition
 const props = defineProps({
   items: {
     type: Array,
@@ -162,28 +161,13 @@ const props = defineProps({
   type: {
     type: String,
     required: true,
-  },
-  hasPagination: {
-    type: Boolean,
-    default: false,
-  },
-  disableNext: {
-    type: Boolean,
-    default: false,
-  },
-  disablePrevious: {
-    type: Boolean,
-    default: false,
-  },
+  }
 })
 
-// Emits definition
-const emit = defineEmits(['clicked', 'nextPage', 'previousPage'])
+const emit = defineEmits(['clicked'])
 
-// Use vue-i18n
 const { t } = useI18n()
 
-// Computed properties
 const sortedItems = computed(() => {
   return props.items.slice().sort((a, b) => {
     const dateA = new Date(a.updateDate)
@@ -192,7 +176,6 @@ const sortedItems = computed(() => {
   })
 })
 
-// Lifecycle hooks
 onBeforeUpdate(() => {
   const availableTypes = [
     'myTests',
@@ -208,7 +191,6 @@ onBeforeUpdate(() => {
   }
 })
 
-// Methods
 const getFormattedDate = (date) => {
   const d = new Date(date)
   return d.toLocaleString()
@@ -221,13 +203,5 @@ const generateColor = () => {
 
 const emitClick = (item) => {
   emit('clicked', item)
-}
-
-const emitNextPage = () => {
-  emit('nextPage')
-}
-
-const emitPreviousPage = () => {
-  emit('previousPage')
 }
 </script>

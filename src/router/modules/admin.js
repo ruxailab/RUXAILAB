@@ -7,16 +7,14 @@ import CooperatorsView from '@/views/admin/CooperatorsView.vue'
 import SettingsView from '@/views/admin/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
-import CreateView from '@/views/admin/CreateView.vue'
 import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
 import Choose from '@/views/admin/Choose.vue'
-import Inspection from '@/views/admin/Inspection.vue'
-import Testing from '@/views/admin/Testing.vue'
 import ChooseStudyMethods from '@/views/admin/ChooseStudyMethods.vue'
+import ChooseStudyType from '@/views/admin/ChooseStudyType.vue'
 import StudyDetailsForm from '@/views/admin/StudyDetailsForm.vue'
 
 
@@ -108,43 +106,31 @@ export default [
     path:'/choose',
     name:'study-create-step1',
     meta: { authorize: [1] },
-    component:Choose,
+    component: Choose,
   },
   {
     path: '/methods',
-    component: ChooseStudyMethods,
+    name: 'study-create-step2',
     meta: { authorize: [1] },
-    name: 'study-create-step2'
+    component: ChooseStudyMethods,
   },
   {
     path: '/createtest',
     name: 'study-create-step3',
     meta: { authorize: [1] },
-    component: CreateView,
+    component: ChooseStudyType,
   },
   {
     path: '/studydetails',
-    component: StudyDetailsForm,
+    name: 'study-create-step4',
     meta: { authorize: [1] },
-    name: 'study-create-step4'
+    component: StudyDetailsForm,
   },
   {
     path: '/createBlank',
     name: 'Create Blank View',
     meta: { authorize: [1] },
     component: CreateBlankView,
-  },
-  {
-    path: '/inspection',
-    name: 'Inspection',
-    meta: { authorize: [1] },
-    component: Inspection,
-  },
-  {
-    path: '/testing',
-    name: 'Testing',
-    meta: { authorize: [1] },
-    component: Testing,
   },
   {
     path: '/fromtemplate',
