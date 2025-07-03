@@ -1,46 +1,22 @@
 <template>
   <div class="finalReportView">
     <v-container v-if="test.testType === 'HEURISTICS'">
-      <ShowInfo
-        style="padding: 0!important;"
-        :title="$t('titles.drawer.Final Report')"
-      />
+      <ShowInfo style="padding: 0!important;" :title="$t('titles.drawer.Final Report')" />
 
-      <v-stepper
-        :model-value="step"
-        style="background-color:#F5F7FF"
-        class="final-report-box rounded pt-0 mb-4"
-        elevation="0"
-      >
-        <v-stepper-header
-          style="background-color: #F5F7FF;"
-          class="pt-2"
-        >
-          <v-stepper-item
-            :complete="value > 1"
-            value="1"
-            color="orange"
-          >
+      <v-stepper :model-value="step" style="background-color:#F5F7FF" class="final-report-box rounded pt-0 mb-4"
+        elevation="0">
+        <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
+          <v-stepper-item :complete="value > 1" value="1" color="orange">
             Conclusion
           </v-stepper-item>
           <v-divider />
-          <v-stepper-item
-            :complete="value > 2"
-            value="2"
-            color="orange"
-          >
+          <v-stepper-item :complete="value > 2" value="2" color="orange">
             Elements
           </v-stepper-item>
         </v-stepper-header>
 
-        <v-stepper-window
-          style="background-color:#F5F7FF"
-          class="mt-0"
-        >
-          <v-stepper-window-item
-            value="1"
-            class="align-mid pt-5"
-          >
+        <v-stepper-window style="background-color:#F5F7FF" class="mt-0">
+          <v-stepper-window-item value="1" class="align-mid pt-5">
             <div class="container">
               <div class="row">
                 <TextControls />
@@ -48,20 +24,10 @@
 
               <div class="row">
                 <div class="col">
-                  <div
-                    id="myTextarea"
-                    contenteditable
-                    class="form-control"
-                  />
+                  <div id="myTextarea" contenteditable class="form-control" />
                 </div>
               </div>
-              <v-btn
-                class="mt-4"
-                align="right"
-                color="orange"
-                elevation="0"
-                @click="handleNext"
-              >
+              <v-btn class="mt-4" align="right" color="orange" elevation="0" @click="handleNext">
                 {{ $t('buttons.next') }}
               </v-btn>
             </div>
@@ -76,19 +42,10 @@
       </v-stepper>
     </v-container>
 
-    <v-container
-      v-else-if="test.testType === 'User'"
-      fluid
-      fill-height
-      class="mt-10"
-    >
+    <v-container v-else-if="test.testType === 'User'" fluid fill-height class="mt-10">
       <v-row>
         <v-col class="text-center">
-          <v-icon
-            size="100"
-            color="primary"
-            class="mb-4"
-          >
+          <v-icon size="100" color="primary" class="mb-4">
             mdi-tools
           </v-icon>
           <h1 class="text-h4">
@@ -109,6 +66,7 @@ import { useStore } from 'vuex';
 import TextControls from '@/components/atoms/FinalReportControls.vue';
 import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue';
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import Test from '@/models/Test';
 
 const store = useStore();
 
@@ -129,7 +87,7 @@ const update = async () => {
   const text = contenteditable.innerHTML;
 
   object.value.finalReport = text;
-  const updatedTest = { ...test.value, ...object.value };
+  const updatedTest = new Test({ ...test.value, ...object.value });
   await store.dispatch('updateTest', updatedTest);
 };
 
