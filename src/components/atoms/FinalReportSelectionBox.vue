@@ -8,29 +8,16 @@
             {{ $t('pages.finalReport.heuristic') + 's:' }}
 
             <div class="pb-4 mt-1">
-              <div
-                v-for="heuristic in heuristics"
-                :key="heuristic.id"
-                class="option"
-              >
-                <input
-                  :id="'heuristic' + heuristic.id"
-                  v-model="selectedHeuristics"
-                  type="checkbox"
-                  :name="heuristic.name"
-                  :value="heuristic.id"
-                  style="margin-right: 10px;"
-                >
+              <div v-for="heuristic in heuristics" :key="heuristic.id" class="option">
+                <input :id="'heuristic' + heuristic.id" v-model="selectedHeuristics" type="checkbox"
+                  :name="heuristic.name" :value="heuristic.id" style="margin-right: 10px;">
                 <label :for="'heuristic' + heuristic.id">
                   {{ heuristic.id + 1 }} - {{ heuristic.title }}
                 </label>
               </div>
             </div>
           </div>
-          <div
-            v-else
-            class="column with-border"
-          >
+          <div v-else class="column with-border">
             <div style="margin-top: 10%">
               {{ $t('pages.finalReport.createHeuristics') }}
             </div>
@@ -39,44 +26,19 @@
         <v-col>
           <div class="column with-margin">
             {{ $t('pages.finalReport.elements') + ':' }}
-            <div
-              v-for="option in options"
-              :key="option.id"
-              class="option"
-            >
-              <input
-                :id="option.id"
-                type="checkbox"
-                :name="option.name"
-                style="margin-right: 10px;"
-              >
-              <label
-                class="option"
-                :for="option.id"
-              >{{ option.label }}</label>
+            <div v-for="option in options" :key="option.id" class="option">
+              <input :id="option.id" type="checkbox" :name="option.name" style="margin-right: 10px;">
+              <label class="option" :for="option.id">{{ option.label }}</label>
             </div>
           </div>
         </v-col>
       </v-row>
     </div>
-    <v-row
-      class="ma-0"
-      justify="space-between"
-    >
-      <v-btn
-        class="teste2"
-        color="blue-grey-darken-3"
-        elevation="0"
-        @click="$emit('return-step')"
-      >
+    <v-row class="ma-0" justify="space-between">
+      <v-btn class="teste2" color="blue-grey-darken-3" elevation="0" @click="$emit('return-step')">
         {{ $t('buttons.previous') }}
       </v-btn>
-      <v-btn
-        :disabled="isLoading"
-        class=""
-        color="orange"
-        @click="submitPdf"
-      >
+      <v-btn :disabled="isLoading" class="" color="orange" @click="submitPdf">
         <span v-if="!isLoading">{{ $t('pages.finalReport.pdf') }}</span>
         <span v-else>{{ $t('pages.finalReport.options.loading') }}</span>
       </v-btn>
@@ -89,7 +51,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
-import { finalResult, statistics } from '@/utils/statistics';
+import { finalResult, standardDeviation, statistics } from '@/utils/statistics';
 
 // Vuex store
 const store = useStore();
@@ -155,55 +117,95 @@ const options = computed(() => [
   },
 ]);
 
-// Methods
-const heuristicsEvaluator = () => {
+// Statistics Results
+const resultEvaluator = ref(statistics());
+
+const heuristicsStatistics = computed(() => {
   const table = {
-    header: [],
+    header: [
+      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
+      { title: 'Percentage (%)', value: 'percentage', align: 'center', sortable: false },
+      { title: 'Standard deviation', value: 'sd', align: 'center', sortable: false },
+      { title: 'Average', value: 'average', align: 'center', sortable: false },
+      { title: 'Max', value: 'max', align: 'center', sortable: false },
+      { title: 'Min', value: 'min', align: 'center', sortable: false },
+    ],
     items: [],
   };
 
-  const testOptions = test.value.testOptions;
-  const resultEvaluator = statistics();
+  if (!heuristicsEvaluator.value || !heuristicsEvaluator.value.items) {
+    return table;
+  }
 
-  const options = testOptions.map((op) => op.value);
-  const max = Math.max(...options);
-  const min = Math.min(...options);
-
-  table.header.push({
-    text: 'HEURISTICS',
-    value: 'heuristic',
+  heuristicsEvaluator.value.items.forEach((item) => {
+    const results = Object.entries(item)
+      .filter(([key]) => key.includes('Ev'))
+      .map(([, value]) => value)
+      .filter((value) => value !== undefined && value !== null);
+    const valueToConvert = results.length
+      ? results.reduce((total, value) => total + value / results.length, 0).toFixed(2)
+      : '0.00';
+    const convertedValue = item.max && item.min && item.max !== item.min
+      ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
+      : 0;
+    table.items.push({
+      name: item.heuristic || 'Unknown',
+      max: item.max ? Number(item.max).toFixed(2) : '0.00',
+      min: item.min ? Number(item.min).toFixed(2) : '0.00',
+      percentage: convertedValue.toFixed(2),
+      sd: results.length ? standardDeviation(results).toFixed(2) : '0.00',
+      average: valueToConvert,
+    });
   });
 
-  if (resultEvaluator) {
-    resultEvaluator.forEach((evaluator) => {
+  return table;
+});
+
+const heuristicsEvaluator = computed(() => {
+  const table = {
+    header: [{ title: 'HEURISTICS', align: 'start', value: 'heuristic' }],
+    items: [],
+  };
+  const options = test.value && test.value.testOptions ? test.value.testOptions.map((op) => op.value) : [];
+  const max = options.length > 0 ? Math.max(...options) : 0;
+  const min = options.length > 0 ? Math.min(...options) : 0;
+
+  if (resultEvaluator.value && Array.isArray(resultEvaluator.value)) {
+    let evaluatorIndex = 1;
+    resultEvaluator.value.forEach((evaluator) => {
+      evaluator.id = `Ev${evaluatorIndex}`;
       const header = table.header.find((h) => h.text === evaluator.id);
       if (!header) {
         table.header.push({
           text: evaluator.id,
+          align: 'center',
           value: evaluator.id,
         });
       }
-      evaluator.heuristics.forEach((heuristic) => {
-        const item = table.items.find((i) => i.heuristic === heuristic.id);
-        if (item) {
-          Object.assign(item, {
-            [evaluator.id]: heuristic.result,
-          });
-        } else {
-          table.items.push({
-            heuristic: heuristic.id,
-            max: max * heuristic.totalQuestions,
-            min: min * heuristic.totalQuestions,
-            [evaluator.id]: heuristic.result,
-          });
-        }
-      });
+      if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
+        evaluator.heuristics.forEach((heuristic) => {
+          const item = table.items.find((i) => i.heuristic === heuristic.id);
+          if (item) {
+            Object.assign(item, {
+              [evaluator.id]: heuristic.result,
+            });
+          } else {
+            table.items.push({
+              heuristic: heuristic.id,
+              max: max * (heuristic.totalQuestions || 0),
+              min: min * (heuristic.totalQuestions || 0),
+              [evaluator.id]: heuristic.result,
+            });
+          }
+        });
+      }
+      evaluatorIndex++;
     });
   }
-
   return table;
-};
+});
 
+// Methods
 const checkHeuristicsSlider = () => {
   const container = document.querySelector('.column');
   if (container) {
@@ -277,16 +279,8 @@ const submitPdf = async () => {
       preview.value.cooperatorsEmail = '';
     }
 
-    answers.value.forEach((answer) => {
-      answer.heuristicQuestions.forEach((heuristic) => {
-        heuristic.heuristicQuestions.forEach((question) => {
-          question.answerImageUrl = '';
-        });
-      });
-    });
-
     const response = await axios.post(
-      'https://laravel-uslfpdl4eq-ue.a.run.app/api/endpoint',
+      process.env.VUE_APP_LARAVEL_PDF,
       {
         items: [
           {
@@ -296,12 +290,14 @@ const submitPdf = async () => {
             testDescription: test.value.testDescription,
             cooperatorsEmail: preview.value.cooperatorsEmail,
             creatorEmail: test.value.testAdmin.email,
-            finalReport: preview.value.finalReport,
+            finalReport: test.value.finalReport,
             allOptions: preview.value.testOptions,
             allAnswers: answers.value,
             testStructure: test.value.testStructure,
             selectedHeuristics: selectedHeuristics.value,
             statistics: preview.value.statistics,
+            statisticsByEvaluatorAnswer: heuristicsEvaluator.value,
+            statisticsByHeuristics: heuristicsStatistics.value,
             gstatistics: statisticsData.value,
             statisticstable: store.state.Answer.evaluatorStatistics,
             heuristicStatistics: preview.value.heuristicEvaluator,
@@ -326,7 +322,8 @@ const submitPdf = async () => {
 };
 
 // Lifecycle hooks
-onMounted(() => {
+onMounted(async () => {
+  await store.dispatch('getTest', { id: test.value.id })
   checkHeuristicsSlider();
 });
 </script>
