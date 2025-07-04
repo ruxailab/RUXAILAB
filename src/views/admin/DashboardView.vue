@@ -233,7 +233,7 @@ const filterModeratedSessions = async () => {
   for (const test of userModeratedTests) {
     const testObj = await store.dispatch('getTest', { id: test.testDocId });
     if (testObj) {
-      const cooperatorObj = testObj.cooperators.find(coop => coop.userDocId == user.value.id);
+      const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
       if (cooperatorObj) {
         Object.assign(cooperatorObj, {
           testTitle: testObj.testTitle,
