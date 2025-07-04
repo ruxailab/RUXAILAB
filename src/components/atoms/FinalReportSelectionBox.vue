@@ -86,68 +86,68 @@ const heuristicsStatistics = computed(() =>
 const submitPdf = async () => {
   isLoading.value = true;
 
-  // try {
-  //   // Extract valid emails from cooperators
-  //   const getCooperatorEmails = () => {
-  //     const cooperators = test.value.cooperators || [];
-  //     return cooperators
-  //       .filter(coop => coop?.email)
-  //       .map(coop => coop.email);
-  //   };
+  try {
+    // Extract valid emails from cooperators
+    const getCooperatorEmails = () => {
+      const cooperators = test.value.cooperators || [];
+      return cooperators
+        .filter(coop => coop?.email)
+        .map(coop => coop.email);
+    };
 
-  //   statisticsData.value = finalResult();
-  //   const cooperatorsEmailsList = getCooperatorEmails();
+    statisticsData.value = finalResult();
+    const cooperatorsEmailsList = getCooperatorEmails();
 
-  //   const payload = {
-  //     items: [
-  //       {
-  //         title: test.value.testTitle,
-  //         creationDate: test.value.creationDate,
-  //         testDescription: test.value.testDescription,
-  //         cooperatorsEmail: cooperatorsEmailsList,
-  //         creatorEmail: test.value.testAdmin.email,
-  //         finalReport: test.value.finalReport,
-  //         allOptions: test.value.testOptions,
-  //         allAnswers: answers.value,
-  //         testStructure: test.value.testStructure,
-  //         statisticsByEvaluatorAnswer: heuristicsEvaluator.value,
-  //         statisticsByHeuristics: heuristicsStatistics.value,
-  //         gstatistics: statisticsData.value,
-  //         statisticstable: store.state.Answer.evaluatorStatistics,
-  //       },
-  //     ],
-  //   };
+    const payload = {
+      items: [
+        {
+          title: test.value.testTitle,
+          creationDate: test.value.creationDate,
+          testDescription: test.value.testDescription,
+          cooperatorsEmail: cooperatorsEmailsList,
+          creatorEmail: test.value.testAdmin.email,
+          finalReport: test.value.finalReport,
+          allOptions: test.value.testOptions,
+          allAnswers: answers.value,
+          testStructure: test.value.testStructure,
+          statisticsByEvaluatorAnswer: heuristicsEvaluator.value,
+          statisticsByHeuristics: heuristicsStatistics.value,
+          gstatistics: statisticsData.value,
+          statisticstable: store.state.Answer.evaluatorStatistics,
+        },
+      ],
+    };
 
-  //   const response = await axios.post(
-  //     process.env.VUE_APP_LARAVEL_PDF,
-  //     payload,
-  //     { responseType: 'blob' }
-  //   );
+    const response = await axios.post(
+      process.env.VUE_APP_LARAVEL_PDF,
+      payload,
+      { responseType: 'blob' }
+    );
 
-  //   // Create filename
-  //   const slugify = (text) =>
-  //     text?.toString().toLowerCase().replace(/\s+/g, '_').replace(/[^\w\-]+/g, '');
+    // Create filename
+    const slugify = (text) =>
+      text?.toString().toLowerCase().replace(/\s+/g, '_').replace(/[^\w\-]+/g, '');
 
-  //   const title = slugify(test.value.testTitle || 'report');
-  //   const creationDate = slugify(test.value.creationDate || new Date().toISOString());
-  //   const filename = `final_report_${title}_${creationDate}.pdf`;
+    const title = slugify(test.value.testTitle || 'report');
+    const creationDate = slugify(test.value.creationDate || new Date().toISOString());
+    const filename = `final_report_${title}_${creationDate}.pdf`;
 
-  //   // Trigger file download
-  //   const blob = new Blob([response.data]);
-  //   const url = URL.createObjectURL(blob);
-  //   const link = Object.assign(document.createElement('a'), {
-  //     href: url,
-  //     download: filename,
-  //   });
+    // Trigger file download
+    const blob = new Blob([response.data]);
+    const url = URL.createObjectURL(blob);
+    const link = Object.assign(document.createElement('a'), {
+      href: url,
+      download: filename,
+    });
 
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   link.remove();
-  //   URL.revokeObjectURL(url);
-  // } catch (error) {
-  //   console.error('PDF export failed:', error);
-  // } finally {
-  //   isLoading.value = false;
-  // }
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('PDF export failed:', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
