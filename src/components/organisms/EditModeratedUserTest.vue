@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-tabs
-      v-if="type === 'tabs'"
-      bg-color="transparent"
-      color="#FCA326"
-      class="pb-0 mb-0"
-    >
+    <v-tabs v-if="type === 'tabs'" bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
       <v-tab @click="tabClicked(0)">
         {{ $t('ModeratedTest.preTest') }}
       </v-tab>
@@ -17,26 +12,13 @@
       </v-tab>
     </v-tabs>
 
-    <v-col
-      v-else-if="type === 'content'"
-      cols="12"
-    >
+    <v-col v-else-if="type === 'content'" cols="12">
       <!-- Desktop Layout -->
       <v-row v-if="isDesktop">
         <!-- PRE-TEST -->
-        <v-col
-          v-if="index === 0"
-          cols="8"
-        >
-          <v-card
-            style="background: #f5f7ff"
-            flat
-            class="cards"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 px-5 pt-4"
-            >
+        <v-col v-if="index === 0" cols="8">
+          <v-card style="background: #f5f7ff" flat class="cards">
+            <v-col cols="12" class="pb-0 px-5 pt-4">
               <span class="cardsTitle ml-3">{{ $t('ModeratedTest.consentForm') }}</span>
               <br>
               <span class="cardsSubtitle ml-3">
@@ -46,89 +28,34 @@
             <UserConsent />
           </v-card>
         </v-col>
-        <v-col
-          v-if="index === 0"
-          cols="4"
-          class="pl-0"
-          style="height: 19vh;"
-        >
-          <v-card
-            flat
-            style="background: #f5f7ff"
-            class="cards"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 pt-4 px-8"
-            >
+        <v-col v-if="index === 0" cols="4" class="pl-0" style="height: 19vh;">
+          <v-card flat style="background: #f5f7ff" class="cards">
+            <v-col cols="12" class="pb-0 pt-4 px-8">
               <span class="cardsTitle mt-4">{{ $t('ModeratedTest.welcomeMessage') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.welcomeMessageDescription') }}</span>
             </v-col>
-            <v-textarea
-              v-model="welcomeMessage"
-              variant="outlined"
-              color="orange"
-              class="mx-6 mt-3"
-              :placeholder="$t('ModeratedTest.welcomeMessage')"
-              @change="saveWelcomeState"
-            />
-            <v-col
-              cols="12"
-              class="pb-0 px-8"
-            >
+            <v-textarea v-model="welcomeMessage" variant="outlined" color="orange" class="mx-6 mt-3"
+              :placeholder="$t('ModeratedTest.welcomeMessage')" @change="saveWelcomeState" />
+            <v-col cols="12" class="pb-0 px-8">
               <span class="cardsTitle">{{ $t('ModeratedTest.landingPage') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.landingPageDescription') }}</span>
-              <v-text-field
-                v-model="landingPage"
-                class="mt-3"
-                style="border-radius: 20px;"
-                :placeholder="$t('ModeratedTest.url')"
-                variant="outlined"
-                color="orange"
-                @change="saveLandingPage"
-              />
+              <v-text-field v-model="landingPage" class="mt-3" style="border-radius: 20px;"
+                :placeholder="$t('ModeratedTest.url')" variant="outlined" color="orange" @change="saveLandingPage" />
             </v-col>
-            <v-col
-              cols="12"
-              class="pb-1 px-8 pb-0"
-            >
+            <v-col cols="12" class="pb-1 px-8 pb-0">
               <span class="cardsTitle">{{ $t('ModeratedTest.participantCamera') }}</span>
-              <v-radio-group
-                v-model="participantCamera"
-                class="pt-0"
-                @update:model-value="saveParticipantCamera"
-              >
-                <v-radio
-                  :label="$t('ModeratedTest.cameraOptions.optional')"
-                  color="orange"
-                  value="optional"
-                />
-                <v-radio
-                  :label="$t('ModeratedTest.cameraOptions.required')"
-                  color="orange"
-                  value="required"
-                />
-                <v-radio
-                  :label="$t('ModeratedTest.cameraOptions.disabled')"
-                  color="orange"
-                  value="disabled"
-                />
+              <v-radio-group v-model="participantCamera" class="pt-0" @update:model-value="saveParticipantCamera">
+                <v-radio :label="$t('ModeratedTest.cameraOptions.optional')" color="orange" value="optional" />
+                <v-radio :label="$t('ModeratedTest.cameraOptions.required')" color="orange" value="required" />
+                <v-radio :label="$t('ModeratedTest.cameraOptions.disabled')" color="orange" value="disabled" />
               </v-radio-group>
             </v-col>
           </v-card>
         </v-col>
-        <v-col
-          v-if="index === 0"
-          cols="8"
-          class="pt-0 pb-0"
-        >
-          <v-card
-            style="background: #f5f7ff; min-height: 420px;"
-            flat
-            class="cards"
-          >
+        <v-col v-if="index === 0" cols="8" class="pt-0 pb-0">
+          <v-card style="background: #f5f7ff; min-height: 420px;" flat class="cards">
             <v-col cols="12">
               <span class="cardsTitle ml-3">{{ $t('ModeratedTest.preForm') }}</span>
               <br>
@@ -137,29 +64,16 @@
             </v-col>
           </v-card>
         </v-col>
-        
+
         <!-- Tasks -->
-        <v-col
-          v-if="index === 1"
-          cols="12"
-        >
+        <v-col v-if="index === 1" cols="12">
           <ModeratedTasks />
         </v-col>
-        
+
         <!-- Post Test -->
-        <v-col
-          v-if="index === 2"
-          cols="12"
-        >
-          <v-card
-            style="background: #f5f7ff; min-height: 410px;"
-            flat
-            class="cards"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 px-5 pt-4"
-            >
+        <v-col v-if="index === 2" cols="12">
+          <v-card style="background: #f5f7ff; min-height: 410px;" flat class="cards">
+            <v-col cols="12" class="pb-0 px-5 pt-4">
               <span class="cardsTitle ml-3">{{ $t('ModeratedTest.postForm') }}</span>
               <br>
               <span class="cardsSubtitle ml-3">{{ $t('ModeratedTest.postFormDescription') }}</span>
@@ -167,33 +81,15 @@
             </v-col>
           </v-card>
         </v-col>
-        <v-col
-          v-if="index === 2"
-          cols="12"
-          class="pt-0"
-        >
-          <v-card
-            style="background: #f5f7ff"
-            flat
-            class="cards"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 px-5 pt-4 pb-0"
-            >
+        <v-col v-if="index === 2" cols="12" class="pt-0">
+          <v-card style="background: #f5f7ff" flat class="cards">
+            <v-col cols="12" class="pb-0 px-5 pt-4 pb-0">
               <span class="cardsTitle ml-3">{{ $t('ModeratedTest.finalMessage') }}</span>
               <br>
               <span class="cardsSubtitle ml-3">{{ $t('ModeratedTest.finalMessageDescription') }}</span>
             </v-col>
-            <v-textarea
-              v-model="finalMessage"
-              rows="3"
-              variant="outlined"
-              color="orange"
-              class="mx-6 mt-3"
-              :placeholder="$t('ModeratedTest.finalMessagePlaceholder')"
-              @change="saveFinalMessage"
-            />
+            <v-textarea v-model="finalMessage" rows="3" variant="outlined" color="orange" class="mx-6 mt-3"
+              :placeholder="$t('ModeratedTest.finalMessagePlaceholder')" @change="saveFinalMessage" />
           </v-card>
         </v-col>
       </v-row>
@@ -201,19 +97,9 @@
       <!-- Mobile/Tablet Layout -->
       <v-row v-else>
         <!-- PRE-TEST Mobile -->
-        <v-col
-          v-if="index === 0"
-          cols="12"
-        >
-          <v-card
-            style="background: #f5f7ff"
-            flat
-            class="cards"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 px-4 pt-4"
-            >
+        <v-col v-if="index === 0" cols="12">
+          <v-card style="background: #f5f7ff" flat class="cards">
+            <v-col cols="12" class="pb-0 px-4 pt-4">
               <span class="cardsTitle">{{ $t('ModeratedTest.consentForm') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.consentDescription') }}</span>
@@ -221,80 +107,35 @@
             <UserConsent />
           </v-card>
 
-          <v-card
-            flat
-            style="background: #f5f7ff"
-            class="cards mt-4"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 pt-4 px-4"
-            >
+          <v-card flat style="background: #f5f7ff" class="cards mt-4">
+            <v-col cols="12" class="pb-0 pt-4 px-4">
               <span class="cardsTitle">{{ $t('ModeratedTest.welcomeMessage') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.welcomeMessageDescription') }}</span>
-              <v-textarea
-                v-model="welcomeMessage"
-                variant="outlined"
-                color="orange"
-                class="mt-3"
-                :placeholder="$t('ModeratedTest.welcomeMessagePlaceholder')"
-                @change="saveWelcomeState"
-              />
+              <v-textarea v-model="welcomeMessage" variant="outlined" color="orange" class="mt-3"
+                :placeholder="$t('ModeratedTest.welcomeMessagePlaceholder')" @change="saveWelcomeState" />
             </v-col>
 
-            <v-col
-              cols="12"
-              class="pb-0 px-4"
-            >
+            <v-col cols="12" class="pb-0 px-4">
               <span class="cardsTitle">{{ $t('ModeratedTest.landingPage') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.landingPageDescription') }}</span>
-              <v-text-field
-                v-model="landingPage"
-                class="mt-3"
-                style="border-radius: 20px;"
-                :placeholder="$t('ModeratedTest.landingPagePlaceholder')"
-                variant="outlined"
-                color="orange"
-                @change="saveLandingPage"
-              />
+              <v-text-field v-model="landingPage" class="mt-3" style="border-radius: 20px;"
+                :placeholder="$t('ModeratedTest.landingPagePlaceholder')" variant="outlined" color="orange"
+                @change="saveLandingPage" />
             </v-col>
 
-            <v-col
-              cols="12"
-              class="pb-1 px-4"
-            >
+            <v-col cols="12" class="pb-1 px-4">
               <span class="cardsTitle">{{ $t('ModeratedTest.participantCamera') }}</span>
-              <v-radio-group
-                v-model="participantCamera"
-                class="pt-0"
-                @update:model-value="saveParticipantCamera"
-              >
-                <v-radio
-                  :label="$t('ModeratedTest.cameraOptions.optional')"
-                  color="orange"
-                  value="optional"
-                />
-                <v-radio
-                  :label="$t('ModeratedTest.cameraOptions.required')"
-                  color="orange"
-                  value="required"
-                />
-                <v-radio
-                  :label="$t('ModeratedTest.cameraOptions.disabled')"
-                  color="orange"
-                  value="disabled"
-                />
+              <v-radio-group v-model="participantCamera" class="pt-0" @update:model-value="saveParticipantCamera">
+                <v-radio :label="$t('ModeratedTest.cameraOptions.optional')" color="orange" value="optional" />
+                <v-radio :label="$t('ModeratedTest.cameraOptions.required')" color="orange" value="required" />
+                <v-radio :label="$t('ModeratedTest.cameraOptions.disabled')" color="orange" value="disabled" />
               </v-radio-group>
             </v-col>
           </v-card>
 
-          <v-card
-            style="background: #f5f7ff"
-            flat
-            class="cards mt-4"
-          >
+          <v-card style="background: #f5f7ff" flat class="cards mt-4">
             <v-col cols="12">
               <span class="cardsTitle">{{ $t('ModeratedTest.preForm') }}</span>
               <br>
@@ -305,58 +146,28 @@
         </v-col>
 
         <!-- Tasks Mobile -->
-        <v-col
-          v-if="index === 1"
-          cols="12"
-        >
+        <v-col v-if="index === 1" cols="12">
           <ModeratedTasks />
         </v-col>
 
         <!-- Post Test Mobile -->
-        <v-col
-          v-if="index === 2"
-          cols="12"
-        >
-          <v-card
-            style="background: #f5f7ff"
-            flat
-            class="cards"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 px-4 pt-4"
-            >
+        <v-col v-if="index === 2" cols="12">
+          <v-card style="background: #f5f7ff" flat class="cards">
+            <v-col cols="12" class="pb-0 px-4 pt-4">
               <span class="cardsTitle">{{ $t('ModeratedTest.postForm') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.postFormDescription') }}</span>
-              <FormPostTest
-                :class="{ 'mobile-post-form': !$vuetify.breakpoint.lgAndUp }"
-                @input="updateData"
-              />
+              <FormPostTest @input="updateData" />
             </v-col>
           </v-card>
 
-          <v-card
-            style="background: #f5f7ff"
-            flat
-            class="cards mt-4"
-          >
-            <v-col
-              cols="12"
-              class="pb-0 px-4 pt-4"
-            >
+          <v-card style="background: #f5f7ff" flat class="cards mt-4">
+            <v-col cols="12" class="pb-0 px-4 pt-4">
               <span class="cardsTitle">{{ $t('ModeratedTest.finalMessage') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.finalMessageDescription') }}</span>
-              <v-textarea
-                v-model="finalMessage"
-                rows="3"
-                variant="outlined"
-                color="orange"
-                class="mt-3"
-                :placeholder="$t('ModeratedTest.finalMessagePlaceholder')"
-                @change="saveFinalMessage"
-              />
+              <v-textarea v-model="finalMessage" rows="3" variant="outlined" color="orange" class="mt-3"
+                :placeholder="$t('ModeratedTest.finalMessagePlaceholder')" @change="saveFinalMessage" />
             </v-col>
           </v-card>
         </v-col>
@@ -392,8 +203,12 @@ const props = defineProps({
 
 const emit = defineEmits(['tabClicked']);
 
-const { lgAndUp } = useDisplay();
-const isDesktop = lgAndUp;
+const isDesktop = ref(window.innerWidth >= 1280);
+
+window.addEventListener('resize', () => {
+  isDesktop.value = window.innerWidth >= 1280;
+});
+
 
 const store = useStore();
 const { t } = useI18n();
@@ -509,6 +324,7 @@ onMounted(() => {
 .cards {
   border-radius: 20px;
 }
+
 .cardsTitle {
   color: #455a64;
   font-size: 18px;
@@ -516,6 +332,7 @@ onMounted(() => {
   font-weight: 600;
   line-height: normal;
 }
+
 .cardsSubtitle {
   color: #455a64;
   font-size: 15px;
@@ -523,6 +340,7 @@ onMounted(() => {
   font-weight: 400;
   line-height: normal;
 }
+
 .v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
@@ -532,9 +350,11 @@ onMounted(() => {
   .cards {
     margin-bottom: 16px;
   }
+
   .cardsTitle {
     font-size: 16px;
   }
+
   .cardsSubtitle {
     font-size: 14px;
   }
@@ -544,13 +364,16 @@ onMounted(() => {
   .cards {
     margin-bottom: 12px;
   }
+
   .cardsTitle {
     font-size: 15px;
   }
+
   .cardsSubtitle {
     font-size: 13px;
   }
 }
+
 .mobile-post-form :deep(.v-select__selections) {
   max-width: 100%;
   overflow: hidden;
@@ -571,7 +394,7 @@ onMounted(() => {
   .mobile-post-form :deep(.v-select__slot) {
     font-size: 14px;
   }
-  
+
   .mobile-post-form :deep(.v-select__selection) {
     max-width: calc(100% - 40px);
   }
