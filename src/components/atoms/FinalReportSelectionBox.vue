@@ -119,7 +119,7 @@ const submitPdf = async () => {
     };
 
     const response = await axios.post(
-      process.env.VUE_APP_LARAVEL_PDF,
+      `${process.env.VUE_APP_LARAVEL_PDF}/generate-pdf`,
       payload,
       { responseType: 'blob' }
     );
