@@ -46,21 +46,19 @@
                     :key="comboboxKey"
                     ref="combobox"
                     v-model="comboboxModel"
-                    :menu-props="{
-                      rounded: 'xl',
-                    }"
+                    :menu-props="{ rounded: 'xl' }"
                     :hide-no-data="false"
-                    :autofocus="comboboxKey == 0 ? false : true"
+                    :autofocus="comboboxKey != 0"
                     style="background: #f5f7ff;"
                     :items="users"
-                    :item-title="item => item?.email || 'Select an Email'"
+                    :item-title="item => item?.email"
                     label="Select cooperator"
                     variant="outlined"
                     rounded
                     density="compact"
                     color="#fca326"
                     class="mx-2"
-                    @update:model-value="verifyEmail()"
+                    @update:model-value="verifyEmail"
                   >
                     <template #no-data>
                       There are no users registered with that email, press enter
@@ -218,7 +216,7 @@
             position="fixed"
             location="bottom right"
             color="#F9A826"
-            :disabled="!comboboxModel.email"
+            :disabled="!(comboboxModel && comboboxModel?.email)"
             v-bind="props"
             @click="openInvitationModal()"
           >
@@ -320,7 +318,7 @@
                     class="pa-0"
                   >
                     <v-text-field
-                      :model-value="comboboxModel.email"
+                      :model-value="comboboxModel?.email || ''"
                       density="compact"
                       disabled
                       variant="outlined"
@@ -349,7 +347,7 @@
                             v-model="date"
                             readonly
                             color="orange"
-                            bg-color="grey lighten-3"
+                            bg-color="grey-lighten-3"
                             v-bind="props"
                             variant="outlined"
                             density="compact"
@@ -388,7 +386,7 @@
                             v-model="hour"
                             prepend-icon="mdi-clock-time-four-outline"
                             density="compact"
-                            bg-color="grey lighten-3"
+                            bg-color="grey-lighten-3"
                             color="orange"
                             variant="outlined"
                             class="rounded-lg"
@@ -414,7 +412,7 @@
                       <v-textarea
                         v-model="inviteMessage"
                         color="orange"
-                        bg-color="grey lighten-3"
+                        bg-color="grey-lighten-3"
                         required
                         :placeholder="$t('UsabilityCooperators.placeholderMessage')"
                         variant="outlined"
@@ -488,7 +486,13 @@ const date = ref(
     .toISOString()
     .substr(0, 10)
 );
-const hour = ref(null);
+const hour = ref(
+  new Date().toLocaleTimeString('en-GB', { 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    hour12: false 
+  })
+);
 const headers = ref([
   { title: 'Email', value: 'email' },
   { title: 'Test Date', value: 'testDate' },
@@ -500,7 +504,7 @@ const headers = ref([
 ]);
 const roleOptions = ref(roleOptionsItems);
 const intro = ref(null);
-const comboboxModel = ref({});
+const comboboxModel = ref(null);
 const comboboxKey = ref(0);
 const selectedRole = ref(1);
 const showCoops = ref(false);
@@ -564,12 +568,13 @@ const saveInvitation = async () => {
 };
 
 const verifyEmail = () => {
+  if (!comboboxModel.value || !comboboxModel.value?.email) return;
   const alreadyInvited = cooperatorsEdit.value.find(
-    (cooperator) => cooperator.email === comboboxModel.value.email
+    (cooperator) => cooperator.email === comboboxModel.value?.email
   );
   if (alreadyInvited) {
     toast.warning(`${comboboxModel.value.email} has already been invited`);
-    comboboxModel.value = {};
+    comboboxModel.value = null;
   }
 };
 
@@ -585,7 +590,7 @@ const submit = async () => {
   inviteForm.value.resetValidation();
   hour.value = null;
   inviteMessage.value = '';
-  comboboxModel.value = {};
+  comboboxModel.value = null;
   combobox.value.blur();
 };
 
