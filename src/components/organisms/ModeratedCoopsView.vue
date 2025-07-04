@@ -1,67 +1,32 @@
 <template>
   <div>
-    <v-overlay
-      v-if="loading"
-      v-model="loading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
+    <v-overlay v-if="loading" v-model="loading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         Loading Cooperators
       </div>
     </v-overlay>
-    <Intro
-      v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
-      @close-intro="intro = false"
-    />
+    <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops" @close-intro="intro = false" />
 
     <v-row justify="center">
       <v-container class="pa-0">
         <Snackbar />
         <!-- Leave alert dialog -->
-        <v-dialog
-          v-model="dialog"
-          width="600"
-          persistent
-        >
+        <v-dialog v-model="dialog" width="600" persistent>
           <LeaveAlert />
         </v-dialog>
 
         <ShowInfo title="Cooperators">
           <template #content>
-            <div
-              class="ma-0 pa-0"
-              style="background: #f5f7ff"
-            >
-              <v-row
-                class="ma-0 pa-0 pt-3"
-                align="center"
-              >
+            <div class="ma-0 pa-0" style="background: #f5f7ff">
+              <v-row class="ma-0 pa-0 pt-3" align="center">
                 <v-col class="mt-1 mx-4 pa-0">
-                  <v-combobox
-                    :key="comboboxKey"
-                    ref="combobox"
-                    v-model="comboboxModel"
-                    :menu-props="{
-                      rounded: 'xl',
-                    }"
-                    :hide-no-data="false"
-                    :autofocus="comboboxKey == 0 ? false : true"
-                    style="background: #f5f7ff;"
-                    :items="users"
-                    :item-title="item => item?.email || 'Select an Email'"
-                    label="Select cooperator"
-                    variant="outlined"
-                    rounded
-                    density="compact"
-                    color="#fca326"
-                    class="mx-2"
-                    @update:model-value="verifyEmail()"
-                  >
+                  <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :menu-props="{
+                    rounded: 'xl',
+                  }" :hide-no-data="false" :autofocus="comboboxKey == 0 ? false : true" style="background: #f5f7ff;"
+                    :items="users" :item-title="item => item?.email || 'Select an Email'" label="Select cooperator"
+                    variant="outlined" rounded density="compact" color="#fca326" class="mx-2"
+                    @update:model-value="verifyEmail()">
                     <template #no-data>
                       There are no users registered with that email, press enter
                       to select anyways.
@@ -69,27 +34,12 @@
                   </v-combobox>
                 </v-col>
               </v-row>
-              <v-card
-                class="mx-6"
-                border
-              >
-                <v-data-table
-                  style="background: #f5f7ff"
-                  :items="cooperatorsEdit"
-                  :headers="headers"
-                  height="450px"
-                  :items-per-page="7"
-                  items-per-page-text="7"
-                  :footer-props="{
-                    'items-per-page-options': [7],
-                  }"
-                >
+              <v-card class="mx-6" border>
+                <v-data-table style="background: #f5f7ff" :items="cooperatorsEdit" :headers="headers" height="450px"
+                  :items-per-page="10">
                   <!-- Email -->
                   <template #item.email="{ item }">
-                    <v-row
-                      class="ml-3"
-                      align="center"
-                    >
+                    <v-row class="ml-3" align="center">
                       <div>{{ item.email }}</div>
                     </v-row>
                   </template>
@@ -106,38 +56,23 @@
 
                   <!-- Invited -->
                   <template #item.invited="{ item }">
-                    <v-icon
-                      v-if="item.invited"
-                      color="#8EB995"
-                    >
+                    <v-icon v-if="item.invited" color="#8EB995">
                       mdi-checkbox-marked-circle-outline
                     </v-icon>
-                    <v-icon
-                      v-else
-                      color="#F47C7C"
-                    >
+                    <v-icon v-else color="#F47C7C">
                       mdi-close-circle-outline
                     </v-icon>
                   </template>
 
                   <!-- Accepted -->
                   <template #item.accepted="{ item }">
-                    <v-icon
-                      v-if="item.accepted == null"
-                      color="#F9A826"
-                    >
+                    <v-icon v-if="item.accepted == null" color="#F9A826">
                       mdi-checkbox-blank-circle-outline
                     </v-icon>
-                    <v-icon
-                      v-else-if="item.accepted"
-                      color="#8EB995"
-                    >
+                    <v-icon v-else-if="item.accepted" color="#8EB995">
                       mdi-checkbox-marked-circle-outline
                     </v-icon>
-                    <v-icon
-                      v-else
-                      color="#F47C7C"
-                    >
+                    <v-icon v-else color="#F47C7C">
                       mdi-close-circle-outline
                     </v-icon>
                   </template>
@@ -146,13 +81,7 @@
                   <template #item.session="{ item }">
                     <v-tooltip location="bottom">
                       <template #activator="{ props }">
-                        <v-btn
-                          v-if="item"
-                          v-bind="props"
-                          class="ml-1"
-                          icon
-                          @click="goToSession(item.userDocId)"
-                        >
+                        <v-btn v-if="item" v-bind="props" class="ml-1" icon @click="goToSession(item.userDocId)">
                           <v-icon>mdi-file-document-arrow-right</v-icon>
                         </v-btn>
                       </template>
@@ -164,40 +93,24 @@
                   <template #item.more="{ item }">
                     <v-menu>
                       <template #activator="{ props }">
-                        <v-btn
-                          icon
-                          v-bind="props"
-                        >
+                        <v-btn icon v-bind="props">
                           <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                       </template>
 
                       <v-list>
-                        <v-list-item
-                          link
-                          @click="messageModel = true; selectedUser = item"
-                        >
+                        <v-list-item link @click="messageModel = true; selectedUser = item">
                           <v-list-item-title>Send a message</v-list-item-title>
                         </v-list-item>
-                        <v-list-item
-                          v-if="item.accepted == false"
-                          link
-                          @click="reinvite(item)"
-                        >
+                        <v-list-item v-if="item.accepted == false" link @click="reinvite(item)">
                           <v-list-item-title>Re-invite</v-list-item-title>
                         </v-list-item>
 
-                        <v-list-item
-                          v-if="item.accepted"
-                          @click="removeCoop(item)"
-                        >
+                        <v-list-item v-if="item.accepted" @click="removeCoop(item)">
                           <v-list-item-title>Remove cooperator</v-list-item-title>
                         </v-list-item>
 
-                        <v-list-item
-                          v-if="item.invited && !item.accepted"
-                          @click="cancelInvitation(item)"
-                        >
+                        <v-list-item v-if="item.invited && !item.accepted" @click="cancelInvitation(item)">
                           <v-list-item-title>Cancel invitation</v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -211,17 +124,8 @@
       </v-container>
       <v-tooltip location="left">
         <template #activator="{ props }">
-          <v-btn
-            size="large"
-            icon
-            class="mr-5 mb-5"
-            position="fixed"
-            location="bottom right"
-            color="#F9A826"
-            :disabled="!comboboxModel.email"
-            v-bind="props"
-            @click="openInvitationModal()"
-          >
+          <v-btn size="large" icon class="mr-5 mb-5" position="fixed" location="bottom right" color="#F9A826"
+            :disabled="!comboboxModel.email" v-bind="props" @click="openInvitationModal()">
             <v-icon size="large">
               mdi-email
             </v-icon>
@@ -232,218 +136,98 @@
     </v-row>
     <AccessNotAllowed v-if="!loading && verified" />
     <div class="text-center">
-      <v-dialog
-        v-model="messageModel"
-        max-width="500"
-      >
+      <v-dialog v-model="messageModel" max-width="500">
         <v-card class="rounded-lg">
-          <v-card-title
-            style="background-color: #F9A826; color: white;"
-            class="rounded-top-lg"
-          >
-            <v-icon
-              color="white"
-              class="mr-2"
-            >
+          <v-card-title style="background-color: #F9A826; color: white;" class="rounded-top-lg">
+            <v-icon color="white" class="mr-2">
               mdi-email
             </v-icon>
             Send a Message
           </v-card-title>
           <v-card-text>
-            <v-text-field
-              v-model="messageTitle"
-              required
-              label="Title"
-              hint="Type a title for your message"
-              variant="outlined"
-              class="rounded-lg mt-4"
-            />
-            <v-textarea
-              v-model="messageContent"
-              required
-              label="Content"
-              hint="Type the content of your message"
-              variant="outlined"
-              class="rounded-lg"
-            />
+            <v-text-field v-model="messageTitle" required label="Title" hint="Type a title for your message"
+              variant="outlined" class="rounded-lg mt-4" />
+            <v-textarea v-model="messageContent" required label="Content" hint="Type the content of your message"
+              variant="outlined" class="rounded-lg" />
           </v-card-text>
           <v-divider />
 
           <v-card-actions>
             <v-spacer />
-            <v-btn
-              color="red"
-              variant="outlined"
-              class="rounded-lg"
-              @click="messageModel = false"
-            >
+            <v-btn color="red" variant="outlined" class="rounded-lg" @click="messageModel = false">
               Cancel
             </v-btn>
-            <v-btn
-              color="orange"
-              class="rounded-lg"
-              @click="sendMessage(selectedUser, messageTitle, messageContent)"
-            >
+            <v-btn color="orange" class="rounded-lg" @click="sendMessage(selectedUser, messageTitle, messageContent)">
               Send
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog
-        v-model="inviteModal"
-        class="rounded-lg"
-        max-width="950"
-        @click:outside="$refs.inviteForm.resetValidation()"
-      >
+      <v-dialog v-model="inviteModal" class="rounded-lg" max-width="950"
+        @click:outside="$refs.inviteForm.resetValidation()">
         <v-card class="rounded-xxl">
-          <v-card-title
-            style="color: #626E76;"
-            class="rounded-top-lg"
-          >
+          <v-card-title style="color: #626E76;" class="rounded-top-lg">
             {{ $t('UsabilityCooperators.inviteEvaluator') }}
           </v-card-title>
           <v-divider class="mb-4" />
           <v-card-text>
-            <v-form
-              ref="inviteForm"
-              v-model="valid"
-              validate-on="lazy"
-            >
+            <v-form ref="inviteForm" v-model="valid" validate-on="lazy">
               <v-row>
-                <v-col
-                  cols="5"
-                  class="ml-4 mt-2"
-                >
+                <v-col cols="5" class="ml-4 mt-2">
                   <span class="modalInternTitles">{{ $t('UsabilityCooperators.email') }}</span>
-                  <v-col
-                    cols="7"
-                    class="pa-0"
-                  >
-                    <v-text-field
-                      :model-value="comboboxModel.email"
-                      density="compact"
-                      disabled
-                      variant="outlined"
-                      bg-color="#D7D7D7"
-                      class="rounded-lg"
-                    />
+                  <v-col cols="7" class="pa-0">
+                    <v-text-field :model-value="comboboxModel.email" density="compact" disabled variant="outlined"
+                      bg-color="#D7D7D7" class="rounded-lg" />
                   </v-col>
                   <span class="modalInternTitles">{{ $t('UsabilityCooperators.scheduledAt') }}</span>
-                  <v-row
-                    justify="center"
-                    style="margin-top: -9px;"
-                  >
-                    <v-col
-                      cols="5"
-                      class="pr-0"
-                    >
-                      <v-menu
-                        ref="menu"
-                        offset="26"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        min-width="auto"
-                      >
+                  <v-row justify="center" style="margin-top: -9px;">
+                    <v-col cols="5" class="pr-0">
+                      <v-menu ref="menu" offset="26" :close-on-content-click="false" transition="scale-transition"
+                        min-width="auto">
                         <template #activator="{ props }">
-                          <v-text-field
-                            v-model="date"
-                            readonly
-                            color="orange"
-                            bg-color="grey lighten-3"
-                            v-bind="props"
-                            variant="outlined"
-                            density="compact"
-                            class="rounded-lg"
-                            :rules="[(v) => !!v || 'Required Date']"
-                            required
-                          />
+                          <v-text-field v-model="date" readonly color="orange" bg-color="grey lighten-3" v-bind="props"
+                            variant="outlined" density="compact" class="rounded-lg"
+                            :rules="[(v) => !!v || 'Required Date']" required />
                         </template>
-                        <v-date-picker
-                          v-model="date"
-                          :min="
-                            new Date(
-                              Date.now() - new Date().getTimezoneOffset() * 60000,
-                            )
-                              .toISOString()
-                              .substring(0, 10)
-                          "
-                          show-adjacent-months
-                          color="orange"
-                        />
+                        <v-date-picker v-model="date" :min="new Date(
+                          Date.now() - new Date().getTimezoneOffset() * 60000,
+                        )
+                          .toISOString()
+                          .substring(0, 10)
+                          " show-adjacent-months color="orange" />
                       </v-menu>
                     </v-col>
-                    <v-col
-                      cols="4"
-                      class="mr-auto"
-                    >
-                      <v-menu
-                        ref="menu"
-                        :close-on-content-click="false"
-                        offset="40"
-                        transition="scale-transition"
-                        min-width="auto"
-                      >
+                    <v-col cols="4" class="mr-auto">
+                      <v-menu ref="menu" :close-on-content-click="false" offset="40" transition="scale-transition"
+                        min-width="auto">
                         <template #activator="{ props }">
-                          <v-text-field
-                            v-model="hour"
-                            prepend-icon="mdi-clock-time-four-outline"
-                            density="compact"
-                            bg-color="grey lighten-3"
-                            color="orange"
-                            variant="outlined"
-                            class="rounded-lg"
-                            readonly
-                            v-bind="props"
-                            :rules="[(v) => !!v || 'Required Time']"
-                            required
-                          />
+                          <v-text-field v-model="hour" prepend-icon="mdi-clock-time-four-outline" density="compact"
+                            bg-color="grey lighten-3" color="orange" variant="outlined" class="rounded-lg" readonly
+                            v-bind="props" :rules="[(v) => !!v || 'Required Time']" required />
                         </template>
-                        <v-time-picker
-                          v-model="hour"
-                          :min="minTime"
-                          format="24hr"
-                          color="orange"
-                          scrollable
-                        />
+                        <v-time-picker v-model="hour" :min="minTime" format="24hr" color="orange" scrollable />
                       </v-menu>
                     </v-col>
                   </v-row>
                   <span class="modalInternTitles">{{ $t('UsabilityCooperators.inviteMessage') }} </span>
                   <v-row>
                     <v-col cols="9">
-                      <v-textarea
-                        v-model="inviteMessage"
-                        color="orange"
-                        bg-color="grey lighten-3"
-                        required
-                        :placeholder="$t('UsabilityCooperators.placeholderMessage')"
-                        variant="outlined"
-                        class="rounded-lg mt-1"
-                      />
+                      <v-textarea v-model="inviteMessage" color="orange" bg-color="grey lighten-3" required
+                        :placeholder="$t('UsabilityCooperators.placeholderMessage')" variant="outlined"
+                        class="rounded-lg mt-1" />
                     </v-col>
                   </v-row>
                 </v-col>
                 <v-col>
-                  <img
-                    class="ml-5"
-                    src="../../../public/Schedule.svg"
-                    alt="Schedule"
-                    height="330"
-                  >
+                  <img class="ml-5" src="../../../public/Schedule.svg" alt="Schedule" height="330">
                   <v-row>
-                    <v-col
-                      cols="9"
-                      style="text-align: center"
-                    >
+                    <v-col cols="9" style="text-align: center">
                       <span class="modalInternTitles">{{ $t('UsabilityCooperators.inviteInfo') }}</span>
                     </v-col>
                     <v-col cols="2">
-                      <v-btn
-                        color="orange"
-                        style="border-radius: 10px; text-transform: unset !important;font-weight: 600"
-                        size="large"
-                        @click="saveInvitation()"
-                      >
+                      <v-btn color="orange"
+                        style="border-radius: 10px; text-transform: unset !important;font-weight: 600" size="large"
+                        @click="saveInvitation()">
                         {{ $t('UsabilityCooperators.send') }}
                       </v-btn>
                     </v-col>
@@ -723,6 +507,7 @@ onMounted(() => {
   align-items: center;
   color: #000000;
 }
+
 .subtitleView {
   font-style: normal;
   font-weight: 200;
@@ -733,6 +518,7 @@ onMounted(() => {
   margin-bottom: 0px;
   padding-bottom: 0px;
 }
+
 .modalInternTitles {
   max-width: 270px;
   color: #626e76;
@@ -741,9 +527,11 @@ onMounted(() => {
   font-weight: 500;
   line-height: normal;
 }
+
 .v-application .v-autocomplete__content.menuable__content__active {
   border-radius: 20px !important;
 }
+
 .v-dialog {
   border-radius: 20px !important;
 }
