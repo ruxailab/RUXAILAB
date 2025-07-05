@@ -70,12 +70,27 @@
                   rounded
                   class="text-white"
                   style="background-color: #F9A826;"
-                  :loading="loading"
+                  :loading="loadingEmail"
                   @click="onSignUp"
                 >
                   Sign-up
                 </v-btn>
               </v-card-actions>
+              
+              <div class="text-center my-3">
+                <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
+              </div>
+              
+              <div class="mx-3">
+                <google-sign-in-button 
+                  :button-text="$t('SIGNIN.continueWithGoogle')"
+                  :loading="loadingGoogle"
+                  @google-sign-in-start="onGoogleSignInStart"
+                  @google-sign-in-success="onGoogleSignInSuccess"
+                  @google-sign-in-error="onGoogleSignInError"
+                />
+              </div>
+              
               <v-card-actions class="justify-center mt-1">
                 <p>
                   <a
@@ -106,6 +121,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 
 const email = ref('')
 const password = ref('')
@@ -118,6 +134,8 @@ const form = ref(null)
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
+const loadingEmail = ref(false)
+const loadingGoogle = ref(false)
 
 const emailRules = computed(() => [
   v => !!v || t('errors.emailIsRequired'),
@@ -141,6 +159,7 @@ const loading = computed(() => store.getters.loading)
 const onSignUp = async () => {
   const { valid: isValid } = await form.value.validate()
   if (isValid) {
+    loadingEmail.value = true
     try {
       await store.dispatch('signup', {
         email: email.value,
@@ -149,6 +168,8 @@ const onSignUp = async () => {
       await router.push('/')
     } catch (error) {
       console.error('Signup failed:', error)
+    } finally {
+      loadingEmail.value = false
     }
   }
 }
@@ -159,15 +180,18 @@ const redirectToSignin = () => {
 
 const onGoogleSignInStart = () => {
   // Event when Google sign-in starts
+  loadingGoogle.value = true
 }
 
 const onGoogleSignInSuccess = async () => {
   // Event when Google sign-in is successful
+  loadingGoogle.value = false
   await router.push('/')
 }
 
 const onGoogleSignInError = (error) => {
   // Event when Google sign-in fails
+  loadingGoogle.value = false
   console.error('Google sign-in error:', error)
 }
 </script>
