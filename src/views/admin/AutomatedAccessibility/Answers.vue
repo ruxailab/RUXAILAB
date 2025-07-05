@@ -123,7 +123,7 @@
 
           <!-- Issues & Preview Tab -->
           <v-window-item :value="1">
-            <v-row no-gutters style="height: 420px;">
+            <v-row no-gutters>
               <v-col cols="12" md="5">
                 <v-card height="100%" class="d-flex flex-column" density="compact">
                   <v-card-title class="py-2 px-3 text-body-2">
@@ -133,8 +133,7 @@
                   <v-card-text class="flex-grow-1 overflow-y-auto py-1 px-2" @scroll="onInfiniteScroll">
                     <v-list density="compact">
                       <v-list-item v-for="(issue, index) in infiniteIssues" :key="index"
-                        :active="selectedIssue === index"
-                        @click="selectIssue(index)" class="mb-1 py-1 px-1"
+                        :active="selectedIssue === index" @click="selectIssue(index)" class="mb-1 py-1 px-1"
                         style="min-height:36px;" rounded>
                         <template v-slot:prepend>
                           <v-avatar :color="getIssueColor(issue.type)" size="x-small">
@@ -182,7 +181,7 @@
 
           <!-- Issues & Details Tab -->
           <v-window-item :value="2">
-            <v-row no-gutters style="height: 420px;">
+            <v-row no-gutters>
               <v-col cols="12" md="5">
                 <v-card height="100%" class="d-flex flex-column" density="compact">
                   <v-card-title class="py-2 px-3 text-body-2">
