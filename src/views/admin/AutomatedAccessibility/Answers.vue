@@ -4,8 +4,12 @@
     <v-skeleton-loader v-if="isLoading" type="article, table-heading, table-tbody" class="mx-auto"></v-skeleton-loader>
 
     <!-- Error State -->
-    <v-alert v-else-if="error" type="error" variant="tonal" closable class="mb-2 text-body-2 pa-2">
-      {{ error }}
+    <v-alert v-else-if="error" type="error" variant="tonal" closable class="mb-2 text-body-2 pa-2 error-alert-center">
+      <div class="d-flex flex-column align-center justify-center">
+        <v-icon color="error" size="48" class="mb-2">mdi-alert-circle</v-icon>
+        <span class="text-h6 font-weight-bold mb-1">Error</span>
+        <span class="text-body-1">{{ error }}</span>
+      </div>
     </v-alert>
 
     <!-- Main Report Content -->
@@ -481,5 +485,9 @@ code {
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+.error-alert-center {
+  text-align: center;
 }
 </style>
