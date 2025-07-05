@@ -52,11 +52,6 @@ const navItems = computed(() => [
         path: `/report/${testId.value}`
     },
     {
-        title: 'Cooperation',
-        icon: 'mdi-account-group',
-        path: `/cooperation/${testId.value}`
-    },
-    {
         title: 'Settings',
         icon: 'mdi-cog',
         path: `/settings/${testId.value}`
