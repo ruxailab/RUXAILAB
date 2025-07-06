@@ -522,6 +522,7 @@ import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
 import SusForm from '@/components/atoms/SusForm.vue';
 import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
+import { nanoid } from 'nanoid'
 
 const videoUrl = ref('');
 const fullName = ref('');
@@ -583,7 +584,11 @@ const isPreTestTaskDisabled = (taskIndex) => {
 const saveAnswer = async () => {
   try {
     localTestAnswer.fullName = fullName.value;
+     if (user.value && user.value?.email) {
+      localTestAnswer.userDocId = user.value.id;
+    }
     if (!user.value) {
+      localTestAnswer.userDocId = nanoid(16)
       console.log(localTestAnswer.value)
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
