@@ -1,26 +1,10 @@
 <template>
   <div>
-    <v-list
-      v-if="items"
-      class="py-0"
-    >
-      <div
-        v-for="(item, n) in sortedItems"
-        :key="n"
-      >
-        <v-list-item
-          v-if="item"
-          :ripple="false"
-          class="py-3 px-4"
-          @click="emitClick(item)"
-        >
+    <v-list v-if="items" class="py-0">
+      <div v-for="(item, n) in sortedItems" :key="n">
+        <v-list-item v-if="item" :ripple="false" class="py-3 px-4" @click="emitClick(item)">
           <template #prepend>
-            <v-avatar
-              tile
-              size="40"
-              :color="generateColor()"
-              style="border-radius: 5px; color: #545454"
-            >
+            <v-avatar tile size="40" :color="generateColor()" style="border-radius: 5px; color: #545454">
               <span class="font-weight-bold text-body-1">
                 {{
                   (item.header?.templateTitle ??
@@ -38,14 +22,7 @@
               <div class="text-body-1 font-weight-medium">
                 {{ item.header?.templateTitle ?? item.testTitle ?? item.email }}
               </div>
-              <v-chip
-                v-if="type !== 'sessions'"
-                label
-                variant="outlined"
-                class="ml-2"
-                size="small"
-                style="color: grey"
-              >
+              <v-chip v-if="type !== 'sessions'" label variant="outlined" class="ml-2" size="small" style="color: grey">
                 {{ item.header?.templateType ?? item.testType ?? 'User' }}
               </v-chip>
             </div>
@@ -57,8 +34,8 @@
                   type === 'myTests' || type === 'myTemplates'
                     ? $t('pages.listTests.me')
                     : item.testAdmin?.email ??
-                      item.header?.templateAuthor?.userEmail ??
-                      item.testAuthorEmail
+                    item.header?.templateAuthor?.userEmail ??
+                    item.testAuthorEmail
                 }}
               </strong>
             </div>
@@ -66,22 +43,11 @@
 
           <template #append>
             <div class="d-flex flex-column align-end justify-center text-caption mr-2">
-              <v-tooltip
-                v-if="type === 'myTests'"
-                location="top"
-              >
+              <v-tooltip v-if="type === 'myTests'" location="top">
                 <template #activator="{ props }">
-                  <v-row
-                    v-bind="props"
-                    class="ma-0 pa-0"
-                    align="center"
-                    dense
-                  >
+                  <v-row v-bind="props" class="ma-0 pa-0" align="center" dense>
                     {{ item.numberColaborators ?? '-' }}
-                    <v-icon
-                      class="ml-1"
-                      size="16"
-                    >
+                    <v-icon class="ml-1" size="16">
                       mdi-account-multiple
                     </v-icon>
                   </v-row>
@@ -89,30 +55,17 @@
                 <span>{{ $t('titles.cooperators') }}</span>
               </v-tooltip>
 
-              <div
-                v-if="item.updateDate && type !== 'sessions'"
-                class="mt-1"
-              >
+              <div v-if="item.updateDate && type !== 'sessions'" class="mt-1">
                 {{ $t('pages.listTests.updated') }}
                 {{ getFormattedDate(item.updateDate) }}
               </div>
 
-              <v-chip
-                v-if="type === 'sessions'"
-                variant="outlined"
-                size="small"
-                class="mt-1"
-              >
+              <v-chip v-if="type === 'sessions'" variant="outlined" size="small" class="mt-1">
                 Scheduled for {{ getFormattedDate(item.testDate) }}
               </v-chip>
 
-              <v-chip
-                v-if="type === 'myTemplates' || type === 'publicTemplates'"
-                variant="outlined"
-                size="small"
-                class="mt-1"
-                label
-              >
+              <v-chip v-if="type === 'myTemplates' || type === 'publicTemplates'" variant="outlined" size="small"
+                class="mt-1" label>
                 {{ $t('pages.listTests.version') }}
                 {{ item.header?.templateVersion ?? '-' }}
               </v-chip>
@@ -122,19 +75,12 @@
         <v-divider v-if="n !== items.length - 1" />
       </div>
 
-      <v-row
-        v-if="items.length <= 0"
-        justify="center"
-        align="center"
-        class="ma-0 mt-2 pa-0"
-      >
-        <span
-          v-if="
-            type === 'myTests' ||
-              type === 'publicTests' ||
-              type === 'sharedWithMe'
-          "
-        >
+      <v-row v-if="items.length <= 0" justify="center" align="center" class="ma-0 mt-2 pa-0">
+        <span v-if="
+          type === 'myTests' ||
+          type === 'publicTests' ||
+          type === 'sharedWithMe'
+        ">
           {{ $t('pages.listTests.noTests') }}
         </span>
         <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'">
