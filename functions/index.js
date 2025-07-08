@@ -73,7 +73,7 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
     to: data.guest.email,
     subject: 'You have been invited to evaluate a test!',
     html: data.template,
-    attachments: data.attachments ?? [],
+    attachments: data.attachments || [],
   }
 
   try {
@@ -84,6 +84,36 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
     return `Error sending email: ${error.message}`
   }
 })
+
+exports.receiveCalibration = functions.https.onRequest(async (req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).send("Method Not Allowed");
+  }
+
+  try {
+    const {
+      sessionId,
+      model,
+      screen_height,
+      screen_width,
+      k
+    } = req.body;
+
+    // Salvar no Firestore (ou como preferir)
+    await admin.firestore().collection("calibrations").doc(sessionId).set({
+      model,
+      screen_height,
+      screen_width,
+      k,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return res.status(200).json({ message: "Calibration saved successfully" });
+  } catch (error) {
+    console.error("Error saving calibration:", error);
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 //code is in safe------------------------------------------------
 // exports.processSignUp = functions.auth.user().onCreate(async (user) => {
