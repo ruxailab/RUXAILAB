@@ -70,7 +70,7 @@
                   rounded
                   class="text-white"
                   style="background-color: #F9A826;"
-                  :loading="loading"
+                  :loading="emailPasswordLoading"
                   @click="onSignUp"
                 >
                   Sign-up
@@ -114,6 +114,7 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const valid = ref(true)
 const form = ref(null)
+const emailPasswordLoading = ref(false)
 
 const store = useStore()
 const router = useRouter()
@@ -136,12 +137,12 @@ const comparePassword = computed(() =>
 )
 
 const user = computed(() => store.getters.user)
-const loading = computed(() => store.getters.loading)
 
 const onSignUp = async () => {
   const { valid: isValid } = await form.value.validate()
   if (isValid) {
     try {
+      emailPasswordLoading.value = true
       await store.dispatch('signup', {
         email: email.value,
         password: password.value,
@@ -149,6 +150,8 @@ const onSignUp = async () => {
       await router.push('/')
     } catch (error) {
       console.error('Signup failed:', error)
+    } finally {
+      emailPasswordLoading.value = false
     }
   }
 }
