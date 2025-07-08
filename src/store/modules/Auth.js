@@ -96,6 +96,7 @@ export default {
             message: i18n.t('errors.incorrectPassword'),
           })
         } else {
+          console.error(err)
           commit('setError', {
             errorCode: 'auth',
             message: i18n.t('errors.incorrectCredential'),
