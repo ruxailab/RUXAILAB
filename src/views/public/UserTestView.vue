@@ -1,5 +1,12 @@
 <template>
   <div v-if="test">
+    <div>
+      <v-btn class="ma-4 flat bg-orange" @click="toggleTracking">
+        {{ isTracking ? 'Parar Tracking' : 'Iniciar Tracking' }}
+      </v-btn>
+
+      <IrisTracker :is-running="isTracking" :ms-per-capture="300" @data="handleIrisData" />
+    </div>
     <!-- Loading Overlay -->
     <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
@@ -204,7 +211,13 @@
 
         <!-- Right View -->
         <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
+
+          <!-- Start Calibration Card -->
+
+          <!-- <StartCalibrationCard @openCalibration="openCalibration()" v-if="index === 0 && taskIndex === 0" /> -->
+
           <!-- Consent -->
+
           <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
             <template #content>
               <v-row class="fill-height" align="center" justify="center">
@@ -522,6 +535,9 @@ import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
 import SusForm from '@/components/atoms/SusForm.vue';
 import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
+import axios from 'axios';
+import StartCalibrationCard from '@/components/atoms/StartCalibrationCard.vue';
+import IrisTracker from '@/components/organisms/IrisTracker.vue';
 
 const videoUrl = ref('');
 const fullName = ref('');
@@ -546,6 +562,16 @@ const doneTaskDisabled = ref(false);
 const rightView = ref(null);
 const videoRecorder = ref(null);
 const timerComponent = ref(null);
+
+//  Eye tracking web gazer testing 
+
+const isTracking = ref(false)
+const irisData = ref([])
+const gazeX = ref(null)
+const gazeY = ref(null)
+const showGaze = ref(true)
+
+//  Eye tracking web gazer testing 
 
 const localTestAnswer = reactive(new TaskAnswer());
 
@@ -574,6 +600,24 @@ const isTaskDisabled = (taskIndex) => {
   }
   return false;
 };
+
+const openCalibration = () => {
+  window.open('http://localhost:8081/calibration/configuration', '_blank');
+}
+
+function toggleTracking() {
+  isTracking.value = !isTracking.value
+  if (!isTracking.value) {
+    console.log('Tracking parado, dados coletados:', irisData.value.length)
+    // aqui pode fazer algo com os dados
+  }
+}
+
+function handleIrisData(data) {
+  irisData.value.push(data)
+  // ou envie para Vuex ou qualquer outra coisa que precisar
+  console.log('Dados recebidos:', data)
+}
 
 const isPreTestTaskDisabled = (taskIndex) => {
   if (taskIndex === 0) return localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted;
@@ -966,12 +1010,45 @@ onMounted(async () => {
     await autoComplete();
     calculateProgress();
   }
+  axios.post('https://b6eb-2804-14d-90a7-4af7-a186-e61d-1a24-cc40.ngrok-free.app/api/session/calib_validation')
+    .then(response => {
+      console.log("Resposta do eye-tracking API:", response);
+    })
+    .catch(error => {
+      console.log("Erro no eye-tracking API:", error);
+    });
+
+  //  Eye tracking web gazer testing 
+
+  // if (window.webgazer) {
+  //   window.saveDataAcrossSessions = false
+
+  //   window.webgazer
+  //     .setGazeListener((data) => {
+  //       if (data) {
+  //         gazeX.value = data.x
+  //         gazeY.value = data.y
+  //       }
+  //     })
+  //     .begin()
+  //     .then(() => {
+  //       window.webgazer.showVideo(false)
+  //       window.webgazer.showFaceOverlay(false)
+  //       window.webgazer.showFaceFeedbackBox(false)
+  //       window.webgazer.showPredictionPoints(false)
+  //     })
+
+  //   //  Eye tracking web gazer testing s
+  // }
 });
 
 onBeforeUnmount(() => {
   if (videoRecorder.value && typeof videoRecorder.value.stopRecording === 'function') {
     videoRecorder.value.stopRecording();
   }
+  // if (window.webgazer) {
+  //   window.webgazer.end()
+  // }
 });
 </script>
 
