@@ -17,6 +17,7 @@ export default class TaskAnswer {
     submitted,
     userDocId,
     lastUpdate,
+    invited,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -33,6 +34,7 @@ export default class TaskAnswer {
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
+    this.invited = invited ?? false
   }
   static toTaskAnswer(data) {
     return new TaskAnswer({
@@ -67,6 +69,7 @@ export default class TaskAnswer {
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
+      invited: this.invited,
     }
   }
 }

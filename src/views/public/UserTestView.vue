@@ -586,6 +586,7 @@ const saveAnswer = async () => {
     localTestAnswer.fullName = fullName.value;
      if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
+      localTestAnswer.invited = true;
     }
     if (!user.value) {
       localTestAnswer.userDocId = nanoid(16)
