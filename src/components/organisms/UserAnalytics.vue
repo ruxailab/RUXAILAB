@@ -1,5 +1,5 @@
 <template>
-  <div v-if="answers" class="analytics-dashboard">
+  <div class="analytics-dashboard">
     <v-container fluid class="pa-6">
       <!-- Header Section -->
       <div class="mb-6">
@@ -7,101 +7,117 @@
           Analytics Dashboard
         </h1>
         <p class="text-body-1 text-grey-600">
-          Select a task to view participant details and answers
+          User sessions and task completion overview
         </p>
       </div>
 
-      <!-- Main Table Layout -->
-      <v-card class="elevation-2 overflow-hidden" rounded='xl'>
-        <div class="d-flex" style="min-height: 600px;">
-          <!-- Tasks List -->
-          <div class="tasks-sidebar">
-            <div class="sidebar-header pa-4 bg-grey-50">
-              <h3 class="text-h6 font-weight-bold text-grey-800">Tasks</h3>
-              <p class="text-body-2 text-grey-600 mb-0">{{ testTasks.length }} total</p>
-            </div>
-            <v-divider />
-            <div class="tasks-list">
-              <div
-                v-for="(taskName, index) in testTasks"
-                :key="index"
-                class="task-item pa-4 cursor-pointer d-flex align-center justify-space-between"
-                :class="{ 'active': taskSelect === index }"
-                @click="taskSelect = index"
-              >
-                <div class="flex-grow-1">
-                  <div class="font-weight-medium text-grey-800 mb-1">
-                    {{ taskName }}
-                  </div>
-                  <div class="text-body-2 text-grey-600">
-                    {{ taskAnswers.filter(t => t.taskName === taskName).length }} participant(s)
-                  </div>
+      <!-- Main Data Table -->
+      <v-card class="elevation-2 overflow-hidden">
+        <v-data-table
+          :headers="dataHeaders"
+          :items="tableData"
+          :items-per-page="10"
+          class="elevation-0"
+        >
+          <template #item.identifier="{ item }">
+            <v-chip
+              color="primary"
+              variant="tonal"
+              size="small"
+              class="font-weight-bold font-mono"
+            >
+              {{ item.identifier }}
+            </v-chip>
+          </template>
+
+          <template #item.user="{ item }">
+            <div class="d-flex align-center py-2">
+              <v-avatar size="32" class="mr-3" color="primary">
+                <span class="text-white text-body-2 font-weight-bold">
+                  {{ item.fullName.charAt(0).toUpperCase() }}
+                </span>
+              </v-avatar>
+              <div>
+                <div class="font-weight-medium text-grey-800">
+                  {{ item.fullName }}
                 </div>
-                <v-icon 
-                  v-if="taskSelect === index"
-                  color="primary"
-                  size="20"
-                >
-                  mdi-chevron-right
-                </v-icon>
+                <div class="text-body-2 text-grey-600">
+                  {{ item.email }}
+                </div>
               </div>
             </div>
-          </div>
+          </template>
 
-          <v-divider vertical />
-
-          <!-- Participants Table -->
-          <div class="participants-section flex-grow-1">
-            <div class="section-header pa-4 bg-grey-50">
-              <h3 class="text-h6 font-weight-bold text-grey-800">
-                {{ testTasks[taskSelect] || 'Select a Task' }}
-              </h3>
-              <p class="text-body-2 text-grey-600 mb-0">
-                {{ filteredParticipants.length }} participant(s)
-              </p>
-            </div>
-            <v-divider />
-
-            <div v-if="filteredParticipants.length" class="participants-table">
-              <v-data-table
-                :headers="dataHeaders"
-                :items="filteredParticipants"
-                class="elevation-0"
-                hide-default-footer
+          <template #item.tasks="{ item }">
+            <div class="py-2">
+              <div class="d-flex align-center mb-2">
+                <v-icon size="16" color="success" class="mr-1">mdi-check-circle</v-icon>
+                <span class="font-weight-medium mr-3">{{ item.completedCount }}/{{ item.totalTasks }}</span>
+                <v-icon size="16" color="primary" class="mr-1">mdi-timer-outline</v-icon>
+                <span class="text-body-2 text-grey-600">{{ formatTime(item.avgTimeSeconds) }} avg</span>
+              </div>
+              <v-btn
+                color="accent"
+                variant="tonal"
+                size="small"
+                prepend-icon="mdi-clipboard-list"
+                @click="showTaskDetails(item)"
+                class="font-weight-medium"
               >
-                <template #item.userDocId="{ item }">
-                  <span>{{ item.fullName }}</span>
-                </template>
-                <template #item.actions="{ item }">
-                  <v-btn
-                    color="accent"
-                    variant="tonal"
-                    size="small"
-                    prepend-icon="mdi-eye"
-                    @click="viewAnswers(item)"
-                  >
-                    Show Answers
-                  </v-btn>
-                </template>
-              </v-data-table>
-
-              <div class="pa-4 bg-grey-50 d-flex justify-end text-body-2 text-grey-600">
-                Showing {{ filteredParticipants.length }} of {{ filteredParticipants.length }} participants
-              </div>
+                Task Details
+              </v-btn>
             </div>
+          </template>
 
-            <div v-else class="empty-state pa-8 text-center">
-              <v-icon size="64" color="grey-400" class="mb-4">mdi-account-search</v-icon>
-              <h3 class="text-h6 text-grey-600 mb-2">No participants found</h3>
-              <p class="text-body-2 text-grey-500">
-                No participants have attempted this task yet.
-              </p>
+          <template #item.invited="{ item }">
+            <v-chip
+              :color="item.invited ? 'success' : 'grey'"
+              :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
+              size="small"
+              variant="tonal"
+            >
+              {{ item.invited ? 'Yes' : 'No' }}
+            </v-chip>
+          </template>
+
+          <template #item.actions="{ item }">
+            <div class="d-flex gap-2">
+              <v-btn
+                color="primary"
+                variant="tonal"
+                size="small"
+                prepend-icon="mdi-eye"
+                @click="viewAnswers(item)"
+                class="font-weight-medium"
+              >
+                View Detail
+              </v-btn>
+              <v-btn
+                :color="item.hidden ? 'warning' : 'secondary'"
+                variant="tonal"
+                size="small"
+                :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'"
+                @click="toggleHideSession(item.id)"
+                class="font-weight-medium"
+              >
+                {{ item.hidden ? 'Show' : 'Hide' }}
+              </v-btn>
+              <v-btn
+                color="error"
+                variant="tonal"
+                size="small"
+                prepend-icon="mdi-delete"
+                @click="deleteSession(item.id)"
+                class="font-weight-medium"
+              >
+                Delete
+              </v-btn>
             </div>
-          </div>
-        </div>
+          </template>
+        </v-data-table>
       </v-card>
 
-      <!-- Modal -->
+      <!-- Modal (Restored from Original Design) -->
       <v-dialog
         v-model="showDialog"
         max-width="600"
@@ -110,7 +126,7 @@
       >
         <v-card>
           <v-toolbar color="orange" class="pl-3">
-            <span class="text-h5">Answer and Observation</span>
+            <span class="text-h5">Test Details</span>
             <v-btn class="ml-auto" icon @click="showDialog = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
@@ -119,7 +135,7 @@
             <v-row v-if="dialogItem">
               <v-col
                 v-if="dialogItem.preTestAnswer.length"
-                :cols="dialogItem.tasks[taskSelect].taskTime ? '10' : '12'"
+                cols="12"
                 class="pt-8"
               >
                 <span class="cardsTitle ma-3">Variables</span>
@@ -132,18 +148,6 @@
                     >
                       <strong>{{ q.title }}</strong> : {{ dialogItem.preTestAnswer[i].answer }}
                     </span>
-                  </div>
-                </v-card>
-              </v-col>
-              <v-col
-                v-if="dialogItem.tasks[taskSelect].taskTime"
-                cols="2"
-                class="pt-8"
-              >
-                <span class="text-h6 font-weight-bold">Task Time</span>
-                <v-card border rounded="xl">
-                  <div class="ma-6">
-                    <p class="text-h6">{{ formatTime(dialogItem.tasks[taskSelect].taskTime) }}</p>
                   </div>
                 </v-card>
               </v-col>
@@ -161,28 +165,12 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col v-if="dialogItem.tasks[taskSelect].taskAnswer" :cols="dialogItem.tasks[taskSelect].taskObservations ? '6' : '12'" class="mt-4">
-                <span class="cardsTitle ma-3">Answer</span>
-                <v-card border rounded="xl">
-                  <div class="ma-6">
-                    <span>{{ dialogItem.tasks[taskSelect].taskAnswer }}</span>
-                  </div>
-                </v-card>
-              </v-col>
               <v-col v-if="dialogItem.tasks[taskSelect].postAnswer" cols="12" class="mt-4">
                 <span class="cardsTitle ma-3">Post Question</span>
                 <v-card border rounded="xl">
                   <div class="ma-6">
                     <strong>{{ testStructure.userTasks[taskSelect].postQuestion }}</strong> :
                     <span>{{ dialogItem.tasks[taskSelect].postAnswer }}</span>
-                  </div>
-                </v-card>
-              </v-col>
-              <v-col v-if="dialogItem.tasks[taskSelect].taskObservations" :cols="dialogItem.tasks[taskSelect].taskAnswer ? '6' : '12'" class="mt-4">
-                <span class="cardsTitle ma-3">Observation</span>
-                <v-card border rounded="xl">
-                  <div class="ma-6">
-                    <span>{{ dialogItem.tasks[taskSelect].taskObservations }}</span>
                   </div>
                 </v-card>
               </v-col>
@@ -202,6 +190,12 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+
+      <TaskDetailsModal
+        v-model="showTaskDetailsModal"
+        :user-session="selectedUserSession"
+        @close="closeTaskDetailsModal"
+      />
     </v-container>
   </div>
 </template>
@@ -209,35 +203,76 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import TaskDetailsModal from '../atoms/TaskDetailsModal.vue';
 
 const store = useStore();
-
 const showDialog = ref(false);
 const dialogItem = ref(null);
 const taskSelect = ref(0);
 const testTasks = ref([]);
 const taskAnswers = ref([]);
+const showTaskDetailsModal = ref(false)
+const selectedUserSession = ref(null)
 
-const dataHeaders = ref([
-  { title: 'Full Name', value: 'userDocId', sortable: true},
-  { title: 'Actions', value: 'actions', width: '160px'},
-]);
+const dataHeaders = [
+  { title: 'Identifier', key: 'identifier', sortable: true, width: '120px' },
+  { title: 'User', key: 'user', sortable: true },
+  { title: 'Tasks', key: 'tasks', sortable: false, width: '280px' },
+  { title: 'Invited', key: 'invited', sortable: true, width: '100px' },
+  { title: 'Actions', key: 'actions', sortable: false, width: '300px' },
+];
 
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
-const answers = computed(() => store.getters.testAnswerDocument?.taskAnswers || []);
-const filteredParticipants = computed(() => taskAnswers.value.filter((_, i) => true));
+const answers = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
+const tableData = computed(() => Object.values(answers.value).map((item, index) => {
+  const tasks = Object.values(item.tasks || {});
+  const completedCount = tasks.filter(t => !!t.completed).length;
+  const totalTasks = testStructure.value.userTasks.length;
+  const avgTime = tasks.reduce((sum, t) => sum + (t.taskTime || 0), 0) / (completedCount || 1);
+  return {
+    ...item,
+    identifier: `#${index + 1}`,
+    completedCount,
+    totalTasks,
+    avgTimeSeconds: Math.floor(avgTime / 1000),
+  };
+}));
 
 const formatTime = (time) => {
-  const seconds = Math.floor(time / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 };
 
 const viewAnswers = (item) => {
   dialogItem.value = item;
   showDialog.value = true;
 };
+
+const showTaskDetails = (session) => {
+  const tasksWithNames = {}
+  const taskNames = testTasks.value
+  Object.entries(session.tasks || {}).forEach(([key, task], index) => {
+    tasksWithNames[key] = {
+      ...task,
+      taskName: taskNames[index]
+    }
+  })
+
+  selectedUserSession.value = {
+    ...session,
+    tasks: tasksWithNames,
+  };
+  showTaskDetailsModal.value = true
+}
+
+const closeTaskDetailsModal = () => {
+  showTaskDetailsModal.value = false
+  selectedUserSession.value = null
+}
+
+const toggleHideSession = (id) => console.log('Toggle hide session', id);
+const deleteSession = (id) => console.log('Delete session', id);
 
 onMounted(() => {
   testStructure.value.userTasks.forEach((task, i) => {
@@ -253,90 +288,21 @@ onMounted(() => {
   background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
 }
 
-.tasks-sidebar {
-  width: 350px;
-  background: white;
-  border-right: 1px solid #E5E7EB;
+.gap-2 {
+  gap: 8px;
 }
 
-.sidebar-header,
-.section-header {
-  border-bottom: 1px solid #E5E7EB;
+.font-mono {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
 }
 
-.tasks-list {
-  max-height: calc(600px - 80px);
-  overflow-y: auto;
-}
-
-.task-item {
-  border-bottom: 1px solid #F1F5F9;
-  transition: all 0.2s ease;
-}
-
-.task-item:hover {
-  background-color: #F8FAFC;
-}
-
-.task-item.active {
-  background-color: #EBF4FF;
-  border-right: 3px solid var(--v-theme-primary);
-}
-
-.task-item:last-child {
-  border-bottom: none;
-}
-
-.participants-section {
-  background: white;
-}
-
-.participants-table {
-  max-height: calc(600px - 80px);
-  overflow-y: auto;
-}
-
-.empty-state {
-  height: calc(600px - 80px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-/* Custom scrollbar */
-.tasks-list::-webkit-scrollbar,
-.participants-table::-webkit-scrollbar {
-  width: 6px;
-}
-
-.tasks-list::-webkit-scrollbar-track,
-.participants-table::-webkit-scrollbar-track {
-  background: #F1F5F9;
-}
-
-.tasks-list::-webkit-scrollbar-thumb,
-.participants-table::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 3px;
-}
-
-.tasks-list::-webkit-scrollbar-thumb:hover,
-.participants-table::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
-}
-
-/* Data table customization */
 :deep(.v-data-table) {
-  background: transparent !important;
+  background: white !important;
+  border-radius: 12px !important;
 }
 
 :deep(.v-data-table__wrapper) {
-  border-radius: 0 !important;
+  border-radius: 12px !important;
 }
 
 :deep(.v-data-table-header) {
@@ -347,6 +313,7 @@ onMounted(() => {
   font-weight: 600 !important;
   color: #374151 !important;
   border-bottom: 1px solid #E5E7EB !important;
+  padding: 16px !important;
 }
 
 :deep(.v-data-table__tr:hover) {
@@ -355,5 +322,9 @@ onMounted(() => {
 
 :deep(.v-data-table__tr) {
   border-bottom: 1px solid #F1F5F9 !important;
+}
+
+:deep(.v-data-table__td) {
+  padding: 12px 16px !important;
 }
 </style>
