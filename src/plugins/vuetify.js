@@ -12,7 +12,11 @@ const myCustomLightTheme = {
     error: '#EF4444',
     warning: '#F59E0B',
     success: '#22C55E',
-    'on-surface': '#1F2937'
+    'on-surface': '#1F2937',
+    excellent: '#4caf50',
+    good: '#2196f3',
+    ok: '#ff9800',
+    poor: '#f44336',
   },
 }
 
