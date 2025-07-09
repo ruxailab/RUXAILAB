@@ -168,7 +168,7 @@ const handleTestType = () => {
     return;
   }
 
-  if (props.testType === 'MANUAL') {
+  if (props.testType === 'manual') {
     console.log('Manual test type detected');
     submitAccessibility();
     return;
