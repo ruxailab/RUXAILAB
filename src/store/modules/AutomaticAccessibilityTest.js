@@ -1,5 +1,5 @@
 // Vuex store for Automatic Accessibility Tests
-import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
+// import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 import AutomaticAccessibilityController from '@/controllers/AutomaticAccessibilityController';
 
 export default {
@@ -31,10 +31,13 @@ export default {
         }
     },
     actions: {
-        async fetchTests({ commit }) {
+        async fetchTests({ commit, rootState }) {
             commit('SET_LOADING', true);
             try {
-                const tests = await AutomaticAccessibilityController.getUserTests(); // You may want to pass userId
+                // Get userId from rootState.Auth.user
+                const userId = rootState.Auth?.user?.id;
+                if (!userId) throw new Error('User not authenticated');
+                const tests = await AutomaticAccessibilityController.getUserTests(userId);
                 commit('SET_TESTS', tests);
             } catch (e) {
                 commit('SET_ERROR', e);
