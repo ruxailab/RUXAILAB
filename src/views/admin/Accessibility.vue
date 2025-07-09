@@ -70,7 +70,7 @@ const setTestType = (type) => {
 
 const navigateToTest = (type) => {
   testType.value = type;
-  router.push(`/accessibility/${type}`);
+  // router.push(`/accessibility/${type}`);
 };
 </script>
 
