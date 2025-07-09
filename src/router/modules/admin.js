@@ -160,7 +160,7 @@ export default [
     component: CreateFromTemplate,
   },
   {
-    path: '/accessibility/automatic//:testId',
+    path: '/accessibility/automatic/:testId',
     name: 'AutomatedAccessibility',
     component: AutomatedAccessibilityManager,
     meta: { authorize: [1] },
@@ -232,7 +232,7 @@ export default [
         meta: { authorize: [1] }
       },
       {
-        path: '/answers/:testId',
+        path: '/result/:testId',
         name: 'AccessibilityTestAnswers',
         component: () => import('@/views/admin/AccessibilityAnswer.vue'),
         props: true,
@@ -253,7 +253,7 @@ export default [
         meta: { authorize: [1] }
       },
       {
-        path: '/settings/:testId',
+        path: '/setting/:testId',
         name: 'AccessibilityTestSettings',
         component: () => import('@/views/admin/AccessibilitySettings.vue'),
         props: true,
