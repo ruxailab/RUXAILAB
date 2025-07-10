@@ -1,90 +1,102 @@
 <template>
   <v-app>
-    <!-- Main Content -->
     <v-main>
-      <v-container fluid class="pa-6">
+      <v-container fluid class="dashboard-container">
         <!-- Welcome Banner -->
-        <v-card class="mb-8" elevation="8" rounded="lg">
+        <v-card 
+          class="welcome-banner mb-8" 
+          elevation="0"
+          rounded="xl"
+        >
           <v-card-text class="pa-8">
-            <v-row align="center">
+            <v-row align="center" no-gutters>
               <v-col cols="12" md="8">
-                <div class="text-h3 font-weight-bold text-primary mb-2">
-                  Welcome Back!
-                </div>
-                <div class="text-h6 text-medium-emphasis mb-4">
-                  Here's what's happening with your dashboard today
-                </div>
-                <div class="text-body-1 text-medium-emphasis">
-                  Monitor your analytics, manage reports, and stay on top of
-                  your data insights.
+                <div class="welcome-content">
+                  <h1 class="display-1 font-weight-bold text-primary mb-3">
+                    Welcome Back!
+                  </h1>
+                  <h2 class="text-h5 text-medium-emphasis mb-4 font-weight-regular">
+                    Here's what's happening with your dashboard today
+                  </h2>
+                  <p class="text-body-1 text-medium-emphasis mb-0">
+                    Monitor your analytics, manage reports, and stay on top of
+                    your data insights with our comprehensive dashboard.
+                  </p>
                 </div>
               </v-col>
               <v-col cols="12" md="4" class="text-center">
-                <v-icon size="120" color="primary" class="opacity-20">
-                  mdi-chart-line
-                </v-icon>
+                <div class="welcome-icon-container">
+                  <v-icon size="100" class="welcome-icon">
+                    mdi-view-dashboard-variant
+                  </v-icon>
+                </div>
               </v-col>
             </v-row>
           </v-card-text>
         </v-card>
 
-        <!-- Dashboard Cards -->
-        <v-row>
+        <!-- Dashboard Stats Overview -->
+        <v-row class="mb-6">
+          <v-col cols="12">
+            <h3 class="text-h4 font-weight-bold mb-6 text-center">
+              Dashboard Overview
+            </h3>
+          </v-col>
+        </v-row>
+
+        <!-- Dashboard Navigation Cards -->
+        <v-row class="dashboard-grid">
           <v-col
-            v-for="item in navItems"
+            v-for="(item, index) in navItems"
             :key="item.title"
             cols="12"
             sm="6"
-            lg="4"
-            xl="2.4"
+            md="4"
+            lg="2.4"
           >
             <v-card
               class="dashboard-card"
-              elevation="4"
-              rounded="lg"
+              elevation="0"
+              rounded="xl"
               hover
               @click="navigateTo(item.title)"
+              :style="{ 'animation-delay': `${index * 100}ms` }"
             >
-              <v-card-text class="text-center pa-6">
-                <div class="card-icon-wrapper mb-4">
-                  <v-icon
-                    :size="48"
-                    :color="
-                      item.title === 'Home'
-                        ? 'blue'
-                        : item.title === 'Analyse'
-                        ? 'green'
-                        : item.title === 'Answers'
-                        ? 'orange'
-                        : item.title === 'Report'
-                        ? 'purple'
-                        : item.title === 'Settings'
-                        ? 'red'
-                        : 'primary'
-                    "
+              <v-card-text class="card-content">
+                <div class="card-header mb-4">
+                  <div 
+                    class="icon-container"
+                    :class="`icon-${item.title.toLowerCase()}`"
                   >
-                    {{ item.icon }}
-                  </v-icon>
+                    <v-icon 
+                      :size="32" 
+                      class="card-icon"
+                      color="white"
+                    >
+                      {{ item.icon }}
+                    </v-icon>
+                  </div>
                 </div>
-                <div class="text-h6 font-weight-bold mb-2">
-                  {{ item.title }}
+                
+                <div class="card-body">
+                  <h4 class="text-h6 font-weight-bold mb-2 card-title">
+                    {{ item.title }}
+                  </h4>
+                  <p class="text-body-2 text-medium-emphasis card-description">
+                    {{ getDescription(item.title) }}
+                  </p>
                 </div>
-                <div class="text-body-2 text-medium-emphasis">
-                  <template v-if="item.title === 'Home'"
-                    >Main dashboard overview</template
+
+                <div class="card-footer mt-4">
+                  <v-btn
+                    variant="text"
+                    size="small"
+                    class="card-action-btn"
+                    :ripple="false"
                   >
-                  <template v-else-if="item.title === 'Analyse'"
-                    >Run accessibility analysis</template
-                  >
-                  <template v-else-if="item.title === 'Answers'"
-                    >Manage Q&amp;A responses</template
-                  >
-                  <template v-else-if="item.title === 'Report'"
-                    >Generate and view reports</template
-                  >
-                  <template v-else-if="item.title === 'Settings'"
-                    >Configure preferences</template
-                  >
+                    Open
+                    <v-icon size="16" class="ml-1">mdi-arrow-right</v-icon>
+                  </v-btn>
                 </div>
               </v-card-text>
             </v-card>
@@ -103,31 +115,31 @@ const route = useRoute()
 const router = useRouter()
 const testId = ref(route.params.testId || '')
 
-// Navigation items for the drawer and dashboard cards
+// Navigation items for the dashboard cards
 const navItems = computed(() => [
   {
     title: 'Home',
-    icon: 'mdi-home',
+    icon: 'mdi-home-variant',
     path: `/accessibility/automatic/${testId.value}`,
   },
   {
     title: 'Analyse',
-    icon: 'mdi-magnify',
+    icon: 'mdi-chart-line-variant',
     path: `/analyse/${testId.value}`,
   },
   {
     title: 'Answers',
-    icon: 'mdi-comment-question',
+    icon: 'mdi-comment-question-outline',
     path: `/answers/${testId.value}`,
   },
   {
     title: 'Report',
-    icon: 'mdi-chart-bar',
+    icon: 'mdi-file-chart-outline',
     path: `/report/${testId.value}`,
   },
   {
     title: 'Settings',
-    icon: 'mdi-cog',
+    icon: 'mdi-cog-outline',
     path: `/settings/${testId.value}`,
   },
 ])
@@ -141,66 +153,224 @@ const navigateTo = (section) => {
     router.push(item.path)
   }
 }
+
+const getDescription = (title) => {
+  const descriptions = {
+    'Home': 'Main dashboard overview and statistics',
+    'Analyse': 'Run comprehensive accessibility analysis',
+    'Answers': 'Manage Q&A responses and feedback',
+    'Report': 'Generate detailed reports and insights',
+    'Settings': 'Configure preferences and options'
+  }
+  return descriptions[title] || 'Navigate to this section'
+}
 </script>
 
 <style scoped>
+/* Main Container */
+.dashboard-container {
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-content {
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.welcome-icon-container {
+  animation: slideInRight 0.8s ease-out;
+}
+
+.welcome-icon {
+  color: rgba(102, 126, 234, 0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Dashboard Cards */
+.dashboard-grid {
+  animation: fadeInUp 0.6s ease-out;
+}
+
 .dashboard-card {
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
   height: 100%;
+  opacity: 0;
+  animation: cardSlideIn 0.6s ease-out forwards;
 }
 
 .dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 1);
 }
 
-.card-icon-wrapper {
+.card-content {
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
   display: flex;
   justify-content: center;
+}
+
+.icon-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
   align-items: center;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto;
-  border-radius: 50%;
-  background: rgba(var(--v-theme-surface-variant), 0.1);
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.v-main {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
+.icon-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  border-radius: inherit;
 }
 
-.v-card {
-  backdrop-filter: blur(10px);
+.icon-home { background: linear-gradient(135deg, #667eea, #764ba2); }
+.icon-analyse { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.icon-answers { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.icon-report { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.icon-settings { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+.card-icon {
+  position: relative;
+  z-index: 1;
 }
 
-/* Custom color classes */
-.text-blue {
-  color: #2196f3 !important;
+.card-body {
+  flex: 1;
+  text-align: center;
 }
 
-.text-green {
-  color: #4caf50 !important;
+.card-title {
+  color: #2c3e50;
 }
 
-.text-orange {
-  color: #ff9800 !important;
+.card-description {
+  line-height: 1.5;
 }
 
-.text-purple {
-  color: #9c27b0 !important;
+.card-footer {
+  text-align: center;
 }
 
-/* Responsive adjustments */
+.card-action-btn {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover .card-action-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Responsive Design */
 @media (max-width: 960px) {
-  .text-h3 {
+  .dashboard-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .welcome-banner .pa-8 {
+    padding: 1.5rem !important;
+  }
+  
+  .display-1 {
     font-size: 2rem !important;
   }
+  
+  .card-content {
+    padding: 1.5rem;
+  }
+  
+  .icon-container {
+    width: 56px;
+    height: 56px;
+  }
+}
 
-  .card-icon-wrapper {
-    width: 60px;
-    height: 60px;
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 0.5rem;
+  }
+  
+  .card-content {
+    padding: 1rem;
   }
 }
 </style>
