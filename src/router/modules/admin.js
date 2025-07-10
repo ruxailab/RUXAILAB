@@ -214,27 +214,27 @@ export default [
       {
         path: '',
         name: 'AccessibilityHome',
-        component: () => import('@/views/admin/AccessibilityHome.vue'),
+        component: () => import('@/views/admin/ManualAccessibility/AccessibilityHome.vue'),
         meta: { authorize: [1] }
       },
       {
         path: '/edit/:testId',
         name: 'EditAccessibilityTest',
-        component: () => import('@/views/admin/AccessibilityEditTest.vue'),
+        component: () => import('@/views/admin/ManualAccessibility/AccessibilityEditTest.vue'),
         props: true,
         meta: { authorize: [1] }
       },
       {
         path: '/preview/:testId',
         name: 'AccessibilityPreviewTest',
-        component: () => import('@/views/admin/AccessibilityPreviewTest.vue'),
+        component: () => import('@/views/admin/ManualAccessibility/AccessibilityPreviewTest.vue'),
         props: true,
         meta: { authorize: [1] }
       },
       {
         path: '/result/:testId',
         name: 'AccessibilityTestAnswers',
-        component: () => import('@/views/admin/AccessibilityAnswer.vue'),
+        component: () => import('@/views/admin/ManualAccessibility/AccessibilityAnswer.vue'),
         props: true,
         meta: { authorize: [1] }
       },
