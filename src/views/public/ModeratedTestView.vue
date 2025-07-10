@@ -605,6 +605,8 @@ const recordedChunksEvaluator = ref([]);
 const recordedChunksModerator = ref([]);
 const recordedVideoEvaluator = ref('');
 const recordedVideoModerator = ref('');
+const recordedAudioModerator = ref('');
+const recordedAudioEvaluator = ref('');
 const videoStream = ref(null);
 const mediaRecorderEvaluator = ref(null);
 const mediaRecorderModerator = ref(null);
@@ -821,6 +823,31 @@ const uploadVideo = async (recordedChunks, storagePath) => {
   });
 };
 
+const uploadAudio = async (recordedChunks, storagePath) => {
+  const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+  const storage = getStorage();
+  const ref = storageRef(storage, storagePath);
+  const uploadTask = uploadBytesResumable(ref, audioBlob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        uploadProgress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        console.error('Upload failed:', error);
+        isLoading.value = false;
+        reject(error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(ref);
+        resolve(downloadURL);
+      },
+    );
+  });
+};
+
 const startRecordingEvaluator = async () => {
   recording.value = true;
   recordedChunksEvaluator.value = [];
@@ -838,10 +865,13 @@ const startRecordingEvaluator = async () => {
 
   mediaRecorderEvaluator.value.onstop = async () => {
     isLoading.value = true;
-    const storagePath = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    const storagePathVideo = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    const storagePathAudio = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/audio/${recordedAudioEvaluator.value}`;
     try {
-      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePath);
+      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePathVideo);
+      recordedAudioEvaluator.value = await uploadAudio(recordedChunksEvaluator.value, storagePathAudio);
       currentUserTestAnswer.value.cameraUrlEvaluator = recordedVideoEvaluator.value;
+      currentUserTestAnswer.value.audioUrlEvaluator = recordedAudioEvaluator.value;
       isLoading.value = false;
       saved.value = true;
       window.onbeforeunload = null;
@@ -879,8 +909,12 @@ const startRecordingModerator = async () => {
   mediaRecorderModerator.value.onstop = async () => {
     isLoading.value = true;
     try {
-      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, storagePath);
+      const videoStoragePath = `tests/${roomTestId.value}/${route.params.token}/moderator/video/${recordedVideoModerator.value}`;
+      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, videoStoragePath);
       currentUserTestAnswer.value.cameraUrlModerator = recordedVideoModerator.value;
+      const audioStoragePath = `tests/${roomTestId.value}/${route.params.token}/moderator/audio/${recordedAudioModerator.value}`;
+      recordedAudioModerator.value = await uploadAudio(recordedChunksModerator.value, audioStoragePath);
+      currentUserTestAnswer.value.audioUrlModerator = recordedAudioModerator.value;
       isLoading.value = false;
       saved.value = true;
       window.onbeforeunload = null;
@@ -894,7 +928,8 @@ const startRecordingModerator = async () => {
   mediaRecorderModerator.value.start();
   backupInterval.value = setInterval(async () => {
     if (recording.value) {
-      await uploadVideo(recordedChunksModerator.value, storagePath);
+      await uploadVideo(recordedChunksModerator.value, videoStoragePath);
+      await uploadAudio(recordedChunksModerator.value, audioStoragePath);
     }
   }, 300000);
 };
