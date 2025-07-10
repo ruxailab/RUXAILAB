@@ -668,28 +668,56 @@ const openTask = (id) => {
 };
 
 const setInProgress = (id, type) => {
-  const statusToUpdate = 'inProgress';
+  console.log(`Setting ${type} ${id} status to inProgress`);
+
   const testRef = doc(db, 'tests', roomTestId.value);
-  getDoc(testRef).then((doc) => {
-    if (doc.exists()) {
-      const data = doc.data();
-      if (type === 'tasks' && tasksStatus.value[id] === 'open') {
-        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
-      } else if (type === 'postTest' && userTestStatus.value.postTestStatus === 'open') {
-        data.userTestStatus.postTestStatus = statusToUpdate;
-      } else if (type === 'preTest' && userTestStatus.value.preTestStatus === 'open') {
-        data.userTestStatus.preTestStatus = statusToUpdate;
-      }
-      updateDoc(testRef, data).catch((error) => {
-        console.error(`Error updating ${type} status:`, error);
-      });
-      if (type === 'tasks') {
-        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
-      } else {
-        test.value.userTestStatus[`${type}Status`] = statusToUpdate;
-      }
-    } else {
+  const statusToUpdate = 'inProgress';
+
+  getDoc(testRef).then((docSnap) => {
+    if (!docSnap.exists()) {
       console.error('Test document not found');
+      return;
+    }
+
+    const data = docSnap.data();
+    let shouldUpdate = false;
+
+    if (type === 'tasks') {
+      const currentStatus = tasksStatus.value[id];
+      if (currentStatus === 'open') {
+        console.log(`Current task status: ${currentStatus}`);
+        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
+        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    } else if (type === 'preTest') {
+      const currentStatus = userTestStatus.value.preTestStatus;
+      if (currentStatus === 'open') {
+        console.log(`Current preTest status: ${currentStatus}`);
+        data.userTestStatus.preTestStatus = statusToUpdate;
+        test.value.userTestStatus.preTestStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    } else if (type === 'postTest') {
+      const currentStatus = userTestStatus.value.postTestStatus;
+      if (currentStatus === 'open') {
+        console.log(`Current postTest status: ${currentStatus}`);
+        data.userTestStatus.postTestStatus = statusToUpdate;
+        test.value.userTestStatus.postTestStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    }
+
+    if (shouldUpdate) {
+      updateDoc(testRef, data)
+        .then(() => {
+          console.log(`Updated ${type} ${id} status to: ${statusToUpdate}`);
+        })
+        .catch((error) => {
+          console.error(`Error updating ${type} status:`, error);
+        });
+    } else {
+      console.log(`Skipped update: ${type} ${id} is not in 'open' state`);
     }
   });
 };
@@ -699,29 +727,62 @@ const setExistUser = () => {
 };
 
 const changeStatus = (id, type, newStatus) => {
+  console.log(`Changing ${type} status to ${newStatus}`);
   const testRef = doc(db, 'tests', roomTestId.value);
   getDoc(testRef)
-    .then((doc) => {
+    .then(async (doc) => {
       if (doc.exists()) {
         const data = doc.data();
         if (type === 'tasks') {
+          console.log(`Updating ${type} ${id} status`);
           data.testStructure.userTasks[id].taskStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.tasks[id].completed = true;
+          if (newStatus === 'done') {
+
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.tasks[id].completed);
+            currentUserTestAnswer.value.tasks[id].completed = true;
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.tasks[id].completed);
+
+          }
         } else if (type === 'postTest') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.postTestStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.postTestCompleted = true;
+          if (newStatus === 'done') {
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.postTestCompleted);
+
+            currentUserTestAnswer.value.postTestCompleted = true;
+
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.postTestCompleted);
+          }
         } else if (type === 'preTest') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.preTestStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.preTestCompleted = true;
+          if (newStatus === 'done') {
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.preTestCompleted);
+
+            currentUserTestAnswer.value.preTestCompleted = true;
+
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.preTestCompleted);
+          }
         } else if (type === 'consent') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.consentStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.consentCompleted = true;
+          if (newStatus === 'done') {
+            console.log(`Marking ${type} as completed`);
+            currentUserTestAnswer.value.consentCompleted = true;
+          }
         }
-        return updateDoc(testRef, data);
+
+        console.log("userTestStatus antes", data.userTestStatus);
+        await updateDoc(testRef, data);
+        console.log("userTestStatus depois", data.userTestStatus);
+        return data;
       }
       throw new Error('Test document not found');
     })
     .then(() => {
+      console.log("userTestStatus", userTestStatus.value);
+
+      console.log('Status updated');
       calculateProgress();
     })
     .catch((error) => {
@@ -841,13 +902,17 @@ const startRecordingModerator = async () => {
 const stopRecording = () => {
   if (mediaRecorderEvaluator.value) {
     mediaRecorderEvaluator.value.stop();
-    localCameraStream.value?.stop();
+    if (localCameraStream.value) {
+      localCameraStream.value.getTracks().forEach(track => track.stop());
+    }
     clearInterval(backupInterval.value);
     recording.value = false;
   }
   if (mediaRecorderModerator.value) {
     mediaRecorderModerator.value.stop();
-    localCameraStream.value?.stop();
+    if (localCameraStream.value) {
+      localCameraStream.value.getTracks().forEach(track => track.stop());
+    }
     clearInterval(backupInterval.value);
     recording.value = false;
   }
@@ -1054,6 +1119,7 @@ onMounted(async () => {
     }
   });
   onSnapshot(ref, (snapshot) => {
+    console.log('snapshot.data().userTestStatus:', snapshot.data().userTestStatus);
     moderatorStatus.value = snapshot.data().userTestStatus.moderator;
     evaluatorStatus.value = snapshot.data().userTestStatus.user;
     userTestStatus.value = snapshot.data().userTestStatus;
@@ -1103,15 +1169,6 @@ watch(localCameraStream, async (value) => {
 watch(remoteCameraStream, async () => {
   await setRemoteAudio();
 });
-
-watch(
-  () => userTestStatus.value.preTestStatus,
-  (newValue) => {
-    if (newValue === 'done' && !isAdmin.value) {
-      window.open(test.value.testStructure.landingPage);
-    }
-  },
-);
 
 watch(
   () => userTestStatus.value.postTestStatus,
