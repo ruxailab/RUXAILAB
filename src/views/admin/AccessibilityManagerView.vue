@@ -27,7 +27,7 @@ import AccessibilityDrawer from '@/components/atoms/AccessibilityDrawer.vue'
 const route = useRoute()
 const testId = ref(route.params.testId || '')
 const accessibilityDrawer = ref(null)
-const drawerOpen = ref(true)
+const drawerOpen = ref(false)
 
 // Navigation items for the drawer
 const navItems = computed(() => [
