@@ -201,7 +201,7 @@ const getDescription = (title) => {
 }
 
 .dashboard-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(237, 237, 237, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
