@@ -392,15 +392,17 @@ const susQuestions = [
 ];
 
 const testAnswerDocument = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
-const tasksArray = computed(() => Object.values(testAnswerDocument.value).flatMap((item, index) => {
-    return Object.values(item.tasks || {}).map((task) => {
-        return {
-            ...task,
-            susScore: calculateSUSScore(task.susAnswers),
-            name: Object.values(testAnswerDocument.value)[index].fullName
-        }
-    })
-}))
+const tasksArray = computed(() => {
+  return Object.values(testAnswerDocument.value).flatMap((item, index) => {
+    return Object.values(item.tasks || {})
+      .filter(task => Array.isArray(task.susAnswers) && task.susAnswers.length === 10)
+      .map(task => ({
+        ...task,
+        susScore: calculateSUSScore(task.susAnswers),
+        name: item.fullName
+      }))
+  })
+})
 console.log(tasksArray.value)
 const analytics = computed(() => {
     const scores = tasksArray.value.map(r => r.susScore)
