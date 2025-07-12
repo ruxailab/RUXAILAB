@@ -408,14 +408,19 @@ const tableHeaders = [
   { title: 'Actions', key: 'actions', sortable: false }
 ]
 
+const test = computed(()=> store.getters.test.testStructure)
 const testAnswerDocument = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
 const nasaTlxData = computed(() => Object.values(testAnswerDocument.value).flatMap((item, index) => {
-    return Object.values(item.tasks || {}).map((task) => {
+    return Object.values(item.tasks || {})
+    .filter(task => test.value?.userTasks[task.taskId]?.taskType === "nasa-tlx")
+    .map((task) => {
         const scores = Object.values(task.nasaTlxAnswers) 
         return {
             ...task,
-            overallScore: Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10,
-            name: Object.values(testAnswerDocument.value)[index].fullName
+            overallScore: scores.length > 0 
+            ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10
+            : 0,
+            name: item.fullName
         }
     })
 }))
