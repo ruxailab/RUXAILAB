@@ -869,7 +869,8 @@ const mappingSteps = async () => {
         id: 1,
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
-        localTestAnswer.tasks = test.value.testStructure.userTasks.map(() => new UserTask({
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => new UserTask({
+          taskId: task.id || i,
           taskAnswer: '',
           taskObservations: '',
           postAnswer: '',
