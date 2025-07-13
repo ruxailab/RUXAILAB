@@ -88,7 +88,6 @@
         <v-col cols="12">
           <v-card elevation="2" style="border-radius: 12px;">
             <v-card-title class="text-h5 pb-2">
-              <v-icon left color="primary">mdi-chart-radar</v-icon>
               Workload Dimension Breakdown
             </v-card-title>
             <v-card-text class="pa-6">

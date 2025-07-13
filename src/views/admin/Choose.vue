@@ -167,7 +167,15 @@ const categories = [
     icon: 'mdi-magnify',
     color: 'secondary',
     hasSubMethods: true
-  }
+  },
+  {
+    id: 'accessibility',
+    title: 'Accessibility',
+    description: '',
+    icon: 'mdi-magnify',
+    color: 'primary',
+    hasSubMethods: true
+  },
 ]
 
 const handleCategoryClick = (categoryId) => {
