@@ -183,6 +183,32 @@ const methodsByCategory = {
       available: false, 
       comingSoon: true 
     }
+  ],
+  accessibility: [
+    {
+      id: 'MANUAL', 
+      name: 'Manual Testing', 
+      description: '',
+      icon: 'mdi-clipboard-check',
+      color: 'secondary',
+      available: false 
+    },
+    {
+      id: 'AUTOMATIC', 
+      name: 'Automatic Testing', 
+      description: '',
+      icon: 'mdi-clipboard-check',
+      color: 'secondary',
+      available: false 
+    },
+    {
+      id: 'AI', 
+      name: 'AI Powered Testing', 
+      description: '',
+      icon: 'mdi-clipboard-check',
+      color: 'secondary',
+      available: false 
+    }
   ]
 }
 
