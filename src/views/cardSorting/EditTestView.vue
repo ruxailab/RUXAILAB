@@ -1,46 +1,34 @@
 <template>
-  <h1>dfdsa</h1>
+  <v-container>
+    <ButtonSave :visible="change" @click="save" />
+
+    <v-row>
+      <v-tabs v-model="tabIndex" bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
+        <v-tab>PRE-TEST</v-tab>
+        <v-tab>CATEGORIES</v-tab>
+        <v-tab>CARDS</v-tab>
+        <v-tab>POST-TEST</v-tab>
+        <v-tab>SETTINGS</v-tab>
+      </v-tabs>
+
+      <v-col cols="12">
+        <!-- PRE-TEST -->
+        <PreTestEditCardSorting v-if="tabIndex === 0" />
+
+        <!-- CATEGORIES -->
+        <CategoriesEditCardSorting v-else-if="tabIndex === 1" />
+
+        <!-- CARDS -->
+        <CardsEditCardSorting v-else-if="tabIndex === 2" />
+
+        <!-- POST-TEST -->
+        <PostTestEditCardSorting v-else-if="tabIndex === 3" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<!-- <template> -->
-<!-- <v-container> -->
-<!-- <ButtonSave
-      :visible="change"
-      @click="save"
-    /> -->
-
-<!-- <v-row> -->
-<!-- <v-tabs
-        v-model="tabIndex"
-        bg-color="transparent"
-        color="#FCA326"
-        class="pb-0 mb-0"
-      > -->
-<!-- <v-tab>PRE-TEST</v-tab>/ -->
-<!-- <v-tab>CATEGORIES</v-tab> -->
-<!-- <v-tab>CARDS</v-tab> -->
-<!-- <v-tab>POST-TEST</v-tab> -->
-<!-- <v-tab>SETTINGS</v-tab> -->
-<!-- </v-tabs> -->
-
-<!-- <v-col cols="12"> -->
-<!-- PRE-TEST -->
-<!-- <PreTestEditCardSorting v-if="tabIndex === 0" /> -->
-
-<!-- CATEGORIES -->
-<!-- <CategoriesEditCardSorting v-else-if="tabIndex === 1" /> -->
-
-<!-- CARDS -->
-<!-- <CardsEditCardSorting v-else-if="tabIndex === 2" /> -->
-
-<!-- POST-TEST -->
-<!-- <PostTestEditCardSorting v-else-if="tabIndex === 3" /> -->
-<!-- </v-col> -->
-<!-- </v-row> -->
-<!-- </v-container> -->
-<!-- </template> -->
-
-<!-- <script>
+<script>
 import ButtonSave from '@/components/atoms/ButtonSave'
 import PreTestEditCardSorting from '@/components/organisms/PreTestEditCardSorting'
 import CardsEditCardSorting from '@/components/organisms/CardsEditCardSorting'
@@ -82,4 +70,4 @@ export default {
     },
   },
 }
-</script> -->
+</script>
