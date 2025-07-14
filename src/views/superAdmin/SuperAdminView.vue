@@ -2,34 +2,19 @@
   <v-main class="pt-4">
     <Snackbar />
     <!-- Delete Alert Dialog -->
-    <v-dialog
-      v-model="dialogDel"
-      width="600"
-      persistent
-    >
+    <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 bg-error text-white"
-          primary-title
-        >
+        <v-card-title class="text-h5 bg-error text-white" primary-title>
           {{ $t('alerts.deleteUser') }}
         </v-card-title>
         <v-card-text>{{ dialogText }}</v-card-text>
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="closeDelete"
-          >
+          <v-btn class="bg-grey-lighten-3" variant="text" @click="closeDelete">
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn
-            class="bg-red text-white ml-1"
-            variant="text"
-            @click="deleteUser(userClicked)"
-          >
+          <v-btn class="bg-red text-white ml-1" variant="text" @click="deleteUser(userClicked)">
             {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
@@ -40,10 +25,7 @@
       {{ $t('PROFILE.superAdmin') }}
     </h1>
 
-    <v-row
-      align="center"
-      justify="center"
-    >
+    <v-row align="center" justify="center">
       <v-col cols="10">
         <v-tabs v-model="tab">
           <v-tab>{{ $t('titles.users') }}</v-tab>
@@ -56,59 +38,31 @@
         <v-window v-model="tab">
           <!-- Users tab -->
           <v-window-item>
-            <v-data-table
-              :search="search"
-              :headers="usersHeaders"
-              :items="users"
-              class="elevation-1"
-              :loading="loading"
-            >
+            <v-data-table :search="search" :headers="usersHeaders" :items="users" class="elevation-1"
+              :loading="loading">
               <template #top>
-                <v-toolbar
-                  flat
-                  color="white"
-                >
+                <v-toolbar flat color="white">
                   <v-toolbar-title>{{ $t('titles.users') }}</v-toolbar-title>
                 </v-toolbar>
-                <v-text-field
-                  v-model="search"
-                  variant="outlined"
-                  prepend-inner-icon="mdi-magnify"
-                  class="mx-3"
-                  density="compact"
-                  :label="$t('Dashboard.search')"
-                />
+                <v-text-field v-model="search" variant="outlined" prepend-inner-icon="mdi-magnify" class="mx-3"
+                  density="compact" :label="$t('Dashboard.search')" />
               </template>
               <template #[`item.accessLevel`]="{ item }">
-                <v-chip
-                  :color="getAccessLevelColor(item.accessLevel)"
-                  size="small"
-                >
+                <v-chip :color="getAccessLevelColor(item.accessLevel)" size="small">
                   {{ level(item.accessLevel) }}
                 </v-chip>
               </template>
               <template #[`item.actions`]="{ item }">
-                <v-icon
-                  size="small"
-                  class="mr-2"
-                  @click="editUser(item)"
-                >
+                <v-icon size="small" class="mr-2" @click="editUser(item)">
                   mdi-pencil
                 </v-icon>
-                <v-icon
-                  color="red"
-                  size="small"
-                  @click="confirmDelete(item)"
-                >
+                <v-icon color="red" size="small" @click="confirmDelete(item)">
                   mdi-delete
                 </v-icon>
               </template>
             </v-data-table>
 
-            <v-dialog
-              v-model="dialog"
-              max-width="500px"
-            >
+            <v-dialog v-model="dialog" max-width="500px">
               <v-card>
                 <v-card-title>
                   <span class="text-h5">{{ $t('PROFILE.editProfile') }}</span>
@@ -117,49 +71,25 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12">
-                        <v-text-field
-                          label="Id"
-                          :model-value="editedUser.id"
-                          disabled
-                          variant="outlined"
-                        />
+                        <v-text-field label="Id" :model-value="editedUser.id" disabled variant="outlined" />
                       </v-col>
                       <v-col cols="12">
-                        <v-text-field
-                          label="E-mail"
-                          :model-value="editedUser.email"
-                          disabled
-                          variant="outlined"
-                        />
+                        <v-text-field label="E-mail" :model-value="editedUser.email" disabled variant="outlined" />
                       </v-col>
                       <v-col cols="12">
                         <p>Access Level</p>
-                        <v-select
-                          v-model="editedUser.accessLevel"
-                          class="my-2"
-                          :items="accessLevels"
-                          item-value="level"
-                          item-title="text"
-                          variant="outlined"
-                        />
+                        <v-select v-model="editedUser.accessLevel" class="my-2" :items="accessLevels" item-value="level"
+                          item-title="text" variant="outlined" />
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="close"
-                  >
+                  <v-btn color="blue-darken-1" variant="text" @click="close">
                     Cancel
                   </v-btn>
-                  <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="save(editedUser)"
-                  >
+                  <v-btn color="blue-darken-1" variant="text" @click="save(editedUser)">
                     Save
                   </v-btn>
                 </v-card-actions>
@@ -169,35 +99,17 @@
 
           <!-- Tests Tab -->
           <v-window-item>
-            <v-data-table
-              :search="search"
-              :headers="testsHeaders"
-              :items="tests"
-              class="elevation-1"
-              :loading="loading"
-            >
+            <v-data-table :search="search" :headers="testsHeaders" :items="tests" class="elevation-1"
+              :loading="loading">
               <template #top>
-                <v-toolbar
-                  flat
-                  color="white"
-                >
+                <v-toolbar flat color="white">
                   <v-toolbar-title>Tests</v-toolbar-title>
                 </v-toolbar>
-                <v-text-field
-                  v-model="search"
-                  variant="outlined"
-                  prepend-inner-icon="mdi-magnify"
-                  class="mx-3"
-                  density="compact"
-                  label="Search"
-                />
+                <v-text-field v-model="search" variant="outlined" prepend-inner-icon="mdi-magnify" class="mx-3"
+                  density="compact" label="Search" />
               </template>
               <template #[`item.actions`]="{ item }">
-                <v-icon
-                  size="small"
-                  class="mr-2"
-                  @click="openManager(item)"
-                >
+                <v-icon size="small" class="mr-2" @click="openManager(item)">
                   mdi-eye
                 </v-icon>
               </template>
@@ -247,7 +159,7 @@ const usersHeaders = computed(() => [
 const testsHeaders = computed(() => [
   { title: t('common.title'), align: 'start', value: 'testTitle' },
   { title: t('pages.listTests.createdBy'), value: 'testAdmin.email' },
-  { title: t('pages.listTests.updated'), value: 'creationDate' },
+  { title: t('pages.listTests.updated'), value: 'creationDate', sortable: true },
   { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
