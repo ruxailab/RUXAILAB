@@ -683,6 +683,10 @@ const validate = (object) => {
 }
 
 const calculateProgress = () => {
+  if (!test.value || !test.value.testType) {
+    return
+  }
+
   if (test.value.testType === 'HEURISTICS') {
     const total = currentUserTestAnswer.value.total
     let x = 0
@@ -744,6 +748,9 @@ const signOut = () => {
 }
 
 const populateWithHeuristicQuestions = () => {
+  if (!test.value || !test.value.testType) {
+    return
+  }
   if (test.value.testType === 'HEURISTICS') {
     let totalQuestions = 0
     if (currentUserTestAnswer.value.heuristicQuestions.length <= 0) {
