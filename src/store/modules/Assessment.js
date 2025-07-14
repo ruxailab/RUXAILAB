@@ -44,32 +44,45 @@ const getters = {
   },
 
   // Get assessment for a rule
-  getRuleAssessment: (state) => (ruleId) => {
-    const ra = state.ruleAssessments[ruleId]
-    if (!ra) {
-      // fallback for legacy notes
-      return {
-        severity: '',
-        status: '',
-        notes: typeof state.notes[ruleId] === 'string'
-          ? [{ text: state.notes[ruleId], imageName: null }]
-          : []
-      }
-    }
-    // Always return notes as array of { text, imageName }
+getRuleAssessment: (state) => (ruleId) => {
+  const ra = state.ruleAssessments[ruleId];
+
+  if (!ra) {
+    // fallback for legacy notes
+    const legacyNote = state.notes[ruleId];
+    const notes = typeof legacyNote === 'string'
+      ? [{ text: legacyNote, imageName: null }]
+      : [];
+
     return {
-      ...ra,
-      notes: Array.isArray(ra.notes)
-        ? ra.notes.map(n =>
-          typeof n === 'string'
-            ? { text: n, imageName: null }
-            : { text: n.text || '', imageName: n.imageName || null }
-        )
-        : (typeof ra.notes === 'string'
-          ? [{ text: ra.notes, imageName: null }]
-          : [])
-    }
-  },
+      severity: '',
+      status: '',
+      notes,
+    };
+  }
+
+  // Normalize notes
+  let normalizedNotes = [];
+
+  if (Array.isArray(ra.notes)) {
+    normalizedNotes = ra.notes.map(n => {
+      if (typeof n === 'string') {
+        return { text: n, imageName: null };
+      }
+      return {
+        text: n.text || '',
+        imageName: n.imageName || null
+      };
+    });
+  } else if (typeof ra.notes === 'string') {
+    normalizedNotes = [{ text: ra.notes, imageName: null }];
+  }
+
+  return {
+    ...ra,
+    notes: normalizedNotes,
+  };
+},
 
   // Get notes for a rule (kept for backward compatibility)
   getRuleNotes: (state) => (ruleId) => {
