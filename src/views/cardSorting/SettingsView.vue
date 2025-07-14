@@ -1,15 +1,9 @@
 <template>
   <v-container>
     <!-- Delete Alert Dialog -->
-    <v-dialog
-      v-model="dialogDel"
-      width="80%"
-    >
+    <v-dialog v-model="dialogDel" width="80%">
       <v-card>
-        <v-card-title
-          class="text-h5 bg-error text-white"
-          primary-title
-        >
+        <v-card-title class="text-h5 bg-error text-white" primary-title>
           {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
@@ -20,19 +14,11 @@
         <v-card-actions>
           <v-spacer />
 
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="dialogDel = false"
-          >
+          <v-btn class="bg-grey-lighten-3" variant="text" @click="dialogDel = false">
             {{ $t('buttons.cancel') }}
           </v-btn>
 
-          <v-btn
-            class="bg-red text-white ml-1"
-            :loading="loading"
-            @click="deleteTest(object)"
-          >
+          <v-btn class="bg-red text-white ml-1" :loading="loading" @click="deleteTest(object)">
             {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
@@ -40,10 +26,7 @@
     </v-dialog>
 
     <!-- Create Template Dialog -->
-    <v-dialog
-      v-model="tempDialog"
-      max-width="80%"
-    >
+    <v-dialog v-model="tempDialog" max-width="80%">
       <v-card>
         <p class="pa-2">
           Create Template
@@ -51,39 +34,16 @@
 
         <v-divider />
 
-        <v-form
-          ref="tempform"
-          class="px-5"
-        >
-          <v-row
-            justify="space-around"
-            class="pa-2"
-          >
+        <v-form ref="tempform" class="px-5">
+          <v-row justify="space-around" class="pa-2">
             <v-col cols="12">
-              <v-text-field
-                v-model="template.title"
-                autofocus
-                label="Title"
-                :rules="titleRequired"
-                counter="200"
-                variant="outlined"
-                density="compact"
-                @update:model-value="$emit('change')"
-              />
+              <v-text-field v-model="template.title" autofocus label="Title" :rules="titleRequired" counter="200"
+                variant="outlined" density="compact" @update:model-value="$emit('change')" />
 
-              <v-textarea
-                v-model="template.description"
-                label="Description"
-                variant="outlined"
-                density="compact"
-                @update:model-value="$emit('change')"
-              />
+              <v-textarea v-model="template.description" label="Description" variant="outlined" density="compact"
+                @update:model-value="$emit('change')" />
 
-              <v-checkbox
-                v-model="template.isPublic"
-                label="Make template public to all users"
-                color="#F9A826"
-              />
+              <v-checkbox v-model="template.isPublic" label="Make template public to all users" color="#F9A826" />
             </v-col>
           </v-row>
 
@@ -92,18 +52,11 @@
           <v-card-actions>
             <v-spacer />
 
-            <v-btn
-              class="bg-error"
-              @click="closeTemplateDialog"
-            >
+            <v-btn class="bg-error" @click="closeTemplateDialog">
               {{ $t('buttons.cancel') }}
             </v-btn>
 
-            <v-btn
-              :disabled="hasTemplate ? true : false"
-              class="bg-success"
-              @click="createTemplate"
-            >
+            <v-btn :disabled="hasTemplate ? true : false" class="bg-success" @click="createTemplate">
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -123,52 +76,26 @@
 
             <v-divider />
 
-            <FormTestDescription
-              v-if="object"
-              :test="object"
-              :lock="true"
-              @val-form="validate"
-              @change="change = true"
-            />
+            <FormTestDescription v-if="object" :test="object" :lock="true" @val-form="validate" @change="change = true"
+              @update:test="object = $event" />
 
-            <v-row
-              justify="space-around"
-              class="mx-4 mb-3"
-            >
+            <v-row justify="space-around" class="mx-4 mb-3">
               <v-spacer />
 
-              <v-btn
-                style="margin-right: 25px"
-                variant="outlined"
-                color="green"
-                :disabled="hasTemplate"
-                @click="tempDialog = true"
-              >
+              <v-btn style="margin-right: 25px" variant="outlined" color="green" :disabled="hasTemplate"
+                @click="tempDialog = true">
                 {{ $t('pages.settings.createTemplate') }}
               </v-btn>
 
-              <v-btn
-                class="mr-5"
-                variant="outlined"
-                color="green"
-                @click="duplicateTest"
-              >
+              <v-btn class="mr-5" variant="outlined" color="green" @click="duplicateTest">
                 Duplicate test
               </v-btn>
             </v-row>
 
             <v-divider class="my-3 mx-2" />
 
-            <v-row
-              justify="center"
-              class="mt-3"
-            >
-              <v-btn
-                color="#f26363"
-                class="text-white mb-4"
-                style="justify-self: center"
-                @click="dialogDel = true"
-              >
+            <v-row justify="center" class="mt-3">
+              <v-btn color="#f26363" class="text-white mb-4" style="justify-self: center" @click="dialogDel = true">
                 <v-icon start>
                   mdi-trash-can-outline
                 </v-icon>
@@ -177,10 +104,7 @@
             </v-row>
           </v-card>
 
-          <ButtonSave
-            :visible="change"
-            @click="save"
-          />
+          <ButtonSave :visible="change" @click="save" />
         </div>
       </template>
     </ShowInfo>
@@ -207,11 +131,11 @@ export default {
 
   beforeRouteLeave(to, from, next) {
     if (!this.$store.getters.localChanges) return next()
-    
+
     this.$store.commit('SET_DIALOG_LEAVE', true)
     this.$store.commit('SET_PATH_TO', to.name)
   },
-  
+
   emits: ['change'],
 
   data: () => ({

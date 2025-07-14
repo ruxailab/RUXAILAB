@@ -15,15 +15,14 @@
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="$route.path.includes('manager')">
-          <div class="back-gradient">
+          <div class="manager-bg back-gradient pa-6">
             <v-row align="center" justify="center" style="height: 100%">
-              <v-col class="text-div">
-                <div v-if="accessLevel == 0" class="text-white">
-                  <p class="mobile-center" style="font-size: 58px; font-weight: 500">
+              <v-col cols="12" md="6" class="text-white text-center text-md-left">
+                <div v-if="accessLevel == 0">
+                  <p class="font-weight-medium text-h4 text-md-h2">
                     {{ $t('titles.manager') }}
                   </p>
-
-                  <p style="font-size: 22px" class="mobile-center">
+                  <p class="text-subtitle-1 text-md-subtitle-1">
                     {{ test.testTitle }}
                   </p>
                 </div>
@@ -31,12 +30,11 @@
                 <div v-else class="text-white mobile-center" style="font-size: 58px; font-weight: 500">
                   {{ test.testTitle }}
                 </div>
-
-                <v-img class="hidden-md-and-up" style="max-height: 40vh" cover
-                  src="@/assets/manager/IntroManager.svg" />
               </v-col>
-              <v-img class="hidden-sm-and-down" cover max-width="40%" max-height="85%"
-                src="@/assets/manager/IntroManager.svg" />
+
+              <v-col cols="12" md="6" class="d-flex justify-center">
+                <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
+              </v-col>
             </v-row>
           </div>
           <div>
@@ -182,7 +180,7 @@ export default {
       if (this.accessLevel == 0) {
         items.push(
           { title: 'Test', icon: 'mdi-file-document-edit', path: `/cardSorting/edittest/${this.test.id}` },
-          { title: 'Preview', icon: 'mdi-file-eye', path: `/cardSorting/testview/${this.test.id}` },
+          // { title: 'Preview', icon: 'mdi-file-eye', path: `/cardSorting/testview/${this.test.id}` },
           // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
           // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
           // { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },
@@ -300,6 +298,11 @@ export default {
 
   .back-gradient {
     height: 100%;
+  }
+
+  .manager-bg {
+    height: 100%;
+    margin: 0 !important;
   }
 }
 </style>
