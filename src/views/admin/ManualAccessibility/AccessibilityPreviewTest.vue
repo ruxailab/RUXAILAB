@@ -120,7 +120,7 @@
                     <v-file-input v-model="note.image" accept="image/*" label="Attach image" prepend-icon="mdi-image"
                       show-size hide-details @change="onImageChange(idx)" class="mr-4" style="max-width: 300px;" />
                     <div v-if="note.imagePreview" class="note-image-preview">
-                      <img :src="note.imagePreview" alt="Note Image"
+                      <img :src="note.imagePreview" alt="Notes  "
                         style="max-width: 120px; max-height: 80px; border-radius: 6px;" />
                       <v-btn icon="mdi-close" size="x-small" variant="plain" @click="removeImage(idx)" />
                     </div>

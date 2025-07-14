@@ -9,7 +9,6 @@ import Sample from '@/views/public/Sample.vue'
 import TermsOfService from '@/views/public/TermsOfService.vue'
 import PrivacyPolicy from '@/views/public/PrivacyPolicy.vue'
 import FAQ from '@/views/public/FAQ.vue'
-import Assessment from '@/views/admin/Assessment.vue'
 
 export default [
   {
