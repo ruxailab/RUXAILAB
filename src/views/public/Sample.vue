@@ -37,11 +37,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch, onBeforeMount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted} from 'vue'
+import { useRoute, useRouter,onBeforeRouteUpdate } from 'vue-router'
 import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
-import { onBeforeRouteUpdate } from 'vue-router'
 import TestInformationCard from '@/components/molecules/TestInformationCard.vue'
 
 const store = useStore()

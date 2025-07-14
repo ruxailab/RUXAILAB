@@ -48,7 +48,7 @@
           </v-col>
 
           <v-col v-if="!isMobile" cols="5" class="imageColumn">
-            <img height="500" src="../../../public/createSVG.svg" alt="Test Creation image">
+            <img height="500" src="../../../public/createSVG.svg" alt="Test Creation ">
           </v-col>
         </v-row>
       </v-card>
