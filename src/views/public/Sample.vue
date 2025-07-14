@@ -150,14 +150,6 @@ const navItems = [
   }
 }))
 
-//compute access level then deciding what goes into navItems
-
-// function handleNavClick(item) {
-//   if (item.route.path === '/assessment') {
-//     window.open(item.route, '_blank')
-//   }
-//   // For other items, default navigation will occur via :to
-// }
 </script>
 
 <style scoped>
