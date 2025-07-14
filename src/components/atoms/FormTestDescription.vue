@@ -1,51 +1,19 @@
 <template>
   <v-form ref="form">
-    <v-row
-      justify="space-around"
-      class="pa-2"
-    >
-      <v-col
-        cols="12"
-        md="5"
-      >
-        <v-text-field
-          :model-value="test.testTitle"
-          :autofocus="lock ? false : true"
-          :label="$t('common.title')"
-          :rules="titleRequired"
-          counter="200"
-          variant="outlined"
-          density="compact"
-          @update:model-value="updateTestTitle($event)"
-        />
-        <v-select
-          :model-value="test.testType"
-          :disabled="lock"
-          :items="types"
-          :label="$t('common.type')"
-          :rules="typeRequired"
-          density="compact"
-          variant="outlined"
-          @update:model-value="$emit('update:test', { ...test, testType: $event })"
-        />
+    <v-row justify="space-around" class="pa-2">
+      <v-col cols="12" md="5">
+        <v-text-field :model-value="test.testTitle" :autofocus="lock ? false : true" :label="$t('common.title')"
+          :rules="titleRequired" counter="200" variant="outlined" density="compact"
+          @update:model-value="updateTestTitle($event)" />
+        <v-select :model-value="test.testType" :disabled="lock" :items="types" :label="$t('common.type')"
+          :rules="typeRequired" density="compact" variant="outlined"
+          @update:model-value="$emit('update:test', { ...test, testType: $event })" />
       </v-col>
-      <v-col
-        cols="12"
-        md="5"
-      >
-        <v-textarea
-          :model-value="test.testDescription"
-          :label="$t('common.description')"
-          variant="outlined"
-          density="compact"
-          @update:model-value="updateTestDescription($event)"
-        />
-        <v-checkbox
-          :value="test.isPublic"
-          :label="$t('pages.createTest.public')"
-          color="#F9A826"
-          @input="updateTestPublic($event)"
-        />
+      <v-col cols="12" md="5">
+        <v-textarea :model-value="test.testDescription" :label="$t('common.description')" variant="outlined"
+          density="compact" @update:model-value="updateTestDescription($event)" />
+        <v-checkbox :model-value="test.isPublic" :label="$t('pages.createTest.public')" color="#F9A826"
+          @update:model-value="updateTestPublic" />
       </v-col>
     </v-row>
   </v-form>

@@ -243,6 +243,13 @@ const goToCreateTestRoute = () => {
 const goTo = (test) => {
   if (mainIndex.value === 0) {
     if (subIndex.value === 0) {
+      if (test.testType == 'CardSorting') {
+        return router.push({
+          name: 'CardSortingManagerView',
+          params: { id: test.testDocId, userId: user.value.id },
+        })
+      }
+
       router.push({
         name: 'ManagerView',
         params: { id: test.testDocId },
