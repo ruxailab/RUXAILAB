@@ -1,97 +1,72 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-data-table
-      height="420"
-      style="background: #f5f7ff; border-radius: 20px;"
-      :headers="headers"
-      :items="allTasks"
-      :items-per-page="5"
-      class="elevation-1"
-    >
+    <v-data-table height="420" style="background: #f5f7ff; border-radius: 20px;" :headers="headers" :items="allTasks"
+      :items-per-page="5">
       <!-- Table Header -->
       <template #top>
-        <v-row
-          align="center"
-          class="ma-0"
-        >
+        <v-row class="ma-0">
           <v-col class="ml-2 mb-1 pa-4 pb-0">
             <p class="subtitleView">
               {{ $t('UserTestTable.titles.currentTasks') }}
             </p>
           </v-col>
-          <v-col>
-            <v-row
-              justify="end"
-              class="mx-0"
-            >
-              <v-btn
-                variant="flat"
-                rounded
-                color="#f9a826"
-                class="text-white"
-                size="small"
-                @click="dialog = true"
-              >
-                Add new task
-              </v-btn>
-              <FormDialog
-                v-model:dialog="dialog"
-                v-model:task="task"
-                @add-task="addTask"
-              />
-            </v-row>
+          <v-col class="d-flex justify-end">
+            <v-btn variant="flat" rounded color="#f9a826" class="text-white" size="small" @click="dialog = true">
+              Add new task
+            </v-btn>
+            <FormDialog v-model:dialog="dialog" v-model:task="task" @add-task="addTask" />
           </v-col>
         </v-row>
         <v-divider class="mb-4" />
       </template>
-      <!-- Checkbox Columns -->
-      <template #item.hasEye="{ item }">
-        <v-checkbox-btn
-          v-model="item.hasEye"
-          disabled
-        />
-      </template>
-      <template #item.hasCamRecord="{ item }">
-        <v-checkbox-btn
-          v-model="item.hasCamRecord"
-          disabled
-        />
-      </template>
-      <template #item.hasAudioRecord="{ item }">
-        <v-checkbox-btn
-          v-model="item.hasAudioRecord"
-          disabled
-        />
-      </template>
-      <template #item.hasScreenRecord="{ item }">
-        <v-checkbox-btn
-          v-model="item.hasScreenRecord"
-          disabled
-        />
-      </template>
-      <!-- Text Columns -->
+
       <template #item.taskDescription="{ item }">
-        {{ item.taskDescription || '-' }}
+        <v-icon :color="item.taskDescription ? '#8EB995' : '#F47C7C'">
+          {{ item.taskDescription ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
       </template>
+
       <template #item.taskTip="{ item }">
-        {{ item.taskTip || '-' }}
+        <v-icon :color="item.taskTip ? '#8EB995' : '#F47C7C'">
+          {{ item.taskTip ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
       </template>
+
       <template #item.postQuestion="{ item }">
-        {{ item.postQuestion || '-' }}
+        <v-icon :color="item.postQuestion ? '#8EB995' : '#F47C7C'">
+          {{ item.postQuestion ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
+      </template>
+
+      <template #item.hasScreenRecord="{ item }">
+        <v-icon :color="item.hasScreenRecord ? '#8EB995' : '#F47C7C'">
+          {{ item.hasScreenRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
+      </template>
+
+      <template #item.hasCamRecord="{ item }">
+        <v-icon :color="item.hasCamRecord ? '#8EB995' : '#F47C7C'">
+          {{ item.hasCamRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
+      </template>
+
+      <template #item.hasEye="{ item }">
+        <v-icon :color="item.hasEye ? '#8EB995' : '#F47C7C'">
+          {{ item.hasEye ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
+      </template>
+
+      <template #item.hasAudioRecord="{ item }">
+        <v-icon :color="item.hasAudioRecord ? '#8EB995' : '#F47C7C'">
+          {{ item.hasAudioRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+        </v-icon>
       </template>
       <!-- Edit and Delete Icons -->
       <template #item.actions="{ item }">
-        <v-icon
-          size="small"
-          class="mr-2"
-          @click="editItem(item)"
-        >
+        <v-icon size="small" class="mr-2" @click="editItem(item)">
           mdi-pencil
         </v-icon>
-        <v-icon
-          size="small"
-          @click="deleteItem(item)"
-        >
+        <v-icon size="small" @click="deleteItem(item)">
           mdi-delete
         </v-icon>
       </template>
@@ -169,7 +144,7 @@ const addTask = (newTask) => {
     editedIndex.value = -1
     emit('change');
   } else {
-    store.dispatch('addItemsTasks', newTask).then(() => {});
+    store.dispatch('addItemsTasks', newTask).then(() => { });
     allTasks.value = Object.assign(
       store.getters.tasks,
       store.state.Tests.Test.testStructure.userTasks

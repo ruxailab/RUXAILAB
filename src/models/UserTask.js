@@ -1,3 +1,5 @@
+import { NasaTlxAnswer } from "./NasaTlxAnswer"
+
 export default class UserTask {
   constructor({
     taskId,
@@ -9,6 +11,8 @@ export default class UserTask {
     screenRecordURL,
     webcamRecordURL,
     postAnswer,
+    susAnswers,
+    nasaTlxAnswers
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -19,6 +23,8 @@ export default class UserTask {
     this.screenRecordURL = screenRecordURL ?? null
     this.webcamRecordURL = webcamRecordURL ?? null
     this.postAnswer = postAnswer ?? null
+    this.susAnswers = susAnswers ?? []
+    this.nasaTlxAnswers = nasaTlxAnswers ?? new NasaTlxAnswer()
   }
 
   static toUserTask(data) {
@@ -36,6 +42,8 @@ export default class UserTask {
       screenRecordURL: this.screenRecordURL,
       webcamRecordURL: this.webcamRecordURL,
       postAnswer: this.postAnswer,
+      susAnswers: this.susAnswers,
+      nasaTlxAnswers: this.nasaTlxAnswers?.toFirestore?.() ?? {}
     }
   }
 }

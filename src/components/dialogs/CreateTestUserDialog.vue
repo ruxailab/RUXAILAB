@@ -40,7 +40,7 @@
                   :title="$t('Createblank.UsabilityUser.SelfTest.title')"
                   :type="$t('Createblank.UsabilityUser.SelfTest.type')"
                   :img="require('../../../public/SelfTest.svg')"
-                  :texts="$t('Createblank.UsabilityUser.SelfTest.text')"
+                  :texts="['Answer on free time', 'Enhanced answer analysis', 'Task Customization']"
                   @click="setType"
                 />
               </v-col>
@@ -55,7 +55,7 @@
                   :title="$t('Createblank.UsabilityUser.LiveTest.title')"
                   :type="$t('Createblank.UsabilityUser.LiveTest.type')"
                   :img="require('../../../public/LiveTest.svg')"
-                  :texts="$t('Createblank.UsabilityUser.LiveTest.text')"
+                  :texts="['Webcam, audio & screen record', 'Enhanced answer analysis', 'Moderated live test']"
                   @click="setType"
                 />
               </v-col>

@@ -517,6 +517,7 @@
     "save": "Save",
     "stay": "Stay",
     "leave": "Leave",
+    "saveandleave": "Save and Leave",
     "help": "Help",
     "delete": "Delete",
     "deleteAccount": "Delete Account",
@@ -534,7 +535,8 @@
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
-    "postForm": "Post Form"
+    "postForm": "Post Form",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Consent Form",

@@ -230,7 +230,7 @@
               </v-row>
               <v-row>
                 <v-col cols="6" class="mx-auto">
-                  <v-radio-group v-model="localTestAnswer.consentCompleted" direction="vertical">
+                  <v-radio-group v-model="localTestAnswer.consentCompleted" direction="horizontal">
                     <v-radio label="I accept the consent terms" :value="true" :disabled="!fullName" />
                     <v-radio label="I do not accept the consent terms" :value="false" />
                   </v-radio-group>
@@ -333,7 +333,7 @@
                       </v-row>
                     </div>
                     <v-row class="paragraph" justify="space-around">
-                      <v-col v-if="test.testStructure.userTasks[taskIndex].taskType === 'textArea'" class="mb-0 pb-0">
+                      <v-col v-if="test.testStructure.userTasks[taskIndex].taskType === 'text-area'" class="mb-0 pb-0">
                         <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
                           v-model="localTestAnswer.tasks[taskIndex].taskAnswer" variant="outlined" label="answer" />
                       </v-col>
@@ -365,7 +365,20 @@
                       frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
                   </v-col>
                 </v-row>
-                <div class="pa-2 text-end">
+
+                <v-row v-if="test.testStructure.userTasks[taskIndex].taskType === 'sus'" class="fill-height"
+                  align="center" justify="center">
+                  <SusForm :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"></SusForm>
+                </v-row>
+
+                <v-row v-if="test.testStructure.userTasks[taskIndex].taskType === 'nasa-tlx'" class="fill-height"
+                  align="center" justify="center">
+                  <v-col cols=12>
+                    <nasaTlxForm :nasaTlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" />
+                  </v-col>
+                </v-row>
+
+                <div class="pa-2 my-2 text-end">
                   <v-row>
                     <v-col cols="6">
                       <v-btn block color="red-lighten-1"
@@ -374,7 +387,7 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="6">
-                      <v-btn block color="orange-lighten-1"
+                      <v-btn block color="orange-lighten-1" :disabled="doneTaskDisabled"
                         @click="completeStep(taskIndex, 'tasks', true); callTimerSave()">
                         {{ $t('UserTestView.buttons.done') }}
                       </v-btn>
@@ -493,7 +506,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
@@ -507,6 +520,8 @@ import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
+import SusForm from '@/components/atoms/SusForm.vue';
+import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
 
 const videoUrl = ref('');
 const fullName = ref('');
@@ -526,6 +541,7 @@ const dialog = ref(false);
 const allTasksCompleted = ref(false);
 const isLoading = ref(false);
 const isVisualizerVisible = ref(false);
+const doneTaskDisabled = ref(false);
 
 const rightView = ref(null);
 const videoRecorder = ref(null);
@@ -886,6 +902,21 @@ const validate = (object) => {
     object.length > 0
   );
 };
+
+watchEffect(() => {
+  const index = taskIndex.value;
+  const task = test.value.testStructure.userTasks[index];
+  const answers = localTestAnswer.tasks[index]?.susAnswers;
+
+  if (task?.taskType === 'sus') {
+    const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
+    doneTaskDisabled.value = validCount < 10;
+    console.log('SUS respostas válidas:', validCount);
+  } else {
+    doneTaskDisabled.value = false;
+  }
+});
+
 
 watch(
   () => test.value,
