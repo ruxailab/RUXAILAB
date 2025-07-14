@@ -243,10 +243,10 @@ export default {
         // Get the testId from route or store
         const testId = this.$route.params.testId || this.testId
         //  process.env.ACCESSIBILITY_API
-        const response = await axios.post('http://localhost:3000/api/test', {
+        await axios.post('http://localhost:3000/api/test', {
           url: this.url,
           testId: testId,
-        })
+        });
 
         // Redirect to the report page
         this.$router.push(`/answers/${testId}`)
