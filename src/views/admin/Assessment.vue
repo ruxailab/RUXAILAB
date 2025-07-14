@@ -267,7 +267,7 @@ function restoreNotesFromAssessment(assessment) {
     notes.value = assessment.notes.map(n => ({
       text: n.text || '',
       image: null,
-      imagePreview: n.imageName ? '' : '', // imagePreview will be set on upload only
+      imagePreview: n.imageName ||'' , // imagePreview will be set on upload only
       imageName: n.imageName || null
     }))
   } else {
