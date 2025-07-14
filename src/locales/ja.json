@@ -129,7 +129,6 @@
     "incorrectPassword": "パスワードが間違っています",
     "incorrectCredential": "ユーザー名またはパスワードが間違っています。",
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。"
-    
   },
   "Introduction": {
     "title": "UXリモートラボ",
@@ -511,7 +510,8 @@
     "screenRecord": "画面録画",
     "camera": "カメラ",
     "eyeTracker": "アイトラッカー",
-    "audioRecord": "音声録音"
+    "audioRecord": "音声録音",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "同意フォーム",
@@ -572,7 +572,6 @@
     "analytics": "分析",
     "help_center": "ヘルプセンター",
     "howCanWeHelp": "どのようにお手伝いできますか？"
-
   },
   "user": "ユーザー",
   "account": "アカウント",
