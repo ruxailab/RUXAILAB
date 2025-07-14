@@ -225,17 +225,17 @@ const getAllRules = () => {
 // Get rules for the current principle
 const getRulesForPrinciple = (principleIndex) => {
   try {
-    const principle = principles.value?.[principleIndex]
+    const principle = principles.value?.[principleIndex];
     if (!principle) {
-      console.error(`No principle found at index ${principleIndex}`)
-      return []
+      console.error(`No principle found at index ${principleIndex}`);
+      return [];
     }
 
     // Get all rules that belong to this principle
     const principleRules = allRules.value.filter(
       (rule) =>
-        rule.principleId === principle.id || rule.principle === principle.title,
-    )
+        rule.principleId === principle.id || rule.principle === principle.title
+    );
 
     // Map each rule with its assessment data
     return principleRules.map((rule) => {
@@ -243,7 +243,13 @@ const getRulesForPrinciple = (principleIndex) => {
         status: 'Not Set',
         severity: 'Not Set',
         notes: [],
-      }
+      };
+
+      const normalizedNotes = Array.isArray(assessment.notes)
+        ? assessment.notes
+        : assessment.notes
+        ? [assessment.notes]
+        : [];
 
       return {
         ruleId: rule.id,
@@ -253,19 +259,16 @@ const getRulesForPrinciple = (principleIndex) => {
         level: rule.level || 'N/A',
         status: assessment.status,
         severity: assessment.severity,
-        notes: Array.isArray(assessment.notes)
-          ? assessment.notes
-          : assessment.notes
-            ? [assessment.notes]
-            : [],
+        notes: normalizedNotes,
         criteria: rule.criteria || [],
-      }
-    })
+      };
+    });
   } catch (error) {
-    console.error('Error getting rules for principle:', error)
-    return []
+    console.error('Error getting rules for principle:', error);
+    return [];
   }
-}
+};
+
 
 // Get principle icon
 const getPrincipleIcon = (index) => {
@@ -345,8 +348,7 @@ const loadAssessmentData = async () => {
     // Load WCAG data if not already loaded
     if (!wcagData.value) {
       await loadWcagData()
-    } else {
-    }
+    } 
 
     // Get the assessment document from Firestore
     const { getDoc, doc } = await import('firebase/firestore')
