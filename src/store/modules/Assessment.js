@@ -423,17 +423,7 @@ const actions = {
     }
   },
 
-  // Update rule assessment
-  updateRuleAssessment({ commit }, { ruleId, severity, status, notes }) {
-    // Accept notes as array or string
-    commit('UPDATE_RULE_ASSESSMENT', {
-      ruleId,
-      assessment: { severity, status, notes }
-    })
-    if (notes !== undefined) {
-      commit('UPDATE_RULE_NOTES', { ruleId, notes })
-    }
-  },
+  
 
   // Update rule notes (kept for backward compatibility)
   updateRuleNotes({ commit }, { ruleId, notes }) {
@@ -514,6 +504,7 @@ const actions = {
   
   // Update a single rule assessment
   async updateRuleAssessment({ commit, state }, { userId, testId, ruleId, assessment }) {
+    console.log("this goes here")
     try {
       if (!userId) throw new Error('User ID is required');
       
