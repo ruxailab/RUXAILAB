@@ -28,6 +28,12 @@
                       :model-value="getConclusionAverage()"
                     />
                   </v-col>
+                  <v-col
+                    cols="12"
+                    class="pb-0 d-flex justify-center align-center"
+                  >
+                    <span class="cardTitle">Tests in progress</span>
+                  </v-col>
                   <span class="conclusionPercentage mx-auto mb-1">{{
                     getTestsInProgress().totalInProgress
                   }}</span>

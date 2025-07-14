@@ -33,6 +33,8 @@
                   <v-list-item
                     v-for="(item, i) in testTasks"
                     :key="i"
+                    :value="i"
+                    @click="taskSelect = i"
                   >
                     <v-list-item-title>{{ item }}</v-list-item-title>
                   </v-list-item>
@@ -73,7 +75,12 @@
       </template>
     </ShowInfo>
     <template>
-      <v-dialog v-model="showDialog" max-width="600" fullscreen transition="dialog-bottom-transition">
+      <v-dialog
+        v-model="showDialog"
+        max-width="600"
+        fullscreen
+        transition="dialog-bottom-transition"
+      >
         <v-card>
           <v-toolbar
             color="orange"
@@ -106,8 +113,12 @@
                   rounded="xl"
                 >
                   <div class="ma-6">
-                    <span v-for="(question, index) in testStructure.preTest" :key="index" class="ma-1 text-subtitle-1"
-                      style="color: #252525">
+                    <span
+                      v-for="(question, index) in testStructure.preTest"
+                      :key="index"
+                      class="ma-1 text-subtitle-1"
+                      style="color: #252525"
+                    >
                       <strong>{{ question.title }}</strong> :
                       {{ dialogItem.preTestAnswer[index].answer }}
                     </span>
@@ -148,8 +159,12 @@
                   rounded="xl"
                 >
                   <div class="ma-6">
-                    <span v-for="(question, index) in testStructure.postTest" :key="index" class="ma-1 text-subtitle-1"
-                      style="color: #252525">
+                    <span
+                      v-for="(question, index) in testStructure.postTest"
+                      :key="index"
+                      class="ma-1 text-subtitle-1"
+                      style="color: #252525"
+                    >
                       <strong>{{ question.title }}</strong> :
                       {{ dialogItem.postTestAnswer[index].answer }}
                     </span>
