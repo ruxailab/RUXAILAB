@@ -231,13 +231,11 @@ const getRulesForPrinciple = (principleIndex) => {
       return [];
     }
 
-    // Get all rules that belong to this principle
     const principleRules = allRules.value.filter(
       (rule) =>
         rule.principleId === principle.id || rule.principle === principle.title
     );
 
-    // Map each rule with its assessment data
     return principleRules.map((rule) => {
       const assessment = assessmentRules.value[rule.id] || {
         status: 'Not Set',
@@ -245,11 +243,12 @@ const getRulesForPrinciple = (principleIndex) => {
         notes: [],
       };
 
-      const normalizedNotes = Array.isArray(assessment.notes)
-        ? assessment.notes
-        : assessment.notes
-        ? [assessment.notes]
-        : [];
+      let normalizedNotes = [];
+      if (Array.isArray(assessment.notes)) {
+        normalizedNotes = assessment.notes;
+      } else if (assessment.notes) {
+        normalizedNotes = [assessment.notes];
+      }
 
       return {
         ruleId: rule.id,
