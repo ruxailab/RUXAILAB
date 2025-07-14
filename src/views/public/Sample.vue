@@ -75,23 +75,6 @@ const fetchTest = async () => {
   }
 }
 
-// Format date for display
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  } catch (e) {
-    return 'Invalid date'
-  }
-}
 
 // Get color based on status
 const getStatusColor = (status) => {
