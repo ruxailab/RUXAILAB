@@ -2,6 +2,7 @@ import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { VTimePicker } from 'vuetify/lib/labs/VTimePicker'
 
 const myCustomLightTheme = {
   dark: false,
@@ -21,7 +22,10 @@ const myCustomLightTheme = {
 }
 
 export default createVuetify({
-  components,
+  components: {
+    ...components,
+    VTimePicker,
+  },
   directives,
   theme: {
     defaultTheme: 'myCustomLightTheme',
