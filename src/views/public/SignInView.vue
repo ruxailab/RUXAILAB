@@ -2,7 +2,11 @@
   <div class="signin-wrapper d-flex">
     <!-- IZQUIERDA: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
+      <img
+        src="@/assets/ruxailab.png"
+        alt="RUXAILAB"
+        class="logo-img"
+      >
     </div>
 
     <!-- DERECHA: FORMULARIO -->
@@ -10,31 +14,67 @@
       <Snackbar />
 
       <div class="signin-box">
-        <h1 class="title">
+        <h1 class="text-h6">
           {{ $t('SIGNIN.sign-in-title') }}
         </h1>
         <p class="subtitle">
           {{ $t('SIGNIN.sign-in-subtitle') }}
         </p>
 
-        <v-form ref="form" @submit.prevent="onSignIn">
-          <v-text-field v-model="email" :rules="emailRules" :label="$t('SIGNIN.email')" type="email"
-            placeholder="you@example.com" prepend-inner-icon="mdi-email-outline" variant="outlined" class="mb-4" />
+        <v-form
+          ref="form"
+          @submit.prevent="onSignIn"
+        >
+          <v-text-field
+            v-model="email"
+            :rules="emailRules"
+            :label="$t('SIGNIN.email')"
+            type="email"
+            placeholder="you@example.com"
+            prepend-inner-icon="mdi-email-outline"
+            variant="outlined"
+            class="mb-4"
+          />
 
-          <v-text-field v-model.trim="password" :rules="[rules.required]" :label="$t('SIGNIN.password')"
-            :type="showPassword ? 'text' : 'password'" placeholder="••••••••" prepend-inner-icon="mdi-lock-outline"
-            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" variant="outlined" class="mb-2"
-            @click:append-inner="toggleShowPassword" />
+          <v-text-field
+            v-model.trim="password"
+            :rules="[rules.required]"
+            :label="$t('SIGNIN.password')"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            class="mb-2"
+            @click:append-inner="toggleShowPassword"
+          />
 
           <div class="d-flex justify-space-between align-center mb-6">
-            <v-checkbox v-model="rememberMe" :label="$t('SIGNIN.rememberMe')" hide-details density="compact" />
+            <v-checkbox
+              v-model="rememberMe"
+              :label="$t('SIGNIN.rememberMe')"
+              hide-details
+              density="compact"
+            />
 
-            <v-btn variant="text" color="primary" class="text-body-2" @click="redirectToForgotPassword">
+            <v-btn
+              variant="text"
+              color="primary"
+              class="text-body-2"
+              @click="redirectToForgotPassword"
+            >
               {{ $t('SIGNIN.forgot-password') }}
             </v-btn>
           </div>
 
-          <v-btn type="submit" color="primary" block :loading="loading" min-height="44" data-testid="sign-in-button">
+          <v-btn
+            type="submit"
+            color="primary"
+            block
+            :loading="loading"
+            min-height="44"
+            data-testid="sign-in-button"
+          >
             {{ $t('SIGNIN.sign-in') }}
           </v-btn>
         </v-form>
@@ -45,15 +85,24 @@
           </span>
         </v-divider>
 
-        <GoogleSignInButton :button-text="$t('SIGNIN.continueWithGoogle')" :loading="loading"
-          @google-sign-in-start="onGoogleSignInStart" @google-sign-in-success="onGoogleSignInSuccess"
-          @google-sign-in-error="onGoogleSignInError" />
+        <GoogleSignInButton
+          :button-text="$t('SIGNIN.continueWithGoogle')"
+          :loading="loading"
+          @google-sign-in-start="onGoogleSignInStart"
+          @google-sign-in-success="onGoogleSignInSuccess"
+          @google-sign-in-error="onGoogleSignInError"
+        />
 
         <div class="text-center mt-6">
           <span class="text-body-2 text-medium-emphasis">
             {{ $t('SIGNIN.dont-have-account') }}
           </span>
-          <v-btn variant="text" color="primary" class="text-body-2 pl-1" @click="redirectToSignup">
+          <v-btn
+            variant="text"
+            color="primary"
+            class="text-body-2 pl-1"
+            @click="redirectToSignup"
+          >
             {{ $t('SIGNIN.sign-up') }}
           </v-btn>
         </div>

@@ -1,7 +1,14 @@
 <template>
-  <v-stepper alt-labels :model-value="currentStep" class="elevation-0 bg-transparent">
+  <v-stepper
+    alt-labels
+    :model-value="currentStep"
+    class="elevation-0 bg-transparent"
+  >
     <v-stepper-header class="elevation-0">
-      <template v-for="(step, index) in steps" :key="step.value">
+      <template
+        v-for="(step, index) in steps"
+        :key="step.value"
+      >
         <v-stepper-item
           :complete="step.complete"
           :value="step.value"
