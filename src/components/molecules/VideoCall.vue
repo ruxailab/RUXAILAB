@@ -1,18 +1,9 @@
 <template>
   <v-container fluid>
-    <v-row
-      class="mb-2"
-      justify="center"
-    >
+    <v-row class="mb-2" justify="center">
       <v-col cols="10">
-        <v-btn
-          v-if="index === 0"
-          :disabled="!consentCompleted && !isAdmin"
-          color="green"
-          block
-          variant="flat"
-          @click="openUserCamera"
-        >
+        <v-btn v-if="index === 0" :disabled="!consentCompleted && !isAdmin" color="green" block variant="flat"
+          @click="openUserCamera">
           CONNECT
         </v-btn>
       </v-col>
@@ -40,7 +31,7 @@ import { db } from '@/firebase'
 import { useRouter } from 'vue-router'
 
 
-defineProps({
+const props = defineProps({
   isAdmin: {
     type: Boolean,
   },
@@ -93,6 +84,8 @@ const emitConfirm = () => {
 }
 
 const createRoom = async () => {
+  console.log('createRoom chamado');
+
   createBtnDisabled.value = true
   joinBtnDisabled.value = true
   roomCollection.value = collection(db, 'rooms')
@@ -101,19 +94,21 @@ const createRoom = async () => {
     configuration: configuration.value,
   })
 
+  console.log('localCameraStream.value', localCameraStream);
   localCameraStream.value.getTracks().forEach((track) => {
     videoSender.value = peerConnection.value.addTrack(track, localCameraStream.value)
   })
 
   const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
   peerConnection.value.addEventListener('icecandidate', (event) => {
-    if (!event.candidate) {
-      return
-    }
+    console.log('icecandidate chamado');
+    if (!event.candidate) return
+    console.log('addDoc callerCandidatesCollection');
     addDoc(callerCandidatesCollection, event.candidate.toJSON())
   })
 
   const offer = await peerConnection.value.createOffer()
+  console.log('createOffer feito');
   await peerConnection.value.setLocalDescription(offer)
   const roomWithOffer = {
     offer: {
@@ -121,34 +116,67 @@ const createRoom = async () => {
       sdp: offer.sdp,
     },
   }
+  console.log('vai setar o documento');
   await setDoc(roomRef, roomWithOffer)
+  console.log('documento setado');
   roomId.value = roomRef.id
   currentRoom.value = `Current room is ${roomRef.id} - You are the caller!`
 
   peerConnection.value.addEventListener('track', (event) => {
+    console.log('evento track');
     event.streams[0].getTracks().forEach((track) => {
       remoteCameraStream.value.addTrack(track)
     })
   })
 
+  const candidateQueue = []
+
   onSnapshot(roomRef, async (snapshot) => {
+    console.log('onSnapshot chamado');
     const data = snapshot.data()
-    if (!peerConnection.value.currentRemoteDescription && data && data.answer) {
+    if (!peerConnection.value.currentRemoteDescription && data?.answer) {
       const rtcSessionDescription = new RTCSessionDescription(data.answer)
+      console.log('vai setar descri o remota');
       await peerConnection.value.setRemoteDescription(rtcSessionDescription)
+      console.log('descri o remota setada');
+
+      // Após setar a remoteDescription, aplicar os ICE Candidates armazenados
+      for (const candidate of candidateQueue) {
+        try {
+          await peerConnection.value.addIceCandidate(candidate)
+        } catch (e) {
+          console.warn('Erro ao aplicar ICE da fila:', e)
+        }
+      }
+      candidateQueue.length = 0
     }
   })
 
   onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
+    console.log('onSnapshot calleeCandidates');
     snapshot.docChanges().forEach(async (change) => {
       if (change.type === 'added') {
         const data = change.doc.data()
-        await peerConnection.value.addIceCandidate(new RTCIceCandidate(data))
+        const candidate = new RTCIceCandidate(data)
+
+        if (peerConnection.value.remoteDescription) {
+          try {
+            console.log('vai adicionar iceCandidate');
+            await peerConnection.value.addIceCandidate(candidate)
+            console.log('iceCandidate adicionado');
+          } catch (e) {
+            console.warn('Erro ao adicionar ICE:', e)
+          }
+        } else {
+          console.log('remoteDescription ausente, guardando ICE')
+          candidateQueue.push(candidate)
+        }
       }
     })
   })
 
   peerConnection.value.addEventListener('connectionstatechange', () => {
+    console.log('connectionstatechange');
     if (
       peerConnection.value.connectionState === 'disconnected' ||
       peerConnection.value.iceConnectionState === 'disconnected'
@@ -162,53 +190,80 @@ const joinRoomById = async (roomId) => {
   const roomRef = doc(collection(db, 'rooms'), roomId)
   const roomSnapshot = await getDoc(roomRef)
 
-  if (roomSnapshot.exists()) {
-    await store.dispatch('createPeerConnection', {
-      configuration: configuration.value,
-    })
-    const localStream = localCameraStream.value
-    localStream.getTracks().forEach((track) => {
-      videoSender.value = peerConnection.value.addTrack(track, localStream)
-    })
+  if (!roomSnapshot.exists()) return
 
-    const calleeCandidatesCollection = collection(roomRef, 'calleeCandidates')
-    peerConnection.value.addEventListener('icecandidate', async (event) => {
-      if (!event.candidate) {
-        return
-      }
+  await store.dispatch('createPeerConnection', {
+    configuration: configuration.value,
+  })
+
+  const localStream = localCameraStream.value
+  localStream.getTracks().forEach((track) => {
+    videoSender.value = peerConnection.value.addTrack(track, localStream)
+  })
+
+  const calleeCandidatesCollection = collection(roomRef, 'calleeCandidates')
+  peerConnection.value.addEventListener('icecandidate', async (event) => {
+    if (event.candidate) {
       await addDoc(calleeCandidatesCollection, event.candidate.toJSON())
-    })
-
-    peerConnection.value.addEventListener('track', (event) => {
-      event.streams[0].getTracks().forEach((track) => {
-        if (remoteCameraStream.value) {
-          remoteCameraStream.value.addTrack(track)
-        }
-      })
-    })
-
-    const offer = roomSnapshot.data().offer
-    await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offer))
-
-    const answer = await peerConnection.value.createAnswer()
-    await peerConnection.value.setLocalDescription(answer)
-    const roomWithAnswer = {
-      answer: {
-        type: answer.type,
-        sdp: answer.sdp,
-      },
     }
-    await updateDoc(roomRef, roomWithAnswer)
+  })
 
-    onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
-      snapshot.docChanges().forEach(async (change) => {
-        if (change.type === 'added') {
-          const data = change.doc.data()
-          await peerConnection.value.addIceCandidate(new RTCIceCandidate(data))
-        }
-      })
+  peerConnection.value.addEventListener('track', (event) => {
+    event.streams[0].getTracks().forEach((track) => {
+      if (remoteCameraStream.value) {
+        remoteCameraStream.value.addTrack(track)
+      }
     })
+  })
+
+  const candidateQueue = []
+
+  onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
+    snapshot.docChanges().forEach(async (change) => {
+      if (change.type === 'added') {
+        const data = change.doc.data()
+        const candidate = new RTCIceCandidate(data)
+
+        if (peerConnection.value.remoteDescription) {
+          try {
+            await peerConnection.value.addIceCandidate(candidate)
+            console.log('ICE adicionado diretamente')
+          } catch (e) {
+            console.warn('Erro ao adicionar ICE diretamente:', e)
+          }
+        } else {
+          console.log('remoteDescription ainda não setada, guardando ICE na fila')
+          candidateQueue.push(candidate)
+        }
+      }
+    })
+  })
+
+  // Agora sim: setando a offer vinda do caller
+  const offer = roomSnapshot.data().offer
+  await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offer))
+
+  const answer = await peerConnection.value.createAnswer()
+  await peerConnection.value.setLocalDescription(answer)
+
+  const roomWithAnswer = {
+    answer: {
+      type: answer.type,
+      sdp: answer.sdp,
+    },
   }
+  await updateDoc(roomRef, roomWithAnswer)
+
+  // Após setar remoteDescription, processa a fila
+  for (const candidate of candidateQueue) {
+    try {
+      await peerConnection.value.addIceCandidate(candidate)
+      console.log('ICE da fila adicionado após remoteDescription')
+    } catch (e) {
+      console.warn('Erro ao aplicar ICE da fila:', e)
+    }
+  }
+  candidateQueue.length = 0
 
   peerConnection.value.addEventListener('connectionstatechange', () => {
     if (
@@ -222,30 +277,67 @@ const joinRoomById = async (roomId) => {
 
 const openUserCamera = async () => {
   try {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    console.table(devices)
+
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        width: { ideal: 640, max: 1280 },
-        height: { ideal: 360, max: 720 },
-      },
-      audio: true,
+      video: true, // simples, sem filtro
+      audio: false
     })
+
+    console.log("[openUserCamera] - stream:", stream);
+
+    // Aguarde a ativação da stream (tracks ativas)
+    await waitForTracks(stream);
+
+    console.log("[openUserCamera] - tracks disponíveis:", stream.getTracks());
+
     if (stream) {
+      await store.dispatch('setlocalCameraStream', stream)
+      const localCameraStream = computed(() => store.getters.localCameraStream)
+      await store.dispatch('setremoteCameraStream', new MediaStream())
+      console.log("Após dispatch: ", localCameraStream.value);
       emitConfirm()
-      store.commit('SET_LOCAL_STREAM', stream)
-      store.commit('SET_REMOTE_STREAM', new MediaStream())
+
+
       createBtnDisabled.value = false
       joinBtnDisabled.value = false
       hangupBtnDisabled.value = false
 
-      if (isAdmin) {
-        await createRoom()
+      console.log('[openUserCamera] - creating/joining room', roomTestId.value)
+
+      if (props.isAdmin) {
+        await createRoom(stream)
       } else {
-        await joinRoomById(roomTestId.value)
+        await joinRoomById(roomTestId.value, stream)
       }
     }
   } catch (e) {
-    toast.error(t('errors.globalError'))
+    console.error('[openUserCamera] - error:', e.name, e.message)
+    if (e.name === 'NotFoundError') {
+      toast.error('Nenhuma câmera ou microfone encontrado.')
+    } else if (e.name === 'NotReadableError') {
+      toast.error('Câmera ou microfone já está em uso.')
+    } else if (e.name === 'NotAllowedError') {
+      toast.error('Permissão negada para acessar câmera ou microfone.')
+    } else {
+      toast.error(t('errors.globalError'))
+    }
   }
+}
+
+const waitForTracks = (stream) => {
+  return new Promise((resolve, reject) => {
+    const check = () => {
+      const tracks = stream.getTracks();
+      if (tracks.length && tracks.every(track => track.readyState === 'live')) {
+        resolve();
+      } else {
+        setTimeout(check, 50);
+      }
+    };
+    check();
+  });
 }
 
 const hangUp = async () => {
@@ -288,16 +380,16 @@ const hangUp = async () => {
   }
 }
 
-router.beforeEach((to, from, next) => {
-  if (from.matched.some((record) => record.components.default === this)) {
-    hangUp()
-  }
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   if (from.matched.some((record) => record.components.default === this)) {
+//     hangUp()
+//   }
+//   next()
+// })
 
-onBeforeUnmount(() => {
-  hangUp()
-})
+// onBeforeUnmount(() => {
+//   hangUp()
+// })
 </script>
 
 <style scoped></style>
