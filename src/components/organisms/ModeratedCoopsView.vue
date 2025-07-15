@@ -178,6 +178,7 @@
                   <v-col cols="7" class="pa-0">
                     <v-text-field :model-value="comboboxModel.email" density="compact" disabled variant="outlined"
                       bg-color="#D7D7D7" class="rounded-lg" />
+
                   </v-col>
                   <span class="modalInternTitles">{{ $t('UsabilityCooperators.scheduledAt') }}</span>
                   <v-row justify="center" style="margin-top: -9px;">
@@ -188,6 +189,7 @@
                           <v-text-field v-model="date" readonly color="orange" bg-color="grey lighten-3" v-bind="props"
                             variant="outlined" density="compact" class="rounded-lg"
                             :rules="[(v) => !!v || 'Required Date']" required />
+
                         </template>
                         <v-date-picker v-model="date" :min="new Date(
                           Date.now() - new Date().getTimezoneOffset() * 60000,
@@ -272,7 +274,13 @@ const date = ref(
     .toISOString()
     .substr(0, 10)
 );
-const hour = ref(null);
+const hour = ref(
+  new Date().toLocaleTimeString('en-GB', { 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    hour12: false 
+  })
+);
 const headers = ref([
   { title: 'Email', value: 'email' },
   { title: 'Test Date', value: 'testDate' },
@@ -284,7 +292,7 @@ const headers = ref([
 ]);
 const roleOptions = ref(roleOptionsItems);
 const intro = ref(null);
-const comboboxModel = ref({});
+const comboboxModel = ref(null);
 const comboboxKey = ref(0);
 const selectedRole = ref(1);
 const showCoops = ref(false);
@@ -348,12 +356,13 @@ const saveInvitation = async () => {
 };
 
 const verifyEmail = () => {
+  if (!comboboxModel.value || !comboboxModel.value?.email) return;
   const alreadyInvited = cooperatorsEdit.value.find(
-    (cooperator) => cooperator.email === comboboxModel.value.email
+    (cooperator) => cooperator.email === comboboxModel.value?.email
   );
   if (alreadyInvited) {
     toast.warning(`${comboboxModel.value.email} has already been invited`);
-    comboboxModel.value = {};
+    comboboxModel.value = null;
   }
 };
 
@@ -369,7 +378,7 @@ const submit = async () => {
   inviteForm.value.resetValidation();
   hour.value = null;
   inviteMessage.value = '';
-  comboboxModel.value = {};
+  comboboxModel.value = null;
   combobox.value.blur();
 };
 

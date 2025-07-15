@@ -325,7 +325,7 @@ const filterModeratedSessions = async () => {
     const testObj = await store.dispatch('getTest', { id: testId });
 
     if (testObj) {
-      const cooperatorObj = testObj.cooperators.find(
+      const cooperatorObj = testObj.cooperators?.find(
         (coop) => coop.userDocId == user.value.id
       );
       if (cooperatorObj) {
