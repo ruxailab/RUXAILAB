@@ -976,7 +976,7 @@
         color="grey-darken-4"
       >
         <v-progress-linear
-          style="border-radius: 20px; width: 20wv;"
+          style="border-radius: 20px; width: 20vw;"
           :model-value="uploadProgress"
           color="#fca326"
           height="20"
