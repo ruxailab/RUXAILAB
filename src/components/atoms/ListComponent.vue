@@ -48,14 +48,9 @@
                     :color="generateColor()"
                     style="border-radius: 5px; color: #545454"
                   >
-                    <span class="font-weight-bold text-body-1">
-                      {{
-                        (item.header?.templateTitle ??
-                          item.testTitle ??
-                          item.email ??
-                          '')[0]?.toUpperCase()
-                      }}
-                    </span>
+                    <v-icon size="24">
+                      {{ getTypeIcon(item) }}
+                    </v-icon>
                   </v-avatar>
                 </template>
                 <span>
@@ -182,6 +177,28 @@ const getOwnerName = (item) => {
     item.testAuthorEmail ??
     'Unknown'
   )
+}
+
+const getTypeIcon = (item) => {
+  const testType = item.testType ?? item.header?.templateType ?? 'USER'
+  const subtype = item.userTestType ?? ''
+
+  switch (testType.toUpperCase()) {
+    case 'HEURISTICS':
+      return 'mdi-clipboard-check'
+
+    case 'USER':
+      if (subtype.toUpperCase().includes('UNMODERATED')) {
+        return 'mdi-monitor-screenshot'
+      }
+      if (subtype.toUpperCase().includes('MODERATED')) {
+        return 'mdi-account-voice'
+      }
+      return 'mdi-account'
+
+    default:
+      return 'mdi-file-document'
+  }
 }
 
 const getOwnerImage = (item) => {
