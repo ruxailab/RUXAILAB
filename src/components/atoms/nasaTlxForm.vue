@@ -19,7 +19,7 @@
               <span class="text-caption text-grey">{{ label.subtitle }}</span>
             </div>
             <v-slider
-              v-model="nasaTlx[key]"
+              v-model="localNasaTlx[key]"
               :max="100"
               :step="5"
               track-color="grey-lighten-2"
@@ -38,24 +38,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { reactive, watch, ref } from 'vue';
 
-defineProps({
-    nasaTlx: {
-        type: Object,
-        required: true,
-    },
-})
+const props = defineProps({
+  nasaTlx: {
+    type: Object,
+    required: true,
+  }
+});
+
+const emit = defineEmits(['update:nasaTlx']);
+
+const localNasaTlx = reactive({ ...props.nasaTlx });
+
+watch(() => props.nasaTlx, (newVal) => {
+  Object.assign(localNasaTlx, newVal);
+});
+
+watch(localNasaTlx, () => {
+  emit('update:nasaTlx', { ...localNasaTlx });
+}, { deep: true });
 
 let valid = ref(false);
 
 const labels = {
-    mentalDemand: { title: "Mental Demand", left: "Low", right: "High", subtitle: "How mentally demanding was the task?" },
-    physicalDemand: { title: "Physical Demand", left: "Low", right: "High", subtitle: "How physically demanding was the task?" },
-    temporalDemand: { title: "Temporal Demand", left: "Low", right: "High", subtitle: "How hurried or rushed was the pace of the task?" },
-    performance: { title: "Performance", left: "Good", right: "Poor", subtitle: "How successful were you in accomplishing the task?" },
-    effort: { title: "Effort", left: "Low", right: "High", subtitle: "How hard did you have to work to accomplish it?" },
-    frustration: { title: "Frustration", left: "Low", right: "High", subtitle: "How stressed, annoyed, or irritated were you?" }
+  mentalDemand: { title: "Mental Demand", left: "Low", right: "High", subtitle: "How mentally demanding was the task?" },
+  physicalDemand: { title: "Physical Demand", left: "Low", right: "High", subtitle: "How physically demanding was the task?" },
+  temporalDemand: { title: "Temporal Demand", left: "Low", right: "High", subtitle: "How hurried or rushed was the pace of the task?" },
+  performance: { title: "Performance", left: "Good", right: "Poor", subtitle: "How successful were you in accomplishing the task?" },
+  effort: { title: "Effort", left: "Low", right: "High", subtitle: "How hard did you have to work to accomplish it?" },
+  frustration: { title: "Frustration", left: "Low", right: "High", subtitle: "How stressed, annoyed, or irritated were you?" }
 };
 </script>
 

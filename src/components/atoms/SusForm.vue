@@ -13,8 +13,9 @@
         <span>{{ susQuestions[i] }}</span>
         <v-divider class="my-2" />
         <v-radio-group
-          v-model="susAnswers[i - 1]"
+          :model-value="susAnswers[i - 1]"
           inline
+          @update:model-value="(val) => emit('update-answer', { index: i - 1, value: val })"
         >
           <v-radio
             v-for="n in 5"
@@ -43,6 +44,8 @@ defineProps({
         required: true,
     },
 })
+
+const emit = defineEmits(['update-answer']);
 
 const form = ref(null);
 const valid = ref(false);
