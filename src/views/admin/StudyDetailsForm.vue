@@ -303,13 +303,22 @@ const category = computed(() => store.state.Tests.studyCategory)
 const method = computed(() => store.state.Tests.studyMethod)
 const studyType = computed(() => store.state.Tests.studyType)
 
-const siteUrlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
-
 const rules = {
   title: [(v) => !!v || 'Enter a Title', (v) => v.length <= 200 || 'Max 200 characters'],
   description: [(v) => v.length <= 600 || 'Max 600 characters'],
   siteName: [(v) => !!v || 'Enter website name', (v) => v.length <= 200 || 'Max 200 characters'],
-  siteUrl: [(v) => !!v || 'Enter website URL', (v) => siteUrlRegex.test(v) || 'Enter a valid URL (e.g., https://example.com)'],
+    siteUrl: [
+    (v) => !!v || 'Enter website URL',
+    (v) => {
+      try {
+        if (!v) return true;
+        const url = new URL(v);
+        return ['http:', 'https:'].includes(url.protocol) || 'URL must start with http:// or https://';
+      } catch {
+        return 'Enter a valid URL (e.g., https://example.com)';
+      }
+    }
+  ],
 };
 
 const heading = 'Study Details';
