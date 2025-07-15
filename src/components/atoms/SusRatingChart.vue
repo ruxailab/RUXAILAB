@@ -1,6 +1,8 @@
 <template>
   <div class="rating-chart-container">
-    <h3 class="text-h6 mb-4">Rating Categories</h3>
+    <h3 class="text-h6 mb-4">
+      Rating Categories
+    </h3>
     <div class="distribution-chart">
       <div
         v-for="(item, index) in distributionData"
@@ -8,7 +10,10 @@
         class="distribution-row"
       >
         <div class="d-flex align-center">
-          <div class="rating-label" style="width: 80px;">
+          <div
+            class="rating-label"
+            style="width: 80px;"
+          >
             {{ item.label }}
           </div>
           <div class="flex-grow-1 mx-4">

@@ -2,7 +2,11 @@
   <div class="background-grey d-flex align-center justify-center">
     <Snackbar />
 
-    <v-card class="mx-auto pa-6" max-width="480" elevation="8">
+    <v-card
+      class="mx-auto pa-6"
+      max-width="480"
+      elevation="8"
+    >
       <v-card-title class="text-h4 font-weight-bold mb-2">
         {{ $t('SIGNIN.sign-in-title') }}
       </v-card-title>
@@ -11,7 +15,10 @@
         {{ $t('SIGNIN.sign-in-subtitle') }}
       </v-card-subtitle>
 
-      <v-form ref="form" @submit.prevent="onSignIn">
+      <v-form
+        ref="form"
+        @submit.prevent="onSignIn"
+      >
         <v-text-field
           v-model="email"
           :rules="emailRules"
@@ -31,9 +38,9 @@
           placeholder="••••••••"
           prepend-inner-icon="mdi-lock-outline"
           :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append-inner="toggleShowPassword"
           variant="outlined"
           class="mb-2"
+          @click:append-inner="toggleShowPassword"
         />
 
         <div class="d-flex justify-space-between align-center mb-6">
@@ -47,8 +54,8 @@
           <v-btn
             variant="text"
             color="primary"
-            @click="redirectToForgotPassword"
             class="text-body-2"
+            @click="redirectToForgotPassword"
           >
             {{ $t('SIGNIN.forgot-password') }}
           </v-btn>
@@ -89,8 +96,8 @@
         <v-btn
           variant="text"
           color="primary"
-          @click="redirectToSignup"
           class="text-body-2 pl-1"
+          @click="redirectToSignup"
         >
           {{ $t('SIGNIN.sign-up') }}
         </v-btn>
