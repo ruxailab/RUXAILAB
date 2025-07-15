@@ -1,97 +1,27 @@
 <template>
-  <v-container
-    fluid
-    class="create-study-view"
-  >
+  <v-container fluid class="create-study-view">
     <v-container class="py-6">
-      <!-- Progress Stepper -->
-      <v-row class="mb-6">
-        <v-col cols="12">
-          <v-stepper
-            alt-labels
-            :model-value="4"
-            class="elevation-0 bg-transparent"
-          >
-            <v-stepper-header class="elevation-0">
-              <v-stepper-item
-                :complete="true"
-                :value="1"
-                color="success"
-                title="Category"
-              />
-              <v-divider />
-              <v-stepper-item
-                :complete="true"
-                :value="2"
-                color="success"
-                title="Methods"
-              />
-              <v-divider />
-              <v-stepper-item
-                :complete="true"
-                :value="3"
-                color="success"
-                title="Study Type"
-              />
-              <v-divider />
-              <v-stepper-item
-                :complete="false"
-                :value="4"
-                color="primary"
-                title="Details"
-              />
-            </v-stepper-header>
-          </v-stepper>
-        </v-col>
-      </v-row>
+
+      <!-- Stepper Header -->
+      <StepperHeader :current-step="4" :steps="steps" />
 
       <!-- Page Header -->
-      <v-row class="mb-6">
-        <v-col
-          cols="12"
-          class="text-center"
-        >
-          <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-3">
-            {{ heading }}
-          </h2>
-          <p class="text-h6 text-grey-darken-1">
-            {{ subHeading }}
-          </p>
-        </v-col>
-      </v-row>
+      <SectionHeader :title="heading" :subtitle="subHeading" />
 
       <!-- Main Content -->
-      <v-row
-        justify="center"
-        class="mb-6"
-      >
-        <v-col
-          cols="12"
-          lg="8"
-          xl="6"
-        >
-          <v-card
-            class="custom-card"
-            elevation="4"
-          >
+      <v-row justify="center" class="mb-6">
+        <v-col cols="12" lg="8" xl="6">
+          <v-card class="custom-card" elevation="4">
             <v-card-text class="pa-8">
+
               <!-- Basic Information -->
               <div class="mb-8">
                 <div class="d-flex align-center mb-6">
-                  <v-icon
-                    icon="mdi-form-textbox"
-                    class="mr-3"
-                    color="primary"
-                  />
-                  <h3 class="text-h5 font-weight-medium">
-                    Basic Information
-                  </h3>
+                  <v-icon icon="mdi-form-textbox" class="mr-3" color="primary" />
+                  <h3 class="text-h5 font-weight-medium">Basic Information</h3>
                 </div>
 
-                <v-form
-                  ref="form"
-                  @submit.prevent="validate"
-                >
+                <v-form ref="form" @submit.prevent="validate">
                   <v-row>
                     <v-col cols="12">
                       <v-text-field
@@ -117,10 +47,7 @@
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
                     </v-col>
-                    <v-col
-                      v-if="method == 'HEURISTICS'"
-                      cols="12"
-                    >
+                    <v-col v-if="method == 'HEURISTICS'" cols="12">
                       <v-text-field
                         v-model="websiteDetails.siteName"
                         :rules="rules.siteName"
@@ -151,26 +78,18 @@
               <!-- Privacy Settings -->
               <div class="mb-8">
                 <div class="d-flex align-center mb-6">
-                  <v-icon
-                    icon="mdi-shield-account"
-                    class="mr-3"
-                    color="primary"
-                  />
+                  <v-icon icon="mdi-shield-account" class="mr-2" color="primary" />
                   <div>
-                    <h3 class="text-h5 font-weight-medium">
-                      Privacy Settings
-                    </h3>
-                    <p class="text-body-2 text-grey-darken-1 mt-1">
-                      Control who can see your study
-                    </p>
+                    <h3 class="text-h5 font-weight-medium">Privacy Settings</h3>
+                    <p class="text-body-2 text-grey-darken-1 mt-1">Control who can see your study</p>
                   </div>
                 </div>
 
                 <v-list class="bg-transparent pa-0">
                   <v-list-item class="pa-0">
                     <template #prepend>
-                      <v-icon 
-                        :icon="test.isPublic ? 'mdi-earth' : 'mdi-lock'" 
+                      <v-icon
+                        :icon="test.isPublic ? 'mdi-earth' : 'mdi-lock'"
                         :color="test.isPublic ? 'success' : 'warning'"
                         class="mr-4"
                       />
@@ -181,18 +100,11 @@
                     </v-list-item-title>
 
                     <v-list-item-subtitle>
-                      {{ test.isPublic 
-                        ? 'Anyone can view and participate in this study' 
-                        : 'Only you and invited participants can access this study' 
-                      }}
+                      {{ test.isPublic ? 'Anyone can view and participate in this study' : 'Only you and invited participants can access this study' }}
                     </v-list-item-subtitle>
 
                     <template #append>
-                      <v-switch
-                        v-model="test.isPublic"
-                        color="primary"
-                        hide-details
-                      />
+                      <v-switch v-model="test.isPublic" color="primary" class="mr-4" hide-details />
                     </template>
                   </v-list-item>
                 </v-list>
@@ -203,42 +115,21 @@
               <!-- Summary -->
               <div class="mb-8">
                 <div class="d-flex align-center mb-6">
-                  <v-icon
-                    icon="mdi-clipboard-list"
-                    class="mr-3"
-                    color="primary"
-                  />
-                  <h3 class="text-h5 font-weight-medium">
-                    Study Summary
-                  </h3>
+                  <v-icon icon="mdi-clipboard-list" class="mr-3" color="primary" />
+                  <h3 class="text-h5 font-weight-medium">Study Summary</h3>
                 </div>
-                <v-card
-                  variant="tonal"
-                  color="primary"
-                  class="pa-4"
-                >
-                  <v-list
-                    class="bg-transparent pa-0"
-                    density="compact"
-                  >
+                <v-card variant="tonal" color="primary" class="pa-4">
+                  <v-list class="bg-transparent pa-0" density="compact">
                     <v-list-item class="pa-0 mb-2">
-                      <v-list-item-title class="font-weight-medium">
-                        Category:
-                      </v-list-item-title>
-                      <v-list-item-subtitle class="text-capitalize">
-                        {{ category }}
-                      </v-list-item-subtitle>
+                      <v-list-item-title class="font-weight-medium">Category:</v-list-item-title>
+                      <v-list-item-subtitle class="text-capitalize">{{ category }}</v-list-item-subtitle>
                     </v-list-item>
                     <v-list-item class="pa-0 mb-2">
-                      <v-list-item-title class="font-weight-medium">
-                        Method:
-                      </v-list-item-title>
+                      <v-list-item-title class="font-weight-medium">Method:</v-list-item-title>
                       <v-list-item-subtitle>{{ method }}</v-list-item-subtitle>
                     </v-list-item>
                     <v-list-item class="pa-0">
-                      <v-list-item-title class="font-weight-medium">
-                        Type:
-                      </v-list-item-title>
+                      <v-list-item-title class="font-weight-medium">Type:</v-list-item-title>
                       <v-list-item-subtitle>{{ studyType === 'blank' ? 'Blank Study' : 'Template' }}</v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
@@ -246,13 +137,7 @@
               </div>
 
               <div class="d-flex justify-space-between align-center">
-                <v-btn
-                  variant="outlined"
-                  prepend-icon="mdi-arrow-left"
-                  @click="goBack"
-                >
-                  Back to Study Type
-                </v-btn>
+                <BackButton label="Back to Study Type" adjust="start" @back="goBack" />
                 <v-btn
                   color="success"
                   size="large"
@@ -264,6 +149,7 @@
                   Create Study
                 </v-btn>
               </div>
+
             </v-card-text>
           </v-card>
         </v-col>
@@ -279,12 +165,13 @@ import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import Test from '@/models/Test';
 import TestAdmin from '@/models/TestAdmin';
+import StepperHeader from '@/components/atoms/StepperHeader.vue';
+import SectionHeader from '@/components/atoms/SectionHeader.vue';
+import BackButton from '@/components/atoms/BackButton.vue';
 
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
-
-// const isMobile = computed(() => mdAndDown.value);
 
 const test = ref({
   title: '',
@@ -326,6 +213,13 @@ const subHeading = 'Provide basic information about your study';
 const testName = 'Study Title';
 const testDescription = 'Study Description';
 const isLoading = ref(false);
+
+const steps = [
+  { value: 1, title: 'Category', complete: true },
+  { value: 2, title: 'Methods', complete: true },
+  { value: 3, title: 'Study Type', complete: true },
+  { value: 4, title: 'Details', complete: false }
+];
 
 const validate = () => {
   if (!test.value.title) {
