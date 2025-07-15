@@ -2,7 +2,11 @@
   <div class="signup-wrapper d-flex">
     <!-- LEFT: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
+      <img
+        src="@/assets/ruxailab.png"
+        alt="RUXAILAB"
+        class="logo-img"
+      >
     </div>
 
     <!-- RIGHT: FORM -->
@@ -10,14 +14,18 @@
       <Snackbar />
 
       <div class="signup-box">
-        <h1 class="title">
+        <h1 class="text-h6">
           {{ $t('SIGNIN.sign-up') }}
         </h1>
         <p class="subtitle">
           {{ $t('SIGNIN.signupSubtitle') }}
         </p>
 
-        <v-form ref="form" v-model="valid" @submit.prevent="onSignUp">
+        <v-form
+          ref="form"
+          v-model="valid"
+          @submit.prevent="onSignUp"
+        >
           <v-text-field
             v-model="email"
             :rules="emailRules"

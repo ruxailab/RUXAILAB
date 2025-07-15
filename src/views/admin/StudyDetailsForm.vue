@@ -1,27 +1,53 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
-
       <!-- Stepper Header -->
-      <StepperHeader :current-step="4" :steps="steps" />
+      <StepperHeader
+        :current-step="4"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
-      <SectionHeader :title="heading" :subtitle="subHeading" />
+      <SectionHeader
+        :title="heading"
+        :subtitle="subHeading"
+      />
 
       <!-- Main Content -->
-      <v-row justify="center" class="mb-6">
-        <v-col cols="12" lg="8" xl="6">
-          <v-card class="custom-card" elevation="4">
+      <v-row
+        justify="center"
+        class="mb-6"
+      >
+        <v-col
+          cols="12"
+          lg="8"
+          xl="6"
+        >
+          <v-card
+            class="custom-card"
+            elevation="4"
+          >
             <v-card-text class="pa-8">
-
               <!-- Basic Information -->
               <div class="mb-8">
                 <div class="d-flex align-center mb-6">
-                  <v-icon icon="mdi-form-textbox" class="mr-3" color="primary" />
-                  <h3 class="text-h5 font-weight-medium">Basic Information</h3>
+                  <v-icon
+                    icon="mdi-form-textbox"
+                    class="mr-3"
+                    color="primary"
+                  />
+                  <h3 class="text-h5 font-weight-medium">
+                    Basic Information
+                  </h3>
                 </div>
 
-                <v-form ref="form" @submit.prevent="validate">
+                <v-form
+                  ref="form"
+                  @submit.prevent="validate"
+                >
                   <v-row>
                     <v-col cols="12">
                       <v-text-field
@@ -47,7 +73,10 @@
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
                     </v-col>
-                    <v-col v-if="method == 'HEURISTICS'" cols="12">
+                    <v-col
+                      v-if="method == 'HEURISTICS'"
+                      cols="12"
+                    >
                       <v-text-field
                         v-model="websiteDetails.siteName"
                         :rules="rules.siteName"
@@ -78,10 +107,18 @@
               <!-- Privacy Settings -->
               <div class="mb-8">
                 <div class="d-flex align-center mb-6">
-                  <v-icon icon="mdi-shield-account" class="mr-2" color="primary" />
+                  <v-icon
+                    icon="mdi-shield-account"
+                    class="mr-2"
+                    color="primary"
+                  />
                   <div>
-                    <h3 class="text-h5 font-weight-medium">Privacy Settings</h3>
-                    <p class="text-body-2 text-grey-darken-1 mt-1">Control who can see your study</p>
+                    <h3 class="text-h5 font-weight-medium">
+                      Privacy Settings
+                    </h3>
+                    <p class="text-body-2 text-grey-darken-1 mt-1">
+                      Control who can see your study
+                    </p>
                   </div>
                 </div>
 
@@ -104,7 +141,12 @@
                     </v-list-item-subtitle>
 
                     <template #append>
-                      <v-switch v-model="test.isPublic" color="primary" class="mr-4" hide-details />
+                      <v-switch
+                        v-model="test.isPublic"
+                        color="primary"
+                        class="mr-4"
+                        hide-details
+                      />
                     </template>
                   </v-list-item>
                 </v-list>
@@ -115,21 +157,42 @@
               <!-- Summary -->
               <div class="mb-8">
                 <div class="d-flex align-center mb-6">
-                  <v-icon icon="mdi-clipboard-list" class="mr-3" color="primary" />
-                  <h3 class="text-h5 font-weight-medium">Study Summary</h3>
+                  <v-icon
+                    icon="mdi-clipboard-list"
+                    class="mr-3"
+                    color="primary"
+                  />
+                  <h3 class="text-h5 font-weight-medium">
+                    Study Summary
+                  </h3>
                 </div>
-                <v-card variant="tonal" color="primary" class="pa-4">
-                  <v-list class="bg-transparent pa-0" density="compact">
+                <v-card
+                  variant="tonal"
+                  color="primary"
+                  class="pa-4"
+                >
+                  <v-list
+                    class="bg-transparent pa-0"
+                    density="compact"
+                  >
                     <v-list-item class="pa-0 mb-2">
-                      <v-list-item-title class="font-weight-medium">Category:</v-list-item-title>
-                      <v-list-item-subtitle class="text-capitalize">{{ category }}</v-list-item-subtitle>
+                      <v-list-item-title class="font-weight-medium">
+                        Category:
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="text-capitalize">
+                        {{ category }}
+                      </v-list-item-subtitle>
                     </v-list-item>
                     <v-list-item class="pa-0 mb-2">
-                      <v-list-item-title class="font-weight-medium">Method:</v-list-item-title>
+                      <v-list-item-title class="font-weight-medium">
+                        Method:
+                      </v-list-item-title>
                       <v-list-item-subtitle>{{ method }}</v-list-item-subtitle>
                     </v-list-item>
                     <v-list-item class="pa-0">
-                      <v-list-item-title class="font-weight-medium">Type:</v-list-item-title>
+                      <v-list-item-title class="font-weight-medium">
+                        Type:
+                      </v-list-item-title>
                       <v-list-item-subtitle>{{ studyType === 'blank' ? 'Blank Study' : 'Template' }}</v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
@@ -137,7 +200,11 @@
               </div>
 
               <div class="d-flex justify-space-between align-center">
-                <BackButton label="Back to Study Type" adjust="start" @back="goBack" />
+                <BackButton
+                  label="Back to Study Type"
+                  adjust="start"
+                  @back="goBack"
+                />
                 <v-btn
                   color="success"
                   size="large"
@@ -149,7 +216,6 @@
                   Create Study
                 </v-btn>
               </div>
-
             </v-card-text>
           </v-card>
         </v-col>
