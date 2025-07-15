@@ -109,6 +109,28 @@ export default {
     SET_EVALUATOR_STATISTICS(state, payload) {
       state.evaluatorStatistics = payload
     },
+    SET_PRETEST_COMPLETED(state, { userId, value }) {
+      if (state.testAnswerDocument?.taskAnswers?.[userId]) {
+        state.testAnswerDocument.taskAnswers[userId].preTestCompleted = value;
+      }
+    },
+    SET_POSTTEST_COMPLETED(state, { userId, value }) {
+      if (state.testAnswerDocument?.taskAnswers?.[userId]) {
+        state.testAnswerDocument.taskAnswers[userId].postTestCompleted = value;
+      }
+    },
+    SET_CONSENT_COMPLETED(state, { userId, value }) {
+      if (state.testAnswerDocument?.taskAnswers?.[userId]) {
+        state.testAnswerDocument.taskAnswers[userId].consentCompleted = value;
+      }
+    },
+    SET_TASK_COMPLETED(state, { userId, taskId, value }) {
+      if (
+        state.testAnswerDocument?.taskAnswers?.[userId]?.tasks?.[taskId]
+      ) {
+        state.testAnswerDocument.taskAnswers[userId].tasks[taskId].completed = value;
+      }
+    }
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
