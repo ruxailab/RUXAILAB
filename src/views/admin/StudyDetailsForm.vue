@@ -307,7 +307,7 @@ const rules = {
   title: [(v) => !!v || 'Enter a Title', (v) => v.length <= 200 || 'Max 200 characters'],
   description: [(v) => v.length <= 600 || 'Max 600 characters'],
   siteName: [(v) => !!v || 'Enter website name', (v) => v.length <= 200 || 'Max 200 characters'],
-    siteUrl: [
+  siteUrl: [
     (v) => !!v || 'Enter website URL',
     (v) => {
       try {
