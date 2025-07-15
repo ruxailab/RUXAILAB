@@ -1,28 +1,63 @@
 <!-- This is your full updated GeneralAnalytics.vue page with the new design and old functionality -->
 <template>
-  <v-container fluid class="pa-8 bg-background min-h-screen">
+  <v-container
+    fluid
+    class="pa-8 bg-background min-h-screen"
+  >
     <v-row class="mb-8">
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
               <div class="d-flex align-center mb-3">
-                <v-icon color="primary" size="28" class="me-3">mdi-target</v-icon>
-                <h3 class="text-h5 font-weight-medium text-on-surface">Conclusion Rate</h3>
+                <v-icon
+                  color="primary"
+                  size="28"
+                  class="me-3"
+                >
+                  mdi-target
+                </v-icon>
+                <h3 class="text-h5 font-weight-medium text-on-surface">
+                  Conclusion Rate
+                </h3>
               </div>
               <div class="text-h2 font-weight-bold text-primary mb-2">
                 {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
               </div>
-              <p class="text-body-1 text-medium-emphasis">Perfect completion rate achieved</p>
+              <p class="text-body-1 text-medium-emphasis">
+                Perfect completion rate achieved
+              </p>
             </div>
             <div class="text-end">
-              <v-chip color="success" variant="flat" size="small" class="mb-2">
-                <v-icon start size="16">mdi-trending-up</v-icon>
+              <v-chip
+                color="success"
+                variant="flat"
+                size="small"
+                class="mb-2"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
+                  mdi-trending-up
+                </v-icon>
                 Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
               </v-chip>
               <br>
-              <v-chip color="error" variant="flat" size="small">
-                <v-icon start size="16">mdi-trending-down</v-icon>
+              <v-chip
+                color="error"
+                variant="flat"
+                size="small"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
+                  mdi-trending-down
+                </v-icon>
                 Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
               </v-chip>
             </div>
@@ -34,35 +69,62 @@
             height="12"
             rounded
             class="mb-6 progress-glow"
-          ></v-progress-linear>
+          />
 
-          <v-divider class="mb-6"></v-divider>
+          <v-divider class="mb-6" />
 
           <div class="d-flex justify-space-between">
             <div class="text-center">
-              <div class="text-h4 font-weight-bold text-secondary mb-1">{{ getTestsInProgress().totalInProgress }}</div>
-              <p class="text-body-2 text-medium-emphasis">Tests in Progress</p>
+              <div class="text-h4 font-weight-bold text-secondary mb-1">
+                {{ getTestsInProgress().totalInProgress }}
+              </div>
+              <p class="text-body-2 text-medium-emphasis">
+                Tests in Progress
+              </p>
             </div>
-            <v-divider vertical class="mx-4"></v-divider>
+            <v-divider
+              vertical
+              class="mx-4"
+            />
             <div class="text-center">
-              <div class="text-h4 font-weight-bold text-accent mb-1">16m</div>
-              <p class="text-body-2 text-medium-emphasis">Total Duration</p>
+              <div class="text-h4 font-weight-bold text-accent mb-1">
+                16m
+              </div>
+              <p class="text-body-2 text-medium-emphasis">
+                Total Duration
+              </p>
             </div>
           </div>
         </v-card>
       </v-col>
 
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <v-row class="h-100">
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="primary" size="48" class="me-3">
-                  <v-icon color="white" size="24">mdi-clock-fast</v-icon>
+                <v-avatar
+                  color="primary"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-clock-fast
+                  </v-icon>
                 </v-avatar>
                 <div>
-                  <div class="text-h5 font-weight-bold text-primary">{{ calculateAverageTime().formatedTime }}</div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">Avg Time/Task</p>
+                  <div class="text-h5 font-weight-bold text-primary">
+                    {{ calculateAverageTime().formatedTime }}
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Avg Time/Task
+                  </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
@@ -73,12 +135,25 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="error" size="48" class="me-3">
-                  <v-icon color="white" size="24">mdi-timer-alert</v-icon>
+                <v-avatar
+                  color="error"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-timer-alert
+                  </v-icon>
                 </v-avatar>
                 <div>
-                  <div class="text-h5 font-weight-bold text-error">{{ findLongestTask().averageTime.formatedTime }}</div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">Longest Task</p>
+                  <div class="text-h5 font-weight-bold text-error">
+                    {{ findLongestTask().averageTime.formatedTime }}
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Longest Task
+                  </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
@@ -89,16 +164,35 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="success" size="48" class="me-3">
-                  <v-icon color="white" size="24">mdi-check-circle</v-icon>
+                <v-avatar
+                  color="success"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-check-circle
+                  </v-icon>
                 </v-avatar>
                 <div>
-                  <div class="text-h5 font-weight-bold text-success">{{ getTotalAnswers() }}</div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">Total Answers</p>
+                  <div class="text-h5 font-weight-bold text-success">
+                    {{ getTotalAnswers() }}
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Total Answers
+                  </p>
                 </div>
               </div>
               <div class="d-flex align-center">
-                <v-icon color="success" size="16" class="me-1">mdi-trending-up</v-icon>
+                <v-icon
+                  color="success"
+                  size="16"
+                  class="me-1"
+                >
+                  mdi-trending-up
+                </v-icon>
                 <span class="text-caption text-success">+{{ getTasksTodayCount() }}/day</span>
               </div>
             </v-card>
@@ -106,12 +200,25 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="accent" size="48" class="me-3">
-                  <v-icon color="white" size="24">mdi-account-circle</v-icon>
+                <v-avatar
+                  color="accent"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-account-circle
+                  </v-icon>
                 </v-avatar>
                 <div>
-                  <div class="text-body-1 font-weight-bold text-accent">Evaluator</div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">Latest User</p>
+                  <div class="text-body-1 font-weight-bold text-accent">
+                    Evaluator
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Latest User
+                  </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
@@ -129,16 +236,32 @@
         <v-card class="pa-8 elevation-4 rounded-xl chart-card">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
-              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">Answers Timeline</h3>
-              <p class="text-body-1 text-medium-emphasis">Track your answer submissions over time</p>
+              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+                Answers Timeline
+              </h3>
+              <p class="text-body-1 text-medium-emphasis">
+                Track your answer submissions over time
+              </p>
             </div>
             <div class="d-flex ga-2">
-              <v-btn variant="outlined" size="small" color="primary">
-                <v-icon start>mdi-download</v-icon>
+              <v-btn
+                variant="outlined"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>
+                  mdi-download
+                </v-icon>
                 Export
               </v-btn>
-              <v-btn variant="flat" size="small" color="primary">
-                <v-icon start>mdi-refresh</v-icon>
+              <v-btn
+                variant="flat"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>
+                  mdi-refresh
+                </v-icon>
                 Refresh
               </v-btn>
             </div>

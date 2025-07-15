@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Progress Stepper -->
       <v-row class="mb-8">
@@ -40,7 +43,10 @@
 
       <!-- Page Header -->
       <v-row class="mb-8">
-        <v-col cols="12" class="text-center">
+        <v-col
+          cols="12"
+          class="text-center"
+        >
           <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-3">
             Choose {{ categoryNames[currentCategory] }} Method
           </h2>
@@ -51,7 +57,10 @@
       </v-row>
 
       <!-- Methods Grid -->
-      <v-row justify="center" class="mb-8">
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
         <v-col
           v-for="method in availableMethods"
           :key="method.id"
@@ -95,8 +104,12 @@
                 </v-avatar>
               </div>
               
-              <h3 class="text-h6 font-weight-medium mb-3">{{ method.name }}</h3>
-              <p class="text-body-1 text-grey-darken-1">{{ method.description }}</p>
+              <h3 class="text-h6 font-weight-medium mb-3">
+                {{ method.name }}
+              </h3>
+              <p class="text-body-1 text-grey-darken-1">
+                {{ method.description }}
+              </p>
             </v-card-text>
             
             <!-- Selected Indicator -->

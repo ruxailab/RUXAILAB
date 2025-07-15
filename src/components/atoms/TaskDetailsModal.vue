@@ -5,7 +5,10 @@
     persistent
     class="task-details-modal-dialog"
   >
-    <v-card v-if="userSession" class="task-details-modal">
+    <v-card
+      v-if="userSession"
+      class="task-details-modal"
+    >
       <!-- Header -->
       <v-card-title class="modal-header d-flex align-center justify-space-between pa-6">
         <div class="header-content">
@@ -21,8 +24,8 @@
           variant="text"
           color="white"
           size="large"
-          @click="closeModal"
           class="close-btn"
+          @click="closeModal"
         />
       </v-card-title>
 
@@ -33,28 +36,52 @@
             <!-- Completed -->
             <div class="text-center">
               <div class="d-flex align-center justify-center mb-2">
-                <v-icon color="success" size="24" class="mr-2">mdi-check-circle</v-icon>
+                <v-icon
+                  color="success"
+                  size="24"
+                  class="mr-2"
+                >
+                  mdi-check-circle
+                </v-icon>
                 <span class="text-h6 font-weight-bold text-success">{{ completedTasks }}</span>
               </div>
-              <div class="text-body-2 text-grey-600">Completed</div>
+              <div class="text-body-2 text-grey-600">
+                Completed
+              </div>
             </div>
 
             <!-- Skipped -->
             <div class="text-center">
               <div class="d-flex align-center justify-center mb-2">
-                <v-icon color="error" size="24" class="mr-2">mdi-close-circle</v-icon>
+                <v-icon
+                  color="error"
+                  size="24"
+                  class="mr-2"
+                >
+                  mdi-close-circle
+                </v-icon>
                 <span class="text-h6 font-weight-bold text-error">{{ skippedTasks }}</span>
               </div>
-              <div class="text-body-2 text-grey-600">Skipped</div>
+              <div class="text-body-2 text-grey-600">
+                Skipped
+              </div>
             </div>
 
             <!-- Average Time -->
             <div class="text-center">
               <div class="d-flex align-center justify-center mb-2">
-                <v-icon color="primary" size="24" class="mr-2">mdi-timer-outline</v-icon>
+                <v-icon
+                  color="primary"
+                  size="24"
+                  class="mr-2"
+                >
+                  mdi-timer-outline
+                </v-icon>
                 <span class="text-h6 font-weight-bold text-primary">{{ averageTime }}</span>
               </div>
-              <div class="text-body-2 text-grey-600">Avg Time</div>
+              <div class="text-body-2 text-grey-600">
+                Avg Time
+              </div>
             </div>
           </div>
         </div>
@@ -63,7 +90,9 @@
 
         <!-- Tasks Table -->
         <div class="pa-6">
-          <h3 class="text-h6 font-weight-bold text-grey-800 mb-4">All Tasks</h3>
+          <h3 class="text-h6 font-weight-bold text-grey-800 mb-4">
+            All Tasks
+          </h3>
           
           <div class="tasks-table-container">
             <v-data-table
@@ -79,13 +108,13 @@
               class="elevation-0"
               hide-default-footer
             >
-              <template v-slot:item.taskName="{ item }">
+              <template #item.taskName="{ item }">
                 <div class="font-weight-medium text-grey-800">
                   {{ item.taskName }}
                 </div>
               </template>
 
-              <template v-slot:item.completed="{ item }">
+              <template #item.completed="{ item }">
                 <v-chip
                   :color="getStatusColor(item.completed)"
                   :prepend-icon="getStatusIcon(item.completed)"
@@ -96,14 +125,17 @@
                 </v-chip>
               </template>
 
-              <template v-slot:item.taskTime="{ item }">
+              <template #item.taskTime="{ item }">
                 <div class="font-weight-medium font-mono">
                   {{ formatDuration(item.taskTime) }}
                 </div>
               </template>
 
-              <template v-slot:item.taskAnswer="{ item }">
-                <div v-if="item.completed && item.taskAnswer" class="final-answer">
+              <template #item.taskAnswer="{ item }">
+                <div
+                  v-if="item.completed && item.taskAnswer"
+                  class="final-answer"
+                >
                   <v-chip
                     color="accent"
                     variant="tonal"
@@ -113,13 +145,19 @@
                     {{ item.taskAnswer }}
                   </v-chip>
                 </div>
-                <div v-else class="text-grey-500 text-body-2">
+                <div
+                  v-else
+                  class="text-grey-500 text-body-2"
+                >
                   -
                 </div>
               </template>
 
-              <template v-slot:item.taskObservations="{ item }">
-                <div v-if="item.completed && item.taskObservations" class="final-answer">
+              <template #item.taskObservations="{ item }">
+                <div
+                  v-if="item.completed && item.taskObservations"
+                  class="final-answer"
+                >
                   <v-chip
                     color="accent"
                     variant="tonal"
@@ -129,7 +167,10 @@
                     {{ item.taskObservations }}
                   </v-chip>
                 </div>
-                <div v-else class="text-grey-500 text-body-5">
+                <div
+                  v-else
+                  class="text-grey-500 text-body-5"
+                >
                   -
                 </div>
               </template>
@@ -145,8 +186,8 @@
           variant="elevated"
           size="large"
           prepend-icon="mdi-check"
-          @click="closeModal"
           class="px-8"
+          @click="closeModal"
         >
           Close
         </v-btn>

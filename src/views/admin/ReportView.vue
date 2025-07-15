@@ -3,41 +3,77 @@
     <v-main>
       <Snackbar />
 
-      <v-dialog v-model="dialog" width="600" persistent>
+      <v-dialog
+        v-model="dialog"
+        width="600"
+        persistent
+      >
         <v-card>
-          <v-card-title class="text-h5 bg-error text-white" primary-title>
+          <v-card-title
+            class="text-h5 bg-error text-white"
+            primary-title
+          >
             {{ $t('HeuristicsReport.messages.confirm_delete_report') }}
           </v-card-title>
           <v-card-text>{{ dialogText }}</v-card-text>
           <v-divider />
           <v-card-actions>
             <v-spacer />
-            <v-btn class="bg-grey-lighten-3" variant="text" @click="dialog = false">
+            <v-btn
+              class="bg-grey-lighten-3"
+              variant="text"
+              @click="dialog = false"
+            >
               {{ $t('common.cancel') }}
             </v-btn>
-            <v-btn class="bg-red text-white ml-1" :loading="loadingBtn" variant="text" @click="removeReport(report), (loadingBtn = true)">
+            <v-btn
+              class="bg-red text-white ml-1"
+              :loading="loadingBtn"
+              variant="text"
+              @click="removeReport(report), (loadingBtn = true)"
+            >
               {{ $t('buttons.delete') }}
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <v-overlay v-model="loading" class="text-center">
-        <v-progress-circular indeterminate color="#fca326" size="50" />
+      <v-overlay
+        v-model="loading"
+        class="text-center"
+      >
+        <v-progress-circular
+          indeterminate
+          color="#fca326"
+          size="50"
+        />
         <div class="text-white mt-3">
           {{ $t('HeuristicsReport.messages.reports_loading') }}
         </div>
       </v-overlay>
 
-      <Intro v-if="reports.length === 0 && !loading" @go-to-coops="goToCoops" />
+      <Intro
+        v-if="reports.length === 0 && !loading"
+        @go-to-coops="goToCoops"
+      />
 
-      <v-container v-else fluid class="pa-8">
+      <v-container
+        v-else
+        fluid
+        class="pa-8"
+      >
         <div class="mb-8">
           <div class="d-flex align-center justify-space-between mb-4">
             <div>
-              <h1 class="text-h3 font-weight-bold text-on-surface mb-2">Reports Dashboard</h1>
+              <h1 class="text-h3 font-weight-bold text-on-surface mb-2">
+                Reports Dashboard
+              </h1>
               <div class="d-flex align-center">
-                <v-icon icon="mdi-update" size="small" class="mr-2 text-medium-emphasis" />
+                <v-icon
+                  icon="mdi-update"
+                  size="small"
+                  class="mr-2 text-medium-emphasis"
+                />
                 <span class="text-body-2 text-medium-emphasis">
                   Last synced: {{ formatDate(lastUpdated) }}
                 </span>
@@ -69,20 +105,45 @@
             />
           </div>
           <div class="d-flex align-center gap-2">
-            <v-btn-toggle v-model="viewMode" mandatory variant="outlined" density="compact">
-              <v-btn value="cards" icon="mdi-view-grid" />
-              <v-btn value="list" icon="mdi-view-list" />
+            <v-btn-toggle
+              v-model="viewMode"
+              mandatory
+              variant="outlined"
+              density="compact"
+            >
+              <v-btn
+                value="cards"
+                icon="mdi-view-grid"
+              />
+              <v-btn
+                value="list"
+                icon="mdi-view-list"
+              />
             </v-btn-toggle>
           </div>
         </div>
 
         <div v-if="viewMode === 'cards'">
           <v-row>
-            <v-col v-for="(r, index) in filteredReports" :key="r.id" cols="12" sm="6" lg="4">
-              <v-card class="report-card" elevation="2" hover>
+            <v-col
+              v-for="(r) in filteredReports"
+              :key="r.id"
+              cols="12"
+              sm="6"
+              lg="4"
+            >
+              <v-card
+                class="report-card"
+                elevation="2"
+                hover
+              >
                 <v-card-text class="pa-6">
                   <div class="d-flex align-center mb-4">
-                    <v-avatar :color="getAvatarColor(r.evaluator)" size="48" class="mr-4">
+                    <v-avatar
+                      :color="getAvatarColor(r.evaluator)"
+                      size="48"
+                      class="mr-4"
+                    >
                       <span class="text-white font-weight-bold text-h6">
                         {{ getInitials(r.fullName) }}
                       </span>
@@ -96,11 +157,22 @@
                       </div>
                     </div>
                     <v-menu>
-                      <template v-slot:activator="{ props }">
-                        <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" class="text-medium-emphasis" />
+                      <template #activator="{ props }">
+                        <v-btn
+                          icon="mdi-dots-vertical"
+                          variant="text"
+                          size="small"
+                          v-bind="props"
+                          class="text-medium-emphasis"
+                        />
                       </template>
                       <v-list min-width="180">
-                        <v-list-item prepend-icon="mdi-delete" title="Remove Report" class="text-error" @click="dialog = true; report = r" />
+                        <v-list-item
+                          prepend-icon="mdi-delete"
+                          title="Remove Report"
+                          class="text-error"
+                          @click="dialog = true; report = r"
+                        />
                       </v-list>
                     </v-menu>
                   </div>
@@ -129,7 +201,11 @@
                       :prepend-icon="getStatusIcon(r.status)"
                     />
                     <div class="d-flex align-center text-body-2 text-medium-emphasis">
-                      <v-icon icon="mdi-clock-outline" size="small" class="mr-1" />
+                      <v-icon
+                        icon="mdi-clock-outline"
+                        size="small"
+                        class="mr-1"
+                      />
                       {{ r.lastUpdate }}
                     </div>
                   </div>
@@ -140,34 +216,78 @@
         </div>
 
         <div v-else>
-          <v-card elevation="2" class="rounded-lg">
+          <v-card
+            elevation="2"
+            class="rounded-lg"
+          >
             <div class="table-header pa-4">
-              <v-row no-gutters class="align-center">
-                <v-col cols="3" class="px-4">
-                  <div class="text-subtitle-1 font-weight-bold table-heading-text">Evaluator</div>
+              <v-row
+                no-gutters
+                class="align-center"
+              >
+                <v-col
+                  cols="3"
+                  class="px-4"
+                >
+                  <div class="text-subtitle-1 font-weight-bold table-heading-text">
+                    Evaluator
+                  </div>
                 </v-col>
-                <v-col cols="2" class="px-4">
-                  <div class="text-subtitle-1 font-weight-bold table-heading-text">Last Update</div>
+                <v-col
+                  cols="2"
+                  class="px-4"
+                >
+                  <div class="text-subtitle-1 font-weight-bold table-heading-text">
+                    Last Update
+                  </div>
                 </v-col>
-                <v-col cols="3" class="px-4">
-                  <div class="text-subtitle-1 font-weight-bold table-heading-text">Progress</div>
+                <v-col
+                  cols="3"
+                  class="px-4"
+                >
+                  <div class="text-subtitle-1 font-weight-bold table-heading-text">
+                    Progress
+                  </div>
                 </v-col>
-                <v-col cols="2" class="px-4">
-                  <div class="text-subtitle-1 font-weight-bold table-heading-text">Status</div>
+                <v-col
+                  cols="2"
+                  class="px-4"
+                >
+                  <div class="text-subtitle-1 font-weight-bold table-heading-text">
+                    Status
+                  </div>
                 </v-col>
-                <v-col cols="2" class="px-4">
-                  <div class="text-subtitle-1 font-weight-bold table-heading-text">Actions</div>
+                <v-col
+                  cols="2"
+                  class="px-4"
+                >
+                  <div class="text-subtitle-1 font-weight-bold table-heading-text">
+                    Actions
+                  </div>
                 </v-col>
               </v-row>
             </div>
             <v-divider />
             <v-list class="pa-0">
-              <template v-for="(r, index) in filteredReports" :key="r.id">
+              <template
+                v-for="(r, index) in filteredReports"
+                :key="r.id"
+              >
                 <v-list-item class="px-0 py-4">
-                  <v-row no-gutters class="align-center">
-                    <v-col cols="3" class="px-4">
+                  <v-row
+                    no-gutters
+                    class="align-center"
+                  >
+                    <v-col
+                      cols="3"
+                      class="px-4"
+                    >
                       <div class="d-flex align-center">
-                        <v-avatar :color="getAvatarColor(r.evaluator)" size="40" class="mr-3">
+                        <v-avatar
+                          :color="getAvatarColor(r.evaluator)"
+                          size="40"
+                          class="mr-3"
+                        >
                           <span class="text-white font-weight-medium">
                             {{ getInitials(r.fullName) }}
                           </span>
@@ -176,35 +296,76 @@
                           <div class="text-subtitle-1 font-weight-bold text-on-surface">
                             {{ r.fullName }}
                           </div>
-                          <div class="text-body-2 text-medium-emphasis">{{ r.evaluator }}</div>
+                          <div class="text-body-2 text-medium-emphasis">
+                            {{ r.evaluator }}
+                          </div>
                         </div>
                       </div>
                     </v-col>
-                    <v-col cols="2" class="px-4">
+                    <v-col
+                      cols="2"
+                      class="px-4"
+                    >
                       <div class="d-flex align-center">
-                        <v-icon icon="mdi-clock-outline" size="small" class="mr-2 text-medium-emphasis" />
+                        <v-icon
+                          icon="mdi-clock-outline"
+                          size="small"
+                          class="mr-2 text-medium-emphasis"
+                        />
                         <span class="text-body-1">{{ r.lastUpdate }}</span>
                       </div>
                     </v-col>
-                    <v-col cols="3" class="px-4">
+                    <v-col
+                      cols="3"
+                      class="px-4"
+                    >
                       <div class="progress-section">
                         <div class="d-flex align-center justify-space-between mb-2">
                           <span class="text-body-2 font-weight-medium text-medium-emphasis">Progress</span>
                           <span class="text-subtitle-1 font-weight-bold text-on-surface">{{ r.progress }}%</span>
                         </div>
-                        <v-progress-linear :model-value="parseFloat(r.progress)" :color="getProgressColor(parseFloat(r.progress))" height="8" rounded />
+                        <v-progress-linear
+                          :model-value="parseFloat(r.progress)"
+                          :color="getProgressColor(parseFloat(r.progress))"
+                          height="8"
+                          rounded
+                        />
                       </div>
                     </v-col>
-                    <v-col cols="2" class="px-4">
-                      <v-chip :color="getStatusColor(r.status)" :text="r.status" variant="flat" size="small" class="text-capitalize font-weight-medium" :prepend-icon="getStatusIcon(r.status)" />
+                    <v-col
+                      cols="2"
+                      class="px-4"
+                    >
+                      <v-chip
+                        :color="getStatusColor(r.status)"
+                        :text="r.status"
+                        variant="flat"
+                        size="small"
+                        class="text-capitalize font-weight-medium"
+                        :prepend-icon="getStatusIcon(r.status)"
+                      />
                     </v-col>
-                    <v-col cols="2" class="px-4">
+                    <v-col
+                      cols="2"
+                      class="px-4"
+                    >
                       <v-menu>
-                        <template v-slot:activator="{ props }">
-                          <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" class="text-medium-emphasis" />
+                        <template #activator="{ props }">
+                          <v-btn
+                            icon="mdi-dots-vertical"
+                            variant="text"
+                            size="small"
+                            v-bind="props"
+                            class="text-medium-emphasis"
+                          />
                         </template>
                         <v-list min-width="180">
-                          <v-list-item prepend-icon="mdi-delete" title="Remove Report" class="text-error" @click="dialog = true; report = r" />
+                          <v-list-item
+                            prepend-icon="mdi-delete"
+                            title="Remove Report"
+                            class="text-error"
+                            @click="dialog = true; report = r"
+                          />
                         </v-list>
                       </v-menu>
                     </v-col>
@@ -216,10 +377,21 @@
           </v-card>
         </div>
 
-        <div v-if="filteredReports.length === 0" class="text-center py-12">
-          <v-icon icon="mdi-file-search" size="64" class="text-medium-emphasis mb-4" />
-          <h3 class="text-h5 font-weight-medium text-medium-emphasis mb-2">No reports found</h3>
-          <p class="text-body-1 text-medium-emphasis">Try adjusting your search or filter criteria</p>
+        <div
+          v-if="filteredReports.length === 0"
+          class="text-center py-12"
+        >
+          <v-icon
+            icon="mdi-file-search"
+            size="64"
+            class="text-medium-emphasis mb-4"
+          />
+          <h3 class="text-h5 font-weight-medium text-medium-emphasis mb-2">
+            No reports found
+          </h3>
+          <p class="text-body-1 text-medium-emphasis">
+            Try adjusting your search or filter criteria
+          </p>
         </div>
       </v-container>
     </v-main>
