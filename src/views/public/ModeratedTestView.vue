@@ -1,89 +1,40 @@
 <template>
   <div v-if="test">
     <!-- Test Start Screen -->
-    <v-row
-      v-if="test && start"
-      class="background background-img pa-0 ma-0"
-      align="center"
-    >
-      <v-col
-        cols="6"
-        class="ml-5"
-      >
+    <v-row v-if="test && start" class="background background-img pa-0 ma-0" align="center">
+      <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">
           {{ test.testTitle }}
         </h1>
-        <p
-          align="justify"
-          class="description"
-        >
+        <p align="justify" class="description">
           {{ test.testDescription }}
         </p>
         <v-row justify="center">
           <v-col cols="12">
-            <span
-              v-if="!isTestAvailable"
-              style="font-size: 18px;"
-              class="titleText mt-4 ml-0"
-            >
+            <span v-if="!isTestAvailable" style="font-size: 18px;" class="titleText mt-4 ml-0">
               The test is available at {{ new Date(testDate).toLocaleString() }}
             </span>
           </v-col>
-          <v-btn
-            :disabled="!isTestAvailable"
-            color="white"
-            variant="outlined"
-            rounded
-            @click="startTest()"
-          >
+          <v-btn :disabled="!isTestAvailable" color="white" variant="outlined" rounded @click="startTest()">
             Start Test
           </v-btn>
         </v-row>
       </v-col>
     </v-row>
 
-    <v-row
-      v-else
-      class="nav pa-0 ma-0"
-      style="background-color: #e8eaf2;"
-      dense
-    >
-      <v-navigation-drawer
-        v-model="drawer"
-        :rail="mini"
-        permanent
-        color="#3F3D56"
-      >
-        <div
-          v-if="!mini"
-          class="header"
-        >
+    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2;" dense>
+      <v-navigation-drawer v-model="drawer" :rail="mini" permanent color="#3F3D56">
+        <div v-if="!mini" class="header">
           <v-list-item>
-            <v-row
-              dense
-              align="center"
-              justify="space-around"
-            >
-              <v-col
-                class="pa-0 ma-0"
-                cols="8"
-              >
-                <v-clamp
-                  class="titleText"
-                  autoresize
-                  :max-lines="2"
-                >
+            <v-row dense align="center" justify="space-around">
+              <v-col class="pa-0 ma-0" cols="8">
+                <v-clamp class="titleText" autoresize :max-lines="2">
                   {{ test.testTitle }}
                 </v-clamp>
               </v-col>
               <v-col>
-                <v-progress-circular
-                  rotate="-90"
-                  :model-value="calculateProgress()"
-                  color="#fca326"
-                  :size="50"
-                  class="mt-2"
-                >
+                <v-progress-circular rotate="-90" :model-value="calculateProgress()" color="#fca326" :size="50"
+                  class="mt-2">
                   {{ Math.floor(calculateProgress()) }}%
                 </v-progress-circular>
               </v-col>
@@ -91,24 +42,12 @@
           </v-list-item>
         </div>
 
-        <v-list
-          class="nav-list"
-          density="compact"
-          max-height="85%"
-          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
-        >
-          <div
-            v-for="(item, itemIndex) in items"
-            :key="itemIndex"
-          >
-            <v-list-item
-              v-if="item.id == 0"
-              :disabled="!isAdmin && bothConnected"
-              :class="{ 'disabled-group': !isAdmin && bothConnected }"
-              :value="index == 0 ? true : false"
-              no-action
-              @click="index = item.id"
-            >
+        <v-list class="nav-list" density="compact" max-height="85%"
+          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
+          <div v-for="(item, itemIndex) in items" :key="itemIndex">
+            <v-list-item v-if="item.id == 0" :disabled="!isAdmin && bothConnected"
+              :class="{ 'disabled-group': !isAdmin && bothConnected }" :value="index == 0 ? true : false" no-action
+              @click="index = item.id">
               <template #prepend>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{ item.icon }}
@@ -118,14 +57,9 @@
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item
-              v-if="item.id == 1"
-              :value="index == 1 ? true : false"
-              :class="{ 'disabled-group': !bothConnected }"
-              :disabled="!bothConnected"
-              no-action
-              @click="index = item.id"
-            >
+            <v-list-item v-if="item.id == 1" :value="index == 1 ? true : false"
+              :class="{ 'disabled-group': !bothConnected }" :disabled="!bothConnected" no-action
+              @click="index = item.id">
               <template #prepend>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{ item.icon }}
@@ -135,12 +69,8 @@
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item
-              v-else-if="item.id == 2"
-              :class="{ 'disabled-group': !bothConnected }"
-              :disabled="!bothConnected"
-              @click="index = item.id"
-            >
+            <v-list-item v-else-if="item.id == 2" :class="{ 'disabled-group': !bothConnected }"
+              :disabled="!bothConnected" @click="index = item.id">
               <template #prepend>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{ item.icon }}
@@ -155,21 +85,11 @@
 
         <div class="footer">
           <v-spacer />
-          <v-btn
-            icon
-            class="mr-2"
-            @click.stop="mini = !mini"
-          >
-            <v-icon
-              v-if="mini"
-              color="white"
-            >
+          <v-btn icon class="mr-2" @click.stop="mini = !mini">
+            <v-icon v-if="mini" color="white">
               mdi-chevron-right
             </v-icon>
-            <v-icon
-              v-else
-              color="white"
-            >
+            <v-icon v-else color="white">
               mdi-chevron-left
             </v-icon>
           </v-btn>
@@ -177,33 +97,14 @@
       </v-navigation-drawer>
 
       <!-- Moderator View -->
-      <v-col
-        v-if="index == 0 && isAdmin && !postTestFinished"
-        ref="rightView"
-        class="mx-15 mt-4 right-view backgroundTest"
-      >
-        <v-card
-          v-if="!connectionStatus"
-          color="white"
-          class="cards"
-        >
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+      <v-col v-if="index == 0 && isAdmin && !postTestFinished" ref="rightView"
+        class="mx-15 mt-4 right-view backgroundTest">
+        <v-card v-if="!connectionStatus" color="white" class="cards">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Confirm you are ready</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-0"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0">
                   <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your evaluator so that, when ready, they can start the test.
@@ -212,79 +113,45 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <VideoCall
-              ref="videoCall"
-              :index="index"
-              :is-admin="isAdmin"
-              @emit-confirm="confirmConnect(), (index = 1)"
-            />
+          <v-row justify="center" class="mt-4">
+            <VideoCall ref="videoCall" :index="index" :is-admin="isAdmin"
+              @emit-confirm="confirmConnect(), (index = 1)" />
           </v-row>
         </v-card>
-        <v-col
-          v-else-if="moderatorStatus && !evaluatorStatus"
-          class="my-12"
-        >
+        <v-col v-else-if="moderatorStatus && !evaluatorStatus" class="my-12">
           <span class="cardsTitle text-center d-block">
             Waiting the evaluator connection ...
           </span>
           <div class="dot-flashing mx-auto mt-4" />
         </v-col>
         <v-expansion-panels variant="accordion">
-          <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px"
-            class="mb-3"
-          >
+          <v-expansion-panel style="border: solid 1px #71717182 !important; border-radius: 30px" class="mb-3">
             <v-expansion-panel-title>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Pre-Test</span>
-                <v-icon
-                  v-if="userTestStatus.preTestStatus == 'closed'"
-                  color="green"
-                  @click="changeStatus(0, 'preTest', 'open')"
-                >
+                <v-icon v-if="userTestStatus.preTestStatus == 'closed'" color="green"
+                  @click="changeStatus(0, 'preTest', 'open')">
                   mdi-play
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.preTestStatus == 'open'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.preTestStatus == 'open'" color="green">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.preTestStatus == 'inProgress'"
-                  color="orange"
-                >
+                <v-icon v-else-if="userTestStatus.preTestStatus == 'inProgress'" color="orange">
                   mdi-dots-horizontal
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.preTestStatus == 'done'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.preTestStatus == 'done'" color="green">
                   mdi-check
                 </v-icon>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                v-for="(item, preTestIdx) in test.testStructure.preTest"
-                :key="preTestIdx"
-              >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
+              <v-row v-for="(item, preTestIdx) in test.testStructure.preTest" :key="preTestIdx">
+                <v-col cols="5" class="mx-auto py-0">
                   <p class="cardsTitle">
                     {{ item.title }}
                   </p>
-                  <p
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >
+                  <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
                 </v-col>
@@ -293,57 +160,30 @@
           </v-expansion-panel>
 
           <!-- Moderator Tasks view -->
-          <v-expansion-panel
-            v-for="(task, taskIdx) in test.testStructure.userTasks"
-            :key="taskIdx"
-            style="border: solid 1px #71717182 !important; border-radius: 30px"
-            class="mb-3"
-          >
+          <v-expansion-panel v-for="(task, taskIdx) in test.testStructure.userTasks" :key="taskIdx"
+            style="border: solid 1px #71717182 !important; border-radius: 30px" class="mb-3">
             <v-expansion-panel-title>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">{{ task.taskName }}</span>
-                <v-icon
-                  v-if="tasksStatus[taskIdx] == 'closed'"
-                  color="green"
-                  @click="openTask(taskIdx)"
-                >
+                <v-icon v-if="tasksStatus[taskIdx] == 'closed'" color="green" @click="openTask(taskIdx)">
                   mdi-play
                 </v-icon>
-                <v-icon
-                  v-else-if="tasksStatus[taskIdx] == 'open'"
-                  color="green"
-                >
+                <v-icon v-else-if="tasksStatus[taskIdx] == 'open'" color="green">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="tasksStatus[taskIdx] == 'inProgress'"
-                  color="orange"
-                >
+                <v-icon v-else-if="tasksStatus[taskIdx] == 'inProgress'" color="orange">
                   mdi-dots-horizontal
                 </v-icon>
-                <v-icon
-                  v-else-if="tasksStatus[taskIdx] == 'done'"
-                  color="green"
-                >
+                <v-icon v-else-if="tasksStatus[taskIdx] == 'done'" color="green">
                   mdi-check
                 </v-icon>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col
-                  cols="12"
-                  class="mb-0"
-                >
-                  <span
-                    class="ml-4"
-                    style="color: #455a64"
-                  >
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455a64">
                     {{ test.testStructure.userTasks[taskIdx].taskDescription }}
                   </span>
                 </v-col>
@@ -352,57 +192,33 @@
           </v-expansion-panel>
 
           <!-- Moderator Post-Test view -->
-          <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px"
-            class="mb-3"
-          >
+          <v-expansion-panel style="border: solid 1px #71717182 !important; border-radius: 30px" class="mb-3">
             <v-expansion-panel-title>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Post-Test</span>
-                <v-icon
-                  v-if="userTestStatus.postTestStatus == 'closed'"
-                  color="green"
-                  @click="changeStatus(0, 'postTest', 'open')"
-                >
+                <v-icon v-if="userTestStatus.postTestStatus == 'closed'" color="green"
+                  @click="changeStatus(0, 'postTest', 'open')">
                   mdi-play
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.postTestStatus == 'open'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.postTestStatus == 'open'" color="green">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.postTestStatus == 'inProgress'"
-                  color="orange"
-                >
+                <v-icon v-else-if="userTestStatus.postTestStatus == 'inProgress'" color="orange">
                   mdi-dots-horizontal
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.postTestStatus == 'done'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.postTestStatus == 'done'" color="green">
                   mdi-check
                 </v-icon>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                v-for="(item, postTestIndex) in test.testStructure.postTest"
-                :key="postTestIndex"
-              >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
+              <v-row v-for="(item, postTestIndex) in test.testStructure.postTest" :key="postTestIndex">
+                <v-col cols="5" class="mx-auto py-0">
                   <p class="cardsTitle">
                     {{ item.title }}
                   </p>
-                  <p
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >
+                  <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
                 </v-col>
@@ -411,81 +227,39 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
-      <v-col
-        v-if="index == 0 && postTestFinished && isAdmin"
-        ref="rightView"
-        class="mx-10 mt-6 right-view backgroundTest"
-      >
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+      <v-col v-if="index == 0 && postTestFinished && isAdmin" ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest">
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Evaluator concluded the test!</span>
               <br>
               <span class="cardsSubtitle">
                 Here you can finalize the test, or you can keep talking with your
                 evaluator until you finish!
               </span>
-              <v-btn
-                v-if="postTestFinished"
-                class="my-6"
-                color="orange"
-                variant="flat"
-                block
-                @click="stopRecording(), finishTest()"
-              >
+              <v-btn v-if="postTestFinished" class="my-6" color="orange" variant="flat" block
+                @click="stopRecording(), finishTest()">
                 Finish Test
               </v-btn>
             </v-col>
           </v-row>
         </v-card>
       </v-col>
-      <v-col
-        v-if="index == 1 && taskIndex == 0 && isAdmin"
-        ref="rightView"
-        class="mx-10 mt-2 right-view backgroundTest"
-      >
-        <FeedbackView
-          :index="index"
-          :is-admin="isAdmin"
-        />
+      <v-col v-if="index == 1 && taskIndex == 0 && isAdmin" ref="rightView"
+        class="mx-10 mt-2 right-view backgroundTest">
+        <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
 
       <!-- Evaluator View -->
-      <v-col
-        v-if="index == 0 && taskIndex == 0 && !isAdmin"
-        ref="rightView"
-        class="mx-15 mt-4 right-view backgroundTest"
-      >
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+      <v-col v-if="index == 0 && taskIndex == 0 && !isAdmin" ref="rightView"
+        class="mx-15 mt-4 right-view backgroundTest">
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Welcome!</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-2 mb-5"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-2 mb-5">
                   <span class="cardsSubtitle">
                     {{ test.testStructure.welcomeMessage }}
                   </span>
@@ -494,27 +268,12 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">We need your consent!</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-2 mb-5"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-2 mb-5">
                   <span class="cardsSubtitle">
                     The information you give is used for lorem ipsum dolor sit
                     amet consectetur
@@ -523,16 +282,11 @@
               </v-row>
               <v-row justify="center">
                 <v-col cols="11">
-                  <v-checkbox
-                    v-model="currentUserTestAnswer.consentCompleted"
-                    :disabled="consentCompleted"
-                    color="orange"
-                    class="ma-0 pa-0"
-                    @click="
+                  <v-checkbox v-model="currentUserTestAnswer.consentCompleted" :disabled="consentCompleted"
+                    color="orange" class="ma-0 pa-0" @click="
                       changeStatus(taskIndex, 'consent', 'done'),
                       (consentCompleted = true)
-                    "
-                  >
+                      ">
                     <template #label>
                       <span style="color: #455a64">{{
                         test.testStructure.consent
@@ -544,54 +298,26 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Connect with your moderator</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-0"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0">
                   <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your moderator so that, when ready, they can start the test.
                   </span>
                 </v-col>
-                <v-col
-                  v-if="moderatorStatus == false"
-                  cols="4"
-                  class="mt-2 mb-8 mr-8"
-                >
+                <v-col v-if="moderatorStatus == false" cols="4" class="mt-2 mb-8 mr-8">
                   <span class="cardsTitle text-center d-block">
                     Waiting the moderator...
                   </span>
                   <div class="dot-flashing mx-auto mt-4" />
                 </v-col>
-                <v-col
-                  v-else
-                  cols="12"
-                  class="mr-8"
-                >
-                  <VideoCall
-                    ref="videoCall"
-                    :index="index"
-                    :is-admin="isAdmin"
-                    :consent-completed="consentCompleted"
-                    @emit-confirm="confirmConnect(), (index = 2)"
-                  />
+                <v-col v-else cols="12" class="mr-8">
+                  <VideoCall ref="videoCall" :index="index" :is-admin="isAdmin" :consent-completed="consentCompleted"
+                    @emit-confirm="confirmConnect(), (index = 2)" />
                 </v-col>
               </v-row>
             </v-col>
@@ -600,105 +326,54 @@
       </v-col>
 
       <!-- Evaluator Pre-Test view -->
-      <v-col
-        v-if="index == 1 && !isAdmin && !postTestFinished"
-        ref="rightView"
-        class="mx-10 mt-6 right-view backgroundTest"
-      >
+      <v-col v-if="index == 1 && !isAdmin && !postTestFinished" ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest">
         <v-expansion-panels variant="accordion">
-          <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px"
-            class="mb-3"
-            :disabled="userTestStatus.preTestStatus == 'closed'"
-            @click="setInProgress(index, 'preTest')"
-          >
+          <v-expansion-panel style="border: solid 1px #71717182 !important; border-radius: 30px" class="mb-3"
+            :disabled="userTestStatus.preTestStatus == 'closed'" @click="setInProgress(index, 'preTest')">
             <v-expansion-panel-title>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Pre-Test</span>
-                <v-icon
-                  v-if="userTestStatus.preTestStatus == 'closed'"
-                  color="#8D8D8D"
-                >
+                <v-icon v-if="userTestStatus.preTestStatus == 'closed'" color="#8D8D8D">
                   mdi-lock
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.preTestStatus == 'open'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.preTestStatus == 'open'" color="green">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.preTestStatus == 'inProgress'"
-                  color="orange"
-                >
+                <v-icon v-else-if="userTestStatus.preTestStatus == 'inProgress'" color="orange">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.preTestStatus == 'done'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.preTestStatus == 'done'" color="green">
                   mdi-check
                 </v-icon>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                v-for="(item, preTestIdx) in test.testStructure.preTest"
-                :key="preTestIdx"
-              >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
+              <v-row v-for="(item, preTestIdx) in test.testStructure.preTest" :key="preTestIdx">
+                <v-col cols="5" class="mx-auto py-0">
                   <p class="cardsTitle">
                     {{ item.title }}
                   </p>
-                  <p
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >
+                  <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
-                  <v-textarea
-                    v-if="item.textField"
-                    v-model="currentUserTestAnswer.preTestAnswer[preTestIdx].answer"
-                    :placeholder="item.title"
-                    rows="1"
-                    variant="outlined"
-                  />
-                  <v-radio-group
-                    v-if="item.selectionField"
-                    v-model="currentUserTestAnswer.preTestAnswer[preTestIdx].answer"
-                  >
-                    <v-row
-                      v-for="(selection, selectionIndex) in item.selectionFields"
-                      :key="selectionIndex"
-                    >
-                      <v-radio
-                        class="ml-3 mb-1"
-                        :label="selection"
-                        :value="selection"
-                      />
+                  <v-textarea v-if="item.textField" v-model="currentUserTestAnswer.preTestAnswer[preTestIdx].answer"
+                    :placeholder="item.title" rows="1" variant="outlined" />
+                  <v-radio-group v-if="item.selectionField"
+                    v-model="currentUserTestAnswer.preTestAnswer[preTestIdx].answer">
+                    <v-row v-for="(selection, selectionIndex) in item.selectionFields" :key="selectionIndex">
+                      <v-radio class="ml-3 mb-1" :label="selection" :value="selection" />
                     </v-row>
                     <v-row justify="end" />
                   </v-radio-group>
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col
-                  cols="10"
-                  class="mx-4"
-                >
-                  <v-btn
-                    v-if="userTestStatus.preTestStatus != 'done'"
-                    block
-                    style="border-radius: 10px"
-                    color="orange-lighten-1"
-                    variant="flat"
-                    :disabled="test.userTestStatus.preTestStatus == 'closed'"
-                    @click="changeStatus(taskIndex, 'preTest', 'done')"
-                  >
+                <v-col cols="10" class="mx-4">
+                  <v-btn v-if="userTestStatus.preTestStatus != 'done'" block style="border-radius: 10px"
+                    color="orange-lighten-1" variant="flat" :disabled="test.userTestStatus.preTestStatus == 'closed'"
+                    @click="changeStatus(taskIndex, 'preTest', 'done')">
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -707,86 +382,42 @@
           </v-expansion-panel>
 
           <!-- Evaluator Tasks view -->
-          <v-expansion-panel
-            v-for="(task, taskIdx) in test.testStructure.userTasks"
-            :key="taskIdx"
-            style="border: solid 1px #71717182 !important; border-radius: 30px"
-            class="mb-3"
+          <v-expansion-panel v-for="(task, taskIdx) in test.testStructure.userTasks" :key="taskIdx"
+            style="border: solid 1px #71717182 !important; border-radius: 30px" class="mb-3"
             :disabled="tasksStatus[taskIdx] == 'closed'"
-            @click="setTaskIndex(taskIdx), setInProgress(taskIdx, 'tasks')"
-          >
+            @click="setTaskIndex(taskIdx), setInProgress(taskIdx, 'tasks')">
             <v-expansion-panel-title>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">{{ task.taskName }}</span>
-                <v-icon
-                  v-if="tasksStatus[taskIdx] == 'closed'"
-                  color="#8D8D8D"
-                >
+                <v-icon v-if="tasksStatus[taskIdx] == 'closed'" color="#8D8D8D">
                   mdi-lock
                 </v-icon>
-                <v-icon
-                  v-else-if="tasksStatus[taskIdx] == 'open'"
-                  color="green"
-                >
+                <v-icon v-else-if="tasksStatus[taskIdx] == 'open'" color="green">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="tasksStatus[taskIdx] == 'inProgress'"
-                  color="orange"
-                >
+                <v-icon v-else-if="tasksStatus[taskIdx] == 'inProgress'" color="orange">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="tasksStatus[taskIdx] == 'done'"
-                  color="green"
-                >
+                <v-icon v-else-if="tasksStatus[taskIdx] == 'done'" color="green">
                   mdi-check
                 </v-icon>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col
-                  cols="12"
-                  class="mb-0"
-                >
-                  <span
-                    class="ml-4"
-                    style="color: #455a64"
-                  >
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455a64">
                     {{ test.testStructure.userTasks[taskIdx].taskDescription }}
                   </span>
                 </v-col>
-                <v-col
-                  cols="9"
-                  class="mb-0 pb-0"
-                >
-                  <v-textarea
-                    :id="'id-' + test.testStructure.userTasks[taskIdx].taskName"
-                    v-model="
-                      currentUserTestAnswer.tasks[taskIdx].taskObservations
-                    "
-                    variant="outlined"
-                    label="observation (optional)"
-                  />
+                <v-col cols="9" class="mb-0 pb-0">
+                  <v-textarea :id="'id-' + test.testStructure.userTasks[taskIdx].taskName" v-model="currentUserTestAnswer.tasks[taskIdx].taskObservations
+                    " variant="outlined" label="observation (optional)" />
                 </v-col>
-                <v-col
-                  cols="2"
-                  class="mx-4"
-                >
-                  <v-btn
-                    v-if="tasksStatus[taskIdx] != 'done'"
-                    block
-                    style="border-radius: 10px"
-                    color="orange-lighten-1"
-                    variant="flat"
-                    @click="changeStatus(taskIdx, 'tasks', 'done')"
-                  >
+                <v-col cols="2" class="mx-4">
+                  <v-btn v-if="tasksStatus[taskIdx] != 'done'" block style="border-radius: 10px"
+                    color="orange-lighten-1" variant="flat" @click="changeStatus(taskIdx, 'tasks', 'done')">
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -795,98 +426,48 @@
           </v-expansion-panel>
 
           <!-- Evaluator Post-Test view -->
-          <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px"
-            class="mb-3"
-            :disabled="userTestStatus.postTestStatus == 'closed'"
-            @click="setInProgress(index, 'postTest')"
-          >
+          <v-expansion-panel style="border: solid 1px #71717182 !important; border-radius: 30px" class="mb-3"
+            :disabled="userTestStatus.postTestStatus == 'closed'" @click="setInProgress(index, 'postTest')">
             <v-expansion-panel-title>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Post-Test</span>
-                <v-icon
-                  v-if="userTestStatus.postTestStatus == 'closed'"
-                  color="#8D8D8D"
-                >
+                <v-icon v-if="userTestStatus.postTestStatus == 'closed'" color="#8D8D8D">
                   mdi-lock
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.postTestStatus == 'open'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.postTestStatus == 'open'" color="green">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.postTestStatus == 'inProgress'"
-                  color="orange"
-                >
+                <v-icon v-else-if="userTestStatus.postTestStatus == 'inProgress'" color="orange">
                   mdi-lock-open
                 </v-icon>
-                <v-icon
-                  v-else-if="userTestStatus.postTestStatus == 'done'"
-                  color="green"
-                >
+                <v-icon v-else-if="userTestStatus.postTestStatus == 'done'" color="green">
                   mdi-check
                 </v-icon>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                v-for="(item, postTestIndex) in test.testStructure.postTest"
-                :key="postTestIndex"
-              >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
+              <v-row v-for="(item, postTestIndex) in test.testStructure.postTest" :key="postTestIndex">
+                <v-col cols="5" class="mx-auto py-0">
                   <p>{{ item.title }}</p>
                   <p v-if="item.description">
                     {{ item.description }}
                   </p>
-                  <v-textarea
-                    v-if="item.textField"
-                    v-model="
-                      currentUserTestAnswer.postTestAnswer[postTestIndex].answer
-                    "
-                    :placeholder="item.title"
-                    variant="outlined"
-                    rows="1"
-                  />
-                  <v-radio-group
-                    v-if="item.selectionField"
-                    v-model="
-                      currentUserTestAnswer.postTestAnswer[postTestIndex].answer
-                    "
-                  >
-                    <v-row
-                      v-for="(selection, selectionIndex) in item.selectionFields"
-                      :key="selectionIndex"
-                    >
-                      <v-radio
-                        class="ml-3 mb-1"
-                        :label="selection"
-                        :value="selection"
-                      />
+                  <v-textarea v-if="item.textField" v-model="currentUserTestAnswer.postTestAnswer[postTestIndex].answer
+                    " :placeholder="item.title" variant="outlined" rows="1" />
+                  <v-radio-group v-if="item.selectionField" v-model="currentUserTestAnswer.postTestAnswer[postTestIndex].answer
+                    ">
+                    <v-row v-for="(selection, selectionIndex) in item.selectionFields" :key="selectionIndex">
+                      <v-radio class="ml-3 mb-1" :label="selection" :value="selection" />
                     </v-row>
                     <v-row justify="end" />
                   </v-radio-group>
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col
-                  cols="10"
-                  class="mx-4"
-                >
-                  <v-btn
-                    v-if="userTestStatus.postTestStatus != 'done'"
-                    alibi
-                    block
-                    style="border-radius: 10px"
-                    color="orange-lighten-1"
-                    variant="flat"
-                    @click="changeStatus(0, 'postTest', 'done')"
-                  >
+                <v-col cols="10" class="mx-4">
+                  <v-btn v-if="userTestStatus.postTestStatus != 'done'" alibi block style="border-radius: 10px"
+                    color="orange-lighten-1" variant="flat" @click="changeStatus(0, 'postTest', 'done')">
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -895,56 +476,27 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
-      <v-col
-        v-if="index == 1 && postTestFinished && !isAdmin"
-        ref="rightView"
-        class="mx-10 mt-6 right-view backgroundTest"
-      >
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+      <v-col v-if="index == 1 && postTestFinished && !isAdmin" ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest">
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Final Message!</span>
               <br>
               <span class="cardsSubtitle">
                 Congratulations, you finished this test. Here you can continue
                 talking with your moderator or leave the test.
               </span>
-              <v-row
-                justify="center"
-                class="mt-3"
-              >
+              <v-row justify="center" class="mt-3">
                 <v-col cols="4">
-                  <img
-                    draggable="false"
-                    src="../../../public/finalMessage.svg"
-                    alt="Final test svg"
-                  >
+                  <img draggable="false" src="../../../public/finalMessage.svg" alt="Final test svg">
                 </v-col>
-                <v-col
-                  cols="6"
-                  class="pt-2 my-8"
-                >
+                <v-col cols="6" class="pt-2 my-8">
                   <span class="cardsSubtitle">
                     {{ test.testStructure.finalMessage }}
                   </span>
-                  <v-col
-                    class="mt-4"
-                    align="end"
-                  >
-                    <v-btn
-                      color="orange"
-                      variant="flat"
-                      @click="saveAnswer(), stopRecording()"
-                    >
+                  <v-col class="mt-4" align="end">
+                    <v-btn color="orange" variant="flat" @click="saveAnswer(), stopRecording()">
                       Save & Exit
                     </v-btn>
                   </v-col>
@@ -956,35 +508,16 @@
       </v-col>
 
       <!-- Feedback View -->
-      <v-col
-        v-if="index == 2 && taskIndex == 0"
-        ref="rightView"
-        class="mx-10 mt-2 right-view backgroundTest"
-      >
-        <FeedbackView
-          :index="index"
-          :is-admin="isAdmin"
-        />
+      <v-col v-if="index == 2 && taskIndex == 0" ref="rightView" class="mx-10 mt-2 right-view backgroundTest">
+        <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
 
     <!-- Loading Overlay -->
-    <v-overlay
-      v-model="isLoading"
-      class="text-center"
-    >
-      <v-card
-        class="pa-4"
-        rounded="xl"
-        color="grey-darken-4"
-      >
-        <v-progress-linear
-          style="border-radius: 20px; width: 20wv;"
-          :model-value="uploadProgress"
-          color="#fca326"
-          height="20"
-          class="mb-2"
-        >
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-card class="pa-4" rounded="xl" color="grey-darken-4">
+        <v-progress-linear style="border-radius: 20px; width: 20wv;" :model-value="uploadProgress" color="#fca326"
+          height="20" class="mb-2">
           <template #default="{ value }">
             <span>{{ Math.ceil(value) }}%</span>
           </template>
@@ -995,52 +528,30 @@
       </v-card>
     </v-overlay>
 
-    <v-dialog
-      :model-value="!noExistUser && !logined"
-      width="500"
-      persistent
-    >
+    <v-dialog :model-value="!noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
-        <v-row
-          class="ma-0 pa-0 pt-5"
-          justify="center"
-        >
-          <v-avatar
-            class="justify-center"
-            color="orange-lighten-4"
-            size="150"
-          >
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange-lighten-4" size="150">
             <v-icon size="120">
               mdi-account
             </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn
-            class="text-white bg-orange"
-            @click="setTest()"
-          >
+          <v-btn class="text-white bg-orange" @click="setTest()">
             Continue as {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a
-              style="color: #f9a826"
-              @click="signOut()"
-            >Change account</a>
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
     <DisconnectedCard v-if="isDisconnected" />
-    <video
-      ref="remoteAudio"
-      autoplay
-      playsinline
-      style="display: none;"
-    />
+    <video ref="remoteAudio" autoplay playsinline style="display: none;" />
   </div>
 </template>
 
@@ -1094,6 +605,8 @@ const recordedChunksEvaluator = ref([]);
 const recordedChunksModerator = ref([]);
 const recordedVideoEvaluator = ref('');
 const recordedVideoModerator = ref('');
+const recordedAudioModerator = ref('');
+const recordedAudioEvaluator = ref('');
 const videoStream = ref(null);
 const mediaRecorderEvaluator = ref(null);
 const mediaRecorderModerator = ref(null);
@@ -1157,28 +670,56 @@ const openTask = (id) => {
 };
 
 const setInProgress = (id, type) => {
-  const statusToUpdate = 'inProgress';
+  console.log(`Setting ${type} ${id} status to inProgress`);
+
   const testRef = doc(db, 'tests', roomTestId.value);
-  getDoc(testRef).then((doc) => {
-    if (doc.exists()) {
-      const data = doc.data();
-      if (type === 'tasks' && tasksStatus.value[id] === 'open') {
-        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
-      } else if (type === 'postTest' && userTestStatus.value.postTestStatus === 'open') {
-        data.userTestStatus.postTestStatus = statusToUpdate;
-      } else if (type === 'preTest' && userTestStatus.value.preTestStatus === 'open') {
-        data.userTestStatus.preTestStatus = statusToUpdate;
-      }
-      updateDoc(testRef, data).catch((error) => {
-        console.error(`Error updating ${type} status:`, error);
-      });
-      if (type === 'tasks') {
-        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
-      } else {
-        test.value.userTestStatus[`${type}Status`] = statusToUpdate;
-      }
-    } else {
+  const statusToUpdate = 'inProgress';
+
+  getDoc(testRef).then((docSnap) => {
+    if (!docSnap.exists()) {
       console.error('Test document not found');
+      return;
+    }
+
+    const data = docSnap.data();
+    let shouldUpdate = false;
+
+    if (type === 'tasks') {
+      const currentStatus = tasksStatus.value[id];
+      if (currentStatus === 'open') {
+        console.log(`Current task status: ${currentStatus}`);
+        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
+        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    } else if (type === 'preTest') {
+      const currentStatus = userTestStatus.value.preTestStatus;
+      if (currentStatus === 'open') {
+        console.log(`Current preTest status: ${currentStatus}`);
+        data.userTestStatus.preTestStatus = statusToUpdate;
+        test.value.userTestStatus.preTestStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    } else if (type === 'postTest') {
+      const currentStatus = userTestStatus.value.postTestStatus;
+      if (currentStatus === 'open') {
+        console.log(`Current postTest status: ${currentStatus}`);
+        data.userTestStatus.postTestStatus = statusToUpdate;
+        test.value.userTestStatus.postTestStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    }
+
+    if (shouldUpdate) {
+      updateDoc(testRef, data)
+        .then(() => {
+          console.log(`Updated ${type} ${id} status to: ${statusToUpdate}`);
+        })
+        .catch((error) => {
+          console.error(`Error updating ${type} status:`, error);
+        });
+    } else {
+      console.log(`Skipped update: ${type} ${id} is not in 'open' state`);
     }
   });
 };
@@ -1188,29 +729,62 @@ const setExistUser = () => {
 };
 
 const changeStatus = (id, type, newStatus) => {
+  console.log(`Changing ${type} status to ${newStatus}`);
   const testRef = doc(db, 'tests', roomTestId.value);
   getDoc(testRef)
-    .then((doc) => {
+    .then(async (doc) => {
       if (doc.exists()) {
         const data = doc.data();
         if (type === 'tasks') {
+          console.log(`Updating ${type} ${id} status`);
           data.testStructure.userTasks[id].taskStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.tasks[id].completed = true;
+          if (newStatus === 'done') {
+
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.tasks[id].completed);
+            currentUserTestAnswer.value.tasks[id].completed = true;
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.tasks[id].completed);
+
+          }
         } else if (type === 'postTest') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.postTestStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.postTestCompleted = true;
+          if (newStatus === 'done') {
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.postTestCompleted);
+
+            currentUserTestAnswer.value.postTestCompleted = true;
+
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.postTestCompleted);
+          }
         } else if (type === 'preTest') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.preTestStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.preTestCompleted = true;
+          if (newStatus === 'done') {
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.preTestCompleted);
+
+            currentUserTestAnswer.value.preTestCompleted = true;
+
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.preTestCompleted);
+          }
         } else if (type === 'consent') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.consentStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.consentCompleted = true;
+          if (newStatus === 'done') {
+            console.log(`Marking ${type} as completed`);
+            currentUserTestAnswer.value.consentCompleted = true;
+          }
         }
-        return updateDoc(testRef, data);
+
+        console.log("userTestStatus antes", data.userTestStatus);
+        await updateDoc(testRef, data);
+        console.log("userTestStatus depois", data.userTestStatus);
+        return data;
       }
       throw new Error('Test document not found');
     })
     .then(() => {
+      console.log("userTestStatus", userTestStatus.value);
+
+      console.log('Status updated');
       calculateProgress();
     })
     .catch((error) => {
@@ -1249,6 +823,31 @@ const uploadVideo = async (recordedChunks, storagePath) => {
   });
 };
 
+const uploadAudio = async (recordedChunks, storagePath) => {
+  const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+  const storage = getStorage();
+  const ref = storageRef(storage, storagePath);
+  const uploadTask = uploadBytesResumable(ref, audioBlob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        uploadProgress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        console.error('Upload failed:', error);
+        isLoading.value = false;
+        reject(error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(ref);
+        resolve(downloadURL);
+      },
+    );
+  });
+};
+
 const startRecordingEvaluator = async () => {
   recording.value = true;
   recordedChunksEvaluator.value = [];
@@ -1266,10 +865,13 @@ const startRecordingEvaluator = async () => {
 
   mediaRecorderEvaluator.value.onstop = async () => {
     isLoading.value = true;
-    const storagePath = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    const storagePathVideo = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    const storagePathAudio = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/audio/${recordedAudioEvaluator.value}`;
     try {
-      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePath);
+      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePathVideo);
+      recordedAudioEvaluator.value = await uploadAudio(recordedChunksEvaluator.value, storagePathAudio);
       currentUserTestAnswer.value.cameraUrlEvaluator = recordedVideoEvaluator.value;
+      currentUserTestAnswer.value.audioUrlEvaluator = recordedAudioEvaluator.value;
       isLoading.value = false;
       saved.value = true;
       window.onbeforeunload = null;
@@ -1307,8 +909,12 @@ const startRecordingModerator = async () => {
   mediaRecorderModerator.value.onstop = async () => {
     isLoading.value = true;
     try {
-      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, storagePath);
+      const videoStoragePath = `tests/${roomTestId.value}/${route.params.token}/moderator/video/${recordedVideoModerator.value}`;
+      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, videoStoragePath);
       currentUserTestAnswer.value.cameraUrlModerator = recordedVideoModerator.value;
+      const audioStoragePath = `tests/${roomTestId.value}/${route.params.token}/moderator/audio/${recordedAudioModerator.value}`;
+      recordedAudioModerator.value = await uploadAudio(recordedChunksModerator.value, audioStoragePath);
+      currentUserTestAnswer.value.audioUrlModerator = recordedAudioModerator.value;
       isLoading.value = false;
       saved.value = true;
       window.onbeforeunload = null;
@@ -1322,7 +928,8 @@ const startRecordingModerator = async () => {
   mediaRecorderModerator.value.start();
   backupInterval.value = setInterval(async () => {
     if (recording.value) {
-      await uploadVideo(recordedChunksModerator.value, storagePath);
+      await uploadVideo(recordedChunksModerator.value, videoStoragePath);
+      await uploadAudio(recordedChunksModerator.value, audioStoragePath);
     }
   }, 300000);
 };
@@ -1330,13 +937,17 @@ const startRecordingModerator = async () => {
 const stopRecording = () => {
   if (mediaRecorderEvaluator.value) {
     mediaRecorderEvaluator.value.stop();
-    localCameraStream.value?.stop();
+    if (localCameraStream.value) {
+      localCameraStream.value.getTracks().forEach(track => track.stop());
+    }
     clearInterval(backupInterval.value);
     recording.value = false;
   }
   if (mediaRecorderModerator.value) {
     mediaRecorderModerator.value.stop();
-    localCameraStream.value?.stop();
+    if (localCameraStream.value) {
+      localCameraStream.value.getTracks().forEach(track => track.stop());
+    }
     clearInterval(backupInterval.value);
     recording.value = false;
   }
@@ -1543,6 +1154,7 @@ onMounted(async () => {
     }
   });
   onSnapshot(ref, (snapshot) => {
+    console.log('snapshot.data().userTestStatus:', snapshot.data().userTestStatus);
     moderatorStatus.value = snapshot.data().userTestStatus.moderator;
     evaluatorStatus.value = snapshot.data().userTestStatus.user;
     userTestStatus.value = snapshot.data().userTestStatus;
@@ -1594,15 +1206,6 @@ watch(remoteCameraStream, async () => {
 });
 
 watch(
-  () => userTestStatus.value.preTestStatus,
-  (newValue) => {
-    if (newValue === 'done' && !isAdmin.value) {
-      window.open(test.value.testStructure.landingPage);
-    }
-  },
-);
-
-watch(
   () => userTestStatus.value.postTestStatus,
   (newValue) => {
     postTestFinished.value = newValue === 'done';
@@ -1623,37 +1226,47 @@ watch(evaluatorStatus, (newValue) => {
   margin: 0;
   overflow-y: auto;
 }
+
 .nav-list {
   max-height: 85%;
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 100px;
 }
+
 .cards {
   margin-top: 16px;
 }
+
 .text-field {
   margin-bottom: 16px;
 }
+
 .btn-done {
   border-radius: 10px;
 }
+
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
+
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
+
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
+
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
+
 .cards {
   border-radius: 20px;
 }
+
 .cardsTitle {
   color: #455a64;
   font-size: 18px;
@@ -1661,6 +1274,7 @@ watch(evaluatorStatus, (newValue) => {
   font-weight: 600;
   line-height: normal;
 }
+
 .cardsSubtitle {
   color: #455a64;
   font-size: 15px;
@@ -1668,17 +1282,21 @@ watch(evaluatorStatus, (newValue) => {
   font-weight: 400;
   line-height: normal;
 }
+
 .v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
 }
+
 .disabled-group {
   pointer-events: none;
   background-color: grey;
 }
+
 body {
   overflow-y: 100vh;
 }
+
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
@@ -1686,11 +1304,13 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+
 .backgroundTest {
   background-color: #e8eaf2;
   height: 94%;
   overflow: scroll;
 }
+
 .background:before {
   content: '';
   position: absolute;
@@ -1705,6 +1325,7 @@ body {
   background-position: right 0px top -20px;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .titleView {
   font-style: normal;
   font-weight: 300;
@@ -1714,6 +1335,7 @@ body {
   align-items: center;
   color: #ffffff;
 }
+
 .description {
   font-style: normal;
   font-weight: 200;
@@ -1722,15 +1344,14 @@ body {
   align-items: flex-end;
   color: #ffffff;
 }
+
 .nav {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 }
-.v-navigation-drawer {
-  margin-top: 64px;
-}
+
 .subtitleView {
   font-style: normal;
   font-weight: 200;
@@ -1740,9 +1361,11 @@ body {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
+
 .btn-fix:focus::before {
   opacity: 0 !important;
 }
+
 .titleText {
   color: rgba(255, 255, 255, 0.7);
   font-size: 16px;
@@ -1751,32 +1374,41 @@ body {
   padding-left: 0px;
   padding-top: 0px;
 }
+
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
+
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
+
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd8694;
   border-radius: 2px;
 }
+
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fda1207a;
 }
+
 .nav-list::-webkit-scrollbar {
   width: 7px;
 }
+
 .nav-list::-webkit-scrollbar-track {
   background: none;
 }
+
 .nav-list::-webkit-scrollbar-thumb {
   background: #c09c6b;
   border-radius: 4px;
 }
+
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #eba555;
 }
+
 .card-title {
   font-style: normal;
   font-weight: 300;
@@ -1785,6 +1417,7 @@ body {
   margin-left: 12px;
   margin-bottom: 20px;
 }
+
 .dot-flashing {
   position: relative;
   width: 15px;
@@ -1795,6 +1428,7 @@ body {
   animation: dot-flashing 1s infinite linear alternate;
   animation-delay: 0.5s;
 }
+
 .dot-flashing::before,
 .dot-flashing::after {
   content: '';
@@ -1802,6 +1436,7 @@ body {
   position: absolute;
   top: 0;
 }
+
 .dot-flashing::before {
   left: -25px;
   width: 15px;
@@ -1812,6 +1447,7 @@ body {
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 0s;
 }
+
 .dot-flashing::after {
   left: 25px;
   width: 15px;
@@ -1822,10 +1458,12 @@ body {
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 1s;
 }
+
 @keyframes dot-flashing {
   0% {
     background-color: #fca326;
   }
+
   50%,
   100% {
     background-color: rgba(252, 163, 38, 0.281);
