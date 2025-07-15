@@ -82,7 +82,8 @@ const rememberMe = ref(false)
 
 const emailRules = [
   (v) => !!v || t('errors.emailIsRequired'),
-  (v) => /.+@.+\\..+/.test(v) || t('errors.invalidEmail'),
+  (v) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
 ]
 
 const rules = {
