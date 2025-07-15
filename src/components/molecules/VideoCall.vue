@@ -1,9 +1,18 @@
 <template>
   <v-container fluid>
-    <v-row class="mb-2" justify="center">
+    <v-row
+      class="mb-2"
+      justify="center"
+    >
       <v-col cols="10">
-        <v-btn v-if="index === 0" :disabled="!consentCompleted && !isAdmin" color="green" block variant="flat"
-          @click="openUserCamera">
+        <v-btn
+          v-if="index === 0"
+          :disabled="!consentCompleted && !isAdmin"
+          color="green"
+          block
+          variant="flat"
+          @click="openUserCamera"
+        >
           CONNECT
         </v-btn>
       </v-col>

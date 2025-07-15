@@ -1,7 +1,12 @@
 <template>
   <div class="chart-container">
-    <h3 class="text-h6 mb-4">Score Distribution Histogram</h3>
-    <canvas ref="histogramCanvas" style="max-height: 300px;"></canvas>
+    <h3 class="text-h6 mb-4">
+      Score Distribution Histogram
+    </h3>
+    <canvas
+      ref="histogramCanvas"
+      style="max-height: 300px;"
+    />
   </div>
 </template>
 

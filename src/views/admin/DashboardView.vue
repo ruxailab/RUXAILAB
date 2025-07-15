@@ -1,24 +1,45 @@
 <template>
   <!-- NEW DESIGN LAYOUT -->
   <div class="dashboard-layout">
-    <v-navigation-drawer width="280" class="sidebar" elevation="2">
+    <v-navigation-drawer
+      width="280"
+      class="sidebar"
+      elevation="2"
+    >
       <!-- Sidebar Header -->
       <div class="sidebar-header pa-6">
         <div class="d-flex align-center">
-          <v-avatar color="primary" size="40" class="mr-3">
-            <v-icon icon="mdi-view-dashboard" color="white" />
+          <v-avatar
+            color="primary"
+            size="40"
+            class="mr-3"
+          >
+            <v-icon
+              icon="mdi-view-dashboard"
+              color="white"
+            />
           </v-avatar>
           <div>
-            <h2 class="text-h6 font-weight-bold">Dashboard</h2>
-            <p class="text-caption text-grey-darken-1 ma-0">Manage your research</p>
+            <h2 class="text-h6 font-weight-bold">
+              Dashboard
+            </h2>
+            <p class="text-caption text-grey-darken-1 ma-0">
+              Manage your research
+            </p>
           </div>
         </div>
       </div>
       <v-divider />
 
       <!-- Navigation Menu -->
-      <v-list class="pa-4" nav>
-        <template v-for="section in navigationItems" :key="section.id">
+      <v-list
+        class="pa-4"
+        nav
+      >
+        <template
+          v-for="section in navigationItems"
+          :key="section.id"
+        >
           <v-list-group :value="section.id">
             <template #activator="{ props }">
               <v-list-item
@@ -45,23 +66,42 @@
 
       <!-- Create Button -->
       <div class="pa-4 mt-auto">
-        <v-btn color="success" block size="large" prepend-icon="mdi-plus" @click="goToCreateTestRoute">
+        <v-btn
+          color="success"
+          block
+          size="large"
+          prepend-icon="mdi-plus"
+          @click="goToCreateTestRoute"
+        >
           Create New Test
         </v-btn>
       </div>
     </v-navigation-drawer>
 
     <v-main class="main-content">
-      <v-container fluid class="pa-6">
+      <v-container
+        fluid
+        class="pa-6"
+      >
         <!-- Header -->
         <div class="content-header mb-6">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">{{ currentPageTitle }}</h1>
-          <p class="text-h6 text-grey-darken-1">{{ activeSection === 'studies' ? 'Manage your research studies' : 'Access study templates' }}</p>
+          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
+            {{ currentPageTitle }}
+          </h1>
+          <p class="text-h6 text-grey-darken-1">
+            {{ activeSection === 'studies' ? 'Manage your research studies' : 'Access study templates' }}
+          </p>
         </div>
 
         <!-- Search + Filters -->
-        <v-row class="mb-6" justify="space-between">
-          <v-col cols="12" md="8">
+        <v-row
+          class="mb-6"
+          justify="space-between"
+        >
+          <v-col
+            cols="12"
+            md="8"
+          >
             <v-text-field
               v-model="search"
               width="full"
@@ -72,7 +112,10 @@
               rounded="lg"
             />
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col
+            cols="12"
+            md="4"
+          >
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -86,19 +129,59 @@
 
         <!-- Content List -->
         <div v-if="mainIndex === 0">
-          <List v-if="subIndex === 0" :items="filteredTests" type="myTests" @clicked="goTo" />
-          <List v-if="subIndex === 1" :items="filteredTests" type="sharedWithMe" @clicked="goTo" />
-          <List v-if="subIndex === 2" :items="filteredTests" type="publicTests" @clicked="goTo" />
-          <List v-if="filteredModeratedSessions.length > 0 && subIndex === 3" :items="filteredModeratedSessions" type="sessions" @clicked="goTo" />
-          <div v-if="filteredModeratedSessions.length === 0 && subIndex === 3" class="empty-state">
-            <v-icon icon="mdi-clock-remove-outline" size="48" color="grey-lighten-1" class="mb-2" />
-            <p class="text-h6">You don't have active sessions</p>
+          <List
+            v-if="subIndex === 0"
+            :items="filteredTests"
+            type="myTests"
+            @clicked="goTo"
+          />
+          <List
+            v-if="subIndex === 1"
+            :items="filteredTests"
+            type="sharedWithMe"
+            @clicked="goTo"
+          />
+          <List
+            v-if="subIndex === 2"
+            :items="filteredTests"
+            type="publicTests"
+            @clicked="goTo"
+          />
+          <List
+            v-if="filteredModeratedSessions.length > 0 && subIndex === 3"
+            :items="filteredModeratedSessions"
+            type="sessions"
+            @clicked="goTo"
+          />
+          <div
+            v-if="filteredModeratedSessions.length === 0 && subIndex === 3"
+            class="empty-state"
+          >
+            <v-icon
+              icon="mdi-clock-remove-outline"
+              size="48"
+              color="grey-lighten-1"
+              class="mb-2"
+            />
+            <p class="text-h6">
+              You don't have active sessions
+            </p>
           </div>
         </div>
 
         <div v-if="mainIndex === 1">
-          <List v-if="subIndex === 0" :items="filteredTemplates" type="myTemplates" @clicked="setupTempDialog" />
-          <List v-if="subIndex === 1" :items="filteredTemplates" type="publicTemplates" @clicked="setupTempDialog" />
+          <List
+            v-if="subIndex === 0"
+            :items="filteredTemplates"
+            type="myTemplates"
+            @clicked="setupTempDialog"
+          />
+          <List
+            v-if="subIndex === 1"
+            :items="filteredTemplates"
+            type="publicTemplates"
+            @clicked="setupTempDialog"
+          />
         </div>
 
         <TempDialog

@@ -1,24 +1,40 @@
 <template>
-    <v-form ref="form" v-model="valid" lazy-validation>
-        <v-container>
-            <v-row dense v-for="(label, key) in labels" :key="key">
-                <v-col cols="12">
-                    <v-card variant="outlined" class="pa-4">
-                        <div class="d-flex justify-space-between mb-1">
-                            <span class="font-weight-medium">{{ label.title }}</span>
-                            <span class="text-caption grey--text">{{ label.subtitle }}</span>
-                        </div>
-                        <v-slider v-model="nasaTlx[key]" :max="100" :step="5" track-color="grey-lighten-2" color="black"
-                            thumb-color="black" />
-                        <div class="d-flex justify-space-between text-caption mt-1">
-                            <span>{{ label.left }}</span>
-                            <span>{{ label.right }}</span>
-                        </div>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-container>
-    </v-form>
+  <v-form
+    ref="form"
+    v-model="valid"
+  >
+    <v-container>
+      <v-row
+        v-for="(label, key) in labels"
+        :key="key"
+        dense
+      >
+        <v-col cols="12">
+          <v-card
+            variant="outlined"
+            class="pa-4"
+          >
+            <div class="d-flex justify-space-between mb-1">
+              <span class="font-weight-medium">{{ label.title }}</span>
+              <span class="text-caption text-grey">{{ label.subtitle }}</span>
+            </div>
+            <v-slider
+              v-model="nasaTlx[key]"
+              :max="100"
+              :step="5"
+              track-color="grey-lighten-2"
+              color="black"
+              thumb-color="black"
+            />
+            <div class="d-flex justify-space-between text-caption mt-1">
+              <span>{{ label.left }}</span>
+              <span>{{ label.right }}</span>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 
 <script setup>

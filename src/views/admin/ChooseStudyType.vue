@@ -1,6 +1,9 @@
 
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Progress Stepper -->
       <v-row class="mb-8">
@@ -43,7 +46,10 @@
 
       <!-- Page Header -->
       <v-row class="mb-8">
-        <v-col cols="12" class="text-center">
+        <v-col
+          cols="12"
+          class="text-center"
+        >
           <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-3">
             Choose Study Type
           </h2>
@@ -54,7 +60,10 @@
       </v-row>
 
       <!-- Options Grid -->
-      <v-row justify="center" class="mb-8">
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
         <v-col
           v-for="option in options"
           :key="option.id"
@@ -97,11 +106,18 @@
                 </v-avatar>
               </div>
               
-              <h3 class="text-h5 font-weight-medium mb-3">{{ option.title }}</h3>
-              <p class="text-body-1 text-grey-darken-1 mb-4">{{ option.description }}</p>
+              <h3 class="text-h5 font-weight-medium mb-3">
+                {{ option.title }}
+              </h3>
+              <p class="text-body-1 text-grey-darken-1 mb-4">
+                {{ option.description }}
+              </p>
               
               <!-- Features List -->
-              <v-list class="bg-transparent pa-0" density="compact">
+              <v-list
+                class="bg-transparent pa-0"
+                density="compact"
+              >
                 <v-list-item
                   v-for="feature in option.features"
                   :key="feature"
@@ -115,14 +131,16 @@
                       class="mr-2"
                     />
                   </template>
-                  <v-list-item-title class="text-body-2">{{ feature }}</v-list-item-title>
+                  <v-list-item-title class="text-body-2">
+                    {{ feature }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
             
             <!-- Selected Indicator -->
             <v-icon 
-            v-if="selectedOption === option.id"
+              v-if="selectedOption === option.id"
               icon="mdi-check-circle"
               color="primary"
               size="large"
