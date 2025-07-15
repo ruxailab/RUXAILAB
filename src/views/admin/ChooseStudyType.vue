@@ -1,9 +1,14 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
-
       <!-- Stepper Header -->
-      <StepperHeader :current-step="3" :steps="steps" />
+      <StepperHeader
+        :current-step="3"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -12,7 +17,10 @@
       />
 
       <!-- Options Grid -->
-      <v-row justify="center" class="mb-8">
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
         <v-col
           v-for="option in options"
           :key="option.id"
@@ -33,7 +41,6 @@
               <v-list
                 class="bg-transparent pl-8 text-start"
                 density="compact"
-
               >
                 <v-list-item
                   v-for="feature in option.features"
@@ -59,8 +66,10 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton label="Back to Methods" @back="goBack" />
-
+      <BackButton
+        label="Back to Methods"
+        @back="goBack"
+      />
     </v-container>
   </v-container>
 </template>
