@@ -674,7 +674,10 @@
                   align="center"
                   justify="center"
                 >
-                  <SusForm :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers" />
+                  <SusForm
+                    :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
+                    @update-answer="({ index, value }) => localTestAnswer.tasks[taskIndex].susAnswers[index] = value"
+                  />
                 </v-row>
 
                 <v-row
@@ -684,7 +687,7 @@
                   justify="center"
                 >
                   <v-col cols="12">
-                    <nasaTlxForm :nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" />
+                    <nasaTlxForm v-model:nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" />
                   </v-col>
                 </v-row>
 
