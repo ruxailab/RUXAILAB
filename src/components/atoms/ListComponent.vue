@@ -1,29 +1,50 @@
 <template>
-  <v-card elevation="2" class="rounded-lg">
+  <v-card
+    elevation="2"
+    class="rounded-lg"
+  >
     <!-- Table Header -->
     <div class="table-header pa-4">
-      <v-row no-gutters class="align-center">
-        <v-col cols="2" class="px-4">
+      <v-row
+        no-gutters
+        class="align-center"
+      >
+        <v-col
+          cols="2"
+          class="px-4"
+        >
           <div class="text-subtitle-1 font-weight-bold table-heading-text">
             Type
           </div>
         </v-col>
-        <v-col cols="3" class="px-4">
+        <v-col
+          cols="3"
+          class="px-4"
+        >
           <div class="text-subtitle-1 font-weight-bold table-heading-text">
             Name
           </div>
         </v-col>
-        <v-col cols="3" class="px-4">
+        <v-col
+          cols="3"
+          class="px-4"
+        >
           <div class="text-subtitle-1 font-weight-bold table-heading-text">
             Owner
           </div>
         </v-col>
-        <v-col cols="2" class="px-4">
+        <v-col
+          cols="2"
+          class="px-4"
+        >
           <div class="text-subtitle-1 font-weight-bold table-heading-text">
             Participants
           </div>
         </v-col>
-        <v-col cols="2" class="px-4">
+        <v-col
+          cols="2"
+          class="px-4"
+        >
           <div class="text-subtitle-1 font-weight-bold table-heading-text">
             Created On
           </div>
@@ -34,11 +55,23 @@
 
     <!-- Table Body -->
     <v-list class="pa-0">
-      <template v-for="(item, index) in sortedItems" :key="index">
-        <v-list-item class="px-0 py-4" @click="emitClick(item)">
-          <v-row no-gutters class="align-center">
+      <template
+        v-for="(item, index) in sortedItems"
+        :key="index"
+      >
+        <v-list-item
+          class="px-0 py-4"
+          @click="emitClick(item)"
+        >
+          <v-row
+            no-gutters
+            class="align-center"
+          >
             <!-- Type Column with Avatar + Tooltip -->
-            <v-col cols="2" class="px-4">
+            <v-col
+              cols="2"
+              class="px-4"
+            >
               <v-tooltip location="top">
                 <template #activator="{ props }">
                   <v-avatar
@@ -60,22 +93,34 @@
             </v-col>
 
             <!-- Name -->
-            <v-col cols="3" class="px-4">
+            <v-col
+              cols="3"
+              class="px-4"
+            >
               <div class="text-subtitle-1 font-weight-medium text-on-surface">
                 {{ item.header?.templateTitle ?? item.testTitle ?? item.email }}
               </div>
             </v-col>
 
             <!-- Owner -->
-            <v-col cols="3" class="px-4">
+            <v-col
+              cols="3"
+              class="px-4"
+            >
               <div class="d-flex align-center">
-                <v-avatar size="32" class="mr-3">
+                <v-avatar
+                  size="32"
+                  class="mr-3"
+                >
                   <v-img
-                    :src="getOwnerImage(item)"
                     v-if="getOwnerImage(item)"
+                    :src="getOwnerImage(item)"
                     cover
                   />
-                  <span v-else class="font-weight-medium">
+                  <span
+                    v-else
+                    class="font-weight-medium"
+                  >
                     {{
                       getOwnerName(item)?.[0]?.toUpperCase() ?? 'U'
                     }}
@@ -88,9 +133,15 @@
             </v-col>
 
             <!-- Participants -->
-            <v-col cols="2" class="px-4">
+            <v-col
+              cols="2"
+              class="px-4"
+            >
               <div class="d-flex align-center">
-                <v-icon size="18" class="mr-1 text-medium-emphasis">
+                <v-icon
+                  size="18"
+                  class="mr-1 text-medium-emphasis"
+                >
                   mdi-account-multiple
                 </v-icon>
                 <span class="text-body-1">
@@ -100,7 +151,10 @@
             </v-col>
 
             <!-- Creation Date -->
-            <v-col cols="2" class="px-4">
+            <v-col
+              cols="2"
+              class="px-4"
+            >
               <div class="text-body-1">
                 {{ formatDate(item.createDate || item.updateDate) }}
               </div>
@@ -120,12 +174,12 @@
         <span>
           {{
             type === 'myTests' ||
-            type === 'publicTests' ||
-            type === 'sharedWithMe'
+              type === 'publicTests' ||
+              type === 'sharedWithMe'
               ? $t('pages.listTests.noTests')
               : type === 'myTemplates' || type === 'publicTemplates'
-              ? $t('pages.listTests.noTemplates')
-              : $t('pages.listTests.noSessions')
+                ? $t('pages.listTests.noTemplates')
+                : $t('pages.listTests.noSessions')
           }}
         </span>
       </v-row>

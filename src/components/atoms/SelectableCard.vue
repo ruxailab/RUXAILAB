@@ -20,8 +20,16 @@
     </v-chip>
 
     <v-card-text :class="textClass">
-      <v-avatar :color="color" :size="avatarSize" class="mb-4">
-        <v-icon :icon="icon" size="32" color="white" />
+      <v-avatar
+        :color="color"
+        :size="avatarSize"
+        class="mb-4"
+      >
+        <v-icon
+          :icon="icon"
+          size="32"
+          color="white"
+        />
       </v-avatar>
 
       <h3 class="text-h5 font-weight-medium mb-3">
