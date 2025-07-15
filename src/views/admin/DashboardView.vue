@@ -1,107 +1,84 @@
 <template>
-  <!-- NEW DESIGN LAYOUT -->
   <div class="dashboard-layout">
-    <v-navigation-drawer
-      width="280"
-      class="sidebar"
-      elevation="2"
-    >
+    <v-navigation-drawer width="280" class="sidebar" elevation="2">
       <!-- Sidebar Header -->
       <div class="sidebar-header pa-6">
         <div class="d-flex align-center">
-          <v-avatar
-            color="primary"
-            size="40"
-            class="mr-3"
-          >
-            <v-icon
-              icon="mdi-view-dashboard"
-              color="white"
-            />
+          <v-avatar color="primary" size="40" class="mr-3">
+            <v-icon icon="mdi-view-dashboard" color="white" />
           </v-avatar>
           <div>
-            <h2 class="text-h6 font-weight-bold">
-              Dashboard
-            </h2>
-            <p class="text-caption text-grey-darken-1 ma-0">
-              Manage your research
-            </p>
+            <h2 class="text-h6 font-weight-bold">Dashboard</h2>
+            <p class="text-caption text-grey-darken-1 ma-0">Manage your research</p>
           </div>
         </div>
       </div>
       <v-divider />
 
-      <!-- Navigation Menu -->
-      <v-list
-        class="pa-4"
-        nav
-      >
-        <template
-          v-for="section in navigationItems"
-          :key="section.id"
-        >
-          <v-list-group :value="section.id">
+      <!-- Navigation -->
+      <v-list class="pa-4" nav>
+        <template v-for="item in navigationItems" :key="item.id">
+          <v-list-group v-if="item.children" :value="activeSection === item.id">
             <template #activator="{ props }">
               <v-list-item
                 v-bind="props"
-                :prepend-icon="section.icon"
-                :title="section.title"
+                :prepend-icon="item.icon"
+                :title="item.title"
                 class="section-header mb-2"
                 rounded="lg"
               />
             </template>
             <v-list-item
-              v-for="child in section.children"
+              v-for="child in item.children"
               :key="child.id"
               :title="child.title"
               :prepend-icon="child.icon"
-              :active="activeSection === section.id && activeSubSection === child.id"
+              :active="activeSection === item.id && activeSubSection === child.id"
               class="subsection-item ml-4 mb-1"
               rounded="lg"
-              @click="selectNavigation(section.id, child.id)"
+              @click="selectNavigation(item.id, child.id)"
             />
           </v-list-group>
+
+          <v-list-item
+            v-else
+            :title="item.title"
+            :prepend-icon="item.icon"
+            :active="activeSection === item.id"
+            class="section-header mb-2"
+            rounded="lg"
+            @click="selectNavigation(item.id)"
+          />
         </template>
       </v-list>
 
       <!-- Create Button -->
       <div class="pa-4 mt-auto">
-        <v-btn
-          color="success"
-          block
-          size="large"
-          prepend-icon="mdi-plus"
-          @click="goToCreateTestRoute"
-        >
+        <v-btn color="success" block size="large" prepend-icon="mdi-plus" @click="goToCreateTestRoute">
           Create New Test
         </v-btn>
       </div>
     </v-navigation-drawer>
 
     <v-main class="main-content">
-      <v-container
-        fluid
-        class="pa-6"
-      >
+      <v-container fluid class="pa-6">
         <!-- Header -->
         <div class="content-header mb-6">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
-            {{ currentPageTitle }}
-          </h1>
+          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">{{ currentPageTitle }}</h1>
           <p class="text-h6 text-grey-darken-1">
-            {{ activeSection === 'studies' ? 'Manage your research studies' : 'Access study templates' }}
+            {{
+              activeSection === 'studies'
+                ? 'Manage your research studies'
+                : activeSection === 'templates'
+                ? 'Access your saved templates'
+                : ''
+            }}
           </p>
         </div>
 
         <!-- Search + Filters -->
-        <v-row
-          class="mb-6"
-          justify="space-between"
-        >
-          <v-col
-            cols="12"
-            md="8"
-          >
+        <v-row class="mb-6" justify="space-between" v-if="['studies', 'community'].includes(activeSection)">
+          <v-col cols="12" md="8">
             <v-text-field
               v-model="search"
               width="full"
@@ -112,10 +89,7 @@
               rounded="lg"
             />
           </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -127,61 +101,46 @@
           </v-col>
         </v-row>
 
-        <!-- Content List -->
-        <div v-if="mainIndex === 0">
+        <!-- Render Sections -->
+        <div v-if="activeSection === 'dashboard'">
+          <!-- Placeholder -->
+        </div>
+
+        <div v-if="activeSection === 'studies'">
+          <List :items="filteredTests" type="myTests" @clicked="goTo" />
+        </div>
+
+        <div v-if="activeSection === 'sessions'">
           <List
-            v-if="subIndex === 0"
-            :items="filteredTests"
-            type="myTests"
-            @clicked="goTo"
-          />
-          <List
-            v-if="subIndex === 1"
-            :items="filteredTests"
-            type="sharedWithMe"
-            @clicked="goTo"
-          />
-          <List
-            v-if="subIndex === 2"
-            :items="filteredTests"
-            type="publicTests"
-            @clicked="goTo"
-          />
-          <List
-            v-if="filteredModeratedSessions.length > 0 && subIndex === 3"
+            v-if="filteredModeratedSessions.length > 0"
             :items="filteredModeratedSessions"
             type="sessions"
             @clicked="goTo"
           />
-          <div
-            v-if="filteredModeratedSessions.length === 0 && subIndex === 3"
-            class="empty-state"
-          >
-            <v-icon
-              icon="mdi-clock-remove-outline"
-              size="48"
-              color="grey-lighten-1"
-              class="mb-2"
-            />
-            <p class="text-h6">
-              You don't have active sessions
-            </p>
+          <div v-else class="empty-state">
+            <v-icon icon="mdi-clock-remove-outline" size="48" color="grey-lighten-1" class="mb-2" />
+            <p class="text-h6">You don't have active sessions</p>
           </div>
         </div>
 
-        <div v-if="mainIndex === 1">
-          <List
-            v-if="subIndex === 0"
-            :items="filteredTemplates"
-            type="myTemplates"
-            @clicked="setupTempDialog"
-          />
-          <List
-            v-if="subIndex === 1"
-            :items="filteredTemplates"
-            type="publicTemplates"
-            @clicked="setupTempDialog"
-          />
+        <div v-if="activeSection === 'templates'">
+          <List :items="filteredTemplates" type="myTemplates" @clicked="setupTempDialog" />
+        </div>
+
+        <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
+          <List :items="filteredTests" type="publicTests" @clicked="goTo" />
+        </div>
+
+        <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
+          <List :items="filteredTemplates" type="publicTemplates" @clicked="setupTempDialog" />
+        </div>
+
+        <div v-if="activeSection === 'notifications'">
+          <!-- Notifications Placeholder -->
+        </div>
+
+        <div v-if="activeSection === 'profile'">
+          <!-- Profile Placeholder -->
         </div>
 
         <TempDialog
@@ -199,41 +158,34 @@
 import { ref, computed, watch, onMounted, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
 import List from '@/components/atoms/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 
 const store = useStore();
 const router = useRouter();
-const { t } = useI18n();
 
 const search = ref('');
-const mainIndex = ref(0);
-const subIndex = ref(0);
+const activeSection = ref('dashboard');
+const activeSubSection = ref(null);
 const tempDialog = ref(false);
 const temp = ref({});
 const filteredModeratedSessions = ref([]);
-const selectedMethodFilter = ref('all')
+const selectedMethodFilter = ref('all');
 
 const navigationItems = [
+  { id: 'dashboard', title: 'Dashboard', icon: 'mdi-view-dashboard' },
+  { id: 'studies', title: 'Studies', icon: 'mdi-flask' },
+  { id: 'sessions', title: 'Sessions', icon: 'mdi-calendar-clock' },
+  { id: 'templates', title: 'Templates', icon: 'mdi-clipboard-text' },
+  { id: 'notifications', title: 'Notifications', icon: 'mdi-bell' },
+  { id: 'profile', title: 'Profile', icon: 'mdi-account-circle' },
   {
-    id: 'studies',
-    title: 'Studies',
-    icon: 'mdi-flask',
+    id: 'community',
+    title: 'Community',
+    icon: 'mdi-earth',
     children: [
-      { id: 0, title: 'My Tests', icon: 'mdi-account' },
-      { id: 1, title: 'Shared With Me', icon: 'mdi-account-multiple' },
-      { id: 2, title: 'Public Tests', icon: 'mdi-earth' },
-      { id: 3, title: 'Sessions', icon: 'mdi-calendar-clock' }
-    ]
-  },
-  {
-    id: 'templates',
-    title: 'Templates',
-    icon: 'mdi-clipboard-text',
-    children: [
-      { id: 0, title: 'Personal', icon: 'mdi-file-document-edit' },
-      { id: 1, title: 'Explore', icon: 'mdi-compass' }
+      { id: 'community-studies', title: 'Studies', icon: 'mdi-flask-outline' },
+      { id: 'community-templates', title: 'Templates', icon: 'mdi-file-document' }
     ]
   }
 ];
@@ -245,9 +197,19 @@ const methodOptions = [
   { value: 'HEURISTICS', title: 'Heuristic Evaluation' },
 ];
 
-const activeSection = computed(() => mainIndex.value === 0 ? 'studies' : 'templates');
-const activeSubSection = computed(() => subIndex.value);
-const currentPageTitle = computed(() => mainIndex.value === 0 ? 'Studies' : 'Templates');
+const currentPageTitle = computed(() => {
+  switch (activeSection.value) {
+    case 'dashboard': return 'Dashboard';
+    case 'studies': return 'Studies';
+    case 'sessions': return 'Sessions';
+    case 'templates': return 'Templates';
+    case 'notifications': return 'Notifications';
+    case 'profile': return 'Profile';
+    case 'community':
+      return activeSubSection.value === 'community-templates' ? 'Community Templates' : 'Community Studies';
+    default: return 'RUXAI Lab';
+  }
+});
 
 const tests = computed(() => store.state.Tests.tests);
 const templates = computed(() => store.state.Templates.templates || []);
@@ -271,11 +233,13 @@ const filteredTests = computed(() => {
   });
 });
 
-const filteredTemplates = computed(() => templates.value.filter(temp => temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())));
+const filteredTemplates = computed(() => templates.value.filter(temp =>
+  temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())
+));
 
-const selectNavigation = (sectionId, childId) => {
-  mainIndex.value = sectionId === 'studies' ? 0 : 1;
-  subIndex.value = childId;
+const selectNavigation = (sectionId, childId = null) => {
+  activeSection.value = sectionId;
+  activeSubSection.value = sectionId === 'community' ? childId : null;
 };
 
 const goToCreateTestRoute = () => {
@@ -283,29 +247,23 @@ const goToCreateTestRoute = () => {
 };
 
 const goTo = (test) => {
-  if (mainIndex.value === 0) {
-    if (subIndex.value === 0 || (subIndex.value === 1 && test.accessLevel < 2) || subIndex.value === 2) {
-      router.push({ name: 'ManagerView', params: { id: test.testDocId || test.id } });
-    } else if (subIndex.value === 1 && test.accessLevel >= 2) {
-      router.push({ name: 'TestView', params: { id: test.testDocId } });
-    } else if (subIndex.value === 3) {
-      router.push(`testview/${test.id}/${user.value.id}`);
-    }
+  if (activeSection.value === 'studies') {
+    router.push({ name: 'ManagerView', params: { id: test.testDocId || test.id } });
+  } else if (activeSection.value === 'sessions') {
+    router.push(`testview/${test.id}/${user.value.id}`);
   }
 };
 
 const setupTempDialog = (template) => {
-  if (!template || !template.header || !template.body) return;
+  if (!template?.header || !template?.body) return;
   temp.value = { ...template };
   tempDialog.value = true;
 };
 
 const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
-const getSharedWithMeTests = () => store.dispatch('getSharedWithMeTests', user.value.id);
 const getPublicTests = () => store.dispatch('getPublicTests');
 const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
-
 const cleanTestStore = () => store.dispatch('cleanTest');
 
 const filterModeratedSessions = async () => {
@@ -331,20 +289,15 @@ const filterModeratedSessions = async () => {
   filteredModeratedSessions.value = cooperatorArray;
 };
 
-watch(mainIndex, async (val) => {
-  subIndex.value = 0;
-  if (val === 0) await getMyPersonalTests();
-  else if (val === 1) await getMyTemplates();
-});
-
-watch(subIndex, async (val) => {
-  if (mainIndex.value === 0) {
-    if (val === 0) await getMyPersonalTests();
-    else if (val === 1) await getSharedWithMeTests();
-    else if (val === 2) await getPublicTests();
-  } else if (mainIndex.value === 1) {
-    if (val === 0) await getMyTemplates();
-    else if (val === 1) await getPublicTemplates();
+watch([activeSection, activeSubSection], async ([section, sub]) => {
+  switch (section) {
+    case 'studies': await getMyPersonalTests(); break;
+    case 'sessions': await filterModeratedSessions(); break;
+    case 'templates': await getMyTemplates(); break;
+    case 'community':
+      if (sub === 'community-studies') await getPublicTests();
+      else if (sub === 'community-templates') await getPublicTemplates();
+      break;
   }
 });
 
@@ -457,4 +410,3 @@ onMounted(() => {
   letter-spacing: normal;
 }
 </style>
-
