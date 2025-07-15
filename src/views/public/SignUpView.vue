@@ -2,9 +2,21 @@
   <div class="background-grey">
     <Snackbar />
 
-    <v-row justify="center" align="center" style="height: 100%;">
-      <v-col cols="12" md="6" lg="5">
-        <v-card class="mx-auto pa-6" max-width="480" elevation="8">
+    <v-row
+      justify="center"
+      align="center"
+      style="height: 100%;"
+    >
+      <v-col
+        cols="12"
+        md="6"
+        lg="5"
+      >
+        <v-card
+          class="mx-auto pa-6"
+          max-width="480"
+          elevation="8"
+        >
           <v-card-title class="text-h4 font-weight-bold mb-2">
             {{ $t('SIGNIN.sign-up') }}
           </v-card-title>
@@ -13,7 +25,11 @@
             {{ $t('SIGNIN.signupSubtitle') }}
           </v-card-subtitle>
 
-          <v-form ref="form" v-model="valid" @submit.prevent="onSignUp">
+          <v-form
+            ref="form"
+            v-model="valid"
+            @submit.prevent="onSignUp"
+          >
             <v-text-field
               v-model="email"
               :rules="emailRules"
@@ -33,9 +49,9 @@
               placeholder="••••••••"
               prepend-inner-icon="mdi-lock-outline"
               :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-              @click:append-inner="showPassword = !showPassword"
               variant="outlined"
               class="mb-4"
+              @click:append-inner="showPassword = !showPassword"
             />
 
             <v-text-field
@@ -46,9 +62,9 @@
               placeholder="••••••••"
               prepend-inner-icon="mdi-lock-outline"
               :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
-              @click:append-inner="showConfirmPassword = !showConfirmPassword"
               variant="outlined"
               class="mb-4"
+              @click:append-inner="showConfirmPassword = !showConfirmPassword"
             />
 
             <v-btn
@@ -70,10 +86,13 @@
             variant="outlined"
             block
             :loading="isLoading"
-            @click=""
             min-height="44"
+            @click="onGoogleSignInStart"
           >
-            <v-icon start icon="mdi-google" />
+            <v-icon
+              start
+              icon="mdi-google"
+            />
             Google
           </v-btn>
 

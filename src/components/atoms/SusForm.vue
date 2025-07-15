@@ -1,19 +1,37 @@
 <template>
-    <v-form ref="form" v-model="valid" lazy-validation>
-        <v-card variant="outlined" class="my-2" v-for="i in susQuestions.length" :key="i">
-            <v-col>
-                <span>{{ susQuestions[i] }}</span>
-                <v-divider class="my-2"></v-divider>
-                <v-radio-group v-model="susAnswers[i - 1]" inline>
-                    <v-radio v-for="n in 5" :key="n" :value="n" class="d-flex flex-column align-center mx-6">
-                        <template #label>
-                            <div class="text-center mt-1">{{ susLabels[n - 1] }}</div>
-                        </template>
-                    </v-radio>
-                </v-radio-group>
-            </v-col>
-        </v-card>
-    </v-form>
+  <v-form
+    ref="form"
+    v-model="valid"
+  >
+    <v-card
+      v-for="i in susQuestions.length"
+      :key="i"
+      variant="outlined"
+      class="my-2"
+    >
+      <v-col>
+        <span>{{ susQuestions[i] }}</span>
+        <v-divider class="my-2" />
+        <v-radio-group
+          v-model="susAnswers[i - 1]"
+          inline
+        >
+          <v-radio
+            v-for="n in 5"
+            :key="n"
+            :value="n"
+            class="d-flex flex-column align-center mx-6"
+          >
+            <template #label>
+              <div class="text-center mt-1">
+                {{ susLabels[n - 1] }}
+              </div>
+            </template>
+          </v-radio>
+        </v-radio-group>
+      </v-col>
+    </v-card>
+  </v-form>
 </template>
 
 <script setup>

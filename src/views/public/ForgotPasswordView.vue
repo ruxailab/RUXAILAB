@@ -2,9 +2,21 @@
   <div class="background-grey">
     <Snackbar />
 
-    <v-row justify="center" align="center" style="height: 100%;">
-      <v-col cols="12" md="6" lg="5">
-        <v-card class="mx-auto pa-6" max-width="480" elevation="8">
+    <v-row
+      justify="center"
+      align="center"
+      style="height: 100%;"
+    >
+      <v-col
+        cols="12"
+        md="6"
+        lg="5"
+      >
+        <v-card
+          class="mx-auto pa-6"
+          max-width="480"
+          elevation="8"
+        >
           <template v-if="!isSubmitted">
             <v-card-title class="text-h4 font-weight-bold mb-2">
               {{ $t('FORGOT_PASSWORD.reset_password') }}
@@ -14,7 +26,11 @@
               {{ $t('FORGOT_PASSWORD.instructions') }}
             </v-card-subtitle>
 
-            <v-form ref="form" v-model="valid" @submit.prevent="onResetRequest">
+            <v-form
+              ref="form"
+              v-model="valid"
+              @submit.prevent="onResetRequest"
+            >
               <v-text-field
                 v-model="email"
                 :label="$t('FORGOT_PASSWORD.email')"
@@ -38,7 +54,10 @@
             </v-form>
           </template>
 
-          <v-card-text v-else class="text-center pa-4">
+          <v-card-text
+            v-else
+            class="text-center pa-4"
+          >
             <v-icon
               icon="mdi-check-circle"
               color="success"
@@ -68,13 +87,16 @@
             </p>
           </v-card-text>
 
-          <div class="text-center" :class="{ 'mt-6': !isSubmitted }">
+          <div
+            class="text-center"
+            :class="{ 'mt-6': !isSubmitted }"
+          >
             <v-btn
               variant="text"
               color="primary"
-              @click="redirectToSignin"
               class="text-body-2"
               prepend-icon="mdi-arrow-left"
+              @click="redirectToSignin"
             >
               {{ $t('FORGOT_PASSWORD.back_to_signin') }}
             </v-btn>

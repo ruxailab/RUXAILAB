@@ -1,6 +1,9 @@
 <template>
   <div class="analytics-dashboard">
-    <v-container fluid class="pa-6">
+    <v-container
+      fluid
+      class="pa-6"
+    >
       <!-- Header Section -->
       <div class="mb-6">
         <h1 class="text-h4 font-weight-bold text-grey-800 mb-2">
@@ -32,7 +35,11 @@
 
           <template #item.user="{ item }">
             <div class="d-flex align-center py-2">
-              <v-avatar size="32" class="mr-3" color="primary">
+              <v-avatar
+                size="32"
+                class="mr-3"
+                color="primary"
+              >
                 <span class="text-white text-body-2 font-weight-bold">
                   {{ item.fullName.charAt(0).toUpperCase() }}
                 </span>
@@ -51,9 +58,21 @@
           <template #item.tasks="{ item }">
             <div class="py-2">
               <div class="d-flex align-center mb-2">
-                <v-icon size="16" color="success" class="mr-1">mdi-check-circle</v-icon>
+                <v-icon
+                  size="16"
+                  color="success"
+                  class="mr-1"
+                >
+                  mdi-check-circle
+                </v-icon>
                 <span class="font-weight-medium mr-3">{{ item.completedCount }}/{{ item.totalTasks }}</span>
-                <v-icon size="16" color="primary" class="mr-1">mdi-timer-outline</v-icon>
+                <v-icon
+                  size="16"
+                  color="primary"
+                  class="mr-1"
+                >
+                  mdi-timer-outline
+                </v-icon>
                 <span class="text-body-2 text-grey-600">{{ formatTime(item.avgTimeSeconds) }} avg</span>
               </div>
               <v-btn
@@ -61,8 +80,8 @@
                 variant="tonal"
                 size="small"
                 prepend-icon="mdi-clipboard-list"
-                @click="showTaskDetails(item)"
                 class="font-weight-medium"
+                @click="showTaskDetails(item)"
               >
                 Task Details
               </v-btn>
@@ -87,8 +106,8 @@
                 variant="tonal"
                 size="small"
                 prepend-icon="mdi-eye"
-                @click="viewAnswers(item)"
                 class="font-weight-medium"
+                @click="viewAnswers(item)"
               >
                 View Detail
               </v-btn>
@@ -97,8 +116,8 @@
                 variant="tonal"
                 size="small"
                 :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'"
-                @click="toggleHideSession(item.id)"
                 class="font-weight-medium"
+                @click="toggleHideSession(item.id)"
               >
                 {{ item.hidden ? 'Show' : 'Hide' }}
               </v-btn>
@@ -107,8 +126,8 @@
                 variant="tonal"
                 size="small"
                 prepend-icon="mdi-delete"
-                @click="deleteSession(item.id)"
                 class="font-weight-medium"
+                @click="deleteSession(item.id)"
               >
                 Delete
               </v-btn>
@@ -125,9 +144,16 @@
         transition="dialog-bottom-transition"
       >
         <v-card>
-          <v-toolbar color="orange" class="pl-3">
+          <v-toolbar
+            color="orange"
+            class="pl-3"
+          >
             <span class="text-h5">Test Details</span>
-            <v-btn class="ml-auto" icon @click="showDialog = false">
+            <v-btn
+              class="ml-auto"
+              icon
+              @click="showDialog = false"
+            >
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
@@ -139,7 +165,10 @@
                 class="pt-8"
               >
                 <span class="cardsTitle ma-3">Variables</span>
-                <v-card border rounded="xl">
+                <v-card
+                  border
+                  rounded="xl"
+                >
                   <div class="ma-6">
                     <span
                       v-for="(q, i) in testStructure.preTest"
@@ -151,9 +180,16 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col v-if="dialogItem.postTestAnswer.length" cols="12" class="pt-8">
+              <v-col
+                v-if="dialogItem.postTestAnswer.length"
+                cols="12"
+                class="pt-8"
+              >
                 <span class="cardsTitle ma-3">Post-Test Answer</span>
-                <v-card border rounded="xl">
+                <v-card
+                  border
+                  rounded="xl"
+                >
                   <div class="ma-6">
                     <span
                       v-for="(q, i) in testStructure.postTest"
@@ -165,26 +201,59 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col v-if="dialogItem.tasks[taskSelect].postAnswer" cols="12" class="mt-4">
+              <v-col
+                v-if="dialogItem.tasks[taskSelect].postAnswer"
+                cols="12"
+                class="mt-4"
+              >
                 <span class="cardsTitle ma-3">Post Question</span>
-                <v-card border rounded="xl">
+                <v-card
+                  border
+                  rounded="xl"
+                >
                   <div class="ma-6">
                     <strong>{{ testStructure.userTasks[taskSelect].postQuestion }}</strong> :
                     <span>{{ dialogItem.tasks[taskSelect].postAnswer }}</span>
                   </div>
                 </v-card>
               </v-col>
-              <v-col v-if="dialogItem.tasks[taskSelect].webcamRecordURL" cols="12" class="d-flex align-center justify-center flex-column">
+              <v-col
+                v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
+                cols="12"
+                class="d-flex align-center justify-center flex-column"
+              >
                 <span class="cardsTitle ma-3">Web Cam Record</span>
-                <video class="my-3" :src="dialogItem.tasks[taskSelect].webcamRecordURL" controls height="260" />
+                <video
+                  class="my-3"
+                  :src="dialogItem.tasks[taskSelect].webcamRecordURL"
+                  controls
+                  height="260"
+                />
               </v-col>
-              <v-col v-if="dialogItem.tasks[taskSelect].screenRecordURL" cols="12" class="d-flex align-center justify-center flex-column">
+              <v-col
+                v-if="dialogItem.tasks[taskSelect].screenRecordURL"
+                cols="12"
+                class="d-flex align-center justify-center flex-column"
+              >
                 <span class="cardsTitle ma-3">Screen Record</span>
-                <video class="my-3" :src="dialogItem.tasks[taskSelect].screenRecordURL" controls height="260" />
+                <video
+                  class="my-3"
+                  :src="dialogItem.tasks[taskSelect].screenRecordURL"
+                  controls
+                  height="260"
+                />
               </v-col>
-              <v-col v-if="dialogItem.tasks[taskSelect].audioRecordURL" cols="12" class="d-flex align-center justify-center flex-column">
+              <v-col
+                v-if="dialogItem.tasks[taskSelect].audioRecordURL"
+                cols="12"
+                class="d-flex align-center justify-center flex-column"
+              >
                 <span class="cardsTitle ma-3">Audio Record</span>
-                <audio class="mx-auto my-3" :src="dialogItem.tasks[taskSelect].audioRecordURL" controls />
+                <audio
+                  class="mx-auto my-3"
+                  :src="dialogItem.tasks[taskSelect].audioRecordURL"
+                  controls
+                />
               </v-col>
             </v-row>
           </v-card-text>
