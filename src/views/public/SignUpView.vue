@@ -1,117 +1,98 @@
 <template>
-  <div class="background-grey">
-    <Snackbar />
+  <div class="signup-wrapper d-flex">
+    <!-- LEFT: LOGO -->
+    <div class="logo-side d-none d-md-flex align-center justify-center">
+      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
+    </div>
 
-    <v-row
-      justify="center"
-      align="center"
-      style="height: 100%;"
-    >
-      <v-col
-        cols="12"
-        md="6"
-        lg="5"
-      >
-        <v-card
-          class="mx-auto pa-6"
-          max-width="480"
-          elevation="8"
-        >
-          <v-card-title class="text-h4 font-weight-bold mb-2">
-            {{ $t('SIGNIN.sign-up') }}
-          </v-card-title>
+    <!-- RIGHT: FORM -->
+    <div class="form-side d-flex align-center justify-center">
+      <Snackbar />
 
-          <v-card-subtitle class="mb-6">
-            {{ $t('SIGNIN.signupSubtitle') }}
-          </v-card-subtitle>
+      <div class="signup-box">
+        <h1 class="title">
+          {{ $t('SIGNIN.sign-up') }}
+        </h1>
+        <p class="subtitle">
+          {{ $t('SIGNIN.signupSubtitle') }}
+        </p>
 
-          <v-form
-            ref="form"
-            v-model="valid"
-            @submit.prevent="onSignUp"
-          >
-            <v-text-field
-              v-model="email"
-              :rules="emailRules"
-              :label="$t('SIGNIN.email')"
-              type="email"
-              placeholder="you@example.com"
-              prepend-inner-icon="mdi-email-outline"
-              variant="outlined"
-              class="mb-4"
-            />
+        <v-form ref="form" v-model="valid" @submit.prevent="onSignUp">
+          <v-text-field
+            v-model="email"
+            :rules="emailRules"
+            :label="$t('SIGNIN.email')"
+            type="email"
+            placeholder="you@example.com"
+            prepend-inner-icon="mdi-email-outline"
+            variant="outlined"
+            class="mb-4"
+          />
 
-            <v-text-field
-              v-model="password"
-              :rules="passwordRules"
-              :label="$t('SIGNIN.password')"
-              :type="showPassword ? 'text' : 'password'"
-              placeholder="••••••••"
-              prepend-inner-icon="mdi-lock-outline"
-              :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-              variant="outlined"
-              class="mb-4"
-              @click:append-inner="showPassword = !showPassword"
-            />
+          <v-text-field
+            v-model="password"
+            :rules="passwordRules"
+            :label="$t('SIGNIN.password')"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            class="mb-4"
+            @click:append-inner="showPassword = !showPassword"
+          />
 
-            <v-text-field
-              v-model="confirmpassword"
-              :rules="[comparePassword]"
-              :label="$t('SIGNIN.confirmPassword')"
-              :type="showConfirmPassword ? 'text' : 'password'"
-              placeholder="••••••••"
-              prepend-inner-icon="mdi-lock-outline"
-              :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
-              variant="outlined"
-              class="mb-4"
-              @click:append-inner="showConfirmPassword = !showConfirmPassword"
-            />
-
-            <v-btn
-              type="submit"
-              color="primary"
-              block
-              :loading="loading"
-              min-height="44"
-            >
-              {{ $t('SIGNIN.sign-up') }}
-            </v-btn>
-          </v-form>
-
-          <v-divider class="my-6">
-            <span class="text-body-2 text-medium-emphasis">{{ $t('SIGNIN.or') }}</span>
-          </v-divider>
+          <v-text-field
+            v-model="confirmpassword"
+            :rules="[comparePassword]"
+            :label="$t('SIGNIN.confirmPassword')"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            class="mb-4"
+            @click:append-inner="showConfirmPassword = !showConfirmPassword"
+          />
 
           <v-btn
-            variant="outlined"
+            type="submit"
+            color="primary"
             block
-            :loading="isLoading"
+            :loading="loading"
             min-height="44"
-            @click="onGoogleSignInStart"
           >
-            <v-icon
-              start
-              icon="mdi-google"
-            />
-            Google
+            {{ $t('SIGNIN.sign-up') }}
           </v-btn>
+        </v-form>
 
-          <div class="text-center mt-6">
-            <span class="text-body-2 text-medium-emphasis">
-              {{ $t('SIGNIN.alreadyHaveAnAccount') }}
-            </span>
-            <v-btn
-              variant="text"
-              color="primary"
-              class="text-body- pl-1"
-              @click="redirectToSignin"
-            >
-              {{ $t('SIGNIN.sign-in') }}
-            </v-btn>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+        <v-divider class="my-6">
+          <span class="text-body-2 text-medium-emphasis">{{ $t('SIGNIN.or') }}</span>
+        </v-divider>
+
+        <GoogleSignInButton
+          :button-text="$t('SIGNIN.continueWithGoogle')"
+          :loading="loading"
+          @google-sign-in-start="onGoogleSignInStart"
+          @google-sign-in-success="onGoogleSignInSuccess"
+          @google-sign-in-error="onGoogleSignInError"
+        />
+
+        <div class="text-center mt-6">
+          <span class="text-body-2 text-medium-emphasis">
+            {{ $t('SIGNIN.alreadyHaveAnAccount') }}
+          </span>
+          <v-btn
+            variant="text"
+            color="primary"
+            class="text-body-2 pl-1"
+            @click="redirectToSignin"
+          >
+            {{ $t('SIGNIN.sign-in') }}
+          </v-btn>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -121,6 +102,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 
 const email = ref('')
 const password = ref('')
@@ -179,27 +161,59 @@ const onGoogleSignInStart = () => {
 const onGoogleSignInSuccess = async () => {
   await router.push('/testslist')
 }
-
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
 }
 </script>
 
 <style scoped>
-.background-grey {
-  background-color: #e8eaf2;
+.signup-wrapper {
+  display: flex;
   height: 100vh;
+  background-color: #ffffff;
+  flex-direction: row;
+}
+
+.logo-side {
+  width: 50%;
+  min-height: 100%;
+  background-color: #ffffff;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
-.v-card {
-  border-radius: 16px !important;
+
+.logo-img {
+  max-width: 400px;
+  width: 100%;
 }
-:deep(.v-field) {
-  border-radius: 12px !important;
+
+.form-side {
+  width: 50%;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-:deep(.v-btn) {
-  text-transform: none;
-  letter-spacing: normal;
+
+.signup-box {
+  width: 100%;
+  max-width: 500px;
+  padding: 48px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 10px solid rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 2rem;
 }
 </style>
