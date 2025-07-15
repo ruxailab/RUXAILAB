@@ -659,6 +659,7 @@
                     </p>
                     <iframe
                       :src="test.testStructure.userTasks[taskIndex].postForm"
+                      title="loading"
                       width="100%"
                       height="500"
                       frameborder="0"
