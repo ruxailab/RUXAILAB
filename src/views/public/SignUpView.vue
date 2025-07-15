@@ -44,7 +44,7 @@
 
           <v-text-field
             v-model="confirmpassword"
-            :rules="[comparePassword]"
+            :rules="comparePassword"
             :label="$t('SIGNIN.confirmPassword')"
             :type="showConfirmPassword ? 'text' : 'password'"
             placeholder="••••••••"
@@ -103,6 +103,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
 import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
+import { z } from 'zod'
 
 const email = ref('')
 const password = ref('')
@@ -116,26 +117,48 @@ const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const emailRules = computed(() => [
+const signupSchema = z.object({
+  email: z.string().email(t('errors.invalidEmail')),
+  password: z.string()
+    .min(8, t('errors.passwordValidate'))
+    .regex(/[A-Z]/, t('errors.passwordUppercase'))
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, t('errors.passwordSymbol')),
+  confirmpassword: z.string(),
+}).refine(data => data.password === data.confirmpassword, {
+  message: t('errors.differentPasswords'),
+  path: ['confirmpassword'],
+})
+
+const emailRules = [
   v => !!v || t('errors.emailIsRequired'),
-  v => /.+@.+\..+/.test(v) || t('errors.invalidEmail'),
-])
+  v => signupSchema.shape.email.safeParse(v).success || t('errors.invalidEmail'),
+]
 
-const passwordRules = computed(() => [
+const passwordRules = [
   v => !!v || t('errors.passwordRequired'),
-  v => v.length >= 8 || t('errors.passwordValidate'),
-  v => /[A-Z]/.test(v) || t('errors.passwordUppercase'),
-  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || t('errors.passwordSymbol'),
-])
+  v => signupSchema.shape.password.safeParse(v).success || t('errors.passwordValidate'),
+]
 
-const comparePassword = computed(() =>
-  v => (v === password.value && v !== '') || t('errors.differentPasswords')
-)
+const comparePassword = [
+  v => !!v || t('errors.passwordRequired'),
+  v => v === password.value || t('errors.differentPasswords')
+]
 
 const user = computed(() => store.getters.user)
 const loading = computed(() => store.getters.loading)
 
 const onSignUp = async () => {
+  const parsed = signupSchema.safeParse({
+    email: email.value,
+    password: password.value,
+    confirmpassword: confirmpassword.value,
+  })
+
+  if (!parsed.success) {
+    console.error('Validation failed:', parsed.error.flatten())
+    return
+  }
+
   const { valid: isValid } = await form.value.validate()
   if (isValid) {
     try {

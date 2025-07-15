@@ -67,6 +67,7 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { z } from 'zod'
 import Snackbar from '@/components/atoms/Snackbar'
 import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 
@@ -80,9 +81,11 @@ const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 
+const emailSchema = z.string().email({ message: t('errors.invalidEmail') })
+
 const emailRules = [
   (v) => !!v || t('errors.emailIsRequired'),
-  (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || t('errors.invalidEmail'),
+  (v) => emailSchema.safeParse(v).success || t('errors.invalidEmail'),
 ]
 
 const rules = {
