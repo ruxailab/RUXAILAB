@@ -1,108 +1,64 @@
 <template>
-  <div class="background-grey d-flex align-center justify-center">
-    <Snackbar />
+  <div class="signin-wrapper d-flex">
+    <!-- IZQUIERDA: LOGO -->
+    <div class="logo-side d-none d-md-flex align-center justify-center">
+      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
+    </div>
 
-    <v-card
-      class="mx-auto pa-6"
-      max-width="480"
-      elevation="8"
-    >
-      <v-card-title class="text-h4 font-weight-bold mb-2">
-        {{ $t('SIGNIN.sign-in-title') }}
-      </v-card-title>
+    <!-- DERECHA: FORMULARIO -->
+    <div class="form-side d-flex align-center justify-center">
+      <Snackbar />
 
-      <v-card-subtitle class="mb-6">
-        {{ $t('SIGNIN.sign-in-subtitle') }}
-      </v-card-subtitle>
+      <div class="signin-box">
+        <h1 class="title">
+          {{ $t('SIGNIN.sign-in-title') }}
+        </h1>
+        <p class="subtitle">
+          {{ $t('SIGNIN.sign-in-subtitle') }}
+        </p>
 
-      <v-form
-        ref="form"
-        @submit.prevent="onSignIn"
-      >
-        <v-text-field
-          v-model="email"
-          :rules="emailRules"
-          :label="$t('SIGNIN.email')"
-          type="email"
-          placeholder="you@example.com"
-          prepend-inner-icon="mdi-email-outline"
-          variant="outlined"
-          class="mb-4"
-        />
+        <v-form ref="form" @submit.prevent="onSignIn">
+          <v-text-field v-model="email" :rules="emailRules" :label="$t('SIGNIN.email')" type="email"
+            placeholder="you@example.com" prepend-inner-icon="mdi-email-outline" variant="outlined" class="mb-4" />
 
-        <v-text-field
-          v-model.trim="password"
-          :rules="[rules.required]"
-          :label="$t('SIGNIN.password')"
-          :type="showPassword ? 'text' : 'password'"
-          placeholder="••••••••"
-          prepend-inner-icon="mdi-lock-outline"
-          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-          variant="outlined"
-          class="mb-2"
-          @click:append-inner="toggleShowPassword"
-        />
+          <v-text-field v-model.trim="password" :rules="[rules.required]" :label="$t('SIGNIN.password')"
+            :type="showPassword ? 'text' : 'password'" placeholder="••••••••" prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" variant="outlined" class="mb-2"
+            @click:append-inner="toggleShowPassword" />
 
-        <div class="d-flex justify-space-between align-center mb-6">
-          <v-checkbox
-            v-model="rememberMe"
-            :label="$t('SIGNIN.rememberMe')"
-            hide-details
-            density="compact"
-          />
+          <div class="d-flex justify-space-between align-center mb-6">
+            <v-checkbox v-model="rememberMe" :label="$t('SIGNIN.rememberMe')" hide-details density="compact" />
 
-          <v-btn
-            variant="text"
-            color="primary"
-            class="text-body-2"
-            @click="redirectToForgotPassword"
-          >
-            {{ $t('SIGNIN.forgot-password') }}
+            <v-btn variant="text" color="primary" class="text-body-2" @click="redirectToForgotPassword">
+              {{ $t('SIGNIN.forgot-password') }}
+            </v-btn>
+          </div>
+
+          <v-btn type="submit" color="primary" block :loading="loading" min-height="44" data-testid="sign-in-button">
+            {{ $t('SIGNIN.sign-in') }}
+          </v-btn>
+        </v-form>
+
+        <v-divider class="my-6">
+          <span class="text-body-2 text-medium-emphasis">
+            {{ $t('SIGNIN.or') }}
+          </span>
+        </v-divider>
+
+        <GoogleSignInButton :button-text="$t('SIGNIN.continueWithGoogle')" :loading="loading"
+          @google-sign-in-start="onGoogleSignInStart" @google-sign-in-success="onGoogleSignInSuccess"
+          @google-sign-in-error="onGoogleSignInError" />
+
+        <div class="text-center mt-6">
+          <span class="text-body-2 text-medium-emphasis">
+            {{ $t('SIGNIN.dont-have-account') }}
+          </span>
+          <v-btn variant="text" color="primary" class="text-body-2 pl-1" @click="redirectToSignup">
+            {{ $t('SIGNIN.sign-up') }}
           </v-btn>
         </div>
-
-        <v-btn
-          type="submit"
-          color="primary"
-          block
-          :loading="loading"
-          min-height="44"
-          data-testid="sign-in-button"
-        >
-          {{ $t('SIGNIN.sign-in') }}
-        </v-btn>
-      </v-form>
-
-      <v-divider class="my-6">
-        <span class="text-body-2 text-medium-emphasis">
-          {{ $t('SIGNIN.or') }}
-        </span>
-      </v-divider>
-
-      <div class="mb-6">
-        <GoogleSignInButton
-          :button-text="$t('SIGNIN.continueWithGoogle')"
-          :loading="loading"
-          @google-sign-in-start="onGoogleSignInStart"
-          @google-sign-in-success="onGoogleSignInSuccess"
-          @google-sign-in-error="onGoogleSignInError"
-        />
       </div>
-
-      <div class="text-center mt-6">
-        <span class="text-body-2 text-medium-emphasis">
-          {{ $t('SIGNIN.dont-have-account') }}
-        </span>
-        <v-btn
-          variant="text"
-          color="primary"
-          class="text-body-2 pl-1"
-          @click="redirectToSignup"
-        >
-          {{ $t('SIGNIN.sign-up') }}
-        </v-btn>
-      </div>
-    </v-card>
+    </div>
   </div>
 </template>
 
@@ -126,7 +82,7 @@ const rememberMe = ref(false)
 
 const emailRules = [
   (v) => !!v || t('errors.emailIsRequired'),
-  (v) => /.+@.+\..+/.test(v) || t('errors.invalidEmail'),
+  (v) => /.+@.+\\..+/.test(v) || t('errors.invalidEmail'),
 ]
 
 const rules = {
@@ -134,7 +90,6 @@ const rules = {
 }
 
 const loading = computed(() => store.getters.loading)
-const user = computed(() => store.getters.user)
 
 const checkForm = () => form.value?.validate()
 
@@ -147,7 +102,7 @@ const onSignIn = async () => {
         password: password.value,
       })
       if (store.getters.user) {
-        router.push('/testslist').catch(() => {})
+        router.push('/testslist').catch(() => { })
       }
     } catch (error) {
       console.error('Authentication error:', error)
@@ -167,37 +122,66 @@ const redirectToForgotPassword = () => {
   router.push('/forgot-password')
 }
 
-const onGoogleSignInStart = () => {
-  // Optional hook for when Google sign-in begins
-}
-
+const onGoogleSignInStart = () => { }
 const onGoogleSignInSuccess = async () => {
   if (store.getters.user) {
-    router.push('/testslist').catch(() => {})
+    router.push('/testslist').catch(() => { })
   }
 }
-
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
 }
 </script>
 
 <style scoped>
-.background-grey {
-  background-color: #e8eaf2;
+.signin-wrapper {
+  display: flex;
   height: 100vh;
+  background-color: #ffffff;
+  flex-direction: row;
 }
 
-.v-card {
-  border-radius: 16px !important;
+.logo-side {
+  width: 50%;
+  min-height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-:deep(.v-field) {
-  border-radius: 12px !important;
+.logo-img {
+  max-width: 400px;
+  width: 100%;
 }
 
-:deep(.v-btn) {
-  text-transform: none;
-  letter-spacing: normal;
+.form-side {
+  width: 50%;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signin-box {
+  width: 100%;
+  max-width: 500px;
+  padding: 48px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 10px solid rgba(0, 0, 0, 0.1);
+
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 2rem;
 }
 </style>
