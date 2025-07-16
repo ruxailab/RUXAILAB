@@ -16,6 +16,56 @@
             </div>
           </v-card-title>
 
+          <!-- Level Filter -->
+          <v-card-subtitle class="pb-2">
+            <v-row align="center" class="ma-0">
+              <v-col cols="auto" class="pa-0">
+                <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
+              </v-col>
+              <v-col cols="auto" class="pa-0 ml-3">
+                <v-btn-toggle
+                  v-model="selectedLevel"
+                  mandatory
+                  color="primary"
+                  variant="outlined"
+                  divided
+                  density="compact"
+                >
+                  <v-btn 
+                    value="A" 
+                    size="small"
+                    :class="{ 'level-a': selectedLevel === 'A' }"
+                  >
+                    A
+                  </v-btn>
+                  <v-btn 
+                    value="AA" 
+                    size="small"
+                    :class="{ 'level-aa': selectedLevel === 'AA' }"
+                  >
+                    AA
+                  </v-btn>
+                  <v-btn 
+                    value="AAA" 
+                    size="small"
+                    :class="{ 'level-aaa': selectedLevel === 'AAA' }"
+                  >
+                    AAA
+                  </v-btn>
+                </v-btn-toggle>
+              </v-col>
+              <v-col cols="auto" class="pa-0 ml-3">
+                <v-chip 
+                  size="small" 
+                  :color="getLevelChipColor(selectedLevel)"
+                  variant="outlined"
+                >
+                  {{ getLevelDescription(selectedLevel) }}
+                </v-chip>
+              </v-col>
+            </v-row>
+          </v-card-subtitle>
+
           <!-- Tabs for Principles -->
           <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
             <v-tab 
@@ -26,6 +76,14 @@
             >
               <v-icon start>{{ getPrincipleIcon(index) }}</v-icon>
               {{ principle.title }}
+              <v-chip 
+                size="x-small" 
+                class="ml-2" 
+                color="primary" 
+                variant="outlined"
+              >
+                {{ getFilteredRulesCount(index) }}
+              </v-chip>
             </v-tab>
           </v-tabs>
 
@@ -44,6 +102,17 @@
                     <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
                       variant="outlined">
                       {{ item.severity || 'Not Set' }}
+                    </v-chip>
+                  </template>
+
+                  <template v-slot:item.level="{ item }">
+                    <v-chip 
+                      :color="getLevelChipColor(item.level)" 
+                      class="text-uppercase" 
+                      size="small"
+                      variant="tonal"
+                    >
+                      {{ item.level || 'N/A' }}
                     </v-chip>
                   </template>
 
@@ -134,6 +203,7 @@ const wcagData = ref(null)
 const principles = ref([])
 const allRules = ref([])
 const assessmentRules = ref({})
+const selectedLevel = ref('AA') // Default to AA level
 
 // Notes dialog state
 const notesDialog = ref({
@@ -153,6 +223,63 @@ const headers = [
   { title: 'Severity', key: 'severity', sortable: true },
   { title: 'Notes', key: 'notes', sortable: false, align: 'center' },
 ]
+
+// Level filter functions
+const getLevelChipColor = (level) => {
+  switch (level?.toUpperCase()) {
+    case 'A':
+      return 'success'
+    case 'AA':
+      return 'warning'
+    case 'AAA':
+      return 'error'
+    default:
+      return 'grey'
+  }
+}
+
+const getLevelDescription = (level) => {
+  switch (level?.toUpperCase()) {
+    case 'A':
+      return 'Level A rules only'
+    case 'AA':
+      return 'Level A + AA rules'
+    case 'AAA':
+      return 'All levels (A + AA + AAA)'
+    default:
+      return 'No level selected'
+  }
+}
+
+const shouldIncludeRule = (ruleLevel) => {
+  if (!ruleLevel) return true // Include rules without level specified
+  
+  const level = ruleLevel.toUpperCase()
+  const selected = selectedLevel.value.toUpperCase()
+  
+  // Cumulative behavior: A shows only A, AA shows A+AA, AAA shows all
+  switch (selected) {
+    case 'A':
+      return level === 'A'
+    case 'AA':
+      return level === 'A' || level === 'AA'
+    case 'AAA':
+      return level === 'A' || level === 'AA' || level === 'AAA'
+    default:
+      return true
+  }
+}
+
+const getFilteredRulesCount = (principleIndex) => {
+  const principle = principles.value?.[principleIndex]
+  if (!principle) return 0
+  
+  const principleRules = allRules.value.filter(
+    (rule) => rule.principleId === principle.id || rule.principle === principle.title
+  )
+  
+  return principleRules.filter(rule => shouldIncludeRule(rule.level)).length
+}
 
 const getStatusColor = (status) => {
   switch (status?.toLowerCase()) {
@@ -222,7 +349,7 @@ const getAllRules = () => {
   return rules
 }
 
-// Get rules for the current principle
+// Get rules for the current principle (with level filtering)
 const getRulesForPrinciple = (principleIndex) => {
   try {
     const principle = principles.value?.[principleIndex];
@@ -236,7 +363,10 @@ const getRulesForPrinciple = (principleIndex) => {
         rule.principleId === principle.id || rule.principle === principle.title
     );
 
-    return principleRules.map((rule) => {
+    // Apply level filtering
+    const filteredRules = principleRules.filter(rule => shouldIncludeRule(rule.level));
+
+    return filteredRules.map((rule) => {
       const assessment = assessmentRules.value[rule.id] || {
         status: 'Not Set',
         severity: 'Not Set',
@@ -267,7 +397,6 @@ const getRulesForPrinciple = (principleIndex) => {
     return [];
   }
 };
-
 
 // Get principle icon
 const getPrincipleIcon = (index) => {
@@ -496,6 +625,26 @@ onMounted(async () => {
 
 .principle-3.v-tab--selected {
   background-color: #f8bbd0 !important;  /* Robust - Pink */
+}
+
+/* Level filter styling */
+.level-a {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.level-aa {
+  background-color: #fff8e1 !important;
+  color: #f57c00 !important;
+}
+
+.level-aaa {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+}
+
+.v-btn-toggle .v-btn {
+  border-radius: 4px !important;
 }
 
 .v-data-table-header th {
