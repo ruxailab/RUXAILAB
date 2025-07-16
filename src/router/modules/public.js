@@ -21,19 +21,19 @@ export default [
   {
     path: '/signin',
     name: 'SignIn',
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: SignIn,
   },
   {
     path: '/signup',
     name: 'Sign Up',
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: SignUp,
   },
   {
     path: '/forgot-password',
     name: 'Forgot Password',
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: ForgotPassword,
   },
   {

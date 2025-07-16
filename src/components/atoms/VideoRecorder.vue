@@ -2,17 +2,35 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip v-if="!recording" location="bottom">
+        <v-tooltip
+          v-if="!recording"
+          location="bottom"
+        >
           <template #activator="{ props }">
-            <v-btn class="ml-4 my-2 mr-auto" elevation="0" icon v-bind="props" @click="startRecording">
+            <v-btn
+              class="ml-4 my-2 mr-auto"
+              elevation="0"
+              icon
+              v-bind="props"
+              @click="startRecording"
+            >
               <v-icon>mdi-camera</v-icon>
             </v-btn>
           </template>
           <span>Start Recording</span>
         </v-tooltip>
-        <v-tooltip v-if="recording" location="bottom">
+        <v-tooltip
+          v-if="recording"
+          location="bottom"
+        >
           <template #activator="{ props }">
-            <v-btn class="ml-4 my-2 mr-auto" color="red" icon v-bind="props" @click="stopRecording">
+            <v-btn
+              class="ml-4 my-2 mr-auto"
+              color="red"
+              icon
+              v-bind="props"
+              @click="stopRecording"
+            >
               <v-icon>
                 mdi-stop
               </v-icon>
