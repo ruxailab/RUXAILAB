@@ -3,7 +3,7 @@
     <v-main>
       <v-container fluid class="dashboard-container">
         <!-- Header Section -->
-        <v-row class="mb-8">
+        <v-row class="mb-6">
           <v-col cols="12">
             <div class="header-content">
               <h1 class="display-1 font-weight-bold text-primary mb-3">
@@ -17,14 +17,16 @@
         </v-row>
 
         <!-- Dashboard Cards -->
-        <v-row class="dashboard-grid">
+        <v-row class="dashboard-grid" no-gutters>
           <v-col
             v-for="(card, index) in cards"
             :key="index"
             cols="12"
             sm="6"
-            md="6"
-            lg="3"
+            md="4"
+            lg="2"
+            xl="2"
+            class="pa-2"
           >
             <v-card
               class="dashboard-card"
@@ -35,13 +37,13 @@
               :style="{ 'animation-delay': `${index * 100}ms` }"
             >
               <v-card-text class="card-content">
-                <div class="card-header mb-4">
+                <div class="card-header mb-3">
                   <div 
                     class="icon-container"
                     :class="`icon-${card.title.toLowerCase()}`"
                   >
                     <v-icon 
-                      :size="32" 
+                      :size="28" 
                       class="card-icon"
                       color="white"
                     >
@@ -54,15 +56,15 @@
                   <h4 class="text-h6 font-weight-bold mb-2 card-title">
                     {{ card.title }}
                   </h4>
-                  <p class="text-body-2 text-medium-emphasis mb-3 card-subtitle">
+                  <p class="text-body-2 text-medium-emphasis mb-2 card-subtitle">
                     {{ card.subtitle }}
                   </p>
-                  <p class="text-body-2 text-medium-emphasis card-description">
+                  <p class="text-caption text-medium-emphasis card-description">
                     {{ card.description }}
                   </p>
                 </div>
 
-                <div class="card-footer mt-4">
+                <div class="card-footer mt-3">
                   <v-btn
                     variant="text"
                     size="small"
@@ -70,7 +72,7 @@
                     :ripple="false"
                   >
                     Open
-                    <v-icon size="16" class="ml-1">mdi-arrow-right</v-icon>
+                    <v-icon size="14" class="ml-1">mdi-arrow-right</v-icon>
                   </v-btn>
                 </div>
               </v-card-text>
@@ -115,7 +117,14 @@ const cards = ref([
     subtitle: 'View test responses',
     description: 'Check and analyze the responses submitted for accessibility tests and evaluations.',
     route: `/result/${testId.value}`
-  }
+  },
+  {
+    title: 'Config',
+    icon: 'mdi-cog-outline',
+    subtitle: 'Configuration settings',
+    description: 'Configure and manage accessibility test settings, preferences, and system configurations.',
+    route: `/config/${testId.value}`
+  },
 ])
 </script>
 
@@ -124,7 +133,9 @@ const cards = ref([
 .dashboard-container {
   background: #f8f9fa;
   min-height: 100vh;
-  padding: 2rem 1rem;
+  padding: 1.5rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* Header */
@@ -144,7 +155,7 @@ const cards = ref([
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
-  height: 100%;
+  height: 280px;
   opacity: 0;
   animation: cardSlideIn 0.6s ease-out forwards;
 }
@@ -156,7 +167,7 @@ const cards = ref([
 }
 
 .card-content {
-  padding: 2rem;
+  padding: 1.5rem;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -168,9 +179,9 @@ const cards = ref([
 }
 
 .icon-container {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,6 +204,7 @@ const cards = ref([
 .icon-edit { background: linear-gradient(135deg, #f093fb, #f5576c); }
 .icon-preview { background: linear-gradient(135deg, #4facfe, #00f2fe); }
 .icon-answer { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.icon-config { background: linear-gradient(135deg, #fa709a, #fee140); }
 
 .card-icon {
   position: relative;
@@ -206,15 +218,22 @@ const cards = ref([
 
 .card-title {
   color: #2c3e50;
+  font-size: 1.1rem !important;
 }
 
 .card-subtitle {
   font-weight: 500;
   color: #5a6c7d;
+  font-size: 0.875rem !important;
 }
 
 .card-description {
-  line-height: 1.5;
+  line-height: 1.4;
+  font-size: 0.75rem !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card-footer {
@@ -267,6 +286,15 @@ const cards = ref([
 }
 
 /* Responsive Design */
+@media (max-width: 1280px) {
+  .dashboard-card {
+    height: 260px;
+  }
+  .card-content {
+    padding: 1.25rem;
+  }
+}
+
 @media (max-width: 960px) {
   .dashboard-container {
     padding: 1rem 0.5rem;
@@ -276,13 +304,17 @@ const cards = ref([
     font-size: 2rem !important;
   }
   
+  .dashboard-card {
+    height: 240px;
+  }
+  
   .card-content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   
   .icon-container {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 }
 
@@ -291,8 +323,40 @@ const cards = ref([
     padding: 0.5rem;
   }
   
+  .dashboard-card {
+    height: 220px;
+  }
+  
   .card-content {
     padding: 1rem;
+  }
+  
+  .icon-container {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .card-title {
+    font-size: 1rem !important;
+  }
+  
+  .card-subtitle {
+    font-size: 0.8rem !important;
+  }
+  
+  .card-description {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Ensure cards fit properly on smaller screens */
+@media (max-width: 450px) {
+  .dashboard-card {
+    height: 200px;
+  }
+  
+  .card-content {
+    padding: 0.75rem;
   }
 }
 </style>
