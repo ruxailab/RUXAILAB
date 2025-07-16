@@ -1,160 +1,153 @@
 <template>
-  <div class="outermost">
-    <v-col cols="12">
-      <v-row justify="center">
-        <p class="titles ma-16">What kind of test are you looking to start?</p>
+  <v-container
+    fluid
+    class="create-study-view"
+  >
+    <v-container class="py-6">
+      <!-- Stepper Header -->
+      <StepperHeader
+        :current-step="1"
+        :steps="steps"
+      />
+
+      <!-- Page Header -->
+      <SectionHeader
+        title="Choose Evaluation Category"
+        subtitle="Select the type of evaluation you want to conduct for your study"
+      />
+
+      <!-- Categories Grid -->
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
+        <v-col
+          v-for="category in categories"
+          :key="category.id"
+          cols="12"
+          sm="6"
+          md="4"
+        >
+          <SelectableCard
+            :selected="selectedCategory === category.id"
+            :icon="category.icon"
+            :title="category.title"
+            text-class="pa-8 text-center"
+            :description="category.description"
+            :color="category.color"
+            :disabled="category.comingSoon"
+            :badge="category.comingSoon ? { text: 'Coming Soon', color: 'warning' } : null"
+            @click="() => handleCategoryClick(category.id)"
+          >
+            <template #extra>
+              <v-chip
+                v-if="category.hasSubMethods && !category.comingSoon"
+                color="primary"
+                variant="tonal"
+                size="small"
+              >
+                Multiple Methods
+              </v-chip>
+            </template>
+          </SelectableCard>
+        </v-col>
       </v-row>
-    </v-col>
 
-    <v-col cols="12" class="mt-6">
-      <v-row>
-        <v-col cols="10" md="4" sm="10" class="card">
-          <CardTypeTest :img="require('../../../public/specialist.png')" title="Testing" type="Category"
-            segund-type="TESTING" :texts="['User Testing', 'A/B Testing', 'Eye-Tracking']"
-            @click="navigateToTest('testing')" />
-        </v-col>
-
-        <v-col cols="10" md="4" sm="10" class="card">
-          <CardTypeTest :img="require('../../../public/specialist.png')" title="Inspection" type="Category"
-            segund-type="INSPECTION" :texts="[
-              'Heuristic Evaluation',
-              'Cognitive Walkthrough',
-              'Automated Evaluations',
-            ]" @click="navigateToTest('inspection')" />
-        </v-col>
-
-        <v-col cols="10" md="4" sm="10" class="card">
-          <CardTypeTest :img="require('../../../public/specialist.png')" title="Inquiry" type="Category"
-            segund-type="INQUIRY" :texts="['Interviews', 'Focus Groups', 'Surveys & Questionnaires']"
-            :disabled="true" />
-        </v-col>
-
-        <v-col cols="10" md="4" sm="10" class="card">
-          <!-- Accessibility Card with "New" badge -->
-          <div class="badge-container">
-            <span class="badge-new">New</span>
-            <CardTypeTest :img="require('../../../public/human.svg')" title="Accessibility" type="Category"
-              segund-type="ACCESSIBILITY" :texts="['Manual', 'Automatic', 'AI powered']"
-              @click="navigateToTest('accessibility')" />
-          </div>
-        </v-col>
-      </v-row>
-    </v-col>
-
-    <CreateTestNameDialog :is-open="nameDialog" :test-type="testType" @close="nameDialog = false" />
-  </div>
+      <!-- Back Button -->
+      <BackButton
+        label="Back to Dashboard"
+        @back="goBack"
+      />
+    </v-container>
+  </v-container>
 </template>
 
 <script setup>
-import CardTypeTest from '@/components/atoms/CardTypeTest'
-import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue'
+import BackButton from '@/components/atoms/BackButton.vue'
+import SectionHeader from '@/components/atoms/SectionHeader.vue'
+import SelectableCard from '@/components/atoms/SelectableCard.vue'
+import StepperHeader from '@/components/atoms/StepperHeader.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const router = useRouter()
+const store = useStore()
+const selectedCategory = ref(null)
 
-const nameDialog = ref(false)
-const testType = ref('')
+const steps = [
+  { value: 1, title: 'Category', complete: false },
+  { value: 2, title: 'Methods', complete: false },
+  { value: 3, title: 'Study Type', complete: false },
+  { value: 4, title: 'Details', complete: false }
+]
 
-const navigateToTest = (type) => {
-  testType.value = type
-  router.push(`/${type}`) // Navigates to /inspection, /inquiry, or /testing
+const categories = [
+  {
+    id: 'test',
+    title: 'Test',
+    description: 'Conduct controlled testing with real users to measure usability and performance.',
+    icon: 'mdi-test-tube',
+    color: 'success',
+    hasSubMethods: true
+  },
+  {
+    id: 'inquiry',
+    title: 'Inquiry',
+    description: 'Gather insights through surveys, interviews, and other research methods.',
+    icon: 'mdi-comment-question-outline',
+    color: 'warning',
+    hasSubMethods: false,
+    comingSoon: true
+  },
+  {
+    id: 'inspection',
+    title: 'Inspection',
+    description: 'Expert evaluation using established usability principles and guidelines.',
+    icon: 'mdi-magnify',
+    color: 'secondary',
+    hasSubMethods: true
+  },
+  {
+    id: 'accessibility',
+    title: 'Accessibility',
+    description: '',
+    icon: 'mdi-magnify',
+    color: 'primary',
+    hasSubMethods: true
+  }
+]
+
+const handleCategoryClick = (categoryId) => {
+  const category = categories.find(c => c.id === categoryId)
+  if (category?.comingSoon) return
+
+  selectedCategory.value = categoryId
+  store.commit('SET_STUDY_CATEGORY', categoryId)
+
+  router.push({ name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3' })
+}
+
+const goBack = () => {
+  router.push('/testslist')
 }
 </script>
 
 <style scoped>
-.outermost {
-  min-height: 93vh;
-  height: auto;
-  background-color: #f9f5f0;
-  padding: 1rem;
-  box-sizing: border-box;
+.create-study-view {
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
-.titles {
-  font-size: clamp(28px, 5vw, 38px);
-  text-align: center;
-  font-weight: 600;
-  color: #f99726;
-  margin: 0 auto;
+.cursor-pointer {
+  cursor: pointer;
 }
 
-.card {
-  padding: 0.5rem;
-  overflow: hidden;
-  word-wrap: break-word;
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.badge-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.badge-new {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  background: #ff5252;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 2px 10px;
-  border-radius: 12px;
-  z-index: 2;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  letter-spacing: 1px;
-  pointer-events: none;
-}
-
-/* Media Queries para Responsividade */
-
-/* Telas pequenas (≤ 600px) */
-@media (max-width: 600px) {
-  .outermost {
-    padding: 0.5rem;
-  }
-
-  .titles {
-    font-size: clamp(20px, 5vw, 28px);
-    margin: 1rem 0;
-  }
-
-  .card {
-    padding: 0.25rem;
-    margin-bottom: 1rem;
-  }
-}
-
-/* Tablets (601px - 960px) */
-@media (min-width: 601px) and (max-width: 960px) {
-  .outermost {
-    padding: 1rem;
-  }
-
-  .titles {
-    font-size: clamp(24px, 5vw, 32px);
-  }
-
-  .card {
-    padding: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
-}
-
-/* Desktop (961px e acima) */
-@media (min-width: 961px) {
-  .outermost {
-    padding: 2rem;
-  }
-
-  .titles {
-    font-size: clamp(32px, 5vw, 38px);
-  }
-
-  .card {
-    padding: 1rem;
-    margin-bottom: 2rem;
-  }
+:deep(.v-stepper-header) {
+  box-shadow: none !important;
 }
 </style>
