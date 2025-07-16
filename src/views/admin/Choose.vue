@@ -1,14 +1,8 @@
 <template>
-  <v-container
-    fluid
-    class="create-study-view"
-  >
+  <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader
-        :current-step="1"
-        :steps="steps"
-      />
+      <StepperHeader :current-step="1" :steps="steps" />
 
       <!-- Page Header -->
       <SectionHeader
@@ -17,10 +11,7 @@
       />
 
       <!-- Categories Grid -->
-      <v-row
-        justify="center"
-        class="mb-8"
-      >
+      <v-row justify="center" class="mb-8">
         <v-col
           v-for="category in categories"
           :key="category.id"
@@ -36,7 +27,11 @@
             :description="category.description"
             :color="category.color"
             :disabled="category.comingSoon"
-            :badge="category.comingSoon ? { text: 'Coming Soon', color: 'warning' } : null"
+            :badge="
+              category.comingSoon
+                ? { text: 'Coming Soon', color: 'warning' }
+                : null
+            "
             @click="() => handleCategoryClick(category.id)"
           >
             <template #extra>
@@ -54,10 +49,7 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton
-        label="Back to Dashboard"
-        @back="goBack"
-      />
+      <BackButton label="Back to Dashboard" @back="goBack" />
     </v-container>
   </v-container>
 </template>
@@ -79,53 +71,63 @@ const steps = [
   { value: 1, title: 'Category', complete: false },
   { value: 2, title: 'Methods', complete: false },
   { value: 3, title: 'Study Type', complete: false },
-  { value: 4, title: 'Details', complete: false }
+  { value: 4, title: 'Details', complete: false },
 ]
 
 const categories = [
   {
     id: 'test',
     title: 'Test',
-    description: 'Conduct controlled testing with real users to measure usability and performance.',
+    description:
+      'Conduct controlled testing with real users to measure usability and performance.',
     icon: 'mdi-test-tube',
     color: 'success',
-    hasSubMethods: true
+    hasSubMethods: true,
   },
   {
     id: 'inquiry',
     title: 'Inquiry',
-    description: 'Gather insights through surveys, interviews, and other research methods.',
+    description:
+      'Gather insights through surveys, interviews, and other research methods.',
     icon: 'mdi-comment-question-outline',
     color: 'warning',
     hasSubMethods: false,
-    comingSoon: true
+    comingSoon: true,
   },
   {
     id: 'inspection',
     title: 'Inspection',
-    description: 'Expert evaluation using established usability principles and guidelines.',
+    description:
+      'Expert evaluation using established usability principles and guidelines.',
     icon: 'mdi-magnify',
     color: 'secondary',
-    hasSubMethods: true
+    hasSubMethods: true,
   },
   {
     id: 'accessibility',
     title: 'Accessibility',
-    description: '',
-    icon: 'mdi-magnify',
+    description:
+      'Assess your product for accessibility compliance and best practices.',
+    icon: 'mdi-access-point',
     color: 'primary',
-    hasSubMethods: true
-  }
+    hasSubMethods: false,
+    comingSoon: false,
+  },
 ]
 
 const handleCategoryClick = (categoryId) => {
-  const category = categories.find(c => c.id === categoryId)
+  const category = categories.find((c) => c.id === categoryId)
   if (category?.comingSoon) return
 
   selectedCategory.value = categoryId
+  if (categoryId === 'accessibility') {
+    router.push('/accessibility')
+    return
+  }
   store.commit('SET_STUDY_CATEGORY', categoryId)
-
-  router.push({ name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3' })
+  router.push({
+    name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3',
+  })
 }
 
 const goBack = () => {
