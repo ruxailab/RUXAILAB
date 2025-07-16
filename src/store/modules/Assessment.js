@@ -6,6 +6,8 @@ const state = {
 
   // WCAG data
   wcagData: null,
+  // Filtered WCAG data (based on config)
+  filteredWcagData: null,
 
   // UI state
   isLoading: false,
@@ -14,27 +16,33 @@ const state = {
   // Assessment progress
   completedRules: [],
   notes: {},
-  ruleAssessments: {} // { ruleId: { severity: '', status: '', notes: [{ text, imageName }] } }
+  ruleAssessments: {}, // { ruleId: { severity: '', status: '', notes: [{ text, imageName }] } }
+
+  // Configuration
+  configuration: {
+    complianceLevel: 'AA',
+    includeNonInterference: true,
+    showExperimentalRules: false,
+    enableAutomaticSave: true,
+    updatedAt: null
+  }
 }
 
 const getters = {
-  // Get current principle
+  // Get current principle (from filtered data)
   currentPrinciple: (state) => {
-    console.log('Getting current principle:', state.selectedPrincipleIdx, state.wcagData?.principles)
-    return state.wcagData?.principles?.[state.selectedPrincipleIdx] || {}
+    return state.filteredWcagData?.principles?.[state.selectedPrincipleIdx] || {}
   },
 
-  // Get current guideline
+  // Get current guideline (from filtered data)
   currentGuideline: (state, getters) => {
     const principle = getters.currentPrinciple
-    console.log('Getting current guideline:', state.selectedGuidelineIdx, principle?.Guidelines)
     return principle?.Guidelines?.[state.selectedGuidelineIdx] || {}
   },
 
-  // Get current rule
+  // Get current rule (from filtered data)
   currentRule: (state, getters) => {
     const guideline = getters.currentGuideline
-    console.log('Getting current rule:', state.selectedRuleIdx, guideline?.rules)
     return guideline?.rules?.[state.selectedRuleIdx] || {}
   },
 
@@ -99,27 +107,22 @@ const getters = {
     return []
   },
 
-  // Get overall completion percentage
+  // Get overall completion percentage (filtered)
   completionPercentage: (state) => {
-    if (!state.wcagData) return 0
-
-    const totalRules = state.wcagData.principles.reduce((total, principle) => {
+    if (!state.filteredWcagData) return 0
+    const totalRules = state.filteredWcagData.principles.reduce((total, principle) => {
       return total + principle.Guidelines.reduce((guidelineTotal, guideline) => {
         return guidelineTotal + (guideline.rules?.length || 0)
       }, 0)
     }, 0)
-
     return totalRules > 0 ? Math.round((state.completedRules.length / totalRules) * 100) : 0
   },
 
-  // Get all assessments
+  // Get all assessments (filtered)
   getAllAssessments: (state, getters) => {
-    if (!state.wcagData) return {}
-
+    if (!state.filteredWcagData) return {}
     const allAssessments = {}
-
-    // Loop through all principles, guidelines, and rules
-    state.wcagData.principles.forEach(principle => {
+    state.filteredWcagData.principles.forEach(principle => {
       principle.Guidelines?.forEach(guideline => {
         guideline.rules?.forEach(rule => {
           const assessment = getters.getRuleAssessment(rule.id)
@@ -137,12 +140,48 @@ const getters = {
         })
       })
     })
-
     return allAssessments
+  },
+
+  // Get configuration
+  getConfiguration: (state) => {
+    return state.configuration
   }
 }
 
+// Helper: filter rules by compliance level
+function filterWcagByComplianceLevel(wcagData, complianceLevel) {
+  if (!wcagData?.principles) return { principles: [] }
+
+  // Map complianceLevel to allowed levels
+  let allowedLevels = []
+  if (complianceLevel === 'A') allowedLevels = ['A']
+  else if (complianceLevel === 'AA') allowedLevels = ['A', 'AA']
+  else if (complianceLevel === 'AAA') allowedLevels = ['A', 'AA', 'AAA']
+  else allowedLevels = ['A', 'AA', 'AAA']
+
+  // Deep clone and filter
+  const filteredPrinciples = wcagData.principles.map(principle => {
+    const filteredGuidelines = (principle.Guidelines || []).map(guideline => {
+      const filteredRules = (guideline.rules || []).filter(rule => allowedLevels.includes(rule.level))
+      return { ...guideline, rules: filteredRules }
+    }).filter(g => g.rules && g.rules.length > 0)
+    return { ...principle, Guidelines: filteredGuidelines }
+  }).filter(p => p.Guidelines && p.Guidelines.length > 0)
+  return { principles: filteredPrinciples }
+}
+
+
 const mutations = {
+  // Set configuration
+  SET_CONFIGURATION(state, config) {
+    state.configuration = { ...state.configuration, ...config }
+  },
+
+  // Set filtered WCAG data
+  SET_FILTERED_WCAG_DATA(state, filteredData) {
+    state.filteredWcagData = filteredData
+  },
   // Set WCAG data
   SET_WCAG_DATA(state, data) {
     state.wcagData = data;
@@ -263,8 +302,28 @@ const mutations = {
 import * as assessmentController from '../../controllers/assessmentController';
 
 const actions = {
+  // Update configuration (local only)
+  updateConfiguration({ commit, dispatch }, config) {
+    commit('SET_CONFIGURATION', config)
+    // Re-filter WCAG data if config changes
+    if (config.complianceLevel) {
+      dispatch('filterByComplianceLevel', config.complianceLevel)
+    }
+  },
+
+  // Get configuration (local only)
+  getConfiguration({ state }) {
+    return state.configuration
+  },
+
+  // Filter WCAG data by compliance level
+  filterByComplianceLevel({ state, commit }, complianceLevel) {
+    if (!state.wcagData) return
+    const filtered = filterWcagByComplianceLevel(state.wcagData, complianceLevel)
+    commit('SET_FILTERED_WCAG_DATA', filtered)
+  },
   // Initialize the assessment with WCAG data
-  async initializeAssessment({ commit, state }) {
+  async initializeAssessment({ commit, state, dispatch }) {
     try {
       commit('SET_LOADING', true)
       console.log('Initializing assessment...')
@@ -326,6 +385,8 @@ const actions = {
 
       console.log('Transformed data:', transformedData)
       commit('SET_WCAG_DATA', transformedData)
+      // Filter by config
+      await dispatch('filterByComplianceLevel', state.configuration.complianceLevel)
       return transformedData
     } catch (error) {
       console.error('Error initializing assessment:', error)
