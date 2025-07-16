@@ -12,7 +12,7 @@ import Language from './modules/Language'
 import Assessment from './modules/Assessment'
 import ManualAccessibilityTest from './modules/ManualAccessibilityTest'
 import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
-import automaticReport from '@/store/automaticReport'
+import automaticReport from '@/store/modules/automaticReport'
 
 export default createStore({
   state: {
