@@ -55,6 +55,11 @@ const navItems = computed(() => [
     icon: 'mdi-comment-question',
     path: `/result/${testId.value}`,
   },
+  {
+    title: 'Config',
+    icon: 'mdi-cog',
+    path: `/config/${testId.value}`,
+  },
 ])
 
 const onDrawerToggle = (isOpen) => {
