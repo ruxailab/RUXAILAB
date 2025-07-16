@@ -8,25 +8,39 @@
     <v-alert v-if="error" type="error" class="ma-4" closable @click:close="error = ''">
       {{ error }}
     </v-alert>
-    <v-container fluid class="pa-0">
-      <v-row no-gutters>
+
+    <!-- Full width container without padding -->
+    <v-container fluid class="pa-0 ma-0 fill-height">
+      <v-row no-gutters class="fill-height">
         <!-- Left Sidebar Navigation -->
-        <v-col cols="2" class="sidebar">
+        <v-col cols="2" class="sidebar fill-height">
           <v-card flat class="h-100" color="grey-lighten-4">
             <v-card-title class="text-h6 pa-4">WCAG Principles</v-card-title>
             <v-list density="compact" class="pa-2" v-if="principles.length > 0">
-              <v-list-group v-for="(principle, pIdx) in principles" :key="principle.id || pIdx"
-                :value="(principle?.title || '').toLowerCase()" :prepend-icon="getPrincipleIcon(pIdx)"
-                :class="{ 'active-principle': selectedPrincipleIdx === pIdx }" :active="selectedPrincipleIdx === pIdx">
+              <v-list-group 
+                v-for="(principle, pIdx) in principles" 
+                :key="principle.id || pIdx"
+                :value="(principle?.title || '').toLowerCase()" 
+                :prepend-icon="getPrincipleIcon(pIdx)"
+                :class="{ 'active-principle': selectedPrincipleIdx === pIdx }" 
+                :active="selectedPrincipleIdx === pIdx"
+              >
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" :title="principle?.title || 'Untitled Principle'"
-                    @click="selectPrinciple(pIdx)" />
+                  <v-list-item 
+                    v-bind="props" 
+                    :title="principle?.title || 'Untitled Principle'"
+                    @click="selectPrinciple(pIdx)" 
+                  />
                 </template>
-                <v-list-item v-for="(guideline, gIdx) in principle?.Guidelines || []" :key="guideline?.id || gIdx"
-                  prepend-icon="mdi-circle-outline" :title="(guideline?.id || '') + ' ' + (guideline?.title || '')
-                    " class="ml-4" :active="selectedGuidelineIdx === gIdx &&
-                      selectedPrincipleIdx === pIdx
-                      " @click="selectGuideline(gIdx)" />
+                <v-list-item 
+                  v-for="(guideline, gIdx) in principle?.Guidelines || []" 
+                  :key="guideline?.id || gIdx"
+                  prepend-icon="mdi-circle-outline" 
+                  :title="(guideline?.id || '') + ' ' + (guideline?.title || '')"
+                  class="ml-4" 
+                  :active="selectedGuidelineIdx === gIdx && selectedPrincipleIdx === pIdx"
+                  @click="selectGuideline(gIdx)" 
+                />
               </v-list-group>
             </v-list>
             <v-list v-else>
@@ -39,8 +53,8 @@
           </v-card>
         </v-col>
 
-        <!-- Main Content Area -->
-        <v-col cols="7" class="main-content">
+        <!-- Main Content Area - Expanded width -->
+        <v-col cols="7" class="main-content fill-height">
           <v-card flat class="h-100 pa-6 scrollable-content">
             <!-- Breadcrumb -->
             <v-breadcrumbs :items="breadcrumbs" class="pa-0 mb-4">
@@ -54,12 +68,32 @@
               <h1 class="text-h4 font-weight-bold mb-2">
                 {{ currentRule?.id }} {{ currentRule?.title }}
               </h1>
-              <div class="d-flex gap-4 mb-4">
-                <v-chip color="grey-lighten-2" variant="elevated" size="small">
-                  Level {{ currentRule?.level }}
+              <!-- Added the missing chips section -->
+              <div class="d-flex gap-2 mb-4">
+                <v-chip 
+                  color="primary" 
+                  variant="elevated" 
+                  size="small"
+                  prepend-icon="mdi-numeric"
+                >
+                  Level {{ currentRule?.level || 'N/A' }}
                 </v-chip>
-                <v-chip color="grey-lighten-2" variant="elevated" size="small">
-                  Version {{ currentRule?.version }}
+                <v-chip 
+                  color="secondary" 
+                  variant="elevated" 
+                  size="small"
+                  prepend-icon="mdi-tag"
+                >
+                  Version {{ currentRule?.version || 'N/A' }}
+                </v-chip>
+                <v-chip 
+                  v-if="currentRule?.conformanceLevel"
+                  color="success" 
+                  variant="elevated" 
+                  size="small"
+                  prepend-icon="mdi-check-circle"
+                >
+                  {{ currentRule.conformanceLevel }}
                 </v-chip>
               </div>
             </div>
@@ -71,13 +105,10 @@
               </template>
               <div>
                 <div class="font-weight-bold mb-2">
-                  Guideline:
-                  {{ currentGuideline?.title || 'No guideline selected' }}
+                  Guideline: {{ currentGuideline?.title || 'No guideline selected' }}
                 </div>
                 <div v-if="currentGuideline">
-                  {{
-                    currentGuideline.description || 'No description available'
-                  }}
+                  {{ currentGuideline.description || 'No description available' }}
                 </div>
               </div>
             </v-alert>
@@ -86,13 +117,13 @@
             <div class="mb-6">
               <h2 class="text-h5 font-weight-bold mb-4">Success Criterion</h2>
               <v-card variant="outlined" class="mb-2" style="border: 2px solid #4caf50">
-                <v-card-text class="pa-3">
+                <v-card-text class="pa-4">
                   <div v-if="!currentRule?.criteria?.length" class="text-caption text-grey">
                     No success criteria available for this rule.
                   </div>
                   <ul v-else class="criteria-list pl-4">
                     <li v-for="(crit, cIdx) in currentRule.criteria" :key="cIdx" class="mb-2">
-                      <pre class="criterion-pre mb-0 text-body-2" style="white-space: pre-wrap">{{ crit }}</pre>
+                      <pre class="criterion-pre mb-0 text-body-2" style="white-space: pre-wrap; font-family: inherit;">{{ crit }}</pre>
                     </li>
                   </ul>
                 </v-card-text>
@@ -100,13 +131,19 @@
             </div>
 
             <!-- Appraiser Notes Section -->
-            <div class="my-4">
+            <div class="my-6">
               <h2 class="text-h5 font-weight-bold mb-4">Appraiser Notes</h2>
               <v-tabs v-model="activeNoteTab" class="mb-2" grow>
                 <v-tab v-for="(note, idx) in notes" :key="'note-tab-' + idx" :value="idx">
                   Note {{ idx + 1 }}
-                  <v-btn v-if="notes.length > 1" icon="mdi-close" size="x-small" variant="plain" class="ml-2"
-                    @click.stop="removeNote(idx)" />
+                  <v-btn 
+                    v-if="notes.length > 1" 
+                    icon="mdi-close" 
+                    size="x-small" 
+                    variant="plain" 
+                    class="ml-2"
+                    @click.stop="removeNote(idx)" 
+                  />
                 </v-tab>
                 <v-tab key="add-note" @click.stop="addNote" class="add-note-tab">
                   <v-icon>mdi-plus</v-icon>
@@ -114,15 +151,38 @@
               </v-tabs>
               <v-window v-model="activeNoteTab">
                 <v-window-item v-for="(note, idx) in notes" :key="'note-window-' + idx" :value="idx">
-                  <v-textarea v-model="note.text" variant="outlined" rows="4" placeholder="Enter your notes here..."
-                    hide-details class="mb-2" />
+                  <v-textarea 
+                    v-model="note.text" 
+                    variant="outlined" 
+                    rows="4" 
+                    placeholder="Enter your notes here..."
+                    hide-details 
+                    class="mb-2" 
+                  />
                   <div class="d-flex align-center mb-2">
-                    <v-file-input v-model="note.image" accept="image/*" label="Attach image" prepend-icon="mdi-image"
-                      show-size hide-details @change="onImageChange(idx)" class="mr-4" style="max-width: 300px;" />
+                    <v-file-input 
+                      v-model="note.image" 
+                      accept="image/*" 
+                      label="Attach image" 
+                      prepend-icon="mdi-image"
+                      show-size 
+                      hide-details 
+                      @change="onImageChange(idx)" 
+                      class="mr-4" 
+                      style="max-width: 300px;" 
+                    />
                     <div v-if="note.imagePreview" class="note-image-preview">
-                      <img :src="note.imagePreview" alt="Notes  "
-                        style="max-width: 120px; max-height: 80px; border-radius: 6px;" />
-                      <v-btn icon="mdi-close" size="x-small" variant="plain" @click="removeImage(idx)" />
+                      <img 
+                        :src="note.imagePreview" 
+                        alt="Notes attachment"
+                        style="max-width: 120px; max-height: 80px; border-radius: 6px;" 
+                      />
+                      <v-btn 
+                        icon="mdi-close" 
+                        size="x-small" 
+                        variant="plain" 
+                        @click="removeImage(idx)" 
+                      />
                     </div>
                   </div>
                 </v-window-item>
@@ -130,39 +190,60 @@
             </div>
 
             <!-- Severity section -->
-            <div>
+            <div class="mb-6">
               <h2 class="text-h5 font-weight-bold mb-4">Severity</h2>
               <v-radio-group v-model="severity" inline>
-                <v-radio label="High" value="high" />
-                <v-radio label="Medium" value="medium" />
-                <v-radio label="Low" value="low" />
+                <v-radio label="High" value="high" color="error" />
+                <v-radio label="Medium" value="medium" color="warning" />
+                <v-radio label="Low" value="low" color="success" />
               </v-radio-group>
             </div>
+
             <!-- Status Section -->
-            <div>
+            <div class="mb-6">
               <h2 class="text-h5 font-weight-bold mb-4">Status</h2>
               <v-radio-group v-model="status" inline>
-                <v-radio label="Pass" value="pass" />
-                <v-radio label="Fail" value="fail" />
-                <v-radio label="N/A" value="na" />
+                <v-radio label="Pass" value="pass" color="success" />
+                <v-radio label="Fail" value="fail" color="error" />
+                <v-radio label="N/A" value="na" color="grey" />
               </v-radio-group>
             </div>
-            <div>
-              <v-btn prepend-icon="mdi-content-save" size="large" color="success" @click="saveAssessment"
-                :loading="isLoading" :disabled="!currentRule?.id">
+
+            <!-- Save Button -->
+            <div class="mb-6">
+              <v-btn 
+                prepend-icon="mdi-content-save" 
+                size="large" 
+                color="success" 
+                @click="saveAssessment"
+                :loading="isLoading" 
+                :disabled="!currentRule?.id"
+              >
                 Save Assessment
               </v-btn>
             </div>
+
+            <!-- Navigation -->
             <v-card flat class="pa-4 mt-4" color="grey-lighten-4">
               <div class="d-flex justify-space-between align-center">
-                <v-btn variant="text" prepend-icon="mdi-chevron-left" color="grey-darken-2" @click="prevRule">
+                <v-btn 
+                  variant="text" 
+                  prepend-icon="mdi-chevron-left" 
+                  color="grey-darken-2" 
+                  @click="prevRule"
+                >
                   Previous
                 </v-btn>
                 <div class="text-body-2 text-grey-darken-1">
                   Rule {{ selectedRuleIdx + 1 }} of {{ rules?.length || 0 }}
                 </div>
-                <v-btn variant="flat" append-icon="mdi-chevron-right" color="amber" class="text-black"
-                  @click="nextRule">
+                <v-btn 
+                  variant="flat" 
+                  append-icon="mdi-chevron-right" 
+                  color="amber" 
+                  class="text-black"
+                  @click="nextRule"
+                >
                   Next
                 </v-btn>
               </div>
@@ -171,14 +252,20 @@
         </v-col>
 
         <!-- Right Sidebar - Table of Contents -->
-        <v-col cols="3" class="toc-sidebar">
+        <v-col cols="3" class="toc-sidebar fill-height">
           <v-card flat class="h-100" color="grey-lighten-5">
             <v-card-title class="text-h6 pa-4">On this page</v-card-title>
             <v-list density="compact" class="pa-2">
               <template v-if="rules && rules.length > 0">
-                <v-list-item v-for="(rule, rIdx) in rules" :key="rule.id || rIdx" prepend-icon="mdi-circle-outline"
-                  :title="(rule?.id || '') + ' ' + (rule?.title || '')" :active="selectedRuleIdx === rIdx"
-                  class="text-body-2" @click="selectRule(rIdx)" />
+                <v-list-item 
+                  v-for="(rule, rIdx) in rules" 
+                  :key="rule.id || rIdx" 
+                  prepend-icon="mdi-circle-outline"
+                  :title="(rule?.id || '') + ' ' + (rule?.title || '')" 
+                  :active="selectedRuleIdx === rIdx"
+                  class="text-body-2" 
+                  @click="selectRule(rIdx)" 
+                />
               </template>
               <v-list-item v-else>
                 <v-list-item-title class="text-grey">No rules available</v-list-item-title>
@@ -192,10 +279,20 @@
     <!-- Floating Save Button -->
     <v-tooltip location="left">
       <template #activator="{ props }">
-        <v-btn data-testid="create-test-btn" size="large" icon position="fixed" location="bottom right" color="#F9A826"
-          variant="elevated" class="mr-4 mb-5 floating-save-btn" rounded="circle" v-bind="props"
-          @click="viewAssessmentDocument">
-          <v-icon size="large"> mdi-eye </v-icon>
+        <v-btn 
+          data-testid="create-test-btn" 
+          size="large" 
+          icon 
+          position="fixed" 
+          location="bottom right" 
+          color="#F9A826"
+          variant="elevated" 
+          class="mr-4 mb-5 floating-save-btn" 
+          rounded="circle" 
+          v-bind="props"
+          @click="viewAssessmentDocument"
+        >
+          <v-icon size="large">mdi-eye</v-icon>
         </v-btn>
       </template>
       <span>View Assessment</span>
@@ -211,15 +308,21 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">
-          <v-data-table :headers="[
-            { title: 'Rule ID', key: 'ruleId' },
-            { title: 'Title', key: 'ruleTitle' },
-            { title: 'Principle', key: 'principle' },
-            { title: 'Guideline', key: 'guideline' },
-            { title: 'Level', key: 'level' },
-            { title: 'Status', key: 'status' },
-            { title: 'Severity', key: 'severity' },
-          ]" :items="Object.values(assessmentData)" :items-per-page="10" class="elevation-1" height="70vh">
+          <v-data-table 
+            :headers="[
+              { title: 'Rule ID', key: 'ruleId' },
+              { title: 'Title', key: 'ruleTitle' },
+              { title: 'Principle', key: 'principle' },
+              { title: 'Guideline', key: 'guideline' },
+              { title: 'Level', key: 'level' },
+              { title: 'Status', key: 'status' },
+              { title: 'Severity', key: 'severity' },
+            ]" 
+            :items="Object.values(assessmentData)" 
+            :items-per-page="10" 
+            class="elevation-1" 
+            height="70vh"
+          >
             <template v-slot:item.notes="{ item }">
               <v-tooltip bottom max-width="400">
                 <template v-slot:activator="{ on, attrs }">
@@ -680,5 +783,49 @@ const resetAssessment = () => {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+fill-height {
+  height: 100vh;
+}
+
+.scrollable-content {
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.floating-save-btn {
+  z-index: 1000;
+}
+
+.note-image-preview {
+  position: relative;
+  display: inline-block;
+}
+
+.note-image-preview .v-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.criteria-list {
+  list-style-type: disc;
+}
+
+.criterion-pre {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.add-note-tab {
+  min-width: 40px !important;
+}
+
+.active-principle {
+  background-color: rgba(25, 118, 210, 0.1);
 }
 </style>
