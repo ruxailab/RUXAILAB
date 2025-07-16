@@ -243,7 +243,7 @@ export default {
         // Get the testId from route or store
         const testId = this.$route.params.testId || this.testId
         //  process.env.ACCESSIBILITY_API
-        await axios.post('http://localhost:3000/api/test', {
+        const response = await axios.post('http://localhost:3000/api/test', {
           url: this.url,
           testId: testId,
         });
