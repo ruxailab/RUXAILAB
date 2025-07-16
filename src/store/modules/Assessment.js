@@ -44,45 +44,45 @@ const getters = {
   },
 
   // Get assessment for a rule
-getRuleAssessment: (state) => (ruleId) => {
-  const ra = state.ruleAssessments[ruleId];
+  getRuleAssessment: (state) => (ruleId) => {
+    const ra = state.ruleAssessments[ruleId];
 
-  if (!ra) {
-    // fallback for legacy notes
-    const legacyNote = state.notes[ruleId];
-    const notes = typeof legacyNote === 'string'
-      ? [{ text: legacyNote, imageName: null }]
-      : [];
+    if (!ra) {
+      // fallback for legacy notes
+      const legacyNote = state.notes[ruleId];
+      const notes = typeof legacyNote === 'string'
+        ? [{ text: legacyNote, imageName: null }]
+        : [];
+
+      return {
+        severity: '',
+        status: '',
+        notes,
+      };
+    }
+
+    // Normalize notes
+    let normalizedNotes = [];
+
+    if (Array.isArray(ra.notes)) {
+      normalizedNotes = ra.notes.map(n => {
+        if (typeof n === 'string') {
+          return { text: n, imageName: null };
+        }
+        return {
+          text: n.text || '',
+          imageName: n.imageName || null
+        };
+      });
+    } else if (typeof ra.notes === 'string') {
+      normalizedNotes = [{ text: ra.notes, imageName: null }];
+    }
 
     return {
-      severity: '',
-      status: '',
-      notes,
+      ...ra,
+      notes: normalizedNotes,
     };
-  }
-
-  // Normalize notes
-  let normalizedNotes = [];
-
-  if (Array.isArray(ra.notes)) {
-    normalizedNotes = ra.notes.map(n => {
-      if (typeof n === 'string') {
-        return { text: n, imageName: null };
-      }
-      return {
-        text: n.text || '',
-        imageName: n.imageName || null
-      };
-    });
-  } else if (typeof ra.notes === 'string') {
-    normalizedNotes = [{ text: ra.notes, imageName: null }];
-  }
-
-  return {
-    ...ra,
-    notes: normalizedNotes,
-  };
-},
+  },
 
   // Get notes for a rule (kept for backward compatibility)
   getRuleNotes: (state) => (ruleId) => {
@@ -147,12 +147,12 @@ const mutations = {
   SET_WCAG_DATA(state, data) {
     state.wcagData = data;
   },
-  
+
   // Set rule assessments (used when loading from Firestore)
   SET_RULE_ASSESSMENTS(state, assessments) {
     state.ruleAssessments = { ...assessments };
   },
-  
+
   // Set completed rules
   SET_COMPLETED_RULES(state, ruleIds) {
     state.completedRules = [...ruleIds];
@@ -398,45 +398,49 @@ const actions = {
 
   // Navigate to previous rule
   prevRule({ state, commit }) {
-    if (state.selectedRuleIdx > 0) {
-      // Move to previous rule in current guideline
-      commit('SET_SELECTED_RULE', state.selectedRuleIdx - 1)
-    } else {
-      // Move to last rule of previous guideline
-      const currentPrinciple = state.wcagData?.principles?.[state.selectedPrincipleIdx]
-      if (!currentPrinciple) return
+    function moveToLastRuleOfPreviousGuideline(currentPrinciple) {
+      const prevGuidelineIdx = state.selectedGuidelineIdx - 1;
+      const prevGuideline = currentPrinciple.Guidelines?.[prevGuidelineIdx];
+      const prevRules = prevGuideline?.rules || [];
+      if (prevRules.length > 0) {
+        commit('SET_SELECTED_GUIDELINE', prevGuidelineIdx);
+        commit('SET_SELECTED_RULE', prevRules.length - 1);
+        return true;
+      }
+      return false;
+    }
 
-      if (state.selectedGuidelineIdx > 0) {
-        // Previous guideline in same principle
-        const prevGuidelineIdx = state.selectedGuidelineIdx - 1
-        const prevGuideline = currentPrinciple.Guidelines?.[prevGuidelineIdx]
-        const prevRules = prevGuideline?.rules || []
-
-        if (prevRules.length > 0) {
-          commit('SET_SELECTED_GUIDELINE', prevGuidelineIdx)
-          commit('SET_SELECTED_RULE', prevRules.length - 1)
-        }
-      } else if (state.selectedPrincipleIdx > 0) {
-        // Previous principle
-        const prevPrincipleIdx = state.selectedPrincipleIdx - 1
-        const prevPrinciple = state.wcagData?.principles?.[prevPrincipleIdx]
-        if (!prevPrinciple?.Guidelines?.length) return
-
-        // Find last guideline with rules
-        for (let i = prevPrinciple.Guidelines.length - 1; i >= 0; i--) {
-          const guideline = prevPrinciple.Guidelines[i]
-          if (guideline.rules?.length > 0) {
-            commit('SET_SELECTED_PRINCIPLE', prevPrincipleIdx)
-            commit('SET_SELECTED_GUIDELINE', i)
-            commit('SET_SELECTED_RULE', guideline.rules.length - 1)
-            break
-          }
+    function moveToLastRuleOfPreviousPrinciple() {
+      const prevPrincipleIdx = state.selectedPrincipleIdx - 1;
+      const prevPrinciple = state.wcagData?.principles?.[prevPrincipleIdx];
+      if (!prevPrinciple?.Guidelines?.length) return;
+      for (let i = prevPrinciple.Guidelines.length - 1; i >= 0; i--) {
+        const guideline = prevPrinciple.Guidelines[i];
+        if (guideline.rules?.length > 0) {
+          commit('SET_SELECTED_PRINCIPLE', prevPrincipleIdx);
+          commit('SET_SELECTED_GUIDELINE', i);
+          commit('SET_SELECTED_RULE', guideline.rules.length - 1);
+          break;
         }
       }
     }
+
+    if (state.selectedRuleIdx > 0) {
+      commit('SET_SELECTED_RULE', state.selectedRuleIdx - 1);
+      return;
+    }
+
+    const currentPrinciple = state.wcagData?.principles?.[state.selectedPrincipleIdx];
+    if (!currentPrinciple) return;
+
+    if (state.selectedGuidelineIdx > 0) {
+      if (moveToLastRuleOfPreviousGuideline(currentPrinciple)) return;
+    } else if (state.selectedPrincipleIdx > 0) {
+      moveToLastRuleOfPreviousPrinciple();
+    }
   },
 
-  
+
 
   // Update rule notes (kept for backward compatibility)
   updateRuleNotes({ commit }, { ruleId, notes }) {
@@ -465,7 +469,7 @@ const actions = {
   async saveAssessment({ state }, { userId, testId, testType = 'manual' }) {
     try {
       if (!userId) throw new Error('User ID is required');
-      
+
       // Convert rule assessments to array format
       const assessmentData = Object.entries(state.ruleAssessments).map(([ruleId, assessment]) => ({
         ruleId,
@@ -478,7 +482,7 @@ const actions = {
           guideline: findGuidelineForRule(ruleId, state.wcogData)
         })
       }));
-      
+
       await assessmentController.saveAssessment(userId, testId, testType, assessmentData);
       return { success: true };
     } catch (error) {
@@ -486,50 +490,50 @@ const actions = {
       throw error;
     }
   },
-  
+
   // Load assessment from Firestore
   async loadAssessment({ commit }, { userId, testId }) {
     try {
       if (!userId) throw new Error('User ID is required');
-      
+
       const assessment = await assessmentController.getAssessment(userId, testId);
       if (!assessment) return null;
-      
+
       // Update the store with loaded assessment data
       const ruleAssessments = {};
       const completedRules = [];
-      
+
       assessment.assessmentData.forEach(item => {
         const { ruleId, status, severity, notes } = item;
         ruleAssessments[ruleId] = { status, severity, notes };
         if (status) completedRules.push(ruleId);
       });
-      
+
       commit('SET_RULE_ASSESSMENTS', ruleAssessments);
       commit('SET_COMPLETED_RULES', completedRules);
-      
+
       return assessment;
     } catch (error) {
       console.error('Failed to load assessment:', error);
       throw error;
     }
   },
-  
+
   // Update a single rule assessment
   async updateRuleAssessment({ commit, state }, { userId, testId, ruleId, assessment }) {
     console.log("this goes here")
     try {
       if (!userId) throw new Error('User ID is required');
-      
+
       // First update local state
       commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment });
-      
+
       // Then update in Firestore
       await assessmentController.updateRuleAssessment(
-        userId, 
-        testId, 
-        { 
-          ruleId, 
+        userId,
+        testId,
+        {
+          ruleId,
           ...assessment,
           // Add any additional metadata
           ...(state.wcagData && {
@@ -539,7 +543,7 @@ const actions = {
           })
         }
       );
-      
+
       return { success: true };
     } catch (error) {
       console.error('Failed to update rule assessment:', error);
@@ -551,7 +555,7 @@ const actions = {
 // Helper function to find rule title by ID
 function findRuleTitle(ruleId, wcagData) {
   if (!wcagData?.principles) return '';
-  
+
   for (const principle of wcagData.principles) {
     for (const guideline of principle.Guidelines || []) {
       const rule = guideline.rules?.find(r => r.id === ruleId);
@@ -564,7 +568,7 @@ function findRuleTitle(ruleId, wcagData) {
 // Helper function to find principle for a rule
 function findPrincipleForRule(ruleId, wcagData) {
   if (!wcagData?.principles) return '';
-  
+
   for (const principle of wcagData.principles) {
     for (const guideline of principle.Guidelines || []) {
       const rule = guideline.rules?.find(r => r.id === ruleId);
@@ -577,7 +581,7 @@ function findPrincipleForRule(ruleId, wcagData) {
 // Helper function to find guideline for a rule
 function findGuidelineForRule(ruleId, wcagData) {
   if (!wcagData?.principles) return '';
-  
+
   for (const principle of wcagData.principles) {
     for (const guideline of principle.Guidelines || []) {
       const rule = guideline.rules?.find(r => r.id === ruleId);
