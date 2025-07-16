@@ -3,11 +3,7 @@
     <v-main>
       <v-container fluid class="dashboard-container">
         <!-- Welcome Banner -->
-        <v-card 
-          class="welcome-banner mb-8" 
-          elevation="0"
-          rounded="xl"
-        >
+        <v-card class="welcome-banner mb-8" elevation="0" rounded="xl">
           <v-card-text class="pa-8">
             <v-row align="center" no-gutters>
               <v-col cols="12" md="8">
@@ -15,7 +11,9 @@
                   <h1 class="display-1 font-weight-bold text-primary mb-3">
                     Welcome Back!
                   </h1>
-                  <h2 class="text-h5 text-medium-emphasis mb-4 font-weight-regular">
+                  <h2
+                    class="text-h5 text-medium-emphasis mb-4 font-weight-regular"
+                  >
                     Here's what's happening with your dashboard today
                   </h2>
                   <p class="text-body-1 text-medium-emphasis mb-0">
@@ -64,20 +62,16 @@
             >
               <v-card-text class="card-content">
                 <div class="card-header mb-4">
-                  <div 
+                  <div
                     class="icon-container"
                     :class="`icon-${item.title.toLowerCase()}`"
                   >
-                    <v-icon 
-                      :size="32" 
-                      class="card-icon"
-                      color="white"
-                    >
+                    <v-icon :size="32" class="card-icon" color="white">
                       {{ item.icon }}
                     </v-icon>
                   </div>
                 </div>
-                
+
                 <div class="card-body">
                   <h4 class="text-h6 font-weight-bold mb-2 card-title">
                     {{ item.title }}
@@ -156,11 +150,11 @@ const navigateTo = (section) => {
 
 const getDescription = (title) => {
   const descriptions = {
-    'Home': 'Main dashboard overview and statistics',
-    'Analyse': 'Run comprehensive accessibility analysis',
-    'Answers': 'Manage Q&A responses and feedback',
-    'Report': 'Generate detailed reports and insights',
-    'Settings': 'Configure preferences and options'
+    Home: 'Main dashboard overview and statistics',
+    Analyse: 'Run comprehensive accessibility analysis',
+    Answers: 'Manage Q&A responses and feedback',
+    Report: 'Generate detailed reports and insights',
+    Settings: 'Configure preferences and options',
   }
   return descriptions[title] || 'Navigate to this section'
 }
@@ -247,15 +241,33 @@ const getDescription = (title) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.1)
+  );
   border-radius: inherit;
 }
 
-.icon-home { background: linear-gradient(135deg, #667eea, #764ba2); }
-.icon-analyse { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.icon-answers { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-.icon-report { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-.icon-settings { background: linear-gradient(135deg, #fa709a, #fee140); }
+.icon-home {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.icon-analyse {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.icon-answers {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.icon-report {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.icon-settings {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
 
 .card-icon {
   position: relative;
@@ -296,6 +308,7 @@ const getDescription = (title) => {
     opacity: 0;
     transform: translateX(-50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -307,6 +320,7 @@ const getDescription = (title) => {
     opacity: 0;
     transform: translateX(50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -318,6 +332,7 @@ const getDescription = (title) => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -329,6 +344,7 @@ const getDescription = (title) => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -336,8 +352,14 @@ const getDescription = (title) => {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Responsive Design */
@@ -345,19 +367,19 @@ const getDescription = (title) => {
   .dashboard-container {
     padding: 1rem 0.5rem;
   }
-  
+
   .welcome-banner .pa-8 {
     padding: 1.5rem !important;
   }
-  
+
   .display-1 {
     font-size: 2rem !important;
   }
-  
+
   .card-content {
     padding: 1.5rem;
   }
-  
+
   .icon-container {
     width: 56px;
     height: 56px;
@@ -368,7 +390,7 @@ const getDescription = (title) => {
   .dashboard-container {
     padding: 0.5rem;
   }
-  
+
   .card-content {
     padding: 1rem;
   }
