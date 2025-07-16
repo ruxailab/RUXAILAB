@@ -3,7 +3,6 @@
     <v-row justify="center">
       <v-col
         cols="12"
-        md="10"
       >
         <v-card
           class="rounded-xxl"
