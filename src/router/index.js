@@ -3,9 +3,10 @@ import Public from '@/router/modules/public.js'
 import Admin from '@/router/modules/admin.js'
 import SuperAdmin from '@/router/modules/superAdmin.js'
 import CardSorting from '@/router/modules/cardSorting'
+import accessibilityRoutes from '@/router/modules/accessibility';
 import store from '@/store'
 
-const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting]
+const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting, ...accessibilityRoutes]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
