@@ -114,7 +114,14 @@ export default [
                 component: () => import('@/views/admin/AccessibilitySettings.vue'),
                 props: true,
                 meta: { authorize: [1] }
-            }
+            },
+            {
+                path: '/config/:testId',
+                name: 'AccessibilityConfig',
+                component: () => import('@/views/admin/ManualAccessibility/AccessibilityConfig.vue'),
+                props: true,
+                meta: { authorize: [1] }
+            },
         ]
     },
 ];
