@@ -22,31 +22,12 @@
         <v-card class="form-card mb-6" elevation="8" rounded="xl">
           <v-card-text class="pa-8">
             <v-form @submit.prevent="runTest">
-              <v-text-field
-                v-model="url"
-                label="Website URL"
-                placeholder="https://example.com"
-                type="url"
-                required
-                :disabled="isLoading"
-                prepend-inner-icon="mdi-web"
-                append-inner-icon="mdi-link"
-                variant="outlined"
-                color="primary"
-                class="mb-4"
-                :rules="[rules.required, rules.url]"
-              />
+              <v-text-field v-model="url" label="Website URL" placeholder="https://example.com" type="url" required
+                :disabled="isLoading" prepend-inner-icon="mdi-web" append-inner-icon="mdi-link" variant="outlined"
+                color="primary" class="mb-4" :rules="[rules.required, rules.url]" />
 
-              <v-btn
-                type="submit"
-                :disabled="isLoading || !url.trim()"
-                :loading="isLoading"
-                color="primary"
-                size="large"
-                block
-                rounded="lg"
-                class="text-none"
-              >
+              <v-btn type="submit" :disabled="isLoading || !url.trim()" :loading="isLoading" color="primary"
+                size="large" block rounded="lg" class="text-none">
                 <template #prepend>
                   <v-icon v-if="!isLoading">mdi-play</v-icon>
                 </template>
@@ -57,20 +38,9 @@
         </v-card>
 
         <!-- Loading Section -->
-        <v-card
-          v-if="isLoading"
-          class="loading-card mb-6"
-          elevation="8"
-          rounded="xl"
-        >
+        <v-card v-if="isLoading" class="loading-card mb-6" elevation="8" rounded="xl">
           <v-card-text class="pa-8 text-center">
-            <v-progress-circular
-              indeterminate
-              size="64"
-              width="4"
-              color="primary"
-              class="mb-4"
-            />
+            <v-progress-circular indeterminate size="64" width="4" color="primary" class="mb-4" />
 
             <h3 class="loading-title mb-2">Analyzing Accessibility</h3>
             <p class="loading-text mb-6">
@@ -79,19 +49,11 @@
 
             <div class="loading-steps">
               <v-list class="bg-transparent">
-                <v-list-item
-                  v-for="(step, index) in steps"
-                  :key="index"
-                  :class="{ 'step-active': currentStep >= index + 1 }"
-                  class="step-item"
-                >
+                <v-list-item v-for="(step, index) in steps" :key="index"
+                  :class="{ 'step-active': currentStep >= index + 1 }" class="step-item">
                   <template #prepend>
-                    <v-icon
-                      :color="
-                        currentStep >= index + 1 ? 'success' : 'grey-lighten-1'
-                      "
-                      size="20"
-                    >
+                    <v-icon :color="currentStep >= index + 1 ? 'success' : 'grey-lighten-1'
+                      " size="20">
                       mdi-check-circle
                     </v-icon>
                   </template>
@@ -103,14 +65,7 @@
         </v-card>
 
         <!-- Error Section -->
-        <v-card
-          v-if="error"
-          class="error-card mb-6"
-          elevation="8"
-          rounded="xl"
-          color="error"
-          variant="tonal"
-        >
+        <v-card v-if="error" class="error-card mb-6" elevation="8" rounded="xl" color="error" variant="tonal">
           <v-card-text class="pa-8">
             <div class="error-header mb-4">
               <v-icon size="32" color="error" class="me-3">
@@ -130,11 +85,7 @@
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-list class="bg-transparent">
-                      <v-list-item
-                        v-for="solution in getSolutions()"
-                        :key="solution.type"
-                        class="pa-3"
-                      >
+                      <v-list-item v-for="solution in getSolutions()" :key="solution.type" class="pa-3">
                         <template #prepend>
                           <v-icon :color="solution.color" size="20">
                             {{ solution.icon }}
@@ -152,12 +103,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
 
-              <v-alert
-                type="info"
-                variant="tonal"
-                icon="mdi-lightbulb"
-                class="mb-4"
-              >
+              <v-alert type="info" variant="tonal" icon="mdi-lightbulb" class="mb-4">
                 <div class="font-weight-medium mb-2">Troubleshooting Tips:</div>
                 <ul class="ma-0 pa-0 ms-4">
                   <li>Make sure the website is publicly accessible</li>
@@ -169,12 +115,7 @@
             </div>
 
             <div class="error-actions">
-              <v-btn
-                @click="clearError"
-                variant="outlined"
-                color="error"
-                class="me-2"
-              >
+              <v-btn @click="clearError" variant="outlined" color="error" class="me-2">
                 <template #prepend>
                   <v-icon>mdi-close</v-icon>
                 </template>
@@ -242,12 +183,16 @@ export default {
 
         // Get the testId from route or store
         const testId = this.$route.params.testId || this.testId
-        //  process.env.ACCESSIBILITY_API
-        const response = await axios.post('http://localhost:3000/api/test', {
+
+        // Use env variable for API endpoint
+        const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API || process.env.ACCESSIBILITY_API || 'http://localhost:3000/api/test';
+        const response = await axios.post(apiUrl, {
           url: this.url,
           testId: testId,
         });
-
+        if (response) {
+          console.log("Done")
+        };
         // Redirect to the report page
         this.$router.push(`/answers/${testId}`)
       } catch (error) {
