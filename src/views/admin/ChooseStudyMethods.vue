@@ -125,7 +125,7 @@ const methodsByCategory = {
       description: '',
       icon: 'mdi-clipboard-check',
       color: 'secondary',
-      available: false
+      available: true
     },
     {
       id: 'AUTOMATIC',
@@ -133,7 +133,7 @@ const methodsByCategory = {
       description: '',
       icon: 'mdi-clipboard-check',
       color: 'secondary',
-      available: false
+      available: true
     },
     {
       id: 'AI',
