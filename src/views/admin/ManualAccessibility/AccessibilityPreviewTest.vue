@@ -735,8 +735,8 @@ const resetAssessment = () => {
   color: #222 !important;
 }
 
-.h-100 {
-  height: 100%;
+.fill-height {
+  height: 100vh;
 }
 
 .scrollable-content {
@@ -780,24 +780,6 @@ const resetAssessment = () => {
 }
 
 .note-image-preview {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-fill-height {
-  height: 100vh;
-}
-
-.scrollable-content {
-  overflow-y: auto;
-  max-height: 100vh;
-}
-
-.floating-save-btn {
-  z-index: 1000;
-}
-
-.note-image-preview {
   position: relative;
   display: inline-block;
 }
@@ -812,20 +794,5 @@ fill-height {
 
 .criteria-list {
   list-style-type: disc;
-}
-
-.criterion-pre {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-.add-note-tab {
-  min-width: 40px !important;
-}
-
-.active-principle {
-  background-color: rgba(25, 118, 210, 0.1);
 }
 </style>
