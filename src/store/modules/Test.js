@@ -32,6 +32,9 @@ export default {
     localCameraStream: null,
     peerConnection: null,
     isDisconnected: false,
+    studyCategory: null,
+    studyMethod: null,
+    studyType: null,
   },
   getters: {
     tests(state) {
@@ -150,6 +153,20 @@ export default {
     },
     SET_DISCONNECTED(state, status) {
       state.isDisconnected = status
+    },
+    SET_STUDY_CATEGORY(state, payload) {
+      state.studyCategory = payload
+    },
+    SET_STUDY_METHOD(state, payload) {
+      state.studyMethod = payload
+    },
+    SET_STUDY_TYPE(state, payload) {
+      state.studyType = payload
+    },
+    RESET_STUDY_DETAILS(state) {
+      state.studyCategory = null,
+      state.studyMethod = null,
+      state.studyType = null
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url
