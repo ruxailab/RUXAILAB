@@ -17,7 +17,6 @@ import Choose from '@/views/admin/Choose.vue'
 import Inspection from '@/views/admin/Inspection.vue'
 import Testing from '@/views/admin/Testing.vue'
 import Accessibility from '@/views/admin/Accessibility.vue'
-import Assessment from '@/views/admin/Assessment.vue'
 import AccessibilityManagerView from '@/views/admin/AccessibilityManagerView.vue'
 import AutomatedAccessibilityManager from '@/views/admin/AutomatedAccessibilityManager.vue'
 import AutomatedAccessibilityHome from '@/views/admin/AutomatedAccessibility/AutomatedAccessibilityHome.vue'
@@ -145,12 +144,6 @@ export default [
     name: 'accessibility',
     meta: { authorize: [1] },
     component: Accessibility,
-  },
-  {
-    path: '/assessment',
-    name: 'assessment',
-    meta: { authorize: [1] },
-    component: Assessment,
   },
   {
     path: '/fromtemplate',
