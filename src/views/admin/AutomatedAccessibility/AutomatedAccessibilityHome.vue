@@ -8,7 +8,7 @@
             <v-row align="center" no-gutters>
               <v-col cols="12" md="8">
                 <div class="welcome-content">
-                  <h1 class="display-1 font-weight-bold text-primary mb-3">
+                  <h1 class="display-main font-weight-bold text-primary mb-3">
                     Welcome Back!
                   </h1>
                   <h2
@@ -372,7 +372,7 @@ const getDescription = (title) => {
     padding: 1.5rem !important;
   }
 
-  .display-1 {
+  .display-main{
     font-size: 2rem !important;
   }
 
