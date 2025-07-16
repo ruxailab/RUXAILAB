@@ -1,7 +1,12 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-data-table height="420" style="background: #f5f7ff; border-radius: 20px;" :headers="headers" :items="allTasks"
-      :items-per-page="5">
+    <v-data-table
+      height="420"
+      style="background: #f5f7ff; border-radius: 20px;"
+      :headers="headers"
+      :items="allTasks"
+      :items-per-page="5"
+    >
       <!-- Table Header -->
       <template #top>
         <v-row class="ma-0">
@@ -11,10 +16,21 @@
             </p>
           </v-col>
           <v-col class="d-flex justify-end">
-            <v-btn variant="flat" rounded color="#f9a826" class="text-white" size="small" @click="dialog = true">
+            <v-btn
+              variant="flat"
+              rounded
+              color="#f9a826"
+              class="text-white"
+              size="small"
+              @click="dialog = true"
+            >
               Add new task
             </v-btn>
-            <FormDialog v-model:dialog="dialog" v-model:task="task" @add-task="addTask" />
+            <FormDialog
+              v-model:dialog="dialog"
+              v-model:task="task"
+              @add-task="addTask"
+            />
           </v-col>
         </v-row>
         <v-divider class="mb-4" />
@@ -63,10 +79,17 @@
       </template>
       <!-- Edit and Delete Icons -->
       <template #item.actions="{ item }">
-        <v-icon size="small" class="mr-2" @click="editItem(item)">
+        <v-icon
+          size="small"
+          class="mr-2"
+          @click="editItem(item)"
+        >
           mdi-pencil
         </v-icon>
-        <v-icon size="small" @click="deleteItem(item)">
+        <v-icon
+          size="small"
+          @click="deleteItem(item)"
+        >
           mdi-delete
         </v-icon>
       </template>

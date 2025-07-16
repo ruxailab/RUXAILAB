@@ -1,11 +1,17 @@
 <template>
   <div>
-    <v-col class="d-flex flex-column" style="min-height: 500px;">
+    <v-col
+      class="d-flex flex-column"
+      style="min-height: 500px;"
+    >
       <!-- Título no topo -->
       <h2>Final Report Content</h2>
 
       <!-- Lista de conteúdo do relatório -->
-      <ul class="mt-4" style="padding-left: 1.2rem; line-height: 1.6;">
+      <ul
+        class="mt-4"
+        style="padding-left: 1.2rem; line-height: 1.6;"
+      >
         <li>Test description</li>
         <li>Conclusion and final observations</li>
         <li>General test data and metadata</li>
@@ -16,19 +22,34 @@
         <li>Downloadable PDF document</li>
       </ul>
 
-      <div v-if="isLoading" class="mt-12">
+      <div
+        v-if="isLoading"
+        class="mt-12"
+      >
         <p>Generating Report PDF. This operation might take a few minutes. Don't close this tab.</p>
-        <v-progress-linear indeterminate></v-progress-linear>
+        <v-progress-linear indeterminate />
       </div>
 
       <!-- Espaço expansível entre o título e os botões -->
-      <div class="flex-grow-1"></div>
+      <div class="flex-grow-1" />
 
-      <v-row class="ma-0" justify="space-between" align-content="end">
-        <v-btn color="blue-grey-darken-3" elevation="0" @click="$emit('return-step')">
+      <v-row
+        class="ma-0"
+        justify="space-between"
+        align-content="end"
+      >
+        <v-btn
+          color="blue-grey-darken-3"
+          elevation="0"
+          @click="$emit('return-step')"
+        >
           {{ $t('buttons.previous') }}
         </v-btn>
-        <v-btn :disabled="isLoading" color="orange" @click="submitPdf">
+        <v-btn
+          :disabled="isLoading"
+          color="orange"
+          @click="submitPdf"
+        >
           <span v-if="!isLoading">{{ $t('pages.finalReport.pdf') }}</span>
           <span v-else>{{ $t('pages.finalReport.options.loading') }}</span>
         </v-btn>
