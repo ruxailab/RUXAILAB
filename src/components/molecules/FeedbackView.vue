@@ -1,33 +1,70 @@
 <template>
   <v-row>
-    <v-col class="mt-8" cols="6">
+    <v-col
+      class="mt-8"
+      cols="6"
+    >
       <template v-if="remoteCameraStream && remoteCameraStream.getTracks().length > 0">
-        <video ref="remoteMedia" class="video" muted autoplay playsinline />
+        <video
+          ref="remoteMedia"
+          class="video"
+          muted
+          autoplay
+          playsinline
+        />
       </template>
       <template v-else>
-        <v-card class="video d-flex align-center justify-center" style="padding-top: auto; padding-bottom: auto;">
-          <v-icon size="80">mdi-camera-off</v-icon>
+        <v-card
+          class="video d-flex align-center justify-center"
+          style="padding-top: auto; padding-bottom: auto;"
+        >
+          <v-icon size="80">
+            mdi-camera-off
+          </v-icon>
         </v-card>
       </template>
     </v-col>
-    <v-col class="mt-8" cols="4">
+    <v-col
+      class="mt-8"
+      cols="4"
+    >
       <template v-if="localCameraStream && localCameraStream.getTracks().length > 0">
-        <video ref="localMedia" class="video" muted autoplay playsinline />
+        <video
+          ref="localMedia"
+          class="video"
+          muted
+          autoplay
+          playsinline
+        />
       </template>
       <template v-else>
-        <v-card class="video d-flex align-center justify-center" style="padding-top: auto; padding-bottom: auto;">
-          <v-icon size="80">mdi-camera-off</v-icon>
+        <v-card
+          class="video d-flex align-center justify-center"
+          style="padding-top: auto; padding-bottom: auto;"
+        >
+          <v-icon size="80">
+            mdi-camera-off
+          </v-icon>
         </v-card>
       </template>
     </v-col>
     <v-col cols="12">
       <v-row justify="center">
-        <v-card class="pa-2 buttonCard" depressed>
+        <v-card
+          class="pa-2 buttonCard"
+          depressed
+        >
           <v-tooltip location="bottom">
             <template #activator="{ props }">
-              <v-btn v-if="localCameraStream" class="mx-3"
-                :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }" icon variant="flat" v-bind="props"
-                @click="toggleMicrophone">
+              <v-btn
+                v-if="localCameraStream"
+                class="mx-3"
+                :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
+                icon
+                variant="flat"
+                v-bind="props"
+                @click="toggleMicrophone"
+              >
                 <v-icon v-if="!isMicrophoneMuted">
                   mdi-microphone
                 </v-icon>
@@ -42,8 +79,14 @@
           </v-tooltip>
           <v-tooltip location="bottom">
             <template #activator="{ props }">
-              <v-btn class="mx-3" :class="{ red: isSharingScreen, white: !isSharingScreen }" variant="flat" icon
-                v-bind="props" @click="toggleCameraScreen">
+              <v-btn
+                class="mx-3"
+                :class="{ red: isSharingScreen, white: !isSharingScreen }"
+                variant="flat"
+                icon
+                v-bind="props"
+                @click="toggleCameraScreen"
+              >
                 <v-icon v-if="!isSharingScreen">
                   mdi-monitor-screenshot
                 </v-icon>
@@ -58,7 +101,13 @@
           </v-tooltip>
           <v-tooltip location="bottom">
             <template #activator="{ props }">
-              <v-btn class="mx-3 bg-white" variant="flat" icon v-bind="props" @click="redirect">
+              <v-btn
+                class="mx-3 bg-white"
+                variant="flat"
+                icon
+                v-bind="props"
+                @click="redirect"
+              >
                 <v-icon>
                   mdi-link
                 </v-icon>
