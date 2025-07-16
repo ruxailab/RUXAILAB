@@ -38,9 +38,9 @@ export default class AutomaticAccessibilityTest {
 
             const plainObj = {};
             for (const key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    plainObj[key] = toPlainObject(obj[key]);
-                }
+                 if (Object.hasOwn(obj, key)) {
+                   plainObj[key] = toPlainObject(obj[key])
+                 }
             }
             return plainObj;
         };
