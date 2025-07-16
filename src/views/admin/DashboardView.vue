@@ -207,11 +207,11 @@
         </div>
 
         <div v-if="activeSection === 'notifications'">
-          <!-- Notifications Placeholder -->
+           <NotificationPage />
         </div>
 
         <div v-if="activeSection === 'profile'">
-          <!-- Profile Placeholder -->
+           <ProfileView />
         </div>
 
         <TempDialog
@@ -231,6 +231,8 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/components/atoms/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
+import ProfileView from './ProfileView.vue';
+import NotificationPage from './NotificationPage.vue';
 
 const store = useStore();
 const router = useRouter();
