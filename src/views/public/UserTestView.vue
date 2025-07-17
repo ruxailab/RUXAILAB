@@ -1,10 +1,6 @@
 <template>
   <div v-if="test">
     <div>
-      <v-btn class="ma-4 flat bg-orange" @click="toggleTracking">
-        {{ isTracking ? 'Parar Tracking' : 'Iniciar Tracking' }}
-      </v-btn>
-
       <IrisTracker :is-running="isTracking" :ms-per-capture="300" @data="handleIrisData" />
     </div>
     <!-- Loading Overlay -->
@@ -102,47 +98,41 @@
 
           <v-list class="nav-list" density="compact" max-height="85%"
             style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
-            <div v-for="item in items" :key="item.id">
-              <!-- Pre Test -->
-              <v-list-group v-if="item.id === 0"
-                :class="{ 'disabled-group': localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted }"
-                :value="index === 0" @click="index = item.id">
-                <template #appendIcon>
-                  <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                    mdi-chevron-down
-                  </v-icon>
-                </template>
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props">
-                    <template #prepend>
-                      <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                        {{ localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted &&
-                          !localTestAnswer.submitted ? 'mdi-lock' : item.icon }}
-                      </v-icon>
-                    </template>
-                    <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-                      {{ item.title }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-                <v-tooltip v-for="(task, i) in item.value" :key="i" location="right">
-                  <template #activator="{ props }">
-                    <v-list-item v-bind="props" link :disabled="isPreTestTaskDisabled(i)"
-                      :class="{ 'disabled-group': isPreTestTaskDisabled(i) }" @click="taskIndex = i">
-                      <template #prepend>
-                        <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
-                          {{ isPreTestTaskDisabled(i) ? 'mdi-lock' : task.icon }}
-                        </v-icon>
-                      </template>
-                      <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </template>
-                  <span>{{ task.title }}</span>
-                </v-tooltip>
-              </v-list-group>
+            <v-list-item :disabled="false" @click="index = 0; taskIndex = 0">
+              <template #prepend>
+                <v-icon :color="index === 0 && taskIndex === 0 ? '#ffffff' : '#fca326'">
+                  {{ localTestAnswer.consentCompleted ? 'mdi-check' : 'mdi-file-document' }}
+                </v-icon>
+              </template>
+              <v-list-item-title :style="index === 0 && taskIndex === 0 ? 'color: white' : 'color:#fca326'">
+                Consent Form
+              </v-list-item-title>
+            </v-list-item>
 
+            <!-- Pre-Test Form -->
+            <v-list-item :disabled="!localTestAnswer.consentCompleted" @click="index = 0; taskIndex = 1">
+              <template #prepend>
+                <v-icon :color="index === 0 && taskIndex === 1 ? '#ffffff' : '#fca326'">
+                  {{ localTestAnswer.preTestCompleted ? 'mdi-check' : 'mdi-form-select' }}
+                </v-icon>
+              </template>
+              <v-list-item-title :style="index === 0 && taskIndex === 1 ? 'color: white' : 'color:#fca326'">
+                Pre-Test Form
+              </v-list-item-title>
+            </v-list-item>
+
+            <!-- Eye Tracking Calibration -->
+            <v-list-item :disabled="!localTestAnswer.preTestCompleted" @click="index = 0; taskIndex = 2">
+              <template #prepend>
+                <v-icon :color="index === 0 && taskIndex === 2 ? '#ffffff' : '#fca326'">
+                  {{ eyeCalibrationDone ? 'mdi-check' : 'mdi-crosshairs-gps' }}
+                </v-icon>
+              </template>
+              <v-list-item-title :style="index === 0 && taskIndex === 2 ? 'color: white' : 'color:#fca326'">
+                Eye Tracking Calibration
+              </v-list-item-title>
+            </v-list-item>
+            <div v-for="item in items" :key="item.id">
               <!-- Tasks -->
               <v-list-group v-if="item.id === 1"
                 :class="{ 'disabled-group': !localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted || (allTasksCompleted && !localTestAnswer.submitted) }"
@@ -211,11 +201,6 @@
 
         <!-- Right View -->
         <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
-
-          <!-- Start Calibration Card -->
-
-          <!-- <StartCalibrationCard @openCalibration="openCalibration()" v-if="index === 0 && taskIndex === 0" /> -->
-
           <!-- Consent -->
 
           <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
@@ -295,6 +280,14 @@
                   </v-btn>
                 </v-col>
               </v-row>
+            </template>
+          </ShowInfo>
+
+          <!-- Eye Tracking Calibration -->
+
+          <ShowInfo v-if="index === 0 && taskIndex === 2" :title="$t('UserTestView.titles.eyeTrackingCalibration')">
+            <template #content>
+              <StartCalibrationCard @openCalibration="openCalibration(), completeStep(taskIndex, 'eyeCalibration')" />
             </template>
           </ShowInfo>
 
@@ -570,6 +563,7 @@ const irisData = ref([])
 const gazeX = ref(null)
 const gazeY = ref(null)
 const showGaze = ref(true)
+const eyeCalibrationDone = ref(false)
 
 //  Eye tracking web gazer testing 
 
@@ -614,8 +608,7 @@ function toggleTracking() {
 }
 
 function handleIrisData(data) {
-  irisData.value.push(data)
-  // ou envie para Vuex ou qualquer outra coisa que precisar
+  localTestAnswer.tasks[taskIndex].irisTrackingData.push(data)
   console.log('Dados recebidos:', data)
 }
 
@@ -697,19 +690,22 @@ const completeStep = (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
       if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
         items.value[0].icon = 'mdi-check-circle-outline';
       }
     }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
       if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
         items.value[0].icon = 'mdi-check-circle-outline';
       }
+      index.value = 0;
+      taskIndex.value = 2;
+    }
+    if (type === 'eyeCalibration') {
       index.value = 1;
       taskIndex.value = 0;
+      eyeCalibrationDone.value = true;
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
@@ -717,7 +713,6 @@ const completeStep = (id, type, userCompleted = true) => {
         return;
       }
       localTestAnswer.tasks[id].completed = userCompleted;
-      items.value[1].value[id].icon = 'mdi-check-circle-outline';
       allTasksCompleted.value = true;
 
       for (let i = 0; i < items.value[1].value.length; i++) {
@@ -1002,6 +997,18 @@ watch(
   }
 );
 
+watch(() => taskIndex.value, async () => {
+  const task = test.testStructure.userTasks[taskIndex.value]
+
+  console.log('hasEye:', task?.hasEye);
+
+  if (task?.hasEye === true) {
+    toggleTracking(true);
+  } else {
+    toggleTracking(false);
+  }
+});
+
 onMounted(async () => {
   await mappingSteps();
   await nextTick();
@@ -1017,38 +1024,12 @@ onMounted(async () => {
     .catch(error => {
       console.log("Erro no eye-tracking API:", error);
     });
-
-  //  Eye tracking web gazer testing 
-
-  // if (window.webgazer) {
-  //   window.saveDataAcrossSessions = false
-
-  //   window.webgazer
-  //     .setGazeListener((data) => {
-  //       if (data) {
-  //         gazeX.value = data.x
-  //         gazeY.value = data.y
-  //       }
-  //     })
-  //     .begin()
-  //     .then(() => {
-  //       window.webgazer.showVideo(false)
-  //       window.webgazer.showFaceOverlay(false)
-  //       window.webgazer.showFaceFeedbackBox(false)
-  //       window.webgazer.showPredictionPoints(false)
-  //     })
-
-  //   //  Eye tracking web gazer testing s
-  // }
 });
 
 onBeforeUnmount(() => {
   if (videoRecorder.value && typeof videoRecorder.value.stopRecording === 'function') {
     videoRecorder.value.stopRecording();
   }
-  // if (window.webgazer) {
-  //   window.webgazer.end()
-  // }
 });
 </script>
 
