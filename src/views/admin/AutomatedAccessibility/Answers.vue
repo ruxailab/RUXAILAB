@@ -661,6 +661,23 @@ export default {
       return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
     },
   },
+    mounted() {
+    if (!this.testId) {
+      this.$store.commit(
+        'automaticReport/SET_ERROR',
+        'No testId provided in route.',
+      )
+      this.$store.commit('automaticReport/SET_LOADING', false)
+      return
+    }
+    this.fetchReport(this.testId).then(() => {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.renderModifiedHtml()
+        }, 100)
+      })
+    })
+  },
   methods: {
     ...mapActions('automaticReport', ['fetchReport']),
     formatDate(dateString) {
@@ -785,23 +802,7 @@ export default {
       }
     },
   },
-  mounted() {
-    if (!this.testId) {
-      this.$store.commit(
-        'automaticReport/SET_ERROR',
-        'No testId provided in route.',
-      )
-      this.$store.commit('automaticReport/SET_LOADING', false)
-      return
-    }
-    this.fetchReport(this.testId).then(() => {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.renderModifiedHtml()
-        }, 100)
-      })
-    })
-  },
+
 }
 </script>
 
