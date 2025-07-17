@@ -1,21 +1,15 @@
 <template>
   <v-app>
-    <v-main class="fill-height pa-0 ma-0">
-      <v-container fluid class="fill-height pa-0 ma-0">
-        <v-row no-gutters class="fill-height">
-          <!-- Drawer Component -->
-          <AccessibilityDrawer
-            ref="accessibilityDrawer"
-            :items="navItems"
-            v-model="drawerOpen"
-            @toggle="onDrawerToggle"
-          />
+    <AccessibilityDrawer
+      ref="accessibilityDrawer"
+      :items="navItems"
+      v-model="drawerOpen"
+      @toggle="onDrawerToggle"
+    />
 
-          <!-- Main Content - Remove padding and card wrapper for full width -->
-          <v-col class="pa-0 content-col" style="height: 100vh; overflow: hidden;">
-            <router-view />
-          </v-col>
-        </v-row>
+    <v-main>
+      <v-container fluid>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
