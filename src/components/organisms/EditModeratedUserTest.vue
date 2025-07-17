@@ -137,7 +137,7 @@
             </v-col>
           </v-card>
         </v-col>
-        
+
         <!-- Tasks -->
         <v-col
           v-if="index === 1"
@@ -145,7 +145,7 @@
         >
           <ModeratedTasks />
         </v-col>
-        
+
         <!-- Post Test -->
         <v-col
           v-if="index === 2"
@@ -329,10 +329,7 @@
               <span class="cardsTitle">{{ $t('ModeratedTest.postForm') }}</span>
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.postFormDescription') }}</span>
-              <FormPostTest
-                :class="{ 'mobile-post-form': !$vuetify.breakpoint.lgAndUp }"
-                @input="updateData"
-              />
+              <FormPostTest @input="updateData" />
             </v-col>
           </v-card>
 
@@ -392,8 +389,12 @@ const props = defineProps({
 
 const emit = defineEmits(['tabClicked']);
 
-const { lgAndUp } = useDisplay();
-const isDesktop = lgAndUp;
+const isDesktop = ref(window.innerWidth >= 1280);
+
+window.addEventListener('resize', () => {
+  isDesktop.value = window.innerWidth >= 1280;
+});
+
 
 const store = useStore();
 const { t } = useI18n();
@@ -509,6 +510,7 @@ onMounted(() => {
 .cards {
   border-radius: 20px;
 }
+
 .cardsTitle {
   color: #455a64;
   font-size: 18px;
@@ -516,6 +518,7 @@ onMounted(() => {
   font-weight: 600;
   line-height: normal;
 }
+
 .cardsSubtitle {
   color: #455a64;
   font-size: 15px;
@@ -523,6 +526,7 @@ onMounted(() => {
   font-weight: 400;
   line-height: normal;
 }
+
 .v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
@@ -532,9 +536,11 @@ onMounted(() => {
   .cards {
     margin-bottom: 16px;
   }
+
   .cardsTitle {
     font-size: 16px;
   }
+
   .cardsSubtitle {
     font-size: 14px;
   }
@@ -544,13 +550,16 @@ onMounted(() => {
   .cards {
     margin-bottom: 12px;
   }
+
   .cardsTitle {
     font-size: 15px;
   }
+
   .cardsSubtitle {
     font-size: 13px;
   }
 }
+
 .mobile-post-form :deep(.v-select__selections) {
   max-width: 100%;
   overflow: hidden;
@@ -571,7 +580,7 @@ onMounted(() => {
   .mobile-post-form :deep(.v-select__slot) {
     font-size: 14px;
   }
-  
+
   .mobile-post-form :deep(.v-select__selection) {
     max-width: calc(100% - 40px);
   }
