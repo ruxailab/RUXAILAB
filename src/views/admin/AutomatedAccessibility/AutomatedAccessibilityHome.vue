@@ -1,12 +1,25 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="dashboard-container">
+      <v-container
+        fluid
+        class="dashboard-container"
+      >
         <!-- Welcome Banner -->
-        <v-card class="welcome-banner mb-8" elevation="0" rounded="xl">
+        <v-card
+          class="welcome-banner mb-8"
+          elevation="0"
+          rounded="xl"
+        >
           <v-card-text class="pa-8">
-            <v-row align="center" no-gutters>
-              <v-col cols="12" md="8">
+            <v-row
+              align="center"
+              no-gutters
+            >
+              <v-col
+                cols="12"
+                md="8"
+              >
                 <div class="welcome-content">
                   <h1 class="display-main font-weight-bold text-primary mb-3">
                     Welcome Back!
@@ -22,9 +35,16 @@
                   </p>
                 </div>
               </v-col>
-              <v-col cols="12" md="4" class="text-center">
+              <v-col
+                cols="12"
+                md="4"
+                class="text-center"
+              >
                 <div class="welcome-icon-container">
-                  <v-icon size="100" class="welcome-icon">
+                  <v-icon
+                    size="100"
+                    class="welcome-icon"
+                  >
                     mdi-view-dashboard-variant
                   </v-icon>
                 </div>
@@ -57,8 +77,8 @@
               elevation="0"
               rounded="xl"
               hover
-              @click="navigateTo(item.title)"
               :style="{ 'animation-delay': `${index * 100}ms` }"
+              @click="navigateTo(item.title)"
             >
               <v-card-text class="card-content">
                 <div class="card-header mb-4">
@@ -66,7 +86,11 @@
                     class="icon-container"
                     :class="`icon-${item.title.toLowerCase()}`"
                   >
-                    <v-icon :size="32" class="card-icon" color="white">
+                    <v-icon
+                      :size="32"
+                      class="card-icon"
+                      color="white"
+                    >
                       {{ item.icon }}
                     </v-icon>
                   </div>
@@ -89,7 +113,12 @@
                     :ripple="false"
                   >
                     Open
-                    <v-icon size="16" class="ml-1">mdi-arrow-right</v-icon>
+                    <v-icon
+                      size="16"
+                      class="ml-1"
+                    >
+                      mdi-arrow-right
+                    </v-icon>
                   </v-btn>
                 </div>
               </v-card-text>

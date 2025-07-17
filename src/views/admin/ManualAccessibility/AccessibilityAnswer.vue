@@ -1,16 +1,29 @@
 <template>
-  <v-container fluid class="pa-6">
+  <v-container
+    fluid
+    class="pa-6"
+  >
     <v-row>
       <v-col cols="12">
         <v-card>
           <v-card-title class="d-flex justify-space-between align-center">
             <span>Accessibility Assessment Results</span>
             <div>
-              <v-btn color="primary" prepend-icon="mdi-download" @click="downloadAssessmentData" class="mr-2"
-                :loading="isLoading">
+              <v-btn
+                color="primary"
+                prepend-icon="mdi-download"
+                class="mr-2"
+                :loading="isLoading"
+                @click="downloadAssessmentData"
+              >
                 Export JSON
               </v-btn>
-              <v-btn color="secondary" @click="loadAssessmentData" :loading="isLoading" prepend-icon="mdi-refresh">
+              <v-btn
+                color="secondary"
+                :loading="isLoading"
+                prepend-icon="mdi-refresh"
+                @click="loadAssessmentData"
+              >
                 Refresh
               </v-btn>
             </div>
@@ -18,11 +31,20 @@
 
           <!-- Level Filter -->
           <v-card-subtitle class="pb-2">
-            <v-row align="center" class="ma-0">
-              <v-col cols="auto" class="pa-0">
+            <v-row
+              align="center"
+              class="ma-0"
+            >
+              <v-col
+                cols="auto"
+                class="pa-0"
+              >
                 <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
               </v-col>
-              <v-col cols="auto" class="pa-0 ml-3">
+              <v-col
+                cols="auto"
+                class="pa-0 ml-3"
+              >
                 <v-btn-toggle
                   v-model="selectedLevel"
                   mandatory
@@ -54,7 +76,10 @@
                   </v-btn>
                 </v-btn-toggle>
               </v-col>
-              <v-col cols="auto" class="pa-0 ml-3">
+              <v-col
+                cols="auto"
+                class="pa-0 ml-3"
+              >
                 <v-chip 
                   size="small" 
                   :color="getLevelChipColor(selectedLevel)"
@@ -67,14 +92,21 @@
           </v-card-subtitle>
 
           <!-- Tabs for Principles -->
-          <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
+          <v-tabs
+            v-model="activeTab"
+            grow
+            show-arrows
+            class="principle-tabs"
+          >
             <v-tab 
               v-for="(principle, index) in principles" 
               :key="index" 
               :value="index"
               :class="`principle-tab principle-${index}`"
             >
-              <v-icon start>{{ getPrincipleIcon(index) }}</v-icon>
+              <v-icon start>
+                {{ getPrincipleIcon(index) }}
+              </v-icon>
               {{ principle.title }}
               <v-chip 
                 size="x-small" 
@@ -89,23 +121,41 @@
 
           <v-card-text class="pa-0">
             <v-window v-model="activeTab">
-              <v-window-item v-for="(principle, pIndex) in principles" :key="pIndex" :value="pIndex">
-                <v-data-table :headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
-                  :loading="isLoading" class="elevation-1" height="65vh">
-                  <template v-slot:item.status="{ item }">
-                    <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
+              <v-window-item
+                v-for="(principle, pIndex) in principles"
+                :key="pIndex"
+                :value="pIndex"
+              >
+                <v-data-table
+                  :headers="headers"
+                  :items="getRulesForPrinciple(pIndex)"
+                  :items-per-page="10"
+                  :loading="isLoading"
+                  class="elevation-1"
+                  height="65vh"
+                >
+                  <template #item.status="{ item }">
+                    <v-chip
+                      :color="getStatusColor(item.status)"
+                      class="text-uppercase"
+                      size="small"
+                    >
                       {{ item.status || 'Not Set' }}
                     </v-chip>
                   </template>
 
-                  <template v-slot:item.severity="{ item }">
-                    <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
-                      variant="outlined">
+                  <template #item.severity="{ item }">
+                    <v-chip
+                      :color="getSeverityColor(item.severity)"
+                      class="text-uppercase"
+                      size="small"
+                      variant="outlined"
+                    >
                       {{ item.severity || 'Not Set' }}
                     </v-chip>
                   </template>
 
-                  <template v-slot:item.level="{ item }">
+                  <template #item.level="{ item }">
                     <v-chip 
                       :color="getLevelChipColor(item.level)" 
                       class="text-uppercase" 
@@ -116,11 +166,21 @@
                     </v-chip>
                   </template>
 
-                  <template v-slot:item.notes="{ item }">
-                    <v-btn v-if="item.notes && item.notes.length > 0" icon size="small" @click="openNotesDialog(item)">
-                      <v-icon size="small">mdi-note-text-outline</v-icon>
+                  <template #item.notes="{ item }">
+                    <v-btn
+                      v-if="item.notes && item.notes.length > 0"
+                      icon
+                      size="small"
+                      @click="openNotesDialog(item)"
+                    >
+                      <v-icon size="small">
+                        mdi-note-text-outline
+                      </v-icon>
                     </v-btn>
-                    <span v-else class="text-grey">-</span>
+                    <span
+                      v-else
+                      class="text-grey"
+                    >-</span>
                   </template>
                 </v-data-table>
               </v-window-item>
@@ -132,20 +192,34 @@
   </v-container>
 
   <!-- Notes Dialog -->
-  <v-dialog v-model="notesDialog.show" max-width="800px">
+  <v-dialog
+    v-model="notesDialog.show"
+    max-width="800px"
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
         <span>Notes for {{ notesDialog.ruleId }} -
           {{ notesDialog.ruleTitle }}</span>
-        <v-btn icon @click="notesDialog.show = false">
+        <v-btn
+          icon
+          @click="notesDialog.show = false"
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
       <v-card-text class="pt-4">
         <v-list>
-          <v-list-item v-for="(note, index) in notesDialog.notes" :key="index" class="mb-4">
-            <template v-slot:prepend>
-              <v-avatar color="primary" size="40" class="mr-4">
+          <v-list-item
+            v-for="(note, index) in notesDialog.notes"
+            :key="index"
+            class="mb-4"
+          >
+            <template #prepend>
+              <v-avatar
+                color="primary"
+                size="40"
+                class="mr-4"
+              >
                 <span class="text-white">{{ index + 1 }}</span>
               </v-avatar>
             </template>
@@ -155,10 +229,25 @@
             <v-list-item-subtitle class="text-body-1 mb-2">
               {{ note.text }}
             </v-list-item-subtitle>
-            <v-img v-if="note.imagePreview" :src="note.imagePreview" max-height="300" contain
-              class="mt-2 mb-2 rounded"></v-img>
-            <v-chip v-if="note.imageName" size="small" color="grey lighten-2" class="mt-2">
-              <v-icon size="small" class="mr-1">mdi-image</v-icon>
+            <v-img
+              v-if="note.imagePreview"
+              :src="note.imagePreview"
+              max-height="300"
+              contain
+              class="mt-2 mb-2 rounded"
+            />
+            <v-chip
+              v-if="note.imageName"
+              size="small"
+              color="grey-lighten-2"
+              class="mt-2"
+            >
+              <v-icon
+                size="small"
+                class="mr-1"
+              >
+                mdi-image
+              </v-icon>
               {{ note.imageName }}
             </v-chip>
           </v-list-item>
@@ -170,8 +259,13 @@
         </v-list>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="notesDialog.show = false">Close</v-btn>
+        <v-spacer />
+        <v-btn
+          color="primary"
+          @click="notesDialog.show = false"
+        >
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

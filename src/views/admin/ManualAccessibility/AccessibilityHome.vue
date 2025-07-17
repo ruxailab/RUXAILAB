@@ -1,9 +1,15 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="dashboard-container">
+      <v-container
+        fluid
+        class="dashboard-container"
+      >
         <!-- Dashboard Cards -->
-        <v-row class="dashboard-grid" no-gutters>
+        <v-row
+          class="dashboard-grid"
+          no-gutters
+        >
           <v-col
             v-for="(card, index) in cards"
             :key="index"
@@ -19,8 +25,8 @@
               elevation="2"
               rounded="xl"
               hover
-              @click="$router.push(card.route)"
               :style="{ 'animation-delay': `${index * 100}ms` }"
+              @click="$router.push(card.route)"
             >
               <v-card-text class="card-content">
                 <div class="card-header mb-3">
@@ -58,7 +64,12 @@
                     :ripple="false"
                   >
                     Open
-                    <v-icon size="14" class="ml-1">mdi-arrow-right</v-icon>
+                    <v-icon
+                      size="14"
+                      class="ml-1"
+                    >
+                      mdi-arrow-right
+                    </v-icon>
                   </v-btn>
                 </div>
               </v-card-text>

@@ -1,51 +1,84 @@
 <template>
-    <v-navigation-drawer :rail="mini" permanent color="#3F3D56" class="hidden-sm-and-down pt-3">
-        <!-- nav header -->
-        <v-list-item v-if="!mini" class="mb-2 mt-15" bg-color="#343344">
-            <v-list-item-title>Accessibility Manager</v-list-item-title>
+  <v-navigation-drawer
+    :rail="mini"
+    permanent
+    color="#3F3D56"
+    class="hidden-sm-and-down pt-3"
+  >
+    <!-- nav header -->
+    <v-list-item
+      v-if="!mini"
+      class="mb-2 mt-15"
+      bg-color="#343344"
+    >
+      <v-list-item-title>Accessibility Manager</v-list-item-title>
+    </v-list-item>
+    <v-divider v-if="!mini" />
+    <!-- Navigation options -->
+    <v-list
+      v-if="items"
+      density="compact"
+      :class="{ 'mt-15': mini }"
+    >
+      <div v-if="mini">
+        <v-tooltip
+          v-for="(item, n) in items"
+          :key="n"
+          location="right"
+        >
+          <template #activator="{ props: tooltipProps }">
+            <v-list-item
+              v-bind="tooltipProps"
+              @click="go(item)"
+            >
+              <template #prepend>
+                <v-icon :color="isActive(item.path) ? '#fca326' : '#bababa'">
+                  {{ item.icon }}
+                </v-icon>
+              </template>
+              <v-list-item-title :style="isActive(item.path) ? 'color: #fca326' : 'color:#bababa'">
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+          <span>{{ item.title }}</span>
+        </v-tooltip>
+      </div>
+
+      <div v-else>
+        <v-list-item
+          v-for="(item, n) in items"
+          :key="n"
+          @click="go(item)"
+        >
+          <template #prepend>
+            <v-icon :color="isActive(item.path) ? '#fca326' : '#bababa'">
+              {{ item.icon }}
+            </v-icon>
+          </template>
+          <v-list-item-title :style="isActive(item.path) ? 'color: #fca326' : 'color:#bababa'">
+            {{ item.title }}
+          </v-list-item-title>
         </v-list-item>
-        <v-divider v-if="!mini"></v-divider>
-        <!-- Navigation options -->
-        <v-list v-if="items" density="compact" :class="{ 'mt-15': mini }">
-            <div v-if="mini">
-                <v-tooltip v-for="(item, n) in items" :key="n" location="right">
-                    <template #activator="{ props: tooltipProps }">
-                        <v-list-item v-bind="tooltipProps" @click="go(item)">
-                            <template #prepend>
-                                <v-icon :color="isActive(item.path) ? '#fca326' : '#bababa'">
-                                    {{ item.icon }}
-                                </v-icon>
-                            </template>
-                            <v-list-item-title :style="isActive(item.path) ? 'color: #fca326' : 'color:#bababa'">
-                                {{ item.title }}
-                            </v-list-item-title>
-                        </v-list-item>
-                    </template>
-                    <span>{{ item.title }}</span>
-                </v-tooltip>
-            </div>
+      </div>
+    </v-list>
 
-            <div v-else>
-                <v-list-item v-for="(item, n) in items" :key="n" @click="go(item)">
-                    <template #prepend>
-                        <v-icon :color="isActive(item.path) ? '#fca326' : '#bababa'">
-                            {{ item.icon }}
-                        </v-icon>
-                    </template>
-                    <v-list-item-title :style="isActive(item.path) ? 'color: #fca326' : 'color:#bababa'">
-                        {{ item.title }}
-                    </v-list-item-title>
-                </v-list-item>
-            </div>
-        </v-list>
-
-        <!-- Navigation footer -->
-        <div class="footer">
-            <v-btn variant="flat" size="small" icon class="toggle-button" @click.stop="toggleMini">
-                <v-icon size="large" :icon="mini ? 'mdi-chevron-right' : 'mdi-chevron-left'" />
-            </v-btn>
-        </div>
-    </v-navigation-drawer>
+    <!-- Navigation footer -->
+    <div class="footer">
+      <v-btn
+        variant="flat"
+        size="small"
+        icon
+        class="toggle-button"
+        @click.stop="toggleMini"
+      >
+        <v-icon
+          size="large"
+          :icon="mini ? 'mdi-chevron-right' : 'mdi-chevron-left'"
+        />
+      </v-btn>
+    </div>
+  </v-navigation-drawer>
 </template>
 
 <script setup>
