@@ -55,7 +55,7 @@
                         </div>
                         
                         <div class="mb-2">
-                          <div class="text-subtitle-1 font-weight-bold mb-1">
+                          <div class="text-subtitle-1 font-weight-bold mb-1 text-black">
                             {{ level.title }}
                           </div>
                           <p class="text-body-2 text-medium-emphasis mb-2 description-text">
@@ -86,7 +86,7 @@
                   <v-icon size="20">mdi-information</v-icon>
                 </template>
                 <div>
-                  <div class="font-weight-bold mb-1">
+                  <div class="font-weight-bold mb-1 text-black">
                     Selected: WCAG {{ selectedLevel.value }} - {{ selectedLevel.title }}
                   </div>
                   <div class="text-body-2">
@@ -152,7 +152,7 @@ const complianceLevels = [
     title: 'Minimum',
     description: 'Basic accessibility features that are essential for any website. Includes fundamental requirements for keyboard navigation, alternative text, and basic structure.',
     color: 'blue',
-    textColor: 'white',
+    textColor: 'Black',
     ruleCount: 25
   },
   {
@@ -160,7 +160,7 @@ const complianceLevels = [
     title: 'Standard',
     description: 'Standard level that most organizations should aim for. Includes color contrast, text resizing, and enhanced keyboard support requirements.',
     color: 'orange',
-    textColor: 'white',
+    textColor: 'Black',
     ruleCount: 50
   },
   {
@@ -168,7 +168,7 @@ const complianceLevels = [
     title: 'Enhanced',
     description: 'Highest level of accessibility for specialized applications. Includes stringent color contrast, comprehensive keyboard support, and advanced user control features.',
     color: 'green',
-    textColor: 'white',
+    textColor: 'black',
     ruleCount: 78
   }
 ]
@@ -302,10 +302,6 @@ onMounted(() => {
 }
 
 /* Ensure good contrast for selected cards */
-.selected-level .v-chip {
-  color: white !important;
-  background-color: currentColor !important;
-}
 
 .selected-level .text-subtitle-1,
 .selected-level .text-body-2,
