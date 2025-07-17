@@ -1,14 +1,17 @@
 <template>
-  <v-container fluid class="pa-1">
+  <v-container
+    fluid
+    class="pa-1"
+  >
     <!-- Loading State -->
     <v-skeleton-loader
       v-if="isLoading"
       type="article, table-heading, table-tbody"
       class="mx-auto"
-    ></v-skeleton-loader>
+    />
 
     <!-- Error State -->
-     <!-- if the data not available  -->
+    <!-- if the data not available  -->
     
     <v-alert
       v-else-if="error"
@@ -19,12 +22,12 @@
     >
       <div class="d-flex flex-column align-center justify-center">
         <v-icon 
-        color="info" 
-        size="48" 
-        class="mb-2"
+          color="info" 
+          size="48" 
+          class="mb-2"
         >
-        mdi-info-circle
-      </v-icon>
+          mdi-info-circle
+        </v-icon>
         <span class="text-h6 font-weight-bold mb-1">Infomation</span>
         <span class="text-body-1">No Assessment Available for this Test</span>
       </div>
@@ -33,19 +36,29 @@
     <!-- Main Report Content -->
     <div v-else-if="report">
       <!-- Report Header -->
-      <v-card class="mb-2" density="compact">
+      <v-card
+        class="mb-2"
+        density="compact"
+      >
         <v-card-title class="text-body-1 py-2">
           <v-icon
             icon="mdi-web-check"
             class="me-2"
             color="primary"
             size="20"
-          ></v-icon>
+          />
           Accessibility Report
         </v-card-title>
         <v-card-text class="py-1">
-          <v-row class="ma-0" dense>
-            <v-col cols="12" md="6" class="py-0">
+          <v-row
+            class="ma-0"
+            dense
+          >
+            <v-col
+              cols="12"
+              md="6"
+              class="py-0"
+            >
               <v-chip
                 prepend-icon="mdi-link"
                 variant="outlined"
@@ -56,7 +69,11 @@
                 {{ report.ReportUrl }}
               </v-chip>
             </v-col>
-            <v-col cols="12" md="6" class="py-0">
+            <v-col
+              cols="12"
+              md="6"
+              class="py-0"
+            >
               <v-chip
                 prepend-icon="mdi-calendar"
                 variant="outlined"
@@ -87,7 +104,11 @@
             :value="index"
             class="text-none px-2"
           >
-            <v-icon :icon="getTabIcon(index)" class="me-1" size="16"></v-icon>
+            <v-icon
+              :icon="getTabIcon(index)"
+              class="me-1"
+              size="16"
+            />
             {{ tab }}
           </v-tab>
         </v-tabs>
@@ -95,10 +116,20 @@
         <v-window v-model="currentTab">
           <!-- Summary & Issues Tab -->
           <v-window-item :value="0">
-            <v-container fluid class="pa-1">
+            <v-container
+              fluid
+              class="pa-1"
+            >
               <!-- Summary Cards -->
-              <v-row class="mb-2" dense>
-                <v-col cols="12" sm="4" class="py-0">
+              <v-row
+                class="mb-2"
+                dense
+              >
+                <v-col
+                  cols="12"
+                  sm="4"
+                  class="py-0"
+                >
                   <v-card
                     :color="
                       getIssueCounts().errors > 0 ? 'error' : 'grey-lighten-3'
@@ -115,11 +146,17 @@
                       >
                         {{ getIssueCounts().errors }}
                       </div>
-                      <div class="text-caption">Errors</div>
+                      <div class="text-caption">
+                        Errors
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col cols="12" sm="4" class="py-0">
+                <v-col
+                  cols="12"
+                  sm="4"
+                  class="py-0"
+                >
                   <v-card
                     :color="
                       getIssueCounts().warnings > 0
@@ -138,11 +175,17 @@
                       >
                         {{ getIssueCounts().warnings }}
                       </div>
-                      <div class="text-caption">Warnings</div>
+                      <div class="text-caption">
+                        Warnings
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col cols="12" sm="4" class="py-0">
+                <v-col
+                  cols="12"
+                  sm="4"
+                  class="py-0"
+                >
                   <v-card
                     :color="
                       getIssueCounts().notices > 0 ? 'info' : 'grey-lighten-3'
@@ -159,7 +202,9 @@
                       >
                         {{ getIssueCounts().notices }}
                       </div>
-                      <div class="text-caption">Notices</div>
+                      <div class="text-caption">
+                        Notices
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -172,7 +217,7 @@
                     icon="mdi-alert-circle"
                     class="me-1"
                     size="18"
-                  ></v-icon>
+                  />
                   Issues
                 </v-card-title>
                 <v-card-text class="py-1 px-2">
@@ -183,11 +228,11 @@
                       :active="
                         selectedIssue === (page - 1) * itemsPerPage + index
                       "
-                      @click="selectIssue((page - 1) * itemsPerPage + index)"
                       class="mb-1 py-1 px-1"
                       style="min-height: 36px"
+                      @click="selectIssue((page - 1) * itemsPerPage + index)"
                     >
-                      <template v-slot:prepend>
+                      <template #prepend>
                         <v-avatar
                           :color="getIssueColor(issue.type)"
                           size="x-small"
@@ -203,7 +248,11 @@
                         >
                           {{ issue.type }}
                         </v-chip>
-                        <v-chip variant="outlined" size="x-small" class="me-1">
+                        <v-chip
+                          variant="outlined"
+                          size="x-small"
+                          class="me-1"
+                        >
                           {{ issue.code }}
                         </v-chip>
                       </v-list-item-title>
@@ -228,7 +277,10 @@
           <!-- Issues & Preview Tab -->
           <v-window-item :value="1">
             <v-row no-gutters>
-              <v-col cols="12" md="5">
+              <v-col
+                cols="12"
+                md="5"
+              >
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
@@ -239,7 +291,7 @@
                       icon="mdi-alert-circle"
                       class="me-1"
                       size="18"
-                    ></v-icon>
+                    />
                     Issues
                   </v-card-title>
                   <v-card-text
@@ -251,12 +303,12 @@
                         v-for="(issue, index) in infiniteIssues"
                         :key="index"
                         :active="selectedIssue === index"
-                        @click="selectIssue(index)"
                         class="mb-1 py-1 px-1"
                         style="min-height: 36px"
                         rounded
+                        @click="selectIssue(index)"
                       >
-                        <template v-slot:prepend>
+                        <template #prepend>
                           <v-avatar
                             :color="getIssueColor(issue.type)"
                             size="x-small"
@@ -288,7 +340,7 @@
                     <div
                       v-if="
                         infiniteIssues.length <
-                        (report?.ReportIssues?.length || 0)
+                          (report?.ReportIssues?.length || 0)
                       "
                       class="text-center py-2 text-caption grey-text"
                     >
@@ -298,14 +350,21 @@
                 </v-card>
               </v-col>
 
-              <v-col cols="12" md="7">
+              <v-col
+                cols="12"
+                md="7"
+              >
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
                   density="compact"
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon icon="mdi-web" class="me-1" size="18"></v-icon>
+                    <v-icon
+                      icon="mdi-web"
+                      class="me-1"
+                      size="18"
+                    />
                     Webpage Preview
                   </v-card-title>
                   <v-card-text
@@ -325,7 +384,7 @@
                         border-radius: 4px;
                         min-height: 320px;
                       "
-                    ></iframe>
+                    />
                   </v-card-text>
                   <v-card-text v-else>
                     <v-alert
@@ -333,7 +392,7 @@
                       variant="tonal"
                       class="pa-2 text-caption"
                       text="No modified HTML content available."
-                    ></v-alert>
+                    />
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -343,7 +402,10 @@
           <!-- Issues & Details Tab -->
           <v-window-item :value="2">
             <v-row no-gutters>
-              <v-col cols="12" md="5">
+              <v-col
+                cols="12"
+                md="5"
+              >
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
@@ -354,7 +416,7 @@
                       icon="mdi-alert-circle"
                       class="me-1"
                       size="18"
-                    ></v-icon>
+                    />
                     Issues
                   </v-card-title>
                   <v-card-text
@@ -367,12 +429,12 @@
                         v-for="(issue, index) in infiniteIssues"
                         :key="index"
                         :active="selectedIssue === index"
-                        @click="selectIssue(index)"
                         class="mb-1 py-1 px-1"
                         style="min-height: 36px"
                         rounded
+                        @click="selectIssue(index)"
                       >
-                        <template v-slot:prepend>
+                        <template #prepend>
                           <v-avatar
                             :color="getIssueColor(issue.type)"
                             size="x-small"
@@ -404,7 +466,7 @@
                     <div
                       v-if="
                         infiniteIssues.length <
-                        (report?.ReportIssues?.length || 0)
+                          (report?.ReportIssues?.length || 0)
                       "
                       class="text-center py-2 text-caption grey-text"
                     >
@@ -414,7 +476,10 @@
                 </v-card>
               </v-col>
 
-              <v-col cols="12" md="7">
+              <v-col
+                cols="12"
+                md="7"
+              >
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
@@ -425,7 +490,7 @@
                       icon="mdi-information"
                       class="me-1"
                       size="18"
-                    ></v-icon>
+                    />
                     Issue Details
                   </v-card-title>
                   <v-card-text class="flex-grow-1 overflow-y-auto py-1 px-2">
@@ -434,8 +499,9 @@
                         <v-list-item>
                           <v-list-item-title
                             class="text-caption font-weight-bold"
-                            >Type</v-list-item-title
                           >
+                            Type
+                          </v-list-item-title>
                           <v-list-item-subtitle>
                             <v-chip
                               :color="
@@ -452,22 +518,23 @@
                         <v-list-item>
                           <v-list-item-title
                             class="text-caption font-weight-bold"
-                            >Code</v-list-item-title
                           >
+                            Code
+                          </v-list-item-title>
                           <v-list-item-subtitle>
                             <code
                               class="bg-grey-lighten-4 pa-1 rounded text-caption"
-                              >{{
-                                report.ReportIssues[selectedIssue].code
-                              }}</code
-                            >
+                            >{{
+                              report.ReportIssues[selectedIssue].code
+                            }}</code>
                           </v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item>
                           <v-list-item-title
                             class="text-caption font-weight-bold"
-                            >Message</v-list-item-title
                           >
+                            Message
+                          </v-list-item-title>
                           <v-list-item-subtitle class="mt-1 text-caption">
                             {{ report.ReportIssues[selectedIssue].message }}
                           </v-list-item-subtitle>
@@ -475,19 +542,21 @@
                         <v-list-item>
                           <v-list-item-title
                             class="text-caption font-weight-bold"
-                            >Context</v-list-item-title
                           >
+                            Context
+                          </v-list-item-title>
                           <v-list-item-subtitle class="mt-1">
                             <v-sheet
                               color="grey-lighten-5"
                               class="pa-1 rounded"
                             >
-                              <pre class="text-caption" style="font-size: 11px"
-                                >{{
+                              <pre
+                                class="text-caption"
+                                style="font-size: 11px"
+                              >{{
                                   report.ReportIssues[selectedIssue].context
                                 }}
-                    </pre
-                              >
+                    </pre>
                             </v-sheet>
                           </v-list-item-subtitle>
                         </v-list-item>
@@ -496,15 +565,15 @@
                         >
                           <v-list-item-title
                             class="text-caption font-weight-bold"
-                            >Selector</v-list-item-title
                           >
+                            Selector
+                          </v-list-item-title>
                           <v-list-item-subtitle>
                             <code
                               class="bg-grey-lighten-4 pa-1 rounded text-caption"
-                              >{{
-                                report.ReportIssues[selectedIssue].selector
-                              }}</code
-                            >
+                            >{{
+                              report.ReportIssues[selectedIssue].selector
+                            }}</code>
                           </v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item
@@ -512,8 +581,9 @@
                         >
                           <v-list-item-title
                             class="text-caption font-weight-bold"
-                            >WCAG Reference</v-list-item-title
                           >
+                            WCAG Reference
+                          </v-list-item-title>
                           <v-list-item-subtitle>
                             <v-btn
                               :href="
@@ -537,7 +607,7 @@
                       variant="tonal"
                       class="pa-2 text-caption"
                       text="Select an issue from the list to view details"
-                    ></v-alert>
+                    />
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -547,7 +617,11 @@
       </v-card>
     </div>
     <div v-else>
-      <v-alert type="info" variant="tonal" class="mb-2 text-body-2 pa-2">
+      <v-alert
+        type="info"
+        variant="tonal"
+        class="mb-2 text-body-2 pa-2"
+      >
         No report data available.
       </v-alert>
     </div>

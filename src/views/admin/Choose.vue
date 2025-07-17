@@ -1,8 +1,14 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="1" :steps="steps" />
+      <StepperHeader
+        :current-step="1"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -11,7 +17,10 @@
       />
 
       <!-- Categories Grid -->
-      <v-row justify="center" class="mb-8">
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
         <v-col
           v-for="category in categories"
           :key="category.id"
@@ -49,7 +58,10 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton label="Back to Dashboard" @back="goBack" />
+      <BackButton
+        label="Back to Dashboard"
+        @back="goBack"
+      />
     </v-container>
   </v-container>
 </template>

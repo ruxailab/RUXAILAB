@@ -1,10 +1,23 @@
 <template>
   <div>
-    <v-dialog :model-value="isOpen" fullscreen persistent transition="dialog-bottom-transition"
-      @update:model-value="$emit('update:isOpen', $event)">
+    <v-dialog
+      :model-value="isOpen"
+      fullscreen
+      persistent
+      transition="dialog-bottom-transition"
+      @update:model-value="$emit('update:isOpen', $event)"
+    >
       <v-card color="#f9f5f0">
-        <v-row align="center" justify="center" class="cardRow ma-0 pa-0">
-          <v-col md="8" lg="9" class="mx-auto pl-6">
+        <v-row
+          align="center"
+          justify="center"
+          class="cardRow ma-0 pa-0"
+        >
+          <v-col
+            md="8"
+            lg="9"
+            class="mx-auto pl-6"
+          >
             <p class="titles ml-5">
               {{ heading }}
             </p>
@@ -15,28 +28,75 @@
           <ButtonBack @click="$emit('close')" />
         </v-row>
 
-        <v-row align="center" justify="center" class="cardRow ma-0 pa-0">
-          <v-col class="ml-auto mr-auto" sm="10" md="8" lg="4">
-            <v-card color="white" class="pb-5" style="border-radius: 20px !important">
-              <v-col cols="11" class="ml-6">
+        <v-row
+          align="center"
+          justify="center"
+          class="cardRow ma-0 pa-0"
+        >
+          <v-col
+            class="ml-auto mr-auto"
+            sm="10"
+            md="8"
+            lg="4"
+          >
+            <v-card
+              color="white"
+              class="pb-5"
+              style="border-radius: 20px !important"
+            >
+              <v-col
+                cols="11"
+                class="ml-6"
+              >
                 <p class="cardInternTitles mt-4">
                   {{ testName }}
                 </p>
-                <v-text-field v-model="test.title" class="mt-3" :label="testName" variant="outlined" color="orange"
-                  @change="store.commit('SET_LOCAL_CHANGES', true)" />
+                <v-text-field
+                  v-model="test.title"
+                  class="mt-3"
+                  :label="testName"
+                  variant="outlined"
+                  color="orange"
+                  @change="store.commit('SET_LOCAL_CHANGES', true)"
+                />
 
                 <p class="cardInternTitles">
                   {{ testDescription }}
                 </p>
-                <v-textarea v-model="test.description" variant="outlined" color="orange" class="mt-3"
-                  :label="testDescription" @change="store.commit('SET_LOCAL_CHANGES', true)" />
+                <v-textarea
+                  v-model="test.description"
+                  variant="outlined"
+                  color="orange"
+                  class="mt-3"
+                  :label="testDescription"
+                  @change="store.commit('SET_LOCAL_CHANGES', true)"
+                />
 
-                <v-row class="d-flex align-center" no-gutters>
-                  <v-col cols="9" class="d-flex align-center">
-                    <v-checkbox v-model="test.isPublic" class="ml-2" color="orange" :label="testLabel" />
+                <v-row
+                  class="d-flex align-center"
+                  no-gutters
+                >
+                  <v-col
+                    cols="9"
+                    class="d-flex align-center"
+                  >
+                    <v-checkbox
+                      v-model="test.isPublic"
+                      class="ml-2"
+                      color="orange"
+                      :label="testLabel"
+                    />
                   </v-col>
-                  <v-col cols="3" class="d-flex justify-end">
-                    <v-btn color="orange" variant="flat" class="mr-2 circleOrange" @click="validate">
+                  <v-col
+                    cols="3"
+                    class="d-flex justify-end"
+                  >
+                    <v-btn
+                      color="orange"
+                      variant="flat"
+                      class="mr-2 circleOrange"
+                      @click="validate"
+                    >
                       <v-icon size="x-large">
                         mdi-arrow-right
                       </v-icon>
@@ -47,14 +107,26 @@
             </v-card>
           </v-col>
 
-          <v-col v-if="!isMobile" cols="5" class="imageColumn">
-            <img height="500" src="../../../public/createSVG.svg" alt="Test Creation ">
+          <v-col
+            v-if="!isMobile"
+            cols="5"
+            class="imageColumn"
+          >
+            <img
+              height="500"
+              src="../../../public/createSVG.svg"
+              alt="Test Creation "
+            >
           </v-col>
         </v-row>
       </v-card>
     </v-dialog>
 
-    <CreateTestUserDialog :is-open="userDialog" @set-user="handleSetUser($event)" @close="userDialog = false" />
+    <CreateTestUserDialog
+      :is-open="userDialog"
+      @set-user="handleSetUser($event)"
+      @close="userDialog = false"
+    />
   </div>
 </template>
 

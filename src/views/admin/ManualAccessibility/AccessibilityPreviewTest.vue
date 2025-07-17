@@ -9,8 +9,10 @@
         indeterminate
         size="64"
         color="primary"
-      ></v-progress-circular>
-      <div class="mt-4 text-h6">Loading WCAG Data...</div>
+      />
+      <div class="mt-4 text-h6">
+        Loading WCAG Data...
+      </div>
     </v-overlay>
 
     <v-alert
@@ -24,30 +26,42 @@
     </v-alert>
 
     <!-- Full width container without padding -->
-    <v-container fluid class="pa-0 ma-0 fill-height">
-      <v-row no-gutters class="fill-height">
+    <v-container
+      fluid
+      class="pa-0 ma-0 fill-height"
+    >
+      <v-row
+        no-gutters
+        class="fill-height"
+      >
         <!-- Left Sidebar Navigation - Reduced width -->
         <div class="v-col v-col-2 sidebar fill-height">
-          <div class="h-100" style="background-color: #f5f5f5">
+          <div
+            class="h-100"
+            style="background-color: #f5f5f5"
+          >
             <div class="text-subtitle-1 pa-3 font-weight-bold">
               WCAG Principles
             </div>
 
-            <div v-if="principles.length > 0" class="pa-0">
+            <div
+              v-if="principles.length > 0"
+              class="pa-0"
+            >
               <div
                 v-for="(principle, pIdx) in principles"
                 :key="principle.id || pIdx"
               >
                 <div
-                  @click="selectPrinciple(pIdx)"
                   :class="{ 'active-principle': selectedPrincipleIdx === pIdx }"
                   class="d-flex align-center justify-space-between pa-2 text-body-2 principle-item"
+                  @click="selectPrinciple(pIdx)"
                 >
                   <div class="d-flex align-center">
-                    <i class="mdi mdi-circle-medium mr-1"></i>
+                    <i class="mdi mdi-circle-medium mr-1" />
                     <span>{{ principle?.title || 'Untitled Principle' }}</span>
                   </div>
-                  <i class="mdi mdi-chevron-down chevron-icon"></i>
+                  <i class="mdi mdi-chevron-down chevron-icon" />
                 </div>
 
                 <div
@@ -57,15 +71,15 @@
                   <div
                     v-for="(guideline, gIdx) in principle?.Guidelines || []"
                     :key="guideline?.id || gIdx"
-                    @click="selectGuideline(gIdx, pIdx)"
                     :class="{
                       'active-guideline':
                         selectedGuidelineIdx === gIdx &&
                         selectedPrincipleIdx === pIdx,
                     }"
                     class="d-flex align-center ml-3 pa-2 text-caption guideline-item"
+                    @click="selectGuideline(gIdx, pIdx)"
                   >
-                    <i class="mdi mdi-circle-outline mr-3"></i>
+                    <i class="mdi mdi-circle-outline mr-3" />
                     <span>{{
                       (guideline?.id || '') + ' ' + (guideline?.title || '')
                     }}</span>
@@ -74,7 +88,10 @@
               </div>
             </div>
 
-            <div v-else class="pa-4">
+            <div
+              v-else
+              class="pa-4"
+            >
               <div class="text-grey text-body-2">
                 {{ isLoading ? 'Loading...' : 'No principles available' }}
               </div>
@@ -82,11 +99,14 @@
           </div>
         </div>
         <!-- Main Content Area - Optimized for laptop -->
-        <v-col cols="7" class="main-content fill-height">
+        <v-col
+          cols="7"
+          class="main-content fill-height"
+        >
           <v-card
+            v-if="currentRule.title"
             flat
             class="h-100 pa-4 scrollable-content"
-            v-if="currentRule.title"
           >
             <!-- Compact Breadcrumb -->
             <v-breadcrumbs
@@ -95,7 +115,10 @@
               density="compact"
             >
               <template #divider>
-                <v-icon icon="mdi-chevron-right" size="small" />
+                <v-icon
+                  icon="mdi-chevron-right"
+                  size="small"
+                />
               </template>
             </v-breadcrumbs>
 
@@ -138,16 +161,26 @@
             </div>
 
             <!-- Compact Guideline Box -->
-            <v-alert variant="tonal" color="info" class="mb-4 pa-3">
+            <v-alert
+              variant="tonal"
+              color="info"
+              class="mb-4 pa-3"
+            >
               <div class="d-flex align-start">
-                <v-icon class="mr-2 mt-1" size="small"
-                  >mdi-information-outline</v-icon
+                <v-icon
+                  class="mr-2 mt-1"
+                  size="small"
                 >
+                  mdi-information-outline
+                </v-icon>
                 <div>
                   <div class="font-weight-medium mb-1 text-body-2">
                     {{ currentGuideline?.title || 'No guideline selected' }}
                   </div>
-                  <div v-if="currentGuideline" class="text-caption">
+                  <div
+                    v-if="currentGuideline"
+                    class="text-caption"
+                  >
                     {{
                       currentGuideline.description || 'No description available'
                     }}
@@ -158,7 +191,9 @@
 
             <!-- Compact Success Criterion Section -->
             <div class="mb-4">
-              <h2 class="text-h6 font-weight-bold mb-2">Success Criterion</h2>
+              <h2 class="text-h6 font-weight-bold mb-2">
+                Success Criterion
+              </h2>
               <v-card
                 variant="outlined"
                 class="mb-2"
@@ -171,7 +206,10 @@
                   >
                     No success criteria available for this rule.
                   </div>
-                  <ul v-else class="criteria-list pl-3 mb-0">
+                  <ul
+                    v-else
+                    class="criteria-list pl-3 mb-0"
+                  >
                     <li
                       v-for="(crit, cIdx) in currentRule.criteria"
                       :key="cIdx"
@@ -184,8 +222,7 @@
                           font-family: inherit;
                           line-height: 1.4;
                         "
-                        >{{ crit }}</pre
-                      >
+                      >{{ crit }}</pre>
                     </li>
                   </ul>
                 </v-card-text>
@@ -194,7 +231,9 @@
 
             <!-- Compact Appraiser Notes Section -->
             <div class="my-4">
-              <h2 class="text-h6 font-weight-bold mb-2">Appraiser Notes</h2>
+              <h2 class="text-h6 font-weight-bold mb-2">
+                Appraiser Notes
+              </h2>
               <v-tabs
                 v-model="activeNoteTab"
                 class="mb-2"
@@ -219,10 +258,12 @@
                 </v-tab>
                 <v-tab
                   key="add-note"
-                  @click.stop="addNote"
                   class="add-note-tab"
+                  @click.stop="addNote"
                 >
-                  <v-icon size="small">mdi-plus</v-icon>
+                  <v-icon size="small">
+                    mdi-plus
+                  </v-icon>
                 </v-tab>
               </v-tabs>
               <v-window v-model="activeNoteTab">
@@ -248,10 +289,10 @@
                       prepend-icon="mdi-image"
                       show-size
                       hide-details
-                      @change="onImageChange(idx)"
                       class="mr-3"
                       style="max-width: 250px"
                       density="compact"
+                      @change="onImageChange(idx)"
                     />
                     <div
                       v-if="note.imagePreview"
@@ -265,7 +306,7 @@
                           max-height: 60px;
                           border-radius: 4px;
                         "
-                      />
+                      >
                       <v-btn
                         icon="mdi-close"
                         size="x-small"
@@ -282,7 +323,9 @@
             <!-- Compact Assessment Section -->
             <v-row class="mb-4">
               <v-col cols="6">
-                <h2 class="text-h6 font-weight-bold mb-2">Severity</h2>
+                <h2 class="text-h6 font-weight-bold mb-2">
+                  Severity
+                </h2>
                 <v-radio-group
                   v-model="severity"
                   density="compact"
@@ -309,8 +352,14 @@
                 </v-radio-group>
               </v-col>
               <v-col cols="6">
-                <h2 class="text-h6 font-weight-bold mb-2">Status</h2>
-                <v-radio-group v-model="status" density="compact" class="mt-0">
+                <h2 class="text-h6 font-weight-bold mb-2">
+                  Status
+                </h2>
+                <v-radio-group
+                  v-model="status"
+                  density="compact"
+                  class="mt-0"
+                >
                   <v-radio
                     label="Pass"
                     value="pass"
@@ -339,10 +388,10 @@
                 prepend-icon="mdi-content-save"
                 size="default"
                 color="success"
-                @click="saveAssessment"
                 :loading="isLoading"
                 :disabled="!currentRule?.id"
                 variant="flat"
+                @click="saveAssessment"
               >
                 Save Assessment
               </v-btn>
@@ -360,8 +409,8 @@
                   variant="text"
                   prepend-icon="mdi-chevron-left"
                   color="grey-darken-2"
-                  @click="prevRule"
                   size="small"
+                  @click="prevRule"
                 >
                   Previous
                 </v-btn>
@@ -373,15 +422,19 @@
                   append-icon="mdi-chevron-right"
                   color="amber"
                   class="text-black"
-                  @click="nextRule"
                   size="small"
+                  @click="nextRule"
                 >
                   Next
                 </v-btn>
               </div>
             </v-card>
           </v-card>
-          <v-card flat class="h-100" v-else>
+          <v-card
+            v-else
+            flat
+            class="h-100"
+          >
             <div
               class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4"
             >
@@ -390,7 +443,7 @@
                 color="blue-lighten-2"
                 size="48"
                 class="mb-4"
-              ></v-icon>
+              />
 
               <h2 class="text-h6 font-weight-regular text-grey-darken-2 mb-1">
                 Ready to Evaluate
@@ -405,19 +458,33 @@
         </v-col>
 
         <!-- Right Sidebar - Compact Table of Contents -->
-        <v-col cols="3" class="toc-sidebar fill-height">
-          <v-card flat class="h-100" color="grey-lighten-5">
-            <v-card-title class="text-subtitle-1 pa-3 font-weight-bold"
-              >Rules</v-card-title
+        <v-col
+          cols="3"
+          class="toc-sidebar fill-height"
+        >
+          <v-card
+            flat
+            class="h-100"
+            color="grey-lighten-5"
+          >
+            <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">
+              Rules
+            </v-card-title>
+            <v-list
+              density="compact"
+              class="pa-1"
             >
-            <v-list density="compact" class="pa-1">
               <template v-if="guidelines.length > 0">
-                <template v-for="(rule, rIdx) in rules" :key="rule.id || rIdx">
+                <template
+                  v-for="(rule, rIdx) in rules"
+                  :key="rule.id || rIdx"
+                >
                   <v-list-item
                     prepend-icon="mdi-circle-outline"
                     :title="(rule?.id || '') + ' ' + (rule?.title || '')"
                     :active="selectedRuleIdx === rIdx"
                     class="text-caption pa-2"
+                    :class="{ 'v-list-item--active': selectedRuleIdx === rIdx }"
                     @click="
                       selectRule(
                         rIdx,
@@ -425,14 +492,13 @@
                         selectedPrincipleIdx,
                       )
                     "
-                    :class="{ 'v-list-item--active': selectedRuleIdx === rIdx }"
                   />
                 </template>
               </template>
               <v-list-item v-else>
-                <v-list-item-title class="text-grey text-caption"
-                  >No rules available</v-list-item-title
-                >
+                <v-list-item-title class="text-grey text-caption">
+                  No rules available
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card>
@@ -454,8 +520,8 @@
           class="mr-3 mb-4 floating-save-btn"
           rounded="circle"
           v-bind="props"
-          @click="viewAssessmentDocument"
           elevation="4"
+          @click="viewAssessmentDocument"
         >
           <v-icon>mdi-eye</v-icon>
         </v-btn>
@@ -464,11 +530,19 @@
     </v-tooltip>
 
     <!-- Compact Assessment Data Dialog -->
-    <v-dialog v-model="showAssessmentDialog" max-width="1000" max-height="700">
+    <v-dialog
+      v-model="showAssessmentDialog"
+      max-width="1000"
+      max-height="700"
+    >
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center pa-3">
           <span class="text-h6">Assessment Data</span>
-          <v-btn icon size="small" @click="showAssessmentDialog = false">
+          <v-btn
+            icon
+            size="small"
+            @click="showAssessmentDialog = false"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -489,11 +563,20 @@
             height="60vh"
             density="compact"
           >
-            <template #item.notes="{ item }">
-              <v-tooltip bottom max-width="400">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon size="small" v-bind="attrs" v-on="on">
-                    <v-icon size="small">mdi-note-text</v-icon>
+            <template item.notes="{ item }">
+              <v-tooltip
+                location="bottom"
+                max-width="400"
+              >
+                <template #activator="{ props }">
+                  <v-btn
+                    icon
+                    size="small"
+                    v-bind="props"
+                  >
+                    <v-icon size="small">
+                      mdi-note-text
+                    </v-icon>
                   </v-btn>
                 </template>
                 <div>
@@ -504,9 +587,20 @@
                   >
                     <strong>Note {{ index + 1 }}:</strong>
                     <div>{{ note.text }}</div>
-                    <div v-if="note.imageName" class="mt-1">
-                      <v-chip size="small" color="grey lighten-2">
-                        <v-icon left size="small">mdi-image</v-icon>
+                    <div
+                      v-if="note.imageName"
+                      class="mt-1"
+                    >
+                      <v-chip
+                        size="small"
+                        color="grey-lighten-2"
+                      >
+                        <v-icon
+                          start
+                          size="small"
+                        >
+                          mdi-image
+                        </v-icon>
                         {{ note.imageName }}
                       </v-chip>
                     </div>
@@ -517,12 +611,21 @@
           </v-data-table>
         </v-card-text>
         <v-card-actions class="pa-3">
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="showAssessmentDialog = false"
-            >Close</v-btn
+          <v-spacer />
+          <v-btn
+            color="primary"
+            @click="showAssessmentDialog = false"
           >
-          <v-btn color="primary" variant="text" @click="downloadAssessmentData">
-            <v-icon left>mdi-download</v-icon>
+            Close
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="downloadAssessmentData"
+          >
+            <v-icon start>
+              mdi-download
+            </v-icon>
             Export JSON
           </v-btn>
         </v-card-actions>

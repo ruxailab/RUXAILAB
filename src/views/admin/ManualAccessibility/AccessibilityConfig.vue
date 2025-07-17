@@ -2,37 +2,85 @@
   <v-app>
     <v-container class="pa-3">
       <v-row justify="center">
-        <v-col cols="12" lg="10" xl="8">
+        <v-col
+          cols="12"
+          lg="10"
+          xl="8"
+        >
           <!-- Compact Header -->
-          <v-card class="mb-3" elevation="2" rounded="lg">
+          <v-card
+            class="mb-3"
+            elevation="2"
+            rounded="lg"
+          >
             <v-card-title class="text-h6 font-weight-bold pa-4 d-flex align-center">
-              <v-icon color="primary" class="mr-2" size="24">mdi-cog</v-icon>
+              <v-icon
+                color="primary"
+                class="mr-2"
+                size="24"
+              >
+                mdi-cog
+              </v-icon>
               Accessibility Configuration
               <v-spacer />
-              <v-chip :color="step === 1 ? 'primary' : 'success'" variant="flat" size="small">
+              <v-chip
+                :color="step === 1 ? 'primary' : 'success'"
+                variant="flat"
+                size="small"
+              >
                 Step {{ step }}/2
               </v-chip>
             </v-card-title>
           </v-card>
 
           <!-- Step 1: Compliance Level Selection -->
-          <v-card v-if="step === 1" elevation="2" rounded="lg" class="mb-3">
+          <v-card
+            v-if="step === 1"
+            elevation="2"
+            rounded="lg"
+            class="mb-3"
+          >
             <v-card-title class="text-subtitle-1 font-weight-bold pa-4 pb-2">
-              <v-icon color="primary" class="mr-2" size="18">mdi-shield-check</v-icon>
+              <v-icon
+                color="primary"
+                class="mr-2"
+                size="18"
+              >
+                mdi-shield-check
+              </v-icon>
               WCAG Compliance Level
             </v-card-title>
             
             <v-card-text class="pa-4 pt-1">
-              <v-alert color="info" variant="tonal" class="mb-4" density="compact">
-                <v-icon slot="prepend" size="18">mdi-information</v-icon>
+              <v-alert
+                color="info"
+                variant="tonal"
+                class="mb-4"
+                density="compact"
+              >
+                <template #prepend>
+                  <v-icon size="18">
+                    mdi-information
+                  </v-icon>
+                </template>
                 <div class="text-body-2">
                   Select the WCAG compliance level for your accessibility requirements.
                 </div>
               </v-alert>
 
-              <v-radio-group v-model="selectedCompliance" class="mb-4">
+              <v-radio-group
+                v-model="selectedCompliance"
+                class="mb-4"
+              >
                 <v-row dense>
-                  <v-col v-for="level in complianceLevels" :key="level.value" cols="12" sm="6" md="4" class="pa-1">
+                  <v-col
+                    v-for="level in complianceLevels"
+                    :key="level.value"
+                    cols="12"
+                    sm="6"
+                    md="4"
+                    class="pa-1"
+                  >
                     <v-card 
                       :class="[
                         'compliance-card cursor-pointer',
@@ -40,9 +88,9 @@
                       ]"
                      
                       :variant="selectedCompliance === level.value ? 'flat' : 'outlined'"
-                      @click="selectedCompliance = level.value"
                       elevation="1"
                       hover
+                      @click="selectedCompliance = level.value"
                     >
                       <v-card-text class="pa-3">
                         <div class="d-flex align-center mb-2">
@@ -73,7 +121,11 @@
                         </div>
                         
                         <div class="d-flex align-center">
-                          <v-icon :color="level.color" size="14" class="mr-1">
+                          <v-icon
+                            :color="level.color"
+                            size="14"
+                            class="mr-1"
+                          >
                             mdi-check-circle
                           </v-icon>
                           <span class="text-caption">{{ level.ruleCount }} rules</span>
@@ -91,7 +143,11 @@
                 class="mb-4"
                 density="compact"
               >
-                <v-icon slot="prepend" size="18">mdi-information</v-icon>
+                <template #prepend>
+                  <v-icon size="18">
+                    mdi-information
+                  </v-icon>
+                </template>
                 <div>
                   <div class="font-weight-bold text-body-2">
                     Selected: WCAG {{ selectedLevel.value }} - {{ selectedLevel.title }}
@@ -106,20 +162,20 @@
             <v-card-actions class="pa-4 pt-2">
               <v-btn 
                 variant="outlined" 
-                @click="resetToDefaults" 
-                :disabled="isLoading"
+                :disabled="isLoading" 
                 prepend-icon="mdi-refresh"
                 size="small"
+                @click="resetToDefaults"
               >
                 Reset
               </v-btn>
               <v-spacer />
               <v-btn 
                 color="primary" 
-                @click="saveComplianceAndContinue" 
-                :loading="isLoading"
+                :loading="isLoading" 
                 :disabled="!selectedCompliance"
                 append-icon="mdi-arrow-right"
+                @click="saveComplianceAndContinue"
               >
                 Continue
               </v-btn>
@@ -127,15 +183,35 @@
           </v-card>
 
           <!-- Step 2: Guidelines Selection -->
-          <v-card v-else-if="step === 2" elevation="2" rounded="lg" class="mb-3">
+          <v-card
+            v-else-if="step === 2"
+            elevation="2"
+            rounded="lg"
+            class="mb-3"
+          >
             <v-card-title class="text-subtitle-1 font-weight-bold pa-4 pb-2">
-              <v-icon color="primary" class="mr-2" size="18">mdi-format-list-checks</v-icon>
+              <v-icon
+                color="primary"
+                class="mr-2"
+                size="18"
+              >
+                mdi-format-list-checks
+              </v-icon>
               Guidelines Selection
             </v-card-title>
             
             <v-card-text class="pa-4 pt-1">
-              <v-alert color="info" variant="tonal" class="mb-4" density="compact">
-                <v-icon slot="prepend" size="18">mdi-information</v-icon>
+              <v-alert
+                color="info"
+                variant="tonal"
+                class="mb-4"
+                density="compact"
+              >
+                <template #prepend>
+                  <v-icon size="18">
+                    mdi-information
+                  </v-icon>
+                </template>
                 <div class="text-body-2">
                   Select guidelines for your assessment. Filter by principle using tabs.
                 </div>
@@ -149,12 +225,21 @@
                 class="mb-4" 
                 density="compact"
               >
-                <v-icon slot="prepend" size="18">mdi-alert-circle</v-icon>
+                <template #prepend>
+                  <v-icon size="18">
+                    mdi-alert-circle
+                  </v-icon>
+                </template>
                 <div class="text-body-2 font-weight-bold">
                   Please fix the following issues:
                 </div>
                 <ul class="text-caption mt-1 ml-4">
-                  <li v-for="error in validationErrors" :key="error">{{ error }}</li>
+                  <li
+                    v-for="error in validationErrors"
+                    :key="error"
+                  >
+                    {{ error }}
+                  </li>
                 </ul>
               </v-alert>
 
@@ -191,71 +276,73 @@
                     v-for="(principle, pIdx) in filteredPrinciples" 
                     :key="principle.id || pIdx"
                   >
-                    <v-card variant="outlined" class="mb-3">
+                    <v-card
+                      variant="outlined"
+                      class="mb-3"
+                    >
                       <v-list density="compact">
                         <v-list-item 
-                          v-for="(guideline, gIdx) in principle.Guidelines || []" 
+                          v-for="(guideline) in principle.Guidelines || []" 
                           :key="guideline.id"
                           class="pa-2"
                           :class="{ 'guideline-error': isGuidelineInvalid(guideline.id) }"
                         >
-                          <template v-slot:prepend>
+                          <template #prepend>
                             <v-checkbox
                               v-model="selectedGuidelines"
                               :value="guideline.id"
                               hide-details
                               density="compact"
                               color="primary"
-                                                              @update:modelValue="onGuidelineCheck(guideline.id)"
-                              @update:model-value="showValidationErrors = false"
+                              @update:model-value="onGuidelineCheck(guideline.id)"
                             />
                           </template>
                           
-                          <v-list-item-content>
-                            <v-list-item-title class="text-body-2 font-weight-bold text-primary mb-1">
-                              {{ guideline.id }}
-                            </v-list-item-title>
-                            <v-list-item-subtitle class="text-caption mb-1">
-                              {{ guideline.title }}
-                            </v-list-item-subtitle>
-                            <v-list-item-subtitle class="text-caption text-medium-emphasis">
-                              {{ guideline.description }}
-                            </v-list-item-subtitle>
+                          
+                          <v-list-item-title class="text-body-2 font-weight-bold text-primary mb-1">
+                            {{ guideline.id }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle class="text-caption mb-1">
+                            {{ guideline.title }}
+                          </v-list-item-subtitle>
+                          <v-list-item-subtitle class="text-caption text-medium-emphasis">
+                            {{ guideline.description }}
+                          </v-list-item-subtitle>
+                          
                             
-                            <!-- Compact Rules Selection -->
-                            <div 
-                              v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
-                              class="mt-2"
+                          <!-- Compact Rules Selection -->
+                          <div 
+                            v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
+                            class="mt-2"
+                          >
+                            <v-select
+                              v-model="selectedRulesByGuideline[guideline.id]"
+                              :items="guideline.rules.map(r => ({ title: r.title, value: r.id }))"
+                              item-title="title"
+                              item-value="value"
+                              label="Select specific rules (required)"
+                              multiple
+                              chips
+                              clearable
+                              density="compact"
+                              variant="outlined"
+                              hide-details
+                              class="rules-select"
+                              :error="showValidationErrors && isGuidelineInvalid(guideline.id)"
+                              :error-messages="showValidationErrors && isGuidelineInvalid(guideline.id) ? ['At least one rule must be selected'] : []"
                             >
-                              <v-select
-                                v-model="selectedRulesByGuideline[guideline.id]"
-                                :items="guideline.rules.map(r => ({ title: r.title, value: r.id }))"
-                                item-title="title"
-                                item-value="value"
-                                label="Select specific rules (required)"
-                                multiple
-                                chips
-                                clearable
-                                density="compact"
-                                variant="outlined"
-                                hide-details
-                                class="rules-select"
-                                :error="showValidationErrors && isGuidelineInvalid(guideline.id)"
-                                :error-messages="showValidationErrors && isGuidelineInvalid(guideline.id) ? ['At least one rule must be selected'] : []"
-                              >
-                                <template v-slot:chip="{ props, item }">
-                                  <v-chip
-                                    v-bind="props"
-                                    color="primary"
-                                    size="x-small"
-                                    variant="outlined"
-                                  >
-                                    {{ item.title }}
-                                  </v-chip>
-                                </template>
-                              </v-select>
-                            </div>
-                          </v-list-item-content>
+                              <template #chip="{ props, item }">
+                                <v-chip
+                                  v-bind="props"
+                                  color="primary"
+                                  size="x-small"
+                                  variant="outlined"
+                                >
+                                  {{ item.title }}
+                                </v-chip>
+                              </template>
+                            </v-select>
+                          </div>
                         </v-list-item>
                       </v-list>
                     </v-card>
@@ -264,10 +351,21 @@
               </div>
 
               <!-- Compact Selection Summary -->
-              <v-card v-if="selectedGuidelines.length > 0" color="success" variant="tonal" class="mt-3">
+              <v-card
+                v-if="selectedGuidelines.length > 0"
+                color="success"
+                variant="tonal"
+                class="mt-3"
+              >
                 <v-card-text class="pa-3">
                   <div class="d-flex align-center">
-                    <v-icon color="success" class="mr-2" size="18">mdi-check-circle</v-icon>
+                    <v-icon
+                      color="success"
+                      class="mr-2"
+                      size="18"
+                    >
+                      mdi-check-circle
+                    </v-icon>
                     <span class="font-weight-bold text-body-2">
                       {{ selectedGuidelines.length }} guideline(s) selected
                     </span>
@@ -282,19 +380,19 @@
             <v-card-actions class="pa-4 pt-2">
               <v-btn 
                 variant="outlined" 
-                @click="step = 1"
                 prepend-icon="mdi-arrow-left"
                 size="small"
+                @click="step = 1"
               >
                 Back
               </v-btn>
               <v-spacer />
               <v-btn 
                 color="primary" 
-                @click="saveConfiguration" 
-                :loading="isLoading"
+                :loading="isLoading" 
                 :disabled="!isValidConfiguration"
                 append-icon="mdi-content-save"
+                @click="saveConfiguration"
               >
                 Save Config
               </v-btn>

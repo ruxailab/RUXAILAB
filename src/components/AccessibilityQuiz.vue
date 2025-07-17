@@ -1,9 +1,16 @@
 <template>
   <v-row class="ma-0">
     <!-- Main Content -->
-    <v-col cols="12" md="9" class="pa-2">
+    <v-col
+      cols="12"
+      md="9"
+      class="pa-2"
+    >
       <!-- Progress bar with percentage -->
-      <QuizProgress v-if="!isComplete && isStarted" :progress="progress" />
+      <QuizProgress
+        v-if="!isComplete && isStarted"
+        :progress="progress"
+      />
 
       <!-- Current principle being tested -->
       <v-row
@@ -11,8 +18,14 @@
         justify="center"
         class="ma-0 mb-3"
       >
-        <v-col cols="12" class="pa-0">
-          <v-chip color="primary" size="large">
+        <v-col
+          cols="12"
+          class="pa-0"
+        >
+          <v-chip
+            color="primary"
+            size="large"
+          >
             <v-icon start>
               {{ getPrincipleIcon(currentPrinciple.title) }}
             </v-icon>
@@ -22,8 +35,15 @@
       </v-row>
 
       <!-- Conformance level selection -->
-      <v-row v-if="!isStarted" justify="center" class="ma-0">
-        <v-col cols="12" class="pa-0">
+      <v-row
+        v-if="!isStarted"
+        justify="center"
+        class="ma-0"
+      >
+        <v-col
+          cols="12"
+          class="pa-0"
+        >
           <ConformanceLevelSelector
             v-model="selectedConformanceLevel"
             @start="startAssessment"
@@ -32,8 +52,15 @@
       </v-row>
 
       <!-- Add the new block here -->
-      <v-row v-if="isStarted" justify="center" class="ma-0 ">
-        <v-col cols="12" class="pa-0">
+      <v-row
+        v-if="isStarted"
+        justify="center"
+        class="ma-0 "
+      >
+        <v-col
+          cols="12"
+          class="pa-0"
+        >
           <v-card-title
             class="justify-center text-h5 bg-primary text-white py-4"
           >
@@ -47,9 +74,9 @@
             <!-- Quiz in progress -->
             <QuizQuestion
               v-if="!isComplete"
-              :currentQuestion="currentQuestion"
-              :currentCriterion="currentCriterion"
-              :currentEvidenceList="currentEvidenceList"
+              :current-question="currentQuestion"
+              :current-criterion="currentCriterion"
+              :current-evidence-list="currentEvidenceList"
               @answer="answerQuestion"
               @add-evidence="addEvidenceNotePair"
               @remove-evidence="removeEvidenceNotePair"
@@ -59,14 +86,18 @@
             <!-- Quiz results -->
             <QuizResults
               v-else
-              :activeTab="activeTab"
-              @update:activeTab="(val) => (activeTab = val)"
+              :active-tab="activeTab"
+              @update:active-tab="(val) => (activeTab = val)"
             >
               <template #conformance>
                 <!-- Conformance Assessment Tab Content -->
                 <v-card flat>
                   <v-card-text>
-                    <v-card border class="mb-6 pa-4 text-center" elevation="1">
+                    <v-card
+                      border
+                      class="mb-6 pa-4 text-center"
+                      elevation="1"
+                    >
                       <v-card-title class="justify-center text-h5">
                         Conformance Assessment
                       </v-card-title>
@@ -87,11 +118,23 @@
                         </v-row>
                       </v-card-text>
                     </v-card>
-                    <v-card border class="mb-6 pa-4" elevation="1">
+                    <v-card
+                      border
+                      class="mb-6 pa-4"
+                      elevation="1"
+                    >
                       <v-card-text>
                         <v-row>
-                          <v-col cols="12" md="6" class="text-center">
-                            <v-sheet color="primary" rounded class="pa-4 mb-2">
+                          <v-col
+                            cols="12"
+                            md="6"
+                            class="text-center"
+                          >
+                            <v-sheet
+                              color="primary"
+                              rounded
+                              class="pa-4 mb-2"
+                            >
                               <div class="text-h3">
                                 {{ totalAnswered }}
                               </div>
@@ -100,11 +143,17 @@
                               </div>
                             </v-sheet>
                           </v-col>
-                          <v-col cols="12" md="6">
+                          <v-col
+                            cols="12"
+                            md="6"
+                          >
                             <v-list density="compact">
                               <v-list-item>
                                 <template #prepend>
-                                  <v-icon color="success" size="28">
+                                  <v-icon
+                                    color="success"
+                                    size="28"
+                                  >
                                     mdi-check-circle
                                   </v-icon>
                                 </template>
@@ -114,7 +163,10 @@
                               </v-list-item>
                               <v-list-item>
                                 <template #prepend>
-                                  <v-icon color="error" size="28">
+                                  <v-icon
+                                    color="error"
+                                    size="28"
+                                  >
                                     mdi-alert-circle
                                   </v-icon>
                                 </template>
@@ -124,7 +176,10 @@
                               </v-list-item>
                               <v-list-item>
                                 <template #prepend>
-                                  <v-icon color="grey" size="28">
+                                  <v-icon
+                                    color="grey"
+                                    size="28"
+                                  >
                                     mdi-minus-circle
                                   </v-icon>
                                 </template>
@@ -165,7 +220,7 @@
                         <tr
                           v-if="
                             selectedConformanceLevel === 'AA' ||
-                            selectedConformanceLevel === 'AAA'
+                              selectedConformanceLevel === 'AAA'
                           "
                         >
                           <td>AA</td>
@@ -190,12 +245,25 @@
                 <!-- Detailed Report Tab Content -->
                 <v-card flat>
                   <v-card-text>
-                    <v-card border class="mb-6 pa-4" elevation="1">
+                    <v-card
+                      border
+                      class="mb-6 pa-4"
+                      elevation="1"
+                    >
                       <v-card-title>View Options</v-card-title>
                       <v-card-text>
-                        <v-radio-group v-model="viewMode" inline>
-                          <v-radio label="All Results" value="all" />
-                          <v-radio label="One by One" value="single" />
+                        <v-radio-group
+                          v-model="viewMode"
+                          inline
+                        >
+                          <v-radio
+                            label="All Results"
+                            value="all"
+                          />
+                          <v-radio
+                            label="One by One"
+                            value="single"
+                          />
                         </v-radio-group>
                       </v-card-text>
                     </v-card>
@@ -207,7 +275,9 @@
                       elevation="2"
                       @click="downloadReport"
                     >
-                      <v-icon start> mdi-download </v-icon>
+                      <v-icon start>
+                        mdi-download
+                      </v-icon>
                       Download Report
                     </v-btn>
                     <v-expansion-panels v-if="viewMode === 'single'">
@@ -300,7 +370,10 @@
                 </v-card>
               </template>
               <template #actions>
-                <v-row class="mt-8" justify="center">
+                <v-row
+                  class="mt-8"
+                  justify="center"
+                >
                   <v-col cols="auto">
                     <v-btn
                       color="primary"
@@ -310,7 +383,9 @@
                       elevation="2"
                       @click="restartQuiz"
                     >
-                      <v-icon start> mdi-refresh </v-icon>
+                      <v-icon start>
+                        mdi-refresh
+                      </v-icon>
                       Start Over
                     </v-btn>
                     <v-btn
@@ -321,7 +396,9 @@
                       elevation="2"
                       @click="returnToSelection"
                     >
-                      <v-icon start> mdi-arrow-left </v-icon>
+                      <v-icon start>
+                        mdi-arrow-left
+                      </v-icon>
                       Select Another Principle
                     </v-btn>
                     <v-btn
@@ -332,7 +409,9 @@
                       elevation="2"
                       @click="downloadReport"
                     >
-                      <v-icon start> mdi-download </v-icon>
+                      <v-icon start>
+                        mdi-download
+                      </v-icon>
                       Download Report
                     </v-btn>
                   </v-col>
@@ -344,10 +423,14 @@
       </v-row>
       <!-- End of new block -->
     </v-col>
-    <v-col cols="12" md="3" class="pa-2">
+    <v-col
+      cols="12"
+      md="3"
+      class="pa-2"
+    >
       <QuizSidebar
         :principles="principles"
-        :selectedPrinciple="selectedPrinciple"
+        :selected-principle="selectedPrinciple"
         @select-principle="selectPrinciple"
         @select-all="selectAllPrinciples"
       />

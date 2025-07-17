@@ -2,8 +2,8 @@
   <v-app>
     <AccessibilityDrawer
       ref="accessibilityDrawer"
-      :items="navItems"
       v-model="drawerOpen"
+      :items="navItems"
       @toggle="onDrawerToggle"
     />
 
