@@ -57,7 +57,6 @@ const initWebcam = async () => {
         if (videoRef.value) {
             videoRef.value.srcObject = mediaStream.value
         }
-        console.log('📏 Video size:', videoRef.value?.videoWidth, videoRef.value?.videoHeight);
 
     } catch (err) {
         console.error('🚫 Erro ao iniciar webcam:', err)

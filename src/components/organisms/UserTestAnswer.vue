@@ -24,6 +24,9 @@
             <v-tab v-if="showNasa" @click="tab = 4">
               Nasa-TLX Analytics
             </v-tab>
+            <v-tab v-if="showEye" @click="tab = 5">
+              Eye-Tracking Analytics
+            </v-tab>
           </v-tabs>
         </template>
 
@@ -34,6 +37,7 @@
             <SentimentAnalysisView v-if="tab === 2" />
             <SusAnalytics v-if="tab === 3" />
             <NasaTlxAnalytics v-if="tab === 4" />
+            <EyeTrackingAnalytics v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -55,6 +59,7 @@ import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue';
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
 import SusAnalytics from '@/views/admin/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/views/admin/NasaTlxAnalytics.vue';
+import EyeTrackingAnalytics from '@/views/admin/EyeTrackingAnalytics.vue';
 
 defineProps({
   id: {
@@ -100,6 +105,14 @@ const showNasa = computed(() => {
     (task) => task.taskType === 'nasa-tlx'
   );
 });
+
+const showEye = computed(() =>
+  testAnswerDocument.value &&
+  testAnswerDocument.value.type === 'User' &&
+  Object.values(testAnswerDocument.value.taskAnswers).some((ev) => {
+    return ev.irisTrackingData.length > 0;
+  })
+);
 
 const loading = computed(() => store.getters.loading);
 
