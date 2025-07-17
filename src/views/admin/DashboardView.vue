@@ -233,7 +233,6 @@ import List from '@/components/atoms/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from './NotificationPage.vue';
-import { title } from 'process';
 
 const store = useStore();
 const router = useRouter();
