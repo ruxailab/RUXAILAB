@@ -514,7 +514,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
 import TextClamp from 'vue3-text-clamp';
 import Snackbar from '@/components/atoms/Snackbar.vue';
@@ -599,17 +599,34 @@ const openCalibration = () => {
   window.open('http://localhost:8081/calibration/configuration', '_blank');
 }
 
-function toggleTracking() {
-  isTracking.value = !isTracking.value
+function toggleTracking(value) {
+  console.log('toggleTracking chamado com:', value, '| index:', index.value, '| taskIndex:', taskIndex.value)
+  isTracking.value = value;
+
   if (!isTracking.value) {
-    console.log('Tracking parado, dados coletados:', irisData.value.length)
-    // aqui pode fazer algo com os dados
+    console.log('localTestAnswer.tasks[taskIndex.value].irisTrackingData:', localTestAnswer.tasks[taskIndex.value].irisTrackingData);
   }
 }
 
 function handleIrisData(data) {
-  localTestAnswer.tasks[taskIndex].irisTrackingData.push(data)
+  localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
   console.log('Dados recebidos:', data)
+}
+
+function saveIrisDataIntoTask() {
+  const task = test.value.testStructure.userTasks[taskIndex.value]
+
+  console.log('taskIndex.value:', taskIndex.value);
+  console.log('task:', task);
+  console.log('hasEye:', task?.hasEye);
+  console.log('index:', index.value);
+
+
+  if (task?.hasEye === true && index.value == 1) {
+    toggleTracking(true);
+  } else {
+    toggleTracking(false);
+  }
 }
 
 const isPreTestTaskDisabled = (taskIndex) => {
@@ -742,6 +759,7 @@ const completeStep = (id, type, userCompleted = true) => {
       localTestAnswer.postTestCompleted = true;
       items.value[2].icon = 'mdi-check-circle-outline';
     }
+    saveIrisDataIntoTask();
     calculateProgress();
   } catch (error) {
     console.error('Error in completeStep:', error);
@@ -932,6 +950,18 @@ const mappingSteps = async () => {
   }
 };
 
+function validateTest() {
+  if (
+    test.value?.testStructure?.userTasks &&
+    test.value.testStructure.userTasks.length > 0
+  ) {
+    return
+  } else {
+    store.commit('SET_TOAST', { type: 'error', message: 'Test not found' });
+    router.push('/');
+  }
+}
+
 const validate = (object) => {
   return (
     object !== null &&
@@ -944,13 +974,12 @@ const validate = (object) => {
 
 watchEffect(() => {
   const index = taskIndex.value;
-  const task = test.value.testStructure.userTasks[index];
+  const task = test.value?.testStructure?.userTasks?.[index];
   const answers = localTestAnswer.tasks[index]?.susAnswers;
 
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
     doneTaskDisabled.value = validCount < 10;
-    console.log('SUS respostas válidas:', validCount);
   } else {
     doneTaskDisabled.value = false;
   }
@@ -997,19 +1026,8 @@ watch(
   }
 );
 
-watch(() => taskIndex.value, async () => {
-  const task = test.testStructure.userTasks[taskIndex.value]
-
-  console.log('hasEye:', task?.hasEye);
-
-  if (task?.hasEye === true) {
-    toggleTracking(true);
-  } else {
-    toggleTracking(false);
-  }
-});
-
 onMounted(async () => {
+  validateTest();
   await mappingSteps();
   await nextTick();
   if (user.value) {
