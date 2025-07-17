@@ -37,6 +37,11 @@ const navItems = computed(() => [
     icon: 'mdi-home',
     path: `/accessibility/manual/${testId.value}`,
   },
+   {
+    title: 'Config',
+    icon: 'mdi-cog',
+    path: `/config/${testId.value}`,
+  },
   {
     title: 'Edit Test',
     icon: 'mdi-pencil',
@@ -52,11 +57,7 @@ const navItems = computed(() => [
     icon: 'mdi-comment-question',
     path: `/result/${testId.value}`,
   },
-  {
-    title: 'Config',
-    icon: 'mdi-cog',
-    path: `/config/${testId.value}`,
-  },
+ 
 ])
 
 const onDrawerToggle = (isOpen) => {
