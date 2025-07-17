@@ -233,7 +233,7 @@
               v-if="note.imagePreview"
               :src="note.imagePreview"
               max-height="300"
-              contain
+              cover
               class="mt-2 mb-2 rounded"
             />
             <v-chip
@@ -305,6 +305,12 @@ const notesDialog = ref({
   ruleId: '',
   ruleTitle: '',
   notes: [],
+})
+
+//life cycle
+onMounted(async () => {
+  await loadWcagData()
+  await loadAssessmentData()
 })
 
 const headers = [
@@ -651,10 +657,7 @@ const downloadAssessmentData = () => {
   }
 }
 
-onMounted(async () => {
-  await loadWcagData()
-  await loadAssessmentData()
-})
+
 </script>
 
 <style scoped>
