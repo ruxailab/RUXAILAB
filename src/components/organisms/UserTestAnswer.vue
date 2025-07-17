@@ -37,7 +37,7 @@
             <SentimentAnalysisView v-if="tab === 2" />
             <SusAnalytics v-if="tab === 3" />
             <NasaTlxAnalytics v-if="tab === 4" />
-            <EyeTrackingAnalytics v-if="tab === 5" />
+            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -109,10 +109,24 @@ const showNasa = computed(() => {
 const showEye = computed(() =>
   testAnswerDocument.value &&
   testAnswerDocument.value.type === 'User' &&
-  Object.values(testAnswerDocument.value.taskAnswers).some((ev) => {
-    return ev.irisTrackingData.length > 0;
-  })
+  Object.values(testAnswerDocument.value.taskAnswers).some(ev =>
+    Object.values(ev.tasks).some(task =>
+      task.irisTrackingData.length > 0
+    )
+  )
 );
+
+const allIrisTrackingData = computed(() => {
+  if (!testAnswerDocument.value || !testAnswerDocument.value.taskAnswers) return [];
+
+  const tasks = Object.values(testAnswerDocument.value.taskAnswers)
+    .flatMap(ev => Object.values(ev.tasks || {}))
+    .filter(task => task.irisTrackingData && task.irisTrackingData.length > 0)
+    .flatMap(task => task.irisTrackingData);
+
+  return tasks;
+});
+
 
 const loading = computed(() => store.getters.loading);
 
