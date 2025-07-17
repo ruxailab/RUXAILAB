@@ -87,7 +87,7 @@
                   </v-avatar>
                 </template>
                 <span>
-                  {{ item.header?.templateType ?? item.testType == 'HEURISTICS' ? 'HEURISTICS' : item.userTestType ?? 'User' }}
+                  {{ item.header?.templateType ?? getTestType(item) }}
                 </span>
               </v-tooltip>
             </v-col>
@@ -252,6 +252,33 @@ const getTypeIcon = (item) => {
 
     default:
       return 'mdi-file-document'
+  }
+}
+
+const getTestType = (item) => {
+  const testType = item.testType ?? item.header?.templateType ?? 'USER'
+  const subtype = item.userTestType ?? ''
+
+  switch (testType.toUpperCase()) {
+    case 'HEURISTICS':
+      return 'HEURISTICS'
+
+    case 'USER':
+      if (subtype.toUpperCase().includes('UNMODERATED')) {
+        return 'UNMODERATED'
+      }
+      if (subtype.toUpperCase().includes('MODERATED')) {
+        return 'MODERATED'
+      }
+    
+    case 'MANUAL':
+      return 'MANUAL'
+
+    case 'AUTOMATIC':
+      return 'AUTOMATIC'
+
+    default:
+      return 'EMPTY TYPE'
   }
 }
 
