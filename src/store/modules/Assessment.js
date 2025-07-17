@@ -149,8 +149,9 @@ const getters = {
   }
 }
 
-// Helper: filter rules by compliance level
-function filterWcagByComplianceLevel(wcagData, complianceLevel) {
+
+// Helper: filter rules by compliance level, selected guidelines, and selected rules
+function filterWcagByComplianceLevel(wcagData, complianceLevel, selectedGuidelines = null, selectedRulesByGuideline = null) {
   if (!wcagData?.principles) return { principles: [] }
 
   // Map complianceLevel to allowed levels
@@ -163,11 +164,19 @@ function filterWcagByComplianceLevel(wcagData, complianceLevel) {
   // Deep clone and filter
   const filteredPrinciples = wcagData.principles.map(principle => {
     const filteredGuidelines = (principle.Guidelines || []).map(guideline => {
-      const filteredRules = (guideline.rules || []).filter(rule => allowedLevels.includes(rule.level))
+      // Only include guideline if selected, if selection is present
+      if (selectedGuidelines && !selectedGuidelines.includes(guideline.id)) return null
+      let filteredRules = (guideline.rules || []).filter(rule => allowedLevels.includes(rule.level))
+      // If rules are selected for this guideline, filter further
+      if (selectedRulesByGuideline && selectedRulesByGuideline[guideline.id] && Array.isArray(selectedRulesByGuideline[guideline.id]) && selectedRulesByGuideline[guideline.id].length > 0) {
+        filteredRules = filteredRules.filter(rule => selectedRulesByGuideline[guideline.id].includes(rule.id))
+      }
+      if (!filteredRules.length) return null
       return { ...guideline, rules: filteredRules }
-    }).filter(g => g.rules && g.rules.length > 0)
+    }).filter(g => g && g.rules && g.rules.length > 0)
+    if (!filteredGuidelines.length) return null
     return { ...principle, Guidelines: filteredGuidelines }
-  }).filter(p => p.Guidelines && p.Guidelines.length > 0)
+  }).filter(p => p && p.Guidelines && p.Guidelines.length > 0)
   return { principles: filteredPrinciples }
 }
 
@@ -319,7 +328,15 @@ const actions = {
   // Filter WCAG data by compliance level
   filterByComplianceLevel({ state, commit }, complianceLevel) {
     if (!state.wcagData) return
-    const filtered = filterWcagByComplianceLevel(state.wcagData, complianceLevel)
+    // Use selectedGuidelines and selectedRulesByGuideline from config if present
+    const selectedGuidelines = state.configuration.selectedGuidelines || null
+    const selectedRulesByGuideline = state.configuration.selectedRulesByGuideline || null
+    const filtered = filterWcagByComplianceLevel(
+      state.wcagData,
+      complianceLevel,
+      selectedGuidelines,
+      selectedRulesByGuideline
+    )
     commit('SET_FILTERED_WCAG_DATA', filtered)
   },
   // Initialize the assessment with WCAG data
