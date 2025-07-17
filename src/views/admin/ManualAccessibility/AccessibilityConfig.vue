@@ -616,10 +616,11 @@ onMounted(async () => {
 
 /* Scrollable guidelines container */
 .guidelines-container {
-  max-height: 500px;
+  max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 4px;
+  scroll-behavior: smooth;
   /* Fix for ResizeObserver loop error */
   contain: layout style paint;
 }
@@ -694,7 +695,7 @@ onMounted(async () => {
     padding: 0 8px;
   }
   
-  .guidelines-container {
+ .guidelines-container  {
     max-height: 400px;
   }
 }
@@ -716,11 +717,6 @@ onMounted(async () => {
   .guidelines-container {
     max-height: 350px;
   }
-}
-
-/* Smooth scrolling */
-.guidelines-container {
-  scroll-behavior: smooth;
 }
 
 /* Focus styling for accessibility */
