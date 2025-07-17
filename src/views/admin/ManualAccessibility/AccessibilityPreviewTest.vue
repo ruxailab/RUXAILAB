@@ -381,7 +381,7 @@
               </div>
             </v-card>
           </v-card>
-          <v-card flat class="h-100">
+          <v-card flat class="h-100" v-else>
             <div
               class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4"
             >
