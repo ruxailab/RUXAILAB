@@ -411,6 +411,7 @@ const saveComplianceAndContinue = async () => {
     toast.success(`WCAG ${selectedCompliance.value} compliance level saved! Now select guidelines.`)
     step.value = 2
   } catch (err) {
+    console.log(err)
     toast.error('Failed to save compliance level')
   } finally {
     isLoading.value = false

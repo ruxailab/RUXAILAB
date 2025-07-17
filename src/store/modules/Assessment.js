@@ -163,17 +163,17 @@ function filterWcagByComplianceLevel(wcagData, complianceLevel, selectedGuidelin
 
   // Deep clone and filter
   const filteredPrinciples = wcagData.principles.map(principle => {
-    const filteredGuidelines = (principle.Guidelines || []).map(guideline => {
+    const filteredGuidelines = principle.Guidelines?.map(guideline => {
       // Only include guideline if selected, if selection is present
-      if (selectedGuidelines && !selectedGuidelines.includes(guideline.id)) return null
-      let filteredRules = (guideline.rules || []).filter(rule => allowedLevels.includes(rule.level))
+      if (selectedGuidelines?.includes(guideline.id) === false) return null
+      let filteredRules = guideline.rules?.filter(rule => allowedLevels.includes(rule.level)) || []
       // If rules are selected for this guideline, filter further
-      if (selectedRulesByGuideline && selectedRulesByGuideline[guideline.id] && Array.isArray(selectedRulesByGuideline[guideline.id]) && selectedRulesByGuideline[guideline.id].length > 0) {
-        filteredRules = filteredRules.filter(rule => selectedRulesByGuideline[guideline.id].includes(rule.id))
+      if (selectedRulesByGuideline?.[guideline.id]?.length > 0) {
+        filteredRules = filteredRules.filter(rule => selectedRulesByGuideline[guideline.id]?.includes(rule.id))
       }
       if (!filteredRules.length) return null
       return { ...guideline, rules: filteredRules }
-    }).filter(g => g && g.rules && g.rules.length > 0)
+    })?.filter(g => g && g.rules && g.rules.length > 0) || []
     if (!filteredGuidelines.length) return null
     return { ...principle, Guidelines: filteredGuidelines }
   }).filter(p => p && p.Guidelines && p.Guidelines.length > 0)
