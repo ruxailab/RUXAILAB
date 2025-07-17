@@ -1,4 +1,4 @@
-<template>
+@update:model-value="showValidationErrors = false"<template>
   <v-app>
     <v-container class="pa-3">
       <v-row justify="center">
@@ -141,6 +141,23 @@
                 </div>
               </v-alert>
 
+              <!-- Validation Error Alert -->
+              <v-alert 
+                v-if="showValidationErrors && validationErrors.length > 0" 
+                color="error" 
+                variant="tonal" 
+                class="mb-4" 
+                density="compact"
+              >
+                <v-icon slot="prepend" size="18">mdi-alert-circle</v-icon>
+                <div class="text-body-2 font-weight-bold">
+                  Please fix the following issues:
+                </div>
+                <ul class="text-caption mt-1 ml-4">
+                  <li v-for="error in validationErrors" :key="error">{{ error }}</li>
+                </ul>
+              </v-alert>
+
               <!-- Compact Principle Tabs -->
               <v-tabs 
                 v-model="selectedPrincipleTab" 
@@ -156,83 +173,95 @@
                   class="text-capitalize"
                   size="small"
                 >
-                  <v-icon class="mr-1" size="16">mdi-bookmark</v-icon>
+                  <v-icon 
+                    :color="getPrincipleIcon(idx).color" 
+                    class="mr-1" 
+                    size="16"
+                  >
+                    {{ getPrincipleIcon(idx).icon }}
+                  </v-icon>
                   {{ principle.title || `P${idx + 1}` }}
                 </v-tab>
               </v-tabs>
 
-              <!-- Compact Guidelines -->
-              <v-window v-model="selectedPrincipleTab">
-                <v-window-item 
-                  v-for="(principle, pIdx) in filteredPrinciples" 
-                  :key="principle.id || pIdx"
-                >
-                  <v-card variant="outlined" class="mb-3">
-                    <v-list density="compact">
-                      <v-list-item 
-                        v-for="(guideline, gIdx) in principle.Guidelines || []" 
-                        :key="guideline.id"
-                        class="pa-2"
-                      >
-                        <template v-slot:prepend>
-                          <v-checkbox
-                            v-model="selectedGuidelines"
-                            :value="guideline.id"
-                            hide-details
-                            density="compact"
-                            color="primary"
-                            @update:modelValue="onGuidelineCheck(guideline.id)"
-                          />
-                        </template>
-                        
-                        <v-list-item-content>
-                          <v-list-item-title class="text-body-2 font-weight-bold text-primary mb-1">
-                            {{ guideline.id }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle class="text-caption mb-1">
-                            {{ guideline.title }}
-                          </v-list-item-subtitle>
-                          <v-list-item-subtitle class="text-caption text-medium-emphasis">
-                            {{ guideline.description }}
-                          </v-list-item-subtitle>
-                          
-                          <!-- Compact Rules Selection -->
-                          <div 
-                            v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
-                            class="mt-2"
-                          >
-                            <v-select
-                              v-model="selectedRulesByGuideline[guideline.id]"
-                              :items="guideline.rules.map(r => ({ title: r.title, value: r.id }))"
-                              item-title="title"
-                              item-value="value"
-                              label="Select specific rules (optional)"
-                              multiple
-                              chips
-                              clearable
-                              density="compact"
-                              variant="outlined"
+              <!-- Scrollable Guidelines Container -->
+              <div class="guidelines-container">
+                <v-window v-model="selectedPrincipleTab">
+                  <v-window-item 
+                    v-for="(principle, pIdx) in filteredPrinciples" 
+                    :key="principle.id || pIdx"
+                  >
+                    <v-card variant="outlined" class="mb-3">
+                      <v-list density="compact">
+                        <v-list-item 
+                          v-for="(guideline, gIdx) in principle.Guidelines || []" 
+                          :key="guideline.id"
+                          class="pa-2"
+                          :class="{ 'guideline-error': isGuidelineInvalid(guideline.id) }"
+                        >
+                          <template v-slot:prepend>
+                            <v-checkbox
+                              v-model="selectedGuidelines"
+                              :value="guideline.id"
                               hide-details
-                              class="rules-select"
+                              density="compact"
+                              color="primary"
+                                                              @update:modelValue="onGuidelineCheck(guideline.id)"
+                              @update:model-value="showValidationErrors = false"
+                            />
+                          </template>
+                          
+                          <v-list-item-content>
+                            <v-list-item-title class="text-body-2 font-weight-bold text-primary mb-1">
+                              {{ guideline.id }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle class="text-caption mb-1">
+                              {{ guideline.title }}
+                            </v-list-item-subtitle>
+                            <v-list-item-subtitle class="text-caption text-medium-emphasis">
+                              {{ guideline.description }}
+                            </v-list-item-subtitle>
+                            
+                            <!-- Compact Rules Selection -->
+                            <div 
+                              v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
+                              class="mt-2"
                             >
-                              <template v-slot:chip="{ props, item }">
-                                <v-chip
-                                  v-bind="props"
-                                  color="primary"
-                                  size="x-small"
-                                  variant="outlined"
-                                >
-                                  {{ item.title }}
-                                </v-chip>
-                              </template>
-                            </v-select>
-                          </div>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                  </v-card>
-                </v-window-item>
-              </v-window>
+                              <v-select
+                                v-model="selectedRulesByGuideline[guideline.id]"
+                                :items="guideline.rules.map(r => ({ title: r.title, value: r.id }))"
+                                item-title="title"
+                                item-value="value"
+                                label="Select specific rules (required)"
+                                multiple
+                                chips
+                                clearable
+                                density="compact"
+                                variant="outlined"
+                                hide-details
+                                class="rules-select"
+                                :error="showValidationErrors && isGuidelineInvalid(guideline.id)"
+                                :error-messages="showValidationErrors && isGuidelineInvalid(guideline.id) ? ['At least one rule must be selected'] : []"
+                              >
+                                <template v-slot:chip="{ props, item }">
+                                  <v-chip
+                                    v-bind="props"
+                                    color="primary"
+                                    size="x-small"
+                                    variant="outlined"
+                                  >
+                                    {{ item.title }}
+                                  </v-chip>
+                                </template>
+                              </v-select>
+                            </div>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-list>
+                    </v-card>
+                  </v-window-item>
+                </v-window>
+              </div>
 
               <!-- Compact Selection Summary -->
               <v-card v-if="selectedGuidelines.length > 0" color="success" variant="tonal" class="mt-3">
@@ -264,7 +293,7 @@
                 color="primary" 
                 @click="saveConfiguration" 
                 :loading="isLoading"
-                :disabled="selectedGuidelines.length === 0"
+                :disabled="!isValidConfiguration"
                 append-icon="mdi-content-save"
               >
                 Save Config
@@ -303,12 +332,64 @@ const enableAutomaticSave = ref(true)
 const selectedGuidelines = ref([])
 const selectedRulesByGuideline = ref({})
 const selectedPrincipleTab = ref(0)
+const showValidationErrors = ref(false) // Only show errors after save attempt
+
+// Principle icons mapping
+const principleIcons = [
+  { icon: 'mdi-eye', color: 'blue-lighten-2' },      // Perceivable
+  { icon: 'mdi-cursor-default', color: 'green-lighten-2' }, // Operable
+  { icon: 'mdi-brain', color: 'purple-lighten-2' },  // Understandable
+  { icon: 'mdi-shield-check', color: 'orange-lighten-2' } // Robust
+]
+
+// Get principle icon based on index
+const getPrincipleIcon = (index) => {
+  return principleIcons[index % principleIcons.length]
+}
+
+// Validation computed properties
+const validationErrors = computed(() => {
+  const errors = []
+  
+  for (const guidelineId of selectedGuidelines.value) {
+    const selectedRules = selectedRulesByGuideline.value[guidelineId]
+    if (!selectedRules || selectedRules.length === 0) {
+      // Find guideline title for better error message
+      const principle = filteredPrinciples.value.find(p => 
+        p.Guidelines.some(g => g.id === guidelineId)
+      )
+      if (principle) {
+        const guideline = principle.Guidelines.find(g => g.id === guidelineId)
+        if (guideline) {
+          errors.push(`Guideline "${guideline.id}" requires at least one rule to be selected`)
+        }
+      }
+    }
+  }
+  
+  return errors
+})
+
+const isValidConfiguration = computed(() => {
+  if (selectedGuidelines.value.length === 0) return false
+  return validationErrors.value.length === 0
+})
+
+// Check if a specific guideline is invalid (only show when validation is enabled)
+const isGuidelineInvalid = (guidelineId) => {
+  if (!showValidationErrors.value) return false
+  if (!selectedGuidelines.value.includes(guidelineId)) return false
+  const selectedRules = selectedRulesByGuideline.value[guidelineId]
+  return !selectedRules || selectedRules.length === 0
+}
 
 // When a guideline is unchecked, clear its selected rules
 function onGuidelineCheck(guidelineId) {
   if (!selectedGuidelines.value.includes(guidelineId)) {
     selectedRulesByGuideline.value[guidelineId] = []
   }
+  // Clear validation errors when user makes changes
+  showValidationErrors.value = false
 }
 
 // Get total selected rules count
@@ -408,10 +489,10 @@ const saveComplianceAndContinue = async () => {
     await store.dispatch('Assessment/filterByComplianceLevel', selectedCompliance.value)
     // Reset guideline selection
     selectedGuidelines.value = []
+    selectedRulesByGuideline.value = {}
     toast.success(`WCAG ${selectedCompliance.value} compliance level saved! Now select guidelines.`)
     step.value = 2
   } catch (err) {
-    console.log(err)
     toast.error('Failed to save compliance level')
   } finally {
     isLoading.value = false
@@ -419,6 +500,17 @@ const saveComplianceAndContinue = async () => {
 }
 
 const saveConfiguration = async () => {
+  // Show validation errors and check if valid
+  showValidationErrors.value = true
+  
+  // Small delay to ensure validation UI updates
+  await new Promise(resolve => setTimeout(resolve, 100))
+  
+  if (!isValidConfiguration.value) {
+    toast.error('Please fix validation errors before saving')
+    return
+  }
+
   try {
     isLoading.value = true
     error.value = ''
@@ -462,6 +554,7 @@ const resetToDefaults = () => {
   enableAutomaticSave.value = true
   selectedGuidelines.value = []
   selectedRulesByGuideline.value = {}
+  showValidationErrors.value = false
   step.value = 1
   success.value = 'Configuration reset to defaults'
   toast.info('Configuration reset to defaults')
@@ -520,6 +613,41 @@ onMounted(async () => {
   max-width: 100%;
 }
 
+/* Scrollable guidelines container */
+.guidelines-container {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  /* Fix for ResizeObserver loop error */
+  contain: layout style paint;
+}
+
+/* Custom scrollbar for webkit browsers */
+.guidelines-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.guidelines-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.guidelines-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.guidelines-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Guideline error styling */
+.guideline-error {
+  background-color: rgba(244, 67, 54, 0.05) !important;
+  border-left: 3px solid #f44336 !important;
+}
+
 /* Compact tab styling */
 .v-tabs >>> .v-tab {
   text-transform: none !important;
@@ -564,6 +692,10 @@ onMounted(async () => {
     min-width: 60px;
     padding: 0 8px;
   }
+  
+  .guidelines-container {
+    max-height: 400px;
+  }
 }
 
 /* Extra small screens */
@@ -579,5 +711,20 @@ onMounted(async () => {
   .pa-3 {
     padding: 8px !important;
   }
+  
+  .guidelines-container {
+    max-height: 350px;
+  }
+}
+
+/* Smooth scrolling */
+.guidelines-container {
+  scroll-behavior: smooth;
+}
+
+/* Focus styling for accessibility */
+.guidelines-container:focus-within {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
 }
 </style>
