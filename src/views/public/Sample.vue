@@ -1,34 +1,67 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
-      <v-list-item prepend-avatar="/human.svg" nav border>
-        <template v-slot:prepend>
-          <v-avatar color="primary" size="40" class="me-2">
-            <v-icon icon="mdi-accessibility" color="white"></v-icon>
+    <v-navigation-drawer
+      v-model="drawer"
+      :rail="rail"
+      permanent
+      @click="rail = false"
+    >
+      <v-list-item
+        prepend-avatar="/human.svg"
+        nav
+        border
+      >
+        <template #prepend>
+          <v-avatar
+            color="primary"
+            size="40"
+            class="me-2"
+          >
+            <v-icon
+              icon="mdi-accessibility"
+              color="white"
+            />
           </v-avatar>
         </template>
         <v-list-item-title class="text-h6">
           {{ test?.title || 'Accessibility Test' }}
         </v-list-item-title>
-        <template v-slot:append>
-          <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
+        <template #append>
+          <v-btn
+            variant="text"
+            icon="mdi-chevron-left"
+            @click.stop="rail = !rail"
+          />
         </template>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider />
 
-      <v-list density="compact" nav>
-        <v-list-item v-for="item in navItems" :key="item.value" :prepend-icon="item.icon" :title="item.title"
-          :value="item.value" :to="item.route" :active="isActive(item.path)"></v-list-item>
+      <v-list
+        density="compact"
+        nav
+      >
+        <v-list-item
+          v-for="item in navItems"
+          :key="item.value"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :value="item.value"
+          :to="item.route"
+          :active="isActive(item.path)"
+        />
       </v-list>
     </v-navigation-drawer>
 
     <v-main>
-
       <v-container fluid>
         <v-row>
           <v-col cols="12">
-            <TestInformationCard :test="test" :loading="loading" :test-id="$route.params.testId" />
+            <TestInformationCard
+              :test="test"
+              :loading="loading"
+              :test-id="$route.params.testId"
+            />
           </v-col>
         </v-row>
       </v-container>

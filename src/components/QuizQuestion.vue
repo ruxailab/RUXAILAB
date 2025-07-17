@@ -54,7 +54,10 @@
             />
           </v-card-text>
         </v-card>
-        <v-divider v-if="idx < currentEvidenceList.length - 1" class="my-2" />
+        <v-divider
+          v-if="idx < currentEvidenceList.length - 1"
+          class="my-2"
+        />
       </div>
       <div class="d-flex justify-center">
         <v-btn
@@ -79,7 +82,9 @@
         elevation="2"
         @click="$emit('answer', 'yes')"
       >
-        <v-icon start> mdi-check </v-icon>
+        <v-icon start>
+          mdi-check
+        </v-icon>
         Yes
       </v-btn>
       <v-btn
@@ -90,7 +95,9 @@
         elevation="2"
         @click="$emit('answer', 'no')"
       >
-        <v-icon start> mdi-close </v-icon>
+        <v-icon start>
+          mdi-close
+        </v-icon>
         No
       </v-btn>
       <v-btn
@@ -101,7 +108,9 @@
         elevation="2"
         @click="$emit('answer', 'na')"
       >
-        <v-icon start> mdi-minus </v-icon>
+        <v-icon start>
+          mdi-minus
+        </v-icon>
         N/A
       </v-btn>
     </div>

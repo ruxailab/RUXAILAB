@@ -2,7 +2,11 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <TestInformationCard :test="test" :loading="loading" :test-id="$route.params.testId" />
+        <TestInformationCard
+          :test="test"
+          :loading="loading"
+          :test-id="$route.params.testId"
+        />
       </v-col>
     </v-row>
   </v-container>

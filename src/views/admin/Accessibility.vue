@@ -8,13 +8,16 @@
       </v-row>
     </v-col>
     <v-col 
-    cols="12" 
-    class="mt-6">
+      cols="12" 
+      class="mt-6"
+    >
       <v-row>
-        <v-col cols="10" 
-        md="4" 
-        sm="10" 
-        class="card">
+        <v-col
+          cols="10" 
+          md="4" 
+          sm="10" 
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/human.svg')"
             title="Manual Testing"
@@ -28,7 +31,12 @@
             @click="setTestType('MANUAL')"
           />
         </v-col>
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col
+          cols="10"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/human.svg')"
             title="Automatic Testing"
@@ -42,7 +50,12 @@
             @click="setTestType('AUTOMATIC')"
           />
         </v-col>
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col
+          cols="10"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/human.svg')"
             title="AI Powered Testing"
