@@ -563,7 +563,7 @@
             height="60vh"
             density="compact"
           >
-            <template item.notes="{ item }">
+            <template #item.notes="{ item }">
               <v-tooltip
                 location="bottom"
                 max-width="400"
