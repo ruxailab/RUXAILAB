@@ -90,6 +90,7 @@ const startRecording = async () => {
     }
   } catch (e) {
     recording.value = false
+    console.error(e)
     toast.error(t('errors.globalError'))
   }
 
@@ -119,6 +120,7 @@ const startRecording = async () => {
 
     mediaRecorder.value.start()
   } catch (e) {
+    console.error(e)
     toast.error(t('errors.globalError'))
   }
 }
@@ -140,6 +142,7 @@ const stopRecording = () => {
   overflow: hidden;
   mask-image: radial-gradient(circle, white 100%, black 100%);
 }
+
 video {
   width: 100%;
   height: 100%;

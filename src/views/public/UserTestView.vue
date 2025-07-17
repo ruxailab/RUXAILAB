@@ -228,7 +228,7 @@
               </v-row>
               <v-row>
                 <v-col cols="6" class="mx-auto">
-                  <v-radio-group v-model="localTestAnswer.consentCompleted" direction="vertical">
+                  <v-radio-group v-model="localTestAnswer.consentCompleted" direction="horizontal">
                     <v-radio label="I accept the consent terms" :value="true" :disabled="!fullName" />
                     <v-radio label="I do not accept the consent terms" :value="false" />
                   </v-radio-group>
@@ -367,20 +367,21 @@
                     <p class="text-h5">
                       Post Form
                     </p>
-                    <iframe :src="test.testStructure.userTasks[taskIndex].postForm" width="100%" height="500"
-                      frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+                    <iframe :src="test.testStructure.userTasks[taskIndex].postForm" title="loading" width="100%"
+                      height="500" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
                   </v-col>
                 </v-row>
 
                 <v-row v-if="test.testStructure.userTasks[taskIndex].taskType === 'sus'" class="fill-height"
                   align="center" justify="center">
-                  <SusForm :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"></SusForm>
+                  <SusForm :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
+                    @update-answer="({ index, value }) => localTestAnswer.tasks[taskIndex].susAnswers[index] = value" />
                 </v-row>
 
                 <v-row v-if="test.testStructure.userTasks[taskIndex].taskType === 'nasa-tlx'" class="fill-height"
                   align="center" justify="center">
-                  <v-col cols=12>
-                    <nasaTlxForm :nasaTlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" />
+                  <v-col cols="12">
+                    <nasaTlxForm v-model:nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" />
                   </v-col>
                 </v-row>
 
@@ -528,6 +529,7 @@ import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
 import SusForm from '@/components/atoms/SusForm.vue';
 import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
+import { nanoid } from 'nanoid'
 import axios from 'axios';
 import StartCalibrationCard from '@/components/atoms/StartCalibrationCard.vue';
 import IrisTracker from '@/components/organisms/IrisTracker.vue';
@@ -637,7 +639,12 @@ const isPreTestTaskDisabled = (taskIndex) => {
 const saveAnswer = async () => {
   try {
     localTestAnswer.fullName = fullName.value;
+    if (user.value && user.value?.email) {
+      localTestAnswer.userDocId = user.value.id;
+      localTestAnswer.invited = true;
+    }
     if (!user.value) {
+      localTestAnswer.userDocId = nanoid(16)
       console.log(localTestAnswer.value)
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
@@ -920,7 +927,8 @@ const mappingSteps = async () => {
         id: 1,
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
-        localTestAnswer.tasks = test.value.testStructure.userTasks.map(() => new UserTask({
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => new UserTask({
+          taskId: task.id || i,
           taskAnswer: '',
           taskObservations: '',
           postAnswer: '',
@@ -974,8 +982,11 @@ const validate = (object) => {
 
 watchEffect(() => {
   const index = taskIndex.value;
-  const task = test.value?.testStructure?.userTasks?.[index];
-  const answers = localTestAnswer.tasks[index]?.susAnswers;
+
+  const taskList = test.value?.testStructure?.userTasks;
+  const task = Array.isArray(taskList) ? taskList[index] : undefined;
+
+  const answers = localTestAnswer?.tasks?.[index]?.susAnswers;
 
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
@@ -984,6 +995,7 @@ watchEffect(() => {
     doneTaskDisabled.value = false;
   }
 });
+
 
 
 watch(

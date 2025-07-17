@@ -1,63 +1,44 @@
 import { render as vtlRender } from '@testing-library/vue'
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Vuetify from 'vuetify'
-import VueRouter from 'vue-router'
-import VueI18n from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
+import { createRouter, createWebHistory } from 'vue-router'
+import { createStore } from 'vuex'
 import en from '@/locales/en.json'
-import store from '@/store/index'
 import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+import Vuetify from 'vuetify'
+import { createVuetify } from 'vuetify'
 
 export * from '@testing-library/vue'
 
-Vue.use(Vuetify)
-Vue.use(Toast)
-Vue.use(VueI18n)
-
-const renderWithVuetify = (component, options, callback) => {
-  const root = document.createElement('div')
-  root.setAttribute('data-app', 'true')
-
-  return vtlRender(
-    component,
-    {
-      container: document.body.appendChild(root),
-      vuetify: new Vuetify(),
-      ...options,
-    },
-    callback,
-  )
-}
-
-const router = new VueRouter()
-const i18n = new VueI18n({
-  locale: 'en',
-  fallbackLocale: 'en',
-  messages: {
-    en,
-  },
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [], // Add your routes here if needed
 })
 
-export function render(component, options = {}, { customStore } = {}) {
-  return renderWithVuetify(component, options, (vue) => {
-    vue.use(VueRouter)
-    vue.use(VueI18n)
-    vue.use(Vuex)
-    vue.use(Vuetify)
+const i18n = createI18n({
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: { en },
+})
 
-    return {
-      router,
-      i18n,
-      store: customStore || store,
-    }
+const vuetify = createVuetify()
+
+export function render(component, options = {}, { customStore } = {}) {
+  const store = customStore || createStore({})
+
+  return vtlRender(component, {
+    global: {
+      plugins: [router, i18n, store, vuetify, Toast],
+      ...options?.global,
+    },
+    ...options,
   })
 }
 
-// ✅ For Vue 2 + Vuex 3
 export function renderWithMockStore(component, options = {}) {
   const signin = jest.fn(() => Promise.resolve())
 
-  const customStore = new Vuex.Store({
+  const customStore = createStore({
     actions: {
       signin,
     },
