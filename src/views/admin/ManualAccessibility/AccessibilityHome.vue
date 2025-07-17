@@ -100,7 +100,7 @@ const cards = ref([
   {
     title: 'Preview',
     icon: 'mdi-eye-outline',
-    subtitle: 'Review and preview tests',
+    subtitle: 'Preview tests',
     description: 'Preview your accessibility tests before deployment and review test configurations.',
     route: `/preview/${testId.value}`
   },
