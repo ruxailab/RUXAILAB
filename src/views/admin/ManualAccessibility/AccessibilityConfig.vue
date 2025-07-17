@@ -496,6 +496,7 @@ const saveComplianceAndContinue = async () => {
     console.log(err)
     toast.error('Failed to save compliance level')
   } finally {
+    console.log("Saving")
     isLoading.value = false
   }
 }
