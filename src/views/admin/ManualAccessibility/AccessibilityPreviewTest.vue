@@ -193,26 +193,14 @@
         <!-- Right Sidebar - Compact Table of Contents -->
         <v-col cols="3" class="toc-sidebar fill-height">
           <v-card flat class="h-100" color="grey-lighten-5">
-            <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">On this page</v-card-title>
+            <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">Rules</v-card-title>
             <v-list density="compact" class="pa-1">
-              <template v-if="principles.length > 0">
-                <template v-for="(principle, pIdx) in principles">
-                  <v-list-subheader v-if="principles.length > 1" :key="'principle-subheader-' + pIdx">{{ principle.title
-                  }}</v-list-subheader>
-                  <template v-for="(guideline, gIdx) in principle.Guidelines">
-                    <v-list-subheader v-if="principle.Guidelines.length > 1" :key="'guideline-subheader-' + gIdx">{{
-                      guideline.title }}</v-list-subheader>
-                    <v-list-item v-for="(rule, rIdx) in guideline.rules" :key="rule.id || rIdx"
-                      prepend-icon="mdi-circle-outline" :title="(rule?.id || '') + ' ' + (rule?.title || '')" :active="selectedPrincipleIdx === pIdx &&
-                        selectedGuidelineIdx === gIdx &&
-                        selectedRuleIdx === rIdx
-                        " class="text-caption pa-2" @click="selectRule(rIdx, gIdx, pIdx)" :class="{
-                          'v-list-item--active':
-                            selectedPrincipleIdx === pIdx &&
-                            selectedGuidelineIdx === gIdx &&
-                            selectedRuleIdx === rIdx,
-                        }" />
-                  </template>
+              <template v-if="guidelines.length > 0">
+                <template v-for="(rule, rIdx) in rules" :key="rule.id || rIdx">
+                  <v-list-item prepend-icon="mdi-circle-outline" :title="(rule?.id || '') + ' ' + (rule?.title || '')"
+                    :active="selectedRuleIdx === rIdx" class="text-caption pa-2"
+                    @click="selectRule(rIdx, selectedGuidelineIdx, selectedPrincipleIdx)"
+                    :class="{ 'v-list-item--active': selectedRuleIdx === rIdx }" />
                 </template>
               </template>
               <v-list-item v-else>
