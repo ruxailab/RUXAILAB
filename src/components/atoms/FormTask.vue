@@ -21,6 +21,7 @@
           variant="outlined" density="compact"
           :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']" />
 
+        <v-checkbox v-model="localTask.hasEye" :label="$t('switches.eyeTracker')" />
         <v-checkbox v-model="localTask.hasScreenRecord" :label="$t('switches.screenRecord')" />
         <v-checkbox v-model="localTask.hasCamRecord" :label="$t('switches.camera')" />
         <v-checkbox v-model="localTask.hasAudioRecord" :label="$t('switches.audioRecord')" />
