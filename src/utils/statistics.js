@@ -183,10 +183,102 @@ function finalResult() {
   return testData
 }
 
+function buildHeuristicsEvaluator(resultEvaluator, testOptions) {
+  const table = {
+    header: [{ title: 'HEURISTICS', align: 'start', value: 'heuristic' }],
+    items: [],
+  };
+
+  const options = Array.isArray(testOptions)
+    ? testOptions.map((op) => op.value)
+    : [];
+  const max = options.length > 0 ? Math.max(...options) : 0;
+  const min = options.length > 0 ? Math.min(...options) : 0;
+
+  if (!Array.isArray(resultEvaluator)) return table;
+
+  let evaluatorIndex = 1;
+  for (const evaluator of resultEvaluator) {
+    evaluator.id = `Ev${evaluatorIndex}`;
+    const headerExists = table.header.find((h) => h.value === evaluator.id);
+    if (!headerExists) {
+      table.header.push({
+        text: evaluator.id,
+        align: 'center',
+        value: evaluator.id,
+      });
+    }
+
+    if (Array.isArray(evaluator.heuristics)) {
+      for (const heuristic of evaluator.heuristics) {
+        const item = table.items.find((i) => i.heuristic === heuristic.id);
+        if (item) {
+          item[evaluator.id] = heuristic.result;
+        } else {
+          table.items.push({
+            heuristic: heuristic.id,
+            max: max * (heuristic.totalQuestions || 0),
+            min: min * (heuristic.totalQuestions || 0),
+            [evaluator.id]: heuristic.result,
+          });
+        }
+      }
+    }
+
+    evaluatorIndex++;
+  }
+
+  return table;
+}
+
+function buildHeuristicsStatistics(heuristicsEvaluator) {
+  const table = {
+    header: [
+      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
+      { title: 'Percentage (%)', value: 'percentage', align: 'center', sortable: false },
+      { title: 'Standard deviation', value: 'sd', align: 'center', sortable: false },
+      { title: 'Average', value: 'average', align: 'center', sortable: false },
+      { title: 'Max', value: 'max', align: 'center', sortable: false },
+      { title: 'Min', value: 'min', align: 'center', sortable: false },
+    ],
+    items: [],
+  };
+
+  if (!heuristicsEvaluator?.items?.length) return table;
+
+  for (const item of heuristicsEvaluator.items) {
+    const results = Object.entries(item)
+      .filter(([key]) => key.includes('Ev'))
+      .map(([, value]) => value)
+      .filter((value) => value !== undefined && value !== null);
+
+    const average = results.length
+      ? (results.reduce((sum, val) => sum + val, 0) / results.length).toFixed(2)
+      : '0.00';
+
+    const percentage = item.max && item.min && item.max !== item.min
+      ? (((average - item.min) / (item.max - item.min)) * 100).toFixed(2)
+      : '0.00';
+
+    table.items.push({
+      name: item.heuristic || 'Unknown',
+      max: item.max ? Number(item.max).toFixed(2) : '0.00',
+      min: item.min ? Number(item.min).toFixed(2) : '0.00',
+      percentage,
+      sd: results.length ? standardDeviation(results).toFixed(2) : '0.00',
+      average,
+    });
+  }
+
+  return table;
+}
+
 export {
   percentage,
   standardDeviation,
   calcFinalResult,
   statistics,
   finalResult,
+  buildHeuristicsStatistics,
+  buildHeuristicsEvaluator,
 }

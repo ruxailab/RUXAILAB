@@ -20,6 +20,7 @@ exports.onTestCreate = functions.firestore
           testDocId: snap.id,
           testTitle: test.testTitle,
           testType: test.testType,
+          userTestType: test.userTestType,
           numberColaborators: 0,
           creationDate: test.creationDate || null,
           updateDate: Date.now(),

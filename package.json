@@ -53,6 +53,7 @@
     "jsdoc-vuex-plugin": "^1.0.0",
     "lodash": "^4.17.21",
     "material-components-web": "^14.0.0",
+    "nanoid": "^5.1.5",
     "nodemailer": "^6.9.5",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
@@ -70,7 +71,8 @@
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.7.18",
     "vuex": "^4.0.2",
-    "wavesurfer.js": "^7.9.4"
+    "wavesurfer.js": "^7.9.4",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
