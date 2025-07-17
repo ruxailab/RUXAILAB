@@ -520,39 +520,34 @@ const selectRule = (rIdx, gIdx = null, pIdx = null) => {
   store.commit('Assessment/SET_SELECTED_RULE', rIdx)
 }
 
-// Next/Previous navigation
 const nextRule = () => {
   // Try next rule in current guideline
   if (selectedRuleIdx.value + 1 < rules.value.length) {
-    store.dispatch('Assessment/selectRule', selectedRuleIdx.value + 1)
-    return
+    store.dispatch('Assessment/selectRule', selectedRuleIdx.value + 1);
   }
   // Try next guideline in current principle
-  if (selectedGuidelineIdx.value + 1 < guidelines.value.length) {
-    store.dispatch('Assessment/selectGuideline', selectedGuidelineIdx.value + 1)
+  else if (selectedGuidelineIdx.value + 1 < guidelines.value.length) {
+    store.dispatch('Assessment/selectGuideline', selectedGuidelineIdx.value + 1);
     if (guidelines.value[selectedGuidelineIdx.value + 1]?.rules?.length > 0) {
-      store.dispatch('Assessment/selectRule', 0)
+      store.dispatch('Assessment/selectRule', 0);
     }
-    return
   }
   // Try next principle
-  if (selectedPrincipleIdx.value + 1 < principles.value.length) {
-    store.dispatch('Assessment/selectPrinciple', selectedPrincipleIdx.value + 1)
+  else if (selectedPrincipleIdx.value + 1 < principles.value.length) {
+    store.dispatch('Assessment/selectPrinciple', selectedPrincipleIdx.value + 1);
     if (
       principles.value[selectedPrincipleIdx.value + 1]?.Guidelines?.length > 0
     ) {
-      store.dispatch('Assessment/selectGuideline', 0)
+      store.dispatch('Assessment/selectGuideline', 0);
       if (
         principles.value[selectedPrincipleIdx.value + 1]?.Guidelines[0]?.rules
           ?.length > 0
       ) {
-        store.dispatch('Assessment/selectRule', 0)
+        store.dispatch('Assessment/selectRule', 0);
       }
     }
-    return
   }
-}
-
+};
 const prevRule = () => {
   // Try previous rule in current guideline
   if (selectedRuleIdx.value > 0) {
