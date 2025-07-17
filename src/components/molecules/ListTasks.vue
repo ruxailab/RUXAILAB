@@ -103,6 +103,7 @@ const task = ref({
   postQuestion: null,
   postForm: null,
   taskType: null,
+  hasEye: false,
   hasAudioRecord: false,
   hasScreenRecord: false,
   hasCamRecord: false,
@@ -157,6 +158,7 @@ const addTask = (newTask) => {
     postQuestion: null,
     taskType: null,
     hasAudioRecord: false,
+    hasEye: false,
     hasScreenRecord: false,
     hasCamRecord: false,
   };
