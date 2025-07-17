@@ -256,29 +256,22 @@ const getTypeIcon = (item) => {
 }
 
 const getTestType = (item) => {
-  const testType = item.testType ?? item.header?.templateType ?? 'USER'
-  const subtype = item.userTestType ?? ''
+  const type = item.testType.toUpperCase();
+  const sub = item.userTestType?.toUpperCase() || '';
 
-  switch (testType.toUpperCase()) {
+  switch (type) {
     case 'HEURISTICS':
-      return 'HEURISTICS'
+    case 'MANUAL':
+    case 'AUTOMATIC':
+      return type;
 
     case 'USER':
-      if (subtype.toUpperCase().includes('UNMODERATED')) {
-        return 'UNMODERATED'
-      }
-      if (subtype.toUpperCase().includes('MODERATED')) {
-        return 'MODERATED'
-      }
-    
-    case 'MANUAL':
-      return 'MANUAL'
-
-    case 'AUTOMATIC':
-      return 'AUTOMATIC'
+      if (sub?.includes('UNMODERATED')) return 'UNMODERATED';
+      if (sub?.includes('MODERATED')) return 'MODERATED';
+      return 'USER';
 
     default:
-      return 'EMPTY TYPE'
+      return 'EMPTY TYPE';
   }
 }
 
