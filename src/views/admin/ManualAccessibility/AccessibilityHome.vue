@@ -2,20 +2,6 @@
   <v-app>
     <v-main>
       <v-container fluid class="dashboard-container">
-        <!-- Header Section -->
-        <v-row class="mb-6">
-          <v-col cols="12">
-            <div class="header-content">
-              <h1 class="display-1 font-weight-bold text-primary mb-3">
-                Accessibility Dashboard
-              </h1>
-              <p class="text-h6 text-medium-emphasis font-weight-regular">
-                Manage and monitor your accessibility testing workflow
-              </p>
-            </div>
-          </v-col>
-        </v-row>
-
         <!-- Dashboard Cards -->
         <v-row class="dashboard-grid" no-gutters>
           <v-col
@@ -24,13 +10,13 @@
             cols="12"
             sm="6"
             md="4"
-            lg="2"
+            lg="3"
             xl="2"
             class="pa-2"
           >
             <v-card
               class="dashboard-card"
-              elevation="0"
+              elevation="2"
               rounded="xl"
               hover
               @click="$router.push(card.route)"
@@ -98,6 +84,13 @@ const cards = ref([
     route: ''
   },
   {
+    title: 'Config',
+    icon: 'mdi-cog-outline',
+    subtitle: 'Configuration settings',
+    description: 'Configure and manage accessibility test settings, preferences, and system configurations.',
+    route: `/config/${testId.value}`
+  },
+  {
     title: 'Edit',
     icon: 'mdi-pencil-outline',
     subtitle: 'Create and modify tests',
@@ -118,13 +111,6 @@ const cards = ref([
     description: 'Check and analyze the responses submitted for accessibility tests and evaluations.',
     route: `/result/${testId.value}`
   },
-  {
-    title: 'Config',
-    icon: 'mdi-cog-outline',
-    subtitle: 'Configuration settings',
-    description: 'Configure and manage accessibility test settings, preferences, and system configurations.',
-    route: `/config/${testId.value}`
-  },
 ])
 </script>
 
@@ -132,7 +118,7 @@ const cards = ref([
 /* Main Container */
 .dashboard-container {
   background: #f8f9fa;
-  min-height: 100vh;
+  min-height: 120vh;
   padding: 1.5rem 1rem;
   max-width: 1400px;
   margin: 0 auto;
@@ -155,7 +141,7 @@ const cards = ref([
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
-  height: 280px;
+  height: 240px;
   opacity: 0;
   animation: cardSlideIn 0.6s ease-out forwards;
 }
