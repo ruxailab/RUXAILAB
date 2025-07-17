@@ -233,6 +233,7 @@ import List from '@/components/atoms/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from './NotificationPage.vue';
+import { title } from 'process';
 
 const store = useStore();
 const router = useRouter();
@@ -267,6 +268,8 @@ const methodOptions = [
   { value: 'all', title: 'All Methods' },
   { value: 'User', title: 'Usability Test' },
   { value: 'HEURISTICS', title: 'Heuristic Evaluation' },
+  { value: 'MANUAL', title: 'MANUAL'},
+  { value: 'AUTOMATIC', title: 'AUTOMATIC'}
 ];
 
 const currentPageTitle = computed(() => {
@@ -297,7 +300,9 @@ const filteredTests = computed(() => {
     const matchesMethod =
       method === 'all' ||
       (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
-      (method === 'User' && testType === 'User');
+      (method === 'User' && testType === 'User') ||
+      (method === 'MANUAL' && testType === 'MANUAL') ||
+      (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 
     return matchesSearch && matchesMethod;
   });
