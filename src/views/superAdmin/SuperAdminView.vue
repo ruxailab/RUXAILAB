@@ -247,7 +247,7 @@ const usersHeaders = computed(() => [
 const testsHeaders = computed(() => [
   { title: t('common.title'), align: 'start', value: 'testTitle' },
   { title: t('pages.listTests.createdBy'), value: 'testAdmin.email' },
-  { title: t('pages.listTests.updated'), value: 'creationDate' },
+  { title: t('pages.listTests.updated'), value: 'creationDate', sortable: true },
   { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
