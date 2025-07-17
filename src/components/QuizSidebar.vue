@@ -1,7 +1,13 @@
 <template>
-  <v-card class="sidebar-card h-100" color="#f5f7ff" elevation="2">
+  <v-card
+    class="sidebar-card h-100"
+    color="#f5f7ff"
+    elevation="2"
+  >
     <v-list nav>
-      <v-list-subheader class="text-h6"> WCAG Principles </v-list-subheader>
+      <v-list-subheader class="text-h6">
+        WCAG Principles
+      </v-list-subheader>
       <v-list-item
         v-for="(principle, index) in principles"
         :key="index"
@@ -23,8 +29,8 @@
         density="compact"
         :value="null"
         color="primary"
-        @click="$emit('select-all')"
         class="mt-8"
+        @click="$emit('select-all')"
       >
         <template #prepend>
           <v-icon>mdi-check-all</v-icon>

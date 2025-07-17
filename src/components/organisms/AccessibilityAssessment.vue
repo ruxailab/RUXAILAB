@@ -1,10 +1,19 @@
 <template>
   <v-app>
     <!-- Dashboard Component -->
-    <v-container v-if="currentView === 'dashboard'" fluid class="pa-6">
+    <v-container
+      v-if="currentView === 'dashboard'"
+      fluid
+      class="pa-6"
+    >
       <v-row>
-        <v-col cols="12" class="d-flex justify-space-between align-center mb-4">
-          <h1 class="text-h4 font-weight-bold">Dashboard</h1>
+        <v-col
+          cols="12"
+          class="d-flex justify-space-between align-center mb-4"
+        >
+          <h1 class="text-h4 font-weight-bold">
+            Dashboard
+          </h1>
           <v-btn
             color="amber-darken-1"
             variant="flat"
@@ -24,9 +33,14 @@
           md="6"
           lg="4"
         >
-          <v-card class="pa-4" elevation="2">
+          <v-card
+            class="pa-4"
+            elevation="2"
+          >
             <div class="d-flex justify-space-between align-center mb-2">
-              <h3 class="text-h6">{{ assessment.name }}</h3>
+              <h3 class="text-h6">
+                {{ assessment.name }}
+              </h3>
               <v-chip
                 :color="getWcagColor(assessment.wcagLevel)"
                 size="small"
@@ -61,7 +75,7 @@
                 color="amber-darken-1"
                 height="6"
                 rounded
-              ></v-progress-linear>
+              />
             </div>
 
             <div class="mb-4">
@@ -74,26 +88,38 @@
                 color="amber-darken-1"
                 height="6"
                 rounded
-              ></v-progress-linear>
+              />
             </div>
 
             <div class="d-flex justify-space-around mb-4">
               <div class="d-flex align-center">
-                <v-icon color="success" size="small" class="mr-1"
-                  >mdi-check-circle</v-icon
+                <v-icon
+                  color="success"
+                  size="small"
+                  class="mr-1"
                 >
+                  mdi-check-circle
+                </v-icon>
                 <span class="text-body-2">{{ assessment.passed }}</span>
               </div>
               <div class="d-flex align-center">
-                <v-icon color="error" size="small" class="mr-1"
-                  >mdi-close-circle</v-icon
+                <v-icon
+                  color="error"
+                  size="small"
+                  class="mr-1"
                 >
+                  mdi-close-circle
+                </v-icon>
                 <span class="text-body-2">{{ assessment.failed }}</span>
               </div>
               <div class="d-flex align-center">
-                <v-icon color="warning" size="small" class="mr-1"
-                  >mdi-alert-circle</v-icon
+                <v-icon
+                  color="warning"
+                  size="small"
+                  class="mr-1"
                 >
+                  mdi-alert-circle
+                </v-icon>
                 <span class="text-body-2">{{ assessment.warnings }}</span>
               </div>
             </div>
@@ -122,10 +148,21 @@
     </v-container>
 
     <!-- Add New Webpage Form -->
-    <v-container v-if="currentView === 'add-webpage'" fluid class="pa-6">
+    <v-container
+      v-if="currentView === 'add-webpage'"
+      fluid
+      class="pa-6"
+    >
       <v-row justify="center">
-        <v-col cols="12" md="8" lg="6">
-          <v-card class="pa-6" elevation="2">
+        <v-col
+          cols="12"
+          md="8"
+          lg="6"
+        >
+          <v-card
+            class="pa-6"
+            elevation="2"
+          >
             <v-card-title class="text-h5 font-weight-bold pa-0 mb-2">
               Add New Webpage for Assessment
             </v-card-title>
@@ -142,7 +179,7 @@
                 variant="outlined"
                 class="mb-4"
                 :rules="[rules.required]"
-              ></v-text-field>
+              />
               <p class="text-body-2 text-medium-emphasis mb-4 mt-n2">
                 A descriptive name for the webpage you are testing.
               </p>
@@ -154,7 +191,7 @@
                 variant="outlined"
                 class="mb-4"
                 :rules="[rules.required, rules.url]"
-              ></v-text-field>
+              />
               <p class="text-body-2 text-medium-emphasis mb-4 mt-n2">
                 The full URL of the webpage.
               </p>
@@ -166,7 +203,7 @@
                 variant="outlined"
                 rows="3"
                 class="mb-4"
-              ></v-textarea>
+              />
 
               <v-select
                 v-model="form.wcagLevel"
@@ -175,7 +212,7 @@
                 variant="outlined"
                 class="mb-6"
                 :rules="[rules.required]"
-              ></v-select>
+              />
               <p class="text-body-2 text-medium-emphasis mb-6 mt-n2">
                 The target WCAG conformance level for this assessment.
               </p>
@@ -189,7 +226,11 @@
                 >
                   Add Webpage & Start Assessment
                 </v-btn>
-                <v-btn variant="outlined" size="large" @click="showDashboard">
+                <v-btn
+                  variant="outlined"
+                  size="large"
+                  @click="showDashboard"
+                >
                   Cancel
                 </v-btn>
               </div>
