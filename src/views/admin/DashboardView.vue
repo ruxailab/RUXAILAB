@@ -138,7 +138,7 @@
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
-              label="Filter by Method"
+              label="Filter by Type"
               variant="outlined"
               hide-details
               rounded="lg"
@@ -265,8 +265,7 @@ const navigationItems = [
 
 const methodOptions = [
   { value: 'all', title: 'All Methods' },
-  { value: 'unmoderated', title: 'Unmoderated Test' },
-  { value: 'moderated', title: 'Moderated Test' },
+  { value: 'User', title: 'Usability Test' },
   { value: 'HEURISTICS', title: 'Heuristic Evaluation' },
 ];
 
@@ -294,13 +293,11 @@ const filteredTests = computed(() => {
 
     const method = selectedMethodFilter.value;
     const testType = test.testType;
-    const userTestType = test.userTestType;
 
     const matchesMethod =
       method === 'all' ||
       (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
-      (method === 'moderated' && testType === 'User' && userTestType === 'moderated') ||
-      (method === 'unmoderated' && testType === 'User' && userTestType === 'unmoderated');
+      (method === 'User' && testType === 'User');
 
     return matchesSearch && matchesMethod;
   });
