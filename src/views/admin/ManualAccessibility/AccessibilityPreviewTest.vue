@@ -1096,10 +1096,6 @@ const resetAssessment = () => {
   border-left: 3px solid #2196f3;
 }
 
-.active-principle {
-  background-color: rgba(33, 150, 243, 0.05);
-}
-
 .add-note-tab {
   min-width: 48px !important;
 }
