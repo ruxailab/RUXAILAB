@@ -29,7 +29,7 @@ export default [
     path:'/profile',
     name:'Profile',
     meta: { authorize: [1] },
-    component:Profile,
+    component: Profile,
   },
   {
     path: '/notifications',
