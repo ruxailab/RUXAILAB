@@ -207,11 +207,11 @@
         </div>
 
         <div v-if="activeSection === 'notifications'">
-           <NotificationPage />
+          <NotificationPage />
         </div>
 
         <div v-if="activeSection === 'profile'">
-           <ProfileView />
+          <ProfileView />
         </div>
 
         <TempDialog
