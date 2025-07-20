@@ -1,13 +1,7 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
     <Snackbar />
-
-    <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        {{ $t('common.loading') }}
-      </div>
-    </v-overlay>
+    <Loadding />
 
     <v-row v-if="test" class="nav pa-0 ma-0" dense>
       <Drawer :items="navigator" />
@@ -71,12 +65,14 @@ import Snackbar from '@/components/atoms/Snackbar'
 import Drawer from '@/components/atoms/Drawer'
 // import { statistics } from '@/utils/statistics'
 import CardsManager from '@/components/atoms/CardsManager'
+import Loadding from '@/components/atoms/Loadding.vue'
 
 export default {
   components: {
     Snackbar,
     Drawer,
     CardsManager,
+    Loadding,
   },
 
   computed: {
@@ -95,10 +91,6 @@ export default {
 
     accessLevel() {
       return this.$store.getters.getUserAccessLevel(this.test)
-    },
-
-    loading() {
-      return this.$store.getters.loading
     },
 
     topCards() {
@@ -184,7 +176,7 @@ export default {
           // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
           // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
           // { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },
-          // { title: 'Cooperators', icon: 'mdi-account-group', path: `/cooperators/${this.test.id}` },
+          { title: 'Cooperators', icon: 'mdi-account-group', path: `/cardSorting/cooperators/${this.test.id}` },
           { title: 'Settings', icon: 'mdi-cog', path: `/cardSorting/settingsview/${this.test.id}` },
         )
       }
