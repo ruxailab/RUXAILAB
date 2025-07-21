@@ -8,7 +8,6 @@
         <v-tab>CATEGORIES</v-tab>
         <v-tab>CARDS</v-tab>
         <v-tab>POST-TEST</v-tab>
-        <v-tab>SETTINGS</v-tab>
       </v-tabs>
 
       <v-col cols="12">
@@ -45,7 +44,7 @@ export default {
   },
 
   data: () => ({
-    tabIndex: 1,
+    tabIndex: 2,
   }),
 
   computed: {

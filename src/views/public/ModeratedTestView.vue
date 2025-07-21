@@ -768,8 +768,7 @@
                 >
                   <v-textarea
                     :id="'id-' + test.testStructure.userTasks[taskIdx].taskName"
-                    v-model="
-                      currentUserTestAnswer.tasks[taskIdx].taskObservations
+                    v-model="currentUserTestAnswer.tasks[taskIdx].taskObservations
                     "
                     variant="outlined"
                     label="observation (optional)"
@@ -846,8 +845,7 @@
                   </p>
                   <v-textarea
                     v-if="item.textField"
-                    v-model="
-                      currentUserTestAnswer.postTestAnswer[postTestIndex].answer
+                    v-model="currentUserTestAnswer.postTestAnswer[postTestIndex].answer
                     "
                     :placeholder="item.title"
                     variant="outlined"
@@ -855,8 +853,7 @@
                   />
                   <v-radio-group
                     v-if="item.selectionField"
-                    v-model="
-                      currentUserTestAnswer.postTestAnswer[postTestIndex].answer
+                    v-model="currentUserTestAnswer.postTestAnswer[postTestIndex].answer
                     "
                   >
                     <v-row
@@ -979,7 +976,7 @@
         color="grey-darken-4"
       >
         <v-progress-linear
-          style="border-radius: 20px; width: 20wv;"
+          style="border-radius: 20px; width: 20vw;"
           :model-value="uploadProgress"
           color="#fca326"
           height="20"
@@ -1094,6 +1091,8 @@ const recordedChunksEvaluator = ref([]);
 const recordedChunksModerator = ref([]);
 const recordedVideoEvaluator = ref('');
 const recordedVideoModerator = ref('');
+const recordedAudioModerator = ref('');
+const recordedAudioEvaluator = ref('');
 const videoStream = ref(null);
 const mediaRecorderEvaluator = ref(null);
 const mediaRecorderModerator = ref(null);
@@ -1157,28 +1156,56 @@ const openTask = (id) => {
 };
 
 const setInProgress = (id, type) => {
-  const statusToUpdate = 'inProgress';
+  console.log(`Setting ${type} ${id} status to inProgress`);
+
   const testRef = doc(db, 'tests', roomTestId.value);
-  getDoc(testRef).then((doc) => {
-    if (doc.exists()) {
-      const data = doc.data();
-      if (type === 'tasks' && tasksStatus.value[id] === 'open') {
-        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
-      } else if (type === 'postTest' && userTestStatus.value.postTestStatus === 'open') {
-        data.userTestStatus.postTestStatus = statusToUpdate;
-      } else if (type === 'preTest' && userTestStatus.value.preTestStatus === 'open') {
-        data.userTestStatus.preTestStatus = statusToUpdate;
-      }
-      updateDoc(testRef, data).catch((error) => {
-        console.error(`Error updating ${type} status:`, error);
-      });
-      if (type === 'tasks') {
-        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
-      } else {
-        test.value.userTestStatus[`${type}Status`] = statusToUpdate;
-      }
-    } else {
+  const statusToUpdate = 'inProgress';
+
+  getDoc(testRef).then((docSnap) => {
+    if (!docSnap.exists()) {
       console.error('Test document not found');
+      return;
+    }
+
+    const data = docSnap.data();
+    let shouldUpdate = false;
+
+    if (type === 'tasks') {
+      const currentStatus = tasksStatus.value[id];
+      if (currentStatus === 'open') {
+        console.log(`Current task status: ${currentStatus}`);
+        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
+        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    } else if (type === 'preTest') {
+      const currentStatus = userTestStatus.value.preTestStatus;
+      if (currentStatus === 'open') {
+        console.log(`Current preTest status: ${currentStatus}`);
+        data.userTestStatus.preTestStatus = statusToUpdate;
+        test.value.userTestStatus.preTestStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    } else if (type === 'postTest') {
+      const currentStatus = userTestStatus.value.postTestStatus;
+      if (currentStatus === 'open') {
+        console.log(`Current postTest status: ${currentStatus}`);
+        data.userTestStatus.postTestStatus = statusToUpdate;
+        test.value.userTestStatus.postTestStatus = statusToUpdate;
+        shouldUpdate = true;
+      }
+    }
+
+    if (shouldUpdate) {
+      updateDoc(testRef, data)
+        .then(() => {
+          console.log(`Updated ${type} ${id} status to: ${statusToUpdate}`);
+        })
+        .catch((error) => {
+          console.error(`Error updating ${type} status:`, error);
+        });
+    } else {
+      console.log(`Skipped update: ${type} ${id} is not in 'open' state`);
     }
   });
 };
@@ -1188,29 +1215,62 @@ const setExistUser = () => {
 };
 
 const changeStatus = (id, type, newStatus) => {
+  console.log(`Changing ${type} status to ${newStatus}`);
   const testRef = doc(db, 'tests', roomTestId.value);
   getDoc(testRef)
-    .then((doc) => {
+    .then(async (doc) => {
       if (doc.exists()) {
         const data = doc.data();
         if (type === 'tasks') {
+          console.log(`Updating ${type} ${id} status`);
           data.testStructure.userTasks[id].taskStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.tasks[id].completed = true;
+          if (newStatus === 'done') {
+
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.tasks[id].completed);
+            currentUserTestAnswer.value.tasks[id].completed = true;
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.tasks[id].completed);
+
+          }
         } else if (type === 'postTest') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.postTestStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.postTestCompleted = true;
+          if (newStatus === 'done') {
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.postTestCompleted);
+
+            currentUserTestAnswer.value.postTestCompleted = true;
+
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.postTestCompleted);
+          }
         } else if (type === 'preTest') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.preTestStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.preTestCompleted = true;
+          if (newStatus === 'done') {
+            console.log("currentUserTestAnswer status antes", currentUserTestAnswer.value.preTestCompleted);
+
+            currentUserTestAnswer.value.preTestCompleted = true;
+
+            console.log("currentUserTestAnswer status depois", currentUserTestAnswer.value.preTestCompleted);
+          }
         } else if (type === 'consent') {
+          console.log(`Updating ${type} status`);
           data.userTestStatus.consentStatus = newStatus;
-          if (newStatus === 'done') currentUserTestAnswer.value.consentCompleted = true;
+          if (newStatus === 'done') {
+            console.log(`Marking ${type} as completed`);
+            currentUserTestAnswer.value.consentCompleted = true;
+          }
         }
-        return updateDoc(testRef, data);
+
+        console.log("userTestStatus antes", data.userTestStatus);
+        await updateDoc(testRef, data);
+        console.log("userTestStatus depois", data.userTestStatus);
+        return data;
       }
       throw new Error('Test document not found');
     })
     .then(() => {
+      console.log("userTestStatus", userTestStatus.value);
+
+      console.log('Status updated');
       calculateProgress();
     })
     .catch((error) => {
@@ -1249,6 +1309,31 @@ const uploadVideo = async (recordedChunks, storagePath) => {
   });
 };
 
+const uploadAudio = async (recordedChunks, storagePath) => {
+  const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+  const storage = getStorage();
+  const ref = storageRef(storage, storagePath);
+  const uploadTask = uploadBytesResumable(ref, audioBlob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        uploadProgress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        console.error('Upload failed:', error);
+        isLoading.value = false;
+        reject(error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(ref);
+        resolve(downloadURL);
+      },
+    );
+  });
+};
+
 const startRecordingEvaluator = async () => {
   recording.value = true;
   recordedChunksEvaluator.value = [];
@@ -1266,10 +1351,13 @@ const startRecordingEvaluator = async () => {
 
   mediaRecorderEvaluator.value.onstop = async () => {
     isLoading.value = true;
-    const storagePath = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    const storagePathVideo = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    const storagePathAudio = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/audio/${recordedAudioEvaluator.value}`;
     try {
-      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePath);
+      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePathVideo);
+      recordedAudioEvaluator.value = await uploadAudio(recordedChunksEvaluator.value, storagePathAudio);
       currentUserTestAnswer.value.cameraUrlEvaluator = recordedVideoEvaluator.value;
+      currentUserTestAnswer.value.audioUrlEvaluator = recordedAudioEvaluator.value;
       isLoading.value = false;
       saved.value = true;
       window.onbeforeunload = null;
@@ -1307,8 +1395,12 @@ const startRecordingModerator = async () => {
   mediaRecorderModerator.value.onstop = async () => {
     isLoading.value = true;
     try {
-      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, storagePath);
+      const videoStoragePath = `tests/${roomTestId.value}/${route.params.token}/moderator/video/${recordedVideoModerator.value}`;
+      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, videoStoragePath);
       currentUserTestAnswer.value.cameraUrlModerator = recordedVideoModerator.value;
+      const audioStoragePath = `tests/${roomTestId.value}/${route.params.token}/moderator/audio/${recordedAudioModerator.value}`;
+      recordedAudioModerator.value = await uploadAudio(recordedChunksModerator.value, audioStoragePath);
+      currentUserTestAnswer.value.audioUrlModerator = recordedAudioModerator.value;
       isLoading.value = false;
       saved.value = true;
       window.onbeforeunload = null;
@@ -1322,7 +1414,8 @@ const startRecordingModerator = async () => {
   mediaRecorderModerator.value.start();
   backupInterval.value = setInterval(async () => {
     if (recording.value) {
-      await uploadVideo(recordedChunksModerator.value, storagePath);
+      await uploadVideo(recordedChunksModerator.value, videoStoragePath);
+      await uploadAudio(recordedChunksModerator.value, audioStoragePath);
     }
   }, 300000);
 };
@@ -1330,13 +1423,17 @@ const startRecordingModerator = async () => {
 const stopRecording = () => {
   if (mediaRecorderEvaluator.value) {
     mediaRecorderEvaluator.value.stop();
-    localCameraStream.value?.stop();
+    if (localCameraStream.value) {
+      localCameraStream.value.getTracks().forEach(track => track.stop());
+    }
     clearInterval(backupInterval.value);
     recording.value = false;
   }
   if (mediaRecorderModerator.value) {
     mediaRecorderModerator.value.stop();
-    localCameraStream.value?.stop();
+    if (localCameraStream.value) {
+      localCameraStream.value.getTracks().forEach(track => track.stop());
+    }
     clearInterval(backupInterval.value);
     recording.value = false;
   }
@@ -1543,6 +1640,7 @@ onMounted(async () => {
     }
   });
   onSnapshot(ref, (snapshot) => {
+    console.log('snapshot.data().userTestStatus:', snapshot.data().userTestStatus);
     moderatorStatus.value = snapshot.data().userTestStatus.moderator;
     evaluatorStatus.value = snapshot.data().userTestStatus.user;
     userTestStatus.value = snapshot.data().userTestStatus;
@@ -1594,15 +1692,6 @@ watch(remoteCameraStream, async () => {
 });
 
 watch(
-  () => userTestStatus.value.preTestStatus,
-  (newValue) => {
-    if (newValue === 'done' && !isAdmin.value) {
-      window.open(test.value.testStructure.landingPage);
-    }
-  },
-);
-
-watch(
   () => userTestStatus.value.postTestStatus,
   (newValue) => {
     postTestFinished.value = newValue === 'done';
@@ -1623,37 +1712,47 @@ watch(evaluatorStatus, (newValue) => {
   margin: 0;
   overflow-y: auto;
 }
+
 .nav-list {
   max-height: 85%;
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 100px;
 }
+
 .cards {
   margin-top: 16px;
 }
+
 .text-field {
   margin-bottom: 16px;
 }
+
 .btn-done {
   border-radius: 10px;
 }
+
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
+
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
+
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
+
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
+
 .cards {
   border-radius: 20px;
 }
+
 .cardsTitle {
   color: #455a64;
   font-size: 18px;
@@ -1661,6 +1760,7 @@ watch(evaluatorStatus, (newValue) => {
   font-weight: 600;
   line-height: normal;
 }
+
 .cardsSubtitle {
   color: #455a64;
   font-size: 15px;
@@ -1668,17 +1768,21 @@ watch(evaluatorStatus, (newValue) => {
   font-weight: 400;
   line-height: normal;
 }
+
 .v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
 }
+
 .disabled-group {
   pointer-events: none;
   background-color: grey;
 }
+
 body {
   overflow-y: 100vh;
 }
+
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
@@ -1686,11 +1790,13 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+
 .backgroundTest {
   background-color: #e8eaf2;
   height: 94%;
   overflow: scroll;
 }
+
 .background:before {
   content: '';
   position: absolute;
@@ -1705,6 +1811,7 @@ body {
   background-position: right 0px top -20px;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .titleView {
   font-style: normal;
   font-weight: 300;
@@ -1714,6 +1821,7 @@ body {
   align-items: center;
   color: #ffffff;
 }
+
 .description {
   font-style: normal;
   font-weight: 200;
@@ -1722,15 +1830,14 @@ body {
   align-items: flex-end;
   color: #ffffff;
 }
+
 .nav {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 }
-.v-navigation-drawer {
-  margin-top: 64px;
-}
+
 .subtitleView {
   font-style: normal;
   font-weight: 200;
@@ -1740,9 +1847,11 @@ body {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
+
 .btn-fix:focus::before {
   opacity: 0 !important;
 }
+
 .titleText {
   color: rgba(255, 255, 255, 0.7);
   font-size: 16px;
@@ -1751,32 +1860,41 @@ body {
   padding-left: 0px;
   padding-top: 0px;
 }
+
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
+
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
+
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd8694;
   border-radius: 2px;
 }
+
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fda1207a;
 }
+
 .nav-list::-webkit-scrollbar {
   width: 7px;
 }
+
 .nav-list::-webkit-scrollbar-track {
   background: none;
 }
+
 .nav-list::-webkit-scrollbar-thumb {
   background: #c09c6b;
   border-radius: 4px;
 }
+
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #eba555;
 }
+
 .card-title {
   font-style: normal;
   font-weight: 300;
@@ -1785,6 +1903,7 @@ body {
   margin-left: 12px;
   margin-bottom: 20px;
 }
+
 .dot-flashing {
   position: relative;
   width: 15px;
@@ -1795,6 +1914,7 @@ body {
   animation: dot-flashing 1s infinite linear alternate;
   animation-delay: 0.5s;
 }
+
 .dot-flashing::before,
 .dot-flashing::after {
   content: '';
@@ -1802,6 +1922,7 @@ body {
   position: absolute;
   top: 0;
 }
+
 .dot-flashing::before {
   left: -25px;
   width: 15px;
@@ -1812,6 +1933,7 @@ body {
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 0s;
 }
+
 .dot-flashing::after {
   left: 25px;
   width: 15px;
@@ -1822,10 +1944,12 @@ body {
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 1s;
 }
+
 @keyframes dot-flashing {
   0% {
     background-color: #fca326;
   }
+
   50%,
   100% {
     background-color: rgba(252, 163, 38, 0.281);

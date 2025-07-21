@@ -146,7 +146,8 @@
                 </v-avatar>
                 <div class="ml-4 flex-grow-1">
                   <div class="d-flex align-center">
-                    <span class="text-h6 font-weight-bold text-grey-darken-4">{{ username || $t('buttons.username') }}</span>
+                    <span class="text-h6 font-weight-bold text-grey-darken-4">{{ username || $t('buttons.username')
+                    }}</span>
                     <v-icon
                       color="primary"
                       size="20"
@@ -392,21 +393,21 @@ const items = computed(() => {
         },
       );
     } else if (accessLevel.value === 1) {
-  items.push(
-    {
-      title: 'Reports',
-      icon: 'mdi-book-multiple',
-      path: `/reportview/${test.value.id}`,
-      id: 2,
-    },
-    {
-      title: 'Answers',
-      icon: 'mdi-order-bool-ascending-variant',
-      path: `/answerview/${test.value.id}`,
-      id: 3,
-    },
-  );
-}
+      items.push(
+        {
+          title: 'Reports',
+          icon: 'mdi-book-multiple',
+          path: `/reportview/${test.value.id}`,
+          id: 2,
+        },
+        {
+          title: 'Answers',
+          icon: 'mdi-order-bool-ascending-variant',
+          path: `/answerview/${test.value.id}`,
+          id: 3,
+        },
+      );
+    }
 
     if (test.value.template) {
       items.push({
@@ -474,6 +475,7 @@ const fetchUsername = async () => {
   } catch (error) {
     console.error('Error fetching profile:', error);
     toast.error(t('errors.globalError'));
+    console.error(e)
   }
 };
 
@@ -481,18 +483,18 @@ const goTo = (path) => {
   if (path.includes('/testview')) {
     window.open(path);
   } else {
-    router.push(path).catch(() => {});
+    router.push(path).catch(() => { });
   }
 };
 
 const signOut = async () => {
   await store.dispatch('logout');
-  router.push('/').catch(() => {});
+  router.push('/').catch(() => { });
 };
 
 const goToProfile = () => {
   if (route.path !== '/profile') {
-    router.push('/profile').catch(() => {});
+    router.push('/profile').catch(() => { });
   }
 };
 

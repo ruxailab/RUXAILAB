@@ -245,7 +245,12 @@ const route = useRoute();
 const { t } = useI18n();
 const toast = useToast()
 
-const props = defineProps(['id']);
+const props = defineProps({
+  id: {
+    type: String,
+    required: true,
+  },
+});
 
 const template = ref({
   templateTitle: '',
