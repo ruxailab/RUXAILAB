@@ -105,16 +105,16 @@ export default {
             'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
           path: `/cardSorting/edittest/${this.test.id}`,
         },
-        // {
-        //   image: 'IntroCoops.svg',
-        //   title: 'cooperators',
-        //   imageStyle: '',
-        //   bottom: '#000',
-        //   description: 'cooperators',
-        //   cardStyle:
-        //     'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
-        //   path: `/cooperators/${this.test.cooperators}`,
-        // },
+        {
+          image: 'IntroCoops.svg',
+          title: 'cooperators',
+          imageStyle: '',
+          bottom: '#000',
+          description: 'cooperators',
+          cardStyle:
+            'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
+          path: `/cardSorting/cooperators/${this.test.cooperators}`,
+        },
       ]
     },
 
@@ -172,7 +172,7 @@ export default {
       if (this.accessLevel == 0) {
         items.push(
           { title: 'Test', icon: 'mdi-file-document-edit', path: `/cardSorting/edittest/${this.test.id}` },
-          // { title: 'Preview', icon: 'mdi-file-eye', path: `/cardSorting/testview/${this.test.id}` },
+          { title: 'Preview', icon: 'mdi-file-eye', path: `/cardSorting/testview/${this.test.id}` },
           // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
           // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
           // { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },

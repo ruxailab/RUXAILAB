@@ -195,13 +195,13 @@ const submit = async () => {
 
 const notifyCooperator = async (guest) => {
   if (guest.userDocId) {
-    const path = guest.accessLevel.value >= 2 ? 'testview' : 'managerview'
+    const path = 'testview'
     await store.dispatch('addNotification', {
       userId: guest.userDocId,
       notification: new Notification({
         title: 'Cooperation Invite!',
         description: `You have been invited to test ${test.value.testTitle}!`,
-        redirectsTo: `/cardSortying/${path}/${test.value.id}/${guest.token}`,
+        redirectsTo: `cardSorting/${path}/${test.value.id}/${guest.userDocId}`,
         author: test.value.testAdmin.email,
         read: false,
         testId: test.value.id,
