@@ -9,6 +9,7 @@ import Sample from '@/views/public/Sample.vue'
 import TermsOfService from '@/views/public/TermsOfService.vue'
 import PrivacyPolicy from '@/views/public/PrivacyPolicy.vue'
 import FAQ from '@/views/public/FAQ.vue'
+
 export default [
   {
     path: '/testview/:id/:token?',
@@ -20,19 +21,19 @@ export default [
   {
     path: '/signin',
     name: 'SignIn',
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: SignIn,
   },
   {
     path: '/signup',
     name: 'Sign Up',
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: SignUp,
   },
   {
     path: '/forgot-password',
     name: 'Forgot Password',
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: ForgotPassword,
   },
   {
@@ -61,10 +62,19 @@ export default [
     component: PageNotFound,
   },
   {
-    path: '/sample',
-    name: 'Sample',
+    path: '/accessibility/manual',
+    name: 'Manual',
     meta: { authorize: [] },
     component: Sample,
+    children: [
+      {
+        path: '/assessment/:testId',
+        name: 'Assessment',
+        component: FAQ,
+        props: true,
+        meta: { authorize: [] }
+      },
+    ]
   },
   {
     path: '/wacg',

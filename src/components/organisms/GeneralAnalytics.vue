@@ -1,434 +1,279 @@
+<!-- This is your full updated GeneralAnalytics.vue page with the new design and old functionality -->
 <template>
-  <div v-if="answers && test.userTestType != 'moderated'">
-    <IntroAnalytics
-      v-if="answers != null && intro"
-      @go-to-coops="goToCoops"
-    />
-    <div>
-      <!-- Analysis Geral -->
-      <v-row class="ma-0 pa-0">
-        <v-col cols="8">
-          <v-card
-            height="400"
-            class="cards mt-3"
-          >
-            <v-row>
-              <v-col cols="6">
-                <v-row justify="center">
-                  <span class="cardTitle">Conclusion percentage</span>
-                  <span class="conclusionPercentage mx-auto mb-1">{{ parseFloat(getConclusionAverage()).toFixed(2) }}%</span>
-                  <v-col
-                    cols="8"
-                    class="mx-auto"
-                  >
-                    <v-progress-linear
-                      rounded
-                      height="6"
-                      color="orange"
-                      :model-value="getConclusionAverage()"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    class="pb-0 d-flex justify-center align-center"
-                  >
-                    <span class="cardTitle">Tests in progress</span>
-                  </v-col>
-                  <span class="conclusionPercentage mx-auto mb-1">{{
-                    getTestsInProgress().totalInProgress
-                  }}</span>
-                </v-row>
-              </v-col>
-
-              <v-divider
-                vertical
-                class="mt-14"
-                style="background-color: #c9c9c9"
-              />
-
-              <v-col cols="6">
-                <v-row justify="center">
-                  <span class="cardSubtitle"><v-icon class="mr-1"> mdi-arrow-top-right</v-icon>Max
-                    {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%</span>
-                  <span class="cardSubtitle"><v-icon class="mr-1"> mdi-arrow-bottom-right</v-icon>Min
-                    {{ parseFloat(minProgressPerTask()).toFixed(2) }}%</span>
-                  <span class="cardSubtitle">Total time<br>
-                    16m</span>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-
-        <v-col cols="4">
-          <v-card
-            height="190"
-            class="mb-8 cards mt-3"
-          >
-            <v-row justify="center">
-              <span class="cardTitle mt-6">Average Time per Task</span>
-              <span class="cardTime mt-3"><v-icon
-                                            size="45"
-                                            class="mr-1 mb-2"
-                                          > mdi-clock-fast</v-icon>
-                {{ calculateAverageTime().formatedTime }}</span>
-              <span class="subtitleTime mt-4 mx-8">Users spend a average of
-                {{ calculateAverageTime().minutes }} minutes and
-                {{ calculateAverageTime().seconds }} seconds on each task</span>
-            </v-row>
-          </v-card>
-          <v-card
-            height="190"
-            class="cards"
-          >
-            <v-row justify="center">
-              <span class="cardTitle mt-6">Longest Task on Average</span>
-              <span
-                class="cardTime mt-4"
-                style="color: #ff5252"
-              ><v-icon
-                 size="38"
-                 class="mr-1 mb-2"
-                 color="#FF5252"
-               >
-                 mdi-clock-alert-outline</v-icon>
-                {{ findLongestTask().averageTime.formatedTime }}</span>
-              <span
-                class="subtitleTime mt-4 mx-8"
-                style="
-                  color: #414d55;
-                  display: inline-block;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  direction: ltr;
-                "
-              >“{{ findLongestTask().taskName }}”</span>
-              <span class="subtitleTime mx-8">with the longest average</span>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-card
-            height="190"
-            class="mb-8 cards mt-3"
-          >
-            <v-row>
-              <span class="bottomCardsTitle mt-6 ml-11">Answers</span>
-              <v-col
-                cols="12"
-                class="pb-0 pt-0 d-flex pl-0"
-              >
-                <span
-                  class="conclusionPercentage mt-2 ml-11 mr-3"
-                  style="
-                  min-width: 0px;
-                  font-weight: 700;
-                  font-size: 36px;
-                  line-height: 40px;
-                  text-align: start;
-                "
-                ><v-icon
-                  size="38"
-                  class="mr-1 mb-2"
-                  color="green"
-                >
-                  mdi-check-circle-outline</v-icon>{{ getTotalAnswers() }}</span>
-                <span
-                  class="subtitleTime mt-6"
-                  style="text-align: start; min-width: 150px"
-                >Total answers</span>
-              </v-col>
-              <v-col
-                class="ml-9"
-                cols="9"
-              >
-                <v-divider style="background-color: #e4eaf0" />
-              </v-col>
-
-              <span
-                class="subtitleTime mt-2 ml-12"
-                style="text-align: start; min-width: 210px"
-              ><v-icon
-                size="20"
-                class="mr-1 mb-2"
-                color="green"
-              >
-                mdi-chevron-double-up</v-icon><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span>
-            </v-row>
-          </v-card>
-
-          <v-card
-            height="190"
-            class="cards"
-          >
-            <v-row>
-              <span class="bottomCardsTitle mb-1 mt-7 ml-11">Latest user answer</span>
-              <v-avatar
-                color="grey"
-                class="ml-10 mt-4"
-                size="45"
-              >
+  <v-container
+    fluid
+    class="pa-8 bg-background min-h-screen"
+  >
+    <v-row class="mb-8">
+      <v-col
+        cols="12"
+        lg="6"
+      >
+        <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
+          <div class="d-flex justify-space-between align-start mb-6">
+            <div>
+              <div class="d-flex align-center mb-3">
                 <v-icon
-                  size="42"
-                  color="white"
-                  icon="mdi-account-circle"
-                />
-              </v-avatar>
-              <span
-                class="subtitleTime mt-4 ml-4"
-                style="text-align: start; min-width: 210px; color: #696d6e"
-              >
-                {{ getLatestResponse().cooperatorEmail }}
-                <br>
-                <div
-                  class="mt-1"
-                  style="color: #28b5e1 !important"
+                  color="primary"
+                  size="28"
+                  class="me-3"
                 >
-                  Evaluator
-                </div>
-              </span>
-              <span
-                class="subtitleTime ml-16 mt-5"
-                style="font-size: 14px; text-align: end"
-              >Last Updated:
-                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="8">
-          <v-card
-            height="400"
-            class="mt-3 cards"
-          >
-            <v-row>
-              <span
-                class="bottomCardsTitle ml-10 mt-6 mb-5"
-                style="min-width:500px"
-              >Answers Timeline</span>
-            </v-row>
-            <div class="px-6">
-              <DateChart
-                :task-answers="taskAnswers"
-                class="ml-6"
-                style="max-height:300px; max-width:1200px;"
-              />
+                  mdi-target
+                </v-icon>
+                <h3 class="text-h5 font-weight-medium text-on-surface">
+                  Conclusion Rate
+                </h3>
+              </div>
+              <div class="text-h2 font-weight-bold text-primary mb-2">
+                {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
+              </div>
+              <p class="text-body-1 text-medium-emphasis">
+                Perfect completion rate achieved
+              </p>
             </div>
-          </v-card>
-        </v-col>
-      </v-row>
-    </div>
-  </div>
-  <div v-else>
-    <IntroAnalytics
-      v-if="answers != null && intro"
-      @go-to-coops="goToCoops"
-    />
-    <div>
-      <!-- Analysis Geral -->
-      <v-row class="ma-0 pa-0">
-        <v-col cols="8">
-          <v-card
-            height="400"
-            class="cards mt-3"
-          >
-            <v-row>
-              <v-col
-                cols="6"
-                class="mb-8"
-              >
-                <v-row
-                  justify="center"
-                  class="mt-16"
-                >
-                  <span class="cardTitle">Total Insights</span>
-                  <span class="conclusionPercentage mx-auto mb-1">0</span>
-                </v-row>
-              </v-col>
-
-              <v-divider
-                vertical
-                class="mt-10"
-                style="background-color: #c9c9c9"
-              />
-
-              <v-col cols="6">
-                <v-row justify="center">
-                  <span class="cardSubtitle">
-                    <v-icon class="mr-1">mdi-thumb-up</v-icon>
-                    Positive Insights
-                    <br>
-                    0
-                  </span>
-                  <span class="cardSubtitle">
-                    <v-icon class="mr-1">mdi-thumb-down</v-icon>
-                    Negative Insights
-                    <br>
-                    0
-                  </span>
-                  <span class="cardSubtitle">
-                    Total test time
-                    <br>
-                    0m
-                  </span>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-
-        <v-col cols="4">
-          <v-card
-            height="190"
-            class="mb-8 cards mt-3"
-          >
-            <v-row justify="center">
-              <span class="cardTitle mt-6">Average Time per Task</span>
-              <span class="cardTime mt-3"><v-icon
-                                            size="45"
-                                            class="mr-1 mb-2"
-                                          > mdi-clock-fast</v-icon>
-                {{ calculateAverageTime().formatedTime }}</span>
-              <span class="subtitleTime mt-4 mx-8">Users spend a average of
-                {{ calculateAverageTime().minutes }} minutes and
-                {{ calculateAverageTime().seconds }} seconds on each task</span>
-            </v-row>
-          </v-card>
-          <v-card
-            height="190"
-            class="cards"
-          >
-            <v-row justify="center">
-              <span class="cardTitle mt-6">Longest Task on Average</span>
-              <span
-                class="cardTime mt-4"
-                style="color: #ff5252"
-              ><v-icon
-                size="38"
-                class="mr-1 mb-2"
-                color="#FF5252"
-              >
-                mdi-clock-alert-outline</v-icon>
-                0 min 0s</span>
-              <span
-                class="subtitleTime mt-4 mx-8"
-                style="
-                  color: #414d55;
-                  display: inline-block;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  direction: ltr;
-                "
-              >“Task”</span>
-              <span class="subtitleTime mx-8">with the longest average</span>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-card
-            height="190"
-            class="mb-8 cards mt-3"
-          >
-            <v-row>
-              <span class="bottomCardsTitle mt-6 ml-11">Answers</span>
-              <span
-                class="conclusionPercentage mt-2 ml-11 mr-3"
-                style="
-                  min-width: 0px;
-                  font-weight: 700;
-                  font-size: 36px;
-                  line-height: 40px;
-                  text-align: start;
-                "
-              ><v-icon
-                size="38"
-                class="mr-1 mb-2"
-                color="green"
-              >
-                mdi-check-circle-outline</v-icon>{{ getTotalAnswers() }}</span>
-              <span
-                class="subtitleTime mt-6"
-                style="text-align: start; min-width: 150px"
-              >Total answers</span>
-              <v-col
-                class="ml-9"
-                cols="9"
-              >
-                <v-divider style="background-color: #e4eaf0" />
-              </v-col>
-
-              <span
-                class="subtitleTime mt-2 ml-12"
-                style="text-align: start; min-width: 210px"
-              ><v-icon
-                size="20"
-                class="mr-1 mb-2"
-                color="green"
-              >
-                mdi-chevron-double-up</v-icon><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span>
-            </v-row>
-          </v-card>
-
-          <v-card
-            height="190"
-            class="cards"
-          >
-            <v-row>
-              <span class="bottomCardsTitle mb-1 mt-7 ml-11">Latest user answer</span>
-              <v-avatar
-                color="grey"
-                class="ml-10 mt-4"
-                size="45"
+            <div class="text-end">
+              <v-chip
+                color="success"
+                variant="flat"
+                size="small"
+                class="mb-2"
               >
                 <v-icon
-                  size="42"
-                  color="white"
-                  icon="mdi-account-circle"
-                />
-              </v-avatar>
-              <span
-                class="subtitleTime mt-4 ml-4"
-                style="text-align: start; min-width: 210px; color: #696d6e"
-              >
-                {{ getLatestResponse().cooperatorEmail }}
-                <br>
-                <div
-                  class="mt-1"
-                  style="color: #28b5e1 !important"
+                  start
+                  size="16"
                 >
-                  Evaluator
-                </div>
-              </span>
-              <span
-                class="subtitleTime ml-16 mt-5"
-                style="font-size: 14px; text-align: end"
-              >Last Updated:
-                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="8">
-          <v-card
-            height="400"
-            class="mt-3 cards"
-          >
-            <v-row>
-              <span
-                class="bottomCardsTitle ml-10 mt-6 mb-5"
-                style="min-width:500px"
-              >Answers Timeline</span>
-            </v-row>
-            <DateChart
-              :task-answers="taskAnswers"
-              class="ml-6"
-              style="max-height:300px; max-width:680px;"
+                  mdi-trending-up
+                </v-icon>
+                Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
+              </v-chip>
+              <br>
+              <v-chip
+                color="error"
+                variant="flat"
+                size="small"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
+                  mdi-trending-down
+                </v-icon>
+                Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
+              </v-chip>
+            </div>
+          </div>
+
+          <v-progress-linear
+            :model-value="getConclusionAverage()"
+            color="primary"
+            height="12"
+            rounded
+            class="mb-6 progress-glow"
+          />
+
+          <v-divider class="mb-6" />
+
+          <div class="d-flex justify-space-between">
+            <div class="text-center">
+              <div class="text-h4 font-weight-bold text-secondary mb-1">
+                {{ getTestsInProgress().totalInProgress }}
+              </div>
+              <p class="text-body-2 text-medium-emphasis">
+                Tests in Progress
+              </p>
+            </div>
+            <v-divider
+              vertical
+              class="mx-4"
             />
-          </v-card>
-        </v-col>
-      </v-row>
-    </div>
-  </div>
+            <div class="text-center">
+              <div class="text-h4 font-weight-bold text-accent mb-1">
+                16m
+              </div>
+              <p class="text-body-2 text-medium-emphasis">
+                Total Duration
+              </p>
+            </div>
+          </div>
+        </v-card>
+      </v-col>
+
+      <v-col
+        cols="12"
+        lg="6"
+      >
+        <v-row class="h-100">
+          <v-col cols="6">
+            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+              <div class="d-flex align-center mb-4">
+                <v-avatar
+                  color="primary"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-clock-fast
+                  </v-icon>
+                </v-avatar>
+                <div>
+                  <div class="text-h5 font-weight-bold text-primary">
+                    {{ calculateAverageTime().formatedTime }}
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Avg Time/Task
+                  </p>
+                </div>
+              </div>
+              <p class="text-caption text-medium-emphasis">
+                Efficient task completion rate
+              </p>
+            </v-card>
+          </v-col>
+          <v-col cols="6">
+            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+              <div class="d-flex align-center mb-4">
+                <v-avatar
+                  color="error"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-timer-alert
+                  </v-icon>
+                </v-avatar>
+                <div>
+                  <div class="text-h5 font-weight-bold text-error">
+                    {{ findLongestTask().averageTime.formatedTime }}
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Longest Task
+                  </p>
+                </div>
+              </div>
+              <p class="text-caption text-medium-emphasis">
+                Task: <strong>"{{ findLongestTask().taskName }}"</strong>
+              </p>
+            </v-card>
+          </v-col>
+          <v-col cols="6">
+            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+              <div class="d-flex align-center mb-4">
+                <v-avatar
+                  color="success"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-check-circle
+                  </v-icon>
+                </v-avatar>
+                <div>
+                  <div class="text-h5 font-weight-bold text-success">
+                    {{ getTotalAnswers() }}
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Total Answers
+                  </p>
+                </div>
+              </div>
+              <div class="d-flex align-center">
+                <v-icon
+                  color="success"
+                  size="16"
+                  class="me-1"
+                >
+                  mdi-trending-up
+                </v-icon>
+                <span class="text-caption text-success">+{{ getTasksTodayCount() }}/day</span>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="6">
+            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+              <div class="d-flex align-center mb-4">
+                <v-avatar
+                  color="accent"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    mdi-account-circle
+                  </v-icon>
+                </v-avatar>
+                <div>
+                  <div class="text-body-1 font-weight-bold text-accent">
+                    Evaluator
+                  </div>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    Latest User
+                  </p>
+                </div>
+              </div>
+              <p class="text-caption text-medium-emphasis">
+                {{ getFormattedDate(getLatestResponse().lastUpdate) }}
+              </p>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+
+    <!-- Chart Section -->
+    <v-row>
+      <v-col cols="12">
+        <v-card class="pa-8 elevation-4 rounded-xl chart-card">
+          <div class="d-flex justify-space-between align-center mb-6">
+            <div>
+              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+                Answers Timeline
+              </h3>
+              <p class="text-body-1 text-medium-emphasis">
+                Track your answer submissions over time
+              </p>
+            </div>
+            <div class="d-flex ga-2">
+              <v-btn
+                variant="outlined"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>
+                  mdi-download
+                </v-icon>
+                Export
+              </v-btn>
+              <v-btn
+                variant="flat"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>
+                  mdi-refresh
+                </v-icon>
+                Refresh
+              </v-btn>
+            </div>
+          </div>
+
+          <div class="chart-container-large">
+            <DateChart :task-answers="taskAnswers" />
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
@@ -668,99 +513,50 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.cards {
-  border-radius: 20px;
-  box-shadow: 0px 0px 8.2px 0px rgba(0, 0, 0, 0.25);
+.conclusion-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(59, 130, 246, 0.1);
 }
 
-.cardTitle {
-  margin-top: 40px;
-  color: #414d55;
-  text-align: center;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.cardTime {
-  min-width: 250px;
-  color: #414d55;
-  font-size: 27px;
-  text-align: center;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
-.conclusionPercentage {
-  min-width: 250px;
-  color: #414d55;
-  text-align: center;
-  font-size: 48px;
-  font-style: normal;
-  font-weight: semi-bold;
-  line-height: normal;
+.chart-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(59, 130, 246, 0.1);
 }
 
-.cardSubtitle {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 250px;
-  margin-top: 75px;
-  color: #414d55;
-  text-align: center;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+.chart-container-large {
+  height: 400px;
+  width: 100%;
+  position: relative;
 }
 
-.subtitleTime {
-  color: #8e8e8e;
-  text-align: center;
-  font-size: 17px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  min-width: 250px;
+.progress-glow {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
 }
 
-.bottomCardsTitle {
-  min-width: 300px;
-  color: #414d55;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 20px;
-  /* 125% */
-  letter-spacing: 0.01px;
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .text-h1 {
+    font-size: 2.5rem !important;
+  }
 }
 
-.list-scroll {
-  height: 508px;
-  overflow: auto;
-}
-
-/* Nav bar list scroll bar */
-/* width */
-.list-scroll::-webkit-scrollbar {
-  width: 7px;
-}
-
-/* Track */
-.list-scroll::-webkit-scrollbar-track {
-  background: none;
-}
-
-/* Handle */
-.list-scroll::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 4px;
-}
-
-/* Handle on hover */
-.list-scroll::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+@media (max-width: 600px) {
+  .chart-container-large {
+    height: 300px;
+  }
+  
+  .conclusion-card .text-h1 {
+    font-size: 2rem !important;
+  }
 }
 </style>

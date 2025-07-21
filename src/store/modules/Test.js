@@ -32,6 +32,9 @@ export default {
     localCameraStream: null,
     peerConnection: null,
     isDisconnected: false,
+    studyCategory: null,
+    studyMethod: null,
+    studyType: null,
   },
   getters: {
     tests(state) {
@@ -96,11 +99,15 @@ export default {
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...state.testStructure, ...payload }
     },
-    SET_CATEGORIES_TEST_STRUCTURE(state, payload) {
+    SET_CARDSORTING_OPTIONS_TEST_STRUCTURE(state, payload) {
+      state.testStructure.cardSorting = state.testStructure.cardSorting || {}
+      state.testStructure.cardSorting.options = payload
+    },
+    SET_CARDSORTING_CATEGORIES_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.categories = payload
     },
-    SET_CARD_TEST_STRUCTURE(state, payload) {
+    SET_CARDSORTING_CARD_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.cards = payload
     },
@@ -141,6 +148,7 @@ export default {
       state.remoteCameraStream = stream
     },
     SET_LOCAL_STREAM(state, stream) {
+      console.log('[SET_LOCAL_STREAM] - stream recebido:', stream)
       state.localCameraStream = stream
     },
     SET_PEER_CONNECTION(state, connection) {
@@ -149,6 +157,20 @@ export default {
     },
     SET_DISCONNECTED(state, status) {
       state.isDisconnected = status
+    },
+    SET_STUDY_CATEGORY(state, payload) {
+      state.studyCategory = payload
+    },
+    SET_STUDY_METHOD(state, payload) {
+      state.studyMethod = payload
+    },
+    SET_STUDY_TYPE(state, payload) {
+      state.studyType = payload
+    },
+    RESET_STUDY_DETAILS(state) {
+      state.studyCategory = null,
+        state.studyMethod = null,
+        state.studyType = null
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url
@@ -390,7 +412,7 @@ export default {
     setPostTest({ commit }, payload) {
       try {
         commit('SET_POST_TEST', payload)
-      } catch (e)  {
+      } catch (e) {
         commit('setError', true)
       }
     },
@@ -490,32 +512,34 @@ export default {
         return peerConnection
       } catch (error) {
         console.error('Error creating peer connection:', error)
-    }
-},
-async closePeerConnection({ commit, state }) {
-    try {
+      }
+    },
+    async closePeerConnection({ commit, state }) {
+      console.log('[closePeerConnection] - state:', state);
+
+      try {
         if (state.localCameraStream) {
-            state.localCameraStream.getTracks().forEach(track => track.stop())
-            commit('SET_LOCAL_STREAM', null)
+          state.localCameraStream.getTracks().forEach(track => track.stop())
+          commit('SET_LOCAL_STREAM', null)
         }
 
         if (state.remoteCameraStream) {
-            state.remoteCameraStream.getTracks().forEach(track => track.stop())
-            commit('SET_REMOTE_STREAM', null)
+          state.remoteCameraStream.getTracks().forEach(track => track.stop())
+          commit('SET_REMOTE_STREAM', null)
         }
 
         if (state.peerConnection) {
-            state.peerConnection.close()
-            commit('SET_PEER_CONNECTION', null)
+          state.peerConnection.close()
+          commit('SET_PEER_CONNECTION', null)
         }
 
-        commit('SET_DISCONNECTED', true)
-    } catch (error) {
+        // commit('SET_DISCONNECTED', true)
+      } catch (error) {
         console.error('Error closing connection:', error)
-    }
-},
-async changeTrack({ commit, state }, stream) {
-    const newTrack = stream.getVideoTracks()[0]
+      }
+    },
+    async changeTrack({ commit, state }, stream) {
+      const newTrack = stream.getVideoTracks()[0]
 
       if (state.peerConnection) {
         const senders = state.peerConnection.getSenders()
