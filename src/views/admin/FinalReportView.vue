@@ -21,7 +21,7 @@
             value="1"
             color="orange"
           >
-            Conclusion
+            Report Conclusion
           </v-stepper-item>
           <v-divider />
           <v-stepper-item
@@ -29,7 +29,7 @@
             value="2"
             color="orange"
           >
-            Elements
+            Generate Report
           </v-stepper-item>
         </v-stepper-header>
 
@@ -39,9 +39,15 @@
         >
           <v-stepper-window-item
             value="1"
-            class="align-mid pt-5"
+            class="align-mid pt-5 min-h-500"
           >
-            <div class="container">
+            <div v-if="loading">
+              Saving Conclusion on Test....
+            </div>
+            <div
+              v-else
+              class=" container"
+            >
               <div class="row">
                 <TextControls />
               </div>
@@ -55,22 +61,28 @@
                   />
                 </div>
               </div>
-              <v-btn
-                class="mt-4"
-                align="right"
-                color="orange"
-                elevation="0"
-                @click="handleNext"
+              <v-row
+                class="ma-0"
+                justify="end"
               >
-                {{ $t('buttons.next') }}
-              </v-btn>
+                <v-btn
+                  class="mt-4"
+                  align="right"
+                  color="orange"
+                  elevation="0"
+                  @click="handleNext"
+                >
+                  {{ $t('buttons.next') }}
+                </v-btn>
+              </v-row>
             </div>
           </v-stepper-window-item>
 
-          <v-stepper-window-item value="2">
-            <div class="pt-10">
-              <FinalReportSelectionBox @return-step="step--" />
-            </div>
+          <v-stepper-window-item
+            value="2"
+            class="align-mid pt-5 min-h-500"
+          >
+            <FinalReportSelectionBox @return-step="step--" />
           </v-stepper-window-item>
         </v-stepper-window>
       </v-stepper>
@@ -109,11 +121,14 @@ import { useStore } from 'vuex';
 import TextControls from '@/components/atoms/FinalReportControls.vue';
 import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue';
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import Test from '@/models/Test';
 
 const store = useStore();
 
 const step = ref(0);
 const object = ref({});
+
+const loading = ref(false)
 
 const test = computed(() => store.getters.test);
 
@@ -129,13 +144,16 @@ const update = async () => {
   const text = contenteditable.innerHTML;
 
   object.value.finalReport = text;
-  const updatedTest = { ...test.value, ...object.value };
+  const updatedTest = new Test({ ...test.value, ...object.value });
   await store.dispatch('updateTest', updatedTest);
+  await store.dispatch('getTest', { id: test.value.id })
 };
 
 const handleNext = async () => {
-  step.value++;
+  loading.value = true
   await update();
+  loading.value = false
+  step.value++;
 };
 
 onMounted(() => {
@@ -167,5 +185,9 @@ onMounted(() => {
   border-radius: 12px;
   overflow: auto;
   font-size: small;
+}
+
+.min-h-500 {
+  min-height: 500px;
 }
 </style>
