@@ -4,7 +4,7 @@ export default [
   {
     path: '/superadmin',
     name: 'Super Admin',
-    meta:{authorize:[0]},
+    meta: { authorize: [0] },
     component: SuperAdmin,
   },
 ]

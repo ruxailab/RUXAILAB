@@ -7,7 +7,7 @@
       transition="dialog-bottom-transition"
       @update:model-value="$emit('update:isOpen', $event)"
     >
-      <v-card color="#f9f5f0"> 
+      <v-card color="#f9f5f0">
         <v-row
           align="center"
           justify="center"
@@ -115,7 +115,7 @@
             <img
               height="500"
               src="../../../public/createSVG.svg"
-              alt="Test Creation image"
+              alt="Test Creation "
             >
           </v-col>
         </v-row>
@@ -137,9 +137,11 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import Test from '@/models/Test';
+import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
+import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 
 const props = defineProps({
   isOpen: {
@@ -231,11 +233,26 @@ const validate = () => {
 };
 
 const handleTestType = () => {
+  console.log('handleTestType called with:', props.testType);
+
   if (props.testType === 'User') {
     userDialog.value = true;
     return;
   }
-  if (['HEURISTICS', 'Accessibility'].includes(props.testType)) {
+
+  if (props.testType === 'manual') {
+    console.log('Manual test type detected');
+    submitAccessibility();
+    return;
+  }
+
+  if (props.testType === 'AUTOMATIC') {
+    console.log('Automatic test type detected');
+    submitAutomaticAccessibility();
+    return;
+  }
+
+  if (['HEURISTICS'].includes(props.testType)) {
     submit();
   }
 };
@@ -244,6 +261,86 @@ const handleSetUser = (event) => {
   test.value = { ...test.value, ...event };
   userDialog.value = false;
   submit();
+};
+
+const submitAccessibility = async () => {
+  console.log('Creating new manual accessibility test:', test.value);
+
+  try {
+    // Create new manual accessibility test
+    const newTest = new ManualAccessibilityTest({
+      title: test.value.title,
+      description: test.value.description,
+      isPublic: test.value.isPublic || false,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      status: 'draft',
+      websiteUrl: '', // This can be set later when configuring the test
+      collaborators: {
+        // Add the creator as an admin collaborator
+        [user.value.id]: 'admin'
+      }
+    });
+
+    console.log('Creating test with data:', newTest);
+
+    // Use the store to create the test
+    const createdTest = await store.dispatch('manualAccessibility/createTest', newTest);
+
+    console.log('Test created successfully:', createdTest);
+
+    // Navigate to the test editor
+    router.push(`/accessibility/manual/${createdTest.id}`);
+
+    // Close the dialog
+    userDialog.value = false;
+  } catch (error) {
+    console.error('Error creating accessibility test:', error);
+
+    console.log(error.message);
+    toast.error(error.message);
+  }
+};
+
+const submitAutomaticAccessibility = async () => {
+  console.log('Creating new automatic accessibility test:', test.value);
+
+  try {
+    // Create new automatic accessibility test
+    const newTest = new AutomaticAccessibilityTest({
+      title: test.value.title,
+      description: test.value.description,
+      isPublic: test.value.isPublic || false,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      status: 'draft',
+      websiteUrl: '', // This can be set later when configuring the test
+      collaborators: {
+        [user.value.id]: 'admin'
+      },
+      type: 'AUTOMATIC'
+    });
+
+    console.log('Creating automatic test with data:', newTest);
+
+    // Use the correct store module to create the test
+    const createdTest = await store.dispatch('automaticAccessibility/addTest', newTest);
+
+    console.log('Automatic test created successfully:', createdTest);
+
+    // Navigate to the automatic test editor
+    router.push(`/accessibility/automatic/${createdTest.id}`);
+
+    // Close the dialog
+    userDialog.value = false;
+  } catch (error) {
+    console.error('Error creating automatic accessibility test:', error);
+    toast.error(error.message);
+  }
 };
 
 const submit = async () => {
@@ -265,7 +362,7 @@ const submit = async () => {
 
   const testId = await store.dispatch('createNewTest', newTest);
 
-  if (props.testType === 'Accessibility') {
+  if (props.testType === 'asdf') {
     router.push('/sample');
   } else {
     router.push(`/managerview/${testId}`);

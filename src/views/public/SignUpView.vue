@@ -1,102 +1,106 @@
 <template>
-  <div class="background-grey">
-    <Snackbar />
-    <v-row
-      justify="center"
-      style="height: 90%"
-      align="center"
-    >
-      <v-col
-        cols="12"
-        md="8"
+  <div class="signup-wrapper d-flex">
+    <!-- LEFT: LOGO -->
+    <div class="logo-side d-none d-md-flex align-center justify-center">
+      <img
+        src="@/assets/ruxailab.png"
+        alt="RUXAILAB"
+        class="logo-img"
       >
-        <v-card
-          color="#f5f7ff"
-          class="mx-2"
+    </div>
+
+    <!-- RIGHT: FORM -->
+    <div class="form-side d-flex align-center justify-center">
+      <Snackbar />
+
+      <div class="signup-box">
+        <h1 class="text-h6">
+          {{ $t('SIGNIN.sign-up') }}
+        </h1>
+        <p class="subtitle">
+          {{ $t('SIGNIN.signupSubtitle') }}
+        </p>
+
+        <v-form
+          ref="form"
+          v-model="valid"
+          @submit.prevent="onSignUp"
         >
-          <v-row>
-            <v-col
-              cols="12"
-              md="5"
-              align-self="center"
-            >
-              <div class="card-title">
-                {{ $t('SIGNIN.sign-up') }}
-              </div>
+          <v-text-field
+            v-model="email"
+            :rules="emailRules"
+            :label="$t('SIGNIN.email')"
+            type="email"
+            placeholder="you@example.com"
+            prepend-inner-icon="mdi-email-outline"
+            variant="outlined"
+            class="mb-4"
+          />
 
-              <div class="divider" />
+          <v-text-field
+            v-model="password"
+            :rules="passwordRules"
+            :label="$t('SIGNIN.password')"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            class="mb-4"
+            @click:append-inner="showPassword = !showPassword"
+          />
 
-              <v-form
-                ref="form"
-                v-model="valid"
-                class="mx-3"
-                @keyup.enter="onSignUp"
-              >
-                <v-text-field
-                  v-model="email"
-                  density="compact"
-                  variant="outlined"
-                  :label="$t('SIGNIN.email')"
-                  :rules="emailRules"
-                  prepend-inner-icon="mdi-account-circle"
-                />
+          <v-text-field
+            v-model="confirmpassword"
+            :rules="comparePassword"
+            :label="$t('SIGNIN.confirmPassword')"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            class="mb-4"
+            @click:append-inner="showConfirmPassword = !showConfirmPassword"
+          />
 
-                <v-text-field
-                  v-model="password"
-                  density="compact"
-                  variant="outlined"
-                  :label="$t('SIGNIN.password')"
-                  prepend-inner-icon="mdi-lock"
-                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="showPassword ? 'text' : 'password'"
-                  :rules="passwordRules"
-                  @click:append-inner="showPassword = !showPassword"
-                />
+          <v-btn
+            type="submit"
+            color="primary"
+            block
+            :loading="loading"
+            min-height="44"
+          >
+            {{ $t('SIGNIN.sign-up') }}
+          </v-btn>
+        </v-form>
 
-                <v-text-field
-                  v-model="confirmpassword"
-                  density="compact"
-                  variant="outlined"
-                  :label="$t('SIGNIN.confirmPassword')"
-                  prepend-inner-icon="mdi-lock"
-                  :append-inner-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="showConfirmPassword ? 'text' : 'password'"
-                  :rules="[comparePassword]"
-                  @click:append-inner="showConfirmPassword = !showConfirmPassword"
-                />
-              </v-form>
-              <v-card-actions class="justify-center mt-4">
-                <v-btn
-                  rounded
-                  class="text-white"
-                  style="background-color: #F9A826;"
-                  :loading="loading"
-                  @click="onSignUp"
-                >
-                  Sign-up
-                </v-btn>
-              </v-card-actions>
-              <v-card-actions class="justify-center mt-1">
-                <p>
-                  <a
-                    style="color: #F9A826; text-decoration: underline; cursor: pointer;"
-                    @click="redirectToSignin"
-                  >{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a>
-                </p>
-              </v-card-actions>
-            </v-col>
+        <v-divider class="my-6">
+          <span class="text-body-2 text-medium-emphasis">{{ $t('SIGNIN.or') }}</span>
+        </v-divider>
 
-            <v-col
-              cols="7"
-              class="d-none d-sm-flex"
-              align-self="center"
-            >
-              <v-img :src="require('@/assets/signUp.svg')" />
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
+        <GoogleSignInButton
+          :button-text="$t('SIGNIN.continueWithGoogle')"
+          :loading="loading"
+          @google-sign-in-start="onGoogleSignInStart"
+          @google-sign-in-success="onGoogleSignInSuccess"
+          @google-sign-in-error="onGoogleSignInError"
+        />
+
+        <div class="text-center mt-6">
+          <span class="text-body-2 text-medium-emphasis">
+            {{ $t('SIGNIN.alreadyHaveAnAccount') }}
+          </span>
+          <v-btn
+            variant="text"
+            color="primary"
+            class="text-body-2 pl-1"
+            @click="redirectToSignin"
+          >
+            {{ $t('SIGNIN.sign-in') }}
+          </v-btn>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -106,6 +110,8 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
+import { z } from 'zod'
 
 const email = ref('')
 const password = ref('')
@@ -119,26 +125,48 @@ const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const emailRules = computed(() => [
+const signupSchema = z.object({
+  email: z.string().email(t('errors.invalidEmail')),
+  password: z.string()
+    .min(8, t('errors.passwordValidate'))
+    .regex(/[A-Z]/, t('errors.passwordUppercase'))
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, t('errors.passwordSymbol')),
+  confirmpassword: z.string(),
+}).refine(data => data.password === data.confirmpassword, {
+  message: t('errors.differentPasswords'),
+  path: ['confirmpassword'],
+})
+
+const emailRules = [
   v => !!v || t('errors.emailIsRequired'),
-  v => /.+@.+\..+/.test(v) || t('errors.invalidEmail'),
-])
+  v => signupSchema.shape.email.safeParse(v).success || t('errors.invalidEmail'),
+]
 
-const passwordRules = computed(() => [
+const passwordRules = [
   v => !!v || t('errors.passwordRequired'),
-  v => v.length >= 8 || t('errors.passwordValidate'),
-  v => /[A-Z]/.test(v) || t('errors.passwordUppercase'),
-  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || t('errors.passwordSymbol'),
-])
+  v => signupSchema.shape.password.safeParse(v).success || t('errors.passwordValidate'),
+]
 
-const comparePassword = computed(() => 
-  v => (v === password.value && v !== '') || t('errors.differentPasswords')
-)
+const comparePassword = [
+  v => !!v || t('errors.passwordRequired'),
+  v => v === password.value || t('errors.differentPasswords')
+]
 
 const user = computed(() => store.getters.user)
 const loading = computed(() => store.getters.loading)
 
 const onSignUp = async () => {
+  const parsed = signupSchema.safeParse({
+    email: email.value,
+    password: password.value,
+    confirmpassword: confirmpassword.value,
+  })
+
+  if (!parsed.success) {
+    console.error('Validation failed:', parsed.error.flatten())
+    return
+  }
+
   const { valid: isValid } = await form.value.validate()
   if (isValid) {
     try {
@@ -146,7 +174,7 @@ const onSignUp = async () => {
         email: email.value,
         password: password.value,
       })
-      await router.push('/')
+      await router.push('/testslist')
     } catch (error) {
       console.error('Signup failed:', error)
     }
@@ -158,42 +186,65 @@ const redirectToSignin = () => {
 }
 
 const onGoogleSignInStart = () => {
-  // Event when Google sign-in starts
+  // Optional: Show loader or feedback
 }
 
 const onGoogleSignInSuccess = async () => {
-  // Event when Google sign-in is successful
-  await router.push('/')
+  await router.push('/testslist')
 }
-
 const onGoogleSignInError = (error) => {
-  // Event when Google sign-in fails
   console.error('Google sign-in error:', error)
 }
 </script>
 
 <style scoped>
-.background-grey {
-  background-color: #e8eaf2;
+.signup-wrapper {
+  display: flex;
   height: 100vh;
-  align-content: center;
+  background-color: #ffffff;
+  flex-direction: row;
 }
-.card-title {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 48px;
-  line-height: 56px;
-  margin-left: 12px;
-  margin-bottom: 20px;
+
+.logo-side {
+  width: 50%;
+  min-height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.divider {
-  margin-bottom: 40px;
-  margin-left: 8px;
-  background: linear-gradient(
-    90deg,
-    #c4c4c4,
-    rgba(196, 196, 196, 0)
-  ) !important;
-  height: 0.5px;
+
+.logo-img {
+  max-width: 400px;
+  width: 100%;
+}
+
+.form-side {
+  width: 50%;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-box {
+  width: 100%;
+  max-width: 500px;
+  padding: 48px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 10px solid rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 2rem;
 }
 </style>
