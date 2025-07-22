@@ -10,7 +10,7 @@
       class="my-2"
     >
       <v-col>
-        <span>{{ susQuestions[i] }}</span>
+        <span>{{ susQuestions[i-1] }}</span>
         <v-divider class="my-2" />
         <v-radio-group
           :model-value="susAnswers[i - 1]"
