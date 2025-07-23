@@ -88,18 +88,18 @@ export default {
         if (err.code === 'auth/invalid-email') {
           commit('setError', {
             errorCode: 'auth',
-            message: i18n.t('errors.userNotExist'),
+            message: i18n.global.t('errors.userNotExist'),
           })
         } else if (err.code === 'auth/wrong-password') {
           commit('setError', {
             errorCode: 'auth',
-            message: i18n.t('errors.incorrectPassword'),
+            message: i18n.global.t('errors.incorrectPassword'),
           })
         } else {
           console.error(err)
           commit('setError', {
             errorCode: 'auth',
-            message: i18n.t('errors.incorrectCredential'),
+            message: i18n.global.t('errors.incorrectCredential'),
           })
         }
         throw err

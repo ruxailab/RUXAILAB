@@ -9,6 +9,10 @@ import Reports from '@/store/modules/Reports'
 import Heuristic from '@/store/modules/Heuristic'
 import Answer from '@/store/modules/Answer'
 import Language from './modules/Language'
+import Assessment from './modules/Assessment'
+import ManualAccessibilityTest from './modules/ManualAccessibilityTest'
+import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
+import automaticReport from '@/store/modules/automaticReport'
 
 export default createStore({
   state: {
@@ -47,6 +51,9 @@ export default createStore({
     },
   },
   modules: {
+    manualAccessibility: ManualAccessibilityTest,
+    automaticAccessibility: AutomaticAccessibilityTest,
+    Assessment,
     Auth,
     Templates,
     Tests,
@@ -56,6 +63,7 @@ export default createStore({
     Reports,
     Heuristic,
     Answer,
-    Language, 
+    Language,
+    automaticReport,
   }
 })
