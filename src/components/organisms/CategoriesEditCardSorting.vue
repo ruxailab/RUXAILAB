@@ -27,7 +27,7 @@
                 </div>
                 <div class="d-flex ml-auto align-center">
                   <v-icon class="mr-2" @click.stop="toggle(index)"
-                    v-if="options.category_description || options.category_tooltip || options.category_image">
+                    v-if="options.category_description || options.category_image">
                     {{ expandedIndex === index ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                   </v-icon>
                   <v-icon @click.stop="deleteCategory(index)">
@@ -40,16 +40,12 @@
                 <div v-show="expandedIndex === index">
                   <v-card-text>
                     <VRow>
-                      <VCol :cols="options.category_tooltip ? 6 : 12" v-if="options.category_description">
+                      <VCol :cols="options.category_image ? 6 : 12" v-if="options.category_description">
                         <InputTextEditTest :value="element.description" label="Description"
                           @input="element.description = $event; onChange()" />
                       </VCol>
-                      <VCol :cols="options.category_description ? 6 : 12" v-if="options.category_tooltip">
-                        <InputTextEditTest :value="element.tooltip" label="Tooltip"
-                          @input="element.tooltip = $event; onChange()" />
-                      </VCol>
-                      <VCol cols="12">
-                        <!-- <v-file-input v-if="options.category_image" accept="image/*" label="Image" variant="outlined"
+                      <VCol cols="6" v-if="options.category_image">
+                        <!-- <v-file-input accept="image/*" label="Image" variant="outlined"
                           color="orange" class="mx-3" @update:model-value="element.image = $event" /> -->
                       </VCol>
                     </VRow>
@@ -72,8 +68,6 @@
       <VCol cols="4">
         <CardForm title="Settings" subtitle="Configure how categories will be displayed">
           <v-checkbox v-model="options.category_description" label="Show Category Description"
-            @update:model-value="onChange()" />
-          <v-checkbox v-model="options.category_tooltip" label="Show Tooltip Description"
             @update:model-value="onChange()" />
           <v-checkbox v-model="options.category_image" label="Show Image" @update:model-value="onChange()" />
           <v-checkbox v-model="options.category_random" label="Randomize the order of cards"
@@ -133,7 +127,7 @@ export default {
     this.categories = categories
     this.options = this.testStructure?.cardSorting?.options || {
       category_description: false,
-      category_tooltip: false,
+
       category_image: false,
       category_random: false,
     }
