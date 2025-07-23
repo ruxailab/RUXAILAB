@@ -381,7 +381,12 @@
                 <v-row v-if="test.testStructure.userTasks[taskIndex].taskType === 'nasa-tlx'" class="fill-height"
                   align="center" justify="center">
                   <v-col cols="12">
-                    <nasaTlxForm v-model:nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" />
+                    <nasaTlxForm
+                      :nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
+                      @update:nasaTlx="val => {
+                        Object.assign(localTestAnswer.tasks[taskIndex].nasaTlxAnswers, val);
+                      }"
+                  />
                   </v-col>
                 </v-row>
 
