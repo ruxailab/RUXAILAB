@@ -1,46 +1,50 @@
 <template>
   <div>
-    {{ categories }}
     <ShowInfo :title="props.test.testTitle">
       <template #content>
         <v-divider class="mb-5" />
 
         <v-container>
           <VRow class="fill-height" align="center" justify="center">
-            <VCol :cols="12 / (countCategories + 1)" class="mb-0 pb-0">
-              <VCard>
-                <VCardTitle>
-                  <p>0 of {{ cards.length }} cards</p>
+            <!-- Cards -->
+            <VCol :cols="12 / (categories.length + 1)" class="mb-0 pb-0">
+              <VCard class="card-category">
+                <VCardTitle class="d-flex justify-center align-center">
+                  <VCol class="text-center">
+                    <p>{{ pendingAllocationCount }} of {{ props.test.testStructure.cardSorting.cards.length }} cards</p>
+                    <v-progress-linear v-model="pendingAllocationCount" color="primary" height="12"
+                      :max="props.test.testStructure.cardSorting.cards.length" />
+                  </VCol>
                 </VCardTitle>
 
-                <Draggable v-model="cards" item-key="title" class="list-group">
+                <Draggable :list="cards" item-key="title" class="list-group" group="cards">
                   <template #item="{ element }">
-                    <VCard class="cards">
-                      <v-card-title class="d-flex justify-between align-center" style="cursor: pointer">
-                        <div>
-                          <v-icon style="cursor: pointer;">mdi-drag</v-icon>
-                        </div>
-
-                        <div class="ml-3">
-                          {{ element.title }}
-                        </div>
-                      </v-card-title>
-                    </VCard>
+                    <CardSortingCard :element="element" :options="props.test.testStructure.cardSorting.options" />
                   </template>
                 </Draggable>
               </VCard>
             </VCol>
 
-            <VCol :cols="12 / (countCategories + 1)" class="mb-0 pb-0" style="background-color: aqua;"
-              v-for="(category, index) in categories" :key="index">
-              <VCard>
-              </VCard>
+            <!-- Categories -->
+            <VCol :cols="12 / (categories.length + 1)" class="mb-0 pb-0" v-for="(category, index) in categories"
+              :key="index">
+              <VCard class="card-category category">
+                <VCardTitle class="d-flex justify-center align-center">
+                  <VCol class="text-center">
+                    <h3>{{ category.title }}</h3>
+                    <p v-if="category.description && props.test.testStructure.cardSorting.options.category_description">
+                      {{
+                        category.description }}</p>
+                  </VCol>
+                </VCardTitle>
 
-              <VRow justify="center">
-                <h1 style="color: #455a64;" class="mt-2">
-                  {{ props.test.testTitle }}
-                </h1>
-              </VRow>
+                <Draggable :list="localTestAnswer.tasks[category.title]" item-key="title" class="list-group"
+                  group="cards">
+                  <template #item="{ element }">
+                    <CardSortingCard :element="element" :options="props.test.testStructure.cardSorting.options" />
+                  </template>
+                </Draggable>
+              </VCard>
             </VCol>
           </VRow>
         </v-container>
@@ -50,9 +54,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import ShowInfo from '../organisms/ShowInfo.vue';
+import { computed, onMounted, ref } from 'vue'
+import ShowInfo from '../organisms/ShowInfo.vue'
 import Draggable from 'vuedraggable'
+import CardSortingCard from '../atoms/CardSortingCard.vue'
 
 // Props
 const props = defineProps({
@@ -60,20 +65,32 @@ const props = defineProps({
     type: Object,
     required: false
   }
-});
+})
+
+// Variables
+const categories = ref([])
+const cards = ref([])
+const localTestAnswer = ref({
+  tasks: {}
+})
 
 // Computed
-const countCategories = computed(() => {
-  return categories.value.length;
-});
+const pendingAllocationCount = computed(() => {
+  return props.test.testStructure.cardSorting.cards.length - cards.value.length
+})
 
-const categories = computed(() => {
-  return props.test.testStructure.cardSorting.categories;
-});
+// Methods
 
-const cards = computed(() => {
-  return props.test.testStructure.cardSorting.cards;
-});
+// Lifecycle Hooks
+onMounted(async () => {
+  categories.value = [...props.test.testStructure.cardSorting.categories] || []
+  cards.value = [...props.test.testStructure.cardSorting.cards] || []
+
+  localTestAnswer.value.tasks = categories.value.reduce((acc, card) => {
+    acc[card.title] = []
+    return acc
+  }, {})
+})
 </script>
 
 <style scoped>
@@ -81,5 +98,15 @@ const cards = computed(() => {
   border-radius: 20px;
   padding: 10px;
   margin: 10px;
+}
+
+.card-category {
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.category {
+  background-color: #f5f5f5;
 }
 </style>
