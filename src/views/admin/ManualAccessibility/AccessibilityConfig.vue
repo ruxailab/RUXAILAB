@@ -750,7 +750,7 @@ onMounted(async () => {
 }
 
 /* Compact tab styling */
-.v-tabs >>> .v-tab {
+.v-tabs :deep(.v-tab) {
   text-transform: none !important;
   font-weight: 500;
   min-width: 80px;
@@ -789,7 +789,7 @@ onMounted(async () => {
     font-size: 0.7rem !important;
   }
   
-  .v-tabs >>> .v-tab {
+  .v-tabs :deep(.v-tab) {
     min-width: 60px;
     padding: 0 8px;
   }
