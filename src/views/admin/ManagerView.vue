@@ -288,6 +288,11 @@ const navigator = computed(() => {
         path: `/answerview/${test.value.id}`,
       },
       {
+        title: 'Sessions',
+        icon: 'mdi-video-account',
+        path: `/sessions/${test.value.id}`,
+      },
+      {
         title: 'Final Report',
         icon: 'mdi-file-document',
         path: `/finalreportview/${test.value.id}`,
