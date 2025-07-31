@@ -30,12 +30,12 @@
             >
               <v-card-text class="card-content">
                 <div class="card-header mb-3">
-                  <div 
+                  <div
                     class="icon-container"
                     :class="`icon-${card.title.toLowerCase()}`"
                   >
-                    <v-icon 
-                      :size="28" 
+                    <v-icon
+                      :size="28"
                       class="card-icon"
                       color="white"
                     >
@@ -43,7 +43,7 @@
                     </v-icon>
                   </div>
                 </div>
-                
+
                 <div class="card-body">
                   <h4 class="text-h6 font-weight-bold mb-2 card-title">
                     {{ card.title }}
@@ -122,6 +122,13 @@ const cards = ref([
     description: 'Check and analyze the responses submitted for accessibility tests and evaluations.',
     route: `/result/${testId.value}`
   },
+  {
+    title: 'Cooperator',
+    icon: 'mdi-account-multiple-outline',
+    subtitle: 'Share test',
+    description: 'Share your accessibility tests with collaborators for feedback and review.',
+    route: `/cooperative/${testId.value}`
+  },
 ])
 </script>
 
@@ -197,11 +204,25 @@ const cards = ref([
   border-radius: inherit;
 }
 
-.icon-home { background: linear-gradient(135deg, #667eea, #764ba2); }
-.icon-edit { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.icon-preview { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-.icon-answer { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-.icon-config { background: linear-gradient(135deg, #fa709a, #fee140); }
+.icon-home {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.icon-edit {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.icon-preview {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.icon-answer {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.icon-config {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
 
 .card-icon {
   position: relative;
@@ -254,6 +275,7 @@ const cards = ref([
     opacity: 0;
     transform: translateY(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -265,6 +287,7 @@ const cards = ref([
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -276,6 +299,7 @@ const cards = ref([
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -287,6 +311,7 @@ const cards = ref([
   .dashboard-card {
     height: 260px;
   }
+
   .card-content {
     padding: 1.25rem;
   }
@@ -296,19 +321,19 @@ const cards = ref([
   .dashboard-container {
     padding: 1rem 0.5rem;
   }
-  
+
   .display-1 {
     font-size: 2rem !important;
   }
-  
+
   .dashboard-card {
     height: 240px;
   }
-  
+
   .card-content {
     padding: 1rem;
   }
-  
+
   .icon-container {
     width: 48px;
     height: 48px;
@@ -319,28 +344,28 @@ const cards = ref([
   .dashboard-container {
     padding: 0.5rem;
   }
-  
+
   .dashboard-card {
     height: 220px;
   }
-  
+
   .card-content {
     padding: 1rem;
   }
-  
+
   .icon-container {
     width: 44px;
     height: 44px;
   }
-  
+
   .card-title {
     font-size: 1rem !important;
   }
-  
+
   .card-subtitle {
     font-size: 0.8rem !important;
   }
-  
+
   .card-description {
     font-size: 0.7rem !important;
   }
@@ -351,7 +376,7 @@ const cards = ref([
   .dashboard-card {
     height: 200px;
   }
-  
+
   .card-content {
     padding: 0.75rem;
   }

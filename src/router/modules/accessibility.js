@@ -104,7 +104,7 @@ export default [
             {
                 path: '/cooperative/:testId',
                 name: 'AccessibilityTestCooperative',
-                component: () => import('@/views/admin/AccessibilityCooperative.vue'),
+                component: () => import('@/views/admin/ManualAccessibility/AccessibilityCooperative.vue'),
                 props: true,
                 meta: { authorize: [1] }
             },

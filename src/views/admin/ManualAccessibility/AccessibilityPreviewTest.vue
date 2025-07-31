@@ -435,9 +435,7 @@
             flat
             class="h-100"
           >
-            <div
-              class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4"
-            >
+            <div class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4">
               <v-icon
                 icon="mdi-information-outline"
                 color="blue-lighten-2"
@@ -650,7 +648,7 @@ const user = computed(() => store.getters.user)
 const isLoading = computed(() => store.state.Assessment?.isLoading || false)
 // Use filteredWcagData so only selected guidelines/rules are shown
 const principles = computed(
-  () => store.state.Assessment?.filteredWcagData?.principles || [],
+  () => store.state.Assessment?.filteredWcagData?.principles || []
 )
 const selectedPrincipleIdx = computed({
   get: () => store.state.Assessment.selectedPrincipleIdx,
@@ -693,6 +691,13 @@ const currentAssessment = computed(() => {
   const ruleId = currentRule.value?.id
   return ruleId ? store.getters['Assessment/getRuleAssessment'](ruleId) : {}
 })
+
+// Add a computed property to fetch configuration data from Vuex
+const configuration = computed(() => store.getters['Assessment/getConfiguration'])
+
+// Example usage: Replace or augment logic to use configuration data
+// For instance, if you need to use complianceLevel from the configuration:
+const complianceLevel = computed(() => configuration.value.complianceLevel || 'AA')
 
 // Helper to restore notes from store (including tabs)
 function restoreNotesFromAssessment(assessment) {
@@ -763,6 +768,19 @@ onMounted(async () => {
         }
       }
     }
+
+    // Get the testId from the route
+    const routeTestId = route.params.testId
+    if (!routeTestId) throw new Error('Test ID is missing')
+
+    // Fetch configData from the store or Firestore
+    const configData = await store.dispatch('Assessment/fetchConfigData', routeTestId)
+    await store.dispatch('Assessment/updateConfiguration', { configData, testId: routeTestId })
+
+    const dataconfogstring = JSON.stringify(configData, null, 2)
+    console.log('Config Data:', dataconfogstring)
+    // Use the fetched configData to update the UI (e.g., complianceLevel, rules, guidelines)
+    complianceLevel.value = configData.complianceLevel || 'AA'
   } catch (err) {
     console.error('Failed to initialize assessment:', err)
     error.value =
@@ -1000,9 +1018,8 @@ const downloadAssessmentData = () => {
     const dataUri =
       'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
 
-    const exportFileDefaultName = `assessment-data-${
-      new Date().toISOString().split('T')[0]
-    }.json`
+    const exportFileDefaultName = `assessment-data-${new Date().toISOString().split('T')[0]
+      }.json`
 
     const linkElement = document.createElement('a')
     linkElement.setAttribute('href', dataUri)
