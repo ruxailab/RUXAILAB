@@ -323,14 +323,37 @@ const mutations = {
 
 // Import the assessment controller
 import * as assessmentController from '../../controllers/assessmentController';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { saveConfigData } from '../../controllers/assessmentController';
 
 const actions = {
-  // Update configuration (local only)
-  updateConfiguration({ commit, dispatch }, config) {
-    commit('SET_CONFIGURATION', config)
+  // Update configuration (local and Firestore)
+  async updateConfiguration({ commit, dispatch, rootState }, { configData, testId }) {
+    console.log('Received configData:', configData); // Log the received configData
+    console.log('Received testId:', testId); // Log the received testId
+
+    commit('SET_CONFIGURATION', configData);
+
     // Re-filter WCAG data if config changes
-    if (config.complianceLevel) {
-      dispatch('filterByComplianceLevel', config.complianceLevel)
+    if (configData.complianceLevel) {
+      dispatch('filterByComplianceLevel', {
+        complianceLevel: configData.complianceLevel,
+        selectedGuidelines: configData.selectedGuidelines,
+        selectedRulesByGuideline: configData.selectedRulesByGuideline
+      });
+    }
+
+    // Save configuration to Firestore
+    try {
+      const userId = rootState.Auth.user?.id; // Corrected casing for Auth module
+      console.log('Saving configuration to Firestore:', configData);
+      console.log('User ID:', userId, 'Test ID:', testId);
+      if (!userId || !testId) throw new Error('User or Test not authenticated');
+
+      await saveConfigData(userId, testId, configData);
+      console.log('Configuration saved to Firestore');
+    } catch (error) {
+      console.error('Failed to save configuration to Firestore:', error);
     }
   },
 
@@ -639,6 +662,34 @@ const actions = {
       return { success: true };
     } catch (error) {
       console.error('Failed to update rule assessment:', error);
+      throw error;
+    }
+  },
+
+  // Add a new action to fetch configData from Firestore
+  async fetchConfigData({ commit, state, rootState }, testId) {
+    try {
+      // Check if configData is already available in the store
+      if (state.configuration && state.configuration.testId === testId) {
+        console.log('ConfigData already available in the store');
+        return state.configuration;
+      }
+
+      // Fetch userId from Auth module
+      const userId = rootState.Auth.user?.id;
+      if (!userId) throw new Error('User not authenticated');
+
+      console.log('Fetching configData from Firestore for testId:', testId);
+
+      // Fetch configData from Firestore (replace with actual Firestore fetch logic)
+      const configData = await assessmentController.getConfigData(userId, testId);
+
+      // Commit the fetched configData to the store
+      commit('SET_CONFIGURATION', configData);
+
+      return configData;
+    } catch (error) {
+      console.error('Failed to fetch configData from Firestore:', error);
       throw error;
     }
   },
