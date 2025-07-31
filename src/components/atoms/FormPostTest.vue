@@ -1,151 +1,200 @@
 <template>
-  <v-container>
+  <v-container fluid class="pa-6 bg-grey-lighten-5">
     <v-row justify="center">
-      <v-col cols="10">
-        <v-expansion-panels
-          v-if="items.length > 0"
-          style="z-index: auto; border-radius: 20px; border: 1px solid rgba(249, 152, 38, 0.49);"
-        >
-          <v-expansion-panel
-            v-for="(item, i) in items"
-            :key="i"
-            style="border-radius: 20px;"
-          >
-            <v-expansion-panel-title>
-              {{ items[i].title }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <v-form>
-                <v-text-field
-                  v-model="items[i].description"
-                  :label="$t('UserTestTable.inputs.description')"
-                  @click:append="log"
-                />
-                <div>
-                  <v-text-field
-                    v-for="(field, index) in items[i].selectionFields"
-                    :key="index"
-                    v-model="items[i].selectionFields[index]"
-                    :label="$t('UserTestTable.inputs.selection')"
-                    @change="saveState"
-                  >
-                    <template #append>
-                      <v-icon @click="newSelection(i)">
-                        mdi-plus
-                      </v-icon>
-                      <v-icon @click="deleteSelection(i)">
-                        mdi-trash-can
-                      </v-icon>
-                    </template>
-                  </v-text-field>
-                  <div
-                    v-if="
-                      items[i].selectionField &&
-                        items[i].selectionFields.length === 0
-                    "
-                  >
-                    <p>
-                      Add first option<v-icon
-                        class="ml-1"
-                        @click="newSelection(i)"
+      <v-col cols="12" md="10" lg="12">
+        <v-card class="elevation-2 rounded-lg pa-6 mb-4">
+          <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+            Post-Test Variables
+          </v-card-title>
+          <v-card-text>
+            <p class="text-body-1 mb-6" style="color: #4B5563;">
+              Configure the variables for the post-test section. Add, edit, or remove variables as needed.
+            </p>
+            <v-expansion-panels
+              v-if="items.length > 0"
+              variant="accordion"
+              class="elevation-0"
+              style="border: 1px solid #E5E7EB; border-radius: 12px;"
+            >
+              <v-expansion-panel
+                v-for="(item, i) in items"
+                :key="i"
+                class="rounded-lg mb-2"
+                :disabled="isSaving"
+              >
+                <v-expansion-panel-title class="py-3 px-4">
+                  <span class="text-body-1 font-weight-medium">{{ item.title || 'Untitled Variable' }}</span>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text class="pa-4">
+                  <v-form @submit.prevent>
+                    <v-text-field
+                      v-model="item.title"
+                      label="Variable Title"
+                      variant="outlined"
+                      density="comfortable"
+                      :rules="[v => !!v || 'Title is required']"
+                      :color="$vuetify.theme.current.colors.primary"
+                      class="mb-4"
+                      @update:model-value="markDirty"
+                    />
+                    <v-textarea
+                      v-model="item.description"
+                      label="Description (Optional)"
+                      variant="outlined"
+                      density="comfortable"
+                      :color="$vuetify.theme.current.colors.primary"
+                      rows="3"
+                      class="mb-4"
+                      @update:model-value="markDirty"
+                    />
+                    <div v-if="item.selectionField">
+                      <div
+                        v-for="(field, index) in item.selectionFields"
+                        :key="index"
+                        class="d-flex align-center mb-2"
                       >
-                        mdi-plus
-                      </v-icon>
-                    </p>
-                  </div>
-                </div>
-              </v-form>
-              <v-row>
-                <v-col
-                  :cols="6"
-                  class="checkbox-container"
-                >
-                  <v-checkbox
-                    v-model="items[i].selectionField"
-                    :label="$t('UserTestTable.checkboxes.selectionAnswer')"
-                    @update:model-value="saveState"
-                    @click="selectField(i)"
-                  />
-                </v-col>
-                <v-col
-                  :cols="5"
-                  class="checkbox-container"
-                >
-                  <v-checkbox
-                    v-model="items[i].textField"
-                    :label="$t('UserTestTable.checkboxes.textAnswer')"
-                    @click="selectText(i)"
-                  />
-                </v-col>
-                <v-col>
-                  <v-btn
-                    class="mt-5"
-                    icon
-                    @click="deleteItem(i)"
-                  >
-                    <v-icon>mdi-trash-can</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
-        <v-card
-          class="mt-2"
-          rounded="xl"
-          border
-          elevation="0"
-          color="grey-lighten-2"
-          @click="showModal"
-        >
-          <p class="text-subtitle-1 text-center ma-2">
-            <v-icon>mdi-plus-circle</v-icon>
-            {{ $t('UserTestTable.buttons.createNewPost') }}
-          </p>
+                        <v-text-field
+                          v-model="item.selectionFields[index]"
+                          :label="`Option ${index + 1}`"
+                          variant="outlined"
+                          density="comfortable"
+                          :rules="[v => !!v || 'Option is required']"
+                          :color="$vuetify.theme.current.colors.primary"
+                          class="mr-2"
+                          @update:model-value="markDirty"
+                        >
+                          <template #append>
+                            <v-icon
+                              :color="$vuetify.theme.current.colors.accent"
+                              class="mr-2"
+                              @click="newSelection(i)"
+                            >
+                              mdi-plus-circle
+                            </v-icon>
+                            <v-icon
+                              v-if="item.selectionFields.length > 1"
+                              :color="$vuetify.theme.current.colors.error"
+                              @click="deleteSelection(i, index)"
+                            >
+                              mdi-trash-can-outline
+                            </v-icon>
+                          </template>
+                        </v-text-field>
+                      </div>
+                      <div v-if="item.selectionFields.length === 0" class="text-body-2 mb-4">
+                        <span>No options added.</span>
+                        <v-btn
+                          variant="text"
+                          :color="$vuetify.theme.current.colors.accent"
+                          class="text-capitalize"
+                          @click="newSelection(i)"
+                        >
+                          <v-icon start>mdi-plus</v-icon>
+                          Add First Option
+                        </v-btn>
+                      </div>
+                    </div>
+                    <v-row align="center" class="mt-2">
+                      <v-col cols="12" sm="6">
+                        <v-checkbox
+                          v-model="item.selectionField"
+                          :label="$t('UserTestTable.checkboxes.selectionAnswer')"
+                          :color="$vuetify.theme.current.colors.primary"
+                          @update:model-value="selectField(i); markDirty()"
+                        />
+                      </v-col>
+                      <v-col cols="12" sm="5">
+                        <v-checkbox
+                          v-model="item.textField"
+                          :label="$t('UserTestTable.checkboxes.textAnswer')"
+                          :color="$vuetify.theme.current.colors.primary"
+                          @update:model-value="selectText(i); markDirty()"
+                        />
+                      </v-col>
+                      <v-col cols="12" sm="1" class="text-right">
+                        <v-btn
+                          icon
+                          :color="$vuetify.theme.current.colors.error"
+                          @click="deleteItem(i)"
+                        >
+                          <v-icon>mdi-trash-can-outline</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+            <v-alert
+              v-else
+              type="info"
+              icon="mdi-information-outline"
+              class="mt-4 rounded-lg"
+              text="No variables added yet. Click below to create a new variable."
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              variant="flat"
+              size="large"
+              class="px-6"
+              rounded="lg"
+              @click="showModal"
+            >
+              <v-icon start>mdi-plus-circle</v-icon>
+              {{ $t('UserTestTable.buttons.createNewPost') }}
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- New Variable Dialog -->
     <v-dialog
       v-model="show"
       max-width="600"
       persistent
+      transition="dialog-bottom-transition"
     >
-      <v-card>
-        <v-card-title class="text-h6 mb-2">
-          {{ $t('UserTestTable.titles.writeNewPost') }}
+      <v-card class="rounded-lg pa-6">
+        <v-card-title class="text-h6 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+          {{ $t('UserTestTable.titles.editNewPost') }}
         </v-card-title>
         <v-card-text>
-          <v-form
-            ref="form"
-            v-model="valid"
-          >
+          <v-form ref="form" v-model="valid">
             <v-text-field
               v-model="newItem"
-              variant="filled"
-              :rules="[(value) => !!value || 'This field is required']"
-              color="orange"
-              :label="$t('UserTestTable.inputs.writeQuestion')"
-              @change="saveState"
+              :label="$t('UserTestTable.inputs.editQuestion')"
+              variant="outlined"
+              density="comfortable"
+              :rules="[v => !!v.trim() || 'Variable name is required']"
+              :color="$vuetify.theme.current.colors.primary"
+              @update:model-value="markDirty"
             />
           </v-form>
         </v-card-text>
         <v-card-actions>
+          <v-spacer />
           <v-btn
-            color="red"
-            class="ml-auto"
+            :color="$vuetify.theme.current.colors.error"
+            variant="outlined"
+            class="px-6"
             @click="closeModal"
           >
-            <v-icon class="mr-1">
-              mdi-close
-            </v-icon>{{ $t('buttons.close') }}
+            <v-icon start>mdi-close</v-icon>
+            {{ $t('buttons.close') }}
           </v-btn>
           <v-btn
-            color="orange"
+            :color="$vuetify.theme.current.colors.success"
+            variant="flat"
+            class="px-6"
+            :disabled="!valid || isSaving"
+            :loading="isSaving"
             @click="saveNewItem"
           >
-            <v-icon class="mr-1">
-              mdi-content-save
-            </v-icon>{{ $t('buttons.save') }}
+            <v-icon start>mdi-content-save</v-icon>
+            {{ $t('buttons.save') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -154,128 +203,152 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-// Data
-const newItem = ref('')
-const items = ref([])
-const show = ref(false)
-const valid = ref(false)
-const form = ref(null)
+const { t } = useI18n();
+const store = useStore();
 
-// Vuex store
-const store = useStore()
+const newItem = ref('');
+const items = ref([]);
+const show = ref(false);
+const valid = ref(false);
+const form = ref(null);
+const isSaving = ref(false);
+const isDirty = ref(false);
 
-// Vue I18n
-const { t } = useI18n()
+const test = computed(() => store.getters.test);
+const postTest = computed(() => store.getters.postTest);
 
-// Computed properties
-const test = computed(() => store.getters.test)
-const postTest = computed(() => store.getters.postTest)
-
-// Methods
-const log = () => {
-  console.log('adicionar + 1')
-}
+const markDirty = () => {
+  isDirty.value = true;
+};
 
 const showModal = () => {
-  show.value = true
-}
+  show.value = true;
+  newItem.value = '';
+  form.value?.resetValidation();
+};
 
 const closeModal = () => {
-  show.value = false
-  form.value?.resetValidation()
-}
+  show.value = false;
+  newItem.value = '';
+  form.value?.resetValidation();
+};
 
 const selectField = (index) => {
-  if (items.value[index].selectionFields.length === 0 && items.value[index].selectionField) {
-    items.value[index].selectionFields.push('')
+  if (items.value[index].selectionField && items.value[index].selectionFields.length === 0) {
+    items.value[index].selectionFields.push('');
   }
   if (!items.value[index].selectionField) {
-    items.value[index].selectionFields = []
+    items.value[index].selectionFields = [];
   }
-  items.value[index].textField = false
-}
+  items.value[index].textField = false;
+  markDirty();
+};
 
 const selectText = (index) => {
-  if (items.value[index].selectionFields.length > 0) {
-    items.value[index].selectionFields = []
-  }
-  items.value[index].selectionField = false
-}
+  items.value[index].selectionFields = [];
+  items.value[index].selectionField = false;
+  markDirty();
+};
 
 const deleteItem = (index) => {
-  items.value.splice(index, 1)
-}
-
-const saveNewItem = () => {
-  if (newItem.value.trim() !== '') {
-    items.value.push({
-      answer: '',
-      title: newItem.value,
-      description: '',
-      selectionFields: [],
-      selectionField: false,
-      textField: true,
-    })
-    newItem.value = ''
-    show.value = false
-    form.value?.resetValidation()
-    saveState()
-  } else {
-    form.value?.validate()
-  }
-}
+  items.value.splice(index, 1);
+  saveState();
+};
 
 const newSelection = (index) => {
   items.value[index] = {
     ...items.value[index],
-    selectionFields: [...items.value[index].selectionFields, '']
+    selectionFields: [...items.value[index].selectionFields, ''],
+  };
+  markDirty();
+};
+
+const deleteSelection = (index, selectionIndex) => {
+  items.value[index].selectionFields.splice(selectionIndex, 1);
+  markDirty();
+};
+
+const saveNewItem = async () => {
+  if (!valid.value) {
+    await form.value?.validate();
+    return;
   }
-}
+  try {
+    isSaving.value = true;
+    items.value.push({
+      answer: '',
+      title: newItem.value.trim(),
+      description: '',
+      selectionFields: [],
+      selectionField: false,
+      textField: true,
+    });
+    newItem.value = '';
+    show.value = false;
+    form.value?.resetValidation();
+    await saveState();
+  } catch (error) {
+    console.error('Error adding variable:', error.message);
+  } finally {
+    isSaving.value = false;
+  }
+};
 
-const deleteSelection = (index) => {
-  items.value[index].selectionFields.splice(
-    items.value[index].selectionFields.length - 1,
-    1
-  )
-}
-
-const saveState = () => {
-  store.dispatch('setPostTest', items.value)
-}
+const saveState = async () => {
+  try {
+    isSaving.value = true;
+    await store.dispatch('setPostTest', items.value);
+    isDirty.value = false;
+  } catch (error) {
+    console.error('Error saving post-test:', error.message);
+  } finally {
+    isSaving.value = false;
+  }
+};
 
 const getPostTest = () => {
-  if (test.value.testStructure.postTest) {
-    items.value = test.value.testStructure.postTest
-    store.dispatch('setPostTest', items.value)
-  } else if (postTest.value) {
-    items.value = postTest.value
-  }
-}
+  const data = test.value?.testStructure?.postTest || postTest.value || [];
+  items.value = Array.isArray(data) ? [...data] : [];
+  store.dispatch('setPostTest', items.value);
+};
 
-// Lifecycle hooks
 onMounted(() => {
-  getPostTest()
-})
+  getPostTest();
+});
 </script>
 
 <style scoped>
+.v-expansion-panel {
+  transition: all 0.3s ease;
+}
+
+.v-expansion-panel-title {
+  background-color: #FFFFFF;
+}
+
+.v-expansion-panel-text {
+  background-color: #F8FAFC;
+}
+
+.v-btn {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.checkbox-container {
+  padding: 8px;
+}
+
 @media (max-width: 600px) {
   .checkbox-container {
-    width: 100%;
-    max-width: 100%;
     flex: 0 0 100%;
   }
-
-  .v-row {
+  .v-row:not(.align-center) {
     flex-direction: column;
-  }
-
-  .v-btn.mt-5 {
-    margin-top: 0 !important;
   }
 }
 </style>
