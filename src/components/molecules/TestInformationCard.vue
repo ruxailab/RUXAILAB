@@ -310,7 +310,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 import { useToast } from 'vue-toastification';
 
 const props = defineProps({
