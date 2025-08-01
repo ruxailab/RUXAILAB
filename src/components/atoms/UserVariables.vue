@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid class="pa-6 bg-grey-lighten-5">
+  <v-container fluid class="pa-0 bg-grey-lighten-5">
     <v-row justify="center">
       <v-col cols="12" md="10" lg="12">
-        <v-card class="elevation-2 rounded-lg pa-6 mb-4">
+        <v-card class="elevation-2 rounded-lg pa-6">
           <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
             Pre-Test Variables
           </v-card-title>
