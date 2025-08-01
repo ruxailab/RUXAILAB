@@ -323,7 +323,6 @@ const mutations = {
 
 // Import the assessment controller
 import * as assessmentController from '../../controllers/assessmentController';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { saveConfigData } from '../../controllers/assessmentController';
 
 const actions = {
