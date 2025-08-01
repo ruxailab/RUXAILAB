@@ -41,6 +41,18 @@ export default class ManualAccessibilityTest {
     // Test-specific data
     this.testType = data.type || 'MANUAL';
     this.isPublic = data.isPublic || false;
+
+    /**
+     * Configuration data for the test
+     */
+    this.configData = data.configData || {
+      complianceLevel: 'AA',
+      includeNonInterference: true,
+      showExperimentalRules: false,
+      enableAutomaticSave: true,
+      selectedGuidelines: [],
+      selectedRulesByGuideline: {}
+    };
   }
 
   /**
@@ -76,7 +88,8 @@ export default class ManualAccessibilityTest {
       testType: this.testType,
       isPublic: this.isPublic,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
+      configData: toPlainObject(this.configData)
     };
 
     // Remove undefined values
