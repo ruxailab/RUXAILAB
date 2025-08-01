@@ -33,7 +33,7 @@
                       variant="outlined"
                       density="comfortable"
                       :rules="[v => !!v || 'Title is required']"
-                      :color="$vuetify.theme.current.colors.primary"
+                      color="primary"
                       class="mb-4"
                       @update:model-value="markDirty"
                     />
@@ -42,7 +42,7 @@
                       label="Description (Optional)"
                       variant="outlined"
                       density="comfortable"
-                      :color="$vuetify.theme.current.colors.primary"
+                      color="primary"
                       rows="3"
                       class="mb-4"
                       @update:model-value="markDirty"
@@ -59,13 +59,13 @@
                           variant="outlined"
                           density="comfortable"
                           :rules="[v => !!v || 'Option is required']"
-                          :color="$vuetify.theme.current.colors.primary"
+                          color="primary"
                           class="mr-2"
                           @update:model-value="markDirty"
                         >
                           <template #append>
                             <v-icon
-                              :color="$vuetify.theme.current.colors.accent"
+                              color="accent"
                               class="mr-2"
                               @click="newSelection(i)"
                             >
@@ -73,7 +73,7 @@
                             </v-icon>
                             <v-icon
                               v-if="item.selectionFields.length > 1"
-                              :color="$vuetify.theme.current.colors.error"
+                              color="error"
                               @click="deleteSelection(i, index)"
                             >
                               mdi-trash-can-outline
@@ -85,7 +85,7 @@
                         <span>No options added.</span>
                         <v-btn
                           variant="text"
-                          :color="$vuetify.theme.current.colors.accent"
+                          color="accent"
                           class="text-capitalize"
                           @click="newSelection(i)"
                         >
@@ -99,7 +99,7 @@
                         <v-checkbox
                           v-model="item.selectionField"
                           :label="$t('UserTestTable.checkboxes.selectionAnswer')"
-                          :color="$vuetify.theme.current.colors.primary"
+                          color="primary"
                           @update:model-value="selectField(i); markDirty()"
                         />
                       </v-col>
@@ -107,14 +107,14 @@
                         <v-checkbox
                           v-model="item.textField"
                           :label="$t('UserTestTable.checkboxes.textAnswer')"
-                          :color="$vuetify.theme.current.colors.primary"
+                          color="primary"
                           @update:model-value="selectText(i); markDirty()"
                         />
                       </v-col>
                       <v-col cols="12" sm="1" class="text-right">
                         <v-btn
                           icon
-                          :color="$vuetify.theme.current.colors.error"
+                          color="error"
                           @click="deleteItem(i)"
                         >
                           <v-icon>mdi-trash-can-outline</v-icon>
@@ -134,17 +134,18 @@
             />
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              color="primary"
-              variant="flat"
-              size="large"
-              class="px-6"
-              rounded="lg"
+            <v-card 
+              class="border-dashed text-center py-6"
+              width="100%"
+              variant="outlined"
               @click="showModal"
+              style="cursor: pointer; border-style: dashed !important; border-color: #D1D5DB;"
             >
-              <v-icon start>mdi-plus-circle</v-icon>
-              {{ $t('UserTestTable.buttons.createNewPost') }}
-            </v-btn>
+              <v-card-text>
+                <v-icon icon="mdi-plus-circle" size="24" class="mb-2"></v-icon>
+                <div class="text-body-1">{{ $t('UserTestTable.buttons.createNewPost') }}</div>
+              </v-card-text>
+            </v-card>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -169,7 +170,7 @@
               variant="outlined"
               density="comfortable"
               :rules="[v => !!v.trim() || 'Variable name is required']"
-              :color="$vuetify.theme.current.colors.primary"
+              color="primary"
               @update:model-value="markDirty"
             />
           </v-form>
@@ -177,7 +178,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            :color="$vuetify.theme.current.colors.error"
+            color="error"
             variant="outlined"
             class="px-6"
             @click="closeModal"
@@ -186,7 +187,7 @@
             {{ $t('buttons.close') }}
           </v-btn>
           <v-btn
-            :color="$vuetify.theme.current.colors.success"
+            color="success"
             variant="flat"
             class="px-6"
             :disabled="!valid || isSaving"
