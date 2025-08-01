@@ -106,10 +106,11 @@ const answers = computed(() =>
     : []
 );
 
-const hasAnswers = computed(() =>
-  testAnswerDocument.value &&
-  Object.keys(testAnswerDocument.value.taskAnswers).length > 0
-);
+const hasAnswers = computed(() => {
+  const answers = testAnswerDocument.value?.taskAnswers;
+  return answers && Object.keys(answers).length > 0;
+});
+
 
 const showSUS = computed(() => {
   if (!testStructure.value) return false;
