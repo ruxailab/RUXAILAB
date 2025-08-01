@@ -9,7 +9,7 @@
         </v-col>
         <v-col cols="12" sm="6" class="text-right">
           <v-btn
-            :color="$vuetify.theme.current.colors.primary"
+            color="primary"
             variant="flat"
             size="large"
             class="px-6 text-capitalize"
@@ -28,47 +28,47 @@
           :items-per-page="5"
           class="elevation-0 rounded-lg"
           style="background: #FFFFFF; border: 1px solid #E5E7EB;"
-          :no-data-text="$t('UserTestTable.messages.noTasks')"
+          :no-data-text="$t('No Tasks')"
         >
           <!-- Custom Column Templates -->
           <template #item.taskDescription="{ item }">
-            <v-icon :color="item.taskDescription ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.taskDescription ? 'success' : 'error'">
               {{ item.taskDescription ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
 
           <template #item.taskTip="{ item }">
-            <v-icon :color="item.taskTip ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.taskTip ? 'success' : 'error'">
               {{ item.taskTip ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
 
           <template #item.postQuestion="{ item }">
-            <v-icon :color="item.postQuestion ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.postQuestion ? 'success' : 'error'">
               {{ item.postQuestion ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
 
           <template #item.hasScreenRecord="{ item }">
-            <v-icon :color="item.hasScreenRecord ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.hasScreenRecord ? 'success' : 'error'">
               {{ item.hasScreenRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
 
           <template #item.hasCamRecord="{ item }">
-            <v-icon :color="item.hasCamRecord ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.hasCamRecord ? 'success' : 'error'">
               {{ item.hasCamRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
 
           <template #item.hasEye="{ item }">
-            <v-icon :color="item.hasEye ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.hasEye ? 'success' : 'error'">
               {{ item.hasEye ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
 
           <template #item.hasAudioRecord="{ item }">
-            <v-icon :color="item.hasAudioRecord ? $vuetify.theme.current.colors.success : $vuetify.theme.current.colors.error">
+            <v-icon :color="item.hasAudioRecord ? 'success' : 'error'">
               {{ item.hasAudioRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
             </v-icon>
           </template>
@@ -78,7 +78,7 @@
             <v-btn
               icon
               variant="text"
-              :color="$vuetify.theme.current.colors.accent"
+              color="accent"
               class="mr-2"
               @click="editItem(item)"
             >
@@ -87,7 +87,7 @@
             <v-btn
               icon
               variant="text"
-              :color="$vuetify.theme.current.colors.error"
+              color="error"
               @click="deleteItem(item)"
             >
               <v-icon>mdi-trash-can-outline</v-icon>
