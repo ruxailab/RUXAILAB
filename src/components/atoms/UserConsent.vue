@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-6 bg-grey-lighten-5" width="100%">
+  <v-container fluid class="pa-0 bg-grey-lighten-5" width="100%">
     <v-row justify="center">
       <v-col cols="12" md="10" lg="12">
         <v-card class="elevation-2 rounded-lg pa-6" width="100%">
