@@ -1,911 +1,481 @@
 <template>
   <div v-if="test">
-    <!-- Loading Overlay -->
-    <v-overlay
-      v-model="isLoading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
-      <div class="white-text mt-3">
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="primary" size="50" />
+      <div class="text-white mt-3">
         Saving...
       </div>
     </v-overlay>
     <Snackbar />
 
-    <!-- Submit Alert Dialog -->
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
-      <v-card>
-        <v-card-title class="text-h5 bg-error text-white">
+    <v-dialog v-model="dialog" max-width="500" persistent>
+      <v-card class="rounded-xl">
+        <v-card-title class="bg-error text-white text-h6 d-flex align-center">
+          <v-icon left>mdi-alert-circle</v-icon>
           {{ $t('HeuristicsTestView.messages.submitTest') }}
         </v-card-title>
-        <v-card-text class="mt-5">
+        <v-card-text class="pa-6 text-body-1">
           {{ $t('HeuristicsTestView.messages.submitOnce') }}
         </v-card-text>
-        <v-divider />
-        <v-card-actions>
+        <v-card-actions class="pa-4 bg-grey-lighten-4">
           <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="dialog = false"
-          >
+          <v-btn variant="text" @click="dialog = false">
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn
-            class="bg-red text-white ml-1"
-            variant="text"
-            @click="handleSubmit"
-          >
+          <v-btn color="error" variant="flat" @click="handleSubmit">
             {{ $t('buttons.submit') }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <!-- User Login Dialog -->
-    <v-dialog
-      :model-value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
-      <v-card v-if="user">
-        <v-row
-          class="ma-0 pa-0 pt-5"
-          justify="center"
-        >
-          <v-avatar
-            class="justify-center"
-            color="orange-lighten-4"
-            size="150"
-          >
-            <v-icon size="120">
-              mdi-account
-            </v-icon>
+    <v-dialog :model-value="fromlink && !noExistUser && !logined" max-width="400" persistent>
+      <v-card v-if="user" class="rounded-xl pa-6">
+        <v-row class="ma-0 pa-0" justify="center">
+          <v-avatar color="primary-lighten-4" size="120">
+            <v-icon size="80">mdi-account-circle</v-icon>
           </v-avatar>
         </v-row>
-        <v-card-actions class="justify-center mt-4">
-          <v-btn
-            class="text-white bg-orange"
-            @click="setTest"
-          >
+        <v-card-title class="text-center text-h6 font-weight-bold mt-4">
+          Welcome back!
+        </v-card-title>
+        <v-card-text class="text-center text-body-1">
+          <p class="font-weight-medium">
+            {{ user.email }}
+          </p>
+        </v-card-text>
+        <v-card-actions class="d-flex flex-column pa-0">
+          <v-btn color="primary" block variant="flat" class="my-2" @click="setTest">
             Continue as {{ user.email }}
           </v-btn>
-        </v-card-actions>
-        <v-card-actions class="justify-center mt-4">
-          <p>
-            Not {{ user.email }}?
-            <a
-              style="color: #f9a826"
-              @click="signOut"
-            >Change account</a>
+          <p class="text-caption mt-2">
+            Not you?
+            <a href="#" class="text-primary font-weight-medium" @click.prevent="signOut">Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-container
-      class="ma-0 pa-0"
-      width="auto"
-      height="100vh"
-      style="background-color: #e8eaf2;"
-    >
-      <!-- Start Screen -->
-      <v-row
-        v-if="test && start"
-        class="background background-img pa-0 ma-0"
-        align="center"
-      >
-        <v-col
-          cols="6"
-          class="ml-5"
-        >
-          <h1 class="titleView pb-1">
+    <v-container fluid class="pa-0">
+      <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
+        <v-col cols="12" md="6" class="ml-5 pa-6">
+          <h1 class="text-h2 font-weight-bold mb-4 text-white">
             {{ test.testTitle }}
           </h1>
-          <p
-            align="justify"
-            class="description"
-          >
+          <p class="text-body-1 mb-6 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-row justify="center">
-            <v-btn
-              color="white"
-              variant="outlined"
-              rounded
-              @click="startTest"
-            >
-              Start Test
-            </v-btn>
-          </v-row>
+          <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
+            Start Test
+          </v-btn>
         </v-col>
       </v-row>
 
-      <!-- Main Test Interface -->
-      <v-row
-        v-else
-        class="pa-0 ma-0"
-        dense
-      >
-        <!-- Navigation Drawer -->
-        <v-navigation-drawer
-          v-model="drawer"
-          :rail="mini"
-          permanent
-          color="#3F3D56"
-        >
-          <div
-            v-if="!mini"
-            class="header"
-          >
-            <v-list-item>
-              <v-row
-                dense
-                align="center"
-                justify="space-around"
+      <v-row v-else class="main-test-interface pa-0 ma-0">
+        <v-col ref="rightView" class="right-view pa-6">
+          <v-row v-if="index !== 1" class="stepper-row pa-4 mb-4">
+            <v-col cols="12">
+              <v-stepper
+                :model-value="stepperValue"
+                class="bg-white rounded-xl elevation-3"
               >
-                <v-col
-                  class="pa-0 ma-0"
-                  cols="8"
-                >
-                  <text-clamp
-                    class="titleText"
-                    :text="test.testTitle"
-                    :max-lines="2"
+                <v-stepper-header>
+                  <v-stepper-item
+                    value="1"
+                    title="Consent"
+                    :complete="stepperValue >= 1"
+                    :color="stepperValue < 1 ? 'primary' : 'success'"
+                    complete-icon="mdi-check-circle"
                   />
-                </v-col>
-                <v-col>
-                  <v-progress-circular
-                    rotate="-90"
-                    :model-value="calculateProgress()"
-                    color="#fca326"
-                    :size="50"
-                    class="mt-2"
-                  >
-                    {{ calculateProgress() }}%
-                  </v-progress-circular>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </div>
+                  <v-divider />
+                  <v-stepper-item
+                    value="2"
+                    title="Pre-test Questions"
+                    :complete="stepperValue >= 2"
+                    :color="stepperValue < 2 ? 'primary' : 'success'"
+                    complete-icon="mdi-check-circle"
+                  />
+                  <v-divider />
+                  <v-stepper-item
+                    value="3"
+                    title="Tasks"
+                    :complete="stepperValue >= 3"
+                    :color="stepperValue < 3 ? 'primary' : 'success'"
+                    complete-icon="mdi-check-circle"
+                  />
+                  <v-divider />
+                  <v-stepper-item
+                    value="4"
+                    title="Post-test Questions"
+                    :complete="stepperValue >= 4"
+                    :color="stepperValue < 4 ? 'primary' : 'success'"
+                    complete-icon="mdi-check-circle"
+                  />
+                  <v-divider />
+                  <v-stepper-item
+                    value="5"
+                    title="Completion"
+                    :complete="stepperValue === 5"
+                    :color="stepperValue < 5 ? 'primary' : 'success'"
+                    complete-icon="mdi-check-circle"
+                  />
+                </v-stepper-header>
+              </v-stepper>
+            </v-col>
+          </v-row>
 
-          <v-list
-            class="nav-list"
-            density="compact"
-            max-height="85%"
-            style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
-          >
-            <div
-              v-for="item in items"
-              :key="item.id"
-            >
-              <!-- Pre Test -->
-              <v-list-group
-                v-if="item.id === 0"
-                :class="{ 'disabled-group': localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted }"
-                :value="index === 0"
-                @click="index = item.id"
-              >
-                <template #appendIcon>
-                  <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                    mdi-chevron-down
-                  </v-icon>
-                </template>
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props">
-                    <template #prepend>
-                      <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                        {{ localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted &&
-                          !localTestAnswer.submitted ? 'mdi-lock' : item.icon }}
-                      </v-icon>
-                    </template>
-                    <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-                      {{ item.title }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-                <v-tooltip
-                  v-for="(task, i) in item.value"
-                  :key="i"
-                  location="right"
-                >
-                  <template #activator="{ props }">
-                    <v-list-item
-                      v-bind="props"
-                      link
-                      :disabled="isPreTestTaskDisabled(i)"
-                      :class="{ 'disabled-group': isPreTestTaskDisabled(i) }"
-                      @click="taskIndex = i"
-                    >
-                      <template #prepend>
-                        <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
-                          {{ isPreTestTaskDisabled(i) ? 'mdi-lock' : task.icon }}
-                        </v-icon>
-                      </template>
-                      <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </template>
-                  <span>{{ task.title }}</span>
-                </v-tooltip>
-              </v-list-group>
-
-              <!-- Tasks -->
-              <v-list-group
-                v-if="item.id === 1"
-                :class="{ 'disabled-group': !localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted || (allTasksCompleted && !localTestAnswer.submitted) }"
-                :value="index === 1"
-                @click="index = item.id"
-              >
-                <template #appendIcon>
-                  <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                    mdi-chevron-down
-                  </v-icon>
-                </template>
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props">
-                    <template #prepend>
-                      <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                        {{ (!localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted || (allTasksCompleted
-                          && !localTestAnswer.submitted)) ? 'mdi-lock' : item.icon }}
-                      </v-icon>
-                    </template>
-                    <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-                      {{ item.title }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-                <v-tooltip
-                  v-for="(task, i) in item.value"
-                  :key="i"
-                  location="right"
-                >
-                  <template #activator="{ props }">
-                    <v-list-item
-                      v-bind="props"
-                      link
-                      :disabled="isTaskDisabled(i) && !localTestAnswer.submitted"
-                      :class="{ 'disabled-group': isTaskDisabled(i) && !localTestAnswer.submitted }"
-                      @click="taskIndex = i; startTimer()"
-                    >
-                      <template #prepend>
-                        <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
-                          {{ isTaskDisabled(i) && !localTestAnswer.submitted ? 'mdi-lock' : task.icon }}
-                        </v-icon>
-                      </template>
-                      <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </template>
-                  <span>{{ task.title }}</span>
-                </v-tooltip>
-              </v-list-group>
-
-              <!-- Post Test -->
-              <v-list-item
-                v-if="item.id === 2"
-                :disabled="!allTasksCompleted && !localTestAnswer.submitted"
-                :class="{ 'disabled-group': !allTasksCompleted && !localTestAnswer.submitted }"
-                @click="index = item.id"
-              >
-                <template #prepend>
-                  <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                    {{ !allTasksCompleted && !localTestAnswer.submitted ? 'mdi-lock' : item.icon }}
-                  </v-icon>
-                </template>
-                <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-                  {{ item.title }}
-                </v-list-item-title>
-              </v-list-item>
-            </div>
-          </v-list>
-
-          <div class="footer">
-            <v-spacer />
-            <v-btn
-              icon
-              class="mr-2 bg-orange"
-              @click.stop="mini = !mini"
-            >
-              <v-icon
-                v-if="mini"
-                color="white"
-                icon="mdi-chevron-right"
-              />
-              <v-icon
-                v-else
-                color="white"
-                icon="mdi-chevron-left"
-              />
-            </v-btn>
-          </div>
-        </v-navigation-drawer>
-
-        <!-- Right View -->
-        <v-col
-          ref="rightView"
-          class="backgroundTest pa-0 ma-0 right-view"
-        >
-          <!-- Consent -->
-          <ShowInfo
-            v-if="index === 0 && taskIndex === 0"
-            :title="$t('UserTestView.titles.preTestConsent')"
-          >
+          <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
             <template #content>
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col cols="12">
-                  <v-row justify="center">
-                    <h1
-                      style="color: #455a64;"
-                      class="mt-6"
-                    >
+              <div class="test-content pa-4 rounded-xl">
+                <v-row>
+                  <v-col cols="12" class="text-center">
+                    <h2 class="text-h5 font-weight-bold mb-8 text-secondary">
                       {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
-                    </h1>
-                  </v-row>
-                </v-col>
-              </v-row>
-              <v-divider class="my-8" />
-              <v-row>
-                <v-col
-                  cols="8"
-                  class="mx-auto py-0"
-                >
-                  <div
-                    class="rich-text mb-6"
-                    v-html="test.testStructure.consent"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  cols="6"
-                  class="mx-auto"
-                >
-                  <v-text-field
-                    v-model="fullName"
-                    label="Full Name"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[v => !!v || 'Name is required']"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  cols="6"
-                  class="mx-auto"
-                >
-                  <v-radio-group
-                    v-model="localTestAnswer.consentCompleted"
-                    direction="horizontal"
-                  >
-                    <v-radio
-                      label="I accept the consent terms"
-                      :value="true"
-                      :disabled="!fullName"
-                    />
-                    <v-radio
-                      label="I do not accept the consent terms"
-                      :value="false"
-                    />
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  cols="6"
-                  class="mx-auto text-center"
-                >
-                  <v-btn
-                    color="primary"
-                    :disabled="!localTestAnswer.consentCompleted || !fullName"
-                    @click="completeStep(taskIndex, 'consent'); taskIndex = 1"
-                  >
-                    Continue
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </template>
-          </ShowInfo>
-
-          <!-- Pre Test Form -->
-          <ShowInfo
-            v-if="index === 0 && taskIndex === 1"
-            :title="$t('UserTestView.titles.preTestForm')"
-          >
-            <template #content>
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col cols="12">
-                  <v-row justify="center">
-                    <h1
-                      style="color: #455a64;"
-                      class="mt-6"
-                    >
-                      {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
-                    </h1>
-                  </v-row>
-                </v-col>
-              </v-row>
-              <v-divider class="my-8" />
-              <v-row
-                v-for="(item, i) in test.testStructure.preTest"
-                :key="i"
-              >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
-                  <span class="cardsTitle">{{ item.title }}</span>
-                  <br>
-                  <span
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >{{ item.description }}</span>
-                  <v-text-field
-                    v-if="item.textField"
-                    v-model="localTestAnswer.preTestAnswer[i].answer"
-                    :disabled="localTestAnswer.preTestCompleted"
-                    :placeholder="item.title"
-                    variant="outlined"
-                  />
-                  <v-radio-group
-                    v-if="item.selectionField"
-                    v-model="localTestAnswer.preTestAnswer[i].answer"
-                    :disabled="localTestAnswer.preTestCompleted"
-                    direction="vertical"
-                  >
-                    <v-radio
-                      v-for="(selection, j) in item.selectionFields"
-                      :key="j"
-                      :label="selection"
-                      :value="selection"
-                      :disabled="localTestAnswer.preTestCompleted"
-                      class="ml-3 mb-1"
-                    />
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-              <v-row
-                justify="center"
-                class="pb-4"
-              >
-                <v-col class="mx-10">
-                  <v-btn
-                    block
-                    color="orange-lighten-1"
-                    :disabled="localTestAnswer.preTestCompleted"
-                    @click="completeStep(taskIndex, 'preTest')"
-                  >
-                    {{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </template>
-          </ShowInfo>
-
-          <!-- Tasks -->
-          <ShowInfo
-            v-if="index === 1 && test.testType === 'User'"
-            :title="test.testStructure.userTasks[taskIndex].taskName"
-          >
-            <template #content>
-              <v-divider class="mb-5" />
-              <v-container>
-                <v-row
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <v-col
-                    cols="12"
-                    class="mb-0 pb-0"
-                  >
-                    <v-row justify="center">
-                      <h1
-                        style="color: #455a64;"
-                        class="mt-2"
-                      >
-                        {{ test.testStructure.userTasks[taskIndex].taskName }}
-                      </h1>
-                    </v-row>
-                    <v-row justify="center">
-                      <div
-                        class="rich-text mb-6"
-                        v-html="test.testStructure.userTasks[taskIndex].taskDescription"
-                      />
-                    </v-row>
-                    <v-row
-                      v-if="test.testStructure.userTasks[taskIndex].taskLink"
-                      justify="center"
-                    >
-                      <a
-                        :href="test.testStructure.userTasks[taskIndex].taskLink"
-                        target="_blank"
-                        style="color: #455a64; cursor: pointer;"
-                      >
-                        {{ test.testStructure.userTasks[taskIndex].taskLink }}
-                      </a>
-                    </v-row>
-                    <div v-if="!localTestAnswer.submitted">
-                      <v-row>
-                        <v-col
-                          v-if="test.testStructure.userTasks[taskIndex].taskTip"
-                          cols="1"
-                          justify="end"
-                        >
-                          <TipButton :task="test.testStructure.userTasks[taskIndex]" />
-                        </v-col>
-                        <v-col
-                          v-if="test.testStructure.userTasks[taskIndex].hasAudioRecord !== false"
-                          cols="1"
-                        >
-                          <AudioRecorder
-                            :test-id="testId"
-                            :task-index="taskIndex"
-                            @show-loading="isLoading = true"
-                            @stop-show-loading="isLoading = false"
-                            @recording-started="isVisualizerVisible = $event"
-                          />
-                        </v-col>
-                        <v-col
-                          v-if="isVisualizerVisible"
-                          cols="1"
-                        >
-                          <AudioVisualizer />
-                        </v-col>
-                        <v-col
-                          v-if="test.testStructure.userTasks[taskIndex].hasCamRecord !== false"
-                          cols="1"
-                        >
-                          <VideoRecorder
-                            ref="videoRecorder"
-                            :test-id="testId"
-                            :task-index="taskIndex"
-                            @show-loading="isLoading = true"
-                            @stop-show-loading="isLoading = false"
-                          />
-                        </v-col>
-                        <v-col
-                          v-if="test.testStructure.userTasks[taskIndex].hasScreenRecord !== false"
-                          cols="1"
-                        >
-                          <ScreenRecorder
-                            :test-id="testId"
-                            :task-index="taskIndex"
-                            @show-loading="isLoading = true"
-                            @stop-show-loading="isLoading = false"
-                          />
-                        </v-col>
-                        <v-col cols="4">
-                          <Timer
-                            ref="timerComponent"
-                            :task-index="taskIndex"
-                            @timer-stopped="handleTimerStopped"
-                          />
-                        </v-col>
-                      </v-row>
-                    </div>
-                    <v-row
-                      class="paragraph"
-                      justify="space-around"
-                    >
-                      <v-col
-                        v-if="test.testStructure.userTasks[taskIndex].taskType === 'text-area'"
-                        class="mb-0 pb-0"
-                      >
-                        <v-textarea
-                          :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
-                          v-model="localTestAnswer.tasks[taskIndex].taskAnswer"
-                          variant="outlined"
-                          label="answer"
-                        />
-                      </v-col>
-                      <v-col class="mb-0 pb-0">
-                        <v-textarea
-                          :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
-                          v-model="localTestAnswer.tasks[taskIndex].taskObservations"
-                          variant="outlined"
-                          label="observation (optional)"
-                        />
-                      </v-col>
-                    </v-row>
+                    </h2>
                   </v-col>
                 </v-row>
-                <v-row
-                  v-if="test.testStructure.userTasks[taskIndex].postQuestion"
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <v-col class="text-center">
-                    <p class="text-h5">
-                      {{ test.testStructure.userTasks[taskIndex].postQuestion }}
-                    </p>
+                <div class="rich-text mb-6 pa-4" v-html="test.testStructure.consent" />
+                <v-row justify="center">
+                  <v-col cols="12" md="6">
                     <v-text-field
-                      v-model="localTestAnswer.tasks[taskIndex].postAnswer"
-                      class="mx-2"
-                      :placeholder="test.testStructure.userTasks[taskIndex].postQuestion"
+                      v-model="fullName"
+                      label="Full Name"
                       variant="outlined"
+                      density="comfortable"
+                      :rules="[v => !!v || 'Name is required']"
                     />
                   </v-col>
                 </v-row>
-                <v-row
-                  v-if="test.testStructure.userTasks[taskIndex].postForm"
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <v-col cols="12">
-                    <p class="text-h5">
-                      Post Form
-                    </p>
-                    <iframe
-                      :src="test.testStructure.userTasks[taskIndex].postForm"
-                      title="loading"
-                      width="100%"
-                      height="500"
-                      frameborder="0"
-                      marginheight="0"
-                      marginwidth="0"
-                    >Loading...</iframe>
+                <v-row justify="center">
+                  <v-col cols="12" md="6">
+                    <v-radio-group v-model="localTestAnswer.consentCompleted" inline>
+                      <v-radio
+                        label="I accept the consent terms"
+                        :value="true"
+                        :disabled="!fullName"
+                      />
+                      <v-radio
+                        label="I do not accept the consent terms"
+                        :value="false"
+                      />
+                    </v-radio-group>
                   </v-col>
                 </v-row>
-
-                <v-row
-                  v-if="test.testStructure.userTasks[taskIndex].taskType === 'sus'"
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <SusForm
-                    :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
-                    @update-answer="({ index, value }) => localTestAnswer.tasks[taskIndex].susAnswers[index] = value"
-                  />
-                </v-row>
-
-                <v-row
-                  v-if="test.testStructure.userTasks[taskIndex].taskType === 'nasa-tlx'"
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <v-col cols="12">
-                    <nasaTlxForm
-                      :nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
-                      @update:nasaTlx="val => {
-                        Object.assign(localTestAnswer.tasks[taskIndex].nasaTlxAnswers, val);
-                      }"
-                  />
+                <v-row justify="center" class="mt-4">
+                  <v-col cols="12" md="6" class="text-center">
+                    <v-btn
+                      color="primary"
+                      variant="flat"
+                      block
+                      :disabled="!localTestAnswer.consentCompleted || !fullName"
+                      @click="completeStep(taskIndex, 'consent'); taskIndex = 1"
+                    >
+                      Continue
+                    </v-btn>
                   </v-col>
                 </v-row>
+              </div>
+            </template>
+          </ShowInfo>
 
-                <div class="pa-2 my-2 text-end">
-                  <v-row>
-                    <v-col cols="6">
-                      <v-btn
-                        block
-                        color="red-lighten-1"
-                        @click="completeStep(taskIndex, 'tasks', false); callTimerSave()"
-                      >
-                        {{ $t('buttons.couldNotFinish') }}
-                      </v-btn>
+          <ShowInfo v-if="index === 0 && taskIndex === 1" :title="$t('UserTestView.titles.preTestForm')">
+            <template #content>
+              <div class="test-content pa-4 rounded-xl">
+                <v-row>
+                  <v-col cols="12" class="text-center">
+                    <h2 class="text-h5 font-weight-bold mb-8 text-secondary">
+                      {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
+                    </h2>
+                  </v-col>
+                </v-row>
+                <div v-for="(item, i) in test.testStructure.preTest" :key="i" class="mb-6">
+                  <v-col cols="12" class="py-0">
+                    <span class="text-subtitle-1 font-weight-bold text-secondary">{{ item.title }}</span>
+                    <br>
+                    <span v-if="item.description" class="text-body-2 text-grey-darken-1">{{ item.description }}</span>
+                    <v-text-field
+                      v-if="item.textField"
+                      v-model="localTestAnswer.preTestAnswer[i].answer"
+                      :disabled="localTestAnswer.preTestCompleted"
+                      :placeholder="item.title"
+                      variant="outlined"
+                      density="comfortable"
+                      class="mt-2"
+                    />
+                    <v-radio-group
+                      v-if="item.selectionField"
+                      v-model="localTestAnswer.preTestAnswer[i].answer"
+                      :disabled="localTestAnswer.preTestCompleted"
+                      class="mt-2"
+                    >
+                      <v-radio
+                        v-for="(selection, j) in item.selectionFields"
+                        :key="j"
+                        :label="selection"
+                        :value="selection"
+                        :disabled="localTestAnswer.preTestCompleted"
+                        density="compact"
+                      />
+                    </v-radio-group>
+                  </v-col>
+                </div>
+                <v-row justify="center" class="mt-4">
+                  <v-col cols="12" md="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      variant="flat"
+                      :disabled="localTestAnswer.preTestCompleted"
+                      @click="completeStep(taskIndex, 'preTest')"
+                    >
+                      {{ $t('UserTestView.buttons.done') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </div>
+            </template>
+          </ShowInfo>
+
+          <ShowInfo v-if="index === 1 && test.testType === 'User'" :title="test.testStructure.userTasks[taskIndex].taskName">
+            <template #content>
+              <div class="test-content pa-4 rounded-xl">
+                <v-row>
+                  <v-col cols="12" class="text-center">
+                    <h2 class="text-h5 font-weight-bold text-secondary">
+                      {{ test.testStructure.userTasks[taskIndex].taskName }}
+                    </h2>
+                  </v-col>
+                </v-row>
+                <div class="rich-text mb-4" v-html="test.testStructure.userTasks[taskIndex].taskDescription" />
+                <v-row v-if="test.testStructure.userTasks[taskIndex].taskLink" justify="center">
+                  <v-col cols="12" class="text-center">
+                    <a :href="test.testStructure.userTasks[taskIndex].taskLink" target="_blank" class="text-primary font-weight-medium">
+                      {{ test.testStructure.userTasks[taskIndex].taskLink }}
+                    </a>
+                  </v-col>
+                </v-row>
+                <div v-if="!localTestAnswer.submitted">
+                  <v-row class="mb-4 d-flex align-center">
+                    <v-col v-if="test.testStructure.userTasks[taskIndex].taskTip" cols="auto">
+                      <TipButton :task="test.testStructure.userTasks[taskIndex]" />
                     </v-col>
-                    <v-col cols="6">
-                      <v-btn
-                        block
-                        color="orange-lighten-1"
-                        :disabled="doneTaskDisabled"
-                        @click="completeStep(taskIndex, 'tasks', true); callTimerSave()"
-                      >
-                        {{ $t('UserTestView.buttons.done') }}
-                      </v-btn>
+                    <v-col v-if="test.testStructure.userTasks[taskIndex].hasAudioRecord !== false" cols="auto">
+                      <AudioRecorder
+                        :test-id="testId"
+                        :task-index="taskIndex"
+                        @show-loading="isLoading = true"
+                        @stop-show-loading="isLoading = false"
+                        @recording-started="isVisualizerVisible = $event"
+                      />
+                    </v-col>
+                    <v-col v-if="isVisualizerVisible" cols="auto">
+                      <AudioVisualizer />
+                    </v-col>
+                    <v-col v-if="test.testStructure.userTasks[taskIndex].hasCamRecord !== false" cols="auto">
+                      <VideoRecorder
+                        ref="videoRecorder"
+                        :test-id="testId"
+                        :task-index="taskIndex"
+                        @show-loading="isLoading = true"
+                        @stop-show-loading="isLoading = false"
+                      />
+                    </v-col>
+                    <v-col v-if="test.testStructure.userTasks[taskIndex].hasScreenRecord !== false" cols="auto">
+                      <ScreenRecorder
+                        :test-id="testId"
+                        :task-index="taskIndex"
+                        @show-loading="isLoading = true"
+                        @stop-show-loading="isLoading = false"
+                      />
+                    </v-col>
+                    <v-spacer />
+                    <v-col cols="auto">
+                      <Timer ref="timerComponent" :task-index="taskIndex" @timer-stopped="handleTimerStopped" />
                     </v-col>
                   </v-row>
                 </div>
-                <video
-                  v-if="videoUrl === ''"
-                  id="vpreview"
-                  class="preview"
-                  style="max-width: 0px"
-                  autoplay
-                />
-              </v-container>
-            </template>
-          </ShowInfo>
-
-          <!-- Post Test -->
-          <ShowInfo
-            v-if="index === 2 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
-            title="Post Test"
-          >
-            <template #content>
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col cols="12">
-                  <v-row justify="center">
-                    <h1
-                      style="color: #455a64;"
-                      class="mt-6"
-                    >
-                      {{ test.testTitle }} - {{ $t('UserTestView.titles.postTest') }}
-                    </h1>
-                  </v-row>
-                </v-col>
-              </v-row>
-              <v-divider class="my-8" />
-              <v-row
-                v-for="(item, i) in test.testStructure.postTest"
-                :key="i"
-              >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
-                  <span class="cardsTitle">{{ item.title }}</span>
-                  <br>
-                  <span
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >{{ item.description }}</span>
-                  <v-text-field
-                    v-if="item.textField"
-                    v-model="localTestAnswer.postTestAnswer[i].answer"
-                    :disabled="localTestAnswer.postTestCompleted"
-                    :placeholder="item.title"
+                <div class="mt-4">
+                  <v-textarea
+                    v-if="test.testStructure.userTasks[taskIndex].taskType === 'text-area'"
+                    :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
+                    v-model="localTestAnswer.tasks[taskIndex].taskAnswer"
                     variant="outlined"
+                    label="Answer"
+                    rows="3"
                   />
-                  <v-radio-group
-                    v-if="item.selectionField"
-                    v-model="localTestAnswer.postTestAnswer[i].answer"
-                    :disabled="localTestAnswer.postTestCompleted"
-                    direction="vertical"
-                  >
-                    <v-radio
-                      v-for="(selection, j) in item.selectionFields"
-                      :key="j"
-                      :label="selection"
-                      :value="selection"
-                      :disabled="localTestAnswer.postTestCompleted"
-                      class="ml-3 mb-1"
-                    />
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-              <v-row
-                justify="center"
-                class="pb-4"
-              >
-                <v-col class="mx-10">
-                  <v-btn
-                    block
-                    color="orange-lighten-1"
-                    class="mt-3"
-                    :disabled="localTestAnswer.postTestCompleted"
-                    @click="completeStep(taskIndex, 'postTest'); taskIndex = 3"
-                  >
-                    {{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
+                  <v-textarea
+                    :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
+                    v-model="localTestAnswer.tasks[taskIndex].taskObservations"
+                    variant="outlined"
+                    label="Observation (optional)"
+                    rows="3"
+                  />
+                </div>
+                <div v-if="test.testStructure.userTasks[taskIndex].postQuestion" class="mt-6">
+                  <p class="text-h6 font-weight-medium">
+                    {{ test.testStructure.userTasks[taskIndex].postQuestion }}
+                  </p>
+                  <v-text-field
+                    v-model="localTestAnswer.tasks[taskIndex].postAnswer"
+                    class="mt-2"
+                    :placeholder="test.testStructure.userTasks[taskIndex].postQuestion"
+                    variant="outlined"
+                    density="comfortable"
+                  />
+                </div>
+                <div v-if="test.testStructure.userTasks[taskIndex].postForm" class="mt-6">
+                  <p class="text-h6 font-weight-medium mb-4">
+                    Post Form
+                  </p>
+                  <iframe
+                    :src="test.testStructure.userTasks[taskIndex].postForm"
+                    title="loading"
+                    width="100%"
+                    height="500"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0"
+                    class="rounded-lg"
+                  >Loading...</iframe>
+                </div>
+                <SusForm
+                  v-if="test.testStructure.userTasks[taskIndex].taskType === 'sus'"
+                  :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
+                  @update-answer="({ index, value }) => localTestAnswer.tasks[taskIndex].susAnswers[index] = value"
+                />
+                <nasaTlxForm
+                  v-if="test.testStructure.userTasks[taskIndex].taskType === 'nasa-tlx'"
+                  :nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
+                  @update:nasaTlx="val => { Object.assign(localTestAnswer.tasks[taskIndex].nasaTlxAnswers, val); }"
+                />
+                <v-row justify="space-between">
+                  <v-col>
+                    <v-btn
+                      color="error"
+                      block
+                      variant="outlined"
+                      class="mr-2"
+                      @click="completeStep(taskIndex, 'tasks', false); callTimerSave()"
+                    >
+                      {{ $t('buttons.couldNotFinish') }}
+                    </v-btn>
+                  </v-col>
+                  <v-col>
+                    <v-btn
+                      color="primary"
+                      block
+                      variant="flat"
+                      class="ml-2"
+                      :disabled="doneTaskDisabled"
+                      @click="completeStep(taskIndex, 'tasks', true); callTimerSave()"
+                    >
+                      {{ $t('UserTestView.buttons.done') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <video v-if="videoUrl === ''" id="vpreview" class="d-none" autoplay />
+              </div>
             </template>
           </ShowInfo>
 
-          <!-- Test Completion -->
-          <ShowInfo
-            v-if="index === 2 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
-            :title="$t('finishTest.title')"
-          >
+          <ShowInfo v-if="index === 2 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)" title="Post Test">
             <template #content>
-              <v-row
-                justify="center"
-                class="ma-4"
-              >
-                <v-col
-                  cols="11"
-                  class="mt-3"
-                >
-                  <span class="cardsTitle">{{ $t('finishTest.finalMessage') }}!</span>
-                  <br>
-                  <span class="cardsSubtitle">{{ $t('finishTest.congratulations') }}</span>
-                  <v-row
-                    justify="center"
-                    class="mt-3"
-                  >
-                    <v-col cols="4">
-                      <img
-                        draggable="false"
-                        src="../../../public/finalMessage.svg"
-                        alt="Final test svg"
-                      >
-                    </v-col>
-                    <v-col
-                      cols="4"
-                      class="pt-2 my-8"
+              <div class="test-content pa-4 rounded-xl">
+                <v-row>
+                  <v-col cols="12" class="text-center">
+                    <h2 class="text-h5 font-weight-bold mb-8 text-secondary">
+                      {{ test.testTitle }} - {{ $t('UserTestView.titles.postTest') }}
+                    </h2>
+                  </v-col>
+                </v-row>
+                <div v-for="(item, i) in test.testStructure.postTest" :key="i" class="mb-6">
+                  <v-col cols="12" class="py-0">
+                    <span class="text-subtitle-1 font-weight-bold text-secondary">{{ item.title }}</span>
+                    <br>
+                    <span v-if="item.description" class="text-body-2 text-grey-darken-1">{{ item.description }}</span>
+                    <v-text-field
+                      v-if="item.textField"
+                      v-model="localTestAnswer.postTestAnswer[i].answer"
+                      :disabled="localTestAnswer.postTestCompleted"
+                      :placeholder="item.title"
+                      variant="outlined"
+                      density="comfortable"
+                      class="mt-2"
+                    />
+                    <v-radio-group
+                      v-if="item.selectionField"
+                      v-model="localTestAnswer.postTestAnswer[i].answer"
+                      :disabled="localTestAnswer.postTestCompleted"
+                      class="mt-2"
                     >
-                      <span class="cardsSubtitle">{{ $t('finishTest.submitMessage') }}</span>
-                      <v-col class="mt-2">
-                        <v-btn
-                          color="orange"
-                          variant="flat"
-                          @click="dialog = true"
-                        >
-                          <v-icon class="ma-2">
-                            mdi-send
-                          </v-icon>{{ $t('buttons.submit') }}
-                        </v-btn>
-                      </v-col>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
+                      <v-radio
+                        v-for="(selection, j) in item.selectionFields"
+                        :key="j"
+                        :label="selection"
+                        :value="selection"
+                        :disabled="localTestAnswer.postTestCompleted"
+                        density="compact"
+                      />
+                    </v-radio-group>
+                  </v-col>
+                </div>
+                <v-row justify="center" class="mt-4">
+                  <v-col cols="12" md="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      variant="flat"
+                      :disabled="localTestAnswer.postTestCompleted"
+                      @click="completeStep(taskIndex, 'postTest'); taskIndex = 3"
+                    >
+                      {{ $t('UserTestView.buttons.done') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </div>
+            </template>
+          </ShowInfo>
+
+          <ShowInfo v-if="index === 2 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted" :title="$t('finishTest.title')">
+            <template #content>
+              <div class="test-content pa-6 rounded-xl text-center">
+                <v-icon size="96" color="success">mdi-check-circle-outline</v-icon>
+                <h3 class="text-h5 font-weight-bold mt-4 text-secondary">
+                  {{ $t('finishTest.finalMessage') }}!
+                </h3>
+                <p class="text-body-1 mt-2 text-grey-darken-1">
+                  {{ $t('finishTest.congratulations') }}
+                </p>
+                <v-row justify="center" class="mt-8">
+                  <v-col cols="12" md="6">
+                    <v-img :src="require('../../../public/finalMessage.svg')" alt="Final test svg" contain />
+                  </v-col>
+                </v-row>
+                <p class="text-body-1 mt-6 text-grey-darken-1">
+                  {{ $t('finishTest.submitMessage') }}
+                </p>
+                <v-btn color="primary" variant="flat" large class="mt-4" @click="dialog = true">
+                  <v-icon left>mdi-send</v-icon>
+                  {{ $t('buttons.submit') }}
+                </v-btn>
+              </div>
             </template>
           </ShowInfo>
         </v-col>
       </v-row>
     </v-container>
-    <!-- Floating Action Button -->
-    <v-btn
-      v-if="showSaveBtn && localTestAnswer && !start"
-      position="fixed"
-      location="bottom right"
-      icon
-      class="mb-10 mr-5"
-    >
-      <v-speed-dial
-        v-model="fab"
-        class="mr-3"
-        open-on-hover
-      >
+
+    <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon class="ma-4">
+      <v-speed-dial v-model="fab" open-on-hover>
         <template #activator="{ props }">
-          <v-btn
-            v-model="fab"
-            size="large"
-            color="#F9A826"
-            v-bind="props"
-            icon
-            class="btn-fix"
-          >
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon
-              v-else
-              size="large"
-            >
-              mdi-hammer-screwdriver
-            </v-icon>
+          <v-btn v-model="fab" size="large" color="primary" v-bind="props" icon>
+            <v-icon v-if="fab">mdi-close</v-icon>
+            <v-icon v-else size="large">mdi-hammer-screwdriver</v-icon>
           </v-btn>
         </template>
         <v-tooltip location="left">
           <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              icon
-              size="small"
-              color="#F9A826"
-              @click="saveAnswer"
-            >
+            <v-btn v-bind="props" icon size="small" color="secondary" @click="saveAnswer">
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
@@ -913,15 +483,7 @@
         </v-tooltip>
         <v-tooltip location="left">
           <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              :disabled="localTestAnswer && !localTestAnswer.postTestCompleted"
-              class="text-white"
-              icon
-              size="small"
-              color="#F9A826"
-              @click="dialog = true"
-            >
+            <v-btn v-bind="props" :disabled="localTestAnswer && !localTestAnswer.postTestCompleted" class="text-white" icon size="small" color="primary" @click="dialog = true">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -1003,6 +565,15 @@ const isTaskDisabled = (taskIndex) => {
   return false;
 };
 
+const stepperValue = computed(() => {
+  if (index.value === 0 && taskIndex.value === 0) return 0; 
+  if (index.value === 0 && taskIndex.value === 1) return 1;
+  if (index.value === 1) return 2; 
+  if (index.value === 2 && !localTestAnswer.postTestCompleted) return 3; 
+  if (index.value === 2 && localTestAnswer.postTestCompleted) return 4;
+  return 0;
+});
+
 const isPreTestTaskDisabled = (taskIndex) => {
   if (taskIndex === 0) return localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted;
   return !localTestAnswer.consentCompleted || (localTestAnswer.preTestCompleted && !localTestAnswer.submitted);
@@ -1017,7 +588,6 @@ const saveAnswer = async () => {
     }
     if (!user.value) {
       localTestAnswer.userDocId = nanoid(16)
-      console.log(localTestAnswer.value)
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
         answerDocId: test.value.answersDocId,
@@ -1414,26 +984,25 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.disabled-group {
-  pointer-events: none;
-  background-color: grey;
-}
+/*
+  Colors:
+  - Primary: #3f51b5 (Indigo, a more professional alternative to orange)
+  - Secondary: #546e7a (Blue Grey)
+  - Success: #4caf50
+  - Error: #f44336
+  - Background: #f5f7fa (Light Grey Blue)
+  - White: #ffffff
+*/
 
-.background {
-  background: linear-gradient(134.16deg, #ffab25 -13.56%, #dd8800 117.67%);
+.start-screen {
+  background: linear-gradient(135deg, #3f51b5 0%, #303f9f 100%);
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 }
 
-.background-task {
-  background-color: #e8eaf6;
-  height: 100%;
-  overflow: auto;
-}
-
-.background:before {
+.start-screen::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -1444,103 +1013,90 @@ onBeforeUnmount(() => {
   background-image: url(../../assets/BackgroundTestView.png);
   background-repeat: no-repeat;
   background-size: contain;
-  background-position: right 0px top -20px;
-  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  background-position: right top;
+  opacity: 0.2;
 }
 
-.title-view {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #ffffff;
+.main-test-interface {
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
-.description-view {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18.1818px;
-  line-height: 21px;
-  align-items: flex-end;
-  color: #ffffff;
+.right-view {
+  overflow-y: auto;
+  max-height: 100vh;
+  padding: 24px;
 }
 
-.sub-title {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-}
-
-.btn-fix:focus:before {
-  opacity: 0 !important;
-}
-
-.title-text {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  margin-left: 15px;
-  padding: 10px;
-  padding-left: 0px;
-  padding-top: 0px;
+.test-content {
+  background-color: #ffffff;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
 }
 
 .right-view::-webkit-scrollbar {
-  width: 9px;
+  width: 8px;
 }
 
 .right-view::-webkit-scrollbar-track {
-  background: none;
+  background: #f5f5f5;
 }
 
 .right-view::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 2px;
-}
-
-.right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
-}
-
-.nav-list::-webkit-scrollbar {
-  width: 7px;
-}
-
-.nav-list::-webkit-list-item {
-  background: none;
-}
-
-.nav-list-item::-webkit-scrollbar-thumb {
-  background: #777596;
+  background: #bdbdbd;
   border-radius: 4px;
 }
 
-.nav-list-item::-webkit-scrollbar-thumb:hover {
-  background: #66618a;
+.right-view::-webkit-scrollbar-thumb:hover {
+  background: #9e9e9e;
 }
 
-.cards {
-  border-radius: 20px;
-}
-
-.cards-title {
+.rich-text {
+  font-size: 16px;
+  line-height: 1.6;
   color: #455a64;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
 }
 
-.cards-subtitle {
-  color: #455a64;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: normal;
-  line-height: normal;
+/* Custom Vuetify Overrides */
+.v-dialog .v-card {
+  border-radius: 12px;
+}
+
+.v-btn.v-btn--rounded {
+  border-radius: 50px;
+}
+
+.v-radio .v-label {
+  font-size: 16px;
+  color: #546e7a;
+}
+
+/* Helper classes */
+.text-primary { color: #3f51b5 !important; }
+.text-secondary { color: #546e7a !important; }
+.bg-primary { background-color: #3f51b5 !important; }
+.bg-error { background-color: #f44336 !important; }
+
+/* Stepper styles */
+.stepper-row {
+  margin: 0;
+  padding: 0;
+}
+
+.v-stepper-header {
+  box-shadow: none !important;
+}
+
+.v-stepper-item {
+  padding: 16px;
+}
+
+.v-stepper-item__content {
+  display: none;
+}
+
+.v-stepper-item--complete .v-stepper-item__content {
+  display: flex;
 }
 </style>
