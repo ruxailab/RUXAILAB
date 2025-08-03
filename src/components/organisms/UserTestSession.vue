@@ -12,6 +12,7 @@
                 </h1>
             </v-col>
         </v-row>
+        selectedUserID : {{ selectedUserID }}
 
         <v-card flat v-if="usersID">
             <v-row class="ma-0 pa-0">
@@ -22,9 +23,9 @@
                     <v-list density="compact" class="list-scroll">
                         <v-list-subheader>Evaluators</v-list-subheader>
                         <v-divider />
-                        <v-list v-model:selected="selectedUserID" selection-mode="single">
-                            <v-list-item v-for="(item, i) in usersID" :key="i" :value="item"
-                                :active="selectedUserID === item" @click="selectedUserID = item">
+                        <v-list dense nav>
+                            <v-list-item v-for="(item, i) in usersID" :key="i" @click="selectedUserID = item"
+                                :class="selectedUserID === item ? 'selected-user' : ''" class="rounded">
                                 <v-list-item-title>
                                     {{ getCooperatorEmail(item) }}
                                     <!-- {{ item }} -->
@@ -33,6 +34,60 @@
                         </v-list>
                     </v-list>
                 </v-col>
+
+
+                <!------------------------------------------------------------------------------------------------------------------------->
+                <!--------------------------------------------- Vertical Line [Split] ----------------------------------------------------->
+                <!------------------------------------------------------------------------------------------------------------------------->
+                <v-divider vertical inset />
+
+                <!------------------------------------------------------------------------------------------------------------------------->
+                <!--------------------------------------------- Session Content [Right] --------------------------------------------------->
+                <!------------------------------------------------------------------------------------------------------------------------->
+                <v-col class="ma-0 pa-1 answer-list" cols="9">
+                    <v-tabs v-model="tab" color="orange" class="mb-4">
+                        <v-tab>Transcription</v-tab>
+                        <v-tab>Timeline</v-tab>
+                        <v-tab>Export</v-tab>
+                    </v-tabs>
+
+                    <v-sheet elevation="0" class="pa-6 rounded-lg" color="#FAFAFA">
+                        <!-- TAB 0: Transcription -->
+                        <template v-if="tab === 0">
+                            <div class="mb-4">
+                                <div v-if="selectedAnswerDocument?.audioUrlEvaluator">
+                                    <h4>🎧 Evaluator Audio</h4>
+                                    <audio :src="selectedAnswerDocument.audioUrlEvaluator" controls
+                                        style="width: 100%;" />
+                                </div>
+
+                                <div v-if="selectedAnswerDocument?.audioUrlModerator" class="mt-4">
+                                    <h4>🎤 Moderator Audio</h4>
+                                    <audio :src="selectedAnswerDocument.audioUrlModerator" controls
+                                        style="width: 100%;" />
+                                </div>
+                            </div>
+
+                            <v-btn class="mb-2" color="primary">Transcribe Evaluator</v-btn>
+                            <v-btn class="mb-2 ml-2" color="primary">Transcribe Moderator</v-btn>
+
+                            <v-sheet class="mt-4 pa-4" color="#fff8e1" style="min-height: 200px;">
+                                <p style="color: grey;">(Transcript will appear here...)</p>
+                            </v-sheet>
+                        </template>
+
+                        <!-- TAB 1: Timeline -->
+                        <template v-else-if="tab === 1">
+                            <p>⏱️ Timeline data will be shown here...</p>
+                        </template>
+
+                        <!-- TAB 2: Export -->
+                        <template v-else-if="tab === 2">
+                            <v-btn class="mt-2" color="success">💾 Save to Firestore</v-btn>
+                            <v-btn class="mt-2 ml-2" color="blue">📄 Export as PDF</v-btn>
+                        </template>
+                    </v-sheet>
+                </v-col>
             </v-row>
         </v-card>
     </v-container>
@@ -40,18 +95,26 @@
 
 <script>
 // External Libraries
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 // Components
 
 
 // Controllers
 
+
 export default {
     components: {
-
+        QuillEditor,
     },
     data() {
         return {
+            selectedUserID: null, // Will store the selected user ID
+
+
+            tab: 0, // ← active tab index
+
         }
     },
     computed: {
@@ -63,6 +126,20 @@ export default {
         },
         usersID() {
             return Object.values(this.testAnswerDocument).map(answer => answer.userDocId);
+        },
+        // Compute selectedAnswerDocument based on selectedUserID
+        selectedAnswerDocument() {
+            return this.testAnswerDocument[this.selectedUserID] || null;
+        },
+    },
+    watch: {
+        selectedUserID: {
+            immediate: true, // Runs when the component is mounted
+            async handler(newUserId) {
+                if (!newUserId) return;
+                // TODO Fetch Previous Results :D (Cached Before)
+                // this.fetchSelectedAnswerSentiment();
+            },
         },
     },
     mounted() {
@@ -91,6 +168,45 @@ const selectedUser = ref(null)
 
 </script>
 
+
+
+<style>
+.cardsTitle {
+    color: #455a64;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.list-scroll {
+    height: 508px;
+    overflow: auto;
+}
+
+.list-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.list-scroll::-webkit-scrollbar-track {
+    background: none;
+}
+
+.list-scroll::-webkit-scrollbar-thumb {
+    background: #ffcd86;
+    border-radius: 4px;
+}
+
+.list-scroll::-webkit-scrollbar-thumb:hover {
+    background: #fca326;
+}
+
+.selected-user {
+    background-color: #ffecb3 !important;
+    /* light orange */
+    /* color: #fca326 !important; */
+    /* dark gray-blue for better contrast */
+    font-weight: 600;
+}
+</style>
 
 <!-- <template>
     <div>
