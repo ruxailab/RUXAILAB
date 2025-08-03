@@ -51,9 +51,10 @@
                         <v-tab>Export</v-tab>
                     </v-tabs>
 
-                    <v-sheet elevation="0" class="pa-6 rounded-lg" color="#FAFAFA">
+                    <v-sheet elevation="0" class="pa-6 rounded-lg" color="#FAFAFA" v-if="selectedUserID">
                         <!-- TAB 0: Transcription -->
                         <template v-if="tab === 0">
+
                             <div class="mb-4">
                                 <div v-if="selectedAnswerDocument?.audioUrlEvaluator">
                                     <h4>🎧 Evaluator Audio</h4>
@@ -67,13 +68,90 @@
                                         style="width: 100%;" />
                                 </div>
                             </div>
+                            <v-btn color="orange" class="mb-4 text-white" @click="transcribeBothMock">
+                                🎙 Transcribe
+                            </v-btn>
 
-                            <v-btn class="mb-2" color="primary">Transcribe Evaluator</v-btn>
-                            <v-btn class="mb-2 ml-2" color="primary">Transcribe Moderator</v-btn>
-
-                            <v-sheet class="mt-4 pa-4" color="#fff8e1" style="min-height: 200px;">
-                                <p style="color: grey;">(Transcript will appear here...)</p>
+                            <v-sheet v-if="transcriptSegments.length" class="pa-4 mt-4 rounded-lg" color="#fffef5">
+                                <v-timeline side="end" density="comfortable">
+                                    <v-timeline-item v-for="segment in transcriptSegments" :key="segment.id"
+                                        :dot-color="segment.role === 'moderator' ? 'blue-darken-2' : 'orange-darken-2'"
+                                        :icon="segment.role === 'moderator' ? 'mdi-account-tie' : 'mdi-laptop-account'"
+                                        size="small">
+                                        <div class="text-grey-darken-2 font-weight-medium">
+                                            <span class="font-weight-bold">{{ formatTime(segment.start) }}–{{
+                                                formatTime(segment.end) }}</span>
+                                            &nbsp; {{ segment.text }}
+                                        </div>
+                                    </v-timeline-item>
+                                </v-timeline>
                             </v-sheet>
+
+                            <!-- <v-sheet v-if="transcriptSegments.length" class="pa-4 mt-4 rounded-lg" color="#fffef5">
+                                <v-timeline side="end" density="comfortable">
+                                    <v-timeline-item v-for="segment in transcriptSegments" :key="segment.id"
+                                        :dot-color="segment.role === 'moderator' ? 'blue-darken-2' : 'orange-darken-2'"
+                                        :icon="segment.role === 'moderator' ? 'mdi-teach' : 'mdi-laptop-account'"
+                                        size="small">
+                                        <div :class="segment.role === 'moderator' ? 'text-blue-darken-2' : 'text-orange-darken-2'"
+                                            class="font-weight-medium">
+                                            <span class="text-grey-darken-2">
+                                                {{ formatTime(segment.start) }}–{{ formatTime(segment.end) }}
+                                            </span>
+                                            &nbsp;
+                                            <strong>
+                                                {{ segment.role === 'moderator' ? '🧑‍🏫 Moderator' : '🧑‍💻 Evaluator'
+                                                }}:
+                                            </strong>
+                                            <span class="ml-1">{{ segment.text }}</span>
+                                        </div>
+                                    </v-timeline-item>
+                                </v-timeline>
+                            </v-sheet> -->
+
+                            <!-- <v-sheet v-if="transcriptSegments.length" class="pa-4 mt-4 rounded-lg" color="#fffef5">
+                                <v-timeline side="end" density="comfortable">
+                                    <v-timeline-item v-for="segment in transcriptSegments" :key="segment.id"
+                                        :dot-color="segment.role === 'moderator' ? 'blue-darken-2' : 'orange-darken-2'"
+                                        :icon="segment.role === 'moderator' ? 'mdi-teach' : 'mdi-laptop-account'"
+                                        size="small">
+                                        <template #opposite>
+                                            <span class="text-grey-darken-2 font-weight-bold">
+                                                {{ formatTime(segment.start) }}–{{ formatTime(segment.end) }}
+                                            </span>
+                                        </template>
+
+<div :class="segment.role === 'moderator' ? 'text-blue-darken-2' : 'text-orange-darken-2'">
+    <strong>
+        {{ segment.role === 'moderator' ? '🧑‍🏫 Moderator' : '🧑‍💻 Evaluator'
+        }}:
+    </strong>
+    <span class="ml-1">{{ segment.text }}</span>
+</div>
+</v-timeline-item>
+</v-timeline>
+</v-sheet>
+<v-sheet v-if="transcriptSegments.length" class="pa-4 mt-4" color="#fff8e1">
+    <v-row v-for="segment in transcriptSegments" :key="segment.id" class="py-2">
+        <v-col cols="3" class="font-weight-bold text-grey-darken-2">
+            ⏱ {{ formatTime(segment.start) }}–{{ formatTime(segment.end) }}
+        </v-col>
+        <v-col cols="9">
+            <div :class="segment.role === 'moderator' ? 'text-blue-darken-2' : 'text-orange-darken-2'">
+                <strong>{{ segment.role === 'moderator' ? '🧑‍🏫\ Moderator' :
+                    '🧑‍💻\ Evaluator' }}:</strong>
+                {{ segment.text }}
+            </div>
+        </v-col>
+    </v-row>
+</v-sheet> -->
+
+                            <!-- <v-btn class="mb-2" color="primary">Transcribe Evaluator</v-btn>
+                            <v-btn class="mb-2 ml-2" color="primary">Transcribe Moderator</v-btn> -->
+
+                            <!-- <v-sheet class="mt-4 pa-4" color="#fff8e1" style="min-height: 200px;">
+                                <p style="color: grey;">(Transcript will appear here...)</p>
+                            </v-sheet> -->
                         </template>
 
                         <!-- TAB 1: Timeline -->
@@ -114,6 +192,8 @@ export default {
 
 
             tab: 0, // ← active tab index
+
+            transcriptSegments: [], // ← segments of the transcript
 
         }
     },
@@ -157,6 +237,28 @@ export default {
             }
             return cooperatorEmail;
         },
+        getMockModeratorSegments() {
+            return [
+                { id: 1, start: 0, end: 4, text: "Hello and welcome", role: "moderator" },
+                { id: 2, start: 8, end: 12, text: "Can you share your thoughts?", role: "moderator" }
+            ]
+        },
+        getMockEvaluatorSegments() {
+            return [
+                { id: 3, start: 4, end: 8, text: "I'm ready to begin", role: "evaluator" },
+                { id: 4, start: 12, end: 16, text: "Sure! I think the app is really intuitive.", role: "evaluator" }
+            ]
+        },
+        transcribeBothMock() {
+            const all = [...this.getMockModeratorSegments(), ...this.getMockEvaluatorSegments()]
+            this.transcriptSegments = all.sort((a, b) => a.start - b.start)
+        },
+        formatTime(seconds) {
+            const min = Math.floor(seconds / 60).toString().padStart(2, '0')
+            const sec = Math.floor(seconds % 60).toString().padStart(2, '0')
+            return `${min}:${sec}`
+        }
+
     },
 }
 
