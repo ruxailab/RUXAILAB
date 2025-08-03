@@ -1,9 +1,9 @@
 <template>
-    <div style="height: 100vh;">
+    <div style="height: calc(100vh - 64px); overflow: auto;">
         <v-overlay :model-value="loading" class="d-flex align-center justify-center">
             <v-progress-circular indeterminate size="64" color="orange" />
         </v-overlay>
-        <div v-if="testAnswerDocument && testAnswerDocument.type === 'User'">
+        <div v-if="testAnswerDocument && testAnswerDocument.type === 'User'" style="height:100%">
             <UserTestSession />
         </div>
         <div v-else-if="testAnswerDocument">
