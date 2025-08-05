@@ -714,9 +714,8 @@ onMounted(() => {
 
 <style scoped>
 .cooperators-page {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem 3rem;
   background-color: white;
 }
 
