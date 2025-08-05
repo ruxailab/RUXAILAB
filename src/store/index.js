@@ -32,6 +32,9 @@ export default createStore({
         message: payload.message,
       }
     },
+    clearError(state) {
+      state.error = null
+    },
     SET_DIALOG_LEAVE(state, payload) {
       state.dialogLeave = payload
     },
@@ -48,6 +51,17 @@ export default createStore({
     },
     localChanges(state) {
       return state.localChanges
+    },
+    error(state) {
+      return state.error
+    },
+  },
+  actions: {
+    clearError({ commit }) {
+      commit('clearError')
+    },
+    setError({ commit }, payload) {
+      commit('setError', payload)
     },
   },
   modules: {

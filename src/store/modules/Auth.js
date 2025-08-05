@@ -77,41 +77,42 @@ export default {
     },
 
     async signin({ commit }, payload) {
-      commit('setLoading', true)
+      commit('setLoading', true, { root: true })
+      commit('clearError', null, { root: true }) // Clear any previous errors
+      
       try {
         const { user } = await authController.signIn(payload.email, payload.password)
         if (user) {
           const dbUser = await userController.getById(user.uid)
           commit('SET_USER', dbUser)
+          commit('clearError', null, { root: true }) // Clear errors on successful signin
         }
       } catch (err) {
+        let errorMessage
         if (err.code === 'auth/invalid-email') {
-          commit('setError', {
-            errorCode: 'auth',
-            message: i18n.global.t('errors.userNotExist'),
-          })
+          errorMessage = i18n.global.t('errors.userNotExist')
         } else if (err.code === 'auth/wrong-password') {
-          commit('setError', {
-            errorCode: 'auth',
-            message: i18n.global.t('errors.incorrectPassword'),
-          })
+          errorMessage = i18n.global.t('errors.incorrectPassword')
         } else {
-          commit('setError', {
-            errorCode: 'auth',
-            message: i18n.global.t('errors.incorrectCredential'),
-          })
+          errorMessage = i18n.global.t('errors.incorrectCredential')
         }
+        
+        commit('setError', {
+          errorCode: 'auth',
+          message: errorMessage,
+        }, { root: true })
+        
         throw err
       } finally {
-        commit('setLoading', false)
+        commit('setLoading', false, { root: true })
       }
     },
 
     /**
- * Handle Google Authentication
- * @action signInWithGoogle
- * @returns {void}
- */
+     * Handle Google Authentication
+     * @action signInWithGoogle
+     * @returns {void}
+     */
     async signInWithGoogle({ commit }) {
       commit('setLoading', true)
       try {
@@ -151,27 +152,39 @@ export default {
     },
 
     async logout({ commit }) {
+      commit('clearError', null, { root: true }) // Clear any previous errors
+      
       try {
         await authController.signOut()
         commit('SET_USER', null)
+        commit('clearError', null, { root: true }) // Clear errors on successful logout
       } catch (err) {
         console.error(err)
-        commit('setError', { errorCode: 'FIREBASE', message: err.code || 'Error during logout' })
+        commit('setError', { 
+          errorCode: 'FIREBASE', 
+          message: err.code || 'Error during logout' 
+        }, { root: true })
       } finally {
-        commit('setLoading', false)
+        commit('setLoading', false, { root: true })
       }
     },
 
     async autoSignIn({ commit }) {
+      commit('clearError', null, { root: true }) // Clear any previous errors
+      
       try {
         const user = await authController.autoSignIn()
         if (!user) return
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
+        commit('clearError', null, { root: true }) // Clear errors on success
       } catch (e) {
         console.error(e)
-        commit('setError', { errorCode: 'FIREBASE', message: e.code || 'Error during auto sign in' })
+        commit('setError', { 
+          errorCode: 'FIREBASE', 
+          message: e.code || 'Error during auto sign in' 
+        }, { root: true })
       }
     },
 
@@ -189,6 +202,11 @@ export default {
       } finally {
         commit('setLoading', false)
       }
+    },
+
+    // Action to manually clear authentication errors
+    clearAuthError({ commit }) {
+      commit('clearError', null, { root: true })
     },
   },
 }
