@@ -60,12 +60,12 @@
       <v-container
         v-else
         fluid
-        class="pa-8"
+        class="side-gap"
       >
         <div class="mb-8">
           <div class="d-flex align-center justify-space-between mb-4">
             <div>
-              <h1 class="text-h3 font-weight-bold text-on-surface mb-2">
+              <h1 class="text-h3 font-weight-light text-on-surface mb-2">
                 Reports Dashboard
               </h1>
               <div class="d-flex align-center">
@@ -462,7 +462,7 @@ const reports = computed(() => {
   console.log(raw)
   return Object.values(raw).map((r) => ({
     id: r.userDocId,
-    fullName: r.fullName,
+    fullName: r.fullName || "Evaluator",
     evaluator: getCooperatorEmail(r.userDocId),
     userDocId: r.userDocId,
     progress: parseFloat(r.progress).toFixed(2),
@@ -561,6 +561,10 @@ onMounted(async () => {
 .report-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.side-gap {
+  padding: 1.5rem 3rem;
 }
 
 .progress-section {

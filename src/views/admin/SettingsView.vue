@@ -79,7 +79,7 @@
     <div class="settings-layout">
       <div class="header-section">
         <div class="header-content">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">Test Configuration</h1>
+          <h1 class="text-h3 font-weight-light text-grey-darken-4 mb-2">Test Configuration</h1>
           <p class="text-body-1 text-grey-darken-1">
             Manage your test settings and preferences with advanced controls
           </p>
@@ -567,12 +567,12 @@ const duplicateTest = async () => {
 .settings-wrapper {
   min-height: 100vh;
   background: #fafbfc;
-  padding: 24px;
 }
 
 .settings-layout {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0.5rem 2rem;
 }
 
 /* Header Section */
