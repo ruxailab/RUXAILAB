@@ -7,8 +7,8 @@ import { VTimePicker } from 'vuetify/lib/labs/VTimePicker'
 const myCustomLightTheme = {
   dark: false,
   colors: {
-    primary: '#3B82F6',
-    secondary: '#10B981',
+    primary: '#00213F',
+    secondary: '#FF425A',
     accent: '#F97316',
     error: '#EF4444',
     warning: '#F59E0B',
