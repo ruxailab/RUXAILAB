@@ -1,22 +1,11 @@
 <template>
   <div class="dashboard-layout">
-    <v-navigation-drawer
-      width="280"
-      class="sidebar"
-      elevation="2"
-    >
+    <v-navigation-drawer width="280" class="sidebar" elevation="2">
       <!-- Sidebar Header -->
       <div class="sidebar-header pa-6">
         <div class="d-flex align-center">
-          <v-avatar
-            color="primary"
-            size="40"
-            class="mr-3"
-          >
-            <v-icon
-              icon="mdi-view-dashboard"
-              color="white"
-            />
+          <v-avatar color="primary" size="40" class="mr-3">
+            <v-icon icon="mdi-view-dashboard" color="white" />
           </v-avatar>
           <div>
             <h2 class="text-h6 font-weight-bold">
@@ -31,70 +20,33 @@
       <v-divider />
 
       <!-- Navigation -->
-      <v-list
-        class="pa-4"
-        nav
-      >
-        <template
-          v-for="item in navigationItems"
-          :key="item.id"
-        >
-          <v-list-group
-            v-if="item.children"
-            :value="activeSection === item.id"
-          >
+      <v-list class="pa-4" nav>
+        <template v-for="item in navigationItems" :key="item.id">
+          <v-list-group v-if="item.children" :value="activeSection === item.id">
             <template #activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                :prepend-icon="item.icon"
-                :title="item.title"
-                class="section-header mb-2"
-                rounded="lg"
-              />
+              <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.title" class="section-header mb-2"
+                rounded="lg" />
             </template>
-            <v-list-item
-              v-for="child in item.children"
-              :key="child.id"
-              :title="child.title"
-              :prepend-icon="child.icon"
-              :active="activeSection === item.id && activeSubSection === child.id"
-              class="subsection-item ml-4 mb-1"
-              rounded="lg"
-              @click="selectNavigation(item.id, child.id)"
-            />
+            <v-list-item v-for="child in item.children" :key="child.id" :title="child.title" :prepend-icon="child.icon"
+              :active="activeSection === item.id && activeSubSection === child.id" class="subsection-item ml-4 mb-1"
+              rounded="lg" @click="selectNavigation(item.id, child.id)" />
           </v-list-group>
 
-          <v-list-item
-            v-else
-            :title="item.title"
-            :prepend-icon="item.icon"
-            :active="activeSection === item.id"
-            class="section-header mb-2"
-            rounded="lg"
-            @click="selectNavigation(item.id)"
-          />
+          <v-list-item v-else :title="item.title" :prepend-icon="item.icon" :active="activeSection === item.id"
+            class="section-header mb-2" rounded="lg" @click="selectNavigation(item.id)" />
         </template>
       </v-list>
 
       <!-- Create Button -->
       <div class="pa-4 mt-auto">
-        <v-btn
-          color="success"
-          block
-          size="large"
-          prepend-icon="mdi-plus"
-          @click="goToCreateTestRoute"
-        >
+        <v-btn color="success" block size="large" prepend-icon="mdi-plus" @click="goToCreateTestRoute">
           Create New Test
         </v-btn>
       </div>
     </v-navigation-drawer>
 
     <v-main class="main-content">
-      <v-container
-        fluid
-        class="pa-6"
-      >
+      <v-container fluid class="pa-6">
         <!-- Header -->
         <div class="content-header mb-6">
           <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
@@ -112,37 +64,14 @@
         </div>
 
         <!-- Search + Filters -->
-        <v-row
-          v-if="['studies', 'community'].includes(activeSection)"
-          class="mb-6"
-          justify="space-between"
-        >
-          <v-col
-            cols="12"
-            md="8"
-          >
-            <v-text-field
-              v-model="search"
-              width="full"
-              prepend-inner-icon="mdi-magnify"
-              label="Search"
-              variant="outlined"
-              hide-details
-              rounded="lg"
-            />
+        <v-row v-if="['studies', 'community'].includes(activeSection)" class="mb-6" justify="space-between">
+          <v-col cols="12" md="8">
+            <v-text-field v-model="search" width="full" prepend-inner-icon="mdi-magnify" label="Search"
+              variant="outlined" hide-details rounded="lg" />
           </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <v-select
-              v-model="selectedMethodFilter"
-              :items="methodOptions"
-              label="Filter by Type"
-              variant="outlined"
-              hide-details
-              rounded="lg"
-            />
+          <v-col cols="12" md="4">
+            <v-select v-model="selectedMethodFilter" :items="methodOptions" label="Filter by Type" variant="outlined"
+              hide-details rounded="lg" />
           </v-col>
         </v-row>
 
@@ -152,30 +81,14 @@
         </div>
 
         <div v-if="activeSection === 'studies'">
-          <List
-            :items="filteredTests"
-            type="myTests"
-            @clicked="goTo"
-          />
+          <List :items="filteredTests" type="myTests" @clicked="goTo" />
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <List
-            v-if="filteredModeratedSessions.length > 0"
-            :items="filteredModeratedSessions"
-            type="sessions"
-            @clicked="goTo"
-          />
-          <div
-            v-else
-            class="empty-state"
-          >
-            <v-icon
-              icon="mdi-clock-remove-outline"
-              size="48"
-              color="grey-lighten-1"
-              class="mb-2"
-            />
+          <List v-if="filteredModeratedSessions.length > 0" :items="filteredModeratedSessions" type="sessions"
+            @clicked="goTo" />
+          <div v-else class="empty-state">
+            <v-icon icon="mdi-clock-remove-outline" size="48" color="grey-lighten-1" class="mb-2" />
             <p class="text-h6">
               You don't have active sessions
             </p>
@@ -183,27 +96,15 @@
         </div>
 
         <div v-if="activeSection === 'templates'">
-          <List
-            :items="filteredTemplates"
-            type="myTemplates"
-            @clicked="setupTempDialog"
-          />
+          <List :items="filteredTemplates" type="myTemplates" @clicked="setupTempDialog" />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
-          <List
-            :items="filteredTests"
-            type="publicTests"
-            @clicked="goTo"
-          />
+          <List :items="filteredTests" type="publicTests" @clicked="goTo" />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
-          <List
-            :items="filteredTemplates"
-            type="publicTemplates"
-            @clicked="setupTempDialog"
-          />
+          <List :items="filteredTemplates" type="publicTemplates" @clicked="setupTempDialog" />
         </div>
 
         <div v-if="activeSection === 'notifications'">
@@ -214,12 +115,7 @@
           <ProfileView />
         </div>
 
-        <TempDialog
-          v-model:dialog="tempDialog"
-          :template="temp"
-          :allow-create="true"
-          @close="tempDialog = false"
-        />
+        <TempDialog v-model:dialog="tempDialog" :template="temp" :allow-create="true" @close="tempDialog = false" />
       </v-container>
     </v-main>
   </div>
@@ -267,8 +163,8 @@ const methodOptions = [
   { value: 'all', title: 'All Methods' },
   { value: 'User', title: 'Usability Test' },
   { value: 'HEURISTICS', title: 'Heuristic Evaluation' },
-  { value: 'MANUAL', title: 'MANUAL'},
-  { value: 'AUTOMATIC', title: 'AUTOMATIC'}
+  { value: 'MANUAL', title: 'MANUAL' },
+  { value: 'AUTOMATIC', title: 'AUTOMATIC' }
 ];
 
 const currentPageTitle = computed(() => {
@@ -375,12 +271,9 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
   }
 });
 
-onBeforeMount(async () => {
+onMounted(async () => {
   await getMyPersonalTests();
   await cleanTestStore();
-});
-
-onMounted(() => {
   filterModeratedSessions();
 });
 </script>
