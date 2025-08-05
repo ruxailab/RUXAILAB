@@ -121,16 +121,6 @@
               >
                 {{ item.hidden ? 'Show' : 'Hide' }}
               </v-btn>
-              <v-btn
-                color="error"
-                variant="tonal"
-                size="small"
-                prepend-icon="mdi-delete"
-                class="font-weight-medium"
-                @click="deleteSession(item.id)"
-              >
-                Delete
-              </v-btn>
             </div>
           </template>
         </v-data-table>
@@ -341,7 +331,6 @@ const closeTaskDetailsModal = () => {
 }
 
 const toggleHideSession = (id) => console.log('Toggle hide session', id);
-const deleteSession = (id) => console.log('Delete session', id);
 
 onMounted(() => {
   testStructure.value.userTasks.forEach((task, i) => {
