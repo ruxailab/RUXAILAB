@@ -18,6 +18,9 @@ const myCustomLightTheme = {
     good: '#2196f3',
     ok: '#ff9800',
     poor: '#f44336',
+    ternary: '#546e7a',
+    forth: '#f5f7fa',
+    testPrimary: '#3f51b5',
   },
 }
 
