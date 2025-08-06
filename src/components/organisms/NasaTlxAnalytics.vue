@@ -521,7 +521,7 @@ const tableHeaders = [
 ]
 
 const test = computed(()=> store.getters.test.testStructure)
-const testAnswerDocument = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
+const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {});
 const nasaTlxData = computed(() => Object.values(testAnswerDocument.value).flatMap((item, index) => {
     return Object.values(item.tasks || {})
     .filter(task => test.value?.userTasks[task.taskId]?.taskType === "nasa-tlx")
