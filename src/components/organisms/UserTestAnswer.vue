@@ -113,14 +113,14 @@ const hasAnswers = computed(() => {
 
 
 const showSUS = computed(() => {
-  if (!testStructure.value) return false;
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'sus'
   );
 });
 
 const showNasa = computed(() => {
-  if (!testStructure.value) return false;
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'nasa-tlx'
   );
