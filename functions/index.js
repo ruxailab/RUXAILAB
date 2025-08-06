@@ -1,174 +1,83 @@
-const functions = require('firebase-functions')
-const admin = require('firebase-admin')
-const nodemailer = require('nodemailer')
-require('dotenv').config()
+import { admin } from './src/f.firebase.js'
 
 admin.initializeApp()
 
-exports.onTestCreate = functions.firestore
-  .document('tests/{docId}')
-  .onCreate(async (snap, context) => {
-    const userId = snap.data().testAdmin.userDocId
-    const test = snap.data()
-
-    await admin
-      .firestore()
-      .collection('users')
-      .doc(userId)
-      .update({
-        [`myTests.${snap.id}`]: {
-          testDocId: snap.id,
-          testTitle: test.testTitle,
-          testType: test.testType,
-          userTestType: test.userTestType,
-          numberColaborators: 0,
-          creationDate: test.creationDate || null,
-          updateDate: Date.now(),
-        },
-      })
-  })
-
-exports.onTestUpdate = functions.firestore
-  .document('tests/{docId}')
-  .onUpdate(async (snap, context) => {
-    const userId = snap.after.data().testAdmin.userDocId
-    const test = snap.after.data()
-
-    await admin
-      .firestore()
-      .collection('users')
-      .doc(userId)
-      .update({
-        [`myTests.${snap.after.id}`]: {
-          testDocId: snap.after.id,
-          testTitle: test.testTitle,
-          testType: test.testType,
-          numberColaborators: test.numberColaborators || 0,
-          creationDate: test.creationDate,
-          updateDate: Date.now(),
-        },
-      })
-  })
-
-exports.deleteAuth = functions.https.onCall(async (data, context) => {
-  try {
-    await admin.auth().deleteUser(data.id)
-    return 'User deleted successfully.'
-  } catch (err) {
-    console.error('Error deleting user:', err)
-    return err
-  }
-})
-
-exports.sendEmail = functions.https.onCall(async (data, context) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.VUE_APP_FIREBASE_EMAIL,
-      pass: process.env.VUE_APP_FIREBASE_PASSWORD,
-    },
-  })
-
-  const mail = {
-    from: 'Uramaki Lab',
-    to: data.guest.email,
-    subject: 'You have been invited to evaluate a test!',
-    html: data.template,
-    attachments: data.attachments || [],
-  }
-
-  try {
-    const info = await transporter.sendMail(mail)
-    return `Message sent: ${info.messageId}`
-  } catch (error) {
-    console.error('Error sending email:', error)
-    return `Error sending email: ${error.message}`
-  }
-})
-
-exports.receiveCalibration = functions.https.onRequest(async (req, res) => {
-  if (req.method !== "POST") {
-    return res.status(405).send("Method Not Allowed");
-  }
-
-  try {
-    const {
-      session_id,
-      model,
-      screen_height,
-      screen_width,
-      k
-    } = req.body;
-
-    if (!session_id) {
-      return res.status(400).json({ error: "session_id is required" });
-    }
-
-    const calibrationData = {
-      model,
-      screen_height,
-      screen_width,
-      k,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-
-    const db = admin.firestore();
-
-    await db.collection("calibrations").doc(session_id).set(calibrationData);
-
-    const userDocRef = db.collection("users").doc(session_id);
-    const userDoc = await userDocRef.get();
-
-    if (userDoc.exists) {
-      await userDocRef.update({
-        calibration_id: session_id,
-        calibration_timestamp: admin.firestore.FieldValue.serverTimestamp()
-      });
-    } else {
-      await userDocRef.set({
-        calibration_id: session_id,
-        calibration_timestamp: admin.firestore.FieldValue.serverTimestamp()
-      });
-    }
-
-    return res.status(200).json({ message: "Calibration saved and user updated successfully" });
-
-  } catch (error) {
-    console.error("Error saving calibration:", error);
-    return res.status(500).json({ error: error.message });
-  }
-});
+export * from './src/https/index.js'
+export * from './src/triggers/index.js'
 
 
-//code is in safe------------------------------------------------
-// exports.processSignUp = functions.auth.user().onCreate(async (user) => {
+// const functions = require('firebase-functions')
+// const admin = require('firebase-admin')
+// const nodemailer = require('nodemailer')
+// require('dotenv').config()
+
+// admin.initializeApp()
+
+// exports.deleteAuth = functions.https.onCall(async (data, context) => {
 //   try {
-//     await admin
-//       .firestore()
-//       .collection("users")
-//       .doc(user.uid)
-//       .set({
-//         email: user.email,
-//         accessLevel: 1,
-//         myTests: {},
-//         myAnswers: {},
-//         notifications: [],
-//       });
+//     await admin.auth().deleteUser(data.id)
+//     return 'User deleted successfully.'
 //   } catch (err) {
-//     console.error("Error to create user in database ", err);
+//     console.error('Error deleting user:', err)
+//     return err
 //   }
-// });
+// })
 
-// exports.setUserRole = functions.https.onCall(async (data) => {
-//   try {
-//     return await admin
-//       .firestore()
-//       .collection("users")
-//       .doc(data.uid)
-//       .update({
-//         accessLevel: data.customClaims.accessLevel,
-//       });
-//   } catch (err) {
-//     return err;
+// exports.sendEmail = functions.https.onCall(async (data, context) => {
+//   const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//       user: process.env.VUE_APP_FIREBASE_EMAIL,
+//       pass: process.env.VUE_APP_FIREBASE_PASSWORD,
+//     },
+//   })
+
+//   const mail = {
+//     from: 'Uramaki Lab',
+//     to: data.guest.email,
+//     subject: 'You have been invited to evaluate a test!',
+//     html: data.template,
+//     attachments: data.attachments ?? [],
 //   }
-// });
+
+//   try {
+//     const info = await transporter.sendMail(mail)
+//     return `Message sent: ${info.messageId}`
+//   } catch (error) {
+//     console.error('Error sending email:', error)
+//     return `Error sending email: ${error.message}`
+//   }
+// })
+
+// //code is in safe------------------------------------------------
+// // exports.processSignUp = functions.auth.user().onCreate(async (user) => {
+// //   try {
+// //     await admin
+// //       .firestore()
+// //       .collection("users")
+// //       .doc(user.uid)
+// //       .set({
+// //         email: user.email,
+// //         accessLevel: 1,
+// //         myTests: {},
+// //         myAnswers: {},
+// //         notifications: [],
+// //       });
+// //   } catch (err) {
+// //     console.error("Error to create user in database ", err);
+// //   }
+// // });
+
+// // exports.setUserRole = functions.https.onCall(async (data) => {
+// //   try {
+// //     return await admin
+// //       .firestore()
+// //       .collection("users")
+// //       .doc(data.uid)
+// //       .update({
+// //         accessLevel: data.customClaims.accessLevel,
+// //       });
+// //   } catch (err) {
+// //     return err;
+// //   }
+// // });
