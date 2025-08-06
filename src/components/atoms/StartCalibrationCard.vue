@@ -17,15 +17,24 @@
                         correctly</span>
 
                 </v-col>
-                <v-col cols="12" class="mx-auto mb-4" align="center"><v-btn @click="$emit('openCalibration')"
-                        color="success">
+                <v-col cols="12" class="mx-auto mb-4" align="center">
+                    <v-btn v-if="!calibrationInProgress" @click="$emit('openCalibration')" color="success">
                         Continue
-                    </v-btn></v-col>
+                    </v-btn>
+                    <v-btn v-else disabled color="success">
+                        In Progress
+                    </v-btn>
+                </v-col>
             </v-row>
         </v-card>
     </v-col>
 </template>
 
 <script setup>
-
+const props = defineProps({
+    calibrationInProgress: {
+        type: Boolean,
+        default: false
+    }
+})
 </script>

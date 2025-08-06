@@ -125,7 +125,7 @@
             <v-list-item :disabled="!localTestAnswer.preTestCompleted" @click="index = 0; taskIndex = 2">
               <template #prepend>
                 <v-icon :color="index === 0 && taskIndex === 2 ? '#ffffff' : '#fca326'">
-                  {{ eyeCalibrationDone ? 'mdi-check' : 'mdi-crosshairs-gps' }}
+                  {{ eyeCalibrationStepDone ? 'mdi-check' : 'mdi-crosshairs-gps' }}
                 </v-icon>
               </template>
               <v-list-item-title :style="index === 0 && taskIndex === 2 ? 'color: white' : 'color:#fca326'">
@@ -287,7 +287,10 @@
 
           <ShowInfo v-if="index === 0 && taskIndex === 2" :title="$t('UserTestView.titles.eyeTrackingCalibration')">
             <template #content>
-              <StartCalibrationCard @openCalibration="openCalibration(), completeStep(taskIndex, 'eyeCalibration')" />
+              <StartCalibrationCard :calibrationInProgress="calibrationInProgress"
+                @openCalibration="openCalibration()" />
+              <CalibrationInProgressModal @openCalibration="openCalibration()" :isOpen="calibrationInProgress"
+                :isCompleted="calibrationCompleted" />
             </template>
           </ShowInfo>
 
@@ -538,6 +541,7 @@ import { nanoid } from 'nanoid'
 import axios from 'axios';
 import StartCalibrationCard from '@/components/atoms/StartCalibrationCard.vue';
 import IrisTracker from '@/components/organisms/IrisTracker.vue';
+import CalibrationInProgressModal from '@/components/atoms/CalibrationInProgressModal.vue';
 
 const videoUrl = ref('');
 const fullName = ref('');
@@ -570,7 +574,9 @@ const irisData = ref([])
 const gazeX = ref(null)
 const gazeY = ref(null)
 const showGaze = ref(true)
-const eyeCalibrationDone = ref(false)
+const eyeCalibrationStepDone = ref(false)
+const calibrationCompleted = ref(false)
+const calibrationInProgress = ref(false)
 
 //  Eye tracking web gazer testing 
 
@@ -603,7 +609,8 @@ const isTaskDisabled = (taskIndex) => {
 };
 
 const openCalibration = () => {
-  window.open('http://localhost:8081/calibration/configuration', '_blank');
+  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  calibrationInProgress.value = true;
 }
 
 function toggleTracking(value) {
@@ -734,7 +741,7 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'eyeCalibration') {
       index.value = 1;
       taskIndex.value = 0;
-      eyeCalibrationDone.value = true;
+      eyeCalibrationStepDone.value = true;
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
