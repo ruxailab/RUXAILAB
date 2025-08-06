@@ -2,7 +2,7 @@
     <ShowInfo>
         <template #content>
             <div class="test-content pa-6 rounded-xl text-center">
-                <h2 class="text-h5 font-weight-bold mb-4 text-secondary">
+                <h2 class="text-h5 font-weight-bold mb-4 text-primary">
                     ¡Bienvenido a RUXAILAB!
                 </h2>
                 <p class="text-body-1 mb-4 text-grey-darken-1">
@@ -11,7 +11,7 @@
                     Este tipo de test nos ayuda a detectar posibles barreras tecnológicas y mejorar la experiencia de
                     todas las personas.
                 </p>
-                <h2 class="text-h5 font-weight-bold mb-4 text-secondary">
+                <h2 class="text-h5 font-weight-bold mb-4 text-primary">
                     ¿Como funciona este test?
                 </h2>
                 <p class="text-body-1 mb-4 text-grey-darken-1">

@@ -45,6 +45,7 @@
     <v-container fluid class="pa-0">
       <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
         <v-col md="8" class="ma-5 pa-5">
+          <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;" />
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -102,7 +103,6 @@
             </v-col>
           </v-row>
           <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
-
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
             :pre-test-title="$t('UserTestView.titles.preTest')" :consent-text="test.testStructure.consent"
             :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
@@ -316,13 +316,16 @@ const startTest = () => {
 
 
 const callTimerSave = () => {
-  // Always try to stop timer in TaskStep
   if (timerComponent.value && typeof timerComponent.value.stopTimer === 'function') {
     timerComponent.value.stopTimer();
   }
 };
 
 function handleTaskFinish(userCompleted) {
+  const currentTask = localTestAnswer.tasks[taskIndex.value];
+  if (currentTask) {
+    console.log('Estado actual de la tarea antes de finalizar:', currentTask);
+  }
   completeStep(taskIndex.value, 'tasks', userCompleted);
   callTimerSave();
 }
@@ -335,8 +338,30 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  if (localTestAnswer.tasks?.[idx]) {
-    localTestAnswer.tasks[idx].taskTime = elapsedTime;
+  console.log('handleTimerStopped llamado con:', { elapsedTime, idx });
+
+  if (!localTestAnswer.tasks) {
+    console.error('localTestAnswer.tasks no está definido');
+    return;
+  }
+
+  if (idx === undefined || idx === null) {
+    console.error('Índice de tarea no válido:', idx);
+    return;
+  }
+
+  if (localTestAnswer.tasks[idx]) {
+    console.log('Guardando tiempo para tarea', idx, ':', elapsedTime, 'segundos');
+    // Asegurar que el tiempo es un número
+    const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
+    if (!isNaN(timeToSave)) {
+      localTestAnswer.tasks[idx].taskTime = timeToSave;
+      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
+    } else {
+      console.error('Tiempo no válido:', elapsedTime);
+    }
+  } else {
+    console.error('No se pudo guardar el tiempo para la tarea', idx);
   }
 };
 
@@ -398,7 +423,7 @@ const completeStep = (id, type, userCompleted = true) => {
       globalIndex.value = 6;
 
     }
-    //calculateProgress();
+    calculateProgress();
   } catch (error) {
     console.error('Error in completeStep:', error);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
@@ -442,7 +467,7 @@ const autoComplete = async () => {
     items.value[2].icon = 'mdi-check-bold';
   }
 };
-/*
+
 const calculateProgress = () => {
   try {
     if (!localTestAnswer) return 0;
@@ -474,7 +499,7 @@ const calculateProgress = () => {
     return 0;
   }
 };
-*/
+
 const setTest = async () => {
   try {
     logined.value = true;
@@ -558,14 +583,20 @@ const mappingSteps = async () => {
         id: 1,
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
-        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => new UserTask({
-          taskId: task.id || i,
-          taskAnswer: '',
-          taskObservations: '',
-          postAnswer: '',
-          taskTime: 0,
-          completed: false,
-        }));
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
+          const newTask = new UserTask({
+            taskId: task.id || i,
+            taskAnswer: '',
+            taskObservations: '',
+            postAnswer: '',
+            taskTime: 0,
+            completed: false,
+            susAnswers: [],
+            nasaTlxAnswers: {}
+          });
+          console.log('Nueva tarea creada:', i, newTask);
+          return newTask;
+        });
       }
     }
 
@@ -686,11 +717,30 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .start-screen {
-  background: linear-gradient(135deg, #00213F 40%, #303f9f 100%);
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background-size: 200% 200%;
+  animation: subtleGradient 8s ease-in-out infinite;
+  background-image: linear-gradient(160deg,
+      #00213F 0%,
+      #1a2f4f 35%,
+      #303f9f 100%);
+}
+
+@keyframes subtleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .start-screen::before {
@@ -701,7 +751,10 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  /*background-image: url(../../assets/BackgroundTestView.png);*/
+  height: 90%;
+  margin-right: -100px;
+  margin-top: 200px;
+  background-image: url(../../assets/ruxailab-small-red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
