@@ -13,7 +13,7 @@
     <v-row
       v-else-if="hasAnswers"
       justify="center"
-      class="ma-0 mt-4"
+      class="ma-0"
     >
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
@@ -75,10 +75,10 @@ import ShowInfo from '@/components/organisms/ShowInfo';
 import IntroAnswer from '@/components/molecules/IntroAnswer';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
 import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue';
-import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue';
+import SentimentAnalysisView from '@/components/organisms/SentimentAnalysisView.vue';
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
-import SusAnalytics from '@/views/admin/SusAnalytics.vue';
-import NasaTlxAnalytics from '@/views/admin/NasaTlxAnalytics.vue';
+import SusAnalytics from '@/components/organisms/SusAnalytics.vue';
+import NasaTlxAnalytics from '@/components/organisms/NasaTlxAnalytics.vue';
 
 defineProps({
   id: {
@@ -113,14 +113,14 @@ const hasAnswers = computed(() => {
 
 
 const showSUS = computed(() => {
-  if (!testStructure.value) return false;
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'sus'
   );
 });
 
 const showNasa = computed(() => {
-  if (!testStructure.value) return false;
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'nasa-tlx'
   );

@@ -1,7 +1,25 @@
-<template>
-  <v-container v-if="!loadingPage" fluid class="settings-wrapper">
-    <Snackbar />
+// src/views/admin/SettingsView.vue
 
+<template>
+  <PageWrapper title="Test Configuration" :loading="loadingPage" loading-text="Loading Settings" :side-gap="true">
+    <!-- Actions Slot for Save Button -->
+    <template #actions>
+      <v-btn color="primary" variant="flat" size="large" class="text-none font-weight-semibold rounded-l px-6"
+        :loading="loading" @click="submit()" :disabled="!localChanges">
+        <v-icon start size="18">mdi-check</v-icon>
+        Save Changes
+      </v-btn>
+    </template>
+
+    <!-- Subtitle Slot -->
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Manage your test settings and preferences with advanced controls
+      </p>
+    </template>
+
+    <!-- Main Content -->
+    <Snackbar />
     <LeaveAlert @submit="onSubmit" />
 
     <v-dialog v-model="tempDialog" max-width="800">
@@ -18,57 +36,24 @@
         <v-form ref="tempform" class="pa-6">
           <v-row>
             <v-col cols="12">
-              <v-text-field
-                v-model="template.templateTitle"
-                autofocus
-                label="Title"
-                :rules="titleRequired"
-                counter="200"
-                variant="outlined"
-                density="comfortable"
-                placeholder="Enter a title for your template"
-                class="mb-4"
-              />
-
-              <v-textarea
-                v-model="template.templateDescription"
-                label="Description"
-                variant="outlined"
-                rows="4"
-                density="comfortable"
-                placeholder="Provide a description for your template"
-                class="mb-4"
-              />
-
-              <v-checkbox
-                v-model="template.isTemplatePublic"
-                label="Make template public to all users"
-                color="primary"
-                hide-details
-                class="mt-0 pt-0"
-              />
+              <v-text-field v-model="template.templateTitle" autofocus label="Title" :rules="titleRequired"
+                counter="200" variant="outlined" density="comfortable" placeholder="Enter a title for your template"
+                class="mb-4" />
+              <v-textarea v-model="template.templateDescription" label="Description" variant="outlined" rows="4"
+                density="comfortable" placeholder="Provide a description for your template" class="mb-4" />
+              <v-checkbox v-model="template.isTemplatePublic" label="Make template public to all users" color="primary"
+                hide-details class="mt-0 pt-0" />
             </v-col>
           </v-row>
           <v-divider class="my-6"></v-divider>
           <v-card-actions class="px-0 pt-0">
             <v-spacer />
-            <v-btn
-              class="text-none rounded-lg px-6"
-              variant="outlined"
-              color="grey-darken-2"
-              height="44"
-              @click="closeDialog()"
-            >
+            <v-btn class="text-none rounded-lg px-6" variant="outlined" color="grey-darken-2" height="44"
+              @click="closeDialog()">
               {{ $t('buttons.cancel') }}
             </v-btn>
-            <v-btn
-              variant="flat"
-              :disabled="hasTemplate ? true : false"
-              color="primary"
-              height="44"
-              class="text-none rounded-lg ml-3"
-              @click="createTemplate()"
-            >
+            <v-btn variant="flat" :disabled="hasTemplate ? true : false" color="primary" height="44"
+              class="text-none rounded-lg ml-3" @click="createTemplate()">
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -77,29 +62,6 @@
     </v-dialog>
 
     <div class="settings-layout">
-      <div class="header-section">
-        <div class="header-content">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">Test Configuration</h1>
-          <p class="text-body-1 text-grey-darken-1">
-            Manage your test settings and preferences with advanced controls
-          </p>
-        </div>
-        <div class="d-flex ga-3">
-          <v-btn
-            color="primary"
-            variant="flat"
-            size="large"
-            class="text-none font-weight-semibold rounded-l px-6"
-            :loading="loading"
-            @click="submit()"
-            :disabled="!localChanges"
-          >
-            <v-icon start size="18">mdi-check</v-icon>
-            Save Changes
-          </v-btn>
-        </div>
-      </div>
-
       <div class="content-wrapper">
         <div class="left-column">
           <v-card class="info-card" elevation="0" height="100%">
@@ -112,16 +74,9 @@
                 <p class="text-caption text-grey-darken-1">Configure the fundamental details of your test</p>
               </div>
             </div>
-
             <v-card-text class="py-6">
-              <FormTestDescription
-                v-if="object"
-                ref="form1"
-                :test="object"
-                :lock="true"
-                @val-form="validate"
-                @update:test="updateObject"
-              />
+              <FormTestDescription v-if="object" ref="form1" :test="object" :lock="true" @val-form="validate"
+                @update:test="updateObject" />
             </v-card-text>
           </v-card>
         </div>
@@ -137,7 +92,6 @@
                 <p class="text-caption text-grey-darken-1">Fine-tune your test configuration</p>
               </div>
             </div>
-
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-5">
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative">
@@ -146,15 +100,8 @@
                     <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Public Access</span>
                   </div>
                   <p class="text-caption text-grey-darken-1 mb-4">Allow users to view this test</p>
-                  <v-switch
-                    v-model="object.isPublic"
-                    color="primary"
-                    hide-details
-                    inset
-                    class="position-absolute"
-                    style="top: 20px; right: 20px;"
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
-                  />
+                  <v-switch v-model="object.isPublic" color="primary" hide-details inset class="position-absolute"
+                    style="top: 20px; right: 20px;" @update:model-value="store.commit('SET_LOCAL_CHANGES', true)" />
                 </div>
               </div>
             </v-card-text>
@@ -170,44 +117,20 @@
                 <p class="text-caption text-grey-darken-1">Perform common tasks instantly</p>
               </div>
             </div>
-
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-3">
-                <v-btn
-                  color="secondary"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-l py-3"
-                  height="48"
-                  :disabled="hasTemplate || !object"
-                  block
-                  @click="tempDialog = true"
-                >
+                <v-btn color="secondary" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
+                  height="48" :disabled="hasTemplate || !object" block @click="tempDialog = true">
                   <v-icon start size="18">mdi-file-document-plus-outline</v-icon>
                   {{ $t('pages.settings.createTemplate') }}
                 </v-btn>
-
-                <v-btn
-                  color="orange-darken-1"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-l py-3"
-                  height="48"
-                  :disabled="!object"
-                  block
-                  @click="duplicateTest()"
-                >
+                <v-btn color="orange-darken-1" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
+                  height="48" :disabled="!object" block @click="duplicateTest()">
                   <v-icon start size="18">mdi-content-duplicate</v-icon>
                   {{ $t('buttons.duplicateTest') }}
                 </v-btn>
-
-                <v-btn
-                  color="error"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-l py-3"
-                  height="48"
-                  :disabled="!object"
-                  @click="dialogDel = true"
-                  block
-                >
+                <v-btn color="error" variant="flat" class="text-none font-weight-semibold rounded-l py-3" height="48"
+                  :disabled="!object" @click="dialogDel = true" block>
                   <v-icon start size="18">mdi-delete-outline</v-icon>
                   {{ $t('pages.settings.deleteTest') }}
                 </v-btn>
@@ -229,48 +152,27 @@
             <p class="text-subtitle-2 text-grey-darken-1">This action cannot be undone</p>
           </div>
         </v-card-title>
-
         <v-card-text class="py-4 px-6">
           <p class="text-body-2 text-grey-darken-1">
             {{ dialogText }} All associated data, results, and configurations will be lost forever.
           </p>
         </v-card-text>
-
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
-          <v-btn
-            variant="outlined"
-            color="grey-darken-2"
-            @click="dialogDel = false"
-            :disabled="loading"
-            class="text-none rounded-lg px-6"
-            height="44"
-          >
+          <v-btn variant="outlined" color="grey-darken-2" @click="dialogDel = false" :disabled="loading"
+            class="text-none rounded-lg px-6" height="44">
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn
-            color="error"
-            variant="flat"
-            @click="deleteTest(object)"
-            :loading="loading"
-            class="text-none rounded-lg px-6"
-            height="44"
-          >
+          <v-btn color="error" variant="flat" @click="deleteTest(object)" :loading="loading"
+            class="text-none rounded-lg px-6" height="44">
             <v-icon start size="16">mdi-delete</v-icon>
             {{ $t('buttons.delete') }} Forever
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
 
-  <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="d-flex justify-center align-center">
-    <v-progress-circular indeterminate color="#fca326" size="50" />
-    <div class="text-white mt-3">
-      Loading Settings
-    </div>
-  </v-overlay>
-
-  <AccessNotAllowed v-else />
+    <AccessNotAllowed v-if="!loadingPage && !object" />
+  </PageWrapper>
 </template>
 
 <script setup>
@@ -281,6 +183,7 @@ import FormTestDescription from '@/components/atoms/FormTestDescription';
 import Snackbar from '@/components/atoms/Snackbar';
 import LeaveAlert from '@/components/atoms/LeaveAlert';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed';
+import PageWrapper from '@/components/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import TemplateHeader from '@/models/TemplateHeader';
 import TemplateAuthor from '@/models/TemplateAuthor';
@@ -352,16 +255,6 @@ const hasTemplate = computed(() => {
     return object.value.template !== null;
   }
   return false;
-});
-const myObject = computed(() => {
-  if (user.value) {
-    let myObject = user.value.myTests.find(test => test.id === props.id);
-    if (!myObject) {
-      myObject = user.value.myCoops.find(test => test.id === props.id);
-    }
-    return myObject;
-  }
-  return null;
 });
 
 watch(
@@ -452,7 +345,7 @@ const deleteTest = async item => {
     console.error('Error deleting test:', error);
   } finally {
     loading.value = false;
-    dialogDel.value = false; // Close the dialog after action
+    dialogDel.value = false;
   }
 };
 
@@ -564,24 +457,10 @@ const duplicateTest = async () => {
 </script>
 
 <style scoped>
-.settings-wrapper {
-  min-height: 100vh;
-  background: #fafbfc;
-  padding: 24px;
-}
-
 .settings-layout {
   max-width: 1400px;
   margin: 0 auto;
-}
-
-/* Header Section */
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 32px;
-  gap: 24px;
+  padding: 0.5rem 0;
 }
 
 /* Content Layout */
@@ -641,32 +520,8 @@ const duplicateTest = async () => {
 }
 
 @media (max-width: 768px) {
-  .settings-wrapper {
-    padding: 16px;
-  }
-
-  .header-section {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-  }
-
-  .page-title {
-    font-size: 1.875rem;
-  }
-
   .right-column {
     display: flex;
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-title {
-    font-size: 1.5rem;
-  }
-
-  .header-actions {
     flex-direction: column;
   }
 }
