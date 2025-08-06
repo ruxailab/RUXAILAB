@@ -83,8 +83,11 @@
                         <nasaTlxForm :nasa-tlx="nasaTlxAnswers" @update:nasaTlx="onUpdateNasaTlx" />
                     </div>
                     <v-row justify="end">
-                        <v-col cols="auto">
-                            <v-btn color="primary" block variant="flat" class="ml-2"
+                        <v-col cols="12">
+                            <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
+                                Por favor, responde a todas las preguntas antes de continuar.
+                            </p>
+                            <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
                                 @click="emitDoneOrCouldNotFinish()">
                                 Finalizar tarea
                             </v-btn>
