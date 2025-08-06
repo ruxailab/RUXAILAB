@@ -5,7 +5,6 @@
     :loading-text="$t('HeuristicsReport.messages.reports_loading')"
     :side-gap="true"
   >
-    <!-- Dialog for Confirm Delete -->
     <v-dialog
       v-model="dialog"
       width="600"
@@ -41,7 +40,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Subtitle Slot -->
     <template #subtitle>
       <div class="d-flex align-center">
         <v-icon
@@ -55,7 +53,6 @@
       </div>
     </template>
 
-    <!-- Filters Slot -->
     <template #filters>
       <div class="d-flex align-center justify-space-between mb-6">
         <div class="d-flex align-center gap-4">
@@ -79,288 +76,132 @@
             style="min-width: 200px; width: 200px;"
           />
         </div>
-        <div class="d-flex align-center gap-2">
-          <v-btn-toggle
-            v-model="viewMode"
-            mandatory
-            variant="outlined"
-            density="compact"
-          >
-            <v-btn
-              value="cards"
-              icon="mdi-view-grid"
-            />
-            <v-btn
-              value="list"
-              icon="mdi-view-list"
-            />
-          </v-btn-toggle>
-        </div>
       </div>
     </template>
 
-    <!-- Main Content -->
     <Intro
       v-if="reports.length === 0 && !loading"
       @go-to-coops="goToCoops"
     />
 
-    <div v-if="viewMode === 'cards' && reports.length > 0">
-      <v-row>
-        <v-col
-          v-for="(r) in filteredReports"
-          :key="r.id"
-          cols="12"
-          sm="6"
-          lg="4"
-        >
-          <v-card
-            class="report-card"
-            elevation="2"
-            hover
-          >
-            <v-card-text class="pa-6">
-              <div class="d-flex align-center mb-4">
-                <v-avatar
-                  :color="getAvatarColor(r.evaluator)"
-                  size="48"
-                  class="mr-4"
-                >
-                  <span class="text-white font-weight-bold text-h6">
-                    {{ getInitials(r.fullName) }}
-                  </span>
-                </v-avatar>
-                <div class="flex-grow-1">
-                  <div class="text-h6 font-weight-bold text-on-surface mb-1">
-                    {{ r.fullName }}
-                  </div>
-                  <div class="text-body-2 text-medium-emphasis">
-                    {{ r.evaluator }}
-                  </div>
-                </div>
-                <v-menu>
-                  <template #activator="{ props }">
-                    <v-btn
-                      icon="mdi-dots-vertical"
-                      variant="text"
-                      size="small"
-                      v-bind="props"
-                      class="text-medium-emphasis"
-                    />
-                  </template>
-                  <v-list min-width="180">
-                    <v-list-item
-                      prepend-icon="mdi-delete"
-                      title="Remove Report"
-                      class="text-error"
-                      @click="dialog = true; report = r"
-                    />
-                  </v-list>
-                </v-menu>
-              </div>
-
-              <div class="mb-4">
-                <div class="d-flex align-center justify-space-between mb-2">
-                  <span class="text-body-2 font-weight-medium text-medium-emphasis">Progress</span>
-                  <span class="text-h6 font-weight-bold text-on-surface">{{ r.progress }}%</span>
-                </div>
-                <v-progress-linear
-                  :model-value="parseFloat(r.progress)"
-                  :color="getProgressColor(parseFloat(r.progress))"
-                  height="12"
-                  rounded
-                  class="mb-2"
-                />
-              </div>
-
-              <div class="d-flex align-center justify-space-between">
-                <v-chip
-                  :color="getStatusColor(r.status)"
-                  :text="r.status"
-                  variant="flat"
-                  size="small"
-                  class="text-capitalize font-weight-medium"
-                  :prepend-icon="getStatusIcon(r.status)"
-                />
-                <div class="d-flex align-center text-body-2 text-medium-emphasis">
-                  <v-icon
-                    icon="mdi-clock-outline"
-                    size="small"
-                    class="mr-1"
-                  />
-                  {{ r.lastUpdate }}
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </div>
-
-    <div v-else-if="reports.length > 0">
-      <v-card
-        elevation="2"
-        class="rounded-lg"
+    <v-card
+      v-if="reports.length > 0"
+      elevation="2"
+      class="rounded-lg"
+    >
+      <v-data-table
+        :headers="headers"
+        :items="filteredReports"
+        :search="searchQuery"
+        class="elevation-0"
+        :no-data-text="$t('HeuristicsReport.messages.no_reports_found')"
       >
-        <div class="table-header pa-4">
-          <v-row
-            no-gutters
-            class="align-center"
+        <template #[`item.evaluator`]="{ item }">
+          <div class="d-flex align-center">
+            <v-avatar
+              :color="getAvatarColor(item.evaluator)"
+              size="40"
+              class="mr-3"
+            >
+              <span class="text-white font-weight-medium">
+                {{ getInitials(item.fullName) }}
+              </span>
+            </v-avatar>
+            <div>
+              <div class="text-subtitle-1 font-weight-bold text-on-surface">
+                {{ item.fullName }}
+              </div>
+              <div class="text-body-2 text-medium-emphasis">
+                {{ item.evaluator }}
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template #[`item.lastUpdate`]="{ item }">
+          <div class="d-flex align-center">
+            <v-icon
+              icon="mdi-clock-outline"
+              size="small"
+              class="mr-2 text-medium-emphasis"
+            />
+            <span class="text-body-1">{{ item.lastUpdate }}</span>
+          </div>
+        </template>
+
+        <template #[`item.progress`]="{ item }">
+          <div class="progress-section">
+            <div class="d-flex align-center justify-space-between mb-2">
+              <span class="text-body-2 font-weight-medium text-medium-emphasis">Progress</span>
+              <span class="text-subtitle-1 font-weight-bold text-on-surface">{{ item.progress }}%</span>
+            </div>
+            <v-progress-linear
+              :model-value="parseFloat(item.progress)"
+              :color="getProgressColor(parseFloat(item.progress))"
+              height="8"
+              rounded
+            />
+          </div>
+        </template>
+
+        <template #[`item.status`]="{ item }">
+          <v-chip
+            :color="getStatusColor(item.status)"
+            :text="item.status"
+            variant="flat"
+            size="small"
+            class="text-capitalize font-weight-medium"
+            :prepend-icon="getStatusIcon(item.status)"
+          />
+        </template>
+
+        <template #[`item.hidden`]="{ item }">
+          <v-chip
+            :color="item.hidden ? 'success' : 'error'"
+            size="small"
+            variant="tonal"
           >
-            <v-col
-              cols="3"
-              class="px-4"
-            >
-              <div class="text-subtitle-1 font-weight-bold table-heading-text">
-                Evaluator
-              </div>
-            </v-col>
-            <v-col
-              cols="2"
-              class="px-4"
-            >
-              <div class="text-subtitle-1 font-weight-bold table-heading-text">
-                Last Update
-              </div>
-            </v-col>
-            <v-col
-              cols="3"
-              class="px-4"
-            >
-              <div class="text-subtitle-1 font-weight-bold table-heading-text">
-                Progress
-              </div>
-            </v-col>
-            <v-col
-              cols="2"
-              class="px-4"
-            >
-              <div class="text-subtitle-1 font-weight-bold table-heading-text">
-                Status
-              </div>
-            </v-col>
-            <v-col
-              cols="2"
-              class="px-4"
-            >
-              <div class="text-subtitle-1 font-weight-bold table-heading-text">
-                Actions
-              </div>
-            </v-col>
-          </v-row>
-        </div>
-        <v-divider />
-        <v-list class="pa-0">
-          <template
-            v-for="(r, index) in filteredReports"
-            :key="r.id"
-          >
-            <v-list-item class="px-0 py-4">
-              <v-row
-                no-gutters
-                class="align-center"
-              >
-                <v-col
-                  cols="3"
-                  class="px-4"
-                >
-                  <div class="d-flex align-center">
-                    <v-avatar
-                      :color="getAvatarColor(r.evaluator)"
-                      size="40"
-                      class="mr-3"
-                    >
-                      <span class="text-white font-weight-medium">
-                        {{ getInitials(r.fullName) }}
-                      </span>
-                    </v-avatar>
-                    <div>
-                      <div class="text-subtitle-1 font-weight-bold text-on-surface">
-                        {{ r.fullName }}
-                      </div>
-                      <div class="text-body-2 text-medium-emphasis">
-                        {{ r.evaluator }}
-                      </div>
-                    </div>
-                  </div>
-                </v-col>
-                <v-col
-                  cols="2"
-                  class="px-4"
-                >
-                  <div class="d-flex align-center">
-                    <v-icon
-                      icon="mdi-clock-outline"
-                      size="small"
-                      class="mr-2 text-medium-emphasis"
-                    />
-                    <span class="text-body-1">{{ r.lastUpdate }}</span>
-                  </div>
-                </v-col>
-                <v-col
-                  cols="3"
-                  class="px-4"
-                >
-                  <div class="progress-section">
-                    <div class="d-flex align-center justify-space-between mb-2">
-                      <span class="text-body-2 font-weight-medium text-medium-emphasis">Progress</span>
-                      <span class="text-subtitle-1 font-weight-bold text-on-surface">{{ r.progress }}%</span>
-                    </div>
-                    <v-progress-linear
-                      :model-value="parseFloat(r.progress)"
-                      :color="getProgressColor(parseFloat(r.progress))"
-                      height="8"
-                      rounded
-                    />
-                  </div>
-                </v-col>
-                <v-col
-                  cols="2"
-                  class="px-4"
-                >
-                  <v-chip
-                    :color="getStatusColor(r.status)"
-                    :text="r.status"
-                    variant="flat"
-                    size="small"
-                    class="text-capitalize font-weight-medium"
-                    :prepend-icon="getStatusIcon(r.status)"
-                  />
-                </v-col>
-                <v-col
-                  cols="2"
-                  class="px-4"
-                >
-                  <v-menu>
-                    <template #activator="{ props }">
-                      <v-btn
-                        icon="mdi-dots-vertical"
-                        variant="text"
-                        size="small"
-                        v-bind="props"
-                        class="text-medium-emphasis"
-                      />
-                    </template>
-                    <v-list min-width="180">
-                      <v-list-item
-                        prepend-icon="mdi-delete"
-                        title="Remove Report"
-                        class="text-error"
-                        @click="dialog = true; report = r"
-                      />
-                    </v-list>
-                  </v-menu>
-                </v-col>
-              </v-row>
-            </v-list-item>
-            <v-divider v-if="index < filteredReports.length - 1" />
-          </template>
-        </v-list>
-      </v-card>
-    </div>
+            <v-icon v-if="item.hidden">
+              mdi-check
+            </v-icon>
+            <v-icon v-else>
+              mdi-close
+            </v-icon>
+          </v-chip>
+        </template>
+
+        <template #[`item.actions`]="{ item }">
+          <v-menu>
+            <template #activator="{ props }">
+              <v-btn
+                icon="mdi-dots-vertical"
+                variant="text"
+                size="small"
+                v-bind="props"
+                class="text-medium-emphasis"
+              />
+            </template>
+            <v-list min-width="180">
+              <v-list-item
+                prepend-icon="mdi-delete"
+                title="Remove Report"
+                class="text-error"
+                @click="dialog = true; report = item"
+              />
+              <v-list-item
+                v-if="item.hidden"
+                prepend-icon="mdi-eye"
+                title="Unhide Report"
+                @click="unhideReport(item)"
+              />
+            </v-list>
+          </v-menu>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <div
-      v-if="filteredReports.length === 0 && reports.length > 0"
+      v-if="filteredReports.length === 0 && reports.length > 0 && !loading"
       class="text-center py-12"
     >
       <v-icon
@@ -387,6 +228,7 @@ import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '@/firebase';
 import Intro from '@/components/molecules/IntroReports.vue';
 import PageWrapper from '@/components/organisms/PageWrapper.vue';
+import TaskAnswer from '@/models/TaskAnswer';
 
 const store = useStore();
 const { t } = useI18n();
@@ -401,11 +243,29 @@ const loadingBtn = ref(false);
 const report = ref(null);
 const searchQuery = ref('');
 const statusFilter = ref(null);
-const viewMode = ref('list');
 const lastUpdated = ref(new Date());
 
 const user = computed(() => store.getters.user);
 const test = computed(() => store.getters.test);
+
+const allHeaders = ref([
+  { title: 'Evaluator', key: 'evaluator' },
+  { title: 'Last Update', key: 'lastUpdate' },
+  { title: 'Progress', key: 'progress' },
+  { title: 'Status', key: 'status' },
+  { title: 'Hidden', key: 'hidden' },
+  { title: 'Actions', key: 'actions', sortable: false },
+]);
+
+const answers = computed(() => store.getters.testAnswerDocument)
+const headers = computed(() => {
+  return allHeaders.value.filter(header => {
+    if (header.key === 'hidden') {
+      return answers.value.type !== 'User' ? false : true;
+    }
+    return true; 
+  });
+});
 
 const checkIfIsSubmitted = (status) => status ? t('HeuristicsReport.status.submitted') : t('HeuristicsReport.status.in_progress');
 
@@ -435,7 +295,7 @@ const formatDate = (timestamp) => {
 const formatTimeAgo = (count, unit) => t(`common.timeAgo.${unit}`, { count });
 
 const reports = computed(() => {
-  const doc = store.getters.testAnswerDocument;
+  const doc = answers.value;
   if (!doc) return [];
   const type = doc.type;
   const raw = type === 'User' ? doc.taskAnswers || {} : doc.heuristicAnswers || {};
@@ -447,10 +307,12 @@ const reports = computed(() => {
     progress: parseFloat(r.progress).toFixed(2),
     status: checkIfIsSubmitted(r.submitted),
     lastUpdate: formatDate(r.lastUpdate),
+    hidden: r.hidden ?? false,
   }));
 });
 
 const filteredReports = computed(() => {
+  if (!reports.value) return [];
   return reports.value.filter((r) => {
     const matchQuery = r.fullName?.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchStatus = statusFilter.value ? r.status === statusFilter.value : true;
@@ -462,6 +324,29 @@ const statusOptions = computed(() => [
   t('HeuristicsReport.status.submitted'),
   t('HeuristicsReport.status.in_progress'),
 ]);
+
+const unhideReport = async (item) => {
+  if (answers.value.type !== 'User') return;
+  const payload = Object.values(answers.value.taskAnswers).find(s => s.userDocId === item.id);
+
+  if (!payload) {
+    console.error("Session not found for userDocId:", item.id);
+    return;
+  }
+  console.log(payload)
+  try {
+    await store.dispatch('updateTaskAnswer', {
+      payload: new TaskAnswer({
+        ...payload,
+        hidden: !item.hidden,
+      }),
+      answerDocId: test.value.answersDocId,
+    });
+  } catch (error) {
+    console.error('Error saving answer:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+  }
+};
 
 const dialogText = computed(() =>
   t('HeuristicsReport.messages.sure_to_delete', {
@@ -543,15 +428,6 @@ onMounted(async () => {
 
 .progress-section {
   min-width: 120px;
-}
-
-.v-list-item {
-  border-radius: 0 !important;
-  transition: background-color 0.2s ease;
-}
-
-.v-list-item:hover {
-  background-color: rgba(var(--v-theme-primary), 0.04) !important;
 }
 
 .table-header {

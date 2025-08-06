@@ -43,7 +43,7 @@ export default class UserTask {
       webcamRecordURL: this.webcamRecordURL,
       postAnswer: this.postAnswer,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers?.toFirestore?.() ?? {}
+      nasaTlxAnswers: (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore()
     }
   }
 }
