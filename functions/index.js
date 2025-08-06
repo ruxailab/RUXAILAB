@@ -93,28 +93,52 @@ exports.receiveCalibration = functions.https.onRequest(async (req, res) => {
 
   try {
     const {
-      sessionId,
+      session_id,
       model,
       screen_height,
       screen_width,
       k
     } = req.body;
 
-    // Salvar no Firestore (ou como preferir)
-    await admin.firestore().collection("calibrations").doc(sessionId).set({
+    if (!session_id) {
+      return res.status(400).json({ error: "session_id is required" });
+    }
+
+    const calibrationData = {
       model,
       screen_height,
       screen_width,
       k,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    };
 
-    return res.status(200).json({ message: "Calibration saved successfully" });
+    const db = admin.firestore();
+
+    await db.collection("calibrations").doc(session_id).set(calibrationData);
+
+    const userDocRef = db.collection("users").doc(session_id);
+    const userDoc = await userDocRef.get();
+
+    if (userDoc.exists) {
+      await userDocRef.update({
+        calibration_id: session_id,
+        calibration_timestamp: admin.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      await userDocRef.set({
+        calibration_id: session_id,
+        calibration_timestamp: admin.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    return res.status(200).json({ message: "Calibration saved and user updated successfully" });
+
   } catch (error) {
     console.error("Error saving calibration:", error);
     return res.status(500).json({ error: error.message });
   }
 });
+
 
 //code is in safe------------------------------------------------
 // exports.processSignUp = functions.auth.user().onCreate(async (user) => {
