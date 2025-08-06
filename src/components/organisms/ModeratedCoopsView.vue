@@ -21,26 +21,11 @@
             <div class="ma-0 pa-0" style="background: #f5f7ff">
               <v-row class="ma-0 pa-0 pt-3" align="center">
                 <v-col class="mt-1 mx-4 pa-0">
-                  <v-combobox
-                    :key="comboboxKey"
-                    ref="combobox"
-                    v-model="comboboxModel"
-                    :menu-props="{ rounded: 'xl' }"
-                    :hide-no-data="false"
-                    :autofocus="comboboxKey == 0 ? false : true"
-                    style="background: #f5f7ff;"
-                    :items="users"
-                    item-title="email"
-                    item-value="email"
-                    label="Select cooperator"
-                    variant="outlined"
-                    rounded
-                    density="compact"
-                    color="#fca326"
-                    class="mx-2"
-                    :filter="customFilter"
-                    @update:model-value="verifyEmail()"
-                  >
+                  <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :menu-props="{ rounded: 'xl' }"
+                    :hide-no-data="false" :autofocus="comboboxKey == 0 ? false : true" style="background: #f5f7ff;"
+                    :items="users" item-title="email" item-value="email" label="Select cooperator" variant="outlined"
+                    rounded density="compact" color="#fca326" class="mx-2" :filter="customFilter"
+                    @update:model-value="verifyEmail()">
                     <template #no-data>
                       There are no users registered with that email, press enter
                       to select anyways.
