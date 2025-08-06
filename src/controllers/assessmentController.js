@@ -15,18 +15,18 @@ export const saveAssessment = async (userId, testId, testType, assessmentData) =
   try {
     const docRef = doc(db, ASSESSMENTS_COLLECTION, `${userId}_${testId}`);
     const docSnap = await getDoc(docRef);
-    
+
     const assessment = {
       userId,
       testId,
       testType,
-      assessmentData: docSnap.exists() 
+      assessmentData: docSnap.exists()
         ? [...docSnap.data().assessmentData, ...assessmentData]
         : assessmentData,
       updatedAt: new Date().toISOString(),
       ...(docSnap.exists() ? {} : { createdAt: new Date().toISOString() })
     };
-    
+
     await setDoc(docRef, assessment, { merge: true });
     return { success: true, id: docRef.id };
   } catch (error) {
@@ -45,7 +45,7 @@ export const getAssessment = async (userId, testId) => {
   try {
     const docRef = doc(db, ASSESSMENTS_COLLECTION, `${userId}_${testId}`);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() };
     }
@@ -67,9 +67,9 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment) => {
   try {
     const docRef = doc(db, ASSESSMENTS_COLLECTION, `${userId}_${testId}`);
     const docSnap = await getDoc(docRef);
-    
+
     let updatedAssessmentData = [];
-    
+
     if (docSnap.exists()) {
       // Remove existing rule if it exists
       const existingData = docSnap.data();
@@ -87,15 +87,15 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment) => {
         updatedAt: new Date().toISOString()
       });
     }
-    
+
     // Add or update the rule assessment
     updatedAssessmentData.push(ruleAssessment);
-    
+
     await updateDoc(docRef, {
       assessmentData: updatedAssessmentData,
       updatedAt: new Date().toISOString()
     });
-    
+
     return { success: true };
   } catch (error) {
     console.error('Error updating rule assessment:', error);
@@ -131,7 +131,7 @@ export const getUserAssessments = async (userId) => {
       collection(db, ASSESSMENTS_COLLECTION),
       where('userId', '==', userId)
     );
-    
+
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -140,5 +140,47 @@ export const getUserAssessments = async (userId) => {
   } catch (error) {
     console.error('Error getting user assessments:', error);
     throw new Error('Failed to get user assessments');
+  }
+};
+
+/**
+ * Save or update configuration data in Firestore
+ * @param {string} userId - The ID of the user
+ * @param {string} testId - The ID of the test
+ * @param {Object} configData - The configuration data to save
+ * @returns {Promise<Object>} - Success status
+ */
+export const saveConfigData = async (userId, testId, configData) => {
+  try {
+    const docRef = doc(db, "tests", `${testId}`);
+    await updateDoc(docRef, {
+      configData,
+      updatedAt: new Date().toISOString()
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving configuration data:', error);
+    throw new Error('Failed to save configuration data');
+  }
+};
+
+/**
+ * Get configuration data from Firestore
+ * @param {string} userId - The ID of the user
+ * @param {string} testId - The ID of the test
+ * @returns {Promise<Object|null>} - The configuration data or null if not found
+ */
+export const getConfigData = async (userId, testId) => {
+  try {
+    const docRef = doc(db, "tests", `${testId}`);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return docSnap.data().configData || null;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching configuration data:', error);
+    throw new Error('Failed to fetch configuration data');
   }
 };

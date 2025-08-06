@@ -5,7 +5,17 @@
   >
     <v-row>
       <v-col cols="12">
-        <v-card>
+        <!-- User Selection Dropdown -->
+        <v-select
+          v-model="selectedUserId"
+          :items="userDetails.map(user => user.email)"
+          label="Select User by Email"
+          variant="outlined"
+          density="compact"
+          class="mb-4"
+        />
+
+        <v-card v-if="selectedUserId">
           <v-card-title class="d-flex justify-space-between align-center">
             <span>Accessibility Assessment Results</span>
             <div>
@@ -53,22 +63,22 @@
                   divided
                   density="compact"
                 >
-                  <v-btn 
-                    value="A" 
+                  <v-btn
+                    value="A"
                     size="small"
                     :class="{ 'level-a': selectedLevel === 'A' }"
                   >
                     A
                   </v-btn>
-                  <v-btn 
-                    value="AA" 
+                  <v-btn
+                    value="AA"
                     size="small"
                     :class="{ 'level-aa': selectedLevel === 'AA' }"
                   >
                     AA
                   </v-btn>
-                  <v-btn 
-                    value="AAA" 
+                  <v-btn
+                    value="AAA"
                     size="small"
                     :class="{ 'level-aaa': selectedLevel === 'AAA' }"
                   >
@@ -80,8 +90,8 @@
                 cols="auto"
                 class="pa-0 ml-3"
               >
-                <v-chip 
-                  size="small" 
+                <v-chip
+                  size="small"
                   :color="getLevelChipColor(selectedLevel)"
                   variant="outlined"
                 >
@@ -98,9 +108,9 @@
             show-arrows
             class="principle-tabs"
           >
-            <v-tab 
-              v-for="(principle, index) in principles" 
-              :key="index" 
+            <v-tab
+              v-for="(principle, index) in principles"
+              :key="index"
               :value="index"
               :class="`principle-tab principle-${index}`"
             >
@@ -108,10 +118,10 @@
                 {{ getPrincipleIcon(index) }}
               </v-icon>
               {{ principle.title }}
-              <v-chip 
-                size="x-small" 
-                class="ml-2" 
-                color="primary" 
+              <v-chip
+                size="x-small"
+                class="ml-2"
+                color="primary"
                 variant="outlined"
               >
                 {{ getFilteredRulesCount(index) }}
@@ -156,9 +166,9 @@
                   </template>
 
                   <template #item.level="{ item }">
-                    <v-chip 
-                      :color="getLevelChipColor(item.level)" 
-                      class="text-uppercase" 
+                    <v-chip
+                      :color="getLevelChipColor(item.level)"
+                      class="text-uppercase"
                       size="small"
                       variant="tonal"
                     >
@@ -185,6 +195,16 @@
                 </v-data-table>
               </v-window-item>
             </v-window>
+          </v-card-text>
+        </v-card>
+        <v-card v-if="!selectedUserId">
+          <v-card-text class="text-center">
+            <v-alert
+              v-if="!selectedUserId"
+              type="info"
+            >
+              Please select a user to view their accessibility assessment results.
+            </v-alert>
           </v-card-text>
         </v-card>
       </v-col>
@@ -272,7 +292,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -307,10 +327,18 @@ const notesDialog = ref({
   notes: [],
 })
 
+// Add state for user selection
+const selectedUserId = ref(null);
+const userIds = ref([]);
+
+// Update userIds to store user details
+const userDetails = ref([]);
+
 //life cycle
 onMounted(async () => {
   await loadWcagData()
-  await loadAssessmentData()
+  await fetchUserIdsForTest();
+  await fetchUserEmails();
 })
 
 const headers = [
@@ -353,10 +381,10 @@ const getLevelDescription = (level) => {
 
 const shouldIncludeRule = (ruleLevel) => {
   if (!ruleLevel) return true // Include rules without level specified
-  
+
   const level = ruleLevel.toUpperCase()
   const selected = selectedLevel.value.toUpperCase()
-  
+
   // Cumulative behavior: A shows only A, AA shows A+AA, AAA shows all
   switch (selected) {
     case 'A':
@@ -373,11 +401,11 @@ const shouldIncludeRule = (ruleLevel) => {
 const getFilteredRulesCount = (principleIndex) => {
   const principle = principles.value?.[principleIndex]
   if (!principle) return 0
-  
+
   const principleRules = allRules.value.filter(
     (rule) => rule.principleId === principle.id || rule.principle === principle.title
   )
-  
+
   return principleRules.filter(rule => shouldIncludeRule(rule.level)).length
 }
 
@@ -558,39 +586,77 @@ const loadWcagData = async () => {
   }
 }
 
-// Load assessment data from Firestore
-const loadAssessmentData = async () => {
+// Fetch all user IDs for the given testId
+const fetchUserIdsForTest = async () => {
   try {
-    isLoading.value = true
+    const { query, where, getDocs, collection } = await import('firebase/firestore');
+    const { db } = await import('@/firebase');
 
-    // Get the current user
-    const user = store.state.Auth.user
+    const q = query(
+      collection(db, 'assessments'),
+      where('testId', '==', route.params.testId || 'default-test-id')
+    );
 
-    if (!user || !user.id) {
-      throw new Error('User not authenticated')
-    }
+    const querySnapshot = await getDocs(q);
+    userIds.value = querySnapshot.docs.map((doc) => doc.data().userId);
+  } catch (error) {
+    console.error('Error fetching user IDs:', error);
+    toast.error('Failed to fetch user IDs.');
+  }
+};
+
+// Fetch user emails for the given user IDs
+const fetchUserEmails = async () => {
+  try {
+    const { getDoc, doc } = await import('firebase/firestore');
+    const { db } = await import('@/firebase');
+
+    const userPromises = userIds.value.map(async (userId) => {
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        return { id: userId, email: userSnap.data().email };
+      }
+      return null;
+    });
+
+    userDetails.value = (await Promise.all(userPromises)).filter(Boolean);
+  } catch (error) {
+    console.error('Error fetching user emails:', error);
+    toast.error('Failed to fetch user emails.');
+  }
+};
+
+
+
+// Watch for changes in selectedUserId and load the corresponding assessment
+watch(selectedUserId, async (newEmail) => {
+  const user = userDetails.value.find(user => user.email === newEmail);
+  if (user) {
+    await loadAssessmentData(user.id);
+  }
+});
+
+// Update loadAssessmentData to accept userId as a parameter
+const loadAssessmentData = async (userId) => {
+  try {
+    isLoading.value = true;
 
     // Get the test ID from route or use a default
-    const testId = route.params.testId || 'default-test-id'
-
-    // Load WCAG data if not already loaded
-    if (!wcagData.value) {
-      await loadWcagData()
-    } 
+    const testId = route.params.testId || 'default-test-id';
 
     // Get the assessment document from Firestore
-    const { getDoc, doc } = await import('firebase/firestore')
-    const { db } = await import('@/firebase')
+    const { getDoc, doc } = await import('firebase/firestore');
+    const { db } = await import('@/firebase');
 
-    const docId = `${user.id}_${testId}`
+    const docId = `${userId}_${testId}`;
+    const docRef = doc(db, 'assessments', docId);
+    const docSnap = await getDoc(docRef);
 
-    const docRef = doc(db, 'assessments', docId)
-    const docSnap = await getDoc(docRef)
-
-    const assessmentLookup = {}
+    const assessmentLookup = {};
 
     if (docSnap.exists()) {
-      const assessment = docSnap.data()
+      const assessment = docSnap.data();
 
       if (assessment?.assessmentData) {
         assessment.assessmentData.forEach((item) => {
@@ -598,28 +664,28 @@ const loadAssessmentData = async () => {
             status: item.status || 'Not Set',
             severity: item.severity || 'Not Set',
             notes: item.notes || [],
-          }
-        })
+          };
+        });
       }
     } else {
-      toast.info('No assessment data found. Create an assessment first.')
+      toast.info('No assessment data found for the selected user.');
     }
 
     // Merge with all rules
-    const mergedData = {}
+    const mergedData = {};
     if (allRules.value && allRules.value.length > 0) {
       allRules.value.forEach((rule) => {
         const assessment = assessmentLookup[rule.id] || {
           status: 'Not Set',
           severity: 'Not Set',
           notes: [],
-        }
+        };
 
         mergedData[rule.id] = {
           ...rule,
           ...assessment,
-        }
-      })
+        };
+      });
     } else {
       toast.error('Failed to load WCAG rules')
     }
@@ -683,22 +749,26 @@ const downloadAssessmentData = () => {
 }
 
 .principle-tab.principle-0 {
-  background-color: #e3f2fd;  /* Perceivable - Light Blue */
+  background-color: #e3f2fd;
+  /* Perceivable - Light Blue */
   color: #0d47a1;
 }
 
 .principle-tab.principle-1 {
-  background-color: #e8f5e9;  /* Operable - Light Green */
+  background-color: #e8f5e9;
+  /* Operable - Light Green */
   color: #1b5e20;
 }
 
 .principle-tab.principle-2 {
-  background-color: #fff8e1;  /* Understandable - Light Amber */
+  background-color: #fff8e1;
+  /* Understandable - Light Amber */
   color: #e65100;
 }
 
 .principle-tab.principle-3 {
-  background-color: #fce4ec;  /* Robust - Light Pink */
+  background-color: #fce4ec;
+  /* Robust - Light Pink */
   color: #880e4f;
 }
 
@@ -709,19 +779,23 @@ const downloadAssessmentData = () => {
 }
 
 .principle-0.v-tab--selected {
-  background-color: #bbdefb !important;  /* Perceivable - Blue */
+  background-color: #bbdefb !important;
+  /* Perceivable - Blue */
 }
 
 .principle-1.v-tab--selected {
-  background-color: #c8e6c9 !important;  /* Operable - Green */
+  background-color: #c8e6c9 !important;
+  /* Operable - Green */
 }
 
 .principle-2.v-tab--selected {
-  background-color: #fff176 !important;  /* Understandable - Amber */
+  background-color: #fff176 !important;
+  /* Understandable - Amber */
 }
 
 .principle-3.v-tab--selected {
-  background-color: #f8bbd0 !important;  /* Robust - Pink */
+  background-color: #f8bbd0 !important;
+  /* Robust - Pink */
 }
 
 /* Level filter styling */
