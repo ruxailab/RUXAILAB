@@ -404,13 +404,14 @@
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Pre Prueba - Consentimiento",
-      "preTestForm": "Pre Prueba - Formulario",
-      "preTest": "Pre-Prueba",
-      "postTest": "Post-Prueba"
+      "preTestConsent": "Antes del Test - Consentimiento",
+      "preTestForm": "Pre Test - Formulario",
+      "preTest": "Pre-Test",
+      "postTest": "Post-Test",
+      "eyeTrackingCalibration": "Calibración de Seguimiento Ocular"
     },
     "buttons": {
-      "done": "Listo"
+      "done": "Hecho"
     }
   },
   "AccessNotAllowed": {
