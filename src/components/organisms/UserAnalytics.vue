@@ -117,19 +117,9 @@
                 size="small"
                 :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'"
                 class="font-weight-medium"
-                @click="toggleHideSession(item.id)"
+                @click="toggleHideSession(item)"
               >
                 {{ item.hidden ? 'Show' : 'Hide' }}
-              </v-btn>
-              <v-btn
-                color="error"
-                variant="tonal"
-                size="small"
-                prepend-icon="mdi-delete"
-                class="font-weight-medium"
-                @click="deleteSession(item.id)"
-              >
-                Delete
               </v-btn>
             </div>
           </template>
@@ -270,9 +260,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import TaskDetailsModal from '../atoms/TaskDetailsModal.vue';
+import TaskAnswer from '@/models/TaskAnswer';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast()
 
 const store = useStore();
 const showDialog = ref(false);
@@ -291,8 +285,10 @@ const dataHeaders = [
   { title: 'Actions', key: 'actions', sortable: false, width: '300px' },
 ];
 
+const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
-const answers = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
+const answers = computed(() => store.getters.visibleUserAnswers || {});
+// const answers = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
 const tableData = computed(() => Object.values(answers.value).map((item, index) => {
   const tasks = Object.values(item.tasks || {});
   const completedCount = tasks.filter(t => !!t.completed).length;
@@ -340,15 +336,45 @@ const closeTaskDetailsModal = () => {
   selectedUserSession.value = null
 }
 
-const toggleHideSession = (id) => console.log('Toggle hide session', id);
-const deleteSession = (id) => console.log('Delete session', id);
+const toggleHideSession = async (item) => {
+  const payload = Object.values(answers.value).find(s => s.userDocId === item.userDocId);
 
-onMounted(() => {
-  testStructure.value.userTasks.forEach((task, i) => {
-    testTasks.value[i] = task.taskName;
-  });
-  taskAnswers.value = Object.values(answers.value);
-});
+  console.log(payload)
+  if (!payload) {
+    console.error("Session not found for userDocId:", item.userDocId);
+    return;
+  }
+
+  try {
+    await store.dispatch('updateTaskAnswer', {
+      payload: new TaskAnswer({
+        ...payload,
+        tasks: { ...payload.tasks },
+        hidden: !item.hidden,
+      }),
+      answerDocId: test.value.answersDocId,
+    });
+    toast.success("User made hidden successfull")
+  } catch (error) {
+    console.error('Error saving answer:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+    toast.error("Unable to hide user!!")
+  }
+};
+
+watch(
+  [testStructure, answers],
+  ([structure, ans]) => {
+    if (structure && Array.isArray(structure.userTasks)) {
+      testTasks.value = structure.userTasks.map((task) => task.taskName);
+    }
+
+    if (ans && typeof ans === 'object') {
+      taskAnswers.value = Object.values(ans);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
