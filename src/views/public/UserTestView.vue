@@ -101,7 +101,6 @@
               </v-stepper>
             </v-col>
           </v-row>
-
           <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
 
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
@@ -124,10 +123,12 @@
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
-            :done-task-disabled="doneTaskDisabled" @done="() => handleTaskFinish(true)"
-            @couldNotFinish="() => handleTaskFinish(false)" @show-loading="isLoading = true"
-            @stop-show-loading="isLoading = false" @recording-started="isVisualizerVisible = $event"
-            @timer-stopped="handleTimerStopped" />
+            :done-task-disabled="doneTaskDisabled"
+            @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
+            @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+            @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
+            @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
+            @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
           <PostTestStep v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
             :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
             :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
