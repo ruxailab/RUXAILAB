@@ -1,18 +1,12 @@
 <template>
-  <v-card
-    class="fill-height"
-    style="border-radius: 0;"
-  >
-    <v-container
-      fluid
-      class="pa-6 fill-height"
-      style="overflow-y: auto;"
-    >
+  <v-card class="fill-height" style="border-radius: 0;">
+    <v-container fluid class="pa-6 fill-height" style="overflow-y: auto;">
       <!-- Header Section -->
       <div class="mb-8">
         <h1 class="text-h3 font-weight-bold text-primary mb-2">
           NASA TLX Analytics
         </h1>
+        {{ analytics }}
         <p class="text-h6 text-grey-darken-1">
           Participant workload insights based on NASA Task Load Index
         </p>
@@ -20,16 +14,8 @@
 
       <!-- Overview Cards -->
       <v-row class="mb-8">
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+        <v-col cols="12" md="4" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -42,31 +28,17 @@
                   out of 100
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #fff3e0; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="warning"
-                >
+              <div class="pa-3" style="background: #fff3e0; border-radius: 8px;">
+                <v-icon size="24" color="warning">
                   mdi-brain
                 </v-icon>
               </div>
             </div>
           </v-card>
         </v-col>
-        
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+
+        <v-col cols="12" md="4" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -79,31 +51,17 @@
                   highest average score
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #ffebee; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="error"
-                >
+              <div class="pa-3" style="background: #ffebee; border-radius: 8px;">
+                <v-icon size="24" color="error">
                   mdi-alert-circle
                 </v-icon>
               </div>
             </div>
           </v-card>
         </v-col>
-        
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+
+        <v-col cols="12" md="4" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -116,14 +74,8 @@
                   lowest average score
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #e8f5e8; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="success"
-                >
+              <div class="pa-3" style="background: #e8f5e8; border-radius: 8px;">
+                <v-icon size="24" color="success">
                   mdi-check-circle
                 </v-icon>
               </div>
@@ -135,55 +87,34 @@
       <!-- Dimension Breakdown Charts -->
       <v-row class="mb-8">
         <v-col cols="12">
-          <v-card
-            elevation="2"
-            style="border-radius: 12px;"
-          >
+          <v-card elevation="2" style="border-radius: 12px;">
             <v-card-title class="text-h5 pb-2">
               Workload Dimension Breakdown
             </v-card-title>
             <v-card-text class="pa-6">
               <v-row>
                 <!-- Radar Chart -->
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <div class="chart-container">
                     <h3 class="text-h6 mb-4">
                       Average Scores by Dimension
                     </h3>
-                    <canvas
-                      ref="radarCanvas"
-                      style="max-height: 400px;"
-                    />
+                    <canvas ref="radarCanvas" style="max-height: 400px;" />
                   </div>
                 </v-col>
-                
+
                 <!-- Horizontal Bar Chart -->
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <div class="dimension-bars-container">
                     <h3 class="text-h6 mb-4">
                       Dimension Comparison
                     </h3>
-                    <div
-                      class="dimension-bars"
-                      style="height: 400px; display: flex; flex-direction: column; justify-content: space-around;"
-                    >
-                      <div 
-                        v-for="dimension in tlxDimensions" 
-                        :key="dimension.key"
-                        class="dimension-row"
-                        style="margin-bottom: 16px;"
-                      >
+                    <div class="dimension-bars"
+                      style="height: 400px; display: flex; flex-direction: column; justify-content: space-around;">
+                      <div v-for="dimension in tlxDimensions" :key="dimension.key" class="dimension-row"
+                        style="margin-bottom: 16px;">
                         <div class="d-flex align-center">
-                          <div
-                            class="dimension-label"
-                            style="width: 120px;"
-                          >
+                          <div class="dimension-label" style="width: 120px;">
                             <div class="font-weight-medium">
                               {{ dimension.label }}
                             </div>
@@ -193,20 +124,15 @@
                           </div>
                           <div class="flex-grow-1 mx-4">
                             <div class="progress-container">
-                              <div 
-                                class="progress-bar"
-                                :style="{
-                                  width: `${analytics.dimensionAverages[dimension.key]}%`,
-                                  backgroundColor: dimension.color,
-                                  borderRadius: '20px',
-                                  height: '32px',
-                                  position: 'relative',
-                                  minWidth: '40px'
-                                }"
-                              >
-                                <span 
-                                  class="progress-text"
-                                  style="
+                              <div class="progress-bar" :style="{
+                                width: `${analytics.dimensionAverages[dimension.key]}%`,
+                                backgroundColor: dimension.color,
+                                borderRadius: '20px',
+                                height: '32px',
+                                position: 'relative',
+                                minWidth: '40px'
+                              }">
+                                <span class="progress-text" style="
                                     position: absolute;
                                     left: 50%;
                                     top: 50%;
@@ -214,17 +140,13 @@
                                     color: white;
                                     font-weight: bold;
                                     font-size: 12px;
-                                  "
-                                >
+                                  ">
                                   {{ analytics.dimensionAverages[dimension.key] }}
                                 </span>
                               </div>
                             </div>
                           </div>
-                          <div
-                            class="score-display text-h6 font-weight-bold"
-                            style="width: 60px; text-align: right;"
-                          >
+                          <div class="score-display text-h6 font-weight-bold" style="width: 60px; text-align: right;">
                             {{ analytics.dimensionAverages[dimension.key] }}
                           </div>
                         </div>
@@ -241,27 +163,16 @@
       <!-- Individual TLX Table -->
       <v-row>
         <v-col cols="12">
-          <v-card
-            elevation="2"
-            style="border-radius: 12px;"
-          >
+          <v-card elevation="2" style="border-radius: 12px;">
             <v-card-title class="text-h5 pb-2">
-              <v-icon
-                start
-                color="primary"
-              >
+              <v-icon start color="primary">
                 mdi-table
               </v-icon>
               Individual TLX Scores
             </v-card-title>
-            
+
             <!-- Data Table -->
-            <v-data-table
-              :headers="tableHeaders"
-              :items="analytics.responses"
-              :items-per-page="10"
-              class="elevation-0"
-            >
+            <v-data-table :headers="tableHeaders" :items="analytics.responses" :items-per-page="10" class="elevation-0">
               <template #item.user="{ item }">
                 <div>
                   <div class="font-weight-medium">
@@ -269,85 +180,57 @@
                   </div>
                 </div>
               </template>
-              
+
               <template #item.mentalDemand="{ item }">
-                <v-chip
-                  :color="getWorkloadColor(item.nasaTlxAnswers.mentalDemand)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getWorkloadColor(item.nasaTlxAnswers.mentalDemand)" size="small"
+                  class="font-weight-bold">
                   {{ item.nasaTlxAnswers.mentalDemand }}
                 </v-chip>
               </template>
-              
+
               <template #item.physicalDemand="{ item }">
-                <v-chip
-                  :color="getWorkloadColor(item.nasaTlxAnswers.physicalDemand)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getWorkloadColor(item.nasaTlxAnswers.physicalDemand)" size="small"
+                  class="font-weight-bold">
                   {{ item.nasaTlxAnswers.physicalDemand }}
                 </v-chip>
               </template>
-              
+
               <template #item.temporalDemand="{ item }">
-                <v-chip
-                  :color="getWorkloadColor(item.nasaTlxAnswers.temporalDemand)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getWorkloadColor(item.nasaTlxAnswers.temporalDemand)" size="small"
+                  class="font-weight-bold">
                   {{ item.nasaTlxAnswers.temporalDemand }}
                 </v-chip>
               </template>
-              
+
               <template #item.performance="{ item }">
-                <v-chip
-                  :color="getPerformanceColor(item.nasaTlxAnswers.performance)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getPerformanceColor(item.nasaTlxAnswers.performance)" size="small"
+                  class="font-weight-bold">
                   {{ item.nasaTlxAnswers.performance }}
                 </v-chip>
               </template>
-              
+
               <template #item.effort="{ item }">
-                <v-chip
-                  :color="getWorkloadColor(item.nasaTlxAnswers.effort)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getWorkloadColor(item.nasaTlxAnswers.effort)" size="small" class="font-weight-bold">
                   {{ item.nasaTlxAnswers.effort }}
                 </v-chip>
               </template>
-              
+
               <template #item.frustration="{ item }">
-                <v-chip
-                  :color="getWorkloadColor(item.nasaTlxAnswers.frustration)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getWorkloadColor(item.nasaTlxAnswers.frustration)" size="small"
+                  class="font-weight-bold">
                   {{ item.nasaTlxAnswers.frustration }}
                 </v-chip>
               </template>
-              
+
               <template #item.overallScore="{ item }">
-                <v-chip
-                  :color="getWorkloadColor(item.overallScore)"
-                  variant="tonal"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getWorkloadColor(item.overallScore)" variant="tonal" size="small"
+                  class="font-weight-bold">
                   {{ item.overallScore }}
                 </v-chip>
               </template>
-              
+
               <template #item.actions="{ item }">
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  size="small"
-                  @click="openDetailsModal(item)"
-                >
+                <v-btn color="primary" variant="outlined" size="small" @click="openDetailsModal(item)">
                   <v-icon start>
                     mdi-eye
                   </v-icon>
@@ -360,14 +243,8 @@
       </v-row>
 
       <!-- Details Modal -->
-      <v-dialog
-        v-model="detailsModal"
-        max-width="800px"
-      >
-        <v-card
-          v-if="selectedResponse"
-          style="border-radius: 12px;"
-        >
+      <v-dialog v-model="detailsModal" max-width="800px">
+        <v-card v-if="selectedResponse" style="border-radius: 12px;">
           <v-card-title class="d-flex justify-space-between align-center pa-6 pb-4">
             <div>
               <div class="text-h5 font-weight-bold mb-1">
@@ -377,17 +254,13 @@
                 {{ selectedResponse.name }}
               </div>
             </div>
-            <v-btn
-              icon
-              variant="text"
-              @click="detailsModal = false"
-            >
+            <v-btn icon variant="text" @click="detailsModal = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
-          
+
           <v-divider />
-          
+
           <v-card-text class="pa-6">
             <!-- Overall Score -->
             <div class="mb-6">
@@ -400,11 +273,7 @@
                     {{ selectedResponse.overallScore }}
                   </span>
                   <span class="text-h6 text-grey">/ 100</span>
-                  <v-chip
-                    :color="getWorkloadColor(selectedResponse.overallScore)"
-                    size="small"
-                    class="ml-3"
-                  >
+                  <v-chip :color="getWorkloadColor(selectedResponse.overallScore)" size="small" class="ml-3">
                     {{ getWorkloadLevel(selectedResponse.overallScore) }}
                   </v-chip>
                 </div>
@@ -419,36 +288,24 @@
                 Dimension Breakdown
               </h3>
               <v-row>
-                <v-col
-                  v-for="dimension in tlxDimensions"
-                  :key="dimension.key"
-                  cols="12"
-                  md="6"
-                >
-                  <div
-                    class="dimension-detail pa-4"
-                    style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;"
-                  >
+                <v-col v-for="dimension in tlxDimensions" :key="dimension.key" cols="12" md="6">
+                  <div class="dimension-detail pa-4"
+                    style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;">
                     <div class="d-flex justify-space-between align-center mb-2">
                       <div class="font-weight-medium">
                         {{ dimension.label }}
                       </div>
                       <v-chip
                         :color="dimension.key === 'performance' ? getPerformanceColor(selectedResponse.nasaTlxAnswers[dimension.key]) : getWorkloadColor(selectedResponse.nasaTlxAnswers[dimension.key])"
-                        size="small"
-                      >
+                        size="small">
                         {{ selectedResponse.nasaTlxAnswers[dimension.key] }}
                       </v-chip>
                     </div>
                     <div class="text-caption text-grey mb-2">
                       {{ dimension.description }}
                     </div>
-                    <v-progress-linear
-                      :model-value="selectedResponse.nasaTlxAnswers[dimension.key]"
-                      :color="dimension.color"
-                      height="8"
-                      rounded
-                    />
+                    <v-progress-linear :model-value="selectedResponse.nasaTlxAnswers[dimension.key]"
+                      :color="dimension.color" height="8" rounded />
                   </div>
                 </v-col>
               </v-row>
@@ -520,20 +377,20 @@ const tableHeaders = [
   { title: 'Actions', key: 'actions', sortable: false }
 ]
 
-const test = computed(()=> store.getters.test.testStructure)
+const test = computed(() => store.getters.test.testStructure)
 const testAnswerDocument = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
 const nasaTlxData = computed(() => Object.values(testAnswerDocument.value).flatMap((item, index) => {
-    return Object.values(item.tasks || {})
+  return Object.values(item.tasks || {})
     .filter(task => test.value?.userTasks[task.taskId]?.taskType === "nasa-tlx")
     .map((task) => {
-        const scores = Object.values(task.nasaTlxAnswers) 
-        return {
-            ...task,
-            overallScore: scores.length > 0 
-            ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10
-            : 0,
-            name: item.fullName
-        }
+      const scores = Object.values(task.nasaTlxAnswers)
+      return {
+        ...task,
+        overallScore: scores.length > 0
+          ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10
+          : 0,
+        name: item.fullName
+      }
     })
 }))
 
@@ -564,7 +421,7 @@ const radarOptions = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        label: function(context) {
+        label: function (context) {
           return `${context.label}: ${context.parsed.r}/100`
         }
       }
@@ -639,7 +496,7 @@ watchEffect(async () => {
 
 .v-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
 }
 
 .v-chip {
