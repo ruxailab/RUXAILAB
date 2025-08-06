@@ -1,39 +1,20 @@
 <template>
-  <PageWrapper
-    :title="$t('Reports Dashboard')"
-    :loading="loading"
-    :loading-text="$t('HeuristicsReport.messages.reports_loading')"
-    :side-gap="true"
-  >
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
+  <PageWrapper :title="$t('Reports Dashboard')" :loading="loading"
+    :loading-text="$t('HeuristicsReport.messages.reports_loading')" :side-gap="true">
+    <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 bg-error text-white"
-          primary-title
-        >
+        <v-card-title class="text-h5 bg-error text-white" primary-title>
           {{ $t('HeuristicsReport.messages.confirm_delete_report') }}
         </v-card-title>
         <v-card-text>{{ dialogText }}</v-card-text>
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="dialog = false"
-          >
+          <v-btn class="bg-grey-lighten-3" variant="text" @click="dialog = false">
             {{ $t('common.cancel') }}
           </v-btn>
-          <v-btn
-            class="bg-red text-white ml-1"
-            :loading="loadingBtn"
-            variant="text"
-            @click="removeReport(report), (loadingBtn = true)"
-          >
+          <v-btn class="bg-red text-white ml-1" :loading="loadingBtn" variant="text"
+            @click="removeReport(report), (loadingBtn = true)">
             {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
@@ -42,11 +23,7 @@
 
     <template #subtitle>
       <div class="d-flex align-center">
-        <v-icon
-          icon="mdi-update"
-          size="small"
-          class="mr-2 text-medium-emphasis"
-        />
+        <v-icon icon="mdi-update" size="small" class="mr-2 text-medium-emphasis" />
         <span class="text-body-2 text-medium-emphasis">
           Last synced: {{ formatDate(lastUpdated) }}
         </span>
@@ -56,53 +33,22 @@
     <template #filters>
       <div class="d-flex align-center justify-space-between mb-6">
         <div class="d-flex align-center gap-4">
-          <v-text-field
-            v-model="searchQuery"
-            prepend-inner-icon="mdi-magnify"
-            label="Search reports..."
-            variant="outlined"
-            density="compact"
-            hide-details
-            style="max-width: 500px; min-width: 400px;"
-          />
-          <v-select
-            v-model="statusFilter"
-            :items="statusOptions"
-            label="Filter by status"
-            variant="outlined"
-            density="compact"
-            hide-details
-            clearable
-            style="min-width: 200px; width: 200px;"
-          />
+          <v-text-field v-model="searchQuery" prepend-inner-icon="mdi-magnify" label="Search reports..."
+            variant="outlined" density="compact" hide-details style="max-width: 500px; min-width: 400px;" />
+          <v-select v-model="statusFilter" :items="statusOptions" label="Filter by status" variant="outlined"
+            density="compact" hide-details clearable style="min-width: 200px; width: 200px;" />
         </div>
       </div>
     </template>
 
-    <Intro
-      v-if="reports.length === 0 && !loading"
-      @go-to-coops="goToCoops"
-    />
+    <Intro v-if="reports.length === 0 && !loading" @go-to-coops="goToCoops" />
 
-    <v-card
-      v-if="reports.length > 0"
-      elevation="2"
-      class="rounded-lg"
-    >
-      <v-data-table
-        :headers="headers"
-        :items="filteredReports"
-        :search="searchQuery"
-        class="elevation-0"
-        :no-data-text="$t('HeuristicsReport.messages.no_reports_found')"
-      >
+    <v-card v-if="reports.length > 0" elevation="2" class="rounded-lg">
+      <v-data-table :headers="headers" :items="filteredReports" :search="searchQuery" class="elevation-0"
+        :no-data-text="$t('HeuristicsReport.messages.no_reports_found')">
         <template #[`item.evaluator`]="{ item }">
           <div class="d-flex align-center">
-            <v-avatar
-              :color="getAvatarColor(item.evaluator)"
-              size="40"
-              class="mr-3"
-            >
+            <v-avatar :color="getAvatarColor(item.evaluator)" size="40" class="mr-3">
               <span class="text-white font-weight-medium">
                 {{ getInitials(item.fullName) }}
               </span>
@@ -120,11 +66,7 @@
 
         <template #[`item.lastUpdate`]="{ item }">
           <div class="d-flex align-center">
-            <v-icon
-              icon="mdi-clock-outline"
-              size="small"
-              class="mr-2 text-medium-emphasis"
-            />
+            <v-icon icon="mdi-clock-outline" size="small" class="mr-2 text-medium-emphasis" />
             <span class="text-body-1">{{ item.lastUpdate }}</span>
           </div>
         </template>
@@ -135,32 +77,18 @@
               <span class="text-body-2 font-weight-medium text-medium-emphasis">Progress</span>
               <span class="text-subtitle-1 font-weight-bold text-on-surface">{{ item.progress }}%</span>
             </div>
-            <v-progress-linear
-              :model-value="parseFloat(item.progress)"
-              :color="getProgressColor(parseFloat(item.progress))"
-              height="8"
-              rounded
-            />
+            <v-progress-linear :model-value="parseFloat(item.progress)"
+              :color="getProgressColor(parseFloat(item.progress))" height="8" rounded />
           </div>
         </template>
 
         <template #[`item.status`]="{ item }">
-          <v-chip
-            :color="getStatusColor(item.status)"
-            :text="item.status"
-            variant="flat"
-            size="small"
-            class="text-capitalize font-weight-medium"
-            :prepend-icon="getStatusIcon(item.status)"
-          />
+          <v-chip :color="getStatusColor(item.status)" :text="item.status" variant="flat" size="small"
+            class="text-capitalize font-weight-medium" :prepend-icon="getStatusIcon(item.status)" />
         </template>
 
         <template #[`item.hidden`]="{ item }">
-          <v-chip
-            :color="item.hidden ? 'success' : 'error'"
-            size="small"
-            variant="tonal"
-          >
+          <v-chip :color="item.hidden ? 'success' : 'error'" size="small" variant="tonal">
             <v-icon v-if="item.hidden">
               mdi-check
             </v-icon>
@@ -173,42 +101,21 @@
         <template #[`item.actions`]="{ item }">
           <v-menu>
             <template #activator="{ props }">
-              <v-btn
-                icon="mdi-dots-vertical"
-                variant="text"
-                size="small"
-                v-bind="props"
-                class="text-medium-emphasis"
-              />
+              <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" class="text-medium-emphasis" />
             </template>
             <v-list min-width="180">
-              <v-list-item
-                prepend-icon="mdi-delete"
-                title="Remove Report"
-                class="text-error"
-                @click="dialog = true; report = item"
-              />
-              <v-list-item
-                v-if="item.hidden"
-                prepend-icon="mdi-eye"
-                title="Unhide Report"
-                @click="unhideReport(item)"
-              />
+              <v-list-item prepend-icon="mdi-delete" title="Remove Report" class="text-error"
+                @click="dialog = true; report = item" />
+              <v-list-item v-if="item.hidden" prepend-icon="mdi-eye" title="Unhide Report"
+                @click="unhideReport(item)" />
             </v-list>
           </v-menu>
         </template>
       </v-data-table>
     </v-card>
 
-    <div
-      v-if="filteredReports.length === 0 && reports.length > 0 && !loading"
-      class="text-center py-12"
-    >
-      <v-icon
-        icon="mdi-file-search"
-        size="64"
-        class="text-medium-emphasis mb-4"
-      />
+    <div v-if="filteredReports.length === 0 && reports.length > 0 && !loading" class="text-center py-12">
+      <v-icon icon="mdi-file-search" size="64" class="text-medium-emphasis mb-4" />
       <h3 class="text-h5 font-weight-medium text-medium-emphasis mb-2">
         No reports found
       </h3>
@@ -227,7 +134,7 @@ import { useToast } from 'vue-toastification';
 import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '@/firebase';
 import Intro from '@/components/molecules/IntroReports.vue';
-import PageWrapper from '@/components/organisms/PageWrapper.vue';
+import PageWrapper from '@/components/template/PageWrapper.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 
 const store = useStore();
@@ -263,7 +170,7 @@ const headers = computed(() => {
     if (header.key === 'hidden') {
       return answers.value.type !== 'User' ? false : true;
     }
-    return true; 
+    return true;
   });
 });
 

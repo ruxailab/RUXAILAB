@@ -1,23 +1,11 @@
 // src/views/admin/SettingsView.vue
 
 <template>
-  <PageWrapper
-    title="Test Configuration"
-    :loading="loadingPage"
-    loading-text="Loading Settings"
-    :side-gap="true"
-  >
+  <PageWrapper title="Test Configuration" :loading="loadingPage" loading-text="Loading Settings" :side-gap="true">
     <!-- Actions Slot for Save Button -->
     <template #actions>
-      <v-btn
-        color="primary"
-        variant="flat"
-        size="large"
-        class="text-none font-weight-semibold rounded-l px-6"
-        :loading="loading"
-        @click="submit()"
-        :disabled="!localChanges"
-      >
+      <v-btn color="primary" variant="flat" size="large" class="text-none font-weight-semibold rounded-l px-6"
+        :loading="loading" @click="submit()" :disabled="!localChanges">
         <v-icon start size="18">mdi-check</v-icon>
         Save Changes
       </v-btn>
@@ -48,55 +36,24 @@
         <v-form ref="tempform" class="pa-6">
           <v-row>
             <v-col cols="12">
-              <v-text-field
-                v-model="template.templateTitle"
-                autofocus
-                label="Title"
-                :rules="titleRequired"
-                counter="200"
-                variant="outlined"
-                density="comfortable"
-                placeholder="Enter a title for your template"
-                class="mb-4"
-              />
-              <v-textarea
-                v-model="template.templateDescription"
-                label="Description"
-                variant="outlined"
-                rows="4"
-                density="comfortable"
-                placeholder="Provide a description for your template"
-                class="mb-4"
-              />
-              <v-checkbox
-                v-model="template.isTemplatePublic"
-                label="Make template public to all users"
-                color="primary"
-                hide-details
-                class="mt-0 pt-0"
-              />
+              <v-text-field v-model="template.templateTitle" autofocus label="Title" :rules="titleRequired"
+                counter="200" variant="outlined" density="comfortable" placeholder="Enter a title for your template"
+                class="mb-4" />
+              <v-textarea v-model="template.templateDescription" label="Description" variant="outlined" rows="4"
+                density="comfortable" placeholder="Provide a description for your template" class="mb-4" />
+              <v-checkbox v-model="template.isTemplatePublic" label="Make template public to all users" color="primary"
+                hide-details class="mt-0 pt-0" />
             </v-col>
           </v-row>
           <v-divider class="my-6"></v-divider>
           <v-card-actions class="px-0 pt-0">
             <v-spacer />
-            <v-btn
-              class="text-none rounded-lg px-6"
-              variant="outlined"
-              color="grey-darken-2"
-              height="44"
-              @click="closeDialog()"
-            >
+            <v-btn class="text-none rounded-lg px-6" variant="outlined" color="grey-darken-2" height="44"
+              @click="closeDialog()">
               {{ $t('buttons.cancel') }}
             </v-btn>
-            <v-btn
-              variant="flat"
-              :disabled="hasTemplate ? true : false"
-              color="primary"
-              height="44"
-              class="text-none rounded-lg ml-3"
-              @click="createTemplate()"
-            >
+            <v-btn variant="flat" :disabled="hasTemplate ? true : false" color="primary" height="44"
+              class="text-none rounded-lg ml-3" @click="createTemplate()">
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -118,14 +75,8 @@
               </div>
             </div>
             <v-card-text class="py-6">
-              <FormTestDescription
-                v-if="object"
-                ref="form1"
-                :test="object"
-                :lock="true"
-                @val-form="validate"
-                @update:test="updateObject"
-              />
+              <FormTestDescription v-if="object" ref="form1" :test="object" :lock="true" @val-form="validate"
+                @update:test="updateObject" />
             </v-card-text>
           </v-card>
         </div>
@@ -149,15 +100,8 @@
                     <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Public Access</span>
                   </div>
                   <p class="text-caption text-grey-darken-1 mb-4">Allow users to view this test</p>
-                  <v-switch
-                    v-model="object.isPublic"
-                    color="primary"
-                    hide-details
-                    inset
-                    class="position-absolute"
-                    style="top: 20px; right: 20px;"
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
-                  />
+                  <v-switch v-model="object.isPublic" color="primary" hide-details inset class="position-absolute"
+                    style="top: 20px; right: 20px;" @update:model-value="store.commit('SET_LOCAL_CHANGES', true)" />
                 </div>
               </div>
             </v-card-text>
@@ -175,39 +119,18 @@
             </div>
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-3">
-                <v-btn
-                  color="secondary"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-l py-3"
-                  height="48"
-                  :disabled="hasTemplate || !object"
-                  block
-                  @click="tempDialog = true"
-                >
+                <v-btn color="secondary" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
+                  height="48" :disabled="hasTemplate || !object" block @click="tempDialog = true">
                   <v-icon start size="18">mdi-file-document-plus-outline</v-icon>
                   {{ $t('pages.settings.createTemplate') }}
                 </v-btn>
-                <v-btn
-                  color="orange-darken-1"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-l py-3"
-                  height="48"
-                  :disabled="!object"
-                  block
-                  @click="duplicateTest()"
-                >
+                <v-btn color="orange-darken-1" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
+                  height="48" :disabled="!object" block @click="duplicateTest()">
                   <v-icon start size="18">mdi-content-duplicate</v-icon>
                   {{ $t('buttons.duplicateTest') }}
                 </v-btn>
-                <v-btn
-                  color="error"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-l py-3"
-                  height="48"
-                  :disabled="!object"
-                  @click="dialogDel = true"
-                  block
-                >
+                <v-btn color="error" variant="flat" class="text-none font-weight-semibold rounded-l py-3" height="48"
+                  :disabled="!object" @click="dialogDel = true" block>
                   <v-icon start size="18">mdi-delete-outline</v-icon>
                   {{ $t('pages.settings.deleteTest') }}
                 </v-btn>
@@ -235,24 +158,12 @@
           </p>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
-          <v-btn
-            variant="outlined"
-            color="grey-darken-2"
-            @click="dialogDel = false"
-            :disabled="loading"
-            class="text-none rounded-lg px-6"
-            height="44"
-          >
+          <v-btn variant="outlined" color="grey-darken-2" @click="dialogDel = false" :disabled="loading"
+            class="text-none rounded-lg px-6" height="44">
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn
-            color="error"
-            variant="flat"
-            @click="deleteTest(object)"
-            :loading="loading"
-            class="text-none rounded-lg px-6"
-            height="44"
-          >
+          <v-btn color="error" variant="flat" @click="deleteTest(object)" :loading="loading"
+            class="text-none rounded-lg px-6" height="44">
             <v-icon start size="16">mdi-delete</v-icon>
             {{ $t('buttons.delete') }} Forever
           </v-btn>
@@ -272,7 +183,7 @@ import FormTestDescription from '@/components/atoms/FormTestDescription';
 import Snackbar from '@/components/atoms/Snackbar';
 import LeaveAlert from '@/components/atoms/LeaveAlert';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed';
-import PageWrapper from '@/components/organisms/PageWrapper.vue';
+import PageWrapper from '@/components/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import TemplateHeader from '@/models/TemplateHeader';
 import TemplateAuthor from '@/models/TemplateAuthor';
