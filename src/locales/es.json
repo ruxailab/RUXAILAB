@@ -404,9 +404,9 @@
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Pre Prueba - Consentimiento",
-      "preTestForm": "Pre Prueba - Formulario",
-      "preTest": "Pre-Prueba",
+      "preTestConsent": "Formulario de Consentimiento",
+      "preTestForm": "Preguntas iniciales",
+      "preTest": "Preguntas finales",
       "postTest": "Post-Prueba"
     },
     "buttons": {
