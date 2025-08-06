@@ -47,9 +47,7 @@ h1 {
   padding-bottom: 2px;
 }
 
-.dataCard {
-  background: #f5f7ff;
-}
+
 
 .v-sheet.v-card:not(.v-sheet--outlined) {
   box-shadow: none !important;
