@@ -311,7 +311,17 @@ const startTest = () => {
     router.push(`/missions/${test.value.id}`);
     return;
   }
-  start.value = !start.value;
+
+  // Primero añadimos la clase para la animación de salida
+  const startScreen = document.querySelector('.start-screen');
+  if (startScreen) {
+    startScreen.classList.add('leaving');
+  }
+
+  // Esperamos a que termine la animación antes de cambiar el estado
+  setTimeout(() => {
+    start.value = false;
+  }, 1000);
 };
 
 
@@ -722,11 +732,21 @@ onBeforeUnmount(() => {
   height: 100vh;
   overflow: hidden;
   background-size: 200% 200%;
-  animation: subtleGradient 8s ease-in-out infinite;
+  animation: subtleGradient 20s ease-in-out infinite;
   background-image: linear-gradient(160deg,
       #00213F 0%,
       #1a2f4f 35%,
       #303f9f 100%);
+  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+.start-screen.leaving,
+.start-screen.leaving>*,
+.start-screen.leaving::before {
+  opacity: 0;
+  transition-duration: 1.2s;
 }
 
 @keyframes subtleGradient {
@@ -759,6 +779,10 @@ onBeforeUnmount(() => {
   background-size: contain;
   background-position: right top;
   opacity: 0.2;
+}
+
+.start-screen.leaving::before {
+  opacity: 0;
 }
 
 /* Stepper sticky styles */

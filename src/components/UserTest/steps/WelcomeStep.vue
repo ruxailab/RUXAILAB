@@ -1,7 +1,7 @@
 <template>
     <ShowInfo>
         <template #content>
-            <div class="test-content pa-6 rounded-xl text-center">
+            <div class="test-content pa-6 rounded-xl text-center fade-in">
                 <h2 class="text-h5 font-weight-bold mb-4 text-primary">
                     ¡Bienvenido a RUXAILAB!
                 </h2>
@@ -62,3 +62,22 @@ const props = defineProps({
 const emit = defineEmits(['start']);
 const { smAndDown } = useDisplay();
 </script>
+
+<style scoped>
+.fade-in {
+    animation: fadeIn 2s ease-in-out;
+    animation-fill-mode: both;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
