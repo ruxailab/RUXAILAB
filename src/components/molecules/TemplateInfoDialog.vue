@@ -8,7 +8,6 @@
       @update:model-value="$emit('update:dialog', $event)"
     >
       <v-card class="pa-6" rounded="xl" elevation="6">
-        <!-- Dialog Title -->
         <v-card-title class="text-h5 font-weight-bold pa-0 mb-4">
           {{ step === 1 ? $t('pages.createTest.templateInfo') : $t('pages.createTest.create') }}
         </v-card-title>
