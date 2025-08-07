@@ -1,66 +1,115 @@
 <template>
-  <div class="mt-0 pa-0 rounded-sm">
-    <v-data-table
-      height="420px"
-      style="background: #f5f7ff;"
-      :headers="headers"
-      :items="optionsWithFormattedValue"
-      :items-per-page="-1"
-    >
-      <template #[`item.actions`]="{ item }">
-        <v-icon
-          :disabled="testAnswerDocLength > 0"
-          size="small"
-          @click="editItem(item)"
-        >
-          mdi-pencil
-        </v-icon>
-        <v-icon
-          :disabled="testAnswerDocLength > 0"
-          size="small"
-          @click="deleteItem(item)"
-        >
-          mdi-delete
-        </v-icon>
-      </template>
-
-      <template #top>
-        <v-row
-          class="ma-0"
-          align="center"
-        >
-          <v-card-title class="subtitleView">
-            {{ $t('HeuristicsOptionsTable.titles.options') }}
-          </v-card-title>
-          <v-row
-            justify="end"
-            class="ma-0 pa-0 mr-4"
+  <v-app>
+    <v-main>
+      <v-container fluid class="pa-6">
+        <!-- Header Section -->
+        <div class="d-flex align-center justify-space-between mb-8">
+          <div>
+            <h1 class="text-h4 font-weight-bold text-on-surface">
+              {{ $t('HeuristicsOptionsTable.titles.options') }}
+            </h1>
+          </div>
+          
+          <v-btn
+            color="accent"
+            prepend-icon="mdi-plus"
+            variant="elevated"
+            size="large"
+            :disabled="testAnswerDocLength > 0"
+            @click="dialog = true"
+            class="text-none"
           >
-            <v-btn
-              rounded
-              color="#f9a826"
-              class="text-white"
-              size="small"
-              :disabled="testAnswerDocLength > 0"
-              :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-              @click="dialog = true"
-            >
-              {{ $t('HeuristicsTable.titles.addOption') }}
-            </v-btn>
-            <AddOptionBtn
-              v-model:dialog="dialog"
-              :option="option"
-              :has-value="hasValue"
-              @change-has-value="updateHasValue"
-              @add-option="updateOptions"
-              @change="emitChange"
-            />
-          </v-row>
-        </v-row>
-        <v-divider class="mb-4" />
-      </template>
-    </v-data-table>
-  </div>
+            {{ $t('HeuristicsTable.titles.addOption') }}
+          </v-btn>
+        </div>
+
+        <!-- Options Table -->
+        <v-card elevation="2" class="options-table">
+          <v-data-table
+            :headers="headers"
+            :items="optionsWithFormattedValue"
+            :items-per-page="-1"
+            class="elevation-0"
+          >
+            <!-- Custom header styling -->
+            <template v-slot:headers="{ columns }">
+              <tr class="table-header">
+                <th
+                  v-for="column in columns"
+                  :key="column.key"
+                  class="text-left font-weight-medium text-ternary pa-4"
+                  :style="{ width: column.width }"
+                >
+                  {{ column.title }}
+                </th>
+              </tr>
+            </template>
+
+            <!-- Custom row styling -->
+            <template v-slot:item="{ item }">
+              <tr class="table-row">
+                <td class="pa-4">
+                  <span class="text-body-1 text-on-surface">{{ item.text }}</span>
+                </td>
+                <td class="pa-4">
+                  <span class="text-body-2 text-on-surface">{{ item.description }}</span>
+                </td>
+                <td class="pa-4">
+                  <span class="text-body-1 text-on-surface font-weight-medium">{{ item.value }}</span>
+                </td>
+                <td class="pa-4">
+                  <div class="d-flex gap-2">
+                    <v-btn
+                      icon="mdi-pencil"
+                      variant="text"
+                      size="small"
+                      color="primary"
+                      :disabled="testAnswerDocLength > 0"
+                      @click="editItem(item)"
+                    />
+                    <v-btn
+                      icon="mdi-delete"
+                      variant="text"
+                      size="small"
+                      color="error"
+                      :disabled="testAnswerDocLength > 0"
+                      @click="deleteItem(item)"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </template>
+
+            <!-- Empty state -->
+            <template v-slot:no-data>
+              <div class="text-center pa-8">
+                <v-icon
+                  icon="mdi-cog-outline"
+                  size="64"
+                  color="secondary"
+                  class="mb-4"
+                />
+                <h3 class="text-h6 text-secondary mb-2">{{ $t('HeuristicsOptionsTable.titles.noOptions') }}</h3>
+                <p class="text-body-2 text-secondary">
+                  {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
+                </p>
+              </div>
+            </template>
+          </v-data-table>
+        </v-card>
+
+        <!-- AddOptionBtn Component -->
+        <AddOptionBtn
+          v-model:dialog="dialog"
+          :option="option"
+          :has-value="hasValue"
+          @change-has-value="updateHasValue"
+          @add-option="updateOptions"
+          @change="emitChange"
+        />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
@@ -76,7 +125,7 @@ const emit = defineEmits(['change']);
 
 const headers = ref([
   {
-    title: t('commoitle'),
+    title: t('common.title'),
     align: 'start',
     value: 'text',
   },
@@ -112,7 +161,7 @@ const hasValue = ref(true);
 const optionsWithFormattedValue = computed(() =>
   store.state.Tests.Test.testOptions.map((opt) => ({
     ...opt,
-    value: opt.value === null ? 'No value' : opt.value,
+    value: opt.value === null ? '-' : opt.value,
   })),
 );
 
@@ -129,13 +178,11 @@ watch(dialog, (newVal) => {
   }
 });
 
-
 const updateHasValue = (newValue) => {
   hasValue.value = newValue;
 };
 
 const updateOptions = (newOption) => {
-  console.log('Received newOption:', newOption);
   if (editIndex.value === -1) {
     store.state.Tests.Test.testOptions.push({
       ...newOption,
@@ -179,16 +226,37 @@ const resetForm = () => {
 </script>
 
 <style scoped>
-.subtitleView {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
+.options-table {
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.disabledBtnBackground {
-  background-color: rgba(185, 185, 185, 0.308);
+
+.table-header {
+  background-color: #F8FAFC;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.table-row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: rgba(59, 130, 246, 0.02);
+}
+
+:deep(.v-data-table) {
+  border-radius: 8px;
+}
+
+:deep(.v-data-table__wrapper) {
+  border-radius: 8px 8px 0 0;
+}
+
+:deep(.v-btn--variant-elevated) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.v-btn--variant-elevated:hover) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 </style>

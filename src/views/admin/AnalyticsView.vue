@@ -13,7 +13,7 @@
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import HeuristicsAnalytics from '@/components/organisms/HeuristicsAnalytics.vue';
-import UserAnalytics from '@/components/organisms/UserAnalytics.vue';
+import UserAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/UserAnalytics.vue';
 
 const store = useStore();
 

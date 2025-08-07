@@ -2,12 +2,11 @@
   <v-navigation-drawer
     :rail="mini"
     permanent
-    color="#3F3D56"
+    color="primary"
     class="hidden-sm-and-down pt-3"
   >
     <!-- Navigation header -->
     <div v-if="!mini">
-      <!--- CHANGE CURRENT TEST SELECTOR -->
       <v-list-item>
         <v-row dense>
           <v-col class="pa-0 ma-0">
@@ -17,8 +16,6 @@
               item-title="testTitle"
               :items="testsList"
               :model-value="test.testTitle"
-              :label="test.testTitle || 'Select a Test'"
-              bg-color="#343344"
               style="max-width: 240px"
               @update:model-value="changeTest"
             />
@@ -81,30 +78,21 @@
 
     <!-- Navigation footer -->
     <div
-      v-if="!mini"
       class="footer"
     >
       <v-btn
         icon
+        size="small"
         class="mr-2 bg-orange"
         @click.stop="mini = !mini"
       >
-        <v-icon 
+        <v-icon
+          v-if="!mini"
           color="white"
           icon="mdi-chevron-left"
         />
-      </v-btn>
-    </div>
-    <div
-      v-else
-      class="footer"
-    >
-      <v-btn
-        icon
-        class="mr-2 bg-orange"
-        @click.stop="mini = !mini"
-      >
-        <v-icon 
+        <v-icon
+          v-else
           color="white"
           icon="mdi-chevron-right"
         />
