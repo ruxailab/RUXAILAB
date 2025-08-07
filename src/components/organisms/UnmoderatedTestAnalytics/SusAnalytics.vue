@@ -402,7 +402,7 @@ const susQuestions = [
     "I needed to learn a lot of things before I could get going with this system."
 ];
 
-const testAnswerDocument = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
+const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {});
 const tasksArray = computed(() => {
   return Object.values(testAnswerDocument.value).flatMap((item, index) => {
     return Object.values(item.tasks || {})
