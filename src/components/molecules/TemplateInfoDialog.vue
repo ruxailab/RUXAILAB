@@ -3,152 +3,144 @@
     <v-dialog
       v-if="template?.header"
       :model-value="dialog"
-      max-width="80%"
+      max-width="700px"
       persistent
       @update:model-value="$emit('update:dialog', $event)"
     >
-      <v-stepper
-        v-model="step"
-        style="background-color: #e8eaf2"
-      >
-        <v-stepper-header>
-          <v-stepper-step
-            color="#F9A826"
-            :complete="step > 1"
-            step="1"
+      <v-card class="pa-6" rounded="xl" elevation="6">
+        <!-- Dialog Title -->
+        <v-card-title class="text-h5 font-weight-bold pa-0 mb-4">
+          {{ step === 1 ? $t('pages.createTest.templateInfo') : $t('pages.createTest.create') }}
+        </v-card-title>
+
+        <!-- Step Navigation -->
+        <v-row v-if="allowCreate" class="mb-4" justify="center">
+          <v-btn-toggle
+            v-model="step"
+            mandatory
+            divided
+            color="primary"
+            variant="outlined"
+            class="rounded-lg"
           >
-            {{ $t('pages.createTest.templateInfo') }}
-          </v-stepper-step>
+            <v-btn :value="1" class="text-capitalize">
+              {{ $t('pages.createTest.templateInfo') }}
+            </v-btn>
+            <v-btn :value="2" class="text-capitalize">
+              {{ $t('pages.createTest.templateTitle') }}
+            </v-btn>
+          </v-btn-toggle>
+        </v-row>
 
-          <v-divider />
-
-          <v-stepper-step
-            v-if="allowCreate"
-            color="#F9A826"
-            step="2"
-          >
-            {{ $t('pages.createTest.templateTitle') }}
-          </v-stepper-step>
-        </v-stepper-header>
-
-        <v-stepper-items>
-          <v-stepper-content step="1">
-            <v-row
-              align="center"
-              justify="space-between"
-            >
-              <v-col
-                v-if="template.header"
-                cols="10"
-              >
-                <p class="dialog-title ma-0">
+        <!-- Step Content -->
+        <v-card-text class="pa-0">
+          <div v-if="step === 1" class="px-4">
+            <v-row align="center" justify="space-between">
+              <v-col cols="12">
+                <h3 class="text-h6 font-weight-bold mb-2">
                   {{ template.header.templateTitle }}
-                </p>
-                <div class="text-caption ma-0">
+                </h3>
+                <p class="text-body-2 text-grey-darken-2 mb-0">
                   {{ $t('pages.listTests.createdBy') }} {{ author }}
                   {{
                     template.header.templateVersion === '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
-                      : ` - Last updated: ${getFormattedDate(
-                        template.header.updateDate
-                      )}`
+                      : ` - Last updated: ${getFormattedDate(template.header.updateDate)}`
                   }}
-                  ({{
-                    $t('pages.listTests.version') +
-                      ' ' +
-                      template.header.templateVersion
-                  }})
-                </div>
+                  ({{ $t('pages.listTests.version') + ' ' + template.header.templateVersion }})
+                </p>
               </v-col>
             </v-row>
 
-            <v-divider class="my-2" />
+            <v-divider class="my-6" />
 
-            <div style="margin: 0px 0px 30px 0px">
+            <p class="text-body-1 mb-6">
               {{
                 template.header.templateDescription
                   ? template.header.templateDescription
                   : $t('pages.createTest.noDescription')
               }}
-            </div>
+            </p>
 
-            <v-row
-              justify="end"
-              class="ma-0 pa-0"
-            >
+            <v-row justify="space-between" class="ma-0">
               <v-btn
                 v-if="isMyTemplate"
                 color="error"
-                variant="outlined"
-                style="position: absolute; left: 24px"
+                variant="text"
+                class="text-capitalize"
                 @click="deleteTemplate"
               >
+                <v-icon start size="small">mdi-delete</v-icon>
                 {{ $t('buttons.delete') }}
-                <v-icon end>
-                  mdi-delete
-                </v-icon>
               </v-btn>
 
-              <v-btn
-                class="bg-error mr-2"
-                @click="reset"
-              >
-                {{ $t('buttons.close') }}
-              </v-btn>
-
-              <v-btn
-                v-if="allowCreate"
-                class="bg-success"
-                color="primary"
-                @click="step = 2"
-              >
-                {{ $t('buttons.next') }}
-              </v-btn>
+              <div class="d-flex" style="gap: 12px">
+                <v-btn
+                  color="grey-darken-2"
+                  variant="outlined"
+                  class="text-capitalize flex-grow-1"
+                  @click="reset"
+                >
+                  {{ $t('buttons.close') }}
+                </v-btn>
+                <v-btn
+                  v-if="allowCreate"
+                  color="primary"
+                  variant="flat"
+                  class="text-capitalize flex-grow-1"
+                  @click="step = 2"
+                >
+                  {{ $t('buttons.next') }}
+                  <v-icon end size="small">mdi-arrow-right</v-icon>
+                </v-btn>
+              </div>
             </v-row>
-          </v-stepper-content>
+          </div>
 
-          <v-stepper-content step="2">
-            <p class="dialog-title ma-0">
-              {{ $t('pages.createTest.create') }}
-            </p>
-            <v-divider class="my-2" />
+          <div v-if="step === 2" class="px-4">
             <FormTestDescription
               ref="formRef"
-              style="margin: 0px 0px 20px 0px"
+              class="mb-6"
               :test="localTest"
               :lock="true"
               @update:test="updateLocalTest"
               @val-form="handleValForm"
             />
-            <v-row
-              justify="end"
-              class="ma-0 pa-0"
-            >
+
+            <v-row justify="space-between" class="ma-0">
               <v-btn
-                class="bg-warning"
-                style="position: absolute; left: 24px"
+                color="grey-darken-2"
+                variant="text"
+                class="text-capitalize"
                 @click="step = 1"
               >
+                <v-icon start size="small">mdi-arrow-left</v-icon>
                 {{ $t('buttons.previous') }}
               </v-btn>
 
-              <v-btn
-                class="bg-error mr-2"
-                @click="reset"
-              >
-                {{ $t('buttons.cancel') }}
-              </v-btn>
-              <v-btn
-                class="bg-success"
-                color="primary"
-                @click="validate"
-              >
-                {{ $t('buttons.create') }}
-              </v-btn>
+              <div class="d-flex" style="gap: 12px">
+                <v-btn
+                  color="grey-darken-2"
+                  variant="outlined"
+                  class="text-capitalize flex-grow-1"
+                  @click="reset"
+                >
+                  {{ $t('buttons.cancel') }}
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  variant="flat"
+                  class="text-capitalize flex-grow-1"
+                  @click="validate"
+                >
+                  {{ $t('buttons.create') }}
+                  <v-icon end size="small">mdi-check</v-icon>
+                </v-btn>
+              </div>
             </v-row>
-          </v-stepper-content>
-        </v-stepper-items>
-      </v-stepper>
+          </div>
+        </v-card-text>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -206,10 +198,6 @@ const mountTest = computed(() => {
 
 const author = computed(() => {
   return props.template?.header?.templateAuthor?.userEmail || '';
-});
-
-const title = computed(() => {
-  return props.template?.header?.templateTitle || '';
 });
 
 const user = computed(() => {
