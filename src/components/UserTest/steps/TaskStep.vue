@@ -199,7 +199,7 @@ function handleShowPostForm(userCompleted) {
 
     let finalTime = null;
     if (taskStartTime) {
-        finalTime = Math.round((Date.now() - taskStartTime) / 1000);
+        finalTime = Math.round((Date.now() - taskStartTime));
         console.log('Tiempo detenido en:', finalTime, 'segundos');
         emit('timer-stopped', finalTime, props.taskIndex);
     }
