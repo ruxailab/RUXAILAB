@@ -4,17 +4,13 @@
       <v-col cols="12" md="10" lg="12">
         <v-card class="elevation-2 rounded-lg pa-6" width="100%">
           <v-card-title class="text-h5 font-weight-bold mb-4 bg-on-surface">
-            Consent Editor
+            {{ title }}
           </v-card-title>
           <v-card-text>
             <p class="text-body-1 mb-6" style="color: #4B5563;">
-              Edit the consent text for the test. Changes are saved when you click the Save button.
+              {{ subtitle }}
             </p>
-            <quill-editor
-              v-model:value="consent"
-              :options="editorOptions"
-              class="editor-container"
-            />
+            <quill-editor v-model:value="value" :options="editorOptions" class="editor-container" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -23,13 +19,33 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-const store = useStore();
-const consent = ref('');
+import { ref, watch } from 'vue'
 
-const consentStore = computed(() => store.getters.consent);
-const test = computed(() => store.getters.test);
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  subtitle: {
+    type: String,
+    required: true,
+  },
+  modelValue: {
+    type: String,
+    default: '',
+  },
+})
+
+const emit = defineEmits(['update:value'])
+const value = ref('')
+
+watch(() => props.modelValue, (newVal) => {
+  value.value = newVal
+})
+
+watch(value, (newValue) => {
+  emit('update:value', newValue)
+})
 
 const editorOptions = {
   theme: 'snow',
@@ -42,19 +58,7 @@ const editorOptions = {
       ['clean'],
     ],
   },
-};
-
-const getConsent = () => {
-  if (test.value?.testStructure?.consent) {
-    consent.value = test.value.testStructure.consent;
-  } else if (consentStore.value) {
-    consent.value = consentStore.value;
-  }
-};
-
-onMounted(() => {
-  getConsent();
-});
+}
 </script>
 
 <style scoped>
