@@ -15,16 +15,9 @@
         </v-btn>
 
         <!-- Logo y título -->
-        <v-toolbar-title v-if="$route.path !== '/help'" style="cursor: pointer" class="d-flex align-center"
-            @click="goTo('/testslist')">
+        <v-toolbar-title style="cursor: pointer" class="d-flex align-center" @click="goTo('/testslist')">
             <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB Logo" height="25"
                 class="mr-3 align-self-center" style="vertical-align: middle;" />
-        </v-toolbar-title>
-
-        <v-toolbar-title v-else style="cursor: pointer" class="d-flex align-center" @click="goTo('/testslist')">
-            <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB Logo" height="25"
-                class="mr-3 align-self-center" style="vertical-align: middle;" />
-            <span class="text-white font-weight-bold">Help Center</span>
         </v-toolbar-title>
 
         <v-spacer />
