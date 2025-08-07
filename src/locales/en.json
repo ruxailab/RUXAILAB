@@ -633,7 +633,13 @@
     "cooperators": "Cooperators",
     "analytics": "Analytics",
     "help_center": "Help Center",
-    "howCanWeHelp": "How can we help?"
+    "howCanWeHelp": "How can we help?",
+    "categories": "CATEGORIES",
+    "viewAll": "View All",
+    "noArticlesFound": "No articles found",
+    "browseAllCategories": "Browse all categories to find the help you need",
+    "viewAllArticles": "View All Articles",
+    "videoAltText": "FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
   },
   "PROFILE": {
     "user": "USER",
