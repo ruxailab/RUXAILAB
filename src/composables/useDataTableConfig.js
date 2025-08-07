@@ -1,4 +1,3 @@
-// src/composables/useDataTableConfig.js
 import { computed, toRef } from 'vue'
 
 export function useDataTableConfig(type) {
