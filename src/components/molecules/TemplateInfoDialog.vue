@@ -22,10 +22,10 @@
             variant="outlined"
             class="rounded-lg"
           >
-            <v-btn :value="1" class="text-capitalize">
+            <v-btn :value="1" class="text-capitalize" width="200px">
               {{ $t('pages.createTest.templateInfo') }}
             </v-btn>
-            <v-btn :value="2" class="text-capitalize">
+            <v-btn :value="2" class="text-capitalize" width="200px">
               {{ $t('pages.createTest.templateTitle') }}
             </v-btn>
           </v-btn-toggle>
