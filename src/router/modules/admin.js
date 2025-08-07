@@ -16,6 +16,7 @@ import Choose from '@/views/admin/StudyCreationFlow/Choose.vue'
 import ChooseStudyMethods from '@/views/admin/StudyCreationFlow/ChooseStudyMethods.vue'
 import ChooseStudyType from '@/views/admin/StudyCreationFlow/ChooseStudyType.vue'
 import StudyDetailsForm from '@/views/admin/StudyCreationFlow/StudyDetailsForm.vue'
+import accessibility from '@/views/admin/Accessibility.vue'
 
 
 export default [
@@ -24,6 +25,12 @@ export default [
     name: 'TestList',
     meta: { authorize: [1] },
     component: TestList,
+  },
+  {
+    path: '/accessibility',
+    name: 'Accessibility',
+    meta: { authorize: [1] },
+    component: accessibility,
   },
   {
     path:'/profile',
