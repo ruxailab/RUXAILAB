@@ -4,21 +4,14 @@
       <v-col cols="12">
         <!-- <h1>{{ $t('titles.drawer.' + title) }}</h1> -->
         <h1>{{ title }}</h1>
-        <v-divider />
+        <v-divider v-if="title" />
       </v-col>
       <slot name="top" />
     </v-row>
     <slot name="warning" />
-    <v-row
-      justify="center"
-      class="ma-0"
-    >
+    <v-row justify="center" class="ma-0">
       <v-col cols="12">
-        <v-card
-          flat
-          rounded="xl"
-          class="dataCard ma-0 pa-0"
-        >
+        <v-card flat rounded="xl" class="dataCard ma-0 pa-0">
           <slot name="content" />
         </v-card>
       </v-col>
@@ -43,6 +36,7 @@ h1 {
   align-items: center;
   color: #000000;
 }
+
 .subtitleView {
   font-style: normal;
   font-weight: 200;
@@ -52,9 +46,9 @@ h1 {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-.dataCard {
-  background: #f5f7ff;
-}
+
+
+
 .v-sheet.v-card:not(.v-sheet--outlined) {
   box-shadow: none !important;
 }

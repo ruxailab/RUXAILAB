@@ -18,6 +18,7 @@ import ChooseStudyType from '@/views/admin/ChooseStudyType.vue'
 import StudyDetailsForm from '@/views/admin/StudyDetailsForm.vue'
 import accessibility from '@/views/admin/Accessibility.vue'
 
+
 export default [
   {
     path: '/testslist',
