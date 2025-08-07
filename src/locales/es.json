@@ -44,11 +44,11 @@
     "unread": "no leído",
     "inbox": "Bandeja de entrada",
     "timeAgo": {
-      "years": "Hace {count} año{count !== 1 ? 's' : ''}",
-      "months": "Hace {count} mes{count !== 1 ? 'es' : ''}",
-      "days": "Hace {count} día{count !== 1 ? 's' : ''}",
-      "hours": "Hace {count} hora{count !== 1 ? 's' : ''}",
-      "minutes": "Hace {count} minuto{count !== 1 ? 's' : ''}",
+      "years": "Hace {count} año | Hace {count} años",
+      "months": "Hace {count} mes | Hace {count} meses",
+      "days": "Hace {count} día | Hace {count} días",
+      "hours": "Hace {count} hora | Hace {count} horas",
+      "minutes": "Hace {count} minuto | Hace {count} minutos",
       "now": "Ahora"
     },
     "viewAll": "Ver todo",
@@ -404,9 +404,9 @@
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Pre Prueba - Consentimiento",
-      "preTestForm": "Pre Prueba - Formulario",
-      "preTest": "Pre-Prueba",
+      "preTestConsent": "Formulario de Consentimiento",
+      "preTestForm": "Preguntas iniciales",
+      "preTest": "Preguntas finales",
       "postTest": "Post-Prueba"
     },
     "buttons": {
