@@ -260,9 +260,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
-import TaskDetailsModal from '../atoms/TaskDetailsModal.vue';
+import TaskDetailsModal from '@/components/atoms/TaskDetailsModal.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import { useToast } from 'vue-toastification';
 

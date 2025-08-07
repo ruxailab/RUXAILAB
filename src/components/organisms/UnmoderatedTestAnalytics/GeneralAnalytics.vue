@@ -278,7 +278,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
-import DateChart from '../atoms/DateChart.vue';
+import DateChart from '@/components/atoms/DateChart.vue';
 
 const store = useStore();
 
