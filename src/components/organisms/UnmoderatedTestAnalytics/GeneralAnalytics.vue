@@ -278,40 +278,21 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
-import DateChart from '../atoms/DateChart.vue';
+import DateChart from '@/components/atoms/DateChart.vue';
 
 const store = useStore();
 
-const emit = defineEmits(['goToCoops']);
-
-const showDialog = ref(false);
-const dialogItem = ref(null);
-const search = ref('');
-const taskSelect = ref(0);
 const testTasks = ref([]);
 const taskAnswers = ref([]);
-const intro = ref(null);
-const dataHeaders = ref([
-  {
-    title: 'Email',
-    value: 'userDocId',
-  },
-  {
-    title: 'Actions',
-    sortable: false,
-    value: 'actions',
-  },
-]);
 
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
 const answers = computed(() => {
   if (!store.getters.visibleUserAnswers) {
-    return [];
+    return {};
   }
   return store.getters.visibleUserAnswers;
 });
-const loading = computed(() => !Object.values(answers.value).length);
 const averageTimePerTask = computed(() => {
   let totalTasks = 0;
   let totalTaskTime = 0;
@@ -376,8 +357,13 @@ const findLongestTask = () => {
     }
   }
 
+  const taskMap = {};
+  testStructure.value.userTasks.forEach((task) => {
+    taskMap[task.taskId] = task;
+  });
+
   return {
-    taskName: testStructure.value.userTasks[longestTask]?.taskName || 'Task',
+    taskName: taskMap[longestTask]?.taskName || 'Task',
     averageTime: formatTime(longestAverageTime),
   };
 };
@@ -485,15 +471,6 @@ const getCooperatorEmail = (userDocId) => {
 
 const getFormattedDate = (date) => {
   return new Date(date).toLocaleString();
-};
-
-const goToCoops = () => {
-  emit('goToCoops');
-};
-
-const viewAnswers = (item) => {
-  dialogItem.value = item;
-  showDialog.value = true;
 };
 
 watch(
