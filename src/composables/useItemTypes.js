@@ -1,5 +1,3 @@
-// src/composables/useItemTypes.js
-import { computed } from 'vue'
 import {
     getMethodDefinition,
     getMethodIcon,
