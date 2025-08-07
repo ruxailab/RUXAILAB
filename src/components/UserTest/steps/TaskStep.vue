@@ -22,6 +22,11 @@
                 <!-- STAGE 2: Task answer -->
                 <template v-else-if="stage === 2">
                     <v-row class="mb-4 d-flex align-center">
+                        <v-col cols="auto">
+                            <v-chip color="primary" class="mr-2">
+                                Tiempo: {{ elapsedTimeDisplay }}
+                            </v-chip>
+                        </v-col>
                         <v-col v-if="task?.taskTip" cols="auto">
                             <TipButton :task="task" />
                         </v-col>
@@ -78,8 +83,11 @@
                         <nasaTlxForm :nasa-tlx="nasaTlxAnswers" @update:nasaTlx="onUpdateNasaTlx" />
                     </div>
                     <v-row justify="end">
-                        <v-col cols="auto">
-                            <v-btn color="primary" block variant="flat" class="ml-2"
+                        <v-col cols="12">
+                            <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
+                                Por favor, responde a todas las preguntas antes de continuar.
+                            </p>
+                            <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
                                 @click="emitDoneOrCouldNotFinish()">
                                 Finalizar tarea
                             </v-btn>
@@ -125,75 +133,8 @@ const emit = defineEmits([
     'update:nasaTlxAnswers',
 ]);
 
-import { ref, watch, nextTick, computed } from 'vue';
+import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
-// Acceso a la store para leer respuestas SUS
-const store = useStore();
-const susAnswersFromStore = computed(() => {
-    return store.state.tasks?.[props.taskIndex]?.susAnswers || [];
-});
-
-// Local copy of SUS answers for v-model
-const localSusAnswers = computed({
-    get: () => props.susAnswers || [],
-    set: (val) => emit('update:susAnswers', val)
-});
-
-const stage = ref(1);
-// Guardar tiempo de inicio
-let taskStartTime = null;
-
-function startTask() {
-    stage.value = 2;
-    // Guardar timestamp de inicio
-    taskStartTime = Date.now();
-    nextTick(() => {
-        // Abrir el link automáticamente si existe
-        if (props.task?.taskLink || props.taskLink) {
-            window.open(props.task?.taskLink || props.taskLink, '_blank');
-        }
-        // Iniciar el timer automáticamente si existe el componente
-        setTimeout(() => {
-            const timer = document.querySelector('[ref=timerComponent]');
-            if (timer && timer.startTimer) timer.startTimer();
-        }, 100);
-    });
-}
-
-// Controla si se muestran los formularios post-tarea
-const showPostForm = ref(false);
-
-function handleShowPostForm(userCompleted) {
-    // Si la tarea es de tipo SUS o NASA-TLX, pasar a la etapa 3 (mostrar formulario post-tarea)
-    if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx') {
-        showPostForm.userCompleted = userCompleted;
-        stage.value = 3;
-    } else {
-        // Si no, emitir el evento directamente
-        showPostForm.userCompleted = userCompleted;
-        emitDoneOrCouldNotFinish();
-    }
-}
-
-function emitDoneOrCouldNotFinish() {
-    // Calcular tiempo transcurrido
-    let elapsedTime = null;
-    if (taskStartTime) {
-        elapsedTime = Math.round((Date.now() - taskStartTime) / 1000); // en segundos
-    }
-    // Llama al evento correspondiente según si el usuario presionó Done o Could Not Finish
-    if (showPostForm.userCompleted) {
-        emit('done', elapsedTime, props.taskIndex);
-    } else {
-        emit('couldNotFinish', elapsedTime, props.taskIndex);
-    }
-    // Resetear etapa y estado
-    stage.value = 1;
-    showPostForm.value = false;
-    showPostForm.userCompleted = undefined;
-    taskStartTime = null;
-}
-
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
 import TipButton from '@/components/atoms/TipButton.vue';
 import AudioRecorder from '@/components/atoms/AudioRecorder.vue';
@@ -204,7 +145,86 @@ import Timer from '@/components/atoms/Timer.vue';
 import SusForm from '@/components/atoms/SusForm.vue';
 import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
 
-// ...existing code...
+onBeforeUnmount(() => {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+});
+const store = useStore();
+const susAnswersFromStore = computed(() => {
+    return store.state.tasks?.[props.taskIndex]?.susAnswers || [];
+});
+
+const localSusAnswers = computed({
+    get: () => props.susAnswers || [],
+    set: (val) => emit('update:susAnswers', val)
+});
+
+const stage = ref(1);
+const elapsedTimeDisplay = ref('0:00');
+let taskStartTime = null;
+let timerInterval = null;
+
+function updateElapsedTime() {
+    if (!taskStartTime) return;
+    const elapsed = Math.floor((Date.now() - taskStartTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function startTask() {
+    stage.value = 2;
+    taskStartTime = Date.now();
+    timerInterval = setInterval(updateElapsedTime, 1000);
+    nextTick(() => {
+        if (props.task?.taskLink || props.taskLink) {
+            window.open(props.task?.taskLink || props.taskLink, '_blank');
+        }
+        setTimeout(() => {
+            const timer = document.querySelector('[ref=timerComponent]');
+            if (timer && timer.startTimer) timer.startTimer();
+        }, 100);
+    });
+}
+
+const showPostForm = ref(false);
+
+function handleShowPostForm(userCompleted) {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    let finalTime = null;
+    if (taskStartTime) {
+        finalTime = Math.round((Date.now() - taskStartTime));
+        console.log('Tiempo detenido en:', finalTime, 'segundos');
+        emit('timer-stopped', finalTime, props.taskIndex);
+    }
+
+    if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx') {
+        showPostForm.userCompleted = userCompleted;
+        stage.value = 3;
+    } else {
+        showPostForm.userCompleted = userCompleted;
+        emitDoneOrCouldNotFinish(finalTime);
+    }
+}
+
+function emitDoneOrCouldNotFinish(savedTime) {
+    if (showPostForm.userCompleted) {
+        emit('done', savedTime, props.taskIndex);
+    } else {
+        emit('couldNotFinish', savedTime, props.taskIndex);
+    }
+    stage.value = 1;
+    showPostForm.value = false;
+    showPostForm.userCompleted = undefined;
+    taskStartTime = null;
+    elapsedTimeDisplay.value = '0:00';
+}
 
 const localPostAnswer = ref(props.postAnswer);
 const localTaskAnswer = ref(props.taskAnswer);
@@ -227,7 +247,6 @@ function onUpdateTaskObservations(val) {
     localTaskObservations.value = val;
     emit('update:taskObservations', val);
 }
-// SUS answers are now handled reactively via localSusAnswers
 function onUpdateNasaTlx(val) {
     emit('update:nasaTlxAnswers', val);
 }
