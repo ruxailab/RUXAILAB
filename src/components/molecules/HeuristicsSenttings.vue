@@ -1,66 +1,70 @@
 <template>
-  <div
-    id="FileUpload"
-    class="rounded"
-    style="background-color:#f5f7ff"
-  >
-    <v-card-title class="subtitleView">
-      {{ $t('HeuristicsSettings.titles.settings') }}
-    </v-card-title>
-    <v-divider class="mb-4" />
-    <v-col justify="center">
-      <v-row class="px-6 ">
+  <v-card elevation="2" class="pa-6" style="background-color: #F5F7FF;">
+    <div class="settings-content">
+      <!-- Header Section -->
+      <h1 class="text-h4 font-weight-bold text-on-surface mb-4 subtitleView">
+        {{ $t('HeuristicsSettings.titles.settings') }}
+      </h1>
+      <v-divider class="mb-6" />
+
+      <!-- Download CSV Template -->
+      <div class="mb-8">
         <v-btn
-          variant="flat"
-          color="orange"
-          class="ma-2"
+          color="accent"
+          variant="elevated"
+          size="large"
+          class="text-none"
           @click="downloadTemplate"
         >
           {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
         </v-btn>
-      </v-row>
-      <v-divider class="ma-8" />
-      <v-row>
-        <v-row
-          class="px-8 mb-2"
-          justify="center"
-          align="center"
-        >
-          <v-file-input
-            ref="myFile"
-            v-model="csvFile"
-            accept=".csv"
-            show-size
-            truncate-length="15"
-            :label="$t('HeuristicsSettings.placeHolders.importCsv')"
-            :disabled="testAnswerDocLength > 0"
-          />
-          <v-btn
-            :loading="loadingUpdate"
-            :disabled="loadingUpdate || testAnswerDocLength > 0"
-            color="blue-grey"
-            class="ma-3 text-white"
-            @click="changeToJSON"
-          >
-            {{ $t('HeuristicsSettings.actions.update') }}
-            <v-icon
-              end
+      </div>
+
+      <!-- File Upload Section -->
+      <div class="upload-section">
+        <v-row align="center" class="mb-4">
+          <v-col cols="8">
+            <v-file-input
+              ref="myFile"
+              v-model="csvFile"
+              accept=".csv"
+              :label="$t('HeuristicsSettings.placeHolders.importCsv')"
+              variant="outlined"
+              density="comfortable"
+              prepend-icon=""
+              prepend-inner-icon="mdi-paperclip"
+              show-size
+              truncate-length="15"
+              :disabled="testAnswerDocLength > 0"
+              hide-details
+              class="upload-input"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-btn
+              :loading="loadingUpdate"
+              :disabled="loadingUpdate || testAnswerDocLength > 0"
+              color="secondary"
+              variant="elevated"
+              class="text-none"
+              @click="changeToJSON"
             >
-              mdi-cloud-upload
-            </v-icon>
-          </v-btn>
-        </v-row>  
-      </v-row>
-      <v-alert
-        v-if="errorMessage"
-        type="error"
-        density="compact"
-        class="ma-2"
-      >
-        {{ errorMessage }}
-      </v-alert>  
-    </v-col>
-  </div>
+              <v-icon start>mdi-cloud-upload</v-icon>
+              {{ $t('HeuristicsSettings.actions.update') }}
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-alert
+          v-if="errorMessage"
+          type="error"
+          density="compact"
+          class="mt-2"
+        >
+          {{ errorMessage }}
+        </v-alert>
+      </div>
+    </div>
+  </v-card>
 </template>
 
 <script setup>
@@ -77,8 +81,7 @@ const { t } = useI18n();
 const loading = ref(false);
 const loader = ref(null);
 const csvFile = ref(null);
-const heuristicForm = ref(null);
-const myFile = ref(null); // Ref for the file input
+const myFile = ref(null);
 const loadingUpdate = ref(false);
 const errorMessage = ref('');
 
@@ -187,6 +190,7 @@ const changeToJSON = async () => {
     }
   } catch (error) {
     console.error('Update action failed:', error);
+    errorMessage.value = t('HeuristicsSettings.messages.updateFailed');
   } finally {
     loadingUpdate.value = false;
   }
@@ -199,18 +203,19 @@ const downloadTemplate = async () => {
     const url = await getDownloadURL(starsRef);
     window.open(url, '_blank');
   } catch (error) {
+    console.error('Download template failed:', error);
     switch (error.code) {
       case 'storage/object-not-found':
-        // File doesn't exist
+        errorMessage.value = t('HeuristicsSettings.messages.templateNotFound');
         break;
       case 'storage/unauthorized':
-        // User doesn't have permission to access the object
+        errorMessage.value = t('HeuristicsSettings.messages.unauthorizedAccess');
         break;
       case 'storage/canceled':
-        // User canceled the upload
+        errorMessage.value = t('HeuristicsSettings.messages.downloadCanceled');
         break;
       case 'storage/unknown':
-        // Unknown error occurred, inspect the server response
+        errorMessage.value = t('HeuristicsSettings.messages.unknownError');
         break;
     }
   }
@@ -218,17 +223,35 @@ const downloadTemplate = async () => {
 </script>
 
 <style scoped>
-.csv-box {
-  background-color: white;
+.upload-section {
+  max-width: 600px;
 }
+
+.upload-input {
+  background-color: #F8FAFC;
+}
+
+:deep(.v-file-input .v-field) {
+  background-color: #F8FAFC;
+}
+
+:deep(.v-btn--variant-elevated) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.v-btn--variant-elevated:hover) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.settings-content {
+  min-height: 400px;
+}
+
 .subtitleView {
   font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 500;
   font-size: 18.1818px;
-  align-items: flex-end;
   color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
 }
 </style>
