@@ -610,7 +610,13 @@
     "cooperators": "Colaboradores",
     "analytics": "Análises",
     "help_center": "Central de Ajuda",
-    "howCanWeHelp": "Como podemos ajudar?"
+    "howCanWeHelp": "Como podemos ajudar?",
+    "categories": "CATEGORIAS",
+    "viewAll": "Ver Tudo",
+    "noArticlesFound": "Nenhum artigo encontrado",
+    "browseAllCategories": "Navegue por todas as categorias para encontrar a ajuda que você precisa",
+    "viewAllArticles": "Ver Todos os Artigos",
+    "videoAltText": "Vídeo demonstrativo de FAQ mostrando os passos visuais para resolver a pergunta frequente. Não há conteúdo de áudio presente neste vídeo instrucional."
   },
   "user": "USUÁRIO",
   "account": "Conta",
