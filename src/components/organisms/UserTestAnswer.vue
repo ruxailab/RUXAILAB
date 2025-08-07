@@ -71,14 +71,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { statistics } from '@/utils/statistics';
 import ShowInfo from '@/components/organisms/ShowInfo';
 import IntroAnswer from '@/components/molecules/IntroAnswer';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
-import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue';
-import SentimentAnalysisView from '@/components/organisms/SentimentAnalysisView.vue';
-import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
-import SusAnalytics from '@/components/organisms/SusAnalytics.vue';
-import NasaTlxAnalytics from '@/components/organisms/NasaTlxAnalytics.vue';
+import GeneralAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
+import SentimentAnalysisView from '@/components/organisms/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SusAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/SusAnalytics.vue';
+import NasaTlxAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 
 defineProps({
   id: {
@@ -94,7 +94,6 @@ const store = useStore();
 const tab = ref(0);
 const ind = ref(0);
 const intro = ref(null);
-const resultEvaluator = statistics();
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
 
