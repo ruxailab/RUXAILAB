@@ -30,8 +30,8 @@
                 bg-color="white" rounded="lg" />
             </v-col>
             <v-col cols="12" md="4" class="mt-3 mt-md-0">
-              <v-select v-model="selectedMethodFilter" :items="methodOptions" label="Research Method" variant="outlined"
-                density="comfortable" hide-details bg-color="white" rounded="lg" />
+              <v-select v-model="selectedMethodFilter" :items="methodOptions" item-title="text" item-value="value" 
+                label="Research Method" variant="outlined" density="comfortable" hide-details bg-color="white" rounded="lg" />
             </v-col>
           </v-row>
         </v-card>
@@ -91,7 +91,7 @@ import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from './NotificationPage.vue';
 import { DashboardSidebar } from '@/components/navigation';
-import { methodOptions } from '@/constants/researchMethods';
+import { getMethodOptions } from '@/constants/methodDefinitions';
 
 const store = useStore();
 const router = useRouter();
@@ -104,6 +104,18 @@ const temp = ref({});
 const filteredModeratedSessions = ref([]);
 const selectedMethodFilter = ref('all');
 const drawerOpen = ref(false);
+
+// Opciones de métodos usando el nuevo sistema - solo métodos disponibles
+const methodOptions = computed(() => {
+  const options = getMethodOptions('es', 'available') // Solo métodos disponibles
+  return [
+    { value: 'all', text: 'Todos los Métodos' },
+    ...options.map(option => ({
+      value: option.value,
+      text: option.text
+    }))
+  ]
+})
 
 // Computed
 const currentPageTitle = computed(() => {
@@ -134,7 +146,7 @@ const filteredTests = computed(() => {
     const matchesMethod =
       method === 'all' ||
       (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
-      (method === 'User' && testType === 'User') ||
+      ((method === 'USER_GENERAL' || method === 'USER_MODERATED' || method === 'USER_UNMODERATED') && testType === 'User') ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 

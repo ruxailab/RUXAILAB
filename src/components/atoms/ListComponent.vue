@@ -1,127 +1,73 @@
 <template>
-  <v-card elevation="2" class="rounded-lg">
-    <!-- Table Header -->
-    <div class="table-header pa-4">
-      <v-row no-gutters class="align-center">
-        <v-col cols="2" class="px-4">
-          <div class="text-subtitle-1 font-weight-bold table-heading-text">
-            Type
-          </div>
-        </v-col>
-        <v-col cols="3" class="px-4">
-          <div class="text-subtitle-1 font-weight-bold table-heading-text">
-            Name
-          </div>
-        </v-col>
-        <v-col cols="3" class="px-4">
-          <div class="text-subtitle-1 font-weight-bold table-heading-text">
-            Owner
-          </div>
-        </v-col>
-        <v-col cols="2" class="px-4">
-          <div class="text-subtitle-1 font-weight-bold table-heading-text">
-            Participants
-          </div>
-        </v-col>
-        <v-col cols="2" class="px-4">
-          <div class="text-subtitle-1 font-weight-bold table-heading-text">
-            Created On
-          </div>
-        </v-col>
-      </v-row>
-    </div>
-    <v-divider />
-
-    <!-- Table Body -->
-    <v-list class="pa-0">
-      <template v-for="(item, index) in sortedItems" :key="index">
-        <v-list-item class="px-0 py-4" @click="emitClick(item)">
-          <v-row no-gutters class="align-center">
-            <!-- Type Column with Avatar + Tooltip -->
-            <v-col cols="2" class="px-4">
-              <v-tooltip location="top">
-                <template #activator="{ props }">
-                  <v-avatar v-bind="props" tile size="40" :color="generateColor()"
-                    style="border-radius: 5px; color: #545454">
-                    <v-icon size="24">
-                      {{ getTypeIcon(item) }}
-                    </v-icon>
-                  </v-avatar>
-                </template>
-                <span>
-                  {{ item.header?.templateType ?? getTestType(item) }}
-                </span>
-              </v-tooltip>
-            </v-col>
-
-            <!-- Name -->
-            <v-col cols="3" class="px-4">
-              <div class="text-subtitle-1 font-weight-medium text-on-surface">
-                {{ item.header?.templateTitle ?? item.testTitle ?? item.email }}
-              </div>
-            </v-col>
-
-            <!-- Owner -->
-            <v-col cols="3" class="px-4">
-              <div class="d-flex align-center">
-                <v-avatar size="32" class="mr-3">
-                  <v-img v-if="getOwnerImage(item)" :src="getOwnerImage(item)" cover />
-                  <span v-else class="font-weight-medium">
-                    {{
-                      getOwnerName(item)?.[0]?.toUpperCase() ?? 'U'
-                    }}
-                  </span>
-                </v-avatar>
-                <span class="text-body-1">
-                  {{ getOwnerName(item) }}
-                </span>
-              </div>
-            </v-col>
-
-            <!-- Participants -->
-            <v-col cols="2" class="px-4">
-              <div class="d-flex align-center">
-                <v-icon size="18" class="mr-1 text-medium-emphasis">
-                  mdi-account-multiple
-                </v-icon>
-                <span class="text-body-1">
-                  {{ item.numberColaborators ?? '-' }}
-                </span>
-              </div>
-            </v-col>
-
-            <!-- Creation Date -->
-            <v-col cols="2" class="px-4">
-              <div class="text-body-1">
-                {{ formatDate(item.createDate || item.updateDate) }}
-              </div>
-            </v-col>
-          </v-row>
-        </v-list-item>
-        <v-divider v-if="index < sortedItems.length - 1" />
-      </template>
-
-      <!-- Empty State -->
-      <v-row v-if="sortedItems.length === 0" justify="center" align="center" class="ma-0 mt-4 pa-4">
+  <v-data-table :headers="headers" :items="items" :sort-by="[{ key: 'updateDate', order: 'desc' }]" item-key="id"
+    density="comfortable" class="rounded-lg" elevation="2" @click:row="emitClick" hover>
+    <!-- Type Column -->
+    <template #item.type="{ item }">
+      <v-tooltip location="top">
+        <template #activator="{ props }">
+          <v-avatar v-bind="props" size="32" :color="getAvatarColor(item)" style="color: #fff">
+            <v-icon size="18">
+              {{ getTypeIcon(item) }}
+            </v-icon>
+          </v-avatar>
+        </template>
         <span>
-          {{
-            type === 'myTests' ||
-              type === 'publicTests' ||
-              type === 'sharedWithMe'
-              ? $t('pages.listTests.noTests')
-              : type === 'myTemplates' || type === 'publicTemplates'
-                ? $t('pages.listTests.noTemplates')
-                : $t('pages.listTests.noSessions')
-          }}
+          {{ item.header?.templateType ?? getTestType(item) }}
         </span>
-      </v-row>
-    </v-list>
-  </v-card>
+      </v-tooltip>
+    </template>
+
+    <!-- Name Column -->
+    <template #item.name="{ item }">
+      <div class="d-flex flex-column" style="line-height: 1;">
+        <div class="text-subtitle-1 font-weight-medium text-on-surface">
+          {{ getItemTitle(item) }}
+        </div>
+        <div class="text-caption text-medium-emphasis">
+          Fecha creación: {{ formatItemDate(item) }}
+        </div>
+      </div>
+    </template>
+
+    <!-- Owner Column -->
+    <template #item.owner="{ item }">
+      <div class="d-flex align-center">
+        <v-avatar size="32" class="mr-3">
+          <v-img v-if="getOwnerImage(item)" :src="getOwnerImage(item)" cover />
+          <span v-else class="font-weight-medium">
+            {{ getOwnerName(item)?.[0]?.toUpperCase() ?? '?' }}
+          </span>
+        </v-avatar>
+        <span class="text-body-1">
+          {{ getOwnerName(item) }}
+        </span>
+      </div>
+    </template>
+
+    <!-- Participants Column -->
+    <template #item.participants="{ item }">
+      <v-chip size="small" variant="tonal" color="primary" prepend-icon="mdi-account-multiple">
+        {{ item.numberColaborators ?? 0 }}
+      </v-chip>
+    </template>
+
+    <!-- No Data Slot -->
+    <template #no-data>
+      <div class="text-center pa-4">
+        <span>
+          {{ getEmptyStateMessage(t) }}
+        </span>
+      </div>
+    </template>
+  </v-data-table>
 </template>
 
 <script setup>
-import { computed, onBeforeUpdate } from 'vue'
+import { toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useItemFormatting } from '@/composables/useItemFormatting'
+import { useItemTypes } from '@/composables/useItemTypes'
+import { useDataTableConfig } from '@/composables/useDataTableConfig'
 
 const props = defineProps({
   items: {
@@ -139,118 +85,43 @@ const emit = defineEmits(['clicked'])
 
 const { t } = useI18n()
 
-const sortedItems = computed(() => {
-  return props.items.slice().sort((a, b) => {
-    const dateA = new Date(a.updateDate)
-    const dateB = new Date(b.updateDate)
-    return dateB - dateA
-  })
-})
+// Composables
+const typeRef = toRef(props, 'type')
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
+const { getItemTitle, getOwnerName, getOwnerImage, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
+const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
 
-const formatDate = (date) => {
-  if (!date) return '-'
-  const d = new Date(date)
-  return d.toLocaleDateString('en-GB') // dd/MM/yyyy
-}
-
-const getOwnerName = (item) => {
-  if (props.type === 'myTests' || props.type === 'myTemplates') {
-    return t('pages.listTests.me')
-  }
-  return (
-    item.testAdmin?.email ??
-    item.header?.templateAuthor?.userEmail ??
-    item.testAuthorEmail ??
-    'Unknown'
-  )
-}
-
-const getTypeIcon = (item) => {
-  const testType = item.testType ?? item.header?.templateType ?? 'USER'
-  const subtype = item.userTestType ?? ''
-
-  switch (testType.toUpperCase()) {
-    case 'HEURISTICS':
-      return 'mdi-clipboard-check'
-
-    case 'USER':
-      if (subtype.toUpperCase().includes('UNMODERATED')) {
-        return 'mdi-monitor-screenshot'
-      }
-      if (subtype.toUpperCase().includes('MODERATED')) {
-        return 'mdi-account-voice'
-      }
-      return 'mdi-account'
-
-    default:
-      return 'mdi-file-document'
-  }
-}
-
-const getTestType = (item) => {
-  const type = item.testType.toUpperCase();
-  const sub = item.userTestType?.toUpperCase() || '';
-
-  switch (type) {
-    case 'HEURISTICS':
-    case 'MANUAL':
-    case 'AUTOMATIC':
-      return type;
-
-    case 'USER':
-      if (sub?.includes('UNMODERATED')) return 'UNMODERATED';
-      if (sub?.includes('MODERATED')) return 'MODERATED';
-      return 'USER';
-
-    default:
-      return 'EMPTY TYPE';
-  }
-}
-
-const getOwnerImage = (item) => {
-  return item.testAdmin?.imageUrl || item.header?.templateAuthor?.imageUrl || null
-}
-
-const generateColor = () => {
-  const hue = Math.floor(Math.random() * 360)
-  return `hsl(${hue}, 80%, 80%)`
-}
-
-const emitClick = (item) => {
+// Event handlers
+const emitClick = (event, { item }) => {
   emit('clicked', item)
 }
-
-onBeforeUpdate(() => {
-  const availableTypes = [
-    'myTests',
-    'publicTests',
-    'sharedWithMe',
-    'myTemplates',
-    'publicTemplates',
-    'sessions',
-  ]
-  if (!availableTypes.includes(props.type)) {
-    console.error(props.type + ' type in ListTests.vue is not valid.')
-  }
-})
 </script>
 
 <style scoped>
-.v-list-item {
-  border-radius: 0 !important;
-  transition: background-color 0.2s ease;
-}
-
-.v-list-item:hover {
+/* Custom hover effect for rows */
+:deep(.v-data-table__tr:hover) {
   background-color: rgba(var(--v-theme-primary), 0.04) !important;
 }
 
-.table-header {
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+/* Ensure proper cursor for clickable rows */
+:deep(.v-data-table__tr) {
+  cursor: pointer;
 }
 
-.table-heading-text {
-  color: #1F2937 !important;
+/* Add margin between rows */
+:deep(.v-data-table__tr td) {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+/* Header styling */
+:deep(.v-data-table-header__content) {
   font-weight: 700 !important;
+  color: #1F2937 !important;
+}
+
+/* Optional: Add a subtle border between rows for better separation */
+:deep(.v-data-table__tr:not(:last-child)) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 </style>
