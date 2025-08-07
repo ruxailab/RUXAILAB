@@ -1,55 +1,25 @@
 <template>
-  <v-container
-    fluid
-    class="create-study-view"
-  >
+  <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader
-        :current-step="1"
-        :steps="steps"
-      />
+      <StepperHeader :current-step="1" :steps="steps" />
 
       <!-- Page Header -->
-      <SectionHeader
-        title="Choose Evaluation Category"
-        subtitle="Select the type of evaluation you want to conduct for your study"
-      />
+      <SectionHeader title="Choose Evaluation Category"
+        subtitle="Select the type of evaluation you want to conduct for your study" />
 
       <!-- Categories Grid -->
-      <v-row
-        justify="center"
-        class="mb-8"
-      >
-        <v-col
-          v-for="category in categories"
-          :key="category.id"
-          cols="12"
-          sm="6"
-          md="4"
-        >
-          <SelectableCard
-            :selected="selectedCategory === category.id"
-            :icon="category.icon"
-            :title="category.title"
-            text-class="pa-8 text-center"
-            :description="category.description"
-            :color="category.color"
-            :disabled="category.comingSoon"
-            :badge="
-              category.comingSoon
-                ? { text: 'Coming Soon', color: 'warning' }
-                : null
-            "
-            @click="() => handleCategoryClick(category.id)"
-          >
+      <v-row justify="center">
+        <v-col v-for="category in categories" :key="category.id" cols="3">
+          <SelectableCard :selected="selectedCategory === category.id" :icon="category.icon" :title="category.title"
+            text-class="pa-8 text-center" :description="category.description" :color="category.color"
+            :disabled="category.comingSoon" :badge="category.comingSoon
+              ? { text: 'Coming Soon', color: 'warning' }
+              : null
+              " @click="() => handleCategoryClick(category.id)">
             <template #extra>
-              <v-chip
-                v-if="category.hasSubMethods && !category.comingSoon"
-                color="primary"
-                variant="tonal"
-                size="small"
-              >
+              <v-chip v-if="category.hasSubMethods && !category.comingSoon" color="primary" variant="tonal"
+                size="small">
                 Multiple Methods
               </v-chip>
             </template>
@@ -58,10 +28,7 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton
-        label="Back to Dashboard"
-        @back="goBack"
-      />
+      <BackButton label="Back to Dashboard" @back="goBack" />
     </v-container>
   </v-container>
 </template>
@@ -71,6 +38,7 @@ import BackButton from '@/components/atoms/BackButton.vue'
 import SectionHeader from '@/components/atoms/SectionHeader.vue'
 import SelectableCard from '@/components/atoms/SelectableCard.vue'
 import StepperHeader from '@/components/atoms/StepperHeader.vue'
+import { STUDY_CATEGORIES, getCategoryById } from '@/constants/studyCategories.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -86,49 +54,10 @@ const steps = [
   { value: 4, title: 'Details', complete: false },
 ]
 
-const categories = [
-  {
-    id: 'test',
-    title: 'Test',
-    description:
-      'Conduct controlled testing with real users to measure usability and performance.',
-    icon: 'mdi-test-tube',
-    color: 'success',
-    hasSubMethods: true,
-  },
-  {
-    id: 'inquiry',
-    title: 'Inquiry',
-    description:
-      'Gather insights through surveys, interviews, and other research methods.',
-    icon: 'mdi-comment-question-outline',
-    color: 'warning',
-    hasSubMethods: false,
-    comingSoon: true,
-  },
-  {
-    id: 'inspection',
-    title: 'Inspection',
-    description:
-      'Expert evaluation using established usability principles and guidelines.',
-    icon: 'mdi-magnify',
-    color: 'secondary',
-    hasSubMethods: true,
-  },
-  {
-    id: 'accessibility',
-    title: 'Accessibility',
-    description:
-      'Assess your product for accessibility compliance and best practices.',
-    icon: 'mdi-access-point',
-    color: 'primary',
-    hasSubMethods: false,
-    comingSoon: false,
-  },
-]
+const categories = STUDY_CATEGORIES
 
 const handleCategoryClick = (categoryId) => {
-  const category = categories.find((c) => c.id === categoryId)
+  const category = getCategoryById(categoryId)
   if (category?.comingSoon) return
 
   selectedCategory.value = categoryId
