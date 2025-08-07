@@ -223,7 +223,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
   }
 });
 
-onBeforeMount(async () => {
+onMounted(async () => {
   await getMyPersonalTests();
   await cleanTestStore();
 });
