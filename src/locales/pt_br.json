@@ -44,11 +44,11 @@
     "unread": "não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
-      "years": "{count} ano{count !== 1 ? 's' : ''} atrás",
-      "months": "{count} mês{count !== 1 ? 'es' : ''} atrás",
-      "days": "{count} dia{count !== 1 ? 's' : ''} atrás",
-      "hours": "{count} hora{count !== 1 ? 's' : ''} atrás",
-      "minutes": "{count} minuto{count !== 1 ? 's' : ''} atrás",
+      "years": "{count} ano atrás | {count} ano atráss",
+      "months": "{count} mês atrás | {count} mês atráses",
+      "days": "{count} dia atrás | {count} dia atráss",
+      "hours": "{count} hora atrás | count} hora atráss",
+      "minutes": "{count} minuto atrás | {count} minuto atráss",
       "now": "Agora"
     },
     "viewAll": "Ver tudo",

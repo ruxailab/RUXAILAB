@@ -3,6 +3,7 @@
 import Controller from '@/controllers/BaseController'
 import Answer from '@/models/Answer'
 import UserController from './UserController'
+import TaskAnswer from '@/models/TaskAnswer'
 const COLLECTION = 'answers'
 
 const userController = new UserController()
@@ -79,5 +80,17 @@ export default class AnswerController extends Controller {
     console.log("fieldToUpdate ->", fieldToUpdate);
 
     await super.update(COLLECTION, answerDocId, fieldToUpdate)
+  }
+
+  async updateTaskAnswer(payload, answerDocId) {
+    const fieldPath = `taskAnswers.${payload.userDocId}`;
+    const data = new TaskAnswer({
+      ...payload,
+      lastUpdate: Date.now(),
+    });
+    console.log("data:", data)
+    await super.update(COLLECTION, answerDocId, {
+      [fieldPath]: data.toFirestore(),
+    });
   }
 }

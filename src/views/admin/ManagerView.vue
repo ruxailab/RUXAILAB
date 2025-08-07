@@ -400,7 +400,7 @@ watch(user, () => {
 
 <style>
 .background {
-  background-color: #e8eaf2;
+  background-color: #ffffff;
   height: 100%;
   overflow: scroll;
 }
