@@ -1,103 +1,41 @@
 <template>
   <div class="dashboard-layout">
-    <v-navigation-drawer
-      width="280"
-      class="sidebar"
-      elevation="2"
-    >
-      <!-- Sidebar Header -->
-      <div class="sidebar-header pa-6">
-        <div class="d-flex align-center">
-          <v-avatar
-            color="primary"
-            size="40"
-            class="mr-3"
-          >
-            <v-icon
-              icon="mdi-view-dashboard"
-              color="white"
-            />
-          </v-avatar>
-          <div>
-            <h2 class="text-h6 font-weight-bold">
-              Dashboard
-            </h2>
-            <p class="text-caption text-grey-darken-1 ma-0">
-              Manage your research
-            </p>
-          </div>
-        </div>
-      </div>
-      <v-divider />
+    <v-navigation-drawer width="280" class="sidebar" elevation="0">
+
+      <v-divider class="mb-4" />
 
       <!-- Navigation -->
-      <v-list
-        class="pa-4"
-        nav
-      >
-        <template
-          v-for="item in navigationItems"
-          :key="item.id"
-        >
-          <v-list-group
-            v-if="item.children"
-            :value="activeSection === item.id"
-          >
+      <v-list class="pa-4" nav>
+        <template v-for="item in navigationItems" :key="item.id">
+          <v-list-group v-if="item.children" :value="activeSection === item.id">
             <template #activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                :prepend-icon="item.icon"
-                :title="item.title"
-                class="section-header mb-2"
-                rounded="lg"
-              />
+              <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.title" class="section-header mb-2"
+                rounded="lg" />
             </template>
-            <v-list-item
-              v-for="child in item.children"
-              :key="child.id"
-              :title="child.title"
-              :prepend-icon="child.icon"
-              :active="activeSection === item.id && activeSubSection === child.id"
-              class="subsection-item ml-4 mb-1"
-              rounded="lg"
-              @click="selectNavigation(item.id, child.id)"
-            />
+            <v-list-item v-for="child in item.children" :key="child.id" :title="child.title" :prepend-icon="child.icon"
+              :active="activeSection === item.id && activeSubSection === child.id" class="subsection-item ml-4 mb-1"
+              rounded="lg" @click="selectNavigation(item.id, child.id)" />
           </v-list-group>
 
-          <v-list-item
-            v-else
-            :title="item.title"
-            :prepend-icon="item.icon"
-            :active="activeSection === item.id"
-            class="section-header mb-2"
-            rounded="lg"
-            @click="selectNavigation(item.id)"
-          />
+          <v-list-item v-else :title="item.title" :prepend-icon="item.icon" :active="activeSection === item.id"
+            class="section-header mb-2" rounded="lg" @click="selectNavigation(item.id)" />
         </template>
       </v-list>
 
       <!-- Create Button -->
-      <div class="pa-4 mt-auto">
-        <v-btn
-          color="success"
-          block
-          size="large"
-          prepend-icon="mdi-plus"
-          @click="goToCreateTestRoute"
-        >
+      <div class="px-4 pb-4 mt-auto">
+        <v-btn color="primary" block size="large" prepend-icon="mdi-plus" rounded="lg" elevation="1"
+          class="create-button" @click="goToCreateTestRoute">
           Create New Test
         </v-btn>
       </div>
     </v-navigation-drawer>
 
     <v-main class="main-content">
-      <v-container
-        fluid
-        class="pa-6"
-      >
+      <v-container fluid class="pa-8">
         <!-- Header -->
-        <div class="content-header mb-6">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
+        <div class="content-header">
+          <h1 class="text-h4 font-weight-bold text-grey-darken-4">
             {{ currentPageTitle }}
           </h1>
           <p class="text-h6 text-grey-darken-1">
@@ -112,39 +50,19 @@
         </div>
 
         <!-- Search + Filters -->
-        <v-row
-          v-if="['studies', 'community'].includes(activeSection)"
-          class="mb-6"
-          justify="space-between"
-        >
-          <v-col
-            cols="12"
-            md="8"
-          >
-            <v-text-field
-              v-model="search"
-              width="full"
-              prepend-inner-icon="mdi-magnify"
-              label="Search"
-              variant="outlined"
-              hide-details
-              rounded="lg"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <v-select
-              v-model="selectedMethodFilter"
-              :items="methodOptions"
-              label="Filter by Type"
-              variant="outlined"
-              hide-details
-              rounded="lg"
-            />
-          </v-col>
-        </v-row>
+        <v-card v-if="['studies', 'community'].includes(activeSection)" class="mb-5 search-filters-card">
+          <v-row class="pa-4" justify="space-between" no-gutters>
+            <v-col cols="12" md="8" class="pr-md-4">
+              <v-text-field v-model="search" width="full" prepend-inner-icon="mdi-magnify"
+                placeholder="Search in your research..." variant="outlined" density="comfortable" hide-details
+                bg-color="white" rounded="lg" />
+            </v-col>
+            <v-col cols="12" md="4" class="mt-3 mt-md-0">
+              <v-select v-model="selectedMethodFilter" :items="methodOptions" label="Research Method" variant="outlined"
+                density="comfortable" hide-details bg-color="white" rounded="lg" />
+            </v-col>
+          </v-row>
+        </v-card>
 
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
@@ -152,30 +70,14 @@
         </div>
 
         <div v-if="activeSection === 'studies'">
-          <List
-            :items="filteredTests"
-            type="myTests"
-            @clicked="goTo"
-          />
+          <List :items="filteredTests" type="myTests" @clicked="goTo" />
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <List
-            v-if="filteredModeratedSessions.length > 0"
-            :items="filteredModeratedSessions"
-            type="sessions"
-            @clicked="goTo"
-          />
-          <div
-            v-else
-            class="empty-state"
-          >
-            <v-icon
-              icon="mdi-clock-remove-outline"
-              size="48"
-              color="grey-lighten-1"
-              class="mb-2"
-            />
+          <List v-if="filteredModeratedSessions.length > 0" :items="filteredModeratedSessions" type="sessions"
+            @clicked="goTo" />
+          <div v-else class="empty-state">
+            <v-icon icon="mdi-clock-remove-outline" size="48" color="grey-lighten-1" class="mb-2" />
             <p class="text-h6">
               You don't have active sessions
             </p>
@@ -183,27 +85,15 @@
         </div>
 
         <div v-if="activeSection === 'templates'">
-          <List
-            :items="filteredTemplates"
-            type="myTemplates"
-            @clicked="setupTempDialog"
-          />
+          <List :items="filteredTemplates" type="myTemplates" @clicked="setupTempDialog" />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
-          <List
-            :items="filteredTests"
-            type="publicTests"
-            @clicked="goTo"
-          />
+          <List :items="filteredTests" type="publicTests" @clicked="goTo" />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
-          <List
-            :items="filteredTemplates"
-            type="publicTemplates"
-            @clicked="setupTempDialog"
-          />
+          <List :items="filteredTemplates" type="publicTemplates" @clicked="setupTempDialog" />
         </div>
 
         <div v-if="activeSection === 'notifications'">
@@ -214,12 +104,7 @@
           <ProfileView />
         </div>
 
-        <TempDialog
-          v-model:dialog="tempDialog"
-          :template="temp"
-          :allow-create="true"
-          @close="tempDialog = false"
-        />
+        <TempDialog v-model:dialog="tempDialog" :template="temp" :allow-create="true" @close="tempDialog = false" />
       </v-container>
     </v-main>
   </div>
@@ -267,8 +152,8 @@ const methodOptions = [
   { value: 'all', title: 'All Methods' },
   { value: 'User', title: 'Usability Test' },
   { value: 'HEURISTICS', title: 'Heuristic Evaluation' },
-  { value: 'MANUAL', title: 'MANUAL'},
-  { value: 'AUTOMATIC', title: 'AUTOMATIC'}
+  { value: 'MANUAL', title: 'MANUAL' },
+  { value: 'AUTOMATIC', title: 'AUTOMATIC' }
 ];
 
 const currentPageTitle = computed(() => {
@@ -389,30 +274,31 @@ onMounted(() => {
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f5f6fa;
 }
 
 .sidebar {
   background-color: white !important;
-  border-right: 1px solid #e0e0e0 !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
 .sidebar .sidebar-header {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .main-content {
   padding: 0;
   flex: 1;
-  background-color: #f8f9fa;
+  background-color: #fff;
 }
 
 .content-header {
-  background-color: white;
+  background-color: transparent;
   border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
 }
+
+
 
 .study-card,
 .template-card {
@@ -426,7 +312,7 @@ onMounted(() => {
 .template-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-  border-color: #2196F3 !important;
+  border-color: #00213F !important;
 }
 
 .empty-state {
@@ -437,50 +323,39 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.create-btn {
-  text-transform: none;
-  letter-spacing: normal;
-  font-weight: 600;
+.create-button {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: 600 !important;
+  transition: transform 0.2s ease-in-out !important;
+}
+
+.create-button:hover {
+  transform: translateY(-2px);
 }
 
 /* Navigation Styling */
+.v-list {
+  padding: 0.5rem !important;
+}
+
 .v-list-group__items .v-list-item {
   margin-bottom: 4px;
+  transition: all 0.2s ease-in-out;
 }
 
 .v-list-group__items .v-list-item.v-list-item--active {
-  background-color: rgba(33, 150, 243, 0.1) !important;
-  color: #2196F3 !important;
-}
-
-.v-list-group__items .v-list-item.v-list-item--active .v-list-item__prepend .v-icon {
-  color: #2196F3 !important;
-}
-
-.v-list-group__items .v-list-item:hover:not(.v-list-item--active) {
-  background-color: rgba(0, 0, 0, 0.04) !important;
-}
-
-.section-header {
+  background-color: var(--v-primary-lighten-5, rgba(0, 33, 63, 0.1)) !important;
+  color: var(--v-primary-base, #00213F) !important;
   font-weight: 600 !important;
 }
 
-.section-header .v-list-item__prepend .v-icon {
-  margin-right: 12px;
+.v-list-group__items .v-list-item.v-list-item--active .v-list-item__prepend .v-icon {
+  color: var(--v-primary-base, #00213F) !important;
 }
 
-.subsection-item {
-  font-size: 0.9rem;
-  padding: 0;
-}
-
-.subsection-item .v-list-item__prepend .v-icon {
-  font-size: 18px;
-  margin-right: 12px;
-}
-
-.v-btn {
-  text-transform: none;
-  letter-spacing: normal;
+.v-list-group__items .v-list-item:hover:not(.v-list-item--active) {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  transform: translateX(4px);
 }
 </style>
