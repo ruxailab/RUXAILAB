@@ -20,6 +20,7 @@ export default class TaskAnswer {
     userDocId,
     lastUpdate,
     invited,
+    hidden,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -39,6 +40,7 @@ export default class TaskAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
+    this.hidden = hidden ?? false
   }
   static toTaskAnswer(data) {
     return new TaskAnswer({
@@ -63,7 +65,7 @@ export default class TaskAnswer {
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [
           key,
-          value.toFirestore(),
+          (value instanceof UserTask ? value : new UserTask(value)).toFirestore(),
         ]),
       ),
       progress: this.progress,
@@ -76,6 +78,7 @@ export default class TaskAnswer {
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
       invited: this.invited,
+      hidden: this.hidden,
     }
   }
 }
