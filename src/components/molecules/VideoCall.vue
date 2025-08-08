@@ -1,169 +1,206 @@
 <template>
-  <div>
-    <v-btn @click="start">Conectar</v-btn>
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <video ref="localVideo" autoplay playsinline muted></video>
-      <video ref="remoteVideo" autoplay playsinline></video>
+  <div class="video-call">
+    <video ref="localVideo" autoplay muted playsinline></video>
+    <video ref="remoteVideo" autoplay playsinline></video>
+    <div class="controls">
+      <button @click="startCall">Start Call</button>
+      <button @click="answerCall">Answer Call</button>
+      <button @click="endCall">End Call</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { db } from '@/firebase'
-import {
-  doc, getDoc, setDoc, updateDoc, collection,
-  addDoc, onSnapshot, getDocs, deleteDoc,
-} from 'firebase/firestore'
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { database } from '@/firebase';
+import { ref as dbRef, set, onValue, push, onChildRemoved } from 'firebase/database';
 
-const localVideo = ref(null)
-const remoteVideo = ref(null)
+// References to the video elements
+const localVideo = ref(null);
+const remoteVideo = ref(null);
 
-const localStream = ref(null)
-const remoteStream = ref(new MediaStream())
-const peerConnection = ref(null)
-const roomId = 'test-room'
+// Reactive state variables
+const localStream = ref(null);
+const peerConnection = ref(null);
+const roomId = ref('your_room_id'); // Could be dynamic
 
-const config = {
-  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-}
+// Initialize the WebRTC connection and media
+async function init() {
+  peerConnection.value = null;
+  localStream.value = null;
+  roomId.value = 'your_room_id'; // or dynamic id
 
-async function start() {
-  // Obtem stream local
-  localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-  localVideo.value.srcObject = localStream.value
+  // ICE servers configuration
+  const servers = {
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+  };
 
-  // Inicializa conexão
-  peerConnection.value = new RTCPeerConnection(config)
+  peerConnection.value = new RTCPeerConnection(servers);
 
-  // Adiciona tracks locais
-  localStream.value.getTracks().forEach(track => {
-    peerConnection.value.addTrack(track, localStream.value)
-  })
-
-  // Define stream remota
+  // When remote track arrives, set it to the remote video element
   peerConnection.value.ontrack = (event) => {
-    console.log('[track] recebida')
-    event.streams[0].getTracks().forEach(track => {
-      remoteStream.value.addTrack(track)
-    })
-    remoteVideo.value.srcObject = remoteStream.value
-  }
+    remoteVideo.value.srcObject = event.streams[0];
+  };
 
-  // Logging de estados
-  peerConnection.value.addEventListener('connectionstatechange', async () => {
-    const state = peerConnection.value.connectionState
-    console.log('[connectionstatechange]', state)
-
-    // If disconnected, failed or closed, cleanup
-    if (['disconnected', 'failed', 'closed'].includes(state)) {
-      await cleanupRoom()
-    }
-  })
-
-  const roomRef = doc(db, 'rooms', roomId)
-  const callerCandidates = collection(roomRef, 'callerCandidates')
-  const calleeCandidates = collection(roomRef, 'calleeCandidates')
-
-  const roomSnap = await getDoc(roomRef)
-  const isCaller = !roomSnap.exists()
-
+  // Handle ICE candidates and push them to Firebase
   peerConnection.value.onicecandidate = async (event) => {
     if (event.candidate) {
-      const json = event.candidate.toJSON()
-      await addDoc(isCaller ? callerCandidates : calleeCandidates, json)
+      const candidateRef = dbRef(database, `calls/${roomId.value}/candidates`);
+      await push(candidateRef, event.candidate.toJSON());
     }
+  };
+
+  // Listen for room removal to end call automatically
+  const callsRef = dbRef(database, `calls/`);
+  onChildRemoved(callsRef, (snapshot) => {
+    if (snapshot.key === roomId.value) {
+      console.log('Call ended by remote');
+      endCall(false);
+    }
+  });
+
+  // Access user media (camera and microphone)
+  try {
+    localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localVideo.value.srcObject = localStream.value;
+
+    // Add local tracks to the peer connection
+    localStream.value.getTracks().forEach(track => {
+      peerConnection.value.addTrack(track, localStream.value);
+    });
+  } catch (error) {
+    console.error('Error accessing media devices:', error);
   }
-
-  if (isCaller) {
-    console.log('Sou o caller')
-    const offer = await peerConnection.value.createOffer()
-    await peerConnection.value.setLocalDescription(offer)
-
-    await setDoc(roomRef, { offer: { type: offer.type, sdp: offer.sdp } })
-
-    onSnapshot(roomRef, async snapshot => {
-      const data = snapshot.data()
-      if (data?.answer && !peerConnection.value.currentRemoteDescription) {
-        const answer = new RTCSessionDescription(data.answer)
-        await peerConnection.value.setRemoteDescription(answer)
-      }
-    })
-
-    onSnapshot(calleeCandidates, snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === 'added') {
-          const candidate = new RTCIceCandidate(change.doc.data())
-          peerConnection.value.addIceCandidate(candidate)
-        }
-      })
-    })
-
-  } else {
-    console.log('Sou o callee')
-    const offer = roomSnap.data().offer
-    await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offer))
-
-    const answer = await peerConnection.value.createAnswer()
-    await peerConnection.value.setLocalDescription(answer)
-
-    await updateDoc(roomRef, { answer: { type: answer.type, sdp: answer.sdp } })
-
-    onSnapshot(callerCandidates, snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === 'added') {
-          const candidate = new RTCIceCandidate(change.doc.data())
-          peerConnection.value.addIceCandidate(candidate)
-        }
-      })
-    })
-  }
-
-  async function cleanupRoom() {
-    const roomRef = doc(db, 'rooms', roomId)
-
-    // Apaga candidatos
-    const callerCandidates = await getDocs(collection(roomRef, 'callerCandidates'))
-    const calleeCandidates = await getDocs(collection(roomRef, 'calleeCandidates'))
-
-    for (const docSnap of callerCandidates.docs) {
-      await deleteDoc(docSnap.ref)
-    }
-
-    for (const docSnap of calleeCandidates.docs) {
-      await deleteDoc(docSnap.ref)
-    }
-
-    // Apaga a sala
-    try {
-      await deleteDoc(roomRef)
-    } catch (e) {
-      console.warn('Sala já estava apagada:', e.message)
-    }
-
-    // Fecha o peerConnection
-    if (peerConnection.value) {
-      peerConnection.value.close()
-      peerConnection.value = null
-    }
-
-    // Limpa as streams
-    if (localStream.value) {
-      localStream.value.getTracks().forEach(track => track.stop())
-      localStream.value = null
-    }
-
-    remoteStream.value = new MediaStream()
-    remoteVideo.value.srcObject = null
-  }
-
 }
+
+// Listen for incoming ICE candidates from Firebase and add to peer connection
+function listenForCandidates() {
+  const candidateRef = dbRef(database, `calls/${roomId.value}/candidates`);
+  onValue(candidateRef, async (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      console.log('Received new ICE candidates');
+      const candidates = Object.values(data);
+      for (const candidate of candidates) {
+        try {
+          if (peerConnection.value.remoteDescription) {
+            await peerConnection.value.addIceCandidate(new RTCIceCandidate(candidate));
+          }
+        } catch (e) {
+          console.error('Error adding ICE candidate:', e);
+        }
+      }
+    }
+  });
+}
+
+// Starts the call by creating an offer and saving it in Firebase
+async function startCall() {
+  if (!peerConnection.value) {
+    console.error('PeerConnection not initialized. Initializing now...');
+    await init();
+  }
+
+  const offer = await peerConnection.value.createOffer();
+  await peerConnection.value.setLocalDescription(offer);
+
+  // Save the offer to Firebase
+  const offerRef = dbRef(database, `calls/${roomId.value}/offer`);
+  await set(offerRef, {
+    sdp: offer.sdp,
+    type: offer.type
+  });
+
+  console.log('Offer sent, waiting for answer...');
+
+  // Listen for answer from remote peer
+  const answerRef = dbRef(database, `calls/${roomId.value}/answer`);
+  onValue(answerRef, async (snapshot) => {
+    const data = snapshot.val();
+    if (data && peerConnection.value && peerConnection.value.signalingState === 'have-local-offer') {
+      console.log('Answer received, setting remote description...');
+      const remoteDesc = new RTCSessionDescription(data);
+      await peerConnection.value.setRemoteDescription(remoteDesc);
+      listenForCandidates();
+    }
+  });
+}
+
+// Answers a call by retrieving the offer from Firebase and sending an answer
+async function answerCall() {
+  const offerRef = dbRef(database, `calls/${roomId.value}/offer`);
+  onValue(offerRef, async (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      console.log('Offer received, setting remote description...');
+      const offer = new RTCSessionDescription(data);
+      await peerConnection.value.setRemoteDescription(offer);
+
+      const answer = await peerConnection.value.createAnswer();
+      await peerConnection.value.setLocalDescription(answer);
+
+      const answerRef = dbRef(database, `calls/${roomId.value}/answer`);
+      await set(answerRef, {
+        sdp: answer.sdp,
+        type: answer.type
+      });
+
+      // Now listen for ICE candidates
+      listenForCandidates();
+    }
+  });
+}
+
+// Ends the call and optionally removes the room from Firebase
+function endCall(shouldRemoveFromDB = true) {
+  if (localStream.value) {
+    localStream.value.getTracks().forEach(track => track.stop());
+  }
+  if (peerConnection.value) {
+    peerConnection.value.close();
+  }
+
+  if (shouldRemoveFromDB) {
+    const roomRef = dbRef(database, `calls/${roomId.value}`);
+    set(roomRef, null)
+      .then(() => console.log(`Room ${roomId.value} removed from database.`))
+      .catch(error => console.error('Error removing room:', error));
+  }
+
+  localStream.value = null;
+  peerConnection.value = null;
+
+  // Re-initialize for a new call
+  init();
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  init();
+});
+
+onBeforeUnmount(() => {
+  endCall();
+});
 </script>
+
 <style scoped>
-.video {
-  border-radius: 30px;
+.video-call {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+video {
   width: 100%;
-  object-fit: contain;
-  height: 100%;
+  max-width: 600px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
 }
 </style>
