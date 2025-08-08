@@ -132,7 +132,7 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+            <v-card v-if="testStructure?.userTasks && taskAnswers.length" class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
                 <v-avatar
                   color="error"
@@ -322,19 +322,19 @@ const formatTime = (time) => {
 };
 
 const findLongestTask = () => {
-  if (!taskAnswers.value.length) return { taskName: 'Task', averageTime: formatTime(0) };
+  if (!taskAnswers.value.length) {
+    return { taskName: 'Task', averageTime: formatTime(0) };
+  }
 
   const taskAverages = {};
 
   taskAnswers.value.forEach((answer) => {
+    if (!answer.tasks) return;
     for (const taskId in answer.tasks) {
-      const taskTime = answer.tasks[taskId].taskTime;
+      const taskTime = answer.tasks[taskId]?.taskTime ?? 0;
 
       if (!taskAverages[taskId]) {
-        taskAverages[taskId] = {
-          totalTime: taskTime,
-          count: 1,
-        };
+        taskAverages[taskId] = { totalTime: taskTime, count: 1 };
       } else {
         taskAverages[taskId].totalTime += taskTime;
         taskAverages[taskId].count++;
@@ -343,8 +343,7 @@ const findLongestTask = () => {
   });
 
   for (const taskId in taskAverages) {
-    const averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
-    taskAverages[taskId].averageTime = averageTime;
+    taskAverages[taskId].averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
   }
 
   let longestTask = null;
@@ -358,9 +357,11 @@ const findLongestTask = () => {
   }
 
   const taskMap = {};
-  testStructure.value.userTasks.forEach((task) => {
-    taskMap[task.taskId] = task;
-  });
+  if (testStructure.value && Array.isArray(testStructure.value.userTasks)) {
+    testStructure.value.userTasks.forEach((task) => {
+      taskMap[task.taskId] = task;
+    });
+  }
 
   return {
     taskName: taskMap[longestTask]?.taskName || 'Task',
