@@ -26,35 +26,15 @@
     <v-card
       v-if="index === 0"
       rounded="xxl"
-      style="background: #f5f7ff"
     >
-      <v-card-title class="subtitleView">
-        {{ $t('UserTestTable.titles.consentForm') }}
-      </v-card-title>
-
-      <v-divider />
-      <v-row justify="space-around">
-        <v-col cols="10">
-          <UserConsent @input="updateData" />
-        </v-col>
-      </v-row>
+      <UserConsent @input="updateData" />
     </v-card>
 
     <v-card
       v-if="index === 1"
       rounded="xxl"
-      style="background: #f5f7ff"
     >
-      <v-card-title class="subtitleView">
-        {{ $t('UserTestTable.titles.userVariables') }}
-      </v-card-title>
-
-      <v-divider />
-      <v-row justify="space-around">
-        <v-col cols="12">
-          <UserVariables @input="updateData" />
-        </v-col>
-      </v-row>
+      <UserVariables @input="updateData" />
     </v-card>
 
     <ListTasks
@@ -66,18 +46,8 @@
     <v-card
       v-if="index === 3"
       rounded="xxl"
-      style="background: #f5f7ff"
     >
-      <v-card-title class="subtitleView">
-        {{ $t('UserTestTable.titles.postForm') }}
-      </v-card-title>
-
-      <v-divider />
-      <v-row justify="space-around">
-        <v-col cols="12">
-          <FormPostTest @input="updateData" />
-        </v-col>
-      </v-row>
+      <FormPostTest @input="updateData" />
     </v-card>
   </v-col>
 </template>
