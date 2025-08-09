@@ -44,11 +44,11 @@
     "unread": "no leído",
     "inbox": "Bandeja de entrada",
     "timeAgo": {
-      "years": "Hace {count} año{count !== 1 ? 's' : ''}",
-      "months": "Hace {count} mes{count !== 1 ? 'es' : ''}",
-      "days": "Hace {count} día{count !== 1 ? 's' : ''}",
-      "hours": "Hace {count} hora{count !== 1 ? 's' : ''}",
-      "minutes": "Hace {count} minuto{count !== 1 ? 's' : ''}",
+      "years": "Hace {count} año | Hace {count} años",
+      "months": "Hace {count} mes | Hace {count} meses",
+      "days": "Hace {count} día | Hace {count} días",
+      "hours": "Hace {count} hora | Hace {count} horas",
+      "minutes": "Hace {count} minuto | Hace {count} minutos",
       "now": "Ahora"
     },
     "viewAll": "Ver todo",
@@ -404,9 +404,9 @@
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Pre Prueba - Consentimiento",
-      "preTestForm": "Pre Prueba - Formulario",
-      "preTest": "Pre-Prueba",
+      "preTestConsent": "Formulario de Consentimiento",
+      "preTestForm": "Preguntas iniciales",
+      "preTest": "Preguntas finales",
       "postTest": "Post-Prueba"
     },
     "buttons": {
@@ -617,7 +617,13 @@
     "cooperators": "Colaboradores",
     "analytics": "Análisis",
     "help_center": "Centro de Ayuda",
-    "howCanWeHelp": "¿Cómo podemos ayudar?"
+    "howCanWeHelp": "¿Cómo podemos ayudar?",
+    "categories": "CATEGORÍAS",
+    "viewAll": "Ver Todo",
+    "noArticlesFound": "No se encontraron artículos",
+    "browseAllCategories": "Explora todas las categorías para encontrar la ayuda que necesitas",
+    "viewAllArticles": "Ver Todos los Artículos",
+    "videoAltText": "Video de demostración de FAQ que muestra los pasos visuales para resolver la pregunta frecuente. No hay contenido de audio presente en este video instructivo."
   },
   "user": "USUARIO",
   "account": "Cuenta",

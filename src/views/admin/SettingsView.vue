@@ -1,110 +1,59 @@
-<template>
-  <v-container v-if="true">
-    <Snackbar />
+// src/views/admin/SettingsView.vue
 
-    <!-- Leave Alert Dialog -->
+<template>
+  <PageWrapper title="Test Configuration" :loading="loadingPage" loading-text="Loading Settings" :side-gap="true">
+    <!-- Actions Slot for Save Button -->
+    <template #actions>
+      <v-btn color="primary" variant="flat" size="large" class="text-none font-weight-semibold rounded-l px-6"
+        :loading="loading" @click="submit()" :disabled="!localChanges">
+        <v-icon start size="18">mdi-check</v-icon>
+        Save Changes
+      </v-btn>
+    </template>
+
+    <!-- Subtitle Slot -->
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Manage your test settings and preferences with advanced controls
+      </p>
+    </template>
+
+    <!-- Main Content -->
+    <Snackbar />
     <LeaveAlert @submit="onSubmit" />
 
-    <!-- Delete Alert Dialog -->
-    <v-dialog
-      v-model="dialogDel"
-      width="600"
-      persistent
-    >
-      <v-card>
-        <v-card-title
-          class="text-h5 bg-error text-white"
-          primary-title
-        >
-          {{ $t('alerts.deleteTest') }}
+    <v-dialog v-model="tempDialog" max-width="800">
+      <v-card class="rounded-xl">
+        <v-card-title class="d-flex align-center px-6 py-4">
+          <v-icon color="primary" size="28" class="mr-3">mdi-file-document-plus-outline</v-icon>
+          <h3 class="text-h5 font-weight-bold text-grey-darken-4">Create Template</h3>
+          <v-spacer></v-spacer>
+          <v-btn icon flat @click="closeDialog" class="text-grey-darken-1">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
         </v-card-title>
-
-        <v-card-text>{{ dialogText }}</v-card-text>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="dialogDel = false"
-          >
-            {{ $t('buttons.cancel') }}
-          </v-btn>
-          <v-btn
-            class="bg-red text-white ml-1"
-            :loading="loading"
-            variant="text"
-            @click="deleteTest(object)"
-          >
-            {{ $t('buttons.delete') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Create Template Dialog -->
-    <v-dialog
-      v-model="tempDialog"
-      max-width="80%"
-    >
-      <v-card>
-        <p class="dialog-title ma-2 pa-2">
-          Create Template
-        </p>
-        <v-divider />
-        <v-form
-          ref="tempform"
-          class="px-5"
-        >
-          <v-row
-            justify="space-around"
-            class="pa-2"
-          >
+        <v-divider></v-divider>
+        <v-form ref="tempform" class="pa-6">
+          <v-row>
             <v-col cols="12">
-              <v-text-field
-                :model-value="template.templateTitle"
-                autofocus
-                label="Title"
-                :rules="titleRequired"
-                counter="200"
-                variant="outlined"
-                density="compact"
-                @update:model-value="updateTemplateTitle($event)"
-              />
-
-              <v-textarea
-                :model-value="template.templateDescription"
-                label="Description"
-                variant="outlined"
-                density="compact"
-                @update:model-value="updateTemplateDescription($event)"
-              />
-
-              <v-checkbox
-                :value="template.isTemplatePublic"
-                label="Make template public to all users"
-                color="#F9A826"
-                @input="updateTemplate({ isTemplatePublic: $event })"
-              />
+              <v-text-field v-model="template.templateTitle" autofocus label="Title" :rules="titleRequired"
+                counter="200" variant="outlined" density="comfortable" placeholder="Enter a title for your template"
+                class="mb-4" />
+              <v-textarea v-model="template.templateDescription" label="Description" variant="outlined" rows="4"
+                density="comfortable" placeholder="Provide a description for your template" class="mb-4" />
+              <v-checkbox v-model="template.isTemplatePublic" label="Make template public to all users" color="primary"
+                hide-details class="mt-0 pt-0" />
             </v-col>
           </v-row>
-          <v-divider />
-          <v-card-actions>
+          <v-divider class="my-6"></v-divider>
+          <v-card-actions class="px-0 pt-0">
             <v-spacer />
-            <v-btn
-              class="bg-error"
-              @click="closeDialog()"
-            >
+            <v-btn class="text-none rounded-lg px-6" variant="outlined" color="grey-darken-2" height="44"
+              @click="closeDialog()">
               {{ $t('buttons.cancel') }}
             </v-btn>
-            <v-btn
-              variant="text"
-              :disabled="hasTemplate ? true : false"
-              class="bg-success"
-              @click="createTemplate()"
-            >
+            <v-btn variant="flat" :disabled="hasTemplate ? true : false" color="primary" height="44"
+              class="text-none rounded-lg ml-3" @click="createTemplate()">
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -112,113 +61,118 @@
       </v-card>
     </v-dialog>
 
-    <ShowInfo :title="$t('pages.settings.title')">
-      <template #content>
-        <div>
-          <v-card style="background: #f5f7ff">
-            <v-col class="mb-1 pa-4 pb-1">
-              <p class="subtitleView">
-                {{ $t('pages.settings.currentTest') }}
-              </p>
-            </v-col>
+    <div class="settings-layout">
+      <div class="content-wrapper">
+        <div class="left-column">
+          <v-card class="info-card" elevation="0" height="100%">
+            <div class="d-flex align-start ga-3 pa-6 pb-0">
+              <div class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center">
+                <v-icon color="primary" size="20">mdi-information-outline</v-icon>
+              </div>
+              <div>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Basic Information</h3>
+                <p class="text-caption text-grey-darken-1">Configure the fundamental details of your test</p>
+              </div>
+            </div>
+            <v-card-text class="py-6">
+              <FormTestDescription v-if="object" ref="form1" :test="object" :lock="true" @val-form="validate"
+                @update:test="updateObject" />
+            </v-card-text>
+          </v-card>
+        </div>
 
-            <v-divider />
-            <FormTestDescription
-              v-if="object"
-              ref="form1"
-              :test="object"
-              :lock="true"
-              @val-form="validate"
-              @update:test="updateObject"
-            />
-
-            <v-row
-              justify="space-around"
-              class="mx-4 mb-3"
-            >
-              <v-spacer />
-              <v-btn
-                style="margin-right: 25px"
-                variant="outlined"
-                color="green"
-                :disabled="hasTemplate || !object ? true : false"
-                @click="tempDialog = true"
-              >
-                {{ $t('pages.settings.createTemplate') }}
-              </v-btn>
-
-              <v-btn
-                style="margin-right: 40px"
-                variant="outlined"
-                color="green"
-                @click="duplicateTest()"
-              >
-                {{ $t('buttons.duplicateTest') }}
-              </v-btn>
-            </v-row>
-
-            <v-divider class="my-3 mx-2" />
-
-            <v-row
-              justify="center"
-              class="mt-3"
-            >
-              <v-btn
-                color="#f26363"
-                class="text-white mb-4"
-                style="justify-self: center"
-                @click="dialogDel = true"
-              >
-                <v-icon start>
-                  mdi-trash-can-outline
-                </v-icon>
-                {{ $t('pages.settings.deleteTest') }}
-              </v-btn>
-            </v-row>
+        <div class="right-column">
+          <v-card class="advanced-card" elevation="0">
+            <div class="d-flex align-start ga-3 pa-6 pb-0">
+              <div class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center">
+                <v-icon color="secondary" size="20">mdi-cog-outline</v-icon>
+              </div>
+              <div>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Advanced Settings</h3>
+                <p class="text-caption text-grey-darken-1">Fine-tune your test configuration</p>
+              </div>
+            </div>
+            <v-card-text class="py-6">
+              <div class="d-flex flex-column ga-5">
+                <div class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative">
+                  <div class="d-flex align-center ga-2 mb-2">
+                    <v-icon color="primary" size="18">mdi-earth</v-icon>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Public Access</span>
+                  </div>
+                  <p class="text-caption text-grey-darken-1 mb-4">Allow users to view this test</p>
+                  <v-switch v-model="object.isPublic" color="primary" hide-details inset class="position-absolute"
+                    style="top: 20px; right: 20px;" @update:model-value="store.commit('SET_LOCAL_CHANGES', true)" />
+                </div>
+              </div>
+            </v-card-text>
           </v-card>
 
-          <v-tooltip
-            v-if="localChanges"
-            location="left"
-          >
-            <template #activator="{ props }">
-              <v-btn
-                v-if="localChanges"
-                size="large"
-                icon
-                position="fixed"
-                location="bottom right"
-                color="#F9A826"
-                v-bind="props"
-                @click="submit()"
-              >
-                <v-icon size="large">
-                  mdi-content-save
-                </v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('buttons.save') }}</span>
-          </v-tooltip>
+          <v-card class="actions-card" elevation="0">
+            <div class="d-flex align-start ga-3 pa-6 pb-0">
+              <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
+                <v-icon color="amber-darken-2" size="20">mdi-lightning-bolt</v-icon>
+              </div>
+              <div>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Quick Actions</h3>
+                <p class="text-caption text-grey-darken-1">Perform common tasks instantly</p>
+              </div>
+            </div>
+            <v-card-text class="py-6">
+              <div class="d-flex flex-column ga-3">
+                <v-btn color="secondary" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
+                  height="48" :disabled="hasTemplate || !object" block @click="tempDialog = true">
+                  <v-icon start size="18">mdi-file-document-plus-outline</v-icon>
+                  {{ $t('pages.settings.createTemplate') }}
+                </v-btn>
+                <v-btn color="orange-darken-1" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
+                  height="48" :disabled="!object" block @click="duplicateTest()">
+                  <v-icon start size="18">mdi-content-duplicate</v-icon>
+                  {{ $t('buttons.duplicateTest') }}
+                </v-btn>
+                <v-btn color="error" variant="flat" class="text-none font-weight-semibold rounded-l py-3" height="48"
+                  :disabled="!object" @click="dialogDel = true" block>
+                  <v-icon start size="18">mdi-delete-outline</v-icon>
+                  {{ $t('pages.settings.deleteTest') }}
+                </v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
         </div>
-      </template>
-    </ShowInfo>
-  </v-container>
-  <v-overlay
-    v-else-if="loadingPage"
-    v-model="loadingPage"
-    class="text-center"
-  >
-    <v-progress-circular
-      indeterminate
-      color="#fca326"
-      size="50"
-    />
-    <div class="white-text mt-3">
-      Loading Settings
+      </div>
     </div>
-  </v-overlay>
 
-  <AccessNotAllowed v-else />
+    <v-dialog v-model="dialogDel" max-width="500" persistent>
+      <v-card class="rounded-xl">
+        <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
+          <div class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center">
+            <v-icon color="error" size="28">mdi-alert-circle-outline</v-icon>
+          </div>
+          <div>
+            <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">Confirm Deletion</h3>
+            <p class="text-subtitle-2 text-grey-darken-1">This action cannot be undone</p>
+          </div>
+        </v-card-title>
+        <v-card-text class="py-4 px-6">
+          <p class="text-body-2 text-grey-darken-1">
+            {{ dialogText }} All associated data, results, and configurations will be lost forever.
+          </p>
+        </v-card-text>
+        <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
+          <v-btn variant="outlined" color="grey-darken-2" @click="dialogDel = false" :disabled="loading"
+            class="text-none rounded-lg px-6" height="44">
+            {{ $t('buttons.cancel') }}
+          </v-btn>
+          <v-btn color="error" variant="flat" @click="deleteTest(object)" :loading="loading"
+            class="text-none rounded-lg px-6" height="44">
+            <v-icon start size="16">mdi-delete</v-icon>
+            {{ $t('buttons.delete') }} Forever
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <AccessNotAllowed v-if="!loadingPage && !object" />
+  </PageWrapper>
 </template>
 
 <script setup>
@@ -227,23 +181,23 @@ import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import FormTestDescription from '@/components/atoms/FormTestDescription';
 import Snackbar from '@/components/atoms/Snackbar';
-import ShowInfo from '@/components/organisms/ShowInfo';
 import LeaveAlert from '@/components/atoms/LeaveAlert';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed';
+import PageWrapper from '@/components/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import TemplateHeader from '@/models/TemplateHeader';
 import TemplateAuthor from '@/models/TemplateAuthor';
 import TemplateBody from '@/models/TemplateBody';
 import Template from '@/models/Template';
 import TestAdmin from '@/models/TestAdmin';
-import { useI18n } from 'vue-i18n'
-import { useToast } from "vue-toastification"
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
-const toast = useToast()
+const toast = useToast();
 
 const props = defineProps({
   id: {
@@ -292,25 +246,15 @@ const reports = computed(() => store.getters.reports || []);
 const cooperators = computed(() => store.getters.cooperators || {});
 const dialogText = computed(() => {
   if (test.value) {
-    return `Are you sure you want to delete your test "${test.value.testTitle}"? This action can't be undone.`;
+    return `Are you sure you want to delete your test "${test.value.testTitle}"?`;
   }
-  return "Are you sure you want to delete this test? This action can't be undone";
+  return "Are you sure you want to delete this test?";
 });
 const hasTemplate = computed(() => {
   if (object.value && 'template' in object.value) {
     return object.value.template !== null;
   }
   return false;
-});
-const myObject = computed(() => {
-  if (user.value) {
-    let myObject = user.value.myTests.find(test => test.id === props.id);
-    if (!myObject) {
-      myObject = user.value.myCoops.find(test => test.id === props.id);
-    }
-    return myObject;
-  }
-  return null;
 });
 
 watch(
@@ -362,10 +306,18 @@ const onSubmit = async () => {
 const submit = async () => {
   const title = object.value.testTitle;
   if (title.length > 0 && title.length < 200) {
-    await store.dispatch('updateTest', new Test(object.value));
-    await store.dispatch('getTest', { id: props.id });
-    store.commit('SET_LOCAL_CHANGES', false);
-    toast.success(t('alerts.savedChanges'));
+    loading.value = true;
+    try {
+      await store.dispatch('updateTest', new Test(object.value));
+      await store.dispatch('getTest', { id: props.id });
+      store.commit('SET_LOCAL_CHANGES', false);
+      toast.success(t('alerts.savedChanges'));
+    } catch (error) {
+      toast.error('Failed to save changes.');
+      console.error('Error saving test:', error);
+    } finally {
+      loading.value = false;
+    }
   } else if (title.length >= 200) {
     toast.warning('Title must not exceed 200 characters.');
   } else {
@@ -380,46 +332,69 @@ const preventNav = event => {
 };
 
 const deleteTest = async item => {
-  const auxUser = { ...user.value };
-  delete auxUser.myTests[item.id];
-  item.auxUser = auxUser;
-  await store.dispatch('deleteTest', item);
-  router.push({ name: 'TestList' });
+  loading.value = true;
+  try {
+    const auxUser = { ...user.value };
+    delete auxUser.myTests[item.id];
+    item.auxUser = auxUser;
+    await store.dispatch('deleteTest', item);
+    toast.success('Test deleted successfully!');
+    router.push({ name: 'TestList' });
+  } catch (error) {
+    toast.error('Failed to delete test.');
+    console.error('Error deleting test:', error);
+  } finally {
+    loading.value = false;
+    dialogDel.value = false;
+  }
 };
 
 const createTemplate = async () => {
-  const tempHeader = new TemplateHeader({
-    creationDate: Date.now(),
-    updateDate: Date.now(),
-    isTemplatePublic: template.value.isTemplatePublic,
-    templateDescription: template.value.templateDescription,
-    templateTitle: template.value.templateTitle,
-    templateType: test.value.testType,
-    templateVersion: '1.0.0',
-    templateAuthor: new TemplateAuthor({
-      userEmail: test.value.testAdmin.email,
-      userDocId: test.value.testAdmin.userDocId,
-    }),
-  });
+  const { valid } = await tempform.value.validate();
+  if (!valid) {
+    toast.warning('Please fill in the required fields.');
+    return;
+  }
 
-  const tempBody = new TemplateBody(test.value);
-  const templateObj = new Template({
-    id: null,
-    header: tempHeader,
-    body: tempBody,
-  });
+  loading.value = true;
+  try {
+    const tempHeader = new TemplateHeader({
+      creationDate: Date.now(),
+      updateDate: Date.now(),
+      isTemplatePublic: template.value.isTemplatePublic,
+      templateDescription: template.value.templateDescription,
+      templateTitle: template.value.templateTitle,
+      templateType: test.value.testType,
+      templateVersion: '1.0.0',
+      templateAuthor: new TemplateAuthor({
+        userEmail: test.value.testAdmin.email,
+        userDocId: test.value.testAdmin.userDocId,
+      }),
+    });
 
-  if (template.value.templateTitle.trim() !== '') {
+    const tempBody = new TemplateBody(test.value);
+    const templateObj = new Template({
+      id: null,
+      header: tempHeader,
+      body: tempBody,
+    });
+
     await store.dispatch('createTemplate', templateObj);
+    toast.success('Template created successfully!');
     closeDialog();
-  } else {
-    tempform.value.validate();
+  } catch (error) {
+    toast.error('Failed to create template.');
+    console.error('Error creating template:', error);
+  } finally {
+    loading.value = false;
   }
 };
 
 const closeDialog = () => {
   tempDialog.value = false;
-  tempform.value.resetValidation();
+  if (tempform.value) {
+    tempform.value.resetValidation();
+  }
   template.value = {
     templateTitle: '',
     templateDescription: '',
@@ -447,67 +422,107 @@ const updateObject = newObject => {
 };
 
 const duplicateTest = async () => {
-  const testObj = new Test({
-    testTitle: 'Copy of ' + test.value.testTitle,
-    testDescription: test.value.testDescription,
-    testType: test.value.testType,
-    userTestType: test.value.userTestType,
-    testStructure: test.value.testStructure,
-    testOptions: test.value.testOptions,
-    userTestStatus: {},
-    id: null,
-    testAdmin: new TestAdmin({
-      userDocId: user.value.id,
-      email: user.value.email,
-    }),
-    creationDate: Date.now(),
-    updateDate: Date.now(),
-  });
+  loading.value = true;
+  try {
+    const testObj = new Test({
+      testTitle: 'Copy of ' + test.value.testTitle,
+      testDescription: test.value.testDescription,
+      testType: test.value.testType,
+      userTestType: test.value.userTestType,
+      testStructure: test.value.testStructure,
+      testOptions: test.value.testOptions,
+      userTestStatus: {},
+      id: null,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      creationDate: Date.now(),
+      updateDate: Date.now(),
+    });
 
-  await store.dispatch('duplicateTest', {
-    test: testObj,
-    answer: testAnswerDocument.value,
-  });
-
-  router.push('/testslist');
+    await store.dispatch('duplicateTest', {
+      test: testObj,
+      answer: testAnswerDocument.value,
+    });
+    toast.success('Test duplicated successfully!');
+    router.push('/testslist');
+  } catch (error) {
+    toast.error('Failed to duplicate test.');
+    console.error('Error duplicating test:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
 <style scoped>
-.titleView {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
-.subtitleView {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  line-height: 21px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 0px;
-  padding-bottom: 0px;
-}
-.dialog-title {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 40px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
+.settings-layout {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0.5rem 0;
 }
 
-@media screen and (max-width: 960px) {
-  .dialog-title {
+/* Content Layout */
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Card Styles */
+.info-card,
+.advanced-card,
+.actions-card {
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.info-card:hover,
+.advanced-card:hover,
+.actions-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .right-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .right-column {
     display: flex;
-    text-align: center;
-    justify-content: center;
+    flex-direction: column;
   }
 }
 </style>
