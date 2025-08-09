@@ -98,6 +98,21 @@ export default {
 
       return {};
     },
+    visibleUserAnswers(state) {
+      if (!state.testAnswerDocument) return {};
+
+      const doc = state.testAnswerDocument;
+
+      if (doc.type === 'User' && doc.taskAnswers) {
+        return Object.fromEntries(
+          Object.entries(doc.taskAnswers).filter(
+            ([, answer]) => answer.hidden === false
+          )
+        );
+      }
+
+      return {};
+    },
   },
   mutations: {
     SET_ANSWER_DOCUMENT(state, payload) {
@@ -188,6 +203,16 @@ export default {
       } catch (e) {
         console.error('Error in save test answer', e)
         // commit("setError", true);
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async updateTaskAnswer({ commit }, { payload, answerDocId }) {
+      commit('setLoading', true)
+      try {
+        await answerController.updateTaskAnswer(payload, answerDocId);
+      } catch (e) {
+        console.error('Error in save test answer', e)
       } finally {
         commit('setLoading', false)
       }

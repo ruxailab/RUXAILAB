@@ -13,7 +13,7 @@
     <v-row
       v-else-if="hasAnswers"
       justify="center"
-      class="ma-0 mt-4"
+      class="ma-0"
     >
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
@@ -71,14 +71,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { statistics } from '@/utils/statistics';
 import ShowInfo from '@/components/organisms/ShowInfo';
 import IntroAnswer from '@/components/molecules/IntroAnswer';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
-import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue';
-import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue';
-import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
-import SusAnalytics from '@/views/admin/SusAnalytics.vue';
-import NasaTlxAnalytics from '@/views/admin/NasaTlxAnalytics.vue';
+import GeneralAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
+import SentimentAnalysisView from '@/components/organisms/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SusAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/SusAnalytics.vue';
+import NasaTlxAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 
 defineProps({
   id: {
@@ -94,7 +94,6 @@ const store = useStore();
 const tab = ref(0);
 const ind = ref(0);
 const intro = ref(null);
-const resultEvaluator = statistics();
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
 
@@ -113,14 +112,14 @@ const hasAnswers = computed(() => {
 
 
 const showSUS = computed(() => {
-  if (!testStructure.value) return false;
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'sus'
   );
 });
 
 const showNasa = computed(() => {
-  if (!testStructure.value) return false;
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'nasa-tlx'
   );
