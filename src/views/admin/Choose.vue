@@ -36,10 +36,9 @@
             :description="category.description"
             :color="category.color"
             :disabled="category.comingSoon"
-            :badge="
-              category.comingSoon
-                ? { text: 'Coming Soon', color: 'warning' }
-                : null
+            :badge="category.comingSoon
+              ? { text: 'Coming Soon', color: 'warning' }
+              : null
             "
             @click="() => handleCategoryClick(category.id)"
           >
@@ -122,7 +121,7 @@ const categories = [
       'Assess your product for accessibility compliance and best practices.',
     icon: 'mdi-access-point',
     color: 'primary',
-    hasSubMethods: false,
+    hasSubMethods: true,
     comingSoon: false,
   },
 ]
@@ -132,10 +131,6 @@ const handleCategoryClick = (categoryId) => {
   if (category?.comingSoon) return
 
   selectedCategory.value = categoryId
-  if (categoryId === 'accessibility') {
-    router.push('/accessibility')
-    return
-  }
   store.commit('SET_STUDY_CATEGORY', categoryId)
   router.push({
     name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3',
