@@ -150,7 +150,7 @@
           <v-card-text style="background-color: #E8EAF2;">
             <v-row v-if="dialogItem">
               <v-col
-                v-if="dialogItem.preTestAnswer.length"
+                v-if="dialogItem?.preTestAnswer?.length"
                 cols="12"
                 class="pt-8"
               >
@@ -171,7 +171,7 @@
                 </v-card>
               </v-col>
               <v-col
-                v-if="dialogItem.postTestAnswer.length"
+                v-if="dialogItem?.postTestAnswer?.length"
                 cols="12"
                 class="pt-8"
               >
@@ -192,7 +192,7 @@
                 </v-card>
               </v-col>
               <v-col
-                v-if="dialogItem.tasks[taskSelect].postAnswer"
+                v-if="dialogItem?.tasks?.[taskSelect]?.postAnswer"
                 cols="12"
                 class="mt-4"
               >
@@ -289,19 +289,27 @@ const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
 const answers = computed(() => store.getters.visibleUserAnswers || {});
 // const answers = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
-const tableData = computed(() => Object.values(answers.value).map((item, index) => {
-  const tasks = Object.values(item.tasks || {});
-  const completedCount = tasks.filter(t => !!t.completed).length;
-  const totalTasks = testStructure.value.userTasks.length;
-  const avgTime = tasks.reduce((sum, t) => sum + (t.taskTime || 0), 0) / (completedCount || 1);
-  return {
-    ...item,
-    identifier: `#${index + 1}`,
-    completedCount,
-    totalTasks,
-    avgTimeSeconds: Math.floor(avgTime / 1000),
-  };
-}));
+const tableData = computed(() => {
+  return Object.values(answers.value).map((item, index) => {
+    const tasks = Object.values(item.tasks || {});
+    const completedCount = tasks.filter(t => !!t.completed).length;
+
+    const totalTasks = Array.isArray(testStructure.value?.userTasks)
+      ? testStructure.value.userTasks.length
+      : 0;
+
+    const avgTime = tasks.reduce((sum, t) => sum + (t.taskTime || 0), 0) / (completedCount || 1);
+
+    return {
+      ...item,
+      identifier: `#${index + 1}`,
+      completedCount,
+      totalTasks,
+      avgTimeSeconds: Math.floor(avgTime / 1000),
+    };
+  });
+});
+
 
 const formatTime = (time) => {
   const minutes = Math.floor(time / 60);
