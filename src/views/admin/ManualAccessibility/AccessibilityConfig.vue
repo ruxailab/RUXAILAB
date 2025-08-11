@@ -50,7 +50,7 @@
               </v-icon>
               WCAG Compliance Level
             </v-card-title>
-            
+
             <v-card-text class="pa-4 pt-1">
               <v-alert
                 color="info"
@@ -81,12 +81,11 @@
                     md="4"
                     class="pa-1"
                   >
-                    <v-card 
+                    <v-card
                       :class="[
                         'compliance-card cursor-pointer',
                         selectedCompliance === level.value ? 'selected-compliance' : ''
                       ]"
-                     
                       :variant="selectedCompliance === level.value ? 'flat' : 'outlined'"
                       elevation="1"
                       hover
@@ -94,23 +93,23 @@
                     >
                       <v-card-text class="pa-3">
                         <div class="d-flex align-center mb-2">
-                          <v-radio 
-                            :value="level.value" 
-                            :color="level.color" 
-                            hide-details 
+                          <v-radio
+                            :value="level.value"
+                            :color="level.color"
+                            hide-details
                             class="mr-2"
                             readonly
                           />
-                          <v-chip 
+                          <v-chip
                             :color="level.color"
-                            :variant="selectedCompliance === level.value ? 'flat' : 'outlined'" 
+                            :variant="selectedCompliance === level.value ? 'flat' : 'outlined'"
                             size="small"
                             class="font-weight-bold"
                           >
                             {{ level.value }}
                           </v-chip>
                         </div>
-                        
+
                         <div class="mb-2">
                           <h4 class="text-subtitle-2 font-weight-bold mb-1">
                             {{ level.title }}
@@ -119,7 +118,7 @@
                             {{ level.description }}
                           </p>
                         </div>
-                        
+
                         <div class="d-flex align-center">
                           <v-icon
                             :color="level.color"
@@ -136,10 +135,10 @@
                 </v-row>
               </v-radio-group>
 
-              <v-alert 
-                v-if="selectedLevel" 
-                :color="selectedLevel.color" 
-                variant="tonal" 
+              <v-alert
+                v-if="selectedLevel"
+                :color="selectedLevel.color"
+                variant="tonal"
                 class="mb-4"
                 density="compact"
               >
@@ -160,9 +159,9 @@
             </v-card-text>
 
             <v-card-actions class="pa-4 pt-2">
-              <v-btn 
-                variant="outlined" 
-                :disabled="isLoading" 
+              <v-btn
+                variant="outlined"
+                :disabled="isLoading"
                 prepend-icon="mdi-refresh"
                 size="small"
                 @click="resetToDefaults"
@@ -170,9 +169,9 @@
                 Reset
               </v-btn>
               <v-spacer />
-              <v-btn 
-                color="primary" 
-                :loading="isLoading" 
+              <v-btn
+                color="primary"
+                :loading="isLoading"
                 :disabled="!selectedCompliance"
                 append-icon="mdi-arrow-right"
                 @click="saveComplianceAndContinue"
@@ -199,7 +198,7 @@
               </v-icon>
               Guidelines Selection
             </v-card-title>
-            
+
             <v-card-text class="pa-4 pt-1">
               <v-alert
                 color="info"
@@ -218,11 +217,11 @@
               </v-alert>
 
               <!-- Validation Error Alert -->
-              <v-alert 
-                v-if="showValidationErrors && validationErrors.length > 0" 
-                color="error" 
-                variant="tonal" 
-                class="mb-4" 
+              <v-alert
+                v-if="showValidationErrors && validationErrors.length > 0"
+                color="error"
+                variant="tonal"
+                class="mb-4"
                 density="compact"
               >
                 <template #prepend>
@@ -244,23 +243,23 @@
               </v-alert>
 
               <!-- Compact Principle Tabs -->
-              <v-tabs 
-                v-model="selectedPrincipleTab" 
+              <v-tabs
+                v-model="selectedPrincipleTab"
                 class="mb-3"
                 color="primary"
                 slider-color="primary"
                 show-arrows
                 density="compact"
               >
-                <v-tab 
-                  v-for="(principle, idx) in filteredPrinciples" 
+                <v-tab
+                  v-for="(principle, idx) in filteredPrinciples"
                   :key="principle.id || idx"
                   class="text-capitalize"
                   size="small"
                 >
-                  <v-icon 
-                    :color="getPrincipleIcon(idx).color" 
-                    class="mr-1" 
+                  <v-icon
+                    :color="getPrincipleIcon(idx).color"
+                    class="mr-1"
                     size="16"
                   >
                     {{ getPrincipleIcon(idx).icon }}
@@ -272,8 +271,8 @@
               <!-- Scrollable Guidelines Container -->
               <div class="guidelines-container">
                 <v-window v-model="selectedPrincipleTab">
-                  <v-window-item 
-                    v-for="(principle, pIdx) in filteredPrinciples" 
+                  <v-window-item
+                    v-for="(principle, pIdx) in filteredPrinciples"
                     :key="principle.id || pIdx"
                   >
                     <v-card
@@ -281,8 +280,8 @@
                       class="mb-3"
                     >
                       <v-list density="compact">
-                        <v-list-item 
-                          v-for="(guideline) in principle.Guidelines || []" 
+                        <v-list-item
+                          v-for="(guideline) in principle.Guidelines || []"
                           :key="guideline.id"
                           class="pa-2"
                           :class="{ 'guideline-error': isGuidelineInvalid(guideline.id) }"
@@ -297,8 +296,8 @@
                               @update:model-value="onGuidelineCheck(guideline.id)"
                             />
                           </template>
-                          
-                          
+
+
                           <v-list-item-title class="text-body-2 font-weight-bold text-primary mb-1">
                             {{ guideline.id }}
                           </v-list-item-title>
@@ -308,10 +307,10 @@
                           <v-list-item-subtitle class="text-caption text-medium-emphasis">
                             {{ guideline.description }}
                           </v-list-item-subtitle>
-                          
-                            
+
+
                           <!-- Compact Rules Selection -->
-                          <div 
+                          <div
                             v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
                             class="mt-2"
                           >
@@ -378,8 +377,8 @@
             </v-card-text>
 
             <v-card-actions class="pa-4 pt-2">
-              <v-btn 
-                variant="outlined" 
+              <v-btn
+                variant="outlined"
                 prepend-icon="mdi-arrow-left"
                 size="small"
                 @click="step = 1"
@@ -387,9 +386,9 @@
                 Back
               </v-btn>
               <v-spacer />
-              <v-btn 
-                color="primary" 
-                :loading="isLoading" 
+              <v-btn
+                color="primary"
+                :loading="isLoading"
                 :disabled="!isValidConfiguration"
                 append-icon="mdi-content-save"
                 @click="saveConfiguration"
@@ -448,12 +447,12 @@ const getPrincipleIcon = (index) => {
 // Validation computed properties
 const validationErrors = computed(() => {
   const errors = []
-  
+
   for (const guidelineId of selectedGuidelines.value) {
     const selectedRules = selectedRulesByGuideline.value[guidelineId]
     if (!selectedRules || selectedRules.length === 0) {
       // Find guideline title for better error message
-      const principle = filteredPrinciples.value.find(p => 
+      const principle = filteredPrinciples.value.find(p =>
         p.Guidelines.some(g => g.id === guidelineId)
       )
       if (principle) {
@@ -464,7 +463,7 @@ const validationErrors = computed(() => {
       }
     }
   }
-  
+
   return errors
 })
 
@@ -499,7 +498,7 @@ function getTotalSelectedRules() {
       total += rules.length
     } else {
       // If no specific rules selected, count all rules for this guideline
-      const principle = filteredPrinciples.value.find(p => 
+      const principle = filteredPrinciples.value.find(p =>
         p.Guidelines.some(g => g.id === guidelineId)
       )
       if (principle) {
@@ -583,7 +582,8 @@ const saveComplianceAndContinue = async () => {
       enableAutomaticSave: enableAutomaticSave.value,
       updatedAt: new Date().toISOString()
     }
-    await store.dispatch('Assessment/updateConfiguration', configData)
+    console.log("Saving compliance configuration:", testId.value, configData)
+    await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
     await store.dispatch('Assessment/filterByComplianceLevel', selectedCompliance.value)
     // Reset guideline selection
     selectedGuidelines.value = []
@@ -602,10 +602,10 @@ const saveComplianceAndContinue = async () => {
 const saveConfiguration = async () => {
   // Show validation errors and check if valid
   showValidationErrors.value = true
-  
+
   // Small delay to ensure validation UI updates
   await new Promise(resolve => setTimeout(resolve, 100))
-  
+
   if (!isValidConfiguration.value) {
     toast.error('Please fix validation errors before saving')
     return
@@ -627,8 +627,10 @@ const saveConfiguration = async () => {
       updatedAt: new Date().toISOString()
     }
 
+    // Fetch testId from route params
+    console.log("Saving configuration for testId:", testId)
     // Save to store (you would typically save to your backend/Firestore here)
-    await store.dispatch('Assessment/updateConfiguration', configData)
+    await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
 
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
     toast.success(`WCAG ${selectedCompliance.value} configuration saved!`)
@@ -636,7 +638,7 @@ const saveConfiguration = async () => {
     // Optionally redirect to assessment page after a delay
     setTimeout(() => {
       router.push(`/preview/${testId.value}`)
-    }, 2000)
+    }, 1000)
 
   } catch (err) {
     console.error('Failed to save configuration:', err)
@@ -750,7 +752,7 @@ onMounted(async () => {
 }
 
 /* Compact tab styling */
-.v-tabs >>> .v-tab {
+.v-tabs :deep(.v-tab) {
   text-transform: none !important;
   font-weight: 500;
   min-width: 80px;
@@ -784,17 +786,17 @@ onMounted(async () => {
   .compliance-card {
     min-height: 120px;
   }
-  
+
   .text-caption {
     font-size: 0.7rem !important;
   }
-  
-  .v-tabs >>> .v-tab {
+
+  .v-tabs :deep(.v-tab) {
     min-width: 60px;
     padding: 0 8px;
   }
-  
- .guidelines-container  {
+
+  .guidelines-container {
     max-height: 400px;
   }
 }
@@ -804,15 +806,15 @@ onMounted(async () => {
   .compliance-card {
     min-height: 100px;
   }
-  
+
   .pa-4 {
     padding: 12px !important;
   }
-  
+
   .pa-3 {
     padding: 8px !important;
   }
-  
+
   .guidelines-container {
     max-height: 350px;
   }

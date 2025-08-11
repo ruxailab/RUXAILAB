@@ -1,100 +1,107 @@
 <template>
-  <div class="ma-0 pa-0">
-    <v-data-table
-      height="420"
-      style="background: #f5f7ff; border-radius: 20px;"
-      :headers="headers"
-      :items="allTasks"
-      :items-per-page="5"
-    >
-      <!-- Table Header -->
-      <template #top>
-        <v-row class="ma-0">
-          <v-col class="ml-2 mb-1 pa-4 pb-0">
-            <p class="subtitleView">
-              {{ $t('UserTestTable.titles.currentTasks') }}
-            </p>
-          </v-col>
-          <v-col class="d-flex justify-end">
+  <v-container fluid class="pa-0">
+    <v-card class="elevation-2 rounded-lg pa-6">
+      <v-row align="center" class="pa-4">
+        <v-col cols="12" sm="6">
+          <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+            {{ $t('UserTestTable.titles.currentTasks') }}
+          </v-card-title>
+        </v-col>
+        <v-col cols="12" sm="6" class="text-right">
+          <v-btn
+            color="primary"
+            variant="flat"
+            size="large"
+            class="px-6 text-capitalize"
+            rounded="lg"
+            @click="dialog = true"
+          >
+            <v-icon start>mdi-plus-circle</v-icon>
+            Add New Task
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-card-text>
+        <v-data-table
+          :headers="headers"
+          :items="allTasks"
+          :items-per-page="5"
+          class="elevation-0 rounded-lg"
+          style="background: #FFFFFF; border: 1px solid #E5E7EB;"
+          :no-data-text="$t('No Tasks')"
+        >
+          <!-- Custom Column Templates -->
+          <template #item.taskDescription="{ item }">
+            <v-icon :color="item.taskDescription ? 'success' : 'error'">
+              {{ item.taskDescription ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <template #item.taskTip="{ item }">
+            <v-icon :color="item.taskTip ? 'success' : 'error'">
+              {{ item.taskTip ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <template #item.postQuestion="{ item }">
+            <v-icon :color="item.postQuestion ? 'success' : 'error'">
+              {{ item.postQuestion ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <template #item.hasScreenRecord="{ item }">
+            <v-icon :color="item.hasScreenRecord ? 'success' : 'error'">
+              {{ item.hasScreenRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <template #item.hasCamRecord="{ item }">
+            <v-icon :color="item.hasCamRecord ? 'success' : 'error'">
+              {{ item.hasCamRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <template #item.hasEye="{ item }">
+            <v-icon :color="item.hasEye ? 'success' : 'error'">
+              {{ item.hasEye ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <template #item.hasAudioRecord="{ item }">
+            <v-icon :color="item.hasAudioRecord ? 'success' : 'error'">
+              {{ item.hasAudioRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+            </v-icon>
+          </template>
+
+          <!-- Actions Column -->
+          <template #item.actions="{ item }">
             <v-btn
-              variant="flat"
-              rounded
-              color="#f9a826"
-              class="text-white"
-              size="small"
-              @click="dialog = true"
+              icon
+              variant="text"
+              color="accent"
+              class="mr-2"
+              @click="editItem(item)"
             >
-              Add new task
+              <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <FormDialog
-              v-model:dialog="dialog"
-              v-model:task="task"
-              @add-task="addTask"
-            />
-          </v-col>
-        </v-row>
-        <v-divider class="mb-4" />
-      </template>
-
-      <template #item.taskDescription="{ item }">
-        <v-icon :color="item.taskDescription ? '#8EB995' : '#F47C7C'">
-          {{ item.taskDescription ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-
-      <template #item.taskTip="{ item }">
-        <v-icon :color="item.taskTip ? '#8EB995' : '#F47C7C'">
-          {{ item.taskTip ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-
-      <template #item.postQuestion="{ item }">
-        <v-icon :color="item.postQuestion ? '#8EB995' : '#F47C7C'">
-          {{ item.postQuestion ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-
-      <template #item.hasScreenRecord="{ item }">
-        <v-icon :color="item.hasScreenRecord ? '#8EB995' : '#F47C7C'">
-          {{ item.hasScreenRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-
-      <template #item.hasCamRecord="{ item }">
-        <v-icon :color="item.hasCamRecord ? '#8EB995' : '#F47C7C'">
-          {{ item.hasCamRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-
-      <template #item.hasEye="{ item }">
-        <v-icon :color="item.hasEye ? '#8EB995' : '#F47C7C'">
-          {{ item.hasEye ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-
-      <template #item.hasAudioRecord="{ item }">
-        <v-icon :color="item.hasAudioRecord ? '#8EB995' : '#F47C7C'">
-          {{ item.hasAudioRecord ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-        </v-icon>
-      </template>
-      <!-- Edit and Delete Icons -->
-      <template #item.actions="{ item }">
-        <v-icon
-          size="small"
-          class="mr-2"
-          @click="editItem(item)"
-        >
-          mdi-pencil
-        </v-icon>
-        <v-icon
-          size="small"
-          @click="deleteItem(item)"
-        >
-          mdi-delete
-        </v-icon>
-      </template>
-    </v-data-table>
-  </div>
+            <v-btn
+              icon
+              variant="text"
+              color="error"
+              @click="deleteItem(item)"
+            >
+              <v-icon>mdi-trash-can-outline</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
+      </v-card-text>
+      <FormDialog
+        v-model:dialog="dialog"
+        v-model:task="task"
+        @add-task="addTask"
+      />
+    </v-card>
+  </v-container>
 </template>
 
 <script setup>
@@ -129,23 +136,19 @@ const task = ref({
   hasAudioRecord: false,
   hasScreenRecord: false,
   hasCamRecord: false,
+  hasEye: false,
 });
 
 const headers = ref([
-  {
-    title: 'Name',
-    align: 'start',
-    sortable: false,
-    value: 'taskName',
-  },
-  { title: 'Description', value: 'taskDescription' },
-  { title: 'Tip', value: 'taskTip' },
-  { title: 'Post question', value: 'postQuestion' },
-  { title: 'Screen Record', value: 'hasScreenRecord' },
-  { title: 'Camera', value: 'hasCamRecord' },
-  { title: 'Eye Tracker', value: 'hasEye' },
-  { title: 'Audio Record', value: 'hasAudioRecord' },
-  { title: 'Actions', value: 'actions', sortable: false },
+  { title: 'Name', align: 'start', sortable: false, value: 'taskName', width: '10%' },
+  { title: 'Description', value: 'taskDescription', sortable: false, align: 'center' },
+  { title: 'Tip', value: 'taskTip', sortable: false, align: 'center' },
+  { title: 'Post Question', value: 'postQuestion', sortable: false, align: 'center' },
+  { title: 'Screen Record', value: 'hasScreenRecord', sortable: false, align: 'center' },
+  { title: 'Camera', value: 'hasCamRecord', sortable: false, align: 'center' },
+  { title: 'Eye Tracker', value: 'hasEye', sortable: false, align: 'center' },
+  { title: 'Audio Record', value: 'hasAudioRecord', sortable: false, align: 'center' },
+  { title: 'Actions', value: 'actions', sortable: false, align: 'center', width: '150px'},
 ]);
 
 const editItem = (item) => {
@@ -154,35 +157,46 @@ const editItem = (item) => {
   dialog.value = true;
 };
 
-const deleteItem = (item) => {
+const deleteItem = async (item) => {
   const index = allTasks.value.indexOf(item);
   if (confirm('Are you sure you want to delete this task?')) {
-    allTasks.value.splice(index, 1);
+    try {
+      allTasks.value.splice(index, 1);
+      await store.dispatch('setTasks', allTasks.value);
+      emit('change');
+    } catch (error) {
+      console.error('Error deleting task:', error.message);
+    }
   }
 };
 
-const addTask = (newTask) => {
-  if (editedIndex.value > -1) {
-    Object.assign(props.tasks[editedIndex.value], newTask);
-    editedIndex.value = -1
+const addTask = async (newTask) => {
+  try {
+    if (editedIndex.value > -1) {
+      Object.assign(allTasks.value[editedIndex.value], newTask);
+      editedIndex.value = -1;
+    } else {
+      allTasks.value.push(newTask);
+    }
+    await store.dispatch('setTasks', allTasks.value);
+    task.value = {
+      taskName: '',
+      taskDescription: null,
+      taskTip: null,
+      taskLink: null,
+      postQuestion: null,
+      postForm: null,
+      taskType: null,
+      hasAudioRecord: false,
+      hasScreenRecord: false,
+      hasCamRecord: false,
+      hasEye: false,
+    };
+    dialog.value = false;
     emit('change');
-  } else {
-    store.dispatch('addItemsTasks', newTask).then(() => { });
-    allTasks.value = Object.assign(
-      store.getters.tasks,
-      store.state.Tests.Test.testStructure.userTasks
-    );
+  } catch (error) {
+    console.error('Error adding/updating task:', error.message);
   }
-  task.value = {
-    taskName: '',
-    taskDescription: null,
-    taskTip: null,
-    postQuestion: null,
-    taskType: null,
-    hasAudioRecord: false,
-    hasScreenRecord: false,
-    hasCamRecord: false,
-  };
 };
 
 const setAllTasks = () => {
@@ -207,13 +221,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.subtitleView {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
+.v-data-table {
+  transition: all 0.3s ease;
+}
+
+.v-data-table :deep(.v-data-table__td) {
+  padding: 12px;
+}
+
+.v-data-table :deep(.v-data-table-header__content) {
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.v-btn {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.v-data-table :deep(.v-data-table__tr:hover) {
+  background-color: #F8FAFC;
 }
 </style>

@@ -7,6 +7,8 @@
         Saving...
       </div>
     </v-overlay>
+    -->
+
     <Snackbar />
 
     <!-- Submit Alert Dialog -->
@@ -470,7 +472,6 @@
         </v-col>
       </v-row>
     </v-container>
-
     <!-- Floating Action Button -->
     <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
       class="mb-10 mr-5">
@@ -504,37 +505,38 @@
         </v-tooltip>
       </v-speed-dial>
     </v-btn>
+    -->
   </div>
 </template>
 
 <script setup>
+
+
+import SubmitDialog from '@/components/atoms/SubmitDialog.vue';
+
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import ShowInfo from '@/components/organisms/ShowInfo.vue';
-import TextClamp from 'vue3-text-clamp';
 import Snackbar from '@/components/atoms/Snackbar.vue';
-import TipButton from '@/components/atoms/TipButton.vue';
-import Timer from '@/components/atoms/Timer.vue';
-import AudioRecorder from '@/components/atoms/AudioRecorder.vue';
-import AudioVisualizer from '@/components/atoms/AudioVisualizer.vue';
-import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
-import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
-import SusForm from '@/components/atoms/SusForm.vue';
-import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import { useDisplay } from 'vuetify';
+import WelcomeStep from '@/components/UserTest/steps/WelcomeStep.vue';
+import ConsentStep from '@/components/UserTest/steps/ConsentStep.vue';
+import PreTestStep from '@/components/UserTest/steps/PreTestStep.vue';
+import PreTasksStep from '@/components/UserTest/steps/PreTasksStep.vue';
+import TaskStep from '@/components/UserTest/steps/TaskStep.vue';
+import PostTestStep from '@/components/UserTest/steps/PostTestStep.vue';
+import FinishStep from '@/components/UserTest/steps/FinishStep.vue';
 
-const videoUrl = ref('');
+
+
 const fullName = ref('');
 const logined = ref(null);
-const selected = ref(true);
 const fromlink = ref(null);
-const drawer = ref(true);
 const start = ref(true);
-const mini = ref(false);
-const index = ref(null);
+const globalIndex = ref(null);
 const noExistUser = ref(true);
 const taskIndex = ref(0);
 const preTestIndex = ref(null);
@@ -548,7 +550,11 @@ const doneTaskDisabled = ref(false);
 
 const rightView = ref(null);
 const videoRecorder = ref(null);
-const timerComponent = ref(null);
+const taskStepComponent = ref(null);
+const timerComponent = computed(() => {
+  // Get timer ref from TaskStep
+  return taskStepComponent.value?.$refs?.timerComponent || null;
+});
 
 const localTestAnswer = reactive(new TaskAnswer());
 
@@ -563,10 +569,7 @@ const user = computed(() => {
 });
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer || {});
 const showSaveBtn = computed(() => !localTestAnswer.submitted);
-const cooperators = computed(() => store.getters.cooperators);
-const loading = computed(() => store.getters.loading);
-const currentImageUrl = computed(() => store.state.Tests.currentImageUrl);
-const tasks = computed(() => store.getters.tasks);
+
 
 const isTaskDisabled = (taskIndex) => {
   if (!Array.isArray(localTestAnswer.tasks)) return true;
@@ -578,11 +581,21 @@ const isTaskDisabled = (taskIndex) => {
   return false;
 };
 
+const stepperValue = computed(() => {
+  if (globalIndex.value === 0) return -1;
+  if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 1;
+  if (globalIndex.value === 3 && taskIndex.value === 0) return 2; // 👈 PANTALLA INFORMATIVA
+  if (globalIndex.value === 4 && taskIndex.value >= 0) return 2;   // 👈 TAREAS
+  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3;
+  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4;
+  return 0;
+});
+
 const isPreTestTaskDisabled = (taskIndex) => {
   if (taskIndex === 0) return localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted;
   return !localTestAnswer.consentCompleted || (localTestAnswer.preTestCompleted && !localTestAnswer.submitted);
 };
-
 const saveAnswer = async () => {
   try {
     localTestAnswer.fullName = fullName.value;
@@ -592,7 +605,6 @@ const saveAnswer = async () => {
     }
     if (!user.value) {
       localTestAnswer.userDocId = nanoid(16)
-      console.log(localTestAnswer.value)
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
         answerDocId: test.value.answersDocId,
@@ -634,16 +646,34 @@ const startTest = () => {
     router.push(`/missions/${test.value.id}`);
     return;
   }
-  start.value = !start.value;
+
+  // Primero añadimos la clase para la animación de salida
+  const startScreen = document.querySelector('.start-screen');
+  if (startScreen) {
+    startScreen.classList.add('leaving');
+  }
+
+  // Esperamos a que termine la animación antes de cambiar el estado
+  setTimeout(() => {
+    start.value = false;
+  }, 1000);
 };
+
 
 const callTimerSave = () => {
   if (timerComponent.value && typeof timerComponent.value.stopTimer === 'function') {
     timerComponent.value.stopTimer();
-  } else {
-    console.warn('Timer component or stopTimer method is not available');
   }
 };
+
+function handleTaskFinish(userCompleted) {
+  const currentTask = localTestAnswer.tasks[taskIndex.value];
+  if (currentTask) {
+    console.log('Estado actual de la tarea antes de finalizar:', currentTask);
+  }
+  completeStep(taskIndex.value, 'tasks', userCompleted);
+  callTimerSave();
+}
 
 const startTimer = () => {
   if (timerComponent.value && typeof timerComponent.value.startTimer === 'function') {
@@ -651,9 +681,32 @@ const startTimer = () => {
   }
 };
 
-const handleTimerStopped = (elapsedTime, taskIndex) => {
-  if (localTestAnswer.tasks?.[taskIndex]) {
-    localTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
+const handleTimerStopped = (elapsedTime, idx) => {
+  // idx is passed from TaskStep, always use it
+  console.log('handleTimerStopped llamado con:', { elapsedTime, idx });
+
+  if (!localTestAnswer.tasks) {
+    console.error('localTestAnswer.tasks no está definido');
+    return;
+  }
+
+  if (idx === undefined || idx === null) {
+    console.error('Índice de tarea no válido:', idx);
+    return;
+  }
+
+  if (localTestAnswer.tasks[idx]) {
+    console.log('Guardando tiempo para tarea', idx, ':', elapsedTime, 'segundos');
+    // Asegurar que el tiempo es un número
+    const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
+    if (!isNaN(timeToSave)) {
+      localTestAnswer.tasks[idx].taskTime = timeToSave;
+      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
+    } else {
+      console.error('Tiempo no válido:', elapsedTime);
+    }
+  } else {
+    console.error('No se pudo guardar el tiempo para la tarea', idx);
   }
 };
 
@@ -665,6 +718,8 @@ const completeStep = (id, type, userCompleted = true) => {
       if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
         items.value[0].icon = 'mdi-check-circle-outline';
       }
+      globalIndex.value = 2;
+
     }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true;
@@ -672,8 +727,7 @@ const completeStep = (id, type, userCompleted = true) => {
       if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
         items.value[0].icon = 'mdi-check-circle-outline';
       }
-      index.value = 1;
-      taskIndex.value = 0;
+      globalIndex.value = 3;
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
@@ -697,7 +751,8 @@ const completeStep = (id, type, userCompleted = true) => {
         taskIndex.value = id + 1;
         startTimer();
       } else {
-        index.value = 2;
+        console.log('All tasks completed, moving to post-test');
+        globalIndex.value = 5;
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -710,6 +765,8 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true;
       items.value[2].icon = 'mdi-check-circle-outline';
+      globalIndex.value = 6;
+
     }
     calculateProgress();
   } catch (error) {
@@ -739,20 +796,20 @@ const autoComplete = async () => {
     allTasksCompleted.value = true;
     for (let i = 0; i < items.value[1].value.length; i++) {
       if (localTestAnswer.tasks[i]?.completed) {
-        items.value[1].value[i].icon = 'mdi-check-circle-outline';
+        items.value[1].value[i].icon = 'mdi-check-bold';
       }
       if (!localTestAnswer.tasks[i]?.completed) {
         allTasksCompleted.value = false;
       }
     }
     if (allTasksCompleted.value) {
-      items.value[1].icon = 'mdi-check-circle-outline';
+      items.value[1].icon = 'mdi-check-bold';
     }
   }
 
   // POST-TEST
   if (items.value[2] && localTestAnswer.postTestCompleted) {
-    items.value[2].icon = 'mdi-check-circle-outline';
+    items.value[2].icon = 'mdi-check-bold';
   }
 };
 
@@ -836,16 +893,16 @@ const mappingSteps = async () => {
     if (validate(test.value?.testStructure?.preTest)) {
       items.value.push({
         title: 'Pre-test',
-        icon: 'mdi-checkbox-blank-circle-outline',
+        icon: 'mdi-check-bold',
         value: [
           {
             title: 'Consent',
-            icon: 'mdi-checkbox-blank-circle-outline',
+            icon: 'mdi-check-bold',
             id: 0,
           },
           {
             title: 'Form',
-            icon: 'mdi-checkbox-blank-circle-outline',
+            icon: 'mdi-check-bold',
             id: 1,
           },
         ],
@@ -862,23 +919,29 @@ const mappingSteps = async () => {
     if (validate(test.value?.testStructure?.userTasks)) {
       items.value.push({
         title: 'Tasks',
-        icon: 'mdi-checkbox-blank-circle-outline',
+        icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
           title: task.taskName,
-          icon: 'mdi-checkbox-blank-circle-outline',
+          icon: 'mdi-check-bold',
           id: index,
         })),
         id: 1,
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
-        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => new UserTask({
-          taskId: task.id || i,
-          taskAnswer: '',
-          taskObservations: '',
-          postAnswer: '',
-          taskTime: 0,
-          completed: false,
-        }));
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
+          const newTask = new UserTask({
+            taskId: task.id || i,
+            taskAnswer: '',
+            taskObservations: '',
+            postAnswer: '',
+            taskTime: 0,
+            completed: false,
+            susAnswers: [],
+            nasaTlxAnswers: {}
+          });
+          console.log('Nueva tarea creada:', i, newTask);
+          return newTask;
+        });
       }
     }
 
@@ -886,7 +949,7 @@ const mappingSteps = async () => {
     if (validate(test.value?.testStructure?.postTest)) {
       items.value.push({
         title: 'Post Test',
-        icon: 'mdi-checkbox-blank-circle-outline',
+        icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
         id: 2,
       });
@@ -911,8 +974,8 @@ const validate = (object) => {
     object.length > 0
   );
 };
-
 watchEffect(() => {
+
   const index = taskIndex.value;
 
   const taskList = test.value?.testStructure?.userTasks;
@@ -928,9 +991,6 @@ watchEffect(() => {
     doneTaskDisabled.value = false;
   }
 });
-
-
-
 watch(
   () => test.value,
   async () => {
@@ -942,8 +1002,8 @@ watch(
 watch(
   () => items.value,
   () => {
-    if (items.value.length && index.value === null) {
-      index.value = items.value[0].id;
+    if (items.value.length && globalIndex.value === null) {
+      globalIndex.value = items.value[0].id;
       if (items.value.find((obj) => obj.id === 0)) {
         preTestIndex.value = items.value[0].value[0].id;
       }
@@ -952,12 +1012,21 @@ watch(
   { deep: true }
 );
 
+
+// Scroll to top of the page when step changes
+const scrollToTop = () => {
+  // For most browsers
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // For rightView (in case of overflow)
+  if (rightView.value) {
+    rightView.value.scrollTop = 0;
+  }
+};
+
 watch(
-  () => taskIndex.value,
+  () => [globalIndex.value, taskIndex.value],
   () => {
-    if (rightView.value) {
-      rightView.value.scrollTop = 0;
-    }
+    scrollToTop();
   }
 );
 
@@ -972,12 +1041,13 @@ watch(
 );
 
 onMounted(async () => {
+  globalIndex.value = 0;
   await mappingSteps();
   await nextTick();
   if (user.value) {
     await setTest();
     await autoComplete();
-    calculateProgress();
+    //calculateProgress();
   }
 });
 
@@ -986,20 +1056,22 @@ onBeforeUnmount(() => {
     videoRecorder.value.stopRecording();
   }
 });
+
+
 </script>
 
 <style scoped>
-.disabled-group {
-  pointer-events: none;
-  background-color: grey;
-}
-
-.background {
-  background: linear-gradient(134.16deg, #ffab25 -13.56%, #dd8800 117.67%);
+.start-screen {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+}
+
+.background-task {
+  background-color: #e8eaf6;
+  height: 100%;
+  overflow: auto;
 }
 
 .background:before {
@@ -1010,11 +1082,43 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  background-image: url(../../assets/BackgroundTestView.png);
+  height: 90%;
+  margin-right: -100px;
+  margin-top: 200px;
+  background-image: url(../../assets/ruxailab-small-red.png);
   background-repeat: no-repeat;
   background-size: contain;
-  background-position: right 0px top -20px;
-  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  background-position: right top;
+  opacity: 0.2;
+}
+
+.title-view {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+
+.description-view {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.1818px;
+  line-height: 21px;
+  align-items: flex-end;
+  color: #ffffff;
+}
+
+.sub-title {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
 }
 
 .btn-fix:focus:before {
@@ -1030,57 +1134,41 @@ onBeforeUnmount(() => {
   padding-top: 0px;
 }
 
-.right-view::-webkit-scrollbar {
-  width: 9px;
+/* Task stepper background */
+.task-stepper {
+  background: #00213F !important;
+  color: #fff !important;
+  --v-stepper-header-title-color: #fff !important;
+  --v-stepper-item-title-color: #fff !important;
+  --v-stepper-item-color: #fff !important;
 }
 
-.right-view::-webkit-scrollbar-track {
-  background: none;
+/* Forzar tamaño grande y negrita en los números del stepper (avatar) y títulos, usando selectores globales */
+:deep(.v-stepper-item__avatar) {
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-.right-view::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 2px;
+/* Aumentar el tamaño del icono de check-circle cuando el step está completo */
+:deep(.v-stepper-item--complete .v-stepper-item__avatar .v-icon) {
+  font-size: 1.25rem !important;
+  width: 2.2rem !important;
+  height: 2.2rem !important;
 }
 
-.right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+:deep(.v-stepper-item__title) {
+  font-size: 1.1rem !important;
+  font-weight: 300 !important;
+  line-height: 0.8 !important;
 }
 
-.nav-list::-webkit-scrollbar {
-  width: 7px;
-}
-
-.nav-list::-webkit-list-item {
-  background: none;
-}
-
-.nav-list-item::-webkit-scrollbar-thumb {
-  background: #777596;
-  border-radius: 4px;
-}
-
-.nav-list-item::-webkit-scrollbar-thumb:hover {
-  background: #66618a;
-}
-
-.cards {
-  border-radius: 20px;
-}
-
-.cards-title {
-  color: #455a64;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-}
-
-.cards-subtitle {
-  color: #455a64;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: normal;
-  line-height: normal;
+.v-stepper-item {
+  padding: 1rem;
+  ;
 }
 </style>

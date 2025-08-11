@@ -6,8 +6,8 @@ import * as directives from 'vuetify/directives'
 const myCustomLightTheme = {
   dark: false,
   colors: {
-    primary: '#3B82F6',
-    secondary: '#10B981',
+    primary: '#00213F',
+    secondary: '#FF425A',
     accent: '#F97316',
     error: '#EF4444',
     warning: '#F59E0B',
@@ -17,6 +17,9 @@ const myCustomLightTheme = {
     good: '#2196f3',
     ok: '#ff9800',
     poor: '#f44336',
+    ternary: '#546e7a',
+    forth: '#f5f7fa',
+    testPrimary: '#3f51b5',
   },
 }
 
