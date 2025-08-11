@@ -1,4 +1,3 @@
-<!-- This is your full updated GeneralAnalytics.vue page with the new design and old functionality -->
 <template>
   <v-container
     fluid
@@ -277,43 +276,23 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
-import DateChart from '../atoms/DateChart.vue';
+import DateChart from '@/components/atoms/DateChart.vue';
 
 const store = useStore();
 
-const emit = defineEmits(['goToCoops']);
-
-const showDialog = ref(false);
-const dialogItem = ref(null);
-const search = ref('');
-const taskSelect = ref(0);
 const testTasks = ref([]);
 const taskAnswers = ref([]);
-const intro = ref(null);
-const dataHeaders = ref([
-  {
-    title: 'Email',
-    value: 'userDocId',
-  },
-  {
-    title: 'Actions',
-    sortable: false,
-    value: 'actions',
-  },
-]);
 
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
-const tasksAnswer = computed(() => store.getters.testAnswerDocument);
 const answers = computed(() => {
-  if (!store.getters.testAnswerDocument) {
-    return [];
+  if (!store.getters.visibleUserAnswers) {
+    return {};
   }
-  return store.getters.testAnswerDocument.taskAnswers;
+  return store.getters.visibleUserAnswers;
 });
-const loading = computed(() => !Object.values(answers.value).length);
 const averageTimePerTask = computed(() => {
   let totalTasks = 0;
   let totalTaskTime = 0;
@@ -378,8 +357,13 @@ const findLongestTask = () => {
     }
   }
 
+  const taskMap = {};
+  testStructure.value.userTasks.forEach((task) => {
+    taskMap[task.taskId] = task;
+  });
+
   return {
-    taskName: testStructure.value.userTasks[longestTask]?.taskName || 'Task',
+    taskName: taskMap[longestTask]?.taskName || 'Task',
     averageTime: formatTime(longestAverageTime),
   };
 };
@@ -489,25 +473,40 @@ const getFormattedDate = (date) => {
   return new Date(date).toLocaleString();
 };
 
-const goToCoops = () => {
-  emit('goToCoops');
-};
+watch(
+  () => testStructure.value,
+  (newVal) => {
+    if (newVal && Array.isArray(newVal.userTasks)) {
+      testTasks.value = newVal.userTasks.map(task => task.taskName);
+    }
+  },
+  { immediate: true }
+);
 
-const viewAnswers = (item) => {
-  dialogItem.value = item;
-  showDialog.value = true;
-};
+watch(
+  () => answers.value,
+  (newAnswers) => {
+    if (newAnswers && typeof newAnswers === 'object') {
+      taskAnswers.value = Object.values(newAnswers);
+    }
+  },
+  { immediate: true }
+);
+
 
 onMounted(() => {
-  let i = 0;
-  testStructure.value.userTasks.forEach((task) => {
-    testTasks.value[i] = task.taskName;
-    i++;
-  });
-  let c = 0;
-  for (const key in answers.value) {
-    taskAnswers.value[c] = answers.value[key];
-    c++;
+  if (testStructure.value && Array.isArray(testStructure.value.userTasks)) {
+    testStructure.value.userTasks.forEach((task, i) => {
+      testTasks.value[i] = task.taskName;
+    });
+  }
+
+  if (answers.value && typeof answers.value === 'object') {
+    let c = 0;
+    for (const key in answers.value) {
+      taskAnswers.value[c] = answers.value[key];
+      c++;
+    }
   }
 });
 </script>

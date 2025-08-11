@@ -56,7 +56,11 @@ watch(() => props.nasaTlx, (newVal) => {
 });
 
 watch(localNasaTlx, () => {
-  emit('update:nasaTlx', { ...localNasaTlx });
+  const fullUpdate = {};
+  for (const key in labels) {
+    fullUpdate[key] = localNasaTlx[key] ?? 0;
+  }
+  emit('update:nasaTlx', fullUpdate);
 }, { deep: true });
 
 let valid = ref(false);
