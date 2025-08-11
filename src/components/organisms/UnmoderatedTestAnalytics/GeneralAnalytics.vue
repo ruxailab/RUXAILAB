@@ -106,7 +106,8 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card v-if="testStructure?.userTasks && taskAnswers.length" class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+            <v-card v-if="testStructure?.userTasks && taskAnswers.length"
+              class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
                 <v-avatar color="error" size="48" class="me-3">
                   <v-icon color="white" size="24">
@@ -179,41 +180,7 @@
     </v-row>
 
     <!-- Chart Section -->
-    <v-row class="mb-8">
-      <v-col cols="12">
-        <v-card class="pa-8 elevation-4 rounded-xl chart-card">
-          <div class="d-flex justify-space-between align-center mb-6">
-            <div>
-              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Answers Timeline
-              </h3>
-              <p class="text-body-1 text-medium-emphasis">
-                Track your answer submissions over time
-              </p>
-            </div>
-            <div class="d-flex ga-2">
-              <v-btn variant="outlined" size="small" color="primary">
-                <v-icon start>
-                  mdi-download
-                </v-icon>
-                Export
-              </v-btn>
-              <v-btn variant="flat" size="small" color="primary">
-                <v-icon start>
-                  mdi-refresh
-                </v-icon>
-                Refresh
-              </v-btn>
-            </div>
-          </div>
-
-          <div class="chart-container-large">
-            <DateChart :task-answers="taskAnswers" />
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
-
+    <AnswersTimeline :task-answers="taskAnswers" @refresh="onRefreshTimeline" @export="onExportTimeline" />
 
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
@@ -339,6 +306,7 @@ import DateChart from '@/components/atoms/DateChart.vue';
 import UxMetricCard from '@/components/UserTest/answers/UxMetricCard.vue';
 import CommentListCard from '@/components/UserTest/answers/CommentListCard.vue';
 import SelectionPieChart from '@/components/UserTest/answers/SelectionPieChart.vue';
+import AnswersTimeline from '@/components/UserTest/answers/AnswersTimeline.vue';
 
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
