@@ -29,7 +29,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
 const props = defineProps({
     value: { type: [String, Number], required: true },
     label: { type: String, required: true },
