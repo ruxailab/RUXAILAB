@@ -5,10 +5,10 @@
     </v-overlay>
     <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
     <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
-      <ShowInfo title="Answers">
+      <ShowInfo hideCol="true">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326" class="m">
+          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
             <v-tab @click="tab = 0">
               General Analytics
             </v-tab>
