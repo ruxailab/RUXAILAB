@@ -3,8 +3,8 @@
     <video ref="localVideo" autoplay muted playsinline></video>
     <video ref="remoteVideo" autoplay playsinline></video>
     <div class="controls">
-      <button @click="startCall">Start Call</button>
-      <button @click="answerCall">Answer Call</button>
+      <button v-if="caller" @click="startCall">Start Call</button>
+      <button v-else @click="answerCall">Answer Call</button>
       <button @click="endCall">End Call</button>
     </div>
   </div>
@@ -15,6 +15,19 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { database } from '@/firebase';
 import { ref as dbRef, set, onValue, push, onChildRemoved } from 'firebase/database';
 
+// Props
+const props = defineProps({
+  caller: {
+    type: Boolean,
+    required: true
+  },
+  roomId: {
+    type: String,
+    required: true,
+  }
+})
+
+
 // References to the video elements
 const localVideo = ref(null);
 const remoteVideo = ref(null);
@@ -22,7 +35,7 @@ const remoteVideo = ref(null);
 // Reactive state variables
 const localStream = ref(null);
 const peerConnection = ref(null);
-const roomId = ref('your_room_id'); // Could be dynamic
+const roomId = ref(null); // Could be dynamic
 
 // Initialize the WebRTC connection and media
 async function init() {
