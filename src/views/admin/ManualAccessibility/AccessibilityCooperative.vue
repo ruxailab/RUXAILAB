@@ -223,26 +223,53 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
-import Notification from '@/models/Notification';
 import { useToast } from 'vue-toastification';
 import Intro from '@/components/molecules/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
 import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
 import PageWrapper from '@/components/template/PageWrapper.vue';
 import UIDGenerator from 'uid-generator';
+import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
+import { useNotificationManager } from '@/composables/useNotificationManager';
+import { useCooperatorActions } from '@/composables/useCooperatorActions';
 
 const uidgen = new UIDGenerator();
-
-// Custom filter for v-combobox to allow searching by email (case-insensitive)
-const customFilter = (item, queryText, itemText) => {
-  const text = (item.email || itemText || '').toString().toLowerCase();
-  return text.includes(queryText.toLowerCase());
-};
 
 const toast = useToast();
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
+
+// Use composables
+const {
+  roleOptions,
+  statusFilterOptions,
+  getInitials,
+  getRoleColor,
+  getRoleIcon,
+  getStatusColor,
+  getStatusText,
+  formatDate,
+  formatTime,
+  validateEmail: isValidEmail
+} = useCooperatorUtils();
+
+const {
+  sendInvitationNotification,
+  sendReminderNotification,
+  sendMessageNotification
+} = useNotificationManager();
+
+const {
+  updateTestData,
+  fetchTestData,
+  handleRoleChange,
+  handleCooperatorRemoval,
+  handleInvitationCancellation,
+  showSuccess,
+  showError,
+  showWarning
+} = useCooperatorActions();
 
 // Reactive variables for enhanced functionality
 const loading = ref(false);
@@ -291,7 +318,6 @@ const filters = ref({
 
 const dialog = computed(() => store.state.dialog);
 
-// Table headers for the enhanced data table
 const headers = computed(() => [
   { title: 'Email', key: 'email', sortable: true, width: '30%' },
   { title: 'Role', key: 'accessLevel', sortable: true, width: '15%' },
@@ -300,18 +326,6 @@ const headers = computed(() => [
   { title: 'Invited', key: 'invited', sortable: true, width: '10%' },
   { title: 'Status', key: 'accepted', sortable: true, width: '10%' },
   { title: 'Actions', key: 'actions', sortable: false, width: '10%' }
-]);
-
-const roleOptions = computed(() => [
-  { title: 'Administrator', value: 0 },
-  { title: 'Evaluator', value: 1 },
-  { title: 'Guest', value: 2 }
-]);
-
-const statusFilterOptions = computed(() => [
-  { title: 'Invited', value: 'invited' },
-  { title: 'Accepted', value: 'accepted' },
-  { title: 'Pending', value: 'pending' }
 ]);
 
 // Computed properties
@@ -366,93 +380,21 @@ const minTime = computed(() => {
   }
 });
 
-// Utility functions
-const getInitials = (email) => {
-  return email.split('@')[0].slice(0, 2).toUpperCase();
-};
-
-const getRoleColor = (role) => {
-  switch (role.toLowerCase()) {
-    case 'administrator': return 'primary';
-    case 'evaluator': return 'success';
-    case 'guest': return 'warning';
-    default: return 'grey';
-  }
-};
-
-const getRoleIcon = (role) => {
-  switch (role.toLowerCase()) {
-    case 'administrator': return 'mdi-crown';
-    case 'evaluator': return 'mdi-account-check';
-    case 'guest': return 'mdi-account';
-    default: return 'mdi-account';
-  }
-};
-
-const getStatusColor = (status) => {
-  if (status === true) return 'success';
-  if (status === false) return 'error';
-  return 'warning';
-};
-
-const getStatusText = (status) => {
-  if (status === true) return 'accepted';
-  return 'pending';
-};
-
-const formatDate = (timestamp) => {
-  if (!timestamp) return '';
-  const date = new Date(timestamp);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const formatTime = (timestamp) => {
-  if (!timestamp) return '';
-  const date = new Date(timestamp);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-};
-
 const removeSelectedCoops = (index) => {
   selectedCoops.value.splice(index, 1);
 };
 
 const changeRole = async (item, newValue) => {
-  const index = cooperatorsEdit.value.indexOf(item);
-  const newCoop = { ...item, accessLevel: newValue.value };
-  const currentAccessLevelText = roleOptions.value.find(r => r.value === item.accessLevel)?.title;
-  const newAccessLevelText = newValue.title;
-
-  if (item.accessLevel !== newValue.value) {
-    const ok = confirm(
-      `Change ${item.email} role from ${currentAccessLevelText} to ${newAccessLevelText}?`
-    );
-    if (ok) {
-      // Update in database
-      const testId = route.params.testId;
-      try {
-        const currentTest = await store.dispatch('manualAccessibility/fetchTest', testId);
-        if (currentTest && currentTest.collaborators && currentTest.collaborators[item.userDocId]) {
-          currentTest.collaborators[item.userDocId].accessLevel = newValue.value;
-          await store.dispatch('manualAccessibility/updateTest', {
-            testId: currentTest.id,
-            updates: { collaborators: { ...currentTest.collaborators } }
-          });
-          await fetchTestAndPopulateTable();
-          toast.success('Role updated successfully!');
-        }
-      } catch (error) {
-        console.error('Error updating role:', error);
-        toast.error('Failed to update role.');
-      }
-    } else {
-      dataTableKey.value++;
+  await handleRoleChange(item, newValue, roleOptions.value, async (item, newValue) => {
+    const testId = route.params.testId;
+    const currentTest = await fetchTestData(testId);
+    if (currentTest?.collaborators?.[item.userDocId]) {
+      currentTest.collaborators[item.userDocId].accessLevel = newValue.value;
+      await updateTestData(testId, { collaborators: { ...currentTest.collaborators } });
+      await fetchTestAndPopulateTable();
     }
-  }
+  });
+  dataTableKey.value++;
 };
 
 const validateEmail = () => {
@@ -460,12 +402,12 @@ const validateEmail = () => {
   comboboxKey.value++;
   if (typeof email !== 'object' && email !== undefined) {
     if (email.length) {
-      if (!email.includes('@') || !email.includes('.')) {
-        toast.error('Invalid email format');
+      if (!isValidEmail(email)) {
+        showError('Invalid email format');
         return;
       }
       if (!users.value.find(user => user.email === email)) {
-        toast.error(`${email} is not a valid email or does not exist`);
+        showError(`${email} is not a valid email or does not exist`);
         return;
       } else if (!selectedCoops.value.includes(email)) {
         selectedCoops.value.push(email);
@@ -476,7 +418,7 @@ const validateEmail = () => {
       cooperator => cooperator.email === email.email
     );
     if (alreadyInvited) {
-      toast.warning(`${email.email} has already been invited`);
+      showWarning(`${email.email} has already been invited`);
       return;
     } else {
       selectedCoops.value.push(email);
@@ -487,81 +429,58 @@ const validateEmail = () => {
 const saveInvitations = async () => {
   const testId = route.params.testId;
 
-  // Get current test
-  let currentTest = null;
   try {
-    currentTest = await store.dispatch('manualAccessibility/fetchTest', testId);
-  } catch (fetchError) {
-    console.error('[AccessibilityCooperative] Failed to fetch test:', fetchError);
-    toast.error('Failed to fetch test details.');
-    return;
-  }
-
-  if (!currentTest) {
-    toast.error('Test not found.');
-    return;
-  }
-  if (!currentTest.collaborators) currentTest.collaborators = {};
-
-  // Process each selected cooperator
-  for (const coop of selectedCoops.value) {
-    const dateTimeString = `${date.value}T${hour.value}:00`;
-    const dateTime = new Date(dateTimeString);
-    const timestamp = dateTime.toISOString();
-    const token = uidgen.generateSync();
-
-    let selectedUser;
-    if (typeof coop === 'object') {
-      selectedUser = coop;
-    } else {
-      selectedUser = users.value.find(user => user.email === coop);
+    const currentTest = await fetchTestData(testId);
+    if (!currentTest) {
+      showError('Test not found.');
+      return;
     }
+    if (!currentTest.collaborators) currentTest.collaborators = {};
 
-    if (selectedUser) {
-      // Add the user as collaborator with extended info
-      currentTest.collaborators[selectedUser.id] = {
-        role: 'invited',
-        email: selectedUser.email,
-        invited: true,
-        accepted: null,
-        testDate: timestamp,
-        inviteMessage: inviteMessage.value,
-        accessLevel: roleOptions.value[selectedRole.value].value,
-        token,
-        progress: 0
-      };
+    // Process each selected cooperator
+    for (const coop of selectedCoops.value) {
+      const dateTimeString = `${date.value}T${hour.value}:00`;
+      const dateTime = new Date(dateTimeString);
+      const timestamp = dateTime.toISOString();
+      const token = uidgen.generateSync();
 
-      // Send notification
-      const notification = new Notification({
-        title: 'Manual Accessibility Test Invitation',
-        description: inviteMessage.value || 'You have been invited to participate in an accessibility test.',
-        redirectsTo: `preview/${testId}`,
-        author: 'Admin',
-        read: false,
-        testId,
-        accessLevel: roleOptions.value[selectedRole.value].value
-      });
+      let selectedUser;
+      if (typeof coop === 'object') {
+        selectedUser = coop;
+      } else {
+        selectedUser = users.value.find(user => user.email === coop);
+      }
 
-      try {
-        await store.dispatch('addNotification', {
-          userId: selectedUser.id,
-          notification,
-        });
-      } catch (error) {
-        console.error('Error sending notification:', error);
+      if (selectedUser) {
+        // Add the user as collaborator with extended info
+        currentTest.collaborators[selectedUser.id] = {
+          role: 'invited',
+          email: selectedUser.email,
+          invited: true,
+          accepted: null,
+          testDate: timestamp,
+          inviteMessage: inviteMessage.value,
+          accessLevel: roleOptions.value[selectedRole.value].value,
+          token,
+          progress: 0
+        };
+
+        // Send notification using composable
+        try {
+          await sendInvitationNotification(
+            selectedUser.id,
+            testId,
+            inviteMessage.value || 'You have been invited to participate in an accessibility test.'
+          );
+        } catch (error) {
+          console.error('Error sending notification:', error);
+        }
       }
     }
-  }
 
-  try {
-    await store.dispatch('manualAccessibility/updateTest', {
-      testId: currentTest.id,
-      updates: { collaborators: { ...currentTest.collaborators } }
-    });
-
-    // Refresh table after update
+    await updateTestData(testId, { collaborators: { ...currentTest.collaborators } });
     await fetchTestAndPopulateTable();
-    toast.success('Invitations sent successfully!');
+    showSuccess('Invitations sent successfully!');
 
     // Reset form
     showInviteDialog.value = false;
@@ -569,93 +488,56 @@ const saveInvitations = async () => {
     comboboxModel.value = [];
     inviteMessage.value = '';
     combobox.value?.blur();
-  } catch (commitError) {
-    console.error('[AccessibilityCooperative] updateTest failed:', commitError);
-    toast.error('Failed to send invitations.');
+  } catch (error) {
+    console.error('[AccessibilityCooperative] updateTest failed:', error);
+    showError('Failed to send invitations.');
   }
 };
 
 const sendMessage = async (guest, title, content) => {
   messageModel.value = false;
   if (guest.userDocId) {
-    const notification = new Notification({
-      title,
-      description: content,
-      redirectsTo: '/',
-      read: false,
-      author: 'Admin',
-      testId: route.params.testId,
-    });
-
     try {
-      await store.dispatch('addNotification', {
-        userId: guest.userDocId,
-        notification,
-      });
-      toast.success('Message sent successfully!');
+      await sendMessageNotification(guest.userDocId, title, content, route.params.testId);
+      showSuccess('Message sent successfully!');
       messageTitle.value = '';
       messageContent.value = '';
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error('Failed to send message.');
+      showError('Failed to send message.');
     }
   }
+};
+
+const reinvite = async (guest) => {
+  try {
+    await sendReminderNotification(guest.userDocId, route.params.testId);
+    showSuccess('Re-invitation sent successfully!');
+  } catch (error) {
+    console.error('Error sending re-invitation:', error);
+    showError('Failed to send re-invitation.');
+  }
+};
+
+const removeCoop = async (coop) => {
+  await handleCooperatorRemoval(coop, async (coop) => {
+    const testId = route.params.testId;
+    const currentTest = await fetchTestData(testId);
+    if (currentTest?.collaborators?.[coop.userDocId]) {
+      delete currentTest.collaborators[coop.userDocId];
+      await updateTestData(testId, { collaborators: { ...currentTest.collaborators } });
+      await fetchTestAndPopulateTable();
+    }
+  });
+};
+
+const cancelInvitation = async (guest) => {
+  await handleInvitationCancellation(guest, removeCoop);
 };
 
 const goToSession = (coopId) => {
   const testId = route.params.testId;
   router.push(`/preview/${testId}`);
-};
-
-const reinvite = async (guest) => {
-  const notification = new Notification({
-    title: 'Manual Accessibility Test Reminder',
-    description: 'This is a reminder about your accessibility test invitation.',
-    redirectsTo: `preview/${route.params.testId}`,
-    author: 'Admin',
-    read: false,
-    testId: route.params.testId,
-  });
-
-  try {
-    await store.dispatch('addNotification', {
-      userId: guest.userDocId,
-      notification,
-    });
-    toast.success('Re-invitation sent successfully!');
-  } catch (error) {
-    console.error('Error sending re-invitation:', error);
-    toast.error('Failed to send re-invitation.');
-  }
-};
-
-const removeCoop = async (coop) => {
-  const ok = confirm(`Are you sure you want to remove ${coop.email} from your cooperators?`);
-  if (ok) {
-    const testId = route.params.testId;
-    try {
-      const currentTest = await store.dispatch('manualAccessibility/fetchTest', testId);
-      if (currentTest && currentTest.collaborators && currentTest.collaborators[coop.userDocId]) {
-        delete currentTest.collaborators[coop.userDocId];
-        await store.dispatch('manualAccessibility/updateTest', {
-          testId: currentTest.id,
-          updates: { collaborators: { ...currentTest.collaborators } }
-        });
-        await fetchTestAndPopulateTable();
-        toast.success('Cooperator removed successfully!');
-      }
-    } catch (error) {
-      console.error('Error removing cooperator:', error);
-      toast.error('Failed to remove cooperator.');
-    }
-  }
-};
-
-const cancelInvitation = async (guest) => {
-  const ok = confirm(`Are you sure you want to cancel ${guest.email}'s invitation?`);
-  if (ok) {
-    await removeCoop(guest);
-  }
 };
 
 // Original functions adapted
@@ -667,8 +549,8 @@ const fetchUsers = async () => {
 const fetchTestAndPopulateTable = async () => {
   const testId = route.params.testId;
   try {
-    const test = await store.dispatch('manualAccessibility/fetchTest', testId);
-    if (test && test.collaborators) {
+    const test = await fetchTestData(testId);
+    if (test?.collaborators) {
       invitedUsers.value = Object.entries(test.collaborators).map(([userId, collaboratorInfo]) => {
         const userObj = users.value.find(u => u.id === userId);
 

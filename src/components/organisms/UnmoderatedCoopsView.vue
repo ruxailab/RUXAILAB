@@ -200,6 +200,9 @@ import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
 import Notification from '@/models/Notification';
 import UIDGenerator from 'uid-generator';
 import PageWrapper from '@/components/template/PageWrapper.vue';
+import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
+import { useNotificationManager } from '@/composables/useNotificationManager';
+import { useCooperatorActions } from '@/composables/useCooperatorActions';
 
 const uidgen = new UIDGenerator();
 
@@ -213,6 +216,30 @@ const props = defineProps({
 const store = useStore();
 const { t } = useI18n();
 const toast = useToast();
+
+// Use composables
+const {
+  roleOptions,
+  statusFilterOptions,
+  getInitials,
+  getRoleColor,
+  getRoleIcon,
+  getStatusColor,
+  getStatusText
+} = useCooperatorUtils();
+
+const {
+  sendNotification
+} = useNotificationManager();
+
+const {
+  handleRoleChange,
+  handleCooperatorRemoval,
+  handleInvitationCancellation,
+  showSuccess,
+  showError,
+  showWarning
+} = useCooperatorActions();
 
 const intro = ref(null);
 const email = ref('');
@@ -253,18 +280,6 @@ const headers = computed(() => [
   { title: 'Actions', key: 'actions', sortable: false, width: '10%' }
 ]);
 
-const roleOptions = computed(() => [
-  { title: 'Administrator', value: 0 },
-  { title: 'Evaluator', value: 1 },
-  { title: 'Guest', value: 2 }
-]);
-
-const statusFilterOptions = computed(() => [
-  { title: 'Invited', value: 'invited' },
-  { title: 'Accepted', value: 'accepted' },
-  { title: 'Pending', value: 'pending' }
-]);
-
 const filteredCooperators = computed(() => {
   let result = [...cooperatorsEdit.value];
   if (filters.value.role) {
@@ -287,69 +302,23 @@ const filteredCooperators = computed(() => {
   return result;
 });
 
-const getInitials = (email) => {
-  return email.split('@')[0].slice(0, 2).toUpperCase();
-};
-
-const getRoleColor = (role) => {
-  switch (role.toLowerCase()) {
-    case 'administrator': return 'primary';
-    case 'evaluator': return 'success';
-    case 'guest': return 'warning';
-    default: return 'grey';
-  }
-};
-
-const getRoleIcon = (role) => {
-  switch (role.toLowerCase()) {
-    case 'administrator': return 'mdi-crown';
-    case 'evaluator': return 'mdi-account-check';
-    case 'guest': return 'mdi-account';
-    default: return 'mdi-account';
-  }
-};
-
-const getStatusColor = (status) => {
-  if (status === true) return 'success';
-  if (status === false) return 'error';
-  return 'warning';
-};
-
-const getStatusText = (status) => {
-  if (status === true) return 'accepted';
-  return 'pending';
-};
-
 const removeSelectedCoops = (index) => {
   selectedCoops.value.splice(index, 1);
 };
 
 const changeRole = async (item, newValue) => {
-  const index = cooperatorsEdit.value.indexOf(item);
-  const newCoop = { ...item, accessLevel: newValue.value };
-  const currentAccessLevelText = roleOptions.value.find(r => r.value === item.accessLevel)?.title;
-  const newAccessLevelText = newValue.title;
-
-  if (item.accessLevel !== newValue.value) {
-    const ok = confirm(
-      t('HeuristicsCooperators.messages.change_role', {
-        email: item.email,
-        old: currentAccessLevelText,
-        new: newAccessLevelText
-      })
-    );
-    if (ok) {
-      test.value.cooperators[index] = newCoop;
-      await store.dispatch('updateTest', test.value);
-      await store.dispatch('updateUserAnswer', {
-        testDocId: test.value.id,
-        cooperatorId: newCoop.userDocId,
-        data: { accessLevel: newCoop.accessLevel }
-      });
-    } else {
-      dataTableKey.value++;
-    }
-  }
+  await handleRoleChange(item, newValue, roleOptions.value, async (item, newValue) => {
+    const index = cooperatorsEdit.value.indexOf(item);
+    const newCoop = { ...item, accessLevel: newValue.value };
+    test.value.cooperators[index] = newCoop;
+    await store.dispatch('updateTest', test.value);
+    await store.dispatch('updateUserAnswer', {
+      testDocId: test.value.id,
+      cooperatorId: newCoop.userDocId,
+      data: { accessLevel: newCoop.accessLevel }
+    });
+  });
+  dataTableKey.value++;
 };
 
 const submit = async () => {
@@ -368,17 +337,14 @@ const submit = async () => {
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
     const path = guest.accessLevel.value >= 2 ? 'testview' : 'managerview';
-    store.dispatch('addNotification', {
+    sendNotification({
       userId: guest.userDocId,
-      notification: new Notification({
-        title: 'Cooperation Invite!',
-        description: `You have been invited to test ${test.value.testTitle}!`,
-        redirectsTo: `${path}/${test.value.id}/${guest.token}`,
-        author: test.value.testAdmin.email,
-        read: false,
-        testId: test.value.id,
-        accessLevel: roleOptions.value[selectedRole.value].value
-      })
+      title: 'Cooperation Invite!',
+      description: `You have been invited to test ${test.value.testTitle}!`,
+      redirectsTo: `${path}/${test.value.id}/${guest.token}`,
+      author: test.value.testAdmin.email,
+      testId: test.value.id,
+      accessLevel: roleOptions.value[selectedRole.value].value
     });
   }
 };
@@ -386,16 +352,13 @@ const notifyCooperator = (guest) => {
 const sendMessage = (user, title, content) => {
   if (user.userDocId) {
     const path = user.accessLevel.value >= 2 ? 'testview' : 'managerview';
-    store.dispatch('addNotification', {
+    sendNotification({
       userId: user.userDocId,
-      notification: new Notification({
-        title: title,
-        description: content,
-        redirectsTo: '/',
-        read: false,
-        author: test.value.testAdmin.email,
-        testId: test.value.id
-      })
+      title: title,
+      description: content,
+      redirectsTo: '/',
+      author: test.value.testAdmin.email,
+      testId: test.value.id
     });
   }
   messageModel.value = false;
@@ -471,10 +434,7 @@ const validateEmail = () => {
 };
 
 const removeCoop = async (coop) => {
-  const ok = confirm(
-    t('HeuristicsCooperators.messages.remove_cooperator', { email: coop.email })
-  );
-  if (ok) {
+  await handleCooperatorRemoval(coop, async (coop) => {
     const index = cooperatorsEdit.value.indexOf(coop);
     cooperatorsEdit.value.splice(index, 1);
     test.value.cooperators = cooperatorsEdit.value;
@@ -484,7 +444,16 @@ const removeCoop = async (coop) => {
       test: test.value,
       cooperator: coop
     });
-  }
+  });
+};
+
+const cancelInvitation = async (guest) => {
+  await handleInvitationCancellation(guest, async (guest) => {
+    const index = cooperatorsEdit.value.indexOf(guest);
+    cooperatorsEdit.value.splice(index, 1);
+    test.value.cooperators = cooperatorsEdit.value;
+    await store.dispatch('updateTest', test.value);
+  });
 };
 
 const sendInvitationMail = async (guest) => {
@@ -503,18 +472,6 @@ const sendInvitationMail = async (guest) => {
     email = { ...email, path: 'managerview', token: guest.token };
   }
   await store.dispatch('sendEmailInvitation', email);
-};
-
-const cancelInvitation = async (guest) => {
-  const ok = confirm(
-    t('HeuristicsCooperators.messages.cancel_invitation', { email: guest.email })
-  );
-  if (ok) {
-    const index = cooperatorsEdit.value.indexOf(guest);
-    cooperatorsEdit.value.splice(index, 1);
-    test.value.cooperators = cooperatorsEdit.value;
-    await store.dispatch('updateTest', test.value);
-  }
 };
 
 watch(loading, (newVal) => {
