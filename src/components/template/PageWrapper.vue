@@ -12,12 +12,12 @@
       </v-overlay>
 
       <!-- Main Container -->
-      <v-container fluid class="page-wrapper" :class="{ 'side-gap': sideGap }">
+      <v-container>
         <!-- Header Section -->
         <div v-if="title || $slots.actions" class="header-section">
           <v-row align="center" class="">
             <v-col>
-              <h1 v-if="title" class="text-h3 font-weight-light text-on-surface mb-2">
+              <h1 v-if="title" class="text-h3 font-weight-light text-on-surface">
                 {{ title }}
               </h1>
               <slot name="subtitle" />
@@ -71,12 +71,5 @@ const { t } = useI18n();
 
 .side-gap {
   padding: 1.5rem 3rem;
-}
-
-
-@media (max-width: 960px) {
-  .side-gap {
-    padding: 1rem;
-  }
 }
 </style>
