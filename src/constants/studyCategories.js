@@ -50,7 +50,7 @@ export const STUDY_CATEGORIES = [
             'Assess your product for accessibility compliance and best practices.',
         icon: 'mdi-access-point',
         color: 'primary',
-        hasSubMethods: false,
+        hasSubMethods: true,
         comingSoon: false,
     },
 ]
