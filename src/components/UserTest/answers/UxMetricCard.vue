@@ -39,14 +39,4 @@ const props = defineProps({
 });
 </script>
 
-<style scoped>
-.ux-metric-card {
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.ux-metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-}
-</style>
+<style scoped></style>

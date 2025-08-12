@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-background">
+  <div>
     <!-- UX Metrics Row (ahora primera fila) -->
-    <v-row class="">
+    <v-row>
       <v-col cols="12" md="4">
         <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" label="Eficacia" color="success"
           icon="mdi-target-account" description="Porcentaje de tareas completadas exitosamente"
@@ -278,7 +278,7 @@
             </div>
           </div>
           <v-row>
-            <template v-for="(q, idx) in taskAnswers[0]?.postTestAnswer || []">
+            <template v-for="(q, idx) in postTestQuestions" :key="'ptq-' + (q.question || idx)">
               <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
                 :key="'sel-' + (q.question || idx)" cols="12" md="6" lg="4">
                 <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
@@ -286,7 +286,7 @@
                   :chart-colors="chartColors" />
               </v-col>
               <v-col v-else :key="'com-' + (q.question || idx)" cols="12">
-                <CommentListCard :question-title="q.title || q.question" :answer="q.answer" />
+                <CommentListCard :question-title="q.title || q.question" :answer="getPostTextAnswers(idx)" />
               </v-col>
             </template>
           </v-row>
@@ -325,20 +325,36 @@ const selectionQuestions = computed(() => {
   return taskAnswers.value[0].postTestAnswer.filter(q => Array.isArray(q.selectionFields) && q.selectionFields.length > 0);
 });
 
+// Computed robusto: tomar la primera sesión que tenga postTestAnswer
+const postTestQuestions = computed(() => {
+  for (const ans of taskAnswers.value) {
+    if (Array.isArray(ans?.postTestAnswer) && ans.postTestAnswer.length) {
+      return ans.postTestAnswer;
+    }
+  }
+  return [];
+});
+
 // Devuelve los recuentos de respuestas para una pregunta de selección específica (por índice)
 function getSelectionCounts(questionIdx) {
   const counts = {};
-  const q = taskAnswers.value[0]?.postTestAnswer?.[questionIdx];
-  if (!q) return counts;
-  q.selectionFields.forEach(opt => { counts[opt] = 0; });
+  // localizar la definición/base de la pregunta
+  let baseQuestion = null;
+  for (const ans of taskAnswers.value) {
+    if (ans.postTestAnswer && ans.postTestAnswer[questionIdx]) { baseQuestion = ans.postTestAnswer[questionIdx]; break; }
+  }
+  if (!baseQuestion) return counts;
+  if (Array.isArray(baseQuestion.selectionFields)) {
+    baseQuestion.selectionFields.forEach(opt => { counts[opt] = 0; });
+  }
   taskAnswers.value.forEach(ans => {
-    if (ans.postTestAnswer && ans.postTestAnswer[questionIdx] && ans.postTestAnswer[questionIdx].answer) {
-      const answer = ans.postTestAnswer[questionIdx].answer;
-      if (Array.isArray(answer)) {
-        answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
-      } else if (counts[answer] !== undefined) {
-        counts[answer]++;
-      }
+    const entry = ans.postTestAnswer?.[questionIdx];
+    if (!entry) return;
+    const answer = entry.answer;
+    if (Array.isArray(answer)) {
+      answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
+    } else if (counts[answer] !== undefined) {
+      counts[answer]++;
     }
   });
   return counts;
@@ -369,6 +385,16 @@ function getPreTextAnswers(questionIdx) {
   taskAnswers.value.forEach(ans => {
     const a = ans.preTestAnswer?.[questionIdx]?.answer;
     if (a !== undefined && a !== null && a !== '') list.push(a);
+  });
+  return list;
+}
+
+function getPostTextAnswers(questionIdx) {
+  const list = [];
+  taskAnswers.value.forEach(ans => {
+    const entry = ans.postTestAnswer?.[questionIdx];
+    const a = entry?.answer;
+    if (a !== undefined && a !== null && a !== '' && !Array.isArray(a)) list.push(a);
   });
   return list;
 }
@@ -782,33 +808,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-}
-
-
-.chart-container-large {
-  height: 400px;
-  width: 100%;
-  position: relative;
-}
-
-.progress-glow {
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
-}
-
-.ux-metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
-
-.task-chart-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
 .chart-container-small {
   height: 150px;
   width: 100%;
