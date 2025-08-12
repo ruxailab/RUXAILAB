@@ -40,7 +40,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView />
+          <DashboardView :items="tests" />
         </div>
 
         <div v-if="activeSection === 'studies'">
