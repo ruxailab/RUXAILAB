@@ -327,13 +327,18 @@ const handleTestType = () => {
 };
 
 const submit = async () => {
+  let testType = category.value == 'test' ? 'User' : 'HEURISTICS'
+  if (method.value === 'CardSorting') {
+    testType = method.value
+  }
+
   isLoading.value = true;
   const user = store.getters.user;
   const newTest = new Test({
     id: null,
     testTitle: test.value.title,
     testDescription: test.value.description,
-    testType: category.value == 'test' ? 'User' : 'HEURISTICS',
+    testType: testType,
     isPublic: test.value.isPublic,
     userTestType: test.value.userTestType,
     userTestStatus: test.value.userTestStatus,
