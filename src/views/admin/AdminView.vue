@@ -145,7 +145,7 @@ const filteredTests = computed(() => {
 
     const method = selectedMethodFilter.value;
     const testType = test.testType;
-
+    console.log(testType)
     const matchesMethod =
       method === 'all' ||
       (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
