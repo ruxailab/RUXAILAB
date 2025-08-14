@@ -2,6 +2,7 @@ import EditTest from '@/views/admin/EditTestView.vue'
 import TestList from '@/views/admin/DashboardView.vue'
 import AnswerView from '@/views/admin/AnswerView.vue'
 import SessionView from '@/views/admin/SessionView.vue'
+import SessionAnalyticsView from '@/views/admin/SessionAnalyticsView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import CooperatorsView from '@/views/admin/CooperatorsView.vue'
@@ -72,6 +73,13 @@ export default [
         props: true,
         meta: { authorize: [0, 1] }, // TODO: This Should be 0 but access Level is not working
         component: SessionView,
+      },
+      {
+        path: '/session-analytics/:id',
+        name: 'SessionAnalyticsView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: SessionAnalyticsView,
       },
       {
         path: '/edittest/:id',
