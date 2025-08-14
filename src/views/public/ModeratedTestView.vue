@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-container fluid class="pa-0">
-
       <!-- Start Screen -->
       <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
         <v-col md="8" class="ma-5 pa-5">
@@ -71,12 +70,45 @@
               @continue="completeStep(taskIndex, 'consent')" />
 
             <!--Step 2: Pre-test -->
-          </div>
+            <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
+              :pre-test-title="$t('UserTestView.titles.preTest')" :pre-test="test.testStructure.preTest"
+              :pre-test-answer="localTestAnswer.preTestAnswer" :pre-test-completed="localTestAnswer.preTestCompleted"
+              @done="completeStep(taskIndex, 'preTest')" />
 
+            <!-- Step 3: Tasks -->
+            <PreTasksStep v-if="globalIndex === 3 && taskIndex === 0"
+              :num-tasks="test?.testStructure?.userTasks?.length || 0"
+              @startTasks="() => { taskIndex = 0; globalIndex = 4 }" />
+
+
+            <!-- Step 4: Task Step -->
+            <TaskStep v-if="globalIndex === 4 && test.testType === 'User'" ref="taskStepComponent"
+              :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
+              v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
+              v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
+              v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
+              :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
+              :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
+              :done-task-disabled="doneTaskDisabled"
+              @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
+              @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+              @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
+              @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
+              @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
+
+            <PostTestStep v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+              :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
+              :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
+              :post-test-completed="localTestAnswer.postTestCompleted"
+              @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }" />
+            <FinishStep v-if="globalIndex === 6 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
+              :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
+              :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
+              @submit="dialog = true" />
+          </div>
         </v-col>
       </v-row>
     </v-container>
-
 
     <!-- Dialog for user to continue or change account -->
     <v-dialog :model-value="!loggedIn" width="500" persistent>
@@ -111,6 +143,11 @@
 <script setup>
 import VideoCall from '@/components/molecules/VideoCall.vue';
 import ConsentStep from '@/components/UserTest/steps/ConsentStep.vue';
+import FinishStep from '@/components/UserTest/steps/FinishStep.vue';
+import PostTestStep from '@/components/UserTest/steps/PostTestStep.vue';
+import PreTasksStep from '@/components/UserTest/steps/PreTasksStep.vue';
+import PreTestStep from '@/components/UserTest/steps/PreTestStep.vue';
+import TaskStep from '@/components/UserTest/steps/TaskStep.vue';
 import WelcomeStep from '@/components/UserTest/steps/WelcomeStep.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
@@ -140,14 +177,22 @@ const items = ref([]);
 const doneTaskDisabled = ref(false); // ?
 const displayVideoCallComponent = ref(false);
 const preTestIndex = ref(null);
+const taskStepComponent = ref(null);
+const allTasksCompleted = ref(false);
 
 // Computed properties
 const test = computed(() => store.getters.test);
+const testId = computed(() => store.getters.test?.id || null);
 const user = computed(() => {
   return store.getters.user;
 });
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+});
+
+const timerComponent = computed(() => {
+  // Get timer ref from TaskStep
+  return taskStepComponent.value?.$refs?.timerComponent || null;
 });
 
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
@@ -267,6 +312,58 @@ const scrollToTop = () => {
   // For rightView (in case of overflow)
   if (rightView.value) {
     rightView.value.scrollTop = 0;
+  }
+};
+
+
+const callTimerSave = () => {
+  if (timerComponent.value && typeof timerComponent.value.stopTimer === 'function') {
+    timerComponent.value.stopTimer();
+  }
+};
+
+function handleTaskFinish(userCompleted) {
+  const currentTask = localTestAnswer.tasks[taskIndex.value];
+  if (currentTask) {
+    console.log('Estado actual de la tarea antes de finalizar:', currentTask);
+  }
+  completeStep(taskIndex.value, 'tasks', userCompleted);
+  callTimerSave();
+}
+
+const startTimer = () => {
+  if (timerComponent.value && typeof timerComponent.value.startTimer === 'function') {
+    timerComponent.value.startTimer();
+  }
+};
+
+
+const handleTimerStopped = (elapsedTime, idx) => {
+  // idx is passed from TaskStep, always use it
+  console.log('handleTimerStopped llamado con:', { elapsedTime, idx });
+
+  if (!localTestAnswer.tasks) {
+    console.error('localTestAnswer.tasks no está definido');
+    return;
+  }
+
+  if (idx === undefined || idx === null) {
+    console.error('Índice de tarea no válido:', idx);
+    return;
+  }
+
+  if (localTestAnswer.tasks[idx]) {
+    console.log('Guardando tiempo para tarea', idx, ':', elapsedTime, 'segundos');
+    // Asegurar que el tiempo es un número
+    const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
+    if (!isNaN(timeToSave)) {
+      localTestAnswer.tasks[idx].taskTime = timeToSave;
+      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
+    } else {
+      console.error('Tiempo no válido:', elapsedTime);
+    }
+  } else {
+    console.error('No se pudo guardar el tiempo para la tarea', idx);
   }
 };
 
