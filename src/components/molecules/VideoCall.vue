@@ -21,7 +21,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { database } from '@/firebase';
-import { ref as dbRef, set, onValue, push, off, get } from 'firebase/database';
+import { ref as dbRef, set, onValue, push, off, get, onDisconnect } from 'firebase/database';
 
 const props = defineProps({
   caller: Boolean,
@@ -69,6 +69,23 @@ async function init() {
   }
 
   localStream.value.getTracks().forEach(track => peerConnection.value.addTrack(track, localStream.value));
+
+  if (props.caller == false) {
+    onValue(dbRef(database, `calls/${props.roomId}`), (snapshot) => {
+      if (!snapshot.exists() && callStarted.value) {
+        console.log('Sala removida pelo caller, encerrando conexão...');
+
+        // Fecha peerConnection e streams
+        if (peerConnection.value) peerConnection.value.close();
+        if (localStream.value) localStream.value.getTracks().forEach(track => track.stop());
+
+        // Limpa estado local
+        peerConnection.value = null;
+        localStream.value = null;
+        callStarted.value = false;
+      }
+    });
+  }
 }
 
 // Escuta candidatos remotos
@@ -122,10 +139,18 @@ async function startCall() {
   await peerConnection.value.setLocalDescription(offer);
   await set(offerRef, { sdp: offer.sdp, type: offer.type });
 
+  if (props.caller) {
+    const roomRef = dbRef(database, `calls/${props.roomId}`);
+    // Define a operação de exclusão para quando o cliente se desconectar
+    await onDisconnect(roomRef).remove();
+  }
+
   const answerRef = dbRef(database, `calls/${props.roomId}/answer`);
   onValue(answerRef, async (snapshot) => {
     const data = snapshot.val();
     if (data && peerConnection.value.signalingState === 'have-local-offer') {
+      console.log('signaling state => ', peerConnection.value.signalingState)
+      console.log('offer data =>', data)
       await peerConnection.value.setRemoteDescription(new RTCSessionDescription(data));
       callStarted.value = true;
       listenForCandidates();
@@ -150,6 +175,8 @@ async function answerCall() {
     await init();
   }
 
+  console.log('ai caralho => ', peerConnection.value.signalingState)
+
   await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offerData));
   const answer = await peerConnection.value.createAnswer();
   await peerConnection.value.setLocalDescription(answer);
@@ -163,11 +190,27 @@ async function answerCall() {
 
 // Encerra a chamada
 async function endCall() {
-  if (localStream.value) localStream.value.getTracks().forEach(track => track.stop());
-  if (peerConnection.value) peerConnection.value.close();
+  // Para os streams locais
+  if (localStream.value) {
+    localStream.value.getTracks().forEach(track => track.stop());
+  }
 
-  await set(dbRef(database, `calls/${props.roomId}`), null);
+  // Fecha a conexão WebRTC
+  if (peerConnection.value) {
+    peerConnection.value.close();
+  }
 
+  // Remove a sala inteira do Firebase (isso avisa o callee)
+  if (props.caller) {
+    const roomRef = dbRef(database, `calls/${props.roomId}`);
+    // Cancela a operação de desconexão para que ela não seja executada
+    await onDisconnect(roomRef).cancel();
+
+    await set(roomRef, null);
+    console.log('Sala removida, callee também será desconectado.');
+  }
+
+  // Limpa estado local
   localStream.value = null;
   peerConnection.value = null;
   callStarted.value = false;
