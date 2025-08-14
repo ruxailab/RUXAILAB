@@ -1,14 +1,5 @@
 <template>
   <div>
-    <h1>Test</h1>
-    {{ test }}
-
-    <h1>User</h1>
-    {{ user }}
-
-    <h1>Current User Test Answer</h1>
-    {{ currentUserTestAnswer }}
-
     <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
 
     <!-- Dialog for user to continue or change account -->
