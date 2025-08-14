@@ -13,14 +13,14 @@
     </v-row>
 
     <v-row justify="center">
-      <!-- Button to start the call if user is caller and call hasn't started -->
-      <v-btn v-if="caller && !callStarted" color="primary" @click="startCall">Start Call</v-btn>
+      <v-btn v-if="caller && !callStarted" color="primary" @click="startCall">Open Room</v-btn>
 
-      <!-- Button to answer the call if user is callee and call hasn't started -->
-      <v-btn v-else-if="!caller && !callStarted" color="success" @click="answerCall">Answer Call</v-btn>
-
-      <!-- Button to end the call if user is caller and call has started -->
-      <!-- <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn> -->
+      <template v-else-if="!caller && !callStarted">
+        <p v-if="!roomExists">Wait for moderator to open the room</p>
+        <v-btn v-else color="success" @click="answerCall" :disabled="!roomExists">
+          Join Room
+        </v-btn>
+      </template>
     </v-row>
   </div>
 </template>
@@ -42,6 +42,7 @@ const remoteVideo = ref(null);
 const localStream = ref(null);       // user's local media stream
 const peerConnection = ref(null);    // WebRTC peer connection
 const callStarted = ref(false);      // call status
+const roomExists = ref(false);
 
 // Initialize WebRTC connection
 async function init() {
@@ -85,6 +86,7 @@ async function init() {
   // Listen for caller disconnect (for callee)
   if (!props.caller) {
     onValue(dbRef(database, `calls/${props.roomId}`), (snapshot) => {
+      roomExists.value = snapshot.exists();
       if (!snapshot.exists() && callStarted.value) {
         console.log('Room removed by caller, ending connection...');
 

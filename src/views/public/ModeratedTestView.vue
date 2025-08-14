@@ -21,14 +21,6 @@
       <!--Answer Test Screen-->
       <v-row v-else class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
-          <!-- Video Call Component -->
-          <div v-if="displayVideoCallComponent">
-            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
-            <v-btn @click="displayVideoCallComponent = false">
-              Proceed to next step
-            </v-btn>
-          </div>
-
           <!--Sticky Stepper to follow Progress-->
           <v-row v-if="globalIndex >= 1 || displayVideoCallComponent" class="stepper-row sticky-stepper">
             <v-col cols="12">
@@ -55,19 +47,32 @@
             </v-col>
           </v-row>
 
-          <!--Step 0: Welcome -->
-          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
-            @start="displayVideoCallComponent = true; globalIndex = 1" />
+          <!-- Video Call Component -->
+          <div v-show="displayVideoCallComponent">
+            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
 
-          <!--Step 1: Consent -->
-          <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
-            :pre-test-title="$t('UserTestView.titles.preTest')" :consent-text="test.testStructure.consent"
-            :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
-            @update:fullNameModel="val => fullName = val"
-            @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-            @continue="completeStep(taskIndex, 'consent')" />
+            <!-- Proceed Button -->
+            <v-btn v-if="isUserTestAdmin" @click="proceedToNextStep()">
+              Proceed to next step
+            </v-btn>
+          </div>
 
-          <!--Step 2: Pre-test -->
+          <!-- Hide Form Elements while on Video Call Mode -->
+          <div v-show="!displayVideoCallComponent">
+            <!--Step 0: Welcome -->
+            <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" />
+
+            <!--Step 1: Consent -->
+            <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
+              :pre-test-title="$t('UserTestView.titles.preTest')" :consent-text="test.testStructure.consent"
+              :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
+              @update:fullNameModel="val => fullName = val"
+              @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
+              @continue="completeStep(taskIndex, 'consent')" />
+
+            <!--Step 2: Pre-test -->
+          </div>
 
         </v-col>
       </v-row>
@@ -217,6 +222,15 @@ watch(
 );
 
 // Methods
+const proceedToNextStep = () => {
+  console.log('global index =>', globalIndex.value);
+  console.log('task index =>', taskIndex.value);
+
+  displayVideoCallComponent.value = false;
+
+  // TODO: Signal Evaluation Step change
+};
+
 const setTestAnswer = async () => {
   loggedIn.value = true;
   await store.dispatch('getCurrentTestAnswerDoc');
