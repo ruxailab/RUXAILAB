@@ -1,18 +1,25 @@
 <template>
   <div class="video-call">
     <v-row class="video-container" align="center" justify="center" no-gutters>
+      <!-- Local video stream -->
       <v-col cols="12" lg="6" md="6" sm="6">
         <video ref="localVideo" autoplay muted playsinline class="video-element"></video>
       </v-col>
 
+      <!-- Remote video stream -->
       <v-col cols="12" lg="6" md="6" sm="6">
         <video ref="remoteVideo" autoplay playsinline class="video-element"></video>
       </v-col>
     </v-row>
 
     <v-row justify="center">
+      <!-- Button to start the call if user is caller and call hasn't started -->
       <v-btn v-if="caller && !callStarted" color="primary" @click="startCall">Start Call</v-btn>
+
+      <!-- Button to answer the call if user is callee and call hasn't started -->
       <v-btn v-else-if="!caller && !callStarted" color="success" @click="answerCall">Answer Call</v-btn>
+
+      <!-- Button to end the call if user is caller and call has started -->
       <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn>
     </v-row>
   </div>
@@ -23,35 +30,38 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { database } from '@/firebase';
 import { ref as dbRef, set, onValue, push, off, get, onDisconnect } from 'firebase/database';
 
+// Props received from parent component
 const props = defineProps({
-  caller: Boolean,
-  roomId: String,
+  caller: Boolean, // whether the user is the caller
+  roomId: String,  // unique room identifier
 });
 
 const localVideo = ref(null);
 const remoteVideo = ref(null);
 
-const localStream = ref(null);
-const peerConnection = ref(null);
-const callStarted = ref(false);
+const localStream = ref(null);       // user's local media stream
+const peerConnection = ref(null);    // WebRTC peer connection
+const callStarted = ref(false);      // call status
 
-// Inicia a conexão WebRTC
+// Initialize WebRTC connection
 async function init() {
   peerConnection.value = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
 
+  // Listen for remote tracks
   peerConnection.value.ontrack = (event) => {
     if (remoteVideo.value && remoteVideo.value.srcObject !== event.streams[0]) {
       remoteVideo.value.srcObject = event.streams[0];
     }
   };
 
+  // Send local ICE candidates to Firebase
   peerConnection.value.onicecandidate = async (event) => {
     if (!event.candidate) return;
     const candidateRef = dbRef(database, `calls/${props.roomId}/candidates`);
     await push(candidateRef, event.candidate.toJSON());
   };
 
-  // Reconexão automática do caller
+  // Automatic reconnection for caller if ICE disconnects
   peerConnection.value.oniceconnectionstatechange = async () => {
     if (props.caller && peerConnection.value.iceConnectionState === 'disconnected') {
       console.log('Caller disconnected. Restarting ICE...');
@@ -59,27 +69,30 @@ async function init() {
     }
   };
 
+  // Get local media stream if not already available
   if (!localStream.value) {
     try {
       localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (localVideo.value) localVideo.value.srcObject = localStream.value;
     } catch (err) {
-      console.error('Erro ao acessar câmera/microfone:', err);
+      console.error('Error accessing camera/microphone:', err);
     }
   }
 
+  // Add local tracks to peer connection
   localStream.value.getTracks().forEach(track => peerConnection.value.addTrack(track, localStream.value));
 
-  if (props.caller == false) {
+  // Listen for caller disconnect (for callee)
+  if (!props.caller) {
     onValue(dbRef(database, `calls/${props.roomId}`), (snapshot) => {
       if (!snapshot.exists() && callStarted.value) {
-        console.log('Sala removida pelo caller, encerrando conexão...');
+        console.log('Room removed by caller, ending connection...');
 
-        // Fecha peerConnection e streams
+        // Close peer connection and stop tracks
         if (peerConnection.value) peerConnection.value.close();
         if (localStream.value) localStream.value.getTracks().forEach(track => track.stop());
 
-        // Limpa estado local
+        // Reset local state
         peerConnection.value = null;
         localStream.value = null;
         callStarted.value = false;
@@ -88,7 +101,7 @@ async function init() {
   }
 }
 
-// Escuta candidatos remotos
+// Listen for remote ICE candidates and add them to peer connection
 function listenForCandidates() {
   const candidateRef = dbRef(database, `calls/${props.roomId}/candidates`);
   onValue(candidateRef, async (snapshot) => {
@@ -101,26 +114,26 @@ function listenForCandidates() {
           await peerConnection.value.addIceCandidate(new RTCIceCandidate(candidate));
         }
       } catch (err) {
-        console.error('Erro adicionando ICE candidate:', err);
+        console.error('Error adding ICE candidate:', err);
       }
     }
   });
 }
 
-// Reinicia a chamada (caller)
+// Restart the call for caller in case of ICE failure
 async function restartCall() {
   try {
     const offer = await peerConnection.value.createOffer({ iceRestart: true });
     await peerConnection.value.setLocalDescription(offer);
     const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
     await set(offerRef, { sdp: offer.sdp, type: offer.type });
-    console.log('Nova offer enviada após reconexão.');
+    console.log('New offer sent after reconnection.');
   } catch (err) {
-    console.error('Falha ao reiniciar ICE:', err);
+    console.error('Failed to restart ICE:', err);
   }
 }
 
-// Inicia a chamada (caller)
+// Start the call (caller)
 async function startCall() {
   await init();
 
@@ -128,9 +141,9 @@ async function startCall() {
   const snapshot = await get(offerRef);
   const offerExists = snapshot.exists();
 
-  // Se a sala já existe, recria a offer para reconexão
+  // If room already exists, recreate offer for reconnection
   if (offerExists && peerConnection.value.signalingState === 'closed') {
-    console.log('Reconexão do caller: recriando offer...');
+    console.log('Caller reconnection: recreating offer...');
     peerConnection.value = null;
     await init();
   }
@@ -141,7 +154,7 @@ async function startCall() {
 
   if (props.caller) {
     const roomRef = dbRef(database, `calls/${props.roomId}`);
-    // Define a operação de exclusão para quando o cliente se desconectar
+    // Set removal of room on client disconnect
     await onDisconnect(roomRef).remove();
   }
 
@@ -158,6 +171,7 @@ async function startCall() {
   });
 }
 
+// Answer the call (callee)
 async function answerCall() {
   await init();
 
@@ -166,16 +180,14 @@ async function answerCall() {
   const offerData = snapshot.val();
 
   if (!offerData) {
-    console.warn('Nenhuma offer encontrada. Aguarde o caller.');
+    console.warn('No offer found. Please wait for the caller.');
     return;
   }
 
-  // Se peerConnection já existe mas estava fechado (calle caiu), recria
+  // Re-initialize if peer connection was closed (caller disconnected)
   if (!peerConnection.value || peerConnection.value.signalingState === 'closed') {
     await init();
   }
-
-  console.log('ai caralho => ', peerConnection.value.signalingState)
 
   await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offerData));
   const answer = await peerConnection.value.createAnswer();
@@ -188,38 +200,40 @@ async function answerCall() {
   listenForCandidates();
 }
 
-// Encerra a chamada
+// End the call
 async function endCall() {
-  // Para os streams locais
+  // Stop local media tracks
   if (localStream.value) {
     localStream.value.getTracks().forEach(track => track.stop());
   }
 
-  // Fecha a conexão WebRTC
+  // Close peer connection
   if (peerConnection.value) {
     peerConnection.value.close();
   }
 
-  // Remove a sala inteira do Firebase (isso avisa o callee)
+  // Remove room from Firebase if caller
   if (props.caller) {
     const roomRef = dbRef(database, `calls/${props.roomId}`);
-    // Cancela a operação de desconexão para que ela não seja executada
+    // Cancel any onDisconnect operation
     await onDisconnect(roomRef).cancel();
 
     await set(roomRef, null);
-    console.log('Sala removida, callee também será desconectado.');
+    console.log('Room removed, callee will also be disconnected.');
   }
 
-  // Limpa estado local
+  // Reset local state
   localStream.value = null;
   peerConnection.value = null;
   callStarted.value = false;
 }
 
+// Initialize call on mount
 onMounted(() => {
   init();
 });
 
+// Cleanup on component unmount
 onBeforeUnmount(() => {
   endCall();
 });
