@@ -3,79 +3,38 @@
     <v-row justify="center">
       <v-col cols="12" md="10" lg="12">
         <v-card class="elevation-2 rounded-lg pa-6">
-          <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+          <v-card-title class="text-h5 font-weight-bold mb-4"
+            :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
             Pre-Test Variables
           </v-card-title>
           <v-card-text>
             <p class="text-body-1 mb-6" style="color: #4B5563;">
               Configure the variables for the pre-test section. Add, edit, or remove variables as needed.
             </p>
-            <v-expansion-panels
-              v-if="items.length > 0"
-              variant="accordion"
-              class="elevation-0"
-              style="border: 1px solid #E5E7EB; border-radius: 12px;"
-            >
-              <v-expansion-panel
-                v-for="(item, i) in items"
-                :key="i"
-                class="rounded-lg mb-2"
-                :disabled="isSaving"
-              >
+            <v-expansion-panels v-if="items.length > 0" variant="accordion" class="elevation-0"
+              style="border: 1px solid #E5E7EB; border-radius: 12px;">
+              <v-expansion-panel v-for="(item, i) in items" :key="i" class="rounded-lg mb-2" :disabled="isSaving">
                 <v-expansion-panel-title class="py-3 px-4">
                   <span class="text-body-1 font-weight-medium">{{ item.title || 'Untitled Variable' }}</span>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text class="pa-4">
                   <v-form @submit.prevent>
-                    <v-text-field
-                      v-model="item.title"
-                      label="Variable Title"
-                      variant="outlined"
-                      density="comfortable"
-                      :rules="[v => !!v || 'Title is required']"
-                      color="primary"
-                      class="mb-4"
-                      @update:model-value="markDirty"
-                    />
-                    <v-textarea
-                      v-model="item.description"
-                      label="Description (Optional)"
-                      variant="outlined"
-                      density="comfortable"
-                      color="primary"
-                      rows="3"
-                      class="mb-4"
-                      @update:model-value="markDirty"
-                    />
+                    <v-text-field v-model="item.title" label="Variable Title" variant="outlined" density="comfortable"
+                      :rules="[v => !!v || 'Title is required']" color="primary" class="mb-4"
+                      @update:model-value="markDirty" />
+                    <v-textarea v-model="item.description" label="Description (Optional)" variant="outlined"
+                      density="comfortable" color="primary" rows="3" class="mb-4" @update:model-value="markDirty" />
                     <div v-if="item.selectionField">
-                      <div
-                        v-for="(field, index) in item.selectionFields"
-                        :key="index"
-                        class="d-flex align-center mb-2"
-                      >
-                        <v-text-field
-                          v-model="item.selectionFields[index]"
-                          :label="`Option ${index + 1}`"
-                          variant="outlined"
-                          density="comfortable"
-                          :rules="[v => !!v || 'Option is required']"
-                          color="primary"
-                          class="mr-2"
-                          @update:model-value="markDirty"
-                        >
+                      <div v-for="(field, index) in item.selectionFields" :key="index" class="d-flex align-center mb-2">
+                        <v-text-field v-model="item.selectionFields[index]" :label="`Option ${index + 1}`"
+                          variant="outlined" density="comfortable" :rules="[v => !!v || 'Option is required']"
+                          color="primary" class="mr-2" @update:model-value="markDirty">
                           <template #append>
-                            <v-icon
-                              color="accent"
-                              class="mr-2"
-                              @click="newSelection(i)"
-                            >
+                            <v-icon color="accent" class="mr-2" @click="newSelection(i)">
                               mdi-plus-circle
                             </v-icon>
-                            <v-icon
-                              v-if="item.selectionFields.length > 1"
-                              color="error"
-                              @click="deleteSelection(i, index)"
-                            >
+                            <v-icon v-if="item.selectionFields.length > 1" color="error"
+                              @click="deleteSelection(i, index)">
                               mdi-trash-can-outline
                             </v-icon>
                           </template>
@@ -83,12 +42,7 @@
                       </div>
                       <div v-if="item.selectionFields.length === 0" class="text-body-2 mb-4">
                         <span>No options added.</span>
-                        <v-btn
-                          variant="text"
-                          color="accent"
-                          class="text-capitalize"
-                          @click="newSelection(i)"
-                        >
+                        <v-btn variant="text" color="accent" class="text-capitalize" @click="newSelection(i)">
                           <v-icon start>mdi-plus</v-icon>
                           Add First Option
                         </v-btn>
@@ -96,27 +50,15 @@
                     </div>
                     <v-row align="center" class="mt-2">
                       <v-col cols="12" sm="6">
-                        <v-checkbox
-                          v-model="item.selectionField"
-                          label="Multiple Choice"
-                          color="primary"
-                          @update:model-value="selectField(i); markDirty()"
-                        />
+                        <v-checkbox v-model="item.selectionField" label="Multiple Choice" color="primary"
+                          @update:model-value="selectField(i); markDirty()" />
                       </v-col>
                       <v-col cols="12" sm="5">
-                        <v-checkbox
-                          v-model="item.textField"
-                          label="Text Input"
-                          color="primary"
-                          @update:model-value="selectText(i); markDirty()"
-                        />
+                        <v-checkbox v-model="item.textField" label="Text Input" color="primary"
+                          @update:model-value="selectText(i); markDirty()" />
                       </v-col>
                       <v-col cols="12" sm="1" class="text-right">
-                        <v-btn
-                          icon
-                          color="error"
-                          @click="deleteItem(i)"
-                        >
+                        <v-btn icon color="error" @click="deleteItem(i)">
                           <v-icon>mdi-trash-can-outline</v-icon>
                         </v-btn>
                       </v-col>
@@ -125,22 +67,12 @@
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
-            <v-alert
-              v-else
-              type="info"
-              icon="mdi-information-outline"
-              class="mt-4 rounded-lg"
-              text="No variables added yet. Click below to create a new variable."
-            />
+            <v-alert v-else type="info" icon="mdi-information-outline" class="mt-4 rounded-lg"
+              text="No variables added yet. Click below to create a new variable." />
           </v-card-text>
           <v-card-actions>
-             <v-card 
-              class="border-dashed text-center py-6"
-              width="100%"
-              variant="outlined"
-              @click="showModal"
-              style="cursor: pointer; border-style: dashed !important; border-color: #D1D5DB;"
-            >
+            <v-card class="border-dashed text-center py-6" width="100%" variant="outlined" @click="showModal"
+              style="cursor: pointer; border-style: dashed !important; border-color: #D1D5DB;">
               <v-card-text>
                 <v-icon icon="mdi-plus-circle" size="24" class="mb-2"></v-icon>
                 <div class="text-body-1">Create a new variable</div>
@@ -152,48 +84,27 @@
     </v-row>
 
     <!-- New Variable Dialog -->
-    <v-dialog
-      v-model="show"
-      max-width="600"
-      persistent
-      transition="dialog-bottom-transition"
-    >
+    <v-dialog v-model="show" max-width="600" persistent transition="dialog-bottom-transition">
       <v-card class="rounded-lg pa-6">
-        <v-card-title class="text-h6 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+        <v-card-title class="text-h6 font-weight-bold mb-4"
+          :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
           Create New Variable
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid">
-            <v-text-field
-              v-model="newItem"
-              label="Variable Name"
-              variant="outlined"
-              density="comfortable"
-              :rules="[v => !!v.trim() || 'Variable name is required']"
-              color="primary"
-              @update:model-value="markDirty"
-            />
+            <v-text-field v-model="newItem" label="Variable Name" variant="outlined" density="comfortable"
+              :rules="[v => !!v.trim() || 'Variable name is required']" color="primary"
+              @update:model-value="markDirty" />
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="error"
-            variant="outlined"
-            class="px-6"
-            @click="closeModal"
-          >
+          <v-btn color="error" variant="outlined" class="px-6" @click="closeModal">
             <v-icon start>mdi-close</v-icon>
             {{ $t('buttons.close') }}
           </v-btn>
-          <v-btn
-            color="success"
-            variant="flat"
-            class="px-6"
-            :disabled="!valid || isSaving"
-            :loading="isSaving"
-            @click="saveNewItem"
-          >
+          <v-btn color="success" variant="flat" class="px-6" :disabled="!valid || isSaving" :loading="isSaving"
+            @click="saveNewItem">
             <v-icon start>mdi-content-save</v-icon>
             {{ $t('buttons.save') }}
           </v-btn>
@@ -301,11 +212,12 @@ const saveNewItem = async () => {
 
 const saveState = async () => {
   try {
-    isSaving.value = true;
-    await store.dispatch('setPreTest', items.value);
-    isDirty.value = false;
+    isSaving.value = true
+    await store.dispatch('setPreTest', items.value)
+    isDirty.value = false
   } catch (error) {
-    console.error('Error saving pre-test:', error.message);
+    console.error('Error saving pre-test:', error.message)
+  } finally {
     isSaving.value = false;
   }
 };
@@ -346,6 +258,7 @@ onMounted(() => {
   .checkbox-container {
     flex: 0 0 100%;
   }
+
   .v-row:not(.align-center) {
     flex-direction: column;
   }

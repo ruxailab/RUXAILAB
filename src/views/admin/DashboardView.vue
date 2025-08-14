@@ -16,7 +16,7 @@
     <!-- Second Row: Activity Timeline and Active Studies -->
     <v-row class="mb-6">
       <v-col cols="12" lg="8">
-        <ActiveStudies />
+        <ActiveStudies :studies="items" />
 
       </v-col>
       <v-col cols="12" lg="4">
@@ -64,12 +64,18 @@ import NextSession from '@/components/dashboard/NextSession.vue'
 
 const store = useStore()
 
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+})
+
 // Dashboard data
 const totalStudies = ref(12)
 const usedStorage = ref(150)
 const totalParticipants = ref(347)
-
-
 
 // User info
 const userDisplayName = computed(() => {
