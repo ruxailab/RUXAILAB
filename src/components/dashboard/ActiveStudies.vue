@@ -15,9 +15,9 @@
                         <v-card-text class="pa-4">
                             <div class="d-flex align-center justify-space-between mb-3">
                                 <v-chip
-                                    :color="study.status === 'active' ? 'success' : study.status === 'recruiting' ? 'warning' : 'info'"
+                                    :color="study.status === 'active' ? 'success' : study.status === 'finished' ? 'warning' : 'info'"
                                     variant="tonal" size="small">
-                                    {{ study.status }}
+                                    {{ study.status.charAt(0).toUpperCase() + study.status.slice(1) }}
                                 </v-chip>
                                 <v-icon :icon="study.typeIcon" size="20" color="primary"></v-icon>
                             </div>
@@ -56,7 +56,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import AnswerController from '@/controllers/AnswerController'
 
 const props = defineProps({
     studies: {
@@ -64,6 +66,79 @@ const props = defineProps({
         default: () => []
     }
 })
+const store = useStore()
+const answerController = new AnswerController()
+
+const loading = ref(false);
+const studiesWithAnswers = ref([]);
+
+const studies = computed(() => {
+    return props.studies.length > 0 ? studiesWithAnswers.value : defaultStudies
+})
+
+const lastFourStudies = computed(() => {
+  if (!props.studies) return [];
+  return [...props.studies].sort(
+    (a, b) => (b.creationDate || 0) - (a.creationDate || 0)
+  ).slice(0, 4);
+});
+
+async function loadAnswers() {
+  if (!lastFourStudies.value.length) {
+    studiesWithAnswers.value = [];
+    return;
+  }
+
+  loading.value = true;
+  const last4 = []
+  try {
+    for (const study in lastFourStudies.value) {
+        const testDoc = await store.dispatch('getTest', { id: lastFourStudies.value[study].testDocId });
+        const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
+        if(answerDoc.type === 'User') {
+            last4.push({
+                ...testDoc,
+                answers: Object.values({ ...answerDoc.taskAnswers })
+            })
+        } else {
+            last4.push({
+                ...testDoc,
+                answers: Object.values({ ...answerDoc.heuristicAnswers })
+            })
+        }
+    }
+    finalFour(last4)
+  } catch (e) {
+    console.error('Error loading answers', e);
+    studiesWithAnswers.value = [];
+  } finally {
+    loading.value = false;
+  }
+}
+
+const calculateProgress = (answers) => {
+    if (!answers || answers.length === 0) return 0;
+    const sum = answers.reduce((acc, val) => acc + val.progress, 0);
+    return sum / answers.length;
+}
+
+const finalFour = (studyArr) => {
+    if(!studyArr) {
+        studiesWithAnswers.value = [];
+        return
+    }
+    for (const study in studyArr) {
+        studiesWithAnswers.value.push({
+            title: studyArr[study].testTitle,
+            description: studyArr[study].testDescription,
+            status: studyArr[study].status,
+            progress: calculateProgress(studyArr[study].answers),
+            participants: studyArr[study].answers?.length || 0,
+            daysLeft: studyArr[study].endDate || 0,
+            typeIcon: 'mdi-sort-variant'
+        })
+    }
+}
 
 // Default studies if none provided
 const defaultStudies = [
@@ -109,9 +184,13 @@ const defaultStudies = [
     }
 ]
 
-const studies = computed(() => {
-    return props.studies.length > 0 ? props.studies : defaultStudies
-})
+watch(
+  () => props.studies,
+  () => {
+    loadAnswers();
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
