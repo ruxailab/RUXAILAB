@@ -1,28 +1,35 @@
 <template>
-  <div class="video-call">
-    <v-row class="video-container" align="center" justify="center" no-gutters>
-      <!-- Local video stream -->
-      <v-col cols="12" lg="6" md="6" sm="6">
+  <v-container fluid class="video-call-container fill-height mt-6">
+
+    <v-row class="video-row fill-height" no-gutters>
+      <v-col cols="12" lg="6" md="6" sm="6" class="d-flex align-center justify-center pr-1">
         <video ref="localVideo" autoplay muted playsinline class="video-element"></video>
       </v-col>
 
-      <!-- Remote video stream -->
-      <v-col cols="12" lg="6" md="6" sm="6">
-        <video ref="remoteVideo" autoplay playsinline class="video-element"></video>
+      <v-col cols="12" lg="6" md="6" sm="6" class="d-flex align-center justify-center pl-1">
+        <div v-show="!callStarted" class="not-connected-message">
+          Not connected
+        </div>
+        <video v-show="callStarted" ref="remoteVideo" autoplay playsinline class="video-element"></video>
       </v-col>
     </v-row>
 
-    <v-row justify="center">
-      <v-btn v-if="caller && !callStarted" color="primary" @click="startCall">Open Room</v-btn>
+    <v-row class="buttons-row d-flex flex-grow-1 align-end justify-center">
+      <v-col cols="12" class="text-center pb-8">
 
-      <template v-else-if="!caller && !callStarted">
-        <p v-if="!roomExists">Wait for moderator to open the room</p>
-        <v-btn v-else color="success" @click="answerCall" :disabled="!roomExists">
-          Join Room
-        </v-btn>
-      </template>
+        <v-btn v-if="caller && !callStarted" color="primary" @click="startCall">Open Room</v-btn>
+
+        <div v-else-if="!caller && !callStarted" class="d-flex flex-column align-center">
+          <p v-if="!roomExists" class="mb-2">Wait for the moderator</p>
+          <v-btn v-else color="primary" @click="answerCall" :disabled="!roomExists">
+            Join Room
+          </v-btn>
+        </div>
+
+        <!-- <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn> -->
+      </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script setup>
@@ -240,3 +247,49 @@ onBeforeUnmount(() => {
   endCall();
 });
 </script>
+
+<style scoped>
+.video-call-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.video-row {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.not-connected-message {
+  border: 2px solid gray;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 90vh;
+  max-height: 90vh;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.video-element {
+  width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  max-width: 100vh;
+}
+
+.buttons-row {
+  margin-top: auto;
+}
+
+.v-container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+</style>

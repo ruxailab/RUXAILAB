@@ -49,12 +49,11 @@
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
-            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
-
             <!-- Proceed Button -->
-            <v-btn v-if="isUserTestAdmin" @click="proceedToNextStep()">
+            <v-btn class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
               Proceed to next step
             </v-btn>
+            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
           </div>
 
           <!-- Hide Form Elements while on Video Call Mode -->
