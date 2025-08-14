@@ -20,7 +20,7 @@
       <v-btn v-else-if="!caller && !callStarted" color="success" @click="answerCall">Answer Call</v-btn>
 
       <!-- Button to end the call if user is caller and call has started -->
-      <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn>
+      <!-- <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn> -->
     </v-row>
   </div>
 </template>

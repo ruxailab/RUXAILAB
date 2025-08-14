@@ -19,10 +19,58 @@
       </v-row>
 
       <!--Answer Test Screen-->
-      <div v-else>
-        v-else
-        <!-- <VideoCall :roomId="roomId" :caller="isUserTestAdmin" /> -->
-      </div>
+      <v-row v-else class="main-test-interface pa-0 ma-0">
+        <v-col ref="rightView" class="right-view pa-6">
+          <!-- Video Call Component -->
+          <div v-if="displayVideoCallComponent">
+            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
+            <v-btn @click="displayVideoCallComponent = false">
+              Proceed to next step
+            </v-btn>
+          </div>
+
+          <!--Sticky Stepper to follow Progress-->
+          <v-row v-if="globalIndex >= 1 || displayVideoCallComponent" class="stepper-row sticky-stepper">
+            <v-col cols="12">
+              <v-stepper :model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
+                :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
+                style="visibility:visible">
+                <v-stepper-header>
+                  <v-stepper-item color="white" value="1" title="Consent" :complete="stepperValue >= 1"
+                    :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-divider />
+                  <v-stepper-item color="white" value="2" title="Pre-test" :complete="stepperValue >= 2"
+                    :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-divider />
+                  <v-stepper-item color="white" value="3" title="Tasks" :complete="stepperValue >= 3"
+                    :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-divider />
+                  <v-stepper-item color="white" value="4" title="Post-test" :complete="stepperValue >= 4"
+                    :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-divider />
+                  <v-stepper-item color="white" value="5" title="Completion" :complete="stepperValue === 5"
+                    :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                </v-stepper-header>
+              </v-stepper>
+            </v-col>
+          </v-row>
+
+          <!--Step 0: Welcome -->
+          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
+            @start="displayVideoCallComponent = true; globalIndex = 1" />
+
+          <!--Step 1: Consent -->
+          <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
+            :pre-test-title="$t('UserTestView.titles.preTest')" :consent-text="test.testStructure.consent"
+            :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
+            @update:fullNameModel="val => fullName = val"
+            @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
+            @continue="completeStep(taskIndex, 'consent')" />
+
+          <!--Step 2: Pre-test -->
+
+        </v-col>
+      </v-row>
     </v-container>
 
 
@@ -58,7 +106,11 @@
 
 <script setup>
 import VideoCall from '@/components/molecules/VideoCall.vue';
-import { ref, computed, watch, onMounted } from 'vue';
+import ConsentStep from '@/components/UserTest/steps/ConsentStep.vue';
+import WelcomeStep from '@/components/UserTest/steps/WelcomeStep.vue';
+import TaskAnswer from '@/models/TaskAnswer';
+import UserTask from '@/models/UserTask';
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
@@ -75,6 +127,15 @@ const loggedIn = ref(null);
 const sessionCooperator = ref(null);
 const testDate = ref(null);
 const start = ref(true);
+const globalIndex = ref(null);
+const taskIndex = ref(0);
+const localTestAnswer = reactive(new TaskAnswer());
+const rightView = ref(null); // For scroll effect
+const fullName = ref(''); // For consent form component
+const items = ref([]);
+const doneTaskDisabled = ref(false); // ?
+const displayVideoCallComponent = ref(false);
+const preTestIndex = ref(null);
 
 // Computed properties
 const test = computed(() => store.getters.test);
@@ -91,12 +152,69 @@ const roomId = computed(() => {
   return test.value.id; // Assuming we will use the test ID as the room ID
 });
 
+const stepperValue = computed(() => {
+  if (globalIndex.value === 0) return -1;
+  if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 1;
+  if (globalIndex.value === 3 && taskIndex.value === 0) return 2; // 👈 PANTALLA INFORMATIVA
+  if (globalIndex.value === 4 && taskIndex.value >= 0) return 2;   // 👈 TAREAS
+  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3;
+  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4;
+  return 0;
+});
+
 // Watchers
 watch(user, async () => {
   if (user.value) {
     if (loggedIn.value) await setTestAnswer();
   }
 });
+
+watch(
+  () => [globalIndex.value, taskIndex.value],
+  () => {
+    scrollToTop();
+  }
+);
+
+watchEffect(() => {
+
+  const index = taskIndex.value;
+
+  const taskList = test.value?.testStructure?.userTasks;
+  const task = Array.isArray(taskList) ? taskList[index] : undefined;
+
+  const answers = localTestAnswer?.tasks?.[index]?.susAnswers;
+
+  if (task?.taskType === 'sus') {
+    const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
+    doneTaskDisabled.value = validCount < 10;
+    console.log('SUS respostas válidas:', validCount);
+  } else {
+    doneTaskDisabled.value = false;
+  }
+});
+
+watch(
+  () => test.value,
+  async () => {
+    await mappingSteps();
+  },
+  { deep: true }
+);
+
+watch(
+  () => items.value,
+  () => {
+    if (items.value.length && globalIndex.value === null) {
+      globalIndex.value = items.value[0].id;
+      if (items.value.find((obj) => obj.id === 0)) {
+        preTestIndex.value = items.value[0].value[0].id;
+      }
+    }
+  },
+  { deep: true }
+);
 
 // Methods
 const setTestAnswer = async () => {
@@ -127,6 +245,203 @@ const startTest = () => {
   setTimeout(() => {
     start.value = false;
   }, 1000);
+};
+
+// Scroll to top of the page when step changes
+const scrollToTop = () => {
+  // For most browsers
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // For rightView (in case of overflow)
+  if (rightView.value) {
+    rightView.value.scrollTop = 0;
+  }
+};
+
+const completeStep = (id, type, userCompleted = true) => {
+  try {
+    if (type === 'consent') {
+      localTestAnswer.consentCompleted = true;
+      items.value[0].value[id].icon = 'mdi-check-circle-outline';
+      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
+        items.value[0].icon = 'mdi-check-circle-outline';
+      }
+      globalIndex.value = 2;
+
+    }
+    if (type === 'preTest') {
+      localTestAnswer.preTestCompleted = true;
+      items.value[0].value[id].icon = 'mdi-check-circle-outline';
+      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
+        items.value[0].icon = 'mdi-check-circle-outline';
+      }
+      globalIndex.value = 3;
+    }
+    if (type === 'tasks') {
+      if (!Array.isArray(localTestAnswer.tasks)) {
+        console.error('localTestAnswer.tasks is not an array:', localTestAnswer.tasks);
+        return;
+      }
+      localTestAnswer.tasks[id].completed = userCompleted;
+      items.value[1].value[id].icon = 'mdi-check-circle-outline';
+      allTasksCompleted.value = true;
+
+      for (let i = 0; i < items.value[1].value.length; i++) {
+        if (!localTestAnswer.tasks[i]?.completed) {
+          allTasksCompleted.value = false;
+          break;
+        }
+      }
+      if (allTasksCompleted.value) {
+        items.value[1].icon = 'mdi-check-circle-outline';
+      }
+      if (id < localTestAnswer.tasks.length - 1) {
+        taskIndex.value = id + 1;
+        startTimer();
+      } else {
+        console.log('All tasks completed, moving to post-test');
+        globalIndex.value = 5;
+      }
+      if (userCompleted) {
+        store.commit('SET_TOAST', {
+          type: 'success',
+          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          timeout: 3000,
+        });
+      }
+    }
+    if (type === 'postTest') {
+      localTestAnswer.postTestCompleted = true;
+      items.value[2].icon = 'mdi-check-circle-outline';
+      globalIndex.value = 6;
+
+    }
+    calculateProgress();
+  } catch (error) {
+    console.error('Error in completeStep:', error);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
+  }
+};
+
+const mappingSteps = async () => {
+  try {
+    items.value = [];
+
+    // PreTest
+    if (validate(test.value?.testStructure?.preTest)) {
+      items.value.push({
+        title: 'Pre-test',
+        icon: 'mdi-check-bold',
+        value: [
+          {
+            title: 'Consent',
+            icon: 'mdi-check-bold',
+            id: 0,
+          },
+          {
+            title: 'Form',
+            icon: 'mdi-check-bold',
+            id: 1,
+          },
+        ],
+        id: 0,
+      });
+      if (!localTestAnswer.preTestAnswer.length && Array.isArray(test.value.testStructure.preTest)) {
+        localTestAnswer.preTestAnswer = test.value.testStructure.preTest.map(() => ({
+          answer: '',
+        }));
+      }
+    }
+
+    // Tasks
+    if (validate(test.value?.testStructure?.userTasks)) {
+      items.value.push({
+        title: 'Tasks',
+        icon: 'mdi-check-bold',
+        value: test.value.testStructure.userTasks.map((task, index) => ({
+          title: task.taskName,
+          icon: 'mdi-check-bold',
+          id: index,
+        })),
+        id: 1,
+      });
+      if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
+          const newTask = new UserTask({
+            taskId: task.id || i,
+            taskAnswer: '',
+            taskObservations: '',
+            postAnswer: '',
+            taskTime: 0,
+            completed: false,
+            susAnswers: [],
+            nasaTlxAnswers: {}
+          });
+          console.log('Nueva tarea creada:', i, newTask);
+          return newTask;
+        });
+      }
+    }
+
+    // PostTest
+    if (validate(test.value?.testStructure?.postTest)) {
+      items.value.push({
+        title: 'Post Test',
+        icon: 'mdi-check-bold',
+        value: test.value.testStructure.postTest,
+        id: 2,
+      });
+      if (!localTestAnswer.postTestAnswer.length && Array.isArray(test.value.testStructure.postTest)) {
+        localTestAnswer.postTestAnswer = test.value.testStructure.postTest.map(() => ({
+          answer: '',
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('Error mapping steps:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to initialize test data. Please try again.' });
+  }
+};
+
+const validate = (object) => {
+  return (
+    object !== null &&
+    object !== undefined &&
+    object !== '' &&
+    Array.isArray(object) &&
+    object.length > 0
+  );
+};
+
+const calculateProgress = () => {
+  try {
+    if (!localTestAnswer) return 0;
+    const totalSteps = 4;
+    let completedSteps = 0;
+
+    if (localTestAnswer.preTestCompleted) completedSteps++;
+    if (localTestAnswer.consentCompleted) completedSteps++;
+
+    let tasksCompleted = 0;
+    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
+      for (let i = 0; i < items.value[1].value.length; i++) {
+        if (localTestAnswer.tasks[i]?.completed) {
+          tasksCompleted++;
+        }
+      }
+      if (tasksCompleted === items.value[1].value.length) {
+        completedSteps++;
+      }
+    }
+
+    if (localTestAnswer.postTestCompleted) completedSteps++;
+
+    const progressPercentage = (completedSteps / totalSteps) * 100;
+    localTestAnswer.progress = progressPercentage;
+    return progressPercentage;
+  } catch (error) {
+    console.error('Error in calculateProgress:', error);
+    return 0;
+  }
 };
 
 // Lifecycle hooks
@@ -170,6 +485,9 @@ onMounted(async () => {
       cooperator: user.value,
     });
   }
+
+  globalIndex.value = 0;
+  await mappingSteps();
 });
 
 </script>
