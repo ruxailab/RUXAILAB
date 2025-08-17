@@ -1,4 +1,3 @@
-import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import Notification from '@/models/Notification';
 
