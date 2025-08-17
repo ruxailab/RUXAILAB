@@ -1,42 +1,20 @@
 <template>
-  <v-row
-    justify="center"
-    justify-md="space-around"
-  >
-    <v-col
-      v-for="(item, n) in cards"
-      :key="n"
-      cols="12"
-      :md="12 / perRow"
-    >
-      <v-card
-        class="rounded-xl cards-animation"
-        height="270px"
-        :style="item.cardStyle"
-        :ripple="false"
-        color="#F2F3F4"
-        @click="$emit('click', item.path)"
-      >
-        <v-row
-          style="height: 200px"
-          justify="center"
-          align="center"
-        >
-          <v-img
-            max-height="150"
-            :style="item.imageStyle"  
-            :src="require('../../assets/manager/' + item.image)"
-          />
+  <v-row justify="center" justify-md="space-around">
+    <v-col v-for="(item, n) in cards" :key="n" cols="12" :md="12 / perRow">
+      <v-card class="rounded-xl cards-animation" height="270px" :style="item.cardStyle" :ripple="false" color="#F2F3F4"
+        @click="$emit('click', item.path)">
+        <v-row style="height: 200px" justify="center" align="center">
+          <v-img max-height="150" :style="item.imageStyle" :src="require('../../assets/manager/' + item.image)" />
         </v-row>
 
-        <div
-          class="text-white pl-4 footer"
-          :style="{ 'background-color': item.bottom }"
-        >
-          <h2>{{ $t(`titles.${item.title}`) }}</h2>
+        <div class="text-white pl-4 footer" :style="{ 'background-color': item.bottom }">
+          <!-- Prefer direct text if provided, otherwise fall back to translation keys -->
+          <h2>
+            {{ item.titleDirect ? item.titleDirect : $t(`titles.${item.title}`) }}
+          </h2>
 
           <div>
-            {{ $t(`descriptions.${item.description}`) }}
+            {{ item.descriptionDirect ? item.descriptionDirect : $t(`descriptions.${item.description}`) }}
           </div>
         </div>
       </v-card>
