@@ -116,7 +116,6 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId) {
-    const path = user.accessLevel >= 2 ? 'testview' : 'managerview';
     sendNotification({
       userId: user.userDocId,
       title: title,
