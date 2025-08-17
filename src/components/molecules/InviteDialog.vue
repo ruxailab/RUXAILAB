@@ -164,34 +164,53 @@ const removeSelectedCoop = (index) => {
     selectedCoops.value.splice(index, 1);
 };
 
+const isStringEmail = (email) => {
+    return typeof email !== 'object' && email !== undefined && email.length > 0;
+};
+
+const isUserEmailValid = (email) => {
+    return props.users.find(user => user.email === email);
+};
+
+const isCoopAlreadySelected = (emailToCheck) => {
+    return selectedCoops.value.find(
+        coop => (typeof coop === 'object' ? coop.email : coop) === emailToCheck
+    );
+};
+
 const validateEmail = () => {
     const email = comboboxModel.value.pop();
     comboboxKey.value++;
 
-    if (typeof email !== 'object' && email !== undefined) {
-        if (email.length) {
-            if (!isValidEmail(email)) {
-                toast.error('Invalid email format');
-                return;
-            }
-            if (!props.users.find(user => user.email === email)) {
-                toast.error(`${email} is not a valid email or does not exist`);
-                return;
-            } else if (!selectedCoops.value.includes(email)) {
-                selectedCoops.value.push(email);
-            }
-        }
-    } else if (email && !selectedCoops.value.includes(email)) {
-        const alreadySelected = selectedCoops.value.find(
-            coop => (typeof coop === 'object' ? coop.email : coop) === email.email
-        );
-        if (alreadySelected) {
-            toast.warning(`${email.email} has already been selected`);
+    if (!email) return;
+
+    // Handle string email input
+    if (isStringEmail(email)) {
+        if (!isValidEmail(email)) {
+            toast.error('Invalid email format');
             return;
-        } else {
+        }
+
+        if (!isUserEmailValid(email)) {
+            toast.error(`${email} is not a valid email or does not exist`);
+            return;
+        }
+
+        if (!selectedCoops.value.includes(email)) {
             selectedCoops.value.push(email);
         }
+        return;
     }
+
+    // Handle object email input
+    if (selectedCoops.value.includes(email)) return;
+
+    if (isCoopAlreadySelected(email.email)) {
+        toast.warning(`${email.email} has already been selected`);
+        return;
+    }
+
+    selectedCoops.value.push(email);
 };
 
 const onCancel = () => {

@@ -6,7 +6,6 @@ import Notification from '@/models/Notification';
  * Composable for notification management
  */
 export function useNotificationManager() {
-    const toast = useToast();
     const store = useStore();
 
     /**
