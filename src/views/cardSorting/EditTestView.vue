@@ -1,72 +1,84 @@
 <template>
-  <v-container>
-    <ButtonSave :visible="change" @click="save" />
+  <PageWrapper title="Edit Test" :side-gap="true">
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Customize the settings and preferences of your test
+      </p>
+    </template>
 
-    <v-row>
-      <v-tabs v-model="tabIndex" bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
-        <v-tab>PRE-TEST</v-tab>
-        <v-tab>CATEGORIES</v-tab>
-        <v-tab>CARDS</v-tab>
-        <v-tab>POST-TEST</v-tab>
-      </v-tabs>
+    <v-container>
+      <Snackbar />
+      <ButtonSave :visible="change" @click="save" />
 
-      <v-col cols="12">
-        <!-- PRE-TEST -->
-        <PreTestEditCardSorting v-if="tabIndex === 0" />
+      <div>
+        <VTabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
+          <VTab @click="index = 0">{{ $t('ModeratedTest.consentForm')}}</VTab>
+          <VTab @click="index = 1">{{ $t('ModeratedTest.preTest')}}</VTab>
+          <VTab @click="index = 2">{{ $t('ModeratedTest.tasks')}}</VTab>
+          <VTab @click="index = 3">{{ $t('ModeratedTest.postTest')}}</VTab>
+        </VTabs>
 
-        <!-- CATEGORIES -->
-        <CategoriesEditCardSorting v-else-if="tabIndex === 1" />
+        <VCol cols="12">
+          <!-- CONSENT FORM -->
+          <v-card v-if="index === 0" rounded="xxl">
+            <TextareaForm :title="$t('ModeratedTest.consentForm')"
+              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+              @update:value="saveState('consent', $event)" />
+          </v-card>
 
-        <!-- CARDS -->
-        <CardsEditCardSorting v-else-if="tabIndex === 2" />
+          <!-- PRE-TEST -->
+          <v-card v-if="index === 1" rounded="xxl">
+            <UserVariables />
+          </v-card>
 
-        <!-- POST-TEST -->
-        <PostTestEditCardSorting v-else-if="tabIndex === 3" />
-      </v-col>
-    </v-row>
-  </v-container>
+          <!-- TASKS -->
+          <!-- <v-card v-if="index === 2" rounded="xxl">
+            <ModeratedTask />
+          </v-card> -->
+
+          <!-- POS-TEST -->
+          <v-card v-if="index === 3" rounded="xxl">
+            <FormPostTest />
+          </v-card>
+        </VCol>
+      </div>
+    </v-container>
+  </PageWrapper>
 </template>
 
-<script>
-import ButtonSave from '@/components/atoms/ButtonSave'
-import PreTestEditCardSorting from '@/components/organisms/PreTestEditCardSorting'
-import CardsEditCardSorting from '@/components/organisms/CardsEditCardSorting'
-import CategoriesEditCardSorting from '@/components/organisms/CategoriesEditCardSorting'
-import PostTestEditCardSorting from '@/components/organisms/PostTestEditCardSorting'
+<script setup>
+import ButtonSave from '@/components/atoms/ButtonSave.vue';
+import FormPostTest from '@/components/atoms/FormPostTest.vue';
+import Snackbar from '@/components/atoms/Snackbar.vue';
+import TextareaForm from '@/components/atoms/TextareaForm.vue';
+import UserVariables from '@/components/atoms/UserVariables.vue';
+import PageWrapper from '@/components/template/PageWrapper.vue';
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 
-export default {
-  components: {
-    ButtonSave,
-    PreTestEditCardSorting,
-    CardsEditCardSorting,
-    CategoriesEditCardSorting,
-    PostTestEditCardSorting,
-  },
+// Variables
+const index = ref(0);
+const change = ref(false);
 
-  data: () => ({
-    tabIndex: 2,
-  }),
+// Stores
+const store = useStore();
 
-  computed: {
-    change() {
-      return this.$store.state.localChanges
-    },
+// Methods
+const save = () => {
+  change.value = false;
+};
 
-    test() {
-      return this.$store.getters.test
-    },
+const saveState = async (type, value) => {
+  const states = {
+    'consent': 'setConsent',
+    'finalMessage': 'setFinalMessage',
+    'participantCamera': 'setParticipantCamera',
+    'welcome': 'setWelcomeMessage',
+  }
 
-    testStructure() {
-      return this.$store.getters.testStructure
-    },
-  },
-
-  methods: {
-    async save() {
-      this.$store.commit('SET_LOCAL_CHANGES', false)
-      const newTest = Object.assign(this.test, { testStructure: this.testStructure })
-      await this.$store.dispatch('updateTest', newTest)
-    },
-  },
+  if (states[type]) {
+    store.dispatch(states[type], value)
+    change.value = true;a
+  }
 }
 </script>
