@@ -15,7 +15,7 @@
 export default class User {
     constructor({
         id, accessLevel, email, notifications = [], myAnswers = [], myTests = [], inbox = [],
-        username = null, contactNo = null, country = null, profileImage = '',
+        username = null, contactNo = null, country = null, profileImage = '', calibrationId = null
     } = {}) {
         this.id = id;
         this.accessLevel = accessLevel;
@@ -23,11 +23,12 @@ export default class User {
         this.notifications = notifications;
         this.myAnswers = myAnswers;
         this.myTests = myTests;
-        this.inbox = inbox; 
-        this.username = username; 
-        this.contactNo = contactNo; 
-        this.country = country; 
-        this.profileImage = profileImage; // Add profileImage field
+        this.inbox = inbox;
+        this.username = username;
+        this.contactNo = contactNo;
+        this.country = country;
+        this.profileImage = profileImage;
+        this.calibrationId = calibrationId;
     }
 
     static toUser(data) {
@@ -48,6 +49,7 @@ export default class User {
             contactNo: this.contactNo, // Include contactNo in Firestore representation
             country: this.country, // Include country in Firestore representation
             profileImage: this.profileImage, // Include profileImage in Firestore representation
+            calibrationId: this.calibrationId
         };
     }
 
