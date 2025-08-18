@@ -2,54 +2,43 @@
   <v-app>
     <v-main>
       <v-container fluid class="dashboard-container">
-        <!-- Dashboard Cards -->
-        <v-row class="dashboard-grid" no-gutters>
-          <v-col v-for="(card, index) in cards" :key="index" cols="12" sm="6" md="4" lg="3" xl="2" class="pa-2">
-            <v-card class="dashboard-card" elevation="2" rounded="xl" hover
-              :style="{ 'animation-delay': `${index * 100}ms` }" @click="$router.push(card.route)">
-              <v-card-text class="card-content">
-                <div class="card-header mb-3">
-                  <div class="icon-container" :class="`icon-${card.title.toLowerCase()}`">
-                    <v-icon :size="28" class="card-icon" color="white">
-                      {{ card.icon }}
-                    </v-icon>
-                  </div>
-                </div>
+        <!-- Manager-style Header (uses same image as ManagerView) -->
+        <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
+          <v-col cols="12" md="6" class="text-white text-center text-md-left">
+            <p class="font-weight-medium text-h4 text-md-h2">
+              Accessibility
+            </p>
+            <p class="text-subtitle-1 text-md-subtitle-1">
+              Manage and inspect accessibility tests
+            </p>
+          </v-col>
 
-                <div class="card-body">
-                  <h4 class="text-h6 font-weight-bold mb-2 card-title">
-                    {{ card.title }}
-                  </h4>
-                  <p class="text-body-2 text-medium-emphasis mb-2 card-subtitle">
-                    {{ card.subtitle }}
-                  </p>
-                  <p class="text-caption text-medium-emphasis card-description">
-                    {{ card.description }}
-                  </p>
-                </div>
-
-                <div class="card-footer mt-3">
-                  <v-btn variant="text" size="small" class="card-action-btn" :ripple="false">
-                    Open
-                    <v-icon size="14" class="ml-1">
-                      mdi-arrow-right
-                    </v-icon>
-                  </v-btn>
-                </div>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
           </v-col>
         </v-row>
+
+        <!-- Cards section using CardsManager so it matches ManagerView UI -->
+        <v-container class="card-container pt-6 pb-10">
+          <p class="presentation-text text-center text-md-left mb-4">
+            Browse accessibility tools and actions
+          </p>
+          <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+        </v-container>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useDisplay } from 'vuetify';
+import CardsManager from '@/components/atoms/CardsManager';
 
 const route = useRoute();
+const router = useRouter();
+const { mdAndUp } = useDisplay();
 const testId = ref(route.params.testId || '');
 
 const cardData = [
@@ -62,6 +51,34 @@ const cardData = [
 ];
 
 const cards = ref(cardData);
+
+// Map card titles to manager-style images (reuse ManagerView assets)
+const imageMap = {
+  home: 'IntroEdit.svg',
+  config: 'IntroCoops.svg',
+  edit: 'IntroEdit.svg',
+  preview: 'IntroReports.svg',
+  answer: 'IntroAnswer.svg',
+  cooperator: 'IntroCoops.svg',
+};
+
+const managerCards = computed(() =>
+  cards.value.map((c) => ({
+    image: imageMap[c.title.toLowerCase()] || 'IntroEdit.svg',
+    title: c.title,
+    titleDirect: (c.title || '').toString(),
+    imageStyle: '',
+    bottom: '#000',
+    description: c.subtitle || c.description,
+    descriptionDirect: (c.subtitle || c.description || '').toString(),
+    cardStyle: '',
+    path: c.route,
+  }))
+);
+
+const go = (path) => {
+  router.push(path).catch(() => { });
+};
 </script>
 
 <style scoped>
@@ -84,9 +101,23 @@ const cards = ref(cardData);
   margin: 0 auto;
 }
 
+/* Manager Header */
+.manager-bg {
+  height: 100%;
+  margin: 0 !important;
+}
+
 /* Dashboard Cards */
-.dashboard-grid {
-  animation: fadeInUp 0.6s ease-out;
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.presentation-text {
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
 }
 
 .dashboard-card {
