@@ -3,25 +3,42 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, toRaw } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, toRaw, computed } from 'vue'
 import * as tf from '@tensorflow/tfjs'
 import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection'
 import '@tensorflow/tfjs-backend-webgl'
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const props = defineProps({
     msPerCapture: { type: Number, default: 100 },
-    isRunning: { type: Boolean, default: false }
+    isRunning: { type: Boolean, default: false },
+    recordScreen: { type: Boolean, default: false },
+    testId: { type: String, required: true },
+    taskIndex: { type: Number, required: true },
 })
 
-const emit = defineEmits(['data'])
+const emit = defineEmits(['faceData', 'screenRecording'])
+
+const store = useStore();
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
+
+const { t } = useI18n();
+const toast = useToast();
 
 const videoRef = ref(null)
 const mediaStream = ref(null)
 const model = ref(null)
 let trackingLoop = null
+const videoUrl = ref('');
 
+// Variáveis da gravação de tela
+const screenStream = ref(null)
+const mediaRecorder = ref(null)
+const screenChunks = ref([])
 
-// ⚠️ Backend e modelo devem estar prontos antes de qualquer loop
 onMounted(async () => {
     console.log('🧠 Inicializando backend WebGL...')
     await tf.setBackend('webgl')
@@ -29,26 +46,32 @@ onMounted(async () => {
     console.log('✅ Backend pronto:', tf.getBackend())
 
     await initWebcam()
-
     await waitForVideoReady()
 
     console.log('🎥 Vídeo pronto.')
     await loadModel()
 
     if (props.isRunning) startTracking()
+    if (props.recordScreen) startScreenRecording()
 })
 
 watch(() => props.isRunning, (val) => {
     val ? startTracking() : stopTracking()
 })
 
+watch(() => props.recordScreen, (val) => {
+    val ? startScreenRecording() : stopScreenRecording()
+})
+
 onBeforeUnmount(() => {
     stopTracking()
+    stopScreenRecording()
     if (mediaStream.value) {
         mediaStream.value.getTracks().forEach(track => track.stop())
     }
 })
 
+// ---------- Webcam ----------
 const initWebcam = async () => {
     try {
         mediaStream.value = await navigator.mediaDevices.getUserMedia({
@@ -57,7 +80,6 @@ const initWebcam = async () => {
         if (videoRef.value) {
             videoRef.value.srcObject = mediaStream.value
         }
-
     } catch (err) {
         console.error('🚫 Erro ao iniciar webcam:', err)
     }
@@ -78,7 +100,7 @@ const loadModel = async () => {
         faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh,
         {
             runtime: 'mediapipe',
-            solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh', // necessário!
+            solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
             refineLandmarks: true,
             maxFaces: 1
         }
@@ -86,6 +108,7 @@ const loadModel = async () => {
     console.log('✅ Modelo carregado com MediaPipe')
 }
 
+// ---------- Face Tracking ----------
 const startTracking = async () => {
     if (!model.value) {
         console.warn('⚠️ Modelo ainda não carregado')
@@ -94,7 +117,6 @@ const startTracking = async () => {
 
     const loop = async () => {
         if (!props.isRunning) return
-        console.log('🔄 Loop ativo...')
 
         try {
             await tf.ready()
@@ -121,7 +143,7 @@ const startTracking = async () => {
                     right_iris_x: keypoints[473]?.x,
                     right_iris_y: keypoints[473]?.y
                 }
-                emit('data', data)
+                emit('faceData', data)
             }
         } catch (err) {
             console.error('❌ Erro durante rastreamento:', err)
@@ -138,6 +160,55 @@ const stopTracking = () => {
         clearTimeout(trackingLoop)
         trackingLoop = null
         console.log('⛔ Tracking parado.')
+    }
+}
+
+// ---------- Screen Recording ----------
+const startScreenRecording = async () => {
+    try {
+        screenStream.value = await navigator.mediaDevices.getDisplayMedia({
+            video: { cursor: 'always' },
+            audio: false
+        })
+
+        screenChunks.value = []
+        mediaRecorder.value = new MediaRecorder(screenStream.value, { mimeType: 'video/webm' })
+
+        mediaRecorder.value.ondataavailable = (e) => {
+            if (e.data.size > 0) screenChunks.value.push(e.data)
+        }
+
+        mediaRecorder.value.onstop = async () => {
+
+            console.log('🎬 Gravação de tela parada, salvando...');
+
+
+            const videoBlob = new Blob(screenChunks.value, { type: 'video/webm' })
+            const storage = getStorage()
+            const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}/screen_record/${videoUrl.value}`
+            const storageReference = storageRef(storage, storagePath)
+
+            await uploadBytes(storageReference, videoBlob)
+            videoUrl.value = await getDownloadURL(storageReference)
+
+            currentUserTestAnswer.value.tasks[props.taskIndex].screenRecordURL = videoUrl.value
+        }
+
+        mediaRecorder.value.start()
+        console.log('🎬 Gravação de tela iniciada...')
+    } catch (err) {
+        console.error('🚫 Erro ao iniciar gravação de tela:', err)
+    }
+}
+
+const stopScreenRecording = () => {
+    if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
+        mediaRecorder.value.stop()
+        console.log('⏹️ Gravação de tela finalizada.')
+    }
+    if (screenStream.value) {
+        screenStream.value.getTracks().forEach(track => track.stop())
+        screenStream.value = null
     }
 }
 </script>
