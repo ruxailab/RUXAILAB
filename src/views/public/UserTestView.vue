@@ -1,7 +1,8 @@
 <template>
   <div v-if="test">
     <div>
-      <IrisTracker :is-running="isTracking" :ms-per-capture="300" @data="handleIrisData" />
+      <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+        @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
     <!-- Loading Overlay -->
     <v-overlay v-model="isLoading" class="text-center">
@@ -289,8 +290,8 @@
             <template #content>
               <StartCalibrationCard :calibrationInProgress="calibrationInProgress"
                 @openCalibration="openCalibration()" />
-              <CalibrationInProgressModal @openCalibration="openCalibration()" :isOpen="calibrationInProgress"
-                :isCompleted="calibrationCompleted" />
+              <CalibrationInProgressModal @close="closeCalibration()" @openCalibration="openCalibration()"
+                :isOpen="calibrationInProgress" :isCompleted="calibrationCompleted" />
             </template>
           </ShowInfo>
 
@@ -384,12 +385,9 @@
                 <v-row v-if="test.testStructure.userTasks[taskIndex].taskType === 'nasa-tlx'" class="fill-height"
                   align="center" justify="center">
                   <v-col cols="12">
-                    <nasaTlxForm
-                      :nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
-                      @update:nasaTlx="val => {
-                        Object.assign(localTestAnswer.tasks[taskIndex].nasaTlxAnswers, val);
-                      }"
-                  />
+                    <nasaTlxForm :nasa-tlx="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" @update:nasaTlx="val => {
+                      Object.assign(localTestAnswer.tasks[taskIndex].nasaTlxAnswers, val);
+                    }" />
                   </v-col>
                 </v-row>
 
@@ -521,6 +519,8 @@
 </template>
 
 <script setup>
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/firebase";
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
@@ -570,6 +570,7 @@ const timerComponent = ref(null);
 //  Eye tracking web gazer testing 
 
 const isTracking = ref(false)
+const isRecording = ref(false)
 const irisData = ref([])
 const gazeX = ref(null)
 const gazeY = ref(null)
@@ -613,28 +614,26 @@ const openCalibration = () => {
   calibrationInProgress.value = true;
 }
 
-function toggleTracking(value) {
-  console.log('toggleTracking chamado com:', value, '| index:', index.value, '| taskIndex:', taskIndex.value)
-  isTracking.value = value;
+const closeCalibration = () => {
+  calibrationInProgress.value = false;
+  completeStep(taskIndex.value, 'eyeCalibration');
+}
 
-  if (!isTracking.value) {
-    console.log('localTestAnswer.tasks[taskIndex.value].irisTrackingData:', localTestAnswer.tasks[taskIndex.value].irisTrackingData);
-  }
+function toggleTracking(value) {
+  isTracking.value = value;
+  isRecording.value = value;
 }
 
 function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
-  console.log('Dados recebidos:', data)
+}
+
+function saveScreenRecording(data) {
+  localTestAnswer.tasks[taskIndex.value].screenRecordingData.push(data)
 }
 
 function saveIrisDataIntoTask() {
   const task = test.value.testStructure.userTasks[taskIndex.value]
-
-  console.log('taskIndex.value:', taskIndex.value);
-  console.log('task:', task);
-  console.log('hasEye:', task?.hasEye);
-  console.log('index:', index.value);
-
 
   if (task?.hasEye === true && index.value == 1) {
     toggleTracking(true);
@@ -1059,13 +1058,25 @@ onMounted(async () => {
     await autoComplete();
     calculateProgress();
   }
-  axios.post('https://b6eb-2804-14d-90a7-4af7-a186-e61d-1a24-cc40.ngrok-free.app/api/session/calib_validation')
-    .then(response => {
-      console.log("Resposta do eye-tracking API:", response);
-    })
-    .catch(error => {
-      console.log("Erro no eye-tracking API:", error);
-    });
+  if (!user.value?.id) return
+
+  let firstSnapshot = true
+
+  const userRef = doc(db, 'users', user.value.id)
+
+  const unsubscribe = onSnapshot(userRef, (docSnap) => {
+    if (!docSnap.exists()) return
+    const data = docSnap.data()
+
+    if (firstSnapshot) {
+      firstSnapshot = false
+      return
+    }
+
+    if (data.calibrationId) {
+      calibrationCompleted.value = true
+    }
+  })
 });
 
 onBeforeUnmount(() => {
