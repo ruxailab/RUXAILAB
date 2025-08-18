@@ -3,7 +3,7 @@
     <v-container fluid class="pa-6 fill-height" style="overflow-y: auto;">
       <!-- Header Section -->
       <div class="mb-8">
-        <h1 class="text-h3 font-weight-bold text-primary mb-2">
+        <h1 class="text-h3 font-weight-bold text-primary">
           NASA TLX Analytics
         </h1>
         <p class="text-h6 text-grey-darken-1">
