@@ -61,10 +61,6 @@ const handleCategoryClick = (categoryId) => {
   if (category?.comingSoon) return
 
   selectedCategory.value = categoryId
-  if (categoryId === 'accessibility') {
-    router.push('/accessibility')
-    return
-  }
   store.commit('SET_STUDY_CATEGORY', categoryId)
   router.push({
     name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3',
