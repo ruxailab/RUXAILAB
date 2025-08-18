@@ -1,7 +1,7 @@
 import admin from 'firebase-admin'
 import firebaseFunctions from 'firebase-functions/v2'
 
-function onRequest({ handler, options }) {
+function onRequest({ handler, options = {} }) {
   return firebaseFunctions.https.onRequest(options, handler)
 }
 
