@@ -1,29 +1,53 @@
 <template>
-  <v-navigation-drawer :rail="mini" permanent color="primary" class="hidden-sm-and-down pt-3">
+  <v-navigation-drawer
+    :rail="mini"
+    permanent
+    color="primary"
+    class="hidden-sm-and-down pt-3"
+  >
     <!-- Navigation header -->
     <div v-if="!mini">
       <v-list-item>
         <v-row dense>
           <v-col class="pa-0 ma-0">
-            <v-select class="pa-0 ma-0" density="compact" item-title="testTitle" :items="testsList"
-              :model-value="test.testTitle" style="max-width: 240px" @update:model-value="changeTest" />
+            <v-select
+              class="pa-0 ma-0"
+              density="compact"
+              item-title="testTitle"
+              :items="testsList"
+              :model-value="test.testTitle"
+              style="max-width: 240px"
+              @update:model-value="changeTest"
+            />
           </v-col>
         </v-row>
       </v-list-item>
     </div>
 
     <!-- Navigation options -->
-    <v-list v-if="items" density="compact">
+    <v-list
+      v-if="items"
+      density="compact"
+    >
       <div v-if="mini">
-        <v-tooltip v-for="(item, n) in items" :key="n" location="right">
+        <v-tooltip
+          v-for="(item, n) in items"
+          :key="n"
+          location="right"
+        >
           <template #activator="{ props }">
-            <v-list-item v-bind="props" @click="go(item)">
+            <v-list-item
+              v-bind="props"
+              @click="go(item)"
+            >
               <template #prepend>
                 <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
                   {{ item.icon }}
                 </v-icon>
               </template>
-              <v-list-item-title :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'">
+              <v-list-item-title
+                :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+              >
                 {{ $t(`titles.drawer.${item.title}`) }}
               </v-list-item-title>
             </v-list-item>
@@ -33,13 +57,19 @@
       </div>
 
       <div v-else>
-        <v-list-item v-for="(item, n) in items" :key="n" @click="go(item)">
+        <v-list-item
+          v-for="(item, n) in items"
+          :key="n"
+          @click="go(item)"
+        >
           <template #prepend>
             <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
               {{ item.icon }}
             </v-icon>
           </template>
-          <v-list-item-title :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'">
+          <v-list-item-title
+            :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+          >
             {{ $t(`titles.drawer.${item.title}`) }}
           </v-list-item-title>
         </v-list-item>
@@ -47,10 +77,25 @@
     </v-list>
 
     <!-- Navigation footer -->
-    <div class="footer">
-      <v-btn icon size="small" class="mr-2 bg-orange" @click.stop="mini = !mini">
-        <v-icon v-if="!mini" color="white" icon="mdi-chevron-left" />
-        <v-icon v-else color="white" icon="mdi-chevron-right" />
+    <div
+      class="footer"
+    >
+      <v-btn
+        icon
+        size="small"
+        class="mr-2 bg-orange"
+        @click.stop="mini = !mini"
+      >
+        <v-icon
+          v-if="!mini"
+          color="white"
+          icon="mdi-chevron-left"
+        />
+        <v-icon
+          v-else
+          color="white"
+          icon="mdi-chevron-right"
+        />
       </v-btn>
     </div>
   </v-navigation-drawer>
