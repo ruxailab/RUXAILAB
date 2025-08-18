@@ -46,7 +46,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['openCalibration']);
+const emit = defineEmits(['openCalibration', 'close']);
 
 const dialogVisible = computed({
     get: () => props.isOpen,
