@@ -293,6 +293,11 @@ const navigator = computed(() => {
         path: `/sessions/${test.value.id}`,
       },
       {
+        title: 'Session Analytics',
+        icon: 'mdi-chart-timeline-variant',
+        path: `/session-analytics/${test.value.id}`,
+      },
+      {
         title: 'Final Report',
         icon: 'mdi-file-document',
         path: `/finalreportview/${test.value.id}`,
@@ -317,6 +322,11 @@ const navigator = computed(() => {
         title: 'Answers',
         icon: 'mdi-order-bool-ascending-variant',
         path: `/answerview/${test.value.id}`,
+      },
+      {
+        title: 'Session Analytics',
+        icon: 'mdi-chart-timeline-variant',
+        path: `/session-analytics/${test.value.id}`,
       }
     )
   }
