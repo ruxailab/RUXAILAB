@@ -1,33 +1,24 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container fluid class="dashboard-container">
-        <!-- Manager-style Header (uses same image as ManagerView) -->
-        <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
-          <v-col cols="12" md="6" class="text-white text-center text-md-left">
-            <p class="font-weight-medium text-h4 text-md-h2">
-              Accessibility
-            </p>
-            <p class="text-subtitle-1 text-md-subtitle-1">
-              Manage and inspect accessibility tests
-            </p>
-          </v-col>
-
-          <v-col cols="12" md="6" class="d-flex justify-center">
-            <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
-          </v-col>
-        </v-row>
-
-        <!-- Cards section using CardsManager so it matches ManagerView UI -->
-        <v-container class="card-container pt-6 pb-10">
-          <p class="presentation-text text-center text-md-left mb-4">
-            Browse accessibility tools and actions
-          </p>
-          <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
-        </v-container>
-      </v-container>
-    </v-main>
-  </v-app>
+  <v-container fluid class="pt-6 pb-10">
+    <v-row>
+      <v-col cols="12">
+        <v-card elevation="0" class="mb-6 pa-4" color="#f8f9fa">
+          <v-card-title class="text-h5 font-weight-bold text-center">
+            {{ testTitle }}
+          </v-card-title>
+          <v-card-text class="text-center">
+            <span v-if="testInfo">{{ testInfo }}</span>
+            <span v-else>Información general sobre el test de accesibilidad manual.</span>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
@@ -40,6 +31,10 @@ const route = useRoute();
 const router = useRouter();
 const { mdAndUp } = useDisplay();
 const testId = ref(route.params.testId || '');
+
+// Demo: Puedes reemplazar testTitle y testInfo con datos reales del test
+const testTitle = ref('Test de Accesibilidad Manual');
+const testInfo = ref('Este test permite evaluar manualmente la accesibilidad de la aplicación, configurando parámetros y revisando resultados.');
 
 const cardData = [
   { title: 'Home', icon: 'mdi-home-variant', subtitle: 'Dashboard overview', description: 'Access your main dashboard with overview of all accessibility activities and metrics.', route: '' },
