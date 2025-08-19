@@ -1,130 +1,30 @@
 <template>
   <v-app>
     <v-main>
-      <v-container
-        fluid
-        class="dashboard-container"
-      >
-        <!-- Welcome Banner -->
-        <v-card
-          class="welcome-banner mb-8"
-          elevation="0"
-          rounded="xl"
-        >
-          <v-card-text class="pa-8">
-            <v-row
-              align="center"
-              no-gutters
-            >
-              <v-col
-                cols="12"
-                md="8"
-              >
-                <div class="welcome-content">
-                  <h1 class="display-main font-weight-bold text-primary mb-3">
-                    Welcome Back!
-                  </h1>
-                  <h2
-                    class="text-h5 text-medium-emphasis mb-4 font-weight-regular"
-                  >
-                    Here's what's happening with your dashboard today
-                  </h2>
-                  <p class="text-body-1 text-medium-emphasis mb-0">
-                    Monitor your analytics, manage reports, and stay on top of
-                    your data insights with our comprehensive dashboard.
-                  </p>
-                </div>
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-                class="text-center"
-              >
-                <div class="welcome-icon-container">
-                  <v-icon
-                    size="100"
-                    class="welcome-icon"
-                  >
-                    mdi-view-dashboard-variant
-                  </v-icon>
-                </div>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+      <v-container fluid class="dashboard-container">
+        <!-- Manager-style Header (matches ManagerView/AccessibilityHome) -->
+        <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
+          <v-col cols="12" md="6" class="text-white text-center text-md-left">
+            <p class="font-weight-medium text-h4 text-md-h2">
+              Accessibility
+            </p>
+            <p class="text-subtitle-1 text-md-subtitle-1">
+              Manage and inspect accessibility tests
+            </p>
+          </v-col>
 
-        <!-- Dashboard Stats Overview -->
-        <v-row class="mb-6">
-          <v-col cols="12">
-            <h3 class="text-h4 font-weight-bold mb-6 text-center">
-              Dashboard Overview
-            </h3>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
           </v-col>
         </v-row>
 
-        <!-- Dashboard Navigation Cards -->
-        <v-row class="dashboard-grid">
-          <v-col
-            v-for="(item, index) in navItems"
-            :key="item.title"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="2.4"
-          >
-            <v-card
-              class="dashboard-card"
-              elevation="0"
-              rounded="xl"
-              hover
-              :style="{ 'animation-delay': `${index * 100}ms` }"
-              @click="navigateTo(item.title)"
-            >
-              <v-card-text class="card-content">
-                <div class="card-header mb-4">
-                  <div
-                    class="icon-container"
-                    :class="`icon-${item.title.toLowerCase()}`"
-                  >
-                    <v-icon
-                      :size="32"
-                      class="card-icon"
-                      color="white"
-                    >
-                      {{ item.icon }}
-                    </v-icon>
-                  </div>
-                </div>
-
-                <div class="card-body">
-                  <h4 class="text-h6 font-weight-bold mb-2 card-title">
-                    {{ item.title }}
-                  </h4>
-                  <p class="text-body-2 text-medium-emphasis card-description">
-                    {{ getDescription(item.title) }}
-                  </p>
-                </div>
-
-                <div class="card-footer mt-4">
-                  <v-btn
-                    variant="text"
-                    size="small"
-                    class="card-action-btn"
-                    :ripple="false"
-                  >
-                    Open
-                    <v-icon
-                      size="16"
-                      class="ml-1"
-                    >
-                      mdi-arrow-right
-                    </v-icon>
-                  </v-btn>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+        <!-- Cards section using CardsManager so it matches ManagerView UI -->
+        <v-container class="card-container pt-6 pb-10">
+          <p class="presentation-text text-center text-md-left mb-4">
+            Browse accessibility tools and actions
+          </p>
+          <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+        </v-container>
       </v-container>
     </v-main>
   </v-app>
@@ -133,9 +33,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useDisplay } from 'vuetify'
+import CardsManager from '@/components/atoms/CardsManager'
 
 const route = useRoute()
 const router = useRouter()
+const { mdAndUp } = useDisplay()
 const testId = ref(route.params.testId || '')
 
 // Navigation items for the dashboard cards
@@ -167,6 +70,30 @@ const navItems = computed(() => [
   },
 ])
 
+// Map titles to manager-style images
+const imageMap = {
+  home: 'IntroAnalytics.svg',
+  analyse: 'IntroAnalytics.svg',
+  answers: 'IntroAnswer.svg',
+  report: 'IntroReports.svg',
+  settings: 'IntroCoops.svg',
+}
+
+const managerCards = computed(() =>
+  navItems.value.map((item) => ({
+    image: imageMap[item.title.toLowerCase()] || 'IntroManager.svg',
+    title: item.title,
+    titleDirect: item.title,
+    imageStyle: '',
+    bottom: '#000',
+    description: item.title,
+    descriptionDirect: getDescription(item.title),
+    cardStyle: '',
+    path: item.path,
+  })),
+)
+
+
 // Methods
 const navigateTo = (section) => {
   const item = navItems.value.find(
@@ -187,6 +114,10 @@ const getDescription = (title) => {
   }
   return descriptions[title] || 'Navigate to this section'
 }
+
+const go = (path) => {
+  router.push(path).catch(() => { })
+}
 </script>
 
 <style scoped>
@@ -197,198 +128,28 @@ const getDescription = (title) => {
   padding: 2rem 1rem;
 }
 
-/* Welcome Banner */
-.welcome-banner {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.welcome-content {
-  animation: slideInLeft 0.8s ease-out;
-}
-
-.welcome-icon-container {
-  animation: slideInRight 0.8s ease-out;
-}
-
-.welcome-icon {
-  color: rgba(102, 126, 234, 0.3);
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Dashboard Cards */
-.dashboard-grid {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.dashboard-card {
-  background: rgba(237, 237, 237, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  cursor: pointer;
+/* Manager-style Header */
+.manager-bg {
   height: 100%;
-  opacity: 0;
-  animation: cardSlideIn 0.6s ease-out forwards;
+  margin: 0 !important;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 1);
+.back-gradient {
+  height: 60vh;
+  background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
-.card-content {
-  padding: 2rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+/* Cards Section */
+.card-container {
+  width: 80%;
+  margin: 0 auto;
 }
 
-.card-header {
-  display: flex;
-  justify-content: center;
-}
-
-.icon-container {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.icon-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.2),
-    rgba(255, 255, 255, 0.1)
-  );
-  border-radius: inherit;
-}
-
-.icon-home {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-}
-
-.icon-analyse {
-  background: linear-gradient(135deg, #f093fb, #f5576c);
-}
-
-.icon-answers {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-}
-
-.icon-report {
-  background: linear-gradient(135deg, #43e97b, #38f9d7);
-}
-
-.icon-settings {
-  background: linear-gradient(135deg, #fa709a, #fee140);
-}
-
-.card-icon {
-  position: relative;
-  z-index: 1;
-}
-
-.card-body {
-  flex: 1;
-  text-align: center;
-}
-
-.card-title {
-  color: #2c3e50;
-}
-
-.card-description {
-  line-height: 1.5;
-}
-
-.card-footer {
-  text-align: center;
-}
-
-.card-action-btn {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.3s ease;
-}
-
-.dashboard-card:hover .card-action-btn {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Animations */
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes cardSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
+.presentation-text {
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 /* Responsive Design */
@@ -401,7 +162,7 @@ const getDescription = (title) => {
     padding: 1.5rem !important;
   }
 
-  .display-main{
+  .display-main {
     font-size: 2rem !important;
   }
 
