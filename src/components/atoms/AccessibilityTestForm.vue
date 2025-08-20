@@ -3,13 +3,11 @@
         <div class="form-container">
             <!-- Test Title -->
             <div class="input-group mb-6">
-                <label class="input-label">
-                    <span class="label-text">Test Title</span>
-                    <v-text-field :model-value="test.title" :autofocus="true" label="Test Title" :rules="titleRequired"
-                        counter="200" variant="outlined" density="comfortable"
-                        placeholder="Enter a descriptive title for your accessibility test" hide-details="auto"
-                        class="modern-input" @update:model-value="updateTitle($event)" />
-                </label>
+                <label for="test-title" class="input-label">Test Title</label>
+                <v-text-field id="test-title" :model-value="test.title" :autofocus="true" label="Test Title"
+                    :rules="titleRequired" counter="200" variant="outlined" density="comfortable"
+                    placeholder="Enter a descriptive title for your accessibility test" hide-details="auto"
+                    class="modern-input" @update:model-value="updateTitle($event)" />
             </div>
 
             <!-- Website URL -->
@@ -271,11 +269,6 @@ watch(() => props.test, () => {
     color: #374151;
     margin-bottom: 8px;
     font-size: 0.875rem;
-}
-
-.label-text {
-    display: block;
-    margin-bottom: 8px;
 }
 
 .modern-input :deep(.v-field) {
