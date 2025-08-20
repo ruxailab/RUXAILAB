@@ -7,13 +7,21 @@
       persistent
       @update:model-value="$emit('update:dialog', $event)"
     >
-      <v-card class="pa-6" rounded="xl" elevation="6">
+      <v-card
+        class="pa-6"
+        rounded="xl"
+        elevation="6"
+      >
         <v-card-title class="text-h5 font-weight-bold pa-0 mb-4">
           {{ step === 1 ? $t('pages.createTest.templateInfo') : $t('pages.createTest.create') }}
         </v-card-title>
 
         <!-- Step Navigation -->
-        <v-row v-if="allowCreate" class="mb-4" justify="center">
+        <v-row
+          v-if="allowCreate"
+          class="mb-4"
+          justify="center"
+        >
           <v-btn-toggle
             v-model="step"
             mandatory
@@ -22,10 +30,18 @@
             variant="outlined"
             class="rounded-lg"
           >
-            <v-btn :value="1" class="text-capitalize" width="200px">
+            <v-btn
+              :value="1"
+              class="text-capitalize"
+              width="200px"
+            >
               {{ $t('pages.createTest.templateInfo') }}
             </v-btn>
-            <v-btn :value="2" class="text-capitalize" width="200px">
+            <v-btn
+              :value="2"
+              class="text-capitalize"
+              width="200px"
+            >
               {{ $t('pages.createTest.templateTitle') }}
             </v-btn>
           </v-btn-toggle>
@@ -33,8 +49,14 @@
 
         <!-- Step Content -->
         <v-card-text class="pa-0">
-          <div v-if="step === 1" class="px-4">
-            <v-row align="center" justify="space-between">
+          <div
+            v-if="step === 1"
+            class="px-4"
+          >
+            <v-row
+              align="center"
+              justify="space-between"
+            >
               <v-col cols="12">
                 <h3 class="text-h6 font-weight-bold mb-2">
                   {{ template.header.templateTitle }}
@@ -61,7 +83,10 @@
               }}
             </p>
 
-            <v-row justify="space-between" class="ma-0">
+            <v-row
+              justify="space-between"
+              class="ma-0"
+            >
               <v-btn
                 v-if="isMyTemplate"
                 color="error"
@@ -69,11 +94,19 @@
                 class="text-capitalize"
                 @click="deleteTemplate"
               >
-                <v-icon start size="small">mdi-delete</v-icon>
+                <v-icon
+                  start
+                  size="small"
+                >
+                  mdi-delete
+                </v-icon>
                 {{ $t('buttons.delete') }}
               </v-btn>
 
-              <div class="d-flex" style="gap: 12px">
+              <div
+                class="d-flex"
+                style="gap: 12px"
+              >
                 <v-btn
                   color="grey-darken-2"
                   variant="outlined"
@@ -90,13 +123,21 @@
                   @click="step = 2"
                 >
                   {{ $t('buttons.next') }}
-                  <v-icon end size="small">mdi-arrow-right</v-icon>
+                  <v-icon
+                    end
+                    size="small"
+                  >
+                    mdi-arrow-right
+                  </v-icon>
                 </v-btn>
               </div>
             </v-row>
           </div>
 
-          <div v-if="step === 2" class="px-4">
+          <div
+            v-if="step === 2"
+            class="px-4"
+          >
             <FormTestDescription
               ref="formRef"
               class="mb-6"
@@ -106,18 +147,29 @@
               @val-form="handleValForm"
             />
 
-            <v-row justify="space-between" class="ma-0">
+            <v-row
+              justify="space-between"
+              class="ma-0"
+            >
               <v-btn
                 color="grey-darken-2"
                 variant="text"
                 class="text-capitalize"
                 @click="step = 1"
               >
-                <v-icon start size="small">mdi-arrow-left</v-icon>
+                <v-icon
+                  start
+                  size="small"
+                >
+                  mdi-arrow-left
+                </v-icon>
                 {{ $t('buttons.previous') }}
               </v-btn>
 
-              <div class="d-flex" style="gap: 12px">
+              <div
+                class="d-flex"
+                style="gap: 12px"
+              >
                 <v-btn
                   color="grey-darken-2"
                   variant="outlined"
@@ -133,7 +185,12 @@
                   @click="validate"
                 >
                   {{ $t('buttons.create') }}
-                  <v-icon end size="small">mdi-check</v-icon>
+                  <v-icon
+                    end
+                    size="small"
+                  >
+                    mdi-check
+                  </v-icon>
                 </v-btn>
               </div>
             </v-row>

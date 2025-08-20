@@ -4,8 +4,16 @@
       <Snackbar />
 
       <!-- Loading Overlay -->
-      <v-overlay v-if="loading" model-value="loading" class="text-center">
-        <v-progress-circular indeterminate color="primary" size="50" />
+      <v-overlay
+        v-if="loading"
+        model-value="loading"
+        class="text-center"
+      >
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          size="50"
+        />
         <div class="text-white mt-3">
           {{ loadingText || $t('common.loading') }}
         </div>
@@ -14,15 +22,27 @@
       <!-- Main Container -->
       <v-container>
         <!-- Header Section -->
-        <div v-if="title || $slots.actions" class="header-section">
-          <v-row align="center" class="">
+        <div
+          v-if="title || $slots.actions"
+          class="header-section"
+        >
+          <v-row
+            align="center"
+            class=""
+          >
             <v-col>
-              <h1 v-if="title" class="text-h3 font-weight-light text-on-surface">
+              <h1
+                v-if="title"
+                class="text-h3 font-weight-light text-on-surface"
+              >
                 {{ title }}
               </h1>
               <slot name="subtitle" />
             </v-col>
-            <v-col v-if="$slots.actions" cols="auto">
+            <v-col
+              v-if="$slots.actions"
+              cols="auto"
+            >
               <slot name="actions" />
             </v-col>
           </v-row>

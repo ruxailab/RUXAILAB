@@ -1,5 +1,10 @@
 <template>
-  <v-tabs v-if="type === 'tabs'" bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
+  <v-tabs
+    v-if="type === 'tabs'"
+    bg-color="transparent"
+    color="#FCA326"
+    class="pb-0 mb-0"
+  >
     <v-tab @click="tabClicked(0)">
       Consent
     </v-tab>
@@ -14,21 +19,38 @@
     </v-tab>
   </v-tabs>
 
-  <v-col v-else-if="type === 'content'" cols="12">
-    <v-card v-if="index === 0" rounded="xxl">
-      <TextareaForm :title="$t('ModeratedTest.consentForm')"
+  <v-col
+    v-else-if="type === 'content'"
+    cols="12"
+  >
+    <v-card
+      v-if="index === 0"
+      rounded="xxl"
+    >
+      <TextareaForm
+        :title="$t('ModeratedTest.consentForm')"
         subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
         @update:value="saveState($event)"
-        @input="updateData" />
+        @input="updateData"
+      />
     </v-card>
 
-    <v-card v-if="index === 1" rounded="xxl">
+    <v-card
+      v-if="index === 1"
+      rounded="xxl"
+    >
       <UserVariables @input="updateData" />
     </v-card>
 
-    <ListTasks v-if="index === 2" @input="updateData" />
+    <ListTasks
+      v-if="index === 2"
+      @input="updateData"
+    />
 
-    <v-card v-if="index === 3" rounded="xxl">
+    <v-card
+      v-if="index === 3"
+      rounded="xxl"
+    >
       <FormPostTest @input="updateData" />
     </v-card>
   </v-col>

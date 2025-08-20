@@ -1,5 +1,8 @@
 <template>
-  <PageWrapper title="Answers" :side-gap="true">
+  <PageWrapper
+    title="Answers"
+    :side-gap="true"
+  >
     <!-- Subtitle Slot -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
