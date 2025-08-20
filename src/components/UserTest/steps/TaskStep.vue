@@ -1,103 +1,201 @@
 <template>
-    <ShowInfo :title="task?.taskName || taskName">
-        <template #content>
-            <div class="test-content pa-4 rounded-xl">
-                <!-- STAGE 1: Show title and description -->
-                <template v-if="stage === 1">
-                    <div class="rich-text mb-4" v-html="task?.taskDescription || taskDescription" />
-                    <v-row v-if="task?.taskLink || taskLink" justify="center">
-                        <v-col cols="12" class="text-center">
-                            <a :href="task?.taskLink || taskLink" target="_blank"
-                                class="text-primary font-weight-medium">
-                                {{ task?.taskLink || taskLink }}
-                            </a>
-                        </v-col>
-                    </v-row>
-                    <v-row justify="center" class="mt-6">
-                        <v-col cols="auto">
-                            <v-btn color="primary" @click="startTask">Empezar tarea</v-btn>
-                        </v-col>
-                    </v-row>
-                </template>
-                <!-- STAGE 2: Task answer -->
-                <template v-else-if="stage === 2">
-                    <v-row class="mb-4 d-flex align-center">
-                        <v-col cols="auto">
-                            <v-chip color="primary" class="mr-2">
-                                Tiempo: {{ elapsedTimeDisplay }}
-                            </v-chip>
-                        </v-col>
-                        <v-col v-if="task?.taskTip" cols="auto">
-                            <TipButton :task="task" />
-                        </v-col>
-                        <v-col v-if="task?.hasAudioRecord !== false" cols="auto">
-                            <AudioRecorder :test-id="testId" :task-index="taskIndex"
-                                @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')"
-                                @recording-started="$emit('recording-started', $event)" />
-                        </v-col>
-                        <v-col v-if="isVisualizerVisible" cols="auto">
-                            <AudioVisualizer />
-                        </v-col>
-                        <v-col v-if="task?.hasCamRecord !== false" cols="auto">
-                            <VideoRecorder ref="videoRecorder" :test-id="testId" :task-index="taskIndex"
-                                @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
-                        </v-col>
-                        <v-col v-if="task?.hasScreenRecord !== false" cols="auto">
-                            <ScreenRecorder :test-id="testId" :task-index="taskIndex"
-                                @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
-                        </v-col>
-                        <v-spacer />
-                        <v-col cols="auto">
-                            <Timer ref="timerComponent" :task-index="taskIndex" @timer-stopped="onTimerStopped" />
-                        </v-col>
-                    </v-row>
-                    <div class="mt-4">
-                        <v-textarea v-if="task?.taskType === 'text-area' && !submitted"
-                            :id="'id-' + (task?.taskName || taskName)" v-model="localTaskAnswer"
-                            @update:modelValue="onUpdateTaskAnswer" variant="outlined" label="Answer" rows="3" />
-                        <v-textarea v-if="!submitted" :id="'id-' + (task?.taskName || taskName) + '-obs'"
-                            v-model="localTaskObservations" @update:modelValue="onUpdateTaskObservations"
-                            variant="outlined" label="Observation (optional)" rows="3" />
-                    </div>
-                    <v-row justify="space-between">
-                        <v-col>
-                            <v-btn color="error" block variant="outlined" class="mr-2"
-                                @click="handleShowPostForm(false)">
-                                Could not finish
-                            </v-btn>
-                        </v-col>
-                        <v-col>
-                            <v-btn color="primary" block variant="flat" class="ml-2" @click="handleShowPostForm(true)">
-                                Done
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </template>
-                <!-- STAGE 3:POST-TASK form -->
-                <template v-else-if="stage === 3">
-                    <div v-if="task?.taskType === 'sus'">
-                        <SusForm :task-index="taskIndex" v-model="localSusAnswers"
-                            @update:modelValue="val => emit('update:susAnswers', val)" />
-                    </div>
-                    <div v-if="task?.taskType === 'nasa-tlx'">
-                        <nasaTlxForm :nasa-tlx="nasaTlxAnswers" @update:nasaTlx="onUpdateNasaTlx" />
-                    </div>
-                    <v-row justify="end">
-                        <v-col cols="12">
-                            <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
-                                Por favor, responde a todas las preguntas antes de continuar.
-                            </p>
-                            <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
-                                @click="emitDoneOrCouldNotFinish()">
-                                Finalizar tarea
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </template>
-                <video v-if="videoUrl === ''" id="vpreview" class="d-none" autoplay />
-            </div>
+  <ShowInfo :title="task?.taskName || taskName">
+    <template #content>
+      <div class="test-content pa-4 rounded-xl">
+        <!-- STAGE 1: Show title and description -->
+        <template v-if="stage === 1">
+          <div
+            class="rich-text mb-4"
+            v-html="task?.taskDescription || taskDescription"
+          />
+          <v-row
+            v-if="task?.taskLink || taskLink"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              class="text-center"
+            >
+              <a
+                :href="task?.taskLink || taskLink"
+                target="_blank"
+                class="text-primary font-weight-medium"
+              >
+                {{ task?.taskLink || taskLink }}
+              </a>
+            </v-col>
+          </v-row>
+          <v-row
+            justify="center"
+            class="mt-6"
+          >
+            <v-col cols="auto">
+              <v-btn
+                color="primary"
+                @click="startTask"
+              >
+                Empezar tarea
+              </v-btn>
+            </v-col>
+          </v-row>
         </template>
-    </ShowInfo>
+        <!-- STAGE 2: Task answer -->
+        <template v-else-if="stage === 2">
+          <v-row class="mb-4 d-flex align-center">
+            <v-col cols="auto">
+              <v-chip
+                color="primary"
+                class="mr-2"
+              >
+                Tiempo: {{ elapsedTimeDisplay }}
+              </v-chip>
+            </v-col>
+            <v-col
+              v-if="task?.taskTip"
+              cols="auto"
+            >
+              <TipButton :task="task" />
+            </v-col>
+            <v-col
+              v-if="task?.hasAudioRecord !== false"
+              cols="auto"
+            >
+              <AudioRecorder
+                :test-id="testId"
+                :task-index="taskIndex"
+                @show-loading="$emit('show-loading')"
+                @stop-show-loading="$emit('stop-show-loading')"
+                @recording-started="$emit('recording-started', $event)"
+              />
+            </v-col>
+            <v-col
+              v-if="isVisualizerVisible"
+              cols="auto"
+            >
+              <AudioVisualizer />
+            </v-col>
+            <v-col
+              v-if="task?.hasCamRecord !== false"
+              cols="auto"
+            >
+              <VideoRecorder
+                ref="videoRecorder"
+                :test-id="testId"
+                :task-index="taskIndex"
+                @show-loading="$emit('show-loading')"
+                @stop-show-loading="$emit('stop-show-loading')"
+              />
+            </v-col>
+            <v-col
+              v-if="task?.hasScreenRecord !== false"
+              cols="auto"
+            >
+              <ScreenRecorder
+                :test-id="testId"
+                :task-index="taskIndex"
+                @show-loading="$emit('show-loading')"
+                @stop-show-loading="$emit('stop-show-loading')"
+              />
+            </v-col>
+            <v-spacer />
+            <v-col cols="auto">
+              <Timer
+                ref="timerComponent"
+                :task-index="taskIndex"
+                @timer-stopped="onTimerStopped"
+              />
+            </v-col>
+          </v-row>
+          <div class="mt-4">
+            <v-textarea
+              v-if="task?.taskType === 'text-area' && !submitted"
+              :id="'id-' + (task?.taskName || taskName)"
+              v-model="localTaskAnswer"
+              variant="outlined"
+              label="Answer"
+              rows="3"
+              @update:model-value="onUpdateTaskAnswer"
+            />
+            <v-textarea
+              v-if="!submitted"
+              :id="'id-' + (task?.taskName || taskName) + '-obs'"
+              v-model="localTaskObservations"
+              variant="outlined"
+              label="Observation (optional)"
+              rows="3"
+              @update:model-value="onUpdateTaskObservations"
+            />
+          </div>
+          <v-row justify="space-between">
+            <v-col>
+              <v-btn
+                color="error"
+                block
+                variant="outlined"
+                class="mr-2"
+                @click="handleShowPostForm(false)"
+              >
+                Could not finish
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                color="primary"
+                block
+                variant="flat"
+                class="ml-2"
+                @click="handleShowPostForm(true)"
+              >
+                Done
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+        <!-- STAGE 3:POST-TASK form -->
+        <template v-else-if="stage === 3">
+          <div v-if="task?.taskType === 'sus'">
+            <SusForm
+              v-model="localSusAnswers"
+              :task-index="taskIndex"
+              @update:model-value="val => emit('update:susAnswers', val)"
+            />
+          </div>
+          <div v-if="task?.taskType === 'nasa-tlx'">
+            <nasaTlxForm
+              :nasa-tlx="nasaTlxAnswers"
+              @update:nasa-tlx="onUpdateNasaTlx"
+            />
+          </div>
+          <v-row justify="end">
+            <v-col cols="12">
+              <p
+                v-if="task?.taskType === 'sus' && doneTaskDisabled"
+                class="text-error mb-4"
+              >
+                Por favor, responde a todas las preguntas antes de continuar.
+              </p>
+              <v-btn
+                color="primary"
+                block
+                variant="flat"
+                class="ml-2"
+                :disabled="doneTaskDisabled"
+                @click="emitDoneOrCouldNotFinish()"
+              >
+                Finalizar tarea
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+        <video
+          v-if="videoUrl === ''"
+          id="vpreview"
+          class="d-none"
+          autoplay
+        />
+      </div>
+    </template>
+  </ShowInfo>
 </template>
 
 <script setup>
@@ -189,41 +287,41 @@ function startTask() {
     });
 }
 
-const showPostForm = ref(false);
+const showPostForm = ref({ userCompleted: undefined });
 
 function handleShowPostForm(userCompleted) {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 
-    let finalTime = null;
-    if (taskStartTime) {
-        finalTime = Math.round((Date.now() - taskStartTime));
-        console.log('Tiempo detenido en:', finalTime, 'segundos');
-        emit('timer-stopped', finalTime, props.taskIndex);
-    }
+  let finalTime = null;
+  if (taskStartTime) {
+    finalTime = Math.round((Date.now() - taskStartTime));
+    console.log('Tiempo detenido en:', finalTime, 'segundos');
+    emit('timer-stopped', finalTime, props.taskIndex);
+  }
 
-    if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx') {
-        showPostForm.userCompleted = userCompleted;
-        stage.value = 3;
-    } else {
-        showPostForm.userCompleted = userCompleted;
-        emitDoneOrCouldNotFinish(finalTime);
-    }
+  showPostForm.value.userCompleted = userCompleted;
+
+  if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx') {
+    stage.value = 3;
+  } else {
+    emitDoneOrCouldNotFinish(finalTime);
+  }
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {
-    if (showPostForm.userCompleted) {
-        emit('done', savedTime, props.taskIndex);
-    } else {
-        emit('couldNotFinish', savedTime, props.taskIndex);
-    }
-    stage.value = 1;
-    showPostForm.value = false;
-    showPostForm.userCompleted = undefined;
-    taskStartTime = null;
-    elapsedTimeDisplay.value = '0:00';
+  if (showPostForm.value.userCompleted) {
+    emit('done', savedTime, props.taskIndex);
+  } else {
+    emit('couldNotFinish', savedTime, props.taskIndex);
+  }
+
+  stage.value = 1;
+  showPostForm.value = { userCompleted: undefined };
+  taskStartTime = null;
+  elapsedTimeDisplay.value = '0:00';
 }
 
 const localPostAnswer = ref(props.postAnswer);

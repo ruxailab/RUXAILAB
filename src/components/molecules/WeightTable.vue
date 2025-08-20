@@ -1,6 +1,13 @@
 <template>
-  <v-container fluid class="pa-6">
-    <v-card elevation="2" class="pa-6" style="background-color: #F5F7FF;">
+  <v-container
+    fluid
+    class="pa-6"
+  >
+    <v-card
+      elevation="2"
+      class="pa-6"
+      style="background-color: #F5F7FF;"
+    >
       <!-- Header Section -->
       <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
         {{ $t('HeuristicsWeightsTable.titles.weights') }}
@@ -14,14 +21,23 @@
         variant="outlined"
         style="background-color: transparent;"
       >
-        <v-icon icon="mdi-information-outline" size="64" color="primary" class="mb-4" />
+        <v-icon
+          icon="mdi-information-outline"
+          size="64"
+          color="primary"
+          class="mb-4"
+        />
         <h3 class="text-h6 text-ternary mb-2">
           {{ $t('HeuristicsWeightsTable.messages.atLeast2HeuristicsForWeighting') }}
         </h3>
       </v-card>
 
       <!-- Weights Content -->
-      <v-card v-else elevation="0" style="background-color: transparent;">
+      <v-card
+        v-else
+        elevation="0"
+        style="background-color: transparent;"
+      >
         <!-- Weights Header Tabs -->
         <v-tabs
           v-model="tabs"
@@ -54,7 +70,10 @@
             :value="pes"
             style="background-color: #F5F7FF;"
           >
-            <v-card variant="outlined" class="weights-table">
+            <v-card
+              variant="outlined"
+              class="weights-table"
+            >
               <!-- Table Header -->
               <div class="d-flex align-center pa-4 bg-grey-lighten-4">
                 <div class="weights-header-cell">

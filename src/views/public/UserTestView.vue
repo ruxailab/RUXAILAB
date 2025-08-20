@@ -11,15 +11,36 @@
 
     <Snackbar />
 
-    <SubmitDialog :model-value="dialog" :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')" :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')" @cancel="dialog = false" @submit="handleSubmit" />
+    <SubmitDialog
+      :model-value="dialog"
+      :title="$t('HeuristicsTestView.messages.submitTest')"
+      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :cancel-label="$t('buttons.cancel')"
+      :submit-label="$t('buttons.submit')"
+      @cancel="dialog = false"
+      @submit="handleSubmit"
+    />
 
-    <v-dialog :model-value="fromlink && !noExistUser && !logined" max-width="400" persistent>
-      <v-card v-if="user" class="rounded-xl pa-6">
-        <v-row class="ma-0 pa-0" justify="center">
-          <v-avatar color="primary-lighten-4" size="120">
-            <v-icon size="80">mdi-account-circle</v-icon>
+    <v-dialog
+      :model-value="fromlink && !noExistUser && !logined"
+      max-width="400"
+      persistent
+    >
+      <v-card
+        v-if="user"
+        class="rounded-xl pa-6"
+      >
+        <v-row
+          class="ma-0 pa-0"
+          justify="center"
+        >
+          <v-avatar
+            color="primary-lighten-4"
+            size="120"
+          >
+            <v-icon size="80">
+              mdi-account-circle
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-title class="text-center text-h6 font-weight-bold mt-4">
@@ -31,113 +52,237 @@
           </p>
         </v-card-text>
         <v-card-actions class="d-flex flex-column pa-0">
-          <v-btn color="primary" block variant="flat" class="my-2" @click="setTest">
+          <v-btn
+            color="primary"
+            block
+            variant="flat"
+            class="my-2"
+            @click="setTest"
+          >
             Continue as {{ user.email }}
           </v-btn>
           <p class="text-caption mt-2">
             Not you?
-            <a href="#" class="text-primary font-weight-medium" @click.prevent="signOut">Change account</a>
+            <a
+              href="#"
+              class="text-primary font-weight-medium"
+              @click.prevent="signOut"
+            >Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-container fluid class="pa-0">
-      <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
-        <v-col md="8" class="ma-5 pa-5">
-          <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;" />
+    <v-container
+      fluid
+      class="pa-0"
+    >
+      <v-row
+        v-if="test && start"
+        class="start-screen background-img pa-0 ma-0"
+        align="center"
+      >
+        <v-col
+          md="8"
+          class="ma-5 pa-5"
+        >
+          <img
+            src="@/assets/ruxailab-long-crop-white.png"
+            alt="RUXAILAB"
+            class="mb-10"
+            style="max-width: 300px;"
+          >
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
+          <v-btn
+            color="white"
+            variant="outlined"
+            rounded
+            size="x-large"
+            @click="startTest"
+          >
             Start Test
           </v-btn>
         </v-col>
       </v-row>
 
-      <v-row v-else class="main-test-interface pa-0 ma-0">
-        <v-col ref="rightView" class="right-view pa-6">
-          <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
+      <v-row
+        v-else
+        class="main-test-interface pa-0 ma-0"
+      >
+        <v-col
+          ref="rightView"
+          class="right-view pa-6"
+        >
+          <v-row
+            v-if="globalIndex >= 1"
+            class="stepper-row sticky-stepper"
+          >
             <v-col cols="12">
-              <v-stepper :model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
+              <v-stepper
+                :model-value="stepperValue"
+                class="main-stepper rounded-xl elevation-3"
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
-                style="visibility:visible">
+                style="visibility:visible"
+              >
                 <v-stepper-header>
-                  <v-stepper-item color="white" value="1" title="Consent" :complete="stepperValue >= 1"
-                    :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    color="white"
+                    value="1"
+                    title="Consent"
+                    :complete="stepperValue >= 1"
+                    :color="stepperValue < 1 ? 'primary' : 'success'"
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item color="white" value="2" title="Pre-test" :complete="stepperValue >= 2"
-                    :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    color="white"
+                    value="2"
+                    title="Pre-test"
+                    :complete="stepperValue >= 2"
+                    :color="stepperValue < 2 ? 'primary' : 'success'"
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item color="white" value="3" title="Tasks" :complete="stepperValue >= 3"
-                    :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    color="white"
+                    value="3"
+                    title="Tasks"
+                    :complete="stepperValue >= 3"
+                    :color="stepperValue < 3 ? 'primary' : 'success'"
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item color="white" value="4" title="Post-test" :complete="stepperValue >= 4"
-                    :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    color="white"
+                    value="4"
+                    title="Post-test"
+                    :complete="stepperValue >= 4"
+                    :color="stepperValue < 4 ? 'primary' : 'success'"
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item color="white" value="5" title="Completion" :complete="stepperValue === 5"
-                    :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    color="white"
+                    value="5"
+                    title="Completion"
+                    :complete="stepperValue === 5"
+                    :color="stepperValue < 5 ? 'primary' : 'success'"
+                    complete-icon="mdi-check"
+                  />
                 </v-stepper-header>
               </v-stepper>
             </v-col>
           </v-row>
           <!-- Stepper secundario para tareas -->
-          <v-row v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1" class="task-stepper-row"
-            justify="center">
-            <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
-              <v-stepper :model-value="taskIndex + 1" class="task-stepper rounded-xl elevation-1 w-100"
-                style="max-width: 100%;">
+          <v-row
+            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            class="task-stepper-row"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              md="8"
+              lg="6"
+              class="d-flex justify-center"
+            >
+              <v-stepper
+                :model-value="taskIndex + 1"
+                class="task-stepper rounded-xl elevation-1 w-100"
+                style="max-width: 100%;"
+              >
                 <v-stepper-header>
-                  <template v-for="(task, idx) in test.testStructure.userTasks" :key="idx">
-                    <v-stepper-item color="white" :value="idx + 1" :title="`Tarea ${idx + 1}`"
+                  <template
+                    v-for="(task, idx) in test.testStructure.userTasks"
+                    :key="idx"
+                  >
+                    <v-stepper-item
+                      color="white"
+                      :value="idx + 1"
+                      :title="`Tarea ${idx + 1}`"
                       :complete="taskIndex > idx"
                       :color="taskIndex > idx ? 'success' : (taskIndex === idx ? 'primary' : 'grey')"
-                      complete-icon="mdi-check" />
+                      complete-icon="mdi-check"
+                    />
                     <v-divider v-if="idx < test.testStructure.userTasks.length - 1" />
                   </template>
                 </v-stepper-header>
               </v-stepper>
             </v-col>
           </v-row>
-          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
-          <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
-            :pre-test-title="$t('UserTestView.titles.preTest')" :consent-text="test.testStructure.consent"
-            :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
-            @update:fullNameModel="val => fullName = val"
-            @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-            @continue="completeStep(taskIndex, 'consent')" />
-          <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
-            :pre-test-title="$t('UserTestView.titles.preTest')" :pre-test="test.testStructure.preTest"
-            :pre-test-answer="localTestAnswer.preTestAnswer" :pre-test-completed="localTestAnswer.preTestCompleted"
-            @done="completeStep(taskIndex, 'preTest')" />
-          <PreTasksStep v-if="globalIndex === 3 && taskIndex === 0"
+          <WelcomeStep
+            v-if="globalIndex === 0"
+            :stepper-value="stepperValue"
+            @start="globalIndex = 1"
+          />
+          <ConsentStep
+            v-if="globalIndex === 1 && taskIndex === 0"
+            :test-title="test.testTitle"
+            :pre-test-title="$t('UserTestView.titles.preTest')"
+            :consent-text="test.testStructure.consent"
+            :full-name-model="fullName"
+            :consent-completed-model="localTestAnswer.consentCompleted"
+            @update:full-name-model="val => fullName = val"
+            @update:consent-completed-model="val => localTestAnswer.consentCompleted = val"
+            @continue="completeStep(taskIndex, 'consent')"
+          />
+          <PreTestStep
+            v-if="globalIndex === 2 && taskIndex === 0"
+            v-model:pre-test-answer="localTestAnswer.preTestAnswer"
+            :test-title="test.testTitle"
+            :pre-test-title="$t('UserTestView.titles.preTest')"
+            :pre-test="test.testStructure.preTest"
+            :pre-test-completed="localTestAnswer.preTestCompleted"
+            @done="completeStep(taskIndex, 'preTest')"
+          />
+          <PreTasksStep
+            v-if="globalIndex === 3 && taskIndex === 0"
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @startTasks="() => { taskIndex = 0; globalIndex = 4 }" />
-          <TaskStep v-if="globalIndex === 4 && test.testType === 'User'" ref="taskStepComponent"
-            :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
+            @start-tasks="() => { taskIndex = 0; globalIndex = 4 }"
+          />
+          <TaskStep
+            v-if="globalIndex === 4 && test.testType === 'User'"
+            ref="taskStepComponent"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
+            :task="test.testStructure.userTasks[taskIndex]"
+            :task-index="taskIndex"
+            :test-id="testId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
-            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
+            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
+            :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
-            @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
-            @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
-            @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
-            @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
-            @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
-          <PostTestStep v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
-            :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
-            :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
+            @update:sus-answers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
+            @update:nasa-tlx-answers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+            @done="() => handleTaskFinish(true)"
+            @could-not-finish="() => handleTaskFinish(false)"
+            @show-loading="isLoading = true"
+            @stop-show-loading="isLoading = false"
+            @recording-started="isVisualizerVisible = $event"
+            @timer-stopped="handleTimerStopped"
+          />
+          <PostTestStep
+            v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            v-model:post-test-answer="localTestAnswer.postTestAnswer"
+            :test-title="test.testTitle"
+            :post-test-title="$t('UserTestView.titles.postTest')"
+            :post-test="test.testStructure.postTest"
             :post-test-completed="localTestAnswer.postTestCompleted"
-            @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }" />
-          <FinishStep v-if="globalIndex === 6 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
-            :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
-            :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
-            @submit="dialog = true" />
+            @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }"
+          />
+          <FinishStep
+            v-if="globalIndex === 6 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
+            :final-message="$t('finishTest.finalMessage')"
+            :congratulations="$t('finishTest.congratulations')"
+            :submit-message="$t('finishTest.submitMessage')"
+            :submit-btn="$t('buttons.submit')"
+            @submit="dialog = true"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -194,8 +339,6 @@ import PreTasksStep from '@/components/UserTest/steps/PreTasksStep.vue';
 import TaskStep from '@/components/UserTest/steps/TaskStep.vue';
 import PostTestStep from '@/components/UserTest/steps/PostTestStep.vue';
 import FinishStep from '@/components/UserTest/steps/FinishStep.vue';
-
-
 
 const fullName = ref('');
 const logined = ref(null);
@@ -721,8 +864,6 @@ onBeforeUnmount(() => {
     videoRecorder.value.stopRecording();
   }
 });
-
-
 </script>
 
 <style scoped>
