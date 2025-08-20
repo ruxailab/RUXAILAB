@@ -312,7 +312,7 @@ const saveState = async () => {
 };
 
 const getPostTest = () => {
-  const data = test.value?.testStructure?.postTest || postTest.value || [];
+  const data = postTest.value ?? test.value?.testStructure?.postTest ?? [];
   items.value = Array.isArray(data) ? [...data] : [];
   store.dispatch('setPostTest', items.value);
 };
