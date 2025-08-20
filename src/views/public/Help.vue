@@ -1,13 +1,34 @@
 <template>
   <div class="bg-grey-lighten-4">
-    <v-card height="260" elevation="0" rounded="0" class="mb-6">
-      <v-img src="https://theme.zdassets.com/theme_assets/717481/e805a01ba4ee2b0b1d0aa58dca3eb97f54c31e95.png"
-        height="260" cover>
+    <v-card
+      height="260"
+      elevation="0"
+      rounded="0"
+      class="mb-6"
+    >
+      <v-img
+        src="https://theme.zdassets.com/theme_assets/717481/e805a01ba4ee2b0b1d0aa58dca3eb97f54c31e95.png"
+        height="260"
+        cover
+      >
         <v-container class="fill-height d-flex align-center justify-center">
-          <v-row justify="center" align="center" class="text-center">
-            <v-col cols="12" xs="12" sm="10" md="8" lg="7" xl="6">
-
-              <h2 class="text-h4 font-weight-medium text-white mb-6" style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)">
+          <v-row
+            justify="center"
+            align="center"
+            class="text-center"
+          >
+            <v-col
+              cols="12"
+              xs="12"
+              sm="10"
+              md="8"
+              lg="7"
+              xl="6"
+            >
+              <h2
+                class="text-h4 font-weight-medium text-white mb-6"
+                style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
+              >
                 {{ $t('help.howCanWeHelp') }}
               </h2>
             </v-col>
@@ -17,49 +38,83 @@
     </v-card>
     <v-container class="mt-4">
       <v-row>
-        <v-col cols="12" md="4" lg="3">
-          <div class="sticky-top" style="top: 24px;">
-            <v-card rounded="lg" elevation="2">
-              <v-list nav rounded color="black">
+        <v-col
+          cols="12"
+          md="4"
+          lg="3"
+        >
+          <div
+            class="sticky-top"
+            style="top: 24px;"
+          >
+            <v-card
+              rounded="lg"
+              elevation="2"
+            >
+              <v-list
+                nav
+                rounded
+                color="black"
+              >
                 <v-list-subheader class="text-subtitle-2 font-weight-bold text-amber-darken-2">
                   {{ $t('help.categories') }}
                 </v-list-subheader>
-                <v-list-item v-for="(category, index) in categories" :key="index" :class="{
-                  'grey lighten-4': selectedCategory === category.id,
-                }" @click="filterByCategory(category.id)">
+                <v-list-item
+                  v-for="(category, index) in categories"
+                  :key="index"
+                  :class="{
+                    'grey lighten-4': selectedCategory === category.id,
+                  }"
+                  @click="filterByCategory(category.id)"
+                >
                   <template #prepend>
-                    <v-icon :color="selectedCategory === category.id
-                      ? 'black'
-                      : 'grey darken-1'
-                      ">
+                    <v-icon
+                      :color="selectedCategory === category.id
+                        ? 'black'
+                        : 'grey darken-1'
+                      "
+                    >
                       {{ category.icon }}
                     </v-icon>
                   </template>
 
-                  <v-list-item-title :class="{
-                    'black--text font-weight-medium':
-                      selectedCategory === category.id,
-                  }">
+                  <v-list-item-title
+                    :class="{
+                      'black--text font-weight-medium':
+                        selectedCategory === category.id,
+                    }"
+                  >
                     {{ $t(category.nameKey) }}
-                    <v-chip v-if="items && Array.isArray(items)" size="small" color="amber-darken-2" class="text-white">
-                      {{items.filter(item => item && item.category === category.id).length}}
+                    <v-chip
+                      v-if="items && Array.isArray(items)"
+                      size="small"
+                      color="amber-darken-2"
+                      class="text-white"
+                    >
+                      {{ items.filter(item => item && item.category === category.id).length }}
                     </v-chip>
                   </v-list-item-title>
-
                 </v-list-item>
                 <v-divider class="my-2" />
-                <v-list-item class="my-1 mx-2 rounded" :class="{ 'grey lighten-4': selectedCategory === null }"
-                  @click="filterByCategory(null)">
+                <v-list-item
+                  class="my-1 mx-2 rounded"
+                  :class="{ 'grey lighten-4': selectedCategory === null }"
+                  @click="filterByCategory(null)"
+                >
                   <template #prepend>
-                    <v-icon :color="selectedCategory === null ? 'black' : 'grey darken-1'
-                      ">
+                    <v-icon
+                      :color="selectedCategory === null ? 'black' : 'grey darken-1'
+                      "
+                    >
                       mdi-view-grid
                     </v-icon>
                   </template>
-                  <v-list-item-title :class="{
-                    'black--text font-weight-medium':
-                      selectedCategory === null,
-                  }">
+                  <v-list-item-title
+                    :class="{
+                      'black--text font-weight-medium':
+                        selectedCategory === null,
+                    }"
+                  >
                     {{ $t('help.viewAll') }}
                   </v-list-item-title>
                 </v-list-item>
@@ -67,21 +122,40 @@
             </v-card>
           </div>
         </v-col>
-        <v-col cols="12" md="8" lg="9">
+        <v-col
+          cols="12"
+          md="8"
+          lg="9"
+        >
           <div v-if="filteredItems.length > 0">
-            <div v-for="(category, catIndex) in displayedCategories" :key="'cat-' + catIndex" class="mb-8">
-              <v-card v-if="getItemsByCategory(category.id).length > 0" flat class="mb-4 rounded-lg"
-                style="border-left: 4px solid rgb(249, 168, 38);">
+            <div
+              v-for="(category, catIndex) in displayedCategories"
+              :key="'cat-' + catIndex"
+              class="mb-8"
+            >
+              <v-card
+                v-if="getItemsByCategory(category.id).length > 0"
+                flat
+                class="mb-4 rounded-lg"
+                style="border-left: 4px solid rgb(249, 168, 38);"
+              >
                 <v-card-title class="py-3 text-black font-weight-medium">
-                  <v-icon start color="black">
+                  <v-icon
+                    start
+                    color="black"
+                  >
                     {{ category.icon }}
                   </v-icon>
                   {{ $t(category.nameKey) }}
                 </v-card-title>
               </v-card>
               <v-expansion-panels flat>
-                <v-expansion-panel v-for="(item, index) in getItemsByCategory(category.id)" :key="'item-' + index"
-                  class="mb-3 rounded-lg" style="border: 1px solid rgba(0,0,0,0.08);">
+                <v-expansion-panel
+                  v-for="(item, index) in getItemsByCategory(category.id)"
+                  :key="'item-' + index"
+                  class="mb-3 rounded-lg"
+                  style="border: 1px solid rgba(0,0,0,0.08);"
+                >
                   <v-expansion-panel-title class="py-3 text-subtitle-1 text-grey-darken-3 font-weight-medium">
                     {{ item.title }}
                   </v-expansion-panel-title>
@@ -90,20 +164,35 @@
                       {{ item.content }}
                     </p>
                     <div class="video-container position-relative">
-                      <video :src="require(`@/assets/faqs/${item.gif}`)" class="rounded-lg" width="100%"
-                        max-height="500" controls controlslist="nodownload" preload="metadata" muted
+                      <video
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        class="rounded-lg"
+                        width="100%"
+                        max-height="500"
+                        controls
+                        controlslist="nodownload"
+                        preload="metadata"
+                        muted
                         :aria-label="$t('help.videoAltText')"
-                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);" />
+                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                      />
                     </div>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
               </v-expansion-panels>
             </div>
           </div>
-          <v-card v-if="filteredItems.length === 0" class="pa-6 rounded-lg text-center bg-grey-lighten-5"
-            style="border: 1px dashed rgba(0,0,0,0.15);">
+          <v-card
+            v-if="filteredItems.length === 0"
+            class="pa-6 rounded-lg text-center bg-grey-lighten-5"
+            style="border: 1px dashed rgba(0,0,0,0.15);"
+          >
             <v-card-text>
-              <v-icon size="64" color="grey-lighten-1" class="mb-4">
+              <v-icon
+                size="64"
+                color="grey-lighten-1"
+                class="mb-4"
+              >
                 mdi-help-circle-outline
               </v-icon>
               <h3 class="mb-3">
@@ -113,14 +202,27 @@
                 {{ $t('help.browseAllCategories') }}
               </p>
 
-              <v-btn color="black" style="color: white;" @click="filterByCategory(null)">
+              <v-btn
+                color="black"
+                style="color: white;"
+                @click="filterByCategory(null)"
+              >
                 {{ $t('help.viewAllArticles') }}
               </v-btn>
             </v-card-text>
           </v-card>
-          <div v-if="pageCount > 1" class="text-center mt-8">
-            <v-pagination v-model="page" :length="pageCount" :total-visible="5" rounded color="black"
-              class="bg-white elevation-2 py-2 px-4 d-inline-flex rounded-pill" />
+          <div
+            v-if="pageCount > 1"
+            class="text-center mt-8"
+          >
+            <v-pagination
+              v-model="page"
+              :length="pageCount"
+              :total-visible="5"
+              rounded
+              color="black"
+              class="bg-white elevation-2 py-2 px-4 d-inline-flex rounded-pill"
+            />
           </div>
         </v-col>
       </v-row>

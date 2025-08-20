@@ -1,6 +1,9 @@
 <template>
   <v-form ref="form">
-    <v-row no-gutters class="px-6 py-0">
+    <v-row
+      no-gutters
+      class="px-6 py-0"
+    >
       <v-col cols="12">
         <div class="input-group mb-6">
           <label class="input-label">Test Title</label>
@@ -34,8 +37,13 @@
             class="modern-input"
             @update:model-value="$emit('update:test', { ...test, testType: $event })"
           >
-            <template v-slot:prepend-inner>
-              <v-icon size="18" color="grey-500">mdi-tag-outline</v-icon>
+            <template #prepend-inner>
+              <v-icon
+                size="18"
+                color="grey-500"
+              >
+                mdi-tag-outline
+              </v-icon>
             </template>
           </v-select>
         </div>
@@ -54,8 +62,7 @@
             @update:model-value="updateTestDescription($event)"
           />
         </div>
-        
-        </v-col>
+      </v-col>
     </v-row>
   </v-form>
 </template>
