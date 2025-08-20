@@ -26,6 +26,27 @@
           </v-btn>
         </div>
 
+        <v-row justify="center" v-if="callStarted">
+          <v-card class="pa-2 buttonCard" depressed>
+            <v-tooltip location="bottom" v-if="!caller">
+              <template #activator="{ props }">
+                <v-btn class="mx-3" :class="{ red: isSharingScreen, white: !isSharingScreen }" variant="flat" icon
+                  v-bind="props" @click="toggleCameraScreen">
+                  <v-icon v-if="!isSharingScreen">
+                    mdi-monitor-screenshot
+                  </v-icon>
+                  <v-icon v-else>
+                    mdi-monitor-off
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>{{
+                isSharingScreen ? 'Stop screen sharing' : 'Share screen'
+                }}</span>
+            </v-tooltip>
+          </v-card>
+        </v-row>
+
         <!-- <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn> -->
       </v-col>
     </v-row>
@@ -50,6 +71,79 @@ const localStream = ref(null);       // user's local media stream
 const peerConnection = ref(null);    // WebRTC peer connection
 const callStarted = ref(false);      // call status
 const roomExists = ref(false);
+
+const isSharingScreen = ref(false);
+const screenStream = ref(null);
+
+async function toggleCameraScreen() {
+  if (isSharingScreen.value) {
+    stopScreenShare();
+  } else {
+    startScreenShare();
+  }
+}
+
+async function startScreenShare() {
+  try {
+    screenStream.value = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+
+    const videoTrack = screenStream.value.getVideoTracks()[0];
+    const audioTrack = screenStream.value.getAudioTracks()[0];
+
+    const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
+    if (sender) {
+      sender.replaceTrack(videoTrack);
+    }
+
+    const audioSender = peerConnection.value.getSenders().find(s => s.track.kind === 'audio');
+    if (audioSender) {
+      audioSender.replaceTrack(audioTrack);
+    }
+
+    localStream.value = screenStream.value;
+    if (localVideo.value) {
+      localVideo.value.srcObject = localStream.value;
+    }
+
+    videoTrack.onended = () => {
+      console.log('Screen sharing stopped by user.');
+      stopScreenShare();
+    };
+
+    isSharingScreen.value = true;
+  } catch (err) {
+    console.error('Error starting screen share:', err);
+    isSharingScreen.value = false;
+  }
+}
+
+async function stopScreenShare() {
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach(track => track.stop());
+  }
+
+  localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+  const videoTrack = localStream.value.getVideoTracks()[0];
+  const audioTrack = localStream.value.getAudioTracks()[0];
+
+  const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
+  if (sender) {
+    sender.replaceTrack(videoTrack);
+  }
+
+  const audioSender = peerConnection.value.getSenders().find(s => s.track.kind === 'audio');
+  if (audioSender) {
+    audioSender.replaceTrack(audioTrack);
+  }
+
+  if (localVideo.value) {
+    localVideo.value.srcObject = localStream.value;
+  }
+
+  isSharingScreen.value = false;
+  screenStream.value = null;
+}
 
 // Initialize WebRTC connection
 async function init() {
@@ -214,6 +308,11 @@ async function endCall() {
   // Stop local media tracks
   if (localStream.value) {
     localStream.value.getTracks().forEach(track => track.stop());
+  }
+
+  // Stop screen share stream if active
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach(track => track.stop());
   }
 
   // Close peer connection
