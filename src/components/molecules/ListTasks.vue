@@ -1,13 +1,29 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container
+    fluid
+    class="pa-0"
+  >
     <v-card class="elevation-2 rounded-lg pa-6">
-      <v-row align="center" class="pa-4">
-        <v-col cols="12" sm="6">
-          <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+      <v-row
+        align="center"
+        class="pa-4"
+      >
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-card-title
+            class="text-h5 font-weight-bold mb-4"
+            :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+          >
             {{ $t('UserTestTable.titles.currentTasks') }}
           </v-card-title>
         </v-col>
-        <v-col cols="12" sm="6" class="text-right">
+        <v-col
+          cols="12"
+          sm="6"
+          class="text-right"
+        >
           <v-btn
             color="primary"
             variant="flat"
@@ -16,7 +32,9 @@
             rounded="lg"
             @click="dialog = true"
           >
-            <v-icon start>mdi-plus-circle</v-icon>
+            <v-icon start>
+              mdi-plus-circle
+            </v-icon>
             Add New Task
           </v-btn>
         </v-col>

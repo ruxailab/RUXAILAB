@@ -1,14 +1,28 @@
 <template>
   <div>
     <v-overlay :model-value="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular
+        indeterminate
+        size="64"
+      />
     </v-overlay>
-    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
-    <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
-      <ShowInfo hideCol="true">
+    <IntroAnswer
+      v-if="intro"
+      @go-to-coops="goToCoops"
+    />
+    <v-row
+      v-else-if="hasAnswers"
+      justify="center"
+      class="ma-0"
+    >
+      <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
+          <v-tabs
+            v-model="tab"
+            bg-color="transparent"
+            color="#FCA326"
+          >
             <v-tab @click="tab = 0">
               General Analytics
             </v-tab>
@@ -18,10 +32,16 @@
             <v-tab @click="tab = 2">
               Sentiment Analysis
             </v-tab>
-            <v-tab v-if="showSUS" @click="tab = 3">
+            <v-tab
+              v-if="showSUS"
+              @click="tab = 3"
+            >
               SUS Analytics
             </v-tab>
-            <v-tab v-if="showNasa" @click="tab = 4">
+            <v-tab
+              v-if="showNasa"
+              @click="tab = 4"
+            >
               Nasa-TLX Analytics
             </v-tab>
           </v-tabs>

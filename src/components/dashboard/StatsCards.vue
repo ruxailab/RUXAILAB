@@ -1,73 +1,137 @@
 <template>
-    <v-row class="mb-6">
-        <!-- Total Studies Card -->
-        <v-col cols="12" sm="6" md="3">
-            <v-card elevation="2" rounded="lg" class="stats-card">
-                <v-card-text class="pa-4">
-                    <div class="d-flex justify-space-between align-start">
-                        <div class="icon-wrapper">
-                            <v-icon icon="mdi-flask" size="32" color="secondary"></v-icon>
-                        </div>
-                        <div class="text-right">
-                            <div class="stats-value">{{ totalStudies }}/50</div>
-                            <div class="stats-label">Studies</div>
-                        </div>
-                    </div>
-                </v-card-text>
-            </v-card>
-        </v-col>
+  <v-row class="mb-6">
+    <!-- Total Studies Card -->
+    <v-col
+      cols="12"
+      sm="6"
+      md="3"
+    >
+      <v-card
+        elevation="2"
+        rounded="lg"
+        class="stats-card"
+      >
+        <v-card-text class="pa-4">
+          <div class="d-flex justify-space-between align-start">
+            <div class="icon-wrapper">
+              <v-icon
+                icon="mdi-flask"
+                size="32"
+                color="secondary"
+              />
+            </div>
+            <div class="text-right">
+              <div class="stats-value">
+                {{ totalStudies }}/50
+              </div>
+              <div class="stats-label">
+                Studies
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
 
-        <!-- Storage Quota Card -->
-        <v-col cols="12" sm="6" md="3">
-            <v-card elevation="2" rounded="lg" class="stats-card">
-                <v-card-text class="pa-4">
-                    <div class="d-flex justify-space-between align-start">
-                        <div class="icon-wrapper">
-                            <v-icon icon="mdi-harddisk" size="32" color="secondary"></v-icon>
-                        </div>
-                        <div class="text-right">
-                            <div class="stats-value">{{ usedStorage }}/500MB</div>
-                            <div class="stats-label">Storage</div>
-                        </div>
-                    </div>
-                </v-card-text>
-            </v-card>
-        </v-col>
+    <!-- Storage Quota Card -->
+    <v-col
+      cols="12"
+      sm="6"
+      md="3"
+    >
+      <v-card
+        elevation="2"
+        rounded="lg"
+        class="stats-card"
+      >
+        <v-card-text class="pa-4">
+          <div class="d-flex justify-space-between align-start">
+            <div class="icon-wrapper">
+              <v-icon
+                icon="mdi-harddisk"
+                size="32"
+                color="secondary"
+              />
+            </div>
+            <div class="text-right">
+              <div class="stats-value">
+                {{ usedStorage }}/500MB
+              </div>
+              <div class="stats-label">
+                Storage
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
 
-        <!-- Current Plan Card -->
-        <v-col cols="12" sm="6" md="3">
-            <v-card elevation="2" rounded="lg" class="stats-card">
-                <v-card-text class="pa-4">
-                    <div class="d-flex justify-space-between align-start">
-                        <div class="icon-wrapper">
-                            <v-icon icon="mdi-crown" size="32" color="secondary"></v-icon>
-                        </div>
-                        <div class="text-right">
-                            <div class="stats-value">Free</div>
-                            <div class="stats-label">Plan</div>
-                        </div>
-                    </div>
-                </v-card-text>
-            </v-card>
-        </v-col>
+    <!-- Current Plan Card -->
+    <v-col
+      cols="12"
+      sm="6"
+      md="3"
+    >
+      <v-card
+        elevation="2"
+        rounded="lg"
+        class="stats-card"
+      >
+        <v-card-text class="pa-4">
+          <div class="d-flex justify-space-between align-start">
+            <div class="icon-wrapper">
+              <v-icon
+                icon="mdi-crown"
+                size="32"
+                color="secondary"
+              />
+            </div>
+            <div class="text-right">
+              <div class="stats-value">
+                Free
+              </div>
+              <div class="stats-label">
+                Plan
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
 
-        <!-- Total Participants Card -->
-        <v-col cols="12" sm="6" md="3">
-            <v-card elevation="2" rounded="lg" class="stats-card">
-                <v-card-text class="pa-4">
-                    <div class="d-flex justify-space-between align-start">
-                        <div class="icon-wrapper">
-                            <v-icon icon="mdi-account-group" size="32" color="secondary"></v-icon>
-                        </div>
-                        <div class="text-right">
-                            <div class="stats-value">{{ totalParticipants }}</div>
-                            <div class="stats-label">Participants</div>
-                        </div>
-                    </div>
-                </v-card-text>
-            </v-card>
-        </v-col>
-    </v-row>
+    <!-- Total Participants Card -->
+    <v-col
+      cols="12"
+      sm="6"
+      md="3"
+    >
+      <v-card
+        elevation="2"
+        rounded="lg"
+        class="stats-card"
+      >
+        <v-card-text class="pa-4">
+          <div class="d-flex justify-space-between align-start">
+            <div class="icon-wrapper">
+              <v-icon
+                icon="mdi-account-group"
+                size="32"
+                color="secondary"
+              />
+            </div>
+            <div class="text-right">
+              <div class="stats-value">
+                {{ totalParticipants }}
+              </div>
+              <div class="stats-label">
+                Participants
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
