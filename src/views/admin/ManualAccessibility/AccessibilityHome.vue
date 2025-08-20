@@ -26,6 +26,7 @@
       </v-container>
     </v-main>
   </v-app>
+
 </template>
 
 <script setup>
@@ -40,6 +41,10 @@ const router = useRouter();
 const { mdAndUp } = useDisplay();
 const { t } = useI18n();
 const testId = ref(route.params.testId || '');
+
+// Demo: Puedes reemplazar testTitle y testInfo con datos reales del test
+const testTitle = ref('Test de Accesibilidad Manual');
+const testInfo = ref('Este test permite evaluar manualmente la accesibilidad de la aplicación, configurando parámetros y revisando resultados.');
 
 const cardData = [
   {
