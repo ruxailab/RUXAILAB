@@ -1,4 +1,4 @@
-@update:model-value="showValidationErrors = false"<template>
+<template>
   <v-app>
     <v-container class="pa-3">
       <v-row justify="center">
@@ -240,7 +240,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -421,10 +421,11 @@ const saveComplianceAndContinue = async () => {
     console.log("Saving compliance configuration:", testId.value, configData)
     await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
     await store.dispatch('Assessment/filterByComplianceLevel', selectedCompliance.value)
-    // Reset guideline selection
-    selectedGuidelines.value = []
-    selectedRulesByGuideline.value = {}
-    toast.success(`WCAG ${selectedCompliance.value} compliance level saved! Now select guidelines.`)
+
+    // Pre-select all guidelines and rules based on compliance level
+    preselectGuidelinesForComplianceLevel()
+
+    toast.success(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
     step.value = 2
   } catch (err) {
     console.log(err)
@@ -485,17 +486,74 @@ const saveConfiguration = async () => {
   }
 }
 
+// Pre-select all guidelines and rules based on the selected compliance level
+const preselectGuidelinesForComplianceLevel = () => {
+  // Determine which levels to include based on compliance level
+  let allowedLevels = []
+  if (selectedCompliance.value === 'A') allowedLevels = ['A']
+  else if (selectedCompliance.value === 'AA') allowedLevels = ['A', 'AA']
+  else if (selectedCompliance.value === 'AAA') allowedLevels = ['A', 'AA', 'AAA']
+  else allowedLevels = ['A', 'AA', 'AAA']
+
+  // Reset selections
+  const newSelectedGuidelines = []
+  const newSelectedRulesByGuideline = {}
+
+  // Iterate through filtered principles to get all applicable guidelines and rules
+  filteredPrinciples.value.forEach(principle => {
+    principle.Guidelines.forEach(guideline => {
+      // Select the guideline
+      newSelectedGuidelines.push(guideline.id)
+
+      // Select all rules for this guideline that match the compliance level
+      const applicableRules = guideline.rules
+        ? guideline.rules
+          .filter(rule => allowedLevels.includes(rule.level))
+          .map(rule => rule.id)
+        : []
+
+      if (applicableRules.length > 0) {
+        newSelectedRulesByGuideline[guideline.id] = applicableRules
+      }
+    })
+  })
+
+  // Update reactive state
+  selectedGuidelines.value = newSelectedGuidelines
+  selectedRulesByGuideline.value = newSelectedRulesByGuideline
+
+  console.log(`Pre-selected ${newSelectedGuidelines.length} guidelines for WCAG ${selectedCompliance.value} compliance level`)
+}
+
+// Watch for compliance level changes on step 2 to re-preselect guidelines
+watch(selectedCompliance, (newLevel, oldLevel) => {
+  // Only auto-reselect if we're on step 2 and the level actually changed
+  if (step.value === 2 && newLevel !== oldLevel && filteredPrinciples.value.length > 0) {
+    preselectGuidelinesForComplianceLevel()
+    console.log(`Compliance level changed from ${oldLevel} to ${newLevel}, reselecting guidelines`)
+  }
+})
+
 const resetToDefaults = () => {
   selectedCompliance.value = 'AA'
   includeNonInterference.value = true
   showExperimentalRules.value = false
   enableAutomaticSave.value = true
-  selectedGuidelines.value = []
-  selectedRulesByGuideline.value = {}
   showValidationErrors.value = false
-  step.value = 1
-  success.value = 'Configuration reset to defaults'
-  toast.info('Configuration reset to defaults')
+
+  if (step.value === 2) {
+    // If we're on step 2, pre-select guidelines for the compliance level
+    preselectGuidelinesForComplianceLevel()
+    success.value = 'Configuration reset to defaults with pre-selected guidelines'
+    toast.info('Configuration reset to defaults with pre-selected guidelines')
+  } else {
+    // If we're on step 1, clear selections and go back to step 1
+    selectedGuidelines.value = []
+    selectedRulesByGuideline.value = {}
+    step.value = 1
+    success.value = 'Configuration reset to defaults'
+    toast.info('Configuration reset to defaults')
+  }
 }
 
 const loadExistingConfiguration = async () => {
