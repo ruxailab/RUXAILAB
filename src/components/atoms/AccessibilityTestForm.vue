@@ -3,8 +3,8 @@
         <div class="form-container">
             <!-- Test Title -->
             <div class="input-group mb-6">
-                <label class="input-label">Test Title</label>
-                <v-text-field :model-value="test.title" :autofocus="true" label="Test Title" :rules="titleRequired"
+                <label for="test-title" class="input-label">Test Title</label>
+                <v-text-field id="test-title" :model-value="test.title" :autofocus="true" label="Test Title" :rules="titleRequired"
                     counter="200" variant="outlined" density="comfortable"
                     placeholder="Enter a descriptive title for your accessibility test" hide-details="auto"
                     class="modern-input" @update:model-value="updateTitle($event)" />
@@ -12,8 +12,8 @@
 
             <!-- Website URL -->
             <div class="input-group mb-6">
-                <label class="input-label">Website URL</label>
-                <v-text-field :model-value="test.websiteUrl" label="Website URL" :rules="urlRequired" variant="outlined"
+                <label for="website-url" class="input-label">Website URL</label>
+                <v-text-field id="website-url" :model-value="test.websiteUrl" label="Website URL" :rules="urlRequired" variant="outlined"
                     density="comfortable" placeholder="Enter the URL of the website to test" hide-details="auto"
                     class="modern-input" @update:model-value="updateWebsiteUrl($event)">
                     <template v-slot:prepend-inner>
@@ -24,8 +24,8 @@
 
             <!-- Test Description -->
             <div class="input-group mb-6">
-                <label class="input-label">Description</label>
-                <v-textarea :model-value="test.description" label="Test Description" variant="outlined" rows="4"
+                <label for="test-description" class="input-label">Description</label>
+                <v-textarea id="test-description" :model-value="test.description" label="Test Description" variant="outlined" rows="4"
                     density="comfortable"
                     placeholder="Provide a detailed description of what this accessibility test covers"
                     hide-details="auto" class="modern-input" @update:model-value="updateDescription($event)" />
@@ -33,8 +33,8 @@
 
             <!-- Test Status -->
             <div class="input-group mb-6">
-                <label class="input-label">Test Status</label>
-                <v-select :model-value="test.status" :items="statusOptions" label="Test Status" density="comfortable"
+                <label for="test-status" class="input-label">Test Status</label>
+                <v-select id="test-status" :model-value="test.status" :items="statusOptions" label="Test Status" density="comfortable"
                     variant="outlined" placeholder="Select the current status of this test" hide-details="auto"
                     class="modern-input" @update:model-value="updateStatus($event)">
                     <template v-slot:prepend-inner>
@@ -56,8 +56,8 @@
 
             <!-- WCAG Version -->
             <div class="input-group mb-6">
-                <label class="input-label">WCAG Version</label>
-                <v-select :model-value="test.version" :items="wcagVersions" label="WCAG Version" density="comfortable"
+                <label for="wcag-version" class="input-label">WCAG Version</label>
+                <v-select id="wcag-version" :model-value="test.version" :items="wcagVersions" label="WCAG Version" density="comfortable"
                     variant="outlined" placeholder="Select WCAG version for this test" hide-details="auto"
                     class="modern-input" @update:model-value="updateVersion($event)">
                     <template v-slot:prepend-inner>
@@ -95,8 +95,8 @@
             <!-- Timestamps (Read-only) -->
             <div class="d-flex ga-4 mb-6" v-if="test.createdAt || test.updatedAt">
                 <div class="input-group flex-1" v-if="test.createdAt">
-                    <label class="input-label">Created</label>
-                    <v-text-field :model-value="formatDate(test.createdAt)" label="Created Date" variant="outlined"
+                    <label for="created-date" class="input-label">Created</label>
+                    <v-text-field id="created-date" :model-value="formatDate(test.createdAt)" label="Created Date" variant="outlined"
                         density="comfortable" readonly hide-details class="modern-input">
                         <template v-slot:prepend-inner>
                             <v-icon size="18" color="grey-500">mdi-calendar-plus</v-icon>
@@ -104,8 +104,8 @@
                     </v-text-field>
                 </div>
                 <div class="input-group flex-1" v-if="test.updatedAt">
-                    <label class="input-label">Last Updated</label>
-                    <v-text-field :model-value="formatDate(test.updatedAt)" label="Updated Date" variant="outlined"
+                    <label for="updated-date" class="input-label">Last Updated</label>
+                    <v-text-field id="updated-date" :model-value="formatDate(test.updatedAt)" label="Updated Date" variant="outlined"
                         density="comfortable" readonly hide-details class="modern-input">
                         <template v-slot:prepend-inner>
                             <v-icon size="18" color="grey-500">mdi-calendar-edit</v-icon>
