@@ -1,164 +1,129 @@
 <template>
-  <div>
-    <!-- Create Dialog -->
-    <CreateVariable :dialog="dialog" title="Category" @close="dialog = false" @save="save" />
-
-    <VRow>
-      <VCol cols="8">
-        <CardForm v-if="categories.length === 0" title="Categories"
-          subtitle="Categories are groups or themes used to organize items during card sorting. They must be clear, separated and aligned with the objective of the exercise, helping those evaluated to classify the items in a logical and intuitive way.">
-          <v-row justify="center">
-            <v-col cols="8">
-              <CardButton icon="mdi-plus-circle" text="Add your first Category" @click="dialog = true" />
+  <v-container fluid class="pa-0">
+    <v-row class="ma-0">
+      <!-- Categories -->
+      <v-col cols="9">
+        <v-card class="elevation-2 rounded-lg pa-6">
+          <v-row aling="center" class="pa-4">
+            <v-col cols="12" sm="6">
+              <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+                {{ 'Current Categories' }}
+              </v-card-title>
+            </v-col>
+            <v-col cols="12" sm="6" class="text-right">
+              <v-btn color="primary" variant="flat" size="large" class="px-6 text-capitalize" rounded="lg" @click="dialog = true">
+                <v-icon start>mdi-plus-circle</v-icon>
+                Add New Task
+              </v-btn>
             </v-col>
           </v-row>
-        </CardForm>
+          <v-card-text>
+            <v-data-table :headers="headers" :items="categories" :items-per-page="5" class="elevation-0 rounded-lg"
+              style="background: #FFFFFF; border: 1px solid #E5E7EB;" :no-data-text="$t('noCategories')">
+              <!-- IMAGE -->
+               <template #item.image="{ item }">
+                <v-icon :color="item.image ? 'success' : 'error'">
+                  {{ item.image ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+                </v-icon>
+              </template>
 
-        <Draggable v-model="categories" item-key="title" class="list-group">
-          <template #item="{ element, index }">
-            <v-card class="cards mb-5">
-              <v-card-title @click="toggle(index)" class="d-flex justify-between align-center" style="cursor: pointer">
-                <div>
-                  <v-icon style="cursor: pointer;">mdi-drag</v-icon>
-                </div>
 
-                <div class="ml-3">
-                  {{ element.title }}
-                </div>
-                <div class="d-flex ml-auto align-center">
-                  <v-icon class="mr-2" @click.stop="toggle(index)"
-                    v-if="options.category_description || options.category_image">
-                    {{ expandedIndex === index ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                  </v-icon>
-                  <v-icon @click.stop="deleteCategory(index)">
-                    mdi-delete
-                  </v-icon>
-                </div>
+              <!-- ACTIONS -->
+              <template #item.actions="{ item }">
+                <v-btn icon variant="text" color="accent" class="mr-2" @click="editItem(item)">
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn icon variant="text" color="error" @click="deleteItem(item)">
+                  <v-icon>mdi-trash-can-outline</v-icon>
+                </v-btn>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <!-- Settings -->
+      <v-col cols="3">
+        <v-card class="elevation-2 rounded-lg pa-6">
+          <v-row align="center" class="pa-4">
+            <v-col cols="12" sm="12">
+              <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+                {{ 'Settings' }}
               </v-card-title>
-
-              <v-expand-transition>
-                <div v-show="expandedIndex === index">
-                  <v-card-text>
-                    <VRow>
-                      <VCol :cols="options.category_image ? 6 : 12" v-if="options.category_description">
-                        <InputTextEditTest :value="element.description" label="Description"
-                          @input="element.description = $event; onChange()" />
-                      </VCol>
-                      <VCol cols="6" v-if="options.category_image">
-                        <!-- <v-file-input accept="image/*" label="Image" variant="outlined"
-                          color="orange" class="mx-3" @update:model-value="element.image = $event" /> -->
-                      </VCol>
-                    </VRow>
-                  </v-card-text>
-                </div>
-              </v-expand-transition>
-            </v-card>
-          </template>
-        </Draggable>
-
-        <v-row v-if="categories.length > 0" justify="center">
-          <v-btn icon variant="flat" color="rgb(249, 168, 38)" @click="dialog = true">
-            <v-icon size="35">
-              mdi-plus
-            </v-icon>
-          </v-btn>
-        </v-row>
-      </VCol>
-
-      <VCol cols="4">
-        <CardForm title="Settings" subtitle="Configure how categories will be displayed">
-          <v-checkbox v-model="options.category_description" label="Show Category Description"
-            @update:model-value="onChange()" />
-          <v-checkbox v-model="options.category_image" label="Show Image" @update:model-value="onChange()" />
-          <v-checkbox v-model="options.category_random" label="Randomize the order of cards"
-            @update:model-value="onChange()" />
-        </CardForm>
-      </VCol>
-    </VRow>
-  </div>
+              Configure how categories will be displayed
+            </v-col>
+          </v-row>
+          <v-card-text>
+            <v-checkbox v-model="options.category_description" label="Show Category Description"
+              @update:model-value="onChange()" />
+            <v-checkbox v-model="options.category_image" label="Show Image" @update:model-value="onChange()" />
+            <v-checkbox v-model="options.category_random" label="Randomize the order of cards"
+              @update:model-value="onChange()" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <CreateCardSortingForm v-model:dialog="dialog" @save="save" :options="options" />
+  </v-container>
 </template>
 
-<script>
-import CardButton from '@/components/atoms/CardButton'
-import CardForm from '@/components/molecules/CardForm'
-import CreateVariable from '@/components/dialogs/CreateVariable'
-import Draggable from 'vuedraggable'
-import InputTextEditTest from '../atoms/InputTextEditTest.vue'
+<script setup>
+import { computed, onMounted, ref } from 'vue';
+import CreateCardSortingForm from '../dialogs/CreateCardSortingForm.vue';
+import { useStore } from 'vuex';
 
-export default {
-  components: {
-    CardButton,
-    CardForm,
-    CreateVariable,
-    Draggable,
-    InputTextEditTest,
-  },
+// Emits
+const emit = defineEmits(['change', 'categories', 'options'])
 
-  data: () => ({
-    categories: [],
-    options: {},
-    expandedIndex: null,
-    dialog: false,
-  }),
+// Store
+const store = useStore();
 
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
+// Computeds
+const test = computed(() => store.getters.test);
 
-    testStructure() {
-      return this.$store.getters.testStructure
-    },
-  },
+// Variables
+const categories = ref([])
+const editedIndex = ref(-1)
+const dialog = ref(false)
+const category = ref({})
+const options = ref({
+  category_description: false,
+  category_image: false,
+  category_random: false
+})
+const headers = ref([
+  { title: 'Name', align: 'start', sortable: false, value: 'title', width: '10%' },
+  { title: 'Description', value: 'description', sortable: false, align: 'center' },
+  { title: 'Image', value: 'image', sortable: false, align: 'center' },
+  { title: 'Actions', value: 'actions', sortable: false, align: 'center', width: '150px' },
+])
 
-  watch: {
-    categories(newValue) {
-      this.$store.commit('SET_CARDSORTING_CATEGORIES_TEST_STRUCTURE', this.categories)
-      this.$store.commit('SET_LOCAL_CHANGES', true)
-    }
-  },
-
-  created() {
-    if (!this.testStructure) {
-      this.$store.commit('SET_TEST_STRUCTURE', this.test.testStructure)
-    }
-
-    const { categories = [] } = this.testStructure?.cardSorting || {}
-    this.categories = categories
-    this.options = this.testStructure?.cardSorting?.options || {
-      category_description: false,
-
-      category_image: false,
-      category_random: false,
-    }
-  },
-
-  methods: {
-    save(item) {
-      this.dialog = false
-      this.categories.push(item)
-    },
-
-    deleteCategory(i) {
-      this.categories.splice(i, 1)
-    },
-
-    onChange() {
-      this.$store.commit('SET_CARDSORTING_OPTIONS_TEST_STRUCTURE', this.options)
-      this.$store.commit('SET_CARDSORTING_CATEGORIES_TEST_STRUCTURE', this.categories)
-      this.$store.commit('SET_LOCAL_CHANGES', true)
-    },
-
-    toggle(index) {
-      this.expandedIndex = this.expandedIndex === index ? null : index
-    }
-  },
+const onChange = () => {
+  emit('change')
+  emit('options', options.value)
 }
+
+const save = (newCategory) => {
+  if (editedIndex.value > -1) {
+    Object.assign(categories.value[editedIndex.value], newCategory)
+    editedIndex.value = -1
+    category.value = {}
+  } else {
+    categories.value.push(newCategory)
+  }
+
+  emit('change')
+  emit('categories', categories.value)
+}
+
+const getCards = () => {
+  categories.value = test.value.testStructure.cardSorting.categories || []
+  options.value = test.value.testStructure.cardSorting.options || {}
+  emit('options', options.value)
+  emit('categories', cards.value)
+}
+
+onMounted(() => {
+  getCards()
+})
 </script>
-
-<style scoped>
-.cards {
-  border-radius: 20px;
-  padding: 1rem;
-}
-</style>
