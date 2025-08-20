@@ -1,7 +1,6 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
+  <div
+    
   >
     <v-row>
       <v-col cols="12">
@@ -209,7 +208,7 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 
   <!-- Notes Dialog -->
   <v-dialog
