@@ -165,7 +165,7 @@
             />
           </v-card-text>
           <v-card-actions>
-            <v-card 
+            <v-card
               class="border-dashed text-center py-6"
               width="100%"
               variant="outlined"
