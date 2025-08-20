@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <!-- Manager-style Header (uses same image as ManagerView) -->
+      
       <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
         <v-col cols="12" md="6" class="text-white text-center text-md-left">
           <p class="font-weight-medium text-h4 text-md-h2">
@@ -17,7 +17,7 @@
         </v-col>
       </v-row>
 
-      <!-- Cards section using CardsManager so it matches ManagerView UI -->
+      
       <v-container class="card-container pt-6 pb-10">
         <p class="presentation-text text-center text-md-left mb-4">
           {{ $t('accessibility.description') }}
