@@ -141,9 +141,9 @@ const setIntro = async () => {
 };
 
 const submit = async () => {
-  object.value.testStructure = store.state.Tests.Test.testStructure;
-  if (test.value.testType === 'User') {
-    object.value.testStructure = {
+  object.value.testStructure = {
+    ...store.state.Tests.Test.testStructure,
+    ...(test.value.testType === 'User' && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
       participantCamera: store.getters.participantCamera,
@@ -152,11 +152,12 @@ const submit = async () => {
       preTest: store.getters.preTest,
       postTest: store.getters.postTest,
       finalMessage: store.getters.finalMessage,
-    };
-  }
+    }),
+  };
 
-  const updatedTest = new Test({ ...test.value, ...object.value });
+  const updatedTest = new Test({ ...object.value });
   await store.dispatch('updateTest', updatedTest);
+  await store.dispatch('getTest', { id: route.params.id })
 };
 
 const validate = (valid, idx) => {

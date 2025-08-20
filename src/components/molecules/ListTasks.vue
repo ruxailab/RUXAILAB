@@ -123,7 +123,6 @@ const store = useStore();
 
 const dialog = ref(false);
 const allTasks = ref([]);
-const itemsTasks = ref([]);
 const editedIndex = ref(-1);
 const task = ref({
   taskName: '',
@@ -204,7 +203,6 @@ const setAllTasks = () => {
     store.getters.tasks,
     store.state.Tests.Test.testStructure.userTasks
   );
-  itemsTasks.value = [...props.tasks];
 };
 
 watch(
