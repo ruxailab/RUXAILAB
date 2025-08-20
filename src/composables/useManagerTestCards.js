@@ -29,7 +29,7 @@ export function useManagerTestCards(test, accessLevel) {
 
     const bottomCards = computed(() => {
         const tVal = test.value
-        if (!tVal || !tVal.answersDocId) return []
+        if (!tVal?.answersDocId) return []
 
         const cards = [
             createCard('REPORTS', {

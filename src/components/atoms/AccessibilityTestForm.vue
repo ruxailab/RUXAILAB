@@ -3,11 +3,13 @@
         <div class="form-container">
             <!-- Test Title -->
             <div class="input-group mb-6">
-                <label for="test-title" class="input-label">Test Title</label>
-                <v-text-field id="test-title" :model-value="test.title" :autofocus="true" label="Test Title"
-                    :rules="titleRequired" counter="200" variant="outlined" density="comfortable"
-                    placeholder="Enter a descriptive title for your accessibility test" hide-details="auto"
-                    class="modern-input" @update:model-value="updateTitle($event)" />
+                <label class="input-label">
+                    <span class="label-text">Test Title</span>
+                    <v-text-field :model-value="test.title" :autofocus="true" label="Test Title" :rules="titleRequired"
+                        counter="200" variant="outlined" density="comfortable"
+                        placeholder="Enter a descriptive title for your accessibility test" hide-details="auto"
+                        class="modern-input" @update:model-value="updateTitle($event)" />
+                </label>
             </div>
 
             <!-- Website URL -->
@@ -68,7 +70,7 @@
 
             <!-- Test Progress Summary (Read-only) -->
             <div class="input-group mb-6" v-if="test.progress">
-                <label class="input-label">Test Progress</label>
+                <h3 class="input-label">Test Progress</h3>
                 <v-card variant="outlined" class="progress-card">
                     <v-card-text class="pa-4">
                         <div class="d-flex align-center justify-space-between mb-3">
@@ -269,6 +271,11 @@ watch(() => props.test, () => {
     color: #374151;
     margin-bottom: 8px;
     font-size: 0.875rem;
+}
+
+.label-text {
+    display: block;
+    margin-bottom: 8px;
 }
 
 .modern-input :deep(.v-field) {
