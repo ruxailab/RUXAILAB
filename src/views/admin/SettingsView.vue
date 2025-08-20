@@ -1,5 +1,3 @@
-// src/views/admin/SettingsView.vue
-
 <template>
   <PageWrapper title="Test Configuration" :loading="loadingPage" loading-text="Loading Settings" :side-gap="true">
     <!-- Actions Slot for Save Button -->
