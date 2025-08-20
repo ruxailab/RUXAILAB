@@ -202,7 +202,7 @@ const saveNewItem = async () => {
     newItem.value = '';
     show.value = false;
     form.value?.resetValidation();
-    await saveState();
+    saveState();
   } catch (error) {
     console.error('Error adding variable:', error.message);
   } finally {
@@ -223,7 +223,7 @@ const saveState = async () => {
 };
 
 const getVariables = () => {
-  const data = test.value?.testStructure?.preTest || preTest.value || [];
+  const data = preTest.value ?? test.value?.testStructure?.preTest ?? [];
   items.value = Array.isArray(data) ? [...data] : [];
 };
 
