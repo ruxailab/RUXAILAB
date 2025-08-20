@@ -70,7 +70,6 @@ import { useDisplay } from 'vuetify'
 import Drawer from '@/components/atoms/Drawer.vue'
 import CardsManager from '@/components/atoms/CardsManager'
 import ManagerLayout from '@/components/layouts/ManagerLayout.vue'
-import { createCard, transformCardsForManager } from '@/utils/cardConfig'
 import { useManagerTestCards } from '@/composables/useManagerTestCards'
 
 const store = useStore()

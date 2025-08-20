@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed,onMounted, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
 import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
