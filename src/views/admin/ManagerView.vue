@@ -23,7 +23,7 @@
                 {{ $t('common.notUser', { userEmail: user.email }) }}
                 <a style="color: #f9a826" @click="signOut">{{
                   $t('common.changeAccount')
-                  }}</a>
+                }}</a>
               </p>
             </v-card-actions>
           </v-card>
@@ -70,6 +70,8 @@ import { useDisplay } from 'vuetify'
 import Drawer from '@/components/atoms/Drawer.vue'
 import CardsManager from '@/components/atoms/CardsManager'
 import ManagerLayout from '@/components/layouts/ManagerLayout.vue'
+import { createCard, transformCardsForManager } from '@/utils/cardConfig'
+import { useManagerTestCards } from '@/composables/useManagerTestCards'
 
 const store = useStore()
 const router = useRouter()
@@ -112,74 +114,8 @@ const accessLevel = computed(() => {
   return test.value?.isPublic ? 1 : 2
 })
 
-const topCards = computed(() => {
-  if (!test.value) return []
-  return [
-    {
-      image: 'IntroEdit.svg',
-      title: 'test',
-      imageStyle: 'transform: rotateY(180deg);',
-      bottom: '#000',
-      description: 'edit',
-      cardStyle:
-        'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
-      path: `/edittest/${test.value.id}`,
-    },
-    {
-      image: 'IntroCoops.svg',
-      title: 'cooperators',
-      imageStyle: '',
-      bottom: '#000',
-      description: 'cooperators',
-      cardStyle:
-        'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
-      path: `/cooperators/${test.value.cooperators}`,
-    },
-  ]
-})
-
-const bottomCards = computed(() => {
-  const tVal = test.value
-  if (!tVal || !tVal.answersDocId) return []
-
-  const cards = [
-    {
-      image: 'IntroReports.svg',
-      title: 'reports',
-      imageStyle: 'height: 250px',
-      bottom: '#000',
-      description: 'reports',
-      cardStyle:
-        'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
-      path: `/reportview/${tVal.answersDocId}`,
-    },
-    {
-      image: 'IntroAnswer.svg',
-      title: 'answers',
-      imageStyle: 'height: 250px',
-      bottom: '#000',
-      description: 'answers',
-      cardStyle:
-        'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
-      path: `/answerview/${tVal.answersDocId}`,
-    },
-  ]
-
-  if (accessLevel.value === 0) {
-    cards.push({
-      image: 'FinalReport.png',
-      title: 'finalReport',
-      imageStyle: 'height: 250px',
-      bottom: '#000',
-      description: 'finalReport',
-      cardStyle:
-        'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
-      path: `/finalreportview/${tVal.id}`,
-    })
-  }
-
-  return cards
-})
+// Use the specialized composable for test cards
+const { topCards, bottomCards } = useManagerTestCards(test, accessLevel)
 
 const navigator = computed(() => {
   if (!test.value) return []
