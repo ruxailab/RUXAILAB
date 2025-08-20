@@ -1,147 +1,62 @@
 <template>
-  <v-container
-    class="pa-0 ma-0"
-    fluid
-  >
-    <v-overlay
-      v-if="$route.path.includes('manager')"
-      v-model="loading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
-      <div class="white-text mt-3">
-        {{ $t('common.loading') }}
-      </div>
-    </v-overlay>
+  <template v-if="test">
+    <ManagerLayout :header-title="accessLevel === 0 ? $t('titles.manager') : test?.testTitle || ''"
+      :header-subtitle="accessLevel === 0 ? test?.testTitle || '' : ''" :show-loading="$route.path.includes('manager')"
+      :loading="loading" :content-class="{ 'pl-drawer': mdAndUp }">
+      <template #dialog>
+        <v-dialog :model-value="flagToken && flagUser && !logined" width="500" persistent>
+          <v-card>
+            <v-row class="ma-0 pa-0 pt-5" justify="center">
+              <v-avatar class="justify-center" color="orange-lighten-4" size="150">
+                <v-icon size="120">
+                  mdi-account
+                </v-icon>
+              </v-avatar>
+            </v-row>
+            <v-card-actions class="justify-center mt-4">
+              <v-btn class="text-white bg-orange" @click="setTest">
+                {{ $t('common.continueAs') }} {{ user.email }}
+              </v-btn>
+            </v-card-actions>
+            <v-card-actions class="justify-center mt-4">
+              <p>
+                {{ $t('common.notUser', { userEmail: user.email }) }}
+                <a style="color: #f9a826" @click="signOut">{{
+                  $t('common.changeAccount')
+                  }}</a>
+              </p>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </template>
 
-    <v-dialog
-      :model-value="flagToken && flagUser && !logined"
-      width="500"
-      persistent
-    >
-      <v-card>
-        <v-row
-          class="ma-0 pa-0 pt-5"
-          justify="center"
-        >
-          <v-avatar
-            class="justify-center"
-            color="orange-lighten-4"
-            size="150"
-          >
-            <v-icon size="120">
-              mdi-account
-            </v-icon>
-          </v-avatar>
-        </v-row>
-        <v-card-actions class="justify-center mt-4">
-          <v-btn
-            class="text-white bg-orange"
-            @click="setTest"
-          >
-            {{ $t('common.continueAs') }} {{ user.email }}
-          </v-btn>
-        </v-card-actions>
-        <v-card-actions class="justify-center mt-4">
-          <p>
-            {{ $t('common.notUser', { userEmail: user.email }) }}
-            <a
-              style="color: #f9a826"
-              @click="signOut"
-            >{{
-              $t('common.changeAccount')
-            }}</a>
-          </p>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <template v-if="test">
-      <Drawer
-        v-if="mdAndUp"
-        :items="navigator"
-      />
-      <v-container
-        fluid
-        :class="['background pa-0 ma-0', { 'pl-drawer': mdAndUp }]"
-        style="min-height: 100vh; overflow-y: auto"
-      >
+      <template #drawer>
+        <Drawer v-if="mdAndUp" :items="navigator" />
+      </template>
+
+      <template #cards>
         <template v-if="$route.path.includes('manager')">
-          <v-row
-            align="center"
-            justify="center"
-            class="manager-bg back-gradient pa-6"
-          >
-            <!-- Text Column -->
-            <v-col
-              cols="12"
-              md="6"
-              class="text-white text-center text-md-left"
-            >
-              <div v-if="accessLevel === 0">
-                <p class="font-weight-medium text-h4 text-md-h2">
-                  {{ $t('titles.manager') }}
-                </p>
-                <p class="text-subtitle-1 text-md-subtitle-1">
-                  {{ test.testTitle }}
-                </p>
-              </div>
-              <div v-else>
-                <p class="font-weight-medium text-h4 text-md-h2">
-                  {{ test.testTitle }}
-                </p>
-              </div>
-            </v-col>
+          <div v-if="accessLevel == 0">
+            <p class="presentation-text text-center text-md-left mb-4">
+              {{ $t('common.editAndInvite') }}
+            </p>
+            <CardsManager :cards="topCards" :per-row="mdAndUp ? 2 : 1" @click="go" />
+          </div>
 
-            <!-- Image Column -->
-            <v-col
-              cols="12"
-              md="6"
-              class="d-flex justify-center"
-            >
-              <v-img
-                :src="require('@/assets/manager/IntroManager.svg')"
-                max-height="300"
-                max-width="100%"
-              />
-            </v-col>
-          </v-row>
-
-          <!-- Cards Section -->
-          <v-container class="card-container pt-6 pb-10">
-            <div v-if="accessLevel == 0">
-              <p class="presentation-text text-center text-md-left mb-4">
-                {{ $t('common.editAndInvite') }}
-              </p>
-              <CardsManager
-                :cards="topCards"
-                :per-row="mdAndUp ? 2 : 1"
-                @click="go"
-              />
-            </div>
-
-            <div
-              v-if="accessLevel == 0"
-              class="mt-10"
-            >
-              <p class="presentation-text text-center text-md-left mb-4">
-                {{ $t('common.analyzeProject') }}
-              </p>
-              <CardsManager
-                :cards="bottomCards"
-                :per-row="mdAndUp ? 3 : 1"
-                @click="go"
-              />
-            </div>
-          </v-container>
+          <div v-if="accessLevel == 0" class="mt-10">
+            <p class="presentation-text text-center text-md-left mb-4">
+              {{ $t('common.analyzeProject') }}
+            </p>
+            <CardsManager :cards="bottomCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+          </div>
         </template>
-        <router-view v-else />
-      </v-container>
-    </template>
-  </v-container>
+      </template>
+
+      <template #content>
+        <router-view v-if="!$route.path.includes('manager')" />
+      </template>
+    </ManagerLayout>
+  </template>
 </template>
 
 <script setup>
@@ -154,6 +69,7 @@ import { statistics } from '@/utils/statistics'
 import { useDisplay } from 'vuetify'
 import Drawer from '@/components/atoms/Drawer.vue'
 import CardsManager from '@/components/atoms/CardsManager'
+import ManagerLayout from '@/components/layouts/ManagerLayout.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -319,7 +235,7 @@ const navigator = computed(() => {
 })
 
 const go = (path) => {
-  router.push(path).catch(() => {})
+  router.push(path).catch(() => { })
 }
 
 const signOut = async () => {
@@ -399,21 +315,12 @@ watch(user, () => {
 </script>
 
 <style>
-.background {
-  background-color: #ffffff;
-  height: 100%;
-  overflow: scroll;
-}
-
+/* Keep only ManagerView specific styles */
 .nav {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
-}
-
-.background::-webkit-scrollbar {
-  display: none;
 }
 
 .testTitle {
@@ -427,29 +334,8 @@ watch(user, () => {
   color: #ffffff;
 }
 
-.presentation-text {
-  color: rgb(87, 84, 100);
-  font-weight: 700;
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-
-.back-gradient {
-  height: 60vh;
-  background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
-}
-
-.manager-bg {
-  height: 100%;
-  margin: 0 !important;
-}
-
 .text-div {
   max-width: 45%;
-}
-
-.card-container {
-  width: 80%;
 }
 
 .bottom-cards {
@@ -457,12 +343,6 @@ watch(user, () => {
 }
 
 @media screen and (max-width: 960px) {
-  .presentation-text {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-
   .text-div {
     max-width: 100%;
     margin: 0px 10px;
@@ -477,14 +357,6 @@ watch(user, () => {
     display: flex;
     text-align: center;
     justify-content: center;
-  }
-
-  .card-container {
-    width: 85%;
-  }
-
-  .back-gradient {
-    height: 100%;
   }
 }
 
