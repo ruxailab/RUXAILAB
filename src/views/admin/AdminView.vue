@@ -1,10 +1,18 @@
 <template>
   <div class="dashboard-layout">
-    <DashboardSidebar v-model="drawerOpen" :active-section="activeSection" :active-sub-section="activeSubSection"
-      @navigate="selectNavigation" @create-test="goToCreateTestRoute" />
+    <DashboardSidebar
+      v-model="drawerOpen"
+      :active-section="activeSection"
+      :active-sub-section="activeSubSection"
+      @navigate="selectNavigation"
+      @create-test="goToCreateTestRoute"
+    />
 
     <v-main class="main-content">
-      <v-container fluid class="pa-8">
+      <v-container
+        fluid
+        class="pa-8"
+      >
         <!-- Header -->
         <div class="content-header">
           <h1 class="text-h4 font-weight-bold text-grey-darken-4">
@@ -22,17 +30,49 @@
         </div>
 
         <!-- Search + Filters -->
-        <v-card v-if="['studies', 'community'].includes(activeSection)" class="mb-5 search-filters-card">
-          <v-row class="pa-4" justify="space-between" no-gutters>
-            <v-col cols="12" md="8" class="pr-md-4">
-              <v-text-field v-model="search" width="full" prepend-inner-icon="mdi-magnify"
-                placeholder="Search in your research..." variant="outlined" density="comfortable" hide-details
-                bg-color="white" rounded="lg" />
+        <v-card
+          v-if="['studies', 'community'].includes(activeSection)"
+          class="mb-5 search-filters-card"
+        >
+          <v-row
+            class="pa-4"
+            justify="space-between"
+            no-gutters
+          >
+            <v-col
+              cols="12"
+              md="8"
+              class="pr-md-4"
+            >
+              <v-text-field
+                v-model="search"
+                width="full"
+                prepend-inner-icon="mdi-magnify"
+                placeholder="Search in your research..."
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                bg-color="white"
+                rounded="lg"
+              />
             </v-col>
-            <v-col cols="12" md="4" class="mt-3 mt-md-0">
-              <v-select v-model="selectedMethodFilter" :items="methodOptions" item-title="text" item-value="value"
-                label="Research Method" variant="outlined" density="comfortable" hide-details bg-color="white"
-                rounded="lg" />
+            <v-col
+              cols="12"
+              md="4"
+              class="mt-3 mt-md-0"
+            >
+              <v-select
+                v-model="selectedMethodFilter"
+                :items="methodOptions"
+                item-title="text"
+                item-value="value"
+                label="Research Method"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                bg-color="white"
+                rounded="lg"
+              />
             </v-col>
           </v-row>
         </v-card>
@@ -44,14 +84,30 @@
         </div>
 
         <div v-if="activeSection === 'studies'">
-          <List :items="filteredTests" type="myTests" @clicked="goTo" />
+          <List
+            :items="filteredTests"
+            type="myTests"
+            @clicked="goTo"
+          />
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <List v-if="filteredModeratedSessions.length > 0" :items="filteredModeratedSessions" type="sessions"
-            @clicked="goTo" />
-          <div v-else class="empty-state">
-            <v-icon icon="mdi-clock-remove-outline" size="48" color="grey-lighten-1" class="mb-2" />
+          <List
+            v-if="filteredModeratedSessions.length > 0"
+            :items="filteredModeratedSessions"
+            type="sessions"
+            @clicked="goTo"
+          />
+          <div
+            v-else
+            class="empty-state"
+          >
+            <v-icon
+              icon="mdi-clock-remove-outline"
+              size="48"
+              color="grey-lighten-1"
+              class="mb-2"
+            />
             <p class="text-h6">
               You don't have active sessions
             </p>
@@ -59,15 +115,27 @@
         </div>
 
         <div v-if="activeSection === 'templates'">
-          <List :items="filteredTemplates" type="myTemplates" @clicked="setupTempDialog" />
+          <List
+            :items="filteredTemplates"
+            type="myTemplates"
+            @clicked="setupTempDialog"
+          />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
-          <List :items="filteredTests" type="publicTests" @clicked="goTo" />
+          <List
+            :items="filteredTests"
+            type="publicTests"
+            @clicked="goTo"
+          />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
-          <List :items="filteredTemplates" type="publicTemplates" @clicked="setupTempDialog" />
+          <List
+            :items="filteredTemplates"
+            type="publicTemplates"
+            @clicked="setupTempDialog"
+          />
         </div>
 
         <div v-if="activeSection === 'notifications'">
@@ -78,7 +146,12 @@
           <ProfileView />
         </div>
 
-        <TempDialog v-model:dialog="tempDialog" :template="temp" :allow-create="true" @close="tempDialog = false" />
+        <TempDialog
+          v-model:dialog="tempDialog"
+          :template="temp"
+          :allow-create="true"
+          @close="tempDialog = false"
+        />
       </v-container>
     </v-main>
   </div>

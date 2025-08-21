@@ -1,28 +1,57 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="mb-6">
-        <v-card-title class="d-flex align-center py-4">
-            <v-icon icon="mdi-clock-time-eight" class="me-2" color="primary"></v-icon>
-            Recent Activity
-            <v-spacer />
-            <v-btn v-if="viewAllRoute" :to="viewAllRoute" variant="text" size="small" color="primary">View All</v-btn>
-        </v-card-title>
-        <v-card-text class="pa-0">
-            <v-timeline direction="vertical" density="comfortable" class="pa-4">
-                <v-timeline-item v-for="activity in activities" :key="activity.id"
-                    :dot-color="getActionDotColor(activity.action)" size="small" class="mb-3" side="start">
-                    <template #opposite>
-                        <div class="time-opposite text-caption text-medium-emphasis">{{ formatActivityTime(activity) }}
-                        </div>
-                    </template>
-                    <div class="text-body-2">
-                        <strong>{{ activity.user }}</strong>
-                        <span class="mx-1">{{ activity.action }}</span>
-                    </div>
-                    <div class="text-body-2 study-name text-medium-emphasis">{{ activity.target }}</div>
-                </v-timeline-item>
-            </v-timeline>
-        </v-card-text>
-    </v-card>
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="mb-6"
+  >
+    <v-card-title class="d-flex align-center py-4">
+      <v-icon
+        icon="mdi-clock-time-eight"
+        class="me-2"
+        color="primary"
+      />
+      Recent Activity
+      <v-spacer />
+      <v-btn
+        v-if="viewAllRoute"
+        :to="viewAllRoute"
+        variant="text"
+        size="small"
+        color="primary"
+      >
+        View All
+      </v-btn>
+    </v-card-title>
+    <v-card-text class="pa-0">
+      <v-timeline
+        direction="vertical"
+        density="comfortable"
+        class="pa-4"
+      >
+        <v-timeline-item
+          v-for="activity in activities"
+          :key="activity.id"
+          :dot-color="getActionDotColor(activity.action)"
+          size="small"
+          class="mb-3"
+          side="start"
+        >
+          <template #opposite>
+            <div class="time-opposite text-caption text-medium-emphasis">
+              {{ formatActivityTime(activity) }}
+            </div>
+          </template>
+          <div class="text-body-2">
+            <strong>{{ activity.user }}</strong>
+            <span class="mx-1">{{ activity.action }}</span>
+          </div>
+          <div class="text-body-2 study-name text-medium-emphasis">
+            {{ activity.target }}
+          </div>
+        </v-timeline-item>
+      </v-timeline>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

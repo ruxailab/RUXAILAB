@@ -1,25 +1,49 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="1" :steps="steps" />
+      <StepperHeader
+        :current-step="1"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
-      <SectionHeader title="Choose Evaluation Category"
-        subtitle="Select the type of evaluation you want to conduct for your study" />
+      <SectionHeader
+        title="Choose Evaluation Category"
+        subtitle="Select the type of evaluation you want to conduct for your study"
+      />
 
       <!-- Categories Grid -->
       <v-row justify="center">
-        <v-col v-for="category in categories" :key="category.id" cols="3">
-          <SelectableCard :selected="selectedCategory === category.id" :icon="category.icon" :title="category.title"
-            text-class="pa-8 text-center" :description="category.description" :color="category.color"
-            :disabled="category.comingSoon" :badge="category.comingSoon
+        <v-col
+          v-for="category in categories"
+          :key="category.id"
+          cols="3"
+        >
+          <SelectableCard
+            :selected="selectedCategory === category.id"
+            :icon="category.icon"
+            :title="category.title"
+            text-class="pa-8 text-center"
+            :description="category.description"
+            :color="category.color"
+            :disabled="category.comingSoon"
+            :badge="category.comingSoon
               ? { text: 'Coming Soon', color: 'warning' }
               : null
-              " @click="() => handleCategoryClick(category.id)">
+            "
+            @click="() => handleCategoryClick(category.id)"
+          >
             <template #extra>
-              <v-chip v-if="category.hasSubMethods && !category.comingSoon" color="primary" variant="tonal"
-                size="small">
+              <v-chip
+                v-if="category.hasSubMethods && !category.comingSoon"
+                color="primary"
+                variant="tonal"
+                size="small"
+              >
                 Multiple Methods
               </v-chip>
             </template>
@@ -28,7 +52,10 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton label="Back to Dashboard" @back="goBack" />
+      <BackButton
+        label="Back to Dashboard"
+        @back="goBack"
+      />
     </v-container>
   </v-container>
 </template>

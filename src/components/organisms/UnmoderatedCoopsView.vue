@@ -1,10 +1,20 @@
 <template>
-  <PageWrapper :title="$t('HeuristicsCooperators.title.cooperators')" :loading="loading"
-    :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')" :side-gap="true">
+  <PageWrapper
+    :title="$t('HeuristicsCooperators.title.cooperators')"
+    :loading="loading"
+    :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
+    :side-gap="true"
+  >
     <!-- Actions Slot -->
     <template #actions>
-      <v-btn color="primary" size="large" @click="showInviteDialog = true" prepend-icon="mdi-account-plus"
-        variant="flat" class="px-6">
+      <v-btn
+        color="primary"
+        size="large"
+        prepend-icon="mdi-account-plus"
+        variant="flat"
+        class="px-6"
+        @click="showInviteDialog = true"
+      >
         {{ $t('HeuristicsCooperators.actions.send_invitation') }}
       </v-btn>
     </template>
@@ -12,52 +22,130 @@
     <!-- Filters Slot -->
     <template #filters>
       <v-row align="center">
-        <v-col cols="12" md="5">
-          <v-text-field v-model="filters.search" label="Search cooperators" prepend-inner-icon="mdi-magnify"
-            variant="outlined" density="comfortable" hide-details clearable />
+        <v-col
+          cols="12"
+          md="5"
+        >
+          <v-text-field
+            v-model="filters.search"
+            label="Search cooperators"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            clearable
+          />
         </v-col>
-        <v-col cols="12" md="4">
-          <v-select v-model="filters.role" :items="roleOptions" item-title="title" item-value="title"
-            label="Filter by Role" variant="outlined" density="comfortable" hide-details clearable />
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <v-select
+            v-model="filters.role"
+            :items="roleOptions"
+            item-title="title"
+            item-value="title"
+            label="Filter by Role"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            clearable
+          />
         </v-col>
-        <v-col cols="12" md="3">
-          <v-select v-model="filters.status" :items="statusFilterOptions" item-title="title" item-value="value"
-            label="Filter by Status" variant="outlined" density="comfortable" hide-details clearable />
+        <v-col
+          cols="12"
+          md="3"
+        >
+          <v-select
+            v-model="filters.status"
+            :items="statusFilterOptions"
+            item-title="title"
+            item-value="value"
+            label="Filter by Status"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            clearable
+          />
         </v-col>
       </v-row>
     </template>
 
     <!-- Main Content -->
-    <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops" @close-intro="intro = false" />
+    <Intro
+      v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
+      @close-intro="intro = false"
+    />
 
-    <v-card elevation="2" height="100%">
-      <v-data-table v-model="selectedCooperators" :headers="headers" :items="filteredCooperators"
-        :items-per-page="itemsPerPage" class="cooperators-table" item-key="email" item-value="email" show-select
-        height="50vh">
+    <v-card
+      elevation="2"
+      height="100%"
+    >
+      <v-data-table
+        v-model="selectedCooperators"
+        :headers="headers"
+        :items="filteredCooperators"
+        :items-per-page="itemsPerPage"
+        class="cooperators-table"
+        item-key="email"
+        item-value="email"
+        show-select
+        height="50vh"
+      >
         <!-- Email Column -->
-        <template v-slot:item.email="{ item }">
+        <template #item.email="{ item }">
           <div class="d-flex align-center py-2">
-            <v-avatar :color="item.avatar ? 'transparent' : 'primary'" size="40" class="me-3">
-              <v-img v-if="item.avatar" :src="item.avatar" :alt="item.email" />
-              <span v-else class="text-white font-weight-medium">
+            <v-avatar
+              :color="item.avatar ? 'transparent' : 'primary'"
+              size="40"
+              class="me-3"
+            >
+              <v-img
+                v-if="item.avatar"
+                :src="item.avatar"
+                :alt="item.email"
+              />
+              <span
+                v-else
+                class="text-white font-weight-medium"
+              >
                 {{ getInitials(item.email) }}
               </span>
             </v-avatar>
             <div>
-              <div class="font-weight-medium text-body-1">{{ item.email }}</div>
+              <div class="font-weight-medium text-body-1">
+                {{ item.email }}
+              </div>
             </div>
           </div>
         </template>
 
         <!-- Role Column -->
-        <template v-slot:item.accessLevel="{ item }">
-          <v-select :ref="'select' + cooperatorsEdit.indexOf(item)" :key="dataTableKey" :model-value="item.accessLevel"
-            :items="roleOptions" item-title="title" return-object density="comfortable"
-            :disabled="!item.invited || item.accepted ? false : true" @update:model-value="changeRole(item, $event)"
-            variant="plain">
-            <template v-slot:selection="{ item: selectedItem }">
-              <v-chip :color="getRoleColor(selectedItem.title)" size="small" variant="flat">
-                <v-icon start size="16">{{ getRoleIcon(selectedItem.title) }}</v-icon>
+        <template #item.accessLevel="{ item }">
+          <v-select
+            :ref="'select' + cooperatorsEdit.indexOf(item)"
+            :key="dataTableKey"
+            :model-value="item.accessLevel"
+            :items="roleOptions"
+            item-title="title"
+            return-object
+            density="comfortable"
+            :disabled="!item.invited || item.accepted ? false : true"
+            variant="plain"
+            @update:model-value="changeRole(item, $event)"
+          >
+            <template #selection="{ item: selectedItem }">
+              <v-chip
+                :color="getRoleColor(selectedItem.title)"
+                size="small"
+                variant="flat"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
+                  {{ getRoleIcon(selectedItem.title) }}
+                </v-icon>
                 {{ selectedItem.title }}
               </v-chip>
             </template>
@@ -65,42 +153,66 @@
         </template>
 
         <!-- Invited Column -->
-        <template v-slot:item.invited="{ item }">
-          <v-chip :color="item.invited ? 'success' : 'error'" size="small" variant="tonal">
+        <template #item.invited="{ item }">
+          <v-chip
+            :color="item.invited ? 'success' : 'error'"
+            size="small"
+            variant="tonal"
+          >
             <v-icon>mdi-check</v-icon>
           </v-chip>
         </template>
 
         <!-- Accepted Column -->
-        <template v-slot:item.accepted="{ item }">
-          <v-chip :color="getStatusColor(item.accepted)" size="small" variant="tonal">
+        <template #item.accepted="{ item }">
+          <v-chip
+            :color="getStatusColor(item.accepted)"
+            size="small"
+            variant="tonal"
+          >
             {{ getStatusText(item.accepted) }}
           </v-chip>
         </template>
 
         <!-- Actions Column -->
-        <template v-slot:item.actions="{ item }">
+        <template #item.actions="{ item }">
           <v-menu>
             <template #activator="{ props }">
-              <v-icon icon="mdi-dots-vertical" v-bind="props" />
+              <v-icon
+                icon="mdi-dots-vertical"
+                v-bind="props"
+              />
             </template>
             <v-list>
-              <v-list-item link @click="messageModel = true; selectedUser = item">
+              <v-list-item
+                link
+                @click="messageModel = true; selectedUser = item"
+              >
                 <v-list-item-title>
                   {{ $t('HeuristicsCooperators.actions.send_message') }}
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item v-if="item.accepted == false" link @click="reinvite(item)">
+              <v-list-item
+                v-if="item.accepted == false"
+                link
+                @click="reinvite(item)"
+              >
                 <v-list-item-title>
                   {{ $t('HeuristicsCooperators.actions.reinvite') }}
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item v-if="item.accepted" @click="removeCoop(item)">
+              <v-list-item
+                v-if="item.accepted"
+                @click="removeCoop(item)"
+              >
                 <v-list-item-title>
                   {{ $t('HeuristicsCooperators.actions.remove_cooperator') }}
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item v-if="item.invited && !item.accepted" @click="cancelInvitation(item)">
+              <v-list-item
+                v-if="item.invited && !item.accepted"
+                @click="cancelInvitation(item)"
+              >
                 <v-list-item-title>
                   {{ $t('HeuristicsCooperators.actions.cancel_invitation') }}
                 </v-list-item-title>
@@ -112,34 +224,67 @@
     </v-card>
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <LeaveAlert />
     </v-dialog>
 
     <!-- Message Dialog -->
-    <v-dialog v-model="messageModel" max-width="500">
+    <v-dialog
+      v-model="messageModel"
+      max-width="500"
+    >
       <v-card class="rounded-lg">
-        <v-card-title style="color: white;" class="bg-primary rounded-top-lg">
-          <v-icon color="white" class="mr-2">
+        <v-card-title
+          style="color: white;"
+          class="bg-primary rounded-top-lg"
+        >
+          <v-icon
+            color="white"
+            class="mr-2"
+          >
             mdi-email
           </v-icon>
           {{ $t('HeuristicsCooperators.actions.send_message') }}
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="messageTitle" required :label="$t('HeuristicsCooperators.headers.title')"
-            :hint="$t('HeuristicsCooperators.messages.message_title_hint')" variant="outlined"
-            class="rounded-lg mt-4" />
-          <v-textarea v-model="messageContent" required :label="$t('HeuristicsCooperators.headers.content')"
-            :hint="$t('HeuristicsCooperators.messages.message_content_hint')" variant="outlined" class="rounded-lg" />
+          <v-text-field
+            v-model="messageTitle"
+            required
+            :label="$t('HeuristicsCooperators.headers.title')"
+            :hint="$t('HeuristicsCooperators.messages.message_title_hint')"
+            variant="outlined"
+            class="rounded-lg mt-4"
+          />
+          <v-textarea
+            v-model="messageContent"
+            required
+            :label="$t('HeuristicsCooperators.headers.content')"
+            :hint="$t('HeuristicsCooperators.messages.message_content_hint')"
+            variant="outlined"
+            class="rounded-lg"
+          />
         </v-card-text>
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn color="red" variant="outlined" class="rounded-lg" @click="messageModel = false">
+          <v-btn
+            color="red"
+            variant="outlined"
+            class="rounded-lg"
+            @click="messageModel = false"
+          >
             {{ $t('HeuristicsCooperators.actions.cancel') }}
           </v-btn>
-          <v-btn color="orange" class="rounded-lg" :disabled="!messageTitle.trim() || !messageContent.trim()"
-            @click="sendMessage(selectedUser, messageTitle, messageContent)">
+          <v-btn
+            color="orange"
+            class="rounded-lg"
+            :disabled="!messageTitle.trim() || !messageContent.trim()"
+            @click="sendMessage(selectedUser, messageTitle, messageContent)"
+          >
             {{ $t('HeuristicsCooperators.actions.send') }}
           </v-btn>
         </v-card-actions>
@@ -147,38 +292,77 @@
     </v-dialog>
 
     <!-- Invite Dialog -->
-    <v-dialog v-model="showInviteDialog" max-width="500">
+    <v-dialog
+      v-model="showInviteDialog"
+      max-width="500"
+    >
       <v-card class="rounded-lg">
-        <v-card-title style="color: white;" class="bg-primary rounded-top-lg">
-          <v-icon color="white" class="mr-2">
+        <v-card-title
+          style="color: white;"
+          class="bg-primary rounded-top-lg"
+        >
+          <v-icon
+            color="white"
+            class="mr-2"
+          >
             mdi-account-plus
           </v-icon>
           {{ $t('HeuristicsCooperators.actions.send_invitation') }}
         </v-card-title>
         <v-card-text class="pt-4">
-          <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :items="users" item-title="email"
-            :label="$t('HeuristicsCooperators.actions.select_cooperator')" multiple variant="outlined"
-            density="comfortable" @update:model-value="validateEmail">
+          <v-combobox
+            :key="comboboxKey"
+            ref="combobox"
+            v-model="comboboxModel"
+            :items="users"
+            item-title="email"
+            :label="$t('HeuristicsCooperators.actions.select_cooperator')"
+            multiple
+            variant="outlined"
+            density="comfortable"
+            @update:model-value="validateEmail"
+          >
             <template #no-data>
               {{ $t('HeuristicsCooperators.messages.no_users') }}
             </template>
           </v-combobox>
           <v-chip-group>
-            <v-chip v-for="(coop, i) in selectedCoops" :key="i" closable @click:close="removeSelectedCoops(i)"
-              class="ml-2 mt-2">
+            <v-chip
+              v-for="(coop, i) in selectedCoops"
+              :key="i"
+              closable
+              class="ml-2 mt-2"
+              @click:close="removeSelectedCoops(i)"
+            >
               {{ typeof coop == 'object' ? coop.email : coop }}
             </v-chip>
           </v-chip-group>
-          <v-select v-model="selectedRole" :items="roleOptions" :label="$t('HeuristicsCooperators.headers.role')"
-            variant="outlined" density="comfortable" class="mt-4" />
+          <v-select
+            v-model="selectedRole"
+            :items="roleOptions"
+            :label="$t('HeuristicsCooperators.headers.role')"
+            variant="outlined"
+            density="comfortable"
+            class="mt-4"
+          />
         </v-card-text>
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn color="red" variant="outlined" class="rounded-lg" @click="showInviteDialog = false">
+          <v-btn
+            color="red"
+            variant="outlined"
+            class="rounded-lg"
+            @click="showInviteDialog = false"
+          >
             {{ $t('HeuristicsCooperators.actions.cancel') }}
           </v-btn>
-          <v-btn color="primary" class="rounded-lg" :disabled="selectedCoops.length === 0" @click="saveInvitations">
+          <v-btn
+            color="primary"
+            class="rounded-lg"
+            :disabled="selectedCoops.length === 0"
+            @click="saveInvitations"
+          >
             {{ $t('HeuristicsCooperators.actions.send') }}
           </v-btn>
         </v-card-actions>

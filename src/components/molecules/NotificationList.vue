@@ -1,13 +1,19 @@
 <template>
-  <v-list lines="two" class="pl-5 pr-8">
+  <v-list
+    lines="two"
+    class="pl-5 pr-8"
+  >
     <template
       v-for="(notification, index) in notifications"
       :key="notification.id"
     >
-      <v-row justify="space-between" align="center">
+      <v-row
+        justify="space-between"
+        align="center"
+      >
         <v-list-item
-          @click="$emit('go-to-redirect', notification)"
           width="90%"
+          @click="$emit('go-to-redirect', notification)"
         >
           <v-list-item-title
             :class="{ 'font-weight-bold': !notification.read }"

@@ -1,24 +1,53 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container
+    fluid
+    class="pa-0"
+  >
     <v-card class="elevation-2 rounded-lg pa-6">
-      <v-row align="center" class="pa-4">
-        <v-col cols="12" sm="6">
-          <v-card-title class="text-h5 font-weight-bold mb-4"
-            :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+      <v-row
+        align="center"
+        class="pa-4"
+      >
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-card-title
+            class="text-h5 font-weight-bold mb-4"
+            :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+          >
             {{ $t('UserTestTable.titles.currentTasks') }}
           </v-card-title>
         </v-col>
-        <v-col cols="12" sm="6" class="text-right">
-          <v-btn color="primary" variant="flat" size="large" class="px-6 text-capitalize" rounded="lg"
-            @click="dialog = true">
-            <v-icon start>mdi-plus-circle</v-icon>
+        <v-col
+          cols="12"
+          sm="6"
+          class="text-right"
+        >
+          <v-btn
+            color="primary"
+            variant="flat"
+            size="large"
+            class="px-6 text-capitalize"
+            rounded="lg"
+            @click="dialog = true"
+          >
+            <v-icon start>
+              mdi-plus-circle
+            </v-icon>
             Add New Task
           </v-btn>
         </v-col>
       </v-row>
       <v-card-text>
-        <v-data-table :headers="headers" :items="allTasks" :items-per-page="5" class="elevation-0 rounded-lg"
-          style="background: #FFFFFF; border: 1px solid #E5E7EB;" :no-data-text="$t('noTasks')">
+        <v-data-table
+          :headers="headers"
+          :items="allTasks"
+          :items-per-page="5"
+          class="elevation-0 rounded-lg"
+          style="background: #FFFFFF; border: 1px solid #E5E7EB;"
+          :no-data-text="$t('noTasks')"
+        >
           <!-- Custom Column Templates -->
           <template #item.taskDescription="{ item }">
             <v-icon :color="item.taskDescription ? 'success' : 'error'">
@@ -34,16 +63,31 @@
 
           <!-- Actions Column -->
           <template #item.actions="{ item }">
-            <v-btn icon variant="text" color="accent" class="mr-2" @click="editItem(item)">
+            <v-btn
+              icon
+              variant="text"
+              color="accent"
+              class="mr-2"
+              @click="editItem(item)"
+            >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <v-btn icon variant="text" color="error" @click="deleteItem(item)">
+            <v-btn
+              icon
+              variant="text"
+              color="error"
+              @click="deleteItem(item)"
+            >
               <v-icon>mdi-trash-can-outline</v-icon>
             </v-btn>
           </template>
         </v-data-table>
       </v-card-text>
-      <CreateTasksModeratedForm :task="task" v-model:dialog="dialog" @add-task="addTask" />
+      <CreateTasksModeratedForm
+        v-model:dialog="dialog"
+        :task="task"
+        @add-task="addTask"
+      />
     </v-card>
   </v-container>
 </template>
