@@ -1,5 +1,10 @@
 <template>
-  <v-tabs v-if="type === 'tabs'" bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
+  <v-tabs
+    v-if="type === 'tabs'"
+    bg-color="transparent"
+    color="#FCA326"
+    class="pb-0 mb-0"
+  >
     <v-tab @click="tabClicked(0)">
       Consent
     </v-tab>
@@ -14,20 +19,38 @@
     </v-tab>
   </v-tabs>
 
-  <v-col v-else-if="type === 'content'" cols="12">
-    <v-card v-if="index === 0" rounded="xxl">
-      <TextareaForm :title="$t('ModeratedTest.consentForm')"
+  <v-col
+    v-else-if="type === 'content'"
+    cols="12"
+  >
+    <v-card
+      v-if="index === 0"
+      rounded="xxl"
+    >
+      <TextareaForm
+        :title="$t('ModeratedTest.consentForm')"
         subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-        @input="updateData" />
+        @update:value="saveState($event)"
+        @input="updateData"
+      />
     </v-card>
 
-    <v-card v-if="index === 1" rounded="xxl">
+    <v-card
+      v-if="index === 1"
+      rounded="xxl"
+    >
       <UserVariables @input="updateData" />
     </v-card>
 
-    <ListTasks v-if="index === 2" :tasks="object.itemsTasks" @input="updateData" />
+    <ListTasks
+      v-if="index === 2"
+      @input="updateData"
+    />
 
-    <v-card v-if="index === 3" rounded="xxl">
+    <v-card
+      v-if="index === 3"
+      rounded="xxl"
+    >
       <FormPostTest @input="updateData" />
     </v-card>
   </v-col>
@@ -39,7 +62,7 @@ import { useStore } from 'vuex';
 import ListTasks from '@/components/molecules/ListTasks.vue';
 import FormPostTest from '@/components/atoms/FormPostTest.vue';
 import UserVariables from '@/components/atoms/UserVariables.vue';
-import TextareaForm from '../atoms/TextareaForm.vue';
+import TextareaForm from '@/components/atoms/TextareaForm.vue';
 
 const props = defineProps({
   type: {
@@ -67,6 +90,10 @@ const formData = ref({
 
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
 
+const saveState = async (value) => {
+  await store.dispatch('setConsent', value)
+}
+
 onMounted(() => {
   if (props.type !== 'content' && props.type !== 'tabs') {
     console.error(`${props.type} type in EditUserTest.vue is not valid.`);
@@ -88,9 +115,12 @@ const tabClicked = (index) => {
 
 const updateData = (data) => {
   if (props.index === 0) {
+    store.dispatch('setConsent', data);
+  }
+  if (props.index === 1) {
     store.dispatch('setPreTest', data);
   }
-  if (props.index === 2) {
+  if (props.index === 3) {
     store.dispatch('setPostTest', data);
   }
 };

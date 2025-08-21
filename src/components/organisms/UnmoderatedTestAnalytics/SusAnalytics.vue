@@ -50,7 +50,6 @@
           </div>
         </v-card>
       </v-col>
-      
       <v-col
         cols="12"
         md="4"
@@ -86,7 +85,6 @@
           </div>
         </v-card>
       </v-col>
-      
       <v-col
         cols="12"
         md="4"
@@ -173,7 +171,7 @@
             </v-icon>
             Individual Scores
           </v-card-title>
-          
+
           <!-- Filter Controls -->
           <v-card-text class="pb-0">
             <v-row align="center">
@@ -225,7 +223,7 @@
                 </div>
               </div>
             </template>
-            
+
             <template #item.susScore="{ item }">
               <v-chip
                 :color="getRatingColor(getSUSRating(item.susScore))"
@@ -235,7 +233,7 @@
                 {{ item.susScore }}
               </v-chip>
             </template>
-            
+
             <template #item.rating="{ item }">
               <v-chip
                 :color="getRatingColor(getSUSRating(item.susScore))"
@@ -245,7 +243,7 @@
                 {{ getSUSRating(item.susScore) }}
               </v-chip>
             </template>
-            
+
             <template #item.actions="{ item }">
               <v-btn
                 color="primary"
@@ -267,7 +265,7 @@
     <!-- Details Modal -->
     <v-dialog
       v-model="detailsModal"
-      max-width="700px"
+      :max-width="dialogMaxWidth"
     >
       <v-card
         v-if="selectedResponse"
@@ -290,9 +288,9 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        
+
         <v-divider />
-        
+
         <v-card-text class="pa-6">
           <!-- Final SUS Score -->
           <div class="mb-6">
@@ -315,9 +313,10 @@
               </div>
             </div>
           </div>
+        </v-card-text>
 
-          <v-divider class="mb-6" />
 
+        <v-card-text class="pa-6">
           <!-- Individual Responses -->
           <div>
             <h3 class="text-h6 mb-4">
@@ -327,12 +326,12 @@
               <div
                 v-for="(question, index) in susQuestions"
                 :key="index"
-                class="response-item mb-4 pa-4"
+                class="response-item mb-2 pa-4"
                 style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;"
               >
-                <div class="d-flex justify-space-between align-start mb-3">
-                  <div class="question-text flex-grow-1 pr-4">
-                    <strong>Q{{ index + 1 }}:</strong> {{ question }}
+                <div class="d-flex justify-space-between align-center d-sm-flex flex-column flex-sm-row">
+                  <div class="question-text flex-grow-1 pr-4 d-flex align-center mb-2 mb-sm-0">
+                    <strong>Q{{ index + 1 }}: </strong> {{ question }}
                   </div>
                   <div class="response-score d-flex align-center">
                     <span class="text-h5 font-weight-bold mr-2">
@@ -346,10 +345,6 @@
                       {{ getResponseLabel(selectedResponse.susAnswers[index]) }}
                     </v-chip>
                   </div>
-                </div>
-                <div class="text-caption text-grey d-flex justify-space-between">
-                  <span>1 = Strongly Disagree</span>
-                  <span>5 = Strongly Agree</span>
                 </div>
               </div>
             </div>

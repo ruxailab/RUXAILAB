@@ -1,90 +1,173 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="next-session-card">
-        <v-card-title class="d-flex align-center justify-space-between py-4">
-            <div class="d-flex align-center">
-                <v-icon icon="mdi-clock-fast" class="me-2" color="primary" style="padding:1.5rem"></v-icon>
-                <span class="text-h6 font-weight-bold">Next Session</span>
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="next-session-card"
+  >
+    <v-card-title class="d-flex align-center justify-space-between py-4">
+      <div class="d-flex align-center">
+        <v-icon
+          icon="mdi-clock-fast"
+          class="me-2"
+          color="primary"
+          style="padding:1.5rem"
+        />
+        <span class="text-h6 font-weight-bold">Next Session</span>
+      </div>
+    </v-card-title>
+
+    <v-card-text
+      v-if="nextSession"
+      class="pa-6"
+    >
+      <!-- Session Header -->
+      <div class="session-header mb-4">
+        <h3 class="session-title mb-2">
+          {{ nextSession.title }}
+        </h3>
+        <p class="session-description text-body-2 text-grey-darken-1 mb-3">
+          {{ nextSession.description }}
+        </p>
+        <v-chip
+          :color="getStatusColor(nextSession.status)"
+          variant="tonal"
+          size="small"
+          class="status-chip"
+        >
+          {{ getStatusText(nextSession.status) }}
+        </v-chip>
+      </div>
+
+      <!-- First Row: Study Type and Owner -->
+      <v-row
+        class="info-row mb-3"
+        no-gutters
+      >
+        <v-col
+          cols="6"
+          class="pr-2"
+        >
+          <div class="info-item">
+            <div class="info-icon-wrapper">
+              <v-icon
+                icon="mdi-microscope"
+                size="24"
+                color="primary"
+              />
             </div>
-        </v-card-title>
-
-        <v-card-text class="pa-6" v-if="nextSession">
-            <!-- Session Header -->
-            <div class="session-header mb-4">
-                <h3 class="session-title mb-2">{{ nextSession.title }}</h3>
-                <p class="session-description text-body-2 text-grey-darken-1 mb-3">{{ nextSession.description }}</p>
-                <v-chip :color="getStatusColor(nextSession.status)" variant="tonal" size="small" class="status-chip">
-                    {{ getStatusText(nextSession.status) }}
-                </v-chip>
+            <div class="info-content">
+              <div class="info-value">
+                {{ nextSession.studyType }}
+              </div>
+              <div>Tipo de Estudio</div>
             </div>
-
-            <!-- First Row: Study Type and Owner -->
-            <v-row class="info-row mb-3" no-gutters>
-                <v-col cols="6" class="pr-2">
-                    <div class="info-item">
-                        <div class="info-icon-wrapper">
-                            <v-icon icon="mdi-microscope" size="24" color="primary"></v-icon>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-value">{{ nextSession.studyType }}</div>
-                            <div>Tipo de Estudio</div>
-                        </div>
-                    </div>
-                </v-col>
-                <v-col cols="6" class="">
-                    <div class="info-item">
-                        <div class="info-icon-wrapper">
-                            <v-icon icon="mdi-account" size="24" color="primary"></v-icon>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-value">{{ nextSession.owner }}</div>
-                            <div>Owner</div>
-                        </div>
-                    </div>
-                </v-col>
-            </v-row>
-
-            <!-- Second Row: Date and Time -->
-            <v-row class="info-row mb-4" no-gutters>
-                <v-col cols="6" class="pr-2">
-                    <div class="info-item">
-                        <div class="info-icon-wrapper">
-                            <v-icon icon="mdi-calendar" size="24" color="primary"></v-icon>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-value">{{ nextSession.date }}</div>
-                            <div>Fecha</div>
-                        </div>
-                    </div>
-                </v-col>
-                <v-col cols="6" class="">
-                    <div class="info-item">
-                        <div class="info-icon-wrapper">
-                            <v-icon icon="mdi-clock-outline" size="24" color="primary"></v-icon>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-value">{{ nextSession.time }}</div>
-                            <div>Horario</div>
-                        </div>
-                    </div>
-                </v-col>
-            </v-row>
-
-            <!-- Action Button -->
-            <v-btn color="primary" variant="flat" size="large" block rounded="lg" prepend-icon="mdi-play-circle"
-                :disabled="nextSession.status !== 'upcoming'" class="action-button">
-                {{ nextSession.status === 'upcoming' ? 'Join Now' : 'Completed' }}
-            </v-btn>
-        </v-card-text>
-
-        <!-- Empty State -->
-        <v-card-text class="pa-6 text-center" v-else>
-            <div class="empty-state">
-                <v-icon icon="mdi-calendar-blank" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
-                <h4 class="text-h6 mb-2">No sessions scheduled</h4>
-                <p class="text-body-2 text-grey">Your next session will appear here</p>
+          </div>
+        </v-col>
+        <v-col
+          cols="6"
+          class=""
+        >
+          <div class="info-item">
+            <div class="info-icon-wrapper">
+              <v-icon
+                icon="mdi-account"
+                size="24"
+                color="primary"
+              />
             </div>
-        </v-card-text>
-    </v-card>
+            <div class="info-content">
+              <div class="info-value">
+                {{ nextSession.owner }}
+              </div>
+              <div>Owner</div>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Second Row: Date and Time -->
+      <v-row
+        class="info-row mb-4"
+        no-gutters
+      >
+        <v-col
+          cols="6"
+          class="pr-2"
+        >
+          <div class="info-item">
+            <div class="info-icon-wrapper">
+              <v-icon
+                icon="mdi-calendar"
+                size="24"
+                color="primary"
+              />
+            </div>
+            <div class="info-content">
+              <div class="info-value">
+                {{ nextSession.date }}
+              </div>
+              <div>Fecha</div>
+            </div>
+          </div>
+        </v-col>
+        <v-col
+          cols="6"
+          class=""
+        >
+          <div class="info-item">
+            <div class="info-icon-wrapper">
+              <v-icon
+                icon="mdi-clock-outline"
+                size="24"
+                color="primary"
+              />
+            </div>
+            <div class="info-content">
+              <div class="info-value">
+                {{ nextSession.time }}
+              </div>
+              <div>Horario</div>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Action Button -->
+      <v-btn
+        color="primary"
+        variant="flat"
+        size="large"
+        block
+        rounded="lg"
+        prepend-icon="mdi-play-circle"
+        :disabled="nextSession.status !== 'upcoming'"
+        class="action-button"
+      >
+        {{ nextSession.status === 'upcoming' ? 'Join Now' : 'Completed' }}
+      </v-btn>
+    </v-card-text>
+
+    <!-- Empty State -->
+    <v-card-text
+      v-else
+      class="pa-6 text-center"
+    >
+      <div class="empty-state">
+        <v-icon
+          icon="mdi-calendar-blank"
+          size="64"
+          color="grey-lighten-1"
+          class="mb-4"
+        />
+        <h4 class="text-h6 mb-2">
+          No sessions scheduled
+        </h4>
+        <p class="text-body-2 text-grey">
+          Your next session will appear here
+        </p>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

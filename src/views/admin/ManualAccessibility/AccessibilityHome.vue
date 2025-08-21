@@ -1,16 +1,44 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="dashboard-container">
+      <v-container
+        fluid
+        class="dashboard-container"
+      >
         <!-- Dashboard Cards -->
-        <v-row class="dashboard-grid" no-gutters>
-          <v-col v-for="(card, index) in cards" :key="index" cols="12" sm="6" md="4" lg="3" xl="2" class="pa-2">
-            <v-card class="dashboard-card" elevation="2" rounded="xl" hover
-              :style="{ 'animation-delay': `${index * 100}ms` }" @click="$router.push(card.route)">
+        <v-row
+          class="dashboard-grid"
+          no-gutters
+        >
+          <v-col
+            v-for="(card, index) in cards"
+            :key="index"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+            xl="2"
+            class="pa-2"
+          >
+            <v-card
+              class="dashboard-card"
+              elevation="2"
+              rounded="xl"
+              hover
+              :style="{ 'animation-delay': `${index * 100}ms` }"
+              @click="$router.push(card.route)"
+            >
               <v-card-text class="card-content">
                 <div class="card-header mb-3">
-                  <div class="icon-container" :class="`icon-${card.title.toLowerCase()}`">
-                    <v-icon :size="28" class="card-icon" color="white">
+                  <div
+                    class="icon-container"
+                    :class="`icon-${card.title.toLowerCase()}`"
+                  >
+                    <v-icon
+                      :size="28"
+                      class="card-icon"
+                      color="white"
+                    >
                       {{ card.icon }}
                     </v-icon>
                   </div>
@@ -29,9 +57,17 @@
                 </div>
 
                 <div class="card-footer mt-3">
-                  <v-btn variant="text" size="small" class="card-action-btn" :ripple="false">
+                  <v-btn
+                    variant="text"
+                    size="small"
+                    class="card-action-btn"
+                    :ripple="false"
+                  >
                     Open
-                    <v-icon size="14" class="ml-1">
+                    <v-icon
+                      size="14"
+                      class="ml-1"
+                    >
                       mdi-arrow-right
                     </v-icon>
                   </v-btn>
