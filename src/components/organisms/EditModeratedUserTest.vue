@@ -5,21 +5,11 @@
       color="#FCA326"
       class="pb-0 mb-0"
     >
-      <v-tab @click="tabClicked(0)">
-        Test
-      </v-tab>
-      <v-tab @click="tabClicked(1)">
-        {{ $t('ModeratedTest.consentForm') }}
-      </v-tab>
-      <v-tab @click="tabClicked(2)">
-        {{ $t('ModeratedTest.preTest') }}
-      </v-tab>
-      <v-tab @click="tabClicked(3)">
-        {{ $t('ModeratedTest.tasks') }}
-      </v-tab>
-      <v-tab @click="tabClicked(4)">
-        {{ $t('ModeratedTest.postTest') }}
-      </v-tab>
+      <v-tab @click="tabClicked(0)">Test</v-tab>
+      <v-tab @click="tabClicked(1)">{{ $t('ModeratedTest.consentForm') }}</v-tab>
+      <v-tab @click="tabClicked(2)">{{ $t('ModeratedTest.preTest') }}</v-tab>
+      <v-tab @click="tabClicked(3)">{{ $t('ModeratedTest.tasks') }}</v-tab>
+      <v-tab @click="tabClicked(4)">{{ $t('ModeratedTest.postTest') }}</v-tab>
     </v-tabs>
 
     <VCol cols="12">
@@ -96,7 +86,7 @@
         v-if="index === 2"
         rounded="xxl"
       >
-        <UserVariables />
+        <UserVariables type="pre-test" @update="saveState('preTest', $event)" />
       </v-card>
 
       <!-- TASKS -->
@@ -112,7 +102,7 @@
         v-if="index === 4"
         rounded="xxl"
       >
-        <FormPostTest />
+        <UserVariables type="post-test" @update="saveState('postTest', $event)" />
       </v-card>
     </VCol>
   </div>
@@ -121,7 +111,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import FormPostTest from '../atoms/FormPostTest.vue'
 import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTask from '../molecules/ModeratedTask.vue'
 import TextareaForm from '../atoms/TextareaForm.vue'
@@ -139,7 +128,7 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(['tabClicked']);
+const emit = defineEmits(['tabClicked', 'change']);
 
 // Reactive state
 const welcomeMessage = ref('')
@@ -178,8 +167,11 @@ const saveState = async (type, value) => {
     'finalMessage': 'setFinalMessage',
     'participantCamera': 'setParticipantCamera',
     'welcome': 'setWelcomeMessage',
+    'preTest': 'setPreTest',
+    'postTest': 'setPostTest',
   }
 
+  emit('change', true)
   if (states[type]) store.dispatch(states[type], value)
 }
 
