@@ -1,0 +1,49 @@
+# name: Update Discord Roles
+
+# on:
+#   schedule:
+#     - cron: '0 0 * * *'  # Run daily at midnight
+#   workflow_dispatch:  # Allow manual trigger
+
+# jobs:
+#   update-roles:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python 3.13.2
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.13.2'  # Ensure Python 3.13.2 is installed
+
+#       - name: Install system dependencies
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y libffi-dev libnacl-dev python3-dev
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r discord_bot/discord_bot_requirements.txt
+
+#       - name: Fetch GitHub contributions 
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#         run: | 
+#           python discord_bot/fetch_contributors.py   
+
+#       - name: Set up Google Credentials
+#         run: echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" | base64 --decode > credentials.json
+
+#       - name: Update Firestore
+#         env:
+#           GOOGLE_APPLICATION_CREDENTIALS: credentials.json
+#         run: |
+#           python discord_bot/firestore.py
+
+#       - name: Update Discord roles
+#         env: 
+#             DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+#         run: |  
+#           python discord_bot/update_discord_roles.py
