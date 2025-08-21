@@ -26,15 +26,27 @@
         :class="{ 'side-gap': sideGap }"
       >
         <!-- Header Section -->
-        <div v-if="title || $slots.actions" class="header-section mb-8">
-          <v-row align="center" class="mb-6">
+        <div
+          v-if="title || $slots.actions"
+          class="header-section"
+        >
+          <v-row
+            align="center"
+            class=""
+          >
             <v-col>
-              <h1 v-if="title" class="text-h3 font-weight-light text-on-surface mb-2">
+              <h1
+                v-if="title"
+                class="text-h3 font-weight-light text-on-surface"
+              >
                 {{ title }}
               </h1>
               <slot name="subtitle" />
             </v-col>
-            <v-col v-if="$slots.actions" cols="auto">
+            <v-col
+              v-if="$slots.actions"
+              cols="auto"
+            >
               <slot name="actions" />
             </v-col>
           </v-row>

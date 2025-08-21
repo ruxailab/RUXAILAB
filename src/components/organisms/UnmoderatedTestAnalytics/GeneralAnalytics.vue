@@ -1,9 +1,48 @@
 <template>
-  <v-container
-    fluid
-    class="pa-8 bg-background min-h-screen"
-  >
-    <v-row class="mb-8">
+  <div>
+    <!-- UX Metrics Row (ahora primera fila) -->
+    <v-row>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="`${calculateEffectiveness().toFixed(1)}%`"
+          label="Eficacia"
+          color="success"
+          icon="mdi-target-account"
+          description="Porcentaje de tareas completadas exitosamente"
+          :progress="calculateEffectiveness()"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="calculateEfficiency().score.toFixed(1)"
+          label="Eficiencia"
+          color="info"
+          icon="mdi-speedometer"
+          :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
+          :progress="Math.min(calculateEfficiency().score * 10, 100)"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="`${calculateSatisfaction().toFixed(1)}/5`"
+          label="Satisfacción"
+          color="warning"
+          icon="mdi-heart"
+          description="Puntuación promedio de satisfacción del usuario"
+          :progress="(calculateSatisfaction() / 5) * 100"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col
         cols="12"
         lg="6"
@@ -96,7 +135,6 @@
           </div>
         </v-card>
       </v-col>
-
       <v-col
         cols="12"
         lg="6"
@@ -132,7 +170,10 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+            <v-card
+              v-if="testStructure?.userTasks && taskAnswers.length"
+              class="pa-6 elevation-3 rounded-xl h-100 stat-card"
+            >
               <div class="d-flex align-center mb-4">
                 <v-avatar
                   color="error"
@@ -230,9 +271,19 @@
     </v-row>
 
     <!-- Chart Section -->
-    <v-row>
+    <AnswersTimeline
+      :task-answers="taskAnswers"
+      @refresh="onRefreshTimeline"
+      @export="onExportTimeline"
+    />
+
+    <!-- Task Performance Charts -->
+    <v-row class="mb-8">
       <v-col cols="12">
-        <v-card class="pa-8 elevation-4 rounded-xl chart-card">
+        <v-card
+          flat
+          class="pa-8"
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -266,13 +317,160 @@
             </div>
           </div>
 
-          <div class="chart-container-large">
-            <DateChart :task-answers="taskAnswers" />
-          </div>
+          <v-row>
+            <v-col
+              v-for="taskStat in getTasksPerformance()"
+              :key="taskStat.taskId"
+              cols="12"
+              md="6"
+              lg="4"
+            >
+              <v-card
+                class="pa-4 elevation-2 rounded-lg task-chart-card"
+                border
+              >
+                <div class="text-center mb-4">
+                  <h4 class="text-h6 font-weight-bold mb-2">
+                    {{ taskStat.taskName }}
+                  </h4>
+                  <v-chip
+                    :color="taskStat.successRate >= 70 ? 'success' : taskStat.successRate >= 50 ? 'warning' : 'error'"
+                    variant="tonal"
+                    size="small"
+                  >
+                    {{ taskStat.successRate.toFixed(1) }}% éxito
+                  </v-chip>
+                </div>
+
+                <div class="chart-container-small mb-4">
+                  <canvas
+                    :id="'task-chart-' + taskStat.taskId"
+                    class="task-chart"
+                    width="120"
+                    height="120"
+                  />
+                </div>
+
+                <div class="d-flex justify-space-between text-body-2">
+                  <div class="d-flex align-center">
+                    <div class="legend-dot bg-success mr-2" />
+                    <span>Aciertos: {{ taskStat.success }}</span>
+                  </div>
+                  <div class="d-flex align-center">
+                    <div class="legend-dot bg-error mr-2" />
+                    <span>Errores: {{ taskStat.errors }}</span>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
+
+    <!-- Mostrar todas las preguntas del pre-form -->
+    <v-row class="mb-8">
+      <v-col cols="12">
+        <v-card
+          flat
+          class="pa-8 "
+        >
+          <div class="d-flex justify-space-between align-center mb-6">
+            <div>
+              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+                Pre Test
+              </h3>
+              <p class="text-body-1 text-medium-emphasis">
+                Resultados del formulario previo al test
+              </p>
+            </div>
+          </div>
+          <v-row>
+            <template v-for="(q, idx) in (testStructure?.preTest || [])">
+              <v-col
+                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'pre-sel-' + (q.title || q.question || idx)"
+                cols="12"
+                md="6"
+                lg="4"
+              >
+                <SelectionPieChart
+                  :question-title="q.title || q.question"
+                  :options="q.selectionFields"
+                  :counts="getPreSelectionCounts(idx)"
+                  :canvas-id="'pretest-selection-chart-' + idx"
+                  :chart-colors="chartColors"
+                />
+              </v-col>
+              <v-col
+                v-else
+                :key="'pre-com-' + (q.title || q.question || idx)"
+                cols="12"
+              >
+                <CommentListCard
+                  :question-title="q.title || q.question"
+                  :answer="getPreTextAnswers(idx)"
+                />
+              </v-col>
+            </template>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Mostrar todas las preguntas del post-form -->
+    <v-row class="mb-8">
+      <v-col cols="12">
+        <v-card
+          flat
+          class="pa-8 "
+        >
+          <div class="d-flex justify-space-between align-center mb-6">
+            <div>
+              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+                Post Test
+              </h3>
+              <p class="text-body-1 text-medium-emphasis">
+                Resultados del formulario posterior al test
+              </p>
+            </div>
+          </div>
+          <v-row>
+            <template
+              v-for="(q, idx) in postTestQuestions"
+              :key="'ptq-' + (q.question || idx)"
+            >
+              <v-col
+                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'sel-' + (q.question || idx)"
+                cols="12"
+                md="6"
+                lg="4"
+              >
+                <SelectionPieChart
+                  :question-title="q.title || q.question"
+                  :options="q.selectionFields"
+                  :counts="getSelectionCounts(idx)"
+                  :canvas-id="'posttest-selection-chart-' + idx"
+                  :chart-colors="chartColors"
+                />
+              </v-col>
+              <v-col
+                v-else
+                :key="'com-' + (q.question || idx)"
+                cols="12"
+              >
+                <CommentListCard
+                  :question-title="q.title || q.question"
+                  :answer="getPostTextAnswers(idx)"
+                />
+              </v-col>
+            </template>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script setup>
@@ -553,7 +751,7 @@ onMounted(() => {
   .chart-container-large {
     height: 300px;
   }
-  
+
   .conclusion-card .text-h1 {
     font-size: 2rem !important;
   }

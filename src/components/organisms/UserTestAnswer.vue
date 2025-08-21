@@ -15,14 +15,13 @@
       justify="center"
       class="ma-0"
     >
-      <ShowInfo title="Answers">
+      <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs
             v-model="tab"
             bg-color="transparent"
             color="#FCA326"
-            class="ml-4"
           >
             <v-tab @click="tab = 0">
               General Analytics

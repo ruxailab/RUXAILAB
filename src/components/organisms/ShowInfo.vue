@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-row class="ma-0">
-      <v-col cols="12">
+      <v-col
+        cols="12"
+        :hidden="hideCol"
+      >
         <!-- <h1>{{ $t('titles.drawer.' + title) }}</h1> -->
         <h1>{{ title }}</h1>
         <v-divider v-if="title" />
