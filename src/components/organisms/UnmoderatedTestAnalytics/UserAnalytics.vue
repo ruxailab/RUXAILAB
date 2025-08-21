@@ -271,6 +271,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
+
         <v-card-text class="dialog-body">
           <v-container
             fluid
@@ -351,7 +352,9 @@
                   <div class="section-title">
                     Post-Test
                   </div>
+
                   <v-divider class="my-2" />
+
                   <div class="qa-grid">
                     <div
                       v-for="(q, i) in testStructure.postTest"
@@ -389,7 +392,9 @@
                     Tasks
                     <span class="text-caption font-weight-regular ml-2">({{ testStructure.userTasks.length }})</span>
                   </div>
+
                   <v-divider class="my-2" />
+
                   <div class="d-flex flex-wrap gap-2 mb-3">
                     <v-chip
                       v-for="(t, i) in testStructure.userTasks"
@@ -422,6 +427,7 @@
                           mdi-check-circle
                         </v-icon> Completed
                       </v-chip>
+
                       <v-chip
                         v-else
                         size="x-small"
@@ -435,6 +441,7 @@
                           mdi-close-circle
                         </v-icon> Not Completed
                       </v-chip>
+
                       <v-chip
                         v-if="dialogItem.tasks[taskSelect].taskTime"
                         size="x-small"
@@ -473,6 +480,7 @@
                           Webcam
                           Recording
                         </v-expansion-panel-title>
+
                         <v-expansion-panel-text>
                           <video
                             :src="dialogItem.tasks[taskSelect].webcamRecordURL"
@@ -490,11 +498,13 @@
                           </video>
                         </v-expansion-panel-text>
                       </v-expansion-panel>
+
                       <v-expansion-panel v-if="dialogItem.tasks[taskSelect].screenRecordURL">
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">
                           Screen
                           Recording
                         </v-expansion-panel-title>
+
                         <v-expansion-panel-text>
                           <video
                             :src="dialogItem.tasks[taskSelect].screenRecordURL"
@@ -512,11 +522,13 @@
                           </video>
                         </v-expansion-panel-text>
                       </v-expansion-panel>
+
                       <v-expansion-panel v-if="dialogItem.tasks[taskSelect].audioRecordURL">
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">
                           Audio
                           Recording
                         </v-expansion-panel-title>
+
                         <v-expansion-panel-text>
                           <audio
                             :src="dialogItem.tasks[taskSelect].audioRecordURL"
@@ -553,10 +565,6 @@ import { useToast } from 'vue-toastification';
 const toast = useToast()
 
 const store = useStore();
-const test = computed(() => store.getters.test);
-const testStructure = computed(() => store.state.Tests.Test.testStructure || {});
-const answers = computed(() => store.getters.visibleUserAnswers || {});
-
 const showDialog = ref(false);
 const dialogItem = ref(null);
 const taskSelect = ref(0);
@@ -565,159 +573,31 @@ const taskAnswers = ref([]);
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
 
-// Búsqueda por nombre / email
-const searchTerm = ref('');
+const dataHeaders = [
+  { title: 'Identifier', key: 'identifier', sortable: true, width: '120px' },
+  { title: 'User', key: 'user', sortable: true },
+  { title: 'Tasks', key: 'tasks', sortable: false, width: '280px' },
+  { title: 'Invited', key: 'invited', sortable: true, width: '100px' },
+  { title: 'Actions', key: 'actions', sortable: false, width: '300px' },
+];
 
-// Filtros dinámicos (todas las preguntas)
-const selectedFilters = ref({});
-const ALL_VALUE = '__ALL__';
-const filterDefinitions = computed(() => {
-  const pre = testStructure.value?.preTest || [];
-  return pre.map((q, idx) => {
-    // valores desde respuestas reales
-    const answerValueSet = new Set();
-    Object.values(answers.value).forEach(s => {
-      const a = s.preTestAnswer?.[idx]?.answer;
-      if (a !== undefined && a !== null && a !== '') answerValueSet.add(a);
-    });
-
-    // valores declarados en la estructura (selectionFields) si es tipo selección
-    if (q?.type === 'selection' && Array.isArray(q.selectionFields)) {
-      q.selectionFields.forEach(opt => {
-        if (opt !== undefined && opt !== null && opt !== '') answerValueSet.add(opt);
-      });
-    }
-
-    const options = Array.from(answerValueSet).sort();
-
-    // Forzar dropdown si es pregunta de selección aunque solo haya 1 opción todavía
-    const isSelection = q?.type === 'selection';
-    const isCategoricalByCount = options.length >= 2 && options.length <= 50;
-    const isCategorical = isSelection || isCategoricalByCount;
-
-    const baseItems = isCategorical ? options.map(o => ({ title: o, value: o })) : [];
-    if (isCategorical && baseItems.length) {
-      // Insertar 'Todos' al inicio
-      if (!baseItems.find(it => it.value === ALL_VALUE)) {
-        baseItems.unshift({ title: 'Todos', value: ALL_VALUE });
-      }
-    }
-
-    return {
-      index: idx,
-      title: q.title || q.question || `Pregunta ${idx + 1}`,
-      options,
-      isCategorical,
-      items: baseItems
-    };
-  });
-});
-
-const onFilterChange = (idx, val) => {
-  if (!val || !val.length) { selectedFilters.value[idx] = []; return; }
-  if (val.includes(ALL_VALUE)) { selectedFilters.value[idx] = [ALL_VALUE]; } else { selectedFilters.value[idx] = val; }
-};
-
-const onFreeTextFilter = (idx) => {
-  // simple trigger (v-model already updates)
-  selectedFilters.value[idx] = selectedFilters.value[idx];
-};
-
-const hasActiveFilters = computed(() => {
-  const someFilters = Object.entries(selectedFilters.value).some(([k, v]) => {
-    if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE);
-    return !!v; // texto
-  });
-  return someFilters || !!searchTerm.value.trim();
-});
-
-const resetFilters = () => { selectedFilters.value = {}; searchTerm.value = ''; };
-
-const filteredSessions = computed(() => {
-  const term = searchTerm.value.trim().toLowerCase();
-  return Object.values(answers.value).filter(session => {
-    if (term) {
-      const name = (session.fullName || '').toLowerCase();
-      const email = (session.email || '').toLowerCase();
-      if (!name.includes(term) && !email.includes(term)) return false;
-    }
-    return filterDefinitions.value.every(def => {
-      const sel = selectedFilters.value[def.index];
-      // Sin filtro aplicado
-      if (sel === undefined || sel === null || sel === '' || (Array.isArray(sel) && (sel.length === 0 || sel.includes(ALL_VALUE)))) return true;
-      const ans = session.preTestAnswer?.[def.index]?.answer || '';
-      if (def.isCategorical) {
-        return Array.isArray(sel) ? sel.includes(ans) : true;
-      } else {
-        // texto libre: substring case-insensitive
-        if (typeof sel === 'string') return ans.toString().toLowerCase().includes(sel.toLowerCase());
-        return true;
-      }
-    });
-  });
-});
-
-// Dynamic task columns + headers + table data
-const taskColumns = computed(() => testStructure.value?.userTasks || []);
-
-const tableHeaders = computed(() => {
-  const dynamicTaskHeaders = taskColumns.value.map((t, i) => ({
-    title: `T${i + 1}`,
-    key: `task_${i}`,
-    sortable: false,
-    align: 'center'
-  }));
-  return [
-    { title: '#', key: 'identifier', sortable: false, width: 60 },
-    { title: 'Usuario', key: 'user', sortable: false },
-    { title: 'Resumen', key: 'tasks', sortable: false },
-    ...dynamicTaskHeaders,
-    { title: 'Invitado', key: 'invited', sortable: false, width: 90 },
-    { title: 'Acciones', key: 'actions', sortable: false, width: 150 }
-  ];
-});
-
-const tableData = computed(() => {
-  return filteredSessions.value.map((session, idx) => {
-    const userTasks = testStructure.value?.userTasks || [];
-    let completedCount = 0;
-    let totalTimeSeconds = 0;
-    const row = {
-      identifier: idx + 1,
-      fullName: session.fullName || 'Sin nombre',
-      email: session.email || '',
-      invited: !!session.invited,
-      hidden: !!session.hidden,
-      userDocId: session.userDocId,
-      tasks: session.tasks || {},
-      preTestAnswer: session.preTestAnswer || [],
-      postTestAnswer: session.postTestAnswer || []
-    };
-
-    userTasks.forEach((_, i) => {
-      const task = session.tasks?.[i] || session.tasks?.[`${i}`] || session.tasks?.[userTasks[i]?.taskId] || {};
-      const completed = !!task.completed;
-      const timeMs = task.taskTime || 0;
-      const timeSeconds = Math.floor(timeMs / 1000);
-      if (completed) completedCount += 1;
-      totalTimeSeconds += timeSeconds;
-      row[`task_${i}`] = { completed, timeSeconds };
-    });
-
-    const totalTasks = userTasks.length || 0;
-    const effectiveness = totalTasks ? Math.round((completedCount / totalTasks) * 100) : 0;
-    const efficiency = totalTimeSeconds > 0 ? (completedCount / (totalTimeSeconds / 60)).toFixed(2) : '0.00';
-
-    return {
-      ...row,
-      completedCount,
-      totalTasks,
-      totalTimeSeconds,
-      effectiveness,
-      efficiency
-    };
-  });
-});
+const test = computed(() => store.getters.test);
+const testStructure = computed(() => store.state.Tests.Test.testStructure);
+const answers = computed(() => store.getters.visibleUserAnswers || {});
+// const answers = computed(() => store.getters.testAnswerDocument?.taskAnswers || {});
+const tableData = computed(() => Object.values(answers.value).map((item, index) => {
+  const tasks = Object.values(item.tasks || {});
+  const completedCount = tasks.filter(t => !!t.completed).length;
+  const totalTasks = testStructure.value.userTasks.length;
+  const avgTime = tasks.reduce((sum, t) => sum + (t.taskTime || 0), 0) / (completedCount || 1);
+  return {
+    ...item,
+    identifier: `#${index + 1}`,
+    completedCount,
+    totalTasks,
+    avgTimeSeconds: Math.floor(avgTime / 1000),
+  };
+}));
 
 const formatTime = (time) => {
   const minutes = Math.floor(time / 60);
@@ -778,11 +658,6 @@ const toggleHideSession = async (item) => {
   }
 };
 
-const showFilters = ref(true);
-const toggleFilters = () => { showFilters.value = !showFilters.value; };
-// Trigger search (re-computed automatically, but kept for explicit UX hook)
-const triggerSearch = () => { /* no-op: computed already reacts; placeholder for future debounce */ };
-
 watch(
   [testStructure, answers],
   ([structure, ans]) => {
@@ -804,78 +679,8 @@ watch(
   background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
 }
 
-.dialog-body {
-  background: #F5F7FA;
-}
-
-.section-col {
-  margin-bottom: 24px;
-}
-
-.section-card {
-  background: #fff;
-  border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  padding: 16px 20px;
-}
-
-.section-title {
-  font-weight: 600;
-  font-size: 15px;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-}
-
-.qa-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.qa-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: start;
-}
-
-.qa-question {
-  font-weight: 600;
-  font-size: 13px;
-  color: #374151;
-}
-
-.qa-answer {
-  font-size: 13px;
-  color: #111827;
-  word-break: break-word;
-}
-
-.task-detail {
-  background: #F9FAFB;
-  border: 1px dashed #D1D5DB;
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.media-video {
-  max-width: 100%;
-  width: 100%;
-  border-radius: 8px;
-  outline: none;
-}
-
 .gap-2 {
   gap: 8px;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.media-panels :deep(.v-expansion-panel-title) {
-  font-size: 13px;
-  font-weight: 500;
 }
 
 .font-mono {
@@ -912,45 +717,5 @@ watch(
 
 :deep(.v-data-table__td) {
   padding: 12px 16px !important;
-}
-
-.filter-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  margin-bottom: 4px;
-  line-height: 1.15;
-  color: #475569;
-}
-
-.truncate-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: calc(11px * 1.15 * 2);
-  max-height: calc(11px * 1.15 * 2);
-}
-
-.filter-field :deep(.v-field__input) {
-  min-height: 36px;
-}
-
-.flex-grow-1 {
-  flex: 1 1 auto;
-  min-width: 240px;
-}
-
-.button-bar {
-  gap: 14px;
-}
-
-.search-btn {
-  min-width: 140px;
-  height: 40px;
-  font-weight: 600;
-  letter-spacing: .3px;
 }
 </style>

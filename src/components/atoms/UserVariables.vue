@@ -255,6 +255,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
+const emit = defineEmits(['update', 'change']);
+
 const { t } = useI18n();
 const store = useStore();
 
@@ -271,6 +273,8 @@ const preTest = computed(() => store.getters.preTest);
 
 const markDirty = () => {
   isDirty.value = true;
+  emit('change');
+  emit('update', items.value);
 };
 
 const showModal = () => {
@@ -317,7 +321,7 @@ const newSelection = (index) => {
 
 const deleteSelection = (index, selectionIndex) => {
   items.value[index].selectionFields.splice(selectionIndex, 1);
-
+  markDirty();
 };
 
 const saveNewItem = async () => {
@@ -350,6 +354,8 @@ const saveState = async () => {
   try {
     isSaving.value = true
     await store.dispatch('setPreTest', items.value)
+    emit('update', items.value)
+    emit('change')
     isDirty.value = false
   } catch (error) {
     console.error('Error saving pre-test:', error.message)
@@ -361,6 +367,7 @@ const saveState = async () => {
 const getVariables = () => {
   const data = preTest.value ?? test.value?.testStructure?.preTest ?? [];
   items.value = Array.isArray(data) ? [...data] : [];
+  emit('update', items.value);
 };
 
 onMounted(() => {
