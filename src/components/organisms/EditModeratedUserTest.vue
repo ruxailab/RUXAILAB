@@ -28,15 +28,15 @@
         <VRow>
           <VCol cols="9">
             <TextareaForm
+              v-model="welcomeMessage"
               :title="$t('ModeratedTest.welcomeMessage')"
-              :model-value="welcomeMessage"
               :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
               @update:value="saveState('welcome', $event)"
             />
 
             <TextareaForm
+              v-model="finalMessage"
               :title="$t('ModeratedTest.finalMessage')"
-              :model-value="finalMessage"
               :subtitle="$t('ModeratedTest.finalMessageDescription')"
               @update:value="saveState('finalMessage', $event)"
             />
@@ -84,6 +84,7 @@
         rounded="xxl"
       >
         <TextareaForm
+          v-model="consent"
           :title="$t('ModeratedTest.consentForm')"
           subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
           @update:value="saveState('consent', $event)"
