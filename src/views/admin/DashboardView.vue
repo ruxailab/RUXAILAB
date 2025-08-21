@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid class="dashboard-container">
+  <v-container
+    fluid
+    class="dashboard-container"
+  >
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
@@ -11,42 +14,62 @@
     </div>
 
     <!-- Stats Cards Row -->
-    <StatsCards :total-studies="totalStudies" :used-storage="usedStorage" :total-participants="totalParticipants" />
+    <StatsCards
+      :total-studies="totalStudies"
+      :used-storage="usedStorage"
+      :total-participants="totalParticipants"
+    />
 
     <!-- Second Row: Activity Timeline and Active Studies -->
     <v-row class="mb-6">
-      <v-col cols="12" lg="8">
+      <v-col
+        cols="12"
+        lg="8"
+      >
         <ActiveStudies :studies="items" />
-
       </v-col>
-      <v-col cols="12" lg="4">
+      <v-col
+        cols="12"
+        lg="4"
+      >
         <ActivityTimeline />
-
       </v-col>
     </v-row>
 
     <!-- Third Row: Upcoming Webinar and Top Methods -->
     <v-row class="mb-6">
-      <v-col cols="12" lg="4">
+      <v-col
+        cols="12"
+        lg="4"
+      >
         <UpcomingWebinar />
-
       </v-col>
-      <v-col cols="12" lg="4">
+      <v-col
+        cols="12"
+        lg="4"
+      >
         <TopMethods />
       </v-col>
-      <v-col cols="12" lg="4">
+      <v-col
+        cols="12"
+        lg="4"
+      >
         <NextSession />
-
       </v-col>
     </v-row>
 
     <!-- Fourth Row: Blog Posts and Next Session -->
     <v-row class="mb-6">
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <BlogPosts />
       </v-col>
-      <v-col cols="12" lg="6">
-      </v-col>
+      <v-col
+        cols="12"
+        lg="6"
+      />
     </v-row>
   </v-container>
 </template>

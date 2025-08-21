@@ -1,5 +1,10 @@
 <template>
-  <v-dialog :model-value="dialog" width="70%" persistent @update:model-value="$emit('update:dialog', $event)">
+  <v-dialog
+    :model-value="dialog"
+    width="70%"
+    persistent
+    @update:model-value="$emit('update:dialog', $event)"
+  >
     <v-card class="dataCard">
       <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
         New task
@@ -8,15 +13,38 @@
       <v-card-text>
         <VForm ref="form">
           <VRow justify="space-around">
-            <VCol class="mt-4" cols="5">
-              <v-text-field v-model="localTask.taskName" :label="$t('common.name')" :rules="requiredRule"
-                variant="outlined" density="compact" />
-              <quill-editor v-model:value="localTask.taskDescription" class="mb-5" style="height: 40%;" />
+            <VCol
+              class="mt-4"
+              cols="5"
+            >
+              <v-text-field
+                v-model="localTask.taskName"
+                :label="$t('common.name')"
+                :rules="requiredRule"
+                variant="outlined"
+                density="compact"
+              />
+              <quill-editor
+                v-model:value="localTask.taskDescription"
+                class="mb-5"
+                style="height: 40%;"
+              />
             </VCol>
 
-            <VCol class="mt-4" cols="5">
-              <v-text-field v-model="localTask.taskLink" label="Link" variant="outlined" density="compact" />
-              <v-checkbox v-model="localTask.hasEye" label="Eye Tracker" />
+            <VCol
+              class="mt-4"
+              cols="5"
+            >
+              <v-text-field
+                v-model="localTask.taskLink"
+                label="Link"
+                variant="outlined"
+                density="compact"
+              />
+              <v-checkbox
+                v-model="localTask.hasEye"
+                label="Eye Tracker"
+              />
             </VCol>
           </VRow>
         </VForm>
@@ -24,10 +52,17 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn color="red-lighten-1" variant="text" @click="$emit('update:dialog', false); reset()">
+        <v-btn
+          color="red-lighten-1"
+          variant="text"
+          @click="$emit('update:dialog', false); reset()"
+        >
           {{ $t('buttons.cancel') }}
         </v-btn>
-        <v-btn class="text-white bg-orange" @click="submit">
+        <v-btn
+          class="text-white bg-orange"
+          @click="submit"
+        >
           {{ $t('common.save') }}
         </v-btn>
       </v-card-actions>

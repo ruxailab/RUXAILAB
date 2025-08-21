@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="pa-6">
+      <v-container
+        fluid
+        class="pa-6"
+      >
         <!-- Header Section -->
         <div class="d-flex align-center justify-space-between mb-8">
           <div>
@@ -16,15 +19,18 @@
             variant="elevated"
             size="large"
             :disabled="testAnswerDocLength > 0"
-            @click="dialog = true"
             class="text-none"
+            @click="dialog = true"
           >
             {{ $t('HeuristicsTable.titles.addOption') }}
           </v-btn>
         </div>
 
         <!-- Options Table -->
-        <v-card elevation="2" class="options-table">
+        <v-card
+          elevation="2"
+          class="options-table"
+        >
           <v-data-table
             :headers="headers"
             :items="optionsWithFormattedValue"
@@ -32,7 +38,7 @@
             class="elevation-0"
           >
             <!-- Custom header styling -->
-            <template v-slot:headers="{ columns }">
+            <template #headers="{ columns }">
               <tr class="table-header">
                 <th
                   v-for="column in columns"
@@ -46,7 +52,7 @@
             </template>
 
             <!-- Custom row styling -->
-            <template v-slot:item="{ item }">
+            <template #item="{ item }">
               <tr class="table-row">
                 <td class="pa-4">
                   <span class="text-body-1 text-on-surface">{{ item.text }}</span>
@@ -81,7 +87,7 @@
             </template>
 
             <!-- Empty state -->
-            <template v-slot:no-data>
+            <template #no-data>
               <div class="text-center pa-8">
                 <v-icon
                   icon="mdi-cog-outline"
@@ -89,7 +95,9 @@
                   color="secondary"
                   class="mb-4"
                 />
-                <h3 class="text-h6 text-secondary mb-2">{{ $t('HeuristicsOptionsTable.titles.noOptions') }}</h3>
+                <h3 class="text-h6 text-secondary mb-2">
+                  {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
+                </h3>
                 <p class="text-body-2 text-secondary">
                   {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
                 </p>

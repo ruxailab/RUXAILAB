@@ -3,115 +3,231 @@
 * Drawer específico para navegación móvil global
 */
 <template>
-    <v-navigation-drawer v-model="isOpen" temporary location="left" width="300" elevation="4" class="mobile-drawer">
-        <!-- Header -->
-        <div class="drawer-header pa-4">
-            <div class="d-flex align-center justify-space-between">
-                <div class="d-flex align-center">
-                    <img src="@/assets/ruxailab.png" alt="RUXAILAB" height="32" class="mr-3" />
-                    <div>
-                        <h4 class="text-primary font-weight-bold">RUXAILAB</h4>
-                        <p class="text-caption text-medium-emphasis ma-0">UX Research Platform</p>
-                    </div>
-                </div>
-                <v-btn icon="mdi-close" variant="text" size="small" color="primary" @click="closeDrawer" />
-            </div>
+  <v-navigation-drawer
+    v-model="isOpen"
+    temporary
+    location="left"
+    width="300"
+    elevation="4"
+    class="mobile-drawer"
+  >
+    <!-- Header -->
+    <div class="drawer-header pa-4">
+      <div class="d-flex align-center justify-space-between">
+        <div class="d-flex align-center">
+          <img
+            src="@/assets/ruxailab.png"
+            alt="RUXAILAB"
+            height="32"
+            class="mr-3"
+          >
+          <div>
+            <h4 class="text-primary font-weight-bold">
+              RUXAILAB
+            </h4>
+            <p class="text-caption text-medium-emphasis ma-0">
+              UX Research Platform
+            </p>
+          </div>
+        </div>
+        <v-btn
+          icon="mdi-close"
+          variant="text"
+          size="small"
+          color="primary"
+          @click="closeDrawer"
+        />
+      </div>
+    </div>
+
+    <v-divider />
+
+    <!-- User Section -->
+    <div
+      v-if="user"
+      class="user-section pa-4"
+    >
+      <div class="d-flex align-center">
+        <v-avatar
+          color="primary"
+          size="40"
+          class="mr-3"
+        >
+          <v-img
+            v-if="user.photoURL"
+            :src="user.photoURL"
+            alt="User Avatar"
+          />
+          <span
+            v-else
+            class="text-white font-weight-bold"
+          >
+            {{ getUserInitials(user) }}
+          </span>
+        </v-avatar>
+        <div class="flex-grow-1">
+          <p class="text-body-2 font-weight-medium mb-0 text-primary">
+            {{ user.displayName || user.email }}
+          </p>
+          <p class="text-caption text-medium-emphasis mb-0">
+            {{ getAccessLevelText(userAccessLevel) }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <v-divider v-if="user" />
+
+    <!-- Navigation Content -->
+    <div class="drawer-content">
+      <!-- Context-specific Navigation -->
+      <div
+        v-if="isInTest"
+        class="test-context pa-4"
+      >
+        <div class="context-header mb-3">
+          <v-icon
+            :icon="testIcon"
+            color="primary"
+            size="20"
+            class="mr-2"
+          />
+          <span class="text-body-2 font-weight-bold text-primary">{{ testTitle }}</span>
         </div>
 
-        <v-divider />
+        <!-- Test Navigation Items -->
+        <v-list
+          class="test-nav-list"
+          nav
+        >
+          <v-list-item
+            v-for="item in filteredTestItems"
+            :key="item.id"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            :active="activeStep === item.id"
+            :disabled="item.disabled"
+            class="nav-item"
+            rounded="lg"
+            @click="navigateToStep(item)"
+          >
+            <template
+              v-if="item.status"
+              #append
+            >
+              <v-icon
+                :icon="getStatusIcon(item.status)"
+                :color="getStatusColor(item.status)"
+                size="16"
+              />
+            </template>
+          </v-list-item>
+        </v-list>
+      </div>
 
-        <!-- User Section -->
-        <div v-if="user" class="user-section pa-4">
-            <div class="d-flex align-center">
-                <v-avatar color="primary" size="40" class="mr-3">
-                    <v-img v-if="user.photoURL" :src="user.photoURL" alt="User Avatar" />
-                    <span v-else class="text-white font-weight-bold">
-                        {{ getUserInitials(user) }}
-                    </span>
-                </v-avatar>
-                <div class="flex-grow-1">
-                    <p class="text-body-2 font-weight-medium mb-0 text-primary">
-                        {{ user.displayName || user.email }}
-                    </p>
-                    <p class="text-caption text-medium-emphasis mb-0">
-                        {{ getAccessLevelText(userAccessLevel) }}
-                    </p>
-                </div>
-            </div>
+      <!-- Global Navigation -->
+      <div class="global-context pa-4">
+        <div
+          v-if="isInTest"
+          class="context-header mb-3"
+        >
+          <v-icon
+            icon="mdi-apps"
+            color="primary"
+            size="20"
+            class="mr-2"
+          />
+          <span class="text-body-2 font-weight-bold text-primary">App Navigation</span>
         </div>
 
-        <v-divider v-if="user" />
-
-        <!-- Navigation Content -->
-        <div class="drawer-content">
-            <!-- Context-specific Navigation -->
-            <div v-if="isInTest" class="test-context pa-4">
-                <div class="context-header mb-3">
-                    <v-icon :icon="testIcon" color="primary" size="20" class="mr-2" />
-                    <span class="text-body-2 font-weight-bold text-primary">{{ testTitle }}</span>
-                </div>
-
-                <!-- Test Navigation Items -->
-                <v-list class="test-nav-list" nav>
-                    <v-list-item v-for="item in filteredTestItems" :key="item.id" :title="item.title"
-                        :prepend-icon="item.icon" :active="activeStep === item.id" :disabled="item.disabled"
-                        class="nav-item" rounded="lg" @click="navigateToStep(item)">
-                        <template v-if="item.status" #append>
-                            <v-icon :icon="getStatusIcon(item.status)" :color="getStatusColor(item.status)" size="16" />
-                        </template>
-                    </v-list-item>
-                </v-list>
+        <v-list
+          class="global-nav-list"
+          nav
+        >
+          <template
+            v-for="item in globalNavigationItems"
+            :key="item.id"
+          >
+            <!-- Section Headers -->
+            <div
+              v-if="item.type === 'header'"
+              class="section-header"
+            >
+              <p class="text-caption text-medium-emphasis font-weight-bold px-2 py-1 ma-0">
+                {{ item.title }}
+              </p>
             </div>
 
-            <!-- Global Navigation -->
-            <div class="global-context pa-4">
-                <div v-if="isInTest" class="context-header mb-3">
-                    <v-icon icon="mdi-apps" color="primary" size="20" class="mr-2" />
-                    <span class="text-body-2 font-weight-bold text-primary">App Navigation</span>
-                </div>
+            <!-- Navigation Items -->
+            <v-list-item
+              v-else
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+              :active="activeSection === item.id"
+              class="nav-item"
+              rounded="lg"
+              @click="navigateToSection(item)"
+            >
+              <template
+                v-if="item.badge"
+                #append
+              >
+                <v-chip
+                  :color="item.badge.color"
+                  size="x-small"
+                  variant="flat"
+                >
+                  {{ item.badge.text }}
+                </v-chip>
+              </template>
+            </v-list-item>
+          </template>
+        </v-list>
+      </div>
 
-                <v-list class="global-nav-list" nav>
-                    <template v-for="item in globalNavigationItems" :key="item.id">
-                        <!-- Section Headers -->
-                        <div v-if="item.type === 'header'" class="section-header">
-                            <p class="text-caption text-medium-emphasis font-weight-bold px-2 py-1 ma-0">
-                                {{ item.title }}
-                            </p>
-                        </div>
+      <!-- Action Buttons -->
+      <div class="action-section pa-4 mt-auto">
+        <v-btn
+          v-if="!isInTest"
+          color="primary"
+          block
+          size="large"
+          prepend-icon="mdi-plus"
+          rounded="lg"
+          class="create-button mb-3"
+          @click="createNewTest"
+        >
+          Create New Test
+        </v-btn>
 
-                        <!-- Navigation Items -->
-                        <v-list-item v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
-                            :active="activeSection === item.id" class="nav-item" rounded="lg"
-                            @click="navigateToSection(item)">
-                            <template v-if="item.badge" #append>
-                                <v-chip :color="item.badge.color" size="x-small" variant="flat">
-                                    {{ item.badge.text }}
-                                </v-chip>
-                            </template>
-                        </v-list-item>
-                    </template>
-                </v-list>
-            </div>
+        <v-btn
+          v-if="isInTest"
+          variant="outlined"
+          color="primary"
+          block
+          prepend-icon="mdi-arrow-left"
+          rounded="lg"
+          class="mb-3"
+          @click="exitTest"
+        >
+          Exit Test
+        </v-btn>
 
-            <!-- Action Buttons -->
-            <div class="action-section pa-4 mt-auto">
-                <v-btn v-if="!isInTest" color="primary" block size="large" prepend-icon="mdi-plus" rounded="lg"
-                    class="create-button mb-3" @click="createNewTest">
-                    Create New Test
-                </v-btn>
-
-                <v-btn v-if="isInTest" variant="outlined" color="primary" block prepend-icon="mdi-arrow-left"
-                    rounded="lg" class="mb-3" @click="exitTest">
-                    Exit Test
-                </v-btn>
-
-                <v-btn v-if="user" variant="text" color="error" block prepend-icon="mdi-logout" rounded="lg"
-                    @click="signOut">
-                    Sign Out
-                </v-btn>
-            </div>
-        </div>
-    </v-navigation-drawer>
+        <v-btn
+          v-if="user"
+          variant="text"
+          color="error"
+          block
+          prepend-icon="mdi-logout"
+          rounded="lg"
+          @click="signOut"
+        >
+          Sign Out
+        </v-btn>
+      </div>
+    </div>
+  </v-navigation-drawer>
 </template>
 
 <script setup>

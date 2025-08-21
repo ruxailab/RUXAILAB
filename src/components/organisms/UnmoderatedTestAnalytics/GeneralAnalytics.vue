@@ -2,29 +2,60 @@
   <div>
     <!-- UX Metrics Row (ahora primera fila) -->
     <v-row>
-      <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" label="Eficacia" color="success"
-          icon="mdi-target-account" description="Porcentaje de tareas completadas exitosamente"
-          :progress="calculateEffectiveness()" />
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="`${calculateEffectiveness().toFixed(1)}%`"
+          label="Eficacia"
+          color="success"
+          icon="mdi-target-account"
+          description="Porcentaje de tareas completadas exitosamente"
+          :progress="calculateEffectiveness()"
+        />
       </v-col>
-      <v-col cols="12" md="4">
-        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" label="Eficiencia" color="info"
-          icon="mdi-speedometer" :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
-          :progress="Math.min(calculateEfficiency().score * 10, 100)" />
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="calculateEfficiency().score.toFixed(1)"
+          label="Eficiencia"
+          color="info"
+          icon="mdi-speedometer"
+          :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
+          :progress="Math.min(calculateEfficiency().score * 10, 100)"
+        />
       </v-col>
-      <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" label="Satisfacción" color="warning"
-          icon="mdi-heart" description="Puntuación promedio de satisfacción del usuario"
-          :progress="(calculateSatisfaction() / 5) * 100" />
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="`${calculateSatisfaction().toFixed(1)}/5`"
+          label="Satisfacción"
+          color="warning"
+          icon="mdi-heart"
+          description="Puntuación promedio de satisfacción del usuario"
+          :progress="(calculateSatisfaction() / 5) * 100"
+        />
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
               <div class="d-flex align-center mb-3">
-                <v-icon color="primary" size="28" class="me-3">
+                <v-icon
+                  color="primary"
+                  size="28"
+                  class="me-3"
+                >
                   mdi-target
                 </v-icon>
                 <h3 class="text-h5 font-weight-medium text-on-surface">
@@ -39,15 +70,30 @@
               </p>
             </div>
             <div class="text-end">
-              <v-chip color="success" variant="flat" size="small" class="mb-2">
-                <v-icon start size="16">
+              <v-chip
+                color="success"
+                variant="flat"
+                size="small"
+                class="mb-2"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
                   mdi-trending-up
                 </v-icon>
                 Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
               </v-chip>
               <br>
-              <v-chip color="error" variant="flat" size="small">
-                <v-icon start size="16">
+              <v-chip
+                color="error"
+                variant="flat"
+                size="small"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
                   mdi-trending-down
                 </v-icon>
                 Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
@@ -55,8 +101,13 @@
             </div>
           </div>
 
-          <v-progress-linear :model-value="getConclusionAverage()" color="primary" height="12" rounded
-            class="mb-6 progress-glow" />
+          <v-progress-linear
+            :model-value="getConclusionAverage()"
+            color="primary"
+            height="12"
+            rounded
+            class="mb-6 progress-glow"
+          />
 
           <v-divider class="mb-6" />
 
@@ -69,7 +120,10 @@
                 Tests in Progress
               </p>
             </div>
-            <v-divider vertical class="mx-4" />
+            <v-divider
+              vertical
+              class="mx-4"
+            />
             <div class="text-center">
               <div class="text-h4 font-weight-bold text-accent mb-1">
                 16m
@@ -81,13 +135,23 @@
           </div>
         </v-card>
       </v-col>
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <v-row class="h-100">
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="primary" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="primary"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-clock-fast
                   </v-icon>
                 </v-avatar>
@@ -106,11 +170,20 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card v-if="testStructure?.userTasks && taskAnswers.length"
-              class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+            <v-card
+              v-if="testStructure?.userTasks && taskAnswers.length"
+              class="pa-6 elevation-3 rounded-xl h-100 stat-card"
+            >
               <div class="d-flex align-center mb-4">
-                <v-avatar color="error" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="error"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-timer-alert
                   </v-icon>
                 </v-avatar>
@@ -131,8 +204,15 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="success" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="success"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-check-circle
                   </v-icon>
                 </v-avatar>
@@ -146,7 +226,11 @@
                 </div>
               </div>
               <div class="d-flex align-center">
-                <v-icon color="success" size="16" class="me-1">
+                <v-icon
+                  color="success"
+                  size="16"
+                  class="me-1"
+                >
                   mdi-trending-up
                 </v-icon>
                 <span class="text-caption text-success">+{{ getTasksTodayCount() }}/day</span>
@@ -156,8 +240,15 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="accent" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="accent"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-account-circle
                   </v-icon>
                 </v-avatar>
@@ -180,12 +271,19 @@
     </v-row>
 
     <!-- Chart Section -->
-    <AnswersTimeline :task-answers="taskAnswers" @refresh="onRefreshTimeline" @export="onExportTimeline" />
+    <AnswersTimeline
+      :task-answers="taskAnswers"
+      @refresh="onRefreshTimeline"
+      @export="onExportTimeline"
+    />
 
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card flat class="pa-8">
+        <v-card
+          flat
+          class="pa-8"
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -198,30 +296,46 @@
           </div>
 
           <v-row>
-            <v-col v-for="taskStat in getTasksPerformance()" :key="taskStat.taskId" cols="12" md="6" lg="4">
-              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" outlined>
+            <v-col
+              v-for="taskStat in getTasksPerformance()"
+              :key="taskStat.taskId"
+              cols="12"
+              md="6"
+              lg="4"
+            >
+              <v-card
+                class="pa-4 elevation-2 rounded-lg task-chart-card"
+                border
+              >
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
                   </h4>
                   <v-chip
                     :color="taskStat.successRate >= 70 ? 'success' : taskStat.successRate >= 50 ? 'warning' : 'error'"
-                    variant="tonal" size="small">
+                    variant="tonal"
+                    size="small"
+                  >
                     {{ taskStat.successRate.toFixed(1) }}% éxito
                   </v-chip>
                 </div>
 
                 <div class="chart-container-small mb-4">
-                  <canvas :id="'task-chart-' + taskStat.taskId" class="task-chart" width="120" height="120"></canvas>
+                  <canvas
+                    :id="'task-chart-' + taskStat.taskId"
+                    class="task-chart"
+                    width="120"
+                    height="120"
+                  />
                 </div>
 
                 <div class="d-flex justify-space-between text-body-2">
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-success mr-2"></div>
+                    <div class="legend-dot bg-success mr-2" />
                     <span>Aciertos: {{ taskStat.success }}</span>
                   </div>
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-error mr-2"></div>
+                    <div class="legend-dot bg-error mr-2" />
                     <span>Errores: {{ taskStat.errors }}</span>
                   </div>
                 </div>
@@ -235,7 +349,10 @@
     <!-- Mostrar todas las preguntas del pre-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card flat class="pa-8 ">
+        <v-card
+          flat
+          class="pa-8 "
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -248,14 +365,30 @@
           </div>
           <v-row>
             <template v-for="(q, idx) in (testStructure?.preTest || [])">
-              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'pre-sel-' + (q.title || q.question || idx)" cols="12" md="6" lg="4">
-                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
-                  :counts="getPreSelectionCounts(idx)" :canvas-id="'pretest-selection-chart-' + idx"
-                  :chart-colors="chartColors" />
+              <v-col
+                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'pre-sel-' + (q.title || q.question || idx)"
+                cols="12"
+                md="6"
+                lg="4"
+              >
+                <SelectionPieChart
+                  :question-title="q.title || q.question"
+                  :options="q.selectionFields"
+                  :counts="getPreSelectionCounts(idx)"
+                  :canvas-id="'pretest-selection-chart-' + idx"
+                  :chart-colors="chartColors"
+                />
               </v-col>
-              <v-col v-else :key="'pre-com-' + (q.title || q.question || idx)" cols="12">
-                <CommentListCard :question-title="q.title || q.question" :answer="getPreTextAnswers(idx)" />
+              <v-col
+                v-else
+                :key="'pre-com-' + (q.title || q.question || idx)"
+                cols="12"
+              >
+                <CommentListCard
+                  :question-title="q.title || q.question"
+                  :answer="getPreTextAnswers(idx)"
+                />
               </v-col>
             </template>
           </v-row>
@@ -266,7 +399,10 @@
     <!-- Mostrar todas las preguntas del post-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card flat class="pa-8 ">
+        <v-card
+          flat
+          class="pa-8 "
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -278,15 +414,34 @@
             </div>
           </div>
           <v-row>
-            <template v-for="(q, idx) in postTestQuestions" :key="'ptq-' + (q.question || idx)">
-              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'sel-' + (q.question || idx)" cols="12" md="6" lg="4">
-                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
-                  :counts="getSelectionCounts(idx)" :canvas-id="'posttest-selection-chart-' + idx"
-                  :chart-colors="chartColors" />
+            <template
+              v-for="(q, idx) in postTestQuestions"
+              :key="'ptq-' + (q.question || idx)"
+            >
+              <v-col
+                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'sel-' + (q.question || idx)"
+                cols="12"
+                md="6"
+                lg="4"
+              >
+                <SelectionPieChart
+                  :question-title="q.title || q.question"
+                  :options="q.selectionFields"
+                  :counts="getSelectionCounts(idx)"
+                  :canvas-id="'posttest-selection-chart-' + idx"
+                  :chart-colors="chartColors"
+                />
               </v-col>
-              <v-col v-else :key="'com-' + (q.question || idx)" cols="12">
-                <CommentListCard :question-title="q.title || q.question" :answer="getPostTextAnswers(idx)" />
+              <v-col
+                v-else
+                :key="'com-' + (q.question || idx)"
+                cols="12"
+              >
+                <CommentListCard
+                  :question-title="q.title || q.question"
+                  :answer="getPostTextAnswers(idx)"
+                />
               </v-col>
             </template>
           </v-row>

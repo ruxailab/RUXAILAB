@@ -1,6 +1,9 @@
 <template>
   <v-row class="mb">
-    <v-col cols="12" class="text-center">
+    <v-col
+      cols="12"
+      class="text-center"
+    >
       <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-3">
         {{ title }}
       </h2>
