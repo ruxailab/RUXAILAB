@@ -1,5 +1,8 @@
 <template>
-  <PageWrapper title="Edit Test" :side-gap="true">
+  <PageWrapper
+    title="Edit Test"
+    :side-gap="true"
+  >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Customize the settings and preferences of your test
@@ -8,16 +11,35 @@
 
     <v-container>
       <Snackbar />
-      <ButtonSave :visible="change" @click="save" />
+      <ButtonSave
+        :visible="change"
+        @click="save"
+      />
 
       <div>
-        <VTabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
-          <VTab @click="index = 0">{{ 'Test' }}</VTab>
-          <VTab @click="index = 1">{{ $t('ModeratedTest.consentForm') }}</VTab>
-          <VTab @click="index = 2">{{ $t('ModeratedTest.preTest') }}</VTab>
-          <VTab @click="index = 3">{{ 'Categories' }}</VTab>
-          <VTab @click="index = 4">{{ 'Cards' }}</VTab>
-          <VTab @click="index = 5">{{ $t('ModeratedTest.postTest') }}</VTab>
+        <VTabs
+          bg-color="transparent"
+          color="#FCA326"
+          class="pb-0 mb-0"
+        >
+          <VTab @click="index = 0">
+            {{ 'Test' }}
+          </VTab>
+          <VTab @click="index = 1">
+            {{ $t('ModeratedTest.consentForm') }}
+          </VTab>
+          <VTab @click="index = 2">
+            {{ $t('ModeratedTest.preTest') }}
+          </VTab>
+          <VTab @click="index = 3">
+            {{ 'Categories' }}
+          </VTab>
+          <VTab @click="index = 4">
+            {{ 'Cards' }}
+          </VTab>
+          <VTab @click="index = 5">
+            {{ $t('ModeratedTest.postTest') }}
+          </VTab>
         </VTabs>
 
         <VCol cols="12">
@@ -25,25 +47,48 @@
           <div v-if="index === 0">
             <VRow>
               <VCol cols="9">
-                <TextareaForm :title="$t('ModeratedTest.welcomeMessage')" v-model="welcomeMessage"
-                  :subtitle="$t('ModeratedTest.welcomeMessageDescription')" />
+                <TextareaForm
+                  v-model="welcomeMessage"
+                  :title="$t('ModeratedTest.welcomeMessage')"
+                  :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
+                />
 
-                <TextareaForm :title="$t('ModeratedTest.finalMessage')" v-model="finalMessage"
+                <TextareaForm
+                  v-model="finalMessage"
+                  :title="$t('ModeratedTest.finalMessage')"
                   :subtitle="$t('ModeratedTest.finalMessageDescription')"
                 />
               </VCol>
 
               <VCol cols="3">
-                <v-card flat class="elevation-2 rounded-lg pa-6">
+                <v-card
+                  flat
+                  class="elevation-2 rounded-lg pa-6"
+                >
                   <v-card-title class="text-h5 font-weight-bold mb-4 bg-on-surface">
                     {{ $t('ModeratedTest.participantCamera') }}
                   </v-card-title>
                   <v-card-text>
-                    <v-radio-group v-model="participantCamera" class="pt-0"
-                      @update:model-value="change = true">
-                      <v-radio :label="$t('ModeratedTest.cameraOptions.optional')" color="orange" value="optional" />
-                      <v-radio :label="$t('ModeratedTest.cameraOptions.required')" color="orange" value="required" />
-                      <v-radio :label="$t('ModeratedTest.cameraOptions.disabled')" color="orange" value="disabled" />
+                    <v-radio-group
+                      v-model="participantCamera"
+                      class="pt-0"
+                      @update:model-value="change = true"
+                    >
+                      <v-radio
+                        :label="$t('ModeratedTest.cameraOptions.optional')"
+                        color="orange"
+                        value="optional"
+                      />
+                      <v-radio
+                        :label="$t('ModeratedTest.cameraOptions.required')"
+                        color="orange"
+                        value="required"
+                      />
+                      <v-radio
+                        :label="$t('ModeratedTest.cameraOptions.disabled')"
+                        color="orange"
+                        value="disabled"
+                      />
                     </v-radio-group>
                   </v-card-text>
                 </v-card>
@@ -52,29 +97,63 @@
           </div>
 
           <!-- CONSENT FORM -->
-          <v-card v-if="index === 1" rounded="xxl">
-            <TextareaForm :title="$t('ModeratedTest.consentForm')" v-model="consent"
-              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button." />
+          <v-card
+            v-if="index === 1"
+            rounded="xxl"
+          >
+            <TextareaForm
+              v-model="consent"
+              :title="$t('ModeratedTest.consentForm')"
+              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+            />
           </v-card>
 
           <!-- PRE-TEST -->
-          <v-card v-if="index === 2" rounded="xxl">
-            <UserVariables @update="preTest = $event" @change="change = true" />
+          <v-card
+            v-if="index === 2"
+            rounded="xxl"
+          >
+            <UserVariables
+              type="pre-test"
+              @update="preTest = $event"
+              @change="change = true"
+            />
           </v-card>
 
           <!-- CATEGORIES -->
-          <div v-if="index === 3" rounded="xxl">
-            <CategoriesEditCardSorting @change="change = true" @categories="categories = $event" @options="optionsCategories = $event" />
+          <div
+            v-if="index === 3"
+            rounded="xxl"
+          >
+            <CategoriesEditCardSorting
+              @change="change = true"
+              @categories="categories = $event"
+              @options="optionsCategories = $event"
+            />
           </div>
 
           <!-- CARDS -->
-          <div v-if="index === 4" rounded="xxl">
-            <CardsEditCardSorting @change="change = true" @cards="cards = $event" @options="optionsCards = $event" />
+          <div
+            v-if="index === 4"
+            rounded="xxl"
+          >
+            <CardsEditCardSorting
+              @change="change = true"
+              @cards="cards = $event"
+              @options="optionsCards = $event"
+            />
           </div>
 
           <!-- POS-TEST -->
-          <v-card v-if="index === 5" rounded="xxl">
-            <FormPostTest @update="postTest = $event" @change="change = true" />
+          <v-card
+            v-if="index === 5"
+            rounded="xxl"
+          >
+            <UserVariables
+              type="post-test"
+              @update="postTest = $event"
+              @change="change = true"
+            />
           </v-card>
         </VCol>
       </div>
@@ -84,7 +163,6 @@
 
 <script setup>
 import ButtonSave from '@/components/atoms/ButtonSave.vue';
-import FormPostTest from '@/components/atoms/FormPostTest.vue';
 import Snackbar from '@/components/atoms/Snackbar.vue';
 import TextareaForm from '@/components/atoms/TextareaForm.vue';
 import UserVariables from '@/components/atoms/UserVariables.vue';
