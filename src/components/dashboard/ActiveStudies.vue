@@ -1,54 +1,27 @@
 <template>
-  <v-card
-    elevation="2"
-    rounded="lg"
-    class="mb-6"
-  >
+  <v-card elevation="2" rounded="lg" class="mb-6">
     <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
-        <v-icon
-          icon="mdi-flask-outline"
-          class="me-2"
-          color="primary"
-        />
+        <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
         Active Studies Overview
       </div>
-      <v-btn
-        variant="text"
-        size="small"
-        color="primary"
-      >
+      <v-btn variant="text" size="small" color="primary">
         View All
       </v-btn>
     </v-card-title>
 
     <v-card-text class="pa-4">
       <v-row>
-        <v-col
-          v-for="study in studies"
-          :key="study.id"
-          cols="12"
-          md="6"
-        >
-          <v-card
-            variant="outlined"
-            rounded="lg"
-            class="study-card"
-          >
+        <v-col v-for="study in studies" :key="study.id" cols="12" md="6">
+          <v-card variant="outlined" rounded="lg" class="study-card">
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
                 <v-chip
                   :color="study.status === 'active' ? 'success' : study.status === 'finished' ? 'warning' : 'info'"
-                  variant="tonal"
-                  size="small"
-                >
-                  {{ study.status.charAt(0).toUpperCase() + study.status.slice(1) }}
+                  variant="tonal" size="small">
+                  {{ study.status ? (study.status.charAt(0).toUpperCase() + study.status.slice(1)) : 'Unknown' }}
                 </v-chip>
-                <v-icon
-                  :icon="study.typeIcon"
-                  size="20"
-                  color="primary"
-                />
+                <v-icon :icon="study.typeIcon" size="20" color="primary" />
               </div>
 
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
@@ -64,32 +37,18 @@
                   <span class="text-caption font-weight-medium">Progress</span>
                   <span class="text-caption">{{ study.progress }}%</span>
                 </div>
-                <v-progress-linear
-                  :model-value="study.progress"
-                  :color="study.status === 'active' ? 'success' : 'primary'"
-                  height="6"
-                  rounded
-                />
+                <v-progress-linear :model-value="study.progress"
+                  :color="study.status === 'active' ? 'success' : 'primary'" height="6" rounded />
               </div>
 
               <!-- Metrics -->
               <div class="d-flex justify-space-between text-caption">
                 <div class="d-flex align-center">
-                  <v-icon
-                    icon="mdi-account-group"
-                    size="16"
-                    class="me-1"
-                    color="info"
-                  />
+                  <v-icon icon="mdi-account-group" size="16" class="me-1" color="info" />
                   <span>{{ study.participants }} participants</span>
                 </div>
                 <div class="d-flex align-center">
-                  <v-icon
-                    icon="mdi-calendar-clock"
-                    size="16"
-                    class="me-1"
-                    color="warning"
-                  />
+                  <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning" />
                   <span>{{ study.daysLeft }} days left</span>
                 </div>
               </div>
@@ -102,72 +61,144 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import AnswerController from '@/controllers/AnswerController';
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex';
 
 const props = defineProps({
-    studies: {
-        type: Array,
-        default: () => []
-    }
+  studies: {
+    type: Array,
+    default: () => []
+  }
 })
+
+const store = useStore()
+const answerController = new AnswerController()
+
+const loading = ref(false);
+const studiesWithAnswers = ref([]);
+
+const studies = computed(() => {
+  return props.studies.length > 0 ? studiesWithAnswers.value : defaultStudies
+})
+
+const lastFourStudies = computed(() => {
+  if (!props.studies) return [];
+  return [...props.studies].sort(
+    (a, b) => (b.creationDate || 0) - (a.creationDate || 0)
+  ).slice(0, 4);
+});
+
+async function loadAnswers() {
+  if (!lastFourStudies.value.length) {
+    studiesWithAnswers.value = [];
+    return;
+  }
+
+  loading.value = true;
+  const last4 = []
+  try {
+    for (const study in lastFourStudies.value) {
+      const testDoc = await store.dispatch('getTest', { id: lastFourStudies.value[study].testDocId });
+      const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
+      if (answerDoc.type === 'User') {
+        last4.push({
+          ...testDoc,
+          answers: Object.values({ ...answerDoc.taskAnswers })
+        })
+      } else {
+        last4.push({
+          ...testDoc,
+          answers: Object.values({ ...answerDoc.heuristicAnswers })
+        })
+      }
+    }
+    finalFour(last4)
+  } catch (e) {
+    console.error('Error loading answers', e);
+    studiesWithAnswers.value = [];
+  } finally {
+    loading.value = false;
+  }
+}
+
+const calculateProgress = (answers) => {
+  if (!answers || answers.length === 0) return 0;
+  const sum = answers.reduce((acc, val) => acc + val.progress, 0);
+  return sum / answers.length;
+}
+
+const finalFour = (studyArr) => {
+  if (!studyArr) {
+    studiesWithAnswers.value = [];
+    return
+  }
+  for (const study in studyArr) {
+    studiesWithAnswers.value.push({
+      title: studyArr[study].testTitle,
+      description: studyArr[study].testDescription,
+      status: studyArr[study].status,
+      progress: calculateProgress(studyArr[study].answers),
+      participants: studyArr[study].answers?.length || 0,
+      daysLeft: studyArr[study].endDate || 0,
+      typeIcon: 'mdi-sort-variant'
+    })
+  }
+}
 
 // Default studies if none provided
 const defaultStudies = [
-    {
-        id: 1,
-        title: 'Mobile Banking UX Study',
-        description: 'Evaluating user experience and accessibility of mobile banking features',
-        status: 'active',
-        progress: 75,
-        participants: 24,
-        daysLeft: 5,
-        typeIcon: 'mdi-cellphone'
-    },
-    {
-        id: 2,
-        title: 'E-commerce Card Sorting',
-        description: 'Understanding user mental models for product categorization',
-        status: 'recruiting',
-        progress: 45,
-        participants: 18,
-        daysLeft: 12,
-        typeIcon: 'mdi-sort-variant'
-    },
-    {
-        id: 3,
-        title: 'Voice Interface Testing',
-        description: 'Usability testing for voice-controlled smart home devices',
-        status: 'active',
-        progress: 90,
-        participants: 32,
-        daysLeft: 2,
-        typeIcon: 'mdi-microphone'
-    },
-    {
-        id: 4,
-        title: 'Accessibility Audit',
-        description: 'Comprehensive accessibility evaluation of web application',
-        status: 'paused',
-        progress: 30,
-        participants: 12,
-        daysLeft: 20,
-        typeIcon: 'mdi-wheelchair-accessibility'
-    }
+  {
+    id: 1,
+    title: 'Mobile Banking UX Study',
+    description: 'Evaluating user experience and accessibility of mobile banking features',
+    status: 'active',
+    progress: 75,
+    participants: 24,
+    daysLeft: 5,
+    typeIcon: 'mdi-cellphone'
+  },
+  {
+    id: 2,
+    title: 'E-commerce Card Sorting',
+    description: 'Understanding user mental models for product categorization',
+    status: 'recruiting',
+    progress: 45,
+    participants: 18,
+    daysLeft: 12,
+    typeIcon: 'mdi-sort-variant'
+  },
+  {
+    id: 3,
+    title: 'Voice Interface Testing',
+    description: 'Usability testing for voice-controlled smart home devices',
+    status: 'active',
+    progress: 90,
+    participants: 32,
+    daysLeft: 2,
+    typeIcon: 'mdi-microphone'
+  },
+  {
+    id: 4,
+    title: 'Accessibility Audit',
+    description: 'Comprehensive accessibility evaluation of web application',
+    status: 'paused',
+    progress: 30,
+    participants: 12,
+    daysLeft: 20,
+    typeIcon: 'mdi-wheelchair-accessibility'
+  }
 ]
-
-const studies = computed(() => {
-    return props.studies.length > 0 ? props.studies : defaultStudies
-})
 </script>
 
 <style scoped>
 .study-card {
-    height: 100%;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  height: 100%;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .study-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>
