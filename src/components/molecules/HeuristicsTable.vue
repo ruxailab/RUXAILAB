@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="pa-6">
+      <v-container
+        fluid
+        class="pa-6"
+      >
         <!-- Header Section -->
         <div class="d-flex align-center justify-space-between mb-8">
           <div>
@@ -15,9 +18,9 @@
             prepend-icon="mdi-plus"
             variant="elevated"
             size="large"
-            @click="dialogHeuris = true"
             :disabled="testAnswerDocLength > 0"
             class="text-none"
+            @click="dialogHeuris = true"
           >
             {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
           </v-btn>
@@ -56,8 +59,8 @@
                   :icon="itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                   variant="text"
                   size="small"
-                  @click="toggleHeuristic(index)"
                   class="me-3"
+                  @click="toggleHeuristic(index)"
                 />
                 
                 <div class="flex-grow-1">
@@ -79,7 +82,10 @@
                     @click="moveItemUp(index)"
                   >
                     <v-icon>mdi-arrow-up</v-icon>
-                    <v-tooltip activator="parent" location="top">
+                    <v-tooltip
+                      activator="parent"
+                      location="top"
+                    >
                       {{ $t('HeuristicsTable.titles.moveUp') }}
                     </v-tooltip>
                   </v-btn>
@@ -92,7 +98,10 @@
                     @click="moveItemDown(index)"
                   >
                     <v-icon>mdi-arrow-down</v-icon>
-                    <v-tooltip activator="parent" location="top">
+                    <v-tooltip
+                      activator="parent"
+                      location="top"
+                    >
                       {{ $t('HeuristicsTable.titles.moveDown') }}
                     </v-tooltip>
                   </v-btn>
@@ -101,11 +110,14 @@
                     variant="text"
                     size="small"
                     color="accent"
-                    @click="setupQuestion(heuristic.id)"
                     :disabled="testAnswerDocLength > 0"
+                    @click="setupQuestion(heuristic.id)"
                   >
                     <v-icon>mdi-plus</v-icon>
-                    <v-tooltip activator="parent" location="top">
+                    <v-tooltip
+                      activator="parent"
+                      location="top"
+                    >
                       {{ $t('HeuristicsTable.titles.addNewQuestion') }}
                     </v-tooltip>
                   </v-btn>
@@ -117,7 +129,10 @@
                     @click="editHeuris(heuristic)"
                   >
                     <v-icon>mdi-pencil</v-icon>
-                    <v-tooltip activator="parent" location="top">
+                    <v-tooltip
+                      activator="parent"
+                      location="top"
+                    >
                       {{ $t('HeuristicsTable.titles.editHeuristic') }}
                     </v-tooltip>
                   </v-btn>
@@ -126,11 +141,14 @@
                     variant="text"
                     size="small"
                     color="error"
-                    @click="deleteHeuristic(index)"
                     :disabled="testAnswerDocLength > 0"
+                    @click="deleteHeuristic(index)"
                   >
                     <v-icon>mdi-delete</v-icon>
-                    <v-tooltip activator="parent" location="top">
+                    <v-tooltip
+                      activator="parent"
+                      location="top"
+                    >
                       {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
                     </v-tooltip>
                   </v-btn>
@@ -143,7 +161,9 @@
                   <v-divider />
                   <v-card-text class="pa-4">
                     <div class="d-flex align-center justify-space-between mb-4">
-                      <h4 class="text-h6 text-on-surface">{{ $t('HeuristicsTable.titles.questions') }}</h4>
+                      <h4 class="text-h6 text-on-surface">
+                        {{ $t('HeuristicsTable.titles.questions') }}
+                      </h4>
                       <v-chip
                         :color="heuristic.questions.length > 0 ? 'success' : 'warning'"
                         variant="tonal"
@@ -154,7 +174,10 @@
                     </div>
 
                     <!-- Questions Grid -->
-                    <div v-if="heuristic.questions.length > 0" class="questions-list">
+                    <div
+                      v-if="heuristic.questions.length > 0"
+                      class="questions-list"
+                    >
                       <v-card
                         v-for="(question, qIndex) in heuristic.questions"
                         :key="question.id"
@@ -190,8 +213,8 @@
                                 variant="text"
                                 size="small"
                                 color="error"
-                                @click.stop="deleteQuestion(qIndex)"
                                 :disabled="testAnswerDocLength > 0"
+                                @click.stop="deleteQuestion(qIndex)"
                               />
                             </div>
                           </div>
@@ -199,10 +222,15 @@
                       </v-card>
 
                       <!-- Descriptions Section -->
-                      <v-card v-if="questionSelect !== null" class="mt-4">
+                      <v-card
+                        v-if="questionSelect !== null"
+                        class="mt-4"
+                      >
                         <v-card-text>
                           <div class="d-flex align-center justify-space-between mb-4">
-                            <h4 class="text-h6 text-on-surface">{{ $t('HeuristicsTable.titles.descriptions') }}</h4>
+                            <h4 class="text-h6 text-on-surface">
+                              {{ $t('HeuristicsTable.titles.descriptions') }}
+                            </h4>
                             <AddDescBtn
                               :question-index="questionSelect"
                               :heuristic-index="itemSelect"
@@ -216,21 +244,28 @@
                             class="elevation-0"
                           >
                             <template #item.actions="{ item }">
-                              <v-row justify="end" class="pr-1">
+                              <v-row
+                                justify="end"
+                                class="pr-1"
+                              >
                                 <v-btn
                                   icon
                                   size="small"
                                   class="mr-2"
                                   @click="editDescription(item)"
                                 >
-                                  <v-icon size="small">mdi-pencil</v-icon>
+                                  <v-icon size="small">
+                                    mdi-pencil
+                                  </v-icon>
                                 </v-btn>
                                 <v-btn
                                   icon
                                   size="small"
                                   @click="deleteItem(item)"
                                 >
-                                  <v-icon size="small">mdi-delete</v-icon>
+                                  <v-icon size="small">
+                                    mdi-delete
+                                  </v-icon>
                                 </v-btn>
                               </v-row>
                             </template>
@@ -252,7 +287,9 @@
                         color="secondary"
                         class="mb-4"
                       />
-                      <h4 class="text-h6 text-secondary mb-2">{{ $t('HeuristicsTable.titles.noQuestions') }}</h4>
+                      <h4 class="text-h6 text-secondary mb-2">
+                        {{ $t('HeuristicsTable.titles.noQuestions') }}
+                      </h4>
                       <p class="text-body-2 text-secondary mb-4">
                         {{ $t('HeuristicsTable.messages.startAddingQuestions') }}
                       </p>
@@ -260,8 +297,8 @@
                         color="primary"
                         variant="outlined"
                         prepend-icon="mdi-plus"
-                        @click="setupQuestion(heuristic.id)"
                         :disabled="testAnswerDocLength > 0"
+                        @click="setupQuestion(heuristic.id)"
                       >
                         {{ $t('HeuristicsTable.titles.addNewQuestion') }}
                       </v-btn>
@@ -276,9 +313,19 @@
         <!-- Empty State for No Heuristics -->
         <v-row v-if="filteredHeuristics.length === 0">
           <v-col cols="12">
-            <v-card class="text-center pa-8" variant="outlined">
-              <v-icon icon="mdi-file-remove" size="64" color="primary" class="mb-4" />
-              <h3 class="text-h5 text-ternary mb-2">{{ $t('HeuristicsTable.titles.noHeuristicsFound') }}</h3>
+            <v-card
+              class="text-center pa-8"
+              variant="outlined"
+            >
+              <v-icon
+                icon="mdi-file-remove"
+                size="64"
+                color="primary"
+                class="mb-4"
+              />
+              <h3 class="text-h5 text-ternary mb-2">
+                {{ $t('HeuristicsTable.titles.noHeuristicsFound') }}
+              </h3>
               <p class="text-body-1 text-ternary">
                 {{ $t('HeuristicsTable.messages.noHeuristics') }}
               </p>
@@ -286,8 +333,8 @@
                 color="primary"
                 variant="outlined"
                 prepend-icon="mdi-plus"
-                @click="dialogHeuris = true"
                 :disabled="testAnswerDocLength > 0"
+                @click="dialogHeuris = true"
               >
                 {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
               </v-btn>
@@ -296,13 +343,23 @@
         </v-row>
 
         <!-- Add/Edit Heuristic Dialog -->
-        <v-dialog v-model="dialogHeuris" max-width="600" persistent>
+        <v-dialog
+          v-model="dialogHeuris"
+          max-width="600"
+          persistent
+        >
           <v-card>
-            <v-card-title class="text-h5 pa-6" style="background-color: #00213F; color: white;">
+            <v-card-title
+              class="text-h5 pa-6"
+              style="background-color: #00213F; color: white;"
+            >
               {{ $t('HeuristicsTable.titles.creatingHeuristic') }}
             </v-card-title>
             <v-card-text class="pa-6">
-              <v-form ref="formHeurisRef" @keyup.enter="addHeuris">
+              <v-form
+                ref="formHeurisRef"
+                @keyup.enter="addHeuris"
+              >
                 <v-text-field
                   v-model="heuristicForm.title"
                   :label="$t('HeuristicsTable.placeholders.titleYourHeuristic')"
@@ -341,13 +398,23 @@
         </v-dialog>
 
         <!-- Add Question Dialog -->
-        <v-dialog v-model="dialogQuestion" max-width="600" persistent>
+        <v-dialog
+          v-model="dialogQuestion"
+          max-width="600"
+          persistent
+        >
           <v-card>
-            <v-card-title class="text-h5 pa-6" style="background-color: #fca326; color: white;">
+            <v-card-title
+              class="text-h5 pa-6"
+              style="background-color: #fca326; color: white;"
+            >
               {{ $t('HeuristicsTable.titles.newQuestion') }}
             </v-card-title>
             <v-card-text class="pa-6 pt-0">
-              <v-form ref="formQuestionRef" @submit.prevent="addQuestion">
+              <v-form
+                ref="formQuestionRef"
+                @submit.prevent="addQuestion"
+              >
                 <v-text-field
                   v-model="newQuestion.title"
                   :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
@@ -378,13 +445,23 @@
         </v-dialog>
 
         <!-- Edit Heuristic/Question Dialog -->
-        <v-dialog v-model="dialogEdit" max-width="600" persistent>
+        <v-dialog
+          v-model="dialogEdit"
+          max-width="600"
+          persistent
+        >
           <v-card>
-            <v-card-title class="text-h5 pa-6" style="background-color: #fca326; color: white;">
+            <v-card-title
+              class="text-h5 pa-6"
+              style="background-color: #fca326; color: white;"
+            >
               {{ itemEdit ? itemEdit.title : '' }}
             </v-card-title>
             <v-card-text class="pa-6 pt-0">
-              <v-form ref="formEditRef" @submit.prevent="validateEdit">
+              <v-form
+                ref="formEditRef"
+                @submit.prevent="validateEdit"
+              >
                 <v-text-field
                   v-model="itemEdit.titleEdit"
                   :label="

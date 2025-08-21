@@ -77,9 +77,7 @@
     </v-list>
 
     <!-- Navigation footer -->
-    <div
-      class="footer"
-    >
+    <div class="footer">
       <v-btn
         icon
         size="small"

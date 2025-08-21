@@ -1,35 +1,67 @@
 <template>
   <v-form ref="form">
-    <v-row no-gutters class="px-6 py-0">
+    <v-row
+      no-gutters
+      class="px-6 py-0"
+    >
       <v-col cols="12">
         <div class="input-group mb-6">
           <label class="input-label">Test Title</label>
-          <v-text-field :model-value="test.testTitle" :autofocus="lock ? false : true" :label="$t('common.title')"
-            :rules="titleRequired" counter="200" variant="outlined" density="comfortable"
-            placeholder="Enter a descriptive title for your test" hide-details="auto" class="modern-input"
-            @update:model-value="updateTestTitle($event)" />
+          <v-text-field
+            :model-value="test.testTitle"
+            :autofocus="lock ? false : true"
+            :label="$t('common.title')"
+            :rules="titleRequired"
+            counter="200"
+            variant="outlined"
+            density="comfortable"
+            placeholder="Enter a descriptive title for your test"
+            hide-details="auto"
+            class="modern-input"
+            @update:model-value="updateTestTitle($event)"
+          />
         </div>
 
         <div class="input-group mb-6">
           <label class="input-label">Test Category</label>
-          <v-select :model-value="test.testType" :disabled="lock" :items="types" :label="$t('common.type')"
-            :rules="typeRequired" density="comfortable" variant="outlined"
-            placeholder="Choose the type of test you're conducting" hide-details="auto" class="modern-input"
-            @update:model-value="$emit('update:test', { ...test, testType: $event })">
-            <template v-slot:prepend-inner>
-              <v-icon size="18" color="grey-500">mdi-tag-outline</v-icon>
+          <v-select
+            :model-value="test.testType"
+            :disabled="lock"
+            :items="types"
+            :label="$t('common.type')"
+            :rules="typeRequired"
+            density="comfortable"
+            variant="outlined"
+            placeholder="Choose the type of test you're conducting"
+            hide-details="auto"
+            class="modern-input"
+            @update:model-value="$emit('update:test', { ...test, testType: $event })"
+          >
+            <template #prepend-inner>
+              <v-icon
+                size="18"
+                color="grey-500"
+              >
+                mdi-tag-outline
+              </v-icon>
             </template>
           </v-select>
         </div>
 
         <div class="input-group mb-6">
           <label class="input-label">Description</label>
-          <v-textarea :model-value="test.testDescription" :label="$t('common.description')" variant="outlined" rows="4"
+          <v-textarea
+            :model-value="test.testDescription"
+            :label="$t('common.description')"
+            variant="outlined"
+            rows="4"
             density="comfortable"
             placeholder="Provide detailed information about your test objectives, methodology, and expected outcomes"
-            hide-details="auto" class="modern-input" @update:model-value="updateTestDescription($event)" />
+            hide-details="auto"
+            class="modern-input"
+            @update:model-value="updateTestDescription($event)"
+          />
         </div>
-
       </v-col>
     </v-row>
   </v-form>

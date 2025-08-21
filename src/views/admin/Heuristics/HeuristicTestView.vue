@@ -151,7 +151,10 @@
       </v-row>
     </v-container>
 
-    <v-card v-else height="100vh">
+    <v-card
+      v-else
+      height="100vh"
+    >
       <v-layout class="fill-height">
         <v-navigation-drawer
           v-model="drawer"
@@ -313,7 +316,10 @@
           </v-list>
 
           <template #append>
-            <v-row class="d-flex pb-10 pt-5 px-5" justify="end">
+            <v-row
+              class="d-flex pb-10 pt-5 px-5"
+              justify="end"
+            >
               <v-btn
                 size="small"
                 icon
@@ -412,10 +418,16 @@
                     class="mt-3"
                   >
                     <v-card class="pa-10">
-                      <v-row justify="center" class="text-h5 font-weight-bold text-testPrimary mb-2">
+                      <v-row
+                        justify="center"
+                        class="text-h5 font-weight-bold text-testPrimary mb-2"
+                      >
                         {{ $t('finishTest.finalMessage') }}!
                       </v-row>
-                      <v-row justify="center" class="text-subtitle-1 text-ternary">
+                      <v-row
+                        justify="center"
+                        class="text-subtitle-1 text-ternary"
+                      >
                         {{ $t('finishTest.congratulations') }}
                       </v-row>
                       <v-row
@@ -448,7 +460,7 @@
                             variant="flat"
                             @click="dialog = true"
                           >
-                            <v-icon left>
+                            <v-icon start>
                               mdi-send
                             </v-icon>
                             {{ $t('buttons.submit') }}
