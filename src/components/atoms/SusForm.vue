@@ -1,19 +1,37 @@
 <template>
-  <v-form ref="form" v-model="valid">
+  <v-form
+    ref="form"
+    v-model="valid"
+  >
     <div class="d-flex align-center mb-4">
       <span class="text-subtitle-1">Progreso: {{ completedCount }}/10</span>
-      <v-progress-linear class="ml-4" :model-value="(completedCount / 10) * 100"
-        :color="completedCount === 10 ? 'success' : 'primary'"></v-progress-linear>
+      <v-progress-linear
+        class="ml-4"
+        :model-value="(completedCount / 10) * 100"
+        :color="completedCount === 10 ? 'success' : 'primary'"
+      />
     </div>
-    <v-card v-for="(question, i) in susQuestions" :key="i" variant="outlined"
-      :class="{ 'my-2': true, 'border-error': !answers[i] }">
+    <v-card
+      v-for="(question, i) in susQuestions"
+      :key="i"
+      variant="outlined"
+      :class="{ 'my-2': true, 'border-error': !answers[i] }"
+    >
       <v-card-text>
         <span :class="{ 'text-error': !answers[i] }">{{ question }} *</span>
         <v-divider class="my-2" />
 
         <!-- Aquí sí funciona correctamente -->
-        <v-radio-group v-model="answers[i]" inline>
-          <v-radio v-for="n in 5" :key="n" :value="n" class="d-flex flex-column align-center mx-6">
+        <v-radio-group
+          v-model="answers[i]"
+          inline
+        >
+          <v-radio
+            v-for="n in 5"
+            :key="n"
+            :value="n"
+            class="d-flex flex-column align-center mx-6"
+          >
             <template #label>
               <div class="text-center mt-1">
                 {{ susLabels[n - 1] }}

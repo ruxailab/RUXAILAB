@@ -3,36 +3,76 @@
 * Sidebar específico para el dashboard principal
 */
 <template>
-    <v-navigation-drawer width="280" class="sidebar" elevation="0" :permanent="!isMobile" :temporary="isMobile"
-        v-model="drawerState">
+  <v-navigation-drawer
+    v-model="drawerState"
+    width="280"
+    class="sidebar"
+    elevation="0"
+    :permanent="!isMobile"
+    :temporary="isMobile"
+  >
+    <!-- Navigation Items -->
+    <v-list
+      class="pa-4"
+      nav
+    >
+      <template
+        v-for="item in navigationItems"
+        :key="item.id"
+      >
+        <v-list-group
+          v-if="item.children"
+          :value="activeSection === item.id"
+        >
+          <template #activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              class="section-header mb-2"
+              rounded="lg"
+            />
+          </template>
+          <v-list-item
+            v-for="child in item.children"
+            :key="child.id"
+            :title="child.title"
+            :prepend-icon="child.icon"
+            :active="activeSection === item.id && activeSubSection === child.id"
+            class="subsection-item ml-4 mb-1"
+            rounded="lg"
+            @click="selectNavigation(item.id, child.id)"
+          />
+        </v-list-group>
 
+        <v-list-item
+          v-else
+          :title="item.title"
+          :prepend-icon="item.icon"
+          :active="activeSection === item.id"
+          class="section-header mb-2"
+          rounded="lg"
+          @click="selectNavigation(item.id)"
+        />
+      </template>
+    </v-list>
 
-        <!-- Navigation Items -->
-        <v-list class="pa-4" nav>
-            <template v-for="item in navigationItems" :key="item.id">
-                <v-list-group v-if="item.children" :value="activeSection === item.id">
-                    <template #activator="{ props }">
-                        <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.title"
-                            class="section-header mb-2" rounded="lg" />
-                    </template>
-                    <v-list-item v-for="child in item.children" :key="child.id" :title="child.title"
-                        :prepend-icon="child.icon" :active="activeSection === item.id && activeSubSection === child.id"
-                        class="subsection-item ml-4 mb-1" rounded="lg" @click="selectNavigation(item.id, child.id)" />
-                </v-list-group>
-
-                <v-list-item v-else :title="item.title" :prepend-icon="item.icon" :active="activeSection === item.id"
-                    class="section-header mb-2" rounded="lg" @click="selectNavigation(item.id)" />
-            </template>
-        </v-list>
-
-        <!-- Create Button -->
-        <div class="px-4 pb-4 mt-auto">
-            <v-btn color="primary" block size="large" prepend-icon="mdi-plus" rounded="lg" elevation="1"
-                class="create-button" @click="$emit('create-test')">
-                Create New Test
-            </v-btn>
-        </div>
-    </v-navigation-drawer>
+    <!-- Create Button -->
+    <div class="px-4 pb-4 mt-auto">
+      <v-btn
+        color="primary"
+        block
+        size="large"
+        prepend-icon="mdi-plus"
+        rounded="lg"
+        elevation="1"
+        class="create-button"
+        @click="$emit('create-test')"
+      >
+        Create New Test
+      </v-btn>
+    </div>
+  </v-navigation-drawer>
 </template>
 
 <script setup>

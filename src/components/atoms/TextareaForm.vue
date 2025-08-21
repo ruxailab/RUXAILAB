@@ -1,16 +1,34 @@
 <template>
-  <v-container fluid class="pa-0 bg-grey-lighten-5" width="100%">
+  <v-container
+    fluid
+    class="pa-0 bg-grey-lighten-5"
+    width="100%"
+  >
     <v-row justify="center">
-      <v-col cols="12" md="10" lg="12">
-        <v-card class="elevation-2 rounded-lg pa-6" width="100%">
+      <v-col
+        cols="12"
+        md="10"
+        lg="12"
+      >
+        <v-card
+          class="elevation-2 rounded-lg pa-6"
+          width="100%"
+        >
           <v-card-title class="text-h5 font-weight-bold mb-4 bg-on-surface">
             {{ title }}
           </v-card-title>
           <v-card-text>
-            <p class="text-body-1 mb-6" style="color: #4B5563;">
+            <p
+              class="text-body-1 mb-6"
+              style="color: #4B5563;"
+            >
               {{ subtitle }}
             </p>
-            <quill-editor v-model:value="value" :options="editorOptions" class="editor-container" />
+            <quill-editor
+              v-model:value="value"
+              :options="editorOptions"
+              class="editor-container"
+            />
           </v-card-text>
         </v-card>
       </v-col>

@@ -1,55 +1,92 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="upcoming-webinar-card">
-        <!-- Hero Image Section -->
-        <v-img class="align-end text-white" height="200" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg" cover>
-            <v-card-title>Some Text</v-card-title>
-        </v-img>
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="upcoming-webinar-card"
+  >
+    <!-- Hero Image Section -->
+    <v-img
+      class="align-end text-white"
+      height="200"
+      src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+      cover
+    >
+      <v-card-title>Some Text</v-card-title>
+    </v-img>
 
 
-        <v-card-text class="pa-6">
-            <!-- Webinar Title -->
-            <h2 class="webinar-title text-h5 font-weight-bold">
-                {{ webinar.title }}
-            </h2>
+    <v-card-text class="pa-6">
+      <!-- Webinar Title -->
+      <h2 class="webinar-title text-h5 font-weight-bold">
+        {{ webinar.title }}
+      </h2>
 
-            <!-- Webinar Description -->
-            <p class="webinar-description text-body-1 text-grey-darken-1 mb-4">
-                {{ webinar.description }}
-            </p>
+      <!-- Webinar Description -->
+      <p class="webinar-description text-body-1 text-grey-darken-1 mb-4">
+        {{ webinar.description }}
+      </p>
 
-            <!-- Date and Duration Info -->
-            <v-row class="info-row mb-4" no-gutters>
-                <v-col cols="6" class="pr-2">
-                    <div class="info-item">
-                        <div class="info-icon-wrapper">
-                            <v-icon icon="mdi-calendar" size="24" color="primary"></v-icon>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-value">{{ webinar.date }}</div>
-                            <div>Fecha</div>
-                        </div>
-                    </div>
-                </v-col>
-                <v-col cols="6" class="">
-                    <div class="info-item">
-                        <div class="info-icon-wrapper">
-                            <v-icon icon="mdi-clock-outline" size="24" color="primary"></v-icon>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-value">{{ webinar.duration }}</div>
-                            <div>Hora</div>
-                        </div>
-                    </div>
-                </v-col>
-            </v-row>
+      <!-- Date and Duration Info -->
+      <v-row
+        class="info-row mb-4"
+        no-gutters
+      >
+        <v-col
+          cols="6"
+          class="pr-2"
+        >
+          <div class="info-item">
+            <div class="info-icon-wrapper">
+              <v-icon
+                icon="mdi-calendar"
+                size="24"
+                color="primary"
+              />
+            </div>
+            <div class="info-content">
+              <div class="info-value">
+                {{ webinar.date }}
+              </div>
+              <div>Fecha</div>
+            </div>
+          </div>
+        </v-col>
+        <v-col
+          cols="6"
+          class=""
+        >
+          <div class="info-item">
+            <div class="info-icon-wrapper">
+              <v-icon
+                icon="mdi-clock-outline"
+                size="24"
+                color="primary"
+              />
+            </div>
+            <div class="info-content">
+              <div class="info-value">
+                {{ webinar.duration }}
+              </div>
+              <div>Hora</div>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
 
-            <!-- Join Button -->
-            <v-btn color="primary" variant="flat" size="large" block rounded="lg" class="join-button"
-                prepend-icon="mdi-video">
-                Join the event
-            </v-btn>
-        </v-card-text>
-    </v-card>
+      <!-- Join Button -->
+      <v-btn
+        color="primary"
+        variant="flat"
+        size="large"
+        block
+        rounded="lg"
+        class="join-button"
+        prepend-icon="mdi-video"
+      >
+        Join the event
+      </v-btn>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

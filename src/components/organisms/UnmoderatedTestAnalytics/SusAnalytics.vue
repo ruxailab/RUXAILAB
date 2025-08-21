@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid class="pa-6">
+  <v-container
+    fluid
+    class="pa-6"
+  >
     <!-- Header Section -->
     <div class="mb-8">
       <h1 class="text-h3 font-weight-bold text-primary">
@@ -12,8 +15,15 @@
 
     <!-- Overview Cards -->
     <v-row class="mb-8">
-      <v-col cols="12" md="4">
-        <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px;">
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <v-card
+          class="pa-6 text-left"
+          elevation="2"
+          style="border-radius: 12px;"
+        >
           <div class="d-flex justify-space-between align-center">
             <div>
               <div class="text-caption text-grey-darken-1 mb-1">
@@ -26,8 +36,14 @@
                 out of 100
               </div>
             </div>
-            <div class="pa-3" style="background: #e3f2fd; border-radius: 8px;">
-              <v-icon size="24" color="primary">
+            <div
+              class="pa-3"
+              style="background: #e3f2fd; border-radius: 8px;"
+            >
+              <v-icon
+                size="24"
+                color="primary"
+              >
                 mdi-trending-up
               </v-icon>
             </div>
@@ -35,8 +51,15 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="4">
-        <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px;">
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <v-card
+          class="pa-6 text-left"
+          elevation="2"
+          style="border-radius: 12px;"
+        >
           <div class="d-flex justify-space-between align-center">
             <div>
               <div class="text-caption text-grey-darken-1 mb-1">
@@ -49,8 +72,14 @@
                 participants
               </div>
             </div>
-            <div class="pa-3" style="background: #e8f5e8; border-radius: 8px;">
-              <v-icon size="24" color="success">
+            <div
+              class="pa-3"
+              style="background: #e8f5e8; border-radius: 8px;"
+            >
+              <v-icon
+                size="24"
+                color="success"
+              >
                 mdi-account-group
               </v-icon>
             </div>
@@ -58,8 +87,15 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="4">
-        <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px;">
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <v-card
+          class="pa-6 text-left"
+          elevation="2"
+          style="border-radius: 12px;"
+        >
           <div class="d-flex justify-space-between align-center">
             <div>
               <div class="text-caption text-grey-darken-1 mb-1">
@@ -72,8 +108,14 @@
                 min | max
               </div>
             </div>
-            <div class="pa-3" style="background: #f3e5f5; border-radius: 8px;">
-              <v-icon size="24" color="purple">
+            <div
+              class="pa-3"
+              style="background: #f3e5f5; border-radius: 8px;"
+            >
+              <v-icon
+                size="24"
+                color="purple"
+              >
                 mdi-chart-bar
               </v-icon>
             </div>
@@ -85,19 +127,28 @@
     <!-- Score Distribution Chart -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card elevation="2" style="border-radius: 12px;">
+        <v-card
+          elevation="2"
+          style="border-radius: 12px;"
+        >
           <v-card-title class="text-h5 pb-2">
             SUS Score Distribution
           </v-card-title>
           <v-card-text class="pa-6">
             <v-row>
               <!-- Histogram Chart -->
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <SusHistogramChart :scores="tasksArray.map(r => r.susScore)" />
               </v-col>
 
               <!-- Horizontal Bar Distribution -->
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <SusRatingChart :scores="tasksArray.map(r => r.susScore)" />
               </v-col>
             </v-row>
@@ -109,9 +160,15 @@
     <!-- Individual Scores Table -->
     <v-row>
       <v-col cols="12">
-        <v-card elevation="2" style="border-radius: 12px;">
+        <v-card
+          elevation="2"
+          style="border-radius: 12px;"
+        >
           <v-card-title class="text-h5 pb-2">
-            <v-icon start color="primary">
+            <v-icon
+              start
+              color="primary"
+            >
               mdi-table
             </v-icon>
             Individual Scores
@@ -120,23 +177,47 @@
           <!-- Filter Controls -->
           <v-card-text class="pb-0">
             <v-row align="center">
-              <v-col cols="12" md="6">
-                <v-select v-model="selectedRatingFilter" :items="ratingFilterOptions" label="Filter by Rating" clearable
-                  variant="outlined" density="compact">
+              <v-col
+                cols="12"
+                md="6"
+              >
+                <v-select
+                  v-model="selectedRatingFilter"
+                  :items="ratingFilterOptions"
+                  label="Filter by Rating"
+                  clearable
+                  variant="outlined"
+                  density="compact"
+                >
                   <template #prepend-inner>
                     <v-icon>mdi-filter</v-icon>
                   </template>
                 </v-select>
               </v-col>
-              <v-col cols="12" md="6">
-                <v-range-slider v-model="scoreRange" :min="0" :max="100" :step="5" label="Score Range"
-                  thumb-label="always" class="mt-4" />
+              <v-col
+                cols="12"
+                md="6"
+              >
+                <v-range-slider
+                  v-model="scoreRange"
+                  :min="0"
+                  :max="100"
+                  :step="5"
+                  label="Score Range"
+                  thumb-label="always"
+                  class="mt-4"
+                />
               </v-col>
             </v-row>
           </v-card-text>
 
           <!-- Data Table -->
-          <v-data-table :headers="tableHeaders" :items="filteredResponses" :items-per-page="10" class="elevation-0">
+          <v-data-table
+            :headers="tableHeaders"
+            :items="filteredResponses"
+            :items-per-page="10"
+            class="elevation-0"
+          >
             <template #item.user="{ item }">
               <div>
                 <div class="font-weight-medium">
@@ -146,19 +227,32 @@
             </template>
 
             <template #item.susScore="{ item }">
-              <v-chip :color="getRatingColor(getSUSRating(item.susScore))" size="small" class="font-weight-bold">
+              <v-chip
+                :color="getRatingColor(getSUSRating(item.susScore))"
+                size="small"
+                class="font-weight-bold"
+              >
                 {{ item.susScore }}
               </v-chip>
             </template>
 
             <template #item.rating="{ item }">
-              <v-chip :color="getRatingColor(getSUSRating(item.susScore))" variant="tonal" size="small">
+              <v-chip
+                :color="getRatingColor(getSUSRating(item.susScore))"
+                variant="tonal"
+                size="small"
+              >
                 {{ getSUSRating(item.susScore) }}
               </v-chip>
             </template>
 
             <template #item.actions="{ item }">
-              <v-btn color="primary" variant="outlined" size="small" @click="openDetailsModal(item)">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                size="small"
+                @click="openDetailsModal(item)"
+              >
                 <v-icon start>
                   mdi-eye
                 </v-icon>
@@ -171,8 +265,14 @@
     </v-row>
 
     <!-- Details Modal -->
-    <v-dialog v-model="detailsModal" :max-width="dialogMaxWidth">
-      <v-card v-if="selectedResponse" style="border-radius: 12px;">
+    <v-dialog
+      v-model="detailsModal"
+      :max-width="dialogMaxWidth"
+    >
+      <v-card
+        v-if="selectedResponse"
+        style="border-radius: 12px;"
+      >
         <v-card-title class="d-flex justify-space-between align-center pa-6 pb-4">
           <div>
             <div class="text-h5 font-weight-bold mb-1">
@@ -182,7 +282,11 @@
               {{ selectedResponse.name }}
             </div>
           </div>
-          <v-btn icon variant="text" @click="detailsModal = false">
+          <v-btn
+            icon
+            variant="text"
+            @click="detailsModal = false"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -201,7 +305,11 @@
                   {{ selectedResponse.susScore }}.0
                 </span>
                 <span class="text-h6 text-grey">/ 100</span>
-                <v-chip :color="getRatingColor(getSUSRating(selectedResponse.susScore))" size="small" class="ml-3">
+                <v-chip
+                  :color="getRatingColor(getSUSRating(selectedResponse.susScore))"
+                  size="small"
+                  class="ml-3"
+                >
                   {{ getSUSRating(selectedResponse.susScore) }}
                 </v-chip>
               </div>
@@ -212,15 +320,18 @@
 
 
         <v-card-text class="pa-6">
-
           <!-- Individual Responses -->
           <div>
             <h3 class="text-h6">
               Individual Responses
             </h3>
             <div class="responses-list">
-              <div v-for="(question, index) in susQuestions" :key="index" class="response-item mb-2 pa-4"
-                style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;">
+              <div
+                v-for="(question, index) in susQuestions"
+                :key="index"
+                class="response-item mb-2 pa-4"
+                style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;"
+              >
                 <div class="d-flex justify-space-between align-center d-sm-flex flex-column flex-sm-row">
                   <div class="question-text flex-grow-1 pr-4 d-flex align-center mb-2 mb-sm-0">
                     <strong>Q{{ index + 1 }}: </strong> {{ question }}
@@ -229,12 +340,15 @@
                     <span class="text-h5 font-weight-bold mr-sm-2 mb-1 mb-sm-0">
                       {{ selectedResponse.susAnswers[index] }}
                     </span>
-                    <v-chip :color="getResponseColor(selectedResponse.susAnswers[index])" size="small" variant="tonal">
+                    <v-chip
+                      :color="getResponseColor(selectedResponse.susAnswers[index])"
+                      size="small"
+                      variant="tonal"
+                    >
                       {{ getResponseLabel(selectedResponse.susAnswers[index]) }}
                     </v-chip>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
