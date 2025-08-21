@@ -12,7 +12,7 @@
 
     <v-card-text class="pa-4">
       <v-row>
-        <v-col v-for="study in studies" :key="study.id" cols="12" md="6">
+  <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
           <v-card variant="outlined" rounded="lg" class="study-card">
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
