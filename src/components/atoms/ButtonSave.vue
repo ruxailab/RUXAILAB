@@ -3,22 +3,10 @@
     <!-- Leave Alert Dialog -->
     <LeaveAlert />
 
-    <v-tooltip
-      v-if="visible"
-      location="left"
-    >
+    <v-tooltip v-if="visible" location="left">
       <template #activator="{ props }">
-        <v-btn
-          size="large"
-          icon
-          fixed
-          location="bottom right"
-          color="#F9A826"
-          :disabled="disabled"
-         
-          v-bind="props"
-          @click="$emit('click')"
-        >
+        <v-btn size="large" icon fixed color="#F9A826" :disabled="disabled" class="save-btn" v-bind="props"
+          @click="$emit('click')">
           <v-icon size="large">
             mdi-content-save
           </v-icon>
@@ -70,3 +58,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.save-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 100;
+}
+</style>
