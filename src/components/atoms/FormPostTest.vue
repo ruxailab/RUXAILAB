@@ -1,13 +1,26 @@
 <template>
-  <v-container fluid class="pa-0 bg-grey-lighten-5">
+  <v-container
+    fluid
+    class="pa-0 bg-grey-lighten-5"
+  >
     <v-row justify="center">
-      <v-col cols="12" md="10" lg="12">
+      <v-col
+        cols="12"
+        md="10"
+        lg="12"
+      >
         <v-card class="elevation-2 rounded-lg pa-6">
-          <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+          <v-card-title
+            class="text-h5 font-weight-bold mb-4"
+            :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+          >
             Post-Test Variables
           </v-card-title>
           <v-card-text>
-            <p class="text-body-1 mb-6" style="color: #4B5563;">
+            <p
+              class="text-body-1 mb-6"
+              style="color: #4B5563;"
+            >
               Configure the variables for the post-test section. Add, edit, or remove variables as needed.
             </p>
             <v-expansion-panels
@@ -81,7 +94,10 @@
                           </template>
                         </v-text-field>
                       </div>
-                      <div v-if="item.selectionFields.length === 0" class="text-body-2 mb-4">
+                      <div
+                        v-if="item.selectionFields.length === 0"
+                        class="text-body-2 mb-4"
+                      >
                         <span>No options added.</span>
                         <v-btn
                           variant="text"
@@ -89,13 +105,21 @@
                           class="text-capitalize"
                           @click="newSelection(i)"
                         >
-                          <v-icon start>mdi-plus</v-icon>
+                          <v-icon start>
+                            mdi-plus
+                          </v-icon>
                           Add First Option
                         </v-btn>
                       </div>
                     </div>
-                    <v-row align="center" class="mt-2">
-                      <v-col cols="12" sm="6">
+                    <v-row
+                      align="center"
+                      class="mt-2"
+                    >
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-checkbox
                           v-model="item.selectionField"
                           :label="$t('UserTestTable.checkboxes.selectionAnswer')"
@@ -103,7 +127,10 @@
                           @update:model-value="selectField(i); markDirty()"
                         />
                       </v-col>
-                      <v-col cols="12" sm="5">
+                      <v-col
+                        cols="12"
+                        sm="5"
+                      >
                         <v-checkbox
                           v-model="item.textField"
                           :label="$t('UserTestTable.checkboxes.textAnswer')"
@@ -111,7 +138,11 @@
                           @update:model-value="selectText(i); markDirty()"
                         />
                       </v-col>
-                      <v-col cols="12" sm="1" class="text-right">
+                      <v-col
+                        cols="12"
+                        sm="1"
+                        class="text-right"
+                      >
                         <v-btn
                           icon
                           color="error"
@@ -138,12 +169,18 @@
               class="border-dashed text-center py-6"
               width="100%"
               variant="outlined"
-              @click="showModal"
               style="cursor: pointer; border-style: dashed !important; border-color: #D1D5DB;"
+              @click="showModal"
             >
               <v-card-text>
-                <v-icon icon="mdi-plus-circle" size="24" class="mb-2"></v-icon>
-                <div class="text-body-1">{{ $t('UserTestTable.buttons.createNewPost') }}</div>
+                <v-icon
+                  icon="mdi-plus-circle"
+                  size="24"
+                  class="mb-2"
+                />
+                <div class="text-body-1">
+                  {{ $t('UserTestTable.buttons.createNewPost') }}
+                </div>
               </v-card-text>
             </v-card>
           </v-card-actions>
@@ -159,11 +196,17 @@
       transition="dialog-bottom-transition"
     >
       <v-card class="rounded-lg pa-6">
-        <v-card-title class="text-h6 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+        <v-card-title
+          class="text-h6 font-weight-bold mb-4"
+          :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+        >
           {{ $t('UserTestTable.titles.editNewPost') }}
         </v-card-title>
         <v-card-text>
-          <v-form ref="form" v-model="valid">
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-text-field
               v-model="newItem"
               :label="$t('UserTestTable.inputs.editQuestion')"
@@ -183,7 +226,9 @@
             class="px-6"
             @click="closeModal"
           >
-            <v-icon start>mdi-close</v-icon>
+            <v-icon start>
+              mdi-close
+            </v-icon>
             {{ $t('buttons.close') }}
           </v-btn>
           <v-btn
@@ -194,7 +239,9 @@
             :loading="isSaving"
             @click="saveNewItem"
           >
-            <v-icon start>mdi-content-save</v-icon>
+            <v-icon start>
+              mdi-content-save
+            </v-icon>
             {{ $t('buttons.save') }}
           </v-btn>
         </v-card-actions>
@@ -312,7 +359,7 @@ const saveState = async () => {
 };
 
 const getPostTest = () => {
-  const data = test.value?.testStructure?.postTest || postTest.value || [];
+  const data = postTest.value ?? test.value?.testStructure?.postTest ?? [];
   items.value = Array.isArray(data) ? [...data] : [];
   store.dispatch('setPostTest', items.value);
 };

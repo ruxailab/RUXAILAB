@@ -1,54 +1,103 @@
 <template>
-    <div class="studies-overview">
-        <div v-if="studies.length === 0" class="empty-state text-center py-4">
-            <v-icon icon="mdi-flask-empty" size="48" color="grey-lighten-2" class="mb-2"></v-icon>
-            <p class="text-body-2 text-grey-darken-1 mb-2">No active studies</p>
-            <v-btn color="primary" variant="outlined" size="small" @click="$router.push('/choose')">
-                Create Your First Study
-            </v-btn>
-        </div>
-
-        <div v-else class="studies-grid">
-            <div v-for="study in studies" :key="study.id" class="study-card">
-                <div class="study-header d-flex align-center justify-space-between mb-3">
-                    <div class="study-info">
-                        <h4 class="text-subtitle-1 font-weight-medium text-grey-darken-4 mb-1">
-                            {{ study.title }}
-                        </h4>
-                        <div class="d-flex align-center gap-2">
-                            <v-chip size="x-small" :color="getStudyTypeColor(study.type)" variant="tonal">
-                                {{ study.type }}
-                            </v-chip>
-                            <v-chip size="x-small" :color="getStatusColor(study.status)" variant="tonal">
-                                {{ formatStatus(study.status) }}
-                            </v-chip>
-                        </div>
-                    </div>
-                    <v-btn icon="mdi-chevron-right" variant="text" size="small" @click="goToStudy(study)"></v-btn>
-                </div>
-
-                <div class="study-metrics mb-3">
-                    <div class="metric-item">
-                        <v-icon icon="mdi-account-group" size="16" color="grey-darken-1" class="mr-1"></v-icon>
-                        <span class="text-body-2 text-grey-darken-1">{{ study.participants }} participants</span>
-                    </div>
-                    <div class="metric-item">
-                        <v-icon icon="mdi-clock-outline" size="16" color="grey-darken-1" class="mr-1"></v-icon>
-                        <span class="text-body-2 text-grey-darken-1">{{ study.lastActivity }}</span>
-                    </div>
-                </div>
-
-                <div class="completion-progress">
-                    <div class="d-flex justify-space-between align-center mb-1">
-                        <span class="text-caption text-grey-darken-1">Completion</span>
-                        <span class="text-caption font-weight-medium">{{ study.completion }}%</span>
-                    </div>
-                    <v-progress-linear :model-value="study.completion" :color="getProgressColor(study.completion)"
-                        height="6" rounded></v-progress-linear>
-                </div>
-            </div>
-        </div>
+  <div class="studies-overview">
+    <div
+      v-if="studies.length === 0"
+      class="empty-state text-center py-4"
+    >
+      <v-icon
+        icon="mdi-flask-empty"
+        size="48"
+        color="grey-lighten-2"
+        class="mb-2"
+      />
+      <p class="text-body-2 text-grey-darken-1 mb-2">
+        No active studies
+      </p>
+      <v-btn
+        color="primary"
+        variant="outlined"
+        size="small"
+        @click="$router.push('/choose')"
+      >
+        Create Your First Study
+      </v-btn>
     </div>
+
+    <div
+      v-else
+      class="studies-grid"
+    >
+      <div
+        v-for="study in studies"
+        :key="study.id"
+        class="study-card"
+      >
+        <div class="study-header d-flex align-center justify-space-between mb-3">
+          <div class="study-info">
+            <h4 class="text-subtitle-1 font-weight-medium text-grey-darken-4 mb-1">
+              {{ study.title }}
+            </h4>
+            <div class="d-flex align-center gap-2">
+              <v-chip
+                size="x-small"
+                :color="getStudyTypeColor(study.type)"
+                variant="tonal"
+              >
+                {{ study.type }}
+              </v-chip>
+              <v-chip
+                size="x-small"
+                :color="getStatusColor(study.status)"
+                variant="tonal"
+              >
+                {{ formatStatus(study.status) }}
+              </v-chip>
+            </div>
+          </div>
+          <v-btn
+            icon="mdi-chevron-right"
+            variant="text"
+            size="small"
+            @click="goToStudy(study)"
+          />
+        </div>
+
+        <div class="study-metrics mb-3">
+          <div class="metric-item">
+            <v-icon
+              icon="mdi-account-group"
+              size="16"
+              color="grey-darken-1"
+              class="mr-1"
+            />
+            <span class="text-body-2 text-grey-darken-1">{{ study.participants }} participants</span>
+          </div>
+          <div class="metric-item">
+            <v-icon
+              icon="mdi-clock-outline"
+              size="16"
+              color="grey-darken-1"
+              class="mr-1"
+            />
+            <span class="text-body-2 text-grey-darken-1">{{ study.lastActivity }}</span>
+          </div>
+        </div>
+
+        <div class="completion-progress">
+          <div class="d-flex justify-space-between align-center mb-1">
+            <span class="text-caption text-grey-darken-1">Completion</span>
+            <span class="text-caption font-weight-medium">{{ study.completion }}%</span>
+          </div>
+          <v-progress-linear
+            :model-value="study.completion"
+            :color="getProgressColor(study.completion)"
+            height="6"
+            rounded
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>

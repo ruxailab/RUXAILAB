@@ -3,61 +3,116 @@
 * Navbar superior global - solo contiene logo, usuario y botones globales
 */
 <template>
-    <v-app-bar density="comfortable" color="#00213F" class="px-4">
-        <!-- Botón hamburguesa móvil -->
-        <v-btn v-if="user && isDashboard" icon class="d-flex d-lg-none" @click="toggleDashboardDrawer">
-            <v-icon>mdi-menu</v-icon>
-        </v-btn>
+  <v-app-bar
+    density="comfortable"
+    color="#00213F"
+    class="px-4"
+  >
+    <!-- Botón hamburguesa móvil -->
+    <v-btn
+      v-if="user && isDashboard"
+      icon
+      class="d-flex d-lg-none"
+      @click="toggleDashboardDrawer"
+    >
+      <v-icon>mdi-menu</v-icon>
+    </v-btn>
 
-        <!-- Botón hamburguesa móvil para otras vistas -->
-        <v-btn v-if="user && !isDashboard" icon class="d-flex d-lg-none" @click="$emit('toggle-mobile-drawer')">
-            <v-icon>mdi-menu</v-icon>
-        </v-btn>
+    <!-- Botón hamburguesa móvil para otras vistas -->
+    <v-btn
+      v-if="user && !isDashboard"
+      icon
+      class="d-flex d-lg-none"
+      @click="$emit('toggle-mobile-drawer')"
+    >
+      <v-icon>mdi-menu</v-icon>
+    </v-btn>
 
-        <!-- Logo y título -->
-        <v-toolbar-title style="cursor: pointer" class="d-flex align-center" @click="goTo('/testslist')">
-            <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB Logo" height="25"
-                class="mr-3 align-self-center" style="vertical-align: middle;" />
-        </v-toolbar-title>
+    <!-- Logo y título -->
+    <v-toolbar-title
+      style="cursor: pointer"
+      class="d-flex align-center"
+      @click="goTo('/testslist')"
+    >
+      <img
+        src="@/assets/ruxailab-long-crop-white.png"
+        alt="RUXAILAB Logo"
+        height="25"
+        class="mr-3 align-self-center"
+        style="vertical-align: middle;"
+      >
+    </v-toolbar-title>
 
-        <v-spacer />
+    <v-spacer />
 
-        <!-- Elementos globales -->
-        <locale-changer />
+    <!-- Elementos globales -->
+    <locale-changer />
 
-        <!-- Botones contextuales -->
-        <v-btn v-if="$route.path === '/' && user" variant="text" color="#f9a826"
-            class="console-button mx-1 d-none d-lg-flex" @click="goTo('/testslist')">
-            {{ $t('buttons.goToConsole') }}
-        </v-btn>
+    <!-- Botones contextuales -->
+    <v-btn
+      v-if="$route.path === '/' && user"
+      variant="text"
+      color="#f9a826"
+      class="console-button mx-1 d-none d-lg-flex"
+      @click="goTo('/testslist')"
+    >
+      {{ $t('buttons.goToConsole') }}
+    </v-btn>
 
-        <v-btn v-if="['/testslist', '/signin', '/signup'].includes($route.path)" variant="text" color="#f9a826"
-            class="console-button mx-1 d-none d-lg-flex" @click="goTo('/')">
-            {{ $t('AccessNotAllowed.goHome') }}
-        </v-btn>
+    <v-btn
+      v-if="['/testslist', '/signin', '/signup'].includes($route.path)"
+      variant="text"
+      color="#f9a826"
+      class="console-button mx-1 d-none d-lg-flex"
+      @click="goTo('/')"
+    >
+      {{ $t('AccessNotAllowed.goHome') }}
+    </v-btn>
 
-        <v-btn v-if="!['/', '/testslist', '/signin', '/signup'].includes($route.path)" variant="text" color="#f9a826"
-            class="console-button mx-1 d-none d-lg-flex" @click="goTo('/testslist')">
-            {{ $t('buttons.returnToConsole') }}
-        </v-btn>
+    <v-btn
+      v-if="!['/', '/testslist', '/signin', '/signup'].includes($route.path)"
+      variant="text"
+      color="#f9a826"
+      class="console-button mx-1 d-none d-lg-flex"
+      @click="goTo('/testslist')"
+    >
+      {{ $t('buttons.returnToConsole') }}
+    </v-btn>
 
-        <!-- Botones de herramientas -->
-        <HelpButton :class="smAndDown ? 'mx-1' : 'mx-2'" />
-        <NotificationBtn v-if="user" :class="smAndDown ? 'mx-1' : 'mx-2'" />
+    <!-- Botones de herramientas -->
+    <HelpButton :class="smAndDown ? 'mx-1' : 'mx-2'" />
+    <NotificationBtn
+      v-if="user"
+      :class="smAndDown ? 'mx-1' : 'mx-2'"
+    />
 
-        <!-- Autenticación -->
-        <v-btn v-if="!user" variant="text" class="d-none d-lg-flex" @click="goTo('/signin')">
-            <v-icon start>mdi-lock</v-icon>
-            {{ $t('SIGNIN.sign-in') }}
-        </v-btn>
+    <!-- Autenticación -->
+    <v-btn
+      v-if="!user"
+      variant="text"
+      class="d-none d-lg-flex"
+      @click="goTo('/signin')"
+    >
+      <v-icon start>
+        mdi-lock
+      </v-icon>
+      {{ $t('SIGNIN.sign-in') }}
+    </v-btn>
 
-        <v-btn v-if="!user" icon class="d-flex d-lg-none" @click="goTo('/signin')">
-            <v-icon :size="iconSize">mdi-lock</v-icon>
-        </v-btn>
+    <v-btn
+      v-if="!user"
+      icon
+      class="d-flex d-lg-none"
+      @click="goTo('/signin')"
+    >
+      <v-icon :size="iconSize">
+        mdi-lock
+      </v-icon>
+    </v-btn>
 
-        <!-- Menú de usuario -->
-        <UserMenu v-if="user" />
-    </v-app-bar>
+    <!-- Menú de usuario -->
+    <UserMenu v-if="user" />
+  </v-app-bar>
 </template>
 
 <script setup>
