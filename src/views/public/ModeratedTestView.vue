@@ -158,11 +158,14 @@ import TaskStep from '@/components/UserTest/steps/TaskStep.vue';
 import WelcomeStep from '@/components/UserTest/steps/WelcomeStep.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
+import { ref as dbRef, onValue, off, update, set } from "firebase/database";
+import { database } from "@/firebase";
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
+import { onBeforeUnmount } from 'vue';
 
 const store = useStore();
 const router = useRouter();
@@ -274,20 +277,21 @@ watch(
 );
 
 // Methods
-const proceedToNextStep = () => {
-  console.log('global index =>', globalIndex.value);
-  console.log('task index =>', taskIndex.value);
-
-  displayVideoCallComponent.value = false;
-
-  // TODO: Signal Evaluation Step change
+const proceedToNextStep = async () => {
+  if (!isUserTestAdmin.value) return;
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  await update(roomRef, {
+    globalIndex: globalIndex.value,
+    taskIndex: taskIndex.value,
+    showVideoCall: false
+  });
 };
 
 const handleSubmit = async () => {
   submitDialog.value = false;
   try {
-    await saveAnswer();
     localTestAnswer.submitted = true;
+    await saveAnswer();
   } catch (error) {
     console.error('Error submitting answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
@@ -343,6 +347,21 @@ const startTest = () => {
   if (startScreen) {
     startScreen.classList.add('leaving');
   }
+
+  // listen for changes 
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+
+  onValue(roomRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    globalIndex.value = data.globalIndex;
+    taskIndex.value = data.taskIndex;
+
+    if (!isUserTestAdmin.value) {
+      displayVideoCallComponent.value = data.showVideoCall;
+    }
+  });
 
   // Wait for the animation to finish before changing the state
   setTimeout(() => {
@@ -413,6 +432,7 @@ const handleTimerStopped = (elapsedTime, idx) => {
 };
 
 const completeStep = async (id, type, userCompleted = true) => {
+  displayVideoCallComponent.value = true;
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true;
@@ -466,10 +486,19 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true;
-      items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = 6;
-
+      if (items.value[2]?.value && items.value[2].value[id]) {
+        items.value[2].value[id].icon = 'mdi-check-circle-outline';
+      }
     }
+
+    const roomRef = dbRef(database, `rooms/${roomId.value}`);
+    await update(roomRef, {
+      globalIndex: globalIndex.value,
+      taskIndex: taskIndex.value,
+      showVideoCall: true
+    });
+
     calculateProgress();
     await saveAnswer();
   } catch (error) {
@@ -646,6 +675,11 @@ onMounted(async () => {
   await mappingSteps();
 });
 
+onBeforeUnmount(async () => {
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  off(roomRef);
+  await set(roomRef, null);
+});
 </script>
 
 <style scoped>
