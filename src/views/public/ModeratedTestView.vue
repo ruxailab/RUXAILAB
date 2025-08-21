@@ -104,11 +104,17 @@
             <FinishStep v-if="globalIndex === 6 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
               :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
               :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
-              @submit="dialog = true" />
+              @submit="submitDialog = true" />
           </div>
         </v-col>
       </v-row>
     </v-container>
+
+    <!-- Submit Dialog -->
+    <SubmitDialog :model-value="submitDialog" :title="$t('HeuristicsTestView.messages.submitTest')"
+      :message="$t('HeuristicsTestView.messages.submitOnce')" :cancel-label="$t('buttons.cancel')"
+      :submit-label="$t('buttons.submit')" @cancel="submitDialog = false" @submit="handleSubmit" />
+
 
     <!-- Dialog for user to continue or change account -->
     <v-dialog :model-value="!loggedIn" width="500" persistent>
@@ -141,6 +147,7 @@
 </template>
 
 <script setup>
+import SubmitDialog from '@/components/atoms/SubmitDialog.vue';
 import VideoCall from '@/components/molecules/VideoCall.vue';
 import ConsentStep from '@/components/UserTest/steps/ConsentStep.vue';
 import FinishStep from '@/components/UserTest/steps/FinishStep.vue';
@@ -179,6 +186,7 @@ const displayVideoCallComponent = ref(false);
 const preTestIndex = ref(null);
 const taskStepComponent = ref(null);
 const allTasksCompleted = ref(false);
+const submitDialog = ref(false);
 
 // Computed properties
 const test = computed(() => store.getters.test);
@@ -275,6 +283,43 @@ const proceedToNextStep = () => {
   // TODO: Signal Evaluation Step change
 };
 
+const handleSubmit = async () => {
+  submitDialog.value = false;
+  try {
+    await saveAnswer();
+    localTestAnswer.submitted = true;
+  } catch (error) {
+    console.error('Error submitting answer:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
+  }
+};
+
+const saveAnswer = async () => {
+  try {
+    localTestAnswer.fullName = fullName.value;
+    if (user.value && user.value?.email) {
+      localTestAnswer.userDocId = user.value.id;
+      localTestAnswer.invited = true;
+    }
+
+    Object.assign(currentUserTestAnswer.value, localTestAnswer);
+
+    console.log('ANSWER =>', {
+      data: currentUserTestAnswer.value,
+      answerDocId: test.value.answersDocId,
+      testType: test.value.testType,
+    })
+    await store.dispatch('saveTestAnswer', {
+      data: currentUserTestAnswer.value,
+      answerDocId: test.value.answersDocId,
+      testType: test.value.testType,
+    });
+  } catch (error) {
+    console.error('Error saving answer:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+  }
+};
+
 const setTestAnswer = async () => {
   loggedIn.value = true;
   await store.dispatch('getCurrentTestAnswerDoc');
@@ -367,7 +412,7 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 };
 
-const completeStep = (id, type, userCompleted = true) => {
+const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true;
@@ -426,6 +471,7 @@ const completeStep = (id, type, userCompleted = true) => {
 
     }
     calculateProgress();
+    await saveAnswer();
   } catch (error) {
     console.error('Error in completeStep:', error);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
