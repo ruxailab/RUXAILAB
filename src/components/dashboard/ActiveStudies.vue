@@ -61,9 +61,9 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import AnswerController from '@/controllers/AnswerController'
+import AnswerController from '@/controllers/AnswerController';
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex';
 
 const props = defineProps({
   studies: {
@@ -71,6 +71,7 @@ const props = defineProps({
     default: () => []
   }
 })
+
 const store = useStore()
 const answerController = new AnswerController()
 
@@ -188,14 +189,6 @@ const defaultStudies = [
     typeIcon: 'mdi-wheelchair-accessibility'
   }
 ]
-
-watch(
-  () => props.studies,
-  () => {
-    loadAnswers();
-  },
-  { immediate: true }
-);
 </script>
 
 <style scoped>

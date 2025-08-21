@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- POST-FORM -->
-    <!-- <CardForm 
+    <!-- <CardForm
       title="Post-Form"
       subtitle="This is a post-questions you make to get participants data"
     >
@@ -9,16 +9,9 @@
     </CardForm> -->
 
     <!-- Final Message -->
-    <CardForm 
-      title="Final Message"
-      subtitle="This is a Final message you leave to the participant on finish test."
-    >
-      <InputTextEditTest
-        v-model="postTest.finalMessage"
-        label="Tankyou for participating..."
-        :rows="1"
-        @input="onChange"
-      />
+    <CardForm title="Final Message" subtitle="This is a Final message you leave to the participant on finish test.">
+      <InputTextEditTest :value="postTest.finalMessage" label="Tankyou for participating..." :rows="1"
+        @input="postTest.finalMessage = $event; onChange()" />
     </CardForm>
   </div>
 </template>
