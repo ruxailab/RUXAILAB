@@ -15,7 +15,7 @@
       justify="center"
       class="ma-0 mt-4"
     >
-      <ShowInfo hideCol="true">
+      <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs
