@@ -87,18 +87,12 @@ import NextSession from '@/components/dashboard/NextSession.vue'
 
 const store = useStore()
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-    default: () => [],
-  },
-})
-
 // Dashboard data
 const totalStudies = ref(12)
 const usedStorage = ref(150)
 const totalParticipants = ref(347)
+
+
 
 // User info
 const userDisplayName = computed(() => {

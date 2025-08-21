@@ -99,11 +99,15 @@ export default {
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...state.testStructure, ...payload }
     },
-    SET_CATEGORIES_TEST_STRUCTURE(state, payload) {
+    SET_CARDSORTING_OPTIONS_TEST_STRUCTURE(state, payload) {
+      state.testStructure.cardSorting = state.testStructure.cardSorting || {}
+      state.testStructure.cardSorting.options = payload
+    },
+    SET_CARDSORTING_CATEGORIES_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.categories = payload
     },
-    SET_CARD_TEST_STRUCTURE(state, payload) {
+    SET_CARDSORTING_CARD_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.cards = payload
     },

@@ -45,7 +45,9 @@
                   {{ item.icon }}
                 </v-icon>
               </template>
-              <v-list-item-title :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'">
+              <v-list-item-title
+                :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+              >
                 {{ $t(`titles.drawer.${item.title}`) }}
               </v-list-item-title>
             </v-list-item>
@@ -65,7 +67,9 @@
               {{ item.icon }}
             </v-icon>
           </template>
-          <v-list-item-title :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'">
+          <v-list-item-title
+            :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+          >
             {{ $t(`titles.drawer.${item.title}`) }}
           </v-list-item-title>
         </v-list-item>

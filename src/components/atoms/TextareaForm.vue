@@ -48,14 +48,12 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  modelValue: {
-    type: String,
-    default: '',
-  },
 })
 
-const emit = defineEmits(['update:value'])
-const value = ref('')
+const value = defineModel({ type: String, default: '' })
+
+const emit = defineEmits(['update:value', 'update:modelValue'])
+// const value = ref('')
 
 watch(() => props.modelValue, (newVal) => {
   value.value = newVal

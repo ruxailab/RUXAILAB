@@ -1,52 +1,25 @@
 <template>
-  <v-container
-    fluid
-    class="create-study-view"
-  >
+  <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader
-        :current-step="2"
-        :steps="steps"
-      />
+      <StepperHeader :current-step="2" :steps="steps" />
 
       <!-- Page Header -->
-      <SectionHeader
-        :title="`Choose ${categoryNames[currentCategory]} Method`"
-        subtitle="Select the specific method for your study"
-      />
+      <SectionHeader :title="`Choose ${categoryNames[currentCategory]} Method`"
+        subtitle="Select the specific method for your study" />
 
       <!-- Methods Grid -->
-      <v-row
-        justify="center"
-        class="mb-8"
-      >
-        <v-col
-          v-for="method in availableMethods"
-          :key="method.id"
-          cols="12"
-          md="6"
-          lg="5"
-        >
-          <SelectableCard
-            :selected="selectedMethod === method.id"
-            :icon="method.icon"
-            :title="method.name"
-            text-class="text-start pa-8"
-            :description="method.description"
-            :color="method.color"
-            :disabled="!method.available"
-            :badge="method.comingSoon ? { text: 'Coming Soon', color: 'warning' } : null"
-            @click="() => selectMethod(method.id, method.available)"
-          />
+      <v-row justify="center" class="mb-8">
+        <v-col v-for="method in availableMethods" :key="method.id" cols="12" md="6" lg="5">
+          <SelectableCard :selected="selectedMethod === method.id" :icon="method.icon" :title="method.name"
+            text-class="text-start pa-8" :description="method.description" :color="method.color"
+            :disabled="!method.available" :badge="method.comingSoon ? { text: 'Coming Soon', color: 'warning' } : null"
+            @click="() => selectMethod(method.id, method.available)" />
         </v-col>
       </v-row>
 
       <!-- Back Button -->
-      <BackButton
-        label="Back to Categories"
-        @back="goBack"
-      />
+      <BackButton label="Back to Categories" @back="goBack" />
     </v-container>
   </v-container>
 </template>
@@ -87,6 +60,14 @@ const methodsByCategory = {
       description: 'Real-time sessions with facilitator guidance and immediate feedback',
       icon: 'mdi-account-voice',
       color: 'success',
+      available: true
+    },
+    {
+      id: 'CardSorting',
+      name: 'Card Sorting (Unmoderated)',
+      description: 'Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic.',
+      icon: 'mdi-card-multiple',
+      color: 'error',
       available: true
     },
     {
