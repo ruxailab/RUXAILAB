@@ -120,7 +120,7 @@ const getCards = () => {
   categories.value = test.value.testStructure.cardSorting.categories || []
   options.value = test.value.testStructure.cardSorting.options || {}
   emit('options', options.value)
-  emit('categories', cards.value)
+  emit('categories', categories.value)
 }
 
 onMounted(() => {
