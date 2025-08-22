@@ -1,81 +1,246 @@
 <template>
-  <v-container>
-    <ButtonSave
-      :visible="change"
-      @click="save"
-    />
-    
-    <v-row>
-      <v-tabs
-        v-model="tabIndex"
-        bg-color="transparent"
-        color="#FCA326"
-        class="pb-0 mb-0"
-      >
-        <v-tab>PRE-TEST</v-tab>
-        <v-tab>CATEGORIES</v-tab>
-        <v-tab>CARDS</v-tab>
-        <v-tab>POST-TEST</v-tab>
-        <!-- <v-tab>SETTINGS</v-tab> -->
-      </v-tabs>
+  <PageWrapper
+    title="Edit Test"
+    :side-gap="true"
+  >
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Customize the settings and preferences of your test
+      </p>
+    </template>
 
-      <v-col cols="12">
-        <!-- PRE-TEST -->
-        <PreTestEditCardSorting v-if="tabIndex === 0" />
+    <v-container>
+      <Snackbar />
+      <ButtonSave
+        :visible="change"
+        @click="save"
+      />
 
-        <!-- CATEGORIES -->
-        <CategoriesEditCardSorting v-else-if="tabIndex === 1" />
+      <div>
+        <VTabs
+          bg-color="transparent"
+          color="#FCA326"
+          class="pb-0 mb-0"
+        >
+          <VTab @click="index = 0">
+            {{ 'Test' }}
+          </VTab>
+          <VTab @click="index = 1">
+            {{ $t('ModeratedTest.consentForm') }}
+          </VTab>
+          <VTab @click="index = 2">
+            {{ $t('ModeratedTest.preTest') }}
+          </VTab>
+          <VTab @click="index = 3">
+            {{ 'Categories' }}
+          </VTab>
+          <VTab @click="index = 4">
+            {{ 'Cards' }}
+          </VTab>
+          <VTab @click="index = 5">
+            {{ $t('ModeratedTest.postTest') }}
+          </VTab>
+        </VTabs>
 
-        <!-- CARDS -->
-        <CardsEditCardSorting v-else-if="tabIndex === 2" />
+        <VCol cols="12">
+          <!-- TEST -->
+          <div v-if="index === 0">
+            <VRow>
+              <VCol cols="9">
+                <TextareaForm
+                  v-model="welcomeMessage"
+                  :title="$t('ModeratedTest.welcomeMessage')"
+                  :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
+                />
 
-        <!-- POST-TEST -->
-        <PostTestEditCardSorting v-else-if="tabIndex === 3" />
-      </v-col>
-    </v-row>
-  </v-container>
+                <TextareaForm
+                  v-model="finalMessage"
+                  :title="$t('ModeratedTest.finalMessage')"
+                  :subtitle="$t('ModeratedTest.finalMessageDescription')"
+                />
+              </VCol>
+
+              <VCol cols="3">
+                <v-card
+                  flat
+                  class="elevation-2 rounded-lg pa-6"
+                >
+                  <v-card-title class="text-h5 font-weight-bold mb-4 bg-on-surface">
+                    {{ $t('ModeratedTest.participantCamera') }}
+                  </v-card-title>
+                  <v-card-text>
+                    <v-radio-group
+                      v-model="participantCamera"
+                      class="pt-0"
+                      @update:model-value="change = true"
+                    >
+                      <v-radio
+                        :label="$t('ModeratedTest.cameraOptions.optional')"
+                        color="orange"
+                        value="optional"
+                      />
+                      <v-radio
+                        :label="$t('ModeratedTest.cameraOptions.required')"
+                        color="orange"
+                        value="required"
+                      />
+                      <v-radio
+                        :label="$t('ModeratedTest.cameraOptions.disabled')"
+                        color="orange"
+                        value="disabled"
+                      />
+                    </v-radio-group>
+                  </v-card-text>
+                </v-card>
+              </VCol>
+            </VRow>
+          </div>
+
+          <!-- CONSENT FORM -->
+          <v-card
+            v-if="index === 1"
+            rounded="xxl"
+          >
+            <TextareaForm
+              v-model="consent"
+              :title="$t('ModeratedTest.consentForm')"
+              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+            />
+          </v-card>
+
+          <!-- PRE-TEST -->
+          <v-card
+            v-if="index === 2"
+            rounded="xxl"
+          >
+            <UserVariables
+              type="pre-test"
+              @update="preTest = $event"
+              @change="change = true"
+            />
+          </v-card>
+
+          <!-- CATEGORIES -->
+          <div
+            v-if="index === 3"
+            rounded="xxl"
+          >
+            <CategoriesEditCardSorting
+              @change="change = true"
+              @categories="categories = $event"
+              @options="optionsCategories = $event"
+            />
+          </div>
+
+          <!-- CARDS -->
+          <div
+            v-if="index === 4"
+            rounded="xxl"
+          >
+            <CardsEditCardSorting
+              @change="change = true"
+              @cards="cards = $event"
+              @options="optionsCards = $event"
+            />
+          </div>
+
+          <!-- POS-TEST -->
+          <v-card
+            v-if="index === 5"
+            rounded="xxl"
+          >
+            <UserVariables
+              type="post-test"
+              @update="postTest = $event"
+              @change="change = true"
+            />
+          </v-card>
+        </VCol>
+      </div>
+    </v-container>
+  </PageWrapper>
 </template>
 
-<script>
-import ButtonSave from '@/components/atoms/ButtonSave'
-import PreTestEditCardSorting from '@/components/organisms/PreTestEditCardSorting'
-import CardsEditCardSorting from '@/components/organisms/CardsEditCardSorting'
-import CategoriesEditCardSorting from '@/components/organisms/CategoriesEditCardSorting'
-import PostTestEditCardSorting from '@/components/organisms/PostTestEditCardSorting'
+<script setup>
+import ButtonSave from '@/components/atoms/ButtonSave.vue';
+import Snackbar from '@/components/atoms/Snackbar.vue';
+import TextareaForm from '@/components/atoms/TextareaForm.vue';
+import UserVariables from '@/components/atoms/UserVariables.vue';
+import CardsEditCardSorting from '@/components/organisms/CardsEditCardSorting.vue';
+import CategoriesEditCardSorting from '@/components/organisms/CategoriesEditCardSorting.vue';
+import PageWrapper from '@/components/template/PageWrapper.vue';
+import Test from '@/models/Test';
+import { computed, onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
 
-export default {
-  components: {
-    ButtonSave,
-    PreTestEditCardSorting,
-    CardsEditCardSorting,
-    CategoriesEditCardSorting,
-    PostTestEditCardSorting,
-  },
+// Variables
+const index = ref(0);
+const change = ref(false);
+const welcomeMessage = ref('')
+const finalMessage = ref('')
+const participantCamera = ref('')
+const preTest = ref([])
+const postTest = ref([])
+const consent = ref('')
+const categories = ref([])
+const cards = ref([])
+const optionsCategories = ref({})
+const optionsCards = ref({})
 
-  data: () => ({
-    tabIndex: 0,
-  }),
+// Stores
+const store = useStore();
 
-  computed: {
-    change() {
-      return this.$store.state.localChanges
-    },
+// Computed
+const test = computed(() => store.getters.test)
 
-    test() {
-      return this.$store.getters.test
-    },
-
-    testStructure() {
-      return this.$store.getters.testStructure
-    },
-  },
-
-  methods: {
-    async save() {
-      this.$store.commit('SET_LOCAL_CHANGES', false)
-      const newTest = Object.assign(this.test, { testStructure: this.testStructure })
-      await this.$store.dispatch('updateTest', newTest)
-    },
-  },
+// Methods
+const save = async () => {
+  await submit()
+  change.value = false
 }
+
+const submit = async () => {
+  const object = {
+    testStructure: {
+      welcomeMessage: welcomeMessage.value,
+      finalMessage: finalMessage.value,
+      participantCamera: participantCamera.value,
+      preTest: preTest.value,
+      postTest: postTest.value,
+      consent: consent.value,
+      cardSorting: {
+        categories: categories.value,
+        cards: cards.value,
+        options: { ...optionsCards.value, ...optionsCategories.value}
+      },
+    }
+  }
+
+  const updatedTest = new Test({ ...test.value, ...object })
+  await store.dispatch('updateTest', updatedTest)
+}
+
+const getWelcome = () => {
+  welcomeMessage.value = test.value.testStructure?.welcomeMessage || ''
+}
+
+const getFinalMessage = () => {
+  finalMessage.value = test.value.testStructure?.finalMessage || ''
+}
+
+const getParticipantCamera = () => {
+  participantCamera.value = test.value.testStructure?.participantCamera || ''
+}
+
+const getConsent = () => {
+  consent.value = test.value.testStructure?.consent || ''
+}
+
+// Lifecycle
+onMounted(() => {
+  getWelcome()
+  getFinalMessage()
+  getParticipantCamera()
+  getConsent()
+})
 </script>

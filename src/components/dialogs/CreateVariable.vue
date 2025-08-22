@@ -1,44 +1,25 @@
 <template>
-  <v-dialog
-    :model-value="dialog"
-    persistent
-    max-width="600"
-    @update:model-value="$emit('update:dialog', $event)"
-  >
+  <v-dialog :model-value="dialog" persistent max-width="600" @update:model-value="$emit('update:dialog', $event)">
     <v-card>
       <v-card-title class="text-h6 mb-2">
         {{ title }}
       </v-card-title>
 
       <v-card-text>
-        <InputTextEditTest 
-          v-model="item.title"
-          type="textField"
-          :label="$t('UserTestTable.inputs.variableName')"
-        />
-
-        <InputTextEditTest 
-          v-model="item.description"
-          :rows="3"
-          label="Variable Description"
-        />
+        <InputTextEditTest :value="item.title" type="textField" :label="$t('UserTestTable.inputs.variableName')"
+          @input="item.title = $event" />
+        <InputTextEditTest :value="item.description" :rows="3" label="Variable Description"
+          @input="item.description = $event" />
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          color="red"
-          class="ml-auto"
-          @click="$emit('close')"
-        >
+        <v-btn color="red" class="ml-auto" @click="$emit('close')">
           <v-icon class="mr-1">
             mdi-close
           </v-icon>
           {{ $t('buttons.close') }}
         </v-btn>
-        <v-btn
-          color="orange"
-          @click="saveItem"
-        >
+        <v-btn color="orange" @click="saveItem">
           <v-icon class="mr-1">
             mdi-content-save
           </v-icon>

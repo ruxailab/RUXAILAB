@@ -5,21 +5,11 @@
       color="#FCA326"
       class="pb-0 mb-0"
     >
-      <v-tab @click="tabClicked(0)">
-        Test
-      </v-tab>
-      <v-tab @click="tabClicked(1)">
-        {{ $t('ModeratedTest.consentForm') }}
-      </v-tab>
-      <v-tab @click="tabClicked(2)">
-        {{ $t('ModeratedTest.preTest') }}
-      </v-tab>
-      <v-tab @click="tabClicked(3)">
-        {{ $t('ModeratedTest.tasks') }}
-      </v-tab>
-      <v-tab @click="tabClicked(4)">
-        {{ $t('ModeratedTest.postTest') }}
-      </v-tab>
+      <v-tab @click="tabClicked(0)">Test</v-tab>
+      <v-tab @click="tabClicked(1)">{{ $t('ModeratedTest.consentForm') }}</v-tab>
+      <v-tab @click="tabClicked(2)">{{ $t('ModeratedTest.preTest') }}</v-tab>
+      <v-tab @click="tabClicked(3)">{{ $t('ModeratedTest.tasks') }}</v-tab>
+      <v-tab @click="tabClicked(4)">{{ $t('ModeratedTest.postTest') }}</v-tab>
     </v-tabs>
 
     <VCol cols="12">
@@ -28,15 +18,15 @@
         <VRow>
           <VCol cols="9">
             <TextareaForm
+              v-model="welcomeMessage"
               :title="$t('ModeratedTest.welcomeMessage')"
-              :model-value="welcomeMessage"
               :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
               @update:value="saveState('welcome', $event)"
             />
 
             <TextareaForm
+              v-model="finalMessage"
               :title="$t('ModeratedTest.finalMessage')"
-              :model-value="finalMessage"
               :subtitle="$t('ModeratedTest.finalMessageDescription')"
               @update:value="saveState('finalMessage', $event)"
             />
@@ -84,6 +74,7 @@
         rounded="xxl"
       >
         <TextareaForm
+          v-model="consent"
           :title="$t('ModeratedTest.consentForm')"
           subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
           @update:value="saveState('consent', $event)"
@@ -95,7 +86,7 @@
         v-if="index === 2"
         rounded="xxl"
       >
-        <UserVariables />
+        <UserVariables type="pre-test" @update="saveState('preTest', $event)" />
       </v-card>
 
       <!-- TASKS -->
@@ -111,7 +102,7 @@
         v-if="index === 4"
         rounded="xxl"
       >
-        <FormPostTest />
+        <UserVariables type="post-test" @update="saveState('postTest', $event)" />
       </v-card>
     </VCol>
   </div>
@@ -120,7 +111,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import FormPostTest from '../atoms/FormPostTest.vue'
 import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTask from '../molecules/ModeratedTask.vue'
 import TextareaForm from '../atoms/TextareaForm.vue'
@@ -138,7 +128,7 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(['tabClicked']);
+const emit = defineEmits(['tabClicked', 'change']);
 
 // Reactive state
 const welcomeMessage = ref('')
@@ -177,8 +167,11 @@ const saveState = async (type, value) => {
     'finalMessage': 'setFinalMessage',
     'participantCamera': 'setParticipantCamera',
     'welcome': 'setWelcomeMessage',
+    'preTest': 'setPreTest',
+    'postTest': 'setPostTest',
   }
 
+  emit('change', true)
   if (states[type]) store.dispatch(states[type], value)
 }
 

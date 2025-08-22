@@ -20,7 +20,11 @@
       </v-overlay>
 
       <!-- Main Container -->
-      <v-container>
+      <v-container
+        fluid
+        class="page-wrapper"
+        :class="{ 'side-gap': sideGap }"
+      >
         <!-- Header Section -->
         <div
           v-if="title || $slots.actions"
@@ -91,5 +95,15 @@ const { t } = useI18n();
 
 .side-gap {
   padding: 1.5rem 3rem;
+}
+
+.header-section {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 960px) {
+  .side-gap {
+    padding: 1rem;
+  }
 }
 </style>
