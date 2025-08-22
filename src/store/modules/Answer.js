@@ -1,5 +1,5 @@
 import AnswerController from '@/controllers/AnswerController'
-import HeuristicAnswer from '@/models/HeuristicAnswer'
+import HeuristicAnswer from '@/models/heuristic_method/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
 import UserTask from '@/models/UserTask'
 import { percentage } from '@/utils/statistics'
