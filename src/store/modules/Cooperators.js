@@ -252,10 +252,9 @@ export default {
       commit('setLoading', true)
 
       try {
+        const testDate = new Date(payload.guest?.testDate || Date.now())
+
         payload.link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`
-
-        const testDate = new Date(payload.guest.testDate)
-
         payload.testDate = testDate.toLocaleDateString()
         payload.testTime = testDate.toLocaleTimeString()
         const dtStamp = testDate

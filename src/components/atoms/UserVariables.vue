@@ -14,14 +14,14 @@
             class="text-h5 font-weight-bold mb-4"
             :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
           >
-            Pre-Test Variables
+            {{ type === 'pre-test' ? 'Pre-Test' : 'Post-Test'}} Variables
           </v-card-title>
           <v-card-text>
             <p
               class="text-body-1 mb-6"
               style="color: #4B5563;"
             >
-              Configure the variables for the pre-test section. Add, edit, or remove variables as needed.
+              Configure the variables for the {{ props.type }} section. Add, edit, or remove variables as needed.
             </p>
             <v-expansion-panels
               v-if="items.length > 0"
@@ -251,82 +251,88 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
 
-const { t } = useI18n();
-const store = useStore();
+const emit = defineEmits(['update', 'change'])
 
-const newItem = ref('');
-const items = ref([]);
-const show = ref(false);
-const valid = ref(false);
-const form = ref(null);
-const isSaving = ref(false);
-const isDirty = ref(false);
+const props = defineProps({
+  type: {
+    type: String,
+    required: true,
+  },
+})
 
-const test = computed(() => store.getters.test);
-const preTest = computed(() => store.getters.preTest);
+const store = useStore()
+
+const newItem = ref('')
+const items = ref([])
+const show = ref(false)
+const valid = ref(false)
+const form = ref(null)
+const isSaving = ref(false)
+const isDirty = ref(false)
+
+const test = computed(() => store.getters.test)
 
 const markDirty = () => {
-  isDirty.value = true;
-};
+  isDirty.value = true
+  emit('change')
+  emit('update', items.value)
+}
 
 const showModal = () => {
-  show.value = true;
-  newItem.value = '';
-  form.value?.resetValidation();
-};
+  show.value = true
+  newItem.value = ''
+  form.value?.resetValidation()
+}
 
 const closeModal = () => {
-  show.value = false;
-  newItem.value = '';
-  form.value?.resetValidation();
-};
+  show.value = false
+  newItem.value = ''
+  form.value?.resetValidation()
+}
 
 const selectField = (i) => {
   if (items.value[i].selectionField && items.value[i].selectionFields.length === 0) {
-    items.value[i].selectionFields.push('');
+    items.value[i].selectionFields.push('')
   }
   if (!items.value[i].selectionField) {
-    items.value[i].selectionFields = [];
+    items.value[i].selectionFields = []
   }
-  items.value[i].textField = false;
-  markDirty();
-};
+  items.value[i].textField = false
+  markDirty()
+}
 
 const selectText = (i) => {
-  items.value[i].selectionFields = [];
-  items.value[i].selectionField = false;
-  markDirty();
-};
+  items.value[i].selectionFields = []
+  items.value[i].selectionField = false
+  markDirty()
+}
 
 const deleteItem = (i) => {
-  items.value.splice(i, 1);
-  saveState();
-};
+  items.value.splice(i, 1)
+  saveState()
+}
 
 const newSelection = (index) => {
   items.value[index] = {
     ...items.value[index],
     selectionFields: [...items.value[index].selectionFields, ''],
-  };
-  markDirty();
-};
+  }
+  markDirty()
+}
 
 const deleteSelection = (index, selectionIndex) => {
-  items.value[index].selectionFields.splice(selectionIndex, 1);
-
-};
+  items.value[index].selectionFields.splice(selectionIndex, 1)
+  markDirty()
+}
 
 const saveNewItem = async () => {
-  if (!valid.value) {
-    await form.value?.validate();
-    return;
-  }
+  if (!valid.value) return await form.value?.validate()
+
   try {
-    isSaving.value = true;
+    isSaving.value = true
     items.value.push({
       answer: '',
       title: newItem.value.trim(),
@@ -334,33 +340,38 @@ const saveNewItem = async () => {
       selectionFields: [],
       selectionField: false,
       textField: true,
-    });
-    newItem.value = '';
-    show.value = false;
-    form.value?.resetValidation();
-    saveState();
+    })
+    newItem.value = ''
+    show.value = false
+    form.value?.resetValidation()
+    saveState()
   } catch (error) {
-    console.error('Error adding variable:', error.message);
+    console.error('Error adding variable:', error.message)
   } finally {
-    isSaving.value = false;
+    isSaving.value = false
   }
 };
 
 const saveState = async () => {
   try {
     isSaving.value = true
-    await store.dispatch('setPreTest', items.value)
+    emit('update', items.value)
+    emit('change')
     isDirty.value = false
   } catch (error) {
     console.error('Error saving pre-test:', error.message)
   } finally {
-    isSaving.value = false;
+    isSaving.value = false
   }
 };
 
 const getVariables = () => {
-  const data = preTest.value ?? test.value?.testStructure?.preTest ?? [];
-  items.value = Array.isArray(data) ? [...data] : [];
+  if (props.type === 'pre-test') {
+    items.value = test.value?.testStructure?.preTest ?? []
+  } else if (props.type === 'post-test') {
+    items.value = test.value?.testStructure?.postTest ?? []
+  }
+  emit('update', items.value)
 };
 
 onMounted(() => {

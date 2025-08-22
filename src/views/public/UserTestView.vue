@@ -1,13 +1,12 @@
 <template>
   <div v-if="test">
-    <!-- REMOVE if not necessary
+    <!-- Loading Overlay -->
     <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="primary" size="50" />
-      <div class="text-white mt-3">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
         Saving...
       </div>
-      </v-overlay>
-      -->
+    </v-overlay>
 
     <Snackbar />
 
@@ -95,7 +94,7 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p class="text-body-1 mb-5 text-white text-justify">
+          <p align="justify" class="description">
             {{ test.testDescription }}
           </p>
           <v-btn
@@ -131,7 +130,6 @@
               >
                 <v-stepper-header>
                   <v-stepper-item
-                    color="white"
                     value="1"
                     title="Consent"
                     :complete="stepperValue >= 1"
@@ -140,7 +138,6 @@
                   />
                   <v-divider />
                   <v-stepper-item
-                    color="white"
                     value="2"
                     title="Pre-test"
                     :complete="stepperValue >= 2"
@@ -149,7 +146,6 @@
                   />
                   <v-divider />
                   <v-stepper-item
-                    color="white"
                     value="3"
                     title="Tasks"
                     :complete="stepperValue >= 3"
@@ -158,7 +154,6 @@
                   />
                   <v-divider />
                   <v-stepper-item
-                    color="white"
                     value="4"
                     title="Post-test"
                     :complete="stepperValue >= 4"
@@ -167,7 +162,6 @@
                   />
                   <v-divider />
                   <v-stepper-item
-                    color="white"
                     value="5"
                     title="Completion"
                     :complete="stepperValue === 5"
@@ -201,7 +195,6 @@
                     :key="idx"
                   >
                     <v-stepper-item
-                      color="white"
                       :value="idx + 1"
                       :title="`Tarea ${idx + 1}`"
                       :complete="taskIndex > idx"
@@ -286,19 +279,23 @@
         </v-col>
       </v-row>
     </v-container>
-
-    <!--TODO: Remove if not necessary
-    <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon class="ma-4">
-      <v-speed-dial v-model="fab" open-on-hover>
+    <!-- Floating Action Button -->
+    <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
+      class="mb-10 mr-5">
+      <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
         <template #activator="{ props }">
-          <v-btn v-model="fab" size="large" color="primary" v-bind="props" icon>
-            <v-icon v-if="fab">mdi-close</v-icon>
-            <v-icon v-else size="large">mdi-hammer-screwdriver</v-icon>
+          <v-btn v-model="fab" size="large" color="#F9A826" v-bind="props" icon class="btn-fix">
+            <v-icon v-if="fab">
+              mdi-close
+            </v-icon>
+            <v-icon v-else size="large">
+              mdi-hammer-screwdriver
+            </v-icon>
           </v-btn>
         </template>
         <v-tooltip location="left">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon size="small" color="secondary" @click="saveAnswer">
+            <v-btn v-bind="props" icon size="small" color="#F9A826" @click="saveAnswer">
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
@@ -307,7 +304,7 @@
         <v-tooltip location="left">
           <template #activator="{ props }">
             <v-btn v-bind="props" :disabled="localTestAnswer && !localTestAnswer.postTestCompleted" class="text-white"
-              icon size="small" color="primary" @click="dialog = true">
+              icon size="small" color="#F9A826" @click="dialog = true">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -872,39 +869,15 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-size: 200% 200%;
-  animation: subtleGradient 20s ease-in-out infinite;
-  background-image: linear-gradient(160deg,
-      #00213F 0%,
-      #1a2f4f 35%,
-      #303f9f 100%);
-  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
-
-.start-screen.leaving,
-.start-screen.leaving>*,
-.start-screen.leaving::before {
-  opacity: 0;
-  transition-duration: 1.2s;
+.background-task {
+  background-color: #e8eaf6;
+  height: 100%;
+  overflow: auto;
 }
 
-@keyframes subtleGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.start-screen::before {
+.background:before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -922,32 +895,46 @@ onBeforeUnmount(() => {
   opacity: 0.2;
 }
 
-.start-screen.leaving::before {
-  opacity: 0;
+.title-view {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
 }
 
-/* Stepper sticky styles */
-.sticky-stepper {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: transparent;
+.description-view {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.1818px;
+  line-height: 21px;
+  align-items: flex-end;
+  color: #ffffff;
 }
 
-.main-stepper {
-  background: #00213F !important;
-  color: #fff !important;
-  --v-stepper-header-title-color: #fff !important;
-  --v-stepper-item-title-color: #fff !important;
-  --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+.sub-title {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
 }
 
+.btn-fix:focus:before {
+  opacity: 0 !important;
+}
 
-.main-stepper.stepper-animate {
-  background: #00213F !important;
-  opacity: 0.3;
-  filter: blur(1px);
+.title-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin-left: 15px;
+  padding: 10px;
+  padding-left: 0px;
+  padding-top: 0px;
 }
 
 /* Task stepper background */

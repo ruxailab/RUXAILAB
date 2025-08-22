@@ -1,82 +1,34 @@
 <template>
-  <v-container
-    class="pa-0 ma-0"
-    fluid
-  >
+  <v-container class="pa-0 ma-0" fluid>
     <Snackbar />
+    <Loadding />
 
-    <v-overlay
-      v-model="loading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
-      <div class="white-text mt-3">
-        {{ $t('common.loading') }}
-      </div>
-    </v-overlay>
-
-    <v-row
-      v-if="test"
-      class="nav pa-0 ma-0"
-      dense
-    >
+    <v-row v-if="test" class="nav pa-0 ma-0" dense>
       <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="$route.path.includes('manager')">
-          <div class="back-gradient">
-            <v-row
-              align="center"
-              justify="center"
-              style="height: 100%"
-            >
-              <v-col class="text-div">
-                <div
-                  v-if="accessLevel == 0"
-                  class="text-white"
-                >
-                  <p
-                    class="mobile-center"
-                    style="font-size: 58px; font-weight: 500"
-                  >
+          <div class="manager-bg back-gradient pa-6">
+            <v-row align="center" justify="center" style="height: 100%">
+              <v-col cols="12" md="6" class="text-white text-center text-md-left">
+                <div v-if="accessLevel == 0">
+                  <p class="font-weight-medium text-h4 text-md-h2">
                     {{ $t('titles.manager') }}
                   </p>
-
-                  <p
-                    style="font-size: 22px"
-                    class="mobile-center"
-                  >
+                  <p class="text-subtitle-1 text-md-subtitle-1">
                     {{ test.testTitle }}
                   </p>
                 </div>
 
-                <div
-                  v-else
-                  class="text-white mobile-center"
-                  style="font-size: 58px; font-weight: 500"
-                >
+                <div v-else class="text-white mobile-center" style="font-size: 58px; font-weight: 500">
                   {{ test.testTitle }}
                 </div>
-
-                <v-img
-                  class="hidden-md-and-up"
-                  style="max-height: 40vh"
-                  cover
-                  src="@/assets/manager/IntroManager.svg"
-                />
               </v-col>
-              <v-img
-                class="hidden-sm-and-down"
-                cover
-                max-width="40%"
-                max-height="85%"
-                src="@/assets/manager/IntroManager.svg"
-              />
+
+              <v-col cols="12" md="6" class="d-flex justify-center">
+                <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
+              </v-col>
             </v-row>
           </div>
           <div>
@@ -87,11 +39,7 @@
                 </div>
 
                 <!-- Top Cards -->
-                <CardsManager
-                  :cards="topCards"
-                  :per-row="2"
-                  @click="go"
-                />
+                <CardsManager :cards="topCards" :per-row="2" @click="go" />
               </div>
 
               <div v-if="bottomCards.length">
@@ -100,11 +48,7 @@
                 </div>
 
                 <!-- Bottom Cards -->
-                <CardsManager
-                  :cards="bottomCards"
-                  :per-row="3"
-                  @click="go"
-                />
+                <CardsManager :cards="bottomCards" :per-row="3" @click="go" />
               </div>
             </v-container>
           </div>
@@ -121,12 +65,14 @@ import Snackbar from '@/components/atoms/Snackbar'
 import Drawer from '@/components/atoms/Drawer'
 // import { statistics } from '@/utils/statistics'
 import CardsManager from '@/components/atoms/CardsManager'
+import Loadding from '@/components/atoms/Loadding.vue'
 
 export default {
   components: {
     Snackbar,
     Drawer,
     CardsManager,
+    Loadding,
   },
 
   computed: {
@@ -147,10 +93,6 @@ export default {
       return this.$store.getters.getUserAccessLevel(this.test)
     },
 
-    loading() {
-      return this.$store.getters.loading
-    },
-
     topCards() {
       return [
         {
@@ -163,16 +105,16 @@ export default {
             'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
           path: `/cardSorting/edittest/${this.test.id}`,
         },
-        // {
-        //   image: 'IntroCoops.svg',
-        //   title: 'cooperators',
-        //   imageStyle: '',
-        //   bottom: '#000',
-        //   description: 'cooperators',
-        //   cardStyle:
-        //     'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
-        //   path: `/cooperators/${this.test.cooperators}`,
-        // },
+        {
+          image: 'IntroCoops.svg',
+          title: 'cooperators',
+          imageStyle: '',
+          bottom: '#000',
+          description: 'cooperators',
+          cardStyle:
+            'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
+          path: `/cardSorting/cooperators/${this.test.cooperators}`,
+        },
       ]
     },
 
@@ -234,7 +176,7 @@ export default {
           // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
           // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
           // { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },
-          // { title: 'Cooperators', icon: 'mdi-account-group', path: `/cooperators/${this.test.id}` },
+          { title: 'Cooperators', icon: 'mdi-account-group', path: `/cardSorting/cooperators/${this.test.id}` },
           { title: 'Settings', icon: 'mdi-cog', path: `/cardSorting/settingsview/${this.test.id}` },
         )
       }
@@ -348,6 +290,11 @@ export default {
 
   .back-gradient {
     height: 100%;
+  }
+
+  .manager-bg {
+    height: 100%;
+    margin: 0 !important;
   }
 }
 </style>

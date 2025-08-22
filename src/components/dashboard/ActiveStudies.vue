@@ -12,7 +12,7 @@
 
     <v-card-text class="pa-4">
       <v-row>
-        <v-col v-for="study in studies" :key="study.id" cols="12" md="6">
+  <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
           <v-card variant="outlined" rounded="lg" class="study-card">
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
@@ -61,9 +61,9 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import AnswerController from '@/controllers/AnswerController'
+import AnswerController from '@/controllers/AnswerController';
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex';
 
 const props = defineProps({
   studies: {
@@ -71,6 +71,7 @@ const props = defineProps({
     default: () => []
   }
 })
+
 const store = useStore()
 const answerController = new AnswerController()
 
@@ -188,14 +189,6 @@ const defaultStudies = [
     typeIcon: 'mdi-wheelchair-accessibility'
   }
 ]
-
-watch(
-  () => props.studies,
-  () => {
-    loadAnswers();
-  },
-  { immediate: true }
-);
 </script>
 
 <style scoped>
