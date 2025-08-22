@@ -287,11 +287,33 @@
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Rendimiento por Tarea
+                Answers Timeline
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Tasa de aciertos y errores por cada tarea del test
+                Track your answer submissions over time
               </p>
+            </div>
+            <div class="d-flex ga-2">
+              <v-btn
+                variant="outlined"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>
+                  mdi-download
+                </v-icon>
+                Export
+              </v-btn>
+              <v-btn
+                variant="flat"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>
+                  mdi-refresh
+                </v-icon>
+                Refresh
+              </v-btn>
             </div>
           </div>
 
@@ -451,111 +473,15 @@
   </div>
 </template>
 
-
 <script setup>
-
-
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import DateChart from '@/components/atoms/DateChart.vue';
-import UxMetricCard from '@/components/UserTest/answers/UxMetricCard.vue';
-import CommentListCard from '@/components/UserTest/answers/CommentListCard.vue';
-import SelectionPieChart from '@/components/UserTest/answers/SelectionPieChart.vue';
-import AnswersTimeline from '@/components/UserTest/answers/AnswersTimeline.vue';
-
-
-// Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
-const testTasks = ref([]);
-const taskAnswers = ref([]);
-
-
-// Colores para el gráfico
-const chartColors = ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#EC407A', '#FF7043', '#26A69A', '#D4E157'];
-
-
-
-// Encuentra todas las preguntas de selección
-const selectionQuestions = computed(() => {
-  if (!taskAnswers.value.length || !taskAnswers.value[0].postTestAnswer) return [];
-  return taskAnswers.value[0].postTestAnswer.filter(q => Array.isArray(q.selectionFields) && q.selectionFields.length > 0);
-});
-
-// Computed robusto: tomar la primera sesión que tenga postTestAnswer
-const postTestQuestions = computed(() => {
-  for (const ans of taskAnswers.value) {
-    if (Array.isArray(ans?.postTestAnswer) && ans.postTestAnswer.length) {
-      return ans.postTestAnswer;
-    }
-  }
-  return [];
-});
-
-// Devuelve los recuentos de respuestas para una pregunta de selección específica (por índice)
-function getSelectionCounts(questionIdx) {
-  const counts = {};
-  // localizar la definición/base de la pregunta
-  let baseQuestion = null;
-  for (const ans of taskAnswers.value) {
-    if (ans.postTestAnswer && ans.postTestAnswer[questionIdx]) { baseQuestion = ans.postTestAnswer[questionIdx]; break; }
-  }
-  if (!baseQuestion) return counts;
-  if (Array.isArray(baseQuestion.selectionFields)) {
-    baseQuestion.selectionFields.forEach(opt => { counts[opt] = 0; });
-  }
-  taskAnswers.value.forEach(ans => {
-    const entry = ans.postTestAnswer?.[questionIdx];
-    if (!entry) return;
-    const answer = entry.answer;
-    if (Array.isArray(answer)) {
-      answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
-    } else if (counts[answer] !== undefined) {
-      counts[answer]++;
-    }
-  });
-  return counts;
-}
-
-function getPreSelectionCounts(questionIdx) {
-  const counts = {};
-  const q = taskAnswers.value[0]?.preTestAnswer?.[questionIdx];
-  if (!testStructure.value?.preTest?.[questionIdx]?.selectionFields) return counts;
-  const options = testStructure.value.preTest[questionIdx].selectionFields;
-  options.forEach(opt => { counts[opt] = 0; });
-  taskAnswers.value.forEach(ans => {
-    const answerObj = ans.preTestAnswer?.[questionIdx];
-    if (answerObj && answerObj.answer !== undefined) {
-      const answer = answerObj.answer;
-      if (Array.isArray(answer)) {
-        answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
-      } else if (counts[answer] !== undefined) {
-        counts[answer]++;
-      }
-    }
-  });
-  return counts;
-}
-
-function getPreTextAnswers(questionIdx) {
-  const list = [];
-  taskAnswers.value.forEach(ans => {
-    const a = ans.preTestAnswer?.[questionIdx]?.answer;
-    if (a !== undefined && a !== null && a !== '') list.push(a);
-  });
-  return list;
-}
-
-function getPostTextAnswers(questionIdx) {
-  const list = [];
-  taskAnswers.value.forEach(ans => {
-    const entry = ans.postTestAnswer?.[questionIdx];
-    const a = entry?.answer;
-    if (a !== undefined && a !== null && a !== '' && !Array.isArray(a)) list.push(a);
-  });
-  return list;
-}
 
 const store = useStore();
 
+const testTasks = ref([]);
+const taskAnswers = ref([]);
 
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
@@ -594,19 +520,19 @@ const formatTime = (time) => {
 };
 
 const findLongestTask = () => {
-  if (!taskAnswers.value.length) {
-    return { taskName: 'Task', averageTime: formatTime(0) };
-  }
+  if (!taskAnswers.value.length) return { taskName: 'Task', averageTime: formatTime(0) };
 
   const taskAverages = {};
 
   taskAnswers.value.forEach((answer) => {
-    if (!answer.tasks) return;
     for (const taskId in answer.tasks) {
-      const taskTime = answer.tasks[taskId]?.taskTime ?? 0;
+      const taskTime = answer.tasks[taskId].taskTime;
 
       if (!taskAverages[taskId]) {
-        taskAverages[taskId] = { totalTime: taskTime, count: 1 };
+        taskAverages[taskId] = {
+          totalTime: taskTime,
+          count: 1,
+        };
       } else {
         taskAverages[taskId].totalTime += taskTime;
         taskAverages[taskId].count++;
@@ -615,7 +541,8 @@ const findLongestTask = () => {
   });
 
   for (const taskId in taskAverages) {
-    taskAverages[taskId].averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
+    const averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
+    taskAverages[taskId].averageTime = averageTime;
   }
 
   let longestTask = null;
@@ -629,11 +556,9 @@ const findLongestTask = () => {
   }
 
   const taskMap = {};
-  if (testStructure.value && Array.isArray(testStructure.value.userTasks)) {
-    testStructure.value.userTasks.forEach((task) => {
-      taskMap[task.taskId] = task;
-    });
-  }
+  testStructure.value.userTasks.forEach((task) => {
+    taskMap[task.taskId] = task;
+  });
 
   return {
     taskName: taskMap[longestTask]?.taskName || 'Task',
@@ -746,196 +671,21 @@ const getFormattedDate = (date) => {
   return new Date(date).toLocaleString();
 };
 
-// UX Metrics Functions
-const calculateEffectiveness = () => {
-  if (!taskAnswers.value.length) return 0;
-
-  let completedTasks = 0;
-  let totalTasks = 0;
-
-  taskAnswers.value.forEach((answer) => {
-    totalTasks += Object.keys(answer.tasks).length;
-    Object.values(answer.tasks).forEach((task) => {
-      if (task.completed) {
-        completedTasks++;
-      }
-    });
-  });
-
-  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
-};
-
-const calculateEfficiency = () => {
-  if (!taskAnswers.value.length) return { score: 0, avgTime: '0 min 0 s' };
-
-  const avgTime = averageTimePerTask.value;
-  const avgTimeFormatted = formatTime(avgTime);
-
-  // Score based on average time (lower is better)
-  // Assuming 2 minutes as optimal time, anything above reduces efficiency
-  const optimalTime = 120000; // 2 minutes in milliseconds
-  const efficiency = Math.max(0, Math.min(10, (optimalTime / avgTime) * 10));
-
-  return {
-    score: efficiency,
-    avgTime: avgTimeFormatted.formatedTime
-  };
-};
-
-const calculateSatisfaction = () => {
-  if (!taskAnswers.value.length) return 0;
-
-  let totalSatisfaction = 0;
-  let ratingsCount = 0;
-
-  taskAnswers.value.forEach((answer) => {
-    if (answer.satisfaction && typeof answer.satisfaction === 'number') {
-      totalSatisfaction += answer.satisfaction;
-      ratingsCount++;
-    } else {
-      // If no satisfaction data, simulate based on completion rate
-      const userProgress = answer.progress;
-      const simulatedRating = userProgress >= 90 ? 4.5 :
-        userProgress >= 70 ? 4.0 :
-          userProgress >= 50 ? 3.5 :
-            userProgress >= 30 ? 3.0 : 2.5;
-      totalSatisfaction += simulatedRating;
-      ratingsCount++;
-    }
-  });
-
-  return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount;
-};
-
-const getTasksPerformance = () => {
-  // Recoger todos los taskId únicos presentes en taskAnswers
-  const allTaskIds = new Set();
-  taskAnswers.value.forEach(answer => {
-    if (answer.tasks) {
-      Object.keys(answer.tasks).forEach(taskId => allTaskIds.add(taskId));
-    }
-  });
-
-  // Para cada taskId, calcular los datos reales
-  const result = [];
-  allTaskIds.forEach(taskId => {
-    let success = 0;
-    let errors = 0;
-    let total = 0;
-    let taskName = taskId;
-
-    // Buscar el nombre de la tarea si está en testStructure
-    if (testStructure.value && testStructure.value.userTasks) {
-      const found = testStructure.value.userTasks.find(t => t.taskId === taskId);
-      if (found) taskName = found.taskName;
-    }
-
-    taskAnswers.value.forEach(answer => {
-      if (answer.tasks && answer.tasks[taskId]) {
-        total++;
-        const task = answer.tasks[taskId];
-        if (task.completed && task.success !== false) {
-          success++;
-        } else {
-          errors++;
-        }
-      }
-    });
-
-    result.push({
-      taskId,
-      taskName,
-      success,
-      errors,
-      total,
-      successRate: total === 0 ? 0 : (success / total) * 100
-    });
-  });
-  return result;
-};
-
-const createTaskCharts = async () => {
-  await nextTick();
-
-  const tasksData = getTasksPerformance();
-
-  tasksData.forEach((task) => {
-    // Usar el id único basado en el taskId
-    const canvasId = 'task-chart-' + (task.taskId || '');
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 10;
-    const innerRadius = radius * 0.6;
-
-    if (!task.total || isNaN(task.successRate)) {
-      // Draw empty donut (gray)
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
-      ctx.closePath();
-      ctx.fillStyle = '#e0e0e0';
-      ctx.fill();
-      // Draw center text
-      ctx.fillStyle = '#999';
-      ctx.font = 'bold 14px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('0%', centerX, centerY + 5);
-      return;
-    }
-
-    // Calculate angles
-    const successAngle = (task.success / task.total) * 2 * Math.PI;
-    const errorAngle = (task.errors / task.total) * 2 * Math.PI;
-
-    // Draw success arc
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, successAngle);
-    ctx.arc(centerX, centerY, innerRadius, successAngle, 0, true);
-    ctx.closePath();
-    ctx.fillStyle = '#4CAF50';
-    ctx.fill();
-
-    // Draw error arc
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, successAngle, successAngle + errorAngle);
-    ctx.arc(centerX, centerY, innerRadius, successAngle + errorAngle, successAngle, true);
-    ctx.closePath();
-    ctx.fillStyle = '#F44336';
-    ctx.fill();
-
-    // Draw center text
-    ctx.fillStyle = '#333';
-    ctx.font = 'bold 14px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${task.successRate.toFixed(0)}%`, centerX, centerY + 5);
-  });
-};
-
 watch(
-  () => answers.value,
-  (newAnswers) => {
-    if (newAnswers && typeof newAnswers === 'object') {
-      taskAnswers.value = Object.values(newAnswers);
-      // Update charts when data changes
-      setTimeout(() => createTaskCharts(), 500);
+  () => testStructure.value,
+  (newVal) => {
+    if (newVal && Array.isArray(newVal.userTasks)) {
+      testTasks.value = newVal.userTasks.map(task => task.taskName);
     }
   },
   { immediate: true }
 );
 
 watch(
-  () => testStructure.value,
-  (newVal) => {
-    if (newVal && Array.isArray(newVal.userTasks)) {
-      testTasks.value = newVal.userTasks.map(task => task.taskName);
-      // Update charts when structure changes
-      setTimeout(() => createTaskCharts(), 500);
+  () => answers.value,
+  (newAnswers) => {
+    if (newAnswers && typeof newAnswers === 'object') {
+      taskAnswers.value = Object.values(newAnswers);
     }
   },
   { immediate: true }
@@ -956,32 +706,38 @@ onMounted(() => {
       c++;
     }
   }
-
-  // Create initial charts
-  setTimeout(() => createTaskCharts(), 1000);
 });
 </script>
 
 <style scoped>
-.chart-container-small {
-  height: 150px;
+.conclusion-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.chart-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.chart-container-large {
+  height: 400px;
   width: 100%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.task-chart {
-  max-width: 120px;
-  max-height: 120px;
-}
-
-.legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
+.progress-glow {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
 }
 
 /* Responsive adjustments */
