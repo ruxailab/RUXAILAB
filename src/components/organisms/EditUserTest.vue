@@ -28,10 +28,10 @@
       rounded="xxl"
     >
       <TextareaForm
+        v-model="consent"
         :title="$t('ModeratedTest.consentForm')"
         subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-        @update:value="saveState($event)"
-        @input="updateData"
+        @update:value="saveState('consent', $event)"
       />
     </v-card>
 
@@ -39,19 +39,24 @@
       v-if="index === 1"
       rounded="xxl"
     >
-      <UserVariables @input="updateData" />
+      <UserVariables
+        type="pre-test"
+        @update="saveState('preTest', $event)"
+      />
     </v-card>
 
     <ListTasks
       v-if="index === 2"
-      @input="updateData"
     />
 
     <v-card
       v-if="index === 3"
       rounded="xxl"
     >
-      <FormPostTest @input="updateData" />
+      <UserVariables
+        type="post-test"
+        @update="saveState('postTest', $event)"
+      />
     </v-card>
   </v-col>
 </template>
@@ -60,7 +65,6 @@
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import ListTasks from '@/components/molecules/ListTasks.vue';
-import FormPostTest from '@/components/atoms/FormPostTest.vue';
 import UserVariables from '@/components/atoms/UserVariables.vue';
 import TextareaForm from '@/components/atoms/TextareaForm.vue';
 
@@ -83,16 +87,9 @@ const emit = defineEmits(['tabClicked']);
 
 const store = useStore();
 
-const formData = ref({
-  preTest: [],
-  postTest: [],
-});
+const consent = ref('');
 
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
-
-const saveState = async (value) => {
-  await store.dispatch('setConsent', value)
-}
 
 onMounted(() => {
   if (props.type !== 'content' && props.type !== 'tabs') {
@@ -113,17 +110,25 @@ const tabClicked = (index) => {
   emit('tabClicked', index);
 };
 
-const updateData = (data) => {
-  if (props.index === 0) {
-    store.dispatch('setConsent', data);
+const saveState = async (type, value) => {
+  const states = {
+    'consent': 'setConsent',
+    'preTest': 'setPreTest',
+    'postTest': 'setPostTest',
   }
-  if (props.index === 1) {
-    store.dispatch('setPreTest', data);
-  }
-  if (props.index === 3) {
-    store.dispatch('setPostTest', data);
-  }
-};
+
+  if (states[type]) store.dispatch(states[type], value)
+}
+
+const getConsent = () => {
+  consent.value = testStructure.value.consent || ''
+  saveState('consent', consent)
+}
+
+// Lifecycle
+onMounted(() => {
+  getConsent()
+})
 </script>
 
 <style scoped>

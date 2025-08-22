@@ -22,7 +22,6 @@
 <script setup>
 import HeuristicsTestAnswer from '@/components/organisms/HeuristicsTestAnswer.vue'
 import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
-import PageWrapper from '@/components/template/PageWrapper.vue';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 

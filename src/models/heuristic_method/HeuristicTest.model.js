@@ -1,4 +1,4 @@
-import Test from './Test'
+import Test from '../Test'
 /**
  * Create a Heuristic.
  * @param {Object[]} heuristics  - An array of HeuristicQuestion value.

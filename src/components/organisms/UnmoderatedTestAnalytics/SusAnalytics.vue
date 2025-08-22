@@ -5,7 +5,7 @@
   >
     <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-h3 font-weight-bold text-primary">
+      <h1 class="text-h3 font-weight-bold text-primary mb-2">
         SUS Analytics
       </h1>
       <p class="text-h6 text-grey-darken-1">
@@ -50,7 +50,6 @@
           </div>
         </v-card>
       </v-col>
-
       <v-col
         cols="12"
         md="4"
@@ -86,7 +85,6 @@
           </div>
         </v-card>
       </v-col>
-
       <v-col
         cols="12"
         md="4"
@@ -276,7 +274,7 @@
         <v-card-title class="d-flex justify-space-between align-center pa-6 pb-4">
           <div>
             <div class="text-h5 font-weight-bold mb-1">
-              SUS Response Detailse
+              SUS Response Details
             </div>
             <div class="text-body-2 text-grey-darken-1">
               {{ selectedResponse.name }}
@@ -295,7 +293,7 @@
 
         <v-card-text class="pa-6">
           <!-- Final SUS Score -->
-          <div>
+          <div class="mb-6">
             <div class="d-flex justify-space-between align-center">
               <div class="text-body-1 text-grey-darken-1">
                 Final SUS Score
@@ -316,13 +314,12 @@
             </div>
           </div>
         </v-card-text>
-        <v-divider />
 
 
         <v-card-text class="pa-6">
           <!-- Individual Responses -->
           <div>
-            <h3 class="text-h6">
+            <h3 class="text-h6 mb-4">
               Individual Responses
             </h3>
             <div class="responses-list">
@@ -336,8 +333,8 @@
                   <div class="question-text flex-grow-1 pr-4 d-flex align-center mb-2 mb-sm-0">
                     <strong>Q{{ index + 1 }}: </strong> {{ question }}
                   </div>
-                  <div class="response-score d-flex align-center justify-center justify-sm-end flex-column flex-sm-row">
-                    <span class="text-h5 font-weight-bold mr-sm-2 mb-1 mb-sm-0">
+                  <div class="response-score d-flex align-center">
+                    <span class="text-h5 font-weight-bold mr-2">
                       {{ selectedResponse.susAnswers[index] }}
                     </span>
                     <v-chip
@@ -360,14 +357,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useDisplay } from 'vuetify'
 import { getSUSRating, getRatingColor, calculateSUSScore } from '@/utils/susCalculator'
 import { useStore } from 'vuex';
 import SusHistogramChart from '@/components/atoms/SusHistogramChart.vue';
 import SusRatingChart from '@/components/atoms/SusRatingChart.vue';
 
 const store = useStore();
-const { xs, sm, md } = useDisplay();
 
 const detailsModal = ref(false)
 const selectedResponse = ref(null)
@@ -390,16 +385,16 @@ const ratingFilterOptions = [
 ]
 
 const susQuestions = [
-  "I think that I would like to use this system frequently.",
-  "I found the system unnecessarily complex.",
-  "I thought the system was easy to use.",
-  "I think that I would need the support of a technical person to be able to use this system.",
-  "I found the various functions in this system were well integrated.",
-  "I thought there was too much inconsistency in this system.",
-  "I would imagine that most people would learn to use this system very quickly.",
-  "I found the system very cumbersome to use.",
-  "I felt very confident using the system.",
-  "I needed to learn a lot of things before I could get going with this system."
+    "I think that I would like to use this system frequently.",
+    "I found the system unnecessarily complex.",
+    "I thought the system was easy to use.",
+    "I think that I would need the support of a technical person to be able to use this system.",
+    "I found the various functions in this system were well integrated.",
+    "I thought there was too much inconsistency in this system.",
+    "I would imagine that most people would learn to use this system very quickly.",
+    "I found the system very cumbersome to use.",
+    "I felt very confident using the system.",
+    "I needed to learn a lot of things before I could get going with this system."
 ];
 
 const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {});
@@ -416,13 +411,13 @@ const tasksArray = computed(() => {
 })
 console.log(tasksArray.value)
 const analytics = computed(() => {
-  const scores = tasksArray.value.map(r => r.susScore)
-  return {
-    averageScore: Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10,
-    totalRespondents: tasksArray.value.length,
-    minScore: Math.min(...scores),
-    maxScore: Math.max(...scores),
-  }
+    const scores = tasksArray.value.map(r => r.susScore)
+    return {
+        averageScore: Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10,
+        totalRespondents: tasksArray.value.length,
+        minScore: Math.min(...scores),
+        maxScore: Math.max(...scores),
+    }
 })
 
 const filteredResponses = computed(() => {
@@ -435,14 +430,6 @@ const filteredResponses = computed(() => {
   filtered = filtered.filter(response => response.susScore >= scoreRange.value[0] && response.susScore <= scoreRange.value[1])
 
   return filtered
-})
-
-// Responsive dialog width based on screen size
-const dialogMaxWidth = computed(() => {
-  if (xs.value) return '95%'      // Extra small screens: 95% width
-  if (sm.value) return '85%'      // Small screens: 85% width  
-  if (md.value) return '80%'      // Medium screens: 70% width
-  return '70%'                    // Large screens and up: 60% width
 })
 
 function openDetailsModal(response) {
@@ -476,13 +463,17 @@ function getResponseLabel(score) {
 
 .v-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
 }
 
 .v-chip {
   font-weight: 600;
 }
 
+.response-item {
+  background: #fafafa !important;
+  border: 1px solid #e0e0e0 !important;
+}
 
 .question-text {
   line-height: 1.4;

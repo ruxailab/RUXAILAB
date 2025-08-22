@@ -8,7 +8,7 @@
  * @param {number} lastUpdate - The date of the last update.
  */
 
-import Heuristic from '@/models/Heuristic'
+import Heuristic from './Heuristic'
 
 export default class HeuristicAnswer {
   constructor({

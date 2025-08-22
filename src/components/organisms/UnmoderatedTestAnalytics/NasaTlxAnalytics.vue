@@ -10,7 +10,7 @@
     >
       <!-- Header Section -->
       <div class="mb-8">
-        <h1 class="text-h3 font-weight-bold text-primary">
+        <h1 class="text-h3 font-weight-bold text-primary mb-2">
           NASA TLX Analytics
         </h1>
         <p class="text-h6 text-grey-darken-1">
