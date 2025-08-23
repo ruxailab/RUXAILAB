@@ -32,6 +32,9 @@ export default createStore({
         message: payload.message,
       }
     },
+    clearError(state) {
+      state.error = null
+    },
     SET_DIALOG_LEAVE(state, payload) {
       state.dialogLeave = payload
     },
