@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import NoToolbarLayout from '@/layouts/NoToolbarLayout.vue'
+import DefaultLayout from '@/app/layouts/DefaultLayout.vue'
+import NoToolbarLayout from '@/app/layouts/NoToolbarLayout.vue'
 
 export default {
   name: 'RUXAILAB',

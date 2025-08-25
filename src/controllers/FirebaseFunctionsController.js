@@ -1,4 +1,4 @@
-import { fbFunctions } from '@/firebase'
+import { fbFunctions } from '@/app/plugins/firebase'
 import {
     httpsCallable,
 } from 'firebase/functions'

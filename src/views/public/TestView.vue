@@ -21,7 +21,7 @@
 <script setup>
 import { ref, computed, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
-import UserTestView from './UserTestView.vue'
+import UserTestView from '@/features/UserTest/views/UserTestView.vue'
 import ModeratedTestView from './ModeratedTestView.vue'
 import HeuristicTestView from '../../features/Heuristic/views/HeuristicTestView.vue'
 
