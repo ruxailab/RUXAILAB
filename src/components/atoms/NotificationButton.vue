@@ -1,10 +1,10 @@
 <template>
-  <div v-if="user.notifications">
+  <div v-if="Array.isArray(user.notifications)">
     <v-menu
-      :location="`${x} ${y}`"
+      location="bottom"
       absolute
       offset="8"
-      min-width="300"
+      max-width="400"
     >
       <template #activator="{ props }">
         <v-badge
@@ -12,6 +12,8 @@
           location="bottom end"
           :content="checkIfHasNewNotifications()"
           :model-value="checkIfHasNewNotifications() > 0"
+          offset-x="5"
+          offset-y="5"
         >
           <v-btn
             size="small"
@@ -32,7 +34,7 @@
         style="overflow: hidden;"
       >
         <!-- Fixed header -->
-        <div style="background: orange; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+  <div class="bg-secondary" style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
           <span style="font-weight: bold; font-size: 16px; color: white;">
             {{ $t('common.notifications') }}
           </span>
@@ -56,37 +58,16 @@
           >
             <v-list
               density="compact"
-              class="py-1"
+              class="py-1 notification-list"
             >
-              <v-list-item
-                v-for="(notification, i) in user.notifications"
-                :key="i"
-                class="px-3"
-                :disabled="notification.read"
-                @click="goToNotificationRedirect(notification)"
-              >
-                <template
-                  v-if="!notification.read"
-                  #prepend
-                >
-                  <v-chip
-                    size="x-small"
-                    color="success"
-                    variant="outlined"
-                    label
-                  >
-                    {{ $t('common.new') }}!
-                  </v-chip>
-                </template>
-
-                <v-list-item-title style="font-weight: bold;">
-                  {{ notification.title }}
-                </v-list-item-title>
-                <v-list-item-subtitle>{{ notification.description }}</v-list-item-subtitle>
-                <v-list-item-subtitle>
-                  {{ $t('common.sentBy') }} {{ notification.author }}
-                </v-list-item-subtitle>
-              </v-list-item>
+              <template v-for="(notification, i) in user.notifications || []" :key="notification.id">
+                <NotificationItem
+                  :notification="notification"
+                  @go-to-redirect="goToNotificationRedirect"
+                  @mark-as-read="goToNotificationRedirect"
+                />
+                <v-divider v-if="i < (user.notifications?.length || 0) - 1" class="mx-4" color="secondary" />
+              </template>
             </v-list>
           </div>
 
@@ -113,18 +94,25 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+
+import NotificationItem from '@/components/atoms/NotificationItem.vue';
+
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+
+// Helper to render multiline description
+function formatMultiline(text) {
+  if (!text) return '';
+  return text.replace(/\n/g, '<br>');
+}
 import { useI18n } from 'vue-i18n';
+import { METHOD_DEFINITIONS } from '@/constants/methodDefinitions.js';
 
 // Initialize store, router, and i18n
 const store = useStore();
 const router = useRouter();
 const { t } = useI18n();
-
-const x = ref('right');
-const y = ref('top');
 
 const user = computed(() => store.getters.user);
 
@@ -143,10 +131,17 @@ const goToNotificationRedirect = async (notification) => {
 const goToNotificationPage = () => {
   router.push('/notifications');
 };
-</script>
 
-<style scoped>
-.text-grey {
-  color: #9e9e9e;
-}
-</style>
+const formatDate = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
+const getTestIcon = (type) => {
+  if (type && METHOD_DEFINITIONS[type] && METHOD_DEFINITIONS[type].icon) {
+    return METHOD_DEFINITIONS[type].icon;
+  }
+  return METHOD_DEFINITIONS.DEFAULT.icon;
+};
+</script>
