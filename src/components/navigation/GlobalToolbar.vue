@@ -1,14 +1,9 @@
-/**
-* GlobalToolbar.vue
-* Navbar superior global - solo contiene logo, usuario y botones globales
-*/
 <template>
   <v-app-bar
     density="comfortable"
     color="#00213F"
-    class="px-4"
+    padding="10px !important"
   >
-    <!-- Botón hamburguesa móvil -->
     <v-btn
       v-if="user && isDashboard"
       icon
@@ -17,8 +12,6 @@
     >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-
-    <!-- Botón hamburguesa móvil para otras vistas -->
     <v-btn
       v-if="user && !isDashboard"
       icon
@@ -45,10 +38,8 @@
 
     <v-spacer />
 
-    <!-- Elementos globales -->
     <locale-changer />
 
-    <!-- Botones contextuales -->
     <v-btn
       v-if="$route.path === '/' && user"
       variant="text"
@@ -162,4 +153,10 @@ const toggleDashboardDrawer = () => {
     text-transform: none !important;
     letter-spacing: normal !important;
 }
+
+:deep(.v-toolbar__content) {
+  padding-right: 20px;
+  padding-left: 10px;
+}
+
 </style>
