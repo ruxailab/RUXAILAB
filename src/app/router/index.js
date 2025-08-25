@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Public from '@/router/modules/public.js'
 import Admin from '@/router/modules/admin.js'
 import SuperAdmin from '@/router/modules/superAdmin.js'
-// import CardSorting from '@/router/modules/cardSorting'
 import CardSorting from '@/features/CardSorting/router.js'
+import HeuristicRoutes from '@/features/Heuristic/router.js';
 import accessibilityRoutes from '@/router/modules/accessibility';
 import store from '@/store'
 
-const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting, ...accessibilityRoutes]
+const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting, ...accessibilityRoutes, ...HeuristicRoutes]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
