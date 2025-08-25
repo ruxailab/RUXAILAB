@@ -120,7 +120,7 @@ import TemplateHeader from '@/models/TemplateHeader'
 import TemplateAuthor from '@/models/TemplateAuthor'
 import TemplateBody from '@/models/TemplateBody'
 import Template from '@/models/Template'
-import i18n from '@/i18n'
+import i18n from '@/app/plugins/i18n'
 
 export default {
   components: {

@@ -4,7 +4,7 @@
  */
 
 import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { db } from '@/app/plugins/firebase'
 import TestController from '@/controllers/TestController'
 import UserController from '@/controllers/UserController'
 import { getAuth } from 'firebase/auth'

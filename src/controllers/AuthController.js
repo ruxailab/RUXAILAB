@@ -7,7 +7,7 @@ import {
 	signInWithPopup,
 	sendPasswordResetEmail
 } from 'firebase/auth'
-import { auth } from '@/firebase'
+import { auth } from '@/app/plugins/firebase'
 
 /**
  * Controller for authentication operations
@@ -82,19 +82,19 @@ export default class AuthController {
 		return sendPasswordResetEmail(auth, email)
 	}
 
-    async autoSignIn() {
-        return new Promise((resolve, reject) => {
-            const unsubscribe = onAuthStateChanged(
-                auth,
-                (user) => {
-                    unsubscribe()
-                    resolve(user)
-                },
-                (error) => {
-                    unsubscribe()
-                    reject(error)
-                }
-            )
-        })
-    }
+	async autoSignIn() {
+		return new Promise((resolve, reject) => {
+			const unsubscribe = onAuthStateChanged(
+				auth,
+				(user) => {
+					unsubscribe()
+					resolve(user)
+				},
+				(error) => {
+					unsubscribe()
+					reject(error)
+				}
+			)
+		})
+	}
 }

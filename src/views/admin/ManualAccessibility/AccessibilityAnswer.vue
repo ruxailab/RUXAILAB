@@ -590,7 +590,7 @@ const loadWcagData = async () => {
 const fetchUserIdsForTest = async () => {
   try {
     const { query, where, getDocs, collection } = await import('firebase/firestore');
-    const { db } = await import('@/firebase');
+    const { db } = await import('@/app/plugins/firebase');
 
     const q = query(
       collection(db, 'assessments'),
@@ -609,7 +609,7 @@ const fetchUserIdsForTest = async () => {
 const fetchUserEmails = async () => {
   try {
     const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@/firebase');
+    const { db } = await import('@/app/plugins/firebase');
 
     const userPromises = userIds.value.map(async (userId) => {
       const userRef = doc(db, 'users', userId);
@@ -647,7 +647,7 @@ const loadAssessmentData = async (userId) => {
 
     // Get the assessment document from Firestore
     const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@/firebase');
+    const { db } = await import('@/app/plugins/firebase');
 
     const docId = `${userId}_${testId}`;
     const docRef = doc(db, 'assessments', docId);
