@@ -51,6 +51,14 @@ const testsHeaders = [
   { text: 'Created by', value: 'admin.email' },
   { text: 'Actions', value: 'actions', align: 'end', sortable: false },
 ]
+const notificationsHeaders = [
+  { text: 'Tipo', value: 'type', align: 'start' },
+  { text: 'Mensaje', value: 'description' },
+  { text: 'Fecha', value: 'date' },
+  { text: 'Estado', value: 'read' },
+  { text: 'Acciones', value: 'actions', sortable: false },
+]
+
 export {
   cooperatorsHeaders,
   heuristicsStatisticsHeaders,
@@ -58,4 +66,5 @@ export {
   reportHeaders,
   userHeaders,
   testsHeaders,
+  notificationsHeaders,
 }
