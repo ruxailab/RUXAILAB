@@ -178,11 +178,10 @@ const submit = async () => {
     ...(test.value.testType === 'User' && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
-      participantCamera: store.getters.participantCamera,
       consent: store.getters.consent,
-      userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks,
-      preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest,
-      postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest,
+      userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks || [],
+      preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest || [],
+      postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest || [],
       finalMessage: store.getters.finalMessage,
     }),
   };
