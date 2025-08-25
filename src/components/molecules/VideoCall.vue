@@ -64,6 +64,10 @@ const props = defineProps({
   roomId: String,  // unique room identifier
 });
 
+const emit = defineEmits([
+    'setRemoteStream'
+]);
+
 const localVideo = ref(null);
 const remoteVideo = ref(null);
 
@@ -153,6 +157,9 @@ async function init() {
   peerConnection.value.ontrack = (event) => {
     if (remoteVideo.value && remoteVideo.value.srcObject !== event.streams[0]) {
       remoteVideo.value.srcObject = event.streams[0];
+
+      // emit to parent
+      emit('setRemoteStream', event.streams[0]);
     }
   };
 
