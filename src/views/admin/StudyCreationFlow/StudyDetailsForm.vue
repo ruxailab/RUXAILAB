@@ -193,7 +193,10 @@
                       <v-list-item-title class="font-weight-medium">
                         Type:
                       </v-list-item-title>
-                      <v-list-item-subtitle>{{ studyType === 'blank' ? 'Blank Study' : 'Template' }}</v-list-item-subtitle>
+                      <v-list-item-subtitle>
+                        {{ studyType === 'blank' ? 'Blank Study' : 'Template'
+                        }}
+                      </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
                 </v-card>
@@ -216,6 +219,7 @@
                   Create Study
                 </v-btn>
               </div>
+              <!-- ...existing code... -->
             </v-card-text>
           </v-card>
         </v-col>
@@ -230,6 +234,8 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import Test from '@/models/Test';
+import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
+import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/components/atoms/StepperHeader.vue';
 import SectionHeader from '@/components/atoms/SectionHeader.vue';
@@ -308,7 +314,7 @@ const handleTestType = () => {
   if (testCategory === 'test') {
     const extraDetails = {}
     const testMethod = method.value;
-    if(testMethod == 'unmoderated') {
+    if (testMethod == 'unmoderated') {
       extraDetails.userTestType = testMethod
     }
     if (testMethod == 'moderated') {
@@ -321,9 +327,17 @@ const handleTestType = () => {
         postTestStatus: 'closed',
       }
     }
-    test.value = { ...test.value, ...extraDetails};
+    test.value = { ...test.value, ...extraDetails };
+    submit();
+  } else if (testCategory === 'accessibility') {
+    if (method.value === 'AUTOMATIC') {
+      submitAutomaticAccessibility();
+    } else if (method.value === 'MANUAL') {
+      submitManualAccessibility();
+    }
+  } else {
+    submit();
   }
-  submit();
 };
 
 const submit = async () => {
@@ -361,6 +375,64 @@ const submit = async () => {
     router.push(`/managerview/${testId}`);
   }
 };
+
+const submitAutomaticAccessibility = async () => {
+  isLoading.value = true;
+  const user = store.getters.user;
+  const newTest = new AutomaticAccessibilityTest({
+    title: test.value.title,
+    description: test.value.description,
+    isPublic: test.value.isPublic || false,
+    testAdmin: new TestAdmin({
+      userDocId: user.id,
+      email: user.email,
+    }),
+    status: 'draft',
+    websiteUrl: '',
+    collaborators: {
+      [user.id]: 'admin'
+    },
+    type: 'AUTOMATIC'
+  });
+  try {
+    const createdTest = await store.dispatch('automaticAccessibility/addTest', newTest);
+    isLoading.value = false;
+    store.commit('RESET_STUDY_DETAILS');
+    router.push(`/accessibility/automatic/${createdTest.id}`);
+  } catch (error) {
+    isLoading.value = false;
+    toast.error(error.message);
+  }
+};
+
+const submitManualAccessibility = async () => {
+  isLoading.value = true;
+  const user = store.getters.user;
+  const newTest = new ManualAccessibilityTest({
+    title: test.value.title,
+    description: test.value.description,
+    isPublic: test.value.isPublic || false,
+    testAdmin: new TestAdmin({
+      userDocId: user.id,
+      email: user.email,
+    }),
+    status: 'draft',
+    websiteUrl: '',
+    collaborators: {
+      [user.id]: 'admin'
+    }
+  });
+  try {
+    const createdTest = await store.dispatch('manualAccessibility/createTest', newTest);
+    isLoading.value = false;
+    store.commit('RESET_STUDY_DETAILS');
+    router.push(`/accessibility/manual/${createdTest.id}`);
+  } catch (error) {
+    isLoading.value = false;
+    toast.error(error.message);
+  }
+};
+
 
 const goBack = () => {
   router.push({ name: 'study-create-step3' })

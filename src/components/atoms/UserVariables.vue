@@ -350,7 +350,7 @@ const saveNewItem = async () => {
   } finally {
     isSaving.value = false
   }
-};
+}
 
 const saveState = async () => {
   try {
@@ -375,8 +375,8 @@ const getVariables = () => {
 };
 
 onMounted(() => {
-  getVariables();
-});
+  getVariables()
+})
 </script>
 
 <style scoped>
