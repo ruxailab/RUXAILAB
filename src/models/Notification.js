@@ -14,6 +14,7 @@ export default class Notification {
     testId,
     accessLevel,
     readAt,
+    type,
   } = {}) {
     this.title = title;
     this.description = description;
@@ -24,6 +25,7 @@ export default class Notification {
     this.testId = testId;
     this.accessLevel = accessLevel ?? null;
     this.readAt = readAt ?? null;
+    this.type = type ?? null;
   }
 
   static toNotification(data) {
@@ -40,7 +42,8 @@ export default class Notification {
       read: this.read,
       testId: this.testId,
       accessLevel: this.accessLevel,
-      readAt: this.readAt, // Fixed: Added readAt and removed duplicate 'read'
+      readAt: this.readAt,
+      type: this.type,
     };
   }
 }
