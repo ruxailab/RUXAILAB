@@ -121,7 +121,7 @@ import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import Snackbar from '@/components/atoms/Snackbar.vue';
-import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
+import EditHeuristicsTest from '@/features/Heuristic/components/EditHeuristicsTest.vue';
 import EditUserTest from '@/components/UserTest/editTest/EditUserTest.vue';
 import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
 import Test from '@/models/Test';

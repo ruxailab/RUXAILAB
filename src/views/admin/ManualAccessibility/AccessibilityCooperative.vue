@@ -38,7 +38,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-import Intro from '@/components/molecules/IntroCoops.vue';
+import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
 import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
 import PageWrapper from '@/components/template/PageWrapper.vue';
