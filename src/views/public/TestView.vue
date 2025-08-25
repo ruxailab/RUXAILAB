@@ -23,7 +23,7 @@ import { ref, computed, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import UserTestView from './UserTestView.vue'
 import ModeratedTestView from './ModeratedTestView.vue'
-import HeuristicTestView from '../admin/Heuristics/HeuristicTestView.vue'
+import HeuristicTestView from '../../features/Heuristic/views/HeuristicTestView.vue'
 
 const props = defineProps({
   id: { type: String, default: '' },

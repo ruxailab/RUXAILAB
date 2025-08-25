@@ -59,7 +59,7 @@
     </v-tabs>
 
     <div class="mt-responsive">
-      <Heuristic
+      <HeuristicsTable
         v-if="index == 0"
         :heuristics="object.heuristics"
         @change="change"
@@ -72,7 +72,7 @@
         v-if="index == 2"
         :options="object.weight"
       />
-      <Settings
+      <HeuristicsSenttings
         v-if="index == 3"
         :options="object.settings"
       />
@@ -83,9 +83,9 @@
 <script setup>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import Heuristic from '@/components/molecules/HeuristicsTable.vue';
+import HeuristicsTable from '@/features/Heuristic/components/HeuristicsTable.vue';
 import OptionsTable from '@/components/molecules/OptionsTable.vue';
-import Settings from '@/components/molecules/HeuristicsSenttings.vue';
+import HeuristicsSenttings from '@/features/Heuristic/components/HeuristicsSenttings.vue';
 import WeightTable from '@/components/molecules/WeightTable.vue';
 
 defineProps({
