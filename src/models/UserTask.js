@@ -8,6 +8,7 @@ export default class UserTask {
     taskTime,
     completed,
     audioRecordURL,
+    moderatorAudioURL,
     screenRecordURL,
     webcamRecordURL,
     postAnswer,
@@ -20,6 +21,7 @@ export default class UserTask {
     this.taskTime = taskTime ?? null
     this.completed = completed ?? null
     this.audioRecordURL = audioRecordURL ?? null
+    this.moderatorAudioURL = moderatorAudioURL ?? null
     this.screenRecordURL = screenRecordURL ?? null
     this.webcamRecordURL = webcamRecordURL ?? null
     this.postAnswer = postAnswer ?? null
@@ -39,6 +41,7 @@ export default class UserTask {
       taskTime: this.taskTime,
       completed: this.completed,
       audioRecordURL: this.audioRecordURL,
+      moderatorAudioURL: this.moderatorAudioURL,
       screenRecordURL: this.screenRecordURL,
       webcamRecordURL: this.webcamRecordURL,
       postAnswer: this.postAnswer,
