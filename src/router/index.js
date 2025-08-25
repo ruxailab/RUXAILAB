@@ -3,7 +3,7 @@ import Public from '@/router/modules/public.js'
 import Admin from '@/router/modules/admin.js'
 import SuperAdmin from '@/router/modules/superAdmin.js'
 // import CardSorting from '@/router/modules/cardSorting'
-import CardSorting from '@/features/CardSorintg/router.js'
+import CardSorting from '@/features/CardSorting/router.js'
 import accessibilityRoutes from '@/router/modules/accessibility';
 import store from '@/store'
 
