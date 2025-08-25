@@ -11,16 +11,10 @@ export default class TaskAnswer {
     postTestCompleted,
     tasks,
     progress,
-    cameraUrlModerator,
-    cameraUrlEvaluator,
-    audioUrlModerator,
-    audioUrlEvaluator,
     total,
     submitted,
     userDocId,
     lastUpdate,
-    invited,
-    hidden,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -31,16 +25,10 @@ export default class TaskAnswer {
     this.postTestCompleted = postTestCompleted ?? false
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
-    this.cameraUrlModerator = cameraUrlModerator ?? ''
-    this.audioUrlModerator = audioUrlModerator ?? ''
-    this.cameraUrlEvaluator = cameraUrlEvaluator ?? ''
-    this.audioUrlEvaluator = audioUrlEvaluator ?? ''
     this.total = total ?? 0
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
-    this.invited = invited ?? false
-    this.hidden = hidden ?? false
   }
   static toTaskAnswer(data) {
     return new TaskAnswer({
@@ -69,16 +57,10 @@ export default class TaskAnswer {
         ]),
       ),
       progress: this.progress,
-      cameraUrlEvaluator: this.cameraUrlEvaluator,
-      cameraUrlModerator: this.cameraUrlModerator,
-      audioUrlEvaluator: this.audioUrlEvaluator,
-      audioUrlModerator: this.audioUrlModerator,
       total: this.total,
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
-      invited: this.invited,
-      hidden: this.hidden,
     }
   }
 }

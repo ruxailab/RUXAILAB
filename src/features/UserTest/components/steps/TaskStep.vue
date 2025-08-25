@@ -63,6 +63,8 @@
               <AudioRecorder
                 :test-id="testId"
                 :task-index="taskIndex"
+                :remote-stream="remoteStream"
+                :should-record-moderator="shouldRecordModerator"
                 @show-loading="$emit('show-loading')"
                 @stop-show-loading="$emit('stop-show-loading')"
                 @recording-started="$emit('recording-started', $event)"
@@ -216,6 +218,8 @@ const props = defineProps({
     submitted: Boolean,
     doneTaskDisabled: Boolean,
     videoUrl: String,
+    remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
+    shouldRecordModerator: Boolean // props that indicate whether to record the moderator's video
 });
 const emit = defineEmits([
     'done',
