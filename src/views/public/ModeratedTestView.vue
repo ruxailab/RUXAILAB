@@ -52,7 +52,7 @@
             <v-btn class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
               Proceed to next step
             </v-btn>
-            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" />
+            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
           </div>
 
           <!-- Hide Form Elements while on Video Call Mode -->
@@ -90,6 +90,8 @@
               :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
               :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
+              :remoteStream="remoteStream"
+              :shouldRecordModerator="!isUserTestAdmin"
               @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
               @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
               @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
@@ -190,6 +192,9 @@ const preTestIndex = ref(null);
 const taskStepComponent = ref(null);
 const allTasksCompleted = ref(false);
 const submitDialog = ref(false);
+
+// From video call to be used by recorders
+const remoteStream = ref(null);
 
 // Computed properties
 const test = computed(() => store.getters.test);
