@@ -1,404 +1,401 @@
 <template>
-  <v-container fluid>
-    <v-row
-      class="mb-2"
-      justify="center"
-    >
-      <v-col cols="10">
-        <v-btn
-          v-if="index === 0"
-          :disabled="!consentCompleted && !isAdmin"
-          color="green"
-          block
-          variant="flat"
-          @click="openUserCamera"
-        >
-          CONNECT
-        </v-btn>
+  <v-container fluid class="video-call-container fill-height mt-6">
+
+    <v-row class="video-row fill-height" no-gutters>
+      <v-col cols="12" lg="6" md="6" sm="6" class="d-flex align-center justify-center pr-1">
+        <video ref="localVideo" autoplay muted playsinline class="video-element"></video>
+      </v-col>
+
+      <v-col cols="12" lg="6" md="6" sm="6" class="d-flex align-center justify-center pl-1">
+        <div v-show="!callStarted" class="not-connected-message">
+          Not connected
+        </div>
+        <video v-show="callStarted" ref="remoteVideo" autoplay playsinline class="video-element"></video>
+      </v-col>
+    </v-row>
+
+    <v-row class="buttons-row d-flex flex-grow-1 align-end justify-center">
+      <v-col cols="12" class="text-center pb-8">
+
+        <v-btn v-if="caller && !callStarted" color="primary" @click="startCall">Open Room</v-btn>
+
+        <div v-else-if="!caller && !callStarted" class="d-flex flex-column align-center">
+          <p v-if="!roomExists" class="mb-2">Wait for the moderator</p>
+          <v-btn v-else color="primary" @click="answerCall" :disabled="!roomExists">
+            Join Room
+          </v-btn>
+        </div>
+
+        <v-row justify="center" v-if="callStarted">
+          <v-card class="pa-2 buttonCard" depressed>
+            <v-tooltip location="bottom" v-if="!caller">
+              <template #activator="{ props }">
+                <v-btn class="mx-3" :class="{ red: isSharingScreen, white: !isSharingScreen }" variant="flat" icon
+                  v-bind="props" @click="toggleCameraScreen">
+                  <v-icon v-if="!isSharingScreen">
+                    mdi-monitor-screenshot
+                  </v-icon>
+                  <v-icon v-else>
+                    mdi-monitor-off
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>{{
+                isSharingScreen ? 'Stop screen sharing' : 'Share screen'
+                }}</span>
+            </v-tooltip>
+          </v-card>
+        </v-row>
+
+        <!-- <v-btn v-if="caller && callStarted" color="error" class="ml-1" @click="endCall">End Call</v-btn> -->
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onBeforeUnmount } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
-import {
-  collection,
-  doc,
-  getDoc,
-  deleteDoc,
-  getDocs,
-  addDoc,
-  setDoc,
-  updateDoc,
-  onSnapshot,
-} from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { database } from '@/app/plugins/firebase/index';
+import { ref as dbRef, set, onValue, push, off, get, onDisconnect } from 'firebase/database';
 
-
+// Props received from parent component
 const props = defineProps({
-  isAdmin: {
-    type: Boolean,
-  },
-  index: {
-    type: Number,
-  },
-  consentCompleted: {
-    type: Boolean,
-  },
-})
+  caller: Boolean, // whether the user is the caller
+  roomId: String,  // unique room identifier
+});
 
+const emit = defineEmits([
+    'setRemoteStream'
+]);
 
-const emit = defineEmits(['emit-confirm'])
-const store = useStore()
-const { t } = useI18n()
-const toast = useToast()
-const router = useRouter()
+const localVideo = ref(null);
+const remoteVideo = ref(null);
 
-const createBtnDisabled = ref(false)
-const joinBtnDisabled = ref(false)
-const hangupBtnDisabled = ref(true)
-const roomId = ref(null)
-const currentRoom = ref('')
-const roomCollection = ref(null)
-const videoSender = ref(null)
-const roomDialog = ref(false)
-const configuration = ref({
-  iceServers: [
-    {
-      urls: [
-        'stun:stun1.l.google.com:19302',
-        'stun:stun2.l.google.com:19302',
-        'stun:stun3.l.google.com:19302',
-        'stun:stun4.l.google.com:19302',
-      ],
-    },
-  ],
-  iceCandidatePoolSize: 10,
-})
+const localStream = ref(null);       // user's local media stream
+const peerConnection = ref(null);    // WebRTC peer connection
+const callStarted = ref(false);      // call status
+const roomExists = ref(false);
 
-const localCameraStream = computed(() => store.getters.localCameraStream)
-const remoteCameraStream = computed(() => store.getters.remoteCameraStream)
-const roomTestAnswerId = computed(() => store.getters.test.testAnswerId)
-const roomTestId = computed(() => store.getters.test.id)
-const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
-const peerConnection = computed(() => store.getters.peerConnection)
+const isSharingScreen = ref(false);
+const screenStream = ref(null);
 
-const emitConfirm = () => {
-  emit('emit-confirm')
+async function toggleCameraScreen() {
+  if (isSharingScreen.value) {
+    stopScreenShare();
+  } else {
+    startScreenShare();
+  }
 }
 
-const createRoom = async () => {
-  console.log('createRoom chamado');
-
-  createBtnDisabled.value = true
-  joinBtnDisabled.value = true
-  roomCollection.value = collection(db, 'rooms')
-  const roomRef = doc(roomCollection.value, roomTestId.value)
-  await store.dispatch('createPeerConnection', {
-    configuration: configuration.value,
-  })
-
-  console.log('localCameraStream.value', localCameraStream);
-  localCameraStream.value.getTracks().forEach((track) => {
-    videoSender.value = peerConnection.value.addTrack(track, localCameraStream.value)
-  })
-
-  const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
-  peerConnection.value.addEventListener('icecandidate', (event) => {
-    console.log('icecandidate chamado');
-    if (!event.candidate) return
-    console.log('addDoc callerCandidatesCollection');
-    addDoc(callerCandidatesCollection, event.candidate.toJSON())
-  })
-
-  const offer = await peerConnection.value.createOffer()
-  console.log('createOffer feito');
-  await peerConnection.value.setLocalDescription(offer)
-  const roomWithOffer = {
-    offer: {
-      type: offer.type,
-      sdp: offer.sdp,
-    },
-  }
-  console.log('vai setar o documento');
-  await setDoc(roomRef, roomWithOffer)
-  console.log('documento setado');
-  roomId.value = roomRef.id
-  currentRoom.value = `Current room is ${roomRef.id} - You are the caller!`
-
-  peerConnection.value.addEventListener('track', (event) => {
-    console.log('evento track');
-    event.streams[0].getTracks().forEach((track) => {
-      remoteCameraStream.value.addTrack(track)
-    })
-  })
-
-  const candidateQueue = []
-
-  onSnapshot(roomRef, async (snapshot) => {
-    console.log('onSnapshot chamado');
-    const data = snapshot.data()
-    if (!peerConnection.value.currentRemoteDescription && data?.answer) {
-      const rtcSessionDescription = new RTCSessionDescription(data.answer)
-      console.log('vai setar descri o remota');
-      await peerConnection.value.setRemoteDescription(rtcSessionDescription)
-      console.log('descri o remota setada');
-
-      // Após setar a remoteDescription, aplicar os ICE Candidates armazenados
-      for (const candidate of candidateQueue) {
-        try {
-          await peerConnection.value.addIceCandidate(candidate)
-        } catch (e) {
-          console.warn('Erro ao aplicar ICE da fila:', e)
-        }
-      }
-      candidateQueue.length = 0
-    }
-  })
-
-  onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
-    console.log('onSnapshot calleeCandidates');
-    snapshot.docChanges().forEach(async (change) => {
-      if (change.type === 'added') {
-        const data = change.doc.data()
-        const candidate = new RTCIceCandidate(data)
-
-        if (peerConnection.value.remoteDescription) {
-          try {
-            console.log('vai adicionar iceCandidate');
-            await peerConnection.value.addIceCandidate(candidate)
-            console.log('iceCandidate adicionado');
-          } catch (e) {
-            console.warn('Erro ao adicionar ICE:', e)
-          }
-        } else {
-          console.log('remoteDescription ausente, guardando ICE')
-          candidateQueue.push(candidate)
-        }
-      }
-    })
-  })
-
-  peerConnection.value.addEventListener('connectionstatechange', () => {
-    console.log('connectionstatechange');
-    if (
-      peerConnection.value.connectionState === 'disconnected' ||
-      peerConnection.value.iceConnectionState === 'disconnected'
-    ) {
-      store.commit('SET_DISCONNECTED', true)
-    }
-  })
-}
-
-const joinRoomById = async (roomId) => {
-  const roomRef = doc(collection(db, 'rooms'), roomId)
-  const roomSnapshot = await getDoc(roomRef)
-
-  if (!roomSnapshot.exists()) return
-
-  await store.dispatch('createPeerConnection', {
-    configuration: configuration.value,
-  })
-
-  const localStream = localCameraStream.value
-  localStream.getTracks().forEach((track) => {
-    videoSender.value = peerConnection.value.addTrack(track, localStream)
-  })
-
-  const calleeCandidatesCollection = collection(roomRef, 'calleeCandidates')
-  peerConnection.value.addEventListener('icecandidate', async (event) => {
-    if (event.candidate) {
-      await addDoc(calleeCandidatesCollection, event.candidate.toJSON())
-    }
-  })
-
-  peerConnection.value.addEventListener('track', (event) => {
-    event.streams[0].getTracks().forEach((track) => {
-      if (remoteCameraStream.value) {
-        remoteCameraStream.value.addTrack(track)
-      }
-    })
-  })
-
-  const candidateQueue = []
-
-  onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
-    snapshot.docChanges().forEach(async (change) => {
-      if (change.type === 'added') {
-        const data = change.doc.data()
-        const candidate = new RTCIceCandidate(data)
-
-        if (peerConnection.value.remoteDescription) {
-          try {
-            await peerConnection.value.addIceCandidate(candidate)
-            console.log('ICE adicionado diretamente')
-          } catch (e) {
-            console.warn('Erro ao adicionar ICE diretamente:', e)
-          }
-        } else {
-          console.log('remoteDescription ainda não setada, guardando ICE na fila')
-          candidateQueue.push(candidate)
-        }
-      }
-    })
-  })
-
-  // Agora sim: setando a offer vinda do caller
-  const offer = roomSnapshot.data().offer
-  await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offer))
-
-  const answer = await peerConnection.value.createAnswer()
-  await peerConnection.value.setLocalDescription(answer)
-
-  const roomWithAnswer = {
-    answer: {
-      type: answer.type,
-      sdp: answer.sdp,
-    },
-  }
-  await updateDoc(roomRef, roomWithAnswer)
-
-  // Após setar remoteDescription, processa a fila
-  for (const candidate of candidateQueue) {
-    try {
-      await peerConnection.value.addIceCandidate(candidate)
-      console.log('ICE da fila adicionado após remoteDescription')
-    } catch (e) {
-      console.warn('Erro ao aplicar ICE da fila:', e)
-    }
-  }
-  candidateQueue.length = 0
-
-  peerConnection.value.addEventListener('connectionstatechange', () => {
-    if (
-      peerConnection.value.connectionState === 'disconnected' ||
-      peerConnection.value.iceConnectionState === 'disconnected'
-    ) {
-      store.commit('SET_DISCONNECTED', true)
-    }
-  })
-}
-
-const openUserCamera = async () => {
+async function startScreenShare() {
   try {
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    console.table(devices)
+    screenStream.value = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true, // simples, sem filtro
-      audio: false
-    })
+    const videoTrack = screenStream.value.getVideoTracks()[0];
+    const audioTrack = screenStream.value.getAudioTracks()[0];
 
-    console.log("[openUserCamera] - stream:", stream);
-
-    // Aguarde a ativação da stream (tracks ativas)
-    await waitForTracks(stream);
-
-    console.log("[openUserCamera] - tracks disponíveis:", stream.getTracks());
-
-    if (stream) {
-      await store.dispatch('setlocalCameraStream', stream)
-      const localCameraStream = computed(() => store.getters.localCameraStream)
-      await store.dispatch('setremoteCameraStream', new MediaStream())
-      console.log("Após dispatch: ", localCameraStream.value);
-      emitConfirm()
-
-
-      createBtnDisabled.value = false
-      joinBtnDisabled.value = false
-      hangupBtnDisabled.value = false
-
-      console.log('[openUserCamera] - creating/joining room', roomTestId.value)
-
-      if (props.isAdmin) {
-        await createRoom(stream)
-      } else {
-        await joinRoomById(roomTestId.value, stream)
-      }
+    const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
+    if (sender) {
+      sender.replaceTrack(videoTrack);
     }
-  } catch (e) {
-    console.error('[openUserCamera] - error:', e.name, e.message)
-    if (e.name === 'NotFoundError') {
-      toast.error('Nenhuma câmera ou microfone encontrado.')
-    } else if (e.name === 'NotReadableError') {
-      toast.error('Câmera ou microfone já está em uso.')
-    } else if (e.name === 'NotAllowedError') {
-      toast.error('Permissão negada para acessar câmera ou microfone.')
-    } else {
-      toast.error(t('errors.globalError'))
+
+    const audioSender = peerConnection.value.getSenders().find(s => s.track.kind === 'audio');
+    if (audioSender) {
+      audioSender.replaceTrack(audioTrack);
     }
+
+    localStream.value = screenStream.value;
+    if (localVideo.value) {
+      localVideo.value.srcObject = localStream.value;
+    }
+
+    videoTrack.onended = () => {
+      console.log('Screen sharing stopped by user.');
+      stopScreenShare();
+    };
+
+    isSharingScreen.value = true;
+  } catch (err) {
+    console.error('Error starting screen share:', err);
+    isSharingScreen.value = false;
   }
 }
 
-const waitForTracks = (stream) => {
-  return new Promise((resolve, reject) => {
-    const check = () => {
-      const tracks = stream.getTracks();
-      if (tracks.length && tracks.every(track => track.readyState === 'live')) {
-        resolve();
-      } else {
-        setTimeout(check, 50);
+async function stopScreenShare() {
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach(track => track.stop());
+  }
+
+  localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+  const videoTrack = localStream.value.getVideoTracks()[0];
+  const audioTrack = localStream.value.getAudioTracks()[0];
+
+  const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
+  if (sender) {
+    sender.replaceTrack(videoTrack);
+  }
+
+  const audioSender = peerConnection.value.getSenders().find(s => s.track.kind === 'audio');
+  if (audioSender) {
+    audioSender.replaceTrack(audioTrack);
+  }
+
+  if (localVideo.value) {
+    localVideo.value.srcObject = localStream.value;
+  }
+
+  isSharingScreen.value = false;
+  screenStream.value = null;
+}
+
+// Initialize WebRTC connection
+async function init() {
+  peerConnection.value = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+
+  // Listen for remote tracks
+  peerConnection.value.ontrack = (event) => {
+    if (remoteVideo.value && remoteVideo.value.srcObject !== event.streams[0]) {
+      remoteVideo.value.srcObject = event.streams[0];
+
+      // emit to parent
+      emit('setRemoteStream', event.streams[0]);
+    }
+  };
+
+  // Send local ICE candidates to Firebase
+  peerConnection.value.onicecandidate = async (event) => {
+    if (!event.candidate) return;
+    const candidateRef = dbRef(database, `calls/${props.roomId}/candidates`);
+    await push(candidateRef, event.candidate.toJSON());
+  };
+
+  // Automatic reconnection for caller if ICE disconnects
+  peerConnection.value.oniceconnectionstatechange = async () => {
+    if (props.caller && peerConnection.value.iceConnectionState === 'disconnected') {
+      console.log('Caller disconnected. Restarting ICE...');
+      await restartCall();
+    }
+  };
+
+  // Get local media stream if not already available
+  if (!localStream.value) {
+    try {
+      localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      if (localVideo.value) localVideo.value.srcObject = localStream.value;
+    } catch (err) {
+      console.error('Error accessing camera/microphone:', err);
+    }
+  }
+
+  // Add local tracks to peer connection
+  localStream.value.getTracks().forEach(track => peerConnection.value.addTrack(track, localStream.value));
+
+  // Listen for caller disconnect (for callee)
+  if (!props.caller) {
+    onValue(dbRef(database, `calls/${props.roomId}`), (snapshot) => {
+      roomExists.value = snapshot.exists();
+      if (!snapshot.exists() && callStarted.value) {
+        console.log('Room removed by caller, ending connection...');
+
+        // Close peer connection and stop tracks
+        if (peerConnection.value) peerConnection.value.close();
+        if (localStream.value) localStream.value.getTracks().forEach(track => track.stop());
+
+        // Reset local state
+        peerConnection.value = null;
+        localStream.value = null;
+        callStarted.value = false;
       }
-    };
-    check();
+    });
+  }
+}
+
+// Listen for remote ICE candidates and add them to peer connection
+function listenForCandidates() {
+  const candidateRef = dbRef(database, `calls/${props.roomId}/candidates`);
+  onValue(candidateRef, async (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+    const candidates = Object.values(data);
+    for (const candidate of candidates) {
+      try {
+        if (peerConnection.value.remoteDescription) {
+          await peerConnection.value.addIceCandidate(new RTCIceCandidate(candidate));
+        }
+      } catch (err) {
+        console.error('Error adding ICE candidate:', err);
+      }
+    }
   });
 }
 
-const hangUp = async () => {
-  const tracks = localCameraStream.value?.getTracks()
-  tracks?.forEach((track) => track.stop())
-
-  if (remoteCameraStream.value) {
-    remoteCameraStream.value.getTracks().forEach((track) => track.stop())
-  }
-
-  await store.dispatch('closePeerConnection')
-
-  store.commit('SET_LOCAL_STREAM', null)
-  store.commit('SET_REMOTE_STREAM', null)
-  createBtnDisabled.value = false
-  joinBtnDisabled.value = false
-  hangupBtnDisabled.value = true
-  currentRoom.value = ''
-
-  if (roomId.value) {
-    try {
-      const roomRef = doc(db, 'rooms', roomId.value)
-      const roomSnapshot = await getDoc(roomRef)
-      if (roomSnapshot.exists()) {
-        const calleeCandidatesSnapshot = await getDocs(collection(roomRef, 'calleeCandidates'))
-        calleeCandidatesSnapshot.forEach(async (candidate) => {
-          await deleteDoc(candidate.ref)
-        })
-
-        const callerCandidatesSnapshot = await getDocs(collection(roomRef, 'callerCandidates'))
-        callerCandidatesSnapshot.forEach(async (candidate) => {
-          await deleteDoc(candidate.ref)
-        })
-
-        await deleteDoc(roomRef)
-      }
-    } catch (error) {
-      console.error('Error deleting room and candidates:', error)
-    }
+// Restart the call for caller in case of ICE failure
+async function restartCall() {
+  try {
+    const offer = await peerConnection.value.createOffer({ iceRestart: true });
+    await peerConnection.value.setLocalDescription(offer);
+    const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
+    await set(offerRef, { sdp: offer.sdp, type: offer.type });
+    console.log('New offer sent after reconnection.');
+  } catch (err) {
+    console.error('Failed to restart ICE:', err);
   }
 }
 
-// router.beforeEach((to, from, next) => {
-//   if (from.matched.some((record) => record.components.default === this)) {
-//     hangUp()
-//   }
-//   next()
-// })
+// Start the call (caller)
+async function startCall() {
+  await init();
 
-// onBeforeUnmount(() => {
-//   hangUp()
-// })
+  const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
+  const snapshot = await get(offerRef);
+  const offerExists = snapshot.exists();
+
+  // If room already exists, recreate offer for reconnection
+  if (offerExists && peerConnection.value.signalingState === 'closed') {
+    console.log('Caller reconnection: recreating offer...');
+    peerConnection.value = null;
+    await init();
+  }
+
+  const offer = await peerConnection.value.createOffer({ iceRestart: true });
+  await peerConnection.value.setLocalDescription(offer);
+  await set(offerRef, { sdp: offer.sdp, type: offer.type });
+
+  if (props.caller) {
+    const roomRef = dbRef(database, `calls/${props.roomId}`);
+    // Set removal of room on client disconnect
+    await onDisconnect(roomRef).remove();
+  }
+
+  const answerRef = dbRef(database, `calls/${props.roomId}/answer`);
+  onValue(answerRef, async (snapshot) => {
+    const data = snapshot.val();
+    if (data && peerConnection.value.signalingState === 'have-local-offer') {
+      console.log('signaling state => ', peerConnection.value.signalingState)
+      console.log('offer data =>', data)
+      await peerConnection.value.setRemoteDescription(new RTCSessionDescription(data));
+      callStarted.value = true;
+      listenForCandidates();
+    }
+  });
+}
+
+// Answer the call (callee)
+async function answerCall() {
+  await init();
+
+  const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
+  const snapshot = await get(offerRef);
+  const offerData = snapshot.val();
+
+  if (!offerData) {
+    console.warn('No offer found. Please wait for the caller.');
+    return;
+  }
+
+  // Re-initialize if peer connection was closed (caller disconnected)
+  if (!peerConnection.value || peerConnection.value.signalingState === 'closed') {
+    await init();
+  }
+
+  await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offerData));
+  const answer = await peerConnection.value.createAnswer();
+  await peerConnection.value.setLocalDescription(answer);
+
+  const answerRef = dbRef(database, `calls/${props.roomId}/answer`);
+  await set(answerRef, { sdp: answer.sdp, type: answer.type });
+
+  callStarted.value = true;
+  listenForCandidates();
+}
+
+// End the call
+async function endCall() {
+  // Stop local media tracks
+  if (localStream.value) {
+    localStream.value.getTracks().forEach(track => track.stop());
+  }
+
+  // Stop screen share stream if active
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach(track => track.stop());
+  }
+
+  // Close peer connection
+  if (peerConnection.value) {
+    peerConnection.value.close();
+  }
+
+  // Remove room from Firebase if caller
+  if (props.caller) {
+    const roomRef = dbRef(database, `calls/${props.roomId}`);
+    // Cancel any onDisconnect operation
+    await onDisconnect(roomRef).cancel();
+
+    await set(roomRef, null);
+    console.log('Room removed, callee will also be disconnected.');
+  }
+
+  // Reset local state
+  localStream.value = null;
+  peerConnection.value = null;
+  callStarted.value = false;
+}
+
+// Initialize call on mount
+onMounted(() => {
+  init();
+});
+
+// Cleanup on component unmount
+onBeforeUnmount(() => {
+  endCall();
+});
 </script>
 
-<style scoped></style>
+<style scoped>
+.video-call-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.video-row {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.not-connected-message {
+  border: 2px solid gray;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 90vh;
+  max-height: 90vh;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.video-element {
+  width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  max-width: 100vh;
+}
+
+.buttons-row {
+  margin-top: auto;
+}
+
+.v-container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+</style>
