@@ -1052,7 +1052,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
-import { db } from '@/firebase';
+import { db } from '@/app/plugins/firebase';
 import VideoCall from '@/components/molecules/VideoCall.vue';
 import DisconnectedCard from '@/components/atoms/DisconnectedCard.vue';
 import FeedbackView from '@/components/molecules/FeedbackView.vue';
