@@ -15,13 +15,10 @@
     <!-- TEST -->
     <div v-if="index === 0">
       <TestConfigForm
-        :type="props.type"
         :welcome="welcomeMessage"
         :final-message="finalMessage"
-        :participant-camera="participantCamera"
         @update:welcome-message="saveState('welcomeMessage', $event)"
         @update:final-message="saveState('finalMessage', $event)"
-        @update:participant-camera="saveState('participantCamera', $event)"
       />
     </div>
 
@@ -51,15 +48,8 @@
 
     <!-- TASKS -->
     <ListTasks
-      v-if="index === 3 && (props.type === METHOD_DEFINITIONS.USER_UNMODERATED.id || props.type === 'unmoderated')"
+      v-if="index === 3"
     />
-
-    <v-card
-      v-if="index === 3 && (props.type === METHOD_DEFINITIONS.USER_MODERATED.id || props.type === 'moderated')"
-      rounded="xxl"
-    >
-      <ModeratedTask />
-    </v-card>
 
     <!-- POST-TEST -->
     <v-card
@@ -80,9 +70,7 @@ import { useStore } from 'vuex'
 import ListTasks from '@/components/molecules/ListTasks.vue'
 import UserVariables from '@/components/atoms/UserVariables.vue'
 import TextareaForm from '@/components/atoms/TextareaForm.vue'
-import ModeratedTask from '@/components/molecules/ModeratedTask.vue'
 import TestConfigForm from '@/components/molecules/TestConfigForm.vue'
-import { METHOD_DEFINITIONS } from '@/constants/methodDefinitions'
 
 // Props
 const props = defineProps({
@@ -101,7 +89,6 @@ const store = useStore()
 // Variables
 const welcomeMessage = ref('')
 const finalMessage = ref('')
-const participantCamera = ref('')
 const consent = ref('')
 const index = ref(0)
 
@@ -113,15 +100,12 @@ const saveState = async (type, value) => {
   const states = {
     'welcomeMessage': 'setWelcomeMessage',
     'finalMessage': 'setFinalMessage',
-    'participantCamera': 'setParticipantCamera',
     'consent': 'setConsent',
     'preTest': 'setPreTest',
     'postTest': 'setPostTest',
   }
 
-
   emit('change')
-  if (type === 'participantCamera') participantCamera.value = value
   if (states[type]) store.dispatch(states[type], value)
 }
 
@@ -135,12 +119,6 @@ const getFinalMessage = () => {
   saveState('finalMessage', finalMessage.value)
 }
 
-const getParticipantCamera = () => {
-  participantCamera.value = testStructure.value.participantCamera || ''
-  console.log('Participant Camera:', participantCamera.value)
-  saveState('participantCamera', participantCamera.value)
-}
-
 const getConsent = () => {
   consent.value = testStructure.value.consent || ''
   saveState('consent', consent.value)
@@ -151,8 +129,6 @@ onMounted(() => {
   getWelcome()
   getFinalMessage()
   getConsent()
-
-  if (props.type === METHOD_DEFINITIONS.USER_MODERATED.id || props.type === 'moderated') getParticipantCamera()
 })
 </script>
 
