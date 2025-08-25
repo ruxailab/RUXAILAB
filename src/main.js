@@ -1,9 +1,9 @@
 import { createApp } from 'vue';
-import App from './App.vue';
+import App from './app/App.vue';
 import router from './app/router/index.js';
 import store from './store';
-import vuetify from './plugins/vuetify';
-import i18n from './i18n';
+import vuetify from './app/plugins/vuetify.js';
+import i18n from './app/plugins/i18n';
 import Toast, { useToast } from 'vue-toastification';
 import TextClamp from 'vue3-text-clamp';
 import { quillEditor } from 'vue3-quill'

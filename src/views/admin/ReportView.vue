@@ -225,7 +225,7 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { db } from '@/app/plugins/firebase';
 import Intro from '@/shared/components/IntroReports.vue';
 import PageWrapper from '@/components/template/PageWrapper.vue';
 import TaskAnswer from '@/models/TaskAnswer';
