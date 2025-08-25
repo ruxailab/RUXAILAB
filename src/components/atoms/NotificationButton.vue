@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user.notifications">
+  <div v-if="Array.isArray(user.notifications)">
     <v-menu
       location="bottom"
       absolute
@@ -60,38 +60,13 @@
               density="compact"
               class="py-1 notification-list"
             >
-              <template v-for="(notification, i) in user.notifications" :key="i">
-                <v-list-item
-                  class="notification-list-item px-3 mb-2"
-                  :disabled="notification.read"
-                  @click="goToNotificationRedirect(notification)"
-                >
-                  <template #prepend>
-                    <v-avatar size="36" class="mr-3">
-                      <v-icon size="28" :color="!notification.read ? 'primary' : 'grey'">
-                        {{ getTestIcon(notification.testType) }}
-                      </v-icon>
-                    </v-avatar>
-                  </template>
-                  <v-list-item-content>
-                    <v-list-item-title class="notification-item-title">
-                      {{ notification.title }}
-                      <span v-if="notification.type" class="ml-2 text-caption text-primary">({{ notification.type }})</span>
-                    </v-list-item-title>
-                    <v-list-item-subtitle class="notification-item-desc">
-                      <span v-html="formatMultiline(notification.description)"></span>
-                    </v-list-item-subtitle>
-                    <div class="notification-meta">
-                      <span class="notification-author">
-                        {{ $t('common.sentBy') }}: {{ notification.author }} 
-                      </span>
-                      <p class="notification-date">
-                        {{ formatDate(notification.createdDate) }}
-                      </p>
-                    </div>
-                  </v-list-item-content>
-                </v-list-item>
-                  <v-divider v-if="i < (user.notifications?.length || 0) - 1" class="mx-4" color="secondary" />
+              <template v-for="(notification, i) in user.notifications || []" :key="notification.id">
+                <NotificationItem
+                  :notification="notification"
+                  @go-to-redirect="goToNotificationRedirect"
+                  @mark-as-read="goToNotificationRedirect"
+                />
+                <v-divider v-if="i < (user.notifications?.length || 0) - 1" class="mx-4" color="secondary" />
               </template>
             </v-list>
           </div>
@@ -119,7 +94,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+
+import NotificationItem from '@/components/atoms/NotificationItem.vue';
+
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
