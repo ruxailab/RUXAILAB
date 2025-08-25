@@ -104,36 +104,11 @@
             </template>
           </EditHeuristicsTest>
 
-          <!-- Unmoderated User Tests -->
+          <!-- User Tests -->
           <EditUserTest
-            v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-            type="tabs"
-            @tab-clicked="setIndex"
-          >
-            <template #top>
-              <!-- Top slot for Unmoderated User Test -->
-            </template>
-          </EditUserTest>
-          <EditUserTest
-            v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-            type="content"
-            :object="object"
-            :index="index"
-            @val-form="validate"
-          >
-            <template #content>
-              <!-- Content slot for Unmoderated User Test -->
-            </template>
-          </EditUserTest>
-
-          <!-- Moderated User Tests -->
-          <EditModeratedUserTest
-            v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-            :index="index"
-            :object="object"
-            @tab-clicked="setIndex"
+            v-if="test.testType === 'User'"
+            :type="test.userTestType"
             @change="change = true"
-            @val-form="validate"
           />
         </v-col>
       </v-row>
@@ -147,7 +122,7 @@ import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import Snackbar from '@/components/atoms/Snackbar.vue';
 import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
-import EditUserTest from '@/components/organisms/EditUserTest.vue';
+import EditUserTest from '@/components/UserTest/editTest/EditUserTest.vue';
 import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
 import Test from '@/models/Test';
 import PageWrapper from '@/components/template/PageWrapper.vue';
@@ -165,7 +140,6 @@ defineProps({
 
 const index = ref(0);
 const object = ref({});
-const valids = ref([true, true]);
 const change = ref(false);
 const dialog = ref(false);
 const go = ref('');
@@ -204,22 +178,16 @@ const submit = async () => {
     ...(test.value.testType === 'User' && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
-      participantCamera: store.getters.participantCamera,
       consent: store.getters.consent,
-      userTasks: store.getters.tasks,
-      preTest: store.getters.preTest,
-      postTest: store.getters.postTest,
+      userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks || [],
+      preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest || [],
+      postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest || [],
       finalMessage: store.getters.finalMessage,
     }),
   };
-
   const updatedTest = new Test({ ...object.value });
   await store.dispatch('updateTest', updatedTest);
   await store.dispatch('getTest', { id: route.params.id })
-};
-
-const validate = (valid, idx) => {
-  valids.value[idx] = valid;
 };
 
 const validateAll = async () => {

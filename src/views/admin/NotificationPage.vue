@@ -6,7 +6,7 @@
       >
         <v-card
           class="rounded-xxl"
-          border
+          flat
         >
           <v-card-title class="text-h5">
             {{ $t('common.notifications') }}
@@ -23,7 +23,7 @@
 
           <v-tabs
             v-model="activeTab"
-            bg-color="#f3a426"
+            bg-color="secondary"
           >
             <v-tab href="#unread">
               {{ $t('common.unread') }}
@@ -35,7 +35,7 @@
 
           <v-window v-model="activeTab">
             <v-window-item value="unread">
-              <v-card-text v-if="paginatedUnreadNotifications.length > 0">
+              <v-card-text v-if="paginatedUnreadNotifications.length > 0" class="pa-0">
                 <notification-list
                   :notifications="paginatedUnreadNotifications"
                   @mark-as-read="markAsRead"
