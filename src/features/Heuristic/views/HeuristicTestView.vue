@@ -554,8 +554,8 @@ import AddCommentBtn from '@/components/atoms/AddCommentBtn.vue'
 import HelpBtn from '@/components/atoms/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/components/atoms/Snackbar.vue'
-import HeuristicQuestionAnswer from '@/models/heuristic_method/HeuristicQuestionAnswer'
-import Heuristic from '@/models/heuristic_method/Heuristic'
+import HeuristicQuestionAnswer from '@/features/Heuristic/models/HeuristicQuestionAnswer'
+import Heuristic from '@/features/Heuristic/models/Heuristic'
 
 const props = defineProps({
   id: { type: String, default: '' },
