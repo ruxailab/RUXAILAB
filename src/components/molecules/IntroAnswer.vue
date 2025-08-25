@@ -1,58 +1,22 @@
 <template>
-  <IntroComp
-    :colors="['#9ac94f', '#7eb543']"
-    :title="'Answers'"
-    :image="'IntroAnswer.svg'"
-    :main="$t('descriptions.intro.answers')"
-    :link="$t('descriptions.intro.invite')"
-    :items="items"
-    @link-clicked="goToCoops"
-    @call-func="callFunc"
-  />
+  <div class="intro-answer">
+    <v-card class="pa-6" elevation="2">
+      <v-icon color="primary" size="48">mdi-information-outline</v-icon>
+      <h2 class="mt-4 mb-2">Intro Answer</h2>
+      <p>This is a placeholder for the IntroAnswer component. Customize as needed.</p>
+    </v-card>
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import IntroComp from '@/components/atoms/IntrosComponent'
-
-const router = useRouter()
-const { t } = useI18n()
-
-const emit = defineEmits(['goToCoops'])
-
-const items = computed(() => [
-  {
-    iconColor: '#4bbdaf',
-    icon: 'mdi-file-document',
-    title: t('pages.intros.docTitle'),
-    subtitle: t('pages.intros.docSubtitle') + t('titles.answers'),
-    func: 'goToDoc',
-  },
-  {
-    iconColor: '#4bbdaf',
-    icon: 'mdi-emoticon-happy',
-    title: t('pages.intros.discTitle'),
-    subtitle: t('pages.intros.discSubtitle'),
-    func: 'goToDisc',
-  },
-])
-
-const goToCoops = () => {
-  emit('goToCoops')
-}
-
-const goToDoc = () => {
-  router.push('/answers/documentation').catch(() => {})
-}
-
-const goToDisc = () => {
-  window.open('https://discord.gg/MFWNpwTq9q')
-}
-
-const callFunc = (func) => {
-  if (func === 'goToDoc') goToDoc()
-  if (func === 'goToDisc') goToDisc()
-}
+// Puedes agregar lógica aquí si es necesario
 </script>
+
+<style scoped>
+.intro-answer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+</style>

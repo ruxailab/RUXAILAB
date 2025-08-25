@@ -121,7 +121,7 @@ import { useStore } from 'vuex';
 import TextControls from '@/components/atoms/FinalReportControls.vue';
 import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue';
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
-import Test from '@/models/Test';
+import Test from '@/features/Heuristic/models/HeuristicTest.model.js';
 
 const store = useStore();
 
