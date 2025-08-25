@@ -3,7 +3,7 @@ export default [
     path: '/cardSorting/managerview/:id',
     name: 'CardSortingManagerView',
     meta: { authorize: [0, 1] },
-    component: () => import('@/features/CardSorintg/views/ManagerView.vue'),
+    component: () => import('@/features/CardSorting/views/ManagerView.vue'),
     props: true,
     children: [
       // {
