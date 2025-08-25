@@ -473,7 +473,7 @@ import { useI18n } from 'vue-i18n';
 import BarChart from '@/components/atoms/BarChart.vue';
 import RadarChart from '@/components/atoms/RadarChart.vue';
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
-import IntroAnswer from '@/components/molecules/IntroAnswer.vue';
+import IntroAnswer from '@/shared/components/IntroAnswer.vue';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
 import RadarWeight from '@/components/atoms/RadarWeight.vue';
 import axios from 'axios';

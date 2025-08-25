@@ -86,7 +86,7 @@ import { useStore } from 'vuex';
 import HeuristicsTable from '@/features/Heuristic/components/HeuristicsTable.vue';
 import OptionsTable from '@/components/molecules/OptionsTable.vue';
 import HeuristicsSenttings from '@/features/Heuristic/components/HeuristicsSenttings.vue';
-import WeightTable from '@/components/molecules/WeightTable.vue';
+import WeightTable from '@/features/Heuristic/components/WeightTable.vue';
 
 defineProps({
   type: {

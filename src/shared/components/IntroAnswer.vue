@@ -1,9 +1,9 @@
 <template>
   <IntroComp
-    :colors="['#32bde7', '#2488e0']"
-    :title="'Analytics'"
-    :image="'IntroAnalytics.svg'"
-    :main="$t('descriptions.intro.analytics')"
+    :colors="['#9ac94f', '#7eb543']"
+    :title="'Answers'"
+    :image="'IntroAnswer.svg'"
+    :main="$t('descriptions.intro.answers')"
     :link="$t('descriptions.intro.invite')"
     :items="items"
     @link-clicked="goToCoops"
@@ -24,14 +24,14 @@ const emit = defineEmits(['goToCoops'])
 
 const items = computed(() => [
   {
-    iconColor: '#59b9d4',
+    iconColor: '#4bbdaf',
     icon: 'mdi-file-document',
     title: t('pages.intros.docTitle'),
-    subtitle: t('pages.intros.docSubtitle') + t('titles.analytics'),
+    subtitle: t('pages.intros.docSubtitle') + t('titles.answers'),
     func: 'goToDoc',
   },
   {
-    iconColor: '#59b9d4',
+    iconColor: '#4bbdaf',
     icon: 'mdi-emoticon-happy',
     title: t('pages.intros.discTitle'),
     subtitle: t('pages.intros.discSubtitle'),
@@ -44,7 +44,7 @@ const goToCoops = () => {
 }
 
 const goToDoc = () => {
-  router.push('/analytics/documentation').catch(() => {})
+  router.push('/answers/documentation').catch(() => {})
 }
 
 const goToDisc = () => {

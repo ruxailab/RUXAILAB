@@ -467,7 +467,7 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import ShowInfo from '@/components/organisms/ShowInfo.vue';
 import Snackbar from '@/components/atoms/Snackbar.vue';
-import Intro from '@/components/molecules/IntroCoops.vue';
+import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
 import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
 import { roleOptionsItems } from '@/utils/items';
