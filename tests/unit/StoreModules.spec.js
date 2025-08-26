@@ -23,7 +23,7 @@ import TestModule from '@/store/modules/Test'
 import AuthModule from '@/store/modules/Auth'
 
 import TestController from '@/controllers/TestController'
-import AuthController from '@/controllers/AuthController'
+import AuthController from '@/features/auth/controllers/AuthController'
 
 /**
  * This is a simplified test that verifies error handling basics in the store modules.

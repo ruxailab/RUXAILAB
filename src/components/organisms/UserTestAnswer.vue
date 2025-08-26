@@ -1,14 +1,28 @@
 <template>
   <div>
     <v-overlay :model-value="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular
+        indeterminate
+        size="64"
+      />
     </v-overlay>
-    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
-    <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
-      <ShowInfo hideCol="true">
+    <IntroAnswer
+      v-if="intro"
+      @go-to-coops="goToCoops"
+    />
+    <v-row
+      v-else-if="hasAnswers"
+      justify="center"
+      class="ma-0"
+    >
+      <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
+          <v-tabs
+            v-model="tab"
+            bg-color="transparent"
+            color="#FCA326"
+          >
             <v-tab @click="tab = 0">
               General Analytics
             </v-tab>
@@ -18,10 +32,16 @@
             <v-tab @click="tab = 2">
               Sentiment Analysis
             </v-tab>
-            <v-tab v-if="showSUS" @click="tab = 3">
+            <v-tab
+              v-if="showSUS"
+              @click="tab = 3"
+            >
               SUS Analytics
             </v-tab>
-            <v-tab v-if="showNasa" @click="tab = 4">
+            <v-tab
+              v-if="showNasa"
+              @click="tab = 4"
+            >
               Nasa-TLX Analytics
             </v-tab>
             <v-tab v-if="showEye" @click="tab = 5">
@@ -31,7 +51,10 @@
         </template>
 
         <template #content>
-          <div>
+          <div
+            style="background-color: #E8EAF2;"
+            class="ma-0 pa-0"
+          >
             <GeneralAnalytics v-if="tab === 0" />
             <AnalyticsView v-if="tab === 1" />
             <SentimentAnalysisView v-if="tab === 2" />
@@ -51,14 +74,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { statistics } from '@/utils/statistics';
-import ShowInfo from '@/components/organisms/ShowInfo';
+import { statistics } from '@/ux/Heuristic/utils/statistics';
+import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/components/molecules/IntroAnswer';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
-import GeneralAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
-import SentimentAnalysisView from '@/components/organisms/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
-import SusAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/SusAnalytics.vue';
-import NasaTlxAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
+import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
+import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
+import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import EyeTrackingAnalytics from '@/views/admin/EyeTrackingAnalytics.vue';
 
 defineProps({
@@ -151,3 +174,86 @@ onMounted(async () => {
   await store.dispatch('getCurrentTestAnswerDoc');
 });
 </script>
+
+<style scoped>
+.titleView {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+
+.subtitleView {
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+
+.scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.cardStyle {
+  background-color: transparent;
+  border: 0.2px solid rgba(0, 0, 0, 0.25);
+}
+
+.cardAnswers {
+  background: #e6e4e4;
+  border-radius: 34px;
+}
+
+.tab-text {
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: center;
+  color: #000000;
+}
+
+.container {
+  height: 400px;
+  padding: 0px;
+  margin: 0px 10px 0px;
+}
+
+.list-scroll {
+  height: 508px;
+  overflow: auto;
+}
+
+/* Nav bar list scroll bar */
+/* width */
+.list-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+.list-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+.list-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+.list-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
+
+.v-chip {
+  min-width: 50px;
+  justify-content: center;
+}
+</style>

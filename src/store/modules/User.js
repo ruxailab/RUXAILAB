@@ -4,7 +4,7 @@
  */
 
 // import UserController
-import UserController from '@/controllers/UserController'
+import UserController from '@/features/auth/controllers/UserController'
 
 const userController = new UserController()
 

@@ -3,9 +3,9 @@
  * @module Auth
  */
 
-import AuthController from '@/controllers/AuthController.js'
-import UserController from '@/controllers/UserController'
-import i18n from '@/i18n'
+import AuthController from '@/features/auth/controllers/AuthController.js'
+import UserController from '@/features/auth/controllers/UserController'
+import i18n from '@/app/plugins/i18n'
 
 const authController = new AuthController()
 const userController = new UserController()

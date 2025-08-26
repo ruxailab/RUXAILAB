@@ -2,7 +2,7 @@
 
 import Controller from '@/controllers/BaseController'
 import Answer from '@/models/Answer'
-import UserController from './UserController'
+import UserController from '../features/auth/controllers/UserController'
 import TaskAnswer from '@/models/TaskAnswer'
 const COLLECTION = 'answers'
 

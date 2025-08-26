@@ -1,8 +1,8 @@
 import AnswerController from '@/controllers/AnswerController'
-import HeuristicAnswer from '@/models/HeuristicAnswer'
+import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
 import UserTask from '@/models/UserTask'
-import { percentage } from '@/utils/statistics'
+import { percentage } from '@/ux/Heuristic/utils/statistics'
 
 const answerController = new AnswerController()
 

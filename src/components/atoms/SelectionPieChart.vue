@@ -1,20 +1,30 @@
 <template>
-    <v-card class="pa-6 elevation-3 rounded-xl chart-card">
-        <div class="mb-4">
-            <h4 class="text-h6 font-weight-bold mb-2">{{ questionTitle }}</h4>
-        </div>
-        <div class="chart-container-small mb-4">
-            <canvas :id="canvasId" width="180" height="180"></canvas>
-        </div>
-        <div>
-            <div v-for="(option, idx) in options" :key="option" class="d-flex align-center mb-1">
-                <div
-                    :style="{ background: chartColors[idx % chartColors.length], width: '14px', height: '14px', borderRadius: '50%', marginRight: '8px' }">
-                </div>
-                <span>{{ option }} ({{ counts[option] || 0 }})</span>
-            </div>
-        </div>
-    </v-card>
+  <v-card class="pa-6 elevation-3 rounded-xl chart-card">
+    <div class="mb-4">
+      <h4 class="text-h6 font-weight-bold mb-2">
+        {{ questionTitle }}
+      </h4>
+    </div>
+    <div class="chart-container-small mb-4">
+      <canvas
+        :id="canvasId"
+        width="180"
+        height="180"
+      />
+    </div>
+    <div>
+      <div
+        v-for="(option, idx) in options"
+        :key="option"
+        class="d-flex align-center mb-1"
+      >
+        <div
+          :style="{ background: chartColors[idx % chartColors.length], width: '14px', height: '14px', borderRadius: '50%', marginRight: '8px' }"
+        />
+        <span>{{ option }} ({{ counts[option] || 0 }})</span>
+      </div>
+    </div>
+  </v-card>
 </template>
 
 <script setup>
