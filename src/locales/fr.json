@@ -572,7 +572,13 @@
     "cooperators": "Collaborateurs",
     "analytics": "Analyses",
     "help_center": "Centre d'aide",
-    "howCanWeHelp": "Comment pouvons-nous vous aider ?"
+    "howCanWeHelp": "Comment pouvons-nous vous aider ?",
+    "categories": "CATÉGORIES",
+    "viewAll": "Voir Tout",
+    "noArticlesFound": "Aucun article trouvé",
+    "browseAllCategories": "Parcourir toutes les catégories",
+    "viewAllArticles": "Voir tous les articles",
+    "videoAltText": "Vidéo de démonstration"
   },
   "user": "UTILISATEUR",
   "account": "Compte",
