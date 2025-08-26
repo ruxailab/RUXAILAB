@@ -99,10 +99,10 @@
 </template>
 
 <script setup>
-import ButtonSend from '@/components/atoms/ButtonSend.vue'
-import LeaveAlert from '@/components/atoms/LeaveAlert.vue'
-import Loadding from '@/components/atoms/Loadding.vue'
-import Snackbar from '@/components/atoms/Snackbar.vue'
+import ButtonSend from '@/shared/components/ButtonSend.vue'
+import LeaveAlert from '@/shared/components/LeaveAlert.vue'
+import Loadding from '@/shared/components/Loadding.vue'
+import Snackbar from '@/shared/components/Snackbar.vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import Notification from '@/shared/models/Notification'
 import { computed, onMounted, ref } from 'vue'
