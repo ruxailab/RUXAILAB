@@ -133,7 +133,7 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import { getAuth } from 'firebase/auth';
-import UserController from '@/controllers/UserController';
+import UserController from '@/features/auth/controllers/UserController';
 
 // Composables
 const router = useRouter();

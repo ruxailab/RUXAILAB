@@ -110,7 +110,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
-import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
+import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 import { z } from 'zod'
 
 const email = ref('')
