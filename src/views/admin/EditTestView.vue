@@ -123,7 +123,6 @@ import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import Snackbar from '@/shared/components/Snackbar';
 import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
-import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
 import Test from '@/models/Test';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
