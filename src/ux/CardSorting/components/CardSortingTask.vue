@@ -55,9 +55,9 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import ShowInfo from '../../shared/components/ShowInfo.vue'
+import ShowInfo from '@/shared/components/ShowInfo.vue'
 import Draggable from 'vuedraggable'
-import CardSortingCard from '../atoms/CardSortingCard.vue'
+import CardSortingCard from '../components/CardSortingCard.vue'
 
 // Props
 const props = defineProps({
