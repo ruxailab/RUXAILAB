@@ -112,7 +112,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { useDisplay } from 'vuetify';
 import { useI18n } from 'vue-i18n';
-import LocaleChanger from '@/components/atoms/LocaleChanger.vue';
+import LocaleChanger from '@/app/layouts/components/LocaleChanger.vue';
 import HelpButton from '@/components/atoms/HelpButton.vue';
 import UserMenu from './UserMenu.vue';
 import NotificationButton from '../notifications/components/NotificationButton.vue';
