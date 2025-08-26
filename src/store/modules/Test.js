@@ -6,7 +6,7 @@
 import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 import TestController from '@/controllers/TestController'
-import UserController from '@/controllers/UserController'
+import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 
 const testController = new TestController()
