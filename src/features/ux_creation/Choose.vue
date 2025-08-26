@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import BackButton from '@/components/atoms/BackButton.vue'
+import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/components/atoms/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
