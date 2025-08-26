@@ -477,7 +477,7 @@ import IntroAnswer from '@/shared/components/IntroAnswer.vue';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
 import RadarWeight from '@/components/atoms/RadarWeight.vue';
 import axios from 'axios';
-import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
+import { standardDeviation, finalResult, statistics } from '@/features/Heuristic/utils/statistics';
 
 const store = useStore();
 const router = useRouter();

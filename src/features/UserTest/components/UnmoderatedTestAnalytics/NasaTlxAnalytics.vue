@@ -462,7 +462,7 @@
 
 <script setup>
 import { ref, computed, nextTick, watchEffect } from 'vue'
-import { getNASATLXData, tlxDimensions } from '@/utils/nasaTlxData'
+import { getNASATLXData, tlxDimensions } from '@/features/UserTest/utils/nasaTlxData'
 import { useStore } from 'vuex'
 import {
   Chart as ChartJS,
