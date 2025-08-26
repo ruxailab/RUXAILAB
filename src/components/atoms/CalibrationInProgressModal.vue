@@ -11,7 +11,7 @@
                 </div>
 
                 <div>
-                    <v-progress-circular v-if="!isCompleted" indeterminate color="orange" size="56" width="5" />
+                    <v-progress-circular v-if="!isCompleted" indeterminate color="primary" size="56" width="5" />
                     <v-icon v-else color="success" size="100">
                         mdi-check
                     </v-icon>
@@ -23,7 +23,7 @@
                 <div class="text-subtitle-1 mt-auto" v-else>
                     The calibration was successful!
                     <br>
-                    <v-btn class="mt-4" color="orange" @click="$emit('close')">
+                    <v-btn class="mt-4" color="primary" @click="$emit('close')">
                         CONTINUE TO THE TEST!
                     </v-btn>
                 </div>
@@ -58,6 +58,7 @@ const dialogVisible = computed({
 .openCalib {
     justify-self: end;
     cursor: pointer;
-    color: orange;
+    text-decoration: underline;
+    color: rgb(10, 35, 61);
 }
 </style>

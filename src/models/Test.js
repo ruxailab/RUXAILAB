@@ -27,6 +27,8 @@ export default class Test {
     userTestType,
     userTestStatus,
     testWeights,
+    status,
+    endDate
   } = {}) {
     /**
      * Defines the test id.
@@ -146,13 +148,28 @@ export default class Test {
      * @type {Object}
      */
     this.userTestStatus = userTestStatus ?? {}
-  /**
-     * Defines the test weights.
-     *
-     * @type {TestWeights[]}
-     */
 
-  this.testWeights = testWeights ?? {}
+    /**
+       * Defines the test weights.
+       *
+       * @type {TestWeights[]}
+       */
+
+    this.testWeights = testWeights ?? {}
+
+    /**
+     * Defines the test status.
+     *
+     * @type {string}
+     */
+    this.status = status ?? null
+
+    /**
+     * Defines a timestamp of the test end date.
+     *
+     * @type {number}
+     */
+    this.endDate = endDate ?? null
 
   }
 
@@ -195,6 +212,8 @@ export default class Test {
       userTestType: this.userTestType,
       userTestStatus: this.userTestStatus,
       testWeights: this.testWeights,
+      status: this.status,
+      endDate: this.endDate,
     }
   }
 }

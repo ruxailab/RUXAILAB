@@ -46,7 +46,7 @@ export default class UserTask {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers?.toFirestore?.() ?? {}
+      nasaTlxAnswers: (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore()
     }
   }
 }

@@ -15,7 +15,7 @@ export default [
     path: '/testview/:id/:token?',
     name: 'TestView',
     props: true,
-    meta: { authorize: [] },
+    meta: { authorize: [], layout: 'no-toolbar' },
     component: TestView,
   },
   {

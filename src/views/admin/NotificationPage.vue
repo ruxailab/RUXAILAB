@@ -35,11 +35,18 @@
 
           <v-window v-model="activeTab">
             <v-window-item value="unread">
-              <v-card-text v-if="unreadNotifications.length > 0">
+              <v-card-text v-if="paginatedUnreadNotifications.length > 0">
                 <notification-list
-                  :notifications="unreadNotifications"
+                  :notifications="paginatedUnreadNotifications"
                   @mark-as-read="markAsRead"
                   @go-to-redirect="goToNotificationRedirect"
+                />
+                <v-pagination
+                  v-if="unreadPages > 1"
+                  v-model="unreadPage"
+                  :length="unreadPages"
+                  rounded="circle"
+                  class="mt-4"
                 />
               </v-card-text>
               <v-card-text v-else>
@@ -53,11 +60,18 @@
             </v-window-item>
 
             <v-window-item value="inbox">
-              <v-card-text v-if="user.inbox && user.inbox.length > 0">
+              <v-card-text v-if="paginatedInboxNotifications.length > 0">
                 <notification-list
-                  :notifications="user.inbox"
+                  :notifications="paginatedInboxNotifications"
                   @mark-as-read="markAsRead"
                   @go-to-redirect="goToNotificationRedirect"
+                />
+                <v-pagination
+                  v-if="inboxPages > 1"
+                  v-model="inboxPage"
+                  :length="inboxPages"
+                  rounded="circle"
+                  class="mt-4"
                 />
               </v-card-text>
               <v-card-text v-else>
@@ -98,6 +112,10 @@ const router = useRouter()
 
 const activeTab = ref('unread')
 
+const pageSize = 5
+const unreadPage = ref(1)
+const inboxPage = ref(1)
+
 const user = computed(() => store.getters.user)
 
 const allRead = computed(() =>
@@ -107,6 +125,20 @@ const allRead = computed(() =>
 const unreadNotifications = computed(() =>
   user.value.notifications.filter((notification) => !notification.read)
 )
+
+const unreadPages = computed(() => Math.ceil(unreadNotifications.value.length / pageSize))
+const paginatedUnreadNotifications = computed(() => {
+  const start = (unreadPage.value - 1) * pageSize
+  const end = start + pageSize
+  return unreadNotifications.value.slice(start, end)
+})
+
+const inboxPages = computed(() => Math.ceil(user.value.inbox.length / pageSize))
+const paginatedInboxNotifications = computed(() => {
+  const start = (inboxPage.value - 1) * pageSize
+  const end = start + pageSize
+  return user.value.inbox.slice(start, end)
+})
 
 const goToNotificationRedirect = async (notification) => {
   if (!notification.read) {

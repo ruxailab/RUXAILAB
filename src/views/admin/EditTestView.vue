@@ -1,148 +1,86 @@
 <template>
-  <v-container>
-    <Snackbar />
-    <!-- Leave Alert Dialog -->
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
-      <v-card>
-        <v-card-title
-          class="text-h5 bg-red text-white"
-        >
-          Are you sure you want to leave?
-        </v-card-title>
-        <v-card-text>All your changes will be discarded</v-card-text>
-        <v-divider />
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="closeDialog"
-          >
-            Stay
+  <PageWrapper title="Edit Test" :side-gap="true">
+    <!-- Subtitle Slot -->
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Customize the settings and preferences of your test
+      </p>
+    </template>
+
+    <v-container>
+      <Snackbar />
+      <!-- Leave Alert Dialog -->
+      <v-dialog v-model="dialog" width="600" persistent>
+        <v-card>
+          <v-card-title class="text-h5 bg-red text-white">
+            Are you sure you want to leave?
+          </v-card-title>
+          <v-card-text>All your changes will be discarded</v-card-text>
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn class="bg-grey-lighten-3" variant="text" @click="closeDialog">
+              Stay
+            </v-btn>
+            <v-btn class="bg-red text-white ml-1" variant="text" @click="leave">
+              Leave
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Save Button -->
+      <v-tooltip v-if="accessLevel === 0" location="left">
+        <template #activator="{ props }">
+          <v-btn size="large" icon color="#F9A826" :disabled="testAnswerDocLength > 0" v-bind="props" class="save-btn"
+            @click="validateAll">
+            <v-icon size="large" :class="{ 'disabled-btn': testAnswerDocLength > 0 }">
+              mdi-content-save
+            </v-icon>
           </v-btn>
-          <v-btn
-            class="bg-red text-white ml-1"
-            variant="text"
-            @click="leave"
-          >
-            Leave
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        </template>
+        <span>Save</span>
+      </v-tooltip>
 
-    <!-- Save Button -->
-    <v-tooltip
-      v-if="accessLevel === 0"
-      location="left"
-    >
-      <template #activator="{ props }">
-        <v-btn
-          size="large"
-          icon
-          color="#F9A826"
-          :disabled="testAnswerDocLength > 0"
-          v-bind="props"
-          class="save-btn"
-          @click="validateAll"
-        >
-          <v-icon
-            size="large"
-            :class="{ 'disabled-btn': testAnswerDocLength > 0 }"
-          >
-            mdi-content-save
-          </v-icon>
-        </v-btn>
-      </template>
-      <span>Save</span>
-    </v-tooltip>
+      <!-- Loading Overlay -->
+      <v-overlay v-model="loading" class="text-center">
+        <v-progress-circular indeterminate color="#fca326" size="50" />
+        <div class="white-text mt-3">
+          Loading Test
+        </div>
+      </v-overlay>
 
-    <!-- Loading Overlay -->
-    <v-overlay
-      v-model="loading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
-      <div class="white-text mt-3">
-        Loading Test
-      </div>
-    </v-overlay>
+      <v-row>
+        <v-col cols="12" class="pb-0">
+          <!-- Heuristic Tests -->
+          <EditHeuristicsTest v-if="test.testType === 'HEURISTICS'" type="content" :object="object" :index="index"
+            @tab-clicked="setIndex" @change="change = true">
+            <template #content>
+              <!-- Content slot for Heuristics Test -->
+            </template>
+          </EditHeuristicsTest>
 
-    <v-row>
-      <v-col
-        cols="12"
-        class="pb-0"
-      >
-        <!-- Heuristic Tests -->
-        <EditHeuristicsTest
-          v-if="test.testType === 'HEURISTICS'"
-          type="content"
-          :object="object"
-          :index="index"
-          @tab-clicked="setIndex"
-          @change="change = true"
-        >
-          <template #content>
-            <!-- Content slot for Heuristics Test -->
-          </template>
-        </EditHeuristicsTest>
+          <!-- Unmoderated User Tests -->
+          <EditUserTest v-if="test.testType === 'User' && test.userTestType === 'unmoderated'" type="tabs"
+            @tab-clicked="setIndex">
+            <template #top>
+              <!-- Top slot for Unmoderated User Test -->
+            </template>
+          </EditUserTest>
+          <EditUserTest v-if="test.testType === 'User' && test.userTestType === 'unmoderated'" type="content"
+            :object="object" :index="index" @val-form="validate">
+            <template #content>
+              <!-- Content slot for Unmoderated User Test -->
+            </template>
+          </EditUserTest>
 
-        <!-- Unmoderated User Tests -->
-        <EditUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-          type="tabs"
-          @tab-clicked="setIndex"
-        >
-          <template #top>
-            <!-- Top slot for Unmoderated User Test -->
-          </template>
-        </EditUserTest>
-        <EditUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-          type="content"
-          :object="object"
-          :index="index"
-          @val-form="validate"
-        >
-          <template #content>
-            <!-- Content slot for Unmoderated User Test -->
-          </template>
-        </EditUserTest>
-
-        <!-- Moderated User Tests -->
-        <EditModeratedUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-          type="tabs"
-          @tab-clicked="setIndex"
-          @change="change = true"
-        >
-          <template #top>
-            <!-- Top slot for Moderated User Test -->
-          </template>
-        </EditModeratedUserTest>
-        <EditModeratedUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-          type="content"
-          :object="object"
-          :index="index"
-          @change="change = true"
-          @val-form="validate"
-        >
-          <template #content>
-            <!-- Content slot for Moderated User Test -->
-          </template>
-        </EditModeratedUserTest>
-      </v-col>
-    </v-row>
-  </v-container>
+          <!-- Moderated User Tests -->
+          <EditModeratedUserTest v-if="test.testType === 'User' && test.userTestType === 'moderated'" :index="index"
+            :object="object" @tab-clicked="setIndex" @change="change = true" @val-form="validate" />
+        </v-col>
+      </v-row>
+    </v-container>
+  </PageWrapper>
 </template>
 
 <script setup>
@@ -154,6 +92,7 @@ import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
 import EditUserTest from '@/components/organisms/EditUserTest.vue';
 import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
 import Test from '@/models/Test';
+import PageWrapper from '@/components/template/PageWrapper.vue';
 
 const store = useStore();
 const router = useRouter();
@@ -193,21 +132,8 @@ const loading = computed(() => {
   return store.getters.loading;
 });
 
-const user = computed(() => {
-  return store.getters.user;
-});
-
 const test = computed(() => {
   return store.getters.test;
-});
-
-const answers = computed(() => {
-  return store.getters.answers ?? [];
-});
-
-const totalQuestions = computed(() => {
-  const items = object.value?.heuristics ?? object.value?.tasks ?? [];
-  return items.reduce((sum, h) => sum + (h.total || 0), 0);
 });
 
 const setIntro = async () => {
@@ -310,10 +236,12 @@ onBeforeRouteLeave((to, from) => {
   right: 16px;
   z-index: 100;
 }
+
 .save-btn.disabled-btn,
 .disabled-btn {
   color: rgba(134, 125, 125, 0.438) !important;
 }
+
 .save-btn.disabled-btn {
   background-color: rgba(185, 185, 185, 0.308) !important;
 }
