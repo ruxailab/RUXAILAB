@@ -19,4 +19,4 @@ export {
     globalToolbarItems,
     navigationContexts,
     getNavigationContext
-} from './globalItems.js';
+} from '@/features/navigation/globalItems.js';

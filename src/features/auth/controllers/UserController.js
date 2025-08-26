@@ -1,5 +1,5 @@
 import Controller from '@/controllers/BaseController'
-import User from '@/models/UserModel'
+import User from '@/features/auth/models/UserModel'
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 const COLLECTION = 'users'
 
