@@ -125,7 +125,7 @@ import EditHeuristicsTest from '@/features/Heuristic/components/EditHeuristicsTe
 import EditUserTest from '@/features/UserTest/components/editTest/EditUserTest.vue';
 import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
 import Test from '@/models/Test';
-import PageWrapper from '@/components/template/PageWrapper.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
 const store = useStore();
 const router = useRouter();

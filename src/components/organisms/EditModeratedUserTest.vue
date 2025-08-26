@@ -111,9 +111,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import UserVariables from '../atoms/UserVariables.vue'
+import UserVariables from '../../features/UserTest/components/UserVariables.vue'
 import ModeratedTask from '../molecules/ModeratedTask.vue'
-import TextareaForm from '../atoms/TextareaForm.vue'
+import TextareaForm from '../../shared/components/TextareaForm.vue'
 
 // Props
 const props = defineProps({
