@@ -1,5 +1,5 @@
 import EditTest from '@/views/admin/EditTestView.vue'
-import TestList from '@/views/admin/DashboardView.vue'
+import TestList from '@/views/admin/AdminView.vue'
 import AnswerView from '@/views/admin/AnswerView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
@@ -12,13 +12,27 @@ import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
-import Choose from '@/views/admin/Choose.vue'
-import ChooseStudyMethods from '@/views/admin/ChooseStudyMethods.vue'
-import ChooseStudyType from '@/views/admin/ChooseStudyType.vue'
-import StudyDetailsForm from '@/views/admin/StudyDetailsForm.vue'
+import Choose from '@/views/admin/StudyCreationFlow/Choose.vue'
+import ChooseStudyMethods from '@/views/admin/StudyCreationFlow/ChooseStudyMethods.vue'
+import ChooseStudyType from '@/views/admin/StudyCreationFlow/ChooseStudyType.vue'
+import StudyDetailsForm from '@/views/admin/StudyCreationFlow/StudyDetailsForm.vue'
+import accessibility from '@/views/admin/Accessibility.vue'
+import DashboardView from '@/views/admin/DashboardView.vue'
 
 
 export default [
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    meta: { authorize: [1] },
+    component: DashboardView,
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    meta: { authorize: [1] },
+    component: TestList,
+  },
   {
     path: '/testslist',
     name: 'TestList',
@@ -26,8 +40,14 @@ export default [
     component: TestList,
   },
   {
-    path:'/profile',
-    name:'Profile',
+    path: '/accessibility',
+    name: 'Accessibility',
+    meta: { authorize: [1] },
+    component: accessibility,
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
     meta: { authorize: [1] },
     component: Profile,
   },
@@ -103,8 +123,8 @@ export default [
     ],
   },
   {
-    path:'/choose',
-    name:'study-create-step1',
+    path: '/choose',
+    name: 'study-create-step1',
     meta: { authorize: [1] },
     component: Choose,
   },
