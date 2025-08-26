@@ -1,15 +1,13 @@
 /**
  * Research Method Definitions
- * Definiciones centralizadas de todos los métodos de investigación
- * 
- * Este archivo contiene la configuración completa de cada método:
- * - ID único
- * - Nombre descriptivo
- * - Icono Material Design
- * - Color específico
- * - Descripción
- * - Categoría (test, inquiry, inspection, accessibility)
- * - Estado (available, not available, coming soon, improving)
+ * This file contains the complete configuration for each research method:
+ * - Unique ID
+ * - Descriptive name
+ * - Material Design icon
+ * - Specific color
+ * - Description
+ * - Category (test, inquiry, inspection, accessibility)
+ * - Status (available, not available, coming soon, improving)
  */
 
 export const METHOD_DEFINITIONS = {

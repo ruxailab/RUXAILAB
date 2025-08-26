@@ -1,15 +1,13 @@
 /**
  * Study Categories Definitions
- * Definiciones de las categorías para el flujo de creación de estudios
- * 
- * Este archivo contiene la configuración completa de cada categoría:
- * - ID único
- * - Título
- * - Descripción
- * - Icono Material Design
+ * This file contains the complete configuration for each study category:
+ * - Unique ID
+ * - Title
+ * - Description
+ * - Material Design Icon
  * - Color
- * - Estado (disponible o próximamente)
- * - Si tiene sub-métodos
+ * - Status (available or coming soon)
+ * - Whether it has sub-methods
  */
 
 export const STUDY_CATEGORIES = [
