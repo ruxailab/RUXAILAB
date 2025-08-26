@@ -62,7 +62,7 @@
 
 <script setup>
 import AnswerController from '@/controllers/AnswerController';
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex';
 
 const props = defineProps({
@@ -128,22 +128,34 @@ const calculateProgress = (answers) => {
   return sum / answers.length;
 }
 
+const daysLeft = (date) => {
+  const futureDate = new Date(date);
+  const today = new Date();
+
+  const differenceInTime = futureDate.getTime() - today.getTime();
+  const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+  return Math.floor(differenceInDays);
+}
+
 const finalFour = (studyArr) => {
   if (!studyArr) {
     studiesWithAnswers.value = [];
     return
   }
-  for (const study in studyArr) {
-    studiesWithAnswers.value.push({
-      title: studyArr[study].testTitle,
-      description: studyArr[study].testDescription,
-      status: studyArr[study].status,
-      progress: calculateProgress(studyArr[study].answers),
-      participants: studyArr[study].answers?.length || 0,
-      daysLeft: studyArr[study].endDate || 0,
-      typeIcon: 'mdi-sort-variant'
-    })
-  }
+  studiesWithAnswers.value = studyArr.map(study => ({
+    id: study.id,
+    title: study.testTitle,
+    description: study.testDescription,
+    status: study.status,
+    progress: calculateProgress(study.answers),
+    participants: study.answers?.length || 0,
+    daysLeft: daysLeft(study.endDate) || 0,
+    typeIcon: 'mdi-sort-variant'
+  }))
+  .filter((study, index, self) =>
+    index === self.findIndex(m => m.id === study.id)
+  );
 }
 
 // Default studies if none provided
@@ -189,6 +201,14 @@ const defaultStudies = [
     typeIcon: 'mdi-wheelchair-accessibility'
   }
 ]
+
+watch(
+  () => props.studies,
+  () => {
+    loadAnswers();
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>

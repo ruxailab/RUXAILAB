@@ -85,6 +85,14 @@ import UpcomingWebinar from '@/components/dashboard/UpcomingWebinar.vue'
 import TopMethods from '@/components/dashboard/TopMethods.vue'
 import NextSession from '@/components/dashboard/NextSession.vue'
 
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+})
+
 const store = useStore()
 
 // Dashboard data
