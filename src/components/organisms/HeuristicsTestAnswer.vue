@@ -15,7 +15,7 @@
       justify="center"
       class="ma-0 mt-4"
     >
-      <ShowInfo :title="$t('HeuristicsTestAnswer.titles.answers')">
+      <ShowInfo hideCol="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs

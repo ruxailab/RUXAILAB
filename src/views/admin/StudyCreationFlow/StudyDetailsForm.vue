@@ -343,6 +343,7 @@ const submit = async () => {
     }),
     creationDate: Date.now(),
     updateDate: Date.now(),
+    status: 'active',
   });
 
   const testId = await store.dispatch('createNewTest', newTest);
