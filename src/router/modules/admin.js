@@ -9,7 +9,7 @@ import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
 import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
-import FinalReportView from '@/features/Heuristic/views/FinalReportView.vue'
+import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
 import Choose from '@/shared/views/StudyCreationFlow/Choose.vue'
@@ -17,7 +17,7 @@ import ChooseStudyMethods from '@/shared/views/StudyCreationFlow/ChooseStudyMeth
 import ChooseStudyType from '@/shared/views/StudyCreationFlow/ChooseStudyType.vue'
 import StudyDetailsForm from '@/shared/views/StudyCreationFlow/StudyDetailsForm.vue'
 import accessibility from '@/views/admin/Accessibility.vue'
-import DashboardView from '@/views/admin/DashboardView.vue'
+import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 
 export default [
