@@ -639,7 +639,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { countries } from '@/shared/utils/countries';
+import { countries } from '@/shared/constants/countries';
 
 const store = useStore();
 const user = computed(() => store.getters.user || { email: '' });
