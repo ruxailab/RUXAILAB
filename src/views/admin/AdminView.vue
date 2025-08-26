@@ -166,7 +166,7 @@ import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from './NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation';
-import { getMethodOptions } from '@/constants/methodDefinitions';
+import { getMethodOptions } from '@/shared/constants/methodDefinitions';
 import DashboardView from '../../features/dashboard/views/DashboardView.vue';
 
 const store = useStore();
