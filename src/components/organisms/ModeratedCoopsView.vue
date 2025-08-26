@@ -469,7 +469,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue';
 import Snackbar from '@/shared/components/Snackbar';
 import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/components/AccessNotAllowed.vue';
-import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
+import LeaveAlert from '@/shared/components/LeaveAlert.vue';
 import { roleOptionsItems } from '@/utils/items';
 import Notification from '@/shared/models/Notification';
 

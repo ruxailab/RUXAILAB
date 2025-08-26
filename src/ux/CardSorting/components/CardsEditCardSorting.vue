@@ -7,26 +7,31 @@
           <v-row aling="center" class="pa-4">
             <v-col cols="12" sm="6">
               <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
-                {{ 'Current Categories' }}
+                {{ 'Current Cards' }}
               </v-card-title>
             </v-col>
             <v-col cols="12" sm="6" class="text-right">
               <v-btn color="primary" variant="flat" size="large" class="px-6 text-capitalize" rounded="lg" @click="dialog = true">
                 <v-icon start>mdi-plus-circle</v-icon>
-                Add New Task
+                Add New Card
               </v-btn>
             </v-col>
           </v-row>
           <v-card-text>
-            <v-data-table :headers="headers" :items="categories" :items-per-page="5" class="elevation-0 rounded-lg"
-              style="background: #FFFFFF; border: 1px solid #E5E7EB;" :no-data-text="$t('noCategories')">
+            <v-data-table
+              :headers="headers"
+              :items="cards"
+              :items-per-page="5"
+              class="elevation-0 rounded-lg"
+              style="background: #FFFFFF; border: 1px solid #E5E7EB;"
+              :no-data-text="$t('noCategories')"
+            >
               <!-- IMAGE -->
                <template #item.image="{ item }">
                 <v-icon :color="item.image ? 'success' : 'error'">
                   {{ item.image ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
                 </v-icon>
               </template>
-
 
               <!-- ACTIONS -->
               <template #item.actions="{ item }">
@@ -50,47 +55,53 @@
               <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
                 {{ 'Settings' }}
               </v-card-title>
-              Configure how categories will be displayed
+              Configure how cards will be displayed
             </v-col>
           </v-row>
           <v-card-text>
-            <v-checkbox v-model="options.category_description" label="Show Category Description"
-              @update:model-value="onChange()" />
-            <v-checkbox v-model="options.category_image" label="Show Image" @update:model-value="onChange()" />
-            <v-checkbox v-model="options.category_random" label="Randomize the order of cards"
-              @update:model-value="onChange()" />
+            <v-checkbox
+              v-model="options.card_description"
+              label="Show Card Description"
+              @update:model-value="onChange()"
+            />
+            <v-checkbox
+              v-model="options.card_image"
+              label="Show Image"
+              @update:model-value="onChange()"
+            />
+            <v-checkbox
+              v-model="options.card_random"
+              label="Randomize the order of cards"
+              @update:model-value="onChange()"
+            />
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-    <CreateCardSortingForm v-model:dialog="dialog" @save="save" :options="options" />
+    <CreateCardSortingForm :value="card" v-model:dialog="dialog" @save="save" :options="options" />
   </v-container>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import CreateCardSortingForm from '../dialogs/CreateCardSortingForm.vue';
+import { computed, onMounted, ref } from 'vue'
+import CreateCardSortingForm from '../components/dialogs/CreateCardSortingForm.vue'
 import { useStore } from 'vuex';
 
 // Emits
-const emit = defineEmits(['change', 'categories', 'options'])
+const emit = defineEmits(['change', 'cards', 'options'])
 
 // Store
 const store = useStore();
 
 // Computeds
-const test = computed(() => store.getters.test);
+const test = computed(() => store.getters.test)
 
 // Variables
-const categories = ref([])
+const cards = ref([])
 const editedIndex = ref(-1)
+const card = ref({})
 const dialog = ref(false)
-const category = ref({})
-const options = ref({
-  category_description: false,
-  category_image: false,
-  category_random: false
-})
+const options = ref({})
 const headers = ref([
   { title: 'Name', align: 'start', sortable: false, value: 'title', width: '10%' },
   { title: 'Description', value: 'description', sortable: false, align: 'center' },
@@ -98,29 +109,30 @@ const headers = ref([
   { title: 'Actions', value: 'actions', sortable: false, align: 'center', width: '150px' },
 ])
 
+// Methods
 const onChange = () => {
   emit('change')
   emit('options', options.value)
 }
 
-const save = (newCategory) => {
+const save = (newCard) => {
   if (editedIndex.value > -1) {
-    Object.assign(categories.value[editedIndex.value], newCategory)
+    Object.assign(cards.value[editedIndex.value], newCard)
     editedIndex.value = -1
-    category.value = {}
+    card.value = {}
   } else {
-    categories.value.push(newCategory)
+    cards.value.push(newCard)
   }
 
   emit('change')
-  emit('categories', categories.value)
+  emit('cards', cards.value)
 }
 
 const getCards = () => {
-  categories.value = test.value.testStructure.cardSorting.categories || []
+  cards.value = test.value.testStructure.cardSorting.cards || []
   options.value = test.value.testStructure.cardSorting.options || {}
   emit('options', options.value)
-  emit('categories', categories.value)
+  emit('cards', cards.value)
 }
 
 onMounted(() => {

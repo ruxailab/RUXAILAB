@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import LeaveAlert from '@/components/atoms/LeaveAlert'
+import LeaveAlert from '@/shared/components/LeaveAlert'
 
 export default {
   components: {
