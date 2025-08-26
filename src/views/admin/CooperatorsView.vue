@@ -6,7 +6,7 @@
           (test.testType === 'User' && test.userTestType === 'unmoderated')
       "
     >
-      <UnmoderatedCoopsView />
+      <CooperatorsView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
       <ModeratedCoopsView />
@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import UnmoderatedCoopsView from '@/components/organisms/UnmoderatedCoopsView.vue'
+import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import ModeratedCoopsView from '@/components/organisms/ModeratedCoopsView.vue'
 import { computed } from 'vue';
 import { useStore } from 'vuex';
