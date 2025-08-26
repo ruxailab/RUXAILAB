@@ -1,11 +1,25 @@
 <template>
-  <v-data-table :headers="headers" :items="items" :sort-by="[{ key: 'updateDate', order: 'desc' }]" item-key="id"
-    density="comfortable" class="rounded-lg" elevation="2" @click:row="emitClick" hover>
+  <v-data-table
+    :headers="headers"
+    :items="items"
+    :sort-by="[{ key: 'updateDate', order: 'desc' }]"
+    item-key="id"
+    density="comfortable"
+    class="rounded-lg"
+    elevation="2"
+    hover
+    @click:row="emitClick"
+  >
     <!-- Type Column -->
     <template #item.type="{ item }">
       <v-tooltip location="top">
         <template #activator="{ props }">
-          <v-avatar v-bind="props" size="32" :color="getAvatarColor(item)" style="color: #fff">
+          <v-avatar
+            v-bind="props"
+            size="32"
+            :color="getAvatarColor(item)"
+            style="color: #fff"
+          >
             <v-icon size="18">
               {{ getTypeIcon(item) }}
             </v-icon>
@@ -19,7 +33,10 @@
 
     <!-- Name Column -->
     <template #item.name="{ item }">
-      <div class="d-flex flex-column" style="line-height: 1;">
+      <div
+        class="d-flex flex-column"
+        style="line-height: 1;"
+      >
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
@@ -32,9 +49,19 @@
     <!-- Owner Column -->
     <template #item.owner="{ item }">
       <div class="d-flex align-center">
-        <v-avatar size="32" class="mr-3">
-          <v-img v-if="getOwnerImage(item)" :src="getOwnerImage(item)" cover />
-          <span v-else class="font-weight-medium">
+        <v-avatar
+          size="32"
+          class="mr-3"
+        >
+          <v-img
+            v-if="getOwnerImage(item)"
+            :src="getOwnerImage(item)"
+            cover
+          />
+          <span
+            v-else
+            class="font-weight-medium"
+          >
             {{ getOwnerName(item)?.[0]?.toUpperCase() ?? '?' }}
           </span>
         </v-avatar>
@@ -46,7 +73,12 @@
 
     <!-- Participants Column -->
     <template #item.participants="{ item }">
-      <v-chip size="small" variant="tonal" color="primary" prepend-icon="mdi-account-multiple">
+      <v-chip
+        size="small"
+        variant="tonal"
+        color="primary"
+        prepend-icon="mdi-account-multiple"
+      >
         {{ item.numberColaborators ?? 0 }}
       </v-chip>
     </template>

@@ -1,5 +1,8 @@
 <template>
-  <PageWrapper title="Edit Test" :side-gap="true">
+  <PageWrapper
+    title="Edit Test"
+    :side-gap="true"
+  >
     <!-- Subtitle Slot -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
@@ -10,7 +13,11 @@
     <v-container>
       <Snackbar />
       <!-- Leave Alert Dialog -->
-      <v-dialog v-model="dialog" width="600" persistent>
+      <v-dialog
+        v-model="dialog"
+        width="600"
+        persistent
+      >
         <v-card>
           <v-card-title class="text-h5 bg-red text-white">
             Are you sure you want to leave?
@@ -19,10 +26,18 @@
           <v-divider />
           <v-card-actions>
             <v-spacer />
-            <v-btn class="bg-grey-lighten-3" variant="text" @click="closeDialog">
+            <v-btn
+              class="bg-grey-lighten-3"
+              variant="text"
+              @click="closeDialog"
+            >
               Stay
             </v-btn>
-            <v-btn class="bg-red text-white ml-1" variant="text" @click="leave">
+            <v-btn
+              class="bg-red text-white ml-1"
+              variant="text"
+              @click="leave"
+            >
               Leave
             </v-btn>
           </v-card-actions>
@@ -30,11 +45,24 @@
       </v-dialog>
 
       <!-- Save Button -->
-      <v-tooltip v-if="accessLevel === 0" location="left">
+      <v-tooltip
+        v-if="accessLevel === 0"
+        location="left"
+      >
         <template #activator="{ props }">
-          <v-btn size="large" icon color="#F9A826" :disabled="testAnswerDocLength > 0" v-bind="props" class="save-btn"
-            @click="validateAll">
-            <v-icon size="large" :class="{ 'disabled-btn': testAnswerDocLength > 0 }">
+          <v-btn
+            size="large"
+            icon
+            color="#F9A826"
+            :disabled="testAnswerDocLength > 0"
+            v-bind="props"
+            class="save-btn"
+            @click="validateAll"
+          >
+            <v-icon
+              size="large"
+              :class="{ 'disabled-btn': testAnswerDocLength > 0 }"
+            >
               mdi-content-save
             </v-icon>
           </v-btn>
@@ -43,40 +71,45 @@
       </v-tooltip>
 
       <!-- Loading Overlay -->
-      <v-overlay v-model="loading" class="text-center">
-        <v-progress-circular indeterminate color="#fca326" size="50" />
+      <v-overlay
+        v-model="loading"
+        class="text-center"
+      >
+        <v-progress-circular
+          indeterminate
+          color="#fca326"
+          size="50"
+        />
         <div class="white-text mt-3">
           Loading Test
         </div>
       </v-overlay>
 
       <v-row>
-        <v-col cols="12" class="pb-0">
+        <v-col
+          cols="12"
+          class="pb-0"
+        >
           <!-- Heuristic Tests -->
-          <EditHeuristicsTest v-if="test.testType === 'HEURISTICS'" type="content" :object="object" :index="index"
-            @tab-clicked="setIndex" @change="change = true">
+          <EditHeuristicsTest
+            v-if="test.testType === 'HEURISTICS'"
+            type="content"
+            :object="object"
+            :index="index"
+            @tab-clicked="setIndex"
+            @change="change = true"
+          >
             <template #content>
               <!-- Content slot for Heuristics Test -->
             </template>
           </EditHeuristicsTest>
 
-          <!-- Unmoderated User Tests -->
-          <EditUserTest v-if="test.testType === 'User' && test.userTestType === 'unmoderated'" type="tabs"
-            @tab-clicked="setIndex">
-            <template #top>
-              <!-- Top slot for Unmoderated User Test -->
-            </template>
-          </EditUserTest>
-          <EditUserTest v-if="test.testType === 'User' && test.userTestType === 'unmoderated'" type="content"
-            :object="object" :index="index" @val-form="validate">
-            <template #content>
-              <!-- Content slot for Unmoderated User Test -->
-            </template>
-          </EditUserTest>
-
-          <!-- Moderated User Tests -->
-          <EditModeratedUserTest v-if="test.testType === 'User' && test.userTestType === 'moderated'" :index="index"
-            :object="object" @tab-clicked="setIndex" @change="change = true" @val-form="validate" />
+          <!-- User Tests -->
+          <EditUserTest
+            v-if="test.testType === 'User'"
+            :type="test.userTestType"
+            @change="change = true"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -87,12 +120,11 @@
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import Snackbar from '@/components/atoms/Snackbar.vue';
-import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
-import EditUserTest from '@/components/organisms/EditUserTest.vue';
-import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
+import Snackbar from '@/shared/components/Snackbar';
+import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
+import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
 import Test from '@/models/Test';
-import PageWrapper from '@/components/template/PageWrapper.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
 const store = useStore();
 const router = useRouter();
@@ -107,7 +139,6 @@ defineProps({
 
 const index = ref(0);
 const object = ref({});
-const valids = ref([true, true]);
 const change = ref(false);
 const dialog = ref(false);
 const go = ref('');
@@ -141,26 +172,21 @@ const setIntro = async () => {
 };
 
 const submit = async () => {
-  object.value.testStructure = store.state.Tests.Test.testStructure;
-  if (test.value.testType === 'User') {
-    object.value.testStructure = {
+  object.value.testStructure = {
+    ...store.state.Tests.Test.testStructure,
+    ...(test.value.testType === 'User' && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
-      participantCamera: store.getters.participantCamera,
       consent: store.getters.consent,
-      userTasks: store.getters.tasks,
-      preTest: store.getters.preTest,
-      postTest: store.getters.postTest,
+      userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks || [],
+      preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest || [],
+      postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest || [],
       finalMessage: store.getters.finalMessage,
-    };
-  }
-
-  const updatedTest = new Test({ ...test.value, ...object.value });
+    }),
+  };
+  const updatedTest = new Test({ ...object.value });
   await store.dispatch('updateTest', updatedTest);
-};
-
-const validate = (valid, idx) => {
-  valids.value[idx] = valid;
+  await store.dispatch('getTest', { id: route.params.id })
 };
 
 const validateAll = async () => {

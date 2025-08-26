@@ -1,16 +1,26 @@
 <template>
   <v-card class="pa-6 elevation-3 rounded-xl chart-card">
     <div class="mb-4">
-      <h4 class="text-h6 font-weight-bold mb-2">{{ question.question }}</h4>
+      <h4 class="text-h6 font-weight-bold mb-2">
+        {{ question.question }}
+      </h4>
     </div>
     <div class="chart-container-small mb-4">
-      <canvas :id="chartId" width="180" height="180"></canvas>
+      <canvas
+        :id="chartId"
+        width="180"
+        height="180"
+      />
     </div>
     <div>
-      <div v-for="(option, idx) in question.selectionFields" :key="option" class="d-flex align-center mb-1">
+      <div
+        v-for="(option, idx) in question.selectionFields"
+        :key="option"
+        class="d-flex align-center mb-1"
+      >
         <div
-          :style="{ background: chartColors[idx % chartColors.length], width: '14px', height: '14px', borderRadius: '50%', marginRight: '8px' }">
-        </div>
+          :style="{ background: chartColors[idx % chartColors.length], width: '14px', height: '14px', borderRadius: '50%', marginRight: '8px' }"
+        />
         <span>{{ option }} ({{ selectionCounts[option] || 0 }})</span>
       </div>
     </div>

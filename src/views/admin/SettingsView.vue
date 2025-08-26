@@ -1,12 +1,27 @@
-// src/views/admin/SettingsView.vue
-
 <template>
-  <PageWrapper title="Test Configuration" :loading="loadingPage" loading-text="Loading Settings" :side-gap="true">
+  <PageWrapper
+    title="Test Configuration"
+    :loading="loadingPage"
+    loading-text="Loading Settings"
+    :side-gap="true"
+  >
     <!-- Actions Slot for Save Button -->
     <template #actions>
-      <v-btn color="primary" variant="flat" size="large" class="text-none font-weight-semibold rounded-l px-6"
-        :loading="loading" @click="submit()" :disabled="!localChanges">
-        <v-icon start size="18">mdi-check</v-icon>
+      <v-btn
+        color="primary"
+        variant="flat"
+        size="large"
+        class="text-none font-weight-semibold rounded-s px-6"
+        :loading="loading"
+        :disabled="!localChanges"
+        @click="submit()"
+      >
+        <v-icon
+          start
+          size="18"
+        >
+          mdi-check
+        </v-icon>
         Save Changes
       </v-btn>
     </template>
@@ -22,38 +37,88 @@
     <Snackbar />
     <LeaveAlert @submit="onSubmit" />
 
-    <v-dialog v-model="tempDialog" max-width="800">
+    <v-dialog
+      v-model="tempDialog"
+      max-width="800"
+    >
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-center px-6 py-4">
-          <v-icon color="primary" size="28" class="mr-3">mdi-file-document-plus-outline</v-icon>
-          <h3 class="text-h5 font-weight-bold text-grey-darken-4">Create Template</h3>
-          <v-spacer></v-spacer>
-          <v-btn icon flat @click="closeDialog" class="text-grey-darken-1">
+          <v-icon
+            color="primary"
+            size="28"
+            class="mr-3"
+          >
+            mdi-file-document-plus-outline
+          </v-icon>
+          <h3 class="text-h5 font-weight-bold text-grey-darken-4">
+            Create Template
+          </h3>
+          <v-spacer />
+          <v-btn
+            icon
+            variant="flat"
+            class="text-grey-darken-1"
+            @click="closeDialog"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-divider></v-divider>
-        <v-form ref="tempform" class="pa-6">
+        <v-divider />
+        <v-form
+          ref="tempform"
+          class="pa-6"
+        >
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="template.templateTitle" autofocus label="Title" :rules="titleRequired"
-                counter="200" variant="outlined" density="comfortable" placeholder="Enter a title for your template"
-                class="mb-4" />
-              <v-textarea v-model="template.templateDescription" label="Description" variant="outlined" rows="4"
-                density="comfortable" placeholder="Provide a description for your template" class="mb-4" />
-              <v-checkbox v-model="template.isTemplatePublic" label="Make template public to all users" color="primary"
-                hide-details class="mt-0 pt-0" />
+              <v-text-field
+                v-model="template.templateTitle"
+                autofocus
+                label="Title"
+                :rules="titleRequired"
+                counter="200"
+                variant="outlined"
+                density="comfortable"
+                placeholder="Enter a title for your template"
+                class="mb-4"
+              />
+              <v-textarea
+                v-model="template.templateDescription"
+                label="Description"
+                variant="outlined"
+                rows="4"
+                density="comfortable"
+                placeholder="Provide a description for your template"
+                class="mb-4"
+              />
+              <v-checkbox
+                v-model="template.isTemplatePublic"
+                label="Make template public to all users"
+                color="primary"
+                hide-details
+                class="mt-0 pt-0"
+              />
             </v-col>
           </v-row>
-          <v-divider class="my-6"></v-divider>
+          <v-divider class="my-6" />
           <v-card-actions class="px-0 pt-0">
             <v-spacer />
-            <v-btn class="text-none rounded-lg px-6" variant="outlined" color="grey-darken-2" height="44"
-              @click="closeDialog()">
+            <v-btn
+              class="text-none rounded-lg px-6"
+              variant="outlined"
+              color="grey-darken-2"
+              height="44"
+              @click="closeDialog()"
+            >
               {{ $t('buttons.cancel') }}
             </v-btn>
-            <v-btn variant="flat" :disabled="hasTemplate ? true : false" color="primary" height="44"
-              class="text-none rounded-lg ml-3" @click="createTemplate()">
+            <v-btn
+              variant="flat"
+              :disabled="hasTemplate ? true : false"
+              color="primary"
+              height="44"
+              class="text-none rounded-lg ml-3"
+              @click="createTemplate()"
+            >
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -64,74 +129,167 @@
     <div class="settings-layout">
       <div class="content-wrapper">
         <div class="left-column">
-          <v-card class="info-card" elevation="0" height="100%">
+          <v-card
+            class="info-card"
+            elevation="0"
+            height="100%"
+          >
             <div class="d-flex align-start ga-3 pa-6 pb-0">
               <div class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center">
-                <v-icon color="primary" size="20">mdi-information-outline</v-icon>
+                <v-icon
+                  color="primary"
+                  size="20"
+                >
+                  mdi-information-outline
+                </v-icon>
               </div>
               <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Basic Information</h3>
-                <p class="text-caption text-grey-darken-1">Configure the fundamental details of your test</p>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+                  Basic Information
+                </h3>
+                <p class="text-caption text-grey-darken-1">
+                  Configure the fundamental details of your test
+                </p>
               </div>
             </div>
             <v-card-text class="py-6">
-              <FormTestDescription v-if="object" ref="form1" :test="object" :lock="true" @val-form="validate"
-                @update:test="updateObject" />
+              <FormTestDescription
+                v-if="object"
+                ref="form1"
+                :test="object"
+                :lock="true"
+                @val-form="validate"
+                @update:test="updateObject"
+              />
             </v-card-text>
           </v-card>
         </div>
 
         <div class="right-column">
-          <v-card class="advanced-card" elevation="0">
+          <v-card
+            class="advanced-card"
+            elevation="0"
+          >
             <div class="d-flex align-start ga-3 pa-6 pb-0">
               <div class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon color="secondary" size="20">mdi-cog-outline</v-icon>
+                <v-icon
+                  color="secondary"
+                  size="20"
+                >
+                  mdi-cog-outline
+                </v-icon>
               </div>
               <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Advanced Settings</h3>
-                <p class="text-caption text-grey-darken-1">Fine-tune your test configuration</p>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+                  Advanced Settings
+                </h3>
+                <p class="text-caption text-grey-darken-1">
+                  Fine-tune your test configuration
+                </p>
               </div>
             </div>
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-5">
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative">
                   <div class="d-flex align-center ga-2 mb-2">
-                    <v-icon color="primary" size="18">mdi-earth</v-icon>
+                    <v-icon
+                      color="primary"
+                      size="18"
+                    >
+                      mdi-earth
+                    </v-icon>
                     <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Public Access</span>
                   </div>
-                  <p class="text-caption text-grey-darken-1 mb-4">Allow users to view this test</p>
-                  <v-switch v-model="object.isPublic" color="primary" hide-details inset class="position-absolute"
-                    style="top: 20px; right: 20px;" @update:model-value="store.commit('SET_LOCAL_CHANGES', true)" />
+                  <p class="text-caption text-grey-darken-1 mb-4">
+                    Allow users to view this test
+                  </p>
+                  <v-switch
+                    v-model="object.isPublic"
+                    color="primary"
+                    hide-details
+                    inset
+                    class="position-absolute"
+                    style="top: 20px; right: 20px;"
+                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                  />
                 </div>
               </div>
             </v-card-text>
           </v-card>
 
-          <v-card class="actions-card" elevation="0">
+          <v-card
+            class="actions-card"
+            elevation="0"
+          >
             <div class="d-flex align-start ga-3 pa-6 pb-0">
               <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon color="amber-darken-2" size="20">mdi-lightning-bolt</v-icon>
+                <v-icon
+                  color="amber-darken-2"
+                  size="20"
+                >
+                  mdi-lightning-bolt
+                </v-icon>
               </div>
               <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Quick Actions</h3>
-                <p class="text-caption text-grey-darken-1">Perform common tasks instantly</p>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+                  Quick Actions
+                </h3>
+                <p class="text-caption text-grey-darken-1">
+                  Perform common tasks instantly
+                </p>
               </div>
             </div>
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-3">
-                <v-btn color="secondary" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
-                  height="48" :disabled="hasTemplate || !object" block @click="tempDialog = true">
-                  <v-icon start size="18">mdi-file-document-plus-outline</v-icon>
+                <v-btn
+                  color="secondary"
+                  variant="flat"
+                  class="text-none font-weight-semibold rounded-s py-3"
+                  height="48"
+                  :disabled="hasTemplate || !object"
+                  block
+                  @click="tempDialog = true"
+                >
+                  <v-icon
+                    start
+                    size="18"
+                  >
+                    mdi-file-document-plus-outline
+                  </v-icon>
                   {{ $t('pages.settings.createTemplate') }}
                 </v-btn>
-                <v-btn color="orange-darken-1" variant="flat" class="text-none font-weight-semibold rounded-l py-3"
-                  height="48" :disabled="!object" block @click="duplicateTest()">
-                  <v-icon start size="18">mdi-content-duplicate</v-icon>
+                <v-btn
+                  color="orange-darken-1"
+                  variant="flat"
+                  class="text-none font-weight-semibold rounded-s py-3"
+                  height="48"
+                  :disabled="!object"
+                  block
+                  @click="duplicateTest()"
+                >
+                  <v-icon
+                    start
+                    size="18"
+                  >
+                    mdi-content-duplicate
+                  </v-icon>
                   {{ $t('buttons.duplicateTest') }}
                 </v-btn>
-                <v-btn color="error" variant="flat" class="text-none font-weight-semibold rounded-l py-3" height="48"
-                  :disabled="!object" @click="dialogDel = true" block>
-                  <v-icon start size="18">mdi-delete-outline</v-icon>
+                <v-btn
+                  color="error"
+                  variant="flat"
+                  class="text-none font-weight-semibold rounded-s py-3"
+                  height="48"
+                  :disabled="!object"
+                  block
+                  @click="dialogDel = true"
+                >
+                  <v-icon
+                    start
+                    size="18"
+                  >
+                    mdi-delete-outline
+                  </v-icon>
                   {{ $t('pages.settings.deleteTest') }}
                 </v-btn>
               </div>
@@ -141,15 +299,28 @@
       </div>
     </div>
 
-    <v-dialog v-model="dialogDel" max-width="500" persistent>
+    <v-dialog
+      v-model="dialogDel"
+      max-width="500"
+      persistent
+    >
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
           <div class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon color="error" size="28">mdi-alert-circle-outline</v-icon>
+            <v-icon
+              color="error"
+              size="28"
+            >
+              mdi-alert-circle-outline
+            </v-icon>
           </div>
           <div>
-            <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">Confirm Deletion</h3>
-            <p class="text-subtitle-2 text-grey-darken-1">This action cannot be undone</p>
+            <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
+              Confirm Deletion
+            </h3>
+            <p class="text-subtitle-2 text-grey-darken-1">
+              This action cannot be undone
+            </p>
           </div>
         </v-card-title>
         <v-card-text class="py-4 px-6">
@@ -158,13 +329,30 @@
           </p>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
-          <v-btn variant="outlined" color="grey-darken-2" @click="dialogDel = false" :disabled="loading"
-            class="text-none rounded-lg px-6" height="44">
+          <v-btn
+            variant="outlined"
+            color="grey-darken-2"
+            :disabled="loading"
+            class="text-none rounded-lg px-6"
+            height="44"
+            @click="dialogDel = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn color="error" variant="flat" @click="deleteTest(object)" :loading="loading"
-            class="text-none rounded-lg px-6" height="44">
-            <v-icon start size="16">mdi-delete</v-icon>
+          <v-btn
+            color="error"
+            variant="flat"
+            :loading="loading"
+            class="text-none rounded-lg px-6"
+            height="44"
+            @click="deleteTest(object)"
+          >
+            <v-icon
+              start
+              size="16"
+            >
+              mdi-delete
+            </v-icon>
             {{ $t('buttons.delete') }} Forever
           </v-btn>
         </v-card-actions>
@@ -180,15 +368,15 @@ import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import FormTestDescription from '@/components/atoms/FormTestDescription';
-import Snackbar from '@/components/atoms/Snackbar';
-import LeaveAlert from '@/components/atoms/LeaveAlert';
-import AccessNotAllowed from '@/components/atoms/AccessNotAllowed';
-import PageWrapper from '@/components/template/PageWrapper.vue';
+import Snackbar from '@/shared/components/Snackbar';
+import LeaveAlert from '@/shared/components/LeaveAlert';
+import AccessNotAllowed from '@/shared/components/AccessNotAllowed';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';
-import TemplateHeader from '@/models/TemplateHeader';
-import TemplateAuthor from '@/models/TemplateAuthor';
-import TemplateBody from '@/models/TemplateBody';
-import Template from '@/models/Template';
+import TemplateHeader from '@/shared/models/TemplateHeader';
+import TemplateAuthor from '@/shared/models/TemplateAuthor';
+import TemplateBody from '@/shared/models/TemplateBody';
+import Template from '@/shared/models/Template';
 import TestAdmin from '@/models/TestAdmin';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';

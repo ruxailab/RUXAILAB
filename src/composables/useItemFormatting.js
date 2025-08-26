@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatDateLong } from '@/utils/dateUtils'
+import { formatDateLong } from '@/shared/utils/dateUtils'
 
 export function useItemFormatting(type) {
     const { t } = useI18n()
