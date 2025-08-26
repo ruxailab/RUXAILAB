@@ -4,6 +4,7 @@
     :loading="loading"
     :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
     :side-gap="true"
+    class="mr-10"
   >
     <!-- Actions Slot -->
     <template #actions>
