@@ -239,7 +239,7 @@ import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
-import BackButton from '@/components/atoms/BackButton.vue';
+import BackButton from '@/features/ux_creation/components/BackButton.vue';
 
 const router = useRouter();
 const store = useStore();

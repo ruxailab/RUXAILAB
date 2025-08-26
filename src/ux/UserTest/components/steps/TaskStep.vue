@@ -241,9 +241,9 @@ import ShowInfo from '@/shared/components/ShowInfo.vue';
 import TipButton from '@/ux/UserTest/components/TipButton.vue';
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
 import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue';
-import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
-import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
-import Timer from '@/components/atoms/Timer.vue';
+import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue';
+import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
+import Timer from '@/ux/UserTest/components/Timer.vue';
 import SusForm from '@/ux/UserTest/SusForm.vue';
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
 
