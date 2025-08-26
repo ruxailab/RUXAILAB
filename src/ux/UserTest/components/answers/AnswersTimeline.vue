@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import DateChart from '@/components/atoms/DateChart.vue'
+import DateChart from '@/ux/UserTest/components/answers/DateChart.vue'
 
 const props = defineProps({
     taskAnswers: { type: Array, default: () => [] }

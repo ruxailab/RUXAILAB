@@ -105,7 +105,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import NotificationList from '@/components/molecules/NotificationList.vue'
+import NotificationList from '@/features/notifications/components/NotificationList.vue'
 
 const store = useStore()
 const router = useRouter()
