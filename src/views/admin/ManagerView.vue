@@ -152,8 +152,8 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
 import { statistics } from '@/ux/Heuristic/utils/statistics'
 import { useDisplay } from 'vuetify'
-import Drawer from '@/components/atoms/Drawer.vue'
-import CardsManager from '@/components/atoms/CardsManager'
+import Drawer from '@/shared/components/Drawer.vue'
+import CardsManager from '@/shared/components/CardsManager'
 
 const store = useStore()
 const router = useRouter()
