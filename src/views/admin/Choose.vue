@@ -67,9 +67,9 @@
 
 <script setup>
 import BackButton from '@/components/atoms/BackButton.vue'
-import SectionHeader from '@/components/atoms/SectionHeader.vue'
+import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/components/atoms/SelectableCard.vue'
-import StepperHeader from '@/components/atoms/StepperHeader.vue'
+import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'

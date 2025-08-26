@@ -324,7 +324,7 @@ import SubmitDialog from '@/components/atoms/SubmitDialog.vue';
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import Snackbar from '@/components/atoms/Snackbar.vue';
+import Snackbar from '@/shared/components/Snackbar';
 import TaskAnswer from '@/models/TaskAnswer';
 import UserTask from '@/models/UserTask';
 import { nanoid } from 'nanoid';
