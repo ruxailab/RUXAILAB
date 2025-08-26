@@ -1,14 +1,14 @@
 import TestView from '@/views/public/TestView.vue'
-import SignIn from '@/views/public/SignInView.vue'
-import SignUp from '@/views/public/SignUpView.vue'
-import ForgotPassword from '@/views/public/ForgotPasswordView.vue'
-import LandingPage from '@/views/public/LandingPageView.vue'
-import PageNotFound from '@/views/public/PageNotFoundView.vue'
-import Help from '@/views/public/Help.vue'
+import SignIn from '@/features/auth/views/SignInView.vue'
+import SignUp from '@/features/auth/views/SignUpView.vue'
+import ForgotPassword from '@/features/auth/views/ForgotPasswordView.vue'
+//import LandingPage from '@/views/public/LandingPageView.vue'
+import PageNotFound from '@/shared/views/public/PageNotFoundView.vue'
+import Help from '@/shared/views/public/Help.vue'
 import Sample from '@/views/public/Sample.vue'
-import TermsOfService from '@/views/public/TermsOfService.vue'
-import PrivacyPolicy from '@/views/public/PrivacyPolicy.vue'
-import FAQ from '@/views/public/FAQ.vue'
+import TermsOfService from '@/features/legal/TermsOfService.vue'
+import PrivacyPolicy from '@/features/legal/PrivacyPolicy.vue'
+import FAQ from '@/shared/views/public/FAQ.vue'
 
 export default [
   {
@@ -48,13 +48,13 @@ export default [
     meta: { authorize: [] },
     component: Help,
     props: { showAllOnLoad: true }
-  },
+  },/*
   {
     path: '/',
     name: 'Landing',
     meta: { authorize: [] },
     component: LandingPage,
-  },
+  },*/
   {
     path: '/:catchAll(.*)',
     name: 'Page not Found',
