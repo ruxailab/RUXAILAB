@@ -63,7 +63,6 @@
 <script>
 import Snackbar from '@/shared/components/Snackbar'
 import Drawer from '@/shared/components/Drawer'
-// import { statistics } from '@/utils/statistics'
 import CardsManager from '@/shared/components/CardsManager'
 import Loadding from '@/shared/components/Loadding.vue'
 
@@ -81,11 +80,6 @@ export default {
     },
 
     test() {
-      // this.$store.dispatch('processStatistics', {
-      //   resultEvaluator: statistics(),
-      //   percentage: this.percentage,
-      //   answers: this.$store.getters.testAnswerDocument,
-      // })
       return this.$store.getters.test
     },
 

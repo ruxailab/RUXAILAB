@@ -112,9 +112,9 @@
 </template>
 
 <script>
-import ButtonSave from '@/components/atoms/ButtonSave'
-import ShowInfo from '@/components/organisms/ShowInfo'
-import FormTestDescription from '@/components/atoms/FormTestDescription'
+import ButtonSave from '@/shared/components/ButtonSave'
+import ShowInfo from '@/shared/components/ShowInfo'
+import FormTestDescription from '@/shared/components/FormTestDescription'
 import Test from '@/models/Test'
 import TemplateHeader from '@/shared/models/TemplateHeader'
 import TemplateAuthor from '@/shared/models/TemplateAuthor'
