@@ -1,5 +1,5 @@
 import Controller from '@/controllers/BaseController'
-import Template from '@/models/Template'
+import Template from '@/shared/models/Template'
 const COLLECTION = 'templates'
 
 export default class TemplateController extends Controller {

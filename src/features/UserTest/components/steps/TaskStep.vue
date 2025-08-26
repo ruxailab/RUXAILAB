@@ -244,8 +244,8 @@ import AudioVisualizer from '@/components/atoms/AudioVisualizer.vue';
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
 import Timer from '@/components/atoms/Timer.vue';
-import SusForm from '@/components/atoms/SusForm.vue';
-import nasaTlxForm from '@/components/atoms/nasaTlxForm.vue';
+import SusForm from '@/features/UserTest/SusForm.vue';
+import nasaTlxForm from '@/features/UserTest/components/nasaTlxForm.vue';
 
 onBeforeUnmount(() => {
     if (timerInterval) {

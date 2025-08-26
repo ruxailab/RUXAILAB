@@ -227,7 +227,7 @@ import { useToast } from 'vue-toastification';
 import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '@/app/plugins/firebase';
 import Intro from '@/shared/components/IntroReports.vue';
-import PageWrapper from '@/components/template/PageWrapper.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 
 const store = useStore();

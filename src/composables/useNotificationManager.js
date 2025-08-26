@@ -1,5 +1,5 @@
 import { useStore } from 'vuex';
-import Notification from '@/models/Notification';
+import Notification from '@/shared/models/Notification';
 
 /**
  * Composable for notification management

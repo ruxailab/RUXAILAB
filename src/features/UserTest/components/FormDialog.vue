@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue';
-import FormTask from '../atoms/FormTask';
+import FormTask from '@/features/UserTest/components/FormTask.vue';
 
 const props = defineProps({
   dialog: Boolean,

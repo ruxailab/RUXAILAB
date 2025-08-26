@@ -359,8 +359,8 @@
 import { ref, computed } from 'vue'
 import { getSUSRating, getRatingColor, calculateSUSScore } from '../../utils/susCalculator'
 import { useStore } from 'vuex';
-import SusHistogramChart from '@/components/atoms/SusHistogramChart.vue';
-import SusRatingChart from '@/components/atoms/SusRatingChart.vue';
+import SusHistogramChart from '@/features/UserTest/SusHistogramChart.vue';
+import SusRatingChart from '@/features/UserTest/SusRatingChart.vue';
 
 const store = useStore();
 

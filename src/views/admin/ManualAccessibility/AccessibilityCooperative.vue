@@ -41,7 +41,7 @@ import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
 import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
-import PageWrapper from '@/components/template/PageWrapper.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CooperatorTable from '@/components/molecules/CooperatorTable.vue';
 import MessageDialog from '@/components/molecules/MessageDialog.vue';
 import InviteDialog from '@/components/molecules/InviteDialog.vue';
