@@ -1,6 +1,6 @@
 import ManagerView from '@/ux/CardSorting/views/ManagerView.vue'
 import EditTestView from '@/ux/CardSorting/views/EditTestView.vue'
-import SettingsView from '@/ux/CardSorting/views/SettingsView.vue'
+import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/ux/CardSorting/views/CooperationsView.vue'
 import TestView from '@/ux/CardSorting/views/TestView.vue'
 
