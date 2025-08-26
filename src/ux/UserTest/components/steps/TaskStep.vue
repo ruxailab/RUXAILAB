@@ -238,9 +238,9 @@ const emit = defineEmits([
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import TipButton from '@/components/atoms/TipButton.vue';
-import AudioRecorder from '@/components/atoms/AudioRecorder.vue';
-import AudioVisualizer from '@/components/atoms/AudioVisualizer.vue';
+import TipButton from '@/ux/UserTest/components/TipButton.vue';
+import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
+import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue';
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
 import Timer from '@/components/atoms/Timer.vue';

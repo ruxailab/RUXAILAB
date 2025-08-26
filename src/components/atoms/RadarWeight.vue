@@ -1,5 +1,4 @@
 <script setup>
-import { Radar } from 'vue-chartjs'
 import { ref, computed, watch, onMounted } from 'vue'
 
 const props = defineProps({
@@ -13,10 +12,6 @@ const props = defineProps({
     required: true,
     default: () => []
   }
-})
-
-const heuristics = computed(() => {
-  return props.testAll?.testStructure || []
 })
 
 const chartRef = ref(null)

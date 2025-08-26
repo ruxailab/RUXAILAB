@@ -84,7 +84,7 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import HeuristicsTable from '@/ux/Heuristic/components/HeuristicsTable.vue';
-import OptionsTable from '@/components/molecules/OptionsTable.vue';
+import OptionsTable from '@/ux/Heuristic/components/OptionsTable.vue';
 import HeuristicsSenttings from '@/ux/Heuristic/components/HeuristicsSenttings.vue';
 import WeightTable from '@/ux/Heuristic/components/WeightTable.vue';
 

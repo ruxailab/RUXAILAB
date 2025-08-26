@@ -553,7 +553,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue'
 import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 import HelpBtn from '@/components/atoms/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
-import Snackbar from '@/components/atoms/Snackbar.vue'
+import Snackbar from '@/shared/components/Snackbar';
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 
