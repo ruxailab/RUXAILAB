@@ -470,12 +470,12 @@ import { ref, computed, watch, onMounted, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import BarChart from '@/components/atoms/BarChart.vue';
+import BarChart from '@/ux/Heuristic/components/BarChart.vue';
 import RadarChart from '@/shared/components/RadarChart.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/IntroAnswer.vue';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
-import RadarWeight from '@/components/atoms/RadarWeight.vue';
+import RadarWeight from '@/ux/Heuristic/components/RadarWeight.vue';
 import axios from 'axios';
 import { standardDeviation, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
 

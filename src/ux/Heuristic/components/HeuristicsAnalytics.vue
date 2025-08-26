@@ -296,7 +296,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import BarChart from '@/components/atoms/BarChart.vue';
+import BarChart from '@/ux/Heuristic/components/BarChart.vue';
 
 const store = useStore();
 const route = useRoute();
