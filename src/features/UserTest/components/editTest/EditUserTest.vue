@@ -67,9 +67,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
-import ListTasks from '@/components/molecules/ListTasks.vue'
-import UserVariables from '@/components/atoms/UserVariables.vue'
-import TextareaForm from '@/components/atoms/TextareaForm.vue'
+import ListTasks from '@/features/UserTest/components/ListTasks.vue'
+import UserVariables from '@/features/UserTest/components/UserVariables.vue'
+import TextareaForm from '@/shared/components/TextareaForm.vue'
 import TestConfigForm from '@/components/molecules/TestConfigForm.vue'
 
 // Props

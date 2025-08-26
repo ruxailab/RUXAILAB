@@ -1,4 +1,4 @@
-import { NasaTlxAnswer } from "./NasaTlxAnswer"
+import { NasaTlxAnswer } from "@/features/UserTest/models/NasaTlxAnswer"
 
 export default class UserTask {
   constructor({

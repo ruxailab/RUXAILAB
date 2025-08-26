@@ -164,8 +164,8 @@
 <script setup>
 import ButtonSave from '@/components/atoms/ButtonSave.vue';
 import Snackbar from '@/components/atoms/Snackbar.vue';
-import TextareaForm from '@/components/atoms/TextareaForm.vue';
-import UserVariables from '@/components/atoms/UserVariables.vue';
+import TextareaForm from '@/shared/components/TextareaForm.vue';
+import UserVariables from '@/features/UserTest/components/UserVariables.vue';
 import CardsEditCardSorting from '@/components/organisms/CardsEditCardSorting.vue';
 import CategoriesEditCardSorting from '@/components/organisms/CategoriesEditCardSorting.vue';
 import PageWrapper from '@/components/template/PageWrapper.vue';

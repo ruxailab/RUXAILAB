@@ -167,7 +167,7 @@ import TaskStep from '@/features/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/features/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/features/UserTest/components/steps/FinishStep.vue';
 import SubmitDialog from '@/components/atoms/SubmitDialog.vue';
-import VideoCall from '@/components/molecules/VideoCall.vue';
+import VideoCall from '@/features/UserTest/components/VideoCall.vue';
 
 const store = useStore();
 const router = useRouter();
