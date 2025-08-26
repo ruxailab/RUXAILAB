@@ -34,7 +34,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { METHOD_DEFINITIONS } from '@/constants/methodDefinitions.js';
+import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js';
 const props = defineProps({
   notification: {
     type: Object,

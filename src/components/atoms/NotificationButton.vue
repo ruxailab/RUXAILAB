@@ -107,7 +107,7 @@ function formatMultiline(text) {
   return text.replace(/\n/g, '<br>');
 }
 import { useI18n } from 'vue-i18n';
-import { METHOD_DEFINITIONS } from '@/constants/methodDefinitions.js';
+import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js';
 
 // Initialize store, router, and i18n
 const store = useStore();
