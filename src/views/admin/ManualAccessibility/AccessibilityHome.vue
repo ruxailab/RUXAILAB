@@ -25,7 +25,7 @@
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
-import CardsManager from '@/components/atoms/CardsManager';
+import CardsManager from '@/shared/components/CardsManager';
 
 const route = useRoute();
 const router = useRouter();
