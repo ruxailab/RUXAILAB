@@ -1,5 +1,5 @@
 
-import { db } from '@/firebase'
+import { db } from '@/app/plugins/firebase'
 import {
   doc,
   updateDoc,

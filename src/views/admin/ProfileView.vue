@@ -2,10 +2,20 @@
   <div class="container px-4 py-8">
     <v-row>
       <!-- Left Section: Profile Details -->
-      <v-col cols="12" md="4" lg="3">
-        <v-card class="rounded-xl pa-6" elevation="4">
+      <v-col
+        cols="12"
+        md="4"
+        lg="3"
+      >
+        <v-card
+          class="rounded-xl pa-6"
+          elevation="4"
+        >
           <v-card-text class="text-center">
-            <v-avatar size="120" class="mb-4">
+            <v-avatar
+              size="120"
+              class="mb-4"
+            >
               <v-img
                 :src="userprofile.profileImage"
                 alt="No Image"
@@ -18,7 +28,6 @@
             <v-chip
               size="small"
               color="primary"
-              text-color="white"
               class="mb-6"
             >
               {{ $t('profile.admin') }}
@@ -33,7 +42,10 @@
                 class="rounded-lg pa-2 list-item-transition"
               >
                 <v-list-item-subtitle class="text-caption text-uppercase text-grey-darken-1">
-                  <v-icon size="small" color="grey-darken-1">
+                  <v-icon
+                    size="small"
+                    color="grey-darken-1"
+                  >
                     {{ item.icon }}
                   </v-icon>
                   {{ item.label }}:
@@ -54,8 +66,15 @@
       </v-col>
 
       <!-- Right Section: Tabs and Content -->
-      <v-col cols="12" md="8" lg="9">
-        <v-card flat class="rounded-xl">
+      <v-col
+        cols="12"
+        md="8"
+        lg="9"
+      >
+        <v-card
+          flat
+          class="rounded-xl"
+        >
           <!-- Tabs Section -->
           <v-tabs
             v-model="activeTab"
@@ -66,28 +85,61 @@
             :stacked="isSmallScreen"
             align-tabs="center"
           >
-            <v-tab value="0" class="text-body-1 font-weight-medium">
-              <v-icon size="small" start>mdi-account</v-icon>
+            <v-tab
+              value="0"
+              class="text-body-1 font-weight-medium"
+            >
+              <v-icon
+                size="small"
+                start
+              >
+                mdi-account
+              </v-icon>
               {{ $t('profile.account') }}
             </v-tab>
-            <v-tab value="1" class="text-body-1 font-weight-medium">
-              <v-icon size="small" start>mdi-shield-lock</v-icon>
+            <v-tab
+              value="1"
+              class="text-body-1 font-weight-medium"
+            >
+              <v-icon
+                size="small"
+                start
+              >
+                mdi-shield-lock
+              </v-icon>
               {{ $t('profile.security') }}
             </v-tab>
           </v-tabs>
 
-          <v-window v-model="activeTab" class="pa-4">
+          <v-window
+            v-model="activeTab"
+            class="pa-4"
+          >
             <!-- Account Tab Content -->
-            <v-window-item value="0" transition="fade-transition">
-              <v-card class="rounded-xl pa-6" elevation="2">
+            <v-window-item
+              value="0"
+              transition="fade-transition"
+            >
+              <v-card
+                class="rounded-xl pa-6"
+                elevation="2"
+              >
                 <v-card-title class="text-h6 font-weight-bold mb-4">
-                  <v-icon start color="primary">mdi-account-details</v-icon>
+                  <v-icon
+                    start
+                    color="primary"
+                  >
+                    mdi-account-details
+                  </v-icon>
                   {{ $t('profile.personalInfo') }}
                 </v-card-title>
                 <v-card-text>
                   <v-form>
                     <v-row dense>
-                      <v-col cols="12" sm="6">
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-text-field
                           v-model="userprofile.username"
                           :label="$t('SIGNIN.username')"
@@ -98,7 +150,10 @@
                           class="input-field-transition"
                         />
                       </v-col>
-                      <v-col cols="12" sm="6">
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-text-field
                           v-model="user.email"
                           :label="$t('SIGNIN.email')"
@@ -109,7 +164,10 @@
                           class="input-field-transition"
                         />
                       </v-col>
-                      <v-col cols="12" sm="6">
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-text-field
                           v-model="userprofile.contactNo"
                           :label="$t('SIGNIN.contact')"
@@ -120,7 +178,10 @@
                           class="input-field-transition"
                         />
                       </v-col>
-                      <v-col cols="12" sm="6">
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-text-field
                           v-model="userprofile.country"
                           :label="$t('profile.country')"
@@ -139,7 +200,9 @@
                     class="mt-4 text-capitalize"
                     @click="openEditProfileDialog"
                   >
-                    <v-icon start>mdi-pencil</v-icon>
+                    <v-icon start>
+                      mdi-pencil
+                    </v-icon>
                     {{ $t('profile.editDetails') }}
                   </v-btn>
                 </v-card-text>
@@ -147,10 +210,21 @@
             </v-window-item>
 
             <!-- Security Tab Content -->
-            <v-window-item value="1" transition="fade-transition">
-              <v-card class="rounded-xl pa-6" elevation="2">
+            <v-window-item
+              value="1"
+              transition="fade-transition"
+            >
+              <v-card
+                class="rounded-xl pa-6"
+                elevation="2"
+              >
                 <v-card-title class="text-h6 font-weight-bold mb-4">
-                  <v-icon start color="primary">mdi-lock</v-icon>
+                  <v-icon
+                    start
+                    color="primary"
+                  >
+                    mdi-lock
+                  </v-icon>
                   {{ $t('profile.changePassword') }}
                 </v-card-title>
                 <v-card-text>
@@ -199,9 +273,15 @@
                     </div>
                   </v-alert>
 
-                  <v-form ref="passwordForm" v-model="valid">
+                  <v-form
+                    ref="passwordForm"
+                    v-model="valid"
+                  >
                     <v-row dense>
-                      <v-col cols="12" sm="6">
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-text-field
                           v-model="newPassword"
                           :rules="passwordRules"
@@ -215,7 +295,10 @@
                           @click:append="showPassword = !showPassword"
                         />
                       </v-col>
-                      <v-col cols="12" sm="6">
+                      <v-col
+                        cols="12"
+                        sm="6"
+                      >
                         <v-text-field
                           v-model="confirmPassword"
                           :rules="confirmPasswordRules"
@@ -237,7 +320,9 @@
                       class="mt-4 text-capitalize"
                       @click="changePassword"
                     >
-                      <v-icon start>mdi-key</v-icon>
+                      <v-icon start>
+                        mdi-key
+                      </v-icon>
                       {{ $t('profile.changePassword') }}
                     </v-btn>
                   </v-form>
@@ -245,9 +330,17 @@
               </v-card>
 
               <!-- Delete Account Section -->
-              <v-card class="rounded-xl pa-6 mt-6" elevation="2">
+              <v-card
+                class="rounded-xl pa-6 mt-6"
+                elevation="2"
+              >
                 <v-card-title class="text-h6 font-weight-bold">
-                  <v-icon start color="error">mdi-alert-circle</v-icon>
+                  <v-icon
+                    start
+                    color="error"
+                  >
+                    mdi-alert-circle
+                  </v-icon>
                   {{ $t('profile.deleteAccountTitle') }}
                 </v-card-title>
                 <v-card-text>
@@ -261,7 +354,9 @@
                     :block="isSmallScreen"
                     @click="deleteAccountDialog = true"
                   >
-                    <v-icon start>mdi-delete</v-icon>
+                    <v-icon start>
+                      mdi-delete
+                    </v-icon>
                     {{ $t('profile.deleteAccountTitle') }}
                   </v-btn>
                 </v-card-text>
@@ -273,18 +368,41 @@
     </v-row>
 
     <!-- Edit Details Dialog -->
-    <v-dialog v-model="editProfileDialog" max-width="600px" transition="dialog-bottom-transition">
-      <v-card class="rounded-xl pa-6" elevation="6">
+    <v-dialog
+      v-model="editProfileDialog"
+      max-width="600px"
+      transition="dialog-bottom-transition"
+    >
+      <v-card
+        class="rounded-xl pa-6"
+        elevation="6"
+      >
         <v-card-title class="text-h6 font-weight-bold">
-          <v-icon start color="primary">mdi-account-edit</v-icon>
+          <v-icon
+            start
+            color="primary"
+          >
+            mdi-account-edit
+          </v-icon>
           {{ $t('profile.editProfile') }}
         </v-card-title>
         <v-card-text>
           <div class="text-center mb-6">
-            <v-avatar size="100" class="avatar-transition bg-ternary">
-              <v-img :src="editProfileData.profileImage" alt="No Image" />
+            <v-avatar
+              size="100"
+              class="avatar-transition bg-ternary"
+            >
+              <v-img
+                :src="editProfileData.profileImage"
+                alt="No Image"
+              />
             </v-avatar>
-            <v-btn icon size="small" class="ml-2" @click="selectImage">
+            <v-btn
+              icon
+              size="small"
+              class="ml-2"
+              @click="selectImage"
+            >
               <v-icon>mdi-camera</v-icon>
             </v-btn>
             <input
@@ -293,9 +411,12 @@
               accept="image/*"
               style="display: none"
               @change="uploadProfileImage"
-            />
+            >
           </div>
-          <v-form ref="editProfileForm" v-model="editProfileValid">
+          <v-form
+            ref="editProfileForm"
+            v-model="editProfileValid"
+          >
             <v-text-field
               v-model="editProfileData.username"
               :label="$t('SIGNIN.username')"
@@ -346,7 +467,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" class="text-capitalize" @click="editProfileDialog = false">
+          <v-btn
+            variant="text"
+            class="text-capitalize"
+            @click="editProfileDialog = false"
+          >
             {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
@@ -356,7 +481,9 @@
             :disabled="!editProfileValid"
             @click="saveProfile"
           >
-            <v-icon start>mdi-content-save</v-icon>
+            <v-icon start>
+              mdi-content-save
+            </v-icon>
             {{ $t('profile.saveChanges') }}
           </v-btn>
         </v-card-actions>
@@ -364,10 +491,23 @@
     </v-dialog>
 
     <!-- Delete Account Dialog -->
-    <v-dialog v-model="deleteAccountDialog" max-width="500px" persistent transition="dialog-bottom-transition">
-      <v-card class="rounded-xl pa-6" elevation="6">
+    <v-dialog
+      v-model="deleteAccountDialog"
+      max-width="500px"
+      persistent
+      transition="dialog-bottom-transition"
+    >
+      <v-card
+        class="rounded-xl pa-6"
+        elevation="6"
+      >
         <v-card-title class="text-h6 font-weight-bold">
-          <v-icon start color="error">mdi-alert-circle</v-icon>
+          <v-icon
+            start
+            color="error"
+          >
+            mdi-alert-circle
+          </v-icon>
           {{ $t('profile.deleteAccountTitle') }}
           <v-spacer />
         </v-card-title>
@@ -375,7 +515,11 @@
         <!-- Step 1: Initial Confirmation -->
         <div v-if="deleteStep === 1">
           <v-card-text>
-            <v-alert type="error" variant="outlined" class="mb-4">
+            <v-alert
+              type="error"
+              variant="outlined"
+              class="mb-4"
+            >
               {{ $t('profile.deleteAccountConfirm') }}
             </v-alert>
             <p class="text-body-1 mb-4">
@@ -420,7 +564,11 @@
         <!-- Step 2: Enter Password -->
         <div v-else>
           <v-card-text>
-            <v-alert type="error" variant="outlined" class="mb-4">
+            <v-alert
+              type="error"
+              variant="outlined"
+              class="mb-4"
+            >
               {{ $t('profile.finalStepVerifyIdentity') }}
             </v-alert>
             <p class="text-center font-weight-bold mb-4">
@@ -457,7 +605,9 @@
               min-width="120"
               @click="deleteAccount"
             >
-              <v-icon start>mdi-delete</v-icon>
+              <v-icon start>
+                mdi-delete
+              </v-icon>
               {{ $t('profile.deleteForever') }}
             </v-btn>
           </v-card-actions>
@@ -489,7 +639,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { countries } from '@/utils/countries';
+import { countries } from '@/shared/constants/countries';
 
 const store = useStore();
 const user = computed(() => store.getters.user || { email: '' });

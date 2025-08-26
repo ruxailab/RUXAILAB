@@ -3,7 +3,7 @@ import {
     getMethodIcon,
     getMethodColor,
     getMethodName
-} from '@/constants/methodDefinitions'
+} from '@/shared/constants/methodDefinitions'
 
 export function useItemTypes() {
 

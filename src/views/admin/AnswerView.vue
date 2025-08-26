@@ -1,5 +1,8 @@
 <template>
-  <PageWrapper title="Answers" :side-gap="true">
+  <PageWrapper
+    title="Answers"
+    :side-gap="true"
+  >
     <!-- Subtitle Slot -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
@@ -17,9 +20,8 @@
 </template>
 
 <script setup>
-import HeuristicsTestAnswer from '@/components/organisms/HeuristicsTestAnswer.vue'
+import HeuristicsTestAnswer from '@/ux/Heuristic/components/HeuristicsTestAnswer.vue'
 import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
-import PageWrapper from '@/components/template/PageWrapper.vue';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 

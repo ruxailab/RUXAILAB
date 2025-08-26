@@ -4,20 +4,20 @@ import AnswerView from '@/views/admin/AnswerView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import CooperatorsView from '@/views/admin/CooperatorsView.vue'
-import SettingsView from '@/views/admin/SettingsView.vue'
+import SettingsView from '@/shared/views/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
 import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
-import FinalReportView from '@/views/admin/FinalReportView'
+import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
-import Choose from '@/views/admin/StudyCreationFlow/Choose.vue'
-import ChooseStudyMethods from '@/views/admin/StudyCreationFlow/ChooseStudyMethods.vue'
-import ChooseStudyType from '@/views/admin/StudyCreationFlow/ChooseStudyType.vue'
-import StudyDetailsForm from '@/views/admin/StudyCreationFlow/StudyDetailsForm.vue'
+import Choose from '@/features/ux_creation/Choose.vue'
+import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
+import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
+import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
 import accessibility from '@/views/admin/Accessibility.vue'
-import DashboardView from '@/views/admin/DashboardView.vue'
+import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 
 export default [
@@ -65,42 +65,42 @@ export default [
     props: true,
     children: [
       {
-        path: '/reportview/:id',
+        path: '/reportview/:id/:token?',
         name: 'ReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
-        path: '/finalreportview/:id',
+        path: '/finalreportview/:id/:token?',
         name: 'FinalReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: FinalReportView,
       },
       {
-        path: '/answerview/:id',
+        path: '/answerview/:id/:token?',
         name: 'AnswerView',
         props: true,
         meta: { authorize: [0, 1] },
         component: AnswerView,
       },
       {
-        path: '/edittest/:id',
+        path: '/edittest/:id/:token?',
         name: 'EditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
-        path: '/settingsview/:id',
+        path: '/settingsview/:id/:token?',
         name: 'SettingsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
-        path: '/cooperators/:id',
+        path: '/cooperators/:id/:token?',
         name: 'CooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
@@ -114,7 +114,7 @@ export default [
         component: AnalyticsView,
       },
       {
-        path: '/templateview/:id',
+        path: '/templateview/:id/:token?',
         name: 'TemplateView',
         props: true,
         meta: { authorize: [0, 1] },

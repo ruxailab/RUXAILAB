@@ -4,9 +4,9 @@
  */
 
 import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { db } from '@/app/plugins/firebase'
 import TestController from '@/controllers/TestController'
-import UserController from '@/controllers/UserController'
+import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 
 const testController = new TestController()
@@ -99,11 +99,15 @@ export default {
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...state.testStructure, ...payload }
     },
-    SET_CATEGORIES_TEST_STRUCTURE(state, payload) {
+    SET_CARDSORTING_OPTIONS_TEST_STRUCTURE(state, payload) {
+      state.testStructure.cardSorting = state.testStructure.cardSorting || {}
+      state.testStructure.cardSorting.options = payload
+    },
+    SET_CARDSORTING_CATEGORIES_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.categories = payload
     },
-    SET_CARD_TEST_STRUCTURE(state, payload) {
+    SET_CARDSORTING_CARD_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.cards = payload
     },
