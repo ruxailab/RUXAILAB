@@ -70,7 +70,7 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/components/AccessNotAllowed.vue';
-import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
+import LeaveAlert from '@/shared/components/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CooperatorTable from '@/shared/components/CooperatorTable.vue';
 import MessageDialog from '@/components/molecules/MessageDialog.vue';

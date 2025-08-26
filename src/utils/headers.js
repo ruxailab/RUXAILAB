@@ -53,7 +53,6 @@ const notificationsHeaders = [
 
 export {
   cooperatorsHeaders,
-  heuristicsStatisticsHeaders,
   evaluatorStatisticsHeaders,
   reportHeaders,
   userHeaders,

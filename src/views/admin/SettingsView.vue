@@ -369,7 +369,7 @@ import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import FormTestDescription from '@/components/atoms/FormTestDescription';
 import Snackbar from '@/shared/components/Snackbar';
-import LeaveAlert from '@/components/atoms/LeaveAlert';
+import LeaveAlert from '@/shared/components/LeaveAlert';
 import AccessNotAllowed from '@/shared/components/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';
