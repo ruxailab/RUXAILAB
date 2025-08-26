@@ -12,8 +12,8 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import HeuristicsAnalytics from '@/features/Heuristic/components/HeuristicsAnalytics.vue';
-import UserAnalytics from '@/features/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
+import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
 
 const store = useStore();
 

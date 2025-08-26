@@ -72,7 +72,7 @@ import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
 import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import CooperatorTable from '@/components/molecules/CooperatorTable.vue';
+import CooperatorTable from '@/shared/components/CooperatorTable.vue';
 import MessageDialog from '@/components/molecules/MessageDialog.vue';
 import InviteDialog from '@/components/molecules/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';

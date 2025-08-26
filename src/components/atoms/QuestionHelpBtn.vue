@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import TextBox from '@/components/atoms/TextBox'
+import TextBox from '@/shared/components/TextBox.vue'
 
 defineProps({
   question: {

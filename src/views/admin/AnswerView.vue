@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import HeuristicsTestAnswer from '@/features/Heuristic/components/HeuristicsTestAnswer.vue'
+import HeuristicsTestAnswer from '@/ux/Heuristic/components/HeuristicsTestAnswer.vue'
 import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
 import { computed } from 'vue';
 import { useStore } from 'vuex';
