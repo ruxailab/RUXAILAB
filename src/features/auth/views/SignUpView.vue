@@ -109,7 +109,7 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import Snackbar from '@/components/atoms/Snackbar'
+import Snackbar from '@/shared/components/Snackbar';
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 import { z } from 'zod'
 

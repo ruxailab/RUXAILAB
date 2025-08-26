@@ -63,7 +63,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import Snackbar from '@/components/atoms/Snackbar.vue';
+import Snackbar from '@/shared/components/Snackbar';
 
 defineProps({
   title: {

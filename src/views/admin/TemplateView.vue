@@ -220,7 +220,7 @@ import { ref, computed, watch, onBeforeMount, onBeforeUnmount, getCurrentInstanc
 import { useStore } from 'vuex';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import SnackBar from '@/components/atoms/Snackbar.vue';
+import Snackbar from '@/shared/components/Snackbar';
 
 // const { proxy } = getCurrentInstance();
 const store = useStore();

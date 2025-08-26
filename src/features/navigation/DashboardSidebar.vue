@@ -69,7 +69,7 @@
         class="create-button"
         @click="$emit('create-test')"
       >
-        Create New Test
+  {{ $t('Dashboard.createNewTest') }}
       </v-btn>
     </div>
   </v-navigation-drawer>

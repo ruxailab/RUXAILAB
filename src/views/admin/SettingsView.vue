@@ -368,9 +368,9 @@ import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import FormTestDescription from '@/components/atoms/FormTestDescription';
-import Snackbar from '@/components/atoms/Snackbar';
+import Snackbar from '@/shared/components/Snackbar';
 import LeaveAlert from '@/components/atoms/LeaveAlert';
-import AccessNotAllowed from '@/components/atoms/AccessNotAllowed';
+import AccessNotAllowed from '@/shared/components/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import TemplateHeader from '@/shared/models/TemplateHeader';

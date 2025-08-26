@@ -237,8 +237,8 @@ import Test from '@/models/Test';
 import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
-import StepperHeader from '@/components/atoms/StepperHeader.vue';
-import SectionHeader from '@/components/atoms/SectionHeader.vue';
+import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
+import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/components/atoms/BackButton.vue';
 
 const router = useRouter();

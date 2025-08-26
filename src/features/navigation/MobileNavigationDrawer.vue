@@ -198,7 +198,7 @@
           class="create-button mb-3"
           @click="createNewTest"
         >
-          Create New Test
+          Create New Study
         </v-btn>
 
         <v-btn

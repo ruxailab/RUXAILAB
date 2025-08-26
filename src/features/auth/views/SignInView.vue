@@ -117,7 +117,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { z } from 'zod'
-import Snackbar from '@/components/atoms/Snackbar'
+import Snackbar from '@/shared/components/Snackbar';
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 
 const { t } = useI18n()
