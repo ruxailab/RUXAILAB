@@ -166,7 +166,7 @@ import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
-import SubmitDialog from '@/components/atoms/SubmitDialog.vue';
+import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
 
 const store = useStore();
@@ -736,7 +736,7 @@ onBeforeUnmount(async () => {
   height: 90%;
   margin-right: -100px;
   margin-top: 200px;
-  background-image: url(../../assets/ruxailab-small-red.png);
+  background-image: url(../../../assets/ruxailab-small-red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
