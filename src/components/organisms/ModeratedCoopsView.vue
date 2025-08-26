@@ -465,7 +465,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import ShowInfo from '@/shared/components/ShowInfo.vue';
 import Snackbar from '@/components/atoms/Snackbar.vue';
 import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';

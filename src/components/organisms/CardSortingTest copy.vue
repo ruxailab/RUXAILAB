@@ -183,7 +183,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
-import ShowInfo from './ShowInfo.vue';
+import ShowInfo from '../../shared/components/ShowInfo.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import { useStore } from 'vuex';
 import CardSortingTask from '../molecules/CardSortingTask.vue';

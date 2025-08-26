@@ -567,7 +567,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 import { db } from '@/firebase';
-import VideoCall from '@/features/UserTest/components/VideoCall.vue';
+import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
 import DisconnectedCard from '@/components/atoms/DisconnectedCard.vue';
 import FeedbackView from '@/components/molecules/FeedbackView.vue';
 import { useI18n } from 'vue-i18n';

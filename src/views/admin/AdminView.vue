@@ -165,9 +165,9 @@ import List from '@/components/atoms/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from './NotificationPage.vue';
-import { DashboardSidebar } from '@/components/navigation';
+import { DashboardSidebar } from '@/features/navigation';
 import { getMethodOptions } from '@/constants/methodDefinitions';
-import DashboardView from './DashboardView.vue';
+import DashboardView from '../../features/dashboard/views/DashboardView.vue';
 
 const store = useStore();
 const router = useRouter();

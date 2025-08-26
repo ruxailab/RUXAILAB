@@ -63,7 +63,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
-import { buildHeuristicsEvaluator, buildHeuristicsStatistics, finalResult, statistics } from '@/features/Heuristic/utils/statistics';
+import { buildHeuristicsEvaluator, buildHeuristicsStatistics, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
 
 // Vuex store
 const store = useStore();
