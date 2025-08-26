@@ -15,7 +15,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import IntroComp from '@/components/atoms/IntrosComponent.vue'
+import IntroComp from '@/shared/components/IntrosComponent.vue'
 
 const emit = defineEmits(['goToCoops'])
 const router = useRouter()

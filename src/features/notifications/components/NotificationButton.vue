@@ -95,7 +95,7 @@
 
 <script setup>
 
-import NotificationItem from '@/components/atoms/NotificationItem.vue';
+import NotificationItem from '@/features/notifications/components/NotificationItem.vue';
 
 import { computed } from 'vue';
 import { useStore } from 'vuex';
