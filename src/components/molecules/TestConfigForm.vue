@@ -18,7 +18,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import TextareaForm from '../atoms/TextareaForm.vue';
+import TextareaForm from '@/shared/components/TextareaForm.vue';
 
 const props = defineProps({
   welcome: {

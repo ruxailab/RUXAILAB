@@ -471,7 +471,7 @@ import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
 import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
 import { roleOptionsItems } from '@/utils/items';
-import Notification from '@/models/Notification';
+import Notification from '@/shared/models/Notification';
 
 
 const props = defineProps({
