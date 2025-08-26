@@ -5,7 +5,7 @@ import Controller from '@/controllers/BaseController'
 import AnswerController from './AnswerController'
 import Answer from '@/models/Answer'
 import UserAnswer from '@/models/UserAnswer'
-import UserController from './UserController'
+import UserController from '../features/auth/controllers/UserController'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
