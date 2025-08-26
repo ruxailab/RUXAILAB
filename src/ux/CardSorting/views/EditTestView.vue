@@ -134,7 +134,7 @@ import TextareaForm from '@/shared/components/TextareaForm.vue';
 import UserVariables from '@/shared/components/UserVariables.vue';
 import CardsEditCardSorting from '../components/CardsEditCardSorting.vue';
 import CategoriesEditCardSorting from '../components/CategoriesEditCardSorting.vue';
-import PageWrapper from '@/shared/components/template/PageWrapper.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
