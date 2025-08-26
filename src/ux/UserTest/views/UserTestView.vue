@@ -319,7 +319,7 @@
 <script setup>
 
 
-import SubmitDialog from '@/components/atoms/SubmitDialog.vue';
+import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
