@@ -2,7 +2,7 @@ import AnswerController from '@/controllers/AnswerController'
 import HeuristicAnswer from '@/features/Heuristic/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
 import UserTask from '@/models/UserTask'
-import { percentage } from '@/utils/statistics'
+import { percentage } from '@/features/Heuristic/utils/statistics'
 
 const answerController = new AnswerController()
 

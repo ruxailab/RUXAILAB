@@ -70,14 +70,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { statistics } from '@/utils/statistics';
+import { statistics } from '@/features/Heuristic/utils/statistics';
 import ShowInfo from '@/components/organisms/ShowInfo';
 import IntroAnswer from '@/components/molecules/IntroAnswer';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
-import GeneralAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
-import SentimentAnalysisView from '@/components/organisms/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
-import SusAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/SusAnalytics.vue';
-import NasaTlxAnalytics from '@/components/organisms/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
+import GeneralAnalytics from '@/features/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
+import SentimentAnalysisView from '@/features/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SusAnalytics from '@/features/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
+import NasaTlxAnalytics from '@/features/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 
 defineProps({
   id: {
