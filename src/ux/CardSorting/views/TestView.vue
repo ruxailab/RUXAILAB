@@ -8,10 +8,10 @@
 </template>
 
 <script setup>
-import Loadding from '@/components/atoms/Loadding.vue';
-import Snackbar from '@/components/atoms/Snackbar.vue';
-import CardSortingTest from '@/components/organisms/CardSortingTest.vue';
-import StartScreenTest from '@/components/organisms/StartScreenTest.vue'
+import Loadding from '@/shared/components/Loadding.vue';
+import Snackbar from '@/shared/components/Snackbar.vue';
+import CardSortingTest from '../components/CardSortingTest.vue';
+import StartScreenTest from '@/shared/components/template/StartScreenTest.vue'
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
