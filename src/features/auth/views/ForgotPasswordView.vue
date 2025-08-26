@@ -111,7 +111,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import Snackbar from '@/components/atoms/Snackbar'
+import Snackbar from '@/shared/components/Snackbar';
 import { useI18n } from 'vue-i18n'
 
 const store = useStore()

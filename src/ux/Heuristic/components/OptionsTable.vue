@@ -124,7 +124,7 @@
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import AddOptionBtn from '../atoms/AddOptionBtn';
+import AddOptionBtn from '@/ux/Heuristic/components/AddOptionBtn';
 
 const store = useStore();
 const { t } = useI18n();
