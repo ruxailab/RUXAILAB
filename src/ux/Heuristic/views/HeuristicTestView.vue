@@ -551,7 +551,7 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
-import HelpBtn from '@/components/atoms/QuestionHelpBtn.vue'
+import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/shared/components/Snackbar';
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
