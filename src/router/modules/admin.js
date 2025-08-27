@@ -16,7 +16,6 @@ import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
 import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
 import accessibility from '@/views/admin/Accessibility.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
-import CooperatorsModeratedView from '@/ux/UserTest/views/Moderators/CooperatorsModeratedView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 
 export default [
@@ -105,13 +104,13 @@ export default [
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
       },
-      {
-        path: '/userTest/moderated/cooperators/:id/:token?',
-        name: 'UserModeraterCooperatorView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: CooperatorsModeratedView,
-      },
+      // {
+      //   path: '/userTest/moderated/cooperators/:id/:token?',
+      //   name: 'UserModeraterCooperatorView',
+      //   props: true,
+      //   meta: { authorize: [0, 1] },
+      //   component: CooperatorsModeratedView,
+      // },
       {
         path: '/analyticsview/:id/:heuristic?',
         name: 'AnalyticsView',
