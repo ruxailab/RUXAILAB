@@ -6,21 +6,21 @@ import TestView from '@/ux/CardSorting/views/TestView.vue'
 
 export default [
   {
-    path: '/cardSorting/managerview/:id',
+    path: '/cardSorting/manager/:id',
     name: 'CardSortingManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,
     props: true,
     children: [
       {
-        path: '/cardSorting/edittest/:id',
+        path: '/cardSorting/edit/:id',
         name: 'CardSortingEditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTestView,
       },
       {
-        path: '/cardSorting/settingsview/:id',
+        path: '/cardSorting/settings/:id',
         name: 'CardSortingSettingsView',
         props: true,
         meta: { authorize: [0, 1] },
@@ -36,7 +36,7 @@ export default [
     ],
   },
   {
-    path: '/cardSorting/testview/:id/:token?',
+    path: '/cardSorting/test/:id/:token?',
     name: 'CardSortingTestView',
     props: true,
     meta: { authorize: [] },

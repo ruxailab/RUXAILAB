@@ -5,9 +5,10 @@ import SuperAdmin from '@/router/modules/superAdmin.js'
 import CardSorting from '@/ux/CardSorting/router.js'
 import HeuristicRoutes from '@/ux/Heuristic/router.js';
 import accessibilityRoutes from '@/router/modules/accessibility';
+import UserTestRoutes from '@/ux/UserTest/router.js';
 import store from '@/store'
 
-const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting, ...accessibilityRoutes, ...HeuristicRoutes]
+const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting, ...accessibilityRoutes, ...HeuristicRoutes, ...UserTestRoutes]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
