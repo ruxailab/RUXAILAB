@@ -25,27 +25,3 @@ export const navigationContexts = {
     TEST: 'test',
     GLOBAL: 'global'
 };
-
-/**
- * Determina el contexto de navegación basado en la ruta actual
- * @param {string} routePath - Ruta actual
- * @returns {string} Contexto de navegación
- */
-export const getNavigationContext = (routePath) => {
-    if (routePath.includes('/testslist') || routePath.includes('/dashboard')) {
-        return navigationContexts.DASHBOARD;
-    }
-
-    if (routePath.includes('/managerview') ||
-        routePath.includes('/edittest') ||
-        routePath.includes('/testview') ||
-        routePath.includes('/reportview') ||
-        routePath.includes('/answerview') ||
-        routePath.includes('/finalreportview') ||
-        routePath.includes('/cooperators') ||
-        routePath.includes('/templateview')) {
-        return navigationContexts.TEST;
-    }
-
-    return navigationContexts.GLOBAL;
-};
