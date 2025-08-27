@@ -1,6 +1,5 @@
 import EditTest from '@/views/admin/EditTestView.vue'
 import TestList from '@/views/admin/AdminView.vue'
-import AnswerView from '@/views/admin/AnswerView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
@@ -18,6 +17,8 @@ import accessibility from '@/views/admin/Accessibility.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 import CooperatorsModeratedView from '@/ux/UserTest/views/Moderators/CooperatorsModeratedView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
+import UserAnswerView from '@/ux/UserTest/views/UserAnswerView.vue'
+import HeuristicAnswerView from '@/ux/Heuristic/views/HeuristicAnswerView.vue'
 
 export default [
   {
@@ -78,11 +79,25 @@ export default [
         component: FinalReportView,
       },
       {
-        path: '/answerview/:id/:token?',
-        name: 'AnswerView',
+        path: '/userTest/moderated/answerview/:id/:token?',
+        name: 'UserTestModeratedAnswerView',
         props: true,
         meta: { authorize: [0, 1] },
-        component: AnswerView,
+        component: UserAnswerView,
+      },
+      {
+        path: '/userTest/unmoderated/answerview/:id/:token?',
+        name: 'UserTestUnmoderatedAnswerView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: UserAnswerView,
+      },
+      {
+        path: '/heuristic/answerview/:id/:token?',
+        name: 'HeuristicAnswerView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: HeuristicAnswerView,
       },
       {
         path: '/edittest/:id/:token?',
