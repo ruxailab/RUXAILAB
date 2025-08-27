@@ -409,7 +409,7 @@ import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import FormTestDescription from '@/shared/components/FormTestDescription';
 import Snackbar from '@/shared/components/Snackbar';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
-import AccessNotAllowed from '@/shared/components/AccessNotAllowed';
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import TemplateHeader from '@/shared/models/TemplateHeader';
