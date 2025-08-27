@@ -1,4 +1,5 @@
 <template>
+  <router-view />
   <v-container
     class="pa-0 ma-0"
     fluid
