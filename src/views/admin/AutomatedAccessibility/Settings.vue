@@ -44,42 +44,42 @@
             <div v-if="safeTest" class="d-flex flex-column ga-4">
               <!-- Test Title -->
               <v-text-field
-                v-model="safeTest.title"
+                :model-value="safeTest.title"
+                @update:model-value="updateTestField('title', $event)"
                 label="Test Title"
                 variant="outlined"
                 density="compact"
-                @update:model-value="updateTest"
                 hide-details
               />
 
               <!-- Test Description -->
               <v-textarea
-                v-model="safeTest.description"
+                :model-value="safeTest.description"
+                @update:model-value="updateTestField('description', $event)"
                 label="Description"
                 variant="outlined"
                 density="compact"
                 rows="3"
-                @update:model-value="updateTest"
                 hide-details
               />
 
               <!-- Website URL -->
               <v-text-field
-                v-model="safeTest.websiteUrl"
+                :model-value="safeTest.websiteUrl"
+                @update:model-value="updateTestField('websiteUrl', $event)"
                 label="Website URL"
                 variant="outlined"
                 density="compact"
-                @update:model-value="updateTest"
                 hide-details
               />
 
               <!-- Test Version -->
               <v-text-field
-                v-model="safeTest.version"
+                :model-value="safeTest.version"
+                @update:model-value="updateTestField('version', $event)"
                 label="Version"
                 variant="outlined"
                 density="compact"
-                @update:model-value="updateTest"
                 hide-details
               />
 
@@ -275,6 +275,12 @@ const safeTest = computed(() => {
 })
 
 // Methods specific to this component
+const updateTestField = (field, value) => {
+  if (!test.value) return
+  test.value[field] = value
+  updateTest()
+}
+
 const updatePublicAccess = (value) => {
   if (!test.value) return
   test.value.isPublic = value
