@@ -86,6 +86,7 @@
                   {{ $t('titles.manager') }}
                 </p>
                 <p class="text-subtitle-1 text-md-subtitle-1">
+
                   {{ test.testTitle }}
                 </p>
               </div>
@@ -180,8 +181,6 @@ const test = computed(() => {
 })
 
 const user = computed(() => store.getters.user)
-
-const cooperators = computed(() => store.getters.cooperators)
 const loading = computed(() => store.getters.loading)
 
 const accessLevel = computed(() => {
@@ -295,7 +294,7 @@ const navigator = computed(() => {
       {
         title: 'Cooperators',
         icon: 'mdi-account-group',
-        path: `/cooperators/${test.value.id}`,
+        path: cooperatorsUrl(),
       },
       { title: 'Settings', icon: 'mdi-cog', path: `/settingsview/${test.value.id}` }
     )
@@ -317,6 +316,14 @@ const navigator = computed(() => {
   }
   return items
 })
+
+const cooperatorsUrl = () => {
+  if (test.value.testType === 'User' && test.value.userTestType === 'moderated') {
+    return `/userTest/moderated/cooperators/${test.value.id}`
+  } else {
+    return `/cooperators/${test.value.id}`
+  }
+}
 
 const go = (path) => {
   router.push(path).catch(() => {})
