@@ -1,6 +1,6 @@
 <template>
   <div class="finalReportView">
-    <v-container v-if="test.testType === 'HEURISTICS'">
+    <v-container>
       <ShowInfo
         style="padding: 0!important;"
         :title="$t('titles.drawer.Final Report')"
@@ -87,39 +87,14 @@
         </v-stepper-window>
       </v-stepper>
     </v-container>
-
-    <v-container
-      v-else-if="test.testType === 'User'"
-      fluid
-      fill-height
-      class="mt-10"
-    >
-      <v-row>
-        <v-col class="text-center">
-          <v-icon
-            size="100"
-            color="primary"
-            class="mb-4"
-          >
-            mdi-tools
-          </v-icon>
-          <h1 class="text-h4">
-            {{ $t('pages.finalReport.ConstructionHeading') }}
-          </h1>
-          <p class="text-subtitle-1">
-            {{ $t('pages.finalReport.ConstructionParagraph') }}
-          </p>
-        </v-col>
-      </v-row>
-    </v-container>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import TextControls from '@/components/atoms/FinalReportControls.vue';
-import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue';
+import TextControls from '@/ux/Heuristic/components/FinalReportControls.vue';
+import FinalReportSelectionBox from '@/ux/Heuristic/components/FinalReportSelectionBox.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import Test from '@/ux/Heuristic/models/HeuristicTest.model.js';
 
