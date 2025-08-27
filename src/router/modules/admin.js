@@ -6,7 +6,6 @@ import ReportView from '@/views/admin/ReportView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
-import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import Profile from '@/views/admin/ProfileView.vue'
@@ -152,12 +151,6 @@ export default [
     name: 'study-create-step4',
     meta: { authorize: [1] },
     component: StudyDetailsForm,
-  },
-  {
-    path: '/createBlank',
-    name: 'Create Blank View',
-    meta: { authorize: [1] },
-    component: CreateBlankView,
   },
   {
     path: '/fromtemplate',
