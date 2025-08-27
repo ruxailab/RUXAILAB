@@ -558,7 +558,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
-import TaskDetailsModal from '@/components/atoms/TaskDetailsModal.vue';
+import TaskDetailsModal from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TaskDetailsModal.vue';
 import TaskAnswer from '@/models/TaskAnswer';
 import { useToast } from 'vue-toastification';
 

@@ -11,7 +11,7 @@
         color="primary"
         variant="flat"
         size="large"
-        class="text-none font-weight-semibold rounded-s px-6 mr-10"
+        class="text-none font-weight-semibold rounded-s px-6"
         :loading="loading"
         :disabled="!localChanges"
         @click="submit()"
@@ -132,7 +132,7 @@
           <v-card
             class="info-card"
             elevation="0"
-            height="100%"
+            height="auto"
           >
             <div class="d-flex align-start ga-3 pa-6 pb-0">
               <div class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center">
@@ -213,90 +213,129 @@
                     @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
                   />
                 </div>
-              </div>
-            </v-card-text>
-          </v-card>
-
-          <v-card
-            class="actions-card"
-            elevation="0"
-          >
-            <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="amber-darken-2"
-                  size="20"
-                >
-                  mdi-lightning-bolt
-                </v-icon>
-              </div>
-              <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Quick Actions
-                </h3>
-                <p class="text-caption text-grey-darken-1">
-                  Perform common tasks instantly
-                </p>
-              </div>
-            </div>
-            <v-card-text class="py-6">
-              <div class="d-flex flex-column ga-3">
-                <v-btn
-                  color="secondary"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-s py-3"
-                  height="48"
-                  :disabled="hasTemplate || !object"
-                  block
-                  @click="tempDialog = true"
-                >
-                  <v-icon
-                    start
-                    size="18"
-                  >
-                    mdi-file-document-plus-outline
-                  </v-icon>
-                  {{ $t('pages.settings.createTemplate') }}
-                </v-btn>
-                <v-btn
-                  color="orange-darken-1"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-s py-3"
-                  height="48"
-                  :disabled="!object"
-                  block
-                  @click="duplicateTest()"
-                >
-                  <v-icon
-                    start
-                    size="18"
-                  >
-                    mdi-content-duplicate
-                  </v-icon>
-                  {{ $t('buttons.duplicateTest') }}
-                </v-btn>
-                <v-btn
-                  color="error"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-s py-3"
-                  height="48"
-                  :disabled="!object"
-                  block
-                  @click="dialogDel = true"
-                >
-                  <v-icon
-                    start
-                    size="18"
-                  >
-                    mdi-delete-outline
-                  </v-icon>
-                  {{ $t('pages.settings.deleteTest') }}
-                </v-btn>
+                <div class="pa-5 border rounded-lg bg-grey-lighten-5">
+                  <div class="d-flex align-center ga-2 mb-3">
+                    <v-icon
+                      color="primary"
+                      size="18"
+                    >
+                      mdi-list-status
+                    </v-icon>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Test Status</span>
+                  </div>
+                  <v-select
+                    v-model="object.status"
+                    :items="statusOptions"
+                    label="Select Status"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                  />
+                </div>
+                <div class="pa-5 border rounded-lg bg-grey-lighten-5">
+                  <div class="d-flex align-center ga-2 mb-3">
+                    <v-icon
+                      color="primary"
+                      size="18"
+                    >
+                      mdi-calendar
+                    </v-icon>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">End Date</span>
+                  </div>
+                  <v-text-field
+                    v-model="object.endDate"
+                    type="date"
+                    label="Select End Date"
+                    variant="outlined"
+                    density="comfortable"
+                    clearable
+                    hide-details
+                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                  />
+                </div>
               </div>
             </v-card-text>
           </v-card>
         </div>
       </div>
+
+      <!-- Quick Actions Card -->
+      <v-card
+        class="actions-card"
+        elevation="0"
+      >
+        <div class="d-flex align-start ga-3 pa-6 pb-0">
+          <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
+            <v-icon
+              color="amber-darken-2"
+              size="20"
+            >
+              mdi-lightning-bolt
+            </v-icon>
+          </div>
+          <div>
+            <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+              Quick Actions
+            </h3>
+            <p class="text-caption text-grey-darken-1">
+              Perform common tasks instantly
+            </p>
+          </div>
+        </div>
+        <v-card-text class="py-6">
+          <div class="d-flex ga-3 flex-wrap">
+            <v-btn
+              color="secondary"
+              variant="flat"
+              class="text-none font-weight-semibold rounded-s py-3"
+              height="48"
+              :disabled="hasTemplate || !object"
+              @click="tempDialog = true"
+            >
+              <v-icon
+                start
+                size="18"
+              >
+                mdi-file-document-plus-outline
+              </v-icon>
+              {{ $t('pages.settings.createTemplate') }}
+            </v-btn>
+            <v-btn
+              color="orange-darken-1"
+              variant="flat"
+              class="text-none font-weight-semibold rounded-s py-3"
+              height="48"
+              :disabled="!object"
+              @click="duplicateTest()"
+            >
+              <v-icon
+                start
+                size="18"
+              >
+                mdi-content-duplicate
+              </v-icon>
+              {{ $t('buttons.duplicateTest') }}
+            </v-btn>
+            <v-btn
+              color="error"
+              variant="flat"
+              class="text-none font-weight-semibold rounded-s py-3"
+              height="48"
+              :disabled="!object"
+              @click="dialogDel = true"
+            >
+              <v-icon
+                start
+                size="18"
+              >
+                mdi-delete-outline
+              </v-icon>
+              {{ $t('pages.settings.deleteTest') }}
+            </v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
     </div>
 
     <v-dialog
@@ -367,10 +406,10 @@
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import FormTestDescription from '@/components/atoms/FormTestDescription';
+import FormTestDescription from '@/shared/components/FormTestDescription';
 import Snackbar from '@/shared/components/Snackbar';
-import LeaveAlert from '@/shared/components/LeaveAlert';
-import AccessNotAllowed from '@/shared/components/AccessNotAllowed';
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';
 import TemplateHeader from '@/shared/models/TemplateHeader';
@@ -407,6 +446,12 @@ const loadingPage = ref(true);
 const tempDialog = ref(false);
 const form1 = ref(null);
 const tempform = ref(null);
+
+const statusOptions = [
+  { title: 'Active', value: 'active' },
+  { title: 'Pending', value: 'pending' },
+  { title: 'Finished', value: 'finished' },
+];
 
 const titleRequired = [
   v => !!v.trim() || t('errors.fieldRequired'),
@@ -449,7 +494,11 @@ watch(
   test,
   newTest => {
     if (newTest !== null && newTest !== undefined) {
-      object.value = { ...newTest };
+      object.value = { 
+        ...newTest, 
+        status: newTest.status || 'pending',
+        endDate: newTest.endDate || null
+      };
     }
   },
   { immediate: true }
@@ -627,6 +676,8 @@ const duplicateTest = async () => {
       }),
       creationDate: Date.now(),
       updateDate: Date.now(),
+      status: test.value.status,
+      endDate: test.value.endDate,
     });
 
     await store.dispatch('duplicateTest', {
@@ -693,6 +744,22 @@ const duplicateTest = async () => {
   height: 40px;
 }
 
+/* Quick Actions Horizontal Layout */
+.actions-card {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.actions-card .d-flex {
+  flex-direction: row;
+  gap: 12px;
+}
+
+.actions-card .v-btn {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .content-wrapper {
@@ -701,16 +768,29 @@ const duplicateTest = async () => {
   }
 
   .right-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 24px;
+  }
+
+  .actions-card {
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
-  .right-column {
-    display: flex;
+  .actions-card .d-flex {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .actions-card .v-btn {
+    flex: none;
+    width: 100%;
+  }
+
+  .actions-card {
+    width: 100%;
   }
 }
 </style>

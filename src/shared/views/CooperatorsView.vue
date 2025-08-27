@@ -4,6 +4,7 @@
     :loading="loading"
     :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
     :side-gap="true"
+    class="mr-10"
   >
     <!-- Actions Slot -->
     <template #actions>
@@ -13,7 +14,7 @@
         prepend-icon="mdi-account-plus"
         variant="flat"
         class="px-6"
-        @click="showInviteDialog = true"
+        @click="openDialog()"
       >
         {{ $t('HeuristicsCooperators.actions.send_invitation') }}
       </v-btn>
@@ -25,7 +26,11 @@
       @close-intro="intro = false"
     />
 
-    <CooperatorTable :cooperators="cooperatorsEdit" :loading="loading" :show-date-columns="false"
+    <CooperatorTable
+      :hasRoleColumn="hasRoleColumn"
+      :cooperators="cooperatorsEdit"
+      :loading="loading"
+      :show-date-columns="true"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
@@ -43,38 +48,55 @@
     </v-dialog>
 
     <!-- Message Dialog -->
-    <MessageDialog v-model:show="messageModel" :selected-user="selectedUser"
-      :title="$t('HeuristicsCooperators.actions.send_message')" :title-label="$t('HeuristicsCooperators.headers.title')"
+    <MessageDialog
+      v-model:show="messageModel"
+      :selected-user="selectedUser"
+      :title="$t('HeuristicsCooperators.actions.send_message')"
+      :title-label="$t('HeuristicsCooperators.headers.title')"
       :title-hint="$t('HeuristicsCooperators.messages.message_title_hint')"
       :content-label="$t('HeuristicsCooperators.headers.content')"
       :content-hint="$t('HeuristicsCooperators.messages.message_content_hint')"
-      :cancel-text="$t('HeuristicsCooperators.actions.cancel')" :send-text="$t('HeuristicsCooperators.actions.send')"
-      @send-message="handleSendMessage" />
+      :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
+      :send-text="$t('HeuristicsCooperators.actions.send')"
+      @send-message="handleSendMessage"
+    />
 
     <!-- Invite Dialog -->
-    <InviteDialog v-model:show="showInviteDialog" :users="users" :show-date-time-selection="false"
+    <InviteDialog
+      v-model:show="showInviteDialog"
+      :users="users"
+      :show-date-time-selection="false"
       :title="$t('HeuristicsCooperators.actions.send_invitation')"
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
       :no-data-text="$t('HeuristicsCooperators.messages.no_users')"
-      :role-label="$t('HeuristicsCooperators.headers.role')" :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
-      :send-text="$t('HeuristicsCooperators.actions.send')" @send-invitations="handleSendInvitations" />
+      :role-label="$t('HeuristicsCooperators.headers.role')"
+      :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
+      :send-text="$t('HeuristicsCooperators.actions.send')"
+      @send-invitations="handleSendInvitations"
+    />
 
     <AccessNotAllowed v-if="!loading && verified" />
+
+    <slot
+      name="dialog"
+      :is-drawer-open="drawerOpen"
+      :set-drawer-open="(val) => drawerOpen = val"
+    />
   </PageWrapper>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, useSlots } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/IntroCoops.vue';
-import AccessNotAllowed from '@/shared/components/AccessNotAllowed.vue';
-import LeaveAlert from '@/shared/components/LeaveAlert.vue';
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CooperatorTable from '@/shared/components/CooperatorTable.vue';
-import MessageDialog from '@/components/molecules/MessageDialog.vue';
-import InviteDialog from '@/components/molecules/InviteDialog.vue';
+import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
+import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
 import { useNotificationManager } from '@/composables/useNotificationManager';
@@ -82,16 +104,24 @@ import { useCooperatorActions } from '@/composables/useCooperatorActions';
 
 const uidgen = new UIDGenerator();
 
+// Props
 const props = defineProps({
   id: {
     type: String,
     default: ''
+  },
+  hasRoleColumn: {
+    type: Boolean,
+    default: true
   }
 });
 
+// Emits
+const emit = defineEmits(['open-invite-dialog'])
+
+// Stores
 const store = useStore();
-const { t } = useI18n();
-const toast = useToast();
+const slots = useSlots();
 
 // Use composables
 const {
@@ -106,25 +136,25 @@ const {
   handleRoleChange,
   handleCooperatorRemoval,
   handleInvitationCancellation,
-  showSuccess,
-  showError,
-  showWarning
 } = useCooperatorActions();
 
+// Variables
 const intro = ref(null);
 const showCoops = ref(false);
 const verified = ref(false);
 const messageModel = ref(false);
 const selectedUser = ref([]);
 const showInviteDialog = ref(false);
+const drawerOpen = ref(false);
 
+// Computeds
 const dialog = computed(() => store.state.dialog);
 const test = computed(() => store.getters.test);
-const user = computed(() => store.getters.user);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
 const loading = computed(() => store.getters.loading);
 
+// Methods
 const openMessageDialog = (item) => {
   selectedUser.value = item;
   messageModel.value = true;
@@ -247,6 +277,11 @@ const cancelInvitation = async (guest) => {
     await store.dispatch('updateTest', test.value);
   });
 };
+
+const openDialog = async () => {
+  if (slots.dialog) drawerOpen.value = true;
+  else showInviteDialog.value = true;
+}
 
 watch(loading, (newVal) => {
   if (!newVal) {
