@@ -476,7 +476,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
-import DateChart from '@/components/atoms/DateChart.vue';
+import SelectionPieChart from '../answers/SelectionPieChart.vue';
 
 const store = useStore();
 

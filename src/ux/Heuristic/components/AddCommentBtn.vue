@@ -84,7 +84,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import ImageImport from '@/components/atoms/ImportImage.vue'
+import ImageImport from '@/ux/Heuristic/components/ImportImage.vue'
 
 const props = defineProps({
   answerHeu: {

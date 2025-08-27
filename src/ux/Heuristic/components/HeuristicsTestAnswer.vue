@@ -471,7 +471,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import BarChart from '@/ux/Heuristic/components/BarChart.vue';
-import RadarChart from '@/shared/components/RadarChart.vue';
+import RadarChart from '@/shared/components/charts/RadarChart.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/IntroAnswer.vue';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
