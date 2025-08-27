@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import NotificationItem from '@/components/atoms/NotificationItem.vue';
+import NotificationItem from '@/features/notifications/components/NotificationItem.vue';
 
 const props = defineProps({
   notifications: {

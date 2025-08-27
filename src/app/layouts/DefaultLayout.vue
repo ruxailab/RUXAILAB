@@ -15,7 +15,7 @@
 
 <script>
 import { GlobalToolbar } from '@/features/navigation'
-import GlobalErrorHandler from '@/components/atoms/GlobalErrorHandler.vue'
+import GlobalErrorHandler from '@/app/layouts/components/GlobalErrorHandler.vue'
 
 export default {
   components: {
