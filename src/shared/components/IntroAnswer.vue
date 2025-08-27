@@ -1,5 +1,5 @@
 <template>
-  <IntroComp
+  <IntrosComponent
     :colors="['#9ac94f', '#7eb543']"
     :title="'Answers'"
     :image="'IntroAnswer.svg'"
@@ -15,7 +15,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import IntroComp from '@/components/atoms/IntrosComponent'
+import IntrosComponent from './IntrosComponent.vue'
 
 const router = useRouter()
 const { t } = useI18n()
