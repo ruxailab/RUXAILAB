@@ -3,7 +3,6 @@ import TestList from '@/views/admin/AdminView.vue'
 import AnswerView from '@/views/admin/AnswerView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
-import CooperatorsView from '@/views/admin/CooperatorsView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
@@ -18,7 +17,8 @@ import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
 import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
 import accessibility from '@/views/admin/Accessibility.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
-
+import CooperatorsModeratedView from '@/ux/UserTest/views/Moderators/CooperatorsModeratedView.vue'
+import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 
 export default [
   {
@@ -105,6 +105,13 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
+      },
+      {
+        path: '/userTest/moderated/cooperators/:id/:token?',
+        name: 'UserModeraterCooperatorView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: CooperatorsModeratedView,
       },
       {
         path: '/analyticsview/:id/:heuristic?',

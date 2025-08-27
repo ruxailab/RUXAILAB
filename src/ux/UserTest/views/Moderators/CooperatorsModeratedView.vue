@@ -1,0 +1,14 @@
+<template>
+  <div>
+    <CooperatorsView @open-invite-dialog="openDialog" :hasRoleColumn="false">
+      <template #dialog="{ isDrawerOpen, setDrawerOpen }">
+        <CreateInviteDialog :dialog="isDrawerOpen" @update:dialog="setDrawerOpen" />
+      </template>
+    </CooperatorsView>
+  </div>
+</template>
+
+<script setup>
+import CooperatorsView from '@/shared/views/CooperatorsView.vue';
+import CreateInviteDialog from '../../components/dialogs/CreateInviteDialog.vue';
+</script>
