@@ -1,10 +1,10 @@
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
-import AnswerView from '@/views/admin/AnswerView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import CooperatorsModeratedView from './views/Moderators/CooperatorsModeratedView.vue'
+import UserAnswerView from './views/UserAnswerView.vue'
 
 export default [
   {
@@ -26,7 +26,7 @@ export default [
         name: 'UserTestUnmoderatedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
-        component: AnswerView,
+        component: UserAnswerView,
       },
       {
         path: 'edit/:id',
@@ -70,7 +70,7 @@ export default [
         name: 'UserTestModeratedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
-        component: AnswerView,
+        component: UserAnswerView,
       },
       {
         path: 'edit/:id',
