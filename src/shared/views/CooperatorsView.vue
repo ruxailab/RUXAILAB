@@ -91,7 +91,7 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/IntroCoops.vue';
-import AccessNotAllowed from '@/shared/components/AccessNotAllowed.vue';
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CooperatorTable from '@/shared/components/CooperatorTable.vue';
