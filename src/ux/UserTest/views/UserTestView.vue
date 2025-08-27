@@ -5,12 +5,13 @@
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
     
-    <v-overlay v-model="isLoading" class="text-center">
+
+    <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         Saving...
       </div>
-    </v-overlay>
+    </v-overlay> -->
 
     <Snackbar />
 
@@ -216,9 +217,6 @@
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
-            :task="test.testStructure.userTasks[taskIndex]"
-            :task-index="taskIndex"
-            :test-id="testId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
             :submitted="localTestAnswer.submitted"
@@ -244,6 +242,7 @@
       </v-row>
     </v-container>
     <!-- Floating Action Button -->
+         <!--TODO: Remove if not necessary
     <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
       class="mb-10 mr-5">
       <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
@@ -283,7 +282,6 @@
 <script setup>
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "@/firebase";
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
@@ -301,6 +299,7 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import IrisTracker from '@/components/organisms/IrisTracker.vue';
 import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
+import { db } from '@/app/plugins/firebase';
 
 const fullName = ref('');
 const logined = ref(null);
