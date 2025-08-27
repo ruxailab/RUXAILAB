@@ -139,8 +139,8 @@ import { useToast } from 'vue-toastification';
 import Test from '@/models/Test';
 import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
-import ButtonBack from '@/components/atoms/ButtonBack.vue';
-import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
+import ButtonBack from '@/components/atoms/[deprecated]ButtonBack.vue';
+import CreateTestUserDialog from '@/components/dialogs/[deprecated]CreateTestUserDialog.vue';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 
 const props = defineProps({

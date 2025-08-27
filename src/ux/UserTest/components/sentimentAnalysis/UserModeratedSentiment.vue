@@ -8,7 +8,7 @@
       <v-card
         flat
         class="task-container"
-      >
+      >src/components/atoms/ModeratedTestCard.vue
         <v-row class="ma-0 pa-0">
           <!------------------------------------------------------------------------------------------------------------------------->
           <!--------------------------------------------- Answers List [Left] ------------------------------------------------------->
@@ -153,8 +153,8 @@
 import axios from 'axios'
 
 // Components
-import ModeratedTestCard from '@/components/molecules/ModeratedTestCard.vue';
-import AudioWave from '@/components/molecules/AudioWave.vue';
+import ModeratedTestCard from '@/ux/UserTest/components/ModeratedTestCard.vue';
+import AudioWave from '@/ux/UserTest/components/sentimentAnalysis/AudioWave.vue';
 import SentimentTranscriptsList from './SentimentTranscriptsList.vue';
 
 // Controllers

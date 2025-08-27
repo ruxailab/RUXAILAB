@@ -23,7 +23,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import UserModeratedSentiment from '@/components/organisms/UserModeratedSentiment.vue'
+import UserModeratedSentiment from '@/ux/UserTest/components/sentimentAnalysis/UserModeratedSentiment.vue'
 
 const store = useStore();
 

@@ -3,22 +3,21 @@ import TestList from '@/views/admin/AdminView.vue'
 import AnswerView from '@/views/admin/AnswerView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
-import CooperatorsView from '@/views/admin/CooperatorsView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
-import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import Profile from '@/views/admin/ProfileView.vue'
-import Notification from '@/views/admin/NotificationPage.vue'
+import Notification from '@/features/notifications/views/NotificationPage.vue'
 import Choose from '@/features/ux_creation/Choose.vue'
 import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
 import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
 import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
 import accessibility from '@/views/admin/Accessibility.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
-
+import CooperatorsModeratedView from '@/ux/UserTest/views/Moderators/CooperatorsModeratedView.vue'
+import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 
 export default [
   {
@@ -107,6 +106,13 @@ export default [
         component: CooperatorsView,
       },
       {
+        path: '/userTest/moderated/cooperators/:id/:token?',
+        name: 'UserModeraterCooperatorView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: CooperatorsModeratedView,
+      },
+      {
         path: '/analyticsview/:id/:heuristic?',
         name: 'AnalyticsView',
         props: true,
@@ -145,12 +151,6 @@ export default [
     name: 'study-create-step4',
     meta: { authorize: [1] },
     component: StudyDetailsForm,
-  },
-  {
-    path: '/createBlank',
-    name: 'Create Blank View',
-    meta: { authorize: [1] },
-    component: CreateBlankView,
   },
   {
     path: '/fromtemplate',
