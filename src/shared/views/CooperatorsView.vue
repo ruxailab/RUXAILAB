@@ -167,7 +167,7 @@ const handleSendMessage = async ({ user, title, content }) => {
       userId: user.userDocId,
       title: title,
       description: content,
-      redirectsTo: '/',
+      redirectsTo: null,
       author: test.value.testAdmin.email,
       testId: test.value.id
     });

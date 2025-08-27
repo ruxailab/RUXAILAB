@@ -87,7 +87,7 @@ export default [
         component: SettingsView,
       },
       {
-        path: 'cooperators/:id',
+        path: 'cooperators/:coopid',
         name: 'UserTestModeratedCooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
