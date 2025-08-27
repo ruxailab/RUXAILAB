@@ -94,8 +94,8 @@
 </template>
 
 <script setup>
-import CardTypeTest from '@/components/atoms/CardTypeTest'
-import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue'
+import CardTypeTest from '@/components/atoms/[deprecated]CardTypeTest'
+import CreateTestNameDialog from '@/components/dialogs/[deprecated]CreateTestNameDialog.vue'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
