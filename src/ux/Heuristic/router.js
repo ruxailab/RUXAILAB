@@ -1,6 +1,5 @@
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
-import AnswerView from '@/views/admin/AnswerView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
@@ -8,6 +7,7 @@ import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
 import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue';
+import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 
 export default [
   {
@@ -36,7 +36,7 @@ export default [
         name: 'AnswerView',
         props: true,
         meta: { authorize: [0, 1] },
-        component: AnswerView,
+        component: HeuristicAnswerView,
       },
       {
         path: 'edittest/:id/:token?',
