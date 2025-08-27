@@ -80,7 +80,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView />
+          <DashboardView :items="tests" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -161,10 +161,10 @@
 import { ref, computed, watch, onMounted, onBeforeMount, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import List from '@/components/atoms/ListComponent.vue';
+import List from '@/shared/components/tables/ListComponent.vue';
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
-import NotificationPage from './NotificationPage.vue';
+import NotificationPage from '../../features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation';
 import { getMethodOptions } from '@/shared/constants/methodDefinitions';
 import DashboardView from '../../features/dashboard/views/DashboardView.vue';

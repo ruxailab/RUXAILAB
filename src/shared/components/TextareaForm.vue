@@ -1,20 +1,16 @@
 <template>
-  <v-container
-    fluid
-    class="pa-0 bg-grey-lighten-5"
-    width="100%"
-  >
     <v-row justify="center">
       <v-col
         cols="12"
         md="10"
         lg="12"
+        class="px-0 py-10"
       >
         <v-card
           class="elevation-2 rounded-lg pa-6"
           width="100%"
         >
-          <v-card-title class="text-h5 font-weight-bold mb-4 bg-on-surface">
+          <v-card-title class="text-h5" style="line-height: none; padding: 0 1rem">
             {{ title }}
           </v-card-title>
           <v-card-text>
@@ -33,7 +29,6 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
 </template>
 
 <script setup>
@@ -59,7 +54,7 @@ watch(value, (newValue) => {
 
 const editorOptions = {
   theme: 'snow',
-  placeholder: 'Enter consent text here...',
+  placeholder: 'Enter text here...',
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline'],
@@ -98,14 +93,5 @@ const editorOptions = {
   padding: 16px;
 }
 
-:deep(.ql-editor:focus) {
-  outline: none;
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
 
-.v-btn {
-  text-transform: none;
-  letter-spacing: 0;
-}
 </style>
