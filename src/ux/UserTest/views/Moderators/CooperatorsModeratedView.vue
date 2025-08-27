@@ -1,8 +1,11 @@
 <template>
   <div>
-    <CooperatorsView @open-invite-dialog="openDialog" :hasRoleColumn="false">
+    <CooperatorsView :hasRoleColumn="false">
       <template #dialog="{ isDrawerOpen, setDrawerOpen }">
-        <CreateInviteDialog :dialog="isDrawerOpen" @update:dialog="setDrawerOpen" />
+        <CreateInviteDialog 
+          :dialog="isDrawerOpen" 
+          @update:dialog="setDrawerOpen" 
+        />
       </template>
     </CooperatorsView>
   </div>
