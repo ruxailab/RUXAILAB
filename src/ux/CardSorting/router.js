@@ -9,7 +9,7 @@ export default [
     path: '/cardSorting/managerview/:id',
     name: 'CardSortingManagerView',
     meta: { authorize: [0, 1] },
-    component: () => ManagerView,
+    component: ManagerView,
     props: true,
     children: [
       {
@@ -17,7 +17,7 @@ export default [
         name: 'CardSortingEditTest',
         props: true,
         meta: { authorize: [0, 1] },
-        component: () => EditTestView,
+        component: EditTestView,
       },
       {
         path: '/cardSorting/settingsview/:id',
