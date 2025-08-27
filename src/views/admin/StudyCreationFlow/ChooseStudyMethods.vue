@@ -135,14 +135,6 @@ const methodsByCategory = {
       color: 'secondary',
       available: true
     },
-    {
-      id: 'AI',
-      name: 'AI Powered Testing',
-      description: '',
-      icon: 'mdi-clipboard-check',
-      color: 'secondary',
-      available: false
-    }
   ]
 }
 

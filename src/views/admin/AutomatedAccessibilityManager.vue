@@ -1,36 +1,11 @@
 <template>
   <v-app>
-    <v-main
-      class="fill-height"
-      style="background-color: #f5f5f5;"
-    >
-      <v-container
-        fluid
-        class="fill-height pa-0 ma-0"
-      >
-        <v-row
-          no-gutters
-          class="fill-height"
-        >
-          <!-- Drawer Component -->
-          <AccessibilityDrawer
-            ref="accessibilityDrawer"
-            v-model="drawerOpen"
-            :items="navItems"
-            @toggle="onDrawerToggle"
-          />
+    <AccessibilityDrawer ref="accessibilityDrawer" v-model="drawerOpen" :items="navItems" @toggle="onDrawerToggle" />
 
-          <!-- Main Content -->
-          <v-col class="pa-4 content-col">
-            <v-card
-              class="fill-height pa-4"
-              style="background-color: #ffffff;"
-            >
-              <router-view />
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+    <v-main>
+      
+        <router-view />
+      
     </v-main>
   </v-app>
 </template>
@@ -55,22 +30,22 @@ const navItems = computed(() => [
     {
         title: 'Analyse',
         icon: 'mdi-magnify',
-        path: `/analyse/${testId.value}`
+        path: `/accessibility/automatic/analyse/${testId.value}`
     },
     {
         title: 'Answers',
         icon: 'mdi-comment-question',
-        path: `/answers/${testId.value}`
+        path: `/accessibility/automatic/answers/${testId.value}`
     },
     {
         title: 'Report',
         icon: 'mdi-chart-bar',
-        path: `/report/${testId.value}`
+        path: `/accessibility/automatic/report/${testId.value}`
     },
     {
         title: 'Settings',
         icon: 'mdi-cog',
-        path: `/settings/${testId.value}`
+        path: `/accessibility/automatic/settings/${testId.value}`
     },
 ])
 
@@ -87,9 +62,10 @@ const onDrawerToggle = (isOpen) => {
     }
 }
 
-// drawer closed when open
+// Initialize the content area position
 onMounted(() => {
-    onDrawerToggle(false) // Assuming drawer starts closed by default
+    // Initial position based on the drawer's default state
+    onDrawerToggle(true) // Assuming drawer starts open by default
 })
 </script>
 

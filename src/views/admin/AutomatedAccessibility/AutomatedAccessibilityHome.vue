@@ -32,22 +32,22 @@ onMounted(() => {
     createCard('ANALYSE', {
       title: 'Analyse',
       description: 'Run comprehensive accessibility analysis',
-      path: `/analyse/${testId}`,
+      path: `/accessibility/automatic/analyse/${testId}`,
     }),
     createCard('ANSWERS', {
       title: 'Answers',
       description: 'Manage Q&A responses and feedback',
-      path: `/answers/${testId}`,
+      path: `/accessibility/automatic/answers/${testId}`,
     }),
     createCard('REPORTS', {
       title: 'Report',
       description: 'Generate detailed reports and insights',
-      path: `/report/${testId}`,
+      path: `/accessibility/automatic/report/${testId}`,
     }),
     createCard('SETTINGS', {
       title: 'Settings',
       description: 'Configure preferences and options',
-      path: `/settings/${testId}`,
+      path: `/accessibility/automatic/settings/${testId}`,
     }),
   ]
 
