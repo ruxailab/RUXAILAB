@@ -209,7 +209,6 @@ const handleSendInvitations = async (invitationData) => {
   });
 
   await submit();
-  showInviteDialog.value = false;
 };
 
 const changeRole = async (item, newValue) => {
