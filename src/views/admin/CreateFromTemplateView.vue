@@ -63,7 +63,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import List from '@/components/atoms/ListComponent.vue'
+import List from '@/shared/components/tables/ListComponent.vue'
 import TempDialog from '@/components/molecules/TemplateInfoDialog.vue'
 
 const store = useStore()

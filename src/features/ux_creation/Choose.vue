@@ -63,7 +63,7 @@
 <script setup>
 import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
-import SelectableCard from '@/shared/components/SelectableCard.vue'
+import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import { STUDY_CATEGORIES, getCategoryById } from '@/shared/constants/studyCategories.js'
 import { ref } from 'vue'

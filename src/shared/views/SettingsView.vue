@@ -406,9 +406,9 @@
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import FormTestDescription from '@/components/atoms/FormTestDescription';
+import FormTestDescription from '@/shared/components/FormTestDescription';
 import Snackbar from '@/shared/components/Snackbar';
-import LeaveAlert from '@/shared/components/LeaveAlert';
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
 import AccessNotAllowed from '@/shared/components/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Test from '@/models/Test';

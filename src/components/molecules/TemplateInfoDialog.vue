@@ -206,7 +206,7 @@ import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import FormTestDescription from '@/components/atoms/FormTestDescription.vue';
+import FormTestDescription from '@/shared/components/FormTestDescription.vue';
 import Test from '@/models/Test';
 import TestAdmin from '@/models/TestAdmin';
 

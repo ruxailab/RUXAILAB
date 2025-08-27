@@ -128,7 +128,7 @@
 </template>
 
 <script setup>
-import ButtonSave from '@/shared/components/ButtonSave.vue';
+import ButtonSave from '@/shared/components/buttons/ButtonSave.vue';
 import Snackbar from '@/shared/components/Snackbar.vue';
 import TextareaForm from '@/shared/components/TextareaForm.vue';
 import UserVariables from '@/shared/components/UserVariables.vue';
