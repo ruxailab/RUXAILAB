@@ -474,7 +474,7 @@ const saveConfiguration = async () => {
 
     // Optionally redirect to assessment page after a delay
     setTimeout(() => {
-      router.push(`/preview/${testId.value}`)
+      router.push(`/accessibility/manual/preview/${testId.value}`)
     }, 1000)
 
   } catch (err) {

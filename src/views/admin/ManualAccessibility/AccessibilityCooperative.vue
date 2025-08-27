@@ -227,7 +227,7 @@ const cancelInvitation = async (guest) => {
 
 const goToSession = (coopId) => {
   const testId = route.params.testId;
-  router.push(`/preview/${testId}`);
+  router.push(`/accessibility/manual/preview/${testId}`);
 };
 
 // Original functions adapted
