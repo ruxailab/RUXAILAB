@@ -78,7 +78,7 @@
 
 import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
-import SelectableCard from '@/shared/components/SelectableCard.vue'
+import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
