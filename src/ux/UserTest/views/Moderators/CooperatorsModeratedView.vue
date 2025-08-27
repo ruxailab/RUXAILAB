@@ -10,5 +10,5 @@
 
 <script setup>
 import CooperatorsView from '@/shared/views/CooperatorsView.vue';
-import CreateInviteDialog from '../../components/dialogs/CreateInviteDialog.vue';
+import CreateInviteDialog from '@/ux/UserTest/components/dialogs/CreateInviteDialog.vue';
 </script>
