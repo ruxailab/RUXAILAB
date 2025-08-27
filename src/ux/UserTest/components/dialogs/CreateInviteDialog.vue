@@ -3,8 +3,8 @@
     :model-value="dialog"
     class="rounded-lg"
     max-width="950"
-    @click:outside="$refs.inviteForm.resetValidation()"
-    @update:model-value="$emit('update:dialog', $event)"
+    @click:outside="$emit('update:dialog', false)"
+  @update:model-value="$emit('update:dialog', $event)"
   >
     <v-card class="rounded-xxl">
       <v-card-title
@@ -267,6 +267,8 @@ const submit = async () => {
   hour.value = null;
   inviteMessage.value = '';
   comboboxModel.value = {};
+
+  emit('update:dialog', false);
 };
 
 const notifyCooperator = (guest) => {
