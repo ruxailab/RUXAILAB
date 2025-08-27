@@ -21,7 +21,7 @@
 
 <script setup>
 import HeuristicsTestAnswer from '@/ux/Heuristic/components/HeuristicsTestAnswer.vue'
-import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
+import UserTestAnswer from '@/ux/UserTest/components/UserTestAnswer.vue'
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
