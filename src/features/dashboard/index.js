@@ -10,7 +10,6 @@ export {
 
 // Test items
 export {
-    generateTestNavigationItems,
     calculateAccessLevel
 } from './testItems.js';
 
@@ -18,5 +17,4 @@ export {
 export {
     globalToolbarItems,
     navigationContexts,
-    getNavigationContext
 } from '@/features/navigation/globalItems.js';
