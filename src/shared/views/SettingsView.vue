@@ -411,7 +411,6 @@ import Snackbar from '@/shared/components/Snackbar';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import Test from '@/models/Test';
 import TemplateHeader from '@/shared/models/TemplateHeader';
 import TemplateAuthor from '@/shared/models/TemplateAuthor';
 import TemplateBody from '@/shared/models/TemplateBody';
@@ -419,6 +418,7 @@ import Template from '@/shared/models/Template';
 import TestAdmin from '@/models/TestAdmin';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
+import Study from '../models/Study';
 
 const store = useStore();
 const router = useRouter();
@@ -545,7 +545,7 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     loading.value = true;
     try {
-      await store.dispatch('updateTest', new Test(object.value));
+      await store.dispatch('updateTest', new Study(object.value));
       await store.dispatch('getTest', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
       toast.success(t('alerts.savedChanges'));
@@ -661,14 +661,13 @@ const updateObject = newObject => {
 const duplicateTest = async () => {
   loading.value = true;
   try {
-    const testObj = new Test({
+    const testObj = new Study({
       testTitle: 'Copy of ' + test.value.testTitle,
       testDescription: test.value.testDescription,
       testType: test.value.testType,
       userTestType: test.value.userTestType,
       testStructure: test.value.testStructure,
       testOptions: test.value.testOptions,
-      userTestStatus: {},
       id: null,
       testAdmin: new TestAdmin({
         userDocId: user.value.id,

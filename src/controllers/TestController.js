@@ -1,6 +1,6 @@
 // imports
 
-import Test from '@/models/Test'
+import Study from '@/shared/models/Study'
 import Controller from '@/controllers/BaseController'
 import AnswerController from './AnswerController'
 import Answer from '@/models/Answer'
@@ -113,7 +113,7 @@ export default class TestController extends Controller {
   async getTest(parameter) {
     const res = await super.readOne(COLLECTION, parameter.id)
     if (!res.exists()) return null
-    return Test.toTest(Object.assign({ id: res.id }, res.data()))
+    return Study.toStudy(Object.assign({ id: res.id }, res.data()))
   }
 
   async getPublicTests() {
@@ -124,14 +124,14 @@ export default class TestController extends Controller {
     }
     const res = await super.query(COLLECTION, q)
     return res.docs.map((t) =>
-      Test.toTest(Object.assign({ id: t.id }, t.data())),
+      Study.toStudy(Object.assign({ id: t.id }, t.data())),
     )
   }
 
   async getAllTests() {
     try {
       const response = await super.readAll('tests')
-      const res = response.map(Test.toTest)
+      const res = response.map(Study.toTest)
       return res
     } catch (err) {
       throw err
