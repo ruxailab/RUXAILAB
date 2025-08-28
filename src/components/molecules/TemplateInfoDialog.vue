@@ -207,7 +207,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import FormTestDescription from '@/shared/components/FormTestDescription.vue';
-import Test from '@/models/Test';
+import Study from '@/shared/models/Study';
 import TestAdmin from '@/models/TestAdmin';
 
 const props = defineProps({
@@ -309,7 +309,7 @@ const validate = async () => {
   }
 
   try {
-    const test = new Test({
+    const test = new Study({
       ...localTest.value,
       id: null,
       testAdmin: new TestAdmin({
