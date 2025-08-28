@@ -87,13 +87,6 @@ const setType = (type) => {
   if (normalizedType === 'unmoderated') test.userTestType = normalizedType
   if (normalizedType === 'moderated') {
     test.userTestType = normalizedType
-    test.userTestStatus = {
-      user: false,
-      moderator: false,
-      consentStatus: 'open',
-      preTestStatus: 'closed',
-      postTestStatus: 'closed',
-    }
   }
 
   emit('setUser', test)

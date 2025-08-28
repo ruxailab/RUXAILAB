@@ -9,21 +9,17 @@
         View the overall analytics of your study
       </p>
     </template>
-    <!-- checking whether to show heuristics answer sheet or user answer sheet-->
-    <div v-if="testAnswerDocument.type === 'HEURISTICS'">
-      <HeuristicsTestAnswer />
-    </div>
-    <div v-else-if="testAnswerDocument">
+    <div v-if="testAnswerDocument">
       <UserTestAnswer />
     </div>
   </PageWrapper>
 </template>
 
 <script setup>
-import HeuristicsTestAnswer from '@/ux/Heuristic/components/HeuristicsTestAnswer.vue'
-import UserTestAnswer from '@/ux/UserTest/components/UserTestAnswer.vue'
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
+import UserTestAnswer from '../components/UserTestAnswer.vue';
 
 const store = useStore()
 

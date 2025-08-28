@@ -233,13 +233,13 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import Test from '@/models/Test';
 import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
+import Study from '@/shared/models/Study';
 
 const router = useRouter();
 const store = useStore();
@@ -250,7 +250,6 @@ const test = ref({
   description: '',
   isPublic: false,
   userTestType: '',
-  userTestStatus: {},
 });
 
 const websiteDetails = ref({
@@ -314,19 +313,7 @@ const handleTestType = () => {
   if (testCategory === 'test') {
     const extraDetails = {}
     const testMethod = method.value;
-    if (testMethod == 'unmoderated') {
-      extraDetails.userTestType = testMethod
-    }
-    if (testMethod == 'moderated') {
-      extraDetails.userTestType = testMethod
-      extraDetails.userTestStatus = {
-        user: false,
-        moderator: false,
-        consentStatus: 'open',
-        preTestStatus: 'closed',
-        postTestStatus: 'closed',
-      }
-    }
+    extraDetails.userTestType = testMethod
     test.value = { ...test.value, ...extraDetails };
     submit();
   } else if (testCategory === 'accessibility') {
@@ -348,14 +335,13 @@ const submit = async () => {
 
   isLoading.value = true;
   const user = store.getters.user;
-  const newTest = new Test({
+  const newTest = new Study({
     id: null,
     testTitle: test.value.title,
     testDescription: test.value.description,
     testType: testType,
     isPublic: test.value.isPublic,
     userTestType: test.value.userTestType,
-    userTestStatus: test.value.userTestStatus,
     testAdmin: new TestAdmin({
       userDocId: user.id,
       email: user.email,

@@ -127,7 +127,7 @@ const submitPdf = async () => {
           testDescription: test.value.testDescription,
           cooperatorsEmail: cooperatorsEmailsList,
           creatorEmail: test.value.testAdmin.email,
-          finalReport: test.value.finalReport,
+          studyConclusion: test.value.studyConclusion,
           allOptions: test.value.testOptions,
           allAnswers: answers.value,
           testStructure: test.value.testStructure,
