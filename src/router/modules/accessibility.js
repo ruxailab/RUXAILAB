@@ -38,7 +38,7 @@ const accessibilityRoutes = [
             { path: '', name: 'AutomatedAccessibilityHome', component: AutomatedAccessibilityHome },
             { path: '/analyse/:testId', name: 'Analyse', component: Analyse },
             { path: '/answers/:testId', name: 'AccessibilityAnswers', component: AccessibilityAnswers },
-            { path: '/report/:testId', name: 'AccessibilityReport', component: AccessibilityReport },
+            { path: '/reports/:testId', name: 'AccessibilityReport', component: AccessibilityReport },
             { path: '/cooperation/:testId', name: 'AccessibilityCooperation', component: AccessibilityCooperation },
             { path: '/settings/:testId', name: 'AccessibilitySettings', component: AccessibilitySettings }
         ]
