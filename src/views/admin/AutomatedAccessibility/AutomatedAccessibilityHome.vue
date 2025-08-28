@@ -1,9 +1,8 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="dashboard-container">
-        <!-- Manager-style Header (matches ManagerView/AccessibilityHome) -->
-        <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
+      <!-- Manager-style Header (uses same image as ManagerView) -->
+      <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
           <v-col cols="12" md="6" class="text-white text-center text-md-left">
             <p class="font-weight-medium text-h4 text-md-h2">
               Accessibility
@@ -25,7 +24,6 @@
           </p>
           <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
         </v-container>
-      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -121,68 +119,126 @@ const go = (path) => {
 </script>
 
 <style scoped>
+:root {
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-hover-bg: rgba(255, 255, 255, 1);
+  --card-border: rgba(255, 255, 255, 0.2);
+  --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --card-padding: 1.5rem;
+  --card-height: 240px;
+  --icon-size: 56px;
+}
+
 /* Main Container */
 .dashboard-container {
   background: #f8f9fa;
-  min-height: 100vh;
-  padding: 2rem 1rem;
+  min-height: 120vh;
+  padding: 1.5rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Manager-style Header */
+/* Manager Header - */
 .manager-bg {
-  height: 100%;
+  height: 80%;
   margin: 0 !important;
 }
 
 .back-gradient {
-  height: 60vh;
+  height: 40vh;
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
-/* Cards Section */
+/* Dashboard Cards - Match ManagerView styling */
 .card-container {
   width: 80%;
-  margin: 0 auto;
 }
 
 .presentation-text {
-  font-weight: 500;
-  font-size: 1.125rem;
-  margin-bottom: 1rem;
-  color: #333;
+  color: rgb(87, 84, 100);
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 20px;
 }
 
-/* Responsive Design */
-@media (max-width: 960px) {
-  .dashboard-container {
-    padding: 1rem 0.5rem;
+.dashboard-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  height: var(--card-height);
+  opacity: 0;
+  animation: cardSlideIn 0.6s ease-out forwards;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--card-shadow);
+  background: var(--card-hover-bg);
+}
+
+.card-content {
+  padding: var(--card-padding);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: center;
+}
+
+.icon-container {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  border-radius: inherit;
+}
+
+/* Animations */
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
 
-  .welcome-banner .pa-8 {
-    padding: 1.5rem !important;
-  }
-
-  .display-main {
-    font-size: 2rem !important;
-  }
-
-  .card-content {
-    padding: 1.5rem;
-  }
-
-  .icon-container {
-    width: 56px;
-    height: 56px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 600px) {
-  .dashboard-container {
-    padding: 0.5rem;
+/* Responsive styles to match ManagerView */
+@media screen and (max-width: 960px) {
+  .presentation-text {
+    display: flex;
+    text-align: center;
+    justify-content: center;
   }
 
-  .card-content {
-    padding: 1rem;
+  .card-container {
+    width: 85%;
+  }
+
+  .back-gradient {
+    height: 100%;
   }
 }
 </style>

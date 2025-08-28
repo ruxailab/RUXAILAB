@@ -1,72 +1,121 @@
 <template>
-  <v-container fluid class="pt-6 pb-10">
-    <v-row>
-      <v-col cols="12">
-        <v-card elevation="0" class="mb-6 pa-4" color="#f8f9fa">
-          <v-card-title class="text-h5 font-weight-bold text-center">
-            {{ testTitle }}
-          </v-card-title>
-          <v-card-text class="text-center">
-            <span v-if="testInfo">{{ testInfo }}</span>
-            <span v-else>Información general sobre el test de accesibilidad manual.</span>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
+  <v-app>
+    <v-main>
+      <!-- Manager-style Header (uses same image as ManagerView) -->
+      <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
+        <v-col cols="12" md="6" class="text-white text-center text-md-left">
+          <p class="font-weight-medium text-h4 text-md-h2">
+            {{ $t('accessibility.title') }}
+          </p>
+          <p class="text-subtitle-1 text-md-subtitle-1">
+            {{ $t('accessibility.subtitle') }}
+          </p>
+        </v-col>
+
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
+        </v-col>
+      </v-row>
+
+      <!-- Cards section using CardsManager so it matches ManagerView UI -->
+      <v-container class="card-container pt-6 pb-10">
+        <p class="presentation-text text-center text-md-left mb-4">
+          {{ $t('accessibility.description') }}
+        </p>
         <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
+import { useI18n } from 'vue-i18n';
 import CardsManager from '@/shared/components/CardsManager';
 
 const route = useRoute();
 const router = useRouter();
 const { mdAndUp } = useDisplay();
+const { t } = useI18n();
 const testId = ref(route.params.testId || '');
 
-// Demo: Puedes reemplazar testTitle y testInfo con datos reales del test
-const testTitle = ref('Test de Accesibilidad Manual');
-const testInfo = ref('Este test permite evaluar manualmente la accesibilidad de la aplicación, configurando parámetros y revisando resultados.');
-
 const cardData = [
-  { title: 'Home', icon: 'mdi-home-variant', subtitle: 'Dashboard overview', description: 'Access your main dashboard with overview of all accessibility activities and metrics.', route: '' },
-  { title: 'Config', icon: 'mdi-cog-outline', subtitle: 'Configuration settings', description: 'Configure and manage accessibility test settings, preferences, and system configurations.', route: `/config/${testId.value}` },
-  { title: 'Edit', icon: 'mdi-pencil-outline', subtitle: 'Create and modify tests', description: 'Design and customize accessibility tests for your application with advanced editing tools.', route: `/edit/${testId.value}` },
-  { title: 'Preview', icon: 'mdi-eye-outline', subtitle: 'Preview tests', description: 'Preview your accessibility tests before deployment and review test configurations.', route: `/preview/${testId.value}` },
-  { title: 'Answer', icon: 'mdi-comment-question-outline', subtitle: 'View test responses', description: 'Check and analyze the responses submitted for accessibility tests and evaluations.', route: `/result/${testId.value}` },
-  { title: 'Cooperator', icon: 'mdi-account-multiple-outline', subtitle: 'Share test', description: 'Share your accessibility tests with collaborators for feedback and review.', route: `/cooperative/${testId.value}` },
+  {
+    title: t('titles.manager'),
+    icon: 'mdi-home-variant',
+    subtitle: t('descriptions.edit'),
+    description: t('descriptions.edit'),
+    route: '',
+    image: 'IntroEdit.svg',
+    imageStyle: '',
+    cardStyle: 'background-image: radial-gradient(circle at top right, #6366f1, #8b5cf6); overflow: hidden'
+  },
+  {
+    title: t('titles.test'),
+    icon: 'mdi-cog-outline',
+    subtitle: t('accessibility.cards.config.subtitle'),
+    description: t('accessibility.cards.config.description'),
+    route: `/config/${testId.value}`,
+    image: 'IntroCoops.svg',
+    imageStyle: '',
+    cardStyle: 'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden'
+  },
+  {
+    title: t('titles.test'),
+    icon: 'mdi-pencil-outline',
+    subtitle: t('descriptions.edit'),
+    description: t('accessibility.cards.edit.description'),
+    route: `/edit/${testId.value}`,
+    image: 'IntroEdit.svg',
+    imageStyle: 'transform: rotateY(180deg);',
+    cardStyle: 'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden'
+  },
+  {
+    title: t('titles.preview'),
+    icon: 'mdi-eye-outline',
+    subtitle: t('descriptions.reports'),
+    description: t('descriptions.reports'),
+    route: `/preview/${testId.value}`,
+    image: 'IntroReports.svg',
+    imageStyle: 'height: 250px',
+    cardStyle: 'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden'
+  },
+  {
+    title: t('titles.answers'),
+    icon: 'mdi-comment-question-outline',
+    subtitle: t('descriptions.answers'),
+    description: t('descriptions.answers'),
+    route: `/result/${testId.value}`,
+    image: 'IntroAnswer.svg',
+    imageStyle: 'height: 250px',
+    cardStyle: 'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden'
+  },
+  {
+    title: t('titles.cooperators'),
+    icon: 'mdi-account-multiple-outline',
+    subtitle: t('descriptions.cooperators'),
+    description: t('descriptions.cooperators'),
+    route: `/cooperative/${testId.value}`,
+    image: 'IntroCoops.svg',
+    imageStyle: '',
+    cardStyle: 'background-image: radial-gradient(circle at top right, #06b6d4, #0891b2); overflow: hidden'
+  },
 ];
 
 const cards = ref(cardData);
 
-// Map card titles to manager-style images (reuse ManagerView assets)
-const imageMap = {
-  home: 'IntroEdit.svg',
-  config: 'IntroCoops.svg',
-  edit: 'IntroEdit.svg',
-  preview: 'IntroReports.svg',
-  answer: 'IntroAnswer.svg',
-  cooperator: 'IntroCoops.svg',
-};
-
 const managerCards = computed(() =>
   cards.value.map((c) => ({
-    image: imageMap[c.title.toLowerCase()] || 'IntroEdit.svg',
+    image: c.image,
     title: c.title,
     titleDirect: (c.title || '').toString(),
-    imageStyle: '',
+    imageStyle: c.imageStyle || '',
     bottom: '#000',
     description: c.subtitle || c.description,
     descriptionDirect: (c.subtitle || c.description || '').toString(),
-    cardStyle: '',
+    cardStyle: c.cardStyle || '',
     path: c.route,
   }))
 );
@@ -96,23 +145,27 @@ const go = (path) => {
   margin: 0 auto;
 }
 
-/* Manager Header */
+/* Manager Header - */
 .manager-bg {
-  height: 100%;
+  height: 80%;
   margin: 0 !important;
 }
 
-/* Dashboard Cards */
+.back-gradient {
+  height: 40vh;
+  background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
+}
+
+/* Dashboard Cards - Match ManagerView styling */
 .card-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  width: 80%;
 }
 
 .presentation-text {
-  font-weight: 500;
-  font-size: 1.125rem;
-  margin-bottom: 1rem;
+  color: rgb(87, 84, 100);
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 20px;
 }
 
 .dashboard-card {
@@ -176,6 +229,23 @@ const go = (path) => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Responsive styles to match ManagerView */
+@media screen and (max-width: 960px) {
+  .presentation-text {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .card-container {
+    width: 85%;
+  }
+
+  .back-gradient {
+    height: 100%;
   }
 }
 </style>
