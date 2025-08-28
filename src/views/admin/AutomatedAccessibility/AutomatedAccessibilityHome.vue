@@ -59,7 +59,7 @@ const navItems = computed(() => [
   {
     title: 'Report',
     icon: 'mdi-file-chart-outline',
-    path: `/report/${testId.value}`,
+    path: `/reports/${testId.value}`,
   },
   {
     title: 'Settings',
