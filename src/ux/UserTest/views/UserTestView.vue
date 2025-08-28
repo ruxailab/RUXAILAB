@@ -145,13 +145,13 @@
                     color="white" complete-icon="mdi-check" />
                   <v-divider v-if="hasEyeTracking" />
 
-                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Tasks"
+                  <v-stepper-item :value="hasEyeTracking ? 3 : 2" title="Tasks"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Post-test"
+                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Post-test"
                     :complete="stepperValue >= (hasEyeTracking ? 5 : 4)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 6 : 5" title="Completion"
+                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Completion"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)" color="white" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
@@ -159,7 +159,7 @@
           </v-row>
           <!-- Stepper secundario para tareas -->
           <v-row
-            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
             class="task-stepper-row"
             justify="center"
           >
@@ -208,11 +208,11 @@
             @closeCalibration="closeCalibration()" @openCalibration="openCalibration()"
             :calibrationInProgress="calibrationInProgress" :calibrationCompleted="calibrationCompleted" />
 
-          <PreTasksStep v-if="globalIndex === (hasEyeTracking ? 5 : 3) && taskIndex === 0"
+          <PreTasksStep v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 6 : 4 }" />
+            @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
 
-          <TaskStep v-if="globalIndex === (hasEyeTracking ? 6 : 4) && test.testType === 'User'" ref="taskStepComponent"
+          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === 'User'" ref="taskStepComponent"
             :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
@@ -228,13 +228,13 @@
             @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 
           <PostTestStep
-            v-if="globalIndex === (hasEyeTracking ? 7 : 5) && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            v-if="globalIndex === (hasEyeTracking ? 6 : 5) && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
             :test-title="test.testTitle" :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer" :post-test-completed="localTestAnswer.postTestCompleted"
             @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }" />
 
           <FinishStep
-            v-if="globalIndex === (hasEyeTracking ? 8 : 6) && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
+            v-if="globalIndex === (hasEyeTracking ? 7 : 6) && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
             :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
             :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
             @submit="dialog = true" />
@@ -330,9 +330,6 @@ const timerComponent = computed(() => {
 const isTracking = ref(false)
 const isRecording = ref(false)
 const irisData = ref([])
-const gazeX = ref(null)
-const gazeY = ref(null)
-const showGaze = ref(true)
 const eyeCalibrationStepDone = ref(false)
 const calibrationCompleted = ref(false)
 const calibrationInProgress = ref(false)
@@ -369,12 +366,11 @@ const stepperValue = computed(() => {
 
   if (hasEyeTracking.value) {
     // EyeTracking flow
-    if (globalIndex.value === 3) return 2; // PreCalibration
-    if (globalIndex.value === 4) return 2; // Calibration (mesmo stepper)
-    if (globalIndex.value === 5) return 3; // PreTasks
-    if (globalIndex.value === 6) return 3; // Tasks
-    if (globalIndex.value === 7 && !localTestAnswer.postTestCompleted) return 4; // PostTest
-    if (globalIndex.value === 8 && localTestAnswer.postTestCompleted) return 5; // Finish
+    if (globalIndex.value === 3) return 2; // Calibration
+    if (globalIndex.value === 4) return 3; // PreTasks
+    if (globalIndex.value === 5) return 3; // Tasks
+    if (globalIndex.value === 6) return 4; // PostTest
+    if (globalIndex.value === 7) return 5; // PostTest
   } else {
     // Normal flow
     if (globalIndex.value === 3) return 2; // PreTasks
@@ -414,14 +410,20 @@ function toggleTracking(value) {
 }
 
 function saveIrisDataIntoTask() {
+  console.log('saveIrisDataIntoTask', {
+    taskIndex: taskIndex.value,
+    hasEye: test.value.testStructure.userTasks[taskIndex.value]?.hasEye,
+    globalIndex: globalIndex.value,
+  });
+
   const task = test.value.testStructure.userTasks[taskIndex.value]
 
-  if (task?.hasEye === true && index.value == 1) {
+  if (task?.hasEye === true && globalIndex.value >= 5) {
     toggleTracking(true);
   } else {
     toggleTracking(false);
   }
-}
+} 
 
 const saveAnswer = async () => {
   try {
@@ -549,12 +551,8 @@ const completeStep = (id, type, userCompleted = true) => {
       globalIndex.value = hasEyeTracking.value ? 3 : 3; // se tiver, vai pro PreCalibration
     }
 
-    if (type === 'eyePreCalibration') {
-      globalIndex.value = 4; // EyeTrackingCalibration
-    }
-
     if (type === 'eyeCalibration') {
-      globalIndex.value = 5; // PreTasks
+      globalIndex.value = 4; // PreTasks
       taskIndex.value = 0;
       eyeCalibrationStepDone.value = true;
     }
@@ -578,12 +576,17 @@ const completeStep = (id, type, userCompleted = true) => {
       // }
 
       if (id < localTestAnswer.tasks.length - 1) {
-        taskIndex.value = id + 1;
-        startTimer();
-      } else {
-        console.log('All tasks completed, moving to post-test');
-        globalIndex.value = hasEyeTracking.value ? 7 : 5; // PostTest
-      }
+  taskIndex.value = id + 1;
+  startTimer();
+} else {
+  if (allTasksCompleted.value) {
+    console.log('All tasks completed, moving to post-test');
+    taskIndex.value = id + 1; // to help saving methods
+    globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+  } else {
+    console.log('Última task finalizada, mas ainda há tasks incompletas.');
+  }
+}
 
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -597,7 +600,7 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true;
       // items.value[2].icon = 'mdi-check-circle-outline';
-      globalIndex.value = hasEyeTracking.value ? 8 : 6; // Finish
+      globalIndex.value = hasEyeTracking.value ? 7 : 6; // Finish
     }
 
     saveIrisDataIntoTask();
