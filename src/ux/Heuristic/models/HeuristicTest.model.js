@@ -1,14 +1,15 @@
-import Test from '../../../models/Test'
+import Test from '../../../shared/models/Study'
 /**
  * Create a Heuristic.
  * @param {Object[]} heuristics  - An array of HeuristicQuestion value.
  */
 
 export default class Heuristic extends Test {
-    constructor({ heuristics, testTitle, testDescription } = {}) {
+    constructor({ heuristics, testTitle, testDescription, testWeights } = {}) {
         super({ testTitle, testDescription })
         this.heuristics = heuristics ?? null
         this.testType = 'heuristic'
+        this.testWeights = testWeights ?? {}
         const date = new Date()
         const current_date =
             date.getFullYear() +
@@ -29,6 +30,7 @@ export default class Heuristic extends Test {
             testOptions: [],
             testAdmin: this.testAdmin,
             updateDate: Date.now(),
+            testWeights: this.testWeights,
         })
     }
     static toHeuristicTest(data) {
