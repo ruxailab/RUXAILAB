@@ -49,15 +49,13 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
-import Intro from '@/components/molecules/IntroCoops.vue';
-import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
-import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
-import PageWrapper from '@/components/template/PageWrapper.vue';
-import CooperatorTable from '@/components/molecules/CooperatorTable.vue';
-import MessageDialog from '@/components/molecules/MessageDialog.vue';
-import InviteDialog from '@/components/molecules/InviteDialog.vue';
+import Intro from '@/shared/components/IntroCoops.vue';
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
+import CooperatorTable from '@/shared/components/CooperatorTable.vue';
+import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
+import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
 import { useNotificationManager } from '@/composables/useNotificationManager';
@@ -120,7 +118,7 @@ const handleSendMessage = async ({ user, title, content }) => {
       userId: user.userDocId,
       title: title,
       description: content,
-      redirectsTo: '/',
+      redirectsTo: null,
       author: test.value.testAdmin.email,
       testId: test.value.id
     });

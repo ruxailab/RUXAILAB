@@ -1,40 +1,75 @@
 <template>
-  <template v-if="test">
-    <ManagerLayout :header-title="accessLevel === 0 ? $t('titles.manager') : test?.testTitle || ''"
-      :header-subtitle="accessLevel === 0 ? test?.testTitle || '' : ''" :show-loading="$route.path.includes('manager')"
-      :loading="loading" :content-class="{ 'pl-drawer': mdAndUp }">
-      <template #dialog>
-        <v-dialog :model-value="flagToken && flagUser && !logined" width="500" persistent>
-          <v-card>
-            <v-row class="ma-0 pa-0 pt-5" justify="center">
-              <v-avatar class="justify-center" color="orange-lighten-4" size="150">
-                <v-icon size="120">
-                  mdi-account
-                </v-icon>
-              </v-avatar>
-            </v-row>
-            <v-card-actions class="justify-center mt-4">
-              <v-btn class="text-white bg-orange" @click="setTest">
-                {{ $t('common.continueAs') }} {{ user.email }}
-              </v-btn>
-            </v-card-actions>
-            <v-card-actions class="justify-center mt-4">
-              <p>
-                {{ $t('common.notUser', { userEmail: user.email }) }}
-                <a style="color: #f9a826" @click="signOut">{{
-                  $t('common.changeAccount')
-                }}</a>
-              </p>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </template>
+  <router-view />
+  <v-container
+    class="pa-0 ma-0"
+    fluid
+  >
+    <v-overlay
+      v-if="$route.path.includes('manager')"
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
+      <div class="white-text mt-3">
+        {{ $t('common.loading') }}
+      </div>
+    </v-overlay>
 
-      <template #drawer>
-        <Drawer v-if="mdAndUp" :items="navigator" />
-      </template>
-
-      <template #cards>
+    <v-dialog
+      :model-value="flagToken && flagUser && !logined"
+      width="500"
+      persistent
+    >
+      <v-card>
+        <v-row
+          class="ma-0 pa-0 pt-5"
+          justify="center"
+        >
+          <v-avatar
+            class="justify-center"
+            color="orange-lighten-4"
+            size="150"
+          >
+            <v-icon size="120">
+              mdi-account
+            </v-icon>
+          </v-avatar>
+        </v-row>
+        <v-card-actions class="justify-center mt-4">
+          <v-btn
+            class="text-white bg-orange"
+            @click="setTest"
+          >
+            {{ $t('common.continueAs') }} {{ user.email }}
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions class="justify-center mt-4">
+          <p>
+            {{ $t('common.notUser', { userEmail: user.email }) }}
+            <a
+              style="color: #f9a826"
+              @click="signOut"
+            >{{
+              $t('common.changeAccount')
+            }}</a>
+          </p>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <template v-if="test">
+      <Drawer
+        v-if="mdAndUp"
+        :items="navigator"
+      />
+      <v-container
+        fluid
+        :class="['background pa-0 ma-0', { 'pl-drawer': mdAndUp }]"
+        style="min-height: 100vh; overflow-y: auto"
+      >
         <template v-if="$route.path.includes('manager')">
           <div v-if="accessLevel == 0">
             <p class="presentation-text text-center text-md-left mb-4">
