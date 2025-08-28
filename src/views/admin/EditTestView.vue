@@ -123,8 +123,8 @@ import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import Snackbar from '@/shared/components/Snackbar';
 import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
-import Test from '@/models/Test';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
+import Study from '@/shared/models/Study';
 
 const store = useStore();
 const router = useRouter();
@@ -184,7 +184,7 @@ const submit = async () => {
       finalMessage: store.getters.finalMessage,
     }),
   };
-  const updatedTest = new Test({ ...object.value });
+  const updatedTest = new Study({ ...object.value });
   await store.dispatch('updateTest', updatedTest);
   await store.dispatch('getTest', { id: route.params.id })
 };

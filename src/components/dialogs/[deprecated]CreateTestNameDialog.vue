@@ -136,7 +136,7 @@ import { useDisplay } from 'vuetify';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-import Test from '@/models/Test';
+import Study from '@/shared/models/Study';
 import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/[deprecated]ButtonBack.vue';
@@ -194,7 +194,6 @@ const test = ref({
   description: '',
   isPublic: false,
   userTestType: '',
-  userTestStatus: {},
 });
 
 const user = computed(() => store.getters.user);
@@ -209,7 +208,6 @@ watch(
         description: '',
         isPublic: false,
         userTestType: '',
-        userTestStatus: {},
       };
     }
   }
@@ -344,14 +342,13 @@ const submitAutomaticAccessibility = async () => {
 };
 
 const submit = async () => {
-  const newTest = new Test({
+  const newTest = new Study({
     id: null,
     testTitle: test.value.title,
     testDescription: test.value.description,
     testType: props.testType,
     isPublic: test.value.isPublic,
     userTestType: test.value.userTestType,
-    userTestStatus: test.value.userTestStatus,
     testAdmin: new TestAdmin({
       userDocId: user.value.id,
       email: user.value.email,
