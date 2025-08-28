@@ -1,4 +1,4 @@
-import ManagerView from '@/views/admin/ManagerView.vue'
+import ManagerView from '@/ux/Heuristic/views/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
@@ -18,56 +18,56 @@ export default [
     props: true,
     children: [
       {
-        path: 'report/:id/:token?',
+        path: '/heuristic/report/:id/:token?',
         name: 'ReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
-        path: 'finalreport/:id/:token?',
+        path: '/heuristic/finalreport/:id/:token?',
         name: 'FinalReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: FinalReportView,
       },
       {
-        path: 'answer/:id/:token?',
+        path: '/heuristic/answer/:id/:token?',
         name: 'AnswerView',
         props: true,
         meta: { authorize: [0, 1] },
         component: HeuristicAnswerView,
       },
       {
-        path: 'edittest/:id/:token?',
+        path: '/heuristic/edit/:id/:token?',
         name: 'EditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
-        path: 'settings/:id/:token?',
+        path: '/heuristic/settings/:id/:token?',
         name: 'SettingsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
-        path: 'cooperators/:id/:token?',
+        path: '/heuristic/cooperators/:id/:token?',
         name: 'CooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
       },
       {
-        path: 'analytics/:id/:heuristic?',
+        path: '/heuristic/analytics/:id/:heuristic?',
         name: 'AnalyticsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: AnalyticsView,
       },
       {
-        path: 'template/:id/:token?',
+        path: '/heuristic/template/:id/:token?',
         name: 'TemplateView',
         props: true,
         meta: { authorize: [0, 1] },
