@@ -88,8 +88,6 @@
 <script setup>
 import { ref, computed, watch, onMounted, useSlots } from 'vue';
 import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
@@ -167,7 +165,7 @@ const handleSendMessage = async ({ user, title, content }) => {
       userId: user.userDocId,
       title: title,
       description: content,
-      redirectsTo: '/',
+      redirectsTo: null,
       author: test.value.testAdmin.email,
       testId: test.value.id
     });

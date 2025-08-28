@@ -1,10 +1,12 @@
-import TestAdmin from './TestAdmin'
+import TestAdmin from '../../models/TestAdmin'
+import Cooperators from './Cooperators'
+import Template from './Template'
 // import Cooperators from '@/models/Cooperators'
 
 /**
  * Represents the test model.
  */
-export default class Test {
+export default class Study { // mudar nome para Study e mover para Shared
   /**
    * @param {Partial<Test>} partial
    */
@@ -21,13 +23,9 @@ export default class Test {
     creationDate,
     updateDate,
     templateDoc,
-    numberColaborators,
     isPublic,
-    finalReport,
-    userTestType,
-    userTestStatus,
-    testWeights,
-    status,
+    studyConclusion,
+    status, // transformar em um ENUM
     endDate,
   } = {}) {
     /**
@@ -89,7 +87,7 @@ export default class Test {
     /**
      * Defines the test cooperators.
      *
-     * @type {Cooperators}
+     * @type {List<Cooperators>}
      */
     this.cooperators = cooperators ?? null
 
@@ -110,16 +108,9 @@ export default class Test {
     /**
      * Defines the test template document.
      *
-     * @type {TestTemplateDoc}
+     * @type {Template}
      */
     this.templateDoc = templateDoc ?? null
-
-    /**
-     * Defines the amount of collaborators.
-     *
-     * @type {number}
-     */
-    this.numberColaborators = numberColaborators ?? 0
 
     /**
      * Defines whether the test is public.
@@ -129,40 +120,18 @@ export default class Test {
     this.isPublic = isPublic ?? false
 
     /**
-     * Allow to add extra info after finish the test.
+     * Test conclusion that can be added on Final Report
      *
      * @type {string}
      */
-    this.finalReport = finalReport ?? null
-
-    /**
-     * Allow to say if tests is moderated or not.
-     *
-     * @type {string}
-     */
-    this.userTestType = userTestType ?? null
-
-    /**
-     * Allow to show if user and moderated is connected
-     *
-     * @type {Object}
-     */
-    this.userTestStatus = userTestStatus ?? {}
-
-    /**
-     * Defines the test weights.
-     *
-     * @type {TestWeights[]}
-     */
-
-    this.testWeights = testWeights ?? {}
+    this.studyConclusion = studyConclusion ?? null
 
     /**
      * Defines the test status.
      * 
      * @type {string}
      */
-     
+
     this.status = status ?? null
     /**
      * Defines a timestamp of the test end date.
@@ -179,8 +148,8 @@ export default class Test {
    * @param {Partial<Test>} map the map to be converted.
    * @returns a new test model.
    */
-  static toTest(map) {
-    return new Test({
+  static toStudy(map) {
+    return new Study({
       ...map,
       testAdmin: TestAdmin.toTestAdmin(map.testAdmin),
       // cooperators: Cooperators.toCooperators(map.cooperators),
@@ -202,16 +171,11 @@ export default class Test {
       testOptions: this.testOptions,
       answersDocId: this.answersDocId,
       cooperators: this.cooperators,
-      // cooperators: this.cooperators.toFirestore(),
       creationDate: this.creationDate,
       updateDate: this.updateDate,
       templateDoc: this.templateDoc,
-      numberColaborators: this.numberColaborators,
       isPublic: this.isPublic,
-      finalReport: this.finalReport,
-      userTestType: this.userTestType,
-      userTestStatus: this.userTestStatus,
-      testWeights: this.testWeights,
+      studyConclusion: this.studyConclusion,
       status: this.status,
       endDate: this.endDate,
     }

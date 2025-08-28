@@ -66,7 +66,6 @@
         class="cooperators-table"
         item-key="email"
         item-value="email"
-        show-select
         height="50vh"
       >
         <!-- Email Column -->
