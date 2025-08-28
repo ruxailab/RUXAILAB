@@ -1,36 +1,19 @@
 <template>
   <v-app>
+    <AccessibilityDrawer
+      ref="accessibilityDrawer"
+      v-model="drawerOpen"
+      :items="navItems"
+      @toggle="onDrawerToggle"
+    />
     <v-main
-      class="fill-height"
-      style="background-color: #f5f5f5;"
+      
     >
-      <v-container
-        fluid
-        class="fill-height pa-0 ma-0"
-      >
-        <v-row
-          no-gutters
-          class="fill-height"
-        >
-          <!-- Drawer Component -->
-          <AccessibilityDrawer
-            ref="accessibilityDrawer"
-            v-model="drawerOpen"
-            :items="navItems"
-            @toggle="onDrawerToggle"
-          />
 
-          <!-- Main Content -->
-          <v-col class="pa-4 content-col">
-            <v-card
-              class="fill-height pa-4"
-              style="background-color: #ffffff;"
-            >
               <router-view />
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+         
+       
+
     </v-main>
   </v-app>
 </template>
