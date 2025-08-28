@@ -1,8 +1,8 @@
 <template>
-  <v-overlay v-if="true" v-model="loading" class="text-center">
+  <v-overlay v-if="$route.path.includes('manager')" v-model="loading" class="text-center">
     <v-progress-circular indeterminate color="#fca326" size="50" />
     <div class="white-text mt-3">
-      Loading
+      {{ $t('common.loading') }}
     </div>
   </v-overlay>
 </template>
