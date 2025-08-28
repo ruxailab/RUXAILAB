@@ -294,7 +294,7 @@ export default {
         const testId = this.$route.params.testId || this.testId
 
         // Use env variable for API endpoint
-        const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API || process.env.ACCESSIBILITY_API || 'http://localhost:3000/api/test';
+        const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API 
         const response = await axios.post(apiUrl, {
           url: this.url,
           testId: testId,
