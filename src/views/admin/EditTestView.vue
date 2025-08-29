@@ -125,10 +125,12 @@ import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import Study from '@/shared/models/Study';
+import { useToast } from 'vue-toastification';
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 
 defineProps({
   id: {
@@ -172,21 +174,33 @@ const setIntro = async () => {
 };
 
 const submit = async () => {
-  object.value.testStructure = {
-    ...store.state.Tests.Test.testStructure,
-    ...(test.value.testType === 'User' && {
-      welcomeMessage: store.getters.welcomeMessage,
-      landingPage: store.getters.landingPage,
-      consent: store.getters.consent,
-      userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks || [],
-      preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest || [],
-      postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest || [],
-      finalMessage: store.getters.finalMessage,
-    }),
-  };
-  const updatedTest = new Study({ ...object.value });
-  await store.dispatch('updateTest', updatedTest);
-  await store.dispatch('getTest', { id: route.params.id })
+  try {
+    if (test.value.testType === 'HEURISTICS') {
+      const heuristics = store.getters.heuristics;
+      object.value.testStructure = heuristics.reduce((acc, heuristic, index) => {
+        acc[index] = { ...heuristic };
+        return acc;
+      }, {});
+      object.value.testWeights = store.getters.testWeights || {};
+    } else if (test.value.testType === 'User') {
+      object.value.testStructure = {
+        welcomeMessage: store.getters.welcomeMessage,
+        landingPage: store.getters.landingPage,
+        consent: store.getters.consent,
+        userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks || [],
+        preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest || [],
+        postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest || [],
+        finalMessage: store.getters.finalMessage,
+      };
+    }
+    const updatedTest = new Study({ ...object.value });
+    await store.dispatch('updateTest', updatedTest);
+    await store.dispatch('getTest', { id: route.params.id });
+    toast.success('Test saved successfully');
+  } catch (error) {
+    console.error('Error saving test:', error);
+    toast.error('Failed to save test');
+  }
 };
 
 const validateAll = async () => {
@@ -239,7 +253,7 @@ const init = async () => {
     ]);
   } catch (error) {
     console.error('Failed to load test data:', error);
-    // Optionally show a toast or redirect
+    toast.error('Failed to load test data');
   }
 };
 init();
