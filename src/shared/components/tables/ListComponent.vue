@@ -97,9 +97,9 @@
 <script setup>
 import { toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useItemFormatting } from '@/composables/useItemFormatting'
-import { useItemTypes } from '@/composables/useItemTypes'
-import { useDataTableConfig } from '@/composables/useDataTableConfig'
+import { useItemFormatting } from '@/shared/composables/useItemFormatting'
+import { useItemTypes } from '@/shared/composables/useItemTypes'
+import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
 
 const props = defineProps({
   items: {

@@ -1,4 +1,4 @@
-import Controller from '@/controllers/BaseController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import TestController from '@/controllers/TestController'
 import { doc, updateDoc, collection, getDocs } from 'firebase/firestore'
 

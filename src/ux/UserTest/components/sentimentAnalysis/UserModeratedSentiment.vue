@@ -158,7 +158,7 @@ import AudioWave from '@/ux/UserTest/components/sentimentAnalysis/AudioWave.vue'
 import SentimentTranscriptsList from './SentimentTranscriptsList.vue';
 
 // Controllers
-import AudioSentimentController from '@/controllers/AudioSentimentController';
+import AudioSentimentController from '@/ai/audio-sentiment/AudioSentimentController';
 
 // Init audioSentimentController
 const audioSentimentController = new AudioSentimentController();
