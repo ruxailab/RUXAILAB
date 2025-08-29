@@ -96,9 +96,9 @@ import CooperatorTable from '@/shared/components/CooperatorTable.vue';
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';
-import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
-import { useNotificationManager } from '@/composables/useNotificationManager';
-import { useCooperatorActions } from '@/composables/useCooperatorActions';
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
+import { useNotificationManager } from '@/shared/composables/useNotificationManager';
+import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 
 const uidgen = new UIDGenerator();
 

@@ -1,7 +1,7 @@
 // imports
 
 import Study from '@/shared/models/Study'
-import Controller from '@/controllers/BaseController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AnswerController from './AnswerController'
 import Answer from '@/models/Answer'
 import UserAnswer from '@/models/UserAnswer'
