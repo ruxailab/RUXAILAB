@@ -16,11 +16,11 @@ export default class Study { // mudar nome para Study e mover para Shared
     testDescription,
     testTitle,
     testType,
+    subType,
     testStructure,
     testOptions,
     answersDocId,
     cooperators,
-    creationDate,
     updateDate,
     templateDoc,
     isPublic,
@@ -64,6 +64,13 @@ export default class Study { // mudar nome para Study e mover para Shared
     this.testType = testType ?? null
 
     /**
+    * Defines the test subtype.
+    *
+    * @type {string}
+    */
+    this.subType = subType ?? null
+
+    /**
      * Defines the test structure.
      *
      * @type {TestStructure[]}
@@ -96,7 +103,7 @@ export default class Study { // mudar nome para Study e mover para Shared
      *
      * @type {number}
      */
-    this.creationDate = creationDate ?? null
+    this.creationDate = Date.now()
 
     /**
      * Defines a timestamp of the test last updated date.
@@ -178,6 +185,7 @@ export default class Study { // mudar nome para Study e mover para Shared
       studyConclusion: this.studyConclusion,
       status: this.status,
       endDate: this.endDate,
+      subType: this.subType,
     }
   }
 }

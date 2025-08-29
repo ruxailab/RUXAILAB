@@ -6,10 +6,10 @@
         :token="token"
       />
     </div>
-    <div v-if="test.testType == 'User' && test.userTestType === 'unmoderated'">
+    <div v-if="test.testType == 'User' && test.subType === 'unmoderated'">
       <UserTestView />
     </div>
-    <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
+    <div v-if="test.testType === 'User' && test.subType === 'moderated'">
       <ModeratedTestView
         ref="moderatedTestViewRef"
         :token="token"
