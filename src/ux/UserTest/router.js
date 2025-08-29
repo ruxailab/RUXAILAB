@@ -1,4 +1,5 @@
-import ManagerView from '@/views/admin/ManagerView.vue'
+import ManagerMonderatedView from '@/ux/UserTest/views/Moderators/ManagerView.vue'
+import ManagerUnmoderatedView from '@/ux/UserTest/views/Unmoderated/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
@@ -9,42 +10,42 @@ import UserAnswerView from './views/UserAnswerView.vue'
 export default [
   {
     path: '/userTest/unmoderated/manager/:id/:token?',
-    name: 'UserTestUnmoderatedManagerView',
+    name: 'UserUnmoderatedManagerView',
     meta: { authorize: [0, 1] },
-    component: ManagerView,
+    component: ManagerUnmoderatedView,
     props: true,
     children: [
       {
         path: 'report/:id/:token?',
-        name: 'UserTestUnmoderatedReportView',
+        name: 'UserUnmoderatedReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
         path: 'answers/:id/:token?',
-        name: 'UserTestUnmoderatedAnswersView',
+        name: 'UserUnmoderatedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
         component: UserAnswerView,
       },
       {
         path: 'edit/:id/:token?',
-        name: 'UserTestUnmoderatedEditTest',
+        name: 'UserUnmoderatedEditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
         path: 'settings/:id/:token?',
-        name: 'UserTestUnmoderatedSettingsView',
+        name: 'UserUnmoderatedSettingsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
         path: 'cooperators/:id/:token?',
-        name: 'UserTestUnmoderatedCooperatorsView',
+        name: 'UserUnmoderatedCooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
@@ -53,42 +54,42 @@ export default [
   },
   {
     path: '/userTest/moderated/manager/:id/:token?',
-    name: 'UserTestModeratedManagerView',
+    name: 'UserModeratedManagerView',
     meta: { authorize: [0, 1] },
-    component: ManagerView,
+    component: ManagerMonderatedView,
     props: true,
     children: [
       {
         path: 'report/:id/:token?',
-        name: 'UserTestModeratedReportView',
+        name: 'UserModeratedReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
         path: 'answers/:id/:token?',
-        name: 'UserTestModeratedAnswersView',
+        name: 'UserModeratedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
         component: UserAnswerView,
       },
       {
         path: 'edit/:id/:token?',
-        name: 'UserTestModeratedEditTest',
+        name: 'UserModeratedEditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
         path: 'settings/:id/:token?',
-        name: 'UserTestModeratedSettingsView',
+        name: 'UserModeratedSettingsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
         path: 'cooperators/:coopid/:token?',
-        name: 'UserTestModeratedCooperatorsView',
+        name: 'UserModeratedCooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsModeratedView,
