@@ -1,7 +1,7 @@
 // Data Model: AudioSentiment
-import AudioSentiment from '@/models/AudioSentiment';
+import AudioSentiment from '@/ai/audio-sentiment/AudioSentiment';
 
-import Controller from '@/controllers/BaseController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 
 const COLLECTION = 'audioSentiment'
 
