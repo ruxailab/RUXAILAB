@@ -162,7 +162,7 @@ import { ref, computed, watch, onMounted, onBeforeMount, onUnmounted } from 'vue
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
-import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
+import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from '../../features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation';
