@@ -5,70 +5,70 @@ import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import TemplateView from '@/views/admin/TemplateView.vue'
+import TemplateView from '@/features/templates/TemplateView.vue'
 import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue';
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 
 export default [
   {
     path: '/heuristic/manager/:id/:token?',
-    name: 'ManagerView',
+    name: 'HeuristicManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,
     props: true,
     children: [
       {
         path: '/heuristic/report/:id/:token?',
-        name: 'ReportView',
+        name: 'HeuristicReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
         path: '/heuristic/finalreport/:id/:token?',
-        name: 'FinalReportView',
+        name: 'HeuristicFinalReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: FinalReportView,
       },
       {
         path: '/heuristic/answer/:id/:token?',
-        name: 'AnswerView',
+        name: 'HeuristicAnswerView',
         props: true,
         meta: { authorize: [0, 1] },
         component: HeuristicAnswerView,
       },
       {
         path: '/heuristic/edit/:id/:token?',
-        name: 'EditTest',
+        name: 'HeuristicEditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
         path: '/heuristic/settings/:id/:token?',
-        name: 'SettingsView',
+        name: 'HeuristicSettingsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
         path: '/heuristic/cooperators/:id/:token?',
-        name: 'CooperatorsView',
+        name: 'HeuristicCooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
       },
       {
         path: '/heuristic/analytics/:id/:heuristic?',
-        name: 'AnalyticsView',
+        name: 'HeuristicAnalyticsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: AnalyticsView,
       },
       {
         path: '/heuristic/template/:id/:token?',
-        name: 'TemplateView',
+        name: 'HeuristicTemplateView',
         props: true,
         meta: { authorize: [0, 1] },
         component: TemplateView,
