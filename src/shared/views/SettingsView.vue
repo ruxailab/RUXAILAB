@@ -665,7 +665,7 @@ const duplicateTest = async () => {
       testTitle: 'Copy of ' + test.value.testTitle,
       testDescription: test.value.testDescription,
       testType: test.value.testType,
-      userTestType: test.value.userTestType,
+      subType: test.value.subType,
       testStructure: test.value.testStructure,
       testOptions: test.value.testOptions,
       id: null,
