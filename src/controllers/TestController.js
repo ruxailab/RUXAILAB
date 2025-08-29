@@ -83,7 +83,7 @@ export default class TestController extends Controller {
       testAuthorEmail: payload.test.testAdmin.email,
       testDocId: payload.test.id,
       testType: payload.test.testType,
-      userTestType: payload.test.userTestType,
+      subType: payload.test.subType,
       testTitle: payload.test.testTitle,
       total: 0,
       updateDate: Date.now(),
