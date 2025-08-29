@@ -239,7 +239,7 @@ import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
-import { classModelByType } from '@/shared/constants/methodDefinitions';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const router = useRouter();
 const store = useStore();
@@ -350,7 +350,7 @@ const submit = async () => {
     updateDate: Date.now(),
     status: 'active',
   }
-  const newTest = classModelByType(testType, rawData)
+  const newTest = instantiateStudyByType(testType, rawData)
 
   const testId = await store.dispatch('createNewTest', newTest);
   isLoading.value = false;

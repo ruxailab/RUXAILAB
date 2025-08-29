@@ -150,20 +150,6 @@ export default class Study { // mudar nome para Study e mover para Shared
   }
 
   /**
-   * Creates a new test model from the given map.
-   *
-   * @param {Partial<Test>} map the map to be converted.
-   * @returns a new test model.
-   */
-  static toStudy(map) {
-    return new Study({
-      ...map,
-      testAdmin: TestAdmin.toTestAdmin(map.testAdmin),
-      // cooperators: Cooperators.toCooperators(map.cooperators),
-    })
-  }
-
-  /**
    * Converts the current model into a map.
    *
    * @returns a map that represents the current model.
