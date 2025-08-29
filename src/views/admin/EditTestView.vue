@@ -107,7 +107,7 @@
           <!-- User Tests -->
           <EditUserTest
             v-if="test.testType === 'User'"
-            :type="test.userTestType"
+            :type="test.subType"
             @change="change = true"
           />
         </v-col>
