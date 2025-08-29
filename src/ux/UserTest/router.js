@@ -1,4 +1,5 @@
-import ManagerView from '@/views/admin/ManagerView.vue'
+import ManagerMonderatedView from '@/ux/UserTest/views/Moderators/ManagerView.vue'
+import ManagerUnmoderatedView from '@/ux/UserTest/views/Unmoderated/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
@@ -11,7 +12,7 @@ export default [
     path: '/userTest/unmoderated/manager/:id/:token?',
     name: 'UserUnmoderatedManagerView',
     meta: { authorize: [0, 1] },
-    component: ManagerView,
+    component: ManagerUnmoderatedView,
     props: true,
     children: [
       {
@@ -55,7 +56,7 @@ export default [
     path: '/userTest/moderated/manager/:id/:token?',
     name: 'UserModeratedManagerView',
     meta: { authorize: [0, 1] },
-    component: ManagerView,
+    component: ManagerMonderatedView,
     props: true,
     children: [
       {
