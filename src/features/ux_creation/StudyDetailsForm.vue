@@ -363,11 +363,11 @@ const submit = async () => {
     if (testType === 'CardSorting') {
       return router.push(`/cardSorting/manager/${testId}`);
     } else if (testType === 'HEURISTICS') {
-      return router.push(`/heuristic/managerview/${testId}`);
+      return router.push(`/heuristic/manager/${testId}`);
     } else if (testType === 'User') {
-      if (test.value.userTestType === 'moderated') {
+      if (test.value.subType === 'moderated') {
         return router.push(`/usertest/moderated/manager/${testId}`);
-      } else if (test.value.userTestType === 'unmoderated') {
+      } else if (test.value.subType === 'unmoderated') {
         return router.push(`/usertest/unmoderated/manager/${testId}`);
       }
     }
