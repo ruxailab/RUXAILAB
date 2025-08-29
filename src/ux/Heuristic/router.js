@@ -5,7 +5,7 @@ import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import TemplateView from '@/views/admin/TemplateView.vue'
+import TemplateView from '@/features/templates/TemplateView.vue'
 import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue';
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 
