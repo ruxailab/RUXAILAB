@@ -276,7 +276,7 @@ const cleanTestStore = () => store.dispatch('cleanTest');
 
 const filterModeratedSessions = async () => {
   const userModeratedTests = Object.values(user.value.myAnswers).filter(
-    (answer) => answer.userTestType === 'moderated'
+    (answer) => answer.subType === 'moderated'
   );
   const cooperatorArray = [];
   for (const test of userModeratedTests) {
