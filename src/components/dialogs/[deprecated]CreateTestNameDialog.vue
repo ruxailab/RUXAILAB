@@ -142,6 +142,7 @@ import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/[deprecated]ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/[deprecated]CreateTestUserDialog.vue';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const props = defineProps({
   isOpen: {
@@ -342,7 +343,7 @@ const submitAutomaticAccessibility = async () => {
 };
 
 const submit = async () => {
-  const newTest = new Study({
+  const rawData = {
     id: null,
     testTitle: test.value.title,
     testDescription: test.value.description,
@@ -355,9 +356,11 @@ const submit = async () => {
     }),
     creationDate: Date.now(),
     updateDate: Date.now(),
-  });
+  };
 
-  const testId = await store.dispatch('createNewTest', newTest);
+  const newStudy = instantiateStudyByType(rawData.testType, rawData);
+
+  const testId = await store.dispatch('createNewTest', newStudy);
 
   if (props.testType === 'asdf') {
     router.push('/sample');

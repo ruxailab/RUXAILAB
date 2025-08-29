@@ -124,7 +124,7 @@ import Snackbar from '@/shared/components/Snackbar';
 import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import Study from '@/shared/models/Study';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const store = useStore();
 const router = useRouter();
@@ -184,8 +184,9 @@ const submit = async () => {
       finalMessage: store.getters.finalMessage,
     }),
   };
-  const updatedTest = new Study({ ...object.value });
-  await store.dispatch('updateTest', updatedTest);
+  const rawData = { ...object.value };
+  const study = instantiateStudyByType(rawData.testType, rawData);
+  await store.dispatch('updateTest', study);
   await store.dispatch('getTest', { id: route.params.id })
 };
 

@@ -96,7 +96,7 @@ import { useStore } from 'vuex';
 import TextControls from '@/ux/Heuristic/components/FinalReportControls.vue';
 import FinalReportSelectionBox from '@/ux/Heuristic/components/FinalReportSelectionBox.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import Study from '@/shared/models/Study';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const store = useStore();
 
@@ -119,7 +119,8 @@ const update = async () => {
   const text = contenteditable.innerHTML;
 
   object.value.studyConclusion = text;
-  const updatedTest = new Study({ ...test.value, ...object.value });
+  const rawData = { ...test.value, ...object.value };
+  const updatedTest = instantiateStudyByType(rawData.testType, rawData);
   await store.dispatch('updateTest', updatedTest);
   await store.dispatch('getTest', { id: test.value.id })
 };
