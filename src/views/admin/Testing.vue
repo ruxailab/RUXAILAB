@@ -12,6 +12,7 @@
       <v-row class="cards-container" justify="center">
         <!-- Active Card: User Testing -->
         <v-col cols="12" sm="6" md="3" lg="3" class="card">
+          <div>
           <CardTypeTest
             :img="require('../../../public/user.png')"
             title="Usability User"
@@ -20,6 +21,7 @@
             :texts="['Webcam, audio & screen record', 'Enhanced answer analysis', 'Moderated or non-moderated tests']"
             @click="setTestType"
           />
+          </div>
         </v-col>
 
         <!-- Inactive Card: A/B Testing -->
