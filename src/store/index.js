@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import Auth from '@/store/modules/Auth'
-import Templates from '@/store/modules/Template'
+import Templates from '@/features/templates/Template'
 import Tests from '@/store/modules/Test'
 import Users from '@/store/modules/User'
 import Cooperators from '@/store/modules/Cooperators'
