@@ -1,9 +1,9 @@
-import Study from '../../../shared/models/Study'
+import Study from "@/shared/models/Study"
 
-export default class UserStudy extends Study {
+export default class CardSortingStudy extends Study {
     constructor(params = {}) {
         super(params)
-        this.testType = 'User'
+        this.testType = 'CardSorting'
     }
 
     toFirestore() {

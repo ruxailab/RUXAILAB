@@ -14,11 +14,7 @@ export default class HeuristicStudy extends Study {
 
     toFirestore() {
         return Object.assign(super.toFirestore(), {
-            testType: this.testType,
             testWeights: this.testWeights,
         })
-    }
-    static toStudy(data) {
-        return new HeuristicStudy(data)
     }
 }
