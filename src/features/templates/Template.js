@@ -4,7 +4,7 @@
  */
 
 //import TemplateController
-import TemplateController from '@/controllers/TemplateController.js'
+import TemplateController from '@/features/templates/TemplateController.js'
 
 const templateController = new TemplateController()
 
