@@ -84,9 +84,9 @@ const emit = defineEmits(['update:isOpen', 'close', 'setUser'])
 const setType = (type) => {
   const normalizedType = type.toLowerCase()
   const test = {}
-  if (normalizedType === 'unmoderated') test.userTestType = normalizedType
+  if (normalizedType === 'unmoderated') test.subType = normalizedType
   if (normalizedType === 'moderated') {
-    test.userTestType = normalizedType
+    test.subType = normalizedType
   }
 
   emit('setUser', test)

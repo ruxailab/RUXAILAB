@@ -10,6 +10,23 @@
  * - Status (available, not available, coming soon, improving)
  */
 
+import HeuristicStudy from "@/ux/Heuristic/models/HeuristicStudy";
+import UserStudy from "@/ux/UserTest/models/UserStudy";
+import Study from "../models/Study";
+
+export function classModelByType(type, rawData) {
+    switch (type) {
+        case 'User':
+            return new UserStudy(rawData);
+        case 'Heuristic':
+            return new HeuristicStudy(rawData);
+        case 'CardSorting':
+            return new CardSortingStudy(rawData);
+        default:
+            return new Study(rawData)
+    }
+}
+
 export const METHOD_DEFINITIONS = {
     HEURISTICS: {
         id: 'HEURISTICS',
@@ -241,12 +258,12 @@ export const USER_SUBTYPE_MAPPING = {
 /**
  * Obtiene la definición completa de un método
  * @param {string} testType - Tipo de test principal
- * @param {string} userTestType - Subtipo de test de usuario (opcional)
+ * @param {string} subType - Subtipo de test de usuario (opcional)
  * @returns {Object} Definición del método
  */
-export const getMethodDefinition = (testType, userTestType = '') => {
+export const getMethodDefinition = (testType, subType = '') => {
     const type = testType?.toUpperCase() || ''
-    const subtype = userTestType?.toUpperCase() || ''
+    const subtype = subType?.toUpperCase() || ''
 
     // Casos especiales para tests de usuario
     if (type === 'USER') {
@@ -266,62 +283,62 @@ export const getMethodDefinition = (testType, userTestType = '') => {
 
 /**
  * Obtiene el icono para un método específico
- * @param {Object} item - Item que contiene testType y userTestType
+ * @param {Object} item - Item que contiene testType y subType
  * @returns {string} Nombre del icono MDI
  */
 export const getMethodIcon = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? ''
-    const userTestType = item.userTestType ?? ''
-    const definition = getMethodDefinition(testType, userTestType)
+    const subType = item.subType ?? ''
+    const definition = getMethodDefinition(testType, subType)
     return definition.icon
 }
 
 /**
  * Obtiene el color para un método específico
- * @param {Object} item - Item que contiene testType y userTestType
+ * @param {Object} item - Item que contiene testType y subType
  * @returns {string} Color en formato hex
  */
 export const getMethodColor = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? ''
-    const userTestType = item.userTestType ?? ''
-    const definition = getMethodDefinition(testType, userTestType)
+    const subType = item.subType ?? ''
+    const definition = getMethodDefinition(testType, subType)
     return definition.color
 }
 
 /**
  * Obtiene el nombre para un método específico
- * @param {Object} item - Item que contiene testType y userTestType
+ * @param {Object} item - Item que contiene testType y subType
  * @param {string} lang - Idioma ('es' o 'en')
  * @returns {string} Nombre del método
  */
 export const getMethodName = (item, lang = 'es') => {
     const testType = item.testType ?? item.header?.templateType ?? ''
-    const userTestType = item.userTestType ?? ''
-    const definition = getMethodDefinition(testType, userTestType)
+    const subType = item.subType ?? ''
+    const definition = getMethodDefinition(testType, subType)
     return lang === 'en' ? definition.nameEn : definition.name
 }
 
 /**
  * Obtiene el estado de un método específico
- * @param {Object} item - Item que contiene testType y userTestType
+ * @param {Object} item - Item que contiene testType y subType
  * @returns {Object} Definición del estado
  */
 export const getMethodStatus = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? ''
-    const userTestType = item.userTestType ?? ''
-    const definition = getMethodDefinition(testType, userTestType)
+    const subType = item.subType ?? ''
+    const definition = getMethodDefinition(testType, subType)
     return METHOD_STATUSES[definition.status]
 }
 
 /**
  * Obtiene la categoría de un método específico
- * @param {Object} item - Item que contiene testType y userTestType
+ * @param {Object} item - Item que contiene testType y subType
  * @returns {Object} Definición de la categoría
  */
 export const getMethodCategory = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? ''
-    const userTestType = item.userTestType ?? ''
-    const definition = getMethodDefinition(testType, userTestType)
+    const subType = item.subType ?? ''
+    const definition = getMethodDefinition(testType, subType)
     return METHOD_CATEGORIES[definition.category]
 }
 

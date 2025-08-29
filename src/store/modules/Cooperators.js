@@ -4,7 +4,7 @@
  */
 
 import template from '@/assets/template.js'
-import { FirebaseFunctionsController } from '@/controllers/FirebaseFunctionsController'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 export default {
   state: {
