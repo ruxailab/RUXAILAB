@@ -359,6 +359,18 @@ const submit = async () => {
   if (studyType.value === 'Accessibility') {
     router.push('/sample');
   } else {
+    if (testType === 'CardSorting') {
+      return router.push(`/cardSorting/manager/${testId}`);
+    } else if (testType === 'HEURISTICS') {
+      return router.push(`/heuristic/managerview/${testId}`);
+    } else if (testType === 'User') {
+      if (test.value.userTestType === 'moderated') {
+        return router.push(`/usertest/moderated/manager/${testId}`);
+      } else if (test.value.userTestType === 'unmoderated') {
+        return router.push(`/usertest/unmoderated/manager/${testId}`);
+      }
+    }
+
     router.push(`/managerview/${testId}`);
   }
 };
