@@ -162,7 +162,7 @@ import { ref, computed, watch, onMounted, onBeforeMount, onUnmounted } from 'vue
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
-import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
+import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from '../../features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation';
@@ -218,7 +218,6 @@ const filteredTests = computed(() => {
 
     const method = selectedMethodFilter.value;
     const testType = test.testType;
-    console.log(testType)
     const matchesMethod =
       method === 'all' ||
       (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
@@ -245,8 +244,19 @@ const goToCreateTestRoute = () => {
 };
 
 const goTo = (test) => {
+  console.log(tests);
   if (activeSection.value === 'studies') {
-    router.push({ name: 'ManagerView', params: { id: test.testDocId || test.id } });
+    if (test.testType === 'HEURISTICS') {
+      router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
+    } else if (test.testType === 'CardSorting') {
+      router.push({ name: 'CardSortingManagerView', params: { id: test.testDocId || test.id } });
+    } else if (test.testType === 'User') {
+      // if (test.userTestType === 'unmoderated') {
+      //   router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
+      // } else if (test.userTestType === 'moderated') {
+        router.push({ name: 'UserModeratedManagerView', params: { id: test.testDocId || test.id } });
+      // }
+    }
   } else if (activeSection.value === 'sessions') {
     router.push(`testview/${test.id}/${user.value.id}`);
   }
