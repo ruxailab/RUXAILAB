@@ -193,7 +193,7 @@ const test = ref({
   title: '',
   description: '',
   isPublic: false,
-  userTestType: '',
+  subType: '',
 });
 
 const user = computed(() => store.getters.user);
@@ -207,7 +207,7 @@ watch(
         title: '',
         description: '',
         isPublic: false,
-        userTestType: '',
+        subType: '',
       };
     }
   }
@@ -348,7 +348,7 @@ const submit = async () => {
     testDescription: test.value.description,
     testType: props.testType,
     isPublic: test.value.isPublic,
-    userTestType: test.value.userTestType,
+    subType: test.value.subType,
     testAdmin: new TestAdmin({
       userDocId: user.value.id,
       email: user.value.email,

@@ -220,7 +220,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 
 const props = defineProps({
     cooperators: {

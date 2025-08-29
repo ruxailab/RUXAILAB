@@ -4,7 +4,7 @@ import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import TemplateView from '@/views/admin/TemplateView.vue'
+import TemplateView from '@/features/templates/TemplateView.vue'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import Profile from '@/views/admin/ProfileView.vue'
@@ -55,92 +55,6 @@ export default [
     name: 'notifications',
     meta: { authorize: [1] },
     component: Notification,
-  },
-  {
-    path: '/managerview/:id/:token?',
-    name: 'ManagerView',
-    meta: { authorize: [0, 1] },
-    component: ManagerView,
-    props: true,
-    children: [
-      {
-        path: '/reportview/:id/:token?',
-        name: 'ReportView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: ReportView,
-      },
-      {
-        path: '/finalreportview/:id/:token?',
-        name: 'FinalReportView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: FinalReportView,
-      },
-      {
-        path: '/userTest/moderated/answerview/:id/:token?',
-        name: 'UserTestModeratedAnswerView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: UserAnswerView,
-      },
-      {
-        path: '/userTest/unmoderated/answerview/:id/:token?',
-        name: 'UserTestUnmoderatedAnswerView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: UserAnswerView,
-      },
-      {
-        path: '/heuristic/answerview/:id/:token?',
-        name: 'HeuristicAnswerView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: HeuristicAnswerView,
-      },
-      {
-        path: '/edittest/:id/:token?',
-        name: 'EditTest',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: EditTest,
-      },
-      {
-        path: '/settingsview/:id/:token?',
-        name: 'SettingsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: SettingsView,
-      },
-      {
-        path: '/cooperators/:id/:token?',
-        name: 'CooperatorsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: CooperatorsView,
-      },
-      // {
-      //   path: '/userTest/moderated/cooperators/:id/:token?',
-      //   name: 'UserModeraterCooperatorView',
-      //   props: true,
-      //   meta: { authorize: [0, 1] },
-      //   component: CooperatorsModeratedView,
-      // },
-      {
-        path: '/analyticsview/:id/:heuristic?',
-        name: 'AnalyticsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: AnalyticsView,
-      },
-      {
-        path: '/templateview/:id/:token?',
-        name: 'TemplateView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: TemplateView,
-      },
-    ],
   },
   {
     path: '/choose',
