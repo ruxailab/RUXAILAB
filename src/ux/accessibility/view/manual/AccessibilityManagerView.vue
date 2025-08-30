@@ -12,7 +12,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import AccessibilityDrawer from '@/components/atoms/AccessibilityDrawer.vue'
+import AccessibilityDrawer from '@/ux/accessibility/components/atoms/AccessibilityDrawer.vue'
 
 const route = useRoute()
 const testId = ref(route.params.testId || '')
