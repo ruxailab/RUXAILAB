@@ -18,7 +18,7 @@ export default class UserAnswer {
     progress,
     total,
     testType,
-    userTestType,
+    subType,
     testTitle,
     testDocId,
     updateDate,
@@ -29,7 +29,7 @@ export default class UserAnswer {
     this.progress = progress
     this.total = total
     this.testType = testType
-    this.userTestType = userTestType
+    this.subType = subType
     this.testTitle = testTitle
     this.testDocId = testDocId
     this.updateDate = updateDate
@@ -46,7 +46,7 @@ export default class UserAnswer {
       progress: this.progress,
       total: this.total,
       testType: this.testType,
-      userTestType: this.userTestType,
+      subType: this.subType,
       testTitle: this.testTitle,
       testDocId: this.testDocId,
       updateDate: this.updateDate,

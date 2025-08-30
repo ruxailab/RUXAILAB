@@ -16,6 +16,7 @@ export const onTestCreate = functions.onTrigger({
       testDocId: snapshot.id,
       testTitle: test.testTitle,
       testType: test.testType,
+      subType: test.subType,
       numberColaborators: test.numberColaborators || 0,
       creationDate: test.creationDate,
       updateDate: Date.now(),

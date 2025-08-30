@@ -1,4 +1,4 @@
-import Controller from '@/controllers/BaseController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import Template from '@/shared/models/Template'
 const COLLECTION = 'templates'
 

@@ -1,11 +1,12 @@
 // imports
 
-import Test from '@/models/Test'
-import Controller from '@/controllers/BaseController'
+import Study from '@/shared/models/Study'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AnswerController from './AnswerController'
 import Answer from '@/models/Answer'
 import UserAnswer from '@/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -83,7 +84,7 @@ export default class TestController extends Controller {
       testAuthorEmail: payload.test.testAdmin.email,
       testDocId: payload.test.id,
       testType: payload.test.testType,
-      userTestType: payload.test.userTestType,
+      subType: payload.test.subType,
       testTitle: payload.test.testTitle,
       total: 0,
       updateDate: Date.now(),
@@ -113,7 +114,9 @@ export default class TestController extends Controller {
   async getTest(parameter) {
     const res = await super.readOne(COLLECTION, parameter.id)
     if (!res.exists()) return null
-    return Test.toTest(Object.assign({ id: res.id }, res.data()))
+
+    const rawData = Object.assign({ id: res.id }, res.data())
+    return instantiateStudyByType(rawData.testType, rawData)
   }
 
   async getPublicTests() {
@@ -123,15 +126,16 @@ export default class TestController extends Controller {
       condition: '==',
     }
     const res = await super.query(COLLECTION, q)
-    return res.docs.map((t) =>
-      Test.toTest(Object.assign({ id: t.id }, t.data())),
-    )
+    return res.docs.map((t) => {
+      const rawData = Object.assign({ id: t.id }, t.data())
+      return instantiateStudyByType(rawData.testType, rawData)
+    })
   }
 
   async getAllTests() {
     try {
       const response = await super.readAll('tests')
-      const res = response.map(Test.toTest)
+      const res = response.map(Study.toTest)
       return res
     } catch (err) {
       throw err

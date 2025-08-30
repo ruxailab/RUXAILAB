@@ -96,7 +96,7 @@ import { useStore } from 'vuex';
 import TextControls from '@/ux/Heuristic/components/FinalReportControls.vue';
 import FinalReportSelectionBox from '@/ux/Heuristic/components/FinalReportSelectionBox.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import Test from '@/ux/Heuristic/models/HeuristicTest.model.js';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const store = useStore();
 
@@ -110,7 +110,7 @@ const test = computed(() => store.getters.test);
 const setInnerHtml = () => {
   const textarea = document.getElementById('myTextarea');
   if (textarea) {
-    textarea.innerHTML = test.value.finalReport || '';
+    textarea.innerHTML = test.value.studyConclusion || '';
   }
 };
 
@@ -118,8 +118,9 @@ const update = async () => {
   const contenteditable = document.getElementById('myTextarea');
   const text = contenteditable.innerHTML;
 
-  object.value.finalReport = text;
-  const updatedTest = new Test({ ...test.value, ...object.value });
+  object.value.studyConclusion = text;
+  const rawData = { ...test.value, ...object.value };
+  const updatedTest = instantiateStudyByType(rawData.testType, rawData);
   await store.dispatch('updateTest', updatedTest);
   await store.dispatch('getTest', { id: test.value.id })
 };
