@@ -51,7 +51,3 @@ const go = (path) => {
   router.push(path).catch(() => { })
 }
 </script>
-
-<style scoped>
-
-</style>
