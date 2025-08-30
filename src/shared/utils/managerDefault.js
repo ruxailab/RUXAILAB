@@ -1,5 +1,5 @@
 import { ACCESS_LEVEL } from "./accessLevel"
-import { ICONS, createCardConfig, CARD_THEMES } from "../constants/theme"
+import { ICONS, createCardConfig } from "../constants/theme"
 
 export const getNavigatorDefault = (test, accessLevel, route, type) => {
   if (!test) return [];
