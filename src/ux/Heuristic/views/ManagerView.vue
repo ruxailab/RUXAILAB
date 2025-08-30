@@ -3,12 +3,13 @@
     <ManagerView
       :navigator="navigator"
       :top-cards="topCards"
-      :bottom-cards="[]"
+      :bottom-cards="bottomCards"
     />
   </div>
 </template>
 
 <script setup>
+import { getBottomCardsDefualt, getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
 import ManagerView from '@/shared/views/template/ManagerView.vue';
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
 import { computed, onMounted } from 'vue';
@@ -37,8 +38,27 @@ const accessLevel = computed(() => {
   return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUETOR
 })
 
-const topCards = computed(() => getTopCardsDefualt(test.value, 'cardSorting'))
-const navigator = computed(() => getNavigatorDefault(test.value, accessLevel.value, route, 'cardSorting'))
+const topCards = computed(() => getTopCardsDefualt(test.value, 'heuristic'))
+const bottomCards = computed(() => getBottomCardsDefualt(test.value, 'heuristic'))
+const navigator = computed(() => {
+  const items = [
+    ...getNavigatorDefault(test.value, accessLevel.value, route, 'heuristic'),
+  ]
+
+  if (test.value.template) {
+    items.push(
+      { title: 'Template', icon: 'mdi-file-compare', path: `/heuristic/template/${test.value.template.id}` }
+    )
+  }
+
+  if (accessLevel.value === 0) {
+    items.push(
+      { title: 'Final Report', icon: 'mdi-file-document', path: `/heuristic/finalreport/${test.value.id}` },
+    )
+  }
+
+  return items
+})
 
 // Lifecycle
 onMounted(async () => {

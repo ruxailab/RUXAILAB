@@ -77,7 +77,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useToast } from 'vue-toastification';
 
 const props = defineProps({

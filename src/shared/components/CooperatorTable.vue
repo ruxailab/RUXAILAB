@@ -66,7 +66,6 @@
         class="cooperators-table"
         item-key="email"
         item-value="email"
-        show-select
         height="50vh"
       >
         <!-- Email Column -->
@@ -221,7 +220,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { useCooperatorUtils } from '@/composables/useCooperatorUtils';
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 
 const props = defineProps({
     cooperators: {

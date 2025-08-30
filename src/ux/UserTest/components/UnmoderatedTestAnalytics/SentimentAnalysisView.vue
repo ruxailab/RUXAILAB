@@ -3,7 +3,7 @@
     <!-- User Usability Test -->
     <div v-if="testAnswerDocument.type === 'User'">
       <!-- Moderated Test -->
-      <div v-if="testDocument.userTestType === 'moderated'">
+      <div v-if="testDocument.subType === 'moderated'">
         <UserModeratedSentiment />
       </div>
 

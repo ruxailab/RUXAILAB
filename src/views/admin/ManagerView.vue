@@ -319,7 +319,7 @@ const navigator = computed(() => {
 })
 
 const cooperatorsUrl = () => {
-  if (test.value.testType === 'User' && test.value.userTestType === 'moderated') {
+  if (test.value.testType === 'User' && test.value.subType === 'moderated') {
     return `/userTest/moderated/cooperators/${test.value.id}`
   } else {
     return `/cooperators/${test.value.id}`

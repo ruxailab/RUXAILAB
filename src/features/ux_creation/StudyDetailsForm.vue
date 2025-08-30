@@ -233,13 +233,13 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import Test from '@/models/Test';
 import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const router = useRouter();
 const store = useStore();
@@ -249,8 +249,7 @@ const test = ref({
   title: '',
   description: '',
   isPublic: false,
-  userTestType: '',
-  userTestStatus: {},
+  subType: '',
 });
 
 const websiteDetails = ref({
@@ -314,19 +313,7 @@ const handleTestType = () => {
   if (testCategory === 'test') {
     const extraDetails = {}
     const testMethod = method.value;
-    if (testMethod == 'unmoderated') {
-      extraDetails.userTestType = testMethod
-    }
-    if (testMethod == 'moderated') {
-      extraDetails.userTestType = testMethod
-      extraDetails.userTestStatus = {
-        user: false,
-        moderator: false,
-        consentStatus: 'open',
-        preTestStatus: 'closed',
-        postTestStatus: 'closed',
-      }
-    }
+    extraDetails.subType = testMethod
     test.value = { ...test.value, ...extraDetails };
     submit();
   } else if (testCategory === 'accessibility') {
@@ -348,14 +335,13 @@ const submit = async () => {
 
   isLoading.value = true;
   const user = store.getters.user;
-  const newTest = new Test({
+  const rawData = {
     id: null,
     testTitle: test.value.title,
     testDescription: test.value.description,
     testType: testType,
     isPublic: test.value.isPublic,
-    userTestType: test.value.userTestType,
-    userTestStatus: test.value.userTestStatus,
+    subType: test.value.subType,
     testAdmin: new TestAdmin({
       userDocId: user.id,
       email: user.email,
@@ -363,7 +349,8 @@ const submit = async () => {
     creationDate: Date.now(),
     updateDate: Date.now(),
     status: 'active',
-  });
+  }
+  const newTest = instantiateStudyByType(testType, rawData)
 
   const testId = await store.dispatch('createNewTest', newTest);
   isLoading.value = false;
@@ -373,6 +360,18 @@ const submit = async () => {
   if (studyType.value === 'Accessibility') {
     router.push('/sample');
   } else {
+    if (testType === 'CardSorting') {
+      return router.push(`/cardSorting/manager/${testId}`);
+    } else if (testType === 'HEURISTICS') {
+      return router.push(`/heuristic/managerview/${testId}`);
+    } else if (testType === 'User') {
+      if (test.value.userTestType === 'moderated') {
+        return router.push(`/usertest/moderated/manager/${testId}`);
+      } else if (test.value.userTestType === 'unmoderated') {
+        return router.push(`/usertest/unmoderated/manager/${testId}`);
+      }
+    }
+
     router.push(`/managerview/${testId}`);
   }
 };

@@ -1,6 +1,6 @@
 // import Answer from "@/models/Answer"
 
-import Controller from '@/controllers/BaseController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import Answer from '@/models/Answer'
 import UserController from '../features/auth/controllers/UserController'
 import TaskAnswer from '@/models/TaskAnswer'
