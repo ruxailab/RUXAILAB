@@ -1,20 +1,22 @@
 import { createAccessibilityRoutes } from './accessibilityUtils';
-import AccessibilityManagerView from '@/views/admin/AccessibilityManagerView.vue';
-import AutomatedAccessibilityManager from '@/views/admin/AutomatedAccessibilityManager.vue';
-import AccessibilityHome from '@/views/admin/ManualAccessibility/AccessibilityHome.vue';
-import EditAccessibilityTest from '@/views/admin/ManualAccessibility/AccessibilityEditTest.vue';
-import AccessibilityPreviewTest from '@/views/admin/ManualAccessibility/AccessibilityPreviewTest.vue';
-import AccessibilityTestAnswers from '@/views/admin/ManualAccessibility/AccessibilityAnswer.vue';
-import AccessibilityTestReport from '@/views/admin/AccessibilityReport.vue';
-import AccessibilityTestCooperative from '@/views/admin/ManualAccessibility/AccessibilityCooperative.vue';
-import AccessibilityTestSettings from '@/views/admin/AccessibilitySettings.vue';
-import AccessibilityConfig from '@/views/admin/ManualAccessibility/AccessibilityConfig.vue';
-import AutomatedAccessibilityHome from '@/views/admin/AutomatedAccessibility/AutomatedAccessibilityHome.vue';
-import Analyse from '@/views/admin/AutomatedAccessibility/EditTest.vue';
-import AccessibilityAnswers from '@/views/admin/AutomatedAccessibility/Answers.vue';
-import AccessibilityReport from '@/views/admin/AutomatedAccessibility/Report.vue';
-import AccessibilityCooperation from '@/views/admin/AutomatedAccessibility/Cooperation.vue';
-import AccessibilitySettings from '@/views/admin/AutomatedAccessibility/Settings.vue';
+// Manual-Accessibility-Pages(x7)
+import AccessibilityManagerView from '@/ux/accessibility/view/manual/AccessibilityManagerView.vue';
+import AccessibilityHome from '@/ux/accessibility/view/manual/AccessibilityHome.vue';
+import EditAccessibilityTest from '@/ux/accessibility/view/manual/AccessibilityEditTest.vue';
+import AccessibilityPreviewTest from '@/ux/accessibility/view/manual/AccessibilityPreviewTest.vue';
+import AccessibilityTestAnswers from '@/ux/accessibility/view/manual/AccessibilityAnswer.vue';
+import AccessibilityTestCooperative from '@/ux/accessibility/view/manual/AccessibilityCooperative.vue';
+import AccessibilityConfig from '@/ux/accessibility/view/manual/AccessibilityConfig.vue';
+
+
+// Automated-Accessibility-Pages (x7)
+import AutomatedAccessibilityManager from '@/ux/accessibility/view/automatic/AutomatedAccessibilityManager.vue';
+import AutomatedAccessibilityHome from '@/ux/accessibility/view/automatic/AutomatedAccessibilityHome.vue';
+import Analyse from '@/ux/accessibility/view/automatic/EditTest.vue';
+import AccessibilityAnswers from '@/ux/accessibility/view/automatic/Answers.vue';
+import AccessibilityReport from '@/ux/accessibility/view/automatic/Report.vue';
+import AccessibilityCooperation from '@/ux/accessibility/view/automatic/Cooperation.vue';
+import AccessibilitySettings from '@/ux/accessibility/view/automatic/Settings.vue';
 
 const accessibilityRoutes = [
     ...createAccessibilityRoutes(
@@ -25,9 +27,7 @@ const accessibilityRoutes = [
             { path: '/edit/:testId', name: 'EditAccessibilityTest', component: EditAccessibilityTest },
             { path: '/preview/:testId', name: 'AccessibilityPreviewTest', component: AccessibilityPreviewTest },
             { path: '/result/:testId', name: 'AccessibilityTestAnswers', component: AccessibilityTestAnswers },
-            { path: '/report/:testId', name: 'AccessibilityTestReport', component: AccessibilityTestReport },
             { path: '/cooperative/:testId', name: 'AccessibilityTestCooperative', component: AccessibilityTestCooperative },
-            { path: '/setting/:testId', name: 'AccessibilityTestSettings', component: AccessibilityTestSettings },
             { path: '/config/:testId', name: 'AccessibilityConfig', component: AccessibilityConfig }
         ]
     ),
