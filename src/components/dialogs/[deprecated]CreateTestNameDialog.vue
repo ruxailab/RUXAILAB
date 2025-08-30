@@ -137,11 +137,11 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import Study from '@/shared/models/Study';
-import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
+import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/[deprecated]ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/[deprecated]CreateTestUserDialog.vue';
-import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
+import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const props = defineProps({
