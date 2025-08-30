@@ -414,7 +414,7 @@ import Snackbar from '@/shared/components/Snackbar';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
+import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
 import { useToast } from 'vue-toastification';
 
 const store = useStore()
