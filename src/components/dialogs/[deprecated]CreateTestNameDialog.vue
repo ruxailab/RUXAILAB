@@ -136,12 +136,13 @@ import { useDisplay } from 'vuetify';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-import Test from '@/models/Test';
+import Study from '@/shared/models/Study';
 import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/[deprecated]ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/[deprecated]CreateTestUserDialog.vue';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 const props = defineProps({
   isOpen: {
@@ -193,8 +194,7 @@ const test = ref({
   title: '',
   description: '',
   isPublic: false,
-  userTestType: '',
-  userTestStatus: {},
+  subType: '',
 });
 
 const user = computed(() => store.getters.user);
@@ -208,8 +208,7 @@ watch(
         title: '',
         description: '',
         isPublic: false,
-        userTestType: '',
-        userTestStatus: {},
+        subType: '',
       };
     }
   }
@@ -344,23 +343,24 @@ const submitAutomaticAccessibility = async () => {
 };
 
 const submit = async () => {
-  const newTest = new Test({
+  const rawData = {
     id: null,
     testTitle: test.value.title,
     testDescription: test.value.description,
     testType: props.testType,
     isPublic: test.value.isPublic,
-    userTestType: test.value.userTestType,
-    userTestStatus: test.value.userTestStatus,
+    subType: test.value.subType,
     testAdmin: new TestAdmin({
       userDocId: user.value.id,
       email: user.value.email,
     }),
     creationDate: Date.now(),
     updateDate: Date.now(),
-  });
+  };
 
-  const testId = await store.dispatch('createNewTest', newTest);
+  const newStudy = instantiateStudyByType(rawData.testType, rawData);
+
+  const testId = await store.dispatch('createNewTest', newStudy);
 
   if (props.testType === 'asdf') {
     router.push('/sample');

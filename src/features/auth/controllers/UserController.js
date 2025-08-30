@@ -1,4 +1,4 @@
-import Controller from '@/controllers/BaseController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import User from '@/features/auth/models/UserModel'
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 const COLLECTION = 'users'
