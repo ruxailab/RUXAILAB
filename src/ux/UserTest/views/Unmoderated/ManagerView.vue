@@ -3,7 +3,7 @@
     <ManagerView
       :navigator="navigator"
       :top-cards="topCards"
-      :bottom-cards="[]"
+      :bottom-cards="bottomCards"
     />
   </div>
 </template>
@@ -14,6 +14,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
 import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import { getBottomCardsDefualt, getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
 
 // Stores
 const store = useStore()
@@ -37,8 +38,9 @@ const accessLevel = computed(() => {
   return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUETOR
 })
 
-const topCards = computed(() => getTopCardsDefualt(test.value, 'cardSorting'))
-const navigator = computed(() => getNavigatorDefault(test.value, accessLevel.value, route, 'cardSorting'))
+const topCards = computed(() => getTopCardsDefualt(test.value, 'userTest/unmoderated'))
+const bottomCards = computed(() => getBottomCardsDefualt(test.value, 'userTest/unmoderated'))
+const navigator = computed(() => getNavigatorDefault(test.value, accessLevel.value, route, 'userTest/unmoderated'))
 
 // Lifecycle
 onMounted(async () => {

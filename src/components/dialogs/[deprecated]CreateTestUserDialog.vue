@@ -84,16 +84,9 @@ const emit = defineEmits(['update:isOpen', 'close', 'setUser'])
 const setType = (type) => {
   const normalizedType = type.toLowerCase()
   const test = {}
-  if (normalizedType === 'unmoderated') test.userTestType = normalizedType
+  if (normalizedType === 'unmoderated') test.subType = normalizedType
   if (normalizedType === 'moderated') {
-    test.userTestType = normalizedType
-    test.userTestStatus = {
-      user: false,
-      moderator: false,
-      consentStatus: 'open',
-      preTestStatus: 'closed',
-      postTestStatus: 'closed',
-    }
+    test.subType = normalizedType
   }
 
   emit('setUser', test)

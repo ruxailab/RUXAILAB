@@ -13,8 +13,8 @@ export function useItemTypes() {
 
     const getTestType = (item) => {
         const testType = item.testType ?? item.header?.templateType ?? ''
-        const userTestType = item.userTestType ?? ''
-        const definition = getMethodDefinition(testType, userTestType)
+        const subType = item.subType ?? ''
+        const definition = getMethodDefinition(testType, subType)
         return definition.name
     }
 

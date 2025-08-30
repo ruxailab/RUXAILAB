@@ -135,9 +135,9 @@ import UserVariables from '@/shared/components/UserVariables.vue';
 import CardsEditCardSorting from '../components/CardsEditCardSorting.vue';
 import CategoriesEditCardSorting from '../components/CategoriesEditCardSorting.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import Test from '@/models/Test';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 
 // Variables
 const index = ref(0);
@@ -180,8 +180,9 @@ const submit = async () => {
     }
   }
 
-  const updatedTest = new Test({ ...test.value, ...object })
-  await store.dispatch('updateTest', updatedTest)
+  const rawData = { ...test.value, ...object }
+  const study = instantiateStudyByType(rawData.testType, rawData);
+  await store.dispatch('updateTest', study)
 }
 
 const getWelcome = () => {
