@@ -12,7 +12,7 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
       { title: 'Test', icon: 'mdi-file-document-edit', path: `/${type}/edit/${test.id}` },
       { title: 'Preview', icon: 'mdi-file-eye', path: `/testview/${test.id}` },
       { title: 'Reports', icon: 'mdi-book-multiple', path: `/${type}/report/${test.id}` },
-      { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/${type}/answer/${test.id}` },
+      { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/${type}/answers/${test.id}` },
       { title: 'Cooperators', icon: 'mdi-account-group', path: `/${type}/cooperators/${test.id}` },
       { title: 'Settings', icon: 'mdi-cog', path: `/${type}/settings/${test.id}` }
     )
@@ -22,7 +22,7 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
     items.push(
       { title: 'Answer Test', icon: 'mdi-file-document', path: `/testview/${test.id}` },
       { title: 'Reports', icon: 'mdi-book-multiple', path: `/${type}/report/${test.id}` },
-      { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/${type}/answer/${test.id}` }
+      { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/${type}/answers/${test.id}` }
     )
   }
 
