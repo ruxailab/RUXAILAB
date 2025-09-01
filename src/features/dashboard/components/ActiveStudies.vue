@@ -129,6 +129,7 @@ const calculateProgress = (answers) => {
 }
 
 const daysLeft = (date) => {
+  if(!date) return 0
   const futureDate = new Date(date);
   const today = new Date();
 
