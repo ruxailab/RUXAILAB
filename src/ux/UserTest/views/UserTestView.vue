@@ -238,7 +238,7 @@
             @start-tasks="() => { taskIndex = 0; globalIndex = 4 }"
           />
           <TaskStep
-            v-if="globalIndex === 4 && test.testType === 'User'"
+            v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER"
             ref="taskStepComponent"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
@@ -336,6 +336,7 @@ import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 
 const fullName = ref('');
 const logined = ref(null);

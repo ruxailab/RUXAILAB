@@ -229,6 +229,7 @@ import { db } from '@/app/plugins/firebase';
 import Intro from '@/shared/components/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import TaskAnswer from '@/models/TaskAnswer';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 
 const store = useStore();
 const { t } = useI18n();
@@ -368,8 +369,8 @@ const removeReport = async (report) => {
   let testType = test.value.testType;
   const testId = test.value.id;
 
-  if (testType === 'HEURISTIC') testType = 'heuristicAnswers';
-  if (testType === 'User') testType = 'taskAnswers';
+  if (testType === STUDY_TYPES.HEURISTIC) testType = 'heuristicAnswers';
+  if (testType === STUDY_TYPES.USER) testType = 'taskAnswers';
 
   try {
     const userDocRef = doc(db, 'users', userToRemoveId);

@@ -4,6 +4,7 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import Answer from '@/models/Answer'
 import UserController from '../features/auth/controllers/UserController'
 import TaskAnswer from '@/models/TaskAnswer'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 const COLLECTION = 'answers'
 
 const userController = new UserController()
@@ -59,12 +60,12 @@ export default class AnswerController extends Controller {
 
     const fieldToUpdate = {}
 
-    if (testType === 'HEURISTICS') {
+    if (testType === STUDY_TYPES.HEURISTIC) {
       fieldToUpdate[
         `heuristicAnswers.${payload.userDocId}`
       ] = payload.toFirestore()
 
-    } else if (testType === 'User') {
+    } else if (testType === STUDY_TYPES.USER) {
       if (!payload.userDocId) {
 
         const taskAnswer = (await this.getAnswerById(answerDocId)).taskAnswers; // get taskAnswers
