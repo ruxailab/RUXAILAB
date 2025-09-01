@@ -52,7 +52,7 @@ const router = useRouter();
 
 // Define goBack function
 const goBack = () => {
-  router.push('/testslist');
+  router.push('/admin');
 };
 </script>
 
