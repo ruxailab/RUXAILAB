@@ -371,8 +371,6 @@ const submit = async () => {
         return router.push(`/usertest/unmoderated/manager/${testId}`);
       }
     }
-
-    router.push(`/managerview/${testId}`);
   }
 };
 
