@@ -142,7 +142,7 @@ import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/[deprecated]ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/[deprecated]CreateTestUserDialog.vue';
 import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { instantiateStudyByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 
 const props = defineProps({
   isOpen: {
@@ -234,11 +234,12 @@ const validate = () => {
 const handleTestType = () => {
   console.log('handleTestType called with:', props.testType);
 
-  if (props.testType === 'User') {
+  if (props.testType === STUDY_TYPES.USER) {
     userDialog.value = true;
     return;
   }
 
+  // TODO: Update to use new ENUM
   if (props.testType === 'manual') {
     console.log('Manual test type detected');
     submitAccessibility();
@@ -251,7 +252,7 @@ const handleTestType = () => {
     return;
   }
 
-  if (['HEURISTICS'].includes(props.testType)) {
+  if (props.testType === STUDY_TYPES.HEURISTIC) {
     submit();
   }
 };
