@@ -190,5 +190,18 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    async deleteAuth({ commit }, payload) {
+      commit('setLoading', true)
+      try {
+        await authController.deleteAuth(payload)
+        commit('SET_USER', null)
+      } catch (err) {
+        console.error('Error deleting user:', err)
+        commit('setError', { errorCode: 'FIREBASE', message: err.code || 'Error deleting user' })
+      } finally {
+        commit('setLoading', false)
+      }
+    }
   },
 }
