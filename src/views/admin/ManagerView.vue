@@ -156,6 +156,7 @@ import { statistics } from '@/ux/Heuristic/utils/statistics'
 import { useDisplay } from 'vuetify'
 import Drawer from '@/shared/components/Drawer.vue'
 import CardsManager from '@/shared/components/CardsManager'
+import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 
 const store = useStore()
 const router = useRouter()
@@ -319,8 +320,12 @@ const navigator = computed(() => {
 })
 
 const cooperatorsUrl = () => {
-  if (test.value.testType === 'User' && test.value.subType === 'moderated') {
-    return `/userTest/moderated/cooperators/${test.value.id}`
+  if (test.value.testType === STUDY_TYPES.USER) {
+    if(test.value.subType === USER_STUDY_SUBTYPES.MODERATED) {
+      return `/userTest/moderated/cooperators/${test.value.id}`
+    } else if (test.value.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+      return `/userTest/unmoderated/cooperators/${test.value.id}`
+    }
   } else {
     return `/cooperators/${test.value.id}`
   }

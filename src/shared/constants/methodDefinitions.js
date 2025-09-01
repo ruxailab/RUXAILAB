@@ -1,15 +1,3 @@
-/**
- * Research Method Definitions
- * This file contains the complete configuration for each research method:
- * - Unique ID
- * - Descriptive name
- * - Material Design icon
- * - Specific color
- * - Description
- * - Category (test, inquiry, inspection, accessibility)
- * - Status (available, not available, coming soon, improving)
- */
-
 import HeuristicStudy from "@/ux/Heuristic/models/HeuristicStudy";
 import UserStudy from "@/ux/UserTest/models/UserStudy";
 import Study from "../models/Study";
@@ -18,434 +6,411 @@ import TestAdmin from "@/models/TestAdmin";
 import Cooperators from "../models/Cooperators";
 import Template from "../models/Template";
 
+/**
+ * Factory function to instantiate the correct study model based on type.
+ * It also normalizes nested sub-models such as TestAdmin, Cooperators and Template.
+ *
+ * @param {string} type - The study type (USER, HEURISTIC, CARD_SORTING).
+ * @param {Object} rawData - Raw data retrieved from the database.
+ * @returns {Study|UserStudy|HeuristicStudy|CardSortingStudy}
+ */
 export function instantiateStudyByType(type, rawData) {
     const normalizedData = {
         ...rawData,
         testAdmin: rawData?.testAdmin ? new TestAdmin(rawData.testAdmin) : null,
         cooperators: rawData?.cooperators
-            ? rawData.cooperators.map(c => new Cooperators(c))
+            ? rawData.cooperators.map((c) => new Cooperators(c))
             : [],
         templateDoc: rawData?.templateDoc ? new Template(rawData.templateDoc) : null,
     };
 
     switch (type) {
-        case 'User':
+        case STUDY_TYPES.USER:
             return new UserStudy(normalizedData);
-        case 'Heuristic':
+        case STUDY_TYPES.HEURISTIC:
             return new HeuristicStudy(normalizedData);
-        case 'CardSorting':
+        case STUDY_TYPES.CARD_SORTING:
             return new CardSortingStudy(normalizedData);
         default:
             return new Study(normalizedData);
     }
 }
 
-export const METHOD_DEFINITIONS = {
-    HEURISTICS: {
-        id: 'HEURISTICS',
-        name: 'Evaluación Heurística',
-        nameEn: 'Heuristic Evaluation',
-        icon: 'mdi-clipboard-check',
-        color: '#2196F3', // Azul
-        description: 'Evaluación de la interfaz basada en principios de usabilidad',
-        category: 'inspection',
-        status: 'available'
-    },
+/**
+ * Enum for available study types.
+ */
+export const STUDY_TYPES = {
+    USER: "USER",
+    HEURISTIC: "HEURISTIC",
+    CARD_SORTING: "CARD_SORTING",
+};
 
-    USER_MODERATED: {
-        id: 'USER_MODERATED',
-        name: 'Test Moderado',
-        nameEn: 'Moderated Usability Test',
-        icon: 'mdi-account-voice',
-        color: '#4CAF50', // Verde
-        description: 'Test de usabilidad con moderador en tiempo real',
-        category: 'test',
-        status: 'available'
-    },
+/**
+ * Enum for subtypes of user studies.
+ */
+export const USER_STUDY_SUBTYPES = {
+    UNMODERATED: "UNMODERATED",
+    MODERATED: "MODERATED",
+};
 
-    USER_UNMODERATED: {
-        id: 'USER_UNMODERATED',
-        name: 'Test No Moderado',
-        nameEn: 'Unmoderated Usability Test',
-        icon: 'mdi-monitor-screenshot',
-        color: '#FF9800', // Naranja
-        description: 'Test de usabilidad automatizado sin moderador',
-        category: 'test',
-        status: 'available'
-    },
+/**
+ * Enum for subtypes of heuristic studies.
+ */
+export const HEURISTIC_STUDY_SUBTYPES = {
+    QUANTITATIVE: "QUANTITATIVE",
+    QUALITATIVE: "QUALITATIVE",
+};
 
-    USER_GENERAL: {
-        id: 'USER_GENERAL',
-        name: 'Test de Usuario',
-        nameEn: 'User Test',
-        icon: 'mdi-account',
-        color: '#9C27B0', // Púrpura
-        description: 'Test general de usuario',
-        category: 'test',
-        status: 'available'
-    },
-
-    SURVEY: {
-        id: 'SURVEY',
-        name: 'Encuesta',
-        nameEn: 'Survey',
-        icon: 'mdi-clipboard-text',
-        color: '#FF5722', // Rojo
-        description: 'Recolección de datos mediante encuestas',
-        category: 'inquiry',
-        status: 'coming soon'
-    },
-
-    INTERVIEW: {
-        id: 'INTERVIEW',
-        name: 'Entrevista',
-        nameEn: 'Interview',
-        icon: 'mdi-microphone',
-        color: '#E91E63', // Rosa
-        description: 'Entrevistas cualitativas con usuarios',
-        category: 'inquiry',
-        status: 'coming soon'
-    },
-
-    CARD_SORTING: {
-        id: 'CARD_SORTING',
-        name: 'Card Sorting',
-        nameEn: 'Card Sorting',
-        icon: 'mdi-cards',
-        color: '#3F51B5', // Índigo
-        description: 'Organización de contenido mediante clasificación de tarjetas',
-        category: 'inquiry',
-        status: 'improving'
-    },
-
-    COGNITIVE_WALKTHROUGH: {
-        id: 'COGNITIVE_WALKTHROUGH',
-        name: 'Recorrido Cognitivo',
-        nameEn: 'Cognitive Walkthrough',
-        icon: 'mdi-brain',
-        color: '#795548', // Marrón
-        description: 'Evaluación paso a paso de tareas cognitivas',
-        category: 'inspection',
-        status: 'not available'
-    },
-
-    MANUAL: {
-        id: 'MANUAL',
-        name: 'Evaluación Manual',
-        nameEn: 'Manual Evaluation',
-        icon: 'mdi-hand-extended',
-        color: '#607D8B', // Azul gris
-        description: 'Evaluación manual de accesibilidad',
-        category: 'accessibility',
-        status: 'available'
-    },
-
-    AUTOMATIC: {
-        id: 'AUTOMATIC',
-        name: 'Evaluación Automática',
-        nameEn: 'Automatic Evaluation',
-        icon: 'mdi-robot',
-        color: '#795548', // Marrón
-        description: 'Evaluación automática de accesibilidad',
-        category: 'accessibility',
-        status: 'available'
-    },
-
-    WCAG_AUDIT: {
-        id: 'WCAG_AUDIT',
-        name: 'Auditoría WCAG',
-        nameEn: 'WCAG Audit',
-        icon: 'mdi-shield-check',
-        color: '#009688', // Teal
-        description: 'Auditoría completa de cumplimiento WCAG',
-        category: 'accessibility',
-        status: 'improving'
-    },
-
-    DEFAULT: {
-        id: 'DEFAULT',
-        name: 'Método Desconocido',
-        nameEn: 'Unknown Method',
-        icon: 'mdi-file-document',
-        color: '#9E9E9E', // Gris
-        description: 'Método no identificado',
-        category: 'other',
-        status: 'not available'
-    }
-}
-
-// Definición de categorías
+/**
+ * Categories of usability methods.
+ */
 export const METHOD_CATEGORIES = {
     test: {
-        id: 'test',
-        name: 'Pruebas con Usuarios',
-        nameEn: 'User Testing',
-        description: 'Métodos que involucran directamente a usuarios reales',
-        icon: 'mdi-account-group',
-        color: '#4CAF50'
+        id: "test",
+        name: "Pruebas con Usuarios",
+        nameEn: "User Testing",
+        description: "Methods that involve real users directly",
+        icon: "mdi-account-group",
+        color: "#4CAF50",
     },
     inquiry: {
-        id: 'inquiry',
-        name: 'Investigación',
-        nameEn: 'User Research',
-        description: 'Métodos de investigación y recolección de datos',
-        icon: 'mdi-magnify',
-        color: '#FF9800'
+        id: "inquiry",
+        name: "Investigación",
+        nameEn: "User Research",
+        description: "Research and data collection methods",
+        icon: "mdi-magnify",
+        color: "#FF9800",
     },
     inspection: {
-        id: 'inspection',
-        name: 'Inspección',
-        nameEn: 'Expert Inspection',
-        description: 'Evaluaciones realizadas por expertos',
-        icon: 'mdi-magnify-scan',
-        color: '#2196F3'
+        id: "inspection",
+        name: "Inspección",
+        nameEn: "Expert Inspection",
+        description: "Expert-driven evaluations",
+        icon: "mdi-magnify-scan",
+        color: "#2196F3",
     },
     accessibility: {
-        id: 'accessibility',
-        name: 'Accesibilidad',
-        nameEn: 'Accessibility',
-        description: 'Evaluaciones de accesibilidad web',
-        icon: 'mdi-wheelchair-accessibility',
-        color: '#009688'
+        id: "accessibility",
+        name: "Accesibilidad",
+        nameEn: "Accessibility",
+        description: "Web accessibility evaluations",
+        icon: "mdi-wheelchair-accessibility",
+        color: "#009688",
     },
     other: {
-        id: 'other',
-        name: 'Otros',
-        nameEn: 'Other',
-        description: 'Otros métodos',
-        icon: 'mdi-dots-horizontal',
-        color: '#9E9E9E'
-    }
-}
-
-// Definición de estados
-export const METHOD_STATUSES = {
-    available: {
-        id: 'available',
-        name: 'Disponible',
-        nameEn: 'Available',
-        description: 'Método completamente funcional',
-        color: '#4CAF50',
-        icon: 'mdi-check-circle'
+        id: "other",
+        name: "Otros",
+        nameEn: "Other",
+        description: "Other UX research methods",
+        icon: "mdi-dots-horizontal",
+        color: "#9E9E9E",
     },
-    'not available': {
-        id: 'not available',
-        name: 'No Disponible',
-        nameEn: 'Not Available',
-        description: 'Método no disponible actualmente',
-        color: '#F44336',
-        icon: 'mdi-close-circle'
-    },
-    'coming soon': {
-        id: 'coming soon',
-        name: 'Próximamente',
-        nameEn: 'Coming Soon',
-        description: 'Método en desarrollo',
-        color: '#FF9800',
-        icon: 'mdi-clock-outline'
-    },
-    improving: {
-        id: 'improving',
-        name: 'Mejorando',
-        nameEn: 'Improving',
-        description: 'Método en proceso de mejora',
-        color: '#2196F3',
-        icon: 'mdi-progress-wrench'
-    }
-}
-
-// Mapeo para compatibilidad con el sistema actual
-export const METHOD_MAPPING = {
-    'HEURISTICS': 'HEURISTICS',
-    'USER': 'USER_GENERAL',
-    'MANUAL': 'MANUAL',
-    'AUTOMATIC': 'AUTOMATIC'
-}
-
-// Mapeo de subtipos para tests de usuario
-export const USER_SUBTYPE_MAPPING = {
-    'UNMODERATED': 'USER_UNMODERATED',
-    'MODERATED': 'USER_MODERATED'
-}
+};
 
 /**
- * Obtiene la definición completa de un método
- * @param {string} testType - Tipo de test principal
- * @param {string} subType - Subtipo de test de usuario (opcional)
- * @returns {Object} Definición del método
+ * Enum for method statuses.
  */
-export const getMethodDefinition = (testType, subType = '') => {
-    const type = testType?.toUpperCase() || ''
-    const subtype = subType?.toUpperCase() || ''
-
-    // Casos especiales para tests de usuario
-    if (type === 'USER') {
-        if (subtype.includes('UNMODERATED')) {
-            return METHOD_DEFINITIONS.USER_UNMODERATED
-        }
-        if (subtype.includes('MODERATED')) {
-            return METHOD_DEFINITIONS.USER_MODERATED
-        }
-        return METHOD_DEFINITIONS.USER_GENERAL
-    }
-
-    // Mapeo directo para otros tipos
-    const mappedType = METHOD_MAPPING[type]
-    return METHOD_DEFINITIONS[mappedType] || METHOD_DEFINITIONS.DEFAULT
-}
+export const METHOD_STATUSES = {
+    AVAILABLE: {
+        id: "AVAILABLE",
+        name: "Disponible",
+        nameEn: "Available",
+        description: "Method is fully functional",
+        color: "#4CAF50",
+        icon: "mdi-check-circle",
+    },
+    NOT_AVAILABLE: {
+        id: "NOT_AVAILABLE",
+        name: "No Disponible",
+        nameEn: "Not Available",
+        description: "Method is currently unavailable",
+        color: "#F44336",
+        icon: "mdi-close-circle",
+    },
+    COMING_SOON: {
+        id: "COMING_SOON",
+        name: "Próximamente",
+        nameEn: "Coming Soon",
+        description: "Method is under development",
+        color: "#FF9800",
+        icon: "mdi-clock-outline",
+    },
+    IMPROVING: {
+        id: "IMPROVING",
+        name: "Mejorando",
+        nameEn: "Improving",
+        description: "Method is being improved",
+        color: "#2196F3",
+        icon: "mdi-progress-wrench",
+    },
+};
 
 /**
- * Obtiene el icono para un método específico
- * @param {Object} item - Item que contiene testType y subType
- * @returns {string} Nombre del icono MDI
+ * Definitions for all supported UX research methods.
+ */
+export const METHOD_DEFINITIONS = {
+    HEURISTICS: {
+        id: "HEURISTICS",
+        name: "Evaluación Heurística",
+        nameEn: "Heuristic Evaluation",
+        icon: "mdi-clipboard-check",
+        color: "#2196F3",
+        description: "Interface evaluation based on usability principles",
+        category: METHOD_CATEGORIES.inspection.id,
+        status: METHOD_STATUSES.AVAILABLE.id,
+    },
+    USER_MODERATED: {
+        id: "USER_MODERATED",
+        name: "Test Moderado",
+        nameEn: "Moderated Usability Test",
+        icon: "mdi-account-voice",
+        color: "#4CAF50",
+        description: "Live moderated usability test",
+        category: METHOD_CATEGORIES.test.id,
+        status: METHOD_STATUSES.AVAILABLE.id,
+    },
+    USER_UNMODERATED: {
+        id: "USER_UNMODERATED",
+        name: "Test No Moderado",
+        nameEn: "Unmoderated Usability Test",
+        icon: "mdi-monitor-screenshot",
+        color: "#FF9800",
+        description: "Automated usability test without moderator",
+        category: METHOD_CATEGORIES.test.id,
+        status: METHOD_STATUSES.AVAILABLE.id,
+    },
+    SURVEY: {
+        id: "SURVEY",
+        name: "Encuesta",
+        nameEn: "Survey",
+        icon: "mdi-clipboard-text",
+        color: "#FF5722",
+        description: "Data collection via surveys",
+        category: METHOD_CATEGORIES.inquiry.id,
+        status: METHOD_STATUSES.COMING_SOON.id,
+    },
+    INTERVIEW: {
+        id: "INTERVIEW",
+        name: "Entrevista",
+        nameEn: "Interview",
+        icon: "mdi-microphone",
+        color: "#E91E63",
+        description: "Qualitative user interviews",
+        category: METHOD_CATEGORIES.inquiry.id,
+        status: METHOD_STATUSES.COMING_SOON.id,
+    },
+    CARD_SORTING: {
+        id: "CARD_SORTING",
+        name: "Card Sorting",
+        nameEn: "Card Sorting",
+        icon: "mdi-cards",
+        color: "#3F51B5",
+        description: "Content organization through card sorting",
+        category: METHOD_CATEGORIES.inquiry.id,
+        status: METHOD_STATUSES.IMPROVING.id,
+    },
+    COGNITIVE_WALKTHROUGH: {
+        id: "COGNITIVE_WALKTHROUGH",
+        name: "Recorrido Cognitivo",
+        nameEn: "Cognitive Walkthrough",
+        icon: "mdi-brain",
+        color: "#795548",
+        description: "Step-by-step evaluation of cognitive tasks",
+        category: METHOD_CATEGORIES.inspection.id,
+        status: METHOD_STATUSES.NOT_AVAILABLE.id,
+    },
+    ACCESSIBILITY_MANUAL: {
+        id: "ACCESSIBILITY_MANUAL",
+        name: "Evaluación Manual",
+        nameEn: "Manual Evaluation",
+        icon: "mdi-hand-extended",
+        color: "#607D8B",
+        description: "Manual accessibility evaluation",
+        category: METHOD_CATEGORIES.accessibility.id,
+        status: METHOD_STATUSES.AVAILABLE.id,
+    },
+    ACCESSIBILITY_AUTOMATIC: {
+        id: "ACCESSIBILITY_AUTOMATIC",
+        name: "Evaluación Automática",
+        nameEn: "Automatic Evaluation",
+        icon: "mdi-robot",
+        color: "#795548",
+        description: "Automated accessibility evaluation",
+        category: METHOD_CATEGORIES.accessibility.id,
+        status: METHOD_STATUSES.AVAILABLE.id,
+    },
+    WCAG_AUDIT: {
+        id: "WCAG_AUDIT",
+        name: "Auditoría WCAG",
+        nameEn: "WCAG Audit",
+        icon: "mdi-shield-check",
+        color: "#009688",
+        description: "Full WCAG compliance audit",
+        category: METHOD_CATEGORIES.accessibility.id,
+        status: METHOD_STATUSES.IMPROVING.id,
+    },
+};
+
+/**
+ * Retrieves the full definition of a method given its type and subtype.
+ */
+export const getMethodDefinition = (testType, subType = "") => {
+    const type = testType?.toUpperCase() || "";
+    const subtype = subType?.toUpperCase() || "";
+
+    switch (type) {
+        case STUDY_TYPES.USER: {
+            if (subtype === USER_STUDY_SUBTYPES.UNMODERATED) {
+                return METHOD_DEFINITIONS.USER_UNMODERATED;
+            }
+            if (subtype === USER_STUDY_SUBTYPES.MODERATED) {
+                return METHOD_DEFINITIONS.USER_MODERATED;
+            }
+            return null;
+        }
+        case STUDY_TYPES.HEURISTIC:
+            return METHOD_DEFINITIONS.HEURISTICS;
+        case STUDY_TYPES.CARD_SORTING:
+            return METHOD_DEFINITIONS.CARD_SORTING;
+        default:
+            return null;
+    }
+};
+
+/**
+ * Retrieves the icon for a given method.
  */
 export const getMethodIcon = (item) => {
-    const testType = item.testType ?? item.header?.templateType ?? ''
-    const subType = item.subType ?? ''
-    const definition = getMethodDefinition(testType, subType)
-    return definition.icon
-}
+    const testType = item.testType ?? item.header?.templateType ?? "";
+    const subType = item.subType ?? "";
+    const definition = getMethodDefinition(testType, subType);
+    return definition?.icon ?? "mdi-help-circle";
+};
 
 /**
- * Obtiene el color para un método específico
- * @param {Object} item - Item que contiene testType y subType
- * @returns {string} Color en formato hex
+ * Retrieves the color for a given method.
  */
 export const getMethodColor = (item) => {
-    const testType = item.testType ?? item.header?.templateType ?? ''
-    const subType = item.subType ?? ''
-    const definition = getMethodDefinition(testType, subType)
-    return definition.color
-}
+    const testType = item.testType ?? item.header?.templateType ?? "";
+    const subType = item.subType ?? "";
+    const definition = getMethodDefinition(testType, subType);
+    return definition?.color ?? "#9E9E9E";
+};
 
 /**
- * Obtiene el nombre para un método específico
- * @param {Object} item - Item que contiene testType y subType
- * @param {string} lang - Idioma ('es' o 'en')
- * @returns {string} Nombre del método
+ * Retrieves the display name for a given method.
  */
-export const getMethodName = (item, lang = 'es') => {
-    const testType = item.testType ?? item.header?.templateType ?? ''
-    const subType = item.subType ?? ''
-    const definition = getMethodDefinition(testType, subType)
-    return lang === 'en' ? definition.nameEn : definition.name
-}
+export const getMethodName = (item, lang = "es") => {
+    const testType = item.testType ?? item.header?.templateType ?? "";
+    const subType = item.subType ?? "";
+    const definition = getMethodDefinition(testType, subType);
+    if (!definition) return lang === "en" ? "Unknown Method" : "Método desconocido";
+    return lang === "en" ? definition.nameEn : definition.name;
+};
 
 /**
- * Obtiene el estado de un método específico
- * @param {Object} item - Item que contiene testType y subType
- * @returns {Object} Definición del estado
+ * Retrieves the status object for a given method.
  */
 export const getMethodStatus = (item) => {
-    const testType = item.testType ?? item.header?.templateType ?? ''
-    const subType = item.subType ?? ''
-    const definition = getMethodDefinition(testType, subType)
-    return METHOD_STATUSES[definition.status]
-}
+    const testType = item.testType ?? item.header?.templateType ?? "";
+    const subType = item.subType ?? "";
+    const definition = getMethodDefinition(testType, subType);
+    return METHOD_STATUSES[definition.status];
+};
 
 /**
- * Obtiene la categoría de un método específico
- * @param {Object} item - Item que contiene testType y subType
- * @returns {Object} Definición de la categoría
+ * Retrieves the category object for a given method.
  */
 export const getMethodCategory = (item) => {
-    const testType = item.testType ?? item.header?.templateType ?? ''
-    const subType = item.subType ?? ''
-    const definition = getMethodDefinition(testType, subType)
-    return METHOD_CATEGORIES[definition.category]
-}
+    const testType = item.testType ?? item.header?.templateType ?? "";
+    const subType = item.subType ?? "";
+    const definition = getMethodDefinition(testType, subType);
+    return METHOD_CATEGORIES[definition.category];
+};
 
 /**
- * Obtiene todos los métodos agrupados por categoría
- * @returns {Object} Métodos agrupados por categoría
+ * Groups all methods by their categories.
  */
 export const getMethodsByCategory = () => {
-    const categories = {}
-
-    Object.values(METHOD_DEFINITIONS).forEach(method => {
+    const categories = {};
+    Object.values(METHOD_DEFINITIONS).forEach((method) => {
         if (!categories[method.category]) {
-            categories[method.category] = []
+            categories[method.category] = [];
         }
-        categories[method.category].push(method)
-    })
-
-    return categories
-}
+        categories[method.category].push(method);
+    });
+    return categories;
+};
 
 /**
- * Obtiene todos los métodos filtrados por estado
- * @param {string} status - Estado a filtrar ('available', 'not available', 'coming soon', 'improving')
- * @returns {Array} Array de métodos con el estado especificado
+ * Retrieves all methods filtered by status.
  */
 export const getMethodsByStatus = (status) => {
-    return Object.values(METHOD_DEFINITIONS).filter(method => method.status === status)
-}
+    return Object.values(METHOD_DEFINITIONS).filter(
+        (method) => method.status === status
+    );
+};
 
 /**
- * Obtiene todos los métodos filtrados por categoría
- * @param {string} category - Categoría a filtrar ('test', 'inquiry', 'inspection', 'accessibility')
- * @returns {Array} Array de métodos de la categoría especificada
+ * Retrieves all methods filtered by a specific category.
  */
 export const getMethodsBySpecificCategory = (category) => {
-    return Object.values(METHOD_DEFINITIONS).filter(method => method.category === category)
-}
+    return Object.values(METHOD_DEFINITIONS).filter(
+        (method) => method.category === category
+    );
+};
 
 /**
- * Obtiene todas las opciones para selectores
- * @param {string} lang - Idioma ('es' o 'en')
- * @param {string} filterStatus - Filtrar por estado (opcional)
- * @param {string} filterCategory - Filtrar por categoría (opcional)
- * @returns {Array} Array de opciones {value, text, icon, color, status, category}
+ * Returns all method options for select inputs.
  */
-export const getMethodOptions = (lang = 'es', filterStatus = null, filterCategory = null) => {
-    let methods = Object.values(METHOD_DEFINITIONS).filter(method => method.id !== 'DEFAULT')
+export const getMethodOptions = (
+    lang = "es",
+    filterStatus = null,
+    filterCategory = null
+) => {
+    let methods = Object.values(METHOD_DEFINITIONS);
 
     if (filterStatus) {
-        methods = methods.filter(method => method.status === filterStatus)
+        methods = methods.filter((method) => method.status === filterStatus);
     }
-
     if (filterCategory) {
-        methods = methods.filter(method => method.category === filterCategory)
+        methods = methods.filter((method) => method.category === filterCategory);
     }
 
-    return methods.map(method => ({
+    return methods.map((method) => ({
         value: method.id,
-        text: lang === 'en' ? method.nameEn : method.name,
+        text: lang === "en" ? method.nameEn : method.name,
         icon: method.icon,
         color: method.color,
         status: method.status,
         category: method.category,
         statusInfo: METHOD_STATUSES[method.status],
-        categoryInfo: METHOD_CATEGORIES[method.category]
-    }))
-}
+        categoryInfo: METHOD_CATEGORIES[method.category],
+    }));
+};
 
 /**
- * Obtiene todas las categorías disponibles
- * @param {string} lang - Idioma ('es' o 'en')
- * @returns {Array} Array de categorías
+ * Returns all available categories for select inputs.
  */
-export const getCategoryOptions = (lang = 'es') => {
-    return Object.values(METHOD_CATEGORIES).map(category => ({
+export const getCategoryOptions = (lang = "es") => {
+    return Object.values(METHOD_CATEGORIES).map((category) => ({
         value: category.id,
-        text: lang === 'en' ? category.nameEn : category.name,
+        text: lang === "en" ? category.nameEn : category.name,
         description: category.description,
         icon: category.icon,
-        color: category.color
-    }))
-}
+        color: category.color,
+    }));
+};
 
 /**
- * Obtiene todos los estados disponibles
- * @param {string} lang - Idioma ('es' o 'en')
- * @returns {Array} Array de estados
+ * Returns all available statuses for select inputs.
  */
-export const getStatusOptions = (lang = 'es') => {
-    return Object.values(METHOD_STATUSES).map(status => ({
+export const getStatusOptions = (lang = "es") => {
+    return Object.values(METHOD_STATUSES).map((status) => ({
         value: status.id,
-        text: lang === 'en' ? status.nameEn : status.name,
+        text: lang === "en" ? status.nameEn : status.name,
         description: status.description,
         icon: status.icon,
-        color: status.color
-    }))
-}
+        color: status.color,
+    }));
+};

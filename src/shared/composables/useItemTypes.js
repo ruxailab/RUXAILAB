@@ -15,7 +15,7 @@ export function useItemTypes() {
         const testType = item.testType ?? item.header?.templateType ?? ''
         const subType = item.subType ?? ''
         const definition = getMethodDefinition(testType, subType)
-        return definition.name
+        return definition?.name ?? ''
     }
 
     // Get color from method definitions
