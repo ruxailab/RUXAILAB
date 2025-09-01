@@ -721,7 +721,7 @@ const submitAnswer = async () => {
   try {
     await saveAnswer();
     toast.success(t('alerts.genericSuccess'));
-    router.push('/testslist');
+    router.push('/admin');
   } catch (error) {
     console.error('Error submitting answer:', error);
     toast.error(t('HeuristicsTestView.errors.failedToSubmitAnswer'));

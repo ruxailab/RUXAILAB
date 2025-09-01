@@ -15,7 +15,7 @@ describe('Heuristic test Suite', () => {
   })
   describe('Create Heuristic Test', () => {
     it('should allow a new test to create', () => {
-      cy.visit(url + '/testslist')
+      cy.visit(url + '/admin')
       cy.findByTestId('create-test-btn').click()
       cy.findByText('Create a blank test').click()
       cy.findByText('Usability Heuristic').click()

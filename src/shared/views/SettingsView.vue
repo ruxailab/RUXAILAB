@@ -495,8 +495,8 @@ watch(
   test,
   newTest => {
     if (newTest !== null && newTest !== undefined) {
-      object.value = { 
-        ...newTest, 
+      object.value = {
+        ...newTest,
         status: newTest.status || 'pending',
         endDate: newTest.endDate || null
       };
@@ -688,7 +688,7 @@ const duplicateTest = async () => {
       answer: testAnswerDocument.value,
     });
     toast.success('Test duplicated successfully!');
-    router.push('/testslist');
+    router.push('/admin');
   } catch (error) {
     toast.error('Failed to duplicate test.');
     console.error('Error duplicating test:', error);
