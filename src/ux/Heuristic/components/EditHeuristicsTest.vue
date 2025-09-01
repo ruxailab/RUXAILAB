@@ -59,29 +59,15 @@
     </v-tabs>
 
     <div class="mt-responsive">
-      <HeuristicsTable
-        v-if="index == 0"
-        :heuristics="object.heuristics"
-        @change="change"
-      />
-      <OptionsTable
-        v-if="index == 1"
-        :options="object.options"
-      />
-      <WeightTable
-        v-if="index == 2"
-        :options="object.weight"
-      />
-      <HeuristicsSenttings
-        v-if="index == 3"
-        :options="object.settings"
-      />
+      <HeuristicsTable v-if="index == 0" @change="emit('change')" />
+      <OptionsTable v-if="index == 1" />
+      <WeightTable v-if="index == 2" />
+      <HeuristicsSenttings v-if="index == 3" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { useStore } from 'vuex';
 import HeuristicsTable from '@/ux/Heuristic/components/HeuristicsTable.vue';
 import OptionsTable from '@/ux/Heuristic/components/OptionsTable.vue';
@@ -107,14 +93,8 @@ const emit = defineEmits(['tabClicked', 'change']);
 
 const store = useStore();
 
-const currentTest = computed(() => store.state.Tests.Test.testStructure);
-
 const tabClicked = (index) => {
   emit('tabClicked', index);
-};
-
-const change = () => {
-  emit('change');
 };
 </script>
 
