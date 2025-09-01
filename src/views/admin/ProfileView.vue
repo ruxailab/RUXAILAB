@@ -862,61 +862,29 @@ const changePassword = async () => {
 
 const deleteAccount = async () => {
   if (!userPassword.value) {
-    toast.error(t('PROFILE.passwordRequired'));
-    return;
+    return toast.error(t('PROFILE.passwordRequired'));
   }
 
   const auth = getAuth();
   const user = auth.currentUser;
+  console.log(user)
 
-  if (user) {
-    try {
-      isDeleting.value = true;
-      const email = user.email;
-      const credential = EmailAuthProvider.credential(email, userPassword.value);
+  isDeleting.value = true;
+  try {
+    const email = user.email;
+    const credential = EmailAuthProvider.credential(email, userPassword.value)
+    await reauthenticateWithCredential(user, credential);
 
-      await reauthenticateWithCredential(user, credential);
+    await store.dispatch('deleteAuth', user.uid);
+    toast.success(t('PROFILE.accountDeletedSuccess'));
 
-      const db = getFirestore();
-      const userDocId = user.uid;
-
-      const testsCollectionRef = collection(db, 'tests');
-      const testsQuery = query(
-        testsCollectionRef,
-        where('testAdmin.userDocId', '==', userDocId)
-      );
-      const testsSnapshot = await getDocs(testsQuery);
-
-      if (!testsSnapshot.empty) {
-        for (const testDoc of testsSnapshot.docs) {
-          const testData = testDoc.data();
-          const answersDocId = testData.answersDocId;
-
-          if (answersDocId) {
-            const answersDocRef = doc(db, 'answers', answersDocId);
-            await deleteDoc(answersDocRef);
-          }
-
-          const testDocRef = doc(db, 'tests', testDoc.id);
-          await deleteDoc(testDocRef);
-        }
-      }
-
-      const userDocRef = doc(db, 'users', userDocId);
-      await deleteDoc(userDocRef);
-
-      await user.delete();
-      toast.success(t('PROFILE.accountDeletedSuccess'));
-      deleteAccountDialog.value = false;
-      signOut();
-    } catch (error) {
-      console.error('Error during account deletion:', error);
-      toast.error(t('PROFILE.accountDeletionFailed'));
-    } finally {
-      isDeleting.value = false;
-    }
-  } else {
-    toast.error(t('PROFILE.noUserSignedIn'));
+    deleteAccountDialog.value = false;
+    signOut();
+  } catch (error) {
+    console.error('Error during account deletion:', error);
+    toast.error(t('PROFILE.accountDeletionFailed'));
+  } finally {
+    isDeleting.value = false;
   }
 };
 

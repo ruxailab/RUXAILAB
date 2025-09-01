@@ -717,7 +717,7 @@ const pythonFunction = async () => {
   const caminhoTestScore = store.state.Tests.scoresPercentage || [];
 
   try {
-    const response = await axios.post(process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION, {
+    const response = await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/say_hello', {
       caminhoTestStructure,
       caminhoTestWeights,
       caminhoTestScore,
