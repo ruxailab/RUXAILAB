@@ -163,7 +163,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
-import ProfileView from './ProfileView.vue';
+import ProfileView from '../../features/auth/views/ProfileView.vue';
 import NotificationPage from '../../features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation';
 import { getMethodOptions } from '@/shared/constants/methodDefinitions';
