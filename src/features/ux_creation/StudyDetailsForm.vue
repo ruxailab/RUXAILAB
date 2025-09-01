@@ -239,7 +239,7 @@ import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 
 const router = useRouter();
 const store = useStore();
@@ -360,14 +360,14 @@ const submit = async () => {
   if (studyType.value === 'Accessibility') {
     router.push('/sample');
   } else {
-    if (testType === 'CardSorting') {
+    if (testType === STUDY_TYPES.CARD_SORTING) {
       return router.push(`/cardSorting/manager/${testId}`);
-    } else if (testType === 'HEURISTICS') {
+    } else if (testType === STUDY_TYPES.HEURISTIC) {
       return router.push(`/heuristic/managerview/${testId}`);
-    } else if (testType === 'User') {
-      if (test.value.userTestType === 'moderated') {
+    } else if (testType === STUDY_TYPES.USER) {
+      if (test.value.subType === USER_STUDY_SUBTYPES.MODERATED) {
         return router.push(`/usertest/moderated/manager/${testId}`);
-      } else if (test.value.userTestType === 'unmoderated') {
+      } else if (test.value.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
         return router.push(`/usertest/unmoderated/manager/${testId}`);
       }
     }

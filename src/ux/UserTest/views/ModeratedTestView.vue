@@ -82,7 +82,7 @@
 
 
             <!-- Step 4: Task Step -->
-            <TaskStep v-if="globalIndex === 4 && test.testType === 'User'" ref="taskStepComponent"
+            <TaskStep v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
               :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
               v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
               v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
@@ -168,6 +168,7 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 
 const store = useStore();
 const router = useRouter();

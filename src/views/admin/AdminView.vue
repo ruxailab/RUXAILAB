@@ -166,7 +166,7 @@ import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from './ProfileView.vue';
 import NotificationPage from '../../features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation';
-import { getMethodOptions } from '@/shared/constants/methodDefinitions';
+import { getMethodOptions, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '../../features/dashboard/views/DashboardView.vue';
 
 const store = useStore();
@@ -220,8 +220,8 @@ const filteredTests = computed(() => {
     const testType = test.testType;
     const matchesMethod =
       method === 'all' ||
-      (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
-      ((method === 'USER_GENERAL' || method === 'USER_MODERATED' || method === 'USER_UNMODERATED') && testType === 'User') ||
+      (method === 'HEURISTICS' && testType === STUDY_TYPES.HEURISTIC) ||
+      ((method === 'USER_GENERAL' || method === 'USER_MODERATED' || method === 'USER_UNMODERATED') && testType === STUDY_TYPES.USER) ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 
@@ -246,16 +246,16 @@ const goToCreateTestRoute = () => {
 const goTo = (test) => {
   console.log(tests);
   if (activeSection.value === 'studies') {
-    if (test.testType === 'HEURISTICS') {
+    if (test.testType === STUDY_TYPES.HEURISTIC) {
       router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === 'CardSorting') {
+    } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
       router.push({ name: 'CardSortingManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === 'User') {
-      // if (test.userTestType === 'unmoderated') {
-      //   router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
-      // } else if (test.userTestType === 'moderated') {
+    } else if (test.testType === STUDY_TYPES.USER) {
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
         router.push({ name: 'UserModeratedManagerView', params: { id: test.testDocId || test.id } });
-      // }
+      }
     }
   } else if (activeSection.value === 'sessions') {
     router.push(`testview/${test.id}/${user.value.id}`);
