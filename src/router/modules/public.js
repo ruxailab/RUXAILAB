@@ -4,7 +4,6 @@ import SignUp from '@/features/auth/views/SignUpView.vue'
 import ForgotPassword from '@/features/auth/views/ForgotPasswordView.vue'
 import PageNotFound from '@/shared/views/public/PageNotFoundView.vue'
 import Help from '@/shared/views/public/Help.vue'
-import Sample from '@/views/public/Sample.vue'
 import TermsOfService from '@/features/legal/TermsOfService.vue'
 import PrivacyPolicy from '@/features/legal/PrivacyPolicy.vue'
 import FAQ from '@/shared/views/public/FAQ.vue'
@@ -59,27 +58,6 @@ export default [
     name: 'Page not Found',
     meta: { authorize: [] },
     component: PageNotFound,
-  },
-  {
-    path: '/accessibility/manual',
-    name: 'Manual',
-    meta: { authorize: [] },
-    component: Sample,
-    children: [
-      {
-        path: '/assessment/:testId',
-        name: 'Assessment',
-        component: FAQ,
-        props: true,
-        meta: { authorize: [] }
-      },
-    ]
-  },
-  {
-    path: '/wacg',
-    name: 'accessibility docs',
-    meta: { authorize: [] },
-    component: () => import('@/views/public/Documentation.vue'),
   },
   {
     path: '/terms-of-service',
