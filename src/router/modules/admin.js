@@ -3,11 +3,11 @@ import TestList from '@/views/admin/AdminView.vue'
 import ManagerView from '@/views/admin/ManagerView.vue'
 import ReportView from '@/views/admin/ReportView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
-import AnalyticsView from '@/views/admin/AnalyticsView.vue'
+import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue'
 import TemplateView from '@/features/templates/TemplateView.vue'
-import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
+//import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
-import Profile from '@/views/admin/ProfileView.vue'
+import Profile from '@/features/auth/views/ProfileView.vue'
 import Notification from '@/features/notifications/views/NotificationPage.vue'
 import Choose from '@/features/ux_creation/Choose.vue'
 import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
@@ -72,11 +72,11 @@ export default [
     name: 'study-create-step4',
     meta: { authorize: [1] },
     component: StudyDetailsForm,
-  },
-  {
+  }
+  /*{
     path: '/fromtemplate',
     name: 'Create from template',
     meta: { authorize: [1] },
     component: CreateFromTemplate,
-  },
+  },*/
 ]
