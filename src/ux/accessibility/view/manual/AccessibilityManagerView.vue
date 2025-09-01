@@ -1,23 +1,18 @@
 <template>
   <v-app>
-    <AccessibilityDrawer
-      ref="accessibilityDrawer"
-      v-model="drawerOpen"
-      :items="navItems"
-      @toggle="onDrawerToggle"
-    />
+    <AccessibilityDrawer ref="accessibilityDrawer" v-model="drawerOpen" :items="navItems" @toggle="onDrawerToggle" />
 
     <v-main>
-      <v-container fluid>
+      
         <router-view />
-      </v-container>
+      
     </v-main>
   </v-app>
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import AccessibilityDrawer from '@/components/atoms/AccessibilityDrawer.vue'
+import AccessibilityDrawer from '@/ux/accessibility/components/atoms/AccessibilityDrawer.vue'
 
 const route = useRoute()
 const testId = ref(route.params.testId || '')
@@ -31,7 +26,7 @@ const navItems = computed(() => [
     icon: 'mdi-home',
     path: `/accessibility/manual/${testId.value}`,
   },
-   {
+  {
     title: 'Config',
     icon: 'mdi-cog',
     path: `/config/${testId.value}`,
@@ -51,7 +46,11 @@ const navItems = computed(() => [
     icon: 'mdi-comment-question',
     path: `/result/${testId.value}`,
   },
- 
+  {
+    title: 'Cooperator',
+    icon: 'mdi-account-multiple',
+    path: `/cooperative/${testId.value}`,
+  },
 ])
 
 const onDrawerToggle = (isOpen) => {
