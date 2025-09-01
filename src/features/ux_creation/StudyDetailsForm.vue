@@ -74,7 +74,7 @@
                       />
                     </v-col>
                     <v-col
-                      v-if="method == 'HEURISTICS'"
+                      v-if="method == STUDY_TYPES.HEURISTIC"
                       cols="12"
                     >
                       <v-text-field
@@ -328,9 +328,9 @@ const handleTestType = () => {
 };
 
 const submit = async () => {
-  let testType = category.value == 'test' ? 'User' : 'HEURISTICS'
+  let testType = category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
   if (method.value === 'CardSorting') {
-    testType = method.value
+    testType = STUDY_TYPES.CARD_SORTING
   }
 
   isLoading.value = true;

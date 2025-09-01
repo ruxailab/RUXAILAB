@@ -8,6 +8,7 @@ import { db } from '@/app/plugins/firebase'
 import TestController from '@/controllers/TestController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
 const testController = new TestController()
 
@@ -97,7 +98,7 @@ export default {
   mutations: {
     SET_TEST(state, payload) {
       state.Test = payload;
-      if (payload?.testStructure && payload.testType === 'HEURISTICS') {
+      if (payload?.testStructure && payload.testType === STUDY_TYPES.HEURISTIC) {
         state.heuristics = Object.entries(payload.testStructure)
           .filter(([key]) => !isNaN(key))
           .map(([_, value]) => ({ ...value }));
@@ -208,8 +209,8 @@ export default {
     },
     RESET_STUDY_DETAILS(state) {
       state.studyCategory = null,
-      state.studyMethod = null,
-      state.studyType = null
+        state.studyMethod = null,
+        state.studyType = null
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url
