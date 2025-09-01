@@ -125,10 +125,12 @@ import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { useToast } from 'vue-toastification';
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 
 defineProps({
   id: {
@@ -240,7 +242,7 @@ const init = async () => {
     ]);
   } catch (error) {
     console.error('Failed to load test data:', error);
-    // Optionally show a toast or redirect
+    toast.error('Failed to load test data');
   }
 };
 init();
