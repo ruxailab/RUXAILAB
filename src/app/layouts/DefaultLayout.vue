@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { GlobalToolbar } from '@/features/navigation'
+import { GlobalToolbar } from '@/features/navigation/utils'
 import GlobalErrorHandler from '@/app/layouts/components/GlobalErrorHandler.vue'
 
 export default {
