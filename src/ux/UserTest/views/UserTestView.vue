@@ -424,7 +424,7 @@ const saveAnswer = async () => {
         testType: test.value.testType,
       });
     }
-    router.push('/testslist');
+    router.push('/admin');
   } catch (error) {
     console.error('Error saving answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
