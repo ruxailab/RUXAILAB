@@ -1,5 +1,5 @@
 import ManagerView from '@/ux/Heuristic/views/ManagerView.vue'
-import ReportView from '@/views/admin/ReportView.vue'
+import ReportView from '@/shared/views/ReportView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
