@@ -233,8 +233,8 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
-import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
+import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
+import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
@@ -363,7 +363,7 @@ const submit = async () => {
     if (testType === 'CardSorting') {
       return router.push(`/cardSorting/manager/${testId}`);
     } else if (testType === 'HEURISTICS') {
-      return router.push(`/heuristic/managerview/${testId}`);
+      return router.push(`/heuristic/manager/${testId}`);
     } else if (testType === 'User') {
       if (test.value.subType === 'moderated') {
         return router.push(`/usertest/moderated/manager/${testId}`);
