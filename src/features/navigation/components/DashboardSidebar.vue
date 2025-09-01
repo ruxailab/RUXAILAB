@@ -1,7 +1,3 @@
-/**
-* DashboardSidebar.vue
-* Sidebar específico para el dashboard principal
-*/
 <template>
   <v-navigation-drawer
     v-model="drawerState"

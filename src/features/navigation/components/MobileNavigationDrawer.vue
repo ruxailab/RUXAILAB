@@ -1,7 +1,3 @@
-/**
-* MobileNavigationDrawer.vue
-* Drawer específico para navegación móvil global
-*/
 <template>
   <v-navigation-drawer
     v-model="isOpen"

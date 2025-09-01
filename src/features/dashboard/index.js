@@ -17,4 +17,4 @@ export {
 export {
     globalToolbarItems,
     navigationContexts,
-} from '@/features/navigation/globalItems.js';
+} from '@/features/navigation/utils/globalItems.js';
