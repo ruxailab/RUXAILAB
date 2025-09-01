@@ -166,7 +166,7 @@ import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
 import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation/utils';
-import { getMethodOptions, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
 
 const store = useStore();
@@ -183,7 +183,8 @@ const drawerOpen = ref(false);
 
 // Opciones de métodos usando el nuevo sistema - solo métodos disponibles
 const methodOptions = computed(() => {
-  const options = getMethodOptions('es', 'available') // Solo métodos disponibles
+  const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id) // Solo métodos disponibles
+
   return [
     { value: 'all', text: 'Todos los Métodos' },
     ...options.map(option => ({
@@ -218,10 +219,14 @@ const filteredTests = computed(() => {
 
     const method = selectedMethodFilter.value;
     const testType = test.testType;
+    const subType = test.subType
+
     const matchesMethod =
       method === 'all' ||
-      (method === 'HEURISTICS' && testType === STUDY_TYPES.HEURISTIC) ||
-      ((method === 'USER_GENERAL' || method === 'USER_MODERATED' || method === 'USER_UNMODERATED') && testType === STUDY_TYPES.USER) ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.USER_UNMODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.UNMODERATED) ||
+      (method === METHOD_DEFINITIONS.USER_MODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.MODERATED)
+      ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 
@@ -244,7 +249,6 @@ const goToCreateTestRoute = () => {
 };
 
 const goTo = (test) => {
-  console.log(tests);
   if (activeSection.value === 'studies') {
     if (test.testType === STUDY_TYPES.HEURISTIC) {
       router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
@@ -276,7 +280,7 @@ const cleanTestStore = () => store.dispatch('cleanTest');
 
 const filterModeratedSessions = async () => {
   const userModeratedTests = Object.values(user.value.myAnswers).filter(
-    (answer) => answer.subType === 'moderated'
+    (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
   );
   const cooperatorArray = [];
   for (const test of userModeratedTests) {
