@@ -262,7 +262,7 @@ const answers = computed(() => store.getters.testAnswerDocument)
 const headers = computed(() => {
   return allHeaders.value.filter(header => {
     if (header.key === 'hidden') {
-      return answers.value.type !== 'User' ? false : true;
+      return answers.value.type !== STUDY_TYPES.USER ? false : true;
     }
     return true;
   });
@@ -299,7 +299,7 @@ const reports = computed(() => {
   const doc = answers.value;
   if (!doc) return [];
   const type = doc.type;
-  const raw = type === 'User' ? doc.taskAnswers || {} : doc.heuristicAnswers || {};
+  const raw = type === STUDY_TYPES.USER ? doc.taskAnswers || {} : doc.heuristicAnswers || {};
   return Object.values(raw).map((r) => ({
     id: r.userDocId,
     fullName: r.fullName || "Evaluator",
@@ -327,7 +327,7 @@ const statusOptions = computed(() => [
 ]);
 
 const unhideReport = async (item) => {
-  if (answers.value.type !== 'User') return;
+  if (answers.value.type !== STUDY_TYPES.USER) return;
   const payload = Object.values(answers.value.taskAnswers).find(s => s.userDocId === item.id);
 
   if (!payload) {

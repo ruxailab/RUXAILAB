@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- User Usability Test -->
-    <div v-if="testAnswerDocument.type === 'User'">
+    <div v-if="testAnswerDocument.type === STUDY_TYPES.USER">
       <!-- Moderated Test -->
-      <div v-if="testDocument.subType === 'moderated'">
+      <div v-if="testDocument.subType === USER_STUDY_SUBTYPES.MODERATED">
         <UserModeratedSentiment />
       </div>
 
@@ -24,6 +24,7 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import UserModeratedSentiment from '@/ux/UserTest/components/sentimentAnalysis/UserModeratedSentiment.vue'
+import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 
 const store = useStore();
 

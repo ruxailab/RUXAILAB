@@ -49,8 +49,8 @@ export const STUDY_TYPES = {
  * Enum for subtypes of user studies.
  */
 export const USER_STUDY_SUBTYPES = {
-    UNMODERATED: "UNMODERATED",
-    MODERATED: "MODERATED",
+    UNMODERATED: "USER_UNMODERATED",
+    MODERATED: "USER_MODERATED",
 };
 
 /**
