@@ -25,12 +25,12 @@
       </div>
 
       <!-- File Upload Section -->
-      <div class="upload-section">
+      <div>
         <v-row
           align="center"
           class="mb-4"
         >
-          <v-col cols="8">
+          <v-col cols="10">
             <v-file-input
               ref="myFile"
               v-model="csvFile"
@@ -43,11 +43,33 @@
               show-size
               truncate-length="15"
               :disabled="testAnswerDocLength > 0"
-              hide-details
+              counter
+              multiple
               class="upload-input"
-            />
+            >
+              <template v-slot:selection="{ fileNames }">
+                <template v-for="(fileName, index) in fileNames" :key="fileName">
+                  <v-chip
+                    v-if="index < 2"
+                    class="me-2"
+                    color="deep-purple-accent-4"
+                    size="small"
+                    label
+                  >
+                    {{ fileName }}
+                  </v-chip>
+
+                  <span
+                    v-else-if="index === 2"
+                    class="text-overline text-grey-darken-3 mx-2"
+                  >
+                    +{{ files.length - 2 }} File(s)
+                  </span>
+                </template>
+              </template>
+            </v-file-input>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="2" class="pb-8">
             <v-btn
               :loading="loadingUpdate"
               :disabled="loadingUpdate || testAnswerDocLength > 0"
@@ -232,10 +254,6 @@ const downloadTemplate = async () => {
 </script>
 
 <style scoped>
-.upload-section {
-  max-width: 600px;
-}
-
 .upload-input {
   background-color: #F8FAFC;
 }
