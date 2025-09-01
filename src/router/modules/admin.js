@@ -1,4 +1,4 @@
-import TestList from '@/views/admin/AdminView.vue'
+import TestList from '@/features/navigation/views/AdminView.vue'
 import Profile from '@/features/auth/views/ProfileView.vue'
 import Notification from '@/features/notifications/views/NotificationPage.vue'
 import Choose from '@/features/ux_creation/Choose.vue'
