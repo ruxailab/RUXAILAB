@@ -71,6 +71,7 @@
 import { ref } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { STUDY_TYPES } from '../constants/methodDefinitions';
 
 const props = defineProps({
   test: {
@@ -101,10 +102,10 @@ const titleRequired = [
 const typeRequired = [v => !!v || t('errors.fieldRequired')];
 
 const types = [
-  { title: 'Usability User Test', value: 'User' },
-  { title: t('titles.heuristic'), value: 'HEURISTICS' },
-  { title: 'Manual Accessibility Test', value: 'MANUAL_ACCESSIBILITY' },
-  { title: 'Automatic Accessibility Test', value: 'AUTOMATIC_ACCESSIBILITY' },
+  { title: 'Usability User Test', value: STUDY_TYPES.USER },
+  { title: t('titles.heuristic'), value: STUDY_TYPES.HEURISTIC },
+  { title: 'Manual Accessibility Test', value: STUDY_TYPES.MANUAL_ACCESSIBILITY },
+  { title: 'Automatic Accessibility Test', value: STUDY_TYPES.AUTOMATIC_ACCESSIBILITY },
 ];
 
 const validate = async () => {

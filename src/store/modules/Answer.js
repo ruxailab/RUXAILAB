@@ -3,6 +3,7 @@ import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
 import UserTask from '@/models/UserTask'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
 const answerController = new AnswerController()
 
@@ -47,7 +48,7 @@ export default {
         return {}
       }
 
-      if (state.testAnswerDocument.type === 'HEURISTICS') {
+      if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
         return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
           ? HeuristicAnswer.toHeuristicAnswer(
             state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
@@ -58,7 +59,7 @@ export default {
           });
       }
 
-      if (state.testAnswerDocument.type === 'User') {
+      if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
         return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
           ? TaskAnswer.toTaskAnswer(
             state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
@@ -103,7 +104,7 @@ export default {
 
       const doc = state.testAnswerDocument;
 
-      if (doc.type === 'User' && doc.taskAnswers) {
+      if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
             ([, answer]) => answer.hidden === false
