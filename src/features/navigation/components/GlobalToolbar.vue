@@ -113,9 +113,9 @@ import { useStore } from 'vuex';
 import { useDisplay } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import LocaleChanger from '@/app/layouts/components/LocaleChanger.vue';
-import HelpButton from '@/features/navigation/HelpButton.vue';
+import HelpButton from '@/features/navigation/components/HelpButton.vue';
 import UserMenu from './UserMenu.vue';
-import NotificationButton from '../notifications/components/NotificationButton.vue';
+import NotificationButton from './NotificationButton.vue';
 
 // Emits
 defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer']);
