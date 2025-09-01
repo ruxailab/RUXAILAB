@@ -154,7 +154,7 @@ const onSignIn = async () => {
         password: password.value,
       })
       if (store.getters.user) {
-        router.push('/testslist').catch(() => { })
+        router.push('/admin').catch(() => { })
       }
     } catch (error) {
       console.error('Authentication error:', error)
@@ -177,7 +177,7 @@ const redirectToForgotPassword = () => {
 const onGoogleSignInStart = () => { }
 const onGoogleSignInSuccess = async () => {
   if (store.getters.user) {
-    router.push('/testslist').catch(() => { })
+    router.push('/admin').catch(() => { })
   }
 }
 const onGoogleSignInError = (error) => {

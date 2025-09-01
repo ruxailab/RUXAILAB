@@ -88,7 +88,7 @@ const handleCategoryClick = (categoryId) => {
   if (category?.comingSoon) return
 
   selectedCategory.value = categoryId
-  
+
 
   store.commit('SET_STUDY_CATEGORY', categoryId)
   router.push({
@@ -97,7 +97,7 @@ const handleCategoryClick = (categoryId) => {
 }
 
 const goBack = () => {
-  router.push('/testslist')
+  router.push('/admin')
 }
 </script>
 

@@ -45,7 +45,7 @@ function redirect() {
   if (!store.state.Auth.user) return '/'
   const level = store.state.Auth.user.accessLevel
   if (level === 0) return '/superadmin'
-  if (level === 1) return '/testslist'
+  if (level === 1) return '/admin'
   return '/'
 }
 

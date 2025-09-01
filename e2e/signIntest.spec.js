@@ -71,7 +71,7 @@ test.describe('Sign In Workflow', () => {
     await logIn(page, validEmail, validPassword);
 
     // 2. Wait for URL change
-    await expect(page).toHaveURL(/\/testslist/, { timeout: 10_000 });
+    await expect(page).toHaveURL(/\/admin/, { timeout: 10_000 });
 
     // 3. Verify that "My tests" tab is visible and selected
     const myTestsTab = page.getByRole('tab', { name: /My tests/i });
@@ -104,9 +104,9 @@ test.describe('Sign In Workflow', () => {
 
       // Option 2: Wait for successful network response
       page.waitForResponse(resp =>
-    resp.url().includes('identitytoolkit.googleapis.com/v1/accounts:sendOobCode') && resp.status() === 200,
-    { timeout: 10_000 }
-    ).then(() => 'network_response')
+        resp.url().includes('identitytoolkit.googleapis.com/v1/accounts:sendOobCode') && resp.status() === 200,
+        { timeout: 10_000 }
+      ).then(() => 'network_response')
     ]);
 
     // 6) Assertion: reset request was processed
@@ -135,8 +135,8 @@ test.describe('Sign In Workflow', () => {
         // Check if there's any password strength feedback or error
         // This could be a validation message or error alert
         const hasError = await page.locator('text=Password must be stronger').isVisible().catch(() => false) ||
-                        await page.locator('text=Password too weak').isVisible().catch(() => false) ||
-                        await page.locator('[role="alert"]').isVisible().catch(() => false);
+          await page.locator('text=Password too weak').isVisible().catch(() => false) ||
+          await page.locator('[role="alert"]').isVisible().catch(() => false);
 
         if (hasError) {
           console.log(`Weak password "${weakPassword}" correctly rejected`);
