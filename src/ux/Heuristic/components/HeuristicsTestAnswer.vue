@@ -474,7 +474,7 @@ import BarChart from '@/ux/Heuristic/components/BarChart.vue';
 import RadarChart from '@/shared/components/charts/RadarChart.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/IntroAnswer.vue';
-import AnalyticsView from '@/views/admin/AnalyticsView.vue';
+import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue';
 import RadarWeight from '@/ux/Heuristic/components/RadarWeight.vue';
 import axios from 'axios';
 import { standardDeviation, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
@@ -717,7 +717,7 @@ const pythonFunction = async () => {
   const caminhoTestScore = store.state.Tests.scoresPercentage || [];
 
   try {
-    const response = await axios.post(process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION, {
+    const response = await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/say_hello', {
       caminhoTestStructure,
       caminhoTestWeights,
       caminhoTestScore,
