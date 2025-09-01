@@ -26,7 +26,7 @@
           <label class="input-label">Test Category</label>
           <v-select
             :model-value="test.testType"
-            :disabled="lock"
+            :disabled="lock || disableType"
             :items="types"
             :label="$t('common.type')"
             :rules="typeRequired"
@@ -81,6 +81,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disableType: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:test', 'valForm']);
@@ -99,6 +103,8 @@ const typeRequired = [v => !!v || t('errors.fieldRequired')];
 const types = [
   { title: 'Usability User Test', value: 'User' },
   { title: t('titles.heuristic'), value: 'HEURISTICS' },
+  { title: 'Manual Accessibility Test', value: 'MANUAL_ACCESSIBILITY' },
+  { title: 'Automatic Accessibility Test', value: 'AUTOMATIC_ACCESSIBILITY' },
 ];
 
 const validate = async () => {

@@ -1,5 +1,5 @@
 import ManualAccessibilityController from '@/controllers/ManualAccessibilityController';
-import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
+import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
 
 const state = {
   currentTest: null,
@@ -158,7 +158,7 @@ const mutations = {
         ...updates
       });
     }
-    
+
     if (state.currentTest && state.currentTest.id === testId) {
       state.currentTest = new ManualAccessibilityTest({
         ...state.currentTest,
