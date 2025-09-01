@@ -111,7 +111,7 @@
                     size="small"
                     color="accent"
                     :disabled="testAnswerDocLength > 0"
-                    @click="setupQuestion(heuristic.id)"
+                    @click="setupQuestion(index)"
                   >
                     <v-icon>mdi-plus</v-icon>
                     <v-tooltip
@@ -298,7 +298,7 @@
                         variant="outlined"
                         prepend-icon="mdi-plus"
                         :disabled="testAnswerDocLength > 0"
-                        @click="setupQuestion(heuristic.id)"
+                        @click="setupQuestion(index)"
                       >
                         {{ $t('HeuristicsTable.titles.addNewQuestion') }}
                       </v-btn>
@@ -416,6 +416,7 @@
                 @submit.prevent="addQuestion"
               >
                 <v-text-field
+                  v-if="newQuestion"
                   v-model="newQuestion.title"
                   :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
                   variant="outlined"
@@ -423,6 +424,9 @@
                   :rules="questionRequired"
                   autofocus
                 />
+                <v-alert v-else type="error" class="mt-4">
+                  {{ $t('HeuristicsTable.errors.failedToLoadQuestionForm') }}
+                </v-alert>
               </v-form>
             </v-card-text>
             <v-card-actions class="pa-6 pt-0">
@@ -433,11 +437,7 @@
               >
                 {{ $t('HeuristicsTable.titles.cancel') }}
               </v-btn>
-              <v-btn
-                color="primary"
-                variant="elevated"
-                @click="addQuestion"
-              >
+              <v-btn color="primary" variant="elevated" :disabled="!newQuestion" @click="addQuestion">
                 {{ $t('HeuristicsTable.titles.add') }}
               </v-btn>
             </v-card-actions>
@@ -500,12 +500,11 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
-import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue'
-import TextClamp from 'vue3-text-clamp'
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
+import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue';
 
 const emit = defineEmits(['change'])
 const store = useStore()
@@ -527,24 +526,14 @@ const formHeurisRef = ref(null)
 const descBtn = ref(null)
 
 const headers = ref([
-  {
-    title: t('HeuristicsTable.titles.title'),
-    align: 'start',
-    value: 'title',
-  },
+  { title: t('HeuristicsTable.titles.title'), align: 'start', value: 'title' },
   { title: t('HeuristicsTable.titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
-const nameRequired = ref([
-  (v) => !!v || t('HeuristicsTable.validation.nameRequired'),
-])
-const questionRequired = ref([
-  (v) => !!v || t('HeuristicsTable.validation.questionRequired'),
-])
+const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')]);
+const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')]);
 
-const heuristics = computed(() =>
-  store.state.Tests.Test.testStructure ? store.state.Tests.Test.testStructure : []
-)
+const heuristics = computed(() => store.getters.heuristics || []);
 
 const filteredHeuristics = computed(() => {
   const searchLower = search.value.toLowerCase()
@@ -559,12 +548,8 @@ const filteredHeuristics = computed(() => {
 })
 
 const testAnswerDocLength = computed(() => {
-  if (!store.getters.testAnswerDocument) {
-    return 0
-  }
-  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers
-  return Object.keys(heuristicAnswers).length
-})
+  return Object.keys(store.getters.testAnswerDocument?.heuristicAnswers ?? {}).length;
+});
 
 watch(dialogHeuris, (newVal) => {
   if (!newVal && heuristics.value.length > 0 && !itemEdit.value) {
@@ -572,16 +557,9 @@ watch(dialogHeuris, (newVal) => {
       id: heuristics.value[heuristics.value.length - 1].id + 1,
       title: '',
       total: 0,
-      questions: [
-        {
-          id: 0,
-          title: '',
-          comparison: [],
-          descriptions: [],
-        },
-      ],
-    }
-    heuristicForm.value.total = heuristicForm.value.questions.length
+      questions: [{ id: 0, title: '', comparison: [], descriptions: [] }],
+    };
+    heuristicForm.value.total = heuristicForm.value.questions.length;
   }
   if (newVal && formHeurisRef.value) {
     formHeurisRef.value.resetValidation()
@@ -591,44 +569,19 @@ watch(dialogHeuris, (newVal) => {
 
 watch(itemSelect, (newVal) => {
   if (newVal !== null) {
-    questionSelect.value = null
-  } else {
-    itemSelect.value = null
+    questionSelect.value = null;
   }
-})
+});
 
 onMounted(() => {
-  if (heuristics.value.length) {
-    heuristicForm.value = {
-      id: heuristics.value[heuristics.value.length - 1].id + 1,
-      total: 0,
-      title: '',
-      questions: [
-        {
-          id: 0,
-          title: '',
-          descriptions: [],
-          comparison: [],
-        },
-      ],
-    }
-  } else {
-    heuristicForm.value = {
-      id: 0,
-      total: 0,
-      title: '',
-      questions: [
-        {
-          id: 0,
-          title: '',
-          descriptions: [],
-          comparison: [],
-        },
-      ],
-    }
-  }
-  heuristicForm.value.total = heuristicForm.value.questions.length
-})
+  heuristicForm.value = {
+    id: heuristics.value.length ? heuristics.value[heuristics.value.length - 1].id + 1 : 0,
+    total: 0,
+    title: '',
+    questions: [{ id: 0, title: '', descriptions: [], comparison: [] }],
+  };
+  heuristicForm.value.total = heuristicForm.value.questions.length;
+});
 
 const toggleHeuristic = (index) => {
   itemSelect.value = itemSelect.value === index ? null : index
@@ -636,72 +589,62 @@ const toggleHeuristic = (index) => {
 
 const moveItemUp = (index) => {
   if (index > 0) {
-    const itemToMove = filteredHeuristics.value[index]
-    const itemAbove = filteredHeuristics.value[index - 1]
+    const newHeuristics = [...heuristics.value];
+    const itemToMove = newHeuristics[index];
+    const itemAbove = newHeuristics[index - 1];
 
-    filteredHeuristics.value[index] = itemAbove
-    filteredHeuristics.value[index - 1] = itemToMove
+    newHeuristics[index] = itemAbove;
+    newHeuristics[index - 1] = itemToMove;
 
-    itemToMove.id = index - 1
-    itemAbove.id = index
+    itemToMove.id = index - 1;
+    itemAbove.id = index;
 
-    heuristics.value[index] = itemAbove
-    heuristics.value[index - 1] = itemToMove
-
-    itemToMove.id = index - 1
-    itemAbove.id = index
-
-    toast.warning(t('HeuristicsTable.messages.changeWeights'))
-    emit('change')
+    store.dispatch('setHeuristics', newHeuristics);
+    toast.warning(t('HeuristicsTable.messages.changeWeights'));
+    emit('change');
   }
 }
 
 const moveItemDown = (index) => {
   if (index < filteredHeuristics.value.length - 1) {
-    const itemToMove = filteredHeuristics.value[index]
-    const itemBelow = filteredHeuristics.value[index + 1]
+    const newHeuristics = [...heuristics.value];
+    const itemToMove = newHeuristics[index];
+    const itemBelow = newHeuristics[index + 1];
 
-    filteredHeuristics.value[index] = itemBelow
-    filteredHeuristics.value[index + 1] = itemToMove
+    newHeuristics[index] = itemBelow;
+    newHeuristics[index + 1] = itemToMove;
 
-    itemToMove.id = index + 1
-    itemBelow.id = index
+    itemToMove.id = index + 1;
+    itemBelow.id = index;
 
-    heuristics.value[index] = itemBelow
-    heuristics.value[index + 1] = itemToMove
-
-    itemToMove.id = index + 1
-    itemBelow.id = index
-
-    toast.warning(t('HeuristicsTable.messages.changeWeights'))
-    emit('change')
+    store.dispatch('setHeuristics', newHeuristics);
+    toast.warning(t('HeuristicsTable.messages.changeWeights'));
+    emit('change');
   }
-}
+};
 
 const deleteHeuristic = (index) => {
-  const config = confirm(
-    `${t('alerts.deleteHeuristic')} ${heuristics.value[index].title}?`
-  )
-
+  const config = confirm(`${t('alerts.deleteHeuristic')} ${heuristics.value[index].title}?`);
   if (config) {
-    store.commit('removeHeuristic', index)
-    itemSelect.value = null
-    questionSelect.value = null
-    emit('change')
+    store.commit('REMOVE_HEURISTIC', index);
+    itemSelect.value = null;
+    questionSelect.value = null;
+    emit('change');
   }
-}
+};
 
 const deleteQuestion = (qIndex) => {
   if (heuristics.value[itemSelect.value].questions.length > 1) {
     const config = confirm(
       `${t('alerts.deleteQuestion')} ${heuristics.value[itemSelect.value].questions[qIndex].title}?`
-    )
-
+    );
     if (config) {
-      heuristics.value[itemSelect.value].questions.splice(qIndex, 1)
-      questionSelect.value = null
-      heuristics.value[itemSelect.value].total = heuristics.value[itemSelect.value].questions.length
-      emit('change')
+      const newHeuristics = [...heuristics.value];
+      newHeuristics[itemSelect.value].questions.splice(qIndex, 1);
+      newHeuristics[itemSelect.value].total = newHeuristics[itemSelect.value].questions.length;
+      store.dispatch('setHeuristics', newHeuristics);
+      questionSelect.value = null;
+      emit('change');
     }
   } else {
     toast.warning(t('HeuristicsTable.messages.cantDeleteAllQuestions'))
@@ -723,44 +666,52 @@ const editQuestions = (item) => {
     title: t('HeuristicsTable.titles.editQuestion'),
     titleEdit: item.title,
     rule: questionRequired.value,
-  }
-  dialogEdit.value = true
-}
+    id: item.id,
+  };
+  dialogEdit.value = true;
+};
 
 const editDescription = (desc) => {
-  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc)
-  descBtn.value.editSetup(ind)
-}
+  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc);
+  descBtn.value.editSetup(ind);
+};
 
-const setupQuestion = (heuristicId) => {
+const setupQuestion = (heuristicIndex) => {
+  if (heuristics.value[heuristicIndex] === undefined) {
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return;
+  }
+  const questions = heuristics.value[heuristicIndex].questions || [];
+  const lastQuestionId = questions.length > 0 ? questions[questions.length - 1].id : -1;
   newQuestion.value = {
-    id: heuristics.value[itemSelect.value].questions[
-      heuristics.value[itemSelect.value].questions.length - 1
-    ].id + 1,
+    id: lastQuestionId + 1,
     title: '',
     descriptions: [],
-  }
-  dialogQuestion.value = true
-}
+    comparison: [],
+  };
+  dialogQuestion.value = true;
+};
 
 const deleteItem = (item) => {
-  heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.splice(
-    heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(item),
+  const newHeuristics = [...heuristics.value];
+  newHeuristics[itemSelect.value].questions[questionSelect.value].descriptions.splice(
+    newHeuristics[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(item),
     1
-  )
-  emit('change')
-}
+  );
+  store.dispatch('setHeuristics', newHeuristics);
+  emit('change');
+};
 
 const addHeuris = () => {
   if (formHeurisRef.value.validate()) {
-    dialogHeuris.value = false
-    heuristics.value.push({ ...heuristicForm.value })
-    itemSelect.value = heuristics.value.length - 1
-    heuristics.value.total = heuristics.value.reduce((sum, h) => sum + h.total, 0)
-    formHeurisRef.value.resetValidation()
-    emit('change')
+    dialogHeuris.value = false;
+    const newHeuristics = [...heuristics.value, { ...heuristicForm.value }];
+    store.dispatch('setHeuristics', newHeuristics);
+    itemSelect.value = newHeuristics.length - 1;
+    formHeurisRef.value.resetValidation();
+    emit('change');
   }
-}
+};
 
 const closeDialog = (dialogName) => {
   if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
@@ -768,9 +719,9 @@ const closeDialog = (dialogName) => {
     formHeurisRef.value.reset()
   }
   if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
-    formQuestionRef.value.resetValidation()
-    formQuestionRef.value.reset()
-    newQuestion.value = null
+    formQuestionRef.value.resetValidation();
+    formQuestionRef.value.reset();
+    // Do not reset newQuestion here to prevent null access
   }
   if (dialogName === 'dialogEdit' && formEditRef.value) {
     formEditRef.value.resetValidation()
@@ -778,38 +729,49 @@ const closeDialog = (dialogName) => {
     itemEdit.value = null
   }
 
-  if (dialogName === 'dialogHeuris') dialogHeuris.value = false
-  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false
-  else if (dialogName === 'dialogEdit') dialogEdit.value = false
-}
+  if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
+  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false;
+  else if (dialogName === 'dialogEdit') dialogEdit.value = false;
+};
 
 const addQuestion = () => {
-  if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false
-    heuristics.value[itemSelect.value].questions.push(newQuestion.value)
-    newQuestion.value = null
-    heuristics.value[itemSelect.value].total = heuristics.value[itemSelect.value].questions.length
-    formQuestionRef.value.resetValidation()
-    emit('change')
+  if (!newQuestion.value) {
+    toast.error(t('HeuristicsTable.errors.questionNotInitialized'));
+    return;
   }
-}
+  if (formQuestionRef.value.validate()) {
+    dialogQuestion.value = false;
+    const newHeuristics = [...heuristics.value];
+    newHeuristics[itemSelect.value].questions.push({ ...newQuestion.value });
+    newHeuristics[itemSelect.value].total = newHeuristics[itemSelect.value].questions.length;
+    store.dispatch('setHeuristics', newHeuristics);
+    newQuestion.value = null; // Reset after adding
+    formQuestionRef.value.resetValidation();
+    emit('change');
+  }
+};
 
 const validateEdit = () => {
   if (formEditRef.value.validate()) {
-    dialogEdit.value = false
+    dialogEdit.value = false;
+    const newHeuristics = [...heuristics.value];
     if (itemEdit.value.title === t('HeuristicsTable.titles.editHeuristic')) {
-      heuristics.value[itemSelect.value].title = itemEdit.value.titleEdit
+      newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit;
     } else {
-      heuristics.value[itemSelect.value].questions[questionSelect.value].title = itemEdit.value.titleEdit
+      const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(q => q.id === itemEdit.value.id);
+      if (questionIndex !== -1) {
+        newHeuristics[itemSelect.value].questions[questionIndex].title = itemEdit.value.titleEdit;
+      }
     }
-    itemEdit.value = null
-    emit('change')
+    store.dispatch('setHeuristics', newHeuristics);
+    itemEdit.value = null;
+    emit('change');
   }
-}
+};
 
 const updateDescription = () => {
-  emit('change')
-}
+  emit('change');
+};
 </script>
 
 <style scoped>

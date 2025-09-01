@@ -363,7 +363,7 @@ const submit = async () => {
     if (testType === STUDY_TYPES.CARD_SORTING) {
       return router.push(`/cardSorting/manager/${testId}`);
     } else if (testType === STUDY_TYPES.HEURISTIC) {
-      return router.push(`/heuristic/managerview/${testId}`);
+      return router.push(`/heuristic/manager/${testId}`);
     } else if (testType === STUDY_TYPES.USER) {
       if (test.value.subType === USER_STUDY_SUBTYPES.MODERATED) {
         return router.push(`/usertest/moderated/manager/${testId}`);
