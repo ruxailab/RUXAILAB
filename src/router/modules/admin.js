@@ -13,7 +13,6 @@ import Choose from '@/features/ux_creation/Choose.vue'
 import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
 import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
 import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
-import accessibility from '@/views/admin/Accessibility.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import UserAnswerView from '@/ux/UserTest/views/UserAnswerView.vue'
@@ -37,12 +36,6 @@ export default [
     name: 'TestList',
     meta: { authorize: [1] },
     component: TestList,
-  },
-  {
-    path: '/accessibility',
-    name: 'Accessibility',
-    meta: { authorize: [1] },
-    component: accessibility,
   },
   {
     path: '/profile',
