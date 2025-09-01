@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -100,8 +100,6 @@ const totalStudies = ref(12)
 const usedStorage = ref(150)
 const totalParticipants = ref(347)
 
-
-
 // User info
 const userDisplayName = computed(() => {
   const user = store.getters['auth/getUser']
@@ -110,6 +108,9 @@ const userDisplayName = computed(() => {
   }
   return 'User'
 })
+watch(() => props.items, (newVal) => {
+  totalStudies.value = newVal.length
+}, { immediate: true })
 </script>
 
 <style scoped>
