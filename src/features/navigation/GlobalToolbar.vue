@@ -25,7 +25,7 @@
     <v-toolbar-title
       style="cursor: pointer"
       class="d-flex align-center"
-      @click="goTo('/testslist')"
+      @click="goTo('/admin')"
     >
       <img
         src="@/assets/ruxailab-long-crop-white.png"
@@ -45,13 +45,13 @@
       variant="text"
       color="#f9a826"
       class="console-button mx-1 d-none d-lg-flex"
-      @click="goTo('/testslist')"
+      @click="goTo('/admin')"
     >
       {{ $t('buttons.goToConsole') }}
     </v-btn>
 
     <v-btn
-      v-if="['/testslist', '/signin', '/signup'].includes($route.path)"
+      v-if="['/admin', '/signin', '/signup'].includes($route.path)"
       variant="text"
       color="#f9a826"
       class="console-button mx-1 d-none d-lg-flex"
@@ -61,11 +61,11 @@
     </v-btn>
 
     <v-btn
-      v-if="!['/', '/testslist', '/signin', '/signup'].includes($route.path)"
+      v-if="!['/', '/admin', '/signin', '/signup'].includes($route.path)"
       variant="text"
       color="#f9a826"
       class="console-button mx-1 d-none d-lg-flex"
-      @click="goTo('/testslist')"
+      @click="goTo('/admin')"
     >
       {{ $t('buttons.returnToConsole') }}
     </v-btn>
@@ -130,7 +130,7 @@ const { t } = useI18n();
 // Computed
 const user = computed(() => store.getters.user);
 const iconSize = computed(() => smAndDown.value ? '18' : '20');
-const isDashboard = computed(() => route.path === '/testslist');
+const isDashboard = computed(() => route.path === '/admin');
 
 // Methods
 const goTo = (path) => {
