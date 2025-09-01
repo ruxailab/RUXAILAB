@@ -353,7 +353,7 @@ const startTest = () => {
     startScreen.classList.add('leaving');
   }
 
-  // listen for changes 
+  // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`);
 
   onValue(roomRef, (snapshot) => {
@@ -653,7 +653,7 @@ onMounted(async () => {
     );
     if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
       toast.error(t('errors.globalError'));
-      router.push('/testslist');
+      router.push('/admin');
       return;
     }
     if (sessionCooperator.value.testDate) {

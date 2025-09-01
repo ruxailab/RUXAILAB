@@ -21,12 +21,6 @@ export default [
     component: TestList,
   },
   {
-    path: '/testslist',
-    name: 'TestList',
-    meta: { authorize: [1] },
-    component: TestList,
-  },
-  {
     path: '/profile',
     name: 'Profile',
     meta: { authorize: [1] },
