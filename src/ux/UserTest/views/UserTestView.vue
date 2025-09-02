@@ -325,10 +325,8 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, w
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import Snackbar from '@/shared/components/Snackbar';
-import TaskAnswer from '@/models/TaskAnswer';
-import UserTask from '@/models/UserTask';
+import UserTask from '@/ux/UserTest/models/UserTask';
 import { nanoid } from 'nanoid';
-import { useDisplay } from 'vuetify';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
@@ -337,6 +335,7 @@ import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 
 const fullName = ref('');
 const logined = ref(null);
@@ -362,7 +361,7 @@ const timerComponent = computed(() => {
   return taskStepComponent.value?.$refs?.timerComponent || null;
 });
 
-const localTestAnswer = reactive(new TaskAnswer());
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 
 const store = useStore();
 const router = useRouter();
@@ -656,7 +655,7 @@ const setTest = async () => {
     logined.value = true;
     await store.dispatch('getCurrentTestAnswerDoc');
     if (!currentUserTestAnswer.value) {
-      currentUserTestAnswer.value = new TaskAnswer();
+      currentUserTestAnswer.value = new UserStudyEvaluatorAnswer()
     }
 
     let tasksArray = [];
