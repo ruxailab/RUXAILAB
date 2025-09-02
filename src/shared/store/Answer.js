@@ -1,9 +1,9 @@
 import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
-import TaskAnswer from '@/models/TaskAnswer'
-import UserTask from '@/models/UserTask'
+import UserTask from '@/ux/UserTest/models/UserTask'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 
 const answerController = new AnswerController()
 
@@ -61,10 +61,10 @@ export default {
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
         return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
-          ? TaskAnswer.toTaskAnswer(
+          ? UserStudyEvaluatorAnswer.toModel(
             state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
           )
-          : new TaskAnswer({
+          : new UserStudyEvaluatorAnswer({
             userDocId: rootState.user.id,
             preTestAnswer: (() => {
               const preTestAnswer = [];

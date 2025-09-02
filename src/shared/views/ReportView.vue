@@ -224,12 +224,10 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
-import { db } from '@/app/plugins/firebase';
 import Intro from '@/shared/components/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import TaskAnswer from '@/models/TaskAnswer';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 
 const store = useStore();
 const { t } = useI18n();
@@ -337,7 +335,7 @@ const unhideReport = async (item) => {
   console.log(payload)
   try {
     await store.dispatch('updateTaskAnswer', {
-      payload: new TaskAnswer({
+      payload: new UserStudyEvaluatorAnswer({
         ...payload,
         hidden: !item.hidden,
       }),

@@ -1,6 +1,6 @@
 import UserTask from './UserTask'
 
-export default class TaskAnswer {
+export default class UserStudyEvaluatorAnswer {
   constructor({
     preTestAnswer,
     consent,
@@ -30,8 +30,8 @@ export default class TaskAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
   }
-  static toTaskAnswer(data) {
-    return new TaskAnswer({
+  static toModel(data) {
+    return new UserStudyEvaluatorAnswer({
       ...data,
       tasks: Object.fromEntries(
         Object.entries(data.tasks).map(([key, value]) => [
