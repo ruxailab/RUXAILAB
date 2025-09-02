@@ -4,7 +4,7 @@ import Admin from '@/router/modules/admin.js'
 import SuperAdmin from '@/router/modules/superAdmin.js'
 import CardSorting from '@/ux/CardSorting/router.js'
 import HeuristicRoutes from '@/ux/Heuristic/router.js';
-import accessibilityRoutes from '@/router/modules/accessibility';
+import accessibilityRoutes from '@/ux/accessibility/router.js';
 import UserTestRoutes from '@/ux/UserTest/router.js';
 import store from '@/store'
 
@@ -45,7 +45,7 @@ function redirect() {
   if (!store.state.Auth.user) return '/'
   const level = store.state.Auth.user.accessLevel
   if (level === 0) return '/superadmin'
-  if (level === 1) return '/testslist'
+  if (level === 1) return '/admin'
   return '/'
 }
 

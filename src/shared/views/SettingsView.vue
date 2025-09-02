@@ -419,6 +419,7 @@ import TestAdmin from '@/models/TestAdmin';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import Study from '../models/Study';
+import { instantiateStudyByType } from '../constants/methodDefinitions';
 
 const store = useStore();
 const router = useRouter();
@@ -494,8 +495,8 @@ watch(
   test,
   newTest => {
     if (newTest !== null && newTest !== undefined) {
-      object.value = { 
-        ...newTest, 
+      object.value = {
+        ...newTest,
         status: newTest.status || 'pending',
         endDate: newTest.endDate || null
       };
@@ -545,7 +546,8 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     loading.value = true;
     try {
-      await store.dispatch('updateTest', new Study(object.value));
+      const study = instantiateStudyByType(object.value.testType, object.value);
+      await store.dispatch('updateTest', study);
       await store.dispatch('getTest', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
       toast.success(t('alerts.savedChanges'));
@@ -661,7 +663,7 @@ const updateObject = newObject => {
 const duplicateTest = async () => {
   loading.value = true;
   try {
-    const testObj = new Study({
+    const rawData = {
       testTitle: 'Copy of ' + test.value.testTitle,
       testDescription: test.value.testDescription,
       testType: test.value.testType,
@@ -677,14 +679,16 @@ const duplicateTest = async () => {
       updateDate: Date.now(),
       status: test.value.status,
       endDate: test.value.endDate,
-    });
+    };
+
+    const study = instantiateStudyByType(rawData.testType, rawData);
 
     await store.dispatch('duplicateTest', {
-      test: testObj,
+      test: study,
       answer: testAnswerDocument.value,
     });
     toast.success('Test duplicated successfully!');
-    router.push('/testslist');
+    router.push('/admin');
   } catch (error) {
     toast.error('Failed to duplicate test.');
     console.error('Error duplicating test:', error);

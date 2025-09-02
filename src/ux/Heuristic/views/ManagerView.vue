@@ -35,7 +35,7 @@ const accessLevel = computed(() => {
   const coop = currentTest?.cooperators?.find(c => c.userDocId === currentUser.id)
   if (coop) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUETOR
+  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
 })
 
 const topCards = computed(() => getTopCardsDefualt(test.value, 'heuristic'))
@@ -45,16 +45,12 @@ const navigator = computed(() => {
     ...getNavigatorDefault(test.value, accessLevel.value, route, 'heuristic'),
   ]
 
-  if (test.value.template) {
-    items.push(
-      { title: 'Template', icon: 'mdi-file-compare', path: `/heuristic/template/${test.value.template.id}` }
-    )
-  }
-
-  if (accessLevel.value === 0) {
-    items.push(
-      { title: 'Final Report', icon: 'mdi-file-document', path: `/heuristic/finalreport/${test.value.id}` },
-    )
+  if (accessLevel.value === 0 && test.value) {
+    items.push({
+      title: 'Final Report',
+      icon: 'mdi-file-document',
+      path: `/heuristic/finalreport/${test.value.id}`,
+    })
   }
 
   return items

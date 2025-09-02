@@ -62,6 +62,7 @@
 
 <script setup>
 import AnswerController from '@/controllers/AnswerController';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex';
 
@@ -101,7 +102,7 @@ async function loadAnswers() {
     for (const study in lastFourStudies.value) {
       const testDoc = await store.dispatch('getTest', { id: lastFourStudies.value[study].testDocId });
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
-      if (answerDoc.type === 'User') {
+      if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({
           ...testDoc,
           answers: Object.values({ ...answerDoc.taskAnswers })
@@ -129,6 +130,7 @@ const calculateProgress = (answers) => {
 }
 
 const daysLeft = (date) => {
+  if(!date) return 0
   const futureDate = new Date(date);
   const today = new Date();
 

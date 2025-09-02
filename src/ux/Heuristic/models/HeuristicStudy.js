@@ -1,3 +1,4 @@
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import Study from '../../../shared/models/Study'
 /**
  * Create a Heuristic.
@@ -8,17 +9,13 @@ export default class HeuristicStudy extends Study {
     constructor(params = {}) {
         super(params)
 
-        this.testType = 'Heuristic' // update to use ENUM
+        this.testType = STUDY_TYPES.HEURISTIC
         this.testWeights = params.testWeights ?? {}
     }
 
     toFirestore() {
         return Object.assign(super.toFirestore(), {
-            testType: this.testType,
             testWeights: this.testWeights,
         })
-    }
-    static toStudy(data) {
-        return new HeuristicStudy(data)
     }
 }

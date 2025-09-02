@@ -65,7 +65,7 @@ onMounted(async () => {
 
   if (user.value.id !== route.params.token) {
     toast.error('Invalid session link. Please use the correct link to access the test.');
-    return router.push('/testslist');
+    return router.push('/admin');
   }
 
   // isAdmin.value = verifyAdmin();
