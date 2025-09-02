@@ -8,6 +8,7 @@ import { db } from '@/app/plugins/firebase'
 import TestController from '@/controllers/TestController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
 const testController = new TestController()
 
@@ -16,6 +17,8 @@ export default {
     Test: null,
     tests: [],
     testStructure: null,
+    heuristics: [],
+    testWeights: {},
     answersId: null,
     module: 'test',
     tasks: [],
@@ -49,8 +52,11 @@ export default {
     testStructure(state) {
       return state.testStructure
     },
-    heuristicsTest(state) {
-      return state.Test.HeuristicsTest
+    heuristics(state) {
+      return state.heuristics
+    },
+    testWeights(state) {
+      return state.testWeights;
     },
     coops(state) {
       return state.Test.coop
@@ -91,13 +97,47 @@ export default {
   },
   mutations: {
     SET_TEST(state, payload) {
-      state.Test = payload
+      state.Test = payload;
+      if (payload?.testStructure && payload.testType === STUDY_TYPES.HEURISTIC) {
+        state.heuristics = Object.entries(payload.testStructure)
+          .filter(([key]) => !isNaN(key))
+          .map(([_, value]) => ({ ...value }));
+        state.testWeights = payload.testWeights || {};
+      }
     },
     SET_TESTS(state, payload) {
       state.tests = payload
     },
     SET_TEST_STRUCTURE(state, payload) {
-      state.testStructure = { ...state.testStructure, ...payload }
+      state.testStructure = { ...payload };
+    },
+    SET_HEURISTICS(state, payload) {
+      state.heuristics = [...payload];
+    },
+    SET_TEST_WEIGHTS(state, payload) {
+      state.testWeights = { ...payload };
+    },
+    REMOVE_HEURISTIC(state, index) {
+      state.heuristics.splice(index, 1);
+      // Adjust testWeights when a heuristic is removed
+      const newWeights = {};
+      const heuristicLength = state.heuristics.length;
+      for (let i = 0; i < heuristicLength - 1; i++) {
+        newWeights[i] = new Array(heuristicLength - (i + 1)).fill(null);
+      }
+      state.testWeights = newWeights;
+    },
+    SETUP_HEURISTIC_QUESTION_DESCRIPTION(state, payload) {
+      if (!state.heuristics[payload.heuristic].questions[payload.question].descriptions) {
+        state.heuristics[payload.heuristic].questions[payload.question].descriptions = [];
+      }
+      if (payload.editIndex != null) {
+        state.heuristics[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = {
+          ...payload.description,
+        };
+      } else {
+        state.heuristics[payload.heuristic].questions[payload.question].descriptions.push(payload.description);
+      }
     },
     SET_CARDSORTING_OPTIONS_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
@@ -178,6 +218,8 @@ export default {
     CLEAN_TEST(state) {
       state.Test = null
       state.testStructure = null
+      state.heuristics = []
+      state.testWeights = {}
       state.answersId = null
       state.module = 'test'
       state.tasks = []
@@ -189,32 +231,7 @@ export default {
       state.landingPage = ''
       state.participantCamera = ''
       state.finalMessage = ''
-      state.peerConnection = null // Reseta peerConnection
-    },
-    removeHeuristic(state, payload) {
-      state.Test.testStructure.splice(payload, 1)
-    },
-    setupHeuristicQuestionDescription(state, payload) {
-      if (
-        state.Test.testStructure[payload.heuristic].questions[payload.question]
-          .descriptions == null
-      )
-        state.Test.testStructure[payload.heuristic].questions[
-          payload.question
-        ].descriptions = []
-
-      if (payload.editIndex != null) {
-        state.Test.testStructure[payload.heuristic].questions[
-          payload.question
-        ].descriptions[payload.editIndex] = Object.assign(
-          {},
-          payload.description,
-        )
-      } else {
-        state.Test.testStructure[payload.heuristic].questions[
-          payload.question
-        ].descriptions.push(payload.description)
-      }
+      state.peerConnection = null
     },
   },
   actions: {
@@ -276,6 +293,7 @@ export default {
       commit('setLoading', true)
       try {
         await testController.updateTest(payload)
+        commit('SET_TEST', payload);
       } catch (e) {
         console.error('Error in updateTest', e)
         commit('setError', true)
@@ -388,7 +406,20 @@ export default {
         commit('setLoading', false)
       }
     },
-
+    async setHeuristics({ commit }, payload) {
+      try {
+        commit('SET_HEURISTICS', payload);
+      } catch (e) {
+        commit('setError', true);
+      }
+    },
+    async setTestWeights({ commit }, payload) {
+      try {
+        commit('SET_TEST_WEIGHTS', payload);
+      } catch (e) {
+        commit('setError', true);
+      }
+    },
     async addItemsTasks({ commit }, payload) {
       try {
         commit('setLoading', true)

@@ -1,11 +1,10 @@
 import ManagerView from '@/ux/Heuristic/views/ManagerView.vue'
-import ReportView from '@/views/admin/ReportView.vue'
+import ReportView from '@/shared/views/ReportView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import TemplateView from '@/features/templates/TemplateView.vue'
+import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue'
 import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue';
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 
@@ -65,13 +64,6 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: AnalyticsView,
-      },
-      {
-        path: '/heuristic/template/:id/:token?',
-        name: 'HeuristicTemplateView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: TemplateView,
       },
     ],
   },

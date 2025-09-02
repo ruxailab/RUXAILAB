@@ -164,7 +164,7 @@ test.describe('Link Page Tests', () => {
 //     '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
 //   )
 
-//   await page.goto('/testslist')
+//   await page.goto('/admin')
 
 //   await page.click('text=Test heuristic playwright for delate')
 //   await page.click(
@@ -202,7 +202,7 @@ test.describe('Link Page Tests', () => {
 //       '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
 //       { timeout: 5000 },
 //     )
-//     await expect(page).toHaveURL('https://ruxailab-prod.web.app/testslist')
+//     await expect(page).toHaveURL('https://ruxailab-prod.web.app/admin')
 //   } catch {
 //     console.error('Failed to click button or URL did not match:')
 //     page.close()

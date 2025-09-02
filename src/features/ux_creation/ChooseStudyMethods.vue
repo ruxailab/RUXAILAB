@@ -32,6 +32,7 @@ import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions'
 
 const router = useRouter()
 const store = useStore()
@@ -47,7 +48,7 @@ const steps = [
 const methodsByCategory = {
   test: [
     {
-      id: 'unmoderated',
+      id: METHOD_DEFINITIONS.USER_UNMODERATED.id,
       name: 'Usability Testing (Unmoderated)',
       description: 'Participants complete tasks independently while their interactions are recorded',
       icon: 'mdi-monitor-screenshot',
@@ -55,7 +56,7 @@ const methodsByCategory = {
       available: true
     },
     {
-      id: 'moderated',
+      id: METHOD_DEFINITIONS.USER_MODERATED.id,
       name: 'Usability Testing (Moderated)',
       description: 'Real-time sessions with facilitator guidance and immediate feedback',
       icon: 'mdi-account-voice',
@@ -63,7 +64,7 @@ const methodsByCategory = {
       available: true
     },
     {
-      id: 'CardSorting',
+      id: METHOD_DEFINITIONS.CARD_SORTING.id,
       name: 'Card Sorting (Unmoderated)',
       description: 'Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic.',
       icon: 'mdi-card-multiple',
@@ -82,7 +83,7 @@ const methodsByCategory = {
   ],
   inspection: [
     {
-      id: 'HEURISTICS',
+      id: METHOD_DEFINITIONS.HEURISTICS.id,
       name: 'Heuristic Evaluation',
       description: 'Expert review using established usability principles and guidelines',
       icon: 'mdi-clipboard-check',
@@ -90,7 +91,7 @@ const methodsByCategory = {
       available: true
     },
     {
-      id: 'cognitive-walkthrough',
+      id: METHOD_DEFINITIONS.COGNITIVE_WALKTHROUGH.id,
       name: 'Cognitive Walkthrough',
       description: 'Step-by-step evaluation of user task completion processes',
       icon: 'mdi-walk',
@@ -138,7 +139,8 @@ const categoryNames = {
 
 const selectMethod = (methodId, available) => {
   if (!available) return
-
+console.log('methodId', methodId)
+console.log(currentCategory.value)
   selectedMethod.value = methodId
   store.commit('SET_STUDY_METHOD', methodId)
   router.push({ name: 'study-create-step3' })
