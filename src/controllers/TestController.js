@@ -2,11 +2,11 @@
 
 import Study from '@/shared/models/Study'
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
-import AnswerController from './AnswerController'
-import Answer from '@/models/Answer'
-import UserAnswer from '@/models/UserAnswer'
+import AnswerController from '../shared/controllers/AnswerController'
+import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import StudyAnswer from '@/shared/models/StudyAnswer'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -20,7 +20,7 @@ export default class TestController extends Controller {
   async createTest(payload) {
     // Create answers doc for test
     const answerDoc = await answerController.createAnswer(
-      new Answer({ type: payload.testType }),
+      new StudyAnswer({ type: payload.testType }),
     )
     payload.answersDocId = answerDoc.id
 
