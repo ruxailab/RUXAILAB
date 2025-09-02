@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import AnswerController from '@/controllers/AnswerController';
+import AnswerController from '@/shared/controllers/AnswerController';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex';

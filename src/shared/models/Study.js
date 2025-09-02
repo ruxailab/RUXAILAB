@@ -1,4 +1,3 @@
-import TestAdmin from '../../models/TestAdmin'
 import Cooperators from './Cooperators'
 import Template from './Template'
 // import Cooperators from '@/models/Cooperators'
@@ -36,9 +35,9 @@ export default class Study { // mudar nome para Study e mover para Shared
     this.id = id ?? null
 
     /**
-     * Defines the test admin.
+     * Defines the study admin.
      *
-     * @type {TestAdmin}
+     * @type {StudyAdmin}
      */
     this.testAdmin = testAdmin ?? null
 

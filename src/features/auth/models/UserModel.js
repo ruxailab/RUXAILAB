@@ -3,7 +3,7 @@
  * @param {number} accessLevel - The accessLevel value.
  * @param {string} email - The email value.
  * @param {Object[]} notifications - An array of Notification value.
- * @param {Object[]} myAnswers - An array of UserAnswer value.
+ * @param {UserAnswer[]} myAnswers - An array of UserAnswer value.
  * @param {Object[]} myTests - An array of UserTest value.
  * @param {Object[]} inbox - An array of past Notification values.
  * @param {string} username - The username of the user.
@@ -11,6 +11,8 @@
  * @param {string} country - The country of the user.
  * @param {string} profileImage - The profile image URL of the user.
  */
+
+import UserAnswer from "./UserAnswer";
 
 export default class User {
     constructor({
@@ -23,10 +25,10 @@ export default class User {
         this.notifications = notifications;
         this.myAnswers = myAnswers;
         this.myTests = myTests;
-        this.inbox = inbox; 
-        this.username = username; 
-        this.contactNo = contactNo; 
-        this.country = country; 
+        this.inbox = inbox;
+        this.username = username;
+        this.contactNo = contactNo;
+        this.country = country;
         this.profileImage = profileImage; // Add profileImage field
     }
 
