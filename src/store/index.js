@@ -56,7 +56,6 @@ export default createStore({
     Templates,
     Tests,
     Users,
-    Cooperators,
     Reports,
     Heuristic,
     Answer,
