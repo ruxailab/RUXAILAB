@@ -45,14 +45,6 @@ const navigator = computed(() => {
     ...getNavigatorDefault(test.value, accessLevel.value, route, 'heuristic'),
   ]
 
-  if (test.value?.template) {
-    items.push({
-      title: 'Template',
-      icon: 'mdi-file-compare',
-      path: `/heuristic/template/${test.value.template.id}`,
-    })
-  }
-
   if (accessLevel.value === 0 && test.value) {
     items.push({
       title: 'Final Report',
