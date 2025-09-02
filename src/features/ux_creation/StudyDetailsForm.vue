@@ -74,7 +74,7 @@
                       />
                     </v-col>
                     <v-col
-                      v-if="method == 'HEURISTICS'"
+                      v-if="method == STUDY_TYPES.HEURISTIC"
                       cols="12"
                     >
                       <v-text-field
@@ -233,13 +233,13 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
-import AutomaticAccessibilityTest from '@/models/AutomaticAccessibilityTest';
+import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
+import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
-import { classModelByType } from '@/shared/constants/methodDefinitions';
+import { instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 
 const router = useRouter();
 const store = useStore();
@@ -328,9 +328,9 @@ const handleTestType = () => {
 };
 
 const submit = async () => {
-  let testType = category.value == 'test' ? 'User' : 'HEURISTICS'
+  let testType = category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
   if (method.value === 'CardSorting') {
-    testType = method.value
+    testType = STUDY_TYPES.CARD_SORTING
   }
 
   isLoading.value = true;
@@ -350,7 +350,7 @@ const submit = async () => {
     updateDate: Date.now(),
     status: 'active',
   }
-  const newTest = classModelByType(testType, rawData)
+  const newTest = instantiateStudyByType(testType, rawData)
 
   const testId = await store.dispatch('createNewTest', newTest);
   isLoading.value = false;
@@ -360,19 +360,17 @@ const submit = async () => {
   if (studyType.value === 'Accessibility') {
     router.push('/sample');
   } else {
-    if (testType === 'CardSorting') {
+    if (testType === STUDY_TYPES.CARD_SORTING) {
       return router.push(`/cardSorting/manager/${testId}`);
-    } else if (testType === 'HEURISTICS') {
-      return router.push(`/heuristic/managerview/${testId}`);
-    } else if (testType === 'User') {
-      if (test.value.userTestType === 'moderated') {
+    } else if (testType === STUDY_TYPES.HEURISTIC) {
+      return router.push(`/heuristic/manager/${testId}`);
+    } else if (testType === STUDY_TYPES.USER) {
+      if (test.value.subType === USER_STUDY_SUBTYPES.MODERATED) {
         return router.push(`/usertest/moderated/manager/${testId}`);
-      } else if (test.value.userTestType === 'unmoderated') {
+      } else if (test.value.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
         return router.push(`/usertest/unmoderated/manager/${testId}`);
       }
     }
-
-    router.push(`/managerview/${testId}`);
   }
 };
 

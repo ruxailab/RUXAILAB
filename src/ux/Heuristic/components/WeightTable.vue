@@ -57,7 +57,7 @@
               <template #activator="{ props }">
                 <span v-bind="props">H {{ index + 1 }}</span>
               </template>
-              <span>{{ heuristics[index].title }}</span>
+              <span>{{ heuristics[index]?.title || 'Unknown Heuristic' }}</span>
             </v-tooltip>
           </v-tab>
         </v-tabs>
@@ -108,7 +108,7 @@
                       H{{ f + (tabs + 1) }}
                     </v-chip>
                     <span class="text-body-1 text-on-surface">
-                      {{ heuristics[f + tabs].title }}
+                      {{ heuristics[f + tabs]?.title || 'Unknown Heuristic' }}
                     </span>
                     <v-tooltip location="right">
                       <template #activator="{ props }">
@@ -121,7 +121,7 @@
                           mdi-help-circle
                         </v-icon>
                       </template>
-                      <span>{{ heuristics[f + tabs].title }}</span>
+                      <span>{{ heuristics[f + tabs]?.title || 'Unknown Heuristic' }}</span>
                     </v-tooltip>
                   </div>
                 </div>
@@ -183,9 +183,12 @@
 import { ref, computed, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
 
+const emit = defineEmits(['change']);
 const store = useStore();
 const { t } = useI18n();
+const toast = useToast();
 
 const tabs = ref(0);
 const group = ref({});
@@ -212,30 +215,32 @@ const importt = ref([
   'Extremely Less Important',
 ]);
 
-const testAll = computed(() => store.state.Tests.Test);
-const heuristics = computed(() => testAll.value.testStructure || []);
+const heuristics = computed(() => store.getters.heuristics || []);
 const heuristicaTamanho = computed(() => heuristics.value.length);
 
 const updateDatas = () => {
-  testAll.value.testWeights = group.value;
-  store.dispatch('updateTest', testAll.value);
+  try {
+    store.dispatch('setTestWeights', { ...group.value });
+    emit('change');
+    toast.success(t('HeuristicsWeightsTable.messages.weightsSaved'));
+  } catch (error) {
+    console.error('Error saving weights:', error);
+    toast.error(t('HeuristicsWeightsTable.errors.failedToSaveWeights'));
+  }
 };
 
 onBeforeMount(() => {
-  if (!testAll.value.testWeights) {
-    console.error('testWeights is undefined');
-    return;
-  }
+  const heuristicLength = heuristics.value.length;
+  const testWeights = store.getters.testWeights || {};
 
-  const heuristicLength = testAll.value.testStructure.length;
-  group.value = testAll.value.testWeights;
-
-  if (Object.keys(testAll.value.testWeights).length === 0) {
+  if (Object.keys(testWeights).length === 0) {
     const weightMap = {};
     for (let i = 0; i < heuristicLength - 1; i++) {
       weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null);
     }
     group.value = weightMap;
+  } else {
+    group.value = { ...testWeights };
   }
 });
 </script>

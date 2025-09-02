@@ -6,6 +6,7 @@ import AnswerController from './AnswerController'
 import Answer from '@/models/Answer'
 import UserAnswer from '@/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -33,10 +34,6 @@ export default class TestController extends Controller {
     return await super.create(COLLECTION, payload.test.toFirestore())
   }
 
-  // async deleteTest(payload) {
-  //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
-  //   return await super.delete(COLLECTION, payload.id)
-  // }
   async deleteTest(payload) {
     try {
       const testToDelete = await super.readOne(COLLECTION, payload.id)
@@ -113,7 +110,9 @@ export default class TestController extends Controller {
   async getTest(parameter) {
     const res = await super.readOne(COLLECTION, parameter.id)
     if (!res.exists()) return null
-    return Study.toStudy(Object.assign({ id: res.id }, res.data()))
+
+    const rawData = Object.assign({ id: res.id }, res.data())
+    return instantiateStudyByType(rawData.testType, rawData)
   }
 
   async getPublicTests() {
@@ -123,9 +122,10 @@ export default class TestController extends Controller {
       condition: '==',
     }
     const res = await super.query(COLLECTION, q)
-    return res.docs.map((t) =>
-      Study.toStudy(Object.assign({ id: t.id }, t.data())),
-    )
+    return res.docs.map((t) => {
+      const rawData = Object.assign({ id: t.id }, t.data())
+      return instantiateStudyByType(rawData.testType, rawData)
+    })
   }
 
   async getAllTests() {

@@ -1,6 +1,6 @@
 import ManagerMonderatedView from '@/ux/UserTest/views/Moderators/ManagerView.vue'
 import ManagerUnmoderatedView from '@/ux/UserTest/views/Unmoderated/ManagerView.vue'
-import ReportView from '@/views/admin/ReportView.vue'
+import ReportView from '@/shared/views/ReportView.vue'
 import EditTest from '@/views/admin/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'

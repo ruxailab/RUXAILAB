@@ -1,3 +1,4 @@
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import store from '@/store'
 
 // Final Statistic
@@ -59,7 +60,7 @@ function calcFinalResult(array) {
 
 function answers() {
   if (store.getters.testAnswerDocument) {
-    return store.getters.testAnswerDocument.type === 'HEURISTICS'
+    return store.getters.testAnswerDocument.type === STUDY_TYPES.HEURISTIC
       ? Object.values(store.getters.testAnswerDocument.heuristicAnswers)
       : Object.values(store.getters.testAnswerDocument.taskAnswers)
   }
@@ -82,7 +83,7 @@ function statistics() {
     return []
   }
 
-  if (testAnswerDocument.type === 'HEURISTICS') {
+  if (testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
     const resultEvaluator = []
 
     // Get Evaluator answers
