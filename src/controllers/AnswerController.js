@@ -10,12 +10,6 @@ const COLLECTION = 'answers'
 const userController = new UserController()
 
 export default class AnswerController extends Controller {
-  async getAllAnswers() {
-    const res = await super.readAll(COLLECTION)
-
-    return res.map((a) => new Answer({ ...a, id: a.id }))
-  }
-
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
     return new Answer({ id: res.id, ...res.data() })
