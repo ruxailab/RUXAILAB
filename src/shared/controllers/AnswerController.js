@@ -1,8 +1,8 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import UserController from '../../features/auth/controllers/UserController'
-import TaskAnswer from '@/models/TaskAnswer'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 const COLLECTION = 'answers'
 
 const userController = new UserController()
@@ -71,7 +71,7 @@ export default class AnswerController extends Controller {
 
   async updateTaskAnswer(payload, answerDocId) {
     const fieldPath = `taskAnswers.${payload.userDocId}`;
-    const data = new TaskAnswer({
+    const data = new UserStudyEvaluatorAnswer({
       ...payload,
       lastUpdate: Date.now(),
     });
