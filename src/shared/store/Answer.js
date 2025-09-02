@@ -1,4 +1,4 @@
-import AnswerController from '@/controllers/AnswerController'
+import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
 import UserTask from '@/models/UserTask'
