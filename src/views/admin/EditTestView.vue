@@ -92,7 +92,7 @@
         >
           <!-- Heuristic Tests -->
           <EditHeuristicsTest
-            v-if="test.testType === 'HEURISTICS'"
+            v-if="test.testType === STUDY_TYPES.HEURISTIC"
             type="content"
             :object="object"
             :index="index"
@@ -106,7 +106,7 @@
 
           <!-- User Tests -->
           <EditUserTest
-            v-if="test.testType === 'User'"
+            v-if="test.testType === STUDY_TYPES.USER"
             :type="test.subType"
             @change="change = true"
           />
@@ -124,11 +124,13 @@ import Snackbar from '@/shared/components/Snackbar';
 import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import Study from '@/shared/models/Study';
+import { instantiateStudyByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import { useToast } from 'vue-toastification';
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 
 defineProps({
   id: {
@@ -174,7 +176,7 @@ const setIntro = async () => {
 const submit = async () => {
   object.value.testStructure = {
     ...store.state.Tests.Test.testStructure,
-    ...(test.value.testType === 'User' && {
+    ...(test.value.testType === STUDY_TYPES.USER && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
       consent: store.getters.consent,
@@ -184,8 +186,9 @@ const submit = async () => {
       finalMessage: store.getters.finalMessage,
     }),
   };
-  const updatedTest = new Study({ ...object.value });
-  await store.dispatch('updateTest', updatedTest);
+  const rawData = { ...object.value };
+  const study = instantiateStudyByType(rawData.testType, rawData);
+  await store.dispatch('updateTest', study);
   await store.dispatch('getTest', { id: route.params.id })
 };
 
@@ -239,7 +242,7 @@ const init = async () => {
     ]);
   } catch (error) {
     console.error('Failed to load test data:', error);
-    // Optionally show a toast or redirect
+    toast.error('Failed to load test data');
   }
 };
 init();

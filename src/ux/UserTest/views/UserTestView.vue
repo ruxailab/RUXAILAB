@@ -212,7 +212,7 @@
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
             @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
 
-          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === 'User'" ref="taskStepComponent"
+          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
             :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
@@ -297,6 +297,7 @@ import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import IrisTracker from '@/components/organisms/IrisTracker.vue';
 import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
 import { db } from '@/app/plugins/firebase';
@@ -447,7 +448,7 @@ const saveAnswer = async () => {
         testType: test.value.testType,
       });
     }
-    router.push('/testslist');
+    router.push('/admin');
   } catch (error) {
     console.error('Error saving answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });

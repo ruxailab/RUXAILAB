@@ -174,7 +174,7 @@ const onSignUp = async () => {
         email: email.value,
         password: password.value,
       })
-      await router.push('/testslist')
+      await router.push('/admin')
     } catch (error) {
       console.error('Signup failed:', error)
     }
@@ -190,7 +190,7 @@ const onGoogleSignInStart = () => {
 }
 
 const onGoogleSignInSuccess = async () => {
-  await router.push('/testslist')
+  await router.push('/admin')
 }
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)

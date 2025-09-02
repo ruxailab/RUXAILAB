@@ -245,7 +245,7 @@
                         </template>
                       </v-list-item>
                     </template>
-                    <span>{{ heuris.title }}</span>
+                    <span>{{ heuris.title || 'Unknown Heuristic' }}</span>
                   </v-tooltip>
                 </div>
 
@@ -277,7 +277,7 @@
                       :class="heurisIndex == i ? 'text-white' : 'text-forth'"
                       class="pl-5"
                     >
-                      {{ heuris.title }}
+                      {{ heuris.title || 'Unknown Heuristic' }}
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
@@ -350,16 +350,15 @@
         >
           <ShowInfo
             v-if="index == 1 && review == true"
-            :title="test.testStructure[heurisIndex].title"
+            :title="heuristics[heurisIndex]?.title || 'Unknown Heuristic'"
           >
             <template #content>
               <v-card-title class="text-h6 font-weight-regular text-primary">
-                {{ test.testStructure[heurisIndex].title }}
+                {{ heuristics[heurisIndex]?.title || 'Unknown Heuristic' }}
               </v-card-title>
               <v-divider class="mb-5" />
               <v-row
-                v-for="(question, i) in test.testStructure[heurisIndex]
-                  .questions"
+                v-for="(question, i) in heuristics[heurisIndex]?.questions || []"
                 :key="i"
                 justify="center"
               >
@@ -368,7 +367,7 @@
                     <v-row class="mb-2">
                       <v-col cols="11">
                         <p class="text-body-1 font-weight-medium">
-                          {{ i + 1 }}) {{ question.title }}
+                          {{ i + 1 }}) {{ question.title || 'Unknown Question' }}
                         </p>
                       </v-col>
                       <v-col cols="1">
@@ -379,7 +378,7 @@
                       :heuris-index="heurisIndex"
                       :answer-heu="
                         currentUserTestAnswer.heuristicQuestions[heurisIndex]
-                          .heuristicQuestions[i]
+                          ?.heuristicQuestions[i] || {}
                       "
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
@@ -387,7 +386,7 @@
                     >
                       <template #answer>
                         <v-select
-                          v-if="currentUserTestAnswer !== undefined"
+                          v-if="currentUserTestAnswer?.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[i]"
                           v-model="currentUserTestAnswer.heuristicQuestions[heurisIndex].heuristicQuestions[i].heuristicAnswer"
                           class="optionSelect"
                           return-object
@@ -398,6 +397,9 @@
                           density="compact"
                           @update:model-value="calculateProgress()"
                         />
+                        <v-alert v-else type="error" class="mt-4">
+                          {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
+                        </v-alert>
                       </template>
                     </AddCommentBtn>
                   </v-card>
@@ -445,7 +447,7 @@
                             :src="require('../../../../public/finalMessage.svg')"
                             alt="Final test svg"
                             class="img-fluid"
-                          >
+                          />
                         </v-col>
                         <v-col
                           cols="12"
@@ -587,7 +589,8 @@ const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
 
-const test = computed(() => store.getters.test)
+const test = computed(() => store.getters.test);
+const heuristics = computed(() => store.getters.heuristics || []);
 const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
@@ -604,99 +607,126 @@ const loading = computed(() => store.getters.loading)
 const currentImageUrl = computed(() => store.state.Tests.currentImageUrl)
 
 const startTest = () => {
-  if (test.value.testStructure.length == 0) {
+  if (heuristics.value.length === 0) {
     store.commit('setError', {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
-    })
-    router.push('/managerview/' + test.value.id)
+    });
+    router.push('/managerview/' + test.value.id);
+    return;
   }
-  start.value = !start.value
-}
+  start.value = false;
+};
 
 const updateComment = (comment, heurisIndex, answerIndex) => {
-  if (comment != '' && comment != undefined) {
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].heuristicComment = comment
-  } else {
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].answerImageUrl = currentImageUrl.value
+  if (!currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[answerIndex]) {
+    return;
   }
-}
+  if (comment != '' && comment != undefined) {
+    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].heuristicComment = comment;
+  } else {
+    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].answerImageUrl = currentImageUrl.value;
+  }
+};
 
 const mappingSteps = () => {
-  if (
-    validate(test.value.testStructure) &&
-    test.value.testStructure.length !== 0
-  ) {
-    items.value.push({
-      title: 'HEURISTICS',
-      icon: 'mdi-checkbox-marked-circle-outline',
-      value: test.value.testStructure.map((option) => ({
-        title: option.title,
+  if (validate(heuristics.value) && heuristics.value.length !== 0) {
+    items.value = [
+      {
+        title: 'HEURISTICS',
         icon: 'mdi-checkbox-marked-circle-outline',
-        done: false,
-        total: option.total,
-        id: option.id,
-      })),
-      id: 1,
-    })
+        value: heuristics.value.map((option) => ({
+          title: option.title || 'Unknown Heuristic',
+          icon: 'mdi-checkbox-marked-circle-outline',
+          done: false,
+          total: option.total || 0,
+          id: option.id,
+        })),
+        id: 1,
+      },
+    ];
   }
-}
+};
 
 const validate = (object) => {
-  return object !== null && object !== undefined && object !== ''
-}
+  return object !== null && object !== undefined && object !== '';
+};
 
 const calculateProgress = () => {
-  if (!test.value) {
-    return
+  if (!heuristics.value || !currentUserTestAnswer.value.heuristicQuestions) {
+    calculatedProgress.value = 0;
+    return;
   }
-  const total = currentUserTestAnswer.value.total
-  let x = 0
+  const total = currentUserTestAnswer.value.total || 0;
+  let answered = 0;
   currentUserTestAnswer.value.heuristicQuestions.forEach((heuQ) => {
-    heuQ.heuristicQuestions.forEach((question) => {
-      if (
-        question.heuristicAnswer !== '' &&
-        Object.values(question.heuristicAnswer).length > 0
-      ) {
-        x++
-      }
-    })
-  })
-  const percent = ((100 * x) / total).toFixed(1)
-  calculatedProgress.value = percent
+    if (heuQ?.heuristicQuestions) {
+      heuQ.heuristicQuestions.forEach((question) => {
+        if (
+          question.heuristicAnswer !== '' &&
+          question.heuristicAnswer !== null &&
+          Object.values(question.heuristicAnswer).length > 0
+        ) {
+          answered++;
+        }
+      });
+    }
+  });
+  const percent = total > 0 ? ((100 * answered) / total).toFixed(1) : 0;
+  calculatedProgress.value = percent;
   if (isNaN(calculatedProgress.value)) {
-    calculatedProgress.value = 0
+    calculatedProgress.value = 0;
   }
-}
+};
 
 const perHeuristicProgress = (item) => {
   if (!item || !item.heuristicQuestions || !Array.isArray(item.heuristicQuestions)) {
-    return 0
+    return 0;
   }
-  const value =
-    (item.heuristicQuestions.filter(
-      (q) =>
-        q.heuristicAnswer !== '' &&
-        Object.values(q.heuristicAnswer).length > 0,
-    ).length * 100) / item.heuristicTotal
-  return value.toFixed(1)
-}
+  const total = item.heuristicTotal || 0;
+  const answered = item.heuristicQuestions.filter(
+    (q) =>
+      q.heuristicAnswer !== '' &&
+      q.heuristicAnswer !== null &&
+      Object.values(q.heuristicAnswer).length > 0,
+  ).length;
+  return total > 0 ? (answered * 100 / total).toFixed(1) : 0;
+};
 
 const saveAnswer = async () => {
-  currentUserTestAnswer.value.progress = calculatedProgress.value
-  await store.dispatch('saveTestAnswer', {
-    data: currentUserTestAnswer.value,
-    answerDocId: test.value.answersDocId,
-    testType: test.value.testType,
-  })
-}
+  if (!currentUserTestAnswer.value) {
+    toast.error(t('HeuristicsTestView.errors.noAnswerData'));
+    return;
+  }
+  currentUserTestAnswer.value.progress = calculatedProgress.value;
+  try {
+    await store.dispatch('saveTestAnswer', {
+      data: currentUserTestAnswer.value,
+      answerDocId: test.value.answersDocId,
+      testType: test.value.testType,
+    });
+    toast.success(t('HeuristicsTestView.messages.answerSaved'));
+  } catch (error) {
+    console.error('Error saving answer:', error);
+    toast.error(t('HeuristicsTestView.errors.failedToSaveAnswer'));
+  }
+};
 
 const submitAnswer = async () => {
-  currentUserTestAnswer.value.submitted = true
-  await saveAnswer()
-  toast.success(t('alerts.genericSuccess'))
-  router.push('/testslist')
-}
+  if (!currentUserTestAnswer.value) {
+    toast.error(t('HeuristicsTestView.errors.noAnswerData'));
+    return;
+  }
+  currentUserTestAnswer.value.submitted = true;
+  try {
+    await saveAnswer();
+    toast.success(t('alerts.genericSuccess'));
+    router.push('/admin');
+  } catch (error) {
+    console.error('Error submitting answer:', error);
+    toast.error(t('HeuristicsTestView.errors.failedToSubmitAnswer'));
+  }
+};
 
 const setExistUser = () => {
   noExistUser.value = false
@@ -709,31 +739,31 @@ const signOut = () => {
 }
 
 const populateWithHeuristicQuestions = () => {
-  if (!test.value) {
-    return
+  if (!heuristics.value || !test.value) {
+    return;
   }
-  let totalQuestions = 0
-  if (currentUserTestAnswer.value.heuristicQuestions?.length <= 0) {
-    test.value.testStructure.forEach((heu) => {
-      currentUserTestAnswer.value.heuristicQuestions.push(
-        new Heuristic({
-          heuristicTitle: heu.title,
-          heuristicId: heu.id,
-          heuristicQuestions: heu.questions.map(
-            (h) =>
-              new HeuristicQuestionAnswer({
-                heuristicId: h.id,
-                heuristicAnswer: null,
-                heuristicComment: '',
-                answerImageUrl: '',
-              }),
-          ),
-          heuristicTotal: heu.total,
-        }),
-      )
-      totalQuestions += heu.questions.length ?? 0
-    })
-    currentUserTestAnswer.value.total = totalQuestions
+  if (!currentUserTestAnswer.value.heuristicQuestions?.length) {
+    let totalQuestions = 0;
+    const heuristicQuestions = heuristics.value.map((heu) => {
+      const questions = heu.questions?.map(
+        (h) =>
+          new HeuristicQuestionAnswer({
+            heuristicId: h.id,
+            heuristicAnswer: null,
+            heuristicComment: '',
+            answerImageUrl: '',
+          }),
+      ) || [];
+      totalQuestions += questions.length;
+      return new Heuristic({
+        heuristicTitle: heu.title || 'Unknown Heuristic',
+        heuristicId: heu.id,
+        heuristicQuestions: questions,
+        heuristicTotal: questions.length,
+      });
+    });
+    currentUserTestAnswer.value.heuristicQuestions = heuristicQuestions;
+    currentUserTestAnswer.value.total = totalQuestions;
   }
 }
 
