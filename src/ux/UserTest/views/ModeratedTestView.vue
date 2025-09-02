@@ -149,7 +149,6 @@
 </template>
 
 <script setup>
-import UserTask from '@/ux/UserTest/models/UserTask';
 import { ref as dbRef, onValue, off, update, set } from "firebase/database";
 import { database } from "@/app/plugins/firebase/index";
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
@@ -169,6 +168,7 @@ import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 
 const store = useStore();
 const router = useRouter();
@@ -557,7 +557,7 @@ const mappingSteps = async () => {
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
         localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
-          const newTask = new UserTask({
+          const newTask = new TaskAnswer({
             taskId: task.id || i,
             taskAnswer: '',
             taskObservations: '',
