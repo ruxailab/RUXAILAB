@@ -415,11 +415,10 @@ import TemplateHeader from '@/shared/models/TemplateHeader';
 import TemplateAuthor from '@/shared/models/TemplateAuthor';
 import TemplateBody from '@/shared/models/TemplateBody';
 import Template from '@/shared/models/Template';
-import TestAdmin from '@/models/TestAdmin';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import Study from '../models/Study';
 import { instantiateStudyByType } from '../constants/methodDefinitions';
+import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const store = useStore();
 const router = useRouter();
@@ -671,7 +670,7 @@ const duplicateTest = async () => {
       testStructure: test.value.testStructure,
       testOptions: test.value.testOptions,
       id: null,
-      testAdmin: new TestAdmin({
+      testAdmin: new StudyAdmin({
         userDocId: user.value.id,
         email: user.value.email,
       }),

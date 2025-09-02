@@ -2,9 +2,9 @@ import HeuristicStudy from "@/ux/Heuristic/models/HeuristicStudy";
 import UserStudy from "@/ux/UserTest/models/UserStudy";
 import Study from "../models/Study";
 import CardSortingStudy from "@/ux/CardSorting/models/CardSortingStudy";
-import TestAdmin from "@/models/TestAdmin";
 import Cooperators from "../models/Cooperators";
 import Template from "../models/Template";
+import StudyAdmin from "@/shared/models/StudyAdmin";
 
 /**
  * Factory function to instantiate the correct study model based on type.
@@ -17,7 +17,7 @@ import Template from "../models/Template";
 export function instantiateStudyByType(type, rawData) {
     const normalizedData = {
         ...rawData,
-        testAdmin: rawData?.testAdmin ? new TestAdmin(rawData.testAdmin) : null,
+        testAdmin: rawData?.testAdmin ? new StudyAdmin(rawData.testAdmin) : null,
         cooperators: rawData?.cooperators
             ? rawData.cooperators.map((c) => new Cooperators(c))
             : [],
