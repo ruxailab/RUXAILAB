@@ -3,7 +3,6 @@ import Auth from '@/features/auth/store/Auth'
 import Templates from '@/features/templates/Template'
 import Tests from '@/store/modules/Test'
 import Users from '@/store/modules/User'
-import Cooperators from '@/store/modules/Cooperators'
 import Reports from '@/shared/store/Report'
 import Heuristic from '@/ux/Heuristic/store/Heuristic'
 import Answer from '@/shared/store/Answer'
@@ -73,7 +72,6 @@ export default createStore({
     Templates,
     Tests,
     Users,
-    Cooperators,
     Reports,
     Heuristic,
     Answer,
