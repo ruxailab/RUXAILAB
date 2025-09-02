@@ -325,7 +325,6 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, w
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import Snackbar from '@/shared/components/Snackbar';
-import UserTask from '@/ux/UserTest/models/UserTask';
 import { nanoid } from 'nanoid';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
@@ -336,6 +335,7 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 
 const fullName = ref('');
 const logined = ref(null);
@@ -661,9 +661,9 @@ const setTest = async () => {
     let tasksArray = [];
     if (currentUserTestAnswer.value.tasks) {
       if (Array.isArray(currentUserTestAnswer.value.tasks)) {
-        tasksArray = currentUserTestAnswer.value.tasks.map(task => new UserTask(task));
+        tasksArray = currentUserTestAnswer.value.tasks.map(task => new TaskAnswer(task));
       } else if (typeof currentUserTestAnswer.value.tasks === 'object') {
-        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new UserTask(task));
+        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new TaskAnswer(task));
       }
     }
 
@@ -734,7 +734,7 @@ const mappingSteps = async () => {
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
         localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
-          const newTask = new UserTask({
+          const newTask = new TaskAnswer({
             taskId: task.id || i,
             taskAnswer: '',
             taskObservations: '',

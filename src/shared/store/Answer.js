@@ -1,9 +1,9 @@
 import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
-import UserTask from '@/ux/UserTest/models/UserTask'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 
 const answerController = new AnswerController()
 
@@ -88,7 +88,7 @@ export default {
               // Ensure userTasks exists before accessing its length
               const userTasksLength = rootState.test.testStructure.userTasks?.length || 0;
               for (let i = 0; i < userTasksLength; i++) {
-                tasks[i] = new UserTask({
+                tasks[i] = new TaskAnswer({
                   taskId: i
                 });
               }

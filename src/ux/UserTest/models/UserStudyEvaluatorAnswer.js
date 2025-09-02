@@ -1,4 +1,4 @@
-import UserTask from './UserTask'
+import TaskAnswer from './TaskAnswer'
 
 export default class UserStudyEvaluatorAnswer {
   constructor({
@@ -36,7 +36,7 @@ export default class UserStudyEvaluatorAnswer {
       tasks: Object.fromEntries(
         Object.entries(data.tasks).map(([key, value]) => [
           key,
-          UserTask.toUserTask(value),
+          TaskAnswer.toModel(value),
         ]),
       ),
     })
@@ -53,7 +53,7 @@ export default class UserStudyEvaluatorAnswer {
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [
           key,
-          (value instanceof UserTask ? value : new UserTask(value)).toFirestore(),
+          (value instanceof TaskAnswer ? value : new TaskAnswer(value)).toFirestore(),
         ]),
       ),
       progress: this.progress,
