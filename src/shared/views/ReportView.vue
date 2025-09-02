@@ -364,35 +364,15 @@ const getCurrentAnswer = async () => {
 };
 
 const removeReport = async (report) => {
-  const answerId = test.value.answersDocId;
-  const userToRemoveId = report.userDocId;
-  let testType = test.value.testType;
-  const testId = test.value.id;
+  loadingBtn.value = true;
 
-  if (testType === STUDY_TYPES.HEURISTIC) testType = 'heuristicAnswers';
-  if (testType === STUDY_TYPES.USER) testType = 'taskAnswers';
+  await store.dispatch("reports/removeReport", { report, test: test.value });
 
-  try {
-    const userDocRef = doc(db, 'users', userToRemoveId);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      await updateDoc(userDocRef, { [`myAnswers.${testId}`]: deleteField() });
-    }
-    const answerDocRef = doc(db, 'answers', answerId);
-    const answerDoc = await getDoc(answerDocRef);
-    if (answerDoc.exists()) {
-      await updateDoc(answerDocRef, { [`${testType}.${userToRemoveId}`]: deleteField() });
-    }
-  } catch (e) {
-    store.commit('setError', {
-      errorCode: 'RemoveReportError',
-      message: e,
-    });
-  }
   await getCurrentAnswer();
+  toast?.success(t("alerts.genericSuccess"));
+
   loadingBtn.value = false;
   dialog.value = false;
-  toast?.success(t('alerts.genericSuccess'));
 };
 
 const goToCoops = () => emit('goToCoops');
