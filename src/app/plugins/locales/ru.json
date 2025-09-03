@@ -201,7 +201,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Варианты"
+      "options": "Варианты",
+      "noOptions": "Нет вариантов"
     },
     "messages": {},
     "placeHolders": {},
