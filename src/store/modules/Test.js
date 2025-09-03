@@ -3,11 +3,10 @@
  * @module Test
  */
 
-import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
 import TestController from '@/controllers/TestController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
 const testController = new TestController()
 
@@ -24,16 +23,11 @@ export default {
     currentImageUrl: '',
     welcomeMessage: '',
     landingPage: '',
-    participantCamera: '',
     consent: '',
     preTest: [],
     postTest: [],
     scoresPercentage: [],
     finalMessage: '',
-    remoteCameraStream: null,
-    localCameraStream: null,
-    peerConnection: null,
-    isDisconnected: false,
     studyCategory: null,
     studyMethod: null,
     studyType: null,
@@ -75,29 +69,14 @@ export default {
     landingPage(state) {
       return state.landingPage
     },
-    participantCamera(state) {
-      return state.participantCamera
-    },
     finalMessage(state) {
       return state.finalMessage
-    },
-    remoteCameraStream(state) {
-      return state.remoteCameraStream
-    },
-    localCameraStream(state) {
-      return state.localCameraStream
-    },
-    peerConnection(state) {
-      return state.peerConnection
-    },
-    isDisconnected(state) {
-      return state.isDisconnected
     },
   },
   mutations: {
     SET_TEST(state, payload) {
       state.Test = payload;
-      if (payload?.testStructure && payload.testType === 'HEURISTICS') {
+      if (payload?.testStructure && payload.testType === STUDY_TYPES.HEURISTIC) {
         state.heuristics = Object.entries(payload.testStructure)
           .filter(([key]) => !isNaN(key))
           .map(([_, value]) => ({ ...value }));
@@ -177,25 +156,8 @@ export default {
     SET_LANDING(state, payload) {
       state.landingPage = payload
     },
-    SET_PARTICIPANT_CAMERA(state, payload) {
-      state.participantCamera = payload
-    },
     SET_FINAL_MESSAGE(state, payload) {
       state.finalMessage = payload
-    },
-    SET_REMOTE_STREAM(state, stream) {
-      state.remoteCameraStream = stream
-    },
-    SET_LOCAL_STREAM(state, stream) {
-      console.log('[SET_LOCAL_STREAM] - stream recebido:', stream)
-      state.localCameraStream = stream
-    },
-    SET_PEER_CONNECTION(state, connection) {
-      // Adiciona mutação para peerConnection
-      state.peerConnection = connection
-    },
-    SET_DISCONNECTED(state, status) {
-      state.isDisconnected = status
     },
     SET_STUDY_CATEGORY(state, payload) {
       state.studyCategory = payload
@@ -228,9 +190,7 @@ export default {
       state.postTest = []
       state.welcomeMessage = ''
       state.landingPage = ''
-      state.participantCamera = ''
       state.finalMessage = ''
-      state.peerConnection = null
     },
   },
   actions: {
@@ -419,16 +379,6 @@ export default {
         commit('setError', true);
       }
     },
-    async addItemsTasks({ commit }, payload) {
-      try {
-        commit('setLoading', true)
-        commit('ADD_TASKS', payload)
-      } catch (e) {
-        commit('setError', true)
-      } finally {
-        commit('setLoading', false)
-      }
-    },
     setTasks({ commit }, payload) {
       try {
         commit('SET_TASKS', payload)
@@ -474,32 +424,12 @@ export default {
         commit('setError', true)
       }
     },
-    async setLandingPage({ commit }, payload) {
-      try {
-        commit('SET_LANDING', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    async setParticipantCamera({ commit }, payload) {
-      try {
-        commit('SET_PARTICIPANT_CAMERA', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
     async setFinalMessage({ commit }, payload) {
       try {
         commit('SET_FINAL_MESSAGE', payload)
       } catch (e) {
         commit('setError', true)
       }
-    },
-    setremoteCameraStream({ commit }, stream) {
-      commit('SET_REMOTE_STREAM', stream)
-    },
-    setlocalCameraStream({ commit }, stream) {
-      commit('SET_LOCAL_STREAM', stream)
     },
     cleanTest({ commit }) {
       try {
@@ -508,86 +438,5 @@ export default {
         commit('setError', true)
       }
     },
-    async hangUp({ commit }, roomId) {
-      try {
-        const roomRef = doc(db, 'rooms', roomId)
-
-        const roomSnapshot = await getDoc(roomRef)
-        if (roomSnapshot.exists()) {
-          const calleeCandidatesSnapshot = await getDocs(
-            collection(roomRef, 'calleeCandidates'),
-          )
-          calleeCandidatesSnapshot.forEach(async (candidate) => {
-            await deleteDoc(candidate.ref)
-          })
-
-          const callerCandidatesSnapshot = await getDocs(
-            collection(roomRef, 'callerCandidates'),
-          )
-          callerCandidatesSnapshot.forEach(async (candidate) => {
-            await deleteDoc(candidate.ref)
-          })
-
-          await deleteDoc(roomRef)
-        }
-      } catch (error) {
-        console.error('Error deleting room and candidates:', error)
-      }
-    },
-    async createPeerConnection({ commit }, configuration) {
-      // Adiciona ação para criar peerConnection
-      try {
-        const peerConnection = new RTCPeerConnection(configuration)
-        commit('SET_PEER_CONNECTION', peerConnection)
-        return peerConnection
-      } catch (error) {
-        console.error('Error creating peer connection:', error)
-      }
-    },
-    async closePeerConnection({ commit, state }) {
-      console.log('[closePeerConnection] - state:', state);
-
-      try {
-        if (state.localCameraStream) {
-          state.localCameraStream.getTracks().forEach(track => track.stop())
-          commit('SET_LOCAL_STREAM', null)
-        }
-
-        if (state.remoteCameraStream) {
-          state.remoteCameraStream.getTracks().forEach(track => track.stop())
-          commit('SET_REMOTE_STREAM', null)
-        }
-
-        if (state.peerConnection) {
-          state.peerConnection.close()
-          commit('SET_PEER_CONNECTION', null)
-        }
-
-        // commit('SET_DISCONNECTED', true)
-      } catch (error) {
-        console.error('Error closing connection:', error)
-      }
-    },
-    async changeTrack({ commit, state }, stream) {
-      const newTrack = stream.getVideoTracks()[0]
-
-      if (state.peerConnection) {
-        const senders = state.peerConnection.getSenders()
-        const videoSender = senders.find(
-          (sender) => sender.track.kind === 'video',
-        )
-
-        if (videoSender) {
-          await videoSender.replaceTrack(newTrack)
-          const newStream = new MediaStream([
-            ...state.localCameraStream.getAudioTracks(),
-            newTrack,
-          ])
-          commit('SET_LOCAL_STREAM', newStream)
-        } else {
-          console.error('videoSender is not set')
-        }
-      }
-    },
-  },
+  }
 }

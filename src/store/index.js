@@ -1,13 +1,12 @@
 import { createStore } from 'vuex'
-import Auth from '@/store/modules/Auth'
+import Auth from '@/features/auth/store/Auth'
 import Templates from '@/features/templates/Template'
 import Tests from '@/store/modules/Test'
 import Users from '@/store/modules/User'
-import Cooperators from '@/store/modules/Cooperators'
-import Reports from '@/store/modules/Reports'
-import Heuristic from '@/store/modules/Heuristic'
-import Answer from '@/store/modules/Answer'
-import Language from './modules/Language'
+import Reports from '@/shared/store/Report'
+import Heuristic from '@/ux/Heuristic/store/Heuristic'
+import Answer from '@/shared/store/Answer'
+import Language from '../features/language/store/Language'
 import Assessment from './modules/Assessment'
 import ManualAccessibilityTest from './modules/ManualAccessibilityTest'
 import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
@@ -20,8 +19,18 @@ export default createStore({
     dialogLeave: false,
     localChanges: false,
     pathTo: null,
+    toastMessage: '',
+    toastType: 'info',
   },
   mutations: {
+    SET_TOAST(state, { message, type }) {
+      state.toastMessage = message;
+      state.toastType = type || 'info';
+    },
+    RESET_TOAST(state) {
+      state.toastMessage = '';
+      state.toastType = 'info';
+    },
     setLoading(state, payload) {
       state.loading = payload
     },
@@ -42,6 +51,12 @@ export default createStore({
     },
   },
   getters: {
+    getToastMessage(state) {
+      return state.toastMessage
+    },
+    getToastType(state) {
+      return state.toastType
+    },
     getDialogLeaveStatus(state) {
       return state.dialogLeave
     },
@@ -57,7 +72,6 @@ export default createStore({
     Templates,
     Tests,
     Users,
-    Cooperators,
     Reports,
     Heuristic,
     Answer,

@@ -1,9 +1,9 @@
 /**
- * Represents a test admin.
+ * Represents a study admin.
  */
-export default class TestAdmin {
+export default class StudyAdmin {
   /**
-   * @param {Partial<TestAdmin>} partial
+   * @param {Partial<StudyAdmin>} partial
    */
   constructor({ email, userDocId } = {}) {
     /**
@@ -19,16 +19,6 @@ export default class TestAdmin {
      * @type {string}
      */
     this.userDocId = userDocId
-  }
-
-  /**
-   * Converts a map into a test admin model.
-   *
-   * @param {Partial<TestAdmin>} data a map to be converted.
-   * @returns a new test admin model.
-   */
-  static toTestAdmin(data) {
-    return new TestAdmin(data)
   }
 
   /**

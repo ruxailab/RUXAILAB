@@ -224,11 +224,10 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
-import { db } from '@/app/plugins/firebase';
 import Intro from '@/shared/components/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import TaskAnswer from '@/models/TaskAnswer';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 
 const store = useStore();
 const { t } = useI18n();
@@ -261,7 +260,7 @@ const answers = computed(() => store.getters.testAnswerDocument)
 const headers = computed(() => {
   return allHeaders.value.filter(header => {
     if (header.key === 'hidden') {
-      return answers.value.type !== 'User' ? false : true;
+      return answers.value.type !== STUDY_TYPES.USER ? false : true;
     }
     return true;
   });
@@ -298,7 +297,7 @@ const reports = computed(() => {
   const doc = answers.value;
   if (!doc) return [];
   const type = doc.type;
-  const raw = type === 'User' ? doc.taskAnswers || {} : doc.heuristicAnswers || {};
+  const raw = type === STUDY_TYPES.USER ? doc.taskAnswers || {} : doc.heuristicAnswers || {};
   return Object.values(raw).map((r) => ({
     id: r.userDocId,
     fullName: r.fullName || "Evaluator",
@@ -326,7 +325,7 @@ const statusOptions = computed(() => [
 ]);
 
 const unhideReport = async (item) => {
-  if (answers.value.type !== 'User') return;
+  if (answers.value.type !== STUDY_TYPES.USER) return;
   const payload = Object.values(answers.value.taskAnswers).find(s => s.userDocId === item.id);
 
   if (!payload) {
@@ -336,7 +335,7 @@ const unhideReport = async (item) => {
   console.log(payload)
   try {
     await store.dispatch('updateTaskAnswer', {
-      payload: new TaskAnswer({
+      payload: new UserStudyEvaluatorAnswer({
         ...payload,
         hidden: !item.hidden,
       }),
@@ -363,35 +362,15 @@ const getCurrentAnswer = async () => {
 };
 
 const removeReport = async (report) => {
-  const answerId = test.value.answersDocId;
-  const userToRemoveId = report.userDocId;
-  let testType = test.value.testType;
-  const testId = test.value.id;
+  loadingBtn.value = true;
 
-  if (testType === 'HEURISTIC') testType = 'heuristicAnswers';
-  if (testType === 'User') testType = 'taskAnswers';
+  await store.dispatch("reports/removeReport", { report, test: test.value });
 
-  try {
-    const userDocRef = doc(db, 'users', userToRemoveId);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      await updateDoc(userDocRef, { [`myAnswers.${testId}`]: deleteField() });
-    }
-    const answerDocRef = doc(db, 'answers', answerId);
-    const answerDoc = await getDoc(answerDocRef);
-    if (answerDoc.exists()) {
-      await updateDoc(answerDocRef, { [`${testType}.${userToRemoveId}`]: deleteField() });
-    }
-  } catch (e) {
-    store.commit('setError', {
-      errorCode: 'RemoveReportError',
-      message: e,
-    });
-  }
   await getCurrentAnswer();
+  toast?.success(t("alerts.genericSuccess"));
+
   loadingBtn.value = false;
   dialog.value = false;
-  toast?.success(t('alerts.genericSuccess'));
 };
 
 const goToCoops = () => emit('goToCoops');

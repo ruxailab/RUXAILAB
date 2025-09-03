@@ -107,7 +107,6 @@ function formatMultiline(text) {
   return text.replace(/\n/g, '<br>');
 }
 import { useI18n } from 'vue-i18n';
-import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js';
 
 // Initialize store, router, and i18n
 const store = useStore();
@@ -136,16 +135,4 @@ const goToNotificationPage = () => {
   router.push('/notifications');
 };
 
-const formatDate = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-};
-
-const getTestIcon = (type) => {
-  if (type && METHOD_DEFINITIONS[type] && METHOD_DEFINITIONS[type].icon) {
-    return METHOD_DEFINITIONS[type].icon;
-  }
-  return METHOD_DEFINITIONS.DEFAULT.icon;
-};
 </script>

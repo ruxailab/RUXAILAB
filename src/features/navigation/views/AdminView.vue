@@ -163,11 +163,11 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
-import ProfileView from '../../features/auth/views/ProfileView.vue';
-import NotificationPage from '../../features/notifications/views/NotificationPage.vue';
-import { DashboardSidebar } from '@/features/navigation';
-import { getMethodOptions } from '@/shared/constants/methodDefinitions';
-import DashboardView from '../../features/dashboard/views/DashboardView.vue';
+import ProfileView from '@/features/auth/views/ProfileView.vue';
+import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
+import { DashboardSidebar } from '@/features/navigation/utils';
+import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import DashboardView from '@/features/dashboard/views/DashboardView.vue';
 
 const store = useStore();
 const router = useRouter();
@@ -183,7 +183,8 @@ const drawerOpen = ref(false);
 
 // Opciones de métodos usando el nuevo sistema - solo métodos disponibles
 const methodOptions = computed(() => {
-  const options = getMethodOptions('es', 'available') // Solo métodos disponibles
+  const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id) // Solo métodos disponibles
+
   return [
     { value: 'all', text: 'Todos los Métodos' },
     ...options.map(option => ({
@@ -218,10 +219,14 @@ const filteredTests = computed(() => {
 
     const method = selectedMethodFilter.value;
     const testType = test.testType;
+    const subType = test.subType
+
     const matchesMethod =
       method === 'all' ||
-      (method === 'HEURISTICS' && testType === 'HEURISTICS') ||
-      ((method === 'USER_GENERAL' || method === 'USER_MODERATED' || method === 'USER_UNMODERATED') && testType === 'User') ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.USER_UNMODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.UNMODERATED) ||
+      (method === METHOD_DEFINITIONS.USER_MODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.MODERATED)
+      ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 
@@ -244,18 +249,17 @@ const goToCreateTestRoute = () => {
 };
 
 const goTo = (test) => {
-  console.log(tests);
   if (activeSection.value === 'studies') {
-    if (test.testType === 'HEURISTICS') {
+    if (test.testType === STUDY_TYPES.HEURISTIC) {
       router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === 'CardSorting') {
+    } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
       router.push({ name: 'CardSortingManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === 'User') {
-      // if (test.userTestType === 'unmoderated') {
-      //   router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
-      // } else if (test.userTestType === 'moderated') {
+    } else if (test.testType === STUDY_TYPES.USER) {
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
         router.push({ name: 'UserModeratedManagerView', params: { id: test.testDocId || test.id } });
-      // }
+      }
     }
   } else if (activeSection.value === 'sessions') {
     router.push(`testview/${test.id}/${user.value.id}`);
@@ -276,7 +280,7 @@ const cleanTestStore = () => store.dispatch('cleanTest');
 
 const filterModeratedSessions = async () => {
   const userModeratedTests = Object.values(user.value.myAnswers).filter(
-    (answer) => answer.subType === 'moderated'
+    (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
   );
   const cooperatorArray = [];
   for (const test of userModeratedTests) {

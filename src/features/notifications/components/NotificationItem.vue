@@ -57,7 +57,7 @@ const getTestIcon = (type) => {
   if (type && METHOD_DEFINITIONS[type] && METHOD_DEFINITIONS[type].icon) {
     return METHOD_DEFINITIONS[type].icon;
   }
-  return METHOD_DEFINITIONS.DEFAULT.icon;
+  return 'mdi-help-circle';
 };
 const onClick = () => emit('go-to-redirect', props.notification);
 const onMarkAsRead = () => emit('mark-as-read', props.notification);

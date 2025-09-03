@@ -1,15 +1,15 @@
 <template>
   <div v-if="test">
-    <div v-if="test.testType == 'HEURISTICS'">
+    <div v-if="test.testType == STUDY_TYPES.HEURISTIC">
       <HeuristicTestView
         :id="id"
         :token="token"
       />
     </div>
-    <div v-if="test.testType == 'User' && test.subType === 'unmoderated'">
+    <div v-if="test.testType == STUDY_TYPES.USER && test.subType === USER_STUDY_SUBTYPES.UNMODERATED">
       <UserTestView />
     </div>
-    <div v-if="test.testType === 'User' && test.subType === 'moderated'">
+    <div v-if="test.testType === STUDY_TYPES.USER && test.subType === USER_STUDY_SUBTYPES.MODERATED">
       <ModeratedTestView
         ref="moderatedTestViewRef"
         :token="token"
@@ -24,6 +24,7 @@ import { useStore } from 'vuex'
 import UserTestView from '@/ux/UserTest/views/UserTestView.vue'
 import ModeratedTestView from '../../ux/UserTest/views/ModeratedTestView.vue'
 import HeuristicTestView from '../../ux/Heuristic/views/HeuristicTestView.vue'
+import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 
 const props = defineProps({
   id: { type: String, default: '' },

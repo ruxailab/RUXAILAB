@@ -11,14 +11,13 @@
 
     <!-- DERECHA: FORMULARIO -->
     <div class="form-side d-flex align-center justify-center">
-      <Snackbar />
 
       <div class="signin-box">
         <h1 class="text-h6">
-          {{ $t('SIGNIN.sign-in-title') }}
+          {{ $t('auth.SIGNIN.sign-in-title') }}
         </h1>
         <p class="subtitle">
-          {{ $t('SIGNIN.sign-in-subtitle') }}
+          {{ $t('auth.SIGNIN.sign-in-subtitle') }}
         </p>
 
         <v-form
@@ -28,7 +27,7 @@
           <v-text-field
             v-model="email"
             :rules="emailRules"
-            :label="$t('SIGNIN.email')"
+            :label="$t('auth.SIGNIN.email')"
             type="email"
             placeholder="you@example.com"
             prepend-inner-icon="mdi-email-outline"
@@ -39,7 +38,7 @@
           <v-text-field
             v-model.trim="password"
             :rules="[rules.required]"
-            :label="$t('SIGNIN.password')"
+            :label="$t('auth.SIGNIN.password')"
             :type="showPassword ? 'text' : 'password'"
             placeholder="••••••••"
             prepend-inner-icon="mdi-lock-outline"
@@ -52,7 +51,7 @@
           <div class="d-flex justify-space-between align-center mb-6">
             <v-checkbox
               v-model="rememberMe"
-              :label="$t('SIGNIN.rememberMe')"
+              :label="$t('auth.SIGNIN.rememberMe')"
               hide-details
               density="compact"
             />
@@ -63,7 +62,7 @@
               class="text-body-2"
               @click="redirectToForgotPassword"
             >
-              {{ $t('SIGNIN.forgot-password') }}
+              {{ $t('auth.SIGNIN.forgot-password') }}
             </v-btn>
           </div>
 
@@ -75,18 +74,18 @@
             min-height="44"
             data-testid="sign-in-button"
           >
-            {{ $t('SIGNIN.sign-in') }}
+            {{ $t('auth.SIGNIN.sign-in') }}
           </v-btn>
         </v-form>
 
         <v-divider class="my-6">
           <span class="text-body-2 text-medium-emphasis">
-            {{ $t('SIGNIN.or') }}
+            {{ $t('auth.SIGNIN.or') }}
           </span>
         </v-divider>
 
         <GoogleSignInButton
-          :button-text="$t('SIGNIN.continueWithGoogle')"
+          :button-text="$t('auth.SIGNIN.continueWithGoogle')"
           :loading="loading"
           @google-sign-in-start="onGoogleSignInStart"
           @google-sign-in-success="onGoogleSignInSuccess"
@@ -95,7 +94,7 @@
 
         <div class="text-center mt-6">
           <span class="text-body-2 text-medium-emphasis">
-            {{ $t('SIGNIN.dont-have-account') }}
+            {{ $t('auth.SIGNIN.dont-have-account') }}
           </span>
           <v-btn
             variant="text"
@@ -103,7 +102,7 @@
             class="text-body-2 pl-1"
             @click="redirectToSignup"
           >
-            {{ $t('SIGNIN.sign-up') }}
+            {{ $t('auth.SIGNIN.sign-up') }}
           </v-btn>
         </div>
       </div>
@@ -117,7 +116,6 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { z } from 'zod'
-import Snackbar from '@/shared/components/Snackbar';
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 
 const { t } = useI18n()
