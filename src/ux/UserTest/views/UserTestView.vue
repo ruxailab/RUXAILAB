@@ -238,7 +238,7 @@
             @start-tasks="() => { taskIndex = 0; globalIndex = 4 }"
           />
           <TaskStep
-            v-if="globalIndex === 4 && test.testType === 'User'"
+            v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER"
             ref="taskStepComponent"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
@@ -325,10 +325,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, w
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import Snackbar from '@/shared/components/Snackbar';
-import TaskAnswer from '@/models/TaskAnswer';
-import UserTask from '@/models/UserTask';
 import { nanoid } from 'nanoid';
-import { useDisplay } from 'vuetify';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
@@ -336,6 +333,9 @@ import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 
 const fullName = ref('');
 const logined = ref(null);
@@ -361,7 +361,7 @@ const timerComponent = computed(() => {
   return taskStepComponent.value?.$refs?.timerComponent || null;
 });
 
-const localTestAnswer = reactive(new TaskAnswer());
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 
 const store = useStore();
 const router = useRouter();
@@ -655,15 +655,15 @@ const setTest = async () => {
     logined.value = true;
     await store.dispatch('getCurrentTestAnswerDoc');
     if (!currentUserTestAnswer.value) {
-      currentUserTestAnswer.value = new TaskAnswer();
+      currentUserTestAnswer.value = new UserStudyEvaluatorAnswer()
     }
 
     let tasksArray = [];
     if (currentUserTestAnswer.value.tasks) {
       if (Array.isArray(currentUserTestAnswer.value.tasks)) {
-        tasksArray = currentUserTestAnswer.value.tasks.map(task => new UserTask(task));
+        tasksArray = currentUserTestAnswer.value.tasks.map(task => new TaskAnswer(task));
       } else if (typeof currentUserTestAnswer.value.tasks === 'object') {
-        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new UserTask(task));
+        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new TaskAnswer(task));
       }
     }
 
@@ -734,7 +734,7 @@ const mappingSteps = async () => {
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
         localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
-          const newTask = new UserTask({
+          const newTask = new TaskAnswer({
             taskId: task.id || i,
             taskAnswer: '',
             taskObservations: '',

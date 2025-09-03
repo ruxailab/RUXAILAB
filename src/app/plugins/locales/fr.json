@@ -1,16 +1,23 @@
 {
-  "language": "Langue",
-  "SIGNIN": {
-    "sign-in": "Se connecter",
-    "email": "E-mail",
-    "username": "Nom d'utilisateur",
-    "password": "Mot de passe",
-    "dont-have-account": "Vous n'avez pas de compte ? Inscrivez-vous",
-    "sign-up": "S'inscrire",
-    "contact": "Numéro de contact",
-    "confirmPassword": "Confirmez votre mot de passe",
-    "alreadyHaveAnAccount": "Vous avez déjà un compte ? Connectez-vous"
+  "auth": {
+    "signupSuccess": "Inscription réussie",
+    "logoutSuccess": "Déconnexion réussie",
+    "resetPasswordSuccess": "E-mail de réinitialisation du mot de passe envoyé",
+    "deleteSuccess": "Compte supprimé avec succès",
+    "loginSuccess": "Connexion réussie",
+    "SIGNIN": {
+      "sign-in": "Se connecter",
+      "email": "E-mail",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "dont-have-account": "Vous n'avez pas de compte ? Inscrivez-vous",
+      "sign-up": "S'inscrire",
+      "contact": "Numéro de contact",
+      "confirmPassword": "Confirmez votre mot de passe",
+      "alreadyHaveAnAccount": "Vous avez déjà un compte ? Connectez-vous"
+    }
   },
+  "language": "Langue",
   "common": {
     "loading": "Chargement du test",
     "continueAs": "Continuer en tant que",

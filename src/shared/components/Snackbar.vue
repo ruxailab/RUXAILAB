@@ -2,7 +2,7 @@
   <v-snackbar
     v-model="snackbar"
     :color="snackColor"
-    :timeout="4000"
+    :timeout="5000"
     location="top"
   >
     <div>{{ snackMessage }}</div>
@@ -28,8 +28,8 @@ const { t } = useI18n();
 
 const snackbar = ref(false);
 
-const snackMessage = computed(() => store.getters.snackMessage);
-const snackColor = computed(() => store.getters.snackColor);
+const snackMessage = computed(() => store.getters.getToastMessage);
+const snackColor = computed(() => store.getters.getToastType);
 
 watch(snackMessage, (newVal) => {
   if (newVal) {
