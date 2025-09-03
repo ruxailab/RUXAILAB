@@ -52,6 +52,15 @@ export default {
         SET_FINAL_MESSAGE(state, payload) {
             state.finalMessage = payload
         },
+        SET_POST_TEST(state, payload) {
+            state.postTest = payload
+        },
+        SET_PRE_TEST(state, payload) {
+            state.preTest = payload
+        },
+        SET_CONSENT(state, payload) {
+            state.consent = payload
+        },
     },
     actions: {
         async setWelcomeMessage({ commit }, payload) {
@@ -89,6 +98,12 @@ export default {
                 commit('setError', true)
             }
         },
-
+        setPostTest({ commit }, payload) {
+            try {
+                commit('SET_POST_TEST', payload)
+            } catch (e) {
+                commit('setError', true)
+            }
+        },
     }
 }
