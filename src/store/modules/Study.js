@@ -234,7 +234,7 @@ export default {
      */
     async getStudy({ commit }, payload) {
       commit('setLoading', true)
-
+      console.log('oi')
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
