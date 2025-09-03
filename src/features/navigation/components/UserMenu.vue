@@ -1,7 +1,3 @@
-/**
-* UserMenu.vue
-* Menú desplegable del usuario en la toolbar
-*/
 <template>
   <div
     v-if="user"

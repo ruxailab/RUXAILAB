@@ -1,7 +1,3 @@
-/**
-* TestNavigationDrawer.vue
-* Drawer específico para navegación dentro de tests
-*/
 <template>
   <v-navigation-drawer
     v-model="isOpen"

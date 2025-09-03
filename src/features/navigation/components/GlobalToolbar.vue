@@ -87,7 +87,7 @@
       <v-icon start>
         mdi-lock
       </v-icon>
-      {{ $t('SIGNIN.sign-in') }}
+      {{ $t('auth.SIGNIN.sign-in') }}
     </v-btn>
 
     <v-btn
@@ -112,10 +112,10 @@ import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { useDisplay } from 'vuetify';
 import { useI18n } from 'vue-i18n';
-import LocaleChanger from '@/app/layouts/components/LocaleChanger.vue';
-import HelpButton from '@/features/navigation/HelpButton.vue';
+import LocaleChanger from '@/features/language/components/LocaleChanger.vue';
+import HelpButton from '@/features/navigation/components/HelpButton.vue';
 import UserMenu from './UserMenu.vue';
-import NotificationButton from '../notifications/components/NotificationButton.vue';
+import NotificationButton from './NotificationButton.vue';
 
 // Emits
 defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer']);

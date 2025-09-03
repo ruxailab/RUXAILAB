@@ -64,6 +64,7 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import { buildHeuristicsEvaluator, buildHeuristicsStatistics, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 
 // Vuex store
 const store = useStore();
@@ -83,7 +84,7 @@ const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 
 const answers = computed(() => {
   if (testAnswerDocument.value) {
-    return testAnswerDocument.value.type === 'HEURISTICS'
+    return testAnswerDocument.value.type === STUDY_TYPES.HEURISTIC
       ? Object.values(testAnswerDocument.value.heuristicAnswers)
       : Object.values(testAnswerDocument.value.taskAnswers);
   }
