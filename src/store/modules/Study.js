@@ -118,7 +118,6 @@ export default {
 
       try {
         await studyController.duplicateStudy(payload)
-        commit('ADD_TASKS', payload.test)
       } catch (err) {
         commit('setError', true)
         return null
