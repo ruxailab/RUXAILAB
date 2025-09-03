@@ -257,7 +257,7 @@ const saveInvitation = async () => {
 
 const submit = async () => {
   test.value.cooperators = [...cooperatorsEdit.value];
-  await store.dispatch('updateTest', test.value);
+  await store.dispatch('updateStudy', test.value);
   cooperatorsEdit.value.forEach((guest) => {
     if (!guest.accepted) {
       notifyCooperator(guest);

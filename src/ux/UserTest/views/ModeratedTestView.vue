@@ -671,7 +671,7 @@ onMounted(async () => {
   }
 
   if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptTestCollaboration', {
+    await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
     });
