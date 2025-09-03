@@ -17,13 +17,6 @@ export default {
     testStructure: null,
     answersId: null,
     module: 'test',
-    tasks: [], //User test
-    welcomeMessage: '', //User test
-    landingPage: '',
-    consent: '', //User test
-    preTest: [], //User test
-    postTest: [],//User test
-    finalMessage: '', //User test
     studyCategory: null,
     studyMethod: null,
     studyType: null,
@@ -35,32 +28,11 @@ export default {
     test(state) {
       return state.Test
     },
-    tasks(state) {
-      return state.tasks
-    },
     testStructure(state) {
       return state.testStructure
     },
     coops(state) {
       return state.Test.coop
-    },
-    preTest(state) {
-      return state.preTest
-    },
-    postTest(state) {
-      return state.postTest
-    },
-    consent(state) {
-      return state.consent
-    },
-    welcomeMessage(state) {
-      return state.welcomeMessage
-    },
-    landingPage(state) {
-      return state.landingPage
-    },
-    finalMessage(state) {
-      return state.finalMessage
     },
   },
   mutations: {
@@ -91,30 +63,6 @@ export default {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.cards = payload
     },
-    ADD_TASKS(state, payload) {
-      state.tasks = [...state.tasks, payload]
-    },
-    SET_TASKS(state, payload) {
-      state.tasks = payload
-    },
-    SET_POST_TEST(state, payload) {
-      state.postTest = payload
-    },
-    SET_PRE_TEST(state, payload) {
-      state.preTest = payload
-    },
-    SET_CONSENT(state, payload) {
-      state.consent = payload
-    },
-    SET_WELCOME(state, payload) {
-      state.welcomeMessage = payload
-    },
-    SET_LANDING(state, payload) {
-      state.landingPage = payload
-    },
-    SET_FINAL_MESSAGE(state, payload) {
-      state.finalMessage = payload
-    },
     SET_STUDY_CATEGORY(state, payload) {
       state.studyCategory = payload
     },
@@ -134,14 +82,7 @@ export default {
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
-      state.tasks = []
-      state.consent = ''
-      state.preTest = []
-      state.postTest = []
-      state.welcomeMessage = ''
-      state.landingPage = ''
-      state.finalMessage = ''
-    },
+    }
   },
   actions: {
     async createStudy({ commit }, payload) {
@@ -164,7 +105,6 @@ export default {
 
       try {
         await studyController.duplicateStudy(payload)
-        commit('ADD_TASKS', payload.test)
       } catch (err) {
         commit('setError', true)
         return null
@@ -313,57 +253,6 @@ export default {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
-      }
-    },
-
-    setTasks({ commit }, payload) {
-      try {
-        commit('SET_TASKS', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    setPostTest({ commit }, payload) {
-      try {
-        commit('SET_POST_TEST', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    setPreTest({ commit }, payload) {
-      try {
-        commit('SET_PRE_TEST', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    setConsent({ commit }, payload) {
-      try {
-        commit('SET_CONSENT', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-
-    async setWelcomeMessage({ commit }, payload) {
-      try {
-        commit('SET_WELCOME', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    async setFinalMessage({ commit }, payload) {
-      try {
-        commit('SET_FINAL_MESSAGE', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    cleanTest({ commit }) {
-      try {
-        commit('CLEAN_TEST')
-      } catch (e) {
-        commit('setError', true)
       }
     },
   }
