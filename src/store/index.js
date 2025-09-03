@@ -11,6 +11,7 @@ import Assessment from './modules/Assessment'
 import ManualAccessibilityTest from './modules/ManualAccessibilityTest'
 import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
 import automaticReport from '@/store/modules/automaticReport'
+import UserStudy from '@/ux/UserTest/store/UserStudy'
 
 export default createStore({
   state: {
@@ -77,5 +78,6 @@ export default createStore({
     Answer,
     Language,
     automaticReport,
+    UserStudy,
   }
 })
