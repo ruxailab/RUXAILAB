@@ -5,6 +5,10 @@ import CardSortingStudy from "@/ux/CardSorting/models/CardSortingStudy";
 import Cooperators from "../models/Cooperators";
 import Template from "../models/Template";
 import StudyAdmin from "@/shared/models/StudyAdmin";
+import StudyAnswer from "../models/StudyAnswer";
+import UserStudyAnswer from "@/ux/UserTest/models/UserStudyAnswer";
+import HeuristicStudyAnswer from "@/ux/Heuristic/models/HeuristicStudyAnswer";
+import CardSortingStudyAnswer from "@/ux/CardSorting/models/CardSortingStudyAnswer";
 
 /**
  * Factory function to instantiate the correct study model based on type.
@@ -33,6 +37,26 @@ export function instantiateStudyByType(type, rawData) {
             return new CardSortingStudy(normalizedData);
         default:
             return new Study(normalizedData);
+    }
+}
+
+/**
+ * Factory function to instantiate the correct answer study model based on type.
+ *
+ * @param {string} type - The study type (USER, HEURISTIC, CARD_SORTING).
+ * @param {Object} rawData - Raw data retrieved from the database.
+ * @returns {StudyAnswer|UserStudyAnswer|HeuristicStudyAnswer|CardSortingStudyAnswer}
+ */
+export function instantiateStudyAnswerByType(type, rawData) {
+    switch (type) {
+        case STUDY_TYPES.USER:
+            return new UserStudyAnswer(rawData);
+        case STUDY_TYPES.HEURISTIC:
+            return new HeuristicStudyAnswer(rawData);
+        case STUDY_TYPES.CARD_SORTING:
+            return new CardSortingStudyAnswer(rawData);
+        default:
+            return new StudyAnswer(rawData);
     }
 }
 

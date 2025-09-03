@@ -1,7 +1,6 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import UserController from '../../features/auth/controllers/UserController'
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
-import StudyAnswer from '@/shared/models/StudyAnswer'
+import { instantiateStudyAnswerByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 const COLLECTION = 'answers'
 
@@ -10,7 +9,8 @@ const userController = new UserController()
 export default class AnswerController extends Controller {
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
-    return new StudyAnswer({ id: res.id, ...res.data() })
+    const answer = instantiateStudyAnswerByType(res.data().type, { id: res.id, ...res.data() })
+    return answer
   }
 
   async createAnswer(payload) {

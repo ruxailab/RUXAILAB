@@ -5,8 +5,7 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
-import StudyAnswer from '@/shared/models/StudyAnswer'
+import { instantiateStudyAnswerByType, instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -18,10 +17,10 @@ export default class TestController extends Controller {
   }
 
   async createTest(payload) {
-    // Create answers doc for test
-    const answerDoc = await answerController.createAnswer(
-      new StudyAnswer({ type: payload.testType }),
-    )
+    const answer = instantiateStudyAnswerByType(payload.testType, { type: payload.testType })
+
+    // Create answers doc for study
+    const answerDoc = await answerController.createAnswer(answer)
     payload.answersDocId = answerDoc.id
 
     return await super.create(COLLECTION, payload.toFirestore())
@@ -41,7 +40,7 @@ export default class TestController extends Controller {
         return null
       }
 
-      const collaborators = await testToDelete.data()
+      const collaborators = testToDelete.data()
       const cooperators = collaborators.cooperators
       if (cooperators) {
         const promises = []
