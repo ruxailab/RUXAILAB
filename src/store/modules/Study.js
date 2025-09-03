@@ -18,13 +18,11 @@ export default {
     answersId: null,
     module: 'test',
     tasks: [], //User test
-    currentImageUrl: '',
     welcomeMessage: '', //User test
     landingPage: '',
     consent: '', //User test
     preTest: [], //User test
     postTest: [],//User test
-    scoresPercentage: [],
     finalMessage: '', //User test
     studyCategory: null,
     studyMethod: null,
@@ -99,9 +97,6 @@ export default {
     SET_TASKS(state, payload) {
       state.tasks = payload
     },
-    SET_CURRENT_IMAGE_URL(state, payload) {
-      state.currentImageUrl = payload
-    },
     SET_POST_TEST(state, payload) {
       state.postTest = payload
     },
@@ -110,9 +105,6 @@ export default {
     },
     SET_CONSENT(state, payload) {
       state.consent = payload
-    },
-    SET_SCORES_PERCENTAGE(state, payload) {
-      state.scoresPercentage = payload
     },
     SET_WELCOME(state, payload) {
       state.welcomeMessage = payload
@@ -137,16 +129,12 @@ export default {
         state.studyMethod = null,
         state.studyType = null
     },
-    updateCurrentImageUrl(state, url) {
-      state.currentImageUrl = url
-    },
     CLEAN_TEST(state) {
       state.Test = null
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
       state.tasks = []
-      state.currentImageUrl = ''
       state.consent = ''
       state.preTest = []
       state.postTest = []
@@ -335,9 +323,6 @@ export default {
         commit('setError', true)
       }
     },
-    setCurrentImageUrl({ commit }, payload) {
-      commit('SET_CURRENT_IMAGE_URL', payload)
-    },
     setPostTest({ commit }, payload) {
       try {
         commit('SET_POST_TEST', payload)
@@ -359,13 +344,7 @@ export default {
         commit('setError', true)
       }
     },
-    setScoresPercentage({ commit }, payload) {
-      try {
-        commit('SET_SCORES_PERCENTAGE', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
+
     async setWelcomeMessage({ commit }, payload) {
       try {
         commit('SET_WELCOME', payload)
