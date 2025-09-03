@@ -79,7 +79,7 @@ export default class Study { // mudar nome para Study e mover para Shared
     /**
      * Defines the test options.
      *
-     * @type {TestStructureOptions[]}
+     * @type {[]}
      */
     this.testOptions = testOptions ?? []
 
