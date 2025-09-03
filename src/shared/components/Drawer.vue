@@ -134,7 +134,7 @@ const fetchTests = async () => {
 
 const changeTest = async (testName) => {
   const testId = testsList.value.find((t) => t.testTitle === testName)?.testDocId;
-  await store.dispatch('getTest', { id: testId });
+  await store.dispatch('getStudy', { id: testId });
   router.replace({ name: 'ManagerView', params: { id: testId } });
 };
 

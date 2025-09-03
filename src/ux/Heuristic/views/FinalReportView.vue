@@ -121,8 +121,8 @@ const update = async () => {
   object.value.studyConclusion = text;
   const rawData = { ...test.value, ...object.value };
   const updatedTest = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateTest', updatedTest);
-  await store.dispatch('getTest', { id: test.value.id })
+  await store.dispatch('updateStudy', updatedTest);
+  await store.dispatch('getStudy', { id: test.value.id })
 };
 
 const handleNext = async () => {
