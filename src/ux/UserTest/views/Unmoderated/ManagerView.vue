@@ -35,7 +35,7 @@ const accessLevel = computed(() => {
   const coop = currentTest?.cooperators?.find(c => c.userDocId === currentUser.id)
   if (coop) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUETOR
+  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
 })
 
 const topCards = computed(() => getTopCardsDefualt(test.value, 'userTest/unmoderated'))

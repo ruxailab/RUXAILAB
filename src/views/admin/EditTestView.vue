@@ -92,7 +92,7 @@
         >
           <!-- Heuristic Tests -->
           <EditHeuristicsTest
-            v-if="test.testType === 'HEURISTICS'"
+            v-if="test.testType === STUDY_TYPES.HEURISTIC"
             type="content"
             :object="object"
             :index="index"
@@ -106,7 +106,7 @@
 
           <!-- User Tests -->
           <EditUserTest
-            v-if="test.testType === 'User'"
+            v-if="test.testType === STUDY_TYPES.USER"
             :type="test.subType"
             @change="change = true"
           />
@@ -124,7 +124,7 @@ import Snackbar from '@/shared/components/Snackbar';
 import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
 import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { instantiateStudyByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { useToast } from 'vue-toastification';
 
 const store = useStore();
@@ -176,7 +176,7 @@ const setIntro = async () => {
 const submit = async () => {
   object.value.testStructure = {
     ...store.state.Tests.Test.testStructure,
-    ...(test.value.testType === 'User' && {
+    ...(test.value.testType === STUDY_TYPES.USER && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
       consent: store.getters.consent,
