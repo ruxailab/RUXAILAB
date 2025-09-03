@@ -818,7 +818,7 @@ onBeforeMount(async () => {
   if (route.params.token) {
     fromlink.value = true
   }
-  await store.dispatch('getTest', { id: props.id })
+  await store.dispatch('getStudy', { id: props.id })
   await store.dispatch('getCurrentTestAnswerDoc')
   populateWithHeuristicQuestions()
   if (

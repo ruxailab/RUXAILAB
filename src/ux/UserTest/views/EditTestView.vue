@@ -149,7 +149,7 @@ const save = async () => {
 
   const rawData = { ...test.value, testStructure: testStructure };
   const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateTest', study);
+  await store.dispatch('updateStudy', study);
 }
 
 // Lifecycle

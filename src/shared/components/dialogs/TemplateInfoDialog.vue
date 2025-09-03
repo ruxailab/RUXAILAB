@@ -323,7 +323,7 @@ const validate = async () => {
 
     const study = instantiateStudyByType(rawData.testType ,rawData)
 
-    const testId = await store.dispatch('createNewTest', study);
+    const testId = await store.dispatch('createStudy', study);
     await router.push(`/managerview/${testId}`);
   } catch (error) {
     console.error('Error creating test:', error);
