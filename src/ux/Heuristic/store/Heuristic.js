@@ -15,7 +15,7 @@ export default {
     },
     getters: {
         heuristics(state, getters, rootState) {
-            return rootState.Tests.heuristics || [];
+            return state.heuristics
         },
         testWeights(state) {
             return state.testWeights
@@ -63,6 +63,7 @@ export default {
     actions: {
         async setHeuristics({ commit }, payload) {
             try {
+                console.log('set')
                 commit('SET_HEURISTICS', payload);
             } catch (e) {
                 commit('setError', true);
