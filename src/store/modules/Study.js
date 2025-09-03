@@ -68,19 +68,10 @@ export default {
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
     },
-    SET_POST_TEST(state, payload) {
-      state.postTest = payload
-    },
-    SET_PRE_TEST(state, payload) {
-      state.preTest = payload
-    },
-    SET_CONSENT(state, payload) {
-      state.consent = payload
-    },
+
     SET_SCORES_PERCENTAGE(state, payload) {
       state.scoresPercentage = payload
     },
-
     SET_STUDY_CATEGORY(state, payload) {
       state.studyCategory = payload
     },
@@ -103,14 +94,7 @@ export default {
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
-      state.tasks = []
       state.currentImageUrl = ''
-      state.consent = ''
-      state.preTest = []
-      state.postTest = []
-      state.welcomeMessage = ''
-      state.landingPage = ''
-      state.finalMessage = ''
     },
   },
   actions: {
@@ -288,13 +272,6 @@ export default {
 
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)
-    },
-    setPostTest({ commit }, payload) {
-      try {
-        commit('SET_POST_TEST', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
     },
 
     setScoresPercentage({ commit }, payload) {
