@@ -201,7 +201,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "选项"
+      "options": "选项",
+      "noOptions": "没有选项"
     },
     "messages": {},
     "placeHolders": {},

@@ -204,7 +204,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "الخيارات"
+      "options": "الخيارات",
+      "noOptions": "لا يوجد خيارات"
     },
     "messages": {},
     "placeHolders": {},
