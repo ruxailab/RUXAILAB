@@ -58,7 +58,7 @@ const navigator = computed(() => {
 
 // Lifecycle
 onMounted(async () => {
-  await store.dispatch('getTest', { id: route.params.id })
+  await store.dispatch('getStudy', { id: route.params.id })
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 </script>

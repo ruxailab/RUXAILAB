@@ -100,7 +100,7 @@ async function loadAnswers() {
   const last4 = []
   try {
     for (const study in lastFourStudies.value) {
-      const testDoc = await store.dispatch('getTest', { id: lastFourStudies.value[study].testDocId });
+      const testDoc = await store.dispatch('getStudy', { id: lastFourStudies.value[study].testDocId });
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({

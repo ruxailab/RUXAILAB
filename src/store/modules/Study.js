@@ -3,20 +3,18 @@
  * @module Test
  */
 
-import TestController from '@/controllers/TestController'
+import StudyController from '@/controllers/StudyController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
-const testController = new TestController()
+const studyController = new StudyController()
 
 export default {
   state: {
     Test: null,
     tests: [],
     testStructure: null,
-    heuristics: [],
-    testWeights: {},
     answersId: null,
     module: 'test',
     tasks: [],
@@ -44,12 +42,6 @@ export default {
     },
     testStructure(state) {
       return state.testStructure
-    },
-    heuristics(state) {
-      return state.heuristics
-    },
-    testWeights(state) {
-      return state.testWeights;
     },
     coops(state) {
       return state.Test.coop
@@ -88,34 +80,6 @@ export default {
     },
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...payload };
-    },
-    SET_HEURISTICS(state, payload) {
-      state.heuristics = [...payload];
-    },
-    SET_TEST_WEIGHTS(state, payload) {
-      state.testWeights = { ...payload };
-    },
-    REMOVE_HEURISTIC(state, index) {
-      state.heuristics.splice(index, 1);
-      // Adjust testWeights when a heuristic is removed
-      const newWeights = {};
-      const heuristicLength = state.heuristics.length;
-      for (let i = 0; i < heuristicLength - 1; i++) {
-        newWeights[i] = new Array(heuristicLength - (i + 1)).fill(null);
-      }
-      state.testWeights = newWeights;
-    },
-    SETUP_HEURISTIC_QUESTION_DESCRIPTION(state, payload) {
-      if (!state.heuristics[payload.heuristic].questions[payload.question].descriptions) {
-        state.heuristics[payload.heuristic].questions[payload.question].descriptions = [];
-      }
-      if (payload.editIndex != null) {
-        state.heuristics[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = {
-          ...payload.description,
-        };
-      } else {
-        state.heuristics[payload.heuristic].questions[payload.question].descriptions.push(payload.description);
-      }
     },
     SET_CARDSORTING_OPTIONS_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
@@ -179,8 +143,6 @@ export default {
     CLEAN_TEST(state) {
       state.Test = null
       state.testStructure = null
-      state.heuristics = []
-      state.testWeights = {}
       state.answersId = null
       state.module = 'test'
       state.tasks = []
@@ -194,11 +156,11 @@ export default {
     },
   },
   actions: {
-    async createNewTest({ commit }, payload) {
+    async createStudy({ commit }, payload) {
       commit('setLoading', true)
 
       try {
-        const res = await testController.createTest(payload)
+        const res = await studyController.createStudy(payload)
         commit('SET_TEST', res.id)
         return res.id
       } catch (err) {
@@ -209,11 +171,11 @@ export default {
       }
     },
 
-    async duplicateTest({ commit }, payload) {
+    async duplicateStudy({ commit }, payload) {
       commit('setLoading', true)
 
       try {
-        await testController.duplicateTest(payload)
+        await studyController.duplicateStudy(payload)
         commit('ADD_TASKS', payload.test)
       } catch (err) {
         commit('setError', true)
@@ -230,9 +192,9 @@ export default {
      * @param {Partial<Test>} payload the test data
      */
 
-    async deleteTest({ commit }, payload) {
+    async deleteStudy({ commit }, payload) {
       try {
-        const res = await testController.deleteTest(payload)
+        const res = await studyController.deleteStudy(payload)
         commit('SET_TESTS', res)
       } catch (e) {
         commit('setError', true)
@@ -248,23 +210,23 @@ export default {
      * @param {Partial<Test>} payload
      */
 
-    async updateTest({ commit }, payload) {
+    async updateStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await testController.updateTest(payload)
+        await studyController.updateStudy(payload)
         commit('SET_TEST', payload);
       } catch (e) {
-        console.error('Error in updateTest', e)
+        console.error('Error in', e)
         commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
     },
 
-    async acceptTestCollaboration({ commit }, payload) {
+    async acceptStudyCollaboration({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await testController.acceptTestCollaboration(payload)
+        await studyController.acceptStudyCollaboration(payload)
       } catch (e) {
         console.error('Error accept test collaboration', e)
         commit('setError', true)
@@ -282,11 +244,11 @@ export default {
      * @param {string} payload.id - Test's identification code
      * @returns {void}
      */
-    async getTest({ commit }, payload) {
+    async getStudy({ commit }, payload) {
       commit('setLoading', true)
 
       try {
-        const res = await testController.getTest(payload)
+        const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
         return res
       } catch (e) {
@@ -296,10 +258,10 @@ export default {
       }
     },
 
-    async getAllTests({ commit }) {
+    async getAllStudies({ commit }) {
       try {
         commit('setLoading', true)
-        const res = await testController.getAllTests()
+        const res = await studyController.getAllStudies()
         commit('SET_TESTS', res)
       } catch (e) {
         commit('setError', true)
@@ -307,8 +269,8 @@ export default {
         commit('setLoading', false)
       }
     },
-
-    async getSharedWithMeTests({ commit, rootState }) {
+    //ToDo: Analyze if it is still needed, or maybe convert into a getter.
+    async getSharedWithMeStudies({ commit, rootState }) {
       try {
         commit('setLoading', true)
         const res = rootState.Auth.user.myAnswers
@@ -326,10 +288,10 @@ export default {
       }
     },
 
-    async getPublicTests({ commit }) {
+    async getPublicStudies({ commit }) {
       try {
         commit('setLoading', true)
-        const res = await testController.getPublicTests()
+        const res = await studyController.getPublicStudies()
         commit('SET_TESTS', res)
       } catch (e) {
         commit('setError', true)
@@ -365,20 +327,7 @@ export default {
         commit('setLoading', false)
       }
     },
-    async setHeuristics({ commit }, payload) {
-      try {
-        commit('SET_HEURISTICS', payload);
-      } catch (e) {
-        commit('setError', true);
-      }
-    },
-    async setTestWeights({ commit }, payload) {
-      try {
-        commit('SET_TEST_WEIGHTS', payload);
-      } catch (e) {
-        commit('setError', true);
-      }
-    },
+
     setTasks({ commit }, payload) {
       try {
         commit('SET_TASKS', payload)

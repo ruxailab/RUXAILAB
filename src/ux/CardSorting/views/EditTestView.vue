@@ -182,7 +182,7 @@ const submit = async () => {
 
   const rawData = { ...test.value, ...object }
   const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateTest', study)
+  await store.dispatch('updateStudy', study)
 }
 
 const getWelcome = () => {

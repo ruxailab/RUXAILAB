@@ -212,7 +212,7 @@ const changeToJSON = async () => {
         const heuristicTest = Array.from(heuristicMap.values());
 
         store.state.Tests.Test.testStructure = heuristicTest;
-        await store.dispatch('updateTest', test.value);
+        await store.dispatch('updateStudy', test.value);
       };
     }
   } catch (error) {
