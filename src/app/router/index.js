@@ -17,11 +17,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
-  await store.dispatch('autoSignIn')
-  const user = store.state.Auth.user
+  let user = store.state.Auth.user
+
+  if (!user) {
+    await store.dispatch('autoSignIn')
+    user = store.state.Auth.user
+  }
 
   if (to.path === '/') return next(redirect())
-
   if (authorize.length && to.path !== '/signin' && !to.params.token) {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
