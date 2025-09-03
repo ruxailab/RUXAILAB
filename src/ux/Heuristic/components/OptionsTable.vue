@@ -12,7 +12,7 @@
               {{ $t('HeuristicsOptionsTable.titles.options') }}
             </h1>
           </div>
-          
+
           <v-btn
             color="accent"
             prepend-icon="mdi-plus"
@@ -174,10 +174,10 @@ const optionsWithFormattedValue = computed(() =>
 );
 
 const testAnswerDocLength = computed(() => {
-  const testAnswerDocument = store.getters.testAnswerDocument;
-  if (!testAnswerDocument) return 0;
-  const heuristicAnswers = testAnswerDocument.heuristicAnswers;
-  return Object.keys(heuristicAnswers).length;
+  const testAnswerDocument = store.getters.testAnswerDocument
+  if (!testAnswerDocument) return 0
+  const heuristicAnswers = testAnswerDocument.heuristicAnswers
+  return Object.keys(heuristicAnswers || {}).length
 });
 
 watch(dialog, (newVal) => {
