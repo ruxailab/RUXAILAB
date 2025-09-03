@@ -8,6 +8,9 @@ export default {
         heuristicStructure: [],
         heuristics: [],
         testWeights: {},
+        scoresPercentage: [],
+        currentImageUrl: '',
+
 
     },
     getters: {
@@ -47,6 +50,15 @@ export default {
                 state.heuristics[payload.heuristic].questions[payload.question].descriptions.push(payload.description);
             }
         },
+        SET_SCORES_PERCENTAGE(state, payload) {
+            state.scoresPercentage = payload
+        },
+        SET_CURRENT_IMAGE_URL(state, payload) {
+            state.currentImageUrl = payload
+        },
+        SET_CURRENT_IMAGE_URL(state, url) {
+            state.currentImageUrl = url
+        },
     },
     actions: {
         async setHeuristics({ commit }, payload) {
@@ -62,6 +74,16 @@ export default {
             } catch (e) {
                 commit('setError', true);
             }
+        },
+        setScoresPercentage({ commit }, payload) {
+            try {
+                commit('SET_SCORES_PERCENTAGE', payload)
+            } catch (e) {
+                commit('setError', true)
+            }
+        },
+        setCurrentImageUrl({ commit }, payload) {
+            commit('SET_CURRENT_IMAGE_URL', payload)
         },
     }
 }
