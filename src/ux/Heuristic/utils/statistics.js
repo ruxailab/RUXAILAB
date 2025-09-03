@@ -61,8 +61,8 @@ function calcFinalResult(array) {
 function answers() {
   if (store.getters.testAnswerDocument) {
     return store.getters.testAnswerDocument.type === STUDY_TYPES.HEURISTIC
-      ? Object.values(store.getters.testAnswerDocument.heuristicAnswers)
-      : Object.values(store.getters.testAnswerDocument.taskAnswers)
+      ? Object.values(store.getters.testAnswerDocument.heuristicAnswers || {})
+      : Object.values(store.getters.testAnswerDocument.taskAnswers || {})
   }
   return []
 }
