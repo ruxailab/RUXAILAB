@@ -14,8 +14,8 @@ export default {
 
     },
     getters: {
-        heuristics(state) {
-            return state.heuristics
+        heuristics(state, getters, rootState) {
+            return rootState.Tests.heuristics || [];
         },
         testWeights(state) {
             return state.testWeights
