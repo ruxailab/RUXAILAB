@@ -286,10 +286,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, w
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
 import Snackbar from '@/shared/components/Snackbar';
-import TaskAnswer from '@/models/TaskAnswer';
-import UserTask from '@/models/UserTask';
 import { nanoid } from 'nanoid';
-import { useDisplay } from 'vuetify';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
@@ -298,6 +295,8 @@ import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 import IrisTracker from '@/components/organisms/IrisTracker.vue';
 import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
 import { db } from '@/app/plugins/firebase';
@@ -687,15 +686,15 @@ const setTest = async () => {
     logined.value = true;
     await store.dispatch('getCurrentTestAnswerDoc');
     if (!currentUserTestAnswer.value) {
-      currentUserTestAnswer.value = new TaskAnswer();
+      currentUserTestAnswer.value = new UserStudyEvaluatorAnswer()
     }
 
     let tasksArray = [];
     if (currentUserTestAnswer.value.tasks) {
       if (Array.isArray(currentUserTestAnswer.value.tasks)) {
-        tasksArray = currentUserTestAnswer.value.tasks.map(task => new UserTask(task));
+        tasksArray = currentUserTestAnswer.value.tasks.map(task => new TaskAnswer(task));
       } else if (typeof currentUserTestAnswer.value.tasks === 'object') {
-        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new UserTask(task));
+        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new TaskAnswer(task));
       }
     }
 
@@ -722,15 +721,83 @@ const setExistUser = () => {
   noExistUser.value = false;
 };
 
-function validateTest() {
-  if (
-    test.value?.testStructure?.userTasks &&
-    test.value.testStructure.userTasks.length > 0
-  ) {
-    return
-  } else {
-    store.commit('SET_TOAST', { type: 'error', message: 'Test not found' });
-    router.push('/');
+const mappingSteps = async () => {
+  try {
+    items.value = [];
+
+    // PreTest
+    if (validate(test.value?.testStructure?.preTest)) {
+      items.value.push({
+        title: 'Pre-test',
+        icon: 'mdi-check-bold',
+        value: [
+          {
+            title: 'Consent',
+            icon: 'mdi-check-bold',
+            id: 0,
+          },
+          {
+            title: 'Form',
+            icon: 'mdi-check-bold',
+            id: 1,
+          },
+        ],
+        id: 0,
+      });
+      if (!localTestAnswer.preTestAnswer.length && Array.isArray(test.value.testStructure.preTest)) {
+        localTestAnswer.preTestAnswer = test.value.testStructure.preTest.map(() => ({
+          answer: '',
+        }));
+      }
+    }
+
+    // Tasks
+    if (validate(test.value?.testStructure?.userTasks)) {
+      items.value.push({
+        title: 'Tasks',
+        icon: 'mdi-check-bold',
+        value: test.value.testStructure.userTasks.map((task, index) => ({
+          title: task.taskName,
+          icon: 'mdi-check-bold',
+          id: index,
+        })),
+        id: 1,
+      });
+      if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
+          const newTask = new TaskAnswer({
+            taskId: task.id || i,
+            taskAnswer: '',
+            taskObservations: '',
+            postAnswer: '',
+            taskTime: 0,
+            completed: false,
+            susAnswers: [],
+            nasaTlxAnswers: {}
+          });
+          console.log('Nueva tarea creada:', i, newTask);
+          return newTask;
+        });
+      }
+    }
+
+    // PostTest
+    if (validate(test.value?.testStructure?.postTest)) {
+      items.value.push({
+        title: 'Post Test',
+        icon: 'mdi-check-bold',
+        value: test.value.testStructure.postTest,
+        id: 2,
+      });
+      if (!localTestAnswer.postTestAnswer.length && Array.isArray(test.value.testStructure.postTest)) {
+        localTestAnswer.postTestAnswer = test.value.testStructure.postTest.map(() => ({
+          answer: '',
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('Error mapping steps:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to initialize test data. Please try again.' });
   }
 }
 

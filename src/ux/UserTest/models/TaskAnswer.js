@@ -1,6 +1,6 @@
 import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
 
-export default class UserTask {
+export default class TaskAnswer {
   constructor({
     taskId,
     taskAnswer,
@@ -31,8 +31,8 @@ export default class UserTask {
     this.nasaTlxAnswers = nasaTlxAnswers ?? new NasaTlxAnswer()
   }
 
-  static toUserTask(data) {
-    return new UserTask(data)
+  static toModel(data) {
+    return new TaskAnswer(data)
   }
 
   toFirestore() {

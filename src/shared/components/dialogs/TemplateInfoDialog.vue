@@ -207,9 +207,8 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import FormTestDescription from '@/shared/components/FormTestDescription.vue';
-import Study from '@/shared/models/Study';
-import TestAdmin from '@/models/TestAdmin';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const props = defineProps({
   dialog: {
@@ -313,7 +312,7 @@ const validate = async () => {
     const rawData = {
       ...localTest.value,
       id: null,
-      testAdmin: new TestAdmin({
+      testAdmin: new StudyAdmin({
         userDocId: user.value.id,
         email: user.value.email,
       }),
@@ -324,7 +323,7 @@ const validate = async () => {
 
     const study = instantiateStudyByType(rawData.testType ,rawData)
 
-    const testId = await store.dispatch('createNewTest', study);
+    const testId = await store.dispatch('createStudy', study);
     await router.push(`/managerview/${testId}`);
   } catch (error) {
     console.error('Error creating test:', error);

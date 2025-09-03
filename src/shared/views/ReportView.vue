@@ -224,12 +224,10 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore';
-import { db } from '@/app/plugins/firebase';
 import Intro from '@/shared/components/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import TaskAnswer from '@/models/TaskAnswer';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 
 const store = useStore();
 const { t } = useI18n();
@@ -337,7 +335,7 @@ const unhideReport = async (item) => {
   console.log(payload)
   try {
     await store.dispatch('updateTaskAnswer', {
-      payload: new TaskAnswer({
+      payload: new UserStudyEvaluatorAnswer({
         ...payload,
         hidden: !item.hidden,
       }),
@@ -364,35 +362,15 @@ const getCurrentAnswer = async () => {
 };
 
 const removeReport = async (report) => {
-  const answerId = test.value.answersDocId;
-  const userToRemoveId = report.userDocId;
-  let testType = test.value.testType;
-  const testId = test.value.id;
+  loadingBtn.value = true;
 
-  if (testType === STUDY_TYPES.HEURISTIC) testType = 'heuristicAnswers';
-  if (testType === STUDY_TYPES.USER) testType = 'taskAnswers';
+  await store.dispatch("reports/removeReport", { report, test: test.value });
 
-  try {
-    const userDocRef = doc(db, 'users', userToRemoveId);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      await updateDoc(userDocRef, { [`myAnswers.${testId}`]: deleteField() });
-    }
-    const answerDocRef = doc(db, 'answers', answerId);
-    const answerDoc = await getDoc(answerDocRef);
-    if (answerDoc.exists()) {
-      await updateDoc(answerDocRef, { [`${testType}.${userToRemoveId}`]: deleteField() });
-    }
-  } catch (e) {
-    store.commit('setError', {
-      errorCode: 'RemoveReportError',
-      message: e,
-    });
-  }
   await getCurrentAnswer();
+  toast?.success(t("alerts.genericSuccess"));
+
   loadingBtn.value = false;
   dialog.value = false;
-  toast?.success(t('alerts.genericSuccess'));
 };
 
 const goToCoops = () => emit('goToCoops');

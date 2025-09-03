@@ -235,11 +235,11 @@ import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
 import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest';
-import TestAdmin from '@/models/TestAdmin';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
 import { instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const router = useRouter();
 const store = useStore();
@@ -342,7 +342,7 @@ const submit = async () => {
     testType: testType,
     isPublic: test.value.isPublic,
     subType: test.value.subType,
-    testAdmin: new TestAdmin({
+    testAdmin: new StudyAdmin({
       userDocId: user.id,
       email: user.email,
     }),
@@ -352,7 +352,7 @@ const submit = async () => {
   }
   const newTest = instantiateStudyByType(testType, rawData)
 
-  const testId = await store.dispatch('createNewTest', newTest);
+  const testId = await store.dispatch('createStudy', newTest);
   isLoading.value = false;
 
   store.commit('RESET_STUDY_DETAILS');
@@ -381,7 +381,7 @@ const submitAutomaticAccessibility = async () => {
     title: test.value.title,
     description: test.value.description,
     isPublic: test.value.isPublic || false,
-    testAdmin: new TestAdmin({
+    testAdmin: new StudyAdmin({
       userDocId: user.id,
       email: user.email,
     }),
@@ -410,7 +410,7 @@ const submitManualAccessibility = async () => {
     title: test.value.title,
     description: test.value.description,
     isPublic: test.value.isPublic || false,
-    testAdmin: new TestAdmin({
+    testAdmin: new StudyAdmin({
       userDocId: user.id,
       email: user.email,
     }),

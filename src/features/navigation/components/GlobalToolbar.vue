@@ -87,7 +87,7 @@
       <v-icon start>
         mdi-lock
       </v-icon>
-      {{ $t('SIGNIN.sign-in') }}
+      {{ $t('auth.SIGNIN.sign-in') }}
     </v-btn>
 
     <v-btn
