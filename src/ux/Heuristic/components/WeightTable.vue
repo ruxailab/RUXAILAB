@@ -216,7 +216,6 @@ const importt = ref([
 ]);
 
 const heuristics = computed(() => store.getters.heuristics || []);
-const heuristicaTamanho = computed(() => heuristics.value.length);
 
 const updateDatas = () => {
   try {
