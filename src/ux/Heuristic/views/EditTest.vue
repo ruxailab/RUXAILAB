@@ -122,8 +122,8 @@ const save = async () => {
   };
 
   const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateTest', study);
-  await store.dispatch('getTest', { id: route.params.id })
+  await store.dispatch('updateStudy', study);
+  await store.dispatch('getStudy', { id: route.params.id })
 }
 </script>
 

@@ -162,7 +162,6 @@ export default {
         )
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
-        console.error('Error in updateTest', e)
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -187,7 +186,6 @@ export default {
           testDocId: payload.test.id,
         })
       } catch (e) {
-        console.error('Error in updateTest', e)
         // commit("setError", true);
       } finally {
         commit('setLoading', false)

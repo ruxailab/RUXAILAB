@@ -273,7 +273,7 @@ const setupTempDialog = (template) => {
 };
 
 const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
-const getPublicTests = () => store.dispatch('getPublicTests');
+const getPublicStudies = () => store.dispatch('getPublicStudies');
 const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
 const cleanTestStore = () => store.dispatch('cleanTest');
@@ -284,7 +284,7 @@ const filterModeratedSessions = async () => {
   );
   const cooperatorArray = [];
   for (const test of userModeratedTests) {
-    const testObj = await store.dispatch('getTest', { id: test.testDocId });
+    const testObj = await store.dispatch('getStudy', { id: test.testDocId });
     if (testObj) {
       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
       if (cooperatorObj) {
@@ -307,7 +307,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
     case 'sessions': await filterModeratedSessions(); break;
     case 'templates': await getMyTemplates(); break;
     case 'community':
-      if (sub === 'community-studies') await getPublicTests();
+      if (sub === 'community-studies') await getPublicStudies();
       else if (sub === 'community-templates') await getPublicTemplates();
       break;
   }
