@@ -197,24 +197,6 @@ export default {
         commit('setLoading', false)
       }
     },
-    //ToDo: Analyze if it is still needed, or maybe convert into a getter.
-    async getSharedWithMeStudies({ commit, rootState }) {
-      try {
-        commit('setLoading', true)
-        const res = rootState.Auth.user.myAnswers
-        const tests = []
-
-        const testsEntries = Object.entries(res)
-        testsEntries.forEach((a) => {
-          tests.push(a[1])
-        })
-        commit('SET_TESTS', tests)
-      } catch (e) {
-        commit('setError', true)
-      } finally {
-        commit('setLoading', false)
-      }
-    },
 
     async getPublicStudies({ commit }) {
       try {
