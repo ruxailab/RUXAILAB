@@ -317,7 +317,8 @@
     },
     "HeuristicsOptionsTable": {
       "titles": {
-        "options": "विकल्प"
+        "options": "विकल्प",
+        "noOptions": "कोई विकल्प नहीं"
       },
       "messages": {},
       "placeHolders": {},
