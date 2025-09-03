@@ -37,9 +37,6 @@ export default {
         },
     },
     mutations: {
-        ADD_TASKS(state, payload) {
-            state.tasks = [...state.tasks, payload]
-        },
         SET_TASKS(state, payload) {
             state.tasks = payload
         },
