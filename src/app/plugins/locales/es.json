@@ -193,7 +193,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Opciones"
+      "options": "Opciones",
+      "noOptions": "No hay opciones"
     },
     "messages": {},
     "placeHolders": {},

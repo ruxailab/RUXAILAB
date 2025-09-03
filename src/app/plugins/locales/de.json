@@ -1,9 +1,9 @@
 {
   "auth": {
-  "signupSuccess": "Registrierung erfolgreich",
-  "logoutSuccess": "Abmeldung erfolgreich",
-  "resetPasswordSuccess": "Passwort-Reset-E-Mail gesendet",
-  "deleteSuccess": "Konto erfolgreich gelöscht",
+    "signupSuccess": "Registrierung erfolgreich",
+    "logoutSuccess": "Abmeldung erfolgreich",
+    "resetPasswordSuccess": "Passwort-Reset-E-Mail gesendet",
+    "deleteSuccess": "Konto erfolgreich gelöscht",
     "loginSuccess": "Anmeldung erfolgreich"
   },
   "language": "Sprache",
@@ -210,7 +210,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Optionen"
+      "options": "Optionen",
+      "noOptions": "Keine Optionen"
     },
     "messages": {},
     "placeHolders": {},
