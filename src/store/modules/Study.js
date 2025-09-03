@@ -17,15 +17,15 @@ export default {
     testStructure: null,
     answersId: null,
     module: 'test',
-    tasks: [],
+    tasks: [], //User test
     currentImageUrl: '',
-    welcomeMessage: '',
+    welcomeMessage: '', //User test
     landingPage: '',
-    consent: '',
-    preTest: [],
-    postTest: [],
+    consent: '', //User test
+    preTest: [], //User test
+    postTest: [],//User test
     scoresPercentage: [],
-    finalMessage: '',
+    finalMessage: '', //User test
     studyCategory: null,
     studyMethod: null,
     studyType: null,
