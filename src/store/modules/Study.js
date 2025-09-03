@@ -17,15 +17,8 @@ export default {
     testStructure: null,
     answersId: null,
     module: 'test',
-    tasks: [],
     currentImageUrl: '',
-    welcomeMessage: '',
-    landingPage: '',
-    consent: '',
-    preTest: [],
-    postTest: [],
     scoresPercentage: [],
-    finalMessage: '',
     studyCategory: null,
     studyMethod: null,
     studyType: null,
@@ -37,32 +30,11 @@ export default {
     test(state) {
       return state.Test
     },
-    tasks(state) {
-      return state.tasks
-    },
     testStructure(state) {
       return state.testStructure
     },
     coops(state) {
       return state.Test.coop
-    },
-    preTest(state) {
-      return state.preTest
-    },
-    postTest(state) {
-      return state.postTest
-    },
-    consent(state) {
-      return state.consent
-    },
-    welcomeMessage(state) {
-      return state.welcomeMessage
-    },
-    landingPage(state) {
-      return state.landingPage
-    },
-    finalMessage(state) {
-      return state.finalMessage
     },
   },
   mutations: {
@@ -93,12 +65,6 @@ export default {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
       state.testStructure.cardSorting.cards = payload
     },
-    ADD_TASKS(state, payload) {
-      state.tasks = [...state.tasks, payload]
-    },
-    SET_TASKS(state, payload) {
-      state.tasks = payload
-    },
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
     },
@@ -114,15 +80,7 @@ export default {
     SET_SCORES_PERCENTAGE(state, payload) {
       state.scoresPercentage = payload
     },
-    SET_WELCOME(state, payload) {
-      state.welcomeMessage = payload
-    },
-    SET_LANDING(state, payload) {
-      state.landingPage = payload
-    },
-    SET_FINAL_MESSAGE(state, payload) {
-      state.finalMessage = payload
-    },
+
     SET_STUDY_CATEGORY(state, payload) {
       state.studyCategory = payload
     },
@@ -328,13 +286,6 @@ export default {
       }
     },
 
-    setTasks({ commit }, payload) {
-      try {
-        commit('SET_TASKS', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)
     },
@@ -345,20 +296,7 @@ export default {
         commit('setError', true)
       }
     },
-    setPreTest({ commit }, payload) {
-      try {
-        commit('SET_PRE_TEST', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    setConsent({ commit }, payload) {
-      try {
-        commit('SET_CONSENT', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
+
     setScoresPercentage({ commit }, payload) {
       try {
         commit('SET_SCORES_PERCENTAGE', payload)
@@ -366,20 +304,7 @@ export default {
         commit('setError', true)
       }
     },
-    async setWelcomeMessage({ commit }, payload) {
-      try {
-        commit('SET_WELCOME', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
-    async setFinalMessage({ commit }, payload) {
-      try {
-        commit('SET_FINAL_MESSAGE', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
-    },
+
     cleanTest({ commit }) {
       try {
         commit('CLEAN_TEST')
