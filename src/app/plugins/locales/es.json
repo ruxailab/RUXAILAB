@@ -1,24 +1,31 @@
 {
+  "auth": {
+    "signupSuccess": "Registro exitoso",
+    "logoutSuccess": "Cierre de sesión exitoso",
+    "resetPasswordSuccess": "Correo de restablecimiento de contraseña enviado",
+    "deleteSuccess": "Cuenta eliminada correctamente",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "SIGNIN": {
+      "sign-in": "Iniciar sesión",
+      "email": "Correo electrónico",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "dont-have-account": "¿No tienes una cuenta? Regístrate",
+      "forgot-password": "Olvidé mi contraseña",
+      "sign-up": "Inscribirse",
+      "contact": "Número de contacto",
+      "confirmPassword": "Confirmar Contraseña",
+      "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
+    },
+    "FORGOT_PASSWORD": {
+      "reset_password": "Restablecer contraseña",
+      "email": "Correo electrónico",
+      "instructions": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
+      "reset_button": "Enviar enlace de restablecimiento",
+      "back_to_signin": "Volver a iniciar sesión"
+    }
+  },
   "language": "Idioma",
-  "SIGNIN": {
-    "sign-in": "Iniciar sesión",
-    "email": "Correo electrónico",
-    "username": "Nombre de usuario",
-    "password": "Contraseña",
-    "dont-have-account": "¿No tienes una cuenta? Regístrate",
-    "forgot-password": "Olvidé mi contraseña",
-    "sign-up": "Inscribirse",
-    "contact": "Número de contacto",
-    "confirmPassword": "Confirmar Contraseña",
-    "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
-  },
-  "FORGOT_PASSWORD": {
-    "reset_password": "Restablecer contraseña",
-    "email": "Correo electrónico",
-    "instructions": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
-    "reset_button": "Enviar enlace de restablecimiento",
-    "back_to_signin": "Volver a iniciar sesión"
-  },
   "common": {
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",

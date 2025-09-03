@@ -68,9 +68,16 @@ export default {
         })
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.signupSuccess'),
+          type: 'success',
+        })
       } catch (err) {
-        commit('setError', { errorCode: 'FIREBASE', message: err.code })
-        throw err // Rethrow the error so the caller knows signup failed
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
+        throw err
       } finally {
         commit('setLoading', false)
       }
@@ -84,25 +91,21 @@ export default {
           const dbUser = await userController.getById(user.uid)
           commit('SET_USER', dbUser)
         }
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.loginSuccess'),
+          type: 'success',
+        })
       } catch (err) {
+        let errorMsg = i18n.global.t('errors.incorrectCredential');
         if (err.code === 'auth/invalid-email') {
-          commit('setError', {
-            errorCode: 'auth',
-            message: i18n.global.t('errors.userNotExist'),
-          })
+          errorMsg = i18n.global.t('errors.userNotExist');
         } else if (err.code === 'auth/wrong-password') {
-          commit('setError', {
-            errorCode: 'auth',
-            message: i18n.global.t('errors.incorrectPassword'),
-          })
-        } else {
-          console.error(err)
-          commit('setError', {
-            errorCode: 'auth',
-            message: i18n.global.t('errors.incorrectCredential'),
-          })
+          errorMsg = i18n.global.t('errors.incorrectPassword');
         }
-        throw err
+        commit('SET_TOAST', {
+          message: errorMsg,
+          type: 'error',
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -140,10 +143,14 @@ export default {
         }
 
         commit('SET_USER', dbUser)
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.loginSuccess'),
+          type: 'success',
+        })
       } catch (err) {
-        commit('setError', {
-          errorCode: 'FIREBASE',
-          message: err.code || 'Error during Google sign in'
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
         })
         throw err
       } finally {
@@ -155,9 +162,16 @@ export default {
       try {
         await authController.signOut()
         commit('SET_USER', null)
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.logoutSuccess'),
+          type: 'success',
+        })
       } catch (err) {
         console.error(err)
-        commit('setError', { errorCode: 'FIREBASE', message: err.code || 'Error during logout' })
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -170,9 +184,16 @@ export default {
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.loginSuccess'),
+          type: 'success',
+        })
       } catch (e) {
         console.error(e)
-        commit('setError', { errorCode: 'FIREBASE', message: e.code || 'Error during auto sign in' })
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
       }
     },
 
@@ -180,13 +201,19 @@ export default {
       commit('setLoading', true)
       try {
         await authController.resetPassword(payload.email)
-        //console.log("If this email is registered, you'll receive a reset link")
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.resetPasswordSuccess'),
+          type: 'success',
+        })
       } catch (err) {
+        let errorMsg = i18n.global.t('errors.globalError');
         if (err.code === 'auth/invalid-email') {
-          console.error('Error: Invalid email format')
-        } else {
-          console.error('Error sending password reset email:', err.message)
+          errorMsg = i18n.global.t('errors.invalidEmail');
         }
+        commit('SET_TOAST', {
+          message: errorMsg,
+          type: 'error',
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -197,9 +224,16 @@ export default {
       try {
         await authController.deleteAuth(payload)
         commit('SET_USER', null)
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.deleteSuccess'),
+          type: 'success',
+        })
       } catch (err) {
         console.error('Error deleting user:', err)
-        commit('setError', { errorCode: 'FIREBASE', message: err.code || 'Error deleting user' })
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
       } finally {
         commit('setLoading', false)
       }

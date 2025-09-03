@@ -15,10 +15,10 @@
 
       <div class="signup-box">
         <h1 class="text-h6">
-          {{ $t('SIGNIN.sign-up') }}
+          {{ $t('auth.SIGNIN.sign-up') }}
         </h1>
         <p class="subtitle">
-          {{ $t('SIGNIN.signupSubtitle') }}
+          {{ $t('auth.SIGNIN.signupSubtitle') }}
         </p>
 
         <v-form
@@ -29,7 +29,7 @@
           <v-text-field
             v-model="email"
             :rules="emailRules"
-            :label="$t('SIGNIN.email')"
+            :label="$t('auth.SIGNIN.email')"
             type="email"
             placeholder="you@example.com"
             prepend-inner-icon="mdi-email-outline"
@@ -40,7 +40,7 @@
           <v-text-field
             v-model="password"
             :rules="passwordRules"
-            :label="$t('SIGNIN.password')"
+            :label="$t('auth.SIGNIN.password')"
             :type="showPassword ? 'text' : 'password'"
             placeholder="••••••••"
             prepend-inner-icon="mdi-lock-outline"
@@ -53,7 +53,7 @@
           <v-text-field
             v-model="confirmpassword"
             :rules="comparePassword"
-            :label="$t('SIGNIN.confirmPassword')"
+            :label="$t('auth.SIGNIN.confirmPassword')"
             :type="showConfirmPassword ? 'text' : 'password'"
             placeholder="••••••••"
             prepend-inner-icon="mdi-lock-outline"
@@ -70,16 +70,16 @@
             :loading="loading"
             min-height="44"
           >
-            {{ $t('SIGNIN.sign-up') }}
+            {{ $t('auth.SIGNIN.sign-up') }}
           </v-btn>
         </v-form>
 
         <v-divider class="my-6">
-          <span class="text-body-2 text-medium-emphasis">{{ $t('SIGNIN.or') }}</span>
+          <span class="text-body-2 text-medium-emphasis">{{ $t('auth.SIGNIN.or') }}</span>
         </v-divider>
 
         <GoogleSignInButton
-          :button-text="$t('SIGNIN.continueWithGoogle')"
+          :button-text="$t('auth.SIGNIN.continueWithGoogle')"
           :loading="loading"
           @google-sign-in-start="onGoogleSignInStart"
           @google-sign-in-success="onGoogleSignInSuccess"
@@ -88,7 +88,7 @@
 
         <div class="text-center mt-6">
           <span class="text-body-2 text-medium-emphasis">
-            {{ $t('SIGNIN.alreadyHaveAnAccount') }}
+            {{ $t('auth.SIGNIN.alreadyHaveAnAccount') }}
           </span>
           <v-btn
             variant="text"
@@ -96,7 +96,7 @@
             class="text-body-2 pl-1"
             @click="redirectToSignin"
           >
-            {{ $t('SIGNIN.sign-in') }}
+            {{ $t('auth.SIGNIN.sign-in') }}
           </v-btn>
         </div>
       </div>

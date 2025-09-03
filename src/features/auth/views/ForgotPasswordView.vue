@@ -19,11 +19,11 @@
         >
           <template v-if="!isSubmitted">
             <v-card-title class="text-h4 font-weight-bold mb-2">
-              {{ $t('FORGOT_PASSWORD.reset_password') }}
+              {{ $t('auth.FORGOT_PASSWORD.reset_password') }}
             </v-card-title>
 
             <v-card-subtitle class="mb-6">
-              {{ $t('FORGOT_PASSWORD.instructions') }}
+              {{ $t('auth.FORGOT_PASSWORD.instructions') }}
             </v-card-subtitle>
 
             <v-form
@@ -33,7 +33,7 @@
             >
               <v-text-field
                 v-model="email"
-                :label="$t('FORGOT_PASSWORD.email')"
+                :label="$t('auth.FORGOT_PASSWORD.email')"
                 :rules="emailRules"
                 type="email"
                 placeholder="you@example.com"
@@ -49,7 +49,7 @@
                 :loading="loading"
                 min-height="44"
               >
-                {{ $t('FORGOT_PASSWORD.reset_button') }}
+                {{ $t('auth.FORGOT_PASSWORD.reset_button') }}
               </v-btn>
             </v-form>
           </template>
@@ -98,7 +98,7 @@
               prepend-icon="mdi-arrow-left"
               @click="redirectToSignin"
             >
-              {{ $t('FORGOT_PASSWORD.back_to_signin') }}
+              {{ $t('auth.FORGOT_PASSWORD.back_to_signin') }}
             </v-btn>
           </div>
         </v-card>
