@@ -334,6 +334,6 @@ watch(tab, () => {
 
 onMounted(async () => {
   await store.dispatch('getAllUsers')
-  await store.dispatch('getAllTests')
+  await store.dispatch('getAllStudies')
 })
 </script>

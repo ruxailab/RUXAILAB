@@ -188,8 +188,8 @@ const submit = async () => {
   };
   const rawData = { ...object.value };
   const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateTest', study);
-  await store.dispatch('getTest', { id: route.params.id })
+  await store.dispatch('updateStudy', study);
+  await store.dispatch('getStudy', { id: route.params.id })
 };
 
 const validateAll = async () => {
@@ -237,7 +237,7 @@ onBeforeUnmount(() => {
 const init = async () => {
   try {
     await Promise.all([
-      store.dispatch('getTest', { id: route.params.id }),
+      store.dispatch('getStudy', { id: route.params.id }),
       store.dispatch('getCurrentTestAnswerDoc'),
     ]);
   } catch (error) {
