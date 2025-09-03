@@ -215,7 +215,7 @@ const changeRole = async (item, newValue) => {
     const index = cooperatorsEdit.value.indexOf(item);
     const newCoop = { ...item, accessLevel: newValue.value };
     test.value.cooperators[index] = newCoop;
-    await store.dispatch('updateTest', test.value);
+    await store.dispatch('updateStudy', test.value);
     await store.dispatch('updateUserAnswer', {
       testDocId: test.value.id,
       cooperatorId: newCoop.userDocId,
@@ -226,7 +226,7 @@ const changeRole = async (item, newValue) => {
 
 const submit = async () => {
   test.value.cooperators = [...cooperatorsEdit.value];
-  await store.dispatch('updateTest', test.value);
+  await store.dispatch('updateStudy', test.value);
   cooperatorsEdit.value.forEach((guest) => {
     if (!guest.accepted) {
       notifyCooperator(guest);
@@ -259,7 +259,7 @@ const removeCoop = async (coop) => {
     cooperatorsEdit.value.splice(index, 1);
     test.value.cooperators = cooperatorsEdit.value;
     test.value.numberColaborators = test.value.numberColaborators - 1;
-    await store.dispatch('updateTest', test.value);
+    await store.dispatch('updateStudy', test.value);
     await store.dispatch('removeTestFromCooperator', {
       test: test.value,
       cooperator: coop
@@ -272,7 +272,7 @@ const cancelInvitation = async (guest) => {
     const index = cooperatorsEdit.value.indexOf(guest);
     cooperatorsEdit.value.splice(index, 1);
     test.value.cooperators = cooperatorsEdit.value;
-    await store.dispatch('updateTest', test.value);
+    await store.dispatch('updateStudy', test.value);
   });
 };
 
