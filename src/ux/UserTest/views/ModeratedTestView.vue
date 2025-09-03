@@ -149,8 +149,6 @@
 </template>
 
 <script setup>
-import TaskAnswer from '@/models/TaskAnswer';
-import UserTask from '@/models/UserTask';
 import { ref as dbRef, onValue, off, update, set } from "firebase/database";
 import { database } from "@/app/plugins/firebase/index";
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
@@ -169,6 +167,8 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 
 const store = useStore();
 const router = useRouter();
@@ -183,7 +183,7 @@ const testDate = ref(null);
 const start = ref(true);
 const globalIndex = ref(null);
 const taskIndex = ref(0);
-const localTestAnswer = reactive(new TaskAnswer());
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 const rightView = ref(null); // For scroll effect
 const fullName = ref(''); // For consent form component
 const items = ref([]);
@@ -557,7 +557,7 @@ const mappingSteps = async () => {
       });
       if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
         localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
-          const newTask = new UserTask({
+          const newTask = new TaskAnswer({
             taskId: task.id || i,
             taskAnswer: '',
             taskObservations: '',
@@ -671,7 +671,7 @@ onMounted(async () => {
   }
 
   if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptTestCollaboration', {
+    await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
     });

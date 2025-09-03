@@ -1,9 +1,9 @@
-import AnswerController from '@/controllers/AnswerController'
+import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
-import TaskAnswer from '@/models/TaskAnswer'
-import UserTask from '@/models/UserTask'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 
 const answerController = new AnswerController()
 
@@ -61,10 +61,10 @@ export default {
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
         return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
-          ? TaskAnswer.toTaskAnswer(
+          ? UserStudyEvaluatorAnswer.toModel(
             state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
           )
-          : new TaskAnswer({
+          : new UserStudyEvaluatorAnswer({
             userDocId: rootState.user.id,
             preTestAnswer: (() => {
               const preTestAnswer = [];
@@ -88,7 +88,7 @@ export default {
               // Ensure userTasks exists before accessing its length
               const userTasksLength = rootState.test.testStructure.userTasks?.length || 0;
               for (let i = 0; i < userTasksLength; i++) {
-                tasks[i] = new UserTask({
+                tasks[i] = new TaskAnswer({
                   taskId: i
                 });
               }
@@ -162,7 +162,6 @@ export default {
         )
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
-        console.error('Error in updateTest', e)
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -187,7 +186,6 @@ export default {
           testDocId: payload.test.id,
         })
       } catch (e) {
-        console.error('Error in updateTest', e)
         // commit("setError", true);
       } finally {
         commit('setLoading', false)

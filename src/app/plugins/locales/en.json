@@ -1,30 +1,37 @@
 {
+  "auth": {
+    "signupSuccess": "Sign up successful",
+    "logoutSuccess": "Logout successful",
+    "resetPasswordSuccess": "Password reset email sent",
+    "deleteSuccess": "Account deleted successfully",
+    "loginSuccess": "Login successful",
+    "SIGNIN": {
+      "sign-in": "Sign in",
+      "sign-in-title": "Welcome back",
+      "sign-in-subtitle": "Sign in to your account to continue",
+      "email": "Email",
+      "username": "Username",
+      "password": "Password",
+      "signupSubtitle": "Fill in your details to get started",
+      "dont-have-account": "Don't have an account yet?",
+      "forgot-password": "Forgot Password?",
+      "sign-up": "Create account",
+      "contact": "Contact No",
+      "confirmPassword": "Confirm your password",
+      "alreadyHaveAnAccount": "Already have an account?",
+      "continueWithGoogle": "Continue with Google",
+      "rememberMe": "Remember me",
+      "or": "or continue with"
+    },
+    "FORGOT_PASSWORD": {
+      "reset_password": "Reset Password",
+      "email": "Email",
+      "instructions": "Enter your email and we'll send you a link to reset your password.",
+      "reset_button": "Send Reset Link",
+      "back_to_signin": "Back to Sign In"
+    }
+  },
   "language": "Language",
-  "SIGNIN": {
-    "sign-in": "Sign in",
-    "sign-in-title": "Welcome back",
-    "sign-in-subtitle": "Sign in to your account to continue",
-    "email": "Email",
-    "username": "Username",
-    "password": "Password",
-    "signupSubtitle": "Fill in your details to get started",
-    "dont-have-account": "Don't have an account yet?",
-    "forgot-password": "Forgot Password?",
-    "sign-up": "Create account",
-    "contact": "Contact No",
-    "confirmPassword": "Confirm your password",
-    "alreadyHaveAnAccount": "Already have an account?",
-    "continueWithGoogle": "Continue with Google",
-    "rememberMe": "Remember me",
-    "or": "or continue with"
-  },
-  "FORGOT_PASSWORD": {
-    "reset_password": "Reset Password",
-    "email": "Email",
-    "instructions": "Enter your email and we'll send you a link to reset your password.",
-    "reset_button": "Send Reset Link",
-    "back_to_signin": "Back to Sign In"
-  },
   "common": {
     "loading": "Loading Test",
     "continueAs": "Continue as",

@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import AnswerController from '@/controllers/AnswerController';
+import AnswerController from '@/shared/controllers/AnswerController';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex';
@@ -100,7 +100,7 @@ async function loadAnswers() {
   const last4 = []
   try {
     for (const study in lastFourStudies.value) {
-      const testDoc = await store.dispatch('getTest', { id: lastFourStudies.value[study].testDocId });
+      const testDoc = await store.dispatch('getStudy', { id: lastFourStudies.value[study].testDocId });
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({

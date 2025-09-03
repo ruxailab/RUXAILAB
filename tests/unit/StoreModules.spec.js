@@ -19,10 +19,10 @@ jest.mock('@/controllers/UserController', () => {
   }))
 })
 
-import TestModule from '@/store/modules/Test'
+import TestModule from '@/store/modules/Study'
 import AuthModule from '@/features/auth/store/Auth'
 
-import TestController from '@/controllers/TestController'
+import TestController from '@/controllers/StudyController'
 import AuthController from '@/features/auth/controllers/AuthController'
 
 /**

@@ -37,7 +37,7 @@ const test = computed(() => store.getters.test)
 const moderatedTestViewRef = ref(null)
 
 onBeforeMount(async () => {
-  await store.dispatch('getTest', { id: props.id })
+  await store.dispatch('getStudy', { id: props.id })
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 </script>

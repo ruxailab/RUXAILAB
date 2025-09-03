@@ -307,7 +307,7 @@
               class="text-none font-weight-semibold rounded-s py-3"
               height="48"
               :disabled="!object"
-              @click="duplicateTest()"
+              @click="duplicateStudy()"
             >
               <v-icon
                 start
@@ -384,7 +384,7 @@
             :loading="loading"
             class="text-none rounded-lg px-6"
             height="44"
-            @click="deleteTest(object)"
+            @click="deleteStudy(object)"
           >
             <v-icon
               start
@@ -415,11 +415,10 @@ import TemplateHeader from '@/shared/models/TemplateHeader';
 import TemplateAuthor from '@/shared/models/TemplateAuthor';
 import TemplateBody from '@/shared/models/TemplateBody';
 import Template from '@/shared/models/Template';
-import TestAdmin from '@/models/TestAdmin';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import Study from '../models/Study';
 import { instantiateStudyByType } from '../constants/methodDefinitions';
+import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const store = useStore();
 const router = useRouter();
@@ -507,7 +506,7 @@ watch(
 
 onMounted(async () => {
   if (!store.getters.test && props.id) {
-    await store.dispatch('getTest', { id: props.id });
+    await store.dispatch('getStudy', { id: props.id });
   }
   loadingPage.value = false;
 });
@@ -547,8 +546,8 @@ const submit = async () => {
     loading.value = true;
     try {
       const study = instantiateStudyByType(object.value.testType, object.value);
-      await store.dispatch('updateTest', study);
-      await store.dispatch('getTest', { id: props.id });
+      await store.dispatch('updateStudy', study);
+      await store.dispatch('getStudy', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
       toast.success(t('alerts.savedChanges'));
     } catch (error) {
@@ -570,13 +569,13 @@ const preventNav = event => {
   event.returnValue = '';
 };
 
-const deleteTest = async item => {
+const deleteStudy = async item => {
   loading.value = true;
   try {
     const auxUser = { ...user.value };
     delete auxUser.myTests[item.id];
     item.auxUser = auxUser;
-    await store.dispatch('deleteTest', item);
+    await store.dispatch('deleteStudy', item);
     toast.success('Test deleted successfully!');
     router.push({ name: 'TestList' });
   } catch (error) {
@@ -660,7 +659,7 @@ const updateObject = newObject => {
   store.commit('SET_LOCAL_CHANGES', true);
 };
 
-const duplicateTest = async () => {
+const duplicateStudy = async () => {
   loading.value = true;
   try {
     const rawData = {
@@ -671,7 +670,7 @@ const duplicateTest = async () => {
       testStructure: test.value.testStructure,
       testOptions: test.value.testOptions,
       id: null,
-      testAdmin: new TestAdmin({
+      testAdmin: new StudyAdmin({
         userDocId: user.value.id,
         email: user.value.email,
       }),
@@ -683,7 +682,7 @@ const duplicateTest = async () => {
 
     const study = instantiateStudyByType(rawData.testType, rawData);
 
-    await store.dispatch('duplicateTest', {
+    await store.dispatch('duplicateStudy', {
       test: study,
       answer: testAnswerDocument.value,
     });
