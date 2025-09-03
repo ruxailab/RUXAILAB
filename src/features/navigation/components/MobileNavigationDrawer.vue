@@ -192,7 +192,7 @@
           prepend-icon="mdi-plus"
           rounded="lg"
           class="create-button mb-3"
-          @click="createNewTest"
+          @click="createStudy"
         >
           Create New Study
         </v-btn>
@@ -318,7 +318,7 @@ const navigateToStep = (item) => {
     }
 };
 
-const createNewTest = () => {
+const createStudy = () => {
     emit('create-test');
     closeDrawer();
 };

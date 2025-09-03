@@ -17,24 +17,21 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
-  await store.dispatch('autoSignIn')
-  const user = store.state.Auth.user
+  let user = store.state.Auth.user
 
-  if (
-    authorize.length > 0 &&
-    to.path !== '/signin' &&
-    !to.params.token
-  ) {
-    if (!user) {
-      return next(redirect())
-    }
+  if (!user) {
+    await store.dispatch('autoSignIn')
+    user = store.state.Auth.user
+  }
 
-    if (!authorize.includes(user.accessLevel)) {
+  if (to.path === '/') return next(redirect())
+  if (authorize.length && to.path !== '/signin' && !to.params.token) {
+    if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
   }
 
-  if (user && (to.path === '/signin' || to.path === '/signup')) {
+  if (user && ['/signin', '/signup'].includes(to.path)) {
     return next(redirect())
   }
 
@@ -42,11 +39,11 @@ router.beforeEach(async (to, from, next) => {
 })
 
 function redirect() {
-  if (!store.state.Auth.user) return '/'
+  if (!store.state.Auth.user) return '/signin'
   const level = store.state.Auth.user.accessLevel
   if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
-  return '/'
+  return '/signin'
 }
 
 export default router

@@ -117,14 +117,10 @@ const loadingUpdate = ref(false);
 const errorMessage = ref('');
 
 const test = computed(() => store.getters.test);
-const user = computed(() => store.getters.user);
-const csvHeuristics = computed(() => store.state.Tests.currentTest);
+
 const testAnswerDocLength = computed(() => {
-  if (!store.getters.testAnswerDocument) {
-    return 0;
-  }
-  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
-  return Object.keys(heuristicAnswers).length;
+  const doc = store.getters.testAnswerDocument;
+  return Object.keys(doc?.heuristicAnswers ?? {}).length;
 });
 
 watch(loader, (newLoader) => {
@@ -216,7 +212,7 @@ const changeToJSON = async () => {
         const heuristicTest = Array.from(heuristicMap.values());
 
         store.state.Tests.Test.testStructure = heuristicTest;
-        await store.dispatch('updateTest', test.value);
+        await store.dispatch('updateStudy', test.value);
       };
     }
   } catch (error) {

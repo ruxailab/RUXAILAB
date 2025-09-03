@@ -44,7 +44,7 @@ const navigator = computed(() => getNavigatorDefault(test.value, accessLevel.val
 
 // Lifecycle
 onMounted(async () => {
-  await store.dispatch('getTest', { id: route.params.id })
+  await store.dispatch('getStudy', { id: route.params.id })
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 </script>

@@ -183,10 +183,9 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import TaskAnswer from '@/models/TaskAnswer';
 import { useStore } from 'vuex';
 import CardSortingTask from '../components/CardSortingTask.vue';
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 
 // Props
 const props = defineProps({
@@ -209,7 +208,7 @@ const taskIndex = ref(null);
 const fullName = ref('');
 const items = ref([]);
 
-const localTestAnswer = reactive(new TaskAnswer());
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 
 // Methods
 const completeStep = (id, type, userCompleted = true) => { }

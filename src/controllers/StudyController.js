@@ -5,27 +5,28 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
-import { instantiateStudyAnswerByType, instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import StudyAnswer from '@/shared/models/StudyAnswer'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
 const userController = new UserController()
 
-export default class TestController extends Controller {
+export default class StudyController extends Controller {
   constructor() {
     super()
   }
 
-  async createTest(payload) {
-    const answer = instantiateStudyAnswerByType(payload.testType, { type: payload.testType })
-
-    // Create answers doc for study
-    const answerDoc = await answerController.createAnswer(answer)
+  async createStudy(payload) {
+    // Create answers doc for test
+    const answerDoc = await answerController.createAnswer(
+      new StudyAnswer({ type: payload.testType }),
+    )
     payload.answersDocId = answerDoc.id
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
-  async duplicateTest(payload) {
+  async duplicateStudy(payload) {
     // Duplicate answers doc for another test
     const answerDoc = await answerController.createAnswer(payload.answer)
     payload.test.answersDocId = answerDoc.id
@@ -33,14 +34,14 @@ export default class TestController extends Controller {
     return await super.create(COLLECTION, payload.test.toFirestore())
   }
 
-  async deleteTest(payload) {
+  async deleteStudy(payload) {
     try {
       const testToDelete = await super.readOne(COLLECTION, payload.id)
       if (!testToDelete.exists()) {
         return null
       }
 
-      const collaborators = testToDelete.data()
+      const collaborators = await testToDelete.data()
       const cooperators = collaborators.cooperators
       if (cooperators) {
         const promises = []
@@ -63,7 +64,7 @@ export default class TestController extends Controller {
     }
   }
 
-  async updateTest(payload) {
+  async updateStudy(payload) {
     try {
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
     } catch (e) {
@@ -71,7 +72,8 @@ export default class TestController extends Controller {
     }
   }
 
-  async acceptTestCollaboration(payload) {
+  // It seems an action from User Testing
+  async acceptStudyCollaboration(payload) {
     const userAnswer = new UserAnswer({
       answerDocId: payload.test.answersDocId,
       accessLevel: payload.cooperator.accessLevel,
@@ -106,7 +108,7 @@ export default class TestController extends Controller {
     )
   }
 
-  async getTest(parameter) {
+  async getStudy(parameter) {
     const res = await super.readOne(COLLECTION, parameter.id)
     if (!res.exists()) return null
 
@@ -114,7 +116,7 @@ export default class TestController extends Controller {
     return instantiateStudyByType(rawData.testType, rawData)
   }
 
-  async getPublicTests() {
+  async getPublicStudies() {
     const q = {
       field: 'isPublic',
       value: true,
@@ -127,7 +129,7 @@ export default class TestController extends Controller {
     })
   }
 
-  async getAllTests() {
+  async getAllStudies() {
     try {
       const response = await super.readAll('tests')
       const res = response.map(Study.toTest)

@@ -1,4 +1,4 @@
-import { fetchReportByTestId } from '@/controllers/ReportController';
+import { fetchReportByTestId } from '@/controllers/AccessibilityReportController';
 
 const state = () => ({
     report: null,
