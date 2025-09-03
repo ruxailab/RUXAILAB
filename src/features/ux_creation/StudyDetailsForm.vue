@@ -352,7 +352,7 @@ const submit = async () => {
   }
   const newTest = instantiateStudyByType(testType, rawData)
 
-  const testId = await store.dispatch('createNewTest', newTest);
+  const testId = await store.dispatch('createStudy', newTest);
   isLoading.value = false;
 
   store.commit('RESET_STUDY_DETAILS');
