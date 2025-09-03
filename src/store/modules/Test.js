@@ -208,8 +208,8 @@ export default {
     },
     RESET_STUDY_DETAILS(state) {
       state.studyCategory = null,
-      state.studyMethod = null,
-      state.studyType = null
+        state.studyMethod = null,
+        state.studyType = null
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url

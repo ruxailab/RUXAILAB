@@ -1,0 +1,178 @@
+<template>
+  <PageWrapper
+    title="Edit Test"
+    :side-gap="true"
+  >
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Customize the settings and preferences of your test
+      </p>
+    </template>
+
+    <v-container>
+      <Snackbar />
+      <ButtonSave
+        :visible="true"
+        @click="save"
+      />
+
+      <div>
+        <v-tabs
+          bg-color="transparent"
+          color="#FCA326"
+          class="pb-0 mb-0"
+        >
+          <v-tab @click="index = 0">
+            Test
+          </v-tab>
+          <v-tab @click="index = 1">
+            {{ $t('ModeratedTest.consentForm') }}
+          </v-tab>
+          <v-tab @click="index = 2">
+            {{ $t('ModeratedTest.preTest') }}
+          </v-tab>
+          <v-tab @click="index = 3">
+            {{ $t('ModeratedTest.tasks') }}
+          </v-tab>
+          <v-tab @click="index = 4">
+            {{ $t('ModeratedTest.postTest') }}
+          </v-tab>
+        </v-tabs>
+
+        <v-col cols="12">
+          <!-- TEST -->
+          <div v-if="index === 0">
+            <TestConfigForm
+              :welcome="welcomeMessage"
+              :final-message="finalMessage"
+              @update:welcome-message="welcomeMessage = $event"
+              @update:final-message="finalMessage = $event"
+            />
+          </div>
+
+          <!-- COSENT FORM -->
+          <v-card
+            v-if="index === 1"
+            rounded="xxl"
+          >
+            <TextareaForm
+              v-model="consent"
+              :title="$t('ModeratedTest.consentForm')"
+              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+              @update:value="consent = $event"
+            />
+          </v-card>
+
+          <!-- PRE-TEST -->
+          <v-card
+            v-if="index === 2"
+            rounded="xxl"
+          >
+            <UserVariables
+              type="pre-test"
+              @update="preTest"
+              @change="change = true"
+            />
+          </v-card>
+
+          <!-- TASKS -->
+          <ListTasks
+            v-if="index === 3"
+          />
+
+          <!-- POST-TEST -->
+          <v-card
+            v-if="index === 4"
+            rounded="xxl"
+          >
+            <UserVariables
+              type="post-test"
+              @update="postTest = $event"
+              @change="change = true"
+            />
+          </v-card>
+        </v-col>
+      </div>
+    </v-container>
+  </PageWrapper>
+</template>
+
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
+import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
+import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
+import TextareaForm from '@/shared/components/TextareaForm.vue'
+import TestConfigForm from '@/ux/UserTest/components/TestConfigForm.vue'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import Snackbar from '@/shared/components/Snackbar.vue'
+
+// Store
+const store = useStore()
+
+// Variables
+const change = ref(false)
+const welcomeMessage = ref('')
+const finalMessage = ref('')
+const preTest = ref([])
+const postTest = ref([])
+const consent = ref('')
+const index = ref(0)
+
+// Computed
+const test = computed(() => store.getters.test)
+
+const getWelcome = () => {
+  welcomeMessage.value = test.value.testStructure.welcomeMessage || ''
+}
+
+const getFinalMessage = () => {
+  finalMessage.value = test.value.testStructure.finalMessage || ''
+}
+
+const getConsent = () => {
+  consent.value = test.value.testStructure.consent || ''
+}
+
+const save = async () => {
+  change.value = false;
+
+  const testStructure = {
+      welcomeMessage: welcomeMessage.value,
+      finalMessage: finalMessage.value,
+      preTest: preTest.value,
+      postTest: postTest.value,
+      consent: consent.value,
+  }
+
+  const rawData = { ...test.value, testStructure: testStructure };
+  const study = instantiateStudyByType(rawData.testType, rawData);
+  await store.dispatch('updateTest', study);
+}
+
+// Lifecycle
+onMounted(() => {
+  getWelcome()
+  getFinalMessage()
+  getConsent()
+})
+</script>
+
+<style scoped>
+.subtitleView {
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+
+.v-text-field--outlined :deep(fieldset) {
+  border-radius: 25px;
+  border: 1px solid #ffceb2;
+}
+</style>
