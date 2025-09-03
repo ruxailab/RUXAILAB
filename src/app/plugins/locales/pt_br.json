@@ -1,9 +1,9 @@
 {
   "auth": {
-  "signupSuccess": "Cadastro realizado com sucesso",
-  "logoutSuccess": "Logout realizado com sucesso",
-  "resetPasswordSuccess": "E-mail de redefinição de senha enviado",
-  "deleteSuccess": "Conta excluída com sucesso",
+    "signupSuccess": "Cadastro realizado com sucesso",
+    "logoutSuccess": "Logout realizado com sucesso",
+    "resetPasswordSuccess": "E-mail de redefinição de senha enviado",
+    "deleteSuccess": "Conta excluída com sucesso",
     "loginSuccess": "Login realizado com sucesso"
   },
   "language": "Língua",
@@ -217,7 +217,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Opções"
+      "options": "Opções",
+      "noOptions": "Nenhuma opção"
     },
     "messages": {},
     "placeHolders": {},
