@@ -297,9 +297,9 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
-import IrisTracker from '@/components/organisms/IrisTracker.vue';
 import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
 import { db } from '@/app/plugins/firebase';
+import IrisTracker from '../components/IrisTracker.vue';
 
 const fullName = ref('');
 const logined = ref(null);
@@ -870,7 +870,7 @@ watch(
 
 onMounted(async () => {
   globalIndex.value = 0;
-  validateTest();
+  // validateTest();
   await nextTick();
   if (user.value) {
     await setTest();
