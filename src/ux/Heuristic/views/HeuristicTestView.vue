@@ -612,7 +612,6 @@ const startTest = () => {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
     });
-    router.push('/managerview/' + test.value.id);
     return;
   }
   start.value = false;
