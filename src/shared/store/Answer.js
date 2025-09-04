@@ -49,14 +49,16 @@ export default {
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
-        return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
+        const heuristicAnswers = state.testAnswerDocument.heuristicAnswers || {}
+
+        return heuristicAnswers[rootState.user.id]
           ? HeuristicAnswer.toHeuristicAnswer(
-            state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
+            heuristicAnswers[rootState.user.id],
             rootState.test.testOptions,
           )
           : new HeuristicAnswer({
             userDocId: rootState.user.id,
-          });
+          })
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
