@@ -11,7 +11,7 @@
       @go-to-coops="goToCoops"
     />
     <v-row
-      v-else-if="answers != null && intro == false"
+      v-else-if="answers != null || intro == false"
       justify="center"
       class="ma-0 mt-4"
     >
@@ -478,6 +478,7 @@ import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue';
 import RadarWeight from '@/ux/Heuristic/components/RadarWeight.vue';
 import axios from 'axios';
 import { standardDeviation, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
+import { heuristicsStatisticsHeaders, weightsStatisticsHeader, heuristicsEvaluatorHeader } from '@/ux/Heuristic/utils/headers.js'
 
 const store = useStore();
 const router = useRouter();
@@ -495,7 +496,7 @@ const emit = defineEmits(['goToCoops']);
 const tab = ref(0);
 const ind = ref(0);
 const resultEvaluator = ref(statistics());
-const intro = ref(null);
+let intro = ref(null);
 const tabelacompleta = ref(null);
 const decisionmatrix = ref(null);
 const relative = ref(null);
@@ -511,7 +512,7 @@ const testWeights = computed(() => store.state.Tests.Test.testWeights || []);
 
 const heuristicsEvaluator = computed(() => {
   const table = {
-    header: [{ title: 'HEURISTICS', align: 'start', value: 'heuristic' }],
+    header: heuristicsEvaluatorHeader,
     items: [],
   };
   const options = test.value && test.value.testOptions ? test.value.testOptions.map((op) => op.value) : [];
@@ -555,14 +556,7 @@ const heuristicsEvaluator = computed(() => {
 
 const heuristicsStatistics = computed(() => {
   const table = {
-    header: [
-      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
-      { title: 'Percentage (%)', value: 'percentage', align: 'center', sortable: false },
-      { title: 'Standard deviation', value: 'sd', align: 'center', sortable: false },
-      { title: 'Average', value: 'average', align: 'center', sortable: false },
-      { title: 'Max', value: 'max', align: 'center', sortable: false },
-      { title: 'Min', value: 'min', align: 'center', sortable: false },
-    ],
+    header: heuristicsStatisticsHeaders,
     items: [],
   };
 
@@ -600,11 +594,7 @@ const heuristicsLength = computed(() => (relative.value ? relative.value.length 
 
 const weightsStatistics = computed(() => {
   const tableWeights = {
-    header: [
-      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
-      { title: 'Usability Score (%)', value: 'percentage', align: 'center', sortable: true },
-      { title: 'Relative Weights', value: 'rw', align: 'center', sortable: true },
-    ],
+    header: weightsStatisticsHeader,
     items: [],
   };
 
@@ -695,6 +685,7 @@ const goToDataHeuristic = (item) => {
 };
 
 const goToCoops = () => {
+  router.push(`/heuristic/edit/${test.value.id}`);
   emit('goToCoops');
 };
 
