@@ -1,9 +1,8 @@
 <template>
   <PageWrapper
-    title="Test Configuration"
+    title="Study Configuration"
     :loading="loadingPage"
     loading-text="Loading Settings"
-    :side-gap="true"
   >
     <!-- Actions Slot for Save Button -->
     <template #actions>
