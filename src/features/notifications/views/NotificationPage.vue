@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row justify="center">
+    <v-row justify="center" v-if="user">
       <v-col
         cols="12"
       >
@@ -8,31 +8,20 @@
           class="rounded-xxl"
           flat
         >
-          <v-card-title class="text-h5">
-            {{ $t('common.notifications') }}
-            <v-spacer />
-            <v-btn
-              v-if="activeTab === 'unread'"
+          <v-row class="ma-0 " justify="space-between">
+            <v-card-title class="text-h5 pl-0"> {{ $t('common.notifications') }}</v-card-title>
+            <v-btn v-if="activeTab === 'unread'"
               color="primary"
               :disabled="allRead"
               @click="markAllAsRead"
             >
               Mark all as read
             </v-btn>
-          </v-card-title>
-
-          <v-tabs
-            v-model="activeTab"
-            bg-color="secondary"
-          >
-            <v-tab href="#unread">
-              {{ $t('common.unread') }}
-            </v-tab>
-            <v-tab href="#inbox">
-              {{ $t('common.inbox') }}
-            </v-tab>
+            </v-row>
+          <v-tabs v-model="activeTab" bg-color="secondary">
+            <v-tab value="unread">{{ $t('common.unread') }}</v-tab>
+            <v-tab value="inbox">{{ $t('common.inbox') }}</v-tab>
           </v-tabs>
-
           <v-window v-model="activeTab">
             <v-window-item value="unread">
               <v-card-text v-if="paginatedUnreadNotifications.length > 0" class="pa-0">
@@ -133,11 +122,11 @@ const paginatedUnreadNotifications = computed(() => {
   return unreadNotifications.value.slice(start, end)
 })
 
-const inboxPages = computed(() => Math.ceil(user.value.inbox.length / pageSize))
+const inboxPages = computed(() => Math.ceil(user.value.notifications.length / pageSize))
 const paginatedInboxNotifications = computed(() => {
   const start = (inboxPage.value - 1) * pageSize
   const end = start + pageSize
-  return user.value.inbox.slice(start, end)
+  return user.value.notifications.slice(start, end)
 })
 
 const goToNotificationRedirect = async (notification) => {
@@ -164,9 +153,5 @@ const markAllAsRead = async () => {
 
 const goBack = () => {
   router.go(-1)
-}
-
-const conall = () => {
-  console.log(user.value.inbox[0])
 }
 </script>

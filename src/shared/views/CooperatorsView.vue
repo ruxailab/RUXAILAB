@@ -3,8 +3,6 @@
     :title="$t('HeuristicsCooperators.title.cooperators')"
     :loading="loading"
     :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
-    :side-gap="true"
-    class="mr-10"
   >
     <!-- Actions Slot -->
     <template #actions>
@@ -18,6 +16,13 @@
       >
         {{ $t('HeuristicsCooperators.actions.send_invitation') }}
       </v-btn>
+    </template>
+
+    <!-- Subtitle Slot -->
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Manage people who participate in your study
+      </p>
     </template>
 
     <!-- Main Content -->
@@ -231,7 +236,7 @@ const changeRole = async (item, newValue) => {
 };
 
 const submit = async () => {
-  const coops = cooperatorsEdit.value.map((coop) => new Cooperators(coop));
+  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.id}));
   test.value.cooperators = [...coops];
   await store.dispatch('updateStudy', test.value);
   cooperatorsEdit.value.forEach((guest) => {
@@ -242,6 +247,7 @@ const submit = async () => {
 };
 
 const notifyCooperator = (guest) => {
+  console.log('guest', guest);
   if (guest.userDocId) {
     const path = guest.accessLevel >= 2 ? 'testview' : 'managerview';
     sendNotification({
