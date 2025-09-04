@@ -1,6 +1,6 @@
 <template>
   <IntroComp
-    :colors="['#ec6618', '#f54e42']"
+    :colors="['#FF3F59', '#00213f']"
     :title="'Reports'"
     :image="'IntroReports.svg'"
     :main="$t('descriptions.intro.reports')"
