@@ -132,12 +132,13 @@ const question = computed(() => {
 })
 
 const testAnswerDocLength = computed(() => {
-  if (!store.getters.testAnswerDocument) {
+  const doc = store.getters.testAnswerDocument
+  if (!doc || !doc.heuristicAnswers) {
     return 0
   }
-  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers
-  return Object.keys(heuristicAnswers).length
+  return Object.keys(doc.heuristicAnswers).length
 })
+
 const validate = async () => {
   const { valid } = await form.value.validate()
   if (valid && desc.value.text.length > 0) {
