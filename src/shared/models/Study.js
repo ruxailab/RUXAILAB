@@ -162,7 +162,7 @@ export default class Study { // mudar nome para Study e mover para Shared
       testStructure: this.testStructure,
       testOptions: this.testOptions,
       answersDocId: this.answersDocId,
-      cooperators: this.cooperators,
+      cooperators: this.cooperators.map((c) => c.toFirestore()),
       creationDate: this.creationDate,
       updateDate: this.updateDate,
       templateDoc: this.templateDoc,
