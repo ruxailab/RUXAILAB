@@ -49,9 +49,12 @@ export default {
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
-        return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
+        const answers = state.testAnswerDocument.heuristicAnswers || {};
+        const userAnswer = answers[rootState.user.id];
+
+        return userAnswer
           ? HeuristicAnswer.toHeuristicAnswer(
-            state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
+            userAnswer,
             rootState.test.testOptions,
           )
           : new HeuristicAnswer({
