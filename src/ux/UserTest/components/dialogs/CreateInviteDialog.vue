@@ -172,6 +172,7 @@
 </template>
 
 <script setup>
+import Cooperators from '@/shared/models/Cooperators';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
@@ -240,8 +241,10 @@ const saveInvitation = async () => {
   const dateTime = new Date(dateTimeString);
   const timestamp = dateTime.toISOString();
 
-  cooperatorsEdit.value.push({
-    userDocId: null,
+  console.log('cooperator', cooperator);
+
+  cooperatorsEdit.value.push(new Cooperators( {
+    userDocId: cooperator.id,
     email: cooperator.email,
     invited: true,
     accepted: false,
@@ -250,7 +253,7 @@ const saveInvitation = async () => {
     inviteMessage: inviteMessage.value,
     updateDate: test.value.updateDate,
     testAuthorEmail: test.value.testAdmin.email,
-  });
+  }));
 
   await submit();
 };
