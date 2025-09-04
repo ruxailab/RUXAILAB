@@ -1,0 +1,699 @@
+{
+  "auth": {
+    "signupSuccess": "Sign up successful",
+    "logoutSuccess": "Logout successful",
+    "resetPasswordSuccess": "Password reset email sent",
+    "deleteSuccess": "Account deleted successfully",
+    "loginSuccess": "Login successful",
+    "SIGNIN": {
+      "sign-in": "Sign in",
+      "sign-in-title": "Welcome back",
+      "sign-in-subtitle": "Sign in to your account to continue",
+      "email": "Email",
+      "username": "Username",
+      "password": "Password",
+      "signupSubtitle": "Fill in your details to get started",
+      "dont-have-account": "Don't have an account yet?",
+      "forgot-password": "Forgot Password?",
+      "sign-up": "Create account",
+      "contact": "Contact No",
+      "confirmPassword": "Confirm your password",
+      "alreadyHaveAnAccount": "Already have an account?",
+      "continueWithGoogle": "Continue with Google",
+      "rememberMe": "Remember me",
+      "or": "or continue with"
+    },
+    "FORGOT_PASSWORD": {
+      "reset_password": "Reset Password",
+      "email": "Email",
+      "instructions": "Enter your email and we'll send you a link to reset your password.",
+      "reset_button": "Send Reset Link",
+      "back_to_signin": "Back to Sign In"
+    }
+  },
+  "language": "Language",
+  "common": {
+    "loading": "Loading Test",
+    "continueAs": "Continue as",
+    "notUser": "Not {userEmail}?",
+    "name": "Name",
+    "changeAccount": "Change account",
+    "editAndInvite": "Edit and invite people to your test",
+    "analyzeProject": "Analyze the project and evaluators",
+    "comment": "Comment",
+    "inputImage": "Input an image of your choice referent to the topic",
+    "title": "Title",
+    "description": "Description",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "add": "Add",
+    "text": "Text",
+    "value": "Value",
+    "save": "Save",
+    "editDelete": "Edit/Delete",
+    "type": "Type",
+    "noNotifications": "You don't have notifications yet",
+    "notifications": "Notifications",
+    "unread": "unread",
+    "inbox": "inbox",
+    "timeAgo": {
+      "years": "{count} year | {count} years",
+      "months": "{count} month | {count} months",
+      "days": "{count} day | {count} days",
+      "hours": "{count} hour | {count} hours",
+      "minutes": "{count} minute | {count} minutes",
+      "now": "Now"
+    },
+    "viewAll": "View all",
+    "sentBy": "Sent by",
+    "new": "NEW"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "account": "Account",
+    "admin": "Admin",
+    "security": "Security",
+    "personalInfo": "Personal Info",
+    "changePassword": "Change Password",
+    "passwordRequirements": "Ensure these requirements",
+    "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "editDetails": "Edit Details",
+    "saveChanges": "Save Changes",
+    "country": "Country",
+    "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
+    "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
+    "finalStepVerifyIdentity": "Final step: Verify your identity",
+    "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
+    "missingInfo": "Missing Information",
+    "deleteAccountTitle": "Delete Account",
+    "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
+    "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
+    "confirmPasswordRequired": "Confirm password is required",
+    "passwordsMatch": "Passwords must match"
+  },
+  "titles": {
+    "manager": "Manager",
+    "test": "Test",
+    "preview": "Preview",
+    "reports": "Reports",
+    "answers": "Answers",
+    "analytics": "Analytics",
+    "cooperators": "Cooperators",
+    "template": "Template",
+    "finalReport": "Final Report",
+    "answerType": "Answer type:",
+    "drawer": {
+      "Manager": "Manager",
+      "Test": "Test",
+      "Preview": "Preview",
+      "Reports": "Reports",
+      "Answers": "Answers",
+      "Sessions": "Sessions",
+      "Analytics": "Analytics",
+      "Cooperators": "Cooperators",
+      "Template": "Template",
+      "Final Report": "Final Report",
+      "Answer Test": "Answer Test",
+      "Settings": "Settings"
+    },
+    "heuristic": "Usability Heuristic Evaluation"
+  },
+  "descriptions": {
+    "edit": "Start creating and editing your test.",
+    "cooperators": "Invite people to help you in your test.",
+    "reports": "Take a look at how your evaluators are doing.",
+    "answers": "See how your evaluators are evaluating your project.",
+    "analytics": "Analyze comments and answers from your evaluators.",
+    "finalReport": "Add additional data to your test.",
+    "intro": {
+      "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
+      "answers": "Quickly get feedback on you project by analyzing data from other users' answers.",
+      "analytics": "Take a deep look into your test and see what people are saying about it.",
+      "invite": "Invite evaluators to answer your test!",
+      "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
+      "start": "Get started!",
+      "edit": "Create and customize your tasks and heuristics for your research needs."
+    }
+  },
+  "errors": {
+    "invalidInvitation": "Invalid Invitation",
+    "signupWithInvitationEmail": "User needs to signup using the same email as the invitation.",
+    "emailIsRequired": "Email is required",
+    "invalidEmail": "Invalid email",
+    "passwordRequired": "Password is required",
+    "passwordValidate": "Password must be at least 8 characters",
+    "differentPasswords": "Different passwords",
+    "fieldRequired": "Field required",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
+    "userNotExist": "This user does not exist.",
+    "incorrectPassword": "Incorrect password",
+    "incorrectCredential": "Incorrect username or password.",
+    "globalError": "An error has occurred, sorry for the inconvenience."
+  },
+  "Introduction": {
+    "title": "UX Remote LAB",
+    "subtitle": "What about doing Usability Tests in remote?",
+    "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!",
+    "cta": "Get started"
+  },
+  "Dashboard": {
+    "createNewTest": "Create new study",
+    "tests": "Tests",
+    "templates": "Templates",
+    "search": "Search",
+    "myTests": "My tests",
+    "sharedWithMe": "Shared with me",
+    "publicTests": "Public tests",
+    "sessions": "Sessions",
+    "personal": "Personal",
+    "explore": "Explore"
+  },
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "Edit Heuristic",
+      "editQuestion": "Edit Question",
+      "newQuestion": "New Question",
+      "creatingHeuristic": "Creating a heuristic",
+      "currentHeuristics": "Heuristics",
+      "addNewHeuristic": "Add new heuristic",
+      "searchHeuristics": "Search heuristics...",
+      "noHeuristicsFound": "No heuristics found",
+      "addNewQuestion": "Add new question",
+      "questions": "Questions",
+      "descriptions": "Descriptions",
+      "actions": "Actions",
+      "titles": "Title",
+      "cancel": "Cancel",
+      "ok": "Ok",
+      "add": "Add",
+      "deleteHeuristic": "Delete heuristic",
+      "deleteQuestion": "Delete question",
+      "addNewDescription": "Add a new Description",
+      "addOption": "Add a new Option",
+      "hasValue": "Has Value"
+    },
+    "placeholders": {
+      "titleHeuristic": "Title Heuristic",
+      "titleYourHeuristic": "Title your heuristic",
+      "titleYourQuestion": "Title your Question",
+      "titleQuestion": "Title Question",
+      "titleNewQuestion": "Title new question",
+      "optionDescription": "Option Description"
+    },
+    "messages": {
+      "noHeuristics": "You don't have any heuristic, create one to proceed.",
+      "youMustHave": "You must have typen something wrong...",
+      "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
+      "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
+    },
+    "validation": {
+      "nameRequired": "Name is mandatory",
+      "questionRequired": "The question must be filled",
+      "textRequired": "Text is required",
+      "positiveValue": "Value must be a positive number",
+      "addQuestion": "Please add at least one question to your heuristic"
+    },
+    "AddCommentBtn": {
+      "showComment": "Show comment",
+      "addComment": "Add comment",
+      "hideTextArea": "Hide text area"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "Options",
+      "noOptions": "No options"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Weights",
+      "heuristics": "Heuristics"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Need at least 2 heuristics to be able to place the weights."
+    },
+    "actions": {
+      "saveWeights": "save weight values"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "Settings"
+    },
+    "messages": {
+      "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+    },
+    "placeHolders": {
+      "importCsv": "Import your CSV testfile here."
+    },
+    "actions": {
+      "downloadCsvTemplate": "Download CSV template",
+      "update": "Update"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "Are you sure you want to submit this test?",
+      "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
+      "noHeuristics": "This test don't have any heuristic"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "save": "Save",
+      "continueAs": "Continue as {userEmail}",
+      "notMail": "Not {userEmail}?",
+      "changeAccount": "Change account",
+      "startTest": "Start Test"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "Heuristics",
+      "options": "Options",
+      "weights": "Weights",
+      "settings": "Settings"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "Answers",
+      "statistics": "Statistics",
+      "evaluators": "Evaluators",
+      "heuristics": "Heuristics",
+      "analytics": "Analytics"
+    },
+    "statistics": {
+      "usabilityPercentage": "Usability Percentage",
+      "max": "Max",
+      "min": "Min",
+      "std": "Standard deviation"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "Table",
+        "graphic": "Graphic"
+      },
+      "messages": {
+        "graphForMoreThan3": "The graphic can only be generated with 3 or more evaluators,please collect more data from your research to proceed."
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "Heuristics Data",
+        "answersByEvaluator": "Answers by Evaluator",
+        "answersByHeuristics": "Answers by Heuristics",
+        "graphic": "Graphic",
+        "weights": "Weights"
+      },
+      "messages": {
+        "needMoreThan1Answer": "This page needs more than 1 answer to be generated.",
+        "runWeightFunction": "This page needs weight function (python) to be running, can be in emulators or in deploy mode, and the weights to be full marked on your creating test page."
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "Reports",
+      "last_updated": "Last Updated"
+    },
+    "headers": {
+      "evaluator": "Evaluator",
+      "last_update": "Last Update",
+      "progress": "Progress",
+      "status": "Status",
+      "more": "More"
+    },
+    "messages": {
+      "confirm_delete_report": "Are you sure you want to delete this report?",
+      "reports_loading": "Loading Reports",
+      "remove_report": "Remove Report",
+      "sure_to_delete": "Are you sure you want to delete {user}'s report? This action can't be undone.",
+      "report_deleted": "Report successfully deleted"
+    },
+    "status": {
+      "submitted": "submitted",
+      "in_progress": "in progress"
+    }
+  },
+  "UsabilityCooperators": {
+    "inviteEvaluator": "Invite Evaluator To Test",
+    "email": "Email",
+    "scheduledAt": "Scheduled at",
+    "inviteMessage": "Invite message",
+    "placeholderMessage": "Hey, let's make a test...",
+    "inviteInfo": "Invite with test link will be sent to evaluator email at scheduled time",
+    "send": "Send"
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "Cooperators"
+    },
+    "headers": {
+      "email": "Email",
+      "role": "Role",
+      "invited": "Invited",
+      "accepted": "Accepted",
+      "more": "More",
+      "title": "Title",
+      "content": "Content"
+    },
+    "actions": {
+      "send_invitation": "Send Invitation",
+      "send_message": "Send a message",
+      "reinvite": "Re-invite",
+      "remove_cooperator": "Remove cooperator",
+      "cancel_invitation": "Cancel invitation",
+      "cancel": "Cancel",
+      "send": "Send",
+      "select_cooperator": "Select cooperator"
+    },
+    "roles": {
+      "administrator": "Administrator",
+      "evaluator": "Evaluator",
+      "guest": "Guest"
+    },
+    "messages": {
+      "cooperators_loading": "Loading Cooperators",
+      "no_users": "There are no users registered with that email, press enter to select anyways.",
+      "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "message_title_hint": "Type a title for your message",
+      "message_content_hint": "Type the content of your message"
+    }
+  },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "Consent Form",
+      "userVariables": "User Variables",
+      "currentTasks": "Current Tasks",
+      "postForm": "Post Form",
+      "writeNewPost": "Write a new post question"
+    },
+    "inputs": {
+      "consent": "Consent",
+      "variableName": "Variable Name",
+      "description": "Description",
+      "selection": "Selection",
+      "writeQuestion": "Write a question"
+    },
+    "checkboxes": {
+      "selectionField": "Selection Field",
+      "textField": "Text Field",
+      "textAnswer": "Text answer",
+      "selectionAnswer": "Selection answer"
+    },
+    "buttons": {
+      "createNewVariable": "Create a new variable",
+      "createNewPost": "Create a new post question"
+    }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "Pre Test - Consent",
+      "preTestForm": "Pre Test - Form",
+      "preTest": "Pre-Test",
+      "postTest": "Post-Test"
+    },
+    "buttons": {
+      "done": "Done"
+    }
+  },
+  "AccessNotAllowed": {
+    "notAllowed": "Access not allowed",
+    "noAccess": "You do not have access to the page you're trying to access.",
+    "goHome": "Go to Home"
+  },
+  "pages": {
+    "intros": {
+      "click": "Click here!",
+      "learnMore": "Learn More",
+      "docTitle": "Read documentation",
+      "docSubtitle": "Click to access the documentation on how to use the page ",
+      "discTitle": "Join the community!",
+      "discSubtitle": "You will find support on our discord server."
+    },
+    "finalReport": {
+      "select": "SELECT YOUR PDF ELEMENTS",
+      "heuristic": "Heuristic",
+      "to": "to",
+      "createHeuristics": "Please create Heuristics so you can select them here.",
+      "createUserTask": "Please create Tasks so you can select them here.",
+      "pdf": "Generate PDF",
+      "elements": "Elements",
+      "options": {
+        "options": "Test options",
+        "comments": "Answers comments",
+        "statistics": "Statistics",
+        "answersByEvaluator": "Answers by evaluators",
+        "answersByHeuristics": "Answers by heuristics",
+        "finalReport": "Final Report",
+        "loading": "Loading..."
+      },
+      "ContructionHeading": "Page Under Construction",
+      "ContructionParagraph": "We're working hard to improve our website. Please check back soon!"
+    },
+    "landing": {
+      "feedbackTitle": "Quickly get feedback on your projects",
+      "feedbackSubtitle1": "UX Remote LAB has been created to give a set of tools for different UX experts that want to create their own UX tests and perform it with the users.",
+      "feedbackSubtitle2": "COVID-19 has shown to the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!",
+      "uxTitle": "Start your own UX LAB",
+      "uxSubtitle1": "If you are a researcher, a company, or a professional that you want to perform an UX test, here you will find several tools to help to analyze and track your tests using different UX techniques.",
+      "uxSubtitle2": "Help us to grow up this Open Source community and join us on GitHub! :)",
+      "footer": "We are looking for new partners to help us to grow the project! Feel free to contact us on "
+    },
+    "listTests": {
+      "createdBy": "Created by",
+      "me": "Me",
+      "progress": "Progress",
+      "updated": "Last Updated on",
+      "version": "Version:",
+      "noTests": "No tests found",
+      "noTemplates": "No templates found"
+    },
+    "createTest": {
+      "title": "Create a new test",
+      "blankTitle": "Create a blank test",
+      "blankSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "templateTitle": "Create from template",
+      "templateSubtitle": "Create a test based on a template created by one of our users.",
+      "create": "Create test",
+      "templateInfo": "Template Info",
+      "deleteTemplate": "Delete template",
+      "noDescription": "Template has no description.",
+      "public": "Make test public to all users (readonly)"
+    },
+    "settings": {
+      "title": "Settings",
+      "currentTest": "Current test",
+      "createTemplate": "CREATE TEMPLATE",
+      "deleteTest": "DELETE TEST"
+    }
+  },
+  "alerts": {
+    "copy": "Copy successful",
+    "noCopy": "Copy unsuccessful",
+    "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
+    "deleteTest": "Are you sure you want to delete this test?",
+    "addDescription": "Please add a descritpion",
+    "errorOccurred": "An error has occurred",
+    "leave": "Are you sure you want to leave?",
+    "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
+    "imageURL": "Type the image URL:",
+    "deleteHeuristic": "Are you sure delete the heuristic ",
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
+    "genericSuccess": "Operation successful"
+  },
+  "buttons": {
+    "next": "Next",
+    "previous": "Previous",
+    "seeCode": "See the code",
+    "username": "Username",
+    "goToConsole": "Go to Console",
+    "signout": "Sign-out",
+    "profile": "profile",
+    "returnToConsole": "Return to Console",
+    "tip": "Tip",
+    "cancel": "Cancel",
+    "create": "Create",
+    "close": "Close",
+    "save": "Save",
+    "stay": "Stay",
+    "leave": "Leave",
+    "saveandleave": "Save and Leave",
+    "help": "Help",
+    "delete": "Delete",
+    "deleteAccount": "Delete Account",
+    "back": "Back",
+    "duplicateTest": "Duplicate Test",
+    "submit": "Submit",
+    "couldNotFinish": "Could not finish"
+  },
+  "switches": {
+    "noAnswer": "No answer",
+    "textArea": "Text Area",
+    "timer": "Timer",
+    "postTest": "Post Question",
+    "screenRecord": "Screen Record",
+    "camera": "Camera",
+    "eyeTracker": "Eye Tracker",
+    "audioRecord": "Audio Record",
+    "postForm": "Post Form",
+    "nasa": "NASA-TLX"
+  },
+  "inputs": {
+    "consentForm": "Consent Form",
+    "preForm": "Pre Form",
+    "postForm": "Post Form"
+  },
+  "Createblank": {
+    "title": "What kind of test are you looking to start?",
+    "test": "Test",
+    "testType_1": {
+      "testTitle": "Usability Heuristic",
+      "text": [
+        "Usability Percentage",
+        "Final Report PDF",
+        "Invite specialists to evaluate your application"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "Usability User",
+      "text": [
+        "Webcam, audio & screen record",
+        "Enhanced answer analysis",
+        "Moderated or non moderated tests"
+      ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Self Test",
+        "type": "Unmoderated",
+        "text": [
+          "Answer on free time",
+          "Enhanced answer analysis",
+          "Task Customization"
+        ]
+      },
+      "LiveTest": {
+        "title": "Live Test",
+        "type": "Moderated",
+        "text": [
+          "Webcam, audio & screen record",
+          "Enhanced answer analysis",
+          "Moderated live test"
+        ]
+      }
+    }
+  },
+  "TestDialog": {
+    "heading": "Test Creation",
+    "sub-heading": "Add a name to your test!",
+    "test-name": "Test Name",
+    "test-description": "Test Description",
+    "test-label": "Test public to all users"
+  },
+  "finishTest": {
+    "title": "Finish Test",
+    "finalMessage": "Final Message",
+    "congratulations": "Congratulations! You have completed the test, now you can submit your answers.",
+    "submitMessage": "Click here to submit your answers. After submitting, you will not be able to change your answers!",
+    "submitButton": "Submit"
+  },
+  "help": {
+    "createtest": "How do I create a test?",
+    "createtestanswer": "To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.",
+    "heuristictest": "How I setup my Heuristic test?",
+    "heuristictestanswer": "To set up your Heuristic test, start by accessing the 'Edit Test' option. Then, click on the plus icon button to add a title and the question to your heuristic. Next, navigate to the options section to create the answer options and their respective values. Finally, save the modifications.",
+    "deletetest": "How I delete my test?",
+    "deletetestanswer": "To delete your test, navigate to the left sidebar and click on the 'Settings' button. Then, select the 'DELETE TEST' button.",
+    "createtemplate": "How to create a template?",
+    "createtemplateanswer": "To create a template for your test, navigate to the left sidebar and click on the 'Settings' button. Then, select the 'CREATE TEMPLATE' option.",
+    "usetemplate": "How to use a template?",
+    "usetemplateanswer": "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+    "previewtest": "How to preview your Test?",
+    "previewtestanswer": "On the leftside bar, click on the 'Preview' option then start the test answering the questions & finally clicking the bottom right button to save and submit the preview which can be later analysed in the 'Answers' section.",
+    "importcsv": "How to import my CSV?",
+    "importcsvanswer": "To import your CSV, navigate to the 'Edit Test' section, then click the 'UPDATE' button. Select your CSV file containing the heuristics.",
+    "invitecooperators": "How to invite cooperators?",
+    "invitecooperatorsanswer": "To invite collaborators, navigate to the manager page of your test. From there, select 'Cooperators' on the left sidebar. Click on 'Select cooperator' and enter the email of your collaborator. Choose the collaborators role, then send the invitation by clicking on the bottom right button.",
+    "analyseresults": "How to analyse the results?",
+    "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
+    "sendmessage": "How to send a message to my cooperators?",
+    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content.",
+    "testCreation": "Test Creation",
+    "templates": "Templates",
+    "cooperators": "Cooperators",
+    "analytics": "Analytics",
+    "help_center": "Help Center",
+    "howCanWeHelp": "How can we help?",
+    "categories": "CATEGORIES",
+    "viewAll": "View All",
+    "noArticlesFound": "No articles found",
+    "browseAllCategories": "Browse all categories to find the help you need",
+    "viewAllArticles": "View All Articles",
+    "videoAltText": "FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
+  },
+  "PROFILE": {
+    "user": "USER",
+    "account": "Account",
+    "security": "Security",
+    "personalInfo": "Personal Info",
+    "contact": "Contact",
+    "country": "Country",
+    "editDetails": "Edit Details",
+    "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
+    "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
+    "finalStepVerifyIdentity": "Final step: Verify your identity",
+    "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
+    "yourPassword": "Your Password",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "countryRequired": "Country is required",
+    "contactNumberRequired": "Contact number is required",
+    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+    "email": "Email",
+    "username": "Username"
+  },
+  "ModeratedTest": {
+    "preTest": "PRE-TEST",
+    "tasks": "TASKS",
+    "postTest": "POST-TEST",
+    "consentForm": "Consent Form",
+    "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
+    "welcomeMessage": "Welcome message",
+    "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
+    "landingPage": "Landing Page",
+    "landingPageDescription": "This URL will automatically load when the participant starts the session.",
+    "url": "Your Landing Page URL",
+    "participantCamera": "Participant camera",
+    "cameraOptions": {
+      "optional": "Optional",
+      "required": "Required",
+      "disabled": "Disabled"
+    },
+    "preForm": "Pre-Form",
+    "preFormDescription": "This is a pre-questionnaire to collect participant data.",
+    "postForm": "Post Form",
+    "postFormDescription": "This is a post-questionnaire to collect participant data.",
+    "finalMessage": "Final message",
+    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
+    "finalMessagePlaceholder": "Enter Final message"
+  }
+}

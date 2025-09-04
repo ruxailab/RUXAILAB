@@ -1,163 +1,136 @@
 <template>
-  <v-container>
-    <Snackbar />
-    <!-- Leave Alert Dialog -->
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
-      <v-card>
-        <v-card-title
-          class="text-h5 bg-red text-white"
-        >
-          Are you sure you want to leave?
-        </v-card-title>
-        <v-card-text>All your changes will be discarded</v-card-text>
-        <v-divider />
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="closeDialog"
-          >
-            Stay
-          </v-btn>
-          <v-btn
-            class="bg-red text-white ml-1"
-            variant="text"
-            @click="leave"
-          >
-            Leave
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  <PageWrapper
+    title="Edit Test"
+    :side-gap="true"
+  >
+    <!-- Subtitle Slot -->
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Customize the settings and preferences of your test
+      </p>
+    </template>
 
-    <!-- Save Button -->
-    <v-tooltip
-      v-if="accessLevel === 0"
-      location="left"
-    >
-      <template #activator="{ props }">
-        <v-btn
-          size="large"
-          icon
-          color="#F9A826"
-          :disabled="testAnswerDocLength > 0"
-          v-bind="props"
-          class="save-btn"
-          @click="validateAll"
-        >
-          <v-icon
-            size="large"
-            :class="{ 'disabled-btn': testAnswerDocLength > 0 }"
-          >
-            mdi-content-save
-          </v-icon>
-        </v-btn>
-      </template>
-      <span>Save</span>
-    </v-tooltip>
-
-    <!-- Loading Overlay -->
-    <v-overlay
-      v-model="loading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
-      <div class="white-text mt-3">
-        Loading Test
-      </div>
-    </v-overlay>
-
-    <v-row>
-      <v-col
-        cols="12"
-        class="pb-0"
+    <v-container>
+      <Snackbar />
+      <!-- Leave Alert Dialog -->
+      <v-dialog
+        v-model="dialog"
+        width="600"
+        persistent
       >
-        <!-- Heuristic Tests -->
-        <EditHeuristicsTest
-          v-if="test.testType === 'HEURISTICS'"
-          type="content"
-          :object="object"
-          :index="index"
-          @tab-clicked="setIndex"
-          @change="change = true"
-        >
-          <template #content>
-            <!-- Content slot for Heuristics Test -->
-          </template>
-        </EditHeuristicsTest>
+        <v-card>
+          <v-card-title class="text-h5 bg-red text-white">
+            Are you sure you want to leave?
+          </v-card-title>
+          <v-card-text>All your changes will be discarded</v-card-text>
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              class="bg-grey-lighten-3"
+              variant="text"
+              @click="closeDialog"
+            >
+              Stay
+            </v-btn>
+            <v-btn
+              class="bg-red text-white ml-1"
+              variant="text"
+              @click="leave"
+            >
+              Leave
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
-        <!-- Unmoderated User Tests -->
-        <EditUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-          type="tabs"
-          @tab-clicked="setIndex"
-        >
-          <template #top>
-            <!-- Top slot for Unmoderated User Test -->
-          </template>
-        </EditUserTest>
-        <EditUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-          type="content"
-          :object="object"
-          :index="index"
-          @val-form="validate"
-        >
-          <template #content>
-            <!-- Content slot for Unmoderated User Test -->
-          </template>
-        </EditUserTest>
+      <!-- Save Button -->
+      <v-tooltip
+        v-if="accessLevel === 0"
+        location="left"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            size="large"
+            icon
+            color="#F9A826"
+            :disabled="testAnswerDocLength > 0"
+            v-bind="props"
+            class="save-btn"
+            @click="validateAll"
+          >
+            <v-icon
+              size="large"
+              :class="{ 'disabled-btn': testAnswerDocLength > 0 }"
+            >
+              mdi-content-save
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Save</span>
+      </v-tooltip>
 
-        <!-- Moderated User Tests -->
-        <EditModeratedUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-          type="tabs"
-          @tab-clicked="setIndex"
-          @change="change = true"
+      <!-- Loading Overlay -->
+      <v-overlay
+        v-model="loading"
+        class="text-center"
+      >
+        <v-progress-circular
+          indeterminate
+          color="#fca326"
+          size="50"
+        />
+        <div class="white-text mt-3">
+          Loading Test
+        </div>
+      </v-overlay>
+
+      <v-row>
+        <v-col
+          cols="12"
+          class="pb-0"
         >
-          <template #top>
-            <!-- Top slot for Moderated User Test -->
-          </template>
-        </EditModeratedUserTest>
-        <EditModeratedUserTest
-          v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-          type="content"
-          :object="object"
-          :index="index"
-          @change="change = true"
-          @val-form="validate"
-        >
-          <template #content>
-            <!-- Content slot for Moderated User Test -->
-          </template>
-        </EditModeratedUserTest>
-      </v-col>
-    </v-row>
-  </v-container>
+          <!-- Heuristic Tests -->
+          <EditHeuristicsTest
+            v-if="test.testType === STUDY_TYPES.HEURISTIC"
+            type="content"
+            :object="object"
+            :index="index"
+            @tab-clicked="setIndex"
+            @change="change = true"
+          >
+            <template #content>
+              <!-- Content slot for Heuristics Test -->
+            </template>
+          </EditHeuristicsTest>
+
+          <!-- User Tests -->
+          <EditUserTest
+            v-if="test.testType === STUDY_TYPES.USER"
+            :type="test.subType"
+            @change="change = true"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </PageWrapper>
 </template>
 
 <script setup>
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import Snackbar from '@/components/atoms/Snackbar.vue';
-import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
-import EditUserTest from '@/components/organisms/EditUserTest.vue';
-import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
-import Test from '@/models/Test';
+import Snackbar from '@/shared/components/Snackbar';
+import EditHeuristicsTest from '@/ux/Heuristic/components/EditHeuristicsTest.vue';
+import EditUserTest from '@/ux/UserTest/components/editTest/EditUserTest.vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
+import { instantiateStudyByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import { useToast } from 'vue-toastification';
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 
 defineProps({
   id: {
@@ -168,7 +141,6 @@ defineProps({
 
 const index = ref(0);
 const object = ref({});
-const valids = ref([true, true]);
 const change = ref(false);
 const dialog = ref(false);
 const go = ref('');
@@ -193,21 +165,8 @@ const loading = computed(() => {
   return store.getters.loading;
 });
 
-const user = computed(() => {
-  return store.getters.user;
-});
-
 const test = computed(() => {
   return store.getters.test;
-});
-
-const answers = computed(() => {
-  return store.getters.answers ?? [];
-});
-
-const totalQuestions = computed(() => {
-  const items = object.value?.heuristics ?? object.value?.tasks ?? [];
-  return items.reduce((sum, h) => sum + (h.total || 0), 0);
 });
 
 const setIntro = async () => {
@@ -215,26 +174,22 @@ const setIntro = async () => {
 };
 
 const submit = async () => {
-  object.value.testStructure = store.state.Tests.Test.testStructure;
-  if (test.value.testType === 'User') {
-    object.value.testStructure = {
+  object.value.testStructure = {
+    ...store.state.Tests.Test.testStructure,
+    ...(test.value.testType === STUDY_TYPES.USER && {
       welcomeMessage: store.getters.welcomeMessage,
       landingPage: store.getters.landingPage,
-      participantCamera: store.getters.participantCamera,
       consent: store.getters.consent,
-      userTasks: store.getters.tasks,
-      preTest: store.getters.preTest,
-      postTest: store.getters.postTest,
+      userTasks: store.getters.tasks.length ? store.getters.tasks : store.state.Tests.Test.testStructure.userTasks || [],
+      preTest: store.getters.preTest.length ? store.getters.preTest : store.state.Tests.Test.testStructure.preTest || [],
+      postTest: store.getters.postTest.length ? store.getters.postTest : store.state.Tests.Test.testStructure.postTest || [],
       finalMessage: store.getters.finalMessage,
-    };
-  }
-
-  const updatedTest = new Test({ ...test.value, ...object.value });
-  await store.dispatch('updateTest', updatedTest);
-};
-
-const validate = (valid, idx) => {
-  valids.value[idx] = valid;
+    }),
+  };
+  const rawData = { ...object.value };
+  const study = instantiateStudyByType(rawData.testType, rawData);
+  await store.dispatch('updateStudy', study);
+  await store.dispatch('getStudy', { id: route.params.id })
 };
 
 const validateAll = async () => {
@@ -282,12 +237,12 @@ onBeforeUnmount(() => {
 const init = async () => {
   try {
     await Promise.all([
-      store.dispatch('getTest', { id: route.params.id }),
+      store.dispatch('getStudy', { id: route.params.id }),
       store.dispatch('getCurrentTestAnswerDoc'),
     ]);
   } catch (error) {
     console.error('Failed to load test data:', error);
-    // Optionally show a toast or redirect
+    toast.error('Failed to load test data');
   }
 };
 init();
@@ -310,10 +265,12 @@ onBeforeRouteLeave((to, from) => {
   right: 16px;
   z-index: 100;
 }
+
 .save-btn.disabled-btn,
 .disabled-btn {
   color: rgba(134, 125, 125, 0.438) !important;
 }
+
 .save-btn.disabled-btn {
   background-color: rgba(185, 185, 185, 0.308) !important;
 }
