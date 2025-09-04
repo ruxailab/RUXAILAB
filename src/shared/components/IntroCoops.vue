@@ -1,6 +1,6 @@
 <template>
   <IntrosComponent
-    :colors="['#eff31a', '#eecf22']"
+    :colors="['#FF3F59', '#00213f']"
     :title="'Cooperators'"
     :image="'IntroCoops.svg'"
     :main="$t('descriptions.intro.cooperators')"

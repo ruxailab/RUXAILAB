@@ -128,7 +128,8 @@ const props = defineProps({
 const emit = defineEmits(['linkClicked', 'callFunc'])
 
 const backgroundImage = computed(() => {
-  return `background-image: radial-gradient(circle at top right, ${props.colors[0]}, ${props.colors[1]});`
+  // Softer gradient: blend colors more gradually
+  return `background-image: radial-gradient(circle at top left, ${props.colors[1]} 60%, ${props.colors[0]} 160%);`;
 })
 
 const emitClick = () => {
