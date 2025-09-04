@@ -1,7 +1,6 @@
 <template>
   <div>
     <Snackbar />
-
     <!-- Submit Alert Dialog -->
     <v-dialog
       v-model="dialog"
@@ -590,7 +589,20 @@ const review = ref(true)
 const rightView = ref(null)
 
 const test = computed(() => store.getters.test);
-const heuristics = computed(() => store.getters.heuristics || []);
+
+const heuristics = computed(() => {
+  // Prefer heuristics from test.testStructure if available
+  if (test.value?.testStructure && Array.isArray(test.value.testStructure)) {
+    return test.value.testStructure;
+  }
+  // Fallback to heuristics getter
+  if (store.getters.heuristics && store.getters.heuristics.length) {
+    return store.getters.heuristics;
+  }
+  // Fallback to empty array
+  return [];
+});
+
 const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
@@ -612,7 +624,6 @@ const startTest = () => {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
     });
-    router.push('/managerview/' + test.value.id);
     return;
   }
   start.value = false;
