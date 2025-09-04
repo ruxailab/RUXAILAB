@@ -168,6 +168,7 @@ import NotificationPage from '@/features/notifications/views/NotificationPage.vu
 import { DashboardSidebar } from '@/features/navigation/utils';
 import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
+import StudyController from '@/controllers/StudyController';
 
 const store = useStore();
 const router = useRouter();
@@ -180,6 +181,7 @@ const temp = ref({});
 const filteredModeratedSessions = ref([]);
 const selectedMethodFilter = ref('all');
 const drawerOpen = ref(false);
+const studyController = new StudyController()
 
 // Opciones de métodos usando el nuevo sistema - solo métodos disponibles
 const methodOptions = computed(() => {
@@ -209,7 +211,7 @@ const currentPageTitle = computed(() => {
   }
 });
 
-const tests = computed(() => store.state.Tests.tests);
+const tests = computed(() => store.getters.tests || []);
 const templates = computed(() => store.state.Templates.templates || []);
 const user = computed(() => store.getters.user);
 
@@ -276,7 +278,6 @@ const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
 const getPublicStudies = () => store.dispatch('getPublicStudies');
 const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
-const cleanTestStore = () => store.dispatch('cleanTest');
 
 const filterModeratedSessions = async () => {
   const userModeratedTests = Object.values(user.value.myAnswers).filter(
@@ -284,7 +285,7 @@ const filterModeratedSessions = async () => {
   );
   const cooperatorArray = [];
   for (const test of userModeratedTests) {
-    const testObj = await store.dispatch('getStudy', { id: test.testDocId });
+    const testObj = await studyController.getStudy({ id: test.testDocId });
     if (testObj) {
       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
       if (cooperatorObj) {
@@ -315,7 +316,6 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
 
 onMounted(async () => {
   await getMyPersonalTests();
-  await cleanTestStore();
 });
 
 // Event handler function

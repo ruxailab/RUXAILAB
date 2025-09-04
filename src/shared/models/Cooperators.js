@@ -15,6 +15,8 @@ export default class Cooperators {
     updateDate,
     testAuthorEmail,
     token,
+    testDate,
+    inviteMessage
   } = {}) {
     /**
      * Defines the user document id.
@@ -78,6 +80,20 @@ export default class Cooperators {
      * @type {String}
      */
     this.token = token
+
+    /**
+     * Defines the date of the test.
+     *
+     * @type {number}
+     */
+    this.testDate = testDate
+
+    /**
+     * Defines the invitation message.
+     *
+     * @type {string}
+     */
+    this.inviteMessage = inviteMessage
   }
 
   /**
@@ -96,15 +112,17 @@ export default class Cooperators {
    */
   toFirestore() {
     return {
-      userDocId: this.userDocId,
-      email: this.email,
-      accessLevel: this.accessLevel,
-      invited: this.invited,
-      accepted: this.accepted,
-      progress: this.progress,
-      updateDate: this.updateDate,
-      testAuthorEmail: this.testAuthorEmail,
-      token: this.token,
+      userDocId: this.userDocId ?? null,
+      email: this.email ?? null,
+      accessLevel: this.accessLevel ?? null,
+      invited: this.invited ?? false,
+      accepted: this.accepted ?? false,
+      progress: this.progress ?? 0,
+      updateDate: this.updateDate ?? null,
+      testAuthorEmail: this.testAuthorEmail ?? null,
+      token: this.token ?? null,
+      testDate: this.testDate ?? null,
+      inviteMessage: this.inviteMessage ?? null
     }
   }
 }
