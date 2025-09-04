@@ -44,6 +44,9 @@
             >
               Nasa-TLX Analytics
             </v-tab>
+            <v-tab v-if="showEye" @click="tab = 5">
+              Eye-Tracking Analytics
+            </v-tab>
           </v-tabs>
         </template>
 
@@ -57,6 +60,7 @@
             <SentimentAnalysisView v-if="tab === 2" />
             <SusAnalytics v-if="tab === 3" />
             <NasaTlxAnalytics v-if="tab === 4" />
+            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -73,11 +77,12 @@ import { useStore } from 'vuex';
 import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/IntroAnswer';
-import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue';
+import AnalyticsView from '@/ux/Heuristic/views/[deprecated]AnalyticsView.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
 import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
+import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
 
 defineProps({
   id: {
@@ -123,6 +128,28 @@ const showNasa = computed(() => {
     (task) => task.taskType === 'nasa-tlx'
   );
 });
+
+const showEye = computed(() =>
+  testAnswerDocument.value &&
+  testAnswerDocument.value.type === 'User' &&
+  Object.values(testAnswerDocument.value.taskAnswers).some(ev =>
+    Object.values(ev.tasks).some(task =>
+      task.irisTrackingData.length > 0
+    )
+  )
+);
+
+const allIrisTrackingData = computed(() => {
+  if (!testAnswerDocument.value || !testAnswerDocument.value.taskAnswers) return [];
+
+  const tasks = Object.values(testAnswerDocument.value.taskAnswers)
+    .flatMap(ev => Object.values(ev.tasks || {}))
+    .filter(task => task.irisTrackingData && task.irisTrackingData.length > 0)
+    .flatMap(task => task.irisTrackingData);
+
+  return tasks;
+});
+
 
 const loading = computed(() => store.getters.loading);
 

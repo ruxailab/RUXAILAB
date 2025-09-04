@@ -3,7 +3,8 @@
     "default": "retlab-dev",
     "dev": "retlab-dev",
     "production": "retlab",
-    "prod": "ruxailab-prod"
+    "prod": "ruxailab-prod",
+    "develop": "ruxailab-develop"
   },
   "targets": {
     "retlab-dev": {
@@ -14,5 +15,6 @@
       }
     }
   },
-  "etags": {}
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

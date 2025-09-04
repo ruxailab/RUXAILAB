@@ -16,7 +16,7 @@ import UserAnswer from "./UserAnswer";
 export default class User {
     constructor({
         id, accessLevel, email, notifications = [], myAnswers = [], myTests = [],
-        username = null, contactNo = null, country = null, profileImage = '',
+        username = null, contactNo = null, country = null, profileImage = '', calibrationId = null
     } = {}) {
         this.id = id;
         this.accessLevel = accessLevel;
@@ -27,7 +27,8 @@ export default class User {
         this.username = username;
         this.contactNo = contactNo;
         this.country = country;
-        this.profileImage = profileImage; // Add profileImage field
+        this.profileImage = profileImage;
+        this.calibrationId = calibrationId;
     }
 
     static toUser(data) {
@@ -47,6 +48,15 @@ export default class User {
             contactNo: this.contactNo, // Include contactNo in Firestore representation
             country: this.country, // Include country in Firestore representation
             profileImage: this.profileImage, // Include profileImage in Firestore representation
+            calibrationId: this.calibrationId
         };
+    }
+
+    /**
+     * Move all current notifications to the inbox.
+     */
+    archiveNotifications() {
+        this.inbox = [...this.inbox, ...this.notifications]; // Add notifications to inbox
+        this.notifications = []; // Clear current notifications
     }
 }
