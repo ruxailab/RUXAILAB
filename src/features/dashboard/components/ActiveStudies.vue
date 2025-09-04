@@ -65,6 +65,7 @@ import AnswerController from '@/shared/controllers/AnswerController';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex';
+import StudyController from '@/controllers/StudyController';
 
 const props = defineProps({
   studies: {
@@ -75,6 +76,7 @@ const props = defineProps({
 
 const store = useStore()
 const answerController = new AnswerController()
+const studyController = new StudyController()
 
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
@@ -100,7 +102,7 @@ async function loadAnswers() {
   const last4 = []
   try {
     for (const study in lastFourStudies.value) {
-      const testDoc = await store.dispatch('getStudy', { id: lastFourStudies.value[study].testDocId });
+      const testDoc = await studyController.getStudy({ id: lastFourStudies.value[study].testDocId });
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({
