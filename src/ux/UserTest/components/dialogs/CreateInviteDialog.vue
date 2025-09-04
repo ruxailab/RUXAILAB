@@ -172,6 +172,7 @@
 </template>
 
 <script setup>
+import Cooperators from '@/shared/models/Cooperators';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
@@ -240,8 +241,8 @@ const saveInvitation = async () => {
   const dateTime = new Date(dateTimeString);
   const timestamp = dateTime.toISOString();
 
-  cooperatorsEdit.value.push({
-    userDocId: null,
+  cooperatorsEdit.value.push(new Cooperators( {
+    userDocId: cooperator.id,
     email: cooperator.email,
     invited: true,
     accepted: false,
@@ -250,7 +251,7 @@ const saveInvitation = async () => {
     inviteMessage: inviteMessage.value,
     updateDate: test.value.updateDate,
     testAuthorEmail: test.value.testAdmin.email,
-  });
+  }));
 
   await submit();
 };
@@ -272,12 +273,13 @@ const submit = async () => {
 };
 
 const notifyCooperator = (guest) => {
+  console.log('Notifying cooperator', guest);
   if (guest.userDocId) {
     const path = 'testview';
     store.dispatch('addNotification', {
       userId: guest.userDocId,
       notification: new Notification({
-        accessLevel: 1,
+        accessLevel: 2,
         title: `You have been invited to test ${test.value.testTitle}!`,
         description: inviteMessage.value,
         redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,

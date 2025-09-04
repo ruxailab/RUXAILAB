@@ -1,6 +1,6 @@
 <template>
   <IntrosComponent
-    :colors="['#9ac94f', '#7eb543']"
+    :colors="['#FF3F59', '#00213f']"
     :title="'Answers'"
     :image="'IntroAnswer.svg'"
     :main="$t('descriptions.intro.answers')"

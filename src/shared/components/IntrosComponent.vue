@@ -1,9 +1,6 @@
 <template>
-  <v-container style="display: contents; background-color: #f4b700">
-    <div
-      class="background-gradient"
-      :style="backgroundImage"
-    >
+  <v-card elevation="2" class="pa-4 mb-4" :style="backgroundImage" rounded="xl">
+    <div class="background-gradient">
       <v-row
         class="ml-0"
         align="center"
@@ -11,41 +8,30 @@
         style="height: 100%"
       >
         <div class="text-div">
+          <h1 class="title-firebase">{{ $t('titles.drawer.' + title) }}</h1>
           <div
-            class="mb-4 text-white mobile-center"
-            style="font-size: 60px; font-weight: 500"
-          >
-            {{ $t('titles.drawer.' + title) }}
-          </div>
-          <v-img
-            class="mb-5 hidden-md-and-up"
-            cover
-            :src="require('../../assets/manager/' + image)"
-            max-height="350"
-          />
-          <div
-            style="font-size: 22px"
+            style="font-size: 20px"
             class="text-white mb-4 mobile-center"
           >
             {{ main }}
           </div>
-          <button
-            class="edit-btn rounded-lg text-white"
+          <v-btn
+            class="rounded-lg"
             @click="emitClick"
           >
             {{ $t('pages.intros.click') }}
-          </button>
+        </v-btn>
         </div>
 
         <v-img
           class="hidden-sm-and-down"
           cover
-          max-width="40%"
-          max-height="400"
+          max-width="30%"
           :src="require('../../assets/manager/' + image)"
         />
       </v-row>
     </div>
+  </v-card>
 
     <v-col>
       <v-row
@@ -101,7 +87,6 @@
         </v-col>
       </v-row>
     </v-col>
-  </v-container>
 </template>
 
 <script setup>
@@ -143,7 +128,8 @@ const props = defineProps({
 const emit = defineEmits(['linkClicked', 'callFunc'])
 
 const backgroundImage = computed(() => {
-  return `background-image: radial-gradient(circle at top right, ${props.colors[0]}, ${props.colors[1]});`
+  // Softer gradient: blend colors more gradually
+  return `background-image: radial-gradient(circle at top left, ${props.colors[1]} 60%, ${props.colors[0]} 160%);`;
 })
 
 const emitClick = () => {
@@ -157,19 +143,18 @@ const emitCallFunc = (func) => {
 
 <style scoped>
 .background-gradient {
-  height: 60vh;
+  height: 50vh;
 }
 
 .learn-text {
-  color: rgb(87, 84, 100);
+  color: rgb(74, 74, 74);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 40px;
   margin-top: 30px;
-  margin-bottom: 30px;
 }
 
 .text-div {
-  max-width: 45%;
+  max-width: 30%;
 }
 
 .page-title {
@@ -201,15 +186,16 @@ const emitCallFunc = (func) => {
   }
 }
 
-.edit-btn {
-  width: 30%;
-  height: 4vh;
-  background-color: rgba(68, 12, 71, 0.644);
-  transition: box-shadow 0.5s, background-color 0.5s;
-}
 
-.edit-btn:hover {
-  box-shadow: 0px 0px 35px 2px rgba(0, 0, 0, 0.7) !important;
-  background-color: rgba(36, 6, 37, 0.644);
+.title-firebase {
+    flex-shrink: 0;
+    font-family: "Google Sans", sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 44px;
+    margin: 0;
+    margin-right: 28px;
+    color:aliceblue
 }
 </style>
