@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main class="ma-5">
       <Snackbar />
 
       <!-- Loading Overlay -->
@@ -87,23 +87,3 @@ defineProps({
 const { t } = useI18n();
 </script>
 
-<style scoped>
-.page-wrapper {
-  min-height: 100vh;
-  background: #fafbfc;
-}
-
-.side-gap {
-  padding: 1.5rem 3rem;
-}
-
-.header-section {
-  margin-bottom: 2rem;
-}
-
-@media (max-width: 960px) {
-  .side-gap {
-    padding: 1rem;
-  }
-}
-</style>

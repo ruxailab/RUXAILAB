@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue';
+import AnalyticsView from '@/ux/Heuristic/views/[deprecated]AnalyticsView.vue';
 </script>
 
 <style scoped>

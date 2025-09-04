@@ -167,6 +167,18 @@
           </v-chip>
         </template>
 
+        <!-- Session -->
+        <template #item.session="{ item }">
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
+              <v-btn v-if="item" v-bind="props" class="ml-1" icon @click="goToSession(item.userDocId)">
+                <v-icon>mdi-file-document-arrow-right</v-icon>
+              </v-btn>
+            </template>
+            <span>Go to session</span>
+           </v-tooltip>
+        </template>
+
         <!-- Actions Column -->
         <template #item.actions="{ item }">
           <v-menu>
@@ -221,6 +233,11 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
+const router = useRouter();
+const store = useStore();
 
 const props = defineProps({
     cooperators: {
@@ -232,6 +249,10 @@ const props = defineProps({
         default: false
     },
     showDateColumns: {
+        type: Boolean,
+        default: false
+    },
+    showSessionColumn: {
         type: Boolean,
         default: false
     },
@@ -296,6 +317,8 @@ const filters = ref({
 });
 
 // Computed properties
+const study = computed(() => store.getters.test);
+
 const computedHeaders = computed(() => {
     const defaultHeaders = [
         { title: 'Email', key: 'email', sortable: true },
@@ -314,6 +337,12 @@ const computedHeaders = computed(() => {
         );
     }
 
+    if (props.showSessionColumn) {
+        defaultHeaders.push(
+            { title: 'Session', key: 'session', sortable: false },
+        );
+    }
+
     defaultHeaders.push(
         { title: 'Invited', key: 'invited', sortable: true },
         { title: 'Status', key: 'accepted', sortable: true },
@@ -322,8 +351,6 @@ const computedHeaders = computed(() => {
 
     return props.baseHeaders.length > 0 ? props.baseHeaders : defaultHeaders;
 });
-
-
 
 const filteredCooperators = computed(() => {
     let result = [...props.cooperators];
@@ -379,6 +406,13 @@ const onCancelInvitation = (item) => {
 watch(selectedCooperators, (newVal) => {
     emit('update:selected-cooperators', newVal);
 }, { deep: true });
+
+// Methods
+const goToSession = (coopId) => {
+  console.log(study)
+  router.push(`/testview/${study.value.id}/${coopId}`);
+};
+
 </script>
 
 <style scoped>
