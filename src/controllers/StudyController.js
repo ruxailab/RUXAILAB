@@ -72,7 +72,7 @@ export default class StudyController extends Controller {
     }
   }
 
-  // It seems an action from User Testing
+  //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
     const userAnswer = new UserAnswer({
       answerDocId: payload.test.answersDocId,

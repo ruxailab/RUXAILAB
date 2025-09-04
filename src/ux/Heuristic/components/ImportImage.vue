@@ -83,7 +83,7 @@ const uploadFile = async () => {
   await uploadBytes(storageReference, file)
   url.value = await getDownloadURL(storageReference)
   
-  store.commit('updateCurrentImageUrl', url.value)
+  store.commit('SET_CURRENT_IMAGE_URL', url.value)
   
   imageUploaded.value = true
   emit('imageUploaded')
