@@ -1,0 +1,185 @@
+<template>
+  <div>
+    <v-col>
+      <v-row>
+        <v-tooltip
+          v-if="!recordingAudio"
+          location="bottom"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              elevation="0"
+              icon
+              class="ml-4 my-2 mr-auto"
+              v-bind="props"
+              @click="startAudioRecording"
+            >
+              <v-icon>mdi-microphone</v-icon>
+            </v-btn>
+          </template>
+          <span>Start Audio Record</span>
+        </v-tooltip>
+        <v-tooltip
+          v-if="recordingAudio"
+          location="bottom"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              color="red"
+              elevation="0"
+              icon
+              class="ml-4 my-2 mr-auto xl"
+              v-bind="props"
+              @click="stopAudioRecording"
+            >
+              <v-icon>mdi-stop</v-icon>
+            </v-btn>
+          </template>
+          <span>Stop Audio Record</span>
+        </v-tooltip>
+      </v-row>
+    </v-col>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+
+const props = defineProps({
+  testId: {
+    type: String,
+    default: ''
+  },
+  taskIndex: {
+    type: Number,
+    default: 0
+  },
+  showVisualizer: {
+    type: Boolean,
+    default: false
+  },
+  remoteStream: {
+    type: MediaStream,
+    default: null
+  },
+  shouldRecordModerator: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['recordingStarted', 'showLoading', 'stopShowLoading'])
+
+const store = useStore()
+const toast = useToast()
+const { t } = useI18n()
+
+// Reactive state
+const recordingAudio = ref(false)
+const recordedChunks = ref([])
+const mediaRecorder = ref(null)
+const audioStream = ref(null)
+const recordedAudio = ref('')
+
+// Computed properties
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
+
+// Methods
+const startAudioRecording = async () => {
+  recordingAudio.value = true
+  emit('recordingStarted', true)
+
+  try {
+    audioStream.value = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    })
+
+    recordedChunks.value = {
+      local: [],
+      remote: []
+    }
+    mediaRecorder.value = {}
+
+    audioStream.value = await navigator.mediaDevices.getUserMedia({ audio: true })
+    mediaRecorder.value.local = new MediaRecorder(audioStream.value, { mimeType: 'audio/webm' })
+
+    mediaRecorder.value.local.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.value.local.push(event.data)
+      }
+    }
+
+    mediaRecorder.value.local.onstop = async () => {
+      emit('showLoading')
+      const audioBlob = new Blob(recordedChunks.value.local, { type: 'audio/webm' })
+      const storage = getStorage()
+      const storageReference = storageRef(
+        storage,
+        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}_evaluator/${Date.now()}.webm`
+      )
+      await uploadBytes(storageReference, audioBlob)
+
+      recordedAudio.value = await getDownloadURL(storageReference)
+
+      console.log('evaluator audio =>', recordedAudio.value)
+
+      currentUserTestAnswer.value.tasks[props.taskIndex].audioRecordURL = recordedAudio.value
+
+      audioStream.value.getTracks().forEach((track) => track.stop())
+      audioStream.value = null
+
+      emit('recordingStarted', false)
+      emit('stopShowLoading')
+      toast.success(t('alerts.genericSuccess'))
+      recordingAudio.value = false
+    }
+
+    mediaRecorder.value.local.start()
+
+    // Remote audio
+    if(props.shouldRecordModerator) {
+      if(props.remoteStream?.getAudioTracks().length) {
+      const remoteAudioStream = new MediaStream(props.remoteStream.getAudioTracks())
+
+      mediaRecorder.value.remote = new MediaRecorder(remoteAudioStream, { mimeType: 'audio/webm' })
+      // Remote
+      mediaRecorder.value.remote.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.value.remote.push(event.data)
+        }
+      }
+      mediaRecorder.value.remote.onstop = async () => {
+        const blob = new Blob(recordedChunks.value.remote, { type: 'audio/webm' })
+        const storage = getStorage()
+        const storageReference = storageRef(
+          storage,
+          `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}_moderator/${Date.now()}.webm`
+        )
+        await uploadBytes(storageReference, blob)
+        const downloadURL = await getDownloadURL(storageReference)
+
+        console.log('moderator audio =>', downloadURL)
+        currentUserTestAnswer.value.tasks[props.taskIndex].moderatorAudioURL = downloadURL
+      }
+
+      mediaRecorder.value.remote.start()
+    }
+  }
+    
+  } catch (error) {
+    console.error('Error accessing audio stream:', error)
+    recordingAudio.value = false
+  }
+}
+
+const stopAudioRecording = () => {
+  if (mediaRecorder.value) {
+    mediaRecorder.value.local.stop()
+    mediaRecorder.value.remote?.stop()
+  }
+}
+</script>
