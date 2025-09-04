@@ -241,8 +241,6 @@ const saveInvitation = async () => {
   const dateTime = new Date(dateTimeString);
   const timestamp = dateTime.toISOString();
 
-  console.log('cooperator', cooperator);
-
   cooperatorsEdit.value.push(new Cooperators( {
     userDocId: cooperator.id,
     email: cooperator.email,
@@ -275,12 +273,13 @@ const submit = async () => {
 };
 
 const notifyCooperator = (guest) => {
+  console.log('Notifying cooperator', guest);
   if (guest.userDocId) {
     const path = 'testview';
     store.dispatch('addNotification', {
       userId: guest.userDocId,
       notification: new Notification({
-        accessLevel: 1,
+        accessLevel: 2,
         title: `You have been invited to test ${test.value.testTitle}!`,
         description: inviteMessage.value,
         redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
