@@ -143,6 +143,7 @@ const save = async () => {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
       preTest: preTest.value,
+      userTasks: store.getters.tasks,
       postTest: postTest.value,
       consent: consent.value,
   }
