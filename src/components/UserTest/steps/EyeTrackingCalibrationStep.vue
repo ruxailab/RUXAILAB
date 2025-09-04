@@ -29,9 +29,9 @@
 </template>
 
 <script setup>
-import StartCalibrationButton from '@/components/atoms/StartCalibrationButton.vue';
-import CalibrationInProgressModal from '@/components/atoms/CalibrationInProgressModal.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
+import CalibrationInProgressModal from '@/ux/UserTest/components/CalibrationInProgressModal.vue';
+import StartCalibrationButton from '@/ux/UserTest/components/StartCalibrationButton.vue';
 
 const emit = defineEmits(['done', 'openCalibration', 'closeCalibration']);
 
