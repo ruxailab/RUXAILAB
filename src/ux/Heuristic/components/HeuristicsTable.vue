@@ -533,7 +533,18 @@ const headers = ref([
 const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')]);
 const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')]);
 
-const heuristics = computed(() => store.getters.heuristics || []);
+const heuristics = computed(() => {
+  // 1. Try heuristics getter
+  if (store.getters.heuristics && store.getters.heuristics.length) {
+    return store.getters.heuristics;
+  }
+  // 2. Try store.state.Test.test (if it exists and is an array)
+  if (store.state.Tests?.Test.testStructure && Array.isArray(store.state.Tests.Test.testStructure)) {
+    return store.state.Tests.Test.testStructure;
+  }
+  // 3. Fallback to empty array
+  return [];
+});
 
 const filteredHeuristics = computed(() => {
   const searchLower = search.value.toLowerCase()
