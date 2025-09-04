@@ -602,6 +602,7 @@ const heuristics = computed(() => {
   // Fallback to empty array
   return [];
 });
+
 const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
