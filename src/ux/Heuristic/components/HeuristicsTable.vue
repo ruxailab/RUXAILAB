@@ -1,11 +1,6 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container
-        fluid
-        class="pa-6"
-      >
-        <!-- Header Section -->
+    <div>
+         <!-- Header Section -->
         <div class="d-flex align-center justify-space-between mb-8">
           <div>
             <h1 class="text-h3 font-weight-bold text-on-surface mb-2">
@@ -27,7 +22,7 @@
         </div>
 
         <!-- Search Row -->
-        <v-row class="mb-8">
+        <v-row>
           <v-col cols="12">
             <v-text-field
               v-model="search"
@@ -50,7 +45,7 @@
           >
             <v-card
               elevation="2"
-              class="mb-4 heuristic-card"
+              class="heuristic-card"
               :class="{ 'expanded': itemSelect === index }"
             >
               <!-- Heuristic Header -->
@@ -121,21 +116,30 @@
                       {{ $t('HeuristicsTable.titles.addNewQuestion') }}
                     </v-tooltip>
                   </v-btn>
+                <span>
                   <v-btn
                     icon="mdi-pencil"
                     variant="text"
                     size="small"
                     color="primary"
+                    :disabled="testAnswerDocLength > 0"
                     @click="editHeuris(heuristic)"
                   >
                     <v-icon>mdi-pencil</v-icon>
-                    <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
-                      {{ $t('HeuristicsTable.titles.editHeuristic') }}
-                    </v-tooltip>
                   </v-btn>
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                  >
+                    <template v-if="testAnswerDocLength > 0">
+                      This study has answers
+                    </template>
+                    <template v-else>
+                      {{ $t('HeuristicsTable.titles.editHeuristic') }}
+                    </template>
+                  </v-tooltip>
+                </span>
+                <span>
                   <v-btn
                     icon="mdi-delete"
                     variant="text"
@@ -145,13 +149,22 @@
                     @click="deleteHeuristic(index)"
                   >
                     <v-icon>mdi-delete</v-icon>
+                        </v-btn>
                     <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
+                    activator="parent"
+                    location="top"
+                  >
+                    <template v-if="testAnswerDocLength > 0">
+                      This study has answers
+                    </template>
+                    <template v-else>
                       {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
-                    </v-tooltip>
-                  </v-btn>
+                    </template>
+                  </v-tooltip>
+
+
+            
+                  </span>
                 </div>
               </v-card-title>
 
@@ -504,9 +517,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-      </v-container>
-    </v-main>
-  </v-app>
+    </div> 
 </template>
 
 <script setup>
@@ -543,6 +554,9 @@ const headers = ref([
 
 const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')]);
 const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')]);
+
+const test = computed(() => store.getters.test);
+
 
 const heuristics = computed(() => {
   // 1. Try heuristics getter
@@ -833,48 +847,3 @@ const updateDescription = () => {
   emit('change');
 };
 </script>
-
-<style scoped>
-.heuristic-card {
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.heuristic-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-.heuristic-card.expanded {
-  border-color: #3B82F6;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
-}
-
-.questions-list {
-  width: 100%;
-}
-
-.question-card {
-  transition: all 0.2s ease;
-  cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.question-card:hover {
-  border-color: #3B82F6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-:deep(.v-field--variant-outlined) {
-  --v-field-border-width: 1px;
-}
-
-:deep(.v-btn--variant-elevated) {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-:deep(.v-btn--variant-elevated:hover) {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-</style>
