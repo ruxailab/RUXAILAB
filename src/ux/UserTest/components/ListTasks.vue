@@ -40,14 +40,8 @@
         </v-col>
       </v-row>
       <v-card-text>
-        <v-data-table
-          :headers="headers"
-          :items="allTasks"
-          :items-per-page="5"
-          class="elevation-0 rounded-lg"
-          style="background: #FFFFFF; border: 1px solid #E5E7EB;"
-          :no-data-text="$t('No Tasks')"
-        >
+        <v-data-table :headers="headers" :items="allTasks" :items-per-page="5" class="elevation-0 rounded-lg"
+          style="background: #FFFFFF; border: 1px solid #E5E7EB;" :no-data-text="$t('No Tasks')">
           <!-- Custom Column Templates -->
           <template #item.taskDescription="{ item }">
             <v-icon :color="item.taskDescription ? 'success' : 'error'">
@@ -93,31 +87,16 @@
 
           <!-- Actions Column -->
           <template #item.actions="{ item }">
-            <v-btn
-              icon
-              variant="text"
-              color="accent"
-              class="mr-2"
-              @click="editItem(item)"
-            >
+            <v-btn icon variant="text" color="accent" class="mr-2" @click="editItem(item)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <v-btn
-              icon
-              variant="text"
-              color="error"
-              @click="deleteItem(item)"
-            >
+            <v-btn icon variant="text" color="error" @click="deleteItem(item)">
               <v-icon>mdi-trash-can-outline</v-icon>
             </v-btn>
           </template>
         </v-data-table>
       </v-card-text>
-      <FormDialog
-        v-model:dialog="dialog"
-        v-model:task="task"
-        @add-task="addTask"
-      />
+      <FormDialog v-model:dialog="dialog" v-model:task="task" @add-task="addTask" />
     </v-card>
   </v-container>
 </template>
@@ -150,6 +129,7 @@ const task = ref({
   postQuestion: null,
   postForm: null,
   taskType: null,
+  hasEye: false,
   hasAudioRecord: false,
   hasScreenRecord: false,
   hasCamRecord: false,
@@ -165,7 +145,7 @@ const headers = ref([
   { title: 'Camera', value: 'hasCamRecord', sortable: false, align: 'center' },
   { title: 'Eye Tracker', value: 'hasEye', sortable: false, align: 'center' },
   { title: 'Audio Record', value: 'hasAudioRecord', sortable: false, align: 'center' },
-  { title: 'Actions', value: 'actions', sortable: false, align: 'center', width: '150px'},
+  { title: 'Actions', value: 'actions', sortable: false, align: 'center', width: '150px' },
 ]);
 
 const editItem = (item) => {

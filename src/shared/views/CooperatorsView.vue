@@ -1,11 +1,11 @@
 <template>
   <PageWrapper
-    :title="$t('HeuristicsCooperators.title.cooperators')"
+    :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
     :loading="loading"
     :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
   >
     <!-- Actions Slot -->
-    <template #actions>
+    <template #actions v-if="!showIntroView">
       <v-btn
         color="primary"
         size="large"
@@ -19,19 +19,18 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template #subtitle>
+    <template #subtitle v-if="!showIntroView">
       <p class="text-body-1 text-grey-darken-1">
         Manage people who participate in your study
       </p>
     </template>
-
     <!-- Main Content -->
     <Intro
-      v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
-      @close-intro="intro = false"
+      v-if="showIntroView"
+      @close-intro="showIntroComponent = false"
     />
-
     <CooperatorTable
+      v-else
       :hasRoleColumn="hasRoleColumn"
       :cooperators="cooperatorsEdit"
       :loading="loading"
@@ -40,8 +39,11 @@
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
-      :cancel-text="$t('HeuristicsCooperators.actions.cancel_invitation')" @role-change="changeRole"
-      @send-message="openMessageDialog" @reinvite="reinvite" @remove-cooperator="removeCoop"
+      :cancel-text="$t('HeuristicsCooperators.actions.cancel_invitation')"
+      @role-change="changeRole"
+      @send-message="openMessageDialog"
+      @reinvite="reinvite"
+      @remove-cooperator="removeCoop"
       @cancel-invitation="cancelInvitation" />
 
     <!-- Leave Alert Dialog -->
@@ -148,13 +150,16 @@ const {
 } = useCooperatorActions();
 
 // Variables
-const intro = ref(null);
-const showCoops = ref(false);
+let showIntroComponent = ref(true);
 const verified = ref(false);
 const messageModel = ref(false);
 const selectedUser = ref([]);
 const showInviteDialog = ref(false);
 const drawerOpen = ref(false);
+
+const showIntroView = computed(() => {
+  return (cooperatorsEdit.value.length <= 0) && ( showIntroComponent.value == true);
+});
 
 // Computeds
 const dialog = computed(() => store.state.dialog);
@@ -249,12 +254,12 @@ const submit = async () => {
 const notifyCooperator = (guest) => {
   console.log('guest', guest);
   if (guest.userDocId) {
-    const path = guest.accessLevel >= 2 ? 'testview' : 'managerview';
+    const path = 'testview';
     sendNotification({
       userId: guest.userDocId,
       title: 'Cooperation Invite!',
       description: `You have been invited to test ${test.value.testTitle}!`,
-      redirectsTo: `${path}/${test.value.id}/${guest.token}`,
+      redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
       author: test.value.testAdmin.email,
       testId: test.value.id,
       accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
@@ -296,7 +301,7 @@ const openDialog = async () => {
 
 watch(loading, (newVal) => {
   if (!newVal) {
-    intro.value = cooperatorsEdit.value.length === 0;
+    showIntroComponent.value = cooperatorsEdit.value.length === 0;
   }
 });
 
