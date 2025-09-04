@@ -249,12 +249,12 @@ const submit = async () => {
 const notifyCooperator = (guest) => {
   console.log('guest', guest);
   if (guest.userDocId) {
-    const path = guest.accessLevel >= 2 ? 'testview' : 'managerview';
+    const path = 'testview';
     sendNotification({
       userId: guest.userDocId,
       title: 'Cooperation Invite!',
       description: `You have been invited to test ${test.value.testTitle}!`,
-      redirectsTo: `${path}/${test.value.id}/${guest.token}`,
+      redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
       author: test.value.testAdmin.email,
       testId: test.value.id,
       accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
