@@ -201,7 +201,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "オプション"
+      "options": "オプション",
+      "noOptions": "オプションなし"
     },
     "messages": {},
     "placeHolders": {},

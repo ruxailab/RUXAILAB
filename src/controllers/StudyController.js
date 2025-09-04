@@ -72,7 +72,7 @@ export default class StudyController extends Controller {
     }
   }
 
-  // It seems an action from User Testing
+  //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
     const userAnswer = new UserAnswer({
       answerDocId: payload.test.answersDocId,
@@ -132,7 +132,10 @@ export default class StudyController extends Controller {
   async getAllStudies() {
     try {
       const response = await super.readAll('tests')
-      const res = response.map(Study.toTest)
+      const res = response.map((t) => {
+        const rawData = Object.assign({ id: t.id }, t.data())
+        return instantiateStudyByType(rawData.testType, rawData)
+      })
       return res
     } catch (err) {
       throw err
