@@ -1,7 +1,14 @@
 import admin from 'firebase-admin'
 import firebaseFunctions from 'firebase-functions/v2'
 
-function onRequest({ handler, options }) {
+const configurationGlobal = {
+  cors: true,
+}
+
+function onRequest({ handler, opts }) {
+  const options = configurationGlobal
+
+  if (opts?.cors) options.cors = opts.cors
   return firebaseFunctions.https.onRequest(options, handler)
 }
 
