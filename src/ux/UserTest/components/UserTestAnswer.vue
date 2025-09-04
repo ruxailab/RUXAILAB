@@ -82,7 +82,7 @@ import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
-import EyeTrackingAnalytics from '@/views/admin/EyeTrackingAnalytics.vue';
+import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
 
 defineProps({
   id: {
