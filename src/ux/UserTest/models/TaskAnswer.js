@@ -11,6 +11,7 @@ export default class TaskAnswer {
     moderatorAudioURL,
     screenRecordURL,
     webcamRecordURL,
+    irisTrackingData,
     postAnswer,
     susAnswers,
     nasaTlxAnswers
@@ -25,6 +26,7 @@ export default class TaskAnswer {
     this.screenRecordURL = screenRecordURL ?? null
     this.webcamRecordURL = webcamRecordURL ?? null
     this.postAnswer = postAnswer ?? null
+    this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? new NasaTlxAnswer()
   }
@@ -45,6 +47,7 @@ export default class TaskAnswer {
       screenRecordURL: this.screenRecordURL,
       webcamRecordURL: this.webcamRecordURL,
       postAnswer: this.postAnswer,
+      irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
       nasaTlxAnswers: (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore()
     }

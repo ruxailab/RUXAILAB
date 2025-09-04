@@ -1,6 +1,6 @@
 <template>
   <PageWrapper
-    :title="$t('Reports Dashboard')"
+    :title="showIntroView ? $t('Reports Dashboard') : ''"
     :loading="loading"
     :loading-text="$t('HeuristicsReport.messages.reports_loading')"
     :side-gap="true"
@@ -39,8 +39,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <template #subtitle>
+    <template #subtitle v-if="showIntroView">
       <div class="d-flex align-center">
         <v-icon
           icon="mdi-update"
@@ -53,7 +52,7 @@
       </div>
     </template>
 
-    <template #filters>
+    <template #filters v-if="showIntroView">
       <div class="d-flex align-center justify-space-between mb-6">
         <div class="d-flex align-center gap-4">
           <v-text-field
@@ -246,6 +245,11 @@ const lastUpdated = ref(new Date());
 
 const user = computed(() => store.getters.user);
 const test = computed(() => store.getters.test);
+
+const showIntroView = computed(() => {
+  return (reports.value.length > 0);
+});
+
 
 const allHeaders = ref([
   { title: 'Evaluator', key: 'evaluator' },
