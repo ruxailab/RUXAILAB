@@ -336,7 +336,7 @@ const calibrationInProgress = ref(false)
 
 //  Eye tracking web gazer testing 
 
-const localTestAnswer = reactive(new TaskAnswer());
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 
 const store = useStore();
 const router = useRouter();
