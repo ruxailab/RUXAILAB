@@ -168,6 +168,7 @@ import NotificationPage from '@/features/notifications/views/NotificationPage.vu
 import { DashboardSidebar } from '@/features/navigation/utils';
 import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
+import StudyController from '@/controllers/StudyController';
 
 const store = useStore();
 const router = useRouter();
@@ -180,6 +181,7 @@ const temp = ref({});
 const filteredModeratedSessions = ref([]);
 const selectedMethodFilter = ref('all');
 const drawerOpen = ref(false);
+const studyController = new StudyController()
 
 // Opciones de métodos usando el nuevo sistema - solo métodos disponibles
 const methodOptions = computed(() => {
@@ -283,7 +285,7 @@ const filterModeratedSessions = async () => {
   );
   const cooperatorArray = [];
   for (const test of userModeratedTests) {
-    const testObj = await store.dispatch('getStudy', { id: test.testDocId });
+    const testObj = await studyController.getStudy({ id: test.testDocId });
     if (testObj) {
       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
       if (cooperatorObj) {
