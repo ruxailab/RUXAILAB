@@ -30,7 +30,6 @@
 </template>
 
 <script setup>
-import EyeTrackingPredictionCanvas from '@/components/atoms/EyeTrackingPredictionCanvas.vue';
 import axios from 'axios';
 import { ref } from 'vue';
 import { computed, onMounted } from 'vue';
