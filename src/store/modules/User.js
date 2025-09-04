@@ -4,7 +4,7 @@
  */
 
 // import UserController
-import UserController from '@/controllers/UserController'
+import UserController from '@/features/auth/controllers/UserController'
 
 const userController = new UserController()
 
@@ -31,39 +31,11 @@ export default {
     REMOVE_USER(state, userId) {
       state.users = state.users.filter(user => user.id !== userId)
     },
-    setSuccess(state, message) {
-      state.successMessage = message
-    },
-    setError(state, error) {
-      state.error = error
-    },
-    setLoading(state, loading) {
-      state.loading = loading
-    }
+
   },
 
   actions: {
-    async addNotification({ commit }, payload) {
-      commit('setLoading', true)
-      try {
-        await userController.addNotification(payload)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        commit('setLoading', false)
-      }
-    },
 
-    async markNotificationAsRead({ commit }, payload) {
-      commit('setLoading', true)
-      try {
-        await userController.markNotificationAsRead(payload)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        commit('setLoading', false)
-      }
-    },
 
     async getAllUsers({ commit }) {
       try {
