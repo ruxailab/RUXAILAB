@@ -4,7 +4,7 @@ import EditTest from '@/ux/Heuristic/views/EditTest.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue'
+import AnalyticsView from '@/ux/Heuristic/views/[deprecated]AnalyticsView.vue'
 import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue';
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 
