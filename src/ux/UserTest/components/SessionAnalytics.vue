@@ -1,0 +1,427 @@
+<template>
+    <v-container fluid class="py-6" style="height: 100%; background-color: white;">
+        <!-- TOP TITLE -->
+        <!------------------------------------------------------------------------------------------------------------------------->
+        <!----------------------------------------------------- Title ------------------------------------------------------------->
+        <!------------------------------------------------------------------------------------------------------------------------->
+        <v-row class="mb-6">
+            <v-col cols="12" class="text-center">
+                <h1 class="text-h4 font-weight-bold d-flex align-center justify-center">
+                    <v-icon class="mr-2" color="success">mdi-video-account</v-icon>
+                    Session Analytics
+                </h1>
+            </v-col>
+        </v-row>
+        <v-card flat>
+            <v-row class="ma-0 pa-0">
+                <!-- Selector de usuario -->
+                <v-col class="ma-0 pa-0 task-list" cols="3">
+                    <v-list density="compact" class="list-scroll">
+                        <v-list-subheader>Evaluators</v-list-subheader>
+                        <v-divider />
+                        <v-list dense nav>
+                            <v-list-item v-for="i in 2" :key="i" class="rounded" @click="selectedUserId = i">
+                                <v-list-item-title>
+                                    <v-skeleton-loader type="text" width="80%" />
+                                </v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-list>
+                </v-col>
+                <v-divider vertical inset />
+                <!-- Lista de tareas -->
+                <v-col class="ma-0 pa-1 answer-list" cols="9">
+                    <div v-if="selectedUserId">
+                        <h3 class="text-h6 font-weight-bold mb-4">Tasks for User {{ selectedUserId }}</h3>
+                        <v-list>
+                            <v-list-item v-for="task in mockTasks" :key="task.taskId" @click="openTaskDialog(task)">
+                                <v-list-item-title>{{ task.taskName }}</v-list-item-title>
+                                <v-list-item-subtitle><v-skeleton-loader type="text"
+                                        width="40%" /></v-list-item-subtitle>
+                            </v-list-item>
+                        </v-list>
+                    </div>
+                    <div v-else>
+                        <p class="text-grey">Select a participant to view their tasks.</p>
+                    </div>
+                </v-col>
+            </v-row>
+        </v-card>
+    </v-container>
+
+    <v-dialog v-model="taskDialog" fullscreen>
+        <v-card>
+            <v-toolbar dark color="primary">
+                <v-btn icon @click="taskDialog = false">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-toolbar-title>Task Analysis: {{ selectedTask?.taskName || '' }}</v-toolbar-title>
+            </v-toolbar>
+            <v-card-text>
+                <v-row class="mb-4">
+                    <!-- Col-6 izquierda: videos tipo iMovie -->
+                    <v-col cols="12" md="5">
+                        <div class="video-box mb-2 video-rect-box">
+                            <video ref="mainVideo1" class="video-rect-skeleton"
+                                :src="require('@/assets/videos/video1.mp4')" poster=""></video>
+                        </div>
+                        <div class="video-box screen-video-box video-rect-box">
+                            <video ref="mainVideo2" class="video-rect-skeleton"
+                                :src="require('@/assets/videos/video2.mp4')" poster=""></video>
+                        </div>
+                    </v-col>
+                    <!-- Col-6 derecha: audio y transcript -->
+                    <v-col cols="12" md="7">
+                        <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
+                            <v-tab value="general">General</v-tab>
+                            <v-tab value="eye">Eye Tracker</v-tab>
+                            <v-tab value="sentimental">Sentimental</v-tab>
+                            <v-tab value="transcript">Transcripción</v-tab>
+                            <v-tab value="notes">Notas</v-tab>
+                        </v-tabs>
+                        <v-window v-model="rightTab" class="mt-4">
+                            <v-window-item value="general">
+                                <h4 class="text-subtitle-1 mb-1">General Analytics</h4>
+                                <TranscriptWordCloud :transcript="mockTranscript" class="mb-4" />
+                                <EyeTrackingStats :accuracy="mockEyeTracking.accuracy"
+                                    :fixations="mockEyeTracking.fixations" class="mb-4" />
+                                <SentimentSummary :sentiments="mockSentiments" class="mb-4" />
+                                <NotesStats :totalNotes="mockNotesCount" class="mb-4" />
+                            </v-window-item>
+                            <v-window-item value="eye">
+                                <h4 class="text-subtitle-1 mb-1">Eye Tracker Data</h4>
+                                <v-skeleton-loader type="text" width="80%" />
+                                <v-skeleton-loader type="text" width="60%" />
+                            </v-window-item>
+                            <v-window-item value="sentimental">
+                                <h4 class="text-subtitle-1 mb-1">Sentimental Analysis</h4>
+                                <v-skeleton-loader type="text" width="80%" />
+                                <v-skeleton-loader type="text" width="60%" />
+                            </v-window-item>
+                            <v-window-item value="transcript">
+                                <h4 class="text-subtitle-1 mb-1">Audio Transcript</h4>
+                                <v-skeleton-loader type="text" width="80%" />
+                                <v-skeleton-loader type="text" width="60%" />
+
+                                <h4 class="text-subtitle-1 mb-2">Timeline de la transcripción</h4>
+                                <v-sheet class="pa-4 rounded-lg mb-6" color="#fffef5">
+                                    <v-timeline side="end" density="comfortable">
+                                        <v-timeline-item v-for="i in 3" :key="i" dot-color="orange-darken-2"
+                                            icon="mdi-laptop-account" size="small">
+                                            <v-skeleton-loader type="text" width="90%" />
+                                        </v-timeline-item>
+                                    </v-timeline>
+                                </v-sheet>
+                                <h4 class="text-subtitle-1 mb-2">Extra Data</h4>
+                                <v-skeleton-loader type="text" width="70%" />
+                                <v-skeleton-loader type="text" width="50%" />
+                            </v-window-item>
+                            <v-window-item value="notes">
+                                <h4 class="text-subtitle-1 mb-2">Notas</h4>
+                                <v-sheet class="pa-4 rounded-lg mb-6" color="#f5f5f5">
+                                    <v-skeleton-loader type="text" width="80%" />
+                                    <v-skeleton-loader type="text" width="60%" />
+                                </v-sheet>
+                            </v-window-item>
+                        </v-window>
+                    </v-col>
+                </v-row>
+                <SessionTimeline ref="sessionTimeline" :currentTime="currentTime" :duration="videoDuration"
+                    :playing="isPlaying" @play-pause="handleTimelinePlayPause" @timeline-selected="handleTimelineSeek"
+                    @video-duration="handleVideoDuration" />
+
+            </v-card-text>
+        </v-card>
+    </v-dialog>
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" :timeout="4000">
+        {{ snackbar.text }}
+        <template #actions>
+            <v-btn color="white" variant="text" @click="snackbar.visible = false">
+                Close
+            </v-btn>
+        </template>
+    </v-snackbar>
+</template>
+
+
+<script>
+import SessionTimeline from './SessionTimeline.vue';
+import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue';
+import EyeTrackingStats from '../sessions/EyeTrackingStats.vue';
+import SentimentSummary from '../sessions/SentimentSummary.vue';
+import NotesStats from '../sessions/NotesStats.vue';
+export default {
+    components: {
+        SessionTimeline,
+        TranscriptWordCloud,
+        EyeTrackingStats,
+        SentimentSummary,
+        NotesStats
+    },
+    data() {
+        return {
+            selectedUserId: null,
+            taskDialog: false,
+            selectedTask: null,
+            selectedThumb: 1,
+            selectedScreenThumb: 1,
+            rightTab: 'transcript',
+            snackbar: {
+                visible: false,
+                text: '',
+                color: '',
+            },
+            mockTasks: [
+                { taskId: 't1', taskName: 'Task 1' },
+                { taskId: 't2', taskName: 'Task 2' },
+                { taskId: 't3', taskName: 'Task 3' },
+            ],
+            mockTranscript: 'El usuario realizó la tarea correctamente y luego revisó el panel de configuración. El moderador preguntó sobre la experiencia y el usuario respondió positivamente.',
+            mockEyeTracking: {
+                accuracy: 92,
+                fixations: 34
+            },
+            mockSentiments: ['positivo', 'neutral', 'positivo', 'negativo', 'positivo', 'neutral'],
+            mockNotesCount: 5,
+            waveformWidth: 1200,
+            currentTime: 0,
+            videoDuration: 100,
+            isPlaying: false,
+            _timelineInterval: null
+        };
+    },
+    methods: {
+        emitTimelineUpdate() {
+            const v1 = this.$refs.mainVideo1;
+            if (!v1) return;
+            // Actualiza el estado currentTime para sincronizar el slider
+            this.currentTime = v1.currentTime;
+        },
+        openTaskDialog(task) {
+            this.selectedTask = task;
+            this.taskDialog = true;
+            this.selectedThumb = 1;
+            this.selectedScreenThumb = 1;
+        },
+        formatTime(seconds) {
+            const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${min}:${sec}`;
+        },
+        onWaveformClick(event, track) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percent = x / rect.width;
+            this.snackbar.text = `Seleccionado en pista ${track === 1 ? 'Moderador' : 'Evaluador'}: ${(percent * 100).toFixed(1)}%`;
+            this.snackbar.visible = true;
+        },
+        handleTimelinePlayPause() {
+            const v1 = this.$refs.mainVideo1;
+            const v2 = this.$refs.mainVideo2;
+            if (!v1 || !v2) return;
+            if (v1.paused || v2.paused) {
+                v1.play();
+                v2.play();
+                this.isPlaying = true;
+            } else {
+                v1.pause();
+                v2.pause();
+                this.isPlaying = false;
+            }
+        },
+        handleTimelineSeek(time) {
+            console.log('[SessionAnalytics] handleTimelineSeek recibido:', time);
+            const v1 = this.$refs.mainVideo1;
+            const v2 = this.$refs.mainVideo2;
+            if (!v1 || !v2) return;
+            v1.currentTime = time;
+            v2.currentTime = time;
+            this.currentTime = time; // Actualiza el estado para el slider
+        },
+        watch: {
+            currentTime(newVal) {
+                console.log('[SessionAnalytics] watcher currentTime:', newVal);
+            }
+        },
+        updateTimeline() {
+            if (this.$refs.mainVideo1 && !this.$refs.mainVideo1.paused) {
+                this.emitTimelineUpdate();
+            }
+        }
+    },
+    mounted() {
+        this._timelineInterval = setInterval(() => {
+            this.updateTimeline();
+        }, 200);
+    },
+    beforeUnmount() {
+        clearInterval(this._timelineInterval);
+    }
+}
+
+</script>
+<style scoped>
+.video-rect-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.video-rect-skeleton {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    max-width: 1920px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fafafa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Screen video styles moved from template to style block */
+.screen-video-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.screen-video-skeleton {
+    width: 100%;
+    aspect-ratio: 19 / 6;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fafafa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.list-scroll {
+    height: 508px;
+    overflow: auto;
+}
+
+.list-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.list-scroll::-webkit-scrollbar-track {
+    background: none;
+}
+
+.list-scroll::-webkit-scrollbar-thumb {
+    background: #ffcd86;
+    border-radius: 4px;
+}
+
+.list-scroll::-webkit-scrollbar-thumb:hover {
+    background: #fca326;
+}
+
+.selected-user {
+    background-color: #ffecb3 !important;
+    font-weight: 600;
+}
+
+.video-sync-container {
+    gap: 32px;
+}
+
+.video-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.timeline-thumbnails {
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.thumb {
+    cursor: pointer;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+    padding: 2px;
+}
+
+.thumb-active {
+    border-color: #ff9800;
+    background: #fff3e0;
+}
+
+.timeline-bar-fixed {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    background: #f5f5f5;
+    z-index: 9999;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+    padding-top: 8px;
+}
+
+.timeline-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 24px 8px 24px;
+}
+
+.thumbnails-row {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 8px;
+}
+
+.waveform-row {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.waveform-track {
+    width: 100%;
+    height: 32px;
+    position: relative;
+    margin-bottom: 4px;
+}
+
+.waveform-bar-style {
+    display: flex;
+    align-items: flex-end;
+    height: 40px;
+    position: relative;
+}
+
+.waveform-bars {
+    display: flex;
+    align-items: flex-end;
+    height: 40px;
+    margin-left: 60px;
+}
+
+.waveform-label {
+    position: absolute;
+    left: 8px;
+    top: 2px;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.controls-row {
+    width: 100%;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+/* Solo afecta a esta view */
+:deep(.v-toolbar__content) {
+    max-height: 40px !important;
+    height: 40px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+</style>
