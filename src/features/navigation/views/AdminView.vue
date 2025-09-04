@@ -209,7 +209,7 @@ const currentPageTitle = computed(() => {
   }
 });
 
-const tests = computed(() => store.state.Tests.tests);
+const tests = computed(() => store.getters.tests || []);
 const templates = computed(() => store.state.Templates.templates || []);
 const user = computed(() => store.getters.user);
 
