@@ -90,13 +90,6 @@ const go = (item) => {
   overflow: scroll;
 }
 
-.nav {
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
 .background::-webkit-scrollbar {
   display: none;
 }

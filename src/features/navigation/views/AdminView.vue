@@ -276,7 +276,6 @@ const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
 const getPublicStudies = () => store.dispatch('getPublicStudies');
 const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
-const cleanTestStore = () => store.dispatch('cleanTest');
 
 const filterModeratedSessions = async () => {
   const userModeratedTests = Object.values(user.value.myAnswers).filter(
@@ -315,7 +314,6 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
 
 onMounted(async () => {
   await getMyPersonalTests();
-  await cleanTestStore();
 });
 
 // Event handler function
