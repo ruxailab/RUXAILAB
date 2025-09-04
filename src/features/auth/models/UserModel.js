@@ -5,7 +5,6 @@
  * @param {Object[]} notifications - An array of Notification value.
  * @param {UserAnswer[]} myAnswers - An array of UserAnswer value.
  * @param {Object[]} myTests - An array of UserTest value.
- * @param {Object[]} inbox - An array of past Notification values.
  * @param {string} username - The username of the user.
  * @param {string} contactNo - The contact number of the user.
  * @param {string} country - The country of the user.
@@ -16,7 +15,7 @@ import UserAnswer from "./UserAnswer";
 
 export default class User {
     constructor({
-        id, accessLevel, email, notifications = [], myAnswers = [], myTests = [], inbox = [],
+        id, accessLevel, email, notifications = [], myAnswers = [], myTests = [],
         username = null, contactNo = null, country = null, profileImage = '',
     } = {}) {
         this.id = id;
@@ -25,7 +24,6 @@ export default class User {
         this.notifications = notifications;
         this.myAnswers = myAnswers;
         this.myTests = myTests;
-        this.inbox = inbox;
         this.username = username;
         this.contactNo = contactNo;
         this.country = country;
@@ -45,19 +43,10 @@ export default class User {
             notifications: this.notifications,
             myAnswers: this.myAnswers,
             myTests: this.myTests,
-            inbox: this.inbox, // Include inbox in Firestore representation
             username: this.username, // Include username in Firestore representation
             contactNo: this.contactNo, // Include contactNo in Firestore representation
             country: this.country, // Include country in Firestore representation
             profileImage: this.profileImage, // Include profileImage in Firestore representation
         };
-    }
-
-    /**
-     * Move all current notifications to the inbox.
-     */
-    archiveNotifications() {
-        this.inbox = [...this.inbox, ...this.notifications]; // Add notifications to inbox
-        this.notifications = []; // Clear current notifications
     }
 }
