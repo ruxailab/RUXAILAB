@@ -109,7 +109,6 @@ const go = (item) => {
   color: rgb(87, 84, 100);
   font-weight: 700;
   font-size: 22px;
-  margin-bottom: 20px;
 }
 
 .back-gradient {
@@ -117,49 +116,5 @@ const go = (item) => {
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
-.text-div {
-  max-width: 45%;
-}
-
-.card-container {
-  width: 70%;
-}
-
-@media screen and (max-width: 960px) {
-  .presentation-text {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .text-div {
-    max-width: 100%;
-    margin: 0px 10px;
-    text-justify: center;
-  }
-
-  .image-back {
-    height: 300px;
-  }
-
-  .mobile-center {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .card-container {
-    width: 85%;
-  }
-
-  .back-gradient {
-    height: 100%;
-  }
-
-  .manager-bg {
-    height: 100%;
-    margin: 0 !important;
-  }
-}
 </style>
 
