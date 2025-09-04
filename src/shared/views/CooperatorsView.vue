@@ -31,6 +31,7 @@
       :cooperators="cooperatorsEdit"
       :loading="loading"
       :show-date-columns="true"
+      :show-session-column="showSessionColumn"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
@@ -99,6 +100,7 @@ import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useNotificationManager } from '@/shared/composables/useNotificationManager';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
+import Cooperators from '../models/Cooperators';
 
 const uidgen = new UIDGenerator();
 
@@ -111,6 +113,10 @@ const props = defineProps({
   hasRoleColumn: {
     type: Boolean,
     default: true
+  },
+  showSessionColumn: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -225,7 +231,8 @@ const changeRole = async (item, newValue) => {
 };
 
 const submit = async () => {
-  test.value.cooperators = [...cooperatorsEdit.value];
+  const coops = cooperatorsEdit.value.map((coop) => new Cooperators(coop));
+  test.value.cooperators = [...coops];
   await store.dispatch('updateStudy', test.value);
   cooperatorsEdit.value.forEach((guest) => {
     if (!guest.accepted) {
