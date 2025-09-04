@@ -455,7 +455,7 @@
               class="text-h5 pa-6"
               style="background-color: #fca326; color: white;"
             >
-              {{ itemEdit ? itemEdit.title : '' }}
+              {{ itemEdit && !isDialogClosing ? itemEdit.title : $t('HeuristicsTable.titles.loading') }}
             </v-card-title>
             <v-card-text class="pa-6 pt-0">
               <v-form
@@ -463,6 +463,7 @@
                 @submit.prevent="validateEdit"
               >
                 <v-text-field
+                  v-if="itemEdit && !isDialogClosing"
                   v-model="itemEdit.titleEdit"
                   :label="
                     itemEdit && itemEdit.title === $t('HeuristicsTable.titles.editHeuristic')
@@ -474,6 +475,13 @@
                   :rules="itemEdit ? itemEdit.rule : []"
                   autofocus
                 />
+                <v-alert
+                  v-else-if="dialogEdit"
+                  type="error"
+                  class="mt-4"
+                >
+                  {{ $t('HeuristicsTable.errors.failedToLoadEditForm') }}
+                </v-alert>
               </v-form>
             </v-card-text>
             <v-card-actions class="pa-6 pt-0">
@@ -481,6 +489,7 @@
               <v-btn
                 variant="text"
                 @click="closeDialog('dialogEdit')"
+                :disabled="isProcessing"
               >
                 {{ $t('HeuristicsTable.titles.cancel') }}
               </v-btn>
@@ -488,6 +497,7 @@
                 color="primary"
                 variant="elevated"
                 @click="validateEdit"
+                :disabled="isProcessing || !itemEdit || isDialogClosing"
               >
                 {{ $t('HeuristicsTable.titles.ok') }}
               </v-btn>
@@ -500,7 +510,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
@@ -524,6 +534,7 @@ const formEditRef = ref(null)
 const formQuestionRef = ref(null)
 const formHeurisRef = ref(null)
 const descBtn = ref(null)
+const isProcessing = ref(false)
 
 const headers = ref([
   { title: t('HeuristicsTable.titles.title'), align: 'start', value: 'title' },
@@ -663,19 +674,31 @@ const deleteQuestion = (qIndex) => {
 }
 
 const editHeuris = (item) => {
+  const heuristicIndex = heuristics.value.findIndex(h => h.id === item.id)
+  if (heuristicIndex === -1) {
+    console.warn('Heuristic not found:', item);
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return
+  }
   itemEdit.value = {
     title: t('HeuristicsTable.titles.editHeuristic'),
-    titleEdit: item.title,
+    titleEdit: item.title || '',
     rule: nameRequired.value,
     id: item.id,
   }
+  itemSelect.value = heuristicIndex
   dialogEdit.value = true
 }
 
 const editQuestions = (item) => {
+  if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
+    console.warn('Invalid heuristic for question edit, itemSelect:', itemSelect.value);
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return;
+  }
   itemEdit.value = {
     title: t('HeuristicsTable.titles.editQuestion'),
-    titleEdit: item.title,
+    titleEdit: item.title || '',
     rule: questionRequired.value,
     id: item.id,
   };
@@ -725,6 +748,7 @@ const addHeuris = () => {
 };
 
 const closeDialog = (dialogName) => {
+  if (isProcessing.value) return;
   if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
     formHeurisRef.value.resetValidation()
     formHeurisRef.value.reset()
@@ -732,12 +756,10 @@ const closeDialog = (dialogName) => {
   if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
     formQuestionRef.value.resetValidation();
     formQuestionRef.value.reset();
-    // Do not reset newQuestion here to prevent null access
   }
   if (dialogName === 'dialogEdit' && formEditRef.value) {
     formEditRef.value.resetValidation()
     formEditRef.value.reset()
-    itemEdit.value = null
   }
 
   if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
@@ -763,20 +785,47 @@ const addQuestion = () => {
 };
 
 const validateEdit = () => {
-  if (formEditRef.value.validate()) {
+  if (isProcessing.value) {
+    console.warn('Validation in progress, aborting');
+    return;
+  }
+  if (!itemEdit.value) {
+    console.warn('itemEdit is null, aborting validation');
     dialogEdit.value = false;
+    return;
+  }
+  if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
+    console.warn('Invalid itemSelect or heuristic not found:', itemSelect.value);
+    dialogEdit.value = false;
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return;
+  }
+  isProcessing.value = true;
+
+  if (formEditRef.value.validate()) {
     const newHeuristics = [...heuristics.value];
     if (itemEdit.value.title === t('HeuristicsTable.titles.editHeuristic')) {
       newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit;
     } else {
-      const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(q => q.id === itemEdit.value.id);
+      const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(
+        (q) => q.id === itemEdit.value.id
+      );
       if (questionIndex !== -1) {
         newHeuristics[itemSelect.value].questions[questionIndex].title = itemEdit.value.titleEdit;
+      } else {
+        console.warn('Question not found for id:', itemEdit.value.id);
+        toast.error(t('HeuristicsTable.errors.invalidQuestion'));
       }
     }
     store.dispatch('setHeuristics', newHeuristics);
-    itemEdit.value = null;
     emit('change');
+    dialogEdit.value = false;
+    nextTick(() => {
+      dialogEdit.value = false
+      isProcessing.value = false
+    });
+  } else {
+    isProcessing.value = false;
   }
 };
 
