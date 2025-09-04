@@ -67,7 +67,7 @@ export default [
         component: ReportView,
       },
       {
-        path: '/userTest/moderated/answers/:id/:token?',
+        path: '/userTest/moderated/answer/:id/:token?',
         name: 'UserModeratedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },

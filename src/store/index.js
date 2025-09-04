@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import Auth from '@/features/auth/store/Auth'
 import Templates from '@/features/templates/Template'
 import Tests from '@/store/modules/Study'
-import Users from '@/store/modules/User'
+import Users from '@/features/super/store/User'
 import Reports from '@/shared/store/Report'
 import Heuristic from '@/ux/Heuristic/store/Heuristic'
 import Answer from '@/shared/store/Answer'
@@ -11,6 +11,7 @@ import Assessment from './modules/Assessment'
 import ManualAccessibilityTest from './modules/ManualAccessibilityTest'
 import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
 import automaticReport from '@/store/modules/automaticReport'
+import UserStudy from '@/ux/UserTest/store/UserStudy'
 
 export default createStore({
   state: {
@@ -77,5 +78,6 @@ export default createStore({
     Answer,
     Language,
     automaticReport,
+    UserStudy,
   }
 })
