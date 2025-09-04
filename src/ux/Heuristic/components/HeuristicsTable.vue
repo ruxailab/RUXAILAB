@@ -546,6 +546,7 @@ const formQuestionRef = ref(null)
 const formHeurisRef = ref(null)
 const descBtn = ref(null)
 const isProcessing = ref(false)
+const questionHeuristicIndex = ref(null)
 
 const headers = ref([
   { title: t('HeuristicsTable.titles.title'), align: 'start', value: 'title' },
@@ -725,20 +726,21 @@ const editDescription = (desc) => {
 };
 
 const setupQuestion = (heuristicIndex) => {
-  if (heuristics.value[heuristicIndex] === undefined) {
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
-    return;
+  if (!heuristics.value[heuristicIndex]) {
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    return
   }
-  const questions = heuristics.value[heuristicIndex].questions || [];
-  const lastQuestionId = questions.length > 0 ? questions[questions.length - 1].id : -1;
+  questionHeuristicIndex.value = heuristicIndex  // remember index
+  const questions = heuristics.value[heuristicIndex].questions || []
+  const lastQuestionId = questions.length > 0 ? questions[questions.length - 1].id : -1
   newQuestion.value = {
     id: lastQuestionId + 1,
     title: '',
     descriptions: [],
     comparison: [],
-  };
-  dialogQuestion.value = true;
-};
+  }
+  dialogQuestion.value = true
+}
 
 const deleteItem = (item) => {
   const newHeuristics = [...heuristics.value];
@@ -782,21 +784,23 @@ const closeDialog = (dialogName) => {
 };
 
 const addQuestion = () => {
-  if (!newQuestion.value) {
-    toast.error(t('HeuristicsTable.errors.questionNotInitialized'));
-    return;
+  if (!newQuestion.value || questionHeuristicIndex.value === null) {
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    return
   }
   if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false;
-    const newHeuristics = [...heuristics.value];
-    newHeuristics[itemSelect.value].questions.push({ ...newQuestion.value });
-    newHeuristics[itemSelect.value].total = newHeuristics[itemSelect.value].questions.length;
-    store.dispatch('setHeuristics', newHeuristics);
-    newQuestion.value = null; // Reset after adding
-    formQuestionRef.value.resetValidation();
-    emit('change');
+    dialogQuestion.value = false
+    const newHeuristics = [...heuristics.value]
+    newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
+    newHeuristics[questionHeuristicIndex.value].total =
+      newHeuristics[questionHeuristicIndex.value].questions.length
+    store.dispatch('setHeuristics', newHeuristics)
+    newQuestion.value = null
+    questionHeuristicIndex.value = null
+    formQuestionRef.value.resetValidation()
+    emit('change')
   }
-};
+}
 
 const validateEdit = () => {
   if (isProcessing.value) {
