@@ -136,7 +136,20 @@ const getConsent = () => {
   consent.value = test.value.testStructure.consent || ''
 }
 
+const getTasks = () => {
+  store.dispatch('setTasks', test.value.testStructure.userTasks || [])
+}
+
+const getPreTest = () => {
+  preTest.value = test.value.testStructure.preTest || []
+}
+
+const getPostTest = () => {
+  postTest.value = test.value.testStructure.postTest || []
+}
+
 const save = async () => {
+  console.log('Saving test changes...')
   change.value = false;
 
   const testStructure = {
@@ -149,6 +162,8 @@ const save = async () => {
   }
 
   const rawData = { ...test.value, testStructure: testStructure };
+
+  console.log('Raw data to save:', rawData.testStructure);
   const study = instantiateStudyByType(rawData.testType, rawData);
   await store.dispatch('updateStudy', study);
 }
@@ -158,6 +173,9 @@ onMounted(() => {
   getWelcome()
   getFinalMessage()
   getConsent()
+  getPreTest()
+  getPostTest()
+  getTasks()
 })
 </script>
 
