@@ -23,24 +23,24 @@ const accessibilityRoutes = [
         '/accessibility/manual',
         AccessibilityManagerView,
         [
-            { path: '', name: 'AccessibilityHome', component: AccessibilityHome },
-            { path: '/edit/:testId', name: 'EditAccessibilityTest', component: EditAccessibilityTest },
-            { path: '/preview/:testId', name: 'AccessibilityPreviewTest', component: AccessibilityPreviewTest },
-            { path: '/result/:testId', name: 'AccessibilityTestAnswers', component: AccessibilityTestAnswers },
-            { path: '/cooperative/:testId', name: 'AccessibilityTestCooperative', component: AccessibilityTestCooperative },
-            { path: '/config/:testId', name: 'AccessibilityConfig', component: AccessibilityConfig }
+            { path: '/accessibility/manual/:testId', name: 'AccessibilityHome', component: AccessibilityHome },
+            { path: '/accessibility/manual/edit/:testId', name: 'EditAccessibilityTest', component: EditAccessibilityTest },
+            { path: '/accessibility/manual/preview/:testId', name: 'AccessibilityPreviewTest', component: AccessibilityPreviewTest },
+            { path: '/accessibility/manual/result/:testId', name: 'AccessibilityTestAnswers', component: AccessibilityTestAnswers },
+            { path: '/accessibility/manual/cooperative/:testId', name: 'AccessibilityTestCooperative', component: AccessibilityTestCooperative },
+            { path: '/accessibility/manual/config/:testId', name: 'AccessibilityConfig', component: AccessibilityConfig }
         ]
     ),
     ...createAccessibilityRoutes(
         '/accessibility/automatic',
         AutomatedAccessibilityManager,
         [
-            { path: '', name: 'AutomatedAccessibilityHome', component: AutomatedAccessibilityHome },
-            { path: '/analyse/:testId', name: 'Analyse', component: Analyse },
-            { path: '/answers/:testId', name: 'AccessibilityAnswers', component: AccessibilityAnswers },
-            { path: '/reports/:testId', name: 'AccessibilityReport', component: AccessibilityReport },
-            { path: '/cooperation/:testId', name: 'AccessibilityCooperation', component: AccessibilityCooperation },
-            { path: '/settings/:testId', name: 'AccessibilitySettings', component: AccessibilitySettings }
+            { path: '/accessibility/automatic/:testId', name: 'AutomatedAccessibilityHome', component: AutomatedAccessibilityHome },
+            { path: '/accessibility/automatic/analyse/:testId', name: 'Analyse', component: Analyse },
+            { path: '/accessibility/automatic/answers/:testId', name: 'AccessibilityAnswers', component: AccessibilityAnswers },
+            { path: '/accessibility/automatic/reports/:testId', name: 'AccessibilityReport', component: AccessibilityReport },
+            { path: '/accessibility/automatic/cooperation/:testId', name: 'AccessibilityCooperation', component: AccessibilityCooperation },
+            { path: '/accessibility/automatic/settings/:testId', name: 'AccessibilitySettings', component: AccessibilitySettings }
         ]
     )
 ];

@@ -1,7 +1,8 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
+  <PageWrapper 
+    title="Accessibility Assessment Results"
+    :loading="isLoading"
+    loading-text="Loading assessment data..."
   >
     <v-row>
       <v-col cols="12">
@@ -209,13 +210,12 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
 
-  <!-- Notes Dialog -->
-  <v-dialog
-    v-model="notesDialog.show"
-    max-width="800px"
-  >
+    <!-- Notes Dialog -->
+    <v-dialog
+      v-model="notesDialog.show"
+      max-width="800px"
+    >
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
         <span>Notes for {{ notesDialog.ruleId }} -
@@ -289,10 +289,12 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  </PageWrapper>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
