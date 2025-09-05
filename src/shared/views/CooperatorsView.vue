@@ -241,7 +241,7 @@ const changeRole = async (item, newValue) => {
 };
 
 const submit = async () => {
-  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.id}));
+  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}));
   test.value.cooperators = [...coops];
   await store.dispatch('updateStudy', test.value);
   cooperatorsEdit.value.forEach((guest) => {
@@ -252,7 +252,6 @@ const submit = async () => {
 };
 
 const notifyCooperator = (guest) => {
-  console.log('guest', guest);
   if (guest.userDocId) {
     const path = 'testview';
     sendNotification({
