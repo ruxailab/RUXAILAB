@@ -1,20 +1,14 @@
 <template>
-  <v-container
-    fluid
-    class="pa-1"
+  <PageWrapper 
+    title="Accessibility Test Answers"
+    :loading="isLoading"
+    loading-text="Loading accessibility test results..."
   >
-    <!-- Loading State -->
-    <v-skeleton-loader
-      v-if="isLoading"
-      type="article, table-heading, table-tbody"
-      class="mx-auto"
-    />
-
     <!-- Error State -->
     <!-- if the data not available  -->
     
     <v-alert
-      v-else-if="error"
+      v-if="error"
       type="info"
       variant="tonal"
       closable
@@ -625,14 +619,18 @@
         No report data available.
       </v-alert>
     </div>
-  </v-container>
+  </PageWrapper>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
   name: 'ReportDetail',
+  components: {
+    PageWrapper
+  },
   data() {
     const testId = this.$route.params.testId || this.$route.params.id
     return {

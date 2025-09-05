@@ -20,15 +20,15 @@ export const createNavItem = (title, icon, path) => ({
  */
 export const createPathGenerators = (testId) => ({
     accessibility: (page) => `/accessibility/automatic/${testId}/${page}`.replace('//', '/'),
-    analyse: () => `/analyse/${testId}`,
-    answers: () => `/answers/${testId}`,
-    reports: () => `/reports/${testId}`,
-    settings: () => `/settings/${testId}`,
-    config: () => `/config/${testId}`,
-    edit: () => `/edit/${testId}`,
-    preview: () => `/preview/${testId}`,
-    result: () => `/result/${testId}`,
-    cooperative: () => `/cooperative/${testId}`,
+    analyse: () => `/accessibility/automatic/analyse/${testId}`,
+    answers: () => `/accessibility/automatic/answers/${testId}`,
+    reports: () => `/accessibility/automatic/reports/${testId}`,
+    settings: () => `/accessibility/automatic/settings/${testId}`,
+    config: () => `/accessibility/automatic/config/${testId}`,
+    edit: () => `/accessibility/automatic/edit/${testId}`,
+    preview: () => `/accessibility/automatic/preview/${testId}`,
+    result: () => `/accessibility/automatic/result/${testId}`,
+    cooperative: () => `/accessibility/automatic/cooperative/${testId}`,
 })
 
 /**
