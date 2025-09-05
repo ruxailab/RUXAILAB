@@ -322,8 +322,8 @@ const mutations = {
 }
 
 // Import the assessment controller
-import * as assessmentController from '../../controllers/assessmentController';
-import { saveConfigData } from '../../controllers/assessmentController';
+import * as assessmentController from '../controllers/assessmentController';
+import { saveConfigData } from '../controllers/assessmentController';
 
 const actions = {
   // Update configuration (local and Firestore)
