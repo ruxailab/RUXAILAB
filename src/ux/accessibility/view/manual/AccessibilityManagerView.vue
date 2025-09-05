@@ -22,7 +22,7 @@ const drawerOpen = ref(false)
 // Navigation items for the drawer
 const navItems = computed(() => [
   {
-    title: 'Home',
+    title: 'Manager',
     icon: 'mdi-home',
     path: `/accessibility/manual/${testId.value}`,
   },
@@ -32,7 +32,7 @@ const navItems = computed(() => [
     path: `/accessibility/manual/config/${testId.value}`,
   },
   {
-    title: 'Edit Test',
+    title: 'Edit Study',
     icon: 'mdi-pencil',
     path: `/accessibility/manual/edit/${testId.value}`,
   },
@@ -43,12 +43,12 @@ const navItems = computed(() => [
   },
   {
     title: 'Answers',
-    icon: 'mdi-comment-question',
+    icon: 'mdi-order-bool-ascending-variant',
     path: `/accessibility/manual/result/${testId.value}`,
   },
   {
     title: 'Cooperator',
-    icon: 'mdi-account-multiple',
+    icon: 'mdi-account-group',
     path: `/accessibility/manual/cooperative/${testId.value}`,
   },
 ])
