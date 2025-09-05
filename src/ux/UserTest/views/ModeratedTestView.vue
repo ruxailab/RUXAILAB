@@ -149,7 +149,7 @@
 </template>
 
 <script setup>
-import { ref as dbRef, onValue, off, update, set } from "firebase/database";
+import { ref as dbRef, onValue, off, update, set, onDisconnect } from "firebase/database";
 import { database } from "@/app/plugins/firebase/index";
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -356,6 +356,8 @@ const startTest = () => {
 
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`);
+
+  onDisconnect(roomRef).set(null);
 
   onValue(roomRef, (snapshot) => {
     const data = snapshot.val();
