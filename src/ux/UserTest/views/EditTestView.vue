@@ -116,8 +116,6 @@ const store = useStore()
 const change = ref(false)
 const welcomeMessage = ref('')
 const finalMessage = ref('')
-const preTest = ref([])
-const postTest = ref([])
 const consent = ref('')
 const index = ref(0)
 
@@ -141,11 +139,11 @@ const getTasks = () => {
 }
 
 const getPreTest = () => {
-  preTest.value = test.value.testStructure.preTest || []
+  store.dispatch('setPreTest', test.value.testStructure.preTest || [])
 }
 
 const getPostTest = () => {
-  postTest.value = test.value.testStructure.postTest || []
+  store.dispatch('setPostTest', test.value.testStructure.postTest || [])
 }
 
 const save = async () => {
@@ -155,9 +153,9 @@ const save = async () => {
   const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: preTest.value,
+      preTest: store.getters.preTest,
       userTasks: store.getters.tasks,
-      postTest: postTest.value,
+      postTest: store.getters.postTest,
       consent: consent.value,
   }
 
