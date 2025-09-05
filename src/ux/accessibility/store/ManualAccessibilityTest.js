@@ -1,4 +1,4 @@
-import ManualAccessibilityController from '@/controllers/ManualAccessibilityController';
+import ManualAccessibilityController from '@/ux/accessibility/controllers/ManualAccessibilityController';
 import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
 
 const state = {
