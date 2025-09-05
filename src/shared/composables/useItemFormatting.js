@@ -10,14 +10,14 @@ export function useItemFormatting(type) {
     }
 
     const getOwnerName = (item) => {
-        if (type.value === 'myTests' || type.value === 'myTemplates') {
-            return t('pages.listTests.me')
-        }
+        // if (type.value === 'myTests' || type.value === 'myTemplates') {
+        //     return t('pages.listTests.me')
+        // }
         return (
             item.testAdmin?.email ??
             item.header?.templateAuthor?.userEmail ??
             item.testAuthorEmail ??
-            'Unknown'
+            t('pages.listTests.me')
         )
     }
 

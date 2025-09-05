@@ -219,8 +219,22 @@ export default {
           const userController = new UserController()
           const userDoc = await userController.getById(user.uid)
 
-          if (userDoc && userDoc.myTests) {
-            const tests = Object.values(userDoc.myTests)
+          if (userDoc) {
+            const tests = []
+
+            if (userDoc.myTests) {
+              for (const test of Object.values(userDoc.myTests)) {
+                tests.push(test)
+              }
+            }
+
+            /// Tests where user is a cooperator
+            if (userDoc.myAnswers) {
+              for (const answer of Object.values(userDoc.myAnswers)) {
+                tests.push(answer)
+              }
+            }
+
             commit('SET_TESTS', tests)
           } else {
             console.error('User document or myTests field not found in Firestore')
