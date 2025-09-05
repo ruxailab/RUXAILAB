@@ -1,20 +1,10 @@
 <template>
-  <v-app>
-    <v-overlay
-      v-model="isLoading"
-      class="align-center justify-center"
-      opacity="0.8"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="primary"
-      />
-      <div class="mt-4 text-h6">
-        Loading WCAG Data...
-      </div>
-    </v-overlay>
-
+  <PageWrapper 
+    title="Accessibility Test Preview"
+    :loading="isLoading"
+    loading-text="Loading WCAG Data..."
+    :side-gap="false"
+  >
     <v-alert
       v-if="error"
       type="error"
@@ -629,7 +619,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-app>
+  </PageWrapper>
 </template>
 
 <script setup>
@@ -637,6 +627,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 const toast = useToast()
 const store = useStore()

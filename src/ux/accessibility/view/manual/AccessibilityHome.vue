@@ -1,19 +1,20 @@
 <template>
-  <v-app>
-    <v-main>
-      <!-- Manager-style Header (uses same image as ManagerView) -->
-       <div class="h-64">
-         <ManagerBanner />
-       </div>
-      <!-- Cards section using CardsManager so it matches ManagerView UI -->
-      <v-container class="card-container pt-6 pb-10">
-        <p class="presentation-text text-center text-md-left mb-4">
-          {{ $t('accessibility.description') }}
-        </p>
-        <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
-      </v-container>
-    </v-main>
-  </v-app>
+  <PageWrapper 
+    title="Manual Accessibility Testing"
+    :side-gap="false"
+  >
+    <!-- Manager-style Header (uses same image as ManagerView) -->
+    <div class="h-64">
+      <ManagerBanner />
+    </div>
+    <!-- Cards section using CardsManager so it matches ManagerView UI -->
+    <v-container class="card-container pt-6 pb-10">
+      <p class="presentation-text text-center text-md-left mb-4">
+        {{ $t('accessibility.description') }}
+      </p>
+      <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+    </v-container>
+  </PageWrapper>
 </template>
 
 <script setup>
@@ -21,6 +22,7 @@ import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
 import { useI18n } from 'vue-i18n';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CardsManager from '@/shared/components/CardsManager';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
 import { getManualAccessibilityCards } from '@/ux/accessibility/utils/constants';
