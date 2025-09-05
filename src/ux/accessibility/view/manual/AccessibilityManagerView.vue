@@ -1,11 +1,8 @@
 <template>
   <v-app>
     <AccessibilityDrawer ref="accessibilityDrawer" v-model="drawerOpen" :items="navItems" @toggle="onDrawerToggle" />
-
     <v-main>
-      
         <router-view />
-      
     </v-main>
   </v-app>
 </template>
