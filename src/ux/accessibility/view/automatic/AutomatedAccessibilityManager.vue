@@ -38,22 +38,22 @@ const navItems = computed(() => [
     {
         title: 'Analyse',
         icon: 'mdi-magnify',
-        path: `/analyse/${testId.value}`
+        path: `/accessibility/automatic/analyse/${testId.value}`
     },
     {
         title: 'Answers',
         icon: 'mdi-comment-question',
-        path: `/answers/${testId.value}`
+        path: `/accessibility/automatic/answers/${testId.value}`
     },
     {
         title: 'Report',
         icon: 'mdi-chart-bar',
-        path: `/reports/${testId.value}`
+        path: `/accessibility/automatic/reports/${testId.value}`
     },
     {
         title: 'Settings',
         icon: 'mdi-cog',
-        path: `/settings/${testId.value}`
+        path: `/accessibility/automatic/settings/${testId.value}`
     },
 ])
 

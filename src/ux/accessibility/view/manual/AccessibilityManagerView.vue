@@ -29,27 +29,27 @@ const navItems = computed(() => [
   {
     title: 'Config',
     icon: 'mdi-cog',
-    path: `/config/${testId.value}`,
+    path: `/accessibility/manual/config/${testId.value}`,
   },
   {
     title: 'Edit Test',
     icon: 'mdi-pencil',
-    path: `/edit/${testId.value}`,
+    path: `/accessibility/manual/edit/${testId.value}`,
   },
   {
     title: 'Preview',
     icon: 'mdi-clipboard-check',
-    path: `/preview/${testId.value}`,
+    path: `/accessibility/manual/preview/${testId.value}`,
   },
   {
     title: 'Answers',
     icon: 'mdi-comment-question',
-    path: `/result/${testId.value}`,
+    path: `/accessibility/manual/result/${testId.value}`,
   },
   {
     title: 'Cooperator',
     icon: 'mdi-account-multiple',
-    path: `/cooperative/${testId.value}`,
+    path: `/accessibility/manual/cooperative/${testId.value}`,
   },
 ])
 
