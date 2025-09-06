@@ -64,7 +64,7 @@ export function useNotificationManager() {
             userId,
             title: 'Manual Accessibility Test Invitation',
             description: message,
-            redirectsTo: `preview/${testId}`,
+            redirectsTo: `accessibility/manual/preview/${testId}`,
             testId
         });
     };
@@ -77,7 +77,7 @@ export function useNotificationManager() {
             userId,
             title: 'Manual Accessibility Test Reminder',
             description: 'This is a reminder about your accessibility test invitation.',
-            redirectsTo: `preview/${testId}`,
+            redirectsTo: `accessibility/manual/preview/${testId}`,
             testId
         });
     };
