@@ -17,27 +17,8 @@
         />
 
         <v-card v-if="selectedUserId">
-          <v-card-title class="d-flex justify-space-between align-center">
+          <v-card-title>
             <span>Accessibility Assessment Results</span>
-            <div>
-              <v-btn
-                color="primary"
-                prepend-icon="mdi-download"
-                class="mr-2"
-                :loading="isLoading"
-                @click="downloadAssessmentData"
-              >
-                Export JSON
-              </v-btn>
-              <v-btn
-                color="secondary"
-                :loading="isLoading"
-                prepend-icon="mdi-refresh"
-                @click="loadAssessmentData"
-              >
-                Refresh
-              </v-btn>
-            </div>
           </v-card-title>
 
           <!-- Level Filter -->
@@ -701,27 +682,6 @@ const loadAssessmentData = async (userId) => {
     )
   } finally {
     isLoading.value = false
-  }
-}
-
-const downloadAssessmentData = () => {
-  try {
-    const dataStr = JSON.stringify(assessmentData.value, null, 2)
-    const dataUri =
-      'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
-
-    const exportFileDefaultName = `accessibility-assessment-${new Date().toISOString().split('T')[0]
-      }.json`
-
-    const linkElement = document.createElement('a')
-    linkElement.setAttribute('href', dataUri)
-    linkElement.setAttribute('download', exportFileDefaultName)
-    linkElement.click()
-
-    toast.success('Assessment data exported successfully')
-  } catch (error) {
-    console.error('Error exporting assessment data:', error)
-    toast.error('Failed to export assessment data')
   }
 }
 
