@@ -173,6 +173,7 @@
 
 <script setup>
 import Cooperators from '@/shared/models/Cooperators';
+import Notification from '@/shared/models/Notification';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
