@@ -1,37 +1,53 @@
 <template>
-  <v-container class="pa-0 ma-0" fluid>
+  <v-container
+    class="pa-0 ma-0"
+    fluid
+  >
     <Snackbar />
     <Loading />
 
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+    <v-row
+      v-if="test"
+      class="nav pa-0 ma-0"
+      dense
+    >
       <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="$route.path.includes('manager')">
-          <ManagerBanner :title="test.testTitle" />
+          <slot>
+            <div>
+              <ManagerBanner :title="test.testTitle" />
+              <v-container class="card-container">
+                <div v-if="topCards.length">
+                  <div class="presentation-text">
+                    {{ $t('common.editAndInvite') }}
+                  </div>
 
-          <div>
-            <v-container class="card-container">
-              <div v-if="topCards.length">
-                <div class="presentation-text">
-                  {{ $t('common.editAndInvite') }}
+                  <!-- Top Cards -->
+                  <CardsManager
+                    :cards="topCards"
+                    :per-row="2"
+                    @click="go"
+                  />
                 </div>
 
-                <!-- Top Cards -->
-                <CardsManager :cards="topCards" :per-row="2" @click="go" />
-              </div>
+                <div v-if="bottomCards.length">
+                  <div class="presentation-text mt-5">
+                    {{ $t('common.analyzeProject') }}
+                  </div>
 
-              <div v-if="bottomCards.length">
-                <div class="presentation-text mt-5">
-                  {{ $t('common.analyzeProject') }}
+                  <!-- Bottom Cards -->
+                  <CardsManager
+                    :cards="bottomCards"
+                    :per-row="2"
+                    @click="go"
+                  />
                 </div>
-
-                <!-- Bottom Cards -->
-                <CardsManager :cards="bottomCards" :per-row="2" @click="go" />
-              </div>
-            </v-container>
-          </div>
+              </v-container>
+            </div>
+          </slot>
         </div>
 
         <router-view />
