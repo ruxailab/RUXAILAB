@@ -51,6 +51,9 @@ export default createStore({
     SET_PATH_TO(state, payload) {
       state.pathTo = payload
     },
+    clearError(state) {
+      state.error = null
+    },
   },
   getters: {
     getToastMessage(state) {
@@ -64,6 +67,12 @@ export default createStore({
     },
     localChanges(state) {
       return state.localChanges
+    },
+    isLoading(state) {
+      return state.loading
+    },
+    getError(state) {
+      return state.error
     },
   },
   modules: {

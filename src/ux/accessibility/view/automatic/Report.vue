@@ -668,8 +668,8 @@ const testId = computed(() => route.params.testId || route.params.id)
 
 // Computed properties from store
 const report = computed(() => store.getters['automaticReport/report'])
-const reportLoading = computed(() => store.getters['automaticReport/isLoading'])
-const reportError = computed(() => store.getters['automaticReport/error'])
+const reportLoading = computed(() => store.getters.isLoading)
+const reportError = computed(() => store.getters.getError)
 
 // Pa11y issues
 const allIssues = computed(() => report.value?.ReportIssues || [])
