@@ -150,7 +150,7 @@
           v-model:dialog="tempDialog"
           :template="temp"
           :allow-create="true"
-          @close="tempDialog = false"
+          @close="reloadMyTemplates()"
         />
       </v-container>
     </v-main>
@@ -308,6 +308,11 @@ const filterModeratedSessions = async () => {
   }
   filteredModeratedSessions.value = cooperatorArray;
 };
+
+const reloadMyTemplates = async () => {
+  tempDialog.value = false
+  await getMyTemplates()
+}
 
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {

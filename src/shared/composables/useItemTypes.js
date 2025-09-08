@@ -2,7 +2,6 @@ import {
     getMethodDefinition,
     getMethodIcon,
     getMethodColor,
-    getMethodName
 } from '@/shared/constants/methodDefinitions'
 
 export function useItemTypes() {

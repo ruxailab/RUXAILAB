@@ -602,6 +602,7 @@ const createTemplate = async () => {
       templateDescription: template.value.templateDescription,
       templateTitle: template.value.templateTitle,
       templateType: test.value.testType,
+      templateSubType: test.value.subType || null,
       templateVersion: '1.0.0',
       templateAuthor: new TemplateAuthor({
         userEmail: test.value.testAdmin.email,
