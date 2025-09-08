@@ -25,13 +25,96 @@ import { useI18n } from 'vue-i18n';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CardsManager from '@/shared/components/CardsManager';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
-import { getManualAccessibilityCards } from '@/ux/accessibility/utils/constants';
+import { ICONS, createCardConfig } from '@/shared/constants/theme';
 
 const route = useRoute();
 const router = useRouter();
 const { mdAndUp } = useDisplay();
 const { t } = useI18n();
 const testId = ref(route.params.testId || '');
+
+// Direct manual accessibility cards implementation
+const manualAccessibilityCardsConfig = [
+  {
+    titleKey: 'titles.manager',
+    icon: ICONS.HOME,
+    subtitleKey: 'descriptions.edit',
+    descriptionKey: 'descriptions.edit',
+    route: '',
+    theme: 'MANAGER',
+  },
+  {
+    titleKey: 'titles.test',
+    icon: ICONS.SETTINGS,
+    subtitleKey: 'accessibility.cards.config.subtitle',
+    descriptionKey: 'accessibility.cards.config.description',
+    routeKey: 'config',
+    theme: 'CONFIG',
+  },
+  {
+    titleKey: 'titles.test',
+    icon: ICONS.EDIT,
+    subtitleKey: 'descriptions.edit',
+    descriptionKey: 'accessibility.cards.edit.description',
+    routeKey: 'edit',
+    theme: 'EDIT',
+  },
+  {
+    titleKey: 'titles.preview',
+    icon: ICONS.VIEW,
+    subtitleKey: 'descriptions.reports',
+    descriptionKey: 'descriptions.reports',
+    routeKey: 'preview',
+    theme: 'PREVIEW',
+  },
+  {
+    titleKey: 'titles.answers',
+    icon: ICONS.QUESTIONS,
+    subtitleKey: 'descriptions.answers',
+    descriptionKey: 'descriptions.answers',
+    routeKey: 'result',
+    theme: 'ANSWERS',
+  },
+  {
+    titleKey: 'titles.cooperators',
+    icon: ICONS.USERS,
+    subtitleKey: 'descriptions.cooperators',
+    descriptionKey: 'descriptions.cooperators',
+    routeKey: 'cooperative',
+    theme: 'COOPERATORS',
+  },
+];
+
+// Path generators
+const createPathGenerators = (testId) => ({
+  accessibility: (page) => `/accessibility/automatic/${testId}/${page}`.replace('//', '/'),
+  analyse: () => `/accessibility/automatic/analyse/${testId}`,
+  answers: () => `/accessibility/automatic/answers/${testId}`,
+  reports: () => `/accessibility/automatic/reports/${testId}`,
+  settings: () => `/accessibility/automatic/settings/${testId}`,
+  config: () => `/accessibility/manual/config/${testId}`,
+  edit: () => `/accessibility/manual/edit/${testId}`,
+  preview: () => `/accessibility/manual/preview/${testId}`,
+  result: () => `/accessibility/manual/result/${testId}`,
+  cooperative: () => `/accessibility/manual/cooperative/${testId}`,
+});
+
+const getManualAccessibilityCards = (t, testId) => {
+  const paths = createPathGenerators(testId);
+
+  return manualAccessibilityCardsConfig.map(config => {
+    const cardTheme = createCardConfig(config.theme);
+
+    return {
+      title: t(config.titleKey),
+      icon: config.icon,
+      subtitle: t(config.subtitleKey),
+      description: t(config.descriptionKey),
+      route: config.routeKey ? paths[config.routeKey]() : config.route,
+      ...cardTheme,
+    };
+  });
+};
 
 const cards = ref(getManualAccessibilityCards(t, testId.value));
 
