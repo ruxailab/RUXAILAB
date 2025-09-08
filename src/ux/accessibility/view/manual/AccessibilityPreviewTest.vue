@@ -636,7 +636,7 @@ const error = ref('')
 const selectedCriteria = ref([])
 const user = computed(() => store.getters.user)
 // Computed properties from store
-const isLoading = computed(() => store.state.Assessment?.isLoading || false)
+const isLoading = computed(() => store.getters.isLoading || false)
 // Use filteredWcagData so only selected guidelines/rules are shown
 const principles = computed(
   () => store.state.Assessment?.filteredWcagData?.principles || []

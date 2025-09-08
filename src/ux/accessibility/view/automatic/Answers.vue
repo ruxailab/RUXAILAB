@@ -644,7 +644,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('automaticReport', ['report', 'isLoading', 'error']),
+    ...mapState('automaticReport', ['report']),
+    isLoading() {
+      return this.$store.getters.isLoading;
+    },
+    error() {
+      return this.$store.getters.getError;
+    },
     paginatedIssues() {
       if (!this.report || !this.report.ReportIssues) return []
       const start = (this.page - 1) * this.itemsPerPage
@@ -661,11 +667,10 @@ export default {
   },
     mounted() {
     if (!this.testId) {
-      this.$store.commit(
-        'automaticReport/SET_ERROR',
-        'No testId provided in route.',
-      )
-      this.$store.commit('automaticReport/SET_LOADING', false)
+      this.$store.commit('setError', {
+        errorCode: 'NO_TEST_ID',
+        message: 'No testId provided in route.'
+      })
       return
     }
     this.fetchReport(this.testId).then(() => {
