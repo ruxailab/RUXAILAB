@@ -26,7 +26,7 @@
           </v-avatar>
         </template>
         <span>
-          {{ item.header?.templateType ?? getTestType(item) }}
+          {{ getTestType(item) }}
         </span>
       </v-tooltip>
     </template>

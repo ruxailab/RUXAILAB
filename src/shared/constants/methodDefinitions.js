@@ -3,7 +3,6 @@ import UserStudy from "@/ux/UserTest/models/UserStudy";
 import Study from "../models/Study";
 import CardSortingStudy from "@/ux/CardSorting/models/CardSortingStudy";
 import Cooperators from "../models/Cooperators";
-import Template from "../models/Template";
 import StudyAdmin from "@/shared/models/StudyAdmin";
 import StudyAnswer from "../models/StudyAnswer";
 import UserStudyAnswer from "@/ux/UserTest/models/UserStudyAnswer";
@@ -25,7 +24,6 @@ export function instantiateStudyByType(type, rawData) {
         cooperators: rawData?.cooperators
             ? rawData.cooperators.map((c) => new Cooperators(c))
             : [],
-        templateDoc: rawData?.templateDoc ? new Template(rawData.templateDoc) : null,
     };
 
     switch (type) {
@@ -306,7 +304,7 @@ export const getMethodDefinition = (testType, subType = "") => {
  */
 export const getMethodIcon = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? "";
-    const subType = item.subType ?? "";
+    const subType = item.subType ?? item.header?.templateSubType ?? "";
     const definition = getMethodDefinition(testType, subType);
     return definition?.icon ?? "mdi-help-circle";
 };
@@ -316,7 +314,7 @@ export const getMethodIcon = (item) => {
  */
 export const getMethodColor = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? "";
-    const subType = item.subType ?? "";
+    const subType = item.subType ?? item.header?.templateSubType ?? "";
     const definition = getMethodDefinition(testType, subType);
     return definition?.color ?? "#9E9E9E";
 };
@@ -326,7 +324,7 @@ export const getMethodColor = (item) => {
  */
 export const getMethodName = (item, lang = "es") => {
     const testType = item.testType ?? item.header?.templateType ?? "";
-    const subType = item.subType ?? "";
+    const subType = item.subType ?? item.header?.templateSubType ?? "";
     const definition = getMethodDefinition(testType, subType);
     if (!definition) return lang === "en" ? "Unknown Method" : "Método desconocido";
     return lang === "en" ? definition.nameEn : definition.name;
@@ -337,7 +335,7 @@ export const getMethodName = (item, lang = "es") => {
  */
 export const getMethodStatus = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? "";
-    const subType = item.subType ?? "";
+    const subType = item.subType ?? item.header?.templateSubType ?? "";
     const definition = getMethodDefinition(testType, subType);
     return METHOD_STATUSES[definition.status];
 };
@@ -347,7 +345,7 @@ export const getMethodStatus = (item) => {
  */
 export const getMethodCategory = (item) => {
     const testType = item.testType ?? item.header?.templateType ?? "";
-    const subType = item.subType ?? "";
+    const subType = item.subType ?? item.header?.templateSubType ?? "";
     const definition = getMethodDefinition(testType, subType);
     return METHOD_CATEGORIES[definition.category];
 };
