@@ -296,6 +296,18 @@ const goTo = (test) => {
     if (canNavigateToSession(test.testDate)) {
       router.push(`testview/${test.id}/${user.value.id}`);
     }
+  } else if(activeSection.value === 'community' && activeSubSection.value === 'community-studies') {
+    if (test.testType === STUDY_TYPES.HEURISTIC) {
+      router.push({ name: 'HeuristicManagerView', params: { id: test.id } });
+    } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
+      router.push({ name: 'CardSortingManagerView', params: { id: test.id } });
+    } else if (test.testType === STUDY_TYPES.USER) {
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.id } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
+        router.push({ name: 'UserModeratedManagerView', params: { id: test.id } });
+      }
+    }
   }
 };
 
