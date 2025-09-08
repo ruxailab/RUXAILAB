@@ -1,10 +1,12 @@
 <template>
-  <v-app>
-    <v-main>
       <v-container
         fluid
         class="pa-6"
       >
+        <v-card
+          elevation="2"
+          class="pa-6"
+        >
         <!-- Header Section -->
         <div class="d-flex align-center justify-space-between mb-8">
           <div>
@@ -14,7 +16,7 @@
           </div>
 
           <v-btn
-            color="accent"
+            color="primary"
             prepend-icon="mdi-plus"
             variant="elevated"
             size="large"
@@ -27,10 +29,7 @@
         </div>
 
         <!-- Options Table -->
-        <v-card
-          elevation="2"
-          class="options-table"
-        >
+        <v-card>
           <v-data-table
             :headers="headers"
             :items="optionsWithFormattedValue"
@@ -88,20 +87,20 @@
 
             <!-- Empty state -->
             <template #no-data>
-              <div class="text-center pa-8">
+              <v-card class="text-center pa-8 my-6" variant="outlined">
                 <v-icon
                   icon="mdi-cog-outline"
                   size="64"
-                  color="secondary"
+                  color="primary"
                   class="mb-4"
                 />
-                <h3 class="text-h6 text-secondary mb-2">
+                <h3 class="text-h6 text-ternary mb-2">
                   {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
                 </h3>
-                <p class="text-body-2 text-secondary">
+                <p class="text-body-2 text-ternary">
                   {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
                 </p>
-              </div>
+              </v-card>
             </template>
           </v-data-table>
         </v-card>
@@ -115,9 +114,8 @@
           @add-option="updateOptions"
           @change="emitChange"
         />
+        </v-card>
       </v-container>
-    </v-main>
-  </v-app>
 </template>
 
 <script setup>
@@ -234,10 +232,6 @@ const resetForm = () => {
 </script>
 
 <style scoped>
-.options-table {
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
 .table-header {
   background-color: #F8FAFC;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
