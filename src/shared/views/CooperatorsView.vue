@@ -271,7 +271,7 @@ const submit = async () => {
 
 
 
-const notifyCooperator = (guest) => {
+const notifyCooperator = async (guest) => {
   if (guest.userDocId) {
     const path = 'testview';
     await sendNotification(
