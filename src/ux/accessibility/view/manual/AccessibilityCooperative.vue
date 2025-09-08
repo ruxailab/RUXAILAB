@@ -47,8 +47,8 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useNotificationManager } from '@/shared/composables/useNotificationManager';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
+import Notification from '@/shared/models/Notification';
 
 const uidgen = new UIDGenerator();
 
@@ -63,12 +63,6 @@ const {
 } = useCooperatorUtils();
 
 const {
-  sendInvitationNotification,
-  sendReminderNotification,
-  sendMessageNotification
-} = useNotificationManager();
-
-const {
   updateTestData,
   fetchTestData,
   handleRoleChange,
@@ -78,6 +72,29 @@ const {
   showError,
   showWarning
 } = useCooperatorActions();
+
+// Direct notification helper
+const sendNotification = async (userId, title, description, redirectsTo = '/', testId = null) => {
+  const notification = new Notification({
+    title,
+    description,
+    redirectsTo,
+    author: 'Admin',
+    read: false,
+    testId
+  });
+
+  try {
+    await store.dispatch('addNotification', {
+      userId,
+      notification,
+    });
+    return true;
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    throw error;
+  }
+};
 
 // Reactive variables for enhanced functionality
 const loading = ref(false);
@@ -115,7 +132,13 @@ const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId) {
     try {
-      await sendMessageNotification(user.userDocId, title, content, route.params.testId);
+      await sendNotification(
+        user.userDocId,
+        title,
+        content,
+        '/',
+        route.params.testId
+      );
       showSuccess('Message sent successfully!');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -164,12 +187,14 @@ const handleSendInvitations = async (invitationData) => {
           progress: 0
         };
 
-        // Send notification using composable
+        // Send notification using direct store dispatch
         try {
-          await sendInvitationNotification(
+          await sendNotification(
             selectedUser.id,
-            testId,
-            inviteMessage || 'You have been invited to participate in an accessibility test.'
+            'Manual Accessibility Test Invitation',
+            inviteMessage || 'You have been invited to participate in an accessibility test.',
+            `accessibility/manual/preview/${testId}`,
+            testId
           );
         } catch (error) {
           console.error('Error sending notification:', error);
@@ -201,7 +226,13 @@ const changeRole = async (item, newValue) => {
 
 const reinvite = async (guest) => {
   try {
-    await sendReminderNotification(guest.userDocId, route.params.testId);
+    await sendNotification(
+      guest.userDocId,
+      'Manual Accessibility Test Reminder',
+      'This is a reminder about your accessibility test invitation.',
+      `accessibility/manual/preview/${route.params.testId}`,
+      route.params.testId
+    );
     showSuccess('Re-invitation sent successfully!');
   } catch (error) {
     console.error('Error sending re-invitation:', error);
