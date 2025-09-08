@@ -392,10 +392,11 @@
       "preTestConsent": "Formulario de Consentimiento",
       "preTestForm": "Preguntas iniciales",
       "preTest": "Preguntas finales",
-      "postTest": "Post-Prueba"
+      "postTest": "Post-Prueba",
+      "eyeTrackingCalibration": "Calibración de Seguimiento Ocular"
     },
     "buttons": {
-      "done": "Listo"
+      "done": "Hecho"
     }
   },
   "AccessNotAllowed": {
