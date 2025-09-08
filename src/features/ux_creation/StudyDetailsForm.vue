@@ -370,11 +370,16 @@ const submit = async () => {
 };
 
 const submitAccessibility = async () => {
+  // Store the method value before it gets reset
+  const selectedMethod = method.value;
+  
+  
   // Determine the test type based on method
-  let testType = method.value === 'AUTOMATIC' 
+  let testType = selectedMethod === 'AUTOMATIC' 
     ? STUDY_TYPES.ACCESSIBILITY_AUTOMATIC 
     : STUDY_TYPES.ACCESSIBILITY_MANUAL;
 
+  
   isLoading.value = true;
   const user = store.getters.user;
   
@@ -405,10 +410,14 @@ const submitAccessibility = async () => {
     isLoading.value = false;
     store.commit('RESET_STUDY_DETAILS');
     
-    // Route to the appropriate accessibility page
-    if (method.value === 'AUTOMATIC') {
+    console.log('Routing decision - selectedMethod:', selectedMethod);
+    
+    // Route to the appropriate accessibility page using the stored method value
+    if (selectedMethod === 'AUTOMATIC') {
+     
       router.push(`/accessibility/automatic/${testId}`);
     } else {
+      
       router.push(`/accessibility/manual/${testId}`);
     }
   } catch (error) {
