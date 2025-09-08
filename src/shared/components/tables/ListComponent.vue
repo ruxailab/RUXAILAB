@@ -40,7 +40,10 @@
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
-        <div class="text-caption text-medium-emphasis">
+        <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
+          Session Date: {{formatDateTime(item.testDate, 'es')}}
+        </div>
+        <div v-else class="text-caption text-medium-emphasis">
           Fecha creación: {{ formatItemDate(item) }}
         </div>
       </div>
@@ -83,6 +86,17 @@
       </v-chip>
     </template>
 
+     <!-- Status Column -->
+    <template #item.status="{ item }">
+      <v-chip
+        label
+        variant="tonal"
+        :color="getSessionStatus(item.testDate).variant"
+      >
+        {{ getSessionStatus(item.testDate).label }}
+      </v-chip>
+    </template>
+
     <!-- No Data Slot -->
     <template #no-data>
       <div class="text-center pa-4">
@@ -100,6 +114,8 @@ import { useI18n } from 'vue-i18n'
 import { useItemFormatting } from '@/shared/composables/useItemFormatting'
 import { useItemTypes } from '@/shared/composables/useItemTypes'
 import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
+import { formatDateTime } from '@/shared/utils/dateUtils'
+import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 
 const props = defineProps({
   items: {
