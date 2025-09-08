@@ -105,9 +105,9 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useNotificationManager } from '@/shared/composables/useNotificationManager';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 import Cooperators from '../models/Cooperators';
+import Notification from '@/shared/models/Notification';
 
 const uidgen = new UIDGenerator();
 
@@ -140,14 +140,33 @@ const {
 } = useCooperatorUtils();
 
 const {
-  sendNotification
-} = useNotificationManager();
-
-const {
   handleRoleChange,
   handleCooperatorRemoval,
   handleInvitationCancellation,
 } = useCooperatorActions();
+
+// Direct notification helper
+const sendNotification = async (userId, title, description, redirectsTo = '/', testId = null) => {
+  const notification = new Notification({
+    title,
+    description,
+    redirectsTo,
+    author: 'Admin',
+    read: false,
+    testId
+  });
+
+  try {
+    await store.dispatch('addNotification', {
+      userId,
+      notification,
+    });
+    return true;
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    throw error;
+  }
+};
 
 // Variables
 let showIntroComponent = ref(true);
@@ -177,14 +196,13 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId) {
-    sendNotification({
-      userId: user.userDocId,
-      title: title,
-      description: content,
-      redirectsTo: null,
-      author: test.value.testAdmin.email,
-      testId: test.value.id
-    });
+    await sendNotification(
+      user.userDocId,
+      title,
+      content,
+      '/',
+      test.value.id
+    );
   }
 };
 
@@ -251,19 +269,17 @@ const submit = async () => {
   });
 };
 
-const notifyCooperator = (guest) => {
+const notifyCooperator = async (guest) => {
   console.log('guest', guest);
   if (guest.userDocId) {
     const path = 'testview';
-    sendNotification({
-      userId: guest.userDocId,
-      title: 'Cooperation Invite!',
-      description: `You have been invited to test ${test.value.testTitle}!`,
-      redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
-      author: test.value.testAdmin.email,
-      testId: test.value.id,
-      accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
-    });
+    await sendNotification(
+      guest.userDocId,
+      'Cooperation Invite!',
+      `You have been invited to test ${test.value.testTitle}!`,
+      `${path}/${test.value.id}/${guest.userDocId}`,
+      test.value.id
+    );
   }
 };
 
