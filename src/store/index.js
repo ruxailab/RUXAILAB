@@ -8,8 +8,6 @@ import Heuristic from '@/ux/Heuristic/store/Heuristic'
 import Answer from '@/shared/store/Answer'
 import Language from '../features/language/store/Language'
 import Assessment from '../ux/accessibility/store/Assessment'
-import ManualAccessibilityTest from '../ux/accessibility/store/ManualAccessibilityTest'
-import AutomaticAccessibilityTest from '../ux/accessibility/store/AutomaticAccessibilityTest'
 import automaticReport from '@/ux/accessibility/store/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
@@ -76,8 +74,6 @@ export default createStore({
     },
   },
   modules: {
-    manualAccessibility: ManualAccessibilityTest,
-    automaticAccessibility: AutomaticAccessibilityTest,
     Assessment,
     Auth,
     Templates,
