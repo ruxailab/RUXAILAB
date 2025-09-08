@@ -27,11 +27,19 @@ export default class StudyController extends Controller {
     return await super.create(COLLECTION, payload.toFirestore())
   }
   async duplicateStudy(payload) {
-    // Duplicate answers doc for another test
-    const answerDoc = await answerController.createAnswer(payload.answer)
-    payload.test.answersDocId = answerDoc.id
+    try {
+      const answerDoc = await answerController.createAnswer(
+        new StudyAnswer({ type: payload.test.testType }),
+      )
 
-    return await super.create(COLLECTION, payload.test.toFirestore())
+      const duplicatedStudy = payload.test
+      duplicatedStudy.answersDocId = answerDoc.id
+
+      return await super.create(COLLECTION, duplicatedStudy.toFirestore())
+    } catch (error) {
+      console.error("Error duplicating study:", error)
+      throw error
+    }
   }
 
   async deleteStudy(payload) {
