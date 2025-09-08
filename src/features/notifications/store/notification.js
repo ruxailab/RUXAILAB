@@ -9,6 +9,7 @@ export default {
             try {
                 await userController.addNotification(payload)
             } catch (e) {
+                console.error(e)
                 commit('setError', e)
             } finally {
                 commit('setLoading', false)

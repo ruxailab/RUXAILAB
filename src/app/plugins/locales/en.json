@@ -429,7 +429,8 @@
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest": "Post-Test"
+      "postTest": "Post-Test",
+      "eyeTrackingCalibration": "Eye Tracking Calibration"
     },
     "buttons": {
       "done": "Done"

@@ -116,8 +116,6 @@ const store = useStore()
 const change = ref(false)
 const welcomeMessage = ref('')
 const finalMessage = ref('')
-const preTest = ref([])
-const postTest = ref([])
 const consent = ref('')
 const index = ref(0)
 
@@ -136,19 +134,34 @@ const getConsent = () => {
   consent.value = test.value.testStructure.consent || ''
 }
 
+const getTasks = () => {
+  store.dispatch('setTasks', test.value.testStructure.userTasks || [])
+}
+
+const getPreTest = () => {
+  store.dispatch('setPreTest', test.value.testStructure.preTest || [])
+}
+
+const getPostTest = () => {
+  store.dispatch('setPostTest', test.value.testStructure.postTest || [])
+}
+
 const save = async () => {
+  console.log('Saving test changes...')
   change.value = false;
 
   const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: preTest.value,
+      preTest: store.getters.preTest,
       userTasks: store.getters.tasks,
-      postTest: postTest.value,
+      postTest: store.getters.postTest,
       consent: consent.value,
   }
 
   const rawData = { ...test.value, testStructure: testStructure };
+
+  console.log('Raw data to save:', rawData.testStructure);
   const study = instantiateStudyByType(rawData.testType, rawData);
   await store.dispatch('updateStudy', study);
 }
@@ -158,6 +171,9 @@ onMounted(() => {
   getWelcome()
   getFinalMessage()
   getConsent()
+  getPreTest()
+  getPostTest()
+  getTasks()
 })
 </script>
 

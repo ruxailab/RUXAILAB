@@ -576,7 +576,7 @@ const deleteStudy = async item => {
     item.auxUser = auxUser;
     await store.dispatch('deleteStudy', item);
     toast.success('Test deleted successfully!');
-    router.push({ name: 'TestList' });
+    router.push({ name: 'Admin' });
   } catch (error) {
     toast.error('Failed to delete test.');
     console.error('Error deleting test:', error);
@@ -637,20 +637,6 @@ const closeDialog = () => {
     templateDescription: '',
     isTemplatePublic: false,
   };
-};
-
-const updateTemplate = updates => {
-  template.value = { ...template.value, ...updates };
-};
-
-const updateTemplateTitle = value => {
-  updateTemplate({ templateTitle: value });
-  store.commit('SET_LOCAL_CHANGES', true);
-};
-
-const updateTemplateDescription = value => {
-  updateTemplate({ templateDescription: value });
-  store.commit('SET_LOCAL_CHANGES', true);
 };
 
 const updateObject = newObject => {
