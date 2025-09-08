@@ -5,9 +5,16 @@ export const consertUserTestTypeToSubType = functions.onRequest({
   handler: async (req, res) => {
     const db = admin.firestore()
 
+    console.log('== TESTS ==')
     await updateUserTestTypeInTest(db)
+
+    console.log('== USERS ==')
     await updateUserTestTypeInUser(db)
+
+    console.log('== ANSWERS ==')
     await updateUserTestTypeInAnswer(db)
+
+    console.log('== TEMPLATES ==')
     await updateUserTestTypeInTempleate(db)
     return res.status(200).send()
   }
@@ -29,12 +36,9 @@ async function updateUserTestTypeInTest(db) {
 
       const hasUserTestType = Object.prototype.hasOwnProperty.call(data, 'userTestType')
       if (hasUserTestType) {
-        const value = data.userTestType
-        const hasSubType = Object.prototype.hasOwnProperty.call(data, 'subType')
-
-        updatePayload = { userTestType: FieldValue.delete() }
-        if (hasSubType == 'moderated') updatePayload['subType'] = 'USER_MODERATED'
-        if (hasSubType == 'unmoderated') updatePayload['subType'] = 'USER_UNMODERATED'
+        updatePayload.userTestType = FieldValue.delete()
+        if (data.userTestType == 'moderated') updatePayload['subType'] = 'USER_MODERATED'
+        if (data.userTestType == 'unmoderated') updatePayload['subType'] = 'USER_UNMODERATED'
       }
 
       if (data.testType == 'User' || data.testType == 'USER') {
