@@ -158,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
@@ -169,6 +169,7 @@ import { DashboardSidebar } from '@/features/navigation/utils';
 import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
 import StudyController from '@/controllers/StudyController';
+import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
 
 const store = useStore();
 const router = useRouter();
@@ -264,7 +265,12 @@ const goTo = (test) => {
       }
     }
   } else if (activeSection.value === 'sessions') {
-    router.push(`testview/${test.id}/${user.value.id}`);
+    const canNavigateToSession = (testDate) => {
+      return getSessionStatus(testDate) === SESSION_STATUSES.TODAY;
+    };
+    if (canNavigateToSession(test.testDate)) {
+      router.push(`testview/${test.id}/${user.value.id}`);
+    }
   }
 };
 
@@ -292,10 +298,11 @@ const filterModeratedSessions = async () => {
         Object.assign(cooperatorObj, {
           testTitle: testObj.testTitle,
           testAdmin: testObj.testAdmin,
-          id: testObj.id
+          id: testObj.id,
+          testType: testObj.testType,
+          subType: testObj.subType
         });
-        const today = new Date(), testDate = new Date(cooperatorObj.testDate);
-        if (testDate.getDate() === today.getDate()) cooperatorArray.push(cooperatorObj);
+        cooperatorArray.push(cooperatorObj);
       }
     }
   }
