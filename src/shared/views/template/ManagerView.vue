@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
     <Snackbar />
-    <Loadding />
+    <Loading />
 
     <v-row v-if="test" class="nav pa-0 ma-0" dense>
       <Drawer :items="navigator" />
@@ -42,7 +42,7 @@
 
 <script setup>
 import Snackbar from '@/shared/components/Snackbar.vue'
-import Loadding from '@/shared/components/Loadding.vue'
+import Loading from '@/shared/components/Loading.vue'
 import Drawer from '@/shared/components/Drawer.vue';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
 import { computed } from 'vue';
