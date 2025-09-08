@@ -21,7 +21,11 @@ export function useDataTableConfig(type) {
             key: 'owner',
             sortable: false,
         },
-        {
+        typeRef.value === 'sessions' ? {
+            title: 'Status',
+            key: 'status',
+            sortable: true,
+        } : {
             title: 'Participants',
             key: 'participants',
             sortable: true,
