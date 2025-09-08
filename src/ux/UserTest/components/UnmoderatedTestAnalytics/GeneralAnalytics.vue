@@ -1,61 +1,30 @@
 <template>
-  <div>
+  <div class="bg-background">
     <!-- UX Metrics Row (ahora primera fila) -->
-    <v-row>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <UxMetricCard
-          :value="`${calculateEffectiveness().toFixed(1)}%`"
-          label="Eficacia"
-          color="success"
-          icon="mdi-target-account"
-          description="Porcentaje de tareas completadas exitosamente"
-          :progress="calculateEffectiveness()"
-        />
+    <v-row class="">
+      <v-col cols="12" md="4">
+        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" label="Eficacia" color="success"
+          icon="mdi-target-account" description="Porcentaje de tareas completadas exitosamente"
+          :progress="calculateEffectiveness()" />
       </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <UxMetricCard
-          :value="calculateEfficiency().score.toFixed(1)"
-          label="Eficiencia"
-          color="info"
-          icon="mdi-speedometer"
-          :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
-          :progress="Math.min(calculateEfficiency().score * 10, 100)"
-        />
+      <v-col cols="12" md="4">
+        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" label="Eficiencia" color="info"
+          icon="mdi-speedometer" :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
+          :progress="Math.min(calculateEfficiency().score * 10, 100)" />
       </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <UxMetricCard
-          :value="`${calculateSatisfaction().toFixed(1)}/5`"
-          label="Satisfacción"
-          color="warning"
-          icon="mdi-heart"
-          description="Puntuación promedio de satisfacción del usuario"
-          :progress="(calculateSatisfaction() / 5) * 100"
-        />
+      <v-col cols="12" md="4">
+        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" label="Satisfacción" color="warning"
+          icon="mdi-heart" description="Puntuación promedio de satisfacción del usuario"
+          :progress="(calculateSatisfaction() / 5) * 100" />
       </v-col>
     </v-row>
     <v-row>
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
               <div class="d-flex align-center mb-3">
-                <v-icon
-                  color="primary"
-                  size="28"
-                  class="me-3"
-                >
+                <v-icon color="primary" size="28" class="me-3">
                   mdi-target
                 </v-icon>
                 <h3 class="text-h5 font-weight-medium text-on-surface">
@@ -70,30 +39,15 @@
               </p>
             </div>
             <div class="text-end">
-              <v-chip
-                color="success"
-                variant="flat"
-                size="small"
-                class="mb-2"
-              >
-                <v-icon
-                  start
-                  size="16"
-                >
+              <v-chip color="success" variant="flat" size="small" class="mb-2">
+                <v-icon start size="16">
                   mdi-trending-up
                 </v-icon>
                 Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
               </v-chip>
               <br>
-              <v-chip
-                color="error"
-                variant="flat"
-                size="small"
-              >
-                <v-icon
-                  start
-                  size="16"
-                >
+              <v-chip color="error" variant="flat" size="small">
+                <v-icon start size="16">
                   mdi-trending-down
                 </v-icon>
                 Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
@@ -101,13 +55,8 @@
             </div>
           </div>
 
-          <v-progress-linear
-            :model-value="getConclusionAverage()"
-            color="primary"
-            height="12"
-            rounded
-            class="mb-6 progress-glow"
-          />
+          <v-progress-linear :model-value="getConclusionAverage()" color="primary" height="12" rounded
+            class="mb-6 progress-glow" />
 
           <v-divider class="mb-6" />
 
@@ -120,10 +69,7 @@
                 Tests in Progress
               </p>
             </div>
-            <v-divider
-              vertical
-              class="mx-4"
-            />
+            <v-divider vertical class="mx-4" />
             <div class="text-center">
               <div class="text-h4 font-weight-bold text-accent mb-1">
                 16m
@@ -135,23 +81,13 @@
           </div>
         </v-card>
       </v-col>
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <v-row class="h-100">
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="primary"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="primary" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-clock-fast
                   </v-icon>
                 </v-avatar>
@@ -170,20 +106,11 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card
-              v-if="testStructure?.userTasks && taskAnswers.length"
-              class="pa-6 elevation-3 rounded-xl h-100 stat-card"
-            >
+            <v-card v-if="testStructure?.userTasks && taskAnswers.length"
+              class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="error"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="error" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-timer-alert
                   </v-icon>
                 </v-avatar>
@@ -204,15 +131,8 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="success"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="success" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-check-circle
                   </v-icon>
                 </v-avatar>
@@ -226,11 +146,7 @@
                 </div>
               </div>
               <div class="d-flex align-center">
-                <v-icon
-                  color="success"
-                  size="16"
-                  class="me-1"
-                >
+                <v-icon color="success" size="16" class="me-1">
                   mdi-trending-up
                 </v-icon>
                 <span class="text-caption text-success">+{{ getTasksTodayCount() }}/day</span>
@@ -240,15 +156,8 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="accent"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="accent" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-account-circle
                   </v-icon>
                 </v-avatar>
@@ -271,93 +180,48 @@
     </v-row>
 
     <!-- Chart Section -->
-    <AnswersTimeline
-      :task-answers="taskAnswers"
-      @refresh="onRefreshTimeline"
-      @export="onExportTimeline"
-    />
+    <AnswersTimeline :task-answers="taskAnswers" @refresh="onRefreshTimeline" @export="onExportTimeline" />
 
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card
-          flat
-          class="pa-8"
-        >
+        <v-card flat class="pa-8">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Answers Timeline
+                Rendimiento por Tarea
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Track your answer submissions over time
+                Tasa de aciertos y errores por cada tarea del test
               </p>
-            </div>
-            <div class="d-flex ga-2">
-              <v-btn
-                variant="outlined"
-                size="small"
-                color="primary"
-              >
-                <v-icon start>
-                  mdi-download
-                </v-icon>
-                Export
-              </v-btn>
-              <v-btn
-                variant="flat"
-                size="small"
-                color="primary"
-              >
-                <v-icon start>
-                  mdi-refresh
-                </v-icon>
-                Refresh
-              </v-btn>
             </div>
           </div>
 
           <v-row>
-            <v-col
-              v-for="taskStat in getTasksPerformance()"
-              :key="taskStat.taskId"
-              cols="12"
-              md="6"
-              lg="4"
-            >
-              <v-card
-                class="pa-4 elevation-2 rounded-lg task-chart-card"
-                border
-              >
+            <v-col v-for="taskStat in getTasksPerformance()" :key="taskStat.taskId" cols="12" md="6" lg="4">
+              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" outlined>
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
                   </h4>
                   <v-chip
                     :color="taskStat.successRate >= 70 ? 'success' : taskStat.successRate >= 50 ? 'warning' : 'error'"
-                    variant="tonal"
-                    size="small"
-                  >
+                    variant="tonal" size="small">
                     {{ taskStat.successRate.toFixed(1) }}% éxito
                   </v-chip>
                 </div>
 
                 <div class="chart-container-small mb-4">
-                  <canvas
-                    :id="'task-chart-' + taskStat.taskId"
-                    class="task-chart"
-                    width="120"
-                    height="120"
-                  />
+                  <canvas :id="'task-chart-' + taskStat.taskId" class="task-chart" width="120" height="120"></canvas>
                 </div>
 
                 <div class="d-flex justify-space-between text-body-2">
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-success mr-2" />
+                    <div class="legend-dot bg-success mr-2"></div>
                     <span>Aciertos: {{ taskStat.success }}</span>
                   </div>
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-error mr-2" />
+                    <div class="legend-dot bg-error mr-2"></div>
                     <span>Errores: {{ taskStat.errors }}</span>
                   </div>
                 </div>
@@ -371,10 +235,7 @@
     <!-- Mostrar todas las preguntas del pre-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card
-          flat
-          class="pa-8 "
-        >
+        <v-card flat class="pa-8 ">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -387,30 +248,14 @@
           </div>
           <v-row>
             <template v-for="(q, idx) in (testStructure?.preTest || [])">
-              <v-col
-                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'pre-sel-' + (q.title || q.question || idx)"
-                cols="12"
-                md="6"
-                lg="4"
-              >
-                <SelectionPieChart
-                  :question-title="q.title || q.question"
-                  :options="q.selectionFields"
-                  :counts="getPreSelectionCounts(idx)"
-                  :canvas-id="'pretest-selection-chart-' + idx"
-                  :chart-colors="chartColors"
-                />
+              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'pre-sel-' + (q.title || q.question || idx)" cols="12" md="6" lg="4">
+                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
+                  :counts="getPreSelectionCounts(idx)" :canvas-id="'pretest-selection-chart-' + idx"
+                  :chart-colors="chartColors" />
               </v-col>
-              <v-col
-                v-else
-                :key="'pre-com-' + (q.title || q.question || idx)"
-                cols="12"
-              >
-                <CommentListCard
-                  :question-title="q.title || q.question"
-                  :answer="getPreTextAnswers(idx)"
-                />
+              <v-col v-else :key="'pre-com-' + (q.title || q.question || idx)" cols="12">
+                <CommentListCard :question-title="q.title || q.question" :answer="getPreTextAnswers(idx)" />
               </v-col>
             </template>
           </v-row>
@@ -421,10 +266,7 @@
     <!-- Mostrar todas las preguntas del post-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card
-          flat
-          class="pa-8 "
-        >
+        <v-card flat class="pa-8 ">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -436,34 +278,15 @@
             </div>
           </div>
           <v-row>
-            <template
-              v-for="(q, idx) in postTestQuestions"
-              :key="'ptq-' + (q.question || idx)"
-            >
-              <v-col
-                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'sel-' + (q.question || idx)"
-                cols="12"
-                md="6"
-                lg="4"
-              >
-                <SelectionPieChart
-                  :question-title="q.title || q.question"
-                  :options="q.selectionFields"
-                  :counts="getSelectionCounts(idx)"
-                  :canvas-id="'posttest-selection-chart-' + idx"
-                  :chart-colors="chartColors"
-                />
+            <template v-for="(q, idx) in taskAnswers[0]?.postTestAnswer || []">
+              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'sel-' + (q.question || idx)" cols="12" md="6" lg="4">
+                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
+                  :counts="getSelectionCounts(idx)" :canvas-id="'posttest-selection-chart-' + idx"
+                  :chart-colors="chartColors" />
               </v-col>
-              <v-col
-                v-else
-                :key="'com-' + (q.question || idx)"
-                cols="12"
-              >
-                <CommentListCard
-                  :question-title="q.title || q.question"
-                  :answer="getPostTextAnswers(idx)"
-                />
+              <v-col v-else :key="'com-' + (q.question || idx)" cols="12">
+                <CommentListCard :question-title="q.title || q.question" :answer="q.answer" />
               </v-col>
             </template>
           </v-row>
@@ -473,15 +296,79 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useStore } from 'vuex';
+import UxMetricCard from '../answers/UxMetricCard.vue';
+import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
+import AnswersTimeline from '../answers/AnswersTimeline.vue';
+
+// Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
+const testTasks = ref([]);
+const taskAnswers = ref([]);
+
+// Colores para el gráfico
+const chartColors = ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#EC407A', '#FF7043', '#26A69A', '#D4E157'];
+
+// Encuentra todas las preguntas de selección
+const selectionQuestions = computed(() => {
+  if (!taskAnswers.value.length || !taskAnswers.value[0].postTestAnswer) return [];
+  return taskAnswers.value[0].postTestAnswer.filter(q => Array.isArray(q.selectionFields) && q.selectionFields.length > 0);
+});
+
+// Devuelve los recuentos de respuestas para una pregunta de selección específica (por índice)
+function getSelectionCounts(questionIdx) {
+  const counts = {};
+  const q = taskAnswers.value[0]?.postTestAnswer?.[questionIdx];
+  if (!q) return counts;
+  q.selectionFields.forEach(opt => { counts[opt] = 0; });
+  taskAnswers.value.forEach(ans => {
+    if (ans.postTestAnswer && ans.postTestAnswer[questionIdx] && ans.postTestAnswer[questionIdx].answer) {
+      const answer = ans.postTestAnswer[questionIdx].answer;
+      if (Array.isArray(answer)) {
+        answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
+      } else if (counts[answer] !== undefined) {
+        counts[answer]++;
+      }
+    }
+  });
+  return counts;
+}
+
+function getPreSelectionCounts(questionIdx) {
+  const counts = {};
+  const q = taskAnswers.value[0]?.preTestAnswer?.[questionIdx];
+  if (!testStructure.value?.preTest?.[questionIdx]?.selectionFields) return counts;
+  const options = testStructure.value.preTest[questionIdx].selectionFields;
+  options.forEach(opt => { counts[opt] = 0; });
+  taskAnswers.value.forEach(ans => {
+    const answerObj = ans.preTestAnswer?.[questionIdx];
+    if (answerObj && answerObj.answer !== undefined) {
+      const answer = answerObj.answer;
+      if (Array.isArray(answer)) {
+        answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
+      } else if (counts[answer] !== undefined) {
+        counts[answer]++;
+      }
+    }
+  });
+  return counts;
+}
+
+function getPreTextAnswers(questionIdx) {
+  const list = [];
+  taskAnswers.value.forEach(ans => {
+    const a = ans.preTestAnswer?.[questionIdx]?.answer;
+    if (a !== undefined && a !== null && a !== '') list.push(a);
+  });
+  return list;
+}
 
 const store = useStore();
 
-const testTasks = ref([]);
-const taskAnswers = ref([]);
 
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
@@ -520,19 +407,19 @@ const formatTime = (time) => {
 };
 
 const findLongestTask = () => {
-  if (!taskAnswers.value.length) return { taskName: 'Task', averageTime: formatTime(0) };
+  if (!taskAnswers.value.length) {
+    return { taskName: 'Task', averageTime: formatTime(0) };
+  }
 
   const taskAverages = {};
 
   taskAnswers.value.forEach((answer) => {
+    if (!answer.tasks) return;
     for (const taskId in answer.tasks) {
-      const taskTime = answer.tasks[taskId].taskTime;
+      const taskTime = answer.tasks[taskId]?.taskTime ?? 0;
 
       if (!taskAverages[taskId]) {
-        taskAverages[taskId] = {
-          totalTime: taskTime,
-          count: 1,
-        };
+        taskAverages[taskId] = { totalTime: taskTime, count: 1 };
       } else {
         taskAverages[taskId].totalTime += taskTime;
         taskAverages[taskId].count++;
@@ -541,8 +428,7 @@ const findLongestTask = () => {
   });
 
   for (const taskId in taskAverages) {
-    const averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
-    taskAverages[taskId].averageTime = averageTime;
+    taskAverages[taskId].averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
   }
 
   let longestTask = null;
@@ -556,9 +442,11 @@ const findLongestTask = () => {
   }
 
   const taskMap = {};
-  testStructure.value.userTasks.forEach((task) => {
-    taskMap[task.taskId] = task;
-  });
+  if (testStructure.value && Array.isArray(testStructure.value.userTasks)) {
+    testStructure.value.userTasks.forEach((task) => {
+      taskMap[task.taskId] = task;
+    });
+  }
 
   return {
     taskName: taskMap[longestTask]?.taskName || 'Task',
@@ -671,21 +559,196 @@ const getFormattedDate = (date) => {
   return new Date(date).toLocaleString();
 };
 
-watch(
-  () => testStructure.value,
-  (newVal) => {
-    if (newVal && Array.isArray(newVal.userTasks)) {
-      testTasks.value = newVal.userTasks.map(task => task.taskName);
+// UX Metrics Functions
+const calculateEffectiveness = () => {
+  if (!taskAnswers.value.length) return 0;
+
+  let completedTasks = 0;
+  let totalTasks = 0;
+
+  taskAnswers.value.forEach((answer) => {
+    totalTasks += Object.keys(answer.tasks).length;
+    Object.values(answer.tasks).forEach((task) => {
+      if (task.completed) {
+        completedTasks++;
+      }
+    });
+  });
+
+  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+};
+
+const calculateEfficiency = () => {
+  if (!taskAnswers.value.length) return { score: 0, avgTime: '0 min 0 s' };
+
+  const avgTime = averageTimePerTask.value;
+  const avgTimeFormatted = formatTime(avgTime);
+
+  // Score based on average time (lower is better)
+  // Assuming 2 minutes as optimal time, anything above reduces efficiency
+  const optimalTime = 120000; // 2 minutes in milliseconds
+  const efficiency = Math.max(0, Math.min(10, (optimalTime / avgTime) * 10));
+
+  return {
+    score: efficiency,
+    avgTime: avgTimeFormatted.formatedTime
+  };
+};
+
+const calculateSatisfaction = () => {
+  if (!taskAnswers.value.length) return 0;
+
+  let totalSatisfaction = 0;
+  let ratingsCount = 0;
+
+  taskAnswers.value.forEach((answer) => {
+    if (answer.satisfaction && typeof answer.satisfaction === 'number') {
+      totalSatisfaction += answer.satisfaction;
+      ratingsCount++;
+    } else {
+      // If no satisfaction data, simulate based on completion rate
+      const userProgress = answer.progress;
+      const simulatedRating = userProgress >= 90 ? 4.5 :
+        userProgress >= 70 ? 4.0 :
+          userProgress >= 50 ? 3.5 :
+            userProgress >= 30 ? 3.0 : 2.5;
+      totalSatisfaction += simulatedRating;
+      ratingsCount++;
     }
-  },
-  { immediate: true }
-);
+  });
+
+  return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount;
+};
+
+const getTasksPerformance = () => {
+  // Recoger todos los taskId únicos presentes en taskAnswers
+  const allTaskIds = new Set();
+  taskAnswers.value.forEach(answer => {
+    if (answer.tasks) {
+      Object.keys(answer.tasks).forEach(taskId => allTaskIds.add(taskId));
+    }
+  });
+
+  // Para cada taskId, calcular los datos reales
+  const result = [];
+  allTaskIds.forEach(taskId => {
+    let success = 0;
+    let errors = 0;
+    let total = 0;
+    let taskName = taskId;
+
+    // Buscar el nombre de la tarea si está en testStructure
+    if (testStructure.value && testStructure.value.userTasks) {
+      const found = testStructure.value.userTasks.find(t => t.taskId === taskId);
+      if (found) taskName = found.taskName;
+    }
+
+    taskAnswers.value.forEach(answer => {
+      if (answer.tasks && answer.tasks[taskId]) {
+        total++;
+        const task = answer.tasks[taskId];
+        if (task.completed && task.success !== false) {
+          success++;
+        } else {
+          errors++;
+        }
+      }
+    });
+
+    result.push({
+      taskId,
+      taskName,
+      success,
+      errors,
+      total,
+      successRate: total === 0 ? 0 : (success / total) * 100
+    });
+  });
+  return result;
+};
+
+const createTaskCharts = async () => {
+  await nextTick();
+
+  const tasksData = getTasksPerformance();
+
+  tasksData.forEach((task) => {
+    // Usar el id único basado en el taskId
+    const canvasId = 'task-chart-' + (task.taskId || '');
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+    const innerRadius = radius * 0.6;
+
+    if (!task.total || isNaN(task.successRate)) {
+      // Draw empty donut (gray)
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
+      ctx.closePath();
+      ctx.fillStyle = '#e0e0e0';
+      ctx.fill();
+      // Draw center text
+      ctx.fillStyle = '#999';
+      ctx.font = 'bold 14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('0%', centerX, centerY + 5);
+      return;
+    }
+
+    // Calculate angles
+    const successAngle = (task.success / task.total) * 2 * Math.PI;
+    const errorAngle = (task.errors / task.total) * 2 * Math.PI;
+
+    // Draw success arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, successAngle);
+    ctx.arc(centerX, centerY, innerRadius, successAngle, 0, true);
+    ctx.closePath();
+    ctx.fillStyle = '#4CAF50';
+    ctx.fill();
+
+    // Draw error arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, successAngle, successAngle + errorAngle);
+    ctx.arc(centerX, centerY, innerRadius, successAngle + errorAngle, successAngle, true);
+    ctx.closePath();
+    ctx.fillStyle = '#F44336';
+    ctx.fill();
+
+    // Draw center text
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${task.successRate.toFixed(0)}%`, centerX, centerY + 5);
+  });
+};
 
 watch(
   () => answers.value,
   (newAnswers) => {
     if (newAnswers && typeof newAnswers === 'object') {
       taskAnswers.value = Object.values(newAnswers);
+      // Update charts when data changes
+      setTimeout(() => createTaskCharts(), 500);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => testStructure.value,
+  (newVal) => {
+    if (newVal && Array.isArray(newVal.userTasks)) {
+      testTasks.value = newVal.userTasks.map(task => task.taskName);
+      // Update charts when structure changes
+      setTimeout(() => createTaskCharts(), 500);
     }
   },
   { immediate: true }
@@ -706,29 +769,18 @@ onMounted(() => {
       c++;
     }
   }
+
+  // Create initial charts
+  setTimeout(() => createTaskCharts(), 1000);
 });
 </script>
 
 <style scoped>
-.conclusion-card {
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-}
-
-.stat-card {
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
-.chart-card {
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-}
 
 .chart-container-large {
   height: 400px;
@@ -738,6 +790,38 @@ onMounted(() => {
 
 .progress-glow {
   filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
+}
+
+.ux-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+.task-chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.chart-container-small {
+  height: 150px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-chart {
+  max-width: 120px;
+  max-height: 120px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 /* Responsive adjustments */
