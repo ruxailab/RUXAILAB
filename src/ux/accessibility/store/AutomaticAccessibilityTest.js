@@ -5,9 +5,7 @@ import AutomaticAccessibilityController from '@/ux/accessibility/controllers/Aut
 export default {
     namespaced: true,
     state: () => ({
-        tests: [],
-        loading: false,
-        error: null
+        tests: []
     }),
     mutations: {
         SET_TESTS(state, tests) {
@@ -22,17 +20,11 @@ export default {
         },
         REMOVE_TEST(state, id) {
             state.tests = state.tests.filter(t => t.id !== id);
-        },
-        SET_LOADING(state, loading) {
-            state.loading = loading;
-        },
-        SET_ERROR(state, error) {
-            state.error = error;
         }
     },
     actions: {
         async fetchTests({ commit, rootState }) {
-            commit('SET_LOADING', true);
+            commit('setLoading', true, { root: true });
             try {
                 // Get userId from rootState.Auth.user
                 const userId = rootState.Auth?.user?.id;
@@ -40,9 +32,9 @@ export default {
                 const tests = await AutomaticAccessibilityController.getUserTests(userId);
                 commit('SET_TESTS', tests);
             } catch (e) {
-                commit('SET_ERROR', e);
+                commit('setError', { errorCode: 'AUTO_TEST_FETCH_ERROR', message: e.message }, { root: true });
             } finally {
-                commit('SET_LOADING', false);
+                commit('setLoading', false, { root: true });
             }
         },
         async addTest({ commit }, testData) {
@@ -51,7 +43,7 @@ export default {
                 commit('ADD_TEST', createdTest);
                 return createdTest;
             } catch (e) {
-                commit('SET_ERROR', e);
+                commit('setError', { errorCode: 'AUTO_TEST_CREATE_ERROR', message: e.message }, { root: true });
                 throw e;
             }
         },
@@ -60,7 +52,7 @@ export default {
                 await AutomaticAccessibilityController.updateTest(testId, updates);
                 commit('UPDATE_TEST', { ...updates, id: testId });
             } catch (e) {
-                commit('SET_ERROR', e);
+                commit('setError', { errorCode: 'AUTO_TEST_UPDATE_ERROR', message: e.message }, { root: true });
                 throw e;
             }
         },
@@ -69,15 +61,13 @@ export default {
                 await AutomaticAccessibilityController.deleteTest(id);
                 commit('REMOVE_TEST', id);
             } catch (e) {
-                commit('SET_ERROR', e);
+                commit('setError', { errorCode: 'AUTO_TEST_DELETE_ERROR', message: e.message }, { root: true });
                 throw e;
             }
         }
     },
     getters: {
         allTests: state => state.tests,
-        getTestById: state => id => state.tests.find(t => t.id === id),
-        isLoading: state => state.loading,
-        error: state => state.error
+        getTestById: state => id => state.tests.find(t => t.id === id)
     }
 };

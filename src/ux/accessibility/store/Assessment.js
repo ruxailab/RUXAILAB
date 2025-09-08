@@ -9,10 +9,6 @@ const state = {
   // Filtered WCAG data (based on config)
   filteredWcagData: null,
 
-  // UI state
-  isLoading: false,
-  error: null,
-
   // Assessment progress
   completedRules: [],
   notes: {},
@@ -309,16 +305,8 @@ const mutations = {
     state.selectedRuleIdx = 0
     state.completedRules = []
     state.notes = {}
-  },
-
-  // Loading and error states
-  SET_LOADING(state, isLoading) {
-    state.isLoading = isLoading
-  },
-
-  SET_ERROR(state, error) {
-    state.error = error
   }
+
 }
 
 // Import the assessment controller
@@ -378,7 +366,7 @@ const actions = {
   // Initialize the assessment with WCAG data
   async initializeAssessment({ commit, state, dispatch }) {
     try {
-      commit('SET_LOADING', true)
+      commit('setLoading', true, { root: true })
       console.log('Initializing assessment...')
 
       // Import the WCAG data
@@ -443,10 +431,10 @@ const actions = {
       return transformedData
     } catch (error) {
       console.error('Error initializing assessment:', error)
-      commit('SET_ERROR', error.message)
+      commit('setError', { errorCode: 'ASSESSMENT_INIT_ERROR', message: error.message }, { root: true })
       throw error
     } finally {
-      commit('SET_LOADING', false)
+      commit('setLoading', false, { root: true })
     }
   },
 

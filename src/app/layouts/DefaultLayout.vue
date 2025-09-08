@@ -1,9 +1,9 @@
 <template>
   <v-app>
     <GlobalToolbar />
-    <!--<GlobalErrorHandler />-->
+    <GlobalErrorHandler />
 
-     <<GlobalToastHandler />
+    <GlobalToastHandler />
     <v-main>
       <v-container
         fluid
