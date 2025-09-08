@@ -48,7 +48,7 @@ const sendHome = () => {
   if (prevRoute.value !== null) {
     router.push(prevRoute.value.path).catch(() => {})
   } else {
-    router.push('/').catch(() => {})
+    router.push(1)
   }
 }
 

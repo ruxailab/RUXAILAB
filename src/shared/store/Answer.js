@@ -62,9 +62,11 @@ export default {
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
-        return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
+        const taskAnswers = state.testAnswerDocument.taskAnswers || {}
+
+        return taskAnswers[rootState.user.id]
           ? UserStudyEvaluatorAnswer.toModel(
-            state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
+            taskAnswers[rootState.user.id],
           )
           : new UserStudyEvaluatorAnswer({
             userDocId: rootState.user.id,
@@ -87,12 +89,9 @@ export default {
             postTestCompleted: false,
             tasks: (() => {
               const tasks = {};
-              // Ensure userTasks exists before accessing its length
               const userTasksLength = rootState.test.testStructure.userTasks?.length || 0;
               for (let i = 0; i < userTasksLength; i++) {
-                tasks[i] = new TaskAnswer({
-                  taskId: i
-                });
+                tasks[i] = new TaskAnswer({ taskId: i });
               }
               return tasks;
             })(),
@@ -152,18 +151,24 @@ export default {
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
+      console.log('getCurrentTestAnswerDoc')
       const currentTest = rootState.Tests.Test
+      console.log('currentTest', currentTest)
       if (!currentTest || !currentTest.answersDocId) {
+        console.log('No current test or answersDocId')
         return
       }
       const currentAnswerDocId = currentTest.answersDocId
+      console.log('currentAnswerDocId', currentAnswerDocId)
       commit('setLoading', true)
       try {
         const answerDoc = await answerController.getAnswerById(
           currentAnswerDocId,
         )
+        console.log('answerDoc', answerDoc)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
+        console.error('Error in getCurrentTestAnswerDoc', e)
         // commit("setError", true);
       } finally {
         commit('setLoading', false)

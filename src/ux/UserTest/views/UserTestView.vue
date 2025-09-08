@@ -1,12 +1,17 @@
 <template>
   <div v-if="test">
-    <!-- Loading Overlay -->
-    <v-overlay v-model="isLoading" class="text-center">
+    <div>
+      <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+        @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
+    </div>
+    
+
+    <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         Saving...
       </div>
-    </v-overlay>
+    </v-overlay> -->
 
     <Snackbar />
 
@@ -129,52 +134,32 @@
                 style="visibility:visible"
               >
                 <v-stepper-header>
-                  <v-stepper-item
-                    value="1"
-                    title="Consent"
-                    :complete="stepperValue >= 1"
-                    :color="stepperValue < 1 ? 'primary' : 'success'"
-                    complete-icon="mdi-check"
-                  />
+                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1" color="white"
+                    complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item
-                    value="2"
-                    title="Pre-test"
-                    :complete="stepperValue >= 2"
-                    :color="stepperValue < 2 ? 'primary' : 'success'"
-                    complete-icon="mdi-check"
-                  />
+                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2" color="white"
+                    complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item
-                    value="3"
-                    title="Tasks"
-                    :complete="stepperValue >= 3"
-                    :color="stepperValue < 3 ? 'primary' : 'success'"
-                    complete-icon="mdi-check"
-                  />
+
+                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Eye Tracking" :complete="stepperValue >= 3"
+                    color="white" complete-icon="mdi-check" />
+                  <v-divider v-if="hasEyeTracking" />
+
+                  <v-stepper-item :value="hasEyeTracking ? 3 : 2" title="Tasks"
+                    :complete="stepperValue >= (hasEyeTracking ? 4 : 3)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item
-                    value="4"
-                    title="Post-test"
-                    :complete="stepperValue >= 4"
-                    :color="stepperValue < 4 ? 'primary' : 'success'"
-                    complete-icon="mdi-check"
-                  />
+                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Post-test"
+                    :complete="stepperValue >= (hasEyeTracking ? 5 : 4)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item
-                    value="5"
-                    title="Completion"
-                    :complete="stepperValue === 5"
-                    :color="stepperValue < 5 ? 'primary' : 'success'"
-                    complete-icon="mdi-check"
-                  />
+                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Completion"
+                    :complete="stepperValue === (hasEyeTracking ? 6 : 5)" color="white" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
             </v-col>
           </v-row>
           <!-- Stepper secundario para tareas -->
           <v-row
-            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
             class="task-stepper-row"
             justify="center"
           >
@@ -207,79 +192,57 @@
               </v-stepper>
             </v-col>
           </v-row>
-          <WelcomeStep
-            v-if="globalIndex === 0"
-            :stepper-value="stepperValue"
-            @start="globalIndex = 1"
-          />
-          <ConsentStep
-            v-if="globalIndex === 1 && taskIndex === 0"
-            :test-title="test.testTitle"
-            :pre-test-title="$t('UserTestView.titles.preTest')"
-            :consent-text="test.testStructure.consent"
-            :full-name-model="fullName"
-            :consent-completed-model="localTestAnswer.consentCompleted"
-            @update:full-name-model="val => fullName = val"
-            @update:consent-completed-model="val => localTestAnswer.consentCompleted = val"
-            @continue="completeStep(taskIndex, 'consent')"
-          />
-          <PreTestStep
-            v-if="globalIndex === 2 && taskIndex === 0"
-            v-model:pre-test-answer="localTestAnswer.preTestAnswer"
-            :test-title="test.testTitle"
-            :pre-test-title="$t('UserTestView.titles.preTest')"
-            :pre-test="test.testStructure.preTest"
-            :pre-test-completed="localTestAnswer.preTestCompleted"
-            @done="completeStep(taskIndex, 'preTest')"
-          />
-          <PreTasksStep
-            v-if="globalIndex === 3 && taskIndex === 0"
+          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
+
+          <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
+            :consent-text="test.testStructure.consent" :full-name-model="fullName"
+            :consent-completed-model="localTestAnswer.consentCompleted" @update:fullNameModel="val => fullName = val"
+            @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
+            @continue="completeStep(taskIndex, 'consent')" />
+
+          <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
+            :pre-test="test.testStructure.preTest" :pre-test-answer="localTestAnswer.preTestAnswer"
+            :pre-test-completed="localTestAnswer.preTestCompleted" @done="completeStep(taskIndex, 'preTest')" />
+
+          <EyeTrackingCalibrationStep v-if="globalIndex === 3 && hasEyeTracking" @done="globalIndex = 4"
+            @closeCalibration="closeCalibration()" @openCalibration="openCalibration()"
+            :calibrationInProgress="calibrationInProgress" :calibrationCompleted="calibrationCompleted" />
+
+          <PreTasksStep v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @start-tasks="() => { taskIndex = 0; globalIndex = 4 }"
-          />
-          <TaskStep
-            v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER"
-            ref="taskStepComponent"
+            @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
+
+          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
+            :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
-            :task="test.testStructure.userTasks[taskIndex]"
-            :task-index="taskIndex"
-            :test-id="testId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
-            @update:sus-answers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
-            @update:nasa-tlx-answers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
-            @done="() => handleTaskFinish(true)"
-            @could-not-finish="() => handleTaskFinish(false)"
-            @show-loading="isLoading = true"
-            @stop-show-loading="isLoading = false"
-            @recording-started="isVisualizerVisible = $event"
-            @timer-stopped="handleTimerStopped"
-          />
+            @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
+            @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+            @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
+            @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
+            @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
+
           <PostTestStep
-            v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
-            v-model:post-test-answer="localTestAnswer.postTestAnswer"
-            :test-title="test.testTitle"
-            :post-test-title="$t('UserTestView.titles.postTest')"
-            :post-test="test.testStructure.postTest"
-            :post-test-completed="localTestAnswer.postTestCompleted"
-            @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }"
-          />
+            v-if="globalIndex === (hasEyeTracking ? 6 : 5) && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            :test-title="test.testTitle" :post-test="test.testStructure.postTest"
+            :post-test-answer="localTestAnswer.postTestAnswer" :post-test-completed="localTestAnswer.postTestCompleted"
+            @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }" />
+
           <FinishStep
-            v-if="globalIndex === 6 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
-            :final-message="$t('finishTest.finalMessage')"
-            :congratulations="$t('finishTest.congratulations')"
-            :submit-message="$t('finishTest.submitMessage')"
-            :submit-btn="$t('buttons.submit')"
-            @submit="dialog = true"
-          />
+            v-if="globalIndex === (hasEyeTracking ? 7 : 6) && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
+            :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
+            :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
+            @submit="dialog = true" />
         </v-col>
       </v-row>
     </v-container>
     <!-- Floating Action Button -->
+         <!--TODO: Remove if not necessary
     <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
       class="mb-10 mr-5">
       <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
@@ -317,13 +280,11 @@
 </template>
 
 <script setup>
-
-
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
-
+import { doc, onSnapshot } from "firebase/firestore";
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import Snackbar from '@/shared/components/Snackbar';
 import { nanoid } from 'nanoid';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
@@ -336,6 +297,9 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
+import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
+import { db } from '@/app/plugins/firebase';
+import IrisTracker from '../components/IrisTracker.vue';
 
 const fullName = ref('');
 const logined = ref(null);
@@ -361,6 +325,17 @@ const timerComponent = computed(() => {
   return taskStepComponent.value?.$refs?.timerComponent || null;
 });
 
+//  Eye tracking web gazer testing 
+
+const isTracking = ref(false)
+const isRecording = ref(false)
+const irisData = ref([])
+const eyeCalibrationStepDone = ref(false)
+const calibrationCompleted = ref(false)
+const calibrationInProgress = ref(false)
+
+//  Eye tracking web gazer testing 
+
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 
 const store = useStore();
@@ -375,32 +350,81 @@ const user = computed(() => {
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer || {});
 const showSaveBtn = computed(() => !localTestAnswer.submitted);
 
+const hasEyeTracking = computed(() =>
+  test.value?.testStructure?.userTasks?.some(task => task.hasEye)
+);
 
-const isTaskDisabled = (taskIndex) => {
-  if (!Array.isArray(localTestAnswer.tasks)) return true;
-  for (let i = 0; i < taskIndex; i++) {
-    if (!localTestAnswer.tasks[i]?.completed) {
-      return true;
-    }
-  }
-  return false;
-};
 
 const stepperValue = computed(() => {
-  if (globalIndex.value === 0) return -1;
+  if (globalIndex.value === 0) return -1; // Welcome
+
+  // Consent
   if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
+
+  // PreTest
   if (globalIndex.value === 2 && taskIndex.value === 0) return 1;
-  if (globalIndex.value === 3 && taskIndex.value === 0) return 2; // 👈 PANTALLA INFORMATIVA
-  if (globalIndex.value === 4 && taskIndex.value >= 0) return 2;   // 👈 TAREAS
-  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3;
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4;
+
+  if (hasEyeTracking.value) {
+    // EyeTracking flow
+    if (globalIndex.value === 3) return 2; // Calibration
+    if (globalIndex.value === 4) return 3; // PreTasks
+    if (globalIndex.value === 5) return 3; // Tasks
+    if (globalIndex.value === 6) return 4; // PostTest
+    if (globalIndex.value === 7) return 5; // PostTest
+  } else {
+    // Normal flow
+    if (globalIndex.value === 3) return 2; // PreTasks
+    if (globalIndex.value === 4) return 2; // Tasks
+    if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3; // PostTest
+    if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4; // Finish
+  }
+
   return 0;
 });
 
-const isPreTestTaskDisabled = (taskIndex) => {
-  if (taskIndex === 0) return localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted;
-  return !localTestAnswer.consentCompleted || (localTestAnswer.preTestCompleted && !localTestAnswer.submitted);
-};
+function handleIrisData(data) {
+  localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
+}
+
+function saveScreenRecording(data) {
+  localTestAnswer.tasks[taskIndex.value].screenRecordingData.push(data)
+}
+
+const openCalibration = () => {
+  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  calibrationInProgress.value = true;
+  console.log('calibrationInProgress.value', calibrationInProgress.value);
+
+}
+
+const closeCalibration = () => {
+  calibrationInProgress.value = false;
+  completeStep(taskIndex.value, 'eyeCalibration');
+}
+
+function toggleTracking(value) {
+  console.log('toggleTracking', value);
+
+  isTracking.value = value;
+  isRecording.value = value;
+}
+
+function saveIrisDataIntoTask() {
+  console.log('saveIrisDataIntoTask', {
+    taskIndex: taskIndex.value,
+    hasEye: test.value.testStructure.userTasks[taskIndex.value]?.hasEye,
+    globalIndex: globalIndex.value,
+  });
+
+  const task = test.value.testStructure.userTasks[taskIndex.value]
+
+  if (task?.hasEye === true && globalIndex.value >= 5) {
+    toggleTracking(true);
+  } else {
+    toggleTracking(false);
+  }
+} 
+
 const saveAnswer = async () => {
   try {
     localTestAnswer.fullName = fullName.value;
@@ -519,46 +543,51 @@ const completeStep = (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
-      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
-        items.value[0].icon = 'mdi-check-circle-outline';
-      }
-      globalIndex.value = 2;
-
+      globalIndex.value = 2; // PreTest
     }
+
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
-      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
-        items.value[0].icon = 'mdi-check-circle-outline';
-      }
-      globalIndex.value = 3;
+      globalIndex.value = hasEyeTracking.value ? 3 : 3; // se tiver, vai pro PreCalibration
     }
+
+    if (type === 'eyeCalibration') {
+      globalIndex.value = 4; // PreTasks
+      taskIndex.value = 0;
+      eyeCalibrationStepDone.value = true;
+    }
+
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
         console.error('localTestAnswer.tasks is not an array:', localTestAnswer.tasks);
         return;
       }
       localTestAnswer.tasks[id].completed = userCompleted;
-      items.value[1].value[id].icon = 'mdi-check-circle-outline';
       allTasksCompleted.value = true;
 
-      for (let i = 0; i < items.value[1].value.length; i++) {
+      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false;
           break;
         }
       }
-      if (allTasksCompleted.value) {
-        items.value[1].icon = 'mdi-check-circle-outline';
-      }
+      // if (allTasksCompleted.value) {
+      //   items.value[1].icon = 'mdi-check-circle-outline';
+      // }
+
       if (id < localTestAnswer.tasks.length - 1) {
-        taskIndex.value = id + 1;
-        startTimer();
-      } else {
-        console.log('All tasks completed, moving to post-test');
-        globalIndex.value = 5;
-      }
+  taskIndex.value = id + 1;
+  startTimer();
+} else {
+  if (allTasksCompleted.value) {
+    console.log('All tasks completed, moving to post-test');
+    taskIndex.value = id + 1; // to help saving methods
+    globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+  } else {
+    console.log('Última task finalizada, mas ainda há tasks incompletas.');
+  }
+}
+
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
@@ -567,12 +596,14 @@ const completeStep = (id, type, userCompleted = true) => {
         });
       }
     }
+
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true;
-      items.value[2].icon = 'mdi-check-circle-outline';
-      globalIndex.value = 6;
-
+      // items.value[2].icon = 'mdi-check-circle-outline';
+      globalIndex.value = hasEyeTracking.value ? 7 : 6; // Finish
     }
+
+    saveIrisDataIntoTask();
     calculateProgress();
   } catch (error) {
     console.error('Error in completeStep:', error);
@@ -768,7 +799,7 @@ const mappingSteps = async () => {
     console.error('Error mapping steps:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to initialize test data. Please try again.' });
   }
-};
+}
 
 const validate = (object) => {
   return (
@@ -791,18 +822,10 @@ watchEffect(() => {
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
     doneTaskDisabled.value = validCount < 10;
-    console.log('SUS respostas válidas:', validCount);
   } else {
     doneTaskDisabled.value = false;
   }
 });
-watch(
-  () => test.value,
-  async () => {
-    await mappingSteps();
-  },
-  { deep: true }
-);
 
 watch(
   () => items.value,
@@ -847,13 +870,32 @@ watch(
 
 onMounted(async () => {
   globalIndex.value = 0;
-  await mappingSteps();
+  // validateTest();
   await nextTick();
   if (user.value) {
     await setTest();
     await autoComplete();
     //calculateProgress();
   }
+  if (!user.value?.id) return
+
+  let firstSnapshot = true
+
+  const userRef = doc(db, 'users', user.value.id)
+
+  const unsubscribe = onSnapshot(userRef, (docSnap) => {
+    if (!docSnap.exists()) return
+    const data = docSnap.data()
+
+    if (firstSnapshot) {
+      firstSnapshot = false
+      return
+    }
+
+    if (data.calibrationId) {
+      calibrationCompleted.value = true
+    }
+  })
 });
 
 onBeforeUnmount(() => {
