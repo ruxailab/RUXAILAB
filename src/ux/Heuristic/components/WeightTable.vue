@@ -6,7 +6,6 @@
     <v-card
       elevation="2"
       class="pa-6"
-      style="background-color: #F5F7FF;"
     >
       <!-- Header Section -->
       <h1 class="text-h4 font-weight-bold text-on-surface mb-4">

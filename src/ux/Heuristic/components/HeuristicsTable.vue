@@ -1,9 +1,16 @@
 <template>
-    <div>
-         <!-- Header Section -->
+    <v-container
+      fluid
+      class="pa-6"
+    >
+      <v-card
+        elevation="2"
+        class="pa-6"
+      >
+        <!-- Header Section -->
         <div class="d-flex align-center justify-space-between mb-8">
           <div>
-            <h1 class="text-h3 font-weight-bold text-on-surface mb-2">
+            <h1 class="text-h4 font-weight-bold text-on-surface">
               {{ $t('HeuristicsTable.titles.currentHeuristics') }}
             </h1>
           </div>
@@ -517,7 +524,8 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-    </div> 
+      </v-card>
+    </v-container> 
 </template>
 
 <script setup>
