@@ -1,98 +1,141 @@
 <template>
   <div>
-    <!-- Loading state -->
-    <div v-if="!test" class="d-flex justify-center align-center" style="min-height: 400px;">
-      <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
-    </div>
-    
-    <!-- Dashboard profesional con componentes específicos -->
-    <v-container v-else class="large-margins">
-      <!-- Primera fila: Título del proyecto con chip al lado -->
-      <v-row>
-        <v-col cols="12">
-          <div class="d-flex align-center gap-3">
-            <h1 class="text-h4">{{ test.testTitle || 'Estudio Heurístico' }}</h1>
-            <v-chip class="ml-5" color="info" variant="outlined" size="small">
-              <v-icon start size="small">mdi-crown-outline</v-icon>
-              Plan Gratuito
-            </v-chip>
-          </div>
-        </v-col>
-      </v-row>
-      
-      <!-- Divider -->
-      <v-divider class="mb-6"></v-divider>
-      
-      <!-- Título de estadísticas -->
-      <v-row>
-        <v-col cols="12">
-          <h2 class="text-h5">Estadísticas Generales</h2>
-        </v-col>
-      </v-row>
-            <v-divider class="mb-6"></v-divider>
+    <!-- ManagerView genérica mantenida -->
+    <ManagerView
+      :navigator="navigator"
+      :top-cards="topCards"
+      :bottom-cards="bottomCards"
+    >
+      <!-- Loading state -->
+      <div
+        v-if="!test"
+        class="d-flex justify-center align-center"
+        style="min-height: 400px;"
+      >
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          size="64"
+        />
+      </div>
 
-      <!-- Las 4 cards de métricas -->
-      <v-row>
-        <v-col cols="12">
-          <StudyOverview :test="test" />
-        </v-col>
-      </v-row>
-      
-      <v-row>
-        <v-col cols="12">
-          <h2 class="text-h5">Módulos</h2>
-        </v-col>
-      </v-row>
-      <v-divider class="mb-6"></v-divider>
+      <!-- Dashboard profesional con componentes específicos -->
+      <v-container
+        v-else
+        class="large-margins"
+      >
+        <!-- Primera fila: Título del proyecto con chip al lado -->
+        <v-row>
+          <v-col cols="12">
+            <div class="d-flex align-center gap-3">
+              <h1 class="text-h4">
+                {{ test.testTitle || 'Estudio Heurístico' }}
+              </h1>
+              <v-chip
+                class="ml-5"
+                color="info"
+                variant="outlined"
+                size="small"
+              >
+                <v-icon
+                  start
+                  size="small"
+                >
+                  mdi-crown-outline
+                </v-icon>
+                Plan Gratuito
+              </v-chip>
+            </div>
+          </v-col>
+        </v-row>
 
-      <!-- Fila con 3 módulos -->
-      <v-row>
-        <!-- Módulo 1: Actividad reciente -->
-        <v-col cols="12" md="4">
-          <RecentActivity 
-            :test="test"
-            @view-all="viewAllActivity"
-          />
-        </v-col>
-        
-        <!-- Módulo 2: Cooperadores -->
-        <v-col cols="12" md="4">
-          <CooperatorsInfo :test="test" />
-        </v-col>
-        
-        <!-- Módulo 3: Información de heurísticas -->
-        <v-col cols="12" md="4">
-          <HeuristicsInfo :test="test" />
-        </v-col>
-      </v-row>
+        <!-- Divider -->
+        <v-divider class="mb-6" />
 
-      <!-- Segunda fila con 3 módulos -->
-      <v-row class="mb-2">
-        <!-- Módulo 4: Storage -->
-        <v-col cols="12" md="4">
-          <StorageInfo :test="test" />
-        </v-col>
-        
-        <!-- Módulo 5: Resultados de Usabilidad -->
-        <v-col cols="12" md="4">
-          <UsabilityResults :test="test" />
-        </v-col>
-        
-        <!-- Módulo 6: Estado del Informe Final -->
-        <v-col cols="12" md="4">
-          <FinalReportStatus :test="test" />
-        </v-col>
-      </v-row>
-    </v-container>
+        <!-- Título de estadísticas -->
+        <v-row>
+          <v-col cols="12">
+            <h2 class="text-h5">
+              Estadísticas Generales
+            </h2>
+          </v-col>
+        </v-row>
+        <v-divider class="mb-6" />
 
-    <!-- Separador visual -->
-    
-      <!-- ManagerView genérica mantenida -->
-   <ManagerView
-        :navigator="navigator"
-        :top-cards="topCards"
-        :bottom-cards="bottomCards"
-      />
+        <!-- Las 4 cards de métricas -->
+        <v-row>
+          <v-col cols="12">
+            <StudyOverview :test="test" />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <h2 class="text-h5">
+              Módulos
+            </h2>
+          </v-col>
+        </v-row>
+        <v-divider class="mb-6" />
+
+        <!-- Fila con 3 módulos -->
+        <v-row>
+          <!-- Módulo 1: Actividad reciente -->
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <RecentActivity
+              :test="test"
+              @view-all="viewAllActivity"
+            />
+          </v-col>
+
+          <!-- Módulo 2: Cooperadores -->
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <CooperatorsInfo :test="test" />
+          </v-col>
+
+          <!-- Módulo 3: Información de heurísticas -->
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <HeuristicsInfo :test="test" />
+          </v-col>
+        </v-row>
+
+        <!-- Segunda fila con 3 módulos -->
+        <v-row class="mb-2">
+          <!-- Módulo 4: Storage -->
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <StorageInfo :test="test" />
+          </v-col>
+
+          <!-- Módulo 5: Resultados de Usabilidad -->
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <UsabilityResults :test="test" />
+          </v-col>
+
+          <!-- Módulo 6: Estado del Informe Final -->
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <FinalReportStatus :test="test" />
+          </v-col>
+        </v-row>
+      </v-container>
+    </ManagerView>
   </div>
 </template>
 
@@ -248,7 +291,7 @@ onMounted(async () => {
   .large-margins {
     width: 90% !important;
   }
-  
+
   .d-flex.gap-3 {
     flex-direction: column;
     align-items: flex-start;
