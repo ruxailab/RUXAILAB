@@ -82,7 +82,7 @@
         color="primary"
         prepend-icon="mdi-account-multiple"
       >
-        {{ item.numberColaborators ?? 0 }}
+        {{ getParticipantCount(item) }}
       </v-chip>
     </template>
 
