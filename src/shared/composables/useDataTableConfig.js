@@ -31,7 +31,7 @@ export function useDataTableConfig(type) {
         })
     }
 
-    if (typeRef.value !== 'sessions' && typeRef.value !== 'myTemplates') {
+    if (typeRef.value !== 'sessions' && typeRef.value !== 'myTemplates' && typeRef.value !== 'publicTemplates') {
         headers.value.push({
             title: 'Participants',
             key: 'participants',
