@@ -1,5 +1,4 @@
 import Cooperators from './Cooperators'
-import Template from './Template'
 // import Cooperators from '@/models/Cooperators'
 
 /**
@@ -112,9 +111,9 @@ export default class Study { // mudar nome para Study e mover para Shared
     this.updateDate = updateDate ?? null
 
     /**
-     * Defines the test template document.
+     * Defines the test template document id.
      *
-     * @type {Template}
+     * @type {String}
      */
     this.templateDoc = templateDoc ?? null
 
