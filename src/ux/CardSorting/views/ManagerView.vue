@@ -14,6 +14,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
 import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import { getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
 
 // Stores
 const store = useStore()
