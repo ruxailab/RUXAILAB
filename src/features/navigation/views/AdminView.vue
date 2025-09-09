@@ -166,7 +166,7 @@ import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
 import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation/utils';
-import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
 import StudyController from '@/controllers/StudyController';
 import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
@@ -253,17 +253,8 @@ const goToCreateTestRoute = () => {
 
 const goTo = (test) => {
   if (activeSection.value === 'studies') {
-    if (test.testType === STUDY_TYPES.HEURISTIC) {
-      router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
-      router.push({ name: 'CardSortingManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === STUDY_TYPES.USER) {
-      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
-        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
-      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
-        router.push({ name: 'UserModeratedManagerView', params: { id: test.testDocId || test.id } });
-      }
-    }
+    const methodView = getMethodManagerView(test.testType, test.subType)
+    router.push({ name: methodView, params: { id: test.testDocId || test.id } });
   } else if (activeSection.value === 'sessions') {
     const canNavigateToSession = (testDate) => {
       return getSessionStatus(testDate) === SESSION_STATUSES.TODAY;
