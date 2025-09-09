@@ -17,7 +17,7 @@ export const onTestUpdate = functions.onTrigger({
       testTitle: newTest.testTitle,
       testType: newTest.testType,
       subType: newTest.subType,
-      numberColaborators: newTest.numberColaborators || 0,
+      numberColaborators: newTest.cooperators.length || 0,
       creationDate: newTest.creationDate,
       updateDate: Date.now(),
     }
