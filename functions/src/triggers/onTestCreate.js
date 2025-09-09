@@ -17,7 +17,7 @@ export const onTestCreate = functions.onTrigger({
       testTitle: test.testTitle,
       testType: test.testType,
       subType: test.subType,
-      numberColaborators: test.numberColaborators || 0,
+      numberColaborators: test.cooperators.length || 0,
       creationDate: test.creationDate,
       updateDate: Date.now(),
     }
