@@ -329,9 +329,7 @@ const handleTestType = () => {
 
 const submit = async () => {
   let testType = category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
-  if (method.value === 'CardSorting') {
-    testType = STUDY_TYPES.CARD_SORTING
-  }
+  if (method.value === STUDY_TYPES.CARD_SORTING) testType = STUDY_TYPES.CARD_SORTING
 
   isLoading.value = true;
   const user = store.getters.user;
@@ -355,12 +353,13 @@ const submit = async () => {
   await store.dispatch('createStudy', newTest);
   isLoading.value = false;
 
+  const testStore = store.getters.test;
   store.commit('RESET_STUDY_DETAILS');
 
   if (studyType.value === 'Accessibility') router.push('/sample');
   else {
-    const methodView = getMethodManagerView(testType, test.value.subType)
-    router.push({ name: methodView, params: { id: test.value.testDocId || test.value.id } })
+    const methodView = getMethodManagerView(testType, newTest.subType)
+    router.push({ name: methodView, params: { id: testStore } })
   }
 };
 
