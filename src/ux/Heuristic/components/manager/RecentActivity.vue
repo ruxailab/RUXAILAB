@@ -63,7 +63,7 @@ const activities = computed(() => {
           description: `Invitación pendiente para ${coop.email}`,
           timeAgo: 'Pendiente',
           color: 'info',
-          timestamp: new Date(coop.updateDate || props.test.createDate)
+          timestamp: new Date(coop.updateDate || props.test.creationDate)
         })
       }
     })

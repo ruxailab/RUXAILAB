@@ -25,6 +25,7 @@ export default class Study { // mudar nome para Study e mover para Shared
     studyConclusion,
     status, // transformar em um ENUM
     endDate,
+    creationDate,
   } = {}) {
     /**
      * Defines the test id.
@@ -101,7 +102,7 @@ export default class Study { // mudar nome para Study e mover para Shared
      *
      * @type {number}
      */
-    this.creationDate = Date.now()
+    this.creationDate = creationDate
 
     /**
      * Defines a timestamp of the test last updated date.
