@@ -231,7 +231,6 @@ const emit = defineEmits(['update:dialog', 'close']);
 
 const store = useStore();
 const router = useRouter();
-const { t } = useI18n();
 
 const step = ref(1);
 const isMyTemplate = ref(false);
@@ -322,9 +321,8 @@ const validate = async () => {
     };
 
     const study = instantiateStudyByType(rawData.testType ,rawData)
-
     const testId = await store.dispatch('createStudy', study);
-    await router.push(`/managerview/${testId}`);
+    await router.push(`/managerview/${testId}`); // TODO: UPDATE TO SEND TO TESTYPE ROUTE
   } catch (error) {
     console.error('Error creating test:', error);
   }

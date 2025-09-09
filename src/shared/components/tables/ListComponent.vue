@@ -26,7 +26,7 @@
           </v-avatar>
         </template>
         <span>
-          {{ item.header?.templateType ?? getTestType(item) }}
+          {{ getTestType(item) }}
         </span>
       </v-tooltip>
     </template>
@@ -82,7 +82,7 @@
         color="primary"
         prepend-icon="mdi-account-multiple"
       >
-        {{ item.numberColaborators ?? 0 }}
+        {{ getParticipantCount(item) }}
       </v-chip>
     </template>
 
