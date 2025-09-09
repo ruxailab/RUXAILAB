@@ -237,9 +237,34 @@ const filteredTests = computed(() => {
   });
 });
 
-const filteredTemplates = computed(() => templates.value.filter(temp =>
-  temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())
-));
+const filteredTemplates = computed(() => {
+  return templates.value?.filter(temp => {
+    // Search filter
+    const matchesSearch = temp.header.templateTitle
+      .toLowerCase()
+      .includes(search.value.toLowerCase());
+
+    const method = selectedMethodFilter.value;
+    const testType = temp.header.templateType;
+    const subType = temp.header.templateSubType;
+
+    // Method filter (mesma lógica de tests, mas usando temp.header)
+    const matchesMethod =
+      method === 'all' ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+        testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
+        testType === STUDY_TYPES.USER &&
+        subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
+      (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
+        testType === STUDY_TYPES.USER &&
+        subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      (method === 'MANUAL' && testType === 'MANUAL') ||
+      (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
+
+    return matchesSearch && matchesMethod;
+  });
+});
 
 const selectNavigation = (navigationData) => {
   const { sectionId, childId } = navigationData;
@@ -261,6 +286,18 @@ const goTo = (test) => {
     };
     if (canNavigateToSession(test.testDate)) {
       router.push(`testview/${test.id}/${user.value.id}`);
+    }
+  } else if(activeSection.value === 'community' && activeSubSection.value === 'community-studies') {
+    if (test.testType === STUDY_TYPES.HEURISTIC) {
+      router.push({ name: 'HeuristicManagerView', params: { id: test.id } });
+    } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
+      router.push({ name: 'CardSortingManagerView', params: { id: test.id } });
+    } else if (test.testType === STUDY_TYPES.USER) {
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.id } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
+        router.push({ name: 'UserModeratedManagerView', params: { id: test.id } });
+      }
     }
   }
 };

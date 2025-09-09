@@ -60,8 +60,8 @@ const completionRate = computed(() => {
 })
 
 const daysActive = computed(() => {
-  if (!props.test?.createDate) return 0
-  return differenceInDays(new Date(), new Date(props.test.createDate))
+  if (!props.test?.creationDate) return 0
+  return differenceInDays(new Date(), new Date(props.test.creationDate))
 })
 
 const heuristicsCount = computed(() => props.test?.testStructure?.length || 0)

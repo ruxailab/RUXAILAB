@@ -275,7 +275,6 @@ const removeCoop = async (coop) => {
     const index = cooperatorsEdit.value.indexOf(coop);
     cooperatorsEdit.value.splice(index, 1);
     test.value.cooperators = cooperatorsEdit.value;
-    test.value.numberColaborators = test.value.numberColaborators - 1;
     await store.dispatch('updateStudy', test.value);
     await store.dispatch('removeTestFromCooperator', {
       test: test.value,
