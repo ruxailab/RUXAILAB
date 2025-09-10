@@ -223,7 +223,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import Intro from '@/shared/components/IntroReports.vue';
+import Intro from '@/shared/components/introduction_cards/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';

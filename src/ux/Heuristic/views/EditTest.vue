@@ -97,7 +97,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { ref } from 'vue';
 import HeuristicsTable from '../components/HeuristicsTable.vue';
 import OptionsTable from '../components/OptionsTable.vue';
-import WeightTable from '../components/WeightTable.vue';
+import WeightTable from '../components/weights_evaluation/WeightTable.vue';
 import HeuristicsSenttings from '../components/HeuristicsSenttings.vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
