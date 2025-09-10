@@ -525,17 +525,15 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 
   if (localTestAnswer.tasks[idx]) {
-    console.log('Guardando tiempo para tarea', idx, ':', elapsedTime, 'segundos');
     // Asegurar que el tiempo es un número
     const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave;
-      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
     } else {
-      console.error('Tiempo no válido:', elapsedTime);
+      //TODO: Add error snackbar
     }
   } else {
-    console.error('No se pudo guardar el tiempo para la tarea', idx);
+    //TODO: Add error snackbar
   }
 };
 
