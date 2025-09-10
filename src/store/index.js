@@ -13,6 +13,7 @@ import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
 import automaticReport from '@/store/modules/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
+import CardStudy from '@/ux/CardSorting/stores/CardStudy'
 
 export default createStore({
   state: {
@@ -81,6 +82,7 @@ export default createStore({
     Language,
     automaticReport,
     UserStudy,
+    CardStudy,
     notification,
   }
 })
