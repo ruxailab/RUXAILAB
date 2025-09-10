@@ -106,7 +106,6 @@
             color="white"
             variant="outlined"
             rounded
-            size="x-large"
             @click="startTest"
           >
             Start Test
@@ -903,21 +902,47 @@ onBeforeUnmount(() => {
 });
 </script>
 
+
+
 <style scoped>
 .start-screen {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background-size: 200% 200%;
+  animation: subtleGradient 20s ease-in-out infinite;
+  background-image: linear-gradient(160deg,
+      #00213F 0%,
+      #1a2f4f 35%,
+      #303f9f 100%);
+  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.background-task {
-  background-color: #e8eaf6;
-  height: 100%;
-  overflow: auto;
+
+
+.start-screen.leaving,
+.start-screen.leaving>*,
+.start-screen.leaving::before {
+  opacity: 0;
+  transition-duration: 1.2s;
 }
 
-.background:before {
+@keyframes subtleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.start-screen::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -928,53 +953,39 @@ onBeforeUnmount(() => {
   height: 90%;
   margin-right: -100px;
   margin-top: 200px;
-  background-image: url('@/assets/ruxailab-small-red.png');
+  background-image: url(../../../assets/ruxailab-small-red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
   opacity: 0.2;
 }
 
-.title-view {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #ffffff;
+.start-screen.leaving::before {
+  opacity: 0;
 }
 
-.description-view {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18.1818px;
-  line-height: 21px;
-  align-items: flex-end;
-  color: #ffffff;
+/* Stepper sticky styles */
+.sticky-stepper {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: transparent;
 }
 
-.sub-title {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
+.main-stepper {
+  background: #00213F !important;
+  color: #fff !important;
+  --v-stepper-header-title-color: #fff !important;
+  --v-stepper-item-title-color: #fff !important;
+  --v-stepper-item-color: #fff !important;
+  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-fix:focus:before {
-  opacity: 0 !important;
-}
 
-.title-text {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  margin-left: 15px;
-  padding: 10px;
-  padding-left: 0px;
-  padding-top: 0px;
+.main-stepper.stepper-animate {
+  background: #00213F !important;
+  opacity: 0.3;
+  filter: blur(1px);
 }
 
 /* Task stepper background */
@@ -1015,3 +1026,4 @@ onBeforeUnmount(() => {
   ;
 }
 </style>
+
