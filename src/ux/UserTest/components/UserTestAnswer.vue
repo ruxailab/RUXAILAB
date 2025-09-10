@@ -76,7 +76,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import IntroAnswer from '@/shared/components/IntroAnswer';
+import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
 import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
 import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
