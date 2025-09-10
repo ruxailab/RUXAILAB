@@ -1,13 +1,13 @@
 <template>
   <div>
-    <!--
+    
     <div v-if="testAnswerDocument.type === 'HEURISTICS'">
       <HeuristicsAnalytics />
     </div>
     <div v-else>
       <UserAnalytics />
     </div>
-  -->
+  
   </div>
 </template>
 
