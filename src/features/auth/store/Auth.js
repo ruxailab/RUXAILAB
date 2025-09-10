@@ -75,10 +75,13 @@ export default {
           type: 'error',
         })
         throw err
+      } finally {
+        commit('setLoading', false)
       }
     },
 
     async signin({ commit }, payload) {
+      commit('setLoading', true)
       try {
         await authController.signIn(payload.email, payload.password, payload.rememberMe)
       } catch (err) {
@@ -92,7 +95,6 @@ export default {
  * @returns {void}
  */
     async signInWithGoogle({ commit }, payload) {
-      commit('setLoading', true)
       try {
         const { user } = await authController.signInWithGoogle(payload.rememberMe)
 
@@ -128,8 +130,6 @@ export default {
           type: 'error',
         })
         throw err
-      } finally {
-        commit('setLoading', false)
       }
     },
 
