@@ -87,6 +87,12 @@
         </v-card>
       </v-col>
     </v-row>
+
+  <AcceptInvitationDialog
+    v-model="dialogVisible"
+    @cancel="onReject"
+    @submit="onAccept"
+  />
   </v-container>
 </template>
 
@@ -95,11 +101,33 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import NotificationList from '@/features/notifications/components/NotificationList.vue'
+import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import StudyController from '@/controllers/StudyController'
 
 const store = useStore()
 const router = useRouter()
 
 const activeTab = ref('unread')
+
+const dialogVisible = ref(false)
+let resolveDialog
+
+const onAccept = () => {
+  dialogVisible.value = false
+  resolveDialog(true)
+}
+
+const onReject = () => {
+  dialogVisible.value = false
+  resolveDialog(false)
+}
+
+function showAcceptDialog() {
+  dialogVisible.value = true
+  return new Promise((resolve) => {
+    resolveDialog = resolve
+  })
+}
 
 const pageSize = 5
 const unreadPage = ref(1)
@@ -130,10 +158,27 @@ const paginatedInboxNotifications = computed(() => {
 })
 
 const goToNotificationRedirect = async (notification) => {
+  if(notification.accessLevel === 0) {
+    const accepted = await showAcceptDialog()
+    if (!accepted) return
+    const study = await new StudyController().getStudy({ id: notification.testId })
+    
+    await store.dispatch('acceptStudyCollaboration', {
+      test: study,
+      cooperator: user.value,
+    });
+  }
+  
   if (!notification.read) {
     await markAsRead(notification)
   }
-  window.open(`/${notification.redirectsTo}`)
+
+  try {
+    window.open(window.location.origin + notification.redirectsTo, '_blank')
+  } catch(e) {
+    console.error(e)
+    window.open(window.location.origin + '/' + notification.redirectsTo, '_blank')
+  }
 }
 
 const markAsRead = async (notification) => {
