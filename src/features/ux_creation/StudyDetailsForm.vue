@@ -208,6 +208,7 @@
                   adjust="start"
                   @back="goBack"
                 />
+                
                 <v-btn
                   color="success"
                   size="large"
@@ -373,22 +374,20 @@ const submitAccessibility = async () => {
   // Store the method value before it gets reset
   const selectedMethod = method.value;
   
-  
   // Determine the test type based on method
   let testType = selectedMethod === 'AUTOMATIC' 
     ? STUDY_TYPES.ACCESSIBILITY_AUTOMATIC 
     : STUDY_TYPES.ACCESSIBILITY_MANUAL;
 
-  
   isLoading.value = true;
   const user = store.getters.user;
   
   const rawData = {
     id: null,
-    testTitle: test.value.title,
-    testDescription: test.value.description,
+    title: test.value.title,              // Use 'title' for accessibility tests
+    description: test.value.description,  // Use 'description' for accessibility tests
     testType: testType,
-    isPublic: test.value.isPublic,
+    isPublic: test.value.isPublic || false, // Ensure isPublic is always set
     testAdmin: new StudyAdmin({
       userDocId: user.id,
       email: user.email,
@@ -414,11 +413,9 @@ const submitAccessibility = async () => {
     
     // Route to the appropriate accessibility page using the stored method value
     if (selectedMethod === 'AUTOMATIC') {
-     
-      router.push(`/accessibility/automatic/${testId}`);
+      router.push(`/accessibility/automatic/${testId}/${testId}`);
     } else {
-      
-      router.push(`/accessibility/manual/${testId}`);
+      router.push(`/accessibility/manual/${testId}/${testId}`);
     }
   } catch (error) {
     isLoading.value = false;

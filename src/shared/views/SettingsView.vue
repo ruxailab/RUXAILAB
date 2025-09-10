@@ -437,7 +437,19 @@ const template = ref({
   templateDescription: '',
   isTemplatePublic: false,
 });
-const object = ref(null);
+const object = ref({
+  testTitle: '',
+  testDescription: '',
+  testType: 'MANUAL',
+  status: 'draft',
+  endDate: null,
+  isPublic: false,
+  websiteUrl: '',
+  testAdmin: null,
+  collaborators: {},
+  configData: {},
+  progress: {}
+});
 const valids = ref([false, true, true]);
 const dialogDel = ref(false);
 const loading = ref(false);
@@ -495,8 +507,18 @@ watch(
     if (newTest !== null && newTest !== undefined) {
       object.value = {
         ...newTest,
-        status: newTest.status || 'pending',
-        endDate: newTest.endDate || null
+        // Map the actual API fields to expected component fields
+        testTitle: newTest.title || newTest.testTitle || '',
+        testDescription: newTest.description || newTest.testDescription || '',
+        testType: newTest.testType || 'MANUAL',
+        status: newTest.status || 'draft',
+        endDate: newTest.endDate || null,
+        isPublic: newTest.isPublic !== undefined ? newTest.isPublic : false,
+        websiteUrl: newTest.websiteUrl || '',
+        testAdmin: newTest.testAdmin || null,
+        collaborators: newTest.collaborators || {},
+        configData: newTest.configData || {},
+        progress: newTest.progress || {}
       };
     }
   },
@@ -504,9 +526,26 @@ watch(
 );
 
 onMounted(async () => {
-  if (!store.getters.test && props.id) {
-    await store.dispatch('getStudy', { id: props.id });
+  if (props.id) {
+    try {
+      console.log('Fetching test data for ID:', props.id);
+      // Always fetch the study data when component mounts
+      await store.dispatch('getStudy', { id: props.id });
+      
+      // Log the fetched test data
+      const testData = store.getters.test;
+      
+      if (!testData) {
+        toast.error('Test not found');
+      }
+    } catch (error) {
+      console.error('Error fetching test data:', error);
+      toast.error('Failed to load test data');
+    }
+  } else {
+    toast.error('Test ID is missing');
   }
+  
   loadingPage.value = false;
 });
 
@@ -566,6 +605,39 @@ const preventNav = event => {
   if (!localChanges.value) return;
   event.preventDefault();
   event.returnValue = '';
+};
+
+// Function to fetch and log test data
+const fetchTestData = async () => {
+  if (!props.id) {
+    return;
+  }
+  
+  try {
+    loading.value = true;
+    
+    // Dispatch the getStudy action
+    await store.dispatch('getStudy', { id: props.id });
+    
+    // Get the test data from store
+    const testData = store.getters.test;
+    
+    if (testData) {
+      toast.success('Test data fetched successfully!');
+    } else {
+      toast.warning('No test data found');
+    }
+  } catch (error) {
+    console.error('Error fetching test data:', error);
+    toast.error('Failed to fetch test data: ' + error.message);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Function to log current component state
+const logCurrentState = () => {
+  // This function can be used for debugging if needed
 };
 
 const deleteStudy = async item => {

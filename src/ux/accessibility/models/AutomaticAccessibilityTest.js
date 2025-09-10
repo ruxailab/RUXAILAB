@@ -21,8 +21,8 @@ export default class AutomaticAccessibilityTest {
         this.updatedAt = data.updatedAt || new Date().toISOString();
 
         // Test-specific data
-        this.testType = data.type || 'AUTOMATIC';
-        this.isPublic = data.isPublic || false;
+        this.testType = data.testType || data.type || 'AUTOMATIC';
+        this.isPublic = data.isPublic !== undefined ? data.isPublic : false;
     }
 
     /**
