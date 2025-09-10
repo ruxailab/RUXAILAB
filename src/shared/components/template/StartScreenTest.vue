@@ -1,20 +1,36 @@
 <template>
   <div>
-    <VRow class="background pa-0 ma-0">
-      <VCol cols="6" class="ml-5">
-        <h1 class="titleView pb-1">
+    <v-row
+      class="start-screen pa-0 ma-0"
+      align="center"
+    >
+      <v-col
+        md="8"
+        class="ma-5 pa-5"
+      >
+        <img
+          src="@/assets/ruxailab-long-crop-white.png"
+          alt="RUXAILAB"
+          class="mb-10"
+          style="max-width: 300px;"
+        >
+        <h1 class="text-h2 font-weight-bold text-white">
           {{ test.testTitle }}
         </h1>
-        <p class="description">
+        <p class="text-body-1 mb-5 text-white text-justify">
           {{ test.testDescription }}
         </p>
-        <VRow justify="center">
-          <VBtn color="white" variant="outlined" rounded @click="$emit('start')">
-            Start Test
-          </VBtn>
-        </VRow>
-      </VCol>
-    </VRow>
+        <v-btn
+          color="white"
+          variant="outlined"
+          rounded
+          size="x-large"
+          @click="startTest"
+        >
+          Start Test
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -32,32 +48,60 @@ defineEmits(['start']);
 </script>
 
 <style scoped>
-.background {
-  align-items: center;
-  background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
+.start-screen {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background-size: 200% 200%;
+  animation: subtleGradient 20s ease-in-out infinite;
+  background-image: linear-gradient(160deg,
+      #00213F 0%,
+      #1a2f4f 35%,
+      #303f9f 100%);
+  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.titleView {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #ffffff;
+.start-screen.leaving,
+.start-screen.leaving>*,
+.start-screen.leaving::before {
+  opacity: 0;
+  transition-duration: 1.2s;
 }
 
-.description {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  line-height: 21px;
-  align-items: flex-end;
-  color: #ffffff;
-  justify-content: center;
+@keyframes subtleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.start-screen::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90%;
+  margin-right: -100px;
+  margin-top: 200px;
+  background-image: url(../../../assets/ruxailab-small-red.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  opacity: 0.2;
+}
+
+.start-screen.leaving::before {
+  opacity: 0;
 }
 </style>
