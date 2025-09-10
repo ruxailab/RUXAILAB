@@ -79,7 +79,7 @@
         <v-divider class="mb-6" />
 
         <!-- Fila con 3 módulos -->
-        <v-row>
+        <v-row class="modules-section">
           <!-- Módulo 1: Actividad reciente -->
           <v-col
             cols="12"
@@ -109,7 +109,7 @@
         </v-row>
 
         <!-- Segunda fila con 3 módulos -->
-        <v-row class="mb-2">
+        <v-row class="mb-2 modules-section">
           <!-- Módulo 4: Storage -->
           <v-col
             cols="12"
@@ -144,13 +144,13 @@ import { getBottomCardsDefualt, getNavigatorDefault, getTopCardsDefualt } from '
 import ManagerView from '@/shared/views/template/ManagerView.vue';
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
 import { computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
 // Componentes del manager
 import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue';
 import RecentActivity from '@/ux/Heuristic/components/manager/RecentActivity.vue';
-import ParticipantsList from '@/ux/Heuristic/components/manager/ParticipantsList.vue';
+
 import CooperatorsInfo from '@/ux/Heuristic/components/manager/CooperatorsInfo.vue';
 import HeuristicsInfo from '@/ux/Heuristic/components/manager/HeuristicsInfo.vue';
 import StorageInfo from '@/ux/Heuristic/components/manager/StorageInfo.vue';
@@ -160,7 +160,6 @@ import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStat
 // Stores
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -180,50 +179,18 @@ const accessLevel = computed(() => {
   return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
 })
 
-// Computed properties para el estado del estudio
-const studyCompletionRate = computed(() => {
-  if (!test.value?.cooperators?.length) return 0
-  const completed = test.value.cooperators.filter(c => c?.progress === 100).length
-  return Math.round((completed / test.value.cooperators.length) * 100)
-})
 
-const studyStatusText = computed(() => {
-  if (!test.value) return 'Cargando...'
-  const rate = studyCompletionRate.value
-  if (rate === 100) return 'Completado'
-  if (rate > 0) return 'En Progreso'
-  return 'Pendiente'
-})
 
-const studyStatusColor = computed(() => {
-  if (!test.value) return 'grey'
-  const rate = studyCompletionRate.value
-  if (rate === 100) return 'success'
-  if (rate > 0) return 'warning'
-  return 'info'
-})
-
-const studyStatusIcon = computed(() => {
-  if (!test.value) return 'mdi-loading'
-  const rate = studyCompletionRate.value
-  if (rate === 100) return 'mdi-check-circle'
-  if (rate > 0) return 'mdi-clock'
-  return 'mdi-play-circle'
-})
-
-// Mantener la lógica genérica original
 const topCards = computed(() => {
   if (!test.value) return []
-  const cards = getTopCardsDefualt(test.value, 'heuristic')
-  console.log('TopCards:', cards)
-  return cards
+  return getTopCardsDefualt(test.value, 'heuristic')
 })
+
 const bottomCards = computed(() => {
   if (!test.value) return []
-  const cards = getBottomCardsDefualt(test.value, 'heuristic')
-  console.log('BottomCards:', cards)
-  return cards
+  return getBottomCardsDefualt(test.value, 'heuristic')
 })
+
 const navigator = computed(() => {
   if (!test.value) return []
   const items = [
@@ -238,9 +205,6 @@ const navigator = computed(() => {
     })
   }
 
-  console.log('Navigator:', items)
-  console.log('Test data:', test.value)
-  console.log('AccessLevel:', accessLevel.value)
   return items
 })
 
@@ -249,22 +213,6 @@ const viewAllActivity = () => {
   console.log('View all activity')
 }
 
-const inviteParticipant = () => {
-  if (!test.value?.id) return
-  router.push(`/heuristic/cooperators/${test.value.id}`)
-}
-
-const viewParticipant = (participant) => {
-  console.log('View participant:', participant)
-}
-
-const sendReminder = (participant) => {
-  console.log('Send reminder to:', participant)
-}
-
-const removeParticipant = (participant) => {
-  console.log('Remove participant:', participant)
-}
 
 // Lifecycle
 onMounted(async () => {
@@ -303,5 +251,10 @@ onMounted(async () => {
   .large-margins {
     width: 96% !important;
   }
+}
+
+/* Solo igualar alturas de los módulos, no las cards de estadísticas */
+.modules-section :deep(.v-card) {
+  height: 300px;
 }
 </style>
