@@ -90,6 +90,12 @@
         </v-card-text>
       </v-card>
     </v-menu>
+
+    <AcceptInvitationDialog
+    v-model="dialogVisible"
+    @cancel="onReject"
+    @submit="onAccept"
+  />
   </div>
 </template>
 
@@ -97,7 +103,7 @@
 
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue';
 
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
@@ -107,6 +113,8 @@ function formatMultiline(text) {
   return text.replace(/\n/g, '<br>');
 }
 import { useI18n } from 'vue-i18n';
+import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue';
+import StudyController from '@/controllers/StudyController';
 
 // Initialize store, router, and i18n
 const store = useStore();
@@ -115,17 +123,48 @@ const { t } = useI18n();
 
 const user = computed(() => store.getters.user);
 
+const dialogVisible = ref(false)
+let resolveDialog
+
+const onAccept = () => {
+  dialogVisible.value = false
+  resolveDialog(true)
+}
+
+const onReject = () => {
+  dialogVisible.value = false
+  resolveDialog(false)
+}
+
+function showAcceptDialog() {
+  dialogVisible.value = true
+  return new Promise((resolve) => {
+    resolveDialog = resolve
+  })
+}
+
 const checkIfHasNewNotifications = () => {
   return user.value.notifications.filter((n) => !n.read).length;
 };
 
 const goToNotificationRedirect = async (notification) => {
+  if(notification.accessLevel === 0) {
+    const accepted = await showAcceptDialog()
+    if (!accepted) return
+    const study = await new StudyController().getStudy({ id: notification.testId })
+    
+    await store.dispatch('acceptStudyCollaboration', {
+      test: study,
+      cooperator: user.value,
+    });
+  }
+
   await store.dispatch('markNotificationAsRead', {
     notification,
     user: user.value,
   });
   if (notification.redirectsTo) {
-    window.open(`/${notification.redirectsTo}`, '_blank');
+    window.open(window.location.origin + notification.redirectsTo, '_blank');
   } else {
     goToNotificationPage();
   }
