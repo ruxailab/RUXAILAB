@@ -96,7 +96,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, useSlots } from 'vue';
 import { useStore } from 'vuex';
-import Intro from '@/shared/components/IntroCoops.vue';
+import Intro from '@/shared/components/introduction_cards/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
