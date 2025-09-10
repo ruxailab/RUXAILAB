@@ -1,5 +1,7 @@
 <template>
   <div class="signin-wrapper d-flex">
+    <Snackbar />
+
     <!-- IZQUIERDA: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
       <img
@@ -11,7 +13,6 @@
 
     <!-- DERECHA: FORMULARIO -->
     <div class="form-side d-flex align-center justify-center">
-
       <div class="signin-box">
         <h1 class="text-h6">
           {{ $t('auth.SIGNIN.sign-in-title') }}
@@ -70,7 +71,8 @@
             type="submit"
             color="primary"
             block
-            :loading="loading"
+            :loading="loadingBtn"
+            :disabled="loadingGoogle"
             min-height="44"
             data-testid="sign-in-button"
           >
@@ -86,7 +88,8 @@
 
         <GoogleSignInButton
           :button-text="$t('auth.SIGNIN.continueWithGoogle')"
-          :loading="loading"
+          :loading="loadingGoogle"
+          :disabled="loadingBtn"
           @google-sign-in-start="onGoogleSignInStart"
           @google-sign-in-success="onGoogleSignInSuccess"
           @google-sign-in-error="onGoogleSignInError"
@@ -111,12 +114,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { z } from 'zod'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import Snackbar from '@/shared/components/Snackbar.vue'
 
 const { t } = useI18n()
 const store = useStore()
@@ -124,10 +128,11 @@ const router = useRouter()
 
 const form = ref(null)
 const showPassword = ref(false)
-const email = ref('')
-const password = ref('')
+const email = ref('julio@gmail.com')
+const password = ref('@Julio30bonow')
 const rememberMe = ref(false)
-
+const loadingGoogle = ref(false)
+const loadingBtn = ref(false)
 const emailSchema = z.string().email({ message: t('errors.invalidEmail') })
 
 const emailRules = [
@@ -139,23 +144,22 @@ const rules = {
   required: (v) => !!v || t('PROFILE.passwordRequired'),
 }
 
-const loading = computed(() => store.getters.loading)
-
 const checkForm = () => form.value?.validate()
 
 const onSignIn = async () => {
   const isValid = await checkForm()
   if (isValid) {
     try {
+      loadingBtn.value = true
       await store.dispatch('signin', {
         email: email.value,
         password: password.value,
       })
-      if (store.getters.user) {
-        router.push('/admin').catch(() => { })
-      }
+      await router.push('/admin')
     } catch (error) {
       console.error('Authentication error:', error)
+    } finally {
+      loadingBtn.value = false
     }
   }
 }
@@ -172,14 +176,18 @@ const redirectToForgotPassword = () => {
   router.push('/forgot-password')
 }
 
-const onGoogleSignInStart = () => { }
-const onGoogleSignInSuccess = async () => {
-  if (store.getters.user) {
-    router.push('/admin').catch(() => { })
-  }
+const onGoogleSignInStart = () => {
+  loadingGoogle.value = true
 }
+
+const onGoogleSignInSuccess = async () => {
+  if (store.getters.user) router.push('/admin')
+  loadingGoogle.value = false
+}
+
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
+  loadingGoogle.value = false
 }
 </script>
 
