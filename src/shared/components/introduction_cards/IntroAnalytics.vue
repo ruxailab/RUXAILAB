@@ -15,7 +15,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import IntroComp from '@/shared/components/IntrosComponent.vue'
+import IntroComp from '@/shared/components/introduction_cards/IntrosComponent.vue'
 
 const router = useRouter()
 const { t } = useI18n()
