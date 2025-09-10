@@ -9,7 +9,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+           {{ test.testDescription }}
           </p>
           <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
             Start Test
