@@ -56,7 +56,7 @@
             class="ma-0 pa-0"
           >
             <GeneralAnalytics v-if="tab === 0" />
-            <AnalyticsView v-if="tab === 1" />
+            <UserAnalytics v-if="tab === 1" />
             <SentimentAnalysisView v-if="tab === 2" />
             <SusAnalytics v-if="tab === 3" />
             <NasaTlxAnalytics v-if="tab === 4" />
@@ -77,7 +77,7 @@ import { useStore } from 'vuex';
 import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/IntroAnswer';
-import AnalyticsView from '@/ux/Heuristic/views/[deprecated]AnalyticsView.vue';
+import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
 import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';

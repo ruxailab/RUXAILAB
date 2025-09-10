@@ -7,7 +7,6 @@
 
     <ShowInfo
       v-if="answers != null && !intro && test"
-      title="Analytics"
     >
       <template #content>
         <div class="ma-0 pa-0">
