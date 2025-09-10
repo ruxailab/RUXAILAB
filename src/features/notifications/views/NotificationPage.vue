@@ -139,8 +139,16 @@ const allRead = computed(() =>
   user.value.notifications.every((notification) => notification.read)
 )
 
+const sortedNotifications = computed(() =>
+  [...user.value.notifications].sort((a, b) => {
+    const aDate = new Date(a.createdDate)
+    const bDate = new Date(b.createdDate)
+    return bDate - aDate
+  })
+)
+
 const unreadNotifications = computed(() =>
-  user.value.notifications.filter((notification) => !notification.read)
+  sortedNotifications.value.filter((notification) => !notification.read)
 )
 
 const unreadPages = computed(() => Math.ceil(unreadNotifications.value.length / pageSize))
@@ -150,14 +158,15 @@ const paginatedUnreadNotifications = computed(() => {
   return unreadNotifications.value.slice(start, end)
 })
 
-const inboxPages = computed(() => Math.ceil(user.value.notifications.length / pageSize))
+const inboxPages = computed(() => Math.ceil(sortedNotifications.value.length / pageSize))
 const paginatedInboxNotifications = computed(() => {
   const start = (inboxPage.value - 1) * pageSize
   const end = start + pageSize
-  return user.value.notifications.slice(start, end)
+  return sortedNotifications.value.slice(start, end)
 })
 
 const goToNotificationRedirect = async (notification) => {
+  if(notification.redirectsTo === null) return
   if(notification.accessLevel === 0) {
     const accepted = await showAcceptDialog()
     if (!accepted) return
@@ -191,8 +200,20 @@ const markAsRead = async (notification) => {
 
 const markAllAsRead = async () => {
   const unread = user.value.notifications.filter((n) => !n.read)
-  for (const notification of unread) {
-    await markAsRead(notification)
+
+  if (unread.length === 0) return
+
+  try {
+    await Promise.all(
+      unread.map((notification) =>
+        store.dispatch('markNotificationAsRead', {
+          notification,
+          user: user.value,
+        })
+      )
+    )
+  } catch (e) {
+    console.error('Error marking all as read:', e)
   }
 }
 
