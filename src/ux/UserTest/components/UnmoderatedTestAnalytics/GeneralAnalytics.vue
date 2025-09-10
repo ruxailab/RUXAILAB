@@ -1,5 +1,44 @@
 <template>
   <div class="bg-background">
+    <!-- Filtros dinámicos -->
+    <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
+      <div class="d-flex align-center mb-3 flex-wrap button-bar">
+        <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
+          variant="outlined" placeholder="Buscar por nombre o email" class="flex-grow-1" />
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
+          @click="resetFilters">Reset</v-btn>
+
+        <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
+          :title="showFilters ? 'Ocultar filtros' : 'Mostrar filtros'" @click="toggleFilters">
+          <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        </v-btn>
+      </div>
+      <v-expand-transition>
+        <div v-show="showFilters">
+          <v-row dense>
+            <v-col v-for="def in filterDefinitions" :key="'filter-' + def.index" cols="12" sm="6" md="3">
+              <!-- Label / tooltip above field -->
+              <v-tooltip v-if="(def.title || '').length > 42" location="top">
+                <template #activator="{ props }">
+                  <div class="filter-label truncate-2" v-bind="props">{{ def.title }}</div>
+                </template>
+                <span class="text-wrap">{{ def.title }}</span>
+              </v-tooltip>
+              <div v-else class="filter-label truncate-2">{{ def.title }}</div>
+              <!-- Categórico (multi-select) -->
+              <v-select v-if="def.isCategorical && def.items.length" :items="def.items"
+                v-model="selectedFilters[def.index]" multiple chips clearable density="compact" variant="outlined"
+                hide-details class="filter-field" @update:model-value="val => onFilterChange(def.index, val)" />
+              <!-- Texto libre / numérico (match contiene) -->
+              <v-text-field v-else v-model="selectedFilters[def.index]" density="compact" variant="outlined"
+                hide-details clearable class="filter-field" @input="onFreeTextFilter(def.index)" />
+            </v-col>
+          </v-row>
+        </div>
+      </v-expand-transition>
+    </v-card>
+
     <!-- UX Metrics Row (ahora primera fila) -->
     <v-row class="">
       <v-col cols="12" md="4">
@@ -180,7 +219,7 @@
     </v-row>
 
     <!-- Chart Section -->
-    <AnswersTimeline :task-answers="taskAnswers" @refresh="onRefreshTimeline" @export="onExportTimeline" />
+    <AnswersTimeline :task-answers="filteredSessions" @refresh="onRefreshTimeline" @export="onExportTimeline" />
 
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
@@ -278,7 +317,7 @@
             </div>
           </div>
           <v-row>
-            <template v-for="(q, idx) in taskAnswers[0]?.postTestAnswer || []">
+            <template v-for="(q, idx) in filteredSessions[0]?.postTestAnswer || []">
               <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
                 :key="'sel-' + (q.question || idx)" cols="12" md="6" lg="4">
                 <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
@@ -310,6 +349,12 @@ import AnswersTimeline from '../answers/AnswersTimeline.vue';
 const testTasks = ref([]);
 const taskAnswers = ref([]);
 
+// Filtering system
+const searchTerm = ref('');
+const selectedFilters = ref({});
+const showFilters = ref(true);
+const ALL_VALUE = '__ALL__';
+
 // Colores para el gráfico
 const chartColors = ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#EC407A', '#FF7043', '#26A69A', '#D4E157'];
 
@@ -322,10 +367,10 @@ const selectionQuestions = computed(() => {
 // Devuelve los recuentos de respuestas para una pregunta de selección específica (por índice)
 function getSelectionCounts(questionIdx) {
   const counts = {};
-  const q = taskAnswers.value[0]?.postTestAnswer?.[questionIdx];
+  const q = filteredSessions.value[0]?.postTestAnswer?.[questionIdx];
   if (!q) return counts;
   q.selectionFields.forEach(opt => { counts[opt] = 0; });
-  taskAnswers.value.forEach(ans => {
+  filteredSessions.value.forEach(ans => {
     if (ans.postTestAnswer && ans.postTestAnswer[questionIdx] && ans.postTestAnswer[questionIdx].answer) {
       const answer = ans.postTestAnswer[questionIdx].answer;
       if (Array.isArray(answer)) {
@@ -340,11 +385,11 @@ function getSelectionCounts(questionIdx) {
 
 function getPreSelectionCounts(questionIdx) {
   const counts = {};
-  const q = taskAnswers.value[0]?.preTestAnswer?.[questionIdx];
+  const q = filteredSessions.value[0]?.preTestAnswer?.[questionIdx];
   if (!testStructure.value?.preTest?.[questionIdx]?.selectionFields) return counts;
   const options = testStructure.value.preTest[questionIdx].selectionFields;
   options.forEach(opt => { counts[opt] = 0; });
-  taskAnswers.value.forEach(ans => {
+  filteredSessions.value.forEach(ans => {
     const answerObj = ans.preTestAnswer?.[questionIdx];
     if (answerObj && answerObj.answer !== undefined) {
       const answer = answerObj.answer;
@@ -360,7 +405,7 @@ function getPreSelectionCounts(questionIdx) {
 
 function getPreTextAnswers(questionIdx) {
   const list = [];
-  taskAnswers.value.forEach(ans => {
+  filteredSessions.value.forEach(ans => {
     const a = ans.preTestAnswer?.[questionIdx]?.answer;
     if (a !== undefined && a !== null && a !== '') list.push(a);
   });
@@ -378,14 +423,91 @@ const answers = computed(() => {
   }
   return store.getters.visibleUserAnswers;
 });
+
+// Filter definitions based on pre-test questions
+const filterDefinitions = computed(() => {
+  const pre = testStructure.value?.preTest || [];
+  return pre.map((q, idx) => {
+    // valores desde respuestas reales
+    const answerValueSet = new Set();
+    Object.values(answers.value).forEach(s => {
+      const a = s.preTestAnswer?.[idx]?.answer;
+      if (a !== undefined && a !== null && a !== '') answerValueSet.add(a);
+    });
+
+    // valores declarados en la estructura (selectionFields) si es tipo selección
+    if (q?.type === 'selection' && Array.isArray(q.selectionFields)) {
+      q.selectionFields.forEach(opt => {
+        if (opt !== undefined && opt !== null && opt !== '') answerValueSet.add(opt);
+      });
+    }
+
+    const options = Array.from(answerValueSet).sort();
+
+    // Forzar dropdown si es pregunta de selección aunque solo haya 1 opción todavía
+    const isSelection = q?.type === 'selection';
+    const isCategoricalByCount = options.length >= 2 && options.length <= 50;
+    const isCategorical = isSelection || isCategoricalByCount;
+
+    const baseItems = isCategorical ? options.map(o => ({ title: o, value: o })) : [];
+    if (isCategorical && baseItems.length) {
+      // Insertar 'Todos' al inicio
+      if (!baseItems.find(it => it.value === ALL_VALUE)) {
+        baseItems.unshift({ title: 'Todos', value: ALL_VALUE });
+      }
+    }
+
+    return {
+      index: idx,
+      title: q.title || q.question || `Pregunta ${idx + 1}`,
+      options,
+      isCategorical,
+      items: baseItems
+    };
+  });
+});
+
+// Check if there are active filters
+const hasActiveFilters = computed(() => {
+  const someFilters = Object.entries(selectedFilters.value).some(([k, v]) => {
+    if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE);
+    return !!v; // texto
+  });
+  return someFilters || !!searchTerm.value.trim();
+});
+
+// Filtered sessions based on search term and filters
+const filteredSessions = computed(() => {
+  const term = searchTerm.value.trim().toLowerCase();
+  return Object.values(answers.value).filter(session => {
+    if (term) {
+      const name = (session.fullName || '').toLowerCase();
+      const email = (session.email || '').toLowerCase();
+      if (!name.includes(term) && !email.includes(term)) return false;
+    }
+    return filterDefinitions.value.every(def => {
+      const sel = selectedFilters.value[def.index];
+      // Sin filtro aplicado
+      if (sel === undefined || sel === null || sel === '' || (Array.isArray(sel) && (sel.length === 0 || sel.includes(ALL_VALUE)))) return true;
+      const ans = session.preTestAnswer?.[def.index]?.answer || '';
+      if (def.isCategorical) {
+        return Array.isArray(sel) ? sel.includes(ans) : true;
+      } else {
+        // texto libre: substring case-insensitive
+        if (typeof sel === 'string') return ans.toString().toLowerCase().includes(sel.toLowerCase());
+        return true;
+      }
+    });
+  });
+});
 const averageTimePerTask = computed(() => {
   let totalTasks = 0;
   let totalTaskTime = 0;
 
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
-  taskAnswers.value.forEach((answer) => {
-    Object.values(answer.tasks).forEach((task) => {
+  filteredSessions.value.forEach((answer) => {
+    Object.values(answer.tasks || {}).forEach((task) => {
       totalTaskTime += task.taskTime;
       totalTasks++;
     });
@@ -407,13 +529,13 @@ const formatTime = (time) => {
 };
 
 const findLongestTask = () => {
-  if (!taskAnswers.value.length) {
+  if (!filteredSessions.value.length) {
     return { taskName: 'Task', averageTime: formatTime(0) };
   }
 
   const taskAverages = {};
 
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     if (!answer.tasks) return;
     for (const taskId in answer.tasks) {
       const taskTime = answer.tasks[taskId]?.taskTime ?? 0;
@@ -459,11 +581,11 @@ const calculateAverageTime = () => {
 };
 
 const getConclusionAverage = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
   let eachConclusion = 0;
   let totalAnswers = 0;
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     eachConclusion += answer.progress;
     totalAnswers++;
   });
@@ -471,11 +593,11 @@ const getConclusionAverage = () => {
 };
 
 const getTestsInProgress = () => {
-  if (!taskAnswers.value.length) return { totalInProgress: 0, totalCompleted: 0 };
+  if (!filteredSessions.value.length) return { totalInProgress: 0, totalCompleted: 0 };
 
   let totalProgress = 0;
   let totalCompleted = 0;
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     if (answer.submitted) {
       totalCompleted++;
     } else {
@@ -489,31 +611,31 @@ const getTestsInProgress = () => {
 };
 
 const maxProgressPerTask = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
-  const progressArray = taskAnswers.value.map((answer) => answer.progress);
+  const progressArray = filteredSessions.value.map((answer) => answer.progress);
   return Math.max(...progressArray);
 };
 
 const minProgressPerTask = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
-  const progressArray = taskAnswers.value.map((answer) => answer.progress);
+  const progressArray = filteredSessions.value.map((answer) => answer.progress);
   return Math.min(...progressArray);
 };
 
 const getTotalAnswers = () => {
-  return taskAnswers.value.length;
+  return filteredSessions.value.length;
 };
 
 const getLatestResponse = () => {
-  if (!taskAnswers.value.length) return { cooperatorEmail: '', lastUpdate: '' };
+  if (!filteredSessions.value.length) return { cooperatorEmail: '', lastUpdate: '' };
 
-  let latestResponse = taskAnswers.value[0].userDocId;
-  let lastUpdate = taskAnswers.value[0].lastUpdate;
+  let latestResponse = filteredSessions.value[0].userDocId;
+  let lastUpdate = filteredSessions.value[0].lastUpdate;
 
-  taskAnswers.value.forEach((answer) => {
-    if (answer.lastUpdate > taskAnswers.value[0].lastUpdate) {
+  filteredSessions.value.forEach((answer) => {
+    if (answer.lastUpdate > filteredSessions.value[0].lastUpdate) {
       latestResponse = answer.userDocId;
       lastUpdate = answer.lastUpdate;
     }
@@ -531,7 +653,7 @@ const getTasksTodayCount = () => {
 
   let tasksToday = 0;
 
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     const answerDate = new Date(answer.lastUpdate);
     answerDate.setHours(0, 0, 0, 0);
 
@@ -559,16 +681,33 @@ const getFormattedDate = (date) => {
   return new Date(date).toLocaleString();
 };
 
+// Filter methods
+const onFilterChange = (idx, val) => {
+  if (!val || !val.length) { selectedFilters.value[idx] = []; return; }
+  if (val.includes(ALL_VALUE)) { selectedFilters.value[idx] = [ALL_VALUE]; } else { selectedFilters.value[idx] = val; }
+};
+
+const onFreeTextFilter = (idx) => {
+  // simple trigger (v-model already updates)
+  selectedFilters.value[idx] = selectedFilters.value[idx];
+};
+
+const resetFilters = () => { selectedFilters.value = {}; searchTerm.value = ''; };
+
+const toggleFilters = () => { showFilters.value = !showFilters.value; };
+
+const triggerSearch = () => { /* no-op: computed already reacts; placeholder for future debounce */ };
+
 // UX Metrics Functions
 const calculateEffectiveness = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
   let completedTasks = 0;
   let totalTasks = 0;
 
-  taskAnswers.value.forEach((answer) => {
-    totalTasks += Object.keys(answer.tasks).length;
-    Object.values(answer.tasks).forEach((task) => {
+  filteredSessions.value.forEach((answer) => {
+    totalTasks += Object.keys(answer.tasks || {}).length;
+    Object.values(answer.tasks || {}).forEach((task) => {
       if (task.completed) {
         completedTasks++;
       }
@@ -596,12 +735,12 @@ const calculateEfficiency = () => {
 };
 
 const calculateSatisfaction = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
   let totalSatisfaction = 0;
   let ratingsCount = 0;
 
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     if (answer.satisfaction && typeof answer.satisfaction === 'number') {
       totalSatisfaction += answer.satisfaction;
       ratingsCount++;
@@ -621,9 +760,9 @@ const calculateSatisfaction = () => {
 };
 
 const getTasksPerformance = () => {
-  // Recoger todos los taskId únicos presentes en taskAnswers
+  // Recoger todos los taskId únicos presentes en filteredSessions
   const allTaskIds = new Set();
-  taskAnswers.value.forEach(answer => {
+  filteredSessions.value.forEach(answer => {
     if (answer.tasks) {
       Object.keys(answer.tasks).forEach(taskId => allTaskIds.add(taskId));
     }
@@ -643,7 +782,7 @@ const getTasksPerformance = () => {
       if (found) taskName = found.taskName;
     }
 
-    taskAnswers.value.forEach(answer => {
+    filteredSessions.value.forEach(answer => {
       if (answer.tasks && answer.tasks[taskId]) {
         total++;
         const task = answer.tasks[taskId];
@@ -839,5 +978,46 @@ onMounted(() => {
   .conclusion-card .text-h1 {
     font-size: 2rem !important;
   }
+}
+
+/* Filter styles */
+.filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+  line-height: 1.15;
+  color: #475569;
+}
+
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(11px * 1.15 * 2);
+  max-height: calc(11px * 1.15 * 2);
+}
+
+.filter-field :deep(.v-field__input) {
+  min-height: 36px;
+}
+
+.flex-grow-1 {
+  flex: 1 1 auto;
+  min-width: 240px;
+}
+
+.button-bar {
+  gap: 14px;
+}
+
+.search-btn {
+  min-width: 140px;
+  height: 40px;
+  font-weight: 600;
+  letter-spacing: .3px;
 }
 </style>
