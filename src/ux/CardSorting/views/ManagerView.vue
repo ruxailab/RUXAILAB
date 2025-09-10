@@ -39,7 +39,17 @@ const accessLevel = computed(() => {
 })
 
 const topCards = computed(() => getTopCardsDefualt(test.value, 'cardSorting'))
-const navigator = computed(() => getNavigatorDefault(test.value, accessLevel.value, route, 'cardSorting'))
+const navigator = computed(() => {
+  const items = getNavigatorDefault(test.value, accessLevel.value, route, 'cardSorting')
+
+  for (const item of items) {
+    if (item.title === 'Preview') {
+      item.path = `/cardSorting/test/${test.value.id}`
+    }
+  }
+
+  return items
+})
 
 // Lifecycle
 onMounted(async () => {
