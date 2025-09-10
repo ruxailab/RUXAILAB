@@ -1,9 +1,9 @@
 <template>
-  <v-card v-if="test" class="pa-4" elevation="1">
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4">
-      <v-icon size="24" color="grey-darken-1" class="mr-3">mdi-file-document-edit-outline</v-icon>
-      <h3 class="text-h6 text-grey-darken-1">Edit</h3>
+    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToEdit">
+      <v-icon size="24" color="primary" class="header-icon">mdi-file-document-edit-outline</v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">Edit</v-card-title>
     </div>
     
     <!-- Métricas principales en dos columnas -->
@@ -68,6 +68,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   test: {
@@ -75,6 +76,15 @@ const props = defineProps({
     required: true
   }
 })
+
+const router = useRouter()
+
+// Navigate to heuristics edit section
+const navigateToEdit = () => {
+  if (props.test?.id) {
+    router.push(`/heuristic/edit/${props.test.id}`)
+  }
+}
 
 // Computed properties
 const heuristicsCount = computed(() => props.test?.testStructure?.length || 0)
@@ -177,5 +187,26 @@ const hasWeights = computed(() => {
     align-items: center;
     gap: 12px;
   }
+}
+
+.clickable-header {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-header:hover .header-icon {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+.clickable-header:hover .clickable-title {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+.header-icon {
+  transition: color 0.2s ease;
+}
+
+.clickable-title {
+  transition: color 0.2s ease;
 }
 </style>

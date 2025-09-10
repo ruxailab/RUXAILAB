@@ -1,9 +1,9 @@
 <template>
-  <v-card v-if="test" class="pa-4" elevation="1">
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4">
-      <v-icon size="24" color="grey-darken-1" class="mr-3">mdi-account-group</v-icon>
-      <h3 class="text-h6 text-grey-darken-1">Cooperators</h3>
+    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToCooperators">
+      <v-icon size="24" color="primary" class="header-icon">mdi-account-group</v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">Cooperators</v-card-title>
     </div>
     
     <!-- Total cooperadores -->
@@ -43,6 +43,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   test: {
@@ -50,6 +51,15 @@ const props = defineProps({
     required: true
   }
 })
+
+const router = useRouter()
+
+// Navigate to cooperators section
+const navigateToCooperators = () => {
+  if (props.test?.id) {
+    router.push(`/heuristic/cooperators/${props.test.id}`)
+  }
+}
 
 // Computed properties
 const cooperators = computed(() => props.test?.cooperators || [])
@@ -116,5 +126,26 @@ const pendingPercentage = computed(() => {
 
 .metric-percentage {
   font-weight: 500;
+}
+
+.clickable-header {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-header:hover .header-icon {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+.clickable-header:hover .clickable-title {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+.header-icon {
+  transition: color 0.2s ease;
+}
+
+.clickable-title {
+  transition: color 0.2s ease;
 }
 </style>
