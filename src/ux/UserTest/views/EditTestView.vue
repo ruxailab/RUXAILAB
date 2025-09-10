@@ -103,7 +103,7 @@ import { useStore } from 'vuex'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
-import TestConfigForm from '@/ux/UserTest/components/TestConfigForm.vue'
+import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';

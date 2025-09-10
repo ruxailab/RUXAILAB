@@ -59,15 +59,9 @@ export default {
      * @returns {void}
      */
     async signup({ commit }, payload) {
-      commit('setLoading', true)
       try {
         const { user } = await authController.signUp(payload.email, payload.password)
-        await userController.create({
-          id: user.uid,
-          email: user.email,
-        })
-        const dbUser = await userController.getById(user.uid)
-        commit('SET_USER', dbUser)
+        await userController.create({ id: user.uid, email: user.email })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
@@ -78,36 +72,29 @@ export default {
           type: 'error',
         })
         throw err
-      } finally {
-        commit('setLoading', false)
       }
     },
 
     async signin({ commit }, payload) {
-      commit('setLoading', true)
       try {
-        const { user } = await authController.signIn(payload.email, payload.password)
-        if (user) {
-          const dbUser = await userController.getById(user.uid)
-          commit('SET_USER', dbUser)
-        }
+        await authController.signIn(payload.email, payload.password)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
       } catch (err) {
-        let errorMsg = i18n.global.t('errors.incorrectCredential');
-        if (err.code === 'auth/invalid-email') {
-          errorMsg = i18n.global.t('errors.userNotExist');
-        } else if (err.code === 'auth/wrong-password') {
-          errorMsg = i18n.global.t('errors.incorrectPassword');
-        }
+        // let errorMsg = i18n.global.t('errors.incorrectCredential');
+        // if (err.code === 'auth/invalid-email') {
+        //   errorMsg = i18n.global.t('errors.userNotExist');
+        // } else if (err.code === 'auth/wrong-password') {
+        //   errorMsg = i18n.global.t('errors.incorrectPassword');
+        // }
+
+        // console.log(errorMsg)
         commit('SET_TOAST', {
-          message: errorMsg,
+          message: i18n.global.t('errors.incorrectCredential'),
           type: 'error',
         })
-      } finally {
-        commit('setLoading', false)
       }
     },
 
