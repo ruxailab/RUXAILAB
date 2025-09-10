@@ -1,7 +1,5 @@
 <template>
   <div class="signin-wrapper d-flex">
-    <Snackbar />
-
     <!-- IZQUIERDA: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
       <img
@@ -118,9 +116,7 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { z } from 'zod'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
-import Snackbar from '@/shared/components/Snackbar.vue'
 
 const { t } = useI18n()
 const store = useStore()
@@ -133,11 +129,10 @@ const password = ref('')
 const rememberMe = ref(false)
 const loadingGoogle = ref(false)
 const loadingBtn = ref(false)
-const emailSchema = z.string().email({ message: t('errors.invalidEmail') })
 
 const emailRules = [
-  (v) => !!v || t('errors.emailIsRequired'),
-  (v) => emailSchema.safeParse(v).success || t('errors.invalidEmail'),
+  v => !!v || t('errors.emailIsRequired'),
+  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
 ]
 
 const rules = {

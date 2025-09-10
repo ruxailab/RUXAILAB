@@ -6,9 +6,12 @@
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
+import { useToast } from 'vue-toastification'
 
 const authController = new AuthController()
 const userController = new UserController()
+
+const toast = useToast()
 
 export default {
   state: {
@@ -78,23 +81,8 @@ export default {
     async signin({ commit }, payload) {
       try {
         await authController.signIn(payload.email, payload.password)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
       } catch (err) {
-        // let errorMsg = i18n.global.t('errors.incorrectCredential');
-        // if (err.code === 'auth/invalid-email') {
-        //   errorMsg = i18n.global.t('errors.userNotExist');
-        // } else if (err.code === 'auth/wrong-password') {
-        //   errorMsg = i18n.global.t('errors.incorrectPassword');
-        // }
-
-        // console.log(errorMsg)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.incorrectCredential'),
-          type: 'error',
-        })
+        toast.error(i18n.global.t('errors.incorrectCredential'))
       }
     },
 
