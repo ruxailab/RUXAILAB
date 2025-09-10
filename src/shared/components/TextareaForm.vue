@@ -1,34 +1,37 @@
 <template>
-    <v-row justify="center">
-      <v-col
-        cols="12"
-        md="10"
-        lg="12"
-        class="px-0 py-10"
+  <v-row justify="center">
+    <v-col
+      cols="12"
+      md="10"
+      lg="12"
+      class="px-0 py-10"
+    >
+      <v-card
+        class="elevation-2 rounded-lg pa-6"
+        width="100%"
       >
-        <v-card
-          class="elevation-2 rounded-lg pa-6"
-          width="100%"
+        <v-card-title
+          class="text-h5"
+          style="line-height: none; padding: 0 1rem"
         >
-          <v-card-title class="text-h5" style="line-height: none; padding: 0 1rem">
-            {{ title }}
-          </v-card-title>
-          <v-card-text>
-            <p
-              class="text-body-1 mb-6"
-              style="color: #4B5563;"
-            >
-              {{ subtitle }}
-            </p>
-            <quill-editor
-              v-model:value="value"
-              :options="editorOptions"
-              class="editor-container"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          {{ title }}
+        </v-card-title>
+        <v-card-text>
+          <p
+            class="text-body-1 mb-6"
+            style="color: #4B5563;"
+          >
+            {{ subtitle }}
+          </p>
+          <quill-editor
+            v-model:value="value"
+            :options="editorOptions"
+            class="editor-container"
+          />
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
