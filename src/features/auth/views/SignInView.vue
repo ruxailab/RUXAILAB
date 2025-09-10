@@ -85,6 +85,7 @@
         </v-divider>
 
         <GoogleSignInButton
+          :remember-me="rememberMe"
           :button-text="$t('auth.SIGNIN.continueWithGoogle')"
           :loading="loadingGoogle"
           :disabled="loadingBtn"
@@ -136,7 +137,7 @@ const emailRules = [
 ]
 
 const rules = {
-  required: (v) => !!v || t('PROFILE.passwordRequired'),
+  required: (v) => !!v || t('errors.passwordRequired'),
 }
 
 const checkForm = () => form.value?.validate()
@@ -149,6 +150,7 @@ const onSignIn = async () => {
       await store.dispatch('signin', {
         email: email.value,
         password: password.value,
+        rememberMe: rememberMe.value,
       })
       await router.push('/admin')
     } catch (error) {
