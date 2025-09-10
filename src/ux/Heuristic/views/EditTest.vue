@@ -10,7 +10,6 @@
     </template>
 
     <v-container>
-      <Snackbar />
       <ButtonSave
         :visible="change"
         @click="save"
@@ -94,7 +93,6 @@
 
 <script setup>
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue';
-import Snackbar from '@/shared/components/Snackbar.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { ref } from 'vue';
 import HeuristicsTable from '../components/HeuristicsTable.vue';

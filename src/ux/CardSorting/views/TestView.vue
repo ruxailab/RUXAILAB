@@ -1,7 +1,6 @@
 <template>
   <div>
     <Loading />
-    <Snackbar />
     <StartScreenTest v-if="!isTestStarted && test" @start="isTestStarted = true" :test="test" />
     <!-- <CardSortingTest v-if="isTestStarted" :test="test" /> -->
   </div>
@@ -9,7 +8,6 @@
 
 <script setup>
 import Loading from '@/shared/components/Loading.vue';
-import Snackbar from '@/shared/components/Snackbar.vue';
 // import CardSortingTest from '../components/CardSortingTest.vue';
 import StartScreenTest from '@/shared/components/template/StartScreenTest.vue'
 import { computed, onBeforeMount, ref } from 'vue';
