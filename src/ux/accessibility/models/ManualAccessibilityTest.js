@@ -39,8 +39,8 @@ export default class ManualAccessibilityTest {
     this.updatedAt = data.updatedAt || new Date().toISOString();
 
     // Test-specific data
-    this.testType = data.type || 'MANUAL';
-    this.isPublic = data.isPublic || false;
+    this.testType = data.testType || data.type || 'MANUAL';
+    this.isPublic = data.isPublic !== undefined ? data.isPublic : false;
 
     /**
      * Configuration data for the test

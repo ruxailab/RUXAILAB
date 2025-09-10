@@ -7,7 +7,14 @@ const createAccessibilityRoutes = (basePath, managerComponent, childRoutes) => [
         component: managerComponent,
         ...authorizeMeta,
         props: true,
-        children: childRoutes.map(route => ({ ...route, ...authorizeMeta, props: true }))
+        children: childRoutes.map(route => ({
+            ...route,
+            ...authorizeMeta,
+            // Convert absolute paths to relative paths for children
+            path: route.path.replace(`${basePath}/`, ''),
+            // For child routes, pass the :id parameter as props
+            props: route.path.includes(':id') ? true : false
+        }))
     }
 ];
 
