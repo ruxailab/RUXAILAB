@@ -45,21 +45,12 @@
         <VCol cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <VRow>
-              <VCol cols="12">
-                <TextareaForm
-                  v-model="welcomeMessage"
-                  :title="$t('ModeratedTest.welcomeMessage')"
-                  :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
-                />
-
-                <TextareaForm
-                  v-model="finalMessage"
-                  :title="$t('ModeratedTest.finalMessage')"
-                  :subtitle="$t('ModeratedTest.finalMessageDescription')"
-                />
-              </VCol>
-            </VRow>
+            <TestConfigForm
+              :welcome="welcomeMessage"
+              :final-message="finalMessage"
+              @update:welcome-message="welcomeMessage = $event; change = true"
+              @update:final-message="finalMessage = $event; change = true"
+            />
           </div>
 
           <!-- CONSENT FORM -->
@@ -138,6 +129,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import TestConfigForm from '@/shared/components/TestConfigForm.vue';
 
 // Variables
 const index = ref(0);
