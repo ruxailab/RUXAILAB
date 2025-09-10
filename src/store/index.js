@@ -55,6 +55,9 @@ export default createStore({
     },
   },
   getters: {
+    loading(state) {
+      return state.loading
+    },
     getToastMessage(state) {
       return state.toastMessage
     },

@@ -67,8 +67,8 @@
             type="submit"
             color="primary"
             block
-            :loading="loadingBtn"
-            :disabled="loadingGoogle"
+            :loading="loading && loadingType === 'signin'"
+            :disabled="loadingType === 'google'"
             min-height="44"
           >
             {{ $t('auth.SIGNIN.sign-up') }}
@@ -81,8 +81,8 @@
 
         <GoogleSignInButton
           :button-text="$t('auth.SIGNIN.continueWithGoogle')"
-          :loading="loadingGoogle"
-          :disabled="loadingBtn"
+          :loading="loading && loadingType === 'google'"
+          :disabled="loadingType === 'signin'"
           @google-sign-in-start="onGoogleSignInStart"
           @google-sign-in-success="onGoogleSignInSuccess"
           @google-sign-in-error="onGoogleSignInError"
@@ -107,7 +107,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -121,8 +121,9 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const valid = ref(true)
 const form = ref(null)
-const loadingBtn = ref(false)
-const loadingGoogle = ref(false)
+const loadingType = ref('')
+
+const loading = computed(() => store.getters.loading)
 
 const store = useStore()
 const router = useRouter()
@@ -150,7 +151,8 @@ const onSignUp = async () => {
   const { valid } = await form.value.validate()
   if (valid) {
     try {
-      loadingBtn.value = true
+      loadingType.value = 'signin'
+      store.dispatch('setLoading', true)
       await store.dispatch('signup', {
         email: email.value,
         password: password.value,
@@ -159,7 +161,7 @@ const onSignUp = async () => {
     } catch (error) {
       console.error('Signup failed:', error)
     } finally {
-      loadingBtn.value = false
+      store.dispatch('setLoading', false)
     }
   }
 }
@@ -169,17 +171,17 @@ const redirectToSignin = () => {
 }
 
 const onGoogleSignInStart = () => {
-  loadingGoogle.value = true
+  loadingType.value = 'google'
+  store.dispatch('setLoading', true)
 }
 
 const onGoogleSignInSuccess = async () => {
   await router.push('/admin')
-  loadingGoogle.value = false
+  store.dispatch('setLoading', false)
 }
 const onGoogleSignInError = (error) => {
-
   console.error('Google sign-in error:', error)
-  loadingGoogle.value = false
+  store.dispatch('setLoading', false)
 }
 </script>
 
