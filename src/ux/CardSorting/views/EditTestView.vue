@@ -10,7 +10,6 @@
     </template>
 
     <v-container>
-      <Snackbar />
       <ButtonSave
         :visible="change"
         @click="save"
@@ -54,7 +53,7 @@
           </div>
 
           <!-- CONSENT FORM -->
-          <v-card
+          <div
             v-if="index === 1"
             rounded="xxl"
           >
@@ -62,8 +61,9 @@
               v-model="consent"
               :title="$t('ModeratedTest.consentForm')"
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+              @update:value="consent = $event"
             />
-          </v-card>
+          </div>
 
           <!-- PRE-TEST -->
           <v-card
@@ -72,8 +72,8 @@
           >
             <UserVariables
               type="pre-test"
-              @update="preTest = $event"
               @change="change = true"
+              @update="store.dispatch('setPreTest', $event)"
             />
           </v-card>
 
@@ -108,8 +108,8 @@
           >
             <UserVariables
               type="post-test"
-              @update="postTest = $event"
               @change="change = true"
+              @update="store.dispatch('setPostTest', $event)"
             />
           </v-card>
         </VCol>
@@ -120,7 +120,6 @@
 
 <script setup>
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue';
-import Snackbar from '@/shared/components/Snackbar.vue';
 import TextareaForm from '@/shared/components/TextareaForm.vue';
 import UserVariables from '@/shared/components/UserVariables.vue';
 import CardsEditCardSorting from '../components/CardsEditCardSorting.vue';
@@ -136,8 +135,6 @@ const index = ref(0);
 const change = ref(false);
 const welcomeMessage = ref('')
 const finalMessage = ref('')
-const preTest = ref([])
-const postTest = ref([])
 const consent = ref('')
 const categories = ref([])
 const cards = ref([])
@@ -157,22 +154,20 @@ const save = async () => {
 }
 
 const submit = async () => {
-  const object = {
-    testStructure: {
-      welcomeMessage: welcomeMessage.value,
-      finalMessage: finalMessage.value,
-      preTest: preTest.value,
-      postTest: postTest.value,
-      consent: consent.value,
-      cardSorting: {
-        categories: categories.value,
-        cards: cards.value,
-        options: { ...optionsCards.value, ...optionsCategories.value}
-      },
-    }
+  const testStructure = {
+    welcomeMessage: welcomeMessage.value,
+    finalMessage: finalMessage.value,
+    preTest: store.getters.preTest,
+    postTest: store.getters.postTest,
+    consent: consent.value,
+    cardSorting: {
+      categories: categories.value,
+      cards: cards.value,
+      options: { ...optionsCards.value, ...optionsCategories.value}
+    },
   }
 
-  const rawData = { ...test.value, ...object }
+  const rawData = { ...test.value, testStructure: testStructure };
   const study = instantiateStudyByType(rawData.testType, rawData);
   await store.dispatch('updateStudy', study)
 }
@@ -187,6 +182,14 @@ const getFinalMessage = () => {
 
 const getConsent = () => {
   consent.value = test.value.testStructure?.consent || ''
+}
+
+const getPreTest = () => {
+  store.dispatch('setPreTest', test.value.testStructure.preTest || [])
+}
+
+const getPostTest = () => {
+  store.dispatch('setPostTest', test.value.testStructure.postTest || [])
 }
 
 // Lifecycle
