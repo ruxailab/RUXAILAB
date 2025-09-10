@@ -340,12 +340,19 @@ const signOut = async () => {
   router.push('/signin');
 };
 
-const startTest = () => {
+const startTest = async () => {
   // Check if the test has no tasks
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', { type: 'info', message: "This test doesn't have any tasks." });
     router.push(`/missions/${test.value.id}`);
     return;
+  }
+
+  if (!isUserTestAdmin.value) {
+    await store.dispatch('acceptStudyCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
   }
 
   // First, add the class for the exit animation
@@ -670,13 +677,6 @@ onMounted(async () => {
     toast.info('Use a session link to access the test');
     router.push('/managerview/' + test.value.id);
     return;
-  }
-
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    });
   }
 
   globalIndex.value = 0;
