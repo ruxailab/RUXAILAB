@@ -33,27 +33,27 @@ const navItems = computed(() => [
     {
         title: 'Manager',
         icon: 'mdi-home',
-        path: `/accessibility/automatic/${testId.value}`
+        path: `/accessibility/automatic/${testId.value}/${testId.value}`
     },
     {
         title: 'Analyse',
         icon: 'mdi-magnify',
-        path: `/accessibility/automatic/analyse/${testId.value}`
+        path: `/accessibility/automatic/${testId.value}/analyse/${testId.value}`
     },
     {
         title: 'Answers',
         icon: 'mdi-order-bool-ascending-variant',
-        path: `/accessibility/automatic/answers/${testId.value}`
+        path: `/accessibility/automatic/${testId.value}/answers/${testId.value}`
     },
     {
         title: 'Report',
         icon: 'mdi-chart-bar',
-        path: `/accessibility/automatic/reports/${testId.value}`
+        path: `/accessibility/automatic/${testId.value}/reports/${testId.value}`
     },
     {
         title: 'Settings',
         icon: 'mdi-cog',
-        path: `/accessibility/automatic/settings/${testId.value}`
+        path: `/accessibility/automatic/${testId.value}/settings/${testId.value}`
     },
 ])
 
