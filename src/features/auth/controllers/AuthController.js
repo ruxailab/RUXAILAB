@@ -5,7 +5,10 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios';
@@ -30,7 +33,8 @@ export default class AuthController {
    * @param {string} password - User password
    * @returns {Promise} - Firebase auth user credential
    */
-  async signIn(email, password) {
+  async signIn(email, password, rememberMe) {
+    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
     return signInWithEmailAndPassword(auth, email, password)
   }
 
@@ -38,7 +42,8 @@ export default class AuthController {
    * Signs in a user with Google
    * @returns {Promise} - Firebase auth user credential
    */
-  async signInWithGoogle() {
+  async signInWithGoogle(rememberMe) {
+    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }

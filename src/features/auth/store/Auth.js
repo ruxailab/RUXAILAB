@@ -80,7 +80,7 @@ export default {
 
     async signin({ commit }, payload) {
       try {
-        await authController.signIn(payload.email, payload.password)
+        await authController.signIn(payload.email, payload.password, payload.rememberMe)
       } catch (err) {
         toast.error(i18n.global.t('errors.incorrectCredential'))
       }
@@ -91,10 +91,10 @@ export default {
  * @action signInWithGoogle
  * @returns {void}
  */
-    async signInWithGoogle({ commit }) {
+    async signInWithGoogle({ commit }, payload) {
       commit('setLoading', true)
       try {
-        const { user } = await authController.signInWithGoogle()
+        const { user } = await authController.signInWithGoogle(payload.rememberMe)
 
         // Check if user already exists in database
         let dbUser = null
