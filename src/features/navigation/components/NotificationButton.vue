@@ -164,7 +164,12 @@ const goToNotificationRedirect = async (notification) => {
     user: user.value,
   });
   if (notification.redirectsTo) {
-    window.open(window.location.origin + notification.redirectsTo, '_blank');
+    try {
+      window.open(window.location.origin + notification.redirectsTo, '_blank')
+    } catch(e) {
+      console.error(e)
+      window.open(window.location.origin + '/' + notification.redirectsTo, '_blank')
+    }
   } else {
     goToNotificationPage();
   }
