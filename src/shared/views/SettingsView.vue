@@ -501,29 +501,49 @@ const hasTemplate = computed(() => {
   return false;
 });
 
+// Helper function to create object based on test type
+const createObjectFromTest = (testData) => {
+  if (!testData) return null;
+
+  // Check if this is an accessibility test (automatic or manual)
+  const isAccessibilityTest = testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL';
+  
+  if (isAccessibilityTest) {
+    // Dynamic mapping for accessibility tests
+    return {
+      ...testData, 
+      testTitle: testData.title || testData.testTitle || testData.name || '',
+      testDescription: testData.description || testData.testDescription || testData.desc || '',
+      testType: testData.testType,
+      status: testData.status || 'draft',
+      endDate: testData.endDate || testData.end_date || null,
+      isPublic: testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
+      websiteUrl: testData.websiteUrl || testData.website_url || testData.url || '',
+      testAdmin: testData.testAdmin || testData.admin || null,
+      collaborators: testData.collaborators || testData.cooperators || {},
+      configData: testData.configData || testData.config || {},
+      progress: testData.progress || testData.progressData || {}
+    };
+  } else {
+    
+    return {
+      ...testData,
+    };
+  }
+};
+
 watch(
   test,
   newTest => {
     if (newTest !== null && newTest !== undefined) {
-      object.value = {
-        ...newTest,
-        // Map the actual API fields to expected component fields
-        testTitle: newTest.title || newTest.testTitle || '',
-        testDescription: newTest.description || newTest.testDescription || '',
-        testType: newTest.testType || 'MANUAL',
-        status: newTest.status || 'draft',
-        endDate: newTest.endDate || null,
-        isPublic: newTest.isPublic !== undefined ? newTest.isPublic : false,
-        websiteUrl: newTest.websiteUrl || '',
-        testAdmin: newTest.testAdmin || null,
-        collaborators: newTest.collaborators || {},
-        configData: newTest.configData || {},
-        progress: newTest.progress || {}
-      };
+      const mappedObject = createObjectFromTest(newTest);
+      object.value = mappedObject;
     }
   },
   { immediate: true }
 );
+
+
 
 onMounted(async () => {
   if (props.id) {
@@ -534,7 +554,7 @@ onMounted(async () => {
       
       // Log the fetched test data
       const testData = store.getters.test;
-      
+      console.log('Fetched test data:', testData);
       if (!testData) {
         toast.error('Test not found');
       }
