@@ -413,9 +413,9 @@ const submitAccessibility = async () => {
     
     // Route to the appropriate accessibility page using the stored method value
     if (selectedMethod === 'AUTOMATIC') {
-      router.push(`/accessibility/automatic/${testId}/${testId}`);
+      router.push(`/accessibility/automatic/${testId}`);
     } else {
-      router.push(`/accessibility/manual/${testId}/${testId}`);
+      router.push(`/accessibility/manual/${testId}`);
     }
   } catch (error) {
     isLoading.value = false;
