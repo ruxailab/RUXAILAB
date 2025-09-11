@@ -31,7 +31,7 @@ const route = useRoute();
 const router = useRouter();
 const { mdAndUp } = useDisplay();
 const { t } = useI18n();
-const testId = ref(route.params.testId || '');
+const testId = ref(route.params.id || '');
 
 // Direct manual accessibility cards implementation
 const manualAccessibilityCardsConfig = [
@@ -87,11 +87,6 @@ const manualAccessibilityCardsConfig = [
 
 // Path generators
 const createPathGenerators = (testId) => ({
-  accessibility: (page) => `/accessibility/automatic/${testId}/${page}`.replace('//', '/'),
-  analyse: () => `/accessibility/automatic/analyse/${testId}`,
-  answers: () => `/accessibility/automatic/answers/${testId}`,
-  reports: () => `/accessibility/automatic/reports/${testId}`,
-  settings: () => `/accessibility/automatic/settings/${testId}`,
   config: () => `/accessibility/manual/config/${testId}`,
   edit: () => `/accessibility/manual/edit/${testId}`,
   preview: () => `/accessibility/manual/preview/${testId}`,

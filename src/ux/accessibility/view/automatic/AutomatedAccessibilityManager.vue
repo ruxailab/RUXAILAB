@@ -24,7 +24,7 @@ import { useRoute } from 'vue-router'
 import AccessibilityDrawer from '@/ux/accessibility/components/atoms/AccessibilityDrawer.vue'
 
 const route = useRoute()
-const testId = ref(route.params.testId || '')
+const testId = ref(route.params.id || '')
 const accessibilityDrawer = ref(null)
 const drawerOpen = ref(false)
 
@@ -33,27 +33,27 @@ const navItems = computed(() => [
     {
         title: 'Manager',
         icon: 'mdi-home',
-        path: `/accessibility/automatic/${testId.value}/${testId.value}`
+        path: `/accessibility/automatic/${testId.value}`
     },
     {
         title: 'Analyse',
         icon: 'mdi-magnify',
-        path: `/accessibility/automatic/${testId.value}/analyse/${testId.value}`
+        path: `/accessibility/automatic/analyse/${testId.value}`
     },
     {
         title: 'Answers',
         icon: 'mdi-order-bool-ascending-variant',
-        path: `/accessibility/automatic/${testId.value}/answers/${testId.value}`
+        path: `/accessibility/automatic/answers/${testId.value}`
     },
     {
         title: 'Report',
         icon: 'mdi-chart-bar',
-        path: `/accessibility/automatic/${testId.value}/reports/${testId.value}`
+        path: `/accessibility/automatic/reports/${testId.value}`
     },
     {
         title: 'Settings',
         icon: 'mdi-cog',
-        path: `/accessibility/automatic/${testId.value}/settings/${testId.value}`
+        path: `/accessibility/automatic/settings/${testId.value}`
     },
 ])
 

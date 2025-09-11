@@ -28,7 +28,7 @@ const router = useRouter()
 const store = useStore()
 const toast = useToast()
 
-const testId = ref(route.params.testId || '')
+const testId = ref(route.params.id || '')
 const accessibilityDrawer = ref(null)
 const drawerOpen = ref(false)
 const userRole = ref(null)
@@ -103,37 +103,37 @@ const navItems = computed(() => {
     {
       title: 'Manager',
       icon: 'mdi-home',
-      path: `/accessibility/manual/${testId.value}/${testId.value}`,
+      path: `/accessibility/manual/${testId.value}`,
       requiresAdmin: true
     },
     {
       title: 'Config',
       icon: 'mdi-cog',
-      path: `/accessibility/manual/${testId.value}/config/${testId.value}`,
+      path: `/accessibility/manual/config/${testId.value}`,
       requiresAdmin: true
     },
     {
       title: 'Edit Study',
       icon: 'mdi-pencil',
-      path: `/accessibility/manual/${testId.value}/edit/${testId.value}`,
+      path: `/accessibility/manual/edit/${testId.value}`,
       requiresAdmin: true
     },
     {
       title: 'Preview',
       icon: 'mdi-clipboard-check',
-      path: `/accessibility/manual/${testId.value}/preview/${testId.value}`,
+      path: `/accessibility/manual/preview/${testId.value}`,
       requiresAdmin: false
     },
     {
       title: 'Answers',
       icon: 'mdi-order-bool-ascending-variant',
-      path: `/accessibility/manual/${testId.value}/result/${testId.value}`,
+      path: `/accessibility/manual/result/${testId.value}`,
       requiresAdmin: true
     },
     {
       title: 'Cooperator',
       icon: 'mdi-account-group',
-      path: `/accessibility/manual/${testId.value}/cooperative/${testId.value}`,
+      path: `/accessibility/manual/cooperative/${testId.value}`,
       requiresAdmin: true
     },
   ]
