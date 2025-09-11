@@ -1,4 +1,3 @@
-import { createAccessibilityRoutes } from './accessibilityUtils';
 // Shared Settings View
 import SettingsView from '@/shared/views/SettingsView.vue';
 // Shared Cooperators View
@@ -19,30 +18,110 @@ import AccessibilityReport from '@/ux/accessibility/view/automatic/Report.vue';
 import AccessibilityAnalyse from '@/ux/accessibility/view/automatic/EditTest.vue';
 
 const accessibilityRoutes = [
-    ...createAccessibilityRoutes(
-        '/accessibility/manual',
-        AccessibilityManagerView,
-        [
-            { path: ':id', name: 'AccessibilityHome', component: AccessibilityHome },
-            { path: 'edit/:id', name: 'EditAccessibilityTest', component: SettingsView, props: true },
-            { path: 'preview/:id', name: 'AccessibilityPreviewTest', component: AccessibilityPreviewTest },
-            { path: 'result/:id', name: 'AccessibilityTestAnswers', component: AccessibilityTestAnswers },
-            { path: 'cooperative/:id', name: 'AccessibilityTestCooperative', component: CooperatorsView, props: true },
-            { path: 'config/:id', name: 'AccessibilityConfig', component: AccessibilityConfig }
-        ]
-    ),
-    ...createAccessibilityRoutes(
-        '/accessibility/automatic',
-        AutomatedAccessibilityManager,
-        [
-            { path: ':id', name: 'AutomatedAccessibilityHome', component: AutomatedAccessibilityHome },
-            { path: 'analyse/:id', name: 'Analyse', component: AccessibilityAnalyse, props: true },
-            { path: 'answers/:id', name: 'AccessibilityAnswers', component: AccessibilityAnswers },
-            { path: 'reports/:id', name: 'AccessibilityReport', component: AccessibilityReport },
-            { path: 'cooperation/:id', name: 'AccessibilityCooperation', component: CooperatorsView, props: true },
-            { path: 'settings/:id', name: 'AccessibilitySettings', component: SettingsView, props: true }
-        ]
-    )
+    // Manual Accessibility Routes
+    {
+        path: '/accessibility/manual/:id',
+        name: 'AccessibilityManualManager',
+        meta: { authorize: [0, 1] },
+        component: AccessibilityManagerView,
+        props: true,
+        children: [
+            {
+                path: '/accessibility/manual/:id',
+                name: 'AccessibilityHome',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityHome,
+            },
+            {
+                path: '/accessibility/manual/edit/:id',
+                name: 'EditAccessibilityTest',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: SettingsView,
+            },
+            {
+                path: '/accessibility/manual/preview/:id',
+                name: 'AccessibilityPreviewTest',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityPreviewTest,
+            },
+            {
+                path: '/accessibility/manual/result/:id',
+                name: 'AccessibilityTestAnswers',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityTestAnswers,
+            },
+            {
+                path: '/accessibility/manual/cooperative/:id',
+                name: 'AccessibilityTestCooperative',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: CooperatorsView,
+            },
+            {
+                path: '/accessibility/manual/config/:id',
+                name: 'AccessibilityConfig',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityConfig,
+            },
+        ],
+    },
+    // Automatic Accessibility Routes
+    {
+        path: '/accessibility/automatic/:id',
+        name: 'AccessibilityAutomaticManager',
+        meta: { authorize: [0, 1] },
+        component: AutomatedAccessibilityManager,
+        props: true,
+        children: [
+            {
+                path: '/accessibility/automatic/:id',
+                name: 'AutomatedAccessibilityHome',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AutomatedAccessibilityHome,
+            },
+            {
+                path: '/accessibility/automatic/analyse/:id',
+                name: 'AccessibilityAnalyse',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityAnalyse,
+            },
+            {
+                path: '/accessibility/automatic/answers/:id',
+                name: 'AccessibilityAnswers',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityAnswers,
+            },
+            {
+                path: '/accessibility/automatic/reports/:id',
+                name: 'AccessibilityReport',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AccessibilityReport,
+            },
+            {
+                path: '/accessibility/automatic/cooperation/:id',
+                name: 'AccessibilityCooperation',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: CooperatorsView,
+            },
+            {
+                path: '/accessibility/automatic/settings/:id',
+                name: 'AccessibilitySettings',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: SettingsView,
+            },
+        ],
+    },
 ];
 
 export default accessibilityRoutes;
