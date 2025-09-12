@@ -1,7 +1,6 @@
 <template>
   <v-list-item
     class="notification-list-item p-0 m-0"
-    :disabled="notification.read"
     @click="onClick"
   >
     <template #prepend>
@@ -11,7 +10,6 @@
         </v-icon>
       </v-avatar>
     </template>
-    <v-list-item-content>
       <v-list-item-title class="notification-item-title">
         {{ notification.title }}
         <span v-if="notification.type" class="ml-2 text-caption text-primary">({{ notification.type }})</span>
@@ -27,7 +25,6 @@
           {{ formatDate(notification.createdDate) }}
         </p>
       </div>
-    </v-list-item-content>
    
   </v-list-item>
 </template>
@@ -60,7 +57,6 @@ const getTestIcon = (type) => {
   return 'mdi-help-circle';
 };
 const onClick = () => emit('go-to-redirect', props.notification);
-const onMarkAsRead = () => emit('mark-as-read', props.notification);
 </script>
 
 <style scoped>
