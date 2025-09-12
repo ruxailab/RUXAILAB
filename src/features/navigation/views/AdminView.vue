@@ -132,7 +132,7 @@
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
           <List
-            :items="filteredTemplates"
+            :items="filteredTemplates.sort((a, b) => (b.header.creationDate || 0) - (a.header.creationDate || 0))"
             type="publicTemplates"
             @clicked="setupTempDialog"
           />
