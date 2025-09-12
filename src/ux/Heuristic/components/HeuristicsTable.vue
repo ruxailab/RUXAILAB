@@ -349,15 +349,7 @@
               <p class="text-body-1 text-ternary">
                 {{ $t('HeuristicsTable.messages.noHeuristics') }}
               </p>
-              <v-btn
-                color="primary"
-                variant="outlined"
-                prepend-icon="mdi-plus"
-                :disabled="testAnswerDocLength > 0"
-                @click="dialogHeuris = true"
-              >
-                {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
-              </v-btn>
+              
             </v-card>
           </v-col>
         </v-row>
@@ -581,7 +573,7 @@ const heuristics = computed(() => {
 });
 
 const filteredHeuristics = computed(() => {
-  const searchLower = search.value.toLowerCase()
+  const searchLower = (search.value || '').toLowerCase()
   return heuristics.value.filter((item) => {
     const idString = item.id.toString()
     return (
