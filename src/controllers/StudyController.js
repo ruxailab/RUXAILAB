@@ -1,6 +1,4 @@
 // imports
-
-import Study from '@/shared/models/Study'
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
@@ -106,7 +104,6 @@ export default class StudyController extends Controller {
     )
     testToUpdate.cooperators[index].accepted = true
     testToUpdate.cooperators[index].userDocId = userToUpdate.id
-    testToUpdate.numberColaborators = testToUpdate.numberColaborators + 1
 
     // Update invitation on test to accepted
     return await super.update(
