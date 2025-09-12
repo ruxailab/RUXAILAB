@@ -457,7 +457,7 @@
             </v-card>
 
             <!-- Tab 4 - Analytics -->
-            <AnalyticsView v-if="tab == 3" />
+            <HeuristicsAnalytics v-if="tab == 3" />
           </div>
         </template>
       </ShowInfo>
@@ -470,12 +470,13 @@ import { ref, computed, watch, onMounted, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import BarChart from '@/ux/Heuristic/components/BarChart.vue';
+import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue';
 import RadarChart from '@/shared/components/charts/RadarChart.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import IntroAnswer from '@/shared/components/IntroAnswer.vue';
-import AnalyticsView from '@/ux/Heuristic/views/[deprecated]AnalyticsView.vue';
-import RadarWeight from '@/ux/Heuristic/components/RadarWeight.vue';
+import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer.vue';
+import RadarWeight from '@/ux/Heuristic/components/weights_evaluation/RadarWeight.vue';
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
+
 import axios from 'axios';
 import { standardDeviation, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
 import { heuristicsStatisticsHeaders, weightsStatisticsHeader, heuristicsEvaluatorHeader } from '@/ux/Heuristic/utils/headers.js'

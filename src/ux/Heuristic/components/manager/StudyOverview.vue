@@ -6,7 +6,7 @@
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="primary" class="mb-2">mdi-account-group</v-icon>
           <div class="metric-value text-h4 mb-1">{{ participantsCount }}</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('manager.participants') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">Participants</div>
         </v-card>
       </v-col>
       
@@ -15,7 +15,7 @@
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="success" class="mb-2">mdi-chart-line</v-icon>
           <div class="metric-value text-h4 mb-1">{{ completionRate }}%</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('manager.completion') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">Completion</div>
         </v-card>
       </v-col>
       
@@ -24,7 +24,7 @@
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="warning" class="mb-2">mdi-calendar-clock</v-icon>
           <div class="metric-value text-h4 mb-1">{{ daysActive }}</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('manager.daysActive') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">Days active</div>
         </v-card>
       </v-col>
       <!-- Card 4: Heurísticas -->
@@ -32,7 +32,7 @@
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="info" class="mb-2">mdi-format-list-checks</v-icon>
           <div class="metric-value text-h4 mb-1">{{ heuristicsCount }}</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('manager.heuristics') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">Heurísticas</div>
         </v-card>
       </v-col>
     </v-row>
@@ -60,8 +60,8 @@ const completionRate = computed(() => {
 })
 
 const daysActive = computed(() => {
-  if (!props.test?.createDate) return 0
-  return differenceInDays(new Date(), new Date(props.test.createDate))
+  if (!props.test?.creationDate) return 0
+  return differenceInDays(new Date(), new Date(props.test.creationDate))
 })
 
 const heuristicsCount = computed(() => props.test?.testStructure?.length || 0)

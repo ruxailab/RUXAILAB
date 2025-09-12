@@ -34,7 +34,7 @@
       :hasRoleColumn="hasRoleColumn"
       :cooperators="cooperatorsEdit"
       :loading="loading"
-      :show-date-columns="true"
+      :show-date-columns="showDateColumns"
       :show-session-column="showSessionColumn"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
@@ -96,7 +96,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, useSlots } from 'vue';
 import { useStore } from 'vuex';
-import Intro from '@/shared/components/IntroCoops.vue';
+import Intro from '@/shared/components/introduction_cards/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
@@ -108,8 +108,11 @@ import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useNotificationManager } from '@/shared/composables/useNotificationManager';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 import Cooperators from '../models/Cooperators';
+import { getMethodManagerView } from '../constants/methodDefinitions';
+import { useRouter } from 'vue-router';
 
 const uidgen = new UIDGenerator();
+const router = useRouter();
 
 // Props
 const props = defineProps({
@@ -122,6 +125,10 @@ const props = defineProps({
     default: true
   },
   showSessionColumn: {
+    type: Boolean,
+    default: false
+  },
+  showDateColumns: {
     type: Boolean,
     default: false
   }
@@ -253,12 +260,21 @@ const submit = async () => {
 
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
-    const path = 'testview';
+    console.log(guest.email + '---' + guest.accessLevel)
+    // admin - 0, evaluator -1, guest - 2
+    const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
+    const managerRoute = router.resolve({
+      name: managerViewByMethod,
+      params: { id: test.value.id }
+    });
+
+    const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
+    
     sendNotification({
       userId: guest.userDocId,
       title: 'Cooperation Invite!',
       description: `You have been invited to test ${test.value.testTitle}!`,
-      redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
+      redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
       accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
@@ -275,7 +291,6 @@ const removeCoop = async (coop) => {
     const index = cooperatorsEdit.value.indexOf(coop);
     cooperatorsEdit.value.splice(index, 1);
     test.value.cooperators = cooperatorsEdit.value;
-    test.value.numberColaborators = test.value.numberColaborators - 1;
     await store.dispatch('updateStudy', test.value);
     await store.dispatch('removeTestFromCooperator', {
       test: test.value,

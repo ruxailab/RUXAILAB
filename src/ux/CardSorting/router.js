@@ -36,7 +36,7 @@ export default [
     ],
   },
   {
-    path: '/cardSorting/test/:id/:token?',
+    path: '/cardSorting/test/:id',
     name: 'CardSortingTestView',
     props: true,
     meta: { authorize: [] },
