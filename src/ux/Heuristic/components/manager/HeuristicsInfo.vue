@@ -5,7 +5,7 @@
       <v-icon size="24" color="primary" class="header-icon">mdi-file-document-edit-outline</v-icon>
       <v-card-title class="text-h6 text-primary clickable-title">Edit</v-card-title>
     </div>
-    
+
     <!-- Métricas principales en dos columnas -->
     <div class="metrics-grid-top mb-3">
       <!-- Heurísticas creadas -->
@@ -16,7 +16,7 @@
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-primary">{{ heuristicsCount }}</div>
       </div>
-      
+
       <!-- Preguntas totales -->
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
@@ -26,7 +26,7 @@
         <div class="metric-value-main text-h5 font-weight-bold text-info">{{ questionsCount }}</div>
       </div>
     </div>
-    
+
     <!-- Opciones y chips en la misma fila -->
     <div class="metrics-grid-bottom">
       <div class="metric-item-bottom">
@@ -36,7 +36,7 @@
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-success">{{ optionsCount }}</div>
       </div>
-      
+
       <!-- Chips informativos al lado -->
       <div class="chips-container">
         <v-chip
@@ -50,7 +50,7 @@
           </v-icon>
           {{ isQualitative ? 'Qualitative' : 'Quantitative' }}
         </v-chip>
-        
+
         <v-chip
           size="small"
           :color="hasWeights ? 'success' : 'grey'"
@@ -91,6 +91,7 @@ const heuristicsCount = computed(() => props.test?.testStructure?.length || 0)
 
 const questionsCount = computed(() => {
   if (!props.test?.testStructure) return 0
+  if (!props.test.testStructure.length) return 0
   return props.test.testStructure.reduce((total, heuristic) => {
     return total + (heuristic.questions?.length || 0)
   }, 0)
@@ -98,6 +99,7 @@ const questionsCount = computed(() => {
 
 const optionsCount = computed(() => {
   if (!props.test?.testStructure) return 0
+  if (!props.test.testStructure.length) return 0
   return props.test.testStructure.reduce((total, heuristic) => {
     const heuristicOptions = heuristic.questions?.reduce((hTotal, question) => {
       return hTotal + (question.options?.length || 0)
@@ -111,14 +113,15 @@ const isQualitative = computed(() => {
   // Verificamos si el test tiene opciones de texto libre o tipo cualitativo
   // Asumimos que si hay preguntas sin opciones predefinidas es cualitativo
   if (!props.test?.testStructure) return false
-  
+  if (!props.test.testStructure.length) return false
+
   // Si tiene alguna pregunta abierta o tipo text, es cualitativo
-  const hasOpenQuestions = props.test.testStructure.some(heuristic => 
-    heuristic.questions?.some(question => 
+  const hasOpenQuestions = props.test.testStructure.some(heuristic =>
+    heuristic.questions?.some(question =>
       question.type === 'text' || question.type === 'textarea' || !question.options?.length
     )
   )
-  
+
   // Si no hay opciones predefinidas en general, también podría ser cualitativo
   return hasOpenQuestions || optionsCount.value === 0
 })
@@ -181,7 +184,7 @@ const hasWeights = computed(() => {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .metrics-grid-bottom {
     flex-direction: column;
     align-items: center;
