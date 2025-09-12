@@ -62,7 +62,7 @@
       <HeuristicsTable v-if="index == 0" @change="emit('change')" />
       <OptionsTable v-if="index == 1" />
       <WeightTable v-if="index == 2" />
-      <HeuristicsSenttings v-if="index == 3" />
+      <HeuristicsSettings v-if="index == 3" @tabChange="handleTabChange" />
     </div>
   </div>
 </template>
@@ -71,7 +71,7 @@
 import { useStore } from 'vuex';
 import HeuristicsTable from '@/ux/Heuristic/components/HeuristicsTable.vue';
 import OptionsTable from '@/ux/Heuristic/components/OptionsTable.vue';
-import HeuristicsSenttings from '@/ux/Heuristic/components/HeuristicsSenttings.vue';
+import HeuristicsSettings from '@/ux/Heuristic/components/HeuristicsSettings.vue';
 import WeightTable from '@/ux/Heuristic/components/weights_evaluation/WeightTable.vue';
 
 defineProps({
@@ -95,6 +95,10 @@ const store = useStore();
 
 const tabClicked = (index) => {
   emit('tabClicked', index);
+};
+
+const handleTabChange = (tabIndex) => {
+  emit('tabClicked', tabIndex);
 };
 </script>
 

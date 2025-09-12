@@ -98,7 +98,7 @@ import { ref } from 'vue';
 import HeuristicsTable from '../components/HeuristicsTable.vue';
 import OptionsTable from '../components/OptionsTable.vue';
 import WeightTable from '../components/weights_evaluation/WeightTable.vue';
-import HeuristicsSenttings from '../components/HeuristicsSenttings.vue';
+import HeuristicsSenttings from '../components/HeuristicsSettings.vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';

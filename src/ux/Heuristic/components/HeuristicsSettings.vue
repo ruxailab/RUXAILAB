@@ -47,28 +47,7 @@
                 truncate-length="15"
                 :disabled="testAnswerDocLength > 0"
                 counter
-                multiple
               >
-                <template v-slot:selection="{ fileNames }">
-                  <template v-for="(fileName, index) in fileNames" :key="fileName">
-                    <v-chip
-                      v-if="index < 2"
-                      class="me-2"
-                      color="deep-purple-accent-4"
-                      size="small"
-                      label
-                    >
-                      {{ fileName }}
-                    </v-chip>
-
-                    <span
-                      v-else-if="index === 2"
-                      class="text-overline text-grey-darken-3 mx-2"
-                    >
-                      +{{ files.length - 2 }} File(s)
-                    </span>
-                  </template>
-                </template>
               </v-file-input>
             </v-col>
             <v-col cols="2" class="pb-8">
@@ -108,6 +87,8 @@ import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
 
+const emit = defineEmits(['tabChange']);
+
 const store = useStore();
 const toast = useToast();
 const { t } = useI18n();
@@ -146,12 +127,15 @@ watch(loader, (newLoader) => {
 });
 
 const changeToJSON = async () => {
-  if (!csvFile.value) {
+  if (!csvFile.value || (Array.isArray(csvFile.value) && csvFile.value.length === 0)) {
     errorMessage.value = t('HeuristicsSettings.messages.noCsvFileSelected');
     return;
   }
 
-  if (!csvFile.value.name.toLowerCase().endsWith('.csv')) {
+  // Handle both single file and array of files
+  const file = Array.isArray(csvFile.value) ? csvFile.value[0] : csvFile.value;
+  
+  if (!file || !file.name || !file.name.toLowerCase().endsWith('.csv')) {
     errorMessage.value = t('HeuristicsSettings.messages.invalidFileType');
     return;
   }
@@ -163,7 +147,7 @@ const changeToJSON = async () => {
     const confirmationText = t('HeuristicsSettings.messages.acceptCsv');
     if (confirm(confirmationText)) {
       const reader = new FileReader();
-      reader.readAsText(csvFile.value, 'UTF-8');
+      reader.readAsText(file, 'UTF-8');
       reader.onload = async () => {
         const csv = reader.result.trim();
 
@@ -216,6 +200,10 @@ const changeToJSON = async () => {
 
         store.state.Tests.Test.testStructure = heuristicTest;
         await store.dispatch('updateStudy', test.value);
+        
+        // Show success message and navigate to HeuristicsTable tab
+        toast.success(t('HeuristicsSettings.messages.uploadSuccess'));
+        emit('tabChange', 0); // Navigate to tab 0 (HeuristicsTable)
       };
     }
   } catch (error) {
