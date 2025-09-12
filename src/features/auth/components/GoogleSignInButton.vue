@@ -16,7 +16,7 @@
     {{ buttonText }}
   </v-btn>
 </template>
-  
+
 <script>
 export default {
   name: 'GoogleSignInButton',
@@ -28,6 +28,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    rememberMe: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['google-sign-in-start', 'google-sign-in-success', 'google-sign-in-error'],
@@ -35,7 +39,7 @@ export default {
     async signInWithGoogle() {
       try {
         this.$emit('google-sign-in-start')
-        await this.$store.dispatch('signInWithGoogle')
+        await this.$store.dispatch('signInWithGoogle', { rememberMe: this.rememberMe })
         this.$emit('google-sign-in-success')
       } catch (error) {
         console.error('Google authentication failed:', error)

@@ -13,6 +13,7 @@ import AutomaticAccessibilityTest from './modules/AutomaticAccessibilityTest'
 import automaticReport from '@/store/modules/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
+import CardStudy from '@/ux/CardSorting/stores/CardStudy'
 
 export default createStore({
   state: {
@@ -32,6 +33,7 @@ export default createStore({
     RESET_TOAST(state) {
       state.toastMessage = '';
       state.toastType = 'info';
+      console.log(state)
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -53,6 +55,9 @@ export default createStore({
     },
   },
   getters: {
+    loading(state) {
+      return state.loading
+    },
     getToastMessage(state) {
       return state.toastMessage
     },
@@ -80,6 +85,7 @@ export default createStore({
     Language,
     automaticReport,
     UserStudy,
+    CardStudy,
     notification,
   }
 })

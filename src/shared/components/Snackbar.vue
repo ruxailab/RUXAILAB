@@ -4,13 +4,14 @@
     :color="snackColor"
     :timeout="5000"
     location="top"
+    @update:model-value="onClose"
   >
     <div>{{ snackMessage }}</div>
     <template #actions="{ attrs }">
       <v-btn
         v-bind="attrs"
         variant="text"
-        @click="snackbar = false"
+        @click="onClose(false)"
       >
         {{ $t('buttons.close') }}
       </v-btn>
@@ -19,27 +20,24 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
-const store = useStore();
-const { t } = useI18n();
+const store = useStore()
 
-const snackbar = ref(false);
+const snackbar = ref(false)
 
-const snackMessage = computed(() => store.getters.getToastMessage);
-const snackColor = computed(() => store.getters.getToastType);
+const snackMessage = computed(() => store.getters.getToastMessage)
+const snackColor = computed(() => store.getters.getToastType)
+
+const onClose = (value) => {
+  if (!value) {
+    snackbar.value = false
+    store.commit('RESET_TOAST')
+  }
+}
 
 watch(snackMessage, (newVal) => {
-  if (newVal) {
-    snackbar.value = true;
-  }
-});
-
-watch(snackbar, (newVal) => {
-  if (!newVal) {
-    store.commit('resetSnack');
-  }
-});
+  if (newVal) snackbar.value = true
+})
 </script>
