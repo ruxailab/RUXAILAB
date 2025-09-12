@@ -391,7 +391,7 @@ function saveScreenRecording(data) {
 }
 
 const openCalibration = () => {
-  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  window.open(`https://eye-tracking-28179.web.app/calibration/camera?auth=${user.value?.id}`, '_blank');
   calibrationInProgress.value = true;
   console.log('calibrationInProgress.value', calibrationInProgress.value);
 
