@@ -8,6 +8,11 @@
       <ManagerBanner />
     </div>
     <!-- Cards section using CardsManager so it matches ManagerView UI -->
+     <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Choose an option below to manage your accessibility test
+      </p>
+    </template>
     <v-container class="card-container pt-6 pb-10">
       <p class="presentation-text text-center text-md-left mb-4">
         {{ $t('accessibility.description') }}

@@ -4,6 +4,11 @@
     :loading="isLoading"
     :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'"
   >
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        {{ currentPage === 'userSelection' ? 'Select a user to view their accessibility assessment results' : 'Review the detailed accessibility assessment results for the selected user' }}
+      </p>
+    </template>
     <!-- Page 1: User Selection -->
     <v-row v-if="currentPage === 'userSelection'">
       <v-col cols="12">
@@ -20,11 +25,9 @@
               variant="outlined"
               class="mb-4"
             >
-              <div class="text-subtitle-2 mb-2">Debug Information</div>
-              <div><strong>Route ID:</strong> {{ route.params.id }}</div>
+              <div class="text-subtitle-2 mb-2">Information</div>
               <div><strong>Found User IDs:</strong> {{ userIds.join(', ') || 'None' }}</div>
               <div><strong>User Details:</strong> {{ userDetails.length }} users loaded</div>
-              <div><strong>Full Route:</strong> {{ route.path }}</div>
             </v-alert>
             <!-- Loading overlay while fetching users -->
             <div v-if="isLoadingUsers" class="text-center py-8">
