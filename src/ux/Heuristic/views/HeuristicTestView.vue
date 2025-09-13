@@ -614,11 +614,15 @@ const showSaveBtn = computed(() => {
   if (currentUserTestAnswer.value.submitted) return false
   return true
 })
-const cooperators = computed(() => store.getters.cooperators)
+
+const isUserTestAdmin = computed(() => {
+  return test.value.testAdmin.userDocId === user.value?.id
+});
+
 const loading = computed(() => store.getters.loading)
 const currentImageUrl = computed(() => store.state.Tests.currentImageUrl)
 
-const startTest = () => {
+const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
       errorCode: 400,
@@ -626,6 +630,14 @@ const startTest = () => {
     });
     return;
   }
+
+  if (!isUserTestAdmin.value) {
+    await store.dispatch('acceptStudyCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
+  }
+
   start.value = false;
 };
 

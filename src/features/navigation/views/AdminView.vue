@@ -132,7 +132,7 @@
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
           <List
-            :items="filteredTemplates"
+            :items="filteredTemplates.sort((a, b) => (b.header.creationDate || 0) - (a.header.creationDate || 0))"
             type="publicTemplates"
             @clicked="setupTempDialog"
           />
@@ -150,7 +150,7 @@
           v-model:dialog="tempDialog"
           :template="temp"
           :allow-create="true"
-          @close="tempDialog = false"
+          @close="reloadMyTemplates()"
         />
       </v-container>
     </v-main>
@@ -158,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
@@ -166,9 +166,10 @@ import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
 import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation/utils';
-import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
 import StudyController from '@/controllers/StudyController';
+import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
 
 const store = useStore();
 const router = useRouter();
@@ -236,9 +237,34 @@ const filteredTests = computed(() => {
   });
 });
 
-const filteredTemplates = computed(() => templates.value.filter(temp =>
-  temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())
-));
+const filteredTemplates = computed(() => {
+  return templates.value?.filter(temp => {
+    // Search filter
+    const matchesSearch = temp.header.templateTitle
+      .toLowerCase()
+      .includes(search.value.toLowerCase());
+
+    const method = selectedMethodFilter.value;
+    const testType = temp.header.templateType;
+    const subType = temp.header.templateSubType;
+
+    // Method filter (mesma lógica de tests, mas usando temp.header)
+    const matchesMethod =
+      method === 'all' ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+        testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
+        testType === STUDY_TYPES.USER &&
+        subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
+      (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
+        testType === STUDY_TYPES.USER &&
+        subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      (method === 'MANUAL' && testType === 'MANUAL') ||
+      (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
+
+    return matchesSearch && matchesMethod;
+  });
+});
 
 const selectNavigation = (navigationData) => {
   const { sectionId, childId } = navigationData;
@@ -252,19 +278,27 @@ const goToCreateTestRoute = () => {
 
 const goTo = (test) => {
   if (activeSection.value === 'studies') {
+    const methodView = getMethodManagerView(test.testType, test.subType)
+    router.push({ name: methodView, params: { id: test.testDocId || test.id } });
+  } else if (activeSection.value === 'sessions') {
+    const canNavigateToSession = (testDate) => {
+      return getSessionStatus(testDate) === SESSION_STATUSES.TODAY;
+    };
+    if (canNavigateToSession(test.testDate)) {
+      router.push(`testview/${test.id}/${user.value.id}`);
+    }
+  } else if(activeSection.value === 'community' && activeSubSection.value === 'community-studies') {
     if (test.testType === STUDY_TYPES.HEURISTIC) {
-      router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
+      router.push({ name: 'HeuristicManagerView', params: { id: test.id } });
     } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
-      router.push({ name: 'CardSortingManagerView', params: { id: test.testDocId || test.id } });
+      router.push({ name: 'CardSortingManagerView', params: { id: test.id } });
     } else if (test.testType === STUDY_TYPES.USER) {
       if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
-        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.id } });
       } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
-        router.push({ name: 'UserModeratedManagerView', params: { id: test.testDocId || test.id } });
+        router.push({ name: 'UserModeratedManagerView', params: { id: test.id } });
       }
     }
-  } else if (activeSection.value === 'sessions') {
-    router.push(`testview/${test.id}/${user.value.id}`);
   }
 };
 
@@ -292,15 +326,21 @@ const filterModeratedSessions = async () => {
         Object.assign(cooperatorObj, {
           testTitle: testObj.testTitle,
           testAdmin: testObj.testAdmin,
-          id: testObj.id
+          id: testObj.id,
+          testType: testObj.testType,
+          subType: testObj.subType
         });
-        const today = new Date(), testDate = new Date(cooperatorObj.testDate);
-        if (testDate.getDate() === today.getDate()) cooperatorArray.push(cooperatorObj);
+        cooperatorArray.push(cooperatorObj);
       }
     }
   }
   filteredModeratedSessions.value = cooperatorArray;
 };
+
+const reloadMyTemplates = async () => {
+  tempDialog.value = false
+  await getMyTemplates()
+}
 
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
