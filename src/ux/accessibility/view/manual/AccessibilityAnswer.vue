@@ -13,6 +13,19 @@
             Select a User to View Assessment Results
           </v-card-title>
           <v-card-text class="pa-6">
+            <!-- Debug Information -->
+            <v-alert 
+              v-if="!isLoadingUsers && userDetails.length === 0"
+              type="info" 
+              variant="outlined"
+              class="mb-4"
+            >
+              <div class="text-subtitle-2 mb-2">Debug Information</div>
+              <div><strong>Route ID:</strong> {{ route.params.id }}</div>
+              <div><strong>Found User IDs:</strong> {{ userIds.join(', ') || 'None' }}</div>
+              <div><strong>User Details:</strong> {{ userDetails.length }} users loaded</div>
+              <div><strong>Full Route:</strong> {{ route.path }}</div>
+            </v-alert>
             <!-- Loading overlay while fetching users -->
             <div v-if="isLoadingUsers" class="text-center py-8">
               <v-progress-circular
@@ -73,15 +86,26 @@
 
                 <!-- Actions Column -->
                 <template #item.actions="{ item }">
-                  <v-btn
-                    color="primary"
-                    variant="flat"
-                    size="small"
-                    prepend-icon="mdi-eye"
-                    @click="selectUser(item)"
-                  >
-                    View
-                  </v-btn>
+                  <div class="d-flex ga-2">
+                    <v-btn
+                      color="primary"
+                      variant="flat"
+                      size="small"
+                      prepend-icon="mdi-eye"
+                      @click="selectUser(item)"
+                    >
+                      View Results
+                    </v-btn>
+                    <v-btn
+                      color="secondary"
+                      variant="outlined"
+                      size="small"
+                      prepend-icon="mdi-test-tube"
+                      @click="viewUserInPreview(item)"
+                    >
+                      View in Preview
+                    </v-btn>
+                  </div>
                 </template>
               </v-data-table>
             </v-card>
@@ -119,9 +143,19 @@
                 <div class="text-body-2 text-grey">{{ selectedUser?.email }}</div>
               </div>
             </div>
-            <v-avatar color="primary" size="40">
-              <v-icon color="white">mdi-account</v-icon>
-            </v-avatar>
+            <div class="d-flex ga-2 align-center">
+              <v-btn
+                color="secondary"
+                variant="outlined"
+                prepend-icon="mdi-test-tube"
+                @click="viewUserInPreview(selectedUser)"
+              >
+                View in Preview Mode
+              </v-btn>
+              <v-avatar color="primary" size="40">
+                <v-icon color="white">mdi-account</v-icon>
+              </v-avatar>
+            </div>
           </v-card-text>
         </v-card>
 
@@ -376,7 +410,7 @@
 import { ref, onMounted, watch } from 'vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
 // Icons for principles
@@ -389,6 +423,7 @@ const principleIcons = [
 
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
 const toast = useToast()
 
 // State
@@ -421,14 +456,32 @@ const userDetails = ref([])
 
 //life cycle
 onMounted(async () => {
-  // Load WCAG data first (this affects general loading state)
-  await loadWcagData()
-  
-  // Then fetch users (this affects user loading state)
-  isLoadingUsers.value = true
-  await fetchUserIdsForTest()
-  await fetchUserEmails()
-  isLoadingUsers.value = false
+  try {
+    // Load WCAG data first (this affects general loading state)
+    await loadWcagData()
+    
+    // Then fetch users (this affects user loading state)
+    isLoadingUsers.value = true
+    
+    // Debug route parameters
+    console.log('Route params:', route.params)
+    console.log('Test ID from route:', route.params.id)
+    console.log('Full route:', route)
+    
+    if (!route.params.id) {
+      toast.error('Test ID is missing from route parameters. Please check the URL.')
+      isLoadingUsers.value = false
+      return
+    }
+    
+    await fetchUserIdsForTest()
+    await fetchUserEmails()
+  } catch (error) {
+    console.error('Error in onMounted:', error)
+    toast.error('Failed to load data: ' + error.message)
+  } finally {
+    isLoadingUsers.value = false
+  }
 })
 
 // Helper function to get display name from email
@@ -447,10 +500,11 @@ const goBackToUserSelection = () => {
 // Select user and navigate to assessment results
 const selectUser = async (user) => {
   try {
-   
+    console.log('Selecting user:', user)
     
     if (!user || !user.id) {
       toast.error('Invalid user selection')
+      console.error('Invalid user object:', user)
       return
     }
     
@@ -458,11 +512,38 @@ const selectUser = async (user) => {
     selectedUserId.value = user.email
     currentPage.value = 'assessmentResults'
     
+    console.log('Selected user ID:', user.id)
+    console.log('Selected user email:', user.email)
+    
     // Load assessment data for the selected user
     await loadAssessmentData(user.id)
   } catch (error) {
     console.error('Error selecting user:', error)
-    toast.error('Failed to load user assessment data')
+    toast.error('Failed to load user assessment data: ' + error.message)
+  }
+}
+
+// Navigate to preview mode for specific user
+const viewUserInPreview = (user) => {
+  try {
+    if (!user || !user.id) {
+      toast.error('Invalid user selection')
+      return
+    }
+    
+    const testId = route.params.id
+    if (!testId) {
+      toast.error('Test ID not found')
+      return
+    }
+    
+    // Navigate to preview page with user ID parameter
+    const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
+    window.open(previewUrl, '_blank')
+    toast.success(`Opening preview for ${getDisplayName(user.email)}`)
+  } catch (error) {
+    console.error('Error opening preview for user:', error)
+    toast.error('Failed to open preview mode')
   }
 }
 
@@ -479,9 +560,9 @@ const headers = [
 
 // Headers for user selection table
 const userHeaders = [
-  { title: 'User', key: 'email', sortable: true, width: '60%' },
+  { title: 'User', key: 'email', sortable: true, width: '50%' },
   { title: 'Status', key: 'status', sortable: false, align: 'center', width: '25%' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'center', width: '15%' },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'center', width: '25%' },
 ]
 
 // Level filter functions
@@ -724,16 +805,35 @@ const fetchUserIdsForTest = async () => {
     const { query, where, getDocs, collection } = await import('firebase/firestore');
     const { db } = await import('@/app/plugins/firebase');
 
+    const testId = route.params.id
+    console.log('Fetching user IDs for test ID:', testId)
+    
+    if (!testId) {
+      throw new Error('Test ID is required')
+    }
+
     const q = query(
       collection(db, 'assessments'),
-      where('testId', '==', route.params.testId || 'default-test-id')
+      where('testId', '==', testId)
     );
 
     const querySnapshot = await getDocs(q);
-    userIds.value = querySnapshot.docs.map((doc) => doc.data().userId);
+    const foundUserIds = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      console.log('Assessment document:', doc.id, 'data:', data);
+      return data.userId;
+    });
+    
+    userIds.value = foundUserIds;
+    console.log('Found user IDs:', userIds.value)
+    
+    if (userIds.value.length === 0) {
+      console.log('No assessment documents found for test ID:', testId);
+      toast.info('No assessment data found for this test. Users need to complete assessments first.');
+    }
   } catch (error) {
     console.error('Error fetching user IDs:', error);
-    toast.error('Failed to fetch user IDs.');
+    toast.error('Failed to fetch user IDs: ' + error.message);
     isLoadingUsers.value = false; // Stop loading on error
   }
 };
@@ -744,16 +844,23 @@ const fetchUserEmails = async () => {
     const { getDoc, doc } = await import('firebase/firestore');
     const { db } = await import('@/app/plugins/firebase');
 
+    console.log('Fetching emails for user IDs:', userIds.value)
+
     const userPromises = userIds.value.map(async (userId) => {
       const userRef = doc(db, 'users', userId);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
-        return { id: userId, email: userSnap.data().email };
+        const userData = { id: userId, email: userSnap.data().email };
+        console.log('Found user:', userData);
+        return userData;
+      } else {
+        console.log('User document not found for ID:', userId);
       }
       return null;
     });
 
     userDetails.value = (await Promise.all(userPromises)).filter(Boolean);
+    console.log('Final user details:', userDetails.value);
   } catch (error) {
     console.error('Error fetching user emails:', error);
     toast.error('Failed to fetch user emails.');
@@ -767,23 +874,23 @@ const fetchUserEmails = async () => {
 const loadAssessmentData = async (userId) => {
   try {
     isLoading.value = true;
-   
+    console.log('Loading assessment data for user:', userId)
 
     // Validate inputs
     if (!userId) {
       throw new Error('User ID is required')
     }
 
-    // Get the test ID from route or use a default
-    const testId = route.params.testId || 'default-test-id';
-    
+    // Get the test ID from route
+    const testId = route.params.id;
+    console.log('Using test ID:', testId)
 
     // Get the assessment document from Firestore
     const { getDoc, doc } = await import('firebase/firestore');
     const { db } = await import('@/app/plugins/firebase');
 
     const docId = `${userId}_${testId}`;
-   
+    console.log('Looking for assessment document:', docId)
     
     const docRef = doc(db, 'assessments', docId);
     const docSnap = await getDoc(docRef);
@@ -792,7 +899,7 @@ const loadAssessmentData = async (userId) => {
 
     if (docSnap.exists()) {
       const assessment = docSnap.data();
-     
+      console.log('Found assessment document:', assessment)
 
       if (assessment?.assessmentData) {
         assessment.assessmentData.forEach((item) => {
@@ -802,7 +909,7 @@ const loadAssessmentData = async (userId) => {
             notes: item.notes || [],
           };
         });
-      
+        console.log('Processed assessment data for', Object.keys(assessmentLookup).length, 'rules')
       } else {
         console.log('No assessmentData property found in document')
       }
