@@ -295,7 +295,7 @@ const submit = async () => {
 
 
 
-const notifyCooperator = async (guest) => {
+const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
     let path = '';
     let title = 'Cooperation Invite!';
@@ -309,10 +309,6 @@ const notifyCooperator = async (guest) => {
       path = `accessibility/automatic/preview/${test.value.id}`;
       title = 'Automatic Accessibility Test Invitation';
       description = `You have been invited to view the automatic accessibility report for "${test.value.testTitle || 'a study'}". Click to view the results.`;
-    } else {
-      if (guest.userDocId) {
-        path = `testview/${test.value.id}/${guest.userDocId}`;
-      }
     }
     
     if (guest.userDocId && path) {
@@ -324,6 +320,37 @@ const notifyCooperator = async (guest) => {
         test.value.id
       );
     }
+  }
+};
+
+const notifyCooperator = (guest) => {
+  if (guest.userDocId) {
+    console.log(guest.email + '---' + guest.accessLevel)
+    
+    // Check if it's an accessibility test (MANUAL or AUTOMATIC)
+    if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
+      notifyCooperatorAccessibility(guest);
+      return;
+    }
+    
+    // admin - 0, evaluator -1, guest - 2
+    const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
+    const managerRoute = router.resolve({
+      name: managerViewByMethod,
+      params: { id: test.value.id }
+    });
+
+    const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
+    
+    sendNotification({
+      userId: guest.userDocId,
+      title: 'Cooperation Invite!',
+      description: `You have been invited to test ${test.value.testTitle}!`,
+      redirectsTo: path,
+      author: test.value.testAdmin.email,
+      testId: test.value.id,
+      accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
+    });
   }
 };
 
