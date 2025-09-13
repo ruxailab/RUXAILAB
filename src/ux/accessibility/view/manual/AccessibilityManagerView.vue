@@ -1,8 +1,8 @@
 <template>
   <ManagerView 
     :navigator="filteredNavItems"
-    :top-cards="[]"
-    :bottom-cards="[]"
+    :top-cards="topCards"
+    :bottom-cards="bottomCards"
   >
     <!-- Loading overlay -->
     <v-overlay v-model="isLoading" contained class="align-center justify-center">
@@ -23,11 +23,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { useAccessibilityAccess } from '@/ux/accessibility/composables/useAccessibilityAccess.js'
+import { getAccessibilityNavigator, getAccessibilityTopCards, getAccessibilityBottomCards } from '@/shared/utils/managerDefault.js'
 
 const route = useRoute()
 const router = useRouter()
+const store = useStore()
 const testId = ref(route.params.id || '')
 
 // Use the accessibility access control composable
@@ -35,53 +38,23 @@ const {
   userRole, 
   isLoading, 
   fetchAccessData, 
-  getFilteredNavItems, 
   getAccessLevelText 
 } = useAccessibilityAccess()
 
-// All navigation items with admin requirements
-const allNavItems = computed(() => [
-  {
-    title: 'Manager',
-    icon: 'mdi-home',
-    path: `/accessibility/manual/${testId.value}`,
-    requiresAdmin: false
-  },
-  {
-    title: 'Edit Study',
-    icon: 'mdi-pencil',
-    path: `/accessibility/manual/config/${testId.value}`,
-    requiresAdmin: true
-  },
-  {
-    title: 'Settings',
-    icon: 'mdi-cog',
-    path: `/accessibility/manual/setting/${testId.value}`,
-    requiresAdmin: true
-  },
-  {
-    title: 'Preview',
-    icon: 'mdi-clipboard-check',
-    path: `/accessibility/manual/preview/${testId.value}`,
-    requiresAdmin: false
-  },
-  {
-    title: 'Answers',
-    icon: 'mdi-order-bool-ascending-variant',
-    path: `/accessibility/manual/result/${testId.value}`,
-    requiresAdmin: true
-  },
-  {
-    title: 'Cooperator',
-    icon: 'mdi-account-group',
-    path: `/accessibility/manual/cooperative/${testId.value}`,
-    requiresAdmin: true
-  },
-])
+// Get test data from store
+const test = computed(() => store.getters.test)
 
-// Filtered navigation items based on user role
+// Use centralized navigation and cards from managerDefault
 const filteredNavItems = computed(() => {
-  return getFilteredNavItems(allNavItems.value)
+  return getAccessibilityNavigator(test.value, userRole.value, route, 'accessibility/manual')
+})
+
+const topCards = computed(() => {
+  return getAccessibilityTopCards(test.value, userRole.value, 'accessibility/manual')
+})
+
+const bottomCards = computed(() => {
+  return getAccessibilityBottomCards(test.value, userRole.value, 'accessibility/manual')
 })
 
 onMounted(async () => {
