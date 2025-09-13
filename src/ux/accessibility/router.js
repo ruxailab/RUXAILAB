@@ -41,10 +41,10 @@ const accessibilityRoutes = [
                 component: SettingsView,
             },
             {
-                path: '/accessibility/manual/preview/:id',
+                path: '/accessibility/manual/preview/:id/:userId?/:token?',
                 name: 'AccessibilityPreviewTest',
                 props: true,
-                meta: { authorize: [0, 1] },
+                meta: { authorize: [] }, // Allow public access with token
                 component: AccessibilityPreviewTest,
             },
             {
@@ -69,6 +69,14 @@ const accessibilityRoutes = [
                 component: AccessibilityConfig,
             },
         ],
+    },
+    // Standalone cooperator access route (like heuristics)
+    {
+        path: '/accessibility/manual/cooperator/:id/:userId?/:token?',
+        name: 'AccessibilityCooperatorTest',
+        props: true,
+        meta: { authorize: [] }, // Allow public access with token
+        component: AccessibilityPreviewTest,
     },
     // Automatic Accessibility Routes
     {
@@ -100,10 +108,10 @@ const accessibilityRoutes = [
                 component: AccessibilityAnswers,
             },
             {
-                path: '/accessibility/automatic/reports/:id',
+                path: '/accessibility/automatic/reports/:id/:token?',
                 name: 'AccessibilityReport',
                 props: true,
-                meta: { authorize: [0, 1] },
+                meta: { authorize: [] }, // Allow public access with token
                 component: AccessibilityReport,
             },
             {
@@ -121,6 +129,14 @@ const accessibilityRoutes = [
                 component: SettingsView,
             },
         ],
+    },
+    // Standalone cooperator access routes
+    {
+        path: '/accessibility/automatic/cooperator/:id/:token',
+        name: 'AccessibilityAutomaticCooperatorTest',
+        props: true,
+        meta: { authorize: [] }, // Allow public access with token
+        component: AccessibilityReport,
     },
 ];
 

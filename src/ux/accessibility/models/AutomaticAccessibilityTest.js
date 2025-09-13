@@ -16,6 +16,9 @@ export default class AutomaticAccessibilityTest {
         this.version = data.version || '2.1';
         this.collaborators = data.collaborators || {};
 
+        // Add cooperators field for compatibility with other test types
+        this.cooperators = data.cooperators || [];
+
         // Timestamps
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
@@ -54,6 +57,7 @@ export default class AutomaticAccessibilityTest {
             status: this.status,
             version: this.version,
             collaborators: toPlainObject(this.collaborators),
+            cooperators: toPlainObject(this.cooperators),
             testType: this.testType,
             isPublic: this.isPublic,
             createdAt: this.createdAt,

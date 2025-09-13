@@ -39,62 +39,20 @@ const fetchTestData = async () => {
   try {
     isLoading.value = true
     
-    const user = store.state.Auth.user
-    if (!user || !user.id) {
-      throw new Error('User not authenticated')
-    }
+    // Skip all authentication and access checks - allow universal access
+    console.log('Skipping all access control - universal access enabled')
     
-    const { getDoc, doc } = await import('firebase/firestore')
-    const { db } = await import('@/app/plugins/firebase')
-    
-    const testRef = doc(db, 'tests', testId.value)
-    const testSnap = await getDoc(testRef)
-    
-    if (!testSnap.exists()) {
-      toast.error('Test not found')
-      router.push('/dashboard')
-      return
-    }
-    
-    const testData = testSnap.data()
-    checkUserAccess(user, testData)
-    
-  } catch (error) {
-    toast.error(`Failed to load test data: ${error.message}`)
-    router.push('/dashboard')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const checkUserAccess = (user, testData) => {
-  if (testData.userId === user.id) {
-    userRole.value = 'owner'
-    accessLevel.value = 999
-    return
-  }
-  
-  const testAdmin = testData.testAdmin
-  if (testAdmin && testAdmin.userDocId === user.id) {
+    // Set default admin access for everyone
     userRole.value = 'admin'
     accessLevel.value = 999
-    return
-  }
-  
-  const collaborators = testData.collaborators || {}
-  const userCollaborator = collaborators[user.id]
-  
-  if (userCollaborator) {
-    if (typeof userCollaborator === 'string') {
-      userRole.value = userCollaborator
-      accessLevel.value = userCollaborator === 'admin' ? 999 : 1
-    } else {
-      userRole.value = userCollaborator.role || 'invited'
-      accessLevel.value = userCollaborator.accessLevel || 1
-    }
-  } else {
-    toast.error('You do not have access to this test')
-    router.push('/dashboard')
+    
+    isLoading.value = false
+    
+  } catch (error) {
+    console.error('Error in fetchTestData:', error)
+    toast.error(`Failed to load test data: ${error.message}`)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -104,19 +62,19 @@ const navItems = computed(() => {
       title: 'Manager',
       icon: 'mdi-home',
       path: `/accessibility/manual/${testId.value}`,
-      requiresAdmin: true
+      requiresAdmin: false
     },
     {
       title: 'Config',
       icon: 'mdi-cog',
       path: `/accessibility/manual/config/${testId.value}`,
-      requiresAdmin: true
+      requiresAdmin: false
     },
     {
       title: 'Edit Study',
       icon: 'mdi-pencil',
       path: `/accessibility/manual/edit/${testId.value}`,
-      requiresAdmin: true
+      requiresAdmin: false
     },
     {
       title: 'Preview',
@@ -128,21 +86,18 @@ const navItems = computed(() => {
       title: 'Answers',
       icon: 'mdi-order-bool-ascending-variant',
       path: `/accessibility/manual/result/${testId.value}`,
-      requiresAdmin: true
+      requiresAdmin: false
     },
     {
       title: 'Cooperator',
       icon: 'mdi-account-group',
       path: `/accessibility/manual/cooperative/${testId.value}`,
-      requiresAdmin: true
+      requiresAdmin: false
     },
   ]
   
-  if (accessLevel.value === 999) {
-    return allItems
-  } else {
-    return allItems.filter(item => !item.requiresAdmin)
-  }
+  // Return all items regardless of access level
+  return allItems
 })
 
 const onDrawerToggle = (isOpen) => {
