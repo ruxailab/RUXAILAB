@@ -34,8 +34,9 @@
             :title="option.title"
             :description="option.description"
             :color="option.color"
-            :badge="option.recommended ? { text: 'Recommended', color: 'success' } : null"
+            :badge="option.recommended ? { text: 'Coming Soon', color: 'warning' } : null"
             @click="() => selectOption(option.id)"
+            :disabled="option.disabled"
           >
             <template #extra>
               <v-list
@@ -103,6 +104,7 @@ const options = [
     icon: 'mdi-file-outline',
     color: 'primary',
     recommended: false,
+    disabled: false,
     features: [
       'Complete customization',
       'Build from ground up',
@@ -116,6 +118,7 @@ const options = [
     icon: 'mdi-clipboard-text-outline',
     color: 'success',
     recommended: true,
+    disabled: true,
     features: [
       'Quick setup',
       'Pre-configured settings',
