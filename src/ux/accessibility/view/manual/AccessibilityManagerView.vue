@@ -33,7 +33,6 @@ const testId = ref(route.params.id || '')
 // Use the accessibility access control composable
 const { 
   userRole, 
-  accessLevel, 
   isLoading, 
   fetchAccessData, 
   getFilteredNavItems, 
