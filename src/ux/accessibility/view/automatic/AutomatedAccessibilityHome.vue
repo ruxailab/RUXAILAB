@@ -1,25 +1,16 @@
 <template>
-  <PageWrapper 
-    title="Automated Accessibility Testing"
-    :side-gap="false"
-  >
+
     <!-- Manager-style Header (uses same image as ManagerView) -->
     <div class="h-64">
       <ManagerBanner />
     </div>
-    <!-- Cards section using CardsManager so it matches ManagerView UI -->
-     <template #subtitle>
-      <p class="text-body-1 text-grey-darken-1">
-        Select a section to manage and view accessibility tests and reports.
-      </p>
-    </template>
     <v-container class="card-container pt-6 pb-10">
       <p class="presentation-text text-center text-md-left mb-4">
         Browse accessibility tools and actions
       </p>
       <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
     </v-container>
-  </PageWrapper>
+  
 </template>
 
 <script setup>
