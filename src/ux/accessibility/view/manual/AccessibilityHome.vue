@@ -1,25 +1,16 @@
 <template>
-  <PageWrapper 
-    title="Manual Accessibility Testing"
-    :side-gap="false"
-  >
+  
     <!-- Manager-style Header (uses same image as ManagerView) -->
-    <div class="h-64">
+    <div class="h-64 w-full">
       <ManagerBanner />
     </div>
-    <!-- Cards section using CardsManager so it matches ManagerView UI -->
-     <template #subtitle>
-      <p class="text-body-1 text-grey-darken-1">
-        Choose an option below to manage your accessibility test
-      </p>
-    </template>
     <v-container class="card-container pt-6 pb-10">
       <p class="presentation-text text-center text-md-left mb-4">
         {{ $t('accessibility.description') }}
       </p>
       <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
     </v-container>
-  </PageWrapper>
+  
 </template>
 
 <script setup>
