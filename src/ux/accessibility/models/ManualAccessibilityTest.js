@@ -16,6 +16,9 @@ export default class ManualAccessibilityTest {
     this.version = data.version || '2.1';
     this.collaborators = data.collaborators || {};
 
+    // Add cooperators field for compatibility with other test types
+    this.cooperators = data.cooperators || [];
+
     // Test progress tracking
     this.progress = data.progress || {
       total: 0,
@@ -84,6 +87,7 @@ export default class ManualAccessibilityTest {
       status: this.status,
       version: this.version,
       collaborators: toPlainObject(this.collaborators),
+      cooperators: toPlainObject(this.cooperators),
       progress: toPlainObject(this.progress),
       testType: this.testType,
       isPublic: this.isPublic,
