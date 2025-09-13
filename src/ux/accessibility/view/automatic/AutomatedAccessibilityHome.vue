@@ -17,7 +17,6 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
-import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import CardsManager from '@/shared/components/CardsManager'
 import ManagerBanner from '@/shared/components/ManagerBanner.vue'
 import { INTRO_IMAGES } from '@/shared/constants/theme'
@@ -26,6 +25,7 @@ const route = useRoute()
 const router = useRouter()
 const { mdAndUp } = useDisplay()
 const testId = ref(route.params.id || '')
+//commit 
 
 // Direct navigation items implementation
 const navItems = computed(() => [
