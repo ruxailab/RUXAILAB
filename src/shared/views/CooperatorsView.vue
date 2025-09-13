@@ -34,7 +34,7 @@
       :hasRoleColumn="hasRoleColumn"
       :cooperators="cooperatorsEdit"
       :loading="loading"
-      :show-date-columns="true"
+      :show-date-columns="showDateColumns"
       :show-session-column="showSessionColumn"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
@@ -96,8 +96,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, useSlots } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
-import Intro from '@/shared/components/IntroCoops.vue';
+import Intro from '@/shared/components/introduction_cards/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
@@ -108,10 +107,13 @@ import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 import Cooperators from '../models/Cooperators';
+import { getMethodManagerView } from '../constants/methodDefinitions';
+import { useRouter } from 'vue-router';
 import Notification from '@/shared/models/Notification';
-import StudyController from '@/controllers/StudyController';
+
 
 const uidgen = new UIDGenerator();
+const router = useRouter();
 
 // Props
 const props = defineProps({
@@ -124,6 +126,10 @@ const props = defineProps({
     default: true
   },
   showSessionColumn: {
+    type: Boolean,
+    default: false
+  },
+  showDateColumns: {
     type: Boolean,
     default: false
   }
@@ -330,7 +336,6 @@ const removeCoop = async (coop) => {
     const index = cooperatorsEdit.value.indexOf(coop);
     cooperatorsEdit.value.splice(index, 1);
     test.value.cooperators = cooperatorsEdit.value;
-    test.value.numberColaborators = test.value.numberColaborators - 1;
     await store.dispatch('updateStudy', test.value);
     await store.dispatch('removeTestFromCooperator', {
       test: test.value,

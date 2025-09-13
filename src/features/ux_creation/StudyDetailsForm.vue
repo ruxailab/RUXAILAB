@@ -237,7 +237,7 @@ import { useStore } from 'vuex';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
-import { instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const router = useRouter();
@@ -325,9 +325,7 @@ const handleTestType = () => {
 
 const submit = async () => {
   let testType = category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
-  if (method.value === 'CardSorting') {
-    testType = STUDY_TYPES.CARD_SORTING
-  }
+  if (method.value === STUDY_TYPES.CARD_SORTING) testType = STUDY_TYPES.CARD_SORTING
 
   isLoading.value = true;
   const user = store.getters.user;
@@ -348,25 +346,16 @@ const submit = async () => {
   }
   const newTest = instantiateStudyByType(testType, rawData)
 
-  const testId = await store.dispatch('createStudy', newTest);
+  await store.dispatch('createStudy', newTest);
   isLoading.value = false;
 
+  const testStore = store.getters.test;
   store.commit('RESET_STUDY_DETAILS');
 
-  if (studyType.value === 'Accessibility') {
-    router.push('/sample');
-  } else {
-    if (testType === STUDY_TYPES.CARD_SORTING) {
-      return router.push(`/cardSorting/manager/${testId}`);
-    } else if (testType === STUDY_TYPES.HEURISTIC) {
-      return router.push(`/heuristic/manager/${testId}`);
-    } else if (testType === STUDY_TYPES.USER) {
-      if (test.value.subType === USER_STUDY_SUBTYPES.MODERATED) {
-        return router.push(`/usertest/moderated/manager/${testId}`);
-      } else if (test.value.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
-        return router.push(`/usertest/unmoderated/manager/${testId}`);
-      }
-    }
+  if (studyType.value === 'Accessibility') router.push('/sample');
+  else {
+    const methodView = getMethodManagerView(testType, newTest.subType)
+    router.push({ name: methodView, params: { id: testStore } })
   }
 };
 
