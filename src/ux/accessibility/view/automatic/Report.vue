@@ -5,6 +5,11 @@
     loading-text="Loading WCAG Data..."
     :side-gap="false"
   >
+  <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Review detailed accessibility issues and success criteria based on WCAG guidelines.
+      </p>
+    </template>
     <v-alert
       v-if="error"
       type="error"
