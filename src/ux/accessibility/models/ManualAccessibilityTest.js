@@ -43,6 +43,7 @@ export default class ManualAccessibilityTest {
 
     // Test-specific data
     this.testType = data.testType || data.type || 'MANUAL';
+    this.subType = data.subType || 'MANUAL'; // Add subType for compatibility
     this.isPublic = data.isPublic !== undefined ? data.isPublic : false;
 
     /**
@@ -81,6 +82,7 @@ export default class ManualAccessibilityTest {
     // Create a plain object with all the data
     const plainData = {
       title: this.title,
+      testTitle: this.title, // Add testTitle for compatibility with Firebase functions
       description: this.description,
       websiteUrl: this.websiteUrl,
       testAdmin: toPlainObject(this.testAdmin),
@@ -90,6 +92,8 @@ export default class ManualAccessibilityTest {
       cooperators: toPlainObject(this.cooperators),
       progress: toPlainObject(this.progress),
       testType: this.testType,
+      subType: this.subType, // Add subType for compatibility
+      creationDate: this.createdAt, // Add creationDate for compatibility with Firebase functions
       isPublic: this.isPublic,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
