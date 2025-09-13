@@ -19,7 +19,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
-import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CardsManager from '@/shared/components/CardsManager';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
 import { ICONS, createCardConfig } from '@/shared/constants/theme';
