@@ -1,111 +1,97 @@
 <template>
-  <v-app>
-    <AccessibilityDrawer
-      ref="accessibilityDrawer"
-      v-model="drawerOpen"
-      :items="navItems"
-      @toggle="onDrawerToggle"
-    />
-    <v-main
-      
-    >
-
-              <router-view />
-         
-       
-
-    </v-main>
-  </v-app>
+  <ManagerView 
+    :navigator="filteredNavItems"
+    :top-cards="[]"
+    :bottom-cards="[]"
+  >
+    <!-- Loading overlay -->
+    <v-overlay v-model="isLoading" contained class="align-center justify-center">
+      <div class="text-center">
+        <v-progress-circular indeterminate size="64" color="primary" />
+        <div class="mt-4 text-h6">Loading test data...</div>
+        <div class="text-caption">Checking access permissions</div>
+      </div>
+    </v-overlay>
+    
+    <!-- Access level indicator -->
+    <div v-if="!isLoading && userRole" class="ma-2 text-caption text-grey">
+      Access: {{ getAccessLevelText }}
+    </div>
+  </ManagerView>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import AccessibilityDrawer from '@/ux/accessibility/components/atoms/AccessibilityDrawer.vue'
+import { useRoute, useRouter } from 'vue-router'
+import ManagerView from '@/shared/views/template/ManagerView.vue'
+import { useAccessibilityAccess } from '@/ux/accessibility/composables/useAccessibilityAccess.js'
 
 const route = useRoute()
+const router = useRouter()
 const testId = ref(route.params.id || '')
-const accessibilityDrawer = ref(null)
-const drawerOpen = ref(false)
 
-// Navigation items for the drawer
-const navItems = computed(() => [
-    {
-        title: 'Manager',
-        icon: 'mdi-home',
-        path: `/accessibility/automatic/${testId.value}`
-    },
-    {
-        title: 'Analyse',
-        icon: 'mdi-magnify',
-        path: `/accessibility/automatic/analyse/${testId.value}`
-    },
-    {
-        title: 'Answers',
-        icon: 'mdi-order-bool-ascending-variant',
-        path: `/accessibility/automatic/answers/${testId.value}`
-    },
-    {
-        title: 'Report',
-        icon: 'mdi-chart-bar',
-        path: `/accessibility/automatic/reports/${testId.value}`
-    },
-    {
-        title: 'Settings',
-        icon: 'mdi-cog',
-        path: `/accessibility/automatic/settings/${testId.value}`
-    },
+// Use the accessibility access control composable
+const { 
+  userRole, 
+  accessLevel, 
+  isLoading, 
+  fetchAccessData, 
+  getFilteredNavItems, 
+  getAccessLevelText 
+} = useAccessibilityAccess()
+
+// All navigation items with admin requirements
+const allNavItems = computed(() => [
+  {
+    title: 'Manager',
+    icon: 'mdi-home',
+    path: `/accessibility/automatic/${testId.value}`,
+    requiresAdmin: false
+  },
+  {
+    title: 'Analyse',
+    icon: 'mdi-magnify',
+    path: `/accessibility/automatic/analyse/${testId.value}`,
+    requiresAdmin: true
+  },
+  {
+    title: 'Answers',
+    icon: 'mdi-order-bool-ascending-variant',
+    path: `/accessibility/automatic/answers/${testId.value}`,
+    requiresAdmin: true
+  },
+  {
+    title: 'Report',
+    icon: 'mdi-chart-bar',
+    path: `/accessibility/automatic/reports/${testId.value}`,
+    requiresAdmin: false // Reports can be viewed by cooperators
+  },
+  {
+    title: 'Cooperation',
+    icon: 'mdi-account-group',
+    path: `/accessibility/automatic/cooperation/${testId.value}`,
+    requiresAdmin: true
+  },
+  {
+    title: 'Settings',
+    icon: 'mdi-cog',
+    path: `/accessibility/automatic/settings/${testId.value}`,
+    requiresAdmin: true
+  },
 ])
 
-const onDrawerToggle = (isOpen) => {
-    const contentCol = document.querySelector('.content-col')
-    if (contentCol) {
-        if (isOpen) {
-            contentCol.style.marginLeft = '256px'
-            contentCol.style.width = 'calc(100% - 256px)'
-        } else {
-            contentCol.style.marginLeft = '56px'
-            contentCol.style.width = 'calc(100% - 56px)'
-        }
-    }
-}
+// Filtered navigation items based on user role
+const filteredNavItems = computed(() => {
+  return getFilteredNavItems(allNavItems.value)
+})
 
-// drawer closed when open
-onMounted(() => {
-    onDrawerToggle(false) // Assuming drawer starts closed by default
+onMounted(async () => {
+  await fetchAccessData(testId.value)
+  
+  // Redirect non-admin users trying to access manager page
+  if (userRole.value !== 'admin' && route.path === `/accessibility/automatic/${testId.value}`) {
+    console.log('Non-admin user redirected to reports')
+    router.push(`/accessibility/automatic/reports/${testId.value}`)
+  }
 })
 </script>
-
-<style scoped>
-.fill-height {
-    height: 100vh;
-    overflow: hidden;
-}
-
-/* Content area styles */
-.content-col {
-    margin-left: 256px;
-    /* Default to drawer open */
-    width: calc(100% - 256px);
-    height: 100%;
-    transition: margin 0.3s ease, width 0.3s ease;
-    overflow-y: auto;
-    padding: 16px !important;
-}
-
-/* Ensure proper spacing for the drawer */
-:deep(.v-navigation-drawer) {
-    position: fixed;
-    z-index: 100;
-    height: 100vh;
-    overflow-y: auto;
-}
-
-/* Adjust for mobile */
-@media (max-width: 960px) {
-    .content-col {
-        margin-left: 56px !important;
-        width: calc(100% - 56px) !important;
-    }
-}
-</style>
