@@ -33,7 +33,6 @@ const testId = ref(route.params.id || '')
 // Use the accessibility access control composable
 const { 
   userRole, 
-  accessLevel, 
   isLoading, 
   fetchAccessData, 
   getFilteredNavItems, 
@@ -64,7 +63,7 @@ const allNavItems = computed(() => [
     title: 'Report',
     icon: 'mdi-chart-bar',
     path: `/accessibility/automatic/reports/${testId.value}`,
-    requiresAdmin: false // Reports can be viewed by cooperators
+    requiresAdmin: false 
   },
   {
     title: 'Cooperation',
