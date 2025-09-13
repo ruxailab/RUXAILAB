@@ -5,6 +5,7 @@
     loading-text="Loading WCAG Data..."
     :side-gap="false"
   >
+
     <v-alert
       v-if="error"
       type="error"
@@ -35,7 +36,7 @@
       class="ma-2"
       variant="outlined"
     >
-      <div class="text-subtitle-2 font-weight-bold mb-2">Debug Information</div>
+      <div class="text-subtitle-2 font-weight-bold mb-2">Information</div>
       <div class="text-caption">
         <div><strong>Viewing User ID:</strong> {{ viewingUserId }}</div>
         <div><strong>Viewing Mode:</strong> {{ viewingUserType }}</div>
@@ -49,7 +50,11 @@
         <div><strong>Configuration:</strong> {{ JSON.stringify(configuration, null, 2) }}</div>
       </div>
     </v-alert>
-
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Evaluate the accessibility of your project based on selected WCAG guidelines
+      </p>
+    </template>
     <!-- Full width container without padding -->
     <v-container
       fluid

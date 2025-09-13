@@ -4,6 +4,12 @@
     :loading="isLoading"
     loading-text="Loading accessibility configuration..."
   >
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Set up and customize your accessibility test parameters
+      </p>
+    </template>
+    
     <v-row justify="center">
       <v-col cols="12" lg="10" xl="8">
         <!-- Compact Header -->
