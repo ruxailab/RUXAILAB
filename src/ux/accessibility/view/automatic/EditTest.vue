@@ -3,6 +3,11 @@
     title="Website Analysis"
     subtitle="Analyze website accessibility using automated tools"
   >
+  <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Enter a website URL to run an automated accessibility test and get a detailed report.
+      </p>
+    </template>
     <v-row
       justify="center"
       class="min-height-screen"
