@@ -34,7 +34,7 @@ const accessibilityRoutes = [
                 component: AccessibilityHome,
             },
             {
-                path: '/accessibility/manual/edit/:id',
+                path: '/accessibility/manual/setting/:id',
                 name: 'EditAccessibilityTest',
                 props: true,
                 meta: { authorize: [0, 1] },
