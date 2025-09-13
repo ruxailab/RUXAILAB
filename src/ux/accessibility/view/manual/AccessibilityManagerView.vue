@@ -151,15 +151,15 @@ const navItems = computed(() => {
       requiresAdmin: false
     },
     {
-      title: 'Config',
-      icon: 'mdi-cog',
+      title: 'Edit Study',
+      icon: 'mdi-pencil',
       path: `/accessibility/manual/config/${testId.value}`,
       requiresAdmin: true
     },
     {
-      title: 'Edit Study',
-      icon: 'mdi-pencil',
-      path: `/accessibility/manual/edit/${testId.value}`,
+      title: 'Settings',
+      icon: 'mdi-cog',
+      path: `/accessibility/manual/setting/${testId.value}`,
       requiresAdmin: true
     },
     {
