@@ -108,7 +108,7 @@ import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 import Cooperators from '../models/Cooperators';
 import { getMethodManagerView } from '../constants/methodDefinitions';
-import { useRouter } from 'vue-router';
+import { useRouter ,useRoute} from 'vue-router';
 import Notification from '@/shared/models/Notification';
 
 
