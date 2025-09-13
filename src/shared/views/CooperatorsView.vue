@@ -96,6 +96,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, useSlots } from 'vue';
 import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 import Intro from '@/shared/components/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
@@ -108,6 +109,7 @@ import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 import Cooperators from '../models/Cooperators';
 import Notification from '@/shared/models/Notification';
+import StudyController from '@/controllers/StudyController';
 
 const uidgen = new UIDGenerator();
 
@@ -132,6 +134,7 @@ const emit = defineEmits(['open-invite-dialog'])
 
 // Stores
 const store = useStore();
+const route = useRoute();
 const slots = useSlots();
 
 // Use composables
@@ -177,15 +180,15 @@ const showInviteDialog = ref(false);
 const drawerOpen = ref(false);
 
 const showIntroView = computed(() => {
-  return (cooperatorsEdit.value.length <= 0) && ( showIntroComponent.value == true);
+  return (cooperatorsEdit.value.length <= 0) && showIntroComponent.value;
 });
 
 // Computeds
-const dialog = computed(() => store.state.dialog);
+const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
-const loading = computed(() => store.getters.loading);
+const loading = computed(() => store.getters.isLoading);
 
 // Methods
 const openMessageDialog = (item) => {
@@ -195,7 +198,7 @@ const openMessageDialog = (item) => {
 
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
-  if (user.userDocId) {
+  if (user.userDocId && test.value) {
     await sendNotification(
       user.userDocId,
       title,
@@ -210,6 +213,10 @@ const handleSendInvitations = async (invitationData) => {
   const { selectedCoops, selectedRole } = invitationData;
   const tokens = {};
 
+  if (!test.value) {
+    return;
+  }
+
   selectedCoops.forEach((coop) => {
     const token = uidgen.generateSync();
     if (!coop.id) {
@@ -221,8 +228,8 @@ const handleSendInvitations = async (invitationData) => {
         accessLevel: roleOptions.value[selectedRole].value,
         token,
         progress: 0,
-        updateDate: test.value.updateDate,
-        testAuthorEmail: test.value.testAdmin.email
+        updateDate: test.value?.updateDate || new Date().toISOString(),
+        testAuthorEmail: test.value?.testAdmin?.email || ''
       });
     } else {
       cooperatorsEdit.value.push({
@@ -233,8 +240,8 @@ const handleSendInvitations = async (invitationData) => {
         accessLevel: roleOptions.value[selectedRole].value,
         token,
         progress: 0,
-        updateDate: test.value.updateDate,
-        testAuthorEmail: test.value.testAdmin.email
+        updateDate: test.value?.updateDate || new Date().toISOString(),
+        testAuthorEmail: test.value?.testAdmin?.email || ''
       });
     }
     tokens[coop.id || coop] = token;
@@ -259,9 +266,20 @@ const changeRole = async (item, newValue) => {
 };
 
 const submit = async () => {
+  if (!test.value) {
+    return;
+  }
+  
   const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}));
   test.value.cooperators = [...coops];
-  await store.dispatch('updateStudy', test.value);
+  
+  try {
+    await store.dispatch('updateStudy', test.value);
+    await store.dispatch('getStudy', { id: test.value.id });
+  } catch (error) {
+    console.error('Error updating study:', error);
+  }
+  
   cooperatorsEdit.value.forEach((guest) => {
     if (!guest.accepted) {
       notifyCooperator(guest);
@@ -272,15 +290,34 @@ const submit = async () => {
 
 
 const notifyCooperator = async (guest) => {
-  if (guest.userDocId) {
-    const path = 'testview';
-    await sendNotification(
-      guest.userDocId,
-      'Cooperation Invite!',
-      `You have been invited to test ${test.value.testTitle}!`,
-      `${path}/${test.value.id}/${guest.userDocId}`,
-      test.value.id
-    );
+  if (test.value) {
+    let path = '';
+    let title = 'Cooperation Invite!';
+    let description = `You have been invited to test ${test.value.testTitle || 'a study'}!`;
+    
+    if (test.value.testType === 'MANUAL') {
+      path = `accessibility/manual/preview/${test.value.id}`;
+      title = 'Manual Accessibility Test Invitation';
+      description = `You have been invited to participate in a manual accessibility evaluation for "${test.value.testTitle || 'a study'}". Please click to start the test.`;
+    } else if (test.value.testType === 'AUTOMATIC') {
+      path = `accessibility/automatic/preview/${test.value.id}`;
+      title = 'Automatic Accessibility Test Invitation';
+      description = `You have been invited to view the automatic accessibility report for "${test.value.testTitle || 'a study'}". Click to view the results.`;
+    } else {
+      if (guest.userDocId) {
+        path = `testview/${test.value.id}/${guest.userDocId}`;
+      }
+    }
+    
+    if (guest.userDocId && path) {
+      await sendNotification(
+        guest.userDocId,
+        title,
+        description,
+        path,
+        test.value.id
+      );
+    }
   }
 };
 
@@ -322,8 +359,23 @@ watch(loading, (newVal) => {
   }
 });
 
-onMounted(() => {
+// Watch for test data changes
+watch(test, (newTest) => {
+  // Test data watcher for reactivity
+}, { immediate: true });
+
+onMounted(async () => {
   store.dispatch('getAllUsers');
+  
+  const testId = props.id || route.params.id;
+  
+  if (testId) {
+    try {
+      await store.dispatch('getStudy', { id: testId });
+    } catch (error) {
+      console.error('Error fetching test data:', error);
+    }
+  }
 });
 </script>
 
