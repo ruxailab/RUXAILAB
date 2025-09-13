@@ -8,6 +8,11 @@
       <ManagerBanner />
     </div>
     <!-- Cards section using CardsManager so it matches ManagerView UI -->
+     <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Select a section to manage and view accessibility tests and reports.
+      </p>
+    </template>
     <v-container class="card-container pt-6 pb-10">
       <p class="presentation-text text-center text-md-left mb-4">
         Browse accessibility tools and actions
