@@ -18,10 +18,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
 import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import CardsManager from '@/shared/components/CardsManager';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
@@ -29,9 +30,51 @@ import { ICONS, createCardConfig } from '@/shared/constants/theme';
 
 const route = useRoute();
 const router = useRouter();
+const store = useStore();
 const { mdAndUp } = useDisplay();
 const { t } = useI18n();
 const testId = ref(route.params.id || '');
+const userRole = ref(null);
+
+// Get user role from parent component or fetch it
+const getUserRole = async () => {
+  try {
+    const currentUser = store.state.Auth.user;
+    if (!currentUser) return 'user';
+    
+    // Get study data
+    let studyData = null;
+    if (store.getters.test) {
+      studyData = store.getters.test;
+    } else if (store.state.Study && store.state.Study.Test) {
+      studyData = store.state.Study.Test;
+    } else if (store.state.Test) {
+      studyData = store.state.Test;
+    }
+    
+    if (!studyData) return 'user';
+    
+    const currentUserId = currentUser.id;
+    const isTestAdmin = studyData.testAdmin?.userDocId === currentUserId;
+    const isCooperator = studyData.cooperators?.some(coop => coop.userDocId === currentUserId);
+    
+    if (isTestAdmin) {
+      return 'admin';
+    } else if (isCooperator) {
+      return 'cooperator';
+    } else {
+      return 'user';
+    }
+  } catch (error) {
+    console.error('Error getting user role:', error);
+    return 'user';
+  }
+};
+
+onMounted(async () => {
+  userRole.value = await getUserRole();
+  console.log('AccessibilityHome user role:', userRole.value);
+});
 
 // Direct manual accessibility cards implementation
 const manualAccessibilityCardsConfig = [
@@ -42,6 +85,7 @@ const manualAccessibilityCardsConfig = [
     descriptionKey: 'descriptions.edit',
     route: '',
     theme: 'MANAGER',
+    requiresAdmin: false,
   },
   {
     titleKey: 'titles.test',
@@ -50,6 +94,7 @@ const manualAccessibilityCardsConfig = [
     descriptionKey: 'accessibility.cards.config.description',
     routeKey: 'config',
     theme: 'CONFIG',
+    requiresAdmin: true,
   },
   {
     titleKey: 'titles.test',
@@ -58,6 +103,7 @@ const manualAccessibilityCardsConfig = [
     descriptionKey: 'accessibility.cards.edit.description',
     routeKey: 'edit',
     theme: 'EDIT',
+    requiresAdmin: true,
   },
   {
     titleKey: 'titles.preview',
@@ -66,6 +112,7 @@ const manualAccessibilityCardsConfig = [
     descriptionKey: 'descriptions.reports',
     routeKey: 'preview',
     theme: 'PREVIEW',
+    requiresAdmin: false,
   },
   {
     titleKey: 'titles.answers',
@@ -74,6 +121,7 @@ const manualAccessibilityCardsConfig = [
     descriptionKey: 'descriptions.answers',
     routeKey: 'result',
     theme: 'ANSWERS',
+    requiresAdmin: true,
   },
   {
     titleKey: 'titles.cooperators',
@@ -82,6 +130,7 @@ const manualAccessibilityCardsConfig = [
     descriptionKey: 'descriptions.cooperators',
     routeKey: 'cooperative',
     theme: 'COOPERATORS',
+    requiresAdmin: true,
   },
 ];
 
@@ -94,10 +143,17 @@ const createPathGenerators = (testId) => ({
   cooperative: () => `/accessibility/manual/cooperative/${testId}`,
 });
 
-const getManualAccessibilityCards = (t, testId) => {
+const getManualAccessibilityCards = (t, testId, userRole) => {
   const paths = createPathGenerators(testId);
 
-  return manualAccessibilityCardsConfig.map(config => {
+  // Filter cards based on user role
+  let filteredConfigs = manualAccessibilityCardsConfig;
+  if (userRole !== 'admin') {
+    // For cooperators and regular users, only show non-admin cards
+    filteredConfigs = manualAccessibilityCardsConfig.filter(config => !config.requiresAdmin);
+  }
+
+  return filteredConfigs.map(config => {
     const cardTheme = createCardConfig(config.theme);
 
     return {
@@ -111,7 +167,7 @@ const getManualAccessibilityCards = (t, testId) => {
   });
 };
 
-const cards = ref(getManualAccessibilityCards(t, testId.value));
+const cards = computed(() => getManualAccessibilityCards(t, testId.value, userRole.value));
 
 const managerCards = computed(() =>
   cards.value.map((c) => ({
