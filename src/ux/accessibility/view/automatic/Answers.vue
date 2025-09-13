@@ -6,7 +6,12 @@
   >
     <!-- Error State -->
     <!-- if the data not available  -->
-    
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        View detailed accessibility issues and recommendations to improve your
+        web content.
+      </p>
+    </template>
     <v-alert
       v-if="error"
       type="info"
@@ -26,7 +31,7 @@
         <span class="text-body-1">No Assessment Available for this Test</span>
       </div>
     </v-alert>
-
+    
     <!-- Main Report Content -->
     <div v-else-if="report">
       <!-- Report Header -->
