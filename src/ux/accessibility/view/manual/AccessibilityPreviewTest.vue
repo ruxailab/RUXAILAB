@@ -729,7 +729,7 @@ const currentUserRole = computed(() => {
   
   if (!currentUser || !currentTest) return 'anonymous'
   
-  if (isOwner.value) return 'owner'
+  if (isOwner.value) return 'admin'
   if (isAdmin.value) return 'admin'
   
   // Check cooperators
