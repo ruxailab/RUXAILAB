@@ -882,129 +882,127 @@ const getPrincipleIcon = (index) => {
   }
 }
 
+// Helper functions for initialization
+const getTestId = () => {
+  const testId = route.params.testId || route.params.id
+  if (!testId) {
+    throw new Error('Test ID is missing')
+  }
+  return testId
+}
+
+const getTargetUserId = () => {
+  return route.params.userId || route.query.userId
+}
+
+const loadTestData = async (testId) => {
+  await store.dispatch('getStudy', { id: testId })
+  await new Promise(resolve => setTimeout(resolve, 100))
+  console.log('AccessibilityPreviewTest: Test data loaded, proceeding with initialization')
+  const testData = store.getters.test
+  if (!testData) {
+    throw new Error('Failed to load test data')
+  }
+  return testData
+}
+
+const initializeAssessment = async () => {
+  await store.dispatch('Assessment/initializeAssessment')
+}
+
+const handleAuthentication = async () => {
+  let authUser = null
+  try {
+    authUser = store.state.Auth.user
+    if (!authUser) {
+      await store.dispatch('autoSignIn')
+      authUser = store.state.Auth.user
+    }
+  } catch (authError) {
+    console.warn('Authentication not available, proceeding without user context:', authError)
+  }
+  return authUser
+}
+
+const determineUserIdToLoad = (targetUserId, authUser) => {
+  if (targetUserId) {
+    console.log('Loading assessment data for target user:', targetUserId)
+    return targetUserId
+  } else if (authUser && authUser.id) {
+    console.log('Loading assessment data for current user:', authUser.id)
+    return authUser.id
+  }
+  return null
+}
+
+const loadAssessmentData = async (userIdToLoad, testId) => {
+  if (!userIdToLoad) {
+    console.log('No user ID available, proceeding with read-only access')
+    return
+  }
+  try {
+    const loadedAssessment = await store.dispatch('Assessment/loadAssessment', {
+      userId: userIdToLoad,
+      testId,
+    })
+    console.log('Loaded assessment data:', loadedAssessment)
+    if (loadedAssessment && loadedAssessment.assessmentData) {
+      const currentRuleId = currentRule.value?.id
+      if (currentRuleId) {
+        const assessment = store.getters['Assessment/getRuleAssessment'](currentRuleId)
+        if (assessment) {
+          severity.value = assessment.severity || ''
+          status.value = assessment.status || ''
+          restoreNotesFromAssessment(assessment)
+        }
+      }
+    }
+  } catch (assessmentError) {
+    console.warn('Could not load user assessment data:', assessmentError)
+  }
+}
+
+const setupConfiguration = async (testData, testId) => {
+  const configData = testData.configData || {
+    complianceLevel: 'AA',
+    includeNonInterference: true,
+    showExperimentalRules: false,
+    enableAutomaticSave: true,
+    selectedGuidelines: [],
+    selectedRulesByGuideline: {}
+  }
+  await store.dispatch('Assessment/updateConfiguration', { configData, testId })
+  console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
+  console.log('Current configuration:', configData)
+  console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
+  console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
+  console.log('Current user role:', currentUserRole.value)
+  console.log('Can save assessments:', canSaveAssessments.value)
+  console.log('Test data:', {
+    id: testData.id,
+    title: testData.title,
+    testAdmin: testData.testAdmin,
+    userId: testData.userId,
+    cooperators: testData.cooperators,
+    collaborators: testData.collaborators,
+    configData: testData.configData
+  })
+}
+
 // Initialize the assessment when component mounts
 onMounted(async () => {
   try {
     isLoading.value = true
-    // Clear any previous error messages
     error.value = ''
-
-    // Get the test ID from route
-    const testId = route.params.testId || route.params.id
-    if (!testId) {
-      throw new Error('Test ID is missing')
-    }
-
-    // Get the target user ID from route params (if viewing specific user's answers)
-    const targetUserId = route.params.userId || route.query.userId
+    const testId = getTestId()
+    const targetUserId = getTargetUserId()
     console.log('Target user ID from route:', targetUserId)
-
-    // Load test data first
-    await store.dispatch('getStudy', { id: testId })
-    
-    // Wait a moment for reactivity to settle
-    await new Promise(resolve => setTimeout(resolve, 100))
-    
-    console.log('AccessibilityPreviewTest: Test data loaded, proceeding with initialization')
-    
-    // Get the test data to access configData
-    const testData = store.getters.test
-    if (!testData) {
-      throw new Error('Failed to load test data')
-    }
-    
-    // Initialize the assessment with the test's configuration
-    await store.dispatch('Assessment/initializeAssessment')
-
-    // Try to get the current user from auth store, but don't fail if not available
-    let authUser = null
-    try {
-      // First try to get from store
-      authUser = store.state.Auth.user
-      
-      // If no user, try auto sign in
-      if (!authUser) {
-        await store.dispatch('autoSignIn')
-        authUser = store.state.Auth.user
-      }
-    } catch (authError) {
-      console.warn('Authentication not available, proceeding without user context:', authError)
-    }
-
-    // Determine which user's assessment data to load
-    let userIdToLoad = null
-    if (targetUserId) {
-      // Load specific user's assessment data (for viewing other user's answers)
-      userIdToLoad = targetUserId
-      console.log('Loading assessment data for target user:', userIdToLoad)
-    } else if (authUser && authUser.id) {
-      // Load current user's assessment data (for editing own answers)
-      userIdToLoad = authUser.id
-      console.log('Loading assessment data for current user:', userIdToLoad)
-    }
-
-    // Load the assessment data from Firestore if we have a user ID
-    if (userIdToLoad) {
-      try {
-        const loadedAssessment = await store.dispatch('Assessment/loadAssessment', {
-          userId: userIdToLoad,
-          testId,
-        })
-
-        console.log('Loaded assessment data:', loadedAssessment)
-
-        // If we have a loaded assessment, update the UI
-        if (loadedAssessment && loadedAssessment.assessmentData) {
-          const currentRuleId = currentRule.value?.id
-          if (currentRuleId) {
-            const assessment =
-              store.getters['Assessment/getRuleAssessment'](currentRuleId)
-            if (assessment) {
-              severity.value = assessment.severity || ''
-              status.value = assessment.status || ''
-              restoreNotesFromAssessment(assessment)
-            }
-          }
-        }
-      } catch (assessmentError) {
-        console.warn('Could not load user assessment data:', assessmentError)
-        // Continue anyway - user can still view the test
-      }
-    } else {
-      console.log('No user ID available, proceeding with read-only access')
-    }
-
-    // Fetch configData from the test data instead of a separate action
-    const configData = testData.configData || {
-      complianceLevel: 'AA',
-      includeNonInterference: true,
-      showExperimentalRules: false,
-      enableAutomaticSave: true,
-      selectedGuidelines: [],
-      selectedRulesByGuideline: {}
-    }
-    
-    // Update the Assessment store configuration with the test's configData
-    // This will automatically filter the WCAG data based on the configuration
-    await store.dispatch('Assessment/updateConfiguration', { configData, testId })
-
-    console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
-    console.log('Current configuration:', configData)
-    console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
-    console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
-    console.log('Current user role:', currentUserRole.value)
-    console.log('Can save assessments:', canSaveAssessments.value)
-    console.log('Test data:', {
-      id: testData.id,
-      title: testData.title,
-      testAdmin: testData.testAdmin,
-      userId: testData.userId,
-      cooperators: testData.cooperators,
-      collaborators: testData.collaborators,
-      configData: testData.configData
-    })
-    
-    // The complianceLevel computed property will automatically get the value from the store
+    const testData = await loadTestData(testId)
+    await initializeAssessment()
+    const authUser = await handleAuthentication()
+    const userIdToLoad = determineUserIdToLoad(targetUserId, authUser)
+    await loadAssessmentData(userIdToLoad, testId)
+    await setupConfiguration(testData, testId)
   } catch (err) {
     console.error('Failed to initialize assessment:', err)
     error.value = 'Failed to load assessment data. Please try refreshing the page.'
