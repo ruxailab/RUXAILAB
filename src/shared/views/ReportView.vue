@@ -368,7 +368,7 @@ const getCurrentAnswer = async () => {
 const removeReport = async (report) => {
   loadingBtn.value = true;
 
-  await store.dispatch("reports/removeReport", { report, test: test.value });
+  await store.dispatch("Reports/removeReport", { report, test: test.value });
 
   await getCurrentAnswer();
   toast?.success(t("alerts.genericSuccess"));

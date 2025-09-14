@@ -15,6 +15,8 @@ export default class UserStudyEvaluatorAnswer {
     submitted,
     userDocId,
     lastUpdate,
+    invited,
+    hidden
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -29,6 +31,8 @@ export default class UserStudyEvaluatorAnswer {
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
+    this.invited = invited ?? false
+    this.hidden = hidden ?? false
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
@@ -61,6 +65,8 @@ export default class UserStudyEvaluatorAnswer {
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
+      invited: this.invited,
+      hidden: this.hidden,
     }
   }
 }
