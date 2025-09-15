@@ -382,6 +382,7 @@
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
+                      :disable="currentUserTestAnswer?.submitted"
                     >
                       <template #answer>
                         <v-select
@@ -395,6 +396,7 @@
                           variant="outlined"
                           density="compact"
                           @update:model-value="calculateProgress()"
+                          :disabled="currentUserTestAnswer?.submitted"
                         />
                         <v-alert v-else type="error" class="mt-4">
                           {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
@@ -460,6 +462,7 @@
                             color="testPrimary"
                             variant="flat"
                             @click="dialog = true"
+                            :disabled="currentUserTestAnswer?.submitted"
                           >
                             <v-icon start>
                               mdi-send
@@ -830,12 +833,6 @@ watch(user, async () => {
     if (logined.value) setTest()
   }
 }, { deep: true })
-
-watch(calculatedProgress, (newVal) => {
-  if (newVal == 100) {
-    review.value = false
-  }
-})
 
 onBeforeMount(async () => {
   if (route.params.token) {
