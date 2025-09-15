@@ -429,6 +429,7 @@ function saveIrisDataIntoTask() {
 
 const saveAnswer = async () => {
   try {
+    localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
@@ -666,13 +667,13 @@ const calculateProgress = () => {
     if (localTestAnswer.consentCompleted) completedSteps++;
 
     let tasksCompleted = 0;
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
+    if (Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0) {
+      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
         if (localTestAnswer.tasks[i]?.completed) {
           tasksCompleted++;
         }
       }
-      if (tasksCompleted === items.value[1].value.length) {
+      if (tasksCompleted === localTestAnswer.tasks.length) {
         completedSteps++;
       }
     }
@@ -718,6 +719,9 @@ const setTest = async () => {
       fullName: currentUserTestAnswer.value.fullName || '',
     });
     fullName.value = localTestAnswer.fullName;
+    await mappingSteps();
+    await autoComplete();
+    localTestAnswer.progress = calculateProgress();
   } catch (error) {
     console.error('Error setting test:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to load test data. Please try again.' });
@@ -882,7 +886,7 @@ onMounted(async () => {
   if (user.value) {
     await setTest();
     await autoComplete();
-    //calculateProgress();
+    calculateProgress();
   }
   if (!user.value?.id) return
 
