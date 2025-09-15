@@ -10,6 +10,7 @@
         : url
       "
       @change="uploadFile"
+      :disabled="disable"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">
@@ -43,6 +44,11 @@ const props = defineProps({
     type: String,
     default: '',
     required: true
+  },
+  disable: {
+    type: Boolean,
+    default: false,
+    required: false
   }
 })
 
