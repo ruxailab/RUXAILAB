@@ -276,8 +276,8 @@
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import TaskDetailsModal from './TaskDetailsModal.vue';
-import TaskAnswer from '../../models/TaskAnswer';
 import { useToast } from 'vue-toastification';
+import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
 
 const toast = useToast()
 
@@ -492,7 +492,7 @@ const toggleHideSession = async (item) => {
 
   try {
     await store.dispatch('updateTaskAnswer', {
-      payload: new TaskAnswer({
+      payload: new UserStudyEvaluatorAnswer({
         ...payload,
         tasks: { ...payload.tasks },
         hidden: !item.hidden,
