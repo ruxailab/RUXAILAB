@@ -24,7 +24,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
 const store = useStore()
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument.heuristicAnswers || {})
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument?.heuristicAnswers || {})
 const hasTestAnswerDocument = computed(() => {
   return testAnswerDocument.value && Object.keys(testAnswerDocument.value).length > 0
 })
