@@ -43,3 +43,18 @@ const props = defineProps({
   }
 })
 </script>
+
+<style scoped>
+.back-gradient {
+  height: 60vh;
+  background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
+  width: 100%;
+}
+
+.manager-bg {
+  min-height: 300px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+</style>

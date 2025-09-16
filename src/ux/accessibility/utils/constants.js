@@ -1,7 +1,6 @@
 // Re-export shared constants for backward compatibility
 export {
-    getAccessibilityNavItems,
-    imageMap,
-    getDescription,
-    getManualAccessibilityCards
+    ICONS,
+    INTRO_IMAGES,
+    createCardConfig
 } from '@/shared/constants'
