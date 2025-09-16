@@ -1,20 +1,15 @@
 <template>
-  <v-app>
-    <v-overlay
-      v-model="isLoading"
-      class="align-center justify-center"
-      opacity="0.8"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="primary"
-      />
-      <div class="mt-4 text-h6">
-        Loading WCAG Data...
-      </div>
-    </v-overlay>
-
+  <PageWrapper 
+    title="Accessibility Test Report"
+    :loading="isLoading"
+    loading-text="Loading WCAG Data..."
+    :side-gap="false"
+  >
+  <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Review detailed accessibility issues and success criteria based on WCAG guidelines.
+      </p>
+    </template>
     <v-alert
       v-if="error"
       type="error"
@@ -650,13 +645,14 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-app>
+  </PageWrapper>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import wcagData from '@/assets/WacgAxe.json'
 
 // Store and route
@@ -677,8 +673,8 @@ const testId = computed(() => route.params.testId || route.params.id)
 
 // Computed properties from store
 const report = computed(() => store.getters['automaticReport/report'])
-const reportLoading = computed(() => store.getters['automaticReport/isLoading'])
-const reportError = computed(() => store.getters['automaticReport/error'])
+const reportLoading = computed(() => store.getters.isLoading)
+const reportError = computed(() => store.getters.getError)
 
 // Pa11y issues
 const allIssues = computed(() => report.value?.ReportIssues || [])

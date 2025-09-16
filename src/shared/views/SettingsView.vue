@@ -454,7 +454,19 @@ const template = ref({
   templateDescription: '',
   isTemplatePublic: false,
 });
-const object = ref(null);
+const object = ref({
+  testTitle: '',
+  testDescription: '',
+  testType: 'MANUAL',
+  status: 'draft',
+  endDate: null,
+  isPublic: false,
+  websiteUrl: '',
+  testAdmin: null,
+  collaborators: {},
+  configData: {},
+  progress: {}
+});
 const valids = ref([false, true, true]);
 const dialogDel = ref(false);
 const loading = ref(false);
@@ -544,24 +556,71 @@ const datePickerModel = computed({
   }
 });
 
+// Helper function to create object based on test type
+const createObjectFromTest = (testData) => {
+  if (!testData) return null;
+
+  // Check if this is an accessibility test (automatic or manual)
+  const isAccessibilityTest = testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL';
+  
+  if (isAccessibilityTest) {
+    // Dynamic mapping for accessibility tests
+    return {
+      ...testData, 
+      testTitle: testData.title || testData.testTitle || testData.name || '',
+      testDescription: testData.description || testData.testDescription || testData.desc || '',
+      testType: testData.testType,
+      status: testData.status || 'draft',
+      endDate: testData.endDate || testData.end_date || null,
+      isPublic: testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
+      websiteUrl: testData.websiteUrl || testData.website_url || testData.url || '',
+      testAdmin: testData.testAdmin || testData.admin || null,
+      collaborators: testData.collaborators || testData.cooperators || {},
+      configData: testData.configData || testData.config || {},
+      progress: testData.progress || testData.progressData || {}
+    };
+  } else {
+    
+    return {
+      ...testData,
+    };
+  }
+};
+
 watch(
   test,
   newTest => {
     if (newTest !== null && newTest !== undefined) {
-      object.value = {
-        ...newTest,
-        status: newTest.status || 'pending',
-        endDate: newTest.endDate || null
-      };
+      const mappedObject = createObjectFromTest(newTest);
+      object.value = mappedObject;
     }
   },
   { immediate: true }
 );
 
+
+
 onMounted(async () => {
-  if (!store.getters.test && props.id) {
-    await store.dispatch('getStudy', { id: props.id });
+  if (props.id) {
+    try {
+      console.log('Fetching test data for ID:', props.id);
+      // Always fetch the study data when component mounts
+      await store.dispatch('getStudy', { id: props.id });
+      
+      // Log the fetched test data
+      const testData = store.getters.test;
+      console.log('Fetched test data:', testData);
+      if (!testData) {
+        toast.error('Test not found');
+      }
+    } catch (error) {
+      console.error('Error fetching test data:', error);
+      toast.error('Failed to load test data');
+    }
+  } else {
+    toast.error('Test ID is missing');
   }
+  
   loadingPage.value = false;
 });
 
@@ -623,6 +682,39 @@ const preventNav = event => {
   if (!localChanges.value) return;
   event.preventDefault();
   event.returnValue = '';
+};
+
+// Function to fetch and log test data
+const fetchTestData = async () => {
+  if (!props.id) {
+    return;
+  }
+  
+  try {
+    loading.value = true;
+    
+    // Dispatch the getStudy action
+    await store.dispatch('getStudy', { id: props.id });
+    
+    // Get the test data from store
+    const testData = store.getters.test;
+    
+    if (testData) {
+      toast.success('Test data fetched successfully!');
+    } else {
+      toast.warning('No test data found');
+    }
+  } catch (error) {
+    console.error('Error fetching test data:', error);
+    toast.error('Failed to fetch test data: ' + error.message);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Function to log current component state
+const logCurrentState = () => {
+  // This function can be used for debugging if needed
 };
 
 const deleteStudy = async item => {

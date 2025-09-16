@@ -1,8 +1,13 @@
 <template>
-  <v-container
-    class="home-container"
-    fluid
+  <PageWrapper 
+    title="Website Analysis"
+    subtitle="Analyze website accessibility using automated tools"
   >
+  <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Enter a website URL to run an automated accessibility test and get a detailed report.
+      </p>
+    </template>
     <v-row
       justify="center"
       class="min-height-screen"
@@ -241,13 +246,17 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
+  </PageWrapper>
 </template>
 
 <script>
 import axios from 'axios'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
+  components: {
+    PageWrapper
+  },
   name: 'Home',
   data() {
     return {
