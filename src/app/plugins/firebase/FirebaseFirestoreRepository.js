@@ -13,6 +13,7 @@ import {
   orderBy,
   limit,
   setDoc,
+  deleteField,
 } from 'firebase/firestore'
 
 /**
@@ -167,5 +168,10 @@ export default class Controller {
 
   async delete(col, docId) {
     return deleteDoc(doc(db, col, docId))
+  }
+
+  // Utility method to get deleteField for field removal
+  getDeleteField() {
+    return deleteField()
   }
 }
