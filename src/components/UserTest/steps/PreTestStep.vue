@@ -20,18 +20,20 @@
             }}</span>
             <v-text-field
               v-if="item.textField"
-              v-model="preTestAnswer[i].answer"
+              :model-value="preTestAnswer[i].answer"
               :disabled="preTestCompleted"
               :placeholder="item.title"
               variant="outlined"
               density="comfortable"
               class="mt-2"
+              @update:model-value="(value) => updateAnswer(i, value)"
             />
             <v-radio-group
               v-if="item.selectionField"
-              v-model="preTestAnswer[i].answer"
+              :model-value="preTestAnswer[i].answer"
               :disabled="preTestCompleted"
               class="mt-2"
+              @update:model-value="(value) => updateAnswer(i, value)"
             >
               <v-radio
                 v-for="(selection, j) in item.selectionFields"
@@ -76,5 +78,11 @@ const props = defineProps({
     preTestAnswer: Array,
     preTestCompleted: Boolean
 });
-const emit = defineEmits(['done']);
+const emit = defineEmits(['done', 'update:preTestAnswer']);
+
+const updateAnswer = (index, value) => {
+  const updatedAnswers = [...props.preTestAnswer];
+  updatedAnswers[index] = { ...updatedAnswers[index], answer: value };
+  emit('update:preTestAnswer', updatedAnswers);
+};
 </script>

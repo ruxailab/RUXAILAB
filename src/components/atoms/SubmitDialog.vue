@@ -55,4 +55,6 @@ defineProps({
         default: 'Submit'
     }
 });
+
+defineEmits(['update:modelValue', 'cancel', 'submit']);
 </script>

@@ -65,7 +65,7 @@
 
       <div class="trends-chart">
         <div
-          v-for="(trend, index) in insights.trendsData"
+          v-for="trend in insights.trendsData"
           :key="trend.month"
           class="trend-bar"
         >
@@ -134,7 +134,7 @@
         <template #prepend>
           <v-icon icon="mdi-chart-line-variant" />
         </template>
-        Consider reviewing studies with <75% completion rates.
+        Consider reviewing studies with &lt;75% completion rates.
       </v-alert>
     </div>
   </div>
