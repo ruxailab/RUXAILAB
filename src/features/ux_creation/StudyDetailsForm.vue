@@ -237,7 +237,7 @@ import { useStore } from 'vuex';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
-import { getMethodManagerView, instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, instantiateStudyByType, getStudyTypeFromMethod, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const router = useRouter();
@@ -309,24 +309,16 @@ const validate = () => {
 
 const handleTestType = () => {
   const testCategory = category.value;
-  if (testCategory === 'test') {
-    const extraDetails = {}
-    const testMethod = method.value;
-    extraDetails.subType = testMethod
-    test.value = { ...test.value, ...extraDetails };
-    submit();
-  } else if (testCategory === 'accessibility') {
-    // Use unified submit function for accessibility tests too
-    submitAccessibility();
-  } else {
-    submit();
-  }
+  const extraDetails = {}
+  const testMethod = method.value;
+  extraDetails.subType = testMethod
+  test.value = { ...test.value, ...extraDetails };
+  submit();
 };
 
 const submit = async () => {
-  let testType = category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
-  if (method.value === STUDY_TYPES.CARD_SORTING) testType = STUDY_TYPES.CARD_SORTING
-
+  let testType = getStudyTypeFromMethod(method.value);
+  
   isLoading.value = true;
   const user = store.getters.user;
   const rawData = {
@@ -352,64 +344,8 @@ const submit = async () => {
   const testStore = store.getters.test;
   store.commit('RESET_STUDY_DETAILS');
 
-  if (studyType.value === 'Accessibility') router.push('/sample');
-  else {
     const methodView = getMethodManagerView(testType, newTest.subType)
     router.push({ name: methodView, params: { id: testStore } })
-  }
-};
-
-const submitAccessibility = async () => {
-  // Store the method value before it gets reset
-  const selectedMethod = method.value;
-  
-  // Determine the test type based on method
-  let testType = selectedMethod === 'AUTOMATIC' 
-    ? STUDY_TYPES.ACCESSIBILITY_AUTOMATIC 
-    : STUDY_TYPES.ACCESSIBILITY_MANUAL;
-
-  isLoading.value = true;
-  const user = store.getters.user;
-  
-  const rawData = {
-    id: null,
-    title: test.value.title,              // Use 'title' for accessibility tests
-    description: test.value.description,  // Use 'description' for accessibility tests
-    testType: testType,
-    isPublic: test.value.isPublic || false, // Ensure isPublic is always set
-    testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
-    }),
-    creationDate: Date.now(),
-    updateDate: Date.now(),
-    status: 'draft',
-    // Accessibility-specific properties
-    websiteUrl: '',
-    collaborators: {
-      [user.id]: 'admin'
-    }
-  };
-
-  try {
-    const newTest = instantiateStudyByType(testType, rawData);
-    const testId = await store.dispatch('createStudy', newTest);
-    
-    isLoading.value = false;
-    store.commit('RESET_STUDY_DETAILS');
-    
-    console.log('Routing decision - selectedMethod:', selectedMethod);
-    
-    // Route to the appropriate accessibility page using the stored method value
-    if (selectedMethod === 'AUTOMATIC') {
-      router.push(`/accessibility/automatic/${testId}`);
-    } else {
-      router.push(`/accessibility/manual/${testId}`);
-    }
-  } catch (error) {
-    isLoading.value = false;
-    toast.error(error.message);
-  }
 };
 
 const goBack = () => {

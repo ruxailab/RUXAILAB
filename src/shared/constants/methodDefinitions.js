@@ -12,6 +12,43 @@ import HeuristicStudyAnswer from "@/ux/Heuristic/models/HeuristicStudyAnswer";
 import CardSortingStudyAnswer from "@/ux/CardSorting/models/CardSortingStudyAnswer";
 
 /**
+ * Gets the main study type from a method/subtype value.
+ * @param {string} methodValue - The method value (subtype) like USER_MODERATED, USER_UNMODERATED, etc.
+ * @returns {string} - The corresponding main study type (USER, HEURISTIC, CARD_SORTING, ACCESSIBILITY)
+ */
+export function getStudyTypeFromMethod(methodValue) {
+  if (!methodValue) return null;
+
+  const method = methodValue.toUpperCase();
+  // User study subtypes
+  if (method === USER_STUDY_SUBTYPES.MODERATED || method === USER_STUDY_SUBTYPES.UNMODERATED) {
+    return STUDY_TYPES.USER;
+  }
+
+  // Heuristic studies
+  if (method === STUDY_TYPES.HEURISTIC) {
+    return STUDY_TYPES.HEURISTIC;
+  }
+
+  // Card sorting
+  if (method === STUDY_TYPES.CARD_SORTING) {
+    return STUDY_TYPES.CARD_SORTING;
+  }
+
+  // Accessibility subtypes
+  if (method === ACCESSIBILITY_STUDY_SUBTYPES.MANUAL || method === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC) {
+    return STUDY_TYPES.ACCESSIBILITY;
+  }
+
+  // If it's already a main type, return it
+  if (Object.values(STUDY_TYPES).includes(method)) {
+    return method;
+  }
+
+  return null;
+}
+
+/**
  * Factory function to instantiate the correct study model based on type.
  * It also normalizes nested sub-models such as TestAdmin, Cooperators and Template.
  *
@@ -27,7 +64,7 @@ export function instantiateStudyByType(type, rawData) {
       ? rawData.cooperators.map((c) => new Cooperators(c))
       : [],
   };
-
+  //TODO: Analyze if is working
   switch (type) {
     case STUDY_TYPES.USER:
       return new UserStudy(normalizedData);
@@ -35,10 +72,6 @@ export function instantiateStudyByType(type, rawData) {
       return new HeuristicStudy(normalizedData);
     case STUDY_TYPES.CARD_SORTING:
       return new CardSortingStudy(normalizedData);
-    case STUDY_TYPES.ACCESSIBILITY_MANUAL:
-      return new ManualAccessibilityTest(normalizedData);
-    case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
-      return new AutomaticAccessibilityTest(normalizedData);
     default:
       return new Study(normalizedData);
   }
@@ -49,7 +82,7 @@ export function instantiateStudyByType(type, rawData) {
  *
  * @param {string} type - The study type (USER, HEURISTIC, CARD_SORTING).
  * @param {Object} rawData - Raw data retrieved from the database.
- * @returns {StudyAnswer|UserStudyAnswer|HeuristicStudyAnswer|CardSortingStudyAnswer}
+ * @returns {StudyAnswer|UserStudyAnswer|HeuristicStudyAnswer|CardSortingStudyAnswer|AutomaticAccessibilityTest}
  */
 export function instantiateStudyAnswerByType(type, rawData) {
   switch (type) {
@@ -59,6 +92,8 @@ export function instantiateStudyAnswerByType(type, rawData) {
       return new HeuristicStudyAnswer(rawData);
     case STUDY_TYPES.CARD_SORTING:
       return new CardSortingStudyAnswer(rawData);
+    case STUDY_TYPES.ACCESSIBILITY:
+      return new AutomaticAccessibilityTest(rawData);
     default:
       return new StudyAnswer(rawData);
   }
@@ -69,10 +104,9 @@ export function instantiateStudyAnswerByType(type, rawData) {
  */
 export const STUDY_TYPES = {
   USER: "USER",
-  HEURISTIC: "HEURISTIC",
+  HEURISTIC: "HEURISTICS",
   CARD_SORTING: "CARD_SORTING",
-  ACCESSIBILITY_MANUAL: "MANUAL",
-  ACCESSIBILITY_AUTOMATIC: "AUTOMATIC",
+  ACCESSIBILITY: "ACCESSIBILITY",
 };
 
 /**
@@ -89,6 +123,14 @@ export const USER_STUDY_SUBTYPES = {
 export const HEURISTIC_STUDY_SUBTYPES = {
   QUANTITATIVE: "QUANTITATIVE",
   QUALITATIVE: "QUALITATIVE",
+};
+
+/**
+ * Enum for subtypes of heuristic studies.
+ */
+export const ACCESSIBILITY_STUDY_SUBTYPES = {
+  MANUAL: "ACCESSIBILITY_MANUAL",
+  AUTOMATIC: "ACCESSIBILITY_AUTOMATIC",
 };
 
 /**
@@ -302,6 +344,15 @@ export const getMethodDefinition = (testType, subType = "") => {
       return METHOD_DEFINITIONS.HEURISTICS;
     case STUDY_TYPES.CARD_SORTING:
       return METHOD_DEFINITIONS.CARD_SORTING;
+    case STUDY_TYPES.ACCESSIBILITY: {
+      if (subtype === ACCESSIBILITY_STUDY_SUBTYPES.MANUAL) {
+        return METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL;
+      }
+      if (subtype === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC) {
+        return METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC;
+      }
+      return null;
+    }
     default:
       return null;
   }
@@ -313,6 +364,10 @@ export const getMethodManagerView = (type, subType) => {
   else if (type === STUDY_TYPES.USER) {
     if (subType === USER_STUDY_SUBTYPES.UNMODERATED) return 'UserUnmoderatedManagerView'
     else if (subType === USER_STUDY_SUBTYPES.MODERATED) return 'UserModeratedManagerView'
+  }
+  else if (type === STUDY_TYPES.ACCESSIBILITY) {
+    if (subType === ACCESSIBILITY_STUDY_SUBTYPES.MANUAL) return 'AccessibilityManualManager'
+    else if (subType === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC) return 'AccessibilityAutomaticManager'
   }
 }
 

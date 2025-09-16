@@ -102,7 +102,7 @@ const methodsByCategory = {
   ],
   accessibility: [
     {
-      id: 'MANUAL',
+      id: METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id,
       name: 'Manual Testing',
       description: 'Human evaluators assess accessibility using assistive technologies',
       icon: 'mdi-eye-check',
@@ -110,7 +110,7 @@ const methodsByCategory = {
       available: true
     },
     {
-      id: 'AUTOMATIC',
+      id: METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC.id,
       name: 'Automatic Testing',
       description: 'Automated tools to identify common accessibility issues',
       icon: 'mdi-robot',
