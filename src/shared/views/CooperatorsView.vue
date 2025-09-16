@@ -105,11 +105,12 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
 import UIDGenerator from 'uid-generator';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useNotificationManager } from '@/shared/composables/useNotificationManager';
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
 import Cooperators from '../models/Cooperators';
 import { getMethodManagerView } from '../constants/methodDefinitions';
-import { useRouter } from 'vue-router';
+import { useRouter ,useRoute} from 'vue-router';
+import Notification from '@/shared/models/Notification';
+
 
 const uidgen = new UIDGenerator();
 const router = useRouter();
@@ -139,6 +140,7 @@ const emit = defineEmits(['open-invite-dialog'])
 
 // Stores
 const store = useStore();
+const route = useRoute();
 const slots = useSlots();
 
 // Use composables
@@ -147,14 +149,33 @@ const {
 } = useCooperatorUtils();
 
 const {
-  sendNotification
-} = useNotificationManager();
-
-const {
   handleRoleChange,
   handleCooperatorRemoval,
   handleInvitationCancellation,
 } = useCooperatorActions();
+
+// Direct notification helper
+const sendNotification = async (userId, title, description, redirectsTo = '/', testId = null) => {
+  const notification = new Notification({
+    title,
+    description,
+    redirectsTo,
+    author: 'Admin',
+    read: false,
+    testId
+  });
+
+  try {
+    await store.dispatch('addNotification', {
+      userId,
+      notification,
+    });
+    return true;
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    throw error;
+  }
+};
 
 // Variables
 let showIntroComponent = ref(true);
@@ -165,15 +186,15 @@ const showInviteDialog = ref(false);
 const drawerOpen = ref(false);
 
 const showIntroView = computed(() => {
-  return (cooperatorsEdit.value.length <= 0) && ( showIntroComponent.value == true);
+  return (cooperatorsEdit.value.length <= 0) && showIntroComponent.value;
 });
 
 // Computeds
-const dialog = computed(() => store.state.dialog);
+const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
-const loading = computed(() => store.getters.loading);
+const loading = computed(() => store.getters.isLoading);
 
 // Methods
 const openMessageDialog = (item) => {
@@ -183,21 +204,24 @@ const openMessageDialog = (item) => {
 
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
-  if (user.userDocId) {
-    sendNotification({
-      userId: user.userDocId,
-      title: title,
-      description: content,
-      redirectsTo: null,
-      author: test.value.testAdmin.email,
-      testId: test.value.id
-    });
+  if (user.userDocId && test.value) {
+    await sendNotification(
+      user.userDocId,
+      title,
+      content,
+      '/',
+      test.value.id
+    );
   }
 };
 
 const handleSendInvitations = async (invitationData) => {
   const { selectedCoops, selectedRole } = invitationData;
   const tokens = {};
+
+  if (!test.value) {
+    return;
+  }
 
   selectedCoops.forEach((coop) => {
     const token = uidgen.generateSync();
@@ -210,8 +234,8 @@ const handleSendInvitations = async (invitationData) => {
         accessLevel: roleOptions.value[selectedRole].value,
         token,
         progress: 0,
-        updateDate: test.value.updateDate,
-        testAuthorEmail: test.value.testAdmin.email
+        updateDate: test.value?.updateDate || new Date().toISOString(),
+        testAuthorEmail: test.value?.testAdmin?.email || ''
       });
     } else {
       cooperatorsEdit.value.push({
@@ -222,8 +246,8 @@ const handleSendInvitations = async (invitationData) => {
         accessLevel: roleOptions.value[selectedRole].value,
         token,
         progress: 0,
-        updateDate: test.value.updateDate,
-        testAuthorEmail: test.value.testAdmin.email
+        updateDate: test.value?.updateDate || new Date().toISOString(),
+        testAuthorEmail: test.value?.testAdmin?.email || ''
       });
     }
     tokens[coop.id || coop] = token;
@@ -248,9 +272,20 @@ const changeRole = async (item, newValue) => {
 };
 
 const submit = async () => {
+  if (!test.value) {
+    return;
+  }
+  
   const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}));
   test.value.cooperators = [...coops];
-  await store.dispatch('updateStudy', test.value);
+  
+  try {
+    await store.dispatch('updateStudy', test.value);
+    await store.dispatch('getStudy', { id: test.value.id });
+  } catch (error) {
+    console.error('Error updating study:', error);
+  }
+  
   cooperatorsEdit.value.forEach((guest) => {
     if (!guest.accepted) {
       notifyCooperator(guest);
@@ -258,9 +293,46 @@ const submit = async () => {
   });
 };
 
+
+
+const notifyCooperatorAccessibility = async (guest) => {
+  if (test.value) {
+    let path = '';
+    let title = 'Cooperation Invite!';
+    let description = `You have been invited to test ${test.value.testTitle || 'a study'}!`;
+    
+    if (test.value.testType === 'MANUAL') {
+      path = `accessibility/manual/preview/${test.value.id}`;
+      title = 'Manual Accessibility Test Invitation';
+      description = `You have been invited to participate in a manual accessibility evaluation for "${test.value.testTitle || 'a study'}". Please click to start the test.`;
+    } else if (test.value.testType === 'AUTOMATIC') {
+      path = `accessibility/automatic/preview/${test.value.id}`;
+      title = 'Automatic Accessibility Test Invitation';
+      description = `You have been invited to view the automatic accessibility report for "${test.value.testTitle || 'a study'}". Click to view the results.`;
+    }
+    
+    if (guest.userDocId && path) {
+      await sendNotification(
+        guest.userDocId,
+        title,
+        description,
+        path,
+        test.value.id
+      );
+    }
+  }
+};
+
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
     console.log(guest.email + '---' + guest.accessLevel)
+    
+    // Check if it's an accessibility test (MANUAL or AUTOMATIC)
+    if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
+      notifyCooperatorAccessibility(guest);
+      return;
+    }
+    
     // admin - 0, evaluator -1, guest - 2
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
     const managerRoute = router.resolve({
@@ -319,8 +391,23 @@ watch(loading, (newVal) => {
   }
 });
 
-onMounted(() => {
+// Watch for test data changes
+watch(test, (newTest) => {
+  // Test data watcher for reactivity
+}, { immediate: true });
+
+onMounted(async () => {
   store.dispatch('getAllUsers');
+  
+  const testId = props.id || route.params.id;
+  
+  if (testId) {
+    try {
+      await store.dispatch('getStudy', { id: testId });
+    } catch (error) {
+      console.error('Error fetching test data:', error);
+    }
+  }
 });
 </script>
 

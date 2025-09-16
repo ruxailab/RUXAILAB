@@ -2,6 +2,8 @@ import HeuristicStudy from "@/ux/Heuristic/models/HeuristicStudy";
 import UserStudy from "@/ux/UserTest/models/UserStudy";
 import Study from "../models/Study";
 import CardSortingStudy from "@/ux/CardSorting/models/CardSortingStudy";
+import ManualAccessibilityTest from "@/ux/accessibility/models/ManualAccessibilityTest";
+import AutomaticAccessibilityTest from "@/ux/accessibility/models/AutomaticAccessibilityTest";
 import Cooperators from "../models/Cooperators";
 import StudyAdmin from "@/shared/models/StudyAdmin";
 import StudyAnswer from "../models/StudyAnswer";
@@ -33,6 +35,10 @@ export function instantiateStudyByType(type, rawData) {
       return new HeuristicStudy(normalizedData);
     case STUDY_TYPES.CARD_SORTING:
       return new CardSortingStudy(normalizedData);
+    case STUDY_TYPES.ACCESSIBILITY_MANUAL:
+      return new ManualAccessibilityTest(normalizedData);
+    case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
+      return new AutomaticAccessibilityTest(normalizedData);
     default:
       return new Study(normalizedData);
   }
@@ -65,6 +71,8 @@ export const STUDY_TYPES = {
   USER: "USER",
   HEURISTIC: "HEURISTIC",
   CARD_SORTING: "CARD_SORTING",
+  ACCESSIBILITY_MANUAL: "MANUAL",
+  ACCESSIBILITY_AUTOMATIC: "AUTOMATIC",
 };
 
 /**

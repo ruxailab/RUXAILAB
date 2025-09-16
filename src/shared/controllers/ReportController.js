@@ -1,10 +1,7 @@
 import Controller from "@/app/plugins/firebase/FirebaseFirestoreRepository";
-import { deleteField } from "firebase/firestore";
 import { STUDY_TYPES } from "../constants/methodDefinitions";
 
-const firestoreService = new Controller();
-
-export default class ReportController {
+export default class ReportController extends Controller {
     /**
      * Remove o report de um usuário e do documento de respostas.
      *
@@ -23,18 +20,18 @@ export default class ReportController {
 
         try {
             // 1 - Remover a referência no usuário
-            const userDoc = await firestoreService.readOne("users", userToRemoveId);
+            const userDoc = await this.readOne("users", userToRemoveId);
             if (userDoc.exists()) {
-                await firestoreService.update("users", userToRemoveId, {
-                    [`myAnswers.${testId}`]: deleteField(),
+                await this.update("users", userToRemoveId, {
+                    [`myAnswers.${testId}`]: this.getDeleteField(),
                 });
             }
 
             // 2 - Remover a referência no documento de respostas
-            const answerDoc = await firestoreService.readOne("answers", answerId);
+            const answerDoc = await this.readOne("answers", answerId);
             if (answerDoc.exists()) {
-                await firestoreService.update("answers", answerId, {
-                    [`${testType}.${userToRemoveId}`]: deleteField(),
+                await this.update("answers", answerId, {
+                    [`${testType}.${userToRemoveId}`]: this.getDeleteField(),
                 });
             }
 
