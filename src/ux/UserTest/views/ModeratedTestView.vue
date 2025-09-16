@@ -27,19 +27,19 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item color="white" value="1" title="Consent" :complete="stepperValue >= 1"
+                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1"
                     :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="2" title="Pre-test" :complete="stepperValue >= 2"
+                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2"
                     :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="3" title="Tasks" :complete="stepperValue >= 3"
+                  <v-stepper-item value="3" title="Tasks" :complete="stepperValue >= 3"
                     :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="4" title="Post-test" :complete="stepperValue >= 4"
+                  <v-stepper-item value="4" title="Post-test" :complete="stepperValue >= 4"
                     :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="5" title="Completion" :complete="stepperValue === 5"
+                  <v-stepper-item value="5" title="Completion" :complete="stepperValue === 5"
                     :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
@@ -298,6 +298,7 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true;
     await saveAnswer();
+    await router.push({ name: 'Admin' });
   } catch (error) {
     console.error('Error submitting answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
