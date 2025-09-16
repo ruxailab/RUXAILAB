@@ -1,35 +1,64 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="top-methods-card">
-        <v-card-title class="pb-0" style="padding:1.5rem;">
-            <div class="d-flex align-center justify-space-between">
-                <span class="text-h6 font-weight-bold">Most used methods</span>
-                <v-btn icon="mdi-dots-vertical" variant="text" size="small"></v-btn>
-            </div>
-        </v-card-title>
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="top-methods-card"
+  >
+    <v-card-title
+      class="pb-0"
+      style="padding:1.5rem;"
+    >
+      <div class="d-flex align-center justify-space-between">
+        <span class="text-h6 font-weight-bold">Most used methods</span>
+        <v-btn
+          icon="mdi-dots-vertical"
+          variant="text"
+          size="small"
+        />
+      </div>
+    </v-card-title>
 
-        <v-card-text class="pa-4">
-            <div class="methods-list">
-                <div v-for="method in topMethods" :key="method.id" class="method-item">
-                    <div class="d-flex align-center justify-space-between">
-                        <div class="d-flex align-center">
-                            <div class="method-icon-wrapper mr-3" :style="{ backgroundColor: method.bgColor + '33' }">
-                                <v-icon :icon="method.icon" :color="method.color" size="24"></v-icon>
-                            </div>
-                            <div class="method-info">
-                                <div class="method-name">{{ method.name }}</div>
-                                <div>{{ method.type }}</div>
-                            </div>
-                        </div>
-                        <div class=" usage-stats">
-                            <v-chip :color="method.color" variant="tonal" size="small" class="usage-chip">
-                                {{ method.usage }} Uses
-                            </v-chip>
-                        </div>
-                    </div>
+    <v-card-text class="pa-4">
+      <div class="methods-list">
+        <div
+          v-for="method in topMethods"
+          :key="method.id"
+          class="method-item"
+        >
+          <div class="d-flex align-center justify-space-between">
+            <div class="d-flex align-center">
+              <div
+                class="method-icon-wrapper mr-3"
+                :style="{ backgroundColor: method.bgColor + '33' }"
+              >
+                <v-icon
+                  :icon="method.icon"
+                  :color="method.color"
+                  size="24"
+                />
+              </div>
+              <div class="method-info">
+                <div class="method-name">
+                  {{ method.name }}
                 </div>
+                <div>{{ method.type }}</div>
+              </div>
             </div>
-        </v-card-text>
-    </v-card>
+            <div class=" usage-stats">
+              <v-chip
+                :color="method.color"
+                variant="tonal"
+                size="small"
+                class="usage-chip"
+              >
+                {{ method.usage }} Uses
+              </v-chip>
+            </div>
+          </div>
+        </div>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

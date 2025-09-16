@@ -1,53 +1,108 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="mb-6">
-        <v-card-title class="d-flex align-center py-4">
-            <v-icon icon="mdi-clock-time-eight" class="me-2" color="primary"></v-icon>
-            Recent Activity
-        </v-card-title>
-        <v-card-text class="pa-0">
-            <v-timeline direction="vertical" density="compact" class="pa-4">
-                <v-timeline-item v-for="activity in activities" :key="activity.id" :dot-color="activity.color"
-                    size="small" class="mb-4">
-                    <template v-slot:opposite>
-                        <div class="text-caption text-medium-emphasis">{{ activity.time }}</div>
-                    </template>
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="mb-6"
+  >
+    <v-card-title class="d-flex align-center py-4">
+      <v-icon
+        icon="mdi-clock-time-eight"
+        class="me-2"
+        color="primary"
+      />
+      Recent Activity
+    </v-card-title>
+    <v-card-text class="pa-0">
+      <v-timeline
+        direction="vertical"
+        density="compact"
+        class="pa-4"
+      >
+        <v-timeline-item
+          v-for="activity in activities"
+          :key="activity.id"
+          :dot-color="activity.color"
+          size="small"
+          class="mb-4"
+        >
+          <template #opposite>
+            <div class="text-caption text-medium-emphasis">
+              {{ activity.time }}
+            </div>
+          </template>
 
-                    <div class="activity-content">
-                        <div class="d-flex align-center mb-2">
-                            <v-avatar size="24" class="me-2">
-                                <v-img :src="activity.user.avatar" :alt="activity.user.name" cover></v-img>
-                            </v-avatar>
-                            <span class="text-body-2 font-weight-medium">{{ activity.user.name }}</span>
-                            <span class="text-body-2 text-medium-emphasis ms-1">{{ activity.action }}</span>
-                        </div>
+          <div class="activity-content">
+            <div class="d-flex align-center mb-2">
+              <v-avatar
+                size="24"
+                class="me-2"
+              >
+                <v-img
+                  :src="activity.user.avatar"
+                  :alt="activity.user.name"
+                  cover
+                />
+              </v-avatar>
+              <span class="text-body-2 font-weight-medium">{{ activity.user.name }}</span>
+              <span class="text-body-2 text-medium-emphasis ms-1">{{ activity.action }}</span>
+            </div>
 
-                        <div class="text-body-2 mb-2">{{ activity.description }}</div>
+            <div class="text-body-2 mb-2">
+              {{ activity.description }}
+            </div>
 
-                        <!-- Attachment if exists -->
-                        <v-card v-if="activity.attachment" variant="outlined" class="attachment-card pa-2 mb-2"
-                            rounded="md">
-                            <div class="d-flex align-center">
-                                <v-icon :icon="activity.attachment.icon" size="16" class="me-2"
-                                    color="primary"></v-icon>
-                                <span class="text-caption">{{ activity.attachment.name }}</span>
-                            </div>
-                        </v-card>
+            <!-- Attachment if exists -->
+            <v-card
+              v-if="activity.attachment"
+              variant="outlined"
+              class="attachment-card pa-2 mb-2"
+              rounded="md"
+            >
+              <div class="d-flex align-center">
+                <v-icon
+                  :icon="activity.attachment.icon"
+                  size="16"
+                  class="me-2"
+                  color="primary"
+                />
+                <span class="text-caption">{{ activity.attachment.name }}</span>
+              </div>
+            </v-card>
 
-                        <!-- Team members if exists -->
-                        <div v-if="activity.teamMembers" class="d-flex align-center mt-2">
-                            <span class="text-caption text-medium-emphasis me-2">Team:</span>
-                            <v-avatar-group size="20" max="3">
-                                <v-avatar v-for="member in activity.teamMembers" :key="member.id" size="20">
-                                    <v-img :src="member.avatar" :alt="member.name" cover></v-img>
-                                    <v-tooltip activator="parent" location="top">{{ member.name }}</v-tooltip>
-                                </v-avatar>
-                            </v-avatar-group>
-                        </div>
-                    </div>
-                </v-timeline-item>
-            </v-timeline>
-        </v-card-text>
-    </v-card>
+            <!-- Team members if exists -->
+            <div
+              v-if="activity.teamMembers"
+              class="d-flex align-center mt-2"
+            >
+              <span class="text-caption text-medium-emphasis me-2">Team:</span>
+              <v-avatar-group
+                size="20"
+                max="3"
+              >
+                <v-avatar
+                  v-for="member in activity.teamMembers"
+                  :key="member.id"
+                  size="20"
+                >
+                  <v-img
+                    :src="member.avatar"
+                    :alt="member.name"
+                    cover
+                  />
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                  >
+                    {{ member.name }}
+                  </v-tooltip>
+                </v-avatar>
+              </v-avatar-group>
+            </div>
+          </div>
+        </v-timeline-item>
+      </v-timeline>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

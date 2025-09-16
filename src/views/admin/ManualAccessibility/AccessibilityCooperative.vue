@@ -1,33 +1,64 @@
 <template>
-  <PageWrapper title="Accessibility Test Cooperators" :loading="loading" loading-text="Loading Cooperators"
-    :side-gap="true">
-
+  <PageWrapper
+    title="Accessibility Test Cooperators"
+    :loading="loading"
+    loading-text="Loading Cooperators"
+    :side-gap="true"
+  >
     <!-- Actions Slot -->
     <template #actions>
-      <v-btn color="primary" size="large" @click="showInviteDialog = true" prepend-icon="mdi-account-plus"
-        variant="flat" class="px-6">
+      <v-btn
+        color="primary"
+        size="large"
+        prepend-icon="mdi-account-plus"
+        variant="flat"
+        class="px-6"
+        @click="showInviteDialog = true"
+      >
         Send Invitation
       </v-btn>
     </template>
 
     <!-- Main Content -->
-    <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops" @close-intro="intro = false" />
+    <Intro
+      v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
+      @close-intro="intro = false"
+    />
 
-    <CooperatorTable :cooperators="cooperatorsEdit" :loading="loading" :show-date-columns="true"
-      @role-change="changeRole" @send-message="openMessageDialog" @reinvite="reinvite" @remove-cooperator="removeCoop"
-      @cancel-invitation="cancelInvitation" />
+    <CooperatorTable
+      :cooperators="cooperatorsEdit"
+      :loading="loading"
+      :show-date-columns="true"
+      @role-change="changeRole"
+      @send-message="openMessageDialog"
+      @reinvite="reinvite"
+      @remove-cooperator="removeCoop"
+      @cancel-invitation="cancelInvitation"
+    />
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <LeaveAlert />
     </v-dialog>
 
     <!-- Message Dialog -->
-    <MessageDialog v-model:show="messageModel" :selected-user="selectedUser" @send-message="handleSendMessage" />
+    <MessageDialog
+      v-model:show="messageModel"
+      :selected-user="selectedUser"
+      @send-message="handleSendMessage"
+    />
 
     <!-- Invite Dialog -->
-    <InviteDialog v-model:show="showInviteDialog" :users="users" :show-date-time-selection="true"
-      @send-invitations="handleSendInvitations" />
+    <InviteDialog
+      v-model:show="showInviteDialog"
+      :users="users"
+      :show-date-time-selection="true"
+      @send-invitations="handleSendInvitations"
+    />
 
     <AccessNotAllowed v-if="!loading && verified" />
   </PageWrapper>

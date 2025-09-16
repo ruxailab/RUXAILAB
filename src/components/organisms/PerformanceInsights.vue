@@ -1,96 +1,143 @@
 <template>
-    <div class="performance-insights">
-        <!-- Key Metrics -->
-        <div class="metrics-grid mb-4">
-            <div class="metric-card">
-                <div class="metric-value">
-                    {{ insights.averageCompletionRate }}%
-                </div>
-                <div class="metric-label">Completion Rate</div>
-                <div class="metric-indicator">
-                    <v-progress-circular :model-value="insights.averageCompletionRate" size="40" width="4"
-                        color="success"></v-progress-circular>
-                </div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-value">
-                    {{ insights.averageTaskSuccess }}%
-                </div>
-                <div class="metric-label">Task Success</div>
-                <div class="metric-indicator">
-                    <v-progress-circular :model-value="insights.averageTaskSuccess" size="40" width="4"
-                        color="primary"></v-progress-circular>
-                </div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-value">
-                    {{ insights.participantSatisfaction }}/5
-                </div>
-                <div class="metric-label">Satisfaction</div>
-                <div class="metric-indicator">
-                    <div class="satisfaction-stars">
-                        <v-icon v-for="i in 5" :key="i"
-                            :icon="i <= Math.round(insights.participantSatisfaction) ? 'mdi-star' : 'mdi-star-outline'"
-                            size="12"
-                            :color="i <= Math.round(insights.participantSatisfaction) ? 'amber' : 'grey-lighten-1'"></v-icon>
-                    </div>
-                </div>
-            </div>
+  <div class="performance-insights">
+    <!-- Key Metrics -->
+    <div class="metrics-grid mb-4">
+      <div class="metric-card">
+        <div class="metric-value">
+          {{ insights.averageCompletionRate }}%
         </div>
-
-        <!-- Trends Chart -->
-        <div class="trends-section">
-            <h4 class="text-subtitle-2 font-weight-medium text-grey-darken-4 mb-3">
-                3-Month Trend
-            </h4>
-
-            <div class="trends-chart">
-                <div v-for="(trend, index) in insights.trendsData" :key="trend.month" class="trend-bar">
-                    <div class="trend-values">
-                        <div class="completion-bar">
-                            <div class="bar-fill" :style="{ height: `${trend.completionRate}%` }"></div>
-                        </div>
-                        <div class="satisfaction-indicator">
-                            <v-icon icon="mdi-circle" size="8"
-                                :color="getSatisfactionColor(trend.satisfaction)"></v-icon>
-                        </div>
-                    </div>
-                    <div class="trend-label">{{ trend.month }}</div>
-                </div>
-            </div>
-
-            <div class="legend mt-3">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: rgb(var(--v-theme-primary))"></div>
-                    <span class="text-caption">Completion Rate</span>
-                </div>
-                <div class="legend-item">
-                    <v-icon icon="mdi-circle" size="8" color="amber" class="mr-1"></v-icon>
-                    <span class="text-caption">Satisfaction</span>
-                </div>
-            </div>
+        <div class="metric-label">
+          Completion Rate
         </div>
-
-        <!-- Quick Recommendations -->
-        <div class="recommendations mt-4">
-            <h4 class="text-subtitle-2 font-weight-medium text-grey-darken-4 mb-2">
-                Quick Insights
-            </h4>
-            <v-alert type="info" variant="tonal" density="compact" class="mb-2">
-                <template #prepend>
-                    <v-icon icon="mdi-lightbulb-outline"></v-icon>
-                </template>
-                Your completion rates are trending upward! Keep up the good work.
-            </v-alert>
-            <v-alert type="warning" variant="tonal" density="compact">
-                <template #prepend>
-                    <v-icon icon="mdi-chart-line-variant"></v-icon>
-                </template>
-                Consider reviewing studies with <75% completion rates. </v-alert>
+        <div class="metric-indicator">
+          <v-progress-circular
+            :model-value="insights.averageCompletionRate"
+            size="40"
+            width="4"
+            color="success"
+          />
         </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">
+          {{ insights.averageTaskSuccess }}%
+        </div>
+        <div class="metric-label">
+          Task Success
+        </div>
+        <div class="metric-indicator">
+          <v-progress-circular
+            :model-value="insights.averageTaskSuccess"
+            size="40"
+            width="4"
+            color="primary"
+          />
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">
+          {{ insights.participantSatisfaction }}/5
+        </div>
+        <div class="metric-label">
+          Satisfaction
+        </div>
+        <div class="metric-indicator">
+          <div class="satisfaction-stars">
+            <v-icon
+              v-for="i in 5"
+              :key="i"
+              :icon="i <= Math.round(insights.participantSatisfaction) ? 'mdi-star' : 'mdi-star-outline'"
+              size="12"
+              :color="i <= Math.round(insights.participantSatisfaction) ? 'amber' : 'grey-lighten-1'"
+            />
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Trends Chart -->
+    <div class="trends-section">
+      <h4 class="text-subtitle-2 font-weight-medium text-grey-darken-4 mb-3">
+        3-Month Trend
+      </h4>
+
+      <div class="trends-chart">
+        <div
+          v-for="(trend, index) in insights.trendsData"
+          :key="trend.month"
+          class="trend-bar"
+        >
+          <div class="trend-values">
+            <div class="completion-bar">
+              <div
+                class="bar-fill"
+                :style="{ height: `${trend.completionRate}%` }"
+              />
+            </div>
+            <div class="satisfaction-indicator">
+              <v-icon
+                icon="mdi-circle"
+                size="8"
+                :color="getSatisfactionColor(trend.satisfaction)"
+              />
+            </div>
+          </div>
+          <div class="trend-label">
+            {{ trend.month }}
+          </div>
+        </div>
+      </div>
+
+      <div class="legend mt-3">
+        <div class="legend-item">
+          <div
+            class="legend-color"
+            style="background-color: rgb(var(--v-theme-primary))"
+          />
+          <span class="text-caption">Completion Rate</span>
+        </div>
+        <div class="legend-item">
+          <v-icon
+            icon="mdi-circle"
+            size="8"
+            color="amber"
+            class="mr-1"
+          />
+          <span class="text-caption">Satisfaction</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Recommendations -->
+    <div class="recommendations mt-4">
+      <h4 class="text-subtitle-2 font-weight-medium text-grey-darken-4 mb-2">
+        Quick Insights
+      </h4>
+      <v-alert
+        type="info"
+        variant="tonal"
+        density="compact"
+        class="mb-2"
+      >
+        <template #prepend>
+          <v-icon icon="mdi-lightbulb-outline" />
+        </template>
+        Your completion rates are trending upward! Keep up the good work.
+      </v-alert>
+      <v-alert
+        type="warning"
+        variant="tonal"
+        density="compact"
+      >
+        <template #prepend>
+          <v-icon icon="mdi-chart-line-variant" />
+        </template>
+        Consider reviewing studies with <75% completion rates.
+      </v-alert>
+    </div>
+  </div>
 </template>
 
         <script setup>

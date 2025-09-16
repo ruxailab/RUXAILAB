@@ -1,13 +1,29 @@
 <template>
   <v-container>
-    <v-row justify="center" justify-md="space-around">
-      <v-col v-for="(item, n) in cards" :key="n" cols="12" :md="12 / perRow">
-        <v-card :ripple="false" @click="$emit('click', item.path)">
+    <v-row
+      justify="center"
+      justify-md="space-around"
+    >
+      <v-col
+        v-for="(item, n) in cards"
+        :key="n"
+        cols="12"
+        :md="12 / perRow"
+      >
+        <v-card
+          :ripple="false"
+          @click="$emit('click', item.path)"
+        >
           <div class="d-flex justify-center align-center pa-4">
-            <v-img height="120" max-width="120" :style="item.imageStyle"
-              :src="require('../../assets/manager/' + item.image)" class="mx-auto" />
+            <v-img
+              height="120"
+              max-width="120"
+              :style="item.imageStyle"
+              :src="require('../../assets/manager/' + item.image)"
+              class="mx-auto"
+            />
           </div>
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-card-title>
             {{ item.titleDirect ? item.titleDirect : $t(`titles.${item.title}`) }}

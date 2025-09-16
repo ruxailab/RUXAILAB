@@ -1,78 +1,158 @@
 <template>
-    <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" max-width="500">
-        <v-card class="rounded-lg">
-            <v-card-title style="color: white;" class="bg-primary rounded-top-lg">
-                <v-icon color="white" class="mr-2">
-                    mdi-account-plus
-                </v-icon>
-                {{ title || 'Send Invitation' }}
-            </v-card-title>
-            <v-card-text class="pt-4">
-                <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :items="users" item-title="email"
-                    :label="selectLabel || 'Select cooperator'" multiple variant="outlined" density="comfortable"
-                    @update:model-value="validateEmail">
-                    <template #no-data>
-                        {{ noDataText || 'There are no users registered with that email, press enter to select anyways.'
-                        }}
-                    </template>
-                </v-combobox>
+  <v-dialog
+    :model-value="show"
+    max-width="500"
+    @update:model-value="$emit('update:show', $event)"
+  >
+    <v-card class="rounded-lg">
+      <v-card-title
+        style="color: white;"
+        class="bg-primary rounded-top-lg"
+      >
+        <v-icon
+          color="white"
+          class="mr-2"
+        >
+          mdi-account-plus
+        </v-icon>
+        {{ title || 'Send Invitation' }}
+      </v-card-title>
+      <v-card-text class="pt-4">
+        <v-combobox
+          :key="comboboxKey"
+          ref="combobox"
+          v-model="comboboxModel"
+          :items="users"
+          item-title="email"
+          :label="selectLabel || 'Select cooperator'"
+          multiple
+          variant="outlined"
+          density="comfortable"
+          @update:model-value="validateEmail"
+        >
+          <template #no-data>
+            {{ noDataText || 'There are no users registered with that email, press enter to select anyways.'
+            }}
+          </template>
+        </v-combobox>
 
-                <v-chip-group>
-                    <v-chip v-for="(coop, i) in selectedCoops" :key="i" closable @click:close="removeSelectedCoop(i)"
-                        class="ml-2 mt-2">
-                        {{ typeof coop == 'object' ? coop.email : coop }}
-                    </v-chip>
-                </v-chip-group>
+        <v-chip-group>
+          <v-chip
+            v-for="(coop, i) in selectedCoops"
+            :key="i"
+            closable
+            class="ml-2 mt-2"
+            @click:close="removeSelectedCoop(i)"
+          >
+            {{ typeof coop == 'object' ? coop.email : coop }}
+          </v-chip>
+        </v-chip-group>
 
-                <v-select v-model="selectedRole" :items="roleOptions" :label="roleLabel || 'Role'" variant="outlined"
-                    density="comfortable" class="mt-4" />
+        <v-select
+          v-model="selectedRole"
+          :items="roleOptions"
+          :label="roleLabel || 'Role'"
+          variant="outlined"
+          density="comfortable"
+          class="mt-4"
+        />
 
-                <!-- Date/Time Selection (only for accessibility tests) -->
-                <v-row v-if="showDateTimeSelection" class="mt-4">
-                    <v-col cols="6">
-                        <v-menu offset="26" :close-on-content-click="false" transition="scale-transition"
-                            min-width="auto">
-                            <template #activator="{ props }">
-                                <v-text-field v-model="date" readonly color="primary" v-bind="props" variant="outlined"
-                                    density="compact" label="Date" prepend-inner-icon="mdi-calendar" />
-                            </template>
-                            <v-date-picker v-model="date"
-                                :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 10)"
-                                show-adjacent-months color="primary" />
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-menu :close-on-content-click="false" offset="40" transition="scale-transition"
-                            min-width="auto">
-                            <template #activator="{ props }">
-                                <v-text-field v-model="hour" prepend-inner-icon="mdi-clock-time-four-outline"
-                                    density="compact" color="primary" variant="outlined" label="Time" readonly
-                                    v-bind="props" />
-                            </template>
-                            <v-time-picker v-model="hour" :min="minTime" format="24hr" color="primary" scrollable />
-                        </v-menu>
-                    </v-col>
-                </v-row>
+        <!-- Date/Time Selection (only for accessibility tests) -->
+        <v-row
+          v-if="showDateTimeSelection"
+          class="mt-4"
+        >
+          <v-col cols="6">
+            <v-menu
+              offset="26"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              min-width="auto"
+            >
+              <template #activator="{ props }">
+                <v-text-field
+                  v-model="date"
+                  readonly
+                  color="primary"
+                  v-bind="props"
+                  variant="outlined"
+                  density="compact"
+                  label="Date"
+                  prepend-inner-icon="mdi-calendar"
+                />
+              </template>
+              <v-date-picker
+                v-model="date"
+                :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 10)"
+                show-adjacent-months
+                color="primary"
+              />
+            </v-menu>
+          </v-col>
+          <v-col cols="6">
+            <v-menu
+              :close-on-content-click="false"
+              offset="40"
+              transition="scale-transition"
+              min-width="auto"
+            >
+              <template #activator="{ props }">
+                <v-text-field
+                  v-model="hour"
+                  prepend-inner-icon="mdi-clock-time-four-outline"
+                  density="compact"
+                  color="primary"
+                  variant="outlined"
+                  label="Time"
+                  readonly
+                  v-bind="props"
+                />
+              </template>
+              <v-time-picker
+                v-model="hour"
+                :min="minTime"
+                format="24hr"
+                color="primary"
+                scrollable
+              />
+            </v-menu>
+          </v-col>
+        </v-row>
 
-                <v-textarea v-if="showInviteMessage" v-model="inviteMessage" color="primary"
-                    :label="messageLabel || 'Invitation Message'"
-                    :placeholder="messagePlaceholder || 'Enter your invitation message'" variant="outlined"
-                    class="mt-4" />
-            </v-card-text>
+        <v-textarea
+          v-if="showInviteMessage"
+          v-model="inviteMessage"
+          color="primary"
+          :label="messageLabel || 'Invitation Message'"
+          :placeholder="messagePlaceholder || 'Enter your invitation message'"
+          variant="outlined"
+          class="mt-4"
+        />
+      </v-card-text>
 
-            <v-divider />
+      <v-divider />
 
-            <v-card-actions>
-                <v-spacer />
-                <v-btn color="red" variant="outlined" class="rounded-lg" @click="onCancel">
-                    {{ cancelText || 'Cancel' }}
-                </v-btn>
-                <v-btn color="primary" class="rounded-lg" :disabled="selectedCoops.length === 0" @click="onSend">
-                    {{ sendText || 'Send' }}
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          color="red"
+          variant="outlined"
+          class="rounded-lg"
+          @click="onCancel"
+        >
+          {{ cancelText || 'Cancel' }}
+        </v-btn>
+        <v-btn
+          color="primary"
+          class="rounded-lg"
+          :disabled="selectedCoops.length === 0"
+          @click="onSend"
+        >
+          {{ sendText || 'Send' }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>

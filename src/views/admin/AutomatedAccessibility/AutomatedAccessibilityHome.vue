@@ -1,10 +1,21 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="dashboard-container">
+      <v-container
+        fluid
+        class="dashboard-container"
+      >
         <!-- Manager-style Header (matches ManagerView/AccessibilityHome) -->
-        <v-row align="center" justify="center" class="manager-bg back-gradient pa-6">
-          <v-col cols="12" md="6" class="text-white text-center text-md-left">
+        <v-row
+          align="center"
+          justify="center"
+          class="manager-bg back-gradient pa-6"
+        >
+          <v-col
+            cols="12"
+            md="6"
+            class="text-white text-center text-md-left"
+          >
             <p class="font-weight-medium text-h4 text-md-h2">
               Accessibility
             </p>
@@ -13,8 +24,16 @@
             </p>
           </v-col>
 
-          <v-col cols="12" md="6" class="d-flex justify-center">
-            <v-img :src="require('@/assets/manager/IntroManager.svg')" max-height="300" max-width="100%" />
+          <v-col
+            cols="12"
+            md="6"
+            class="d-flex justify-center"
+          >
+            <v-img
+              :src="require('@/assets/manager/IntroManager.svg')"
+              max-height="300"
+              max-width="100%"
+            />
           </v-col>
         </v-row>
 
@@ -23,7 +42,11 @@
           <p class="presentation-text text-center text-md-left mb-4">
             Browse accessibility tools and actions
           </p>
-          <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+          <CardsManager
+            :cards="managerCards"
+            :per-row="mdAndUp ? 3 : 1"
+            @click="go"
+          />
         </v-container>
       </v-container>
     </v-main>

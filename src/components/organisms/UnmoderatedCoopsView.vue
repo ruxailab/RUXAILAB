@@ -1,46 +1,81 @@
 <template>
-  <PageWrapper :title="$t('HeuristicsCooperators.title.cooperators')" :loading="loading"
-    :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')" :side-gap="true">
+  <PageWrapper
+    :title="$t('HeuristicsCooperators.title.cooperators')"
+    :loading="loading"
+    :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
+    :side-gap="true"
+  >
     <!-- Actions Slot -->
     <template #actions>
-      <v-btn color="primary" size="large" @click="showInviteDialog = true" prepend-icon="mdi-account-plus"
-        variant="flat" class="px-6">
+      <v-btn
+        color="primary"
+        size="large"
+        prepend-icon="mdi-account-plus"
+        variant="flat"
+        class="px-6"
+        @click="showInviteDialog = true"
+      >
         {{ $t('HeuristicsCooperators.actions.send_invitation') }}
       </v-btn>
     </template>
 
     <!-- Main Content -->
-    <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops" @close-intro="intro = false" />
+    <Intro
+      v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
+      @close-intro="intro = false"
+    />
 
-    <CooperatorTable :cooperators="cooperatorsEdit" :loading="loading" :show-date-columns="false"
+    <CooperatorTable
+      :cooperators="cooperatorsEdit"
+      :loading="loading"
+      :show-date-columns="false"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
-      :cancel-text="$t('HeuristicsCooperators.actions.cancel_invitation')" @role-change="changeRole"
-      @send-message="openMessageDialog" @reinvite="reinvite" @remove-cooperator="removeCoop"
-      @cancel-invitation="cancelInvitation" />
+      :cancel-text="$t('HeuristicsCooperators.actions.cancel_invitation')"
+      @role-change="changeRole"
+      @send-message="openMessageDialog"
+      @reinvite="reinvite"
+      @remove-cooperator="removeCoop"
+      @cancel-invitation="cancelInvitation"
+    />
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <LeaveAlert />
     </v-dialog>
 
     <!-- Message Dialog -->
-    <MessageDialog v-model:show="messageModel" :selected-user="selectedUser"
-      :title="$t('HeuristicsCooperators.actions.send_message')" :title-label="$t('HeuristicsCooperators.headers.title')"
+    <MessageDialog
+      v-model:show="messageModel"
+      :selected-user="selectedUser"
+      :title="$t('HeuristicsCooperators.actions.send_message')"
+      :title-label="$t('HeuristicsCooperators.headers.title')"
       :title-hint="$t('HeuristicsCooperators.messages.message_title_hint')"
       :content-label="$t('HeuristicsCooperators.headers.content')"
       :content-hint="$t('HeuristicsCooperators.messages.message_content_hint')"
-      :cancel-text="$t('HeuristicsCooperators.actions.cancel')" :send-text="$t('HeuristicsCooperators.actions.send')"
-      @send-message="handleSendMessage" />
+      :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
+      :send-text="$t('HeuristicsCooperators.actions.send')"
+      @send-message="handleSendMessage"
+    />
 
     <!-- Invite Dialog -->
-    <InviteDialog v-model:show="showInviteDialog" :users="users" :show-date-time-selection="false"
+    <InviteDialog
+      v-model:show="showInviteDialog"
+      :users="users"
+      :show-date-time-selection="false"
       :title="$t('HeuristicsCooperators.actions.send_invitation')"
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
       :no-data-text="$t('HeuristicsCooperators.messages.no_users')"
-      :role-label="$t('HeuristicsCooperators.headers.role')" :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
-      :send-text="$t('HeuristicsCooperators.actions.send')" @send-invitations="handleSendInvitations" />
+      :role-label="$t('HeuristicsCooperators.headers.role')"
+      :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
+      :send-text="$t('HeuristicsCooperators.actions.send')"
+      @send-invitations="handleSendInvitations"
+    />
 
     <AccessNotAllowed v-if="!loading && verified" />
   </PageWrapper>

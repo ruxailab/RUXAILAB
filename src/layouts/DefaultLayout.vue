@@ -3,7 +3,10 @@
     <GlobalToolbar />
     <GlobalErrorHandler />
     <v-main>
-      <v-container fluid class="pa-0">
+      <v-container
+        fluid
+        class="pa-0"
+      >
         <slot />
       </v-container>
     </v-main>

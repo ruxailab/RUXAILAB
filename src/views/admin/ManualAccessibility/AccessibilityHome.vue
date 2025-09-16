@@ -1,8 +1,15 @@
 <template>
-  <v-container fluid class="pt-6 pb-10">
+  <v-container
+    fluid
+    class="pt-6 pb-10"
+  >
     <v-row>
       <v-col cols="12">
-        <v-card elevation="0" class="mb-6 pa-4" color="#f8f9fa">
+        <v-card
+          elevation="0"
+          class="mb-6 pa-4"
+          color="#f8f9fa"
+        >
           <v-card-title class="text-h5 font-weight-bold text-center">
             {{ testTitle }}
           </v-card-title>
@@ -15,7 +22,11 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+        <CardsManager
+          :cards="managerCards"
+          :per-row="mdAndUp ? 3 : 1"
+          @click="go"
+        />
       </v-col>
     </v-row>
   </v-container>

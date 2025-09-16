@@ -1,41 +1,70 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="mb-6">
-        <v-card-title class="d-flex align-center justify-space-between py-4">
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="mb-6"
+  >
+    <v-card-title class="d-flex align-center justify-space-between py-4">
+      <div class="d-flex align-center">
+        <v-icon
+          icon="mdi-post"
+          class="me-2"
+          color="primary"
+          style="padding:1.5rem"
+        />
+        Latest Blog Posts
+      </div>
+      <v-btn
+        variant="text"
+        size="small"
+        color="primary"
+        href="https://blog-ruxailab.web.app/"
+        target="_blank"
+      >
+        View Blog
+      </v-btn>
+    </v-card-title>
+
+    <v-card-text class="py-4">
+      <v-list class="py-0">
+        <v-list-item
+          v-for="(post, index) in blogPosts"
+          :key="post.id"
+          :href="post.url"
+          target="_blank"
+          class="blog-post-item"
+          :class="{ 'border-bottom': index < blogPosts.length - 1 }"
+        >
+          <v-list-item-title class="text-body-1 font-weight-medium mb-1">
+            {{ post.title }}
+          </v-list-item-title>
+
+          <v-list-item-subtitle class="text-body-2 text-medium-emphasis mb-2">
+            {{ post.excerpt }}
+          </v-list-item-subtitle>
+
+          <div class="d-flex align-center justify-space-between">
             <div class="d-flex align-center">
-                <v-icon icon="mdi-post" class="me-2" color="primary" style="padding:1.5rem"></v-icon>
-                Latest Blog Posts
+              <v-chip
+                size="x-small"
+                color="primary"
+                variant="tonal"
+                class="me-2"
+              >
+                {{ post.category }}
+              </v-chip>
+              <span class="text-caption text-medium-emphasis">{{ post.date }}</span>
             </div>
-            <v-btn variant="text" size="small" color="primary" href="https://blog-ruxailab.web.app/" target="_blank">
-                View Blog
-            </v-btn>
-        </v-card-title>
-
-        <v-card-text class="py-4">
-            <v-list class="py-0">
-                <v-list-item v-for="(post, index) in blogPosts" :key="post.id" :href="post.url" target="_blank"
-                    class="blog-post-item" :class="{ 'border-bottom': index < blogPosts.length - 1 }">
-
-                    <v-list-item-title class="text-body-1 font-weight-medium mb-1">
-                        {{ post.title }}
-                    </v-list-item-title>
-
-                    <v-list-item-subtitle class="text-body-2 text-medium-emphasis mb-2">
-                        {{ post.excerpt }}
-                    </v-list-item-subtitle>
-
-                    <div class="d-flex align-center justify-space-between">
-                        <div class="d-flex align-center">
-                            <v-chip size="x-small" color="primary" variant="tonal" class="me-2">
-                                {{ post.category }}
-                            </v-chip>
-                            <span class="text-caption text-medium-emphasis">{{ post.date }}</span>
-                        </div>
-                        <v-icon icon="mdi-open-in-new" size="16" color="primary"></v-icon>
-                    </div>
-                </v-list-item>
-            </v-list>
-        </v-card-text>
-    </v-card>
+            <v-icon
+              icon="mdi-open-in-new"
+              size="16"
+              color="primary"
+            />
+          </div>
+        </v-list-item>
+      </v-list>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

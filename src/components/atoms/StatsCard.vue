@@ -1,26 +1,45 @@
 <template>
-    <v-card class="stats-card" elevation="2" rounded="lg" :class="`border-${color}`">
-        <v-card-text class="pa-4">
-            <div class="d-flex align-center justify-space-between mb-3">
-                <div class="stats-icon" :class="`bg-${color}`">
-                    <v-icon :icon="icon" size="24" color="white"></v-icon>
-                </div>
-                <div v-if="trend" class="trend-indicator" :class="trendClass">
-                    <v-icon :icon="trendIcon" size="16"></v-icon>
-                    <span class="text-caption ml-1">{{ trend.value }}%</span>
-                </div>
-            </div>
+  <v-card
+    class="stats-card"
+    elevation="2"
+    rounded="lg"
+    :class="`border-${color}`"
+  >
+    <v-card-text class="pa-4">
+      <div class="d-flex align-center justify-space-between mb-3">
+        <div
+          class="stats-icon"
+          :class="`bg-${color}`"
+        >
+          <v-icon
+            :icon="icon"
+            size="24"
+            color="white"
+          />
+        </div>
+        <div
+          v-if="trend"
+          class="trend-indicator"
+          :class="trendClass"
+        >
+          <v-icon
+            :icon="trendIcon"
+            size="16"
+          />
+          <span class="text-caption ml-1">{{ trend.value }}%</span>
+        </div>
+      </div>
 
-            <div class="stats-content">
-                <h3 class="text-h4 font-weight-bold text-grey-darken-4 mb-1">
-                    {{ formattedValue }}
-                </h3>
-                <p class="text-body-2 text-grey-darken-1 mb-0">
-                    {{ title }}
-                </p>
-            </div>
-        </v-card-text>
-    </v-card>
+      <div class="stats-content">
+        <h3 class="text-h4 font-weight-bold text-grey-darken-4 mb-1">
+          {{ formattedValue }}
+        </h3>
+        <p class="text-body-2 text-grey-darken-1 mb-0">
+          {{ title }}
+        </p>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

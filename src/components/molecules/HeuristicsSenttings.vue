@@ -1,5 +1,9 @@
 <template>
-  <v-card elevation="2" class="pa-6" style="background-color: #F5F7FF;">
+  <v-card
+    elevation="2"
+    class="pa-6"
+    style="background-color: #F5F7FF;"
+  >
     <div class="settings-content">
       <!-- Header Section -->
       <h1 class="text-h4 font-weight-bold text-on-surface mb-4 subtitleView">
@@ -22,7 +26,10 @@
 
       <!-- File Upload Section -->
       <div class="upload-section">
-        <v-row align="center" class="mb-4">
+        <v-row
+          align="center"
+          class="mb-4"
+        >
           <v-col cols="8">
             <v-file-input
               ref="myFile"
@@ -49,7 +56,9 @@
               class="text-none"
               @click="changeToJSON"
             >
-              <v-icon start>mdi-cloud-upload</v-icon>
+              <v-icon start>
+                mdi-cloud-upload
+              </v-icon>
               {{ $t('HeuristicsSettings.actions.update') }}
             </v-btn>
           </v-col>

@@ -1,58 +1,104 @@
 <template>
-    <v-card elevation="2" rounded="lg" class="mb-6">
-        <v-card-title class="d-flex align-center justify-space-between py-4">
-            <div class="d-flex align-center">
-                <v-icon icon="mdi-flask-outline" class="me-2" color="primary"></v-icon>
-                Active Studies Overview
-            </div>
-            <v-btn variant="text" size="small" color="primary">View All</v-btn>
-        </v-card-title>
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="mb-6"
+  >
+    <v-card-title class="d-flex align-center justify-space-between py-4">
+      <div class="d-flex align-center">
+        <v-icon
+          icon="mdi-flask-outline"
+          class="me-2"
+          color="primary"
+        />
+        Active Studies Overview
+      </div>
+      <v-btn
+        variant="text"
+        size="small"
+        color="primary"
+      >
+        View All
+      </v-btn>
+    </v-card-title>
 
-        <v-card-text class="pa-4">
-            <v-row>
-                <v-col v-for="study in studies" :key="study.id" cols="12" md="6">
-                    <v-card variant="outlined" rounded="lg" class="study-card">
-                        <v-card-text class="pa-4">
-                            <div class="d-flex align-center justify-space-between mb-3">
-                                <v-chip
-                                    :color="study.status === 'active' ? 'success' : study.status === 'recruiting' ? 'warning' : 'info'"
-                                    variant="tonal" size="small">
-                                    {{ study.status }}
-                                </v-chip>
-                                <v-icon :icon="study.typeIcon" size="20" color="primary"></v-icon>
-                            </div>
+    <v-card-text class="pa-4">
+      <v-row>
+        <v-col
+          v-for="study in studies"
+          :key="study.id"
+          cols="12"
+          md="6"
+        >
+          <v-card
+            variant="outlined"
+            rounded="lg"
+            class="study-card"
+          >
+            <v-card-text class="pa-4">
+              <div class="d-flex align-center justify-space-between mb-3">
+                <v-chip
+                  :color="study.status === 'active' ? 'success' : study.status === 'recruiting' ? 'warning' : 'info'"
+                  variant="tonal"
+                  size="small"
+                >
+                  {{ study.status }}
+                </v-chip>
+                <v-icon
+                  :icon="study.typeIcon"
+                  size="20"
+                  color="primary"
+                />
+              </div>
 
-                            <h4 class="text-subtitle-1 font-weight-bold mb-2">{{ study.title }}</h4>
-                            <p class="text-body-2 text-medium-emphasis mb-3">{{ study.description }}</p>
+              <h4 class="text-subtitle-1 font-weight-bold mb-2">
+                {{ study.title }}
+              </h4>
+              <p class="text-body-2 text-medium-emphasis mb-3">
+                {{ study.description }}
+              </p>
 
-                            <!-- Progress -->
-                            <div class="mb-3">
-                                <div class="d-flex justify-space-between align-center mb-1">
-                                    <span class="text-caption font-weight-medium">Progress</span>
-                                    <span class="text-caption">{{ study.progress }}%</span>
-                                </div>
-                                <v-progress-linear :model-value="study.progress"
-                                    :color="study.status === 'active' ? 'success' : 'primary'" height="6"
-                                    rounded></v-progress-linear>
-                            </div>
+              <!-- Progress -->
+              <div class="mb-3">
+                <div class="d-flex justify-space-between align-center mb-1">
+                  <span class="text-caption font-weight-medium">Progress</span>
+                  <span class="text-caption">{{ study.progress }}%</span>
+                </div>
+                <v-progress-linear
+                  :model-value="study.progress"
+                  :color="study.status === 'active' ? 'success' : 'primary'"
+                  height="6"
+                  rounded
+                />
+              </div>
 
-                            <!-- Metrics -->
-                            <div class="d-flex justify-space-between text-caption">
-                                <div class="d-flex align-center">
-                                    <v-icon icon="mdi-account-group" size="16" class="me-1" color="info"></v-icon>
-                                    <span>{{ study.participants }} participants</span>
-                                </div>
-                                <div class="d-flex align-center">
-                                    <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning"></v-icon>
-                                    <span>{{ study.daysLeft }} days left</span>
-                                </div>
-                            </div>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-card-text>
-    </v-card>
+              <!-- Metrics -->
+              <div class="d-flex justify-space-between text-caption">
+                <div class="d-flex align-center">
+                  <v-icon
+                    icon="mdi-account-group"
+                    size="16"
+                    class="me-1"
+                    color="info"
+                  />
+                  <span>{{ study.participants }} participants</span>
+                </div>
+                <div class="d-flex align-center">
+                  <v-icon
+                    icon="mdi-calendar-clock"
+                    size="16"
+                    class="me-1"
+                    color="warning"
+                  />
+                  <span>{{ study.daysLeft }} days left</span>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>
