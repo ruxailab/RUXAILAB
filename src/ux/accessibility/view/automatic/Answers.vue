@@ -1,20 +1,19 @@
 <template>
-  <v-container
-    fluid
-    class="pa-1"
+  <PageWrapper 
+    title="Accessibility Test Answers"
+    :loading="isLoading"
+    loading-text="Loading accessibility test results..."
   >
-    <!-- Loading State -->
-    <v-skeleton-loader
-      v-if="isLoading"
-      type="article, table-heading, table-tbody"
-      class="mx-auto"
-    />
-
     <!-- Error State -->
     <!-- if the data not available  -->
-    
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        View detailed accessibility issues and recommendations to improve your
+        web content.
+      </p>
+    </template>
     <v-alert
-      v-else-if="error"
+      v-if="error"
       type="info"
       variant="tonal"
       closable
@@ -32,7 +31,7 @@
         <span class="text-body-1">No Assessment Available for this Test</span>
       </div>
     </v-alert>
-
+    
     <!-- Main Report Content -->
     <div v-else-if="report">
       <!-- Report Header -->
@@ -625,14 +624,18 @@
         No report data available.
       </v-alert>
     </div>
-  </v-container>
+  </PageWrapper>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
   name: 'ReportDetail',
+  components: {
+    PageWrapper
+  },
   data() {
     const testId = this.$route.params.testId || this.$route.params.id
     return {
@@ -646,7 +649,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('automaticReport', ['report', 'isLoading', 'error']),
+    ...mapState('automaticReport', ['report']),
+    isLoading() {
+      return this.$store.getters.isLoading;
+    },
+    error() {
+      return this.$store.getters.getError;
+    },
     paginatedIssues() {
       if (!this.report || !this.report.ReportIssues) return []
       const start = (this.page - 1) * this.itemsPerPage
@@ -663,11 +672,10 @@ export default {
   },
     mounted() {
     if (!this.testId) {
-      this.$store.commit(
-        'automaticReport/SET_ERROR',
-        'No testId provided in route.',
-      )
-      this.$store.commit('automaticReport/SET_LOADING', false)
+      this.$store.commit('setError', {
+        errorCode: 'NO_TEST_ID',
+        message: 'No testId provided in route.'
+      })
       return
     }
     this.fetchReport(this.testId).then(() => {

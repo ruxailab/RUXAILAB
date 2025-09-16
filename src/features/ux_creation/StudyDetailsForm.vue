@@ -208,6 +208,7 @@
                   adjust="start"
                   @back="goBack"
                 />
+                
                 <v-btn
                   color="success"
                   size="large"
@@ -233,8 +234,6 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
-import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
@@ -317,11 +316,8 @@ const handleTestType = () => {
     test.value = { ...test.value, ...extraDetails };
     submit();
   } else if (testCategory === 'accessibility') {
-    if (method.value === 'AUTOMATIC') {
-      submitAutomaticAccessibility();
-    } else if (method.value === 'MANUAL') {
-      submitManualAccessibility();
-    }
+    // Use unified submit function for accessibility tests too
+    submitAccessibility();
   } else {
     submit();
   }
@@ -363,63 +359,58 @@ const submit = async () => {
   }
 };
 
-const submitAutomaticAccessibility = async () => {
-  isLoading.value = true;
-  const user = store.getters.user;
-  const newTest = new AutomaticAccessibilityTest({
-    title: test.value.title,
-    description: test.value.description,
-    isPublic: test.value.isPublic || false,
-    testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
-    }),
-    status: 'draft',
-    websiteUrl: '',
-    collaborators: {
-      [user.id]: 'admin'
-    },
-    type: 'AUTOMATIC'
-  });
-  try {
-    const createdTest = await store.dispatch('automaticAccessibility/addTest', newTest);
-    isLoading.value = false;
-    store.commit('RESET_STUDY_DETAILS');
-    router.push(`/accessibility/automatic/${createdTest.id}`);
-  } catch (error) {
-    isLoading.value = false;
-    toast.error(error.message);
-  }
-};
+const submitAccessibility = async () => {
+  // Store the method value before it gets reset
+  const selectedMethod = method.value;
+  
+  // Determine the test type based on method
+  let testType = selectedMethod === 'AUTOMATIC' 
+    ? STUDY_TYPES.ACCESSIBILITY_AUTOMATIC 
+    : STUDY_TYPES.ACCESSIBILITY_MANUAL;
 
-const submitManualAccessibility = async () => {
   isLoading.value = true;
   const user = store.getters.user;
-  const newTest = new ManualAccessibilityTest({
-    title: test.value.title,
-    description: test.value.description,
-    isPublic: test.value.isPublic || false,
+  
+  const rawData = {
+    id: null,
+    title: test.value.title,              // Use 'title' for accessibility tests
+    description: test.value.description,  // Use 'description' for accessibility tests
+    testType: testType,
+    isPublic: test.value.isPublic || false, // Ensure isPublic is always set
     testAdmin: new StudyAdmin({
       userDocId: user.id,
       email: user.email,
     }),
+    creationDate: Date.now(),
+    updateDate: Date.now(),
     status: 'draft',
+    // Accessibility-specific properties
     websiteUrl: '',
     collaborators: {
       [user.id]: 'admin'
     }
-  });
+  };
+
   try {
-    const createdTest = await store.dispatch('manualAccessibility/createTest', newTest);
+    const newTest = instantiateStudyByType(testType, rawData);
+    const testId = await store.dispatch('createStudy', newTest);
+    
     isLoading.value = false;
     store.commit('RESET_STUDY_DETAILS');
-    router.push(`/accessibility/manual/${createdTest.id}`);
+    
+    console.log('Routing decision - selectedMethod:', selectedMethod);
+    
+    // Route to the appropriate accessibility page using the stored method value
+    if (selectedMethod === 'AUTOMATIC') {
+      router.push(`/accessibility/automatic/${testId}`);
+    } else {
+      router.push(`/accessibility/manual/${testId}`);
+    }
   } catch (error) {
     isLoading.value = false;
     toast.error(error.message);
   }
 };
-
 
 const goBack = () => {
   router.push({ name: 'study-create-step3' })
