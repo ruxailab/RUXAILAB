@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-overlay :model-value="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      />
-    </v-overlay>
     <IntroAnswer
       v-if="intro"
       @go-to-coops="goToCoops"
@@ -149,9 +143,6 @@ const allIrisTrackingData = computed(() => {
 
   return tasks;
 });
-
-
-const loading = computed(() => store.getters.loading);
 
 const goToCoops = () => {
   emit('goToCoops');
