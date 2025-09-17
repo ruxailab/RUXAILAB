@@ -104,11 +104,12 @@ export default {
       if (!state.testAnswerDocument) return {};
 
       const doc = state.testAnswerDocument;
+      console.log('doc', doc)
 
       if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
-            ([, answer]) => answer.hidden === false
+            ([, answer]) => answer.hidden !== true
           )
         );
       }
