@@ -176,7 +176,13 @@ const submitEdit = async () => {
   const { valid } = await form.value.validate()
   const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
   if (valid && strippedText.length > 0) {
-    emit('update-description', { index: editIndex.value, description: desc.value })
+    store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
+      heuristic: props.heuristicIndex,
+      question: props.questionIndex,
+      description: desc.value,
+      editIndex: editIndex.value,
+    })
+    emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
     toast.info(t('alerts.addDescription'))
