@@ -3,9 +3,9 @@
     <div v-if="isUserStudy">
       <div v-if="isModerated">
         <!-- DEBUG -->
-        selectedUserID: {{ selectedUserID }} <br>
-        selectedTask: {{ selectedTask }} <br>
-        selectedTaskId: {{ selectedTaskId }} <br>
+        selectedUserID: {{ selectedUserID }} <br />
+        selectedTask: {{ selectedTask }} <br />
+        selectedTaskId: {{ selectedTaskId }} <br />
         tasksForSelectedUser: {{ tasksForSelectedUser }}
 
         <v-row class="ma-0">
@@ -15,7 +15,9 @@
               <v-item v-for="item in usersID" :key="item" :value="item">
                 <template #default="{ isSelected, toggle }">
                   <v-list-item :active="isSelected" @click="toggle()">
-                    <v-list-item-title>{{ getCooperatorEmail(item) }}</v-list-item-title>
+                    <v-list-item-title>{{
+                      getCooperatorEmail(item)
+                    }}</v-list-item-title>
                   </v-list-item>
                 </template>
               </v-item>
@@ -44,16 +46,16 @@
             </v-item-group>
           </v-col>
 
-
           <!-- Tabs + content -->
-          <div v-if="selectedTask"> <!-- remove this v-if if you want tabs always visible -->
+          <div v-if="selectedTask">
+            <!-- remove this v-if if you want tabs always visible -->
             <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
               <v-tab value="timeline">Timeline</v-tab>
               <v-tab value="transcriptions">Transcriptions</v-tab>
               <v-tab value="export">Export Data</v-tab>
             </v-tabs>
 
-            <div style="background-color: #E8EAF2;" class="ma-0 pa-0">
+            <div style="background-color: #e8eaf2" class="ma-0 pa-0">
               <!-- <p v-if="tab === 'timeline'">Timeline Content</p> -->
               <!-- Added Key Prop So that it reloads when user/task changes -->
               <TimelinePanel
@@ -64,10 +66,19 @@
                 :task-id="selectedTaskId"
                 :audio-url-evaluator="selectedTask?.audioRecordURL"
                 :audio-url-moderator="selectedTask?.moderatorAudioURL"
-                />
-                <!-- :transcription-id="selectedTask?.latestTranscriptionDocId" -->
-              <p v-if="tab === 'transcriptions'">Transcriptions Content [NOT Implemented]</p>
-              <p v-if="tab === 'export'">Export Data Content [NOT Implemented]</p>
+              />
+              <!-- :transcription-id="selectedTask?.latestTranscriptionDocId" -->
+              <TranscriptionsPanel
+                v-if="tab === 'transcriptions'"
+                :key="`${selectedUserID}:${selectedTaskId}`"
+                :answer-doc-id="testDocument?.answersDocId"
+                :user-doc-id="selectedUserID"
+                :task-id="selectedTaskId"
+                :latestTranscriptionId="selectedTask?.latestTranscriptionDocId"
+              />
+              <p v-if="tab === 'export'">
+                Export Data Content [NOT Implemented]
+              </p>
             </div>
           </div>
         </v-row>
@@ -83,29 +94,35 @@
   </div>
 </template>
 
-
-
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useStore } from 'vuex';
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import TimelinePanel from '@/ux/UserTest/components/transcription/TimeLinePanel.vue'
-import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import TranscriptionsPanel from '@/ux/UserTest/components/transcription/TranscriptionsPanel.vue'
+import {
+  STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
 
-const store = useStore();
+const store = useStore()
 
-const selectedUserID = ref(null);
-const selectedTaskId = ref(null);
-const tab = ref('timeline');
+const selectedUserID = ref(null)
+const selectedTaskId = ref(null)
+const tab = ref('timeline')
 
 const testDocument = computed(() => store.getters.test)
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 const usersID = computed(() => {
-  return Object.values(testAnswerDocument.value.taskAnswers).map(answer => answer.userDocId);
-});
+  return Object.values(testAnswerDocument.value.taskAnswers).map(
+    (answer) => answer.userDocId,
+  )
+})
 const selectedTask = computed(() => {
   const key = selectedTaskId.value
   if (key == null) return null
-  const pair = tasksForSelectedUser.value.find(([k]) => String(k) === String(key))
+  const pair = tasksForSelectedUser.value.find(
+    ([k]) => String(k) === String(key),
+  )
   return pair ? pair[1] : null
 })
 
@@ -113,7 +130,6 @@ const selectedTask = computed(() => {
 // watch(usersID, (ids) => {
 //   if (!selectedUserID.value && ids.length) selectedUserID.value = ids[0]
 // }, { immediate: true })
-
 
 // computed
 const tasksForSelectedUser = computed(() => {
@@ -137,7 +153,6 @@ const tasksForSelectedUser = computed(() => {
   return []
 })
 
-
 // // auto-select first task when user changes / tasks load
 // watch(tasksForSelectedUser, (tasks) => {
 //   if (tasks.length === 0) selectedTaskId.value = null
@@ -147,23 +162,25 @@ const tasksForSelectedUser = computed(() => {
 // }, { immediate: true })
 
 // handy flags
-const isUserStudy = computed(() =>
-  (testAnswerDocument.value?.type ?? null) === STUDY_TYPES.USER
-);
-const isModerated = computed(() =>
-  (testDocument.value?.subType ?? null) === USER_STUDY_SUBTYPES.MODERATED
-);
+const isUserStudy = computed(
+  () => (testAnswerDocument.value?.type ?? null) === STUDY_TYPES.USER,
+)
+const isModerated = computed(
+  () => (testDocument.value?.subType ?? null) === USER_STUDY_SUBTYPES.MODERATED,
+)
 
 function getCooperatorEmail(userDocId) {
-  let cooperatorEmail = null;
-  if (testDocument.value?.cooperators && Array.isArray(testDocument.value.cooperators)) {
+  let cooperatorEmail = null
+  if (
+    testDocument.value?.cooperators &&
+    Array.isArray(testDocument.value.cooperators)
+  ) {
     for (const element of testDocument.value.cooperators) {
       if (element && element.email && element.userDocId === userDocId) {
-        cooperatorEmail = element.email;
+        cooperatorEmail = element.email
       }
     }
   }
-  return cooperatorEmail;
-};
-
+  return cooperatorEmail
+}
 </script>
