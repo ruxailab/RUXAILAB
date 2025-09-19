@@ -64,7 +64,7 @@
             <SusAnalytics v-if="tab === 3" />
             <NasaTlxAnalytics v-if="tab === 4" />
             <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 5" />
-            <IndividualAnalytics v-if="tab === 6" />
+            <Studies v-if="tab === 6" />
           </div>
         </template>
       </ShowInfo>
@@ -82,7 +82,7 @@ import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/IntroAnswer';
 import AnalyticsView from '@/ux/Heuristic/views/[deprecated]AnalyticsView.vue';
-import IndividualAnalytics from '@/ux/UserTest/components/ModeratedTestAnalytics/IndividualAnalytics.vue';
+import Studies from '@/ux/UserTest/components/ModeratedTestAnalytics/Studies.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
 import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
