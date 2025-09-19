@@ -3,8 +3,10 @@
     <div v-if="isUserStudy">
       <div v-if="isModerated">
         <!-- DEBUG -->
-        <!-- selectedUserID: {{ selectedUserID }} | selectedTaskId: {{ selectedTaskId }}
-        tasksForSelectedUser: {{ tasksForSelectedUser }} -->
+        selectedUserID: {{ selectedUserID }} <br>
+        selectedTask: {{ selectedTask }} <br>
+        selectedTaskId: {{ selectedTaskId }} <br>
+        tasksForSelectedUser: {{ tasksForSelectedUser }}
 
         <v-row class="ma-0">
           <!-- Users -->
@@ -53,13 +55,19 @@
 
             <div style="background-color: #E8EAF2;" class="ma-0 pa-0">
               <!-- <p v-if="tab === 'timeline'">Timeline Content</p> -->
+              <!-- Added Key Prop So that it reloads when user/task changes -->
               <TimelinePanel
                 v-if="tab === 'timeline'"
-                :task-key="selectedTaskId"
-                :transcription-id="selectedTask?.latestTranscriptionDocId"
-              />
-              <p v-if="tab === 'transcriptions'">Transcriptions Content</p>
-              <p v-if="tab === 'export'">Export Data Content</p>
+                :key="`${selectedUserID}:${selectedTaskId}`"
+                :answer-doc-id="testDocument?.answersDocId"
+                :user-doc-id="selectedUserID"
+                :task-id="selectedTaskId"
+                :audio-url-evaluator="selectedTask?.audioRecordURL"
+                :audio-url-moderator="selectedTask?.moderatorAudioURL"
+                />
+                <!-- :transcription-id="selectedTask?.latestTranscriptionDocId" -->
+              <p v-if="tab === 'transcriptions'">Transcriptions Content [NOT Implemented]</p>
+              <p v-if="tab === 'export'">Export Data Content [NOT Implemented]</p>
             </div>
           </div>
         </v-row>
