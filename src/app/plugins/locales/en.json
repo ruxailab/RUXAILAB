@@ -694,5 +694,9 @@
     "finalMessage": "Final message",
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
     "finalMessagePlaceholder": "Enter Final message"
+  },
+  "CardSorting": {
+    "noCategory": "No category",
+    "noCards": "No cards found"
   }
 }
