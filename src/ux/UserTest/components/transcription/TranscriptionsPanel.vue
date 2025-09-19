@@ -146,6 +146,8 @@ const deletingId = ref(null)
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 const transcriptionController = new TranscriptionController()
 
+import AnswerController from '@/shared/controllers/AnswerController'
+const answerController = new AnswerController()
 watch(
   () => [props.answerDocId, props.userDocId, props.taskId],
   async () => {
@@ -191,18 +193,20 @@ async function confirmDelete() {
     // refetch to get the new list
     await fetchSelectedTaskTranscriptions()
 
-    // recompute meta from refreshed list
-    const newCount = transcriptionsArray.value.length
-    const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
 
-    // update task meta on the Answer doc
-    await answerController.setTaskTranscriptionMeta({
-      answerDocId: props.answerDocId,
-      userDocId: props.userDocId,
-      taskId: String(props.taskId),
-      latestTranscriptionDocId: newLatestId,
-      transcriptionsCount: newCount,
-    })
+    // TODO: ADD THIS LATER
+    // // recompute meta from refreshed list
+    // const newCount = transcriptionsArray.value.length
+    // const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
+
+    // // update task meta on the Answer doc
+    // await answerController.setTaskTranscriptionMeta({
+    //   answerDocId: props.answerDocId,
+    //   userDocId: props.userDocId,
+    //   taskId: String(props.taskId),
+    //   latestTranscriptionDocId: newLatestId,
+    //   transcriptionsCount: newCount,
+    // })
   } catch (e) {
     console.error('Failed to delete transcription:', e)
   } finally {
