@@ -3,10 +3,10 @@
     <div v-if="isUserStudy">
       <div v-if="isModerated">
         <!-- DEBUG -->
-        selectedUserID: {{ selectedUserID }} <br />
+        <!-- selectedUserID: {{ selectedUserID }} <br />
         selectedTask: {{ selectedTask }} <br />
         selectedTaskId: {{ selectedTaskId }} <br />
-        tasksForSelectedUser: {{ tasksForSelectedUser }}
+        tasksForSelectedUser: {{ tasksForSelectedUser }} -->
 
         <v-row class="ma-0">
           <!-- Users -->
