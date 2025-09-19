@@ -125,4 +125,28 @@ export default class TranscriptionController extends Controller {
 
     //TODO: getByAnswerDocIdandUserDocIdandTaskId
 
+    /**
+     * Retrieves a Transcription document from Firestore based on the answer document ID and user document ID and task ID.
+     * 
+     * @param {string} answerDocId - The Answer document ID.
+     * @param {string} userDocId - The User document ID.
+     * @param {string} taskId - The Task document ID.
+     * @returns {Promise<Transcription[]|null>} - Returns a Promise that resolves to an array of Transcription instances if documents exist, or null if none are found.
+     * @throws {Error} - Throws an error if there is an issue retrieving the document from Firestore.
+     */
+    async getByAnswerDocIdandUserDocIdandTaskId(answerDocId, userDocId, taskId) {
+        const conditions = [
+            { field: 'answerDocId', condition: '==', value: answerDocId },
+            { field: 'userDocId', condition: '==', value: userDocId },
+            { field: 'taskId', condition: '==', value: taskId }
+        ];
+        const result = await super.queryWithMultipleConditions(COLLECTION, conditions);
+
+        if (result.docs.length === 0) return null;
+
+        return result.docs.map(doc => Transcription.toTranscription({
+            id: doc.id, // Include the document ID here
+            ...doc.data()
+        }));
+    }
 }
