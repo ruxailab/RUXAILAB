@@ -32,23 +32,23 @@
             <v-tab @click="tab = 2">
               Sentiment Analysis
             </v-tab>
+            <v-tab @click="tab = 3">
+              Studies
+            </v-tab>
             <v-tab
               v-if="showSUS"
-              @click="tab = 3"
+              @click="tab = 4"
             >
               SUS Analytics
             </v-tab>
             <v-tab
               v-if="showNasa"
-              @click="tab = 4"
+              @click="tab = 5"
             >
               Nasa-TLX Analytics
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 5">
+            <v-tab v-if="showEye" @click="tab = 6">
               Eye-Tracking Analytics
-            </v-tab>
-            <v-tab @click="tab = 6">
-              Studies
             </v-tab>
           </v-tabs>
         </template>
@@ -61,10 +61,10 @@
             <GeneralAnalytics v-if="tab === 0" />
             <AnalyticsView v-if="tab === 1" />
             <SentimentAnalysisView v-if="tab === 2" />
-            <SusAnalytics v-if="tab === 3" />
-            <NasaTlxAnalytics v-if="tab === 4" />
-            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 5" />
-            <Studies v-if="tab === 6" />
+            <Studies v-if="tab === 3" />
+            <SusAnalytics v-if="tab === 4" />
+            <NasaTlxAnalytics v-if="tab === 5" />
+            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 6" />
           </div>
         </template>
       </ShowInfo>
