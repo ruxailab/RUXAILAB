@@ -1,8 +1,7 @@
 <template>
   <div class="pa-4">
     <div class="d-flex align-center justify-space-between mb-3">
-      <h3 class="text-h6 m-0">
-      </h3>
+      <h3 class="text-h6 m-0"></h3>
       <v-progress-circular
         v-if="loading"
         indeterminate
@@ -39,6 +38,18 @@
                 >Latest</v-chip
               >
             </div>
+
+            <!-- actions -->
+            <div class="d-flex align-center">
+              <v-btn
+                icon="mdi-delete"
+                color="error"
+                :loading="deletingId === run.id"
+                variant="text"
+                size="small"
+                @click.stop="askDelete(run)"
+              />
+            </div>
           </div>
         </v-expansion-panel-title>
 
@@ -66,10 +77,35 @@
             No segments in this run.
           </div>
 
-          <v-row> </v-row>
+          <TranscriptionList
+            v-if="segmentsFor(run).length"
+            :transcriptSegments="segmentsFor(run)"
+          />
+          <div v-else class="text-medium-emphasis text-caption">
+            No segments in this run.
+          </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
+
+    <!-- confirm -->
+    <v-dialog v-model="confirmOpen" max-width="420">
+      <v-card>
+        <v-card-title class="text-h6">Delete transcription?</v-card-title>
+        <v-card-text>
+          This action can’t be undone. The run will be removed from this task.
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
+          <v-btn
+            color="error"
+            :loading="deletingId === runToDelete?.id"
+            @click="confirmDelete"
+            >Delete</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -102,6 +138,10 @@ const props = defineProps({
 const loading = ref(true)
 const transcriptionsArray = ref([])
 
+const confirmOpen = ref(false)
+const runToDelete = ref(null)
+const deletingId = ref(null)
+
 // Controllers
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 const transcriptionController = new TranscriptionController()
@@ -132,6 +172,43 @@ async function fetchSelectedTaskTranscriptions() {
     console.error('Error fetching transcriptions:', error)
   } finally {
     loading.value = false
+  }
+}
+
+/** UI → click delete */
+function askDelete(run) {
+  runToDelete.value = run
+  confirmOpen.value = true
+}
+
+/** Confirm → delete → refresh → update meta */
+async function confirmDelete() {
+  if (!runToDelete.value) return
+  deletingId.value = runToDelete.value.id
+  try {
+    await transcriptionController.deleteById(runToDelete.value.id)
+
+    // refetch to get the new list
+    await fetchSelectedTaskTranscriptions()
+
+    // recompute meta from refreshed list
+    const newCount = transcriptionsArray.value.length
+    const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
+
+    // update task meta on the Answer doc
+    await answerController.setTaskTranscriptionMeta({
+      answerDocId: props.answerDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      latestTranscriptionDocId: newLatestId,
+      transcriptionsCount: newCount,
+    })
+  } catch (e) {
+    console.error('Failed to delete transcription:', e)
+  } finally {
+    confirmOpen.value = false
+    deletingId.value = null
+    runToDelete.value = null
   }
 }
 
