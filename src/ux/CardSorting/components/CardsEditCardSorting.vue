@@ -26,6 +26,13 @@
               style="background: #FFFFFF; border: 1px solid #E5E7EB;"
               :no-data-text="$t('noCards')"
             >
+              <!-- DESCRIPTION -->
+              <template #item.description="{ item }">
+                <v-icon :color="item.description ? 'success' : 'error'">
+                  {{ item.description ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+                </v-icon>
+              </template>
+
               <!-- IMAGE -->
                <template #item.image="{ item }">
                 <v-icon :color="item.image ? 'success' : 'error'">
