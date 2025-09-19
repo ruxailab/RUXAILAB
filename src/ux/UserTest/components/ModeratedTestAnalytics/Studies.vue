@@ -76,9 +76,13 @@
                 :task-id="selectedTaskId"
                 :latestTranscriptionId="selectedTask?.latestTranscriptionDocId"
               />
-              <p v-if="tab === 'export'">
-                Export Data Content [NOT Implemented]
-              </p>
+              <ExportPanel
+                v-if="tab === 'export'"
+                :key="`${selectedUserID}:${selectedTaskId}`"
+                :answer-doc-id="testDocument?.answersDocId"
+                :user-doc-id="selectedUserID"
+                :task-id="selectedTaskId"
+              />
             </div>
           </div>
         </v-row>
@@ -95,10 +99,13 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
+
 import { useStore } from 'vuex'
+
 import TimelinePanel from '@/ux/UserTest/components/transcription/TimeLinePanel.vue'
 import TranscriptionsPanel from '@/ux/UserTest/components/transcription/TranscriptionsPanel.vue'
+import ExportPanel from '@/ux/UserTest/components/transcription/ExportPanel.vue'
 import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
