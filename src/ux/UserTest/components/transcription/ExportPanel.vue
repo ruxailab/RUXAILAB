@@ -20,7 +20,7 @@
         <v-btn-toggle v-model="format" mandatory density="comfortable">
           <v-btn value="csv">CSV</v-btn>
           <v-btn value="json">JSON</v-btn>
-          <v-btn value="pdf" disabled>PDF (coming soon)</v-btn>
+          <!-- <v-btn value="pdf" disabled>PDF (coming soon)</v-btn> -->
         </v-btn-toggle>
       </v-col>
     </v-row>
