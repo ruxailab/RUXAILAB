@@ -173,14 +173,14 @@ defineProps({
 }
 
 .stats-value {
-    font-size: 2.0rem;
+    font-size: 20px;
     font-weight: 700;
     color: rgb(var(--v-theme-on-surface));
     line-height: 1.2;
 }
 
 .stats-label {
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 400;
 }
 </style>
