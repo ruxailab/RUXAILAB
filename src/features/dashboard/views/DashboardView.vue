@@ -26,7 +26,10 @@
         cols="12"
         lg="8"
       >
-        <ActiveStudies :studies="items" />
+        <ActiveStudies 
+          :studies="items"
+          @update-total="totalParticipants = $event"
+        />
       </v-col>
       <v-col
         cols="12"
@@ -98,7 +101,7 @@ const store = useStore()
 // Dashboard data
 const totalStudies = ref(12)
 const usedStorage = ref(150)
-const totalParticipants = ref(347)
+const totalParticipants = ref(0)
 
 // User info
 const userDisplayName = computed(() => {
