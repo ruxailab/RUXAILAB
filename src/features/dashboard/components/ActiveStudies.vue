@@ -11,9 +11,16 @@
     </v-card-title>
 
     <v-card-text class="pa-4">
-      <div v-if="loading" class="d-flex justify-center align-center" style="min-height: 300px;">
-        <v-progress-circular indeterminate color="primary" size="48" />
-      </div>
+      <v-row v-if="loading">
+        <v-col v-for="n in 4" :key="n" cols="12" md="6">
+          <v-skeleton-loader
+            type="card"
+            class="study-card"
+            elevation="2"
+            rounded="lg"
+          />
+        </v-col>
+      </v-row>
       <v-row v-else>
         <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
           <v-card variant="outlined" rounded="lg" class="study-card" @click="goToStudy(study)" hover>
