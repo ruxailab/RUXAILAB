@@ -32,7 +32,7 @@ export default class HeuristicQuestionAnswer {
       heuristicId: this.heuristicId,
       heuristicAnswer: this.heuristicAnswer,
       heuristicComment: this.heuristicComment,
-      answerImageUrl: this.answerImageUrl,
+      answerImageUrl: this.answerImageUrl || '',
     }
   }
 }
