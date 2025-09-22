@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="2" rounded="lg" class="mb-6">
+  <v-card elevation="2" rounded="lg" class="mb-6" min-height="480px">
     <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
         <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
@@ -11,9 +11,12 @@
     </v-card-title>
 
     <v-card-text class="pa-4">
-      <v-row>
-  <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
-          <v-card variant="outlined" rounded="lg" class="study-card">
+      <div v-if="loading" class="d-flex justify-center align-center" style="min-height: 300px;">
+        <v-progress-circular indeterminate color="primary" size="48" />
+      </div>
+      <v-row v-else>
+        <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
+          <v-card variant="outlined" rounded="lg" class="study-card" @click="goToStudy(study)" hover>
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
                 <v-chip
@@ -47,9 +50,9 @@
                   <v-icon icon="mdi-account-group" size="16" class="me-1" color="info" />
                   <span>{{ study.participants }} participants</span>
                 </div>
-                <div class="d-flex align-center">
+                <div v-if="study.daysLeft !== null" class="d-flex align-center">
                   <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning" />
-                  <span>{{ study.daysLeft }} days left</span>
+                  <span>{{ `${study.daysLeft} ${study.daysLeft > 1 ? 'days left' : 'day left'}` }}</span>
                 </div>
               </div>
             </v-card-text>
@@ -62,8 +65,9 @@
 
 <script setup>
 import AnswerController from '@/shared/controllers/AnswerController';
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import StudyController from '@/controllers/StudyController';
 
@@ -75,6 +79,7 @@ const props = defineProps({
 })
 
 const store = useStore()
+const router = useRouter();
 const answerController = new AnswerController()
 const studyController = new StudyController()
 
@@ -156,7 +161,7 @@ const finalFour = (studyArr) => {
     status: study.status,
     progress: calculateProgress(study.answers),
     participants: study.answers?.length || 0,
-    daysLeft: daysLeft(study.endDate) || 0,
+    daysLeft: study.endDate ? daysLeft(study.endDate) : null,
     typeIcon: 'mdi-sort-variant'
   }))
   .filter((study, index, self) =>
@@ -187,6 +192,14 @@ async function getTotalAnswersCount(studies) {
     console.error("Error in getTotalAnswersCount:", err);
     return 0;
   }
+}
+
+const goToStudy = async (study) => {
+  if (!study?.id) return;
+
+  const testDoc = await studyController.getStudy({ id: study.id });
+  const methodView = getMethodManagerView(testDoc.testType, testDoc.subType)
+  router.push({ name: methodView, params: { id: testDoc.id } })
 }
 
 // Default studies if none provided
