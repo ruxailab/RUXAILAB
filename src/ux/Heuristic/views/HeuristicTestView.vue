@@ -623,7 +623,6 @@ const isUserTestAdmin = computed(() => {
 });
 
 const loading = computed(() => store.getters.loading)
-const currentImageUrl = computed(() => store.state.Tests.currentImageUrl)
 
 const startTest = async () => {
   if (heuristics.value.length === 0) {
@@ -648,10 +647,11 @@ const updateComment = (comment, heurisIndex, answerIndex) => {
   if (!currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[answerIndex]) {
     return;
   }
-  if (comment != '' && comment != undefined) {
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].heuristicComment = comment;
-  } else {
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].answerImageUrl = currentImageUrl.value;
+  const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
+  if (comment !== '' && comment !== undefined) {
+    question.heuristicComment = comment;
+  } else if (store.state.Heuristic.currentImageUrl) {
+    question.answerImageUrl = store.state.Heuristic.currentImageUrl;
   }
 };
 
