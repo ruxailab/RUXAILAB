@@ -78,6 +78,8 @@ const store = useStore()
 const answerController = new AnswerController()
 const studyController = new StudyController()
 
+const emit = defineEmits(["update-total"]);
+
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
 
@@ -162,6 +164,31 @@ const finalFour = (studyArr) => {
   );
 }
 
+async function getTotalAnswersCount(studies) {
+  if (!studies || !studies.length) return 0;
+
+  try {
+    const counts = await Promise.all(
+      studies.map(async (study) => {
+        const testDoc = await studyController.getStudy({ id: study.testDocId });
+        const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
+
+        const answers =
+          answerDoc.type === STUDY_TYPES.USER
+            ? Object.values({ ...answerDoc.taskAnswers })
+            : Object.values({ ...answerDoc.heuristicAnswers });
+
+        return answers.length;
+      })
+    );
+
+    return counts.reduce((acc, len) => acc + len, 0);
+  } catch (err) {
+    console.error("Error in getTotalAnswersCount:", err);
+    return 0;
+  }
+}
+
 // Default studies if none provided
 const defaultStudies = [
   {
@@ -213,6 +240,18 @@ watch(
   },
   { immediate: true }
 );
+
+watch(
+  () => props.studies,
+  async (newVal) => {
+    if (newVal && newVal.length > 0) {
+      const total = await getTotalAnswersCount(newVal);
+      emit("update-total", total);
+    }
+  },
+  { immediate: true }
+);
+
 </script>
 
 <style scoped>
