@@ -78,11 +78,6 @@ export default createStore({
       return state.error
     },
   },
-  actions: {
-    setLoading({ commit }, payload) {
-      commit('setLoading', payload)
-    }
-  },
   modules: {
     Assessment,
     Auth,

@@ -2,7 +2,6 @@
   <PageWrapper
     title="Answers"
     :side-gap="true"
-    :loading="loading"
   >
     <!-- Subtitle Slot -->
     <template #subtitle>
@@ -24,7 +23,6 @@ import UserTestAnswer from '../components/UserTestAnswer.vue';
 
 const store = useStore()
 
-const loading = computed(() => store.getters.loading)
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument || {})
 </script>
 
