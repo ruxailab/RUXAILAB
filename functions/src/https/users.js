@@ -44,33 +44,3 @@ const deleteFolderFiles = async (testId) => {
     await Promise.all(files.map(file => file.delete()));
   }
 }
-
-export const sendEmail = functions.onCall({
-  handler: async (data) => {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT || 587),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    })
-
-    const mail = {
-      from: 'RUXAILAB',
-      to: data.guest.email,
-      subject: 'You have been invited to evaluate a test!',
-      html: data.template,
-      attachments: data.attachments ?? [],
-    }
-
-    try {
-      const info = await transporter.sendMail(mail)
-      return `Message sent: ${info.messageId}`
-    } catch (error) {
-      console.error('Error sending email:', error)
-      return `Error sending email: ${error.message}`
-    }
-  }
-})

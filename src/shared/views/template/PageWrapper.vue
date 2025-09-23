@@ -62,8 +62,8 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n';
 import Snackbar from '@/shared/components/Snackbar';
+import Loading from '@/shared/components/Loading.vue';
 
 defineProps({
   title: {
@@ -83,7 +83,5 @@ defineProps({
     default: true,
   },
 });
-
-const { t } = useI18n();
 </script>
 
