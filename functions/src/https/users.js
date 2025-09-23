@@ -48,15 +48,17 @@ const deleteFolderFiles = async (testId) => {
 export const sendEmail = functions.onCall({
   handler: async (data) => {
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: false,
       auth: {
-        user: process.env.VUE_APP_FIREBASE_EMAIL,
-        pass: process.env.VUE_APP_FIREBASE_PASSWORD,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
     })
 
     const mail = {
-      from: 'Uramaki Lab',
+      from: 'RUXAILAB',
       to: data.guest.email,
       subject: 'You have been invited to evaluate a test!',
       html: data.template,
