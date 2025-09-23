@@ -1,28 +1,32 @@
 <template>
-  <v-container
-    fluid
-    class="pa-0 bg-grey-lighten-5"
-  >
-    <v-row justify="center">
+  <v-row justify="center">
       <v-col
-        cols="12"
-        md="10"
         lg="12"
+        class="px-0 py-5"
       >
-        <v-card class="elevation-2 rounded-lg pa-6">
+               <v-card
+        class="elevation-2 rounded-lg pa-6"
+        width="100%"
+      >
+      <v-row class="pa-4 ">
+        <v-col>
           <v-card-title
-            class="text-h5 font-weight-bold mb-4"
+            class="text-h5 font-weight-bold mb-0 pa-0"
             :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
           >
             {{ type === 'pre-test' ? 'Pre-Test' : 'Post-Test'}} Variables
           </v-card-title>
-          <v-card-text>
+        
             <p
               class="text-body-1 mb-6"
               style="color: #4B5563;"
             >
               Configure the variables for the {{ props.type }} section. Add, edit, or remove variables as needed.
             </p>
+              </v-col>
+         </v-row>
+                   <v-card-text>
+
             <v-expansion-panels
               v-if="items.length > 0"
               variant="accordion"
@@ -247,7 +251,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+
 </template>
 
 <script setup>

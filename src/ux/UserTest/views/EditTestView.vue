@@ -22,7 +22,7 @@
           class="pb-0 mb-0"
         >
           <v-tab @click="index = 0">
-            Test
+            Test configuration
           </v-tab>
           <v-tab @click="index = 1">
             {{ $t('ModeratedTest.consentForm') }}
@@ -50,7 +50,7 @@
           </div>
 
           <!-- COSENT FORM -->
-          <v-card
+          <div
             v-if="index === 1"
             rounded="xxl"
           >
@@ -60,36 +60,36 @@
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
               @update:value="consent = $event"
             />
-          </v-card>
+        </div>
 
           <!-- PRE-TEST -->
-          <v-card
+          <div
             v-if="index === 2"
-            rounded="xxl"
           >
             <UserVariables
               type="pre-test"
               @change="change = true"
               @update="store.dispatch('setPreTest', $event)"
             />
-          </v-card>
+          </div>
 
           <!-- TASKS -->
-          <ListTasks
-            v-if="index === 3"
+          <div
+          v-if="index === 3"
+          >
+            <ListTasks
           />
-
+          </div>
           <!-- POST-TEST -->
-          <v-card
+          <div
             v-if="index === 4"
-            rounded="xxl"
           >
             <UserVariables
               type="post-test"
               @change="change = true"
               @update="store.dispatch('setPostTest', $event)"
             />
-          </v-card>
+        </div>
         </v-col>
       </div>
     </v-container>
