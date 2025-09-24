@@ -42,6 +42,21 @@
       ]
     },
     {
+      "site": "ruxailab-develop",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
       "site": "ruxailab-prod",
       "public": "dist",
       "ignore": [
