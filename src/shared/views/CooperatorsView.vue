@@ -201,7 +201,7 @@ const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
-const loading = computed(() => store.getters.isLoading);
+const loading = computed(() => store.getters.loading);
 
 // Methods
 const openMessageDialog = (item) => {

@@ -1,7 +1,7 @@
 <template>
-  <PageWrapper 
+  <PageWrapper
     title="Accessibility Test Answers"
-    :loading="isLoading"
+    :loading="loading"
     loading-text="Loading accessibility test results..."
   >
     <!-- Error State -->
@@ -20,9 +20,9 @@
       class="mb-2 text-body-2 pa-2 "
     >
       <div class="d-flex flex-column align-center justify-center">
-        <v-icon 
-          color="info" 
-          size="48" 
+        <v-icon
+          color="info"
+          size="48"
           class="mb-2"
         >
           mdi-info-circle
@@ -31,7 +31,7 @@
         <span class="text-body-1">No Assessment Available for this Test</span>
       </div>
     </v-alert>
-    
+
     <!-- Main Report Content -->
     <div v-else-if="report">
       <!-- Report Header -->
@@ -650,8 +650,8 @@ export default {
   },
   computed: {
     ...mapState('automaticReport', ['report']),
-    isLoading() {
-      return this.$store.getters.isLoading;
+    loading() {
+      return this.$store.getters.loading;
     },
     error() {
       return this.$store.getters.getError;
@@ -774,7 +774,7 @@ export default {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' })
         this.highlightElement(`issue-${index}`)
-      }   
+      }
     },
     highlightElement(issueId) {
       if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)

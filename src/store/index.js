@@ -71,9 +71,6 @@ export default createStore({
     localChanges(state) {
       return state.localChanges
     },
-    isLoading(state) {
-      return state.loading
-    },
     getError(state) {
       return state.error
     },
