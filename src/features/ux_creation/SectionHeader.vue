@@ -4,7 +4,7 @@
       cols="12"
       class="text-center"
     >
-      <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-3">
+      <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-0">
         {{ title }}
       </h2>
       <p class="text-h6 text-grey-darken-1">
