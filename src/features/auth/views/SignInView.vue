@@ -147,8 +147,8 @@ const onSignIn = async () => {
   const isValid = await checkForm()
   if (isValid) {
     try {
-      loadingType.value = 'signin'
       store.dispatch('setLoading', true)
+      loadingType.value = 'signin'
       await store.dispatch('signin', {
         email: email.value,
         password: password.value,
@@ -158,7 +158,7 @@ const onSignIn = async () => {
     } catch (error) {
       console.error('Authentication error:', error)
     } finally {
-      store.dispatch('setLoading', true)
+      store.dispatch('setLoading', false)
     }
   }
 }

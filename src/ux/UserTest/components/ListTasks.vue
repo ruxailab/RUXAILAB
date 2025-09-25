@@ -1,9 +1,10 @@
 <template>
-  <v-container
-    fluid
-    class="pa-0"
-  >
-    <v-card class="elevation-2 rounded-lg pa-6">
+  <v-row justify="center">
+      <v-col
+        lg="12"
+        class="px-0 py-5"
+      >
+          <v-card class="elevation-2 rounded-lg pa-6">
       <v-row
         align="center"
         class="pa-4"
@@ -98,7 +99,8 @@
       </v-card-text>
       <FormDialog v-model:dialog="dialog" v-model:task="task" @add-task="addTask" />
     </v-card>
-  </v-container>
+    </v-col>
+    </v-row>
 </template>
 
 <script setup>

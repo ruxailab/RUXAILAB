@@ -2,15 +2,12 @@
   <v-overlay
     v-if="$route.path.includes('manager')"
     v-model="loading"
-    class="d-flex flex-column justify-center align-center text-center"
+    class="d-flex flex-column align-center justify-center text-center"
   >
-    <!-- Spinning logo -->
-    <v-img
-      :src="logo"
-      class="spin-loader"
-      width="100"
-      height="100"
-      contain
+    <v-progress-circular
+      indeterminate
+      color="#fca326"
+      size="50"
     />
     <div class="white-text mt-3">
       {{ $t('common.loading') }}

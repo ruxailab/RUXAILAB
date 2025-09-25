@@ -1,8 +1,7 @@
 <template>
   <PageWrapper
-    title="Answers"
+    :title="hasAnswers ? 'Answers' : ''"
     :side-gap="true"
-    :loading="loading"
   >
     <!-- Subtitle Slot -->
     <template #subtitle>
@@ -24,8 +23,16 @@ import UserTestAnswer from '../components/UserTestAnswer.vue';
 
 const store = useStore()
 
-const loading = computed(() => store.getters.loading)
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument || {})
+
+// Evaluar si hay respuestas disponibles
+const hasAnswers = computed(() => {
+  return testAnswerDocument.value.taskAnswers && 
+         testAnswerDocument.value.taskAnswers !== null &&
+         (Array.isArray(testAnswerDocument.value.taskAnswers) ? 
+          testAnswerDocument.value.taskAnswers.length > 0 : 
+          Object.keys(testAnswerDocument.value.taskAnswers).length > 0)
+})
 </script>
 
 <style></style>
