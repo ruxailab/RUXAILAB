@@ -153,7 +153,7 @@ const onSignUp = async () => {
     try {
       loadingType.value = 'signin'
       store.commit('setLoading', true)
-      await store.dispatch('signup', {
+      await store.dispatc('signup', {
         email: email.value,
         password: password.value,
       })
