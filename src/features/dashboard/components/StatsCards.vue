@@ -2,7 +2,7 @@
   <v-row class="mb-6">
     <!-- Total Studies Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -35,7 +35,7 @@
 
     <!-- Storage Quota Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -68,7 +68,7 @@
 
     <!-- Current Plan Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -101,7 +101,7 @@
 
     <!-- Total Participants Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
