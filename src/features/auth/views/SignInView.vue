@@ -147,7 +147,7 @@ const onSignIn = async () => {
   const isValid = await checkForm()
   if (isValid) {
     try {
-      store.dispatch('setLoading', true)
+      store.commit('setLoading', true)
       loadingType.value = 'signin'
       await store.dispatch('signin', {
         email: email.value,
@@ -158,7 +158,8 @@ const onSignIn = async () => {
     } catch (error) {
       console.error('Authentication error:', error)
     } finally {
-      store.dispatch('setLoading', false)
+      loadingType.value = ''
+      store.commit('setLoading', false)
     }
   }
 }
@@ -187,6 +188,7 @@ const onGoogleSignInSuccess = async () => {
 
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
+  loadingType.value = ''
   store.dispatch('setLoading', false)
 }
 </script>

@@ -338,8 +338,6 @@ const notifyCooperatorAccessibility = async (guest) => {
 
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
-    console.log(guest.email + '---' + guest.accessLevel)
-
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
       notifyCooperatorAccessibility(guest);
