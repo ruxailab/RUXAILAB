@@ -107,6 +107,8 @@
             variant="outlined"
             rounded
             @click="startTest"
+            class="mt-4"
+            :disabled="isStartTestDisabled"
           >
             Start Test
           </v-btn>
@@ -355,6 +357,29 @@ const hasEyeTracking = computed(() =>
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+});
+
+const isStartTestDisabled = computed(() => {
+  if (!test.value) return true;
+
+  // Check if testStructure is empty array or doesn't exist
+  const hasValidTasks = test.value.testStructure && 
+                       Array.isArray(test.value.testStructure.userTasks) && 
+                       test.value.testStructure.userTasks.length > 0;
+  
+  if (!hasValidTasks) return true;
+
+  // Check if status is different from 'active'
+  if (test.value.status !== 'active') return true;
+
+  // Check if endDate is lower than current date
+  if (test.value.endDate) {
+    const currentDate = new Date();
+    const endDate = new Date(test.value.endDate);
+    if (endDate < currentDate) return true;
+  }
+
+  return false;
 });
 
 const stepperValue = computed(() => {
