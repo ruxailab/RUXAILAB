@@ -147,7 +147,7 @@ const onSignIn = async () => {
   const isValid = await checkForm()
   if (isValid) {
     try {
-      store.dispatch('setLoading', true)
+      store.commit('setLoading', true)
       loadingType.value = 'signin'
       await store.dispatch('signin', {
         email: email.value,
@@ -158,7 +158,7 @@ const onSignIn = async () => {
     } catch (error) {
       console.error('Authentication error:', error)
     } finally {
-      store.dispatch('setLoading', false)
+      store.commit('setLoading', false)
     }
   }
 }
@@ -177,17 +177,17 @@ const redirectToForgotPassword = () => {
 
 const onGoogleSignInStart = () => {
   loadingType.value = 'google'
-  store.dispatch('setLoading', true)
+  store.commit('setLoading', true)
 }
 
 const onGoogleSignInSuccess = async () => {
   if (store.getters.user) router.push('/admin')
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
 }
 
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
 }
 </script>
 
