@@ -178,12 +178,12 @@ const redirectToForgotPassword = () => {
 
 const onGoogleSignInStart = () => {
   loadingType.value = 'google'
-  store.dispatch('setLoading', true)
+  store.commit('setLoading', true)
 }
 
 const onGoogleSignInSuccess = async () => {
   if (store.getters.user) router.push('/admin')
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
 }
 
 const onGoogleSignInError = (error) => {
