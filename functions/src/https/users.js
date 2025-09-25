@@ -1,5 +1,4 @@
 import { admin, functions } from '../f.firebase.js'
-import nodemailer from 'nodemailer'
 
 export const deleteAuth = functions.onCall({
   handler: async (data) => {
