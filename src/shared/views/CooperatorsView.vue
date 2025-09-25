@@ -3,7 +3,10 @@
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
     <!-- Actions Slot -->
-    <template #actions v-if="!showIntroView">
+    <template
+      v-if="!showIntroView"
+      #actions
+    >
       <v-btn
         color="primary"
         size="large"
@@ -17,7 +20,10 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template #subtitle v-if="!showIntroView">
+    <template
+      v-if="!showIntroView"
+      #subtitle
+    >
       <p class="text-body-1 text-grey-darken-1">
         Manage people who participate in your study
       </p>
@@ -29,7 +35,7 @@
     />
     <CooperatorTable
       v-else
-      :hasRoleColumn="hasRoleColumn"
+      :has-role-column="hasRoleColumn"
       :cooperators="cooperatorsEdit"
       :loading="loading"
       :show-date-columns="showDateColumns"
@@ -42,7 +48,8 @@
       @send-message="openMessageDialog"
       @reinvite="reinvite"
       @remove-cooperator="removeCoop"
-      @cancel-invitation="cancelInvitation" />
+      @cancel-invitation="cancelInvitation"
+    />
 
     <!-- Leave Alert Dialog -->
     <v-dialog
@@ -154,7 +161,7 @@ const {
 } = useCooperatorActions();
 
 // Direct notification helper
-const sendNotification = async (userId, title, description, redirectsTo = '/', testId = null) => {
+const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null } = {}) => {
   const notification = new Notification({
     title,
     description,
