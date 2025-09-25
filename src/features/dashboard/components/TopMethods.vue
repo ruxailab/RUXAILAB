@@ -2,23 +2,28 @@
   <v-card
     elevation="2"
     rounded="lg"
-    class="top-methods-card"
+    class="top-methods-card position-relative"
   >
-    <v-card-title
-      class="pb-0"
-      style="padding:1.5rem;"
+    <!-- Coming Soon Chip -->
+    <v-chip
+      class="coming-soon-chip"
+      color="primary"
+      variant="outlined"
+      size="small"
+      prepend-icon="mdi-clock-outline"
     >
+      Coming Soon
+    </v-chip>
+
+    <v-card-title class="d-flex align-center py-4">
+
       <div class="d-flex align-center justify-space-between">
         <span class="text-h6 font-weight-bold">Most used methods</span>
-        <v-btn
-          icon="mdi-dots-vertical"
-          variant="text"
-          size="small"
-        />
+      
       </div>
     </v-card-title>
 
-    <v-card-text class="pa-4">
+    <v-card-text class="pa-4 coming-soon-overlay">
       <div class="methods-list">
         <div
           v-for="method in topMethods"
@@ -130,6 +135,34 @@ const topMethods = computed(() => {
 <style scoped>
 .top-methods-card {
     height: 100%;
+}
+
+/* Coming Soon Chip */
+.coming-soon-chip {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+}
+
+/* Overlay for content */
+.coming-soon-overlay {
+    position: relative;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.coming-soon-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(248, 249, 250, 0.8);
+    backdrop-filter: blur(0.5px);
+    border-radius: 0 0 12px 12px;
+    z-index: 1;
 }
 
 .method-item {
