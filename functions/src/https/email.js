@@ -3,7 +3,6 @@ import nodemailer from "nodemailer";
 import * as fs from "fs";
 import * as path from "path";
 
-
 export const sendEmail = functions.onCall({
   handler: async (data) => {
     const transporter = nodemailer.createTransport({
@@ -35,7 +34,7 @@ export const sendEmail = functions.onCall({
     }
 
     const mail = {
-      from: 'RUXAILAB',
+      from: 'no-reply@ruxailab.com',
       to: data.data.to,
       subject: data.data.subject,
       html: htmlTemplate,
@@ -44,6 +43,7 @@ export const sendEmail = functions.onCall({
 
     try {
       await transporter.sendMail(mail);
+      console.log('Email sent successfully to', data.data.to);
       return 'Email sent successfully.';
     } catch (err) {
       console.error('Error sending email:', err);
