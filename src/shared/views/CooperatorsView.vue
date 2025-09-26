@@ -303,11 +303,8 @@ const submit = async () => {
   }
 
   cooperatorsEdit.value.forEach(async (guest) => {
-    if (!guest.accepted) {
-      notifyCooperator(guest);
-    }
-
     if (cooperatorsUpdate.value.find(c => c.email === guest.email)) {
+      notifyCooperator(guest);
       await handleSendEmail();
     }
   })
