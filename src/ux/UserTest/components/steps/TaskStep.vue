@@ -288,8 +288,8 @@ function startTask() {
     taskStartTime = Date.now();
     timerInterval = setInterval(updateElapsedTime, 1000);
     nextTick(() => {
+        const link = props.task?.taskLink || props.taskLink;
         if (link) {
-          const link = props.task?.taskLink || props.taskLink;
           const url = link.startsWith('http://') || link.startsWith('https://')
             ? link
             : `https://${link}`;
