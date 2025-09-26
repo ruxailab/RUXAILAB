@@ -14,7 +14,7 @@ import TemplateAuthor from './TemplateAuthor'
 
 export default class TemplateHeader {
     constructor({
-        templateAuthor, creationDate, updateDate, templateDescription, isTemplatePublic, templateTitle, templateVersion, templateType,
+        templateAuthor, creationDate, updateDate, templateDescription, isTemplatePublic, templateTitle, templateVersion, templateType, templateSubType
     } = {},
     ) {
         this.templateAuthor = templateAuthor
@@ -25,6 +25,7 @@ export default class TemplateHeader {
         this.templateTitle = templateTitle
         this.templateVersion = templateVersion
         this.templateType = templateType
+        this.templateSubType = templateSubType
     }
     static toTemplateHeader(data) {
         return new TemplateHeader({
@@ -42,6 +43,7 @@ export default class TemplateHeader {
             templateTitle: this.templateTitle,
             templateVersion: this.templateVersion,
             templateType: this.templateType,
+            templateSubType: this.templateSubType || null,
         }
     }
 }

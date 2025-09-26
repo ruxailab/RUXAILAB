@@ -26,13 +26,20 @@
         cols="12"
         lg="8"
       >
-        <ActiveStudies :studies="items" />
+        <div class="component-height">
+          <ActiveStudies 
+            :studies="items"
+            @update-total="totalParticipants = $event"
+          />
+        </div>
       </v-col>
       <v-col
         cols="12"
         lg="4"
       >
-        <ActivityTimeline />
+        <div class="component-height">
+          <ActivityTimeline />
+        </div>
       </v-col>
     </v-row>
 
@@ -98,7 +105,7 @@ const store = useStore()
 // Dashboard data
 const totalStudies = ref(12)
 const usedStorage = ref(150)
-const totalParticipants = ref(347)
+const totalParticipants = ref(0)
 
 // User info
 const userDisplayName = computed(() => {
@@ -124,9 +131,29 @@ watch(() => props.items, (newVal) => {
   text-align: left;
 }
 
+.component-height {
+  height: 500px;
+}
+
+.component-height :deep(.v-card) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.component-height :deep(.v-card-text) {
+  flex: 1;
+  overflow-y: auto;
+}
+
 @media (max-width: 960px) {
   .dashboard-container {
     padding: 16px;
+  }
+  
+  .component-height {
+    height: auto;
+    min-height: 400px;
   }
 }
 </style>
