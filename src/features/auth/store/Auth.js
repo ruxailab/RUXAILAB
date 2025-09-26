@@ -108,7 +108,7 @@ export default {
         }
 
         // Create user if they don't exist yet
-        if (!dbUser) {
+        if (!dbUser || !dbUser.email) {
           await userController.create({
             id: user.uid,
             email: user.email,
