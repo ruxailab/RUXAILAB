@@ -87,6 +87,12 @@
         </v-card>
       </v-col>
     </v-row>
+
+  <AcceptInvitationDialog
+    v-model="dialogVisible"
+    @cancel="onReject"
+    @submit="onAccept"
+  />
   </v-container>
 </template>
 
@@ -95,11 +101,33 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import NotificationList from '@/features/notifications/components/NotificationList.vue'
+import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import StudyController from '@/controllers/StudyController'
 
 const store = useStore()
 const router = useRouter()
 
 const activeTab = ref('unread')
+
+const dialogVisible = ref(false)
+let resolveDialog
+
+const onAccept = () => {
+  dialogVisible.value = false
+  resolveDialog(true)
+}
+
+const onReject = () => {
+  dialogVisible.value = false
+  resolveDialog(false)
+}
+
+function showAcceptDialog() {
+  dialogVisible.value = true
+  return new Promise((resolve) => {
+    resolveDialog = resolve
+  })
+}
 
 const pageSize = 5
 const unreadPage = ref(1)
@@ -111,8 +139,16 @@ const allRead = computed(() =>
   user.value.notifications.every((notification) => notification.read)
 )
 
+const sortedNotifications = computed(() =>
+  [...user.value.notifications].sort((a, b) => {
+    const aDate = new Date(a.createdDate)
+    const bDate = new Date(b.createdDate)
+    return bDate - aDate
+  })
+)
+
 const unreadNotifications = computed(() =>
-  user.value.notifications.filter((notification) => !notification.read)
+  sortedNotifications.value.filter((notification) => !notification.read)
 )
 
 const unreadPages = computed(() => Math.ceil(unreadNotifications.value.length / pageSize))
@@ -122,18 +158,36 @@ const paginatedUnreadNotifications = computed(() => {
   return unreadNotifications.value.slice(start, end)
 })
 
-const inboxPages = computed(() => Math.ceil(user.value.notifications.length / pageSize))
+const inboxPages = computed(() => Math.ceil(sortedNotifications.value.length / pageSize))
 const paginatedInboxNotifications = computed(() => {
   const start = (inboxPage.value - 1) * pageSize
   const end = start + pageSize
-  return user.value.notifications.slice(start, end)
+  return sortedNotifications.value.slice(start, end)
 })
 
 const goToNotificationRedirect = async (notification) => {
+  if(notification.redirectsTo === null) return
+  if(notification.accessLevel === 0) {
+    const accepted = await showAcceptDialog()
+    if (!accepted) return
+    const study = await new StudyController().getStudy({ id: notification.testId })
+    
+    await store.dispatch('acceptStudyCollaboration', {
+      test: study,
+      cooperator: user.value,
+    });
+  }
+  
   if (!notification.read) {
     await markAsRead(notification)
   }
-  window.open(`/${notification.redirectsTo}`)
+
+  try {
+    window.open(window.location.origin + notification.redirectsTo, '_blank')
+  } catch(e) {
+    console.error(e)
+    window.open(window.location.origin + '/' + notification.redirectsTo, '_blank')
+  }
 }
 
 const markAsRead = async (notification) => {
@@ -146,8 +200,20 @@ const markAsRead = async (notification) => {
 
 const markAllAsRead = async () => {
   const unread = user.value.notifications.filter((n) => !n.read)
-  for (const notification of unread) {
-    await markAsRead(notification)
+
+  if (unread.length === 0) return
+
+  try {
+    await Promise.all(
+      unread.map((notification) =>
+        store.dispatch('markNotificationAsRead', {
+          notification,
+          user: user.value,
+        })
+      )
+    )
+  } catch (e) {
+    console.error('Error marking all as read:', e)
   }
 }
 

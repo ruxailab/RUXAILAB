@@ -11,7 +11,6 @@
 
     <!-- DERECHA: FORMULARIO -->
     <div class="form-side d-flex align-center justify-center">
-
       <div class="signin-box">
         <h1 class="text-h6">
           {{ $t('auth.SIGNIN.sign-in-title') }}
@@ -70,7 +69,8 @@
             type="submit"
             color="primary"
             block
-            :loading="loading"
+            :loading="loading && loadingType === 'signin'"
+            :disabled="loadingType === 'google'"
             min-height="44"
             data-testid="sign-in-button"
           >
@@ -85,8 +85,10 @@
         </v-divider>
 
         <GoogleSignInButton
+          :remember-me="rememberMe"
           :button-text="$t('auth.SIGNIN.continueWithGoogle')"
-          :loading="loading"
+          :loading="loading && loadingType === 'google'"
+          :disabled="loadingType === 'signin'"
           @google-sign-in-start="onGoogleSignInStart"
           @google-sign-in-success="onGoogleSignInSuccess"
           @google-sign-in-error="onGoogleSignInError"
@@ -111,11 +113,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { z } from 'zod'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 
 const { t } = useI18n()
@@ -127,19 +128,18 @@ const showPassword = ref(false)
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
+const loadingType = ref('')
 
-const emailSchema = z.string().email({ message: t('errors.invalidEmail') })
+const loading = computed(() => store.getters.loading)
 
 const emailRules = [
-  (v) => !!v || t('errors.emailIsRequired'),
-  (v) => emailSchema.safeParse(v).success || t('errors.invalidEmail'),
+  v => !!v || t('errors.emailIsRequired'),
+  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
 ]
 
 const rules = {
-  required: (v) => !!v || t('PROFILE.passwordRequired'),
+  required: (v) => !!v || t('errors.passwordRequired'),
 }
-
-const loading = computed(() => store.getters.loading)
 
 const checkForm = () => form.value?.validate()
 
@@ -147,15 +147,19 @@ const onSignIn = async () => {
   const isValid = await checkForm()
   if (isValid) {
     try {
+      store.commit('setLoading', true)
+      loadingType.value = 'signin'
       await store.dispatch('signin', {
         email: email.value,
         password: password.value,
+        rememberMe: rememberMe.value,
       })
-      if (store.getters.user) {
-        router.push('/admin').catch(() => { })
-      }
+      await router.push('/admin')
     } catch (error) {
       console.error('Authentication error:', error)
+    } finally {
+      loadingType.value = ''
+      store.commit('setLoading', false)
     }
   }
 }
@@ -172,14 +176,20 @@ const redirectToForgotPassword = () => {
   router.push('/forgot-password')
 }
 
-const onGoogleSignInStart = () => { }
-const onGoogleSignInSuccess = async () => {
-  if (store.getters.user) {
-    router.push('/admin').catch(() => { })
-  }
+const onGoogleSignInStart = () => {
+  loadingType.value = 'google'
+  store.commit('setLoading', true)
 }
+
+const onGoogleSignInSuccess = async () => {
+  if (store.getters.user) router.push('/admin')
+  store.commit('setLoading', false)
+}
+
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
+  loadingType.value = ''
+  store.dispatch('setLoading', false)
 }
 </script>
 

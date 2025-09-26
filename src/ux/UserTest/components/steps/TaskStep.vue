@@ -17,7 +17,7 @@
               class="text-center"
             >
               <a
-                :href="task?.taskLink || taskLink"
+                :href="normalizedLink"
                 target="_blank"
                 class="text-primary font-weight-medium"
               >
@@ -263,6 +263,13 @@ const localSusAnswers = computed({
     set: (val) => emit('update:susAnswers', val)
 });
 
+
+const rawLink = computed(() => props.task?.taskLink || props.taskLink);
+const normalizedLink = computed(() => {
+  const link = rawLink.value || '';
+  return link.match(/^https?:\/\//i) ? link : `https://${link}`;
+});
+
 const stage = ref(1);
 const elapsedTimeDisplay = ref('0:00');
 let taskStartTime = null;
@@ -281,8 +288,12 @@ function startTask() {
     taskStartTime = Date.now();
     timerInterval = setInterval(updateElapsedTime, 1000);
     nextTick(() => {
-        if (props.task?.taskLink || props.taskLink) {
-            window.open(props.task?.taskLink || props.taskLink, '_blank');
+        const link = props.task?.taskLink || props.taskLink;
+        if (link) {
+          const url = link.startsWith('http://') || link.startsWith('https://')
+            ? link
+            : `https://${link}`;
+          window.open(url, '_blank');
         }
         setTimeout(() => {
             const timer = document.querySelector('[ref=timerComponent]');

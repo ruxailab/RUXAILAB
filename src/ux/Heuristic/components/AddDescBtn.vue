@@ -41,11 +41,9 @@
                     :label="$t('common.title')"
                   />
 
-                  <div>{{ $t('common.description') }}:</div>
-                  <TextBox
-                    ref="textbox"
-                    @mounted="setDescriptionText"
-                    @update-html="updateText"
+                  <TextareaForm
+                    v-model="desc.text"
+                    :title="$t('common.description')"
                   />
                 </v-col>
               </v-row>
@@ -88,11 +86,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
-import TextBox from '@/shared/components/TextBox'
+import TextareaForm from '@/shared/components/TextareaForm'
 
 const props = defineProps({
   questionIndex: {
@@ -119,9 +117,7 @@ const desc = ref({
   text: '',
 })
 const editIndex = ref(null)
-const isMounted = ref(false)
 const form = ref(null)
-const textbox = ref(null)
 
 // Rules for form validation
 const rules = ref([(v) => !!v || t('errors.fieldRequired')])
@@ -141,15 +137,17 @@ const testAnswerDocLength = computed(() => {
 
 const validate = async () => {
   const { valid } = await form.value.validate()
-  if (valid && desc.value.text.length > 0) {
-    store.commit('setupHeuristicQuestionDescription', {
+  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  if (valid && strippedText.length > 0) {
+    store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
       question: props.questionIndex,
       description: desc.value,
       editIndex: editIndex.value,
     })
+    emit('update-description')
     reset()
-  } else if (valid && desc.value.text.length === 0) {
+  } else if (valid && strippedText.length === 0) {
     toast.info(t('alerts.addDescription'))
   }
 }
@@ -157,7 +155,6 @@ const validate = async () => {
 const reset = () => {
   dialog.value = false
   form.value.resetValidation()
-  textbox.value?.resetContent?.()
   desc.value = {
     title: '',
     text: '',
@@ -169,29 +166,23 @@ const resetIndex = () => {
   editIndex.value = null
 }
 
-const updateText = (html) => {
-  desc.value.text = html
-}
-
 const editSetup = (i) => {
   dialog.value = true
   editIndex.value = i
   desc.value = { ...question.value.descriptions[editIndex.value] }
-  if (isMounted.value) {
-    setDescriptionText()
-  }
-}
-
-const setDescriptionText = () => {
-  isMounted.value = true
-  textbox.value?.setContent?.(desc.value.text)
 }
 
 const submitEdit = async () => {
   const { valid } = await form.value.validate()
   const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
   if (valid && strippedText.length > 0) {
-    emit('update-description', { index: editIndex.value, description: desc.value })
+    store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
+      heuristic: props.heuristicIndex,
+      question: props.questionIndex,
+      description: desc.value,
+      editIndex: editIndex.value,
+    })
+    emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
     toast.info(t('alerts.addDescription'))
@@ -220,7 +211,6 @@ defineExpose({
   padding-bottom: 2px;
 }
 .dataCard {
-  background: #f5f7ff;
   box-shadow: 0px 4px 4px_RGBA(0, 0, 0, 0.25);
   border-radius: 4px;
 }

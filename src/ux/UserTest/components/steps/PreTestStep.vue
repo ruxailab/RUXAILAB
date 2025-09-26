@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + preTestTitle">
+  <ShowInfo :title="testTitle + ' - ' + 'PreTest'">
     <template #content>
       <div class="test-content pa-4 rounded-xl">
         <div
@@ -80,7 +80,6 @@ import ShowInfo from "@/shared/components/ShowInfo.vue";
 
 const props = defineProps({
   testTitle: String,
-  preTestTitle: String,
   preTest: Array,
   preTestAnswer: Array,
   preTestCompleted: Boolean,

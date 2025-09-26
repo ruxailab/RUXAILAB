@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + preTestTitle">
+  <ShowInfo :title="testTitle + ' - ' + 'Consent'">
     <template #content>
       <div class="test-content pa-4 rounded-xl">
         <div
@@ -72,7 +72,6 @@ import ShowInfo from '@/shared/components/ShowInfo.vue';
 import { ref, watch } from 'vue';
 const props = defineProps({
     testTitle: String,
-    preTestTitle: String,
     consentText: String,
     fullNameModel: String,
     consentCompletedModel: Boolean

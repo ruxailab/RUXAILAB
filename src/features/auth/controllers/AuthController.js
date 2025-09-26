@@ -5,10 +5,14 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios';
+import EmailController from '@/shared/controllers/EmailController';
 
 /**
  * Controller for authentication operations
@@ -30,7 +34,8 @@ export default class AuthController {
    * @param {string} password - User password
    * @returns {Promise} - Firebase auth user credential
    */
-  async signIn(email, password) {
+  async signIn(email, password, rememberMe) {
+    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
     return signInWithEmailAndPassword(auth, email, password)
   }
 
@@ -38,7 +43,8 @@ export default class AuthController {
    * Signs in a user with Google
    * @returns {Promise} - Firebase auth user credential
    */
-  async signInWithGoogle() {
+  async signInWithGoogle(rememberMe) {
+    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }
@@ -80,7 +86,13 @@ export default class AuthController {
   }
   // Reset Password
   async resetPassword(email) {
-    return sendPasswordResetEmail(auth, email)
+    // return sendPasswordResetEmail(auth, email)
+    const emailController = new EmailController()
+    await emailController.send({
+      to: email,
+      subject: 'Password Reset',
+      template: 'passwordReset',
+    })
   }
 
   async autoSignIn() {

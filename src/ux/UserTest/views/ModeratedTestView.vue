@@ -9,7 +9,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+           {{ test.testDescription }}
           </p>
           <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
             Start Test
@@ -27,19 +27,19 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item color="white" value="1" title="Consent" :complete="stepperValue >= 1"
+                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1"
                     :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="2" title="Pre-test" :complete="stepperValue >= 2"
+                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2"
                     :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="3" title="Tasks" :complete="stepperValue >= 3"
+                  <v-stepper-item value="3" title="Tasks" :complete="stepperValue >= 3"
                     :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="4" title="Post-test" :complete="stepperValue >= 4"
+                  <v-stepper-item value="4" title="Post-test" :complete="stepperValue >= 4"
                     :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="5" title="Completion" :complete="stepperValue === 5"
+                  <v-stepper-item value="5" title="Completion" :complete="stepperValue === 5"
                     :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
@@ -49,9 +49,12 @@
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <!-- Proceed Button -->
-            <v-btn class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
-              Proceed to next step
-            </v-btn>
+            <v-row class="ma-0" justify="center"> 
+              <v-btn variant="outlined" class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
+                Proceed to next step
+              </v-btn>
+            </v-row>
+           
             <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
           </div>
 
@@ -298,6 +301,7 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true;
     await saveAnswer();
+    await router.push({ name: 'Admin' });
   } catch (error) {
     console.error('Error submitting answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
@@ -340,12 +344,19 @@ const signOut = async () => {
   router.push('/signin');
 };
 
-const startTest = () => {
+const startTest = async () => {
   // Check if the test has no tasks
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', { type: 'info', message: "This test doesn't have any tasks." });
     router.push(`/missions/${test.value.id}`);
     return;
+  }
+
+  if (!isUserTestAdmin.value) {
+    await store.dispatch('acceptStudyCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
   }
 
   // First, add the class for the exit animation
@@ -567,7 +578,7 @@ const mappingSteps = async () => {
             taskTime: 0,
             completed: false,
             susAnswers: [],
-            nasaTlxAnswers: {}
+            nasaTlxAnswers: null,
           });
           console.log('Nueva tarea creada:', i, newTask);
           return newTask;
@@ -670,13 +681,6 @@ onMounted(async () => {
     toast.info('Use a session link to access the test');
     router.push('/managerview/' + test.value.id);
     return;
-  }
-
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    });
   }
 
   globalIndex.value = 0;

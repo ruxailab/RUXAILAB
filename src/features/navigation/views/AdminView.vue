@@ -132,7 +132,7 @@
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
           <List
-            :items="filteredTemplates"
+            :items="filteredTemplates.sort((a, b) => (b.header.creationDate || 0) - (a.header.creationDate || 0))"
             type="publicTemplates"
             @clicked="setupTempDialog"
           />
@@ -150,7 +150,7 @@
           v-model:dialog="tempDialog"
           :template="temp"
           :allow-create="true"
-          @close="tempDialog = false"
+          @close="reloadMyTemplates()"
         />
       </v-container>
     </v-main>
@@ -160,19 +160,20 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
 import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation/utils';
-import { getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
 import StudyController from '@/controllers/StudyController';
 import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const search = ref('');
 const activeSection = ref('dashboard');
@@ -217,29 +218,55 @@ const templates = computed(() => store.state.Templates.templates || []);
 const user = computed(() => store.getters.user);
 
 const filteredTests = computed(() => {
-  return tests.value?.filter(test => {
-    const matchesSearch = test.testTitle.toLowerCase().includes(search.value.toLowerCase());
+  const allTests = tests.value;
+
+  return allTests?.filter(test => {
+    const matchesSearch = (test.testTitle || test.title || '').toLowerCase().includes(search.value.toLowerCase());
 
     const method = selectedMethodFilter.value;
     const testType = test.testType;
-    const subType = test.subType
+    const subType = test.subType;
 
     const matchesMethod =
       method === 'all' ||
       (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
       (method === METHOD_DEFINITIONS.USER_UNMODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.UNMODERATED) ||
-      (method === METHOD_DEFINITIONS.USER_MODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.MODERATED)
-      ||
+      (method === METHOD_DEFINITIONS.USER_MODERATED.id && testType === STUDY_TYPES.USER && subType == USER_STUDY_SUBTYPES.MODERATED) ||
+      (method === METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id && testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) ||
+      (method === METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC.id && testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC);
+
+    return matchesSearch && matchesMethod;
+  });
+});
+
+const filteredTemplates = computed(() => {
+  return templates.value?.filter(temp => {
+    // Search filter
+    const matchesSearch = temp.header.templateTitle
+      .toLowerCase()
+      .includes(search.value.toLowerCase());
+
+    const method = selectedMethodFilter.value;
+    const testType = temp.header.templateType;
+    const subType = temp.header.templateSubType;
+
+    // Method filter (mesma lógica de tests, mas usando temp.header)
+    const matchesMethod =
+      method === 'all' ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+        testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
+        testType === STUDY_TYPES.USER &&
+        subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
+      (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
+        testType === STUDY_TYPES.USER &&
+        subType === USER_STUDY_SUBTYPES.MODERATED) ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 
     return matchesSearch && matchesMethod;
   });
 });
-
-const filteredTemplates = computed(() => templates.value.filter(temp =>
-  temp.header.templateTitle.toLowerCase().includes(search.value.toLowerCase())
-));
 
 const selectNavigation = (navigationData) => {
   const { sectionId, childId } = navigationData;
@@ -252,25 +279,58 @@ const goToCreateTestRoute = () => {
 };
 
 const goTo = (test) => {
-  if (activeSection.value === 'studies') {
-    if (test.testType === STUDY_TYPES.HEURISTIC) {
-      router.push({ name: 'HeuristicManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === STUDY_TYPES.CARD_SORTING) {
-      router.push({ name: 'CardSortingManagerView', params: { id: test.testDocId || test.id } });
-    } else if (test.testType === STUDY_TYPES.USER) {
-      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
-        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.testDocId || test.id } });
-      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
-        router.push({ name: 'UserModeratedManagerView', params: { id: test.testDocId || test.id } });
+  // Handle MANUAL and AUTOMATIC tests with router navigation
+  if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
+    const baseUrl = activeSection.value === 'studies' ? test.testDocId || test.id : test.id;
+    router.push(`/accessibility/manual/${baseUrl}`);
+    return;
+  }
+
+  if (test.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
+    const baseUrl = activeSection.value === 'studies' ? test.testDocId || test.id : test.id;
+    router.push(`/accessibility/automatic/${baseUrl}`);
+    return;
+  }
+
+  // Handle other test types based on section
+  switch (activeSection.value) {
+    case 'studies':
+      const methodView = getMethodManagerView(test.testType, test.subType);
+      router.push({ name: methodView, params: { id: test.testDocId || test.id } });
+      break;
+
+    case 'sessions':
+      const canNavigateToSession = (testDate) => {
+        return getSessionStatus(testDate) === SESSION_STATUSES.TODAY;
+      };
+      if (canNavigateToSession(test.testDate)) {
+        router.push(`testview/${test.id}/${user.value.id}`);
       }
-    }
-  } else if (activeSection.value === 'sessions') {
-    const canNavigateToSession = (testDate) => {
-      return getSessionStatus(testDate) === SESSION_STATUSES.TODAY;
-    };
-    if (canNavigateToSession(test.testDate)) {
-      router.push(`testview/${test.id}/${user.value.id}`);
-    }
+      break;
+
+    case 'community':
+      if (activeSubSection.value === 'community-studies') {
+        navigateToCommunityStudy(test);
+      }
+      break;
+  }
+};
+
+const navigateToCommunityStudy = (test) => {
+  switch (test.testType) {
+    case STUDY_TYPES.HEURISTIC:
+      router.push({ name: 'HeuristicManagerView', params: { id: test.id } });
+      break;
+    case STUDY_TYPES.CARD_SORTING:
+      router.push({ name: 'CardSortingManagerView', params: { id: test.id } });
+      break;
+    case STUDY_TYPES.USER:
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.id } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
+        router.push({ name: 'UserModeratedManagerView', params: { id: test.id } });
+      }
+      break;
   }
 };
 
@@ -309,6 +369,11 @@ const filterModeratedSessions = async () => {
   filteredModeratedSessions.value = cooperatorArray;
 };
 
+const reloadMyTemplates = async () => {
+  tempDialog.value = false
+  await getMyTemplates()
+}
+
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
     case 'studies': await getMyPersonalTests(); break;
@@ -333,9 +398,38 @@ const handleToggleDrawer = () => {
 onMounted(() => {
   filterModeratedSessions();
 
+  // Handle query parameters for section navigation
+  if (route.query.section) {
+    activeSection.value = route.query.section;
+    if (route.query.subsection) {
+      activeSubSection.value = route.query.subsection;
+    }
+  }
+
   // Escuchar evento del toolbar para toggle del drawer
   window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer);
 });
+
+// Watch for route changes to handle navigation
+watch(
+  () => route.query.section,
+  (newSection) => {
+    if (newSection) {
+      activeSection.value = newSection;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => route.query.subsection,
+  (newSubSection) => {
+    if (newSubSection) {
+      activeSubSection.value = newSubSection;
+    }
+  },
+  { immediate: true }
+);
 
 onUnmounted(() => {
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer);

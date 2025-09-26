@@ -1,9 +1,9 @@
 <template>
   <IntroComp
     :colors="['#FF3F59', '#00213f']"
-    :title="'Reports'"
+    :title="'Final Report'"
     :image="'IntroReports.svg'"
-    :main="$t('descriptions.intro.reports')"
+    :main="$t('descriptions.intro.finalReport')"
     :link="$t('descriptions.intro.invite')"
     :items="items"
     @link-clicked="goToCoops"
@@ -15,7 +15,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import IntroComp from '@/shared/components/IntrosComponent.vue'
+import IntroComp from '@/shared/components/introduction_cards/IntrosComponent.vue'
 
 const emit = defineEmits(['goToCoops'])
 const router = useRouter()
