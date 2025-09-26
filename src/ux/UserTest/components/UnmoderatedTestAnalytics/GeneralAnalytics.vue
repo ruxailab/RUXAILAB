@@ -4,7 +4,7 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre o email" class="flex-grow-1" />
+          variant="outlined" placeholder="Buscar por nombre" class="flex-grow-1" />
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">Reset</v-btn>
