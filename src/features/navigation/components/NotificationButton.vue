@@ -172,7 +172,10 @@ const goToNotificationRedirect = async (notification) => {
 };
 
 const goToNotificationPage = () => {
-  router.push('/notifications');
+  router.push({ 
+    path: '/admin', 
+    query: { section: 'notifications' } 
+  }).catch(() => { });
 };
 
 </script>
