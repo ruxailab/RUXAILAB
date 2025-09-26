@@ -99,7 +99,7 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="description">
+          <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
           <v-btn
