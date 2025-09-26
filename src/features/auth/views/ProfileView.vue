@@ -544,6 +544,7 @@
               variant="outlined"
               class="text-capitalize"
               min-width="120"
+              :disabled="isDeleting"
               @click="closeDeleteDialog"
             >
               {{ $t('common.cancel') }}
@@ -553,6 +554,7 @@
               variant="flat"
               class="text-capitalize"
               min-width="120"
+              :loading="isDeleting"
               :disabled="deleteConfirmText !== 'DELETE'"
               @click="handlerDeleteConfirmText"
             >
@@ -861,7 +863,7 @@ const changePassword = async () => {
 const handlerDeleteConfirmText = async (value) => {
   const auth = getAuth();
   const user = auth.currentUser
-  if (!user.providerData.includes(a => a.providerId !== 'google.com')) deleteStep.value = 2
+  if (user.providerData.includes(a => a.providerId !== 'google.com')) return deleteStep.value = 2
 
   try {
     isDeleting.value = true
