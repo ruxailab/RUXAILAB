@@ -160,7 +160,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
@@ -173,6 +173,7 @@ import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const search = ref('');
 const activeSection = ref('dashboard');
@@ -397,9 +398,38 @@ const handleToggleDrawer = () => {
 onMounted(() => {
   filterModeratedSessions();
 
+  // Handle query parameters for section navigation
+  if (route.query.section) {
+    activeSection.value = route.query.section;
+    if (route.query.subsection) {
+      activeSubSection.value = route.query.subsection;
+    }
+  }
+
   // Escuchar evento del toolbar para toggle del drawer
   window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer);
 });
+
+// Watch for route changes to handle navigation
+watch(
+  () => route.query.section,
+  (newSection) => {
+    if (newSection) {
+      activeSection.value = newSection;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => route.query.subsection,
+  (newSubSection) => {
+    if (newSubSection) {
+      activeSubSection.value = newSubSection;
+    }
+  },
+  { immediate: true }
+);
 
 onUnmounted(() => {
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer);
