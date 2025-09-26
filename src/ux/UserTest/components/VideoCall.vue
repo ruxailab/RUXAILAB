@@ -27,7 +27,7 @@
         </div>
 
         <v-row justify="center" v-if="callStarted">
-          <v-card class="pa-2 buttonCard" depressed>
+          <v-card v-if="!caller" class="pa-2 buttonCard" depressed>
             <v-tooltip location="bottom" v-if="!caller">
               <template #activator="{ props }">
                 <v-btn class="mx-3" :class="{ red: isSharingScreen, white: !isSharingScreen }" variant="flat" icon
