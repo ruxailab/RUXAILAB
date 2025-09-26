@@ -27,7 +27,7 @@
           class="hidden-sm-and-down"
           cover
           max-width="30%"
-          :src="require('../../assets/manager/' + image)"
+          :src="require('../../../assets/manager/' + image)"
         />
       </v-row>
     </div>

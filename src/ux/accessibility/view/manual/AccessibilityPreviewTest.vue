@@ -1,19 +1,10 @@
 <template>
-  <v-app>
-    <v-overlay
-      v-model="isLoading"
-      class="align-center justify-center"
-      opacity="0.8"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="primary"
-      />
-      <div class="mt-4 text-h6">
-        Loading WCAG Data...
-      </div>
-    </v-overlay>
+  <PageWrapper
+    title="Accessibility Test Preview"
+    :loading="isLoading"
+    loading-text="Loading WCAG Data..."
+    :side-gap="false"
+  >
 
     <v-alert
       v-if="error"
@@ -25,6 +16,45 @@
       {{ error }}
     </v-alert>
 
+    <!-- User viewing mode indicator -->
+    <v-alert
+      v-if="viewingUserType === 'other-user'"
+      type="info"
+      variant="tonal"
+      class="ma-2 mb-4"
+      prepend-icon="mdi-eye"
+    >
+      <v-alert-title>Viewing Mode</v-alert-title>
+      You are viewing assessment data for user ID: <strong>{{ viewingUserId }}</strong>.
+      This is read-only mode - you cannot save changes to another user's assessment.
+    </v-alert>
+
+    <!-- Debug Panel (only show if there are issues) -->
+    <v-alert
+      v-if="principles.length === 0 && !isLoading"
+      type="warning"
+      class="ma-2"
+      variant="outlined"
+    >
+      <div class="text-subtitle-2 font-weight-bold mb-2">Information</div>
+      <div class="text-caption">
+        <div><strong>Viewing User ID:</strong> {{ viewingUserId }}</div>
+        <div><strong>Viewing Mode:</strong> {{ viewingUserType }}</div>
+        <div><strong>User Role:</strong> {{ currentUserRole }}</div>
+        <div><strong>Can Save:</strong> {{ canSaveAssessments }}</div>
+        <div><strong>Compliance Level:</strong> {{ complianceLevel }}</div>
+        <div><strong>Principles Available:</strong> {{ principles.length }}</div>
+        <div><strong>Selected Guidelines:</strong> {{ configuration.selectedGuidelines?.length || 0 }}</div>
+        <div><strong>Raw WCAG Data Available:</strong> {{ store.state.Assessment?.wcagData?.principles?.length || 0 }}</div>
+        <div><strong>Filtered WCAG Data Available:</strong> {{ store.state.Assessment?.filteredWcagData?.principles?.length || 0 }}</div>
+        <div><strong>Configuration:</strong> {{ JSON.stringify(configuration, null, 2) }}</div>
+      </div>
+    </v-alert>
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Evaluate the accessibility of your project based on selected WCAG guidelines
+      </p>
+    </template>
     <!-- Full width container without padding -->
     <v-container
       fluid
@@ -389,11 +419,11 @@
                 size="default"
                 color="success"
                 :loading="isLoading"
-                :disabled="!currentRule?.id"
+                :disabled="!currentRule?.id || !canSaveAssessments"
                 variant="flat"
                 @click="saveAssessment"
               >
-                Save Assessment
+                {{ canSaveAssessments ? 'Save Assessment' : 'Sign In to Save' }}
               </v-btn>
             </div>
 
@@ -629,7 +659,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-app>
+  </PageWrapper>
 </template>
 
 <script setup>
@@ -637,6 +667,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 const toast = useToast()
 const store = useStore()
@@ -644,8 +675,82 @@ const route = useRoute()
 const error = ref('')
 const selectedCriteria = ref([])
 const user = computed(() => store.getters.user)
+const test = computed(() => store.getters.test)
 // Computed properties from store
-const isLoading = computed(() => store.state.Assessment?.isLoading || false)
+const isLoading = computed(() => store.getters.loading || false)
+
+// Check if user has access to this test - Proper role-based access control
+const hasAccess = computed(() => {
+  // Always allow access for preview mode
+  return true
+})
+
+// Check if user has admin privileges
+const isAdmin = computed(() => {
+  const currentUser = user.value || store.state.Auth.user
+  const currentTest = test.value
+
+  if (!currentUser || !currentTest) return false
+
+  // Check if user is test owner
+  if (currentTest.userId === currentUser.id) return true
+
+  // Check if user is test admin
+  if (currentTest.testAdmin?.userDocId === currentUser.id) return true
+
+  // Check if user has admin role in collaborators
+  const collaborators = currentTest.collaborators || {}
+  const userCollaborator = collaborators[currentUser.id]
+  if (userCollaborator === 'admin' || (userCollaborator && userCollaborator.role === 'admin')) {
+    return true
+  }
+
+  // Check if user has admin role in cooperators
+  const cooperators = currentTest.cooperators || []
+  const userCooperator = cooperators.find(coop =>
+    coop.userDocId === currentUser.id || coop.email === currentUser.email
+  )
+  if (userCooperator && (userCooperator.role === 'admin' || userCooperator.accessLevel >= 999)) {
+    return true
+  }
+
+  return false
+})
+
+// Check if user is owner specifically
+const isOwner = computed(() => {
+  const currentUser = user.value || store.state.Auth.user
+  const currentTest = test.value
+
+  if (!currentUser || !currentTest) return false
+
+  return currentTest.userId === currentUser.id || currentTest.testAdmin?.userDocId === currentUser.id
+})
+
+// Get current user role for debugging
+const currentUserRole = computed(() => {
+  const currentUser = user.value || store.state.Auth.user
+  const currentTest = test.value
+
+  if (!currentUser || !currentTest) return 'anonymous'
+
+  if (isOwner.value) return 'admin'
+  if (isAdmin.value) return 'admin'
+
+  // Check cooperators
+  const cooperators = currentTest.cooperators || []
+  const userCooperator = cooperators.find(coop =>
+    coop.userDocId === currentUser.id || coop.email === currentUser.email
+  )
+  if (userCooperator) return `cooperator (${userCooperator.role || 'default'})`
+
+  // Check legacy collaborators
+  const collaborators = currentTest.collaborators || {}
+  if (collaborators[currentUser.id]) return `collaborator (${collaborators[currentUser.id]})`
+
+  return 'no-access'
+})
+
 // Use filteredWcagData so only selected guidelines/rules are shown
 const principles = computed(
   () => store.state.Assessment?.filteredWcagData?.principles || []
@@ -692,12 +797,57 @@ const currentAssessment = computed(() => {
   return ruleId ? store.getters['Assessment/getRuleAssessment'](ruleId) : {}
 })
 
+// Add a computed property to track which user's data we're viewing
+const viewingUserId = computed(() => {
+  return route.params.userId || route.query.userId || user.value?.id || 'current-user'
+})
+
+const viewingUserType = computed(() => {
+  const targetUserId = route.params.userId || route.query.userId
+  if (targetUserId) {
+    return targetUserId === user.value?.id ? 'current-user' : 'other-user'
+  }
+  return 'current-user'
+})
+
 // Add a computed property to fetch configuration data from Vuex
 const configuration = computed(() => store.getters['Assessment/getConfiguration'])
 
 // Example usage: Replace or augment logic to use configuration data
 // For instance, if you need to use complianceLevel from the configuration:
 const complianceLevel = computed(() => configuration.value.complianceLevel || 'AA')
+
+// Check if user can save assessments
+const canSaveAssessments = computed(() => {
+  const currentUser = user.value || store.state.Auth.user
+  const currentTest = test.value
+
+  // Must have a user logged in
+  if (!currentUser || !currentUser.id) return false
+
+  // Must have test data
+  if (!currentTest) return false
+
+  // Cannot save when viewing another user's data
+  const targetUserId = route.params.userId || route.query.userId
+  if (targetUserId && targetUserId !== currentUser.id) return false
+
+  // Check if user is owner/admin
+  if (isOwner.value || isAdmin.value) return true
+
+  // Check if user is in cooperators list (any cooperator can save assessments)
+  const cooperators = currentTest.cooperators || []
+  const userCooperator = cooperators.find(coop =>
+    coop.userDocId === currentUser.id || coop.email === currentUser.email
+  )
+  if (userCooperator) return true
+
+  // Check legacy collaborators
+  const collaborators = currentTest.collaborators || {}
+  if (collaborators[currentUser.id]) return true
+
+  return false
+})
 
 // Helper to restore notes from store (including tabs)
 function restoreNotesFromAssessment(assessment) {
@@ -732,35 +882,74 @@ const getPrincipleIcon = (index) => {
   }
 }
 
-// Initialize the assessment when component mounts
-onMounted(async () => {
+// Helper functions for initialization
+const getTestId = () => {
+  const testId = route.params.testId || route.params.id
+  if (!testId) {
+    throw new Error('Test ID is missing')
+  }
+  return testId
+}
+
+const getTargetUserId = () => {
+  return route.params.userId || route.query.userId
+}
+
+const loadTestData = async (testId) => {
+  await store.dispatch('getStudy', { id: testId })
+  await new Promise(resolve => setTimeout(resolve, 100))
+  console.log('AccessibilityPreviewTest: Test data loaded, proceeding with initialization')
+  const testData = store.getters.test
+  if (!testData) {
+    throw new Error('Failed to load test data')
+  }
+  return testData
+}
+
+const initializeAssessment = async () => {
+  await store.dispatch('Assessment/initializeAssessment')
+}
+
+const handleAuthentication = async () => {
+  let authUser = null
   try {
-    isLoading.value = true
-
-    // Initialize the assessment
-    await store.dispatch('Assessment/initializeAssessment')
-
-    // Get the current user
-    const user = store.state.Auth.user
-    if (!user || !user.id) {
-      throw new Error('User not authenticated')
+    authUser = store.state.Auth.user
+    if (!authUser) {
+      await store.dispatch('autoSignIn')
+      authUser = store.state.Auth.user
     }
+  } catch (authError) {
+    console.warn('Authentication not available, proceeding without user context:', authError)
+  }
+  return authUser
+}
 
-    // Get the test ID from route or use a default
-    const testId = route.params.testId || 'default-test-id'
+const determineUserIdToLoad = (targetUserId, authUser) => {
+  if (targetUserId) {
+    console.log('Loading assessment data for target user:', targetUserId)
+    return targetUserId
+  } else if (authUser && authUser.id) {
+    console.log('Loading assessment data for current user:', authUser.id)
+    return authUser.id
+  }
+  return null
+}
 
-    // Load the assessment data from Firestore
+const loadAssessmentData = async (userIdToLoad, testId) => {
+  if (!userIdToLoad) {
+    console.log('No user ID available, proceeding with read-only access')
+    return
+  }
+  try {
     const loadedAssessment = await store.dispatch('Assessment/loadAssessment', {
-      userId: user.id,
+      userId: userIdToLoad,
       testId,
     })
-
-    // If we have a loaded assessment, update the UI
+    console.log('Loaded assessment data:', loadedAssessment)
     if (loadedAssessment && loadedAssessment.assessmentData) {
       const currentRuleId = currentRule.value?.id
       if (currentRuleId) {
-        const assessment =
-          store.getters['Assessment/getRuleAssessment'](currentRuleId)
+        const assessment = store.getters['Assessment/getRuleAssessment'](currentRuleId)
         if (assessment) {
           severity.value = assessment.severity || ''
           status.value = assessment.status || ''
@@ -768,23 +957,55 @@ onMounted(async () => {
         }
       }
     }
+  } catch (assessmentError) {
+    console.warn('Could not load user assessment data:', assessmentError)
+  }
+}
 
-    // Get the testId from the route
-    const routeTestId = route.params.testId
-    if (!routeTestId) throw new Error('Test ID is missing')
+const setupConfiguration = async (testData, testId) => {
+  const configData = testData.configData || {
+    complianceLevel: 'AA',
+    includeNonInterference: true,
+    showExperimentalRules: false,
+    enableAutomaticSave: true,
+    selectedGuidelines: [],
+    selectedRulesByGuideline: {}
+  }
+  await store.dispatch('Assessment/updateConfiguration', { configData, testId })
+  console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
+  console.log('Current configuration:', configData)
+  console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
+  console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
+  console.log('Current user role:', currentUserRole.value)
+  console.log('Can save assessments:', canSaveAssessments.value)
+  console.log('Test data:', {
+    id: testData.id,
+    title: testData.title,
+    testAdmin: testData.testAdmin,
+    userId: testData.userId,
+    cooperators: testData.cooperators,
+    collaborators: testData.collaborators,
+    configData: testData.configData
+  })
+}
 
-    // Fetch configData from the store or Firestore
-    const configData = await store.dispatch('Assessment/fetchConfigData', routeTestId)
-    await store.dispatch('Assessment/updateConfiguration', { configData, testId: routeTestId })
-
-    const dataconfogstring = JSON.stringify(configData, null, 2)
-    console.log('Config Data:', dataconfogstring)
-    // Use the fetched configData to update the UI (e.g., complianceLevel, rules, guidelines)
-    complianceLevel.value = configData.complianceLevel || 'AA'
+// Initialize the assessment when component mounts
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    error.value = ''
+    const testId = getTestId()
+    const targetUserId = getTargetUserId()
+    console.log('Target user ID from route:', targetUserId)
+    const testData = await loadTestData(testId)
+    await initializeAssessment()
+    const authUser = await handleAuthentication()
+    const userIdToLoad = determineUserIdToLoad(targetUserId, authUser)
+    await loadAssessmentData(userIdToLoad, testId)
+    await setupConfiguration(testData, testId)
   } catch (err) {
     console.error('Failed to initialize assessment:', err)
-    error.value =
-      'Failed to load assessment data. Please try refreshing the page.'
+    error.value = 'Failed to load assessment data. Please try refreshing the page.'
   } finally {
     isLoading.value = false
   }
@@ -804,6 +1025,18 @@ watch(
     }
   },
   { immediate: true },
+)
+
+// Watch for changes in filtered WCAG data to debug
+watch(
+  () => store.state.Assessment?.filteredWcagData?.principles,
+  (newPrinciples) => {
+    console.log('Filtered WCAG data updated:', {
+      principlesCount: newPrinciples?.length || 0,
+      principles: newPrinciples?.map(p => ({ id: p.id, title: p.title, guidelinesCount: p.Guidelines?.length || 0 })) || []
+    })
+  },
+  { immediate: true, deep: true }
 )
 
 // Breadcrumb items
@@ -1044,9 +1277,6 @@ const viewAssessmentDocument = () => {
     const allAssessments = store.getters['Assessment/getAllAssessments']
     assessmentData.value = allAssessments
 
-    // Log to console for debugging
-    console.log('All Assessment Data:', JSON.stringify(allAssessments, null, 2))
-
     // Show the dialog
     showAssessmentDialog.value = true
   } catch (error) {
@@ -1058,13 +1288,30 @@ const viewAssessmentDocument = () => {
 // Save assessment
 const saveAssessment = async () => {
   try {
+    // Check if user is authenticated
+    const currentUser = user.value || store.state.Auth.user
+    if (!currentUser || !currentUser.id) {
+      toast.error('You must be signed in to save assessments')
+      return
+    }
+
+    // Check if we're viewing another user's data (read-only mode)
+    const targetUserId = route.params.userId || route.query.userId
+    if (targetUserId && targetUserId !== currentUser.id) {
+      toast.error('Cannot save changes when viewing another user\'s assessment data')
+      return
+    }
+
     const ruleId = currentRule.value?.id
     if (!ruleId) {
       throw new Error('No rule selected')
     }
 
-    // Get the current test ID from route or props
-    const testId = route.params.testId || 'default-test-id'
+    // Get the current test ID from route
+    const testId = route.params.testId || route.params.id
+    if (!testId) {
+      throw new Error('Test ID is missing')
+    }
 
     // Prepare the assessment data
     const notesToSave = notes.value
@@ -1087,11 +1334,9 @@ const saveAssessment = async () => {
       updatedAt: new Date().toISOString(),
     }
 
-    console.log('Saving assessment data:', assessmentData)
-
     // Save to Firestore via Vuex
     await store.dispatch('Assessment/updateRuleAssessment', {
-      userId: user.value.id,
+      userId: currentUser.id,
       testId,
       ruleId,
       assessment: {
@@ -1102,7 +1347,7 @@ const saveAssessment = async () => {
 
     // Also update the local store
     await store.dispatch('Assessment/saveAssessment', {
-      userId: user.value.id,
+      userId: currentUser.id,
       testId,
       testType: 'manual', // or get this from props/route
     })

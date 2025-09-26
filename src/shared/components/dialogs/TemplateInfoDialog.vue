@@ -207,7 +207,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import FormTestDescription from '@/shared/components/FormTestDescription.vue';
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const props = defineProps({
@@ -231,7 +231,6 @@ const emit = defineEmits(['update:dialog', 'close']);
 
 const store = useStore();
 const router = useRouter();
-const { t } = useI18n();
 
 const step = ref(1);
 const isMyTemplate = ref(false);
@@ -322,9 +321,10 @@ const validate = async () => {
     };
 
     const study = instantiateStudyByType(rawData.testType ,rawData)
-
     const testId = await store.dispatch('createStudy', study);
-    await router.push(`/managerview/${testId}`);
+
+    const methodView = getMethodManagerView(rawData.testType, rawData.subType)
+    await router.push({ name: methodView, params: { id: testId } });
   } catch (error) {
     console.error('Error creating test:', error);
   }

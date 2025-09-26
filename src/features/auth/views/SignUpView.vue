@@ -67,7 +67,8 @@
             type="submit"
             color="primary"
             block
-            :loading="loading"
+            :loading="loading && loadingType === 'signin'"
+            :disabled="loadingType === 'google'"
             min-height="44"
           >
             {{ $t('auth.SIGNIN.sign-up') }}
@@ -80,7 +81,8 @@
 
         <GoogleSignInButton
           :button-text="$t('auth.SIGNIN.continueWithGoogle')"
-          :loading="loading"
+          :loading="loading && loadingType === 'google'"
+          :disabled="loadingType === 'signin'"
           @google-sign-in-start="onGoogleSignInStart"
           @google-sign-in-success="onGoogleSignInSuccess"
           @google-sign-in-error="onGoogleSignInError"
@@ -105,13 +107,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar';
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
-import { z } from 'zod'
 
 const email = ref('')
 const password = ref('')
@@ -120,56 +121,38 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const valid = ref(true)
 const form = ref(null)
+const loadingType = ref('')
+
+const loading = computed(() => store.getters.loading)
 
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const signupSchema = z.object({
-  email: z.string().email(t('errors.invalidEmail')),
-  password: z.string()
-    .min(8, t('errors.passwordValidate'))
-    .regex(/[A-Z]/, t('errors.passwordUppercase'))
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, t('errors.passwordSymbol')),
-  confirmpassword: z.string(),
-}).refine(data => data.password === data.confirmpassword, {
-  message: t('errors.differentPasswords'),
-  path: ['confirmpassword'],
-})
-
 const emailRules = [
   v => !!v || t('errors.emailIsRequired'),
-  v => signupSchema.shape.email.safeParse(v).success || t('errors.invalidEmail'),
+  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
 ]
 
 const passwordRules = [
   v => !!v || t('errors.passwordRequired'),
-  v => signupSchema.shape.password.safeParse(v).success || t('errors.passwordValidate'),
+  v => (v?.length >= 8) || t('errors.passwordValidate'),
+  v => /[A-Z]/.test(v) || t('errors.passwordUppercase'),
+  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || t('errors.passwordSymbol'),
 ]
 
 const comparePassword = [
   v => !!v || t('errors.passwordRequired'),
-  v => v === password.value || t('errors.differentPasswords')
+  v => v === password.value || t('errors.differentPasswords'),
 ]
 
-const user = computed(() => store.getters.user)
-const loading = computed(() => store.getters.loading)
 
 const onSignUp = async () => {
-  const parsed = signupSchema.safeParse({
-    email: email.value,
-    password: password.value,
-    confirmpassword: confirmpassword.value,
-  })
-
-  if (!parsed.success) {
-    console.error('Validation failed:', parsed.error.flatten())
-    return
-  }
-
-  const { valid: isValid } = await form.value.validate()
-  if (isValid) {
+  const { valid } = await form.value.validate()
+  if (valid) {
     try {
+      loadingType.value = 'signin'
+      store.commit('setLoading', true)
       await store.dispatch('signup', {
         email: email.value,
         password: password.value,
@@ -177,6 +160,8 @@ const onSignUp = async () => {
       await router.push('/admin')
     } catch (error) {
       console.error('Signup failed:', error)
+    } finally {
+      store.commit('setLoading', false)
     }
   }
 }
@@ -186,14 +171,17 @@ const redirectToSignin = () => {
 }
 
 const onGoogleSignInStart = () => {
-  // Optional: Show loader or feedback
+  loadingType.value = 'google'
+  store.commit('setLoading', true)
 }
 
 const onGoogleSignInSuccess = async () => {
   await router.push('/admin')
+  store.commit('setLoading', false)
 }
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
+  store.commit('setLoading', false)
 }
 </script>
 

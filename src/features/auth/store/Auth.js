@@ -6,9 +6,12 @@
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
+import { useToast } from 'vue-toastification'
 
 const authController = new AuthController()
 const userController = new UserController()
+
+const toast = useToast()
 
 export default {
   state: {
@@ -59,15 +62,9 @@ export default {
      * @returns {void}
      */
     async signup({ commit }, payload) {
-      commit('setLoading', true)
       try {
         const { user } = await authController.signUp(payload.email, payload.password)
-        await userController.create({
-          id: user.uid,
-          email: user.email,
-        })
-        const dbUser = await userController.getById(user.uid)
-        commit('SET_USER', dbUser)
+        await userController.create({ id: user.uid, email: user.email })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
@@ -86,28 +83,9 @@ export default {
     async signin({ commit }, payload) {
       commit('setLoading', true)
       try {
-        const { user } = await authController.signIn(payload.email, payload.password)
-        if (user) {
-          const dbUser = await userController.getById(user.uid)
-          commit('SET_USER', dbUser)
-        }
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
+        await authController.signIn(payload.email, payload.password, payload.rememberMe)
       } catch (err) {
-        let errorMsg = i18n.global.t('errors.incorrectCredential');
-        if (err.code === 'auth/invalid-email') {
-          errorMsg = i18n.global.t('errors.userNotExist');
-        } else if (err.code === 'auth/wrong-password') {
-          errorMsg = i18n.global.t('errors.incorrectPassword');
-        }
-        commit('SET_TOAST', {
-          message: errorMsg,
-          type: 'error',
-        })
-      } finally {
-        commit('setLoading', false)
+        toast.error(i18n.global.t('errors.incorrectCredential'))
       }
     },
 
@@ -116,10 +94,9 @@ export default {
  * @action signInWithGoogle
  * @returns {void}
  */
-    async signInWithGoogle({ commit }) {
-      commit('setLoading', true)
+    async signInWithGoogle({ commit }, payload) {
       try {
-        const { user } = await authController.signInWithGoogle()
+        const { user } = await authController.signInWithGoogle(payload.rememberMe)
 
         // Check if user already exists in database
         let dbUser = null
@@ -131,7 +108,7 @@ export default {
         }
 
         // Create user if they don't exist yet
-        if (!dbUser) {
+        if (!dbUser || !dbUser.email) {
           await userController.create({
             id: user.uid,
             email: user.email,
@@ -153,8 +130,6 @@ export default {
           type: 'error',
         })
         throw err
-      } finally {
-        commit('setLoading', false)
       }
     },
 

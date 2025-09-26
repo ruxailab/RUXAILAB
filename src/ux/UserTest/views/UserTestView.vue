@@ -99,15 +99,16 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="description">
+          <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
           <v-btn
             color="white"
             variant="outlined"
             rounded
-            size="x-large"
             @click="startTest"
+            class="mt-4"
+            :disabled="isStartTestDisabled"
           >
             Start Test
           </v-btn>
@@ -354,6 +355,32 @@ const hasEyeTracking = computed(() =>
   test.value?.testStructure?.userTasks?.some(task => task.hasEye)
 );
 
+const isUserTestAdmin = computed(() => {
+  return test.value.testAdmin.userDocId === user.value?.id
+});
+
+const isStartTestDisabled = computed(() => {
+  if (!test.value) return true;
+
+  // Check if testStructure is empty array or doesn't exist
+  const hasValidTasks = test.value.testStructure && 
+                       Array.isArray(test.value.testStructure.userTasks) && 
+                       test.value.testStructure.userTasks.length > 0;
+  
+  if (!hasValidTasks) return true;
+
+  // Check if status is different from 'active'
+  if (test.value.status !== 'active') return true;
+
+  // Check if endDate is lower than current date
+  if (test.value.endDate) {
+    const currentDate = new Date();
+    const endDate = new Date(test.value.endDate);
+    if (endDate < currentDate) return true;
+  }
+
+  return false;
+});
 
 const stepperValue = computed(() => {
   if (globalIndex.value === 0) return -1; // Welcome
@@ -427,6 +454,7 @@ function saveIrisDataIntoTask() {
 
 const saveAnswer = async () => {
   try {
+    localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
@@ -469,11 +497,18 @@ const handleSubmit = () => {
   submitAnswer();
 };
 
-const startTest = () => {
+const startTest = async () => {
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', { type: 'info', message: "This test doesn't have any tasks." });
     router.push(`/missions/${test.value.id}`);
     return;
+  }
+
+  if (!isUserTestAdmin.value) {
+    await store.dispatch('acceptStudyCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
   }
 
   // Primero añadimos la clase para la animación de salida
@@ -525,17 +560,15 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 
   if (localTestAnswer.tasks[idx]) {
-    console.log('Guardando tiempo para tarea', idx, ':', elapsedTime, 'segundos');
     // Asegurar que el tiempo es un número
     const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave;
-      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
     } else {
-      console.error('Tiempo no válido:', elapsedTime);
+      //TODO: Add error snackbar
     }
   } else {
-    console.error('No se pudo guardar el tiempo para la tarea', idx);
+    //TODO: Add error snackbar
   }
 };
 
@@ -659,13 +692,13 @@ const calculateProgress = () => {
     if (localTestAnswer.consentCompleted) completedSteps++;
 
     let tasksCompleted = 0;
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
+    if (Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0) {
+      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
         if (localTestAnswer.tasks[i]?.completed) {
           tasksCompleted++;
         }
       }
-      if (tasksCompleted === items.value[1].value.length) {
+      if (tasksCompleted === localTestAnswer.tasks.length) {
         completedSteps++;
       }
     }
@@ -711,6 +744,9 @@ const setTest = async () => {
       fullName: currentUserTestAnswer.value.fullName || '',
     });
     fullName.value = localTestAnswer.fullName;
+    await mappingSteps();
+    await autoComplete();
+    localTestAnswer.progress = calculateProgress();
   } catch (error) {
     console.error('Error setting test:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to load test data. Please try again.' });
@@ -875,7 +911,7 @@ onMounted(async () => {
   if (user.value) {
     await setTest();
     await autoComplete();
-    //calculateProgress();
+    calculateProgress();
   }
   if (!user.value?.id) return
 
@@ -905,21 +941,47 @@ onBeforeUnmount(() => {
 });
 </script>
 
+
+
 <style scoped>
 .start-screen {
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background-size: 200% 200%;
+  animation: subtleGradient 20s ease-in-out infinite;
+  background-image: linear-gradient(160deg,
+      #00213F 0%,
+      #1a2f4f 35%,
+      #303f9f 100%);
+  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.background-task {
-  background-color: #e8eaf6;
-  height: 100%;
-  overflow: auto;
+
+
+.start-screen.leaving,
+.start-screen.leaving>*,
+.start-screen.leaving::before {
+  opacity: 0;
+  transition-duration: 1.2s;
 }
 
-.background:before {
+@keyframes subtleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.start-screen::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -930,53 +992,39 @@ onBeforeUnmount(() => {
   height: 90%;
   margin-right: -100px;
   margin-top: 200px;
-  background-image: url('@/assets/ruxailab-small-red.png');
+  background-image: url(../../../assets/ruxailab-small-red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
   opacity: 0.2;
 }
 
-.title-view {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #ffffff;
+.start-screen.leaving::before {
+  opacity: 0;
 }
 
-.description-view {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18.1818px;
-  line-height: 21px;
-  align-items: flex-end;
-  color: #ffffff;
+/* Stepper sticky styles */
+.sticky-stepper {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: transparent;
 }
 
-.sub-title {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
+.main-stepper {
+  background: #00213F !important;
+  color: #fff !important;
+  --v-stepper-header-title-color: #fff !important;
+  --v-stepper-item-title-color: #fff !important;
+  --v-stepper-item-color: #fff !important;
+  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-fix:focus:before {
-  opacity: 0 !important;
-}
 
-.title-text {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  margin-left: 15px;
-  padding: 10px;
-  padding-left: 0px;
-  padding-top: 0px;
+.main-stepper.stepper-animate {
+  background: #00213F !important;
+  opacity: 0.3;
+  filter: blur(1px);
 }
 
 /* Task stepper background */
@@ -1017,3 +1065,4 @@ onBeforeUnmount(() => {
   ;
 }
 </style>
+

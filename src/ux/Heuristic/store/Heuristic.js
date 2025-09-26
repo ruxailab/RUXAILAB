@@ -10,8 +10,6 @@ export default {
         testWeights: {},
         scoresPercentage: [],
         currentImageUrl: '',
-
-
     },
     getters: {
         heuristics(state, getters, rootState) {
@@ -39,15 +37,23 @@ export default {
             state.testWeights = newWeights;
         },
         SETUP_HEURISTIC_QUESTION_DESCRIPTION(state, payload) {
-            if (!state.heuristics[payload.heuristic].questions[payload.question].descriptions) {
-                state.heuristics[payload.heuristic].questions[payload.question].descriptions = [];
+            const { heuristic, question, description, editIndex } = payload;
+            if (!state.heuristics || !state.heuristics[heuristic]) {
+                console.warn("Heuristic index not found in heuristics:", heuristic);
+                return;
             }
-            if (payload.editIndex != null) {
-                state.heuristics[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = {
-                    ...payload.description,
-                };
+            if (!state.heuristics[heuristic].questions || !state.heuristics[heuristic].questions[question]) {
+                console.warn("Question index not found in heuristics:", question);
+                return;
+            }
+            let targetQuestion = state.heuristics[heuristic].questions[question];
+            if (!targetQuestion.descriptions) {
+                targetQuestion.descriptions = [];
+            }
+            if (editIndex != null) {
+                targetQuestion.descriptions[editIndex] = { ...description };
             } else {
-                state.heuristics[payload.heuristic].questions[payload.question].descriptions.push(payload.description);
+                targetQuestion.descriptions.push(description);
             }
         },
         SET_SCORES_PERCENTAGE(state, payload) {
@@ -55,10 +61,7 @@ export default {
         },
         SET_CURRENT_IMAGE_URL(state, payload) {
             state.currentImageUrl = payload
-        },
-        SET_CURRENT_IMAGE_URL(state, url) {
-            state.currentImageUrl = url
-        },
+        }
     },
     actions: {
         async setHeuristics({ commit }, payload) {

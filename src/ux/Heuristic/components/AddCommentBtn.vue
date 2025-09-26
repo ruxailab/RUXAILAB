@@ -68,6 +68,7 @@
           clear-icon="mdi-close"
           :label="$t('common.comment')"
           @update:model-value="updateComment"
+          :disabled="disable"
         />
         <ImageImport
           v-if="show"
@@ -75,6 +76,7 @@
           :question-id="answerHeu.heuristicId"
           :test-id="store.getters.test.id"
           @image-uploaded="handleImageUploaded"
+          :disable="disable"
         />
       </v-col>
     </v-row>
@@ -96,6 +98,11 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  disable: {
+    type: Boolean,
+    default: false,
+    required: false
+  }
 })
 
 const emit = defineEmits(['updateComment'])
@@ -147,7 +154,10 @@ const updateComment = (input) => {
   emit('updateComment', input)
 }
 
-const handleImageUploaded = () => {
-  updateComment('')
-}
+const handleImageUploaded = (imageUrl) => {
+  if (imageUrl) {
+    localComment.value = ''; 
+    emit('updateComment', '', props.heurisIndex, props.answerHeu.heuristicId)
+  }
+};
 </script>

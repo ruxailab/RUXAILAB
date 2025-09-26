@@ -10,6 +10,7 @@
         : url
       "
       @change="uploadFile"
+      :disabled="disable"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">
@@ -43,6 +44,11 @@ const props = defineProps({
     type: String,
     default: '',
     required: true
+  },
+  disable: {
+    type: Boolean,
+    default: false,
+    required: false
   }
 })
 
@@ -79,15 +85,13 @@ const uploadFile = async () => {
     storage,
     `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
   )
-
   await uploadBytes(storageReference, file)
   url.value = await getDownloadURL(storageReference)
   
-  store.commit('SET_CURRENT_IMAGE_URL', url.value)
-  
+  store.dispatch('setCurrentImageUrl', url.value)
   imageUploaded.value = true
-  emit('imageUploaded')
-}
+  emit('imageUploaded', url.value)
+};
 </script>
 
 <style>
