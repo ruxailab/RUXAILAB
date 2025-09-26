@@ -186,9 +186,10 @@ const fetchUsername = async () => {
 };
 
 const goToProfile = () => {
-    if (route.path !== '/profile') {
-        router.push('/profile').catch(() => { });
-    }
+    router.push({ 
+      path: '/admin', 
+      query: { section: 'profile' } 
+    }).catch(() => { });
 };
 
 const signOut = async () => {
