@@ -1,14 +1,10 @@
 <template>
   <div>
-    <!-- usersID : {{ usersID }}
-    selectedUserID : {{ selectedUserID }}
-    selectedAnswerDocument : {{ selectedAnswerDocument }}
-    selectedAnswerSentiment : {{ selectedAnswerSentiment }}  -->
     <div v-if="usersID">
       <v-card
         flat
         class="task-container"
-      >src/components/atoms/ModeratedTestCard.vue
+      >
         <v-row class="ma-0 pa-0">
           <!------------------------------------------------------------------------------------------------------------------------->
           <!--------------------------------------------- Answers List [Left] ------------------------------------------------------->
@@ -21,7 +17,6 @@
               density="compact"
               class="list-scroll"
             >
-              Ascendantly">
               <v-list-subheader>Evaluators</v-list-subheader>
               <v-divider />
 
@@ -67,43 +62,50 @@
               :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
               :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }"
             />
+ 
+              <h2>Tasks</h2>
+              <div class="mt-6" v-for="(task, index) in selectedAnswerDocument.tasks" :key="index">
+                <h3>Task {{ Number(index + 1) }}</h3>
+                {{ task }}
 
-            <!-- Audio Wave -->
-            <AudioWave
-              ref="audioWave"
-              v-model:active-region="activeRegion"
-              :file="selectedAnswerDocument.cameraUrlEvaluator"
-              :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []"
-            />
+                <!-- Audio Wave -->     
+                <AudioWave
+                  ref="audioWave"
+                  v-model:active-region="activeRegion"
+                  :file="task.audioRecordURL"
+                  :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []"
+                />
 
-            <!-- Audio Wave End Banner-->
-            <v-row class="align-center justify-space-between pa-3">
-              <!-- Left Text -->
-              <v-col
-                cols="12"
-                md="8"
-              >
-                <span class="text--secondary text-caption">
-                  Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
-                </span>
-              </v-col>
+                <!-- Audio Wave End Banner-->
+                <v-row class="align-center justify-space-between pa-3">
+                  <!-- Left Text -->
+                  <v-col
+                    cols="12"
+                    md="8"
+                  >
+                    <span class="text--secondary text-caption">
+                      Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
+                    </span>
+                  </v-col>
 
-              <!-- Right Controls -->
-              <v-col
-                cols="12"
-                md="4"
-                class="text-right"
-              >
-                <v-btn
-                  color="orange"
-                  class="text-white"
-                  @click="analyzeTimeStamp()"
-                >
-                  + Analyze
-                </v-btn>
-              </v-col>
-            </v-row>
-
+                  <!-- Right Controls -->
+                  <v-col
+                    cols="12"
+                    md="4"
+                    class="text-right"
+                  >
+                    <v-btn
+                      color="orange"
+                      class="text-white"
+                      @click="analyzeTimeStamp()"
+                    >
+                      + Analyze
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-divider class="my-4" />
+            </div>
+            
             <!-- Segments Transcripts Sentiment -->
             <SentimentTranscriptsList
               :play-segment="playSegmentInAudioWave"
@@ -278,13 +280,13 @@ export default {
         };
       }
     },
-    async analyzeTimeStamp() {
+    async analyzeTimeStamp(task) {
       console.log('Analyzing Timestamp..............................', this.activeRegion.start, this.activeRegion.end);
       this.overlay = { visible: true, text: 'Analyzing...' };
 
       try {
         const response = await axios.post('http://localhost:8001/audio-transcript-sentiment/process', {
-          url: this.selectedAnswerDocument.cameraUrlEvaluator,
+          url: task.audioRecordURL,
           start_time_ms: this.activeRegion.start * 1000.0, // Convert to milliseconds
           end_time_ms: this.activeRegion.end * 1000.0, // Convert to milliseconds
         });
