@@ -114,10 +114,10 @@ async function transcribeSession() {
   }
   isTranscribing.value = true
 
-  // const provider = 'whisper'
-  // const model = 'tiny' // You can change the model as needed
-  const provider = "openai"
-  const model = "whisper-1"
+  const provider = 'whisper'
+  const model = 'tiny' // You can change the model as needed
+  // const provider = "openai"
+  // const model = "whisper-1"
 
   try {
     // Show snackbar notificationz
@@ -432,14 +432,23 @@ async function transcribeAudio(provider, model, audioUrl, role) {
       return []
     }
 
+    // const response = await axios.post(
+    //   'http://127.0.0.1:8000/api/v1/transcribe',
+    //   {
+    //     audio_url: audioUrl,
+    //     provider,
+    //     model,
+    //   },
+    // )
     const response = await axios.post(
-      'http://127.0.0.1:8000/api/v1/transcribe',
+      'https://transcription-api-gpu-990683238789.europe-west4.run.app/api/v1/transcribe',
       {
         audio_url: audioUrl,
         provider,
         model,
       },
     )
+
 
     const data = response.data
 
