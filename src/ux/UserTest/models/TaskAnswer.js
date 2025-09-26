@@ -28,7 +28,7 @@ export default class TaskAnswer {
     this.postAnswer = postAnswer ?? null
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
-    this.nasaTlxAnswers = nasaTlxAnswers ?? new NasaTlxAnswer()
+    this.nasaTlxAnswers = nasaTlxAnswers ?? null
   }
 
   static toModel(data) {
@@ -49,7 +49,7 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore()
+      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
     }
   }
 }
