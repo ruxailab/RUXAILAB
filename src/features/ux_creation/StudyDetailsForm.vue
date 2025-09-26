@@ -23,33 +23,37 @@
       >
         <v-col
           cols="12"
-          lg="8"
-          xl="6"
+          lg="10"
+          xl="8"
         >
-          <v-card
-            class="custom-card"
-            elevation="4"
-          >
-            <v-card-text class="pa-8">
-              <!-- Basic Information -->
-              <div class="mb-8">
-                <div class="d-flex align-center mb-6">
-                  <v-icon
-                    icon="mdi-form-textbox"
-                    class="mr-3"
-                    color="primary"
-                  />
-                  <h3 class="text-h5 font-weight-medium">
-                    Basic Information
-                  </h3>
-                </div>
+          <v-row>
+            <!-- Basic Information Column -->
+            <v-col
+              cols="12"
+              md="8"
+            >
+              <v-card
+                class="custom-card"
+                elevation="4"
+              >
+                <v-card-text class="pa-8">
+                  <!-- Basic Information -->
+                  <div class="mb-0">
+                    <div class="d-flex align-center mb-6">
+                      <v-icon
+                        icon="mdi-form-textbox"
+                        class="mr-3"
+                        color="primary"
+                      />
+                      <h3 class="text-h5 font-weight-medium">
+                        Basic Information
+                      </h3>
+                    </div>
 
-                <v-form
-                  ref="form"
-                  @submit.prevent="validate"
-                >
-                  <v-row>
-                    <v-col cols="12">
+                    <v-form
+                      ref="form"
+                      @submit.prevent="validate"
+                    >
                       <v-text-field
                         v-model="test.title"
                         :rules="rules.title"
@@ -58,10 +62,9 @@
                         variant="outlined"
                         :counter="200"
                         prepend-inner-icon="mdi-format-title"
+                        class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
-                    </v-col>
-                    <v-col cols="12">
                       <v-textarea
                         v-model="test.description"
                         :rules="rules.description"
@@ -70,158 +73,131 @@
                         variant="outlined"
                         :counter="600"
                         prepend-inner-icon="mdi-text"
+                        class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
-                    </v-col>
-                    <v-col
-                      v-if="method == STUDY_TYPES.HEURISTIC"
-                      cols="12"
-                    >
-                      <v-text-field
-                        v-model="websiteDetails.siteName"
-                        :rules="rules.siteName"
-                        label="Website Name"
-                        placeholder="Enter the website name"
-                        variant="outlined"
-                        :counter="200"
-                        prepend-inner-icon="mdi-alpha-n-box"
-                        @change="store.commit('SET_LOCAL_CHANGES', true)"
-                      />
-                      <v-text-field
-                        v-model="websiteDetails.siteURL"
-                        :rules="rules.siteUrl"
-                        label="Website URL (optional)"
-                        placeholder="Enter the website URL"
-                        variant="outlined"
-                        :counter="200"
-                        prepend-inner-icon="mdi-link-variant"
-                        @change="store.commit('SET_LOCAL_CHANGES', true)"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-form>
-              </div>
-
-              <v-divider class="mb-8" />
-
-              <!-- Privacy Settings -->
-              <div class="mb-8">
-                <div class="d-flex align-center mb-6">
-                  <v-icon
-                    icon="mdi-shield-account"
-                    class="mr-2"
-                    color="primary"
-                  />
-                  <div>
-                    <h3 class="text-h5 font-weight-medium">
-                      Privacy Settings
-                    </h3>
-                    <p class="text-body-2 text-grey-darken-1 mt-1">
-                      Control who can see your study
-                    </p>
+                      <div v-if="method == STUDY_TYPES.HEURISTIC">
+                        <v-text-field
+                          v-model="websiteDetails.siteName"
+                          :rules="rules.siteName"
+                          label="Website Name"
+                          placeholder="Enter the website name"
+                          variant="outlined"
+                          :counter="200"
+                          prepend-inner-icon="mdi-alpha-n-box"
+                          class="mb-4"
+                          @change="store.commit('SET_LOCAL_CHANGES', true)"
+                        />
+                        <v-text-field
+                          v-model="websiteDetails.siteURL"
+                          :rules="rules.siteUrl"
+                          label="Website URL (optional)"
+                          placeholder="Enter the website URL"
+                          variant="outlined"
+                          :counter="200"
+                          prepend-inner-icon="mdi-link-variant"
+                          @change="store.commit('SET_LOCAL_CHANGES', true)"
+                        />
+                      </div>
+                    </v-form>
                   </div>
-                </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
 
-                <v-list class="bg-transparent pa-0">
-                  <v-list-item class="pa-0">
-                    <template #prepend>
+            <!-- Privacy Settings Column -->
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <v-card
+                class="custom-card"
+                elevation="4"
+              >
+                <v-card-text class="pa-8">
+                  <!-- Privacy Settings -->
+                  <div class="mb-0">
+                    <div class="d-flex align-center mb-6">
                       <v-icon
-                        :icon="test.isPublic ? 'mdi-earth' : 'mdi-lock'"
-                        :color="test.isPublic ? 'success' : 'warning'"
-                        class="mr-4"
-                      />
-                    </template>
-
-                    <v-list-item-title class="font-weight-medium">
-                      {{ test.isPublic ? 'Public Study' : 'Private Study' }}
-                    </v-list-item-title>
-
-                    <v-list-item-subtitle>
-                      {{ test.isPublic ? 'Anyone can view and participate in this study' : 'Only you and invited participants can access this study' }}
-                    </v-list-item-subtitle>
-
-                    <template #append>
-                      <v-switch
-                        v-model="test.isPublic"
+                        icon="mdi-shield-account"
+                        class="mr-2"
                         color="primary"
-                        class="mr-4"
-                        hide-details
                       />
-                    </template>
-                  </v-list-item>
-                </v-list>
-              </div>
+                      <div>
+                        <h3 class="text-h5 font-weight-medium">
+                          Privacy Settings
+                        </h3>
+                        <p class="text-body-2 text-grey-darken-1 mt-1">
+                          Control who can see your study
+                        </p>
+                      </div>
+                    </div>
 
-              <v-divider class="mb-8" />
+                    <v-list class="bg-transparent pa-0">
+                      <v-list-item class="pa-0 mb-4">
+                        <template #prepend>
+                          <v-icon
+                            :icon="test.isPublic ? 'mdi-earth' : 'mdi-lock'"
+                            :color="test.isPublic ? 'success' : 'warning'"
+                            class="mr-0"
+                          />
+                        </template>
 
-              <!-- Summary -->
-              <div class="mb-8">
-                <div class="d-flex align-center mb-6">
-                  <v-icon
-                    icon="mdi-clipboard-list"
-                    class="mr-3"
-                    color="primary"
-                  />
-                  <h3 class="text-h5 font-weight-medium">
-                    Study Summary
-                  </h3>
-                </div>
-                <v-card
-                  variant="tonal"
-                  color="primary"
-                  class="pa-4"
-                >
-                  <v-list
-                    class="bg-transparent pa-0"
-                    density="compact"
-                  >
-                    <v-list-item class="pa-0 mb-2">
-                      <v-list-item-title class="font-weight-medium">
-                        Category:
-                      </v-list-item-title>
-                      <v-list-item-subtitle class="text-capitalize">
-                        {{ category }}
-                      </v-list-item-subtitle>
-                    </v-list-item>
-                    <v-list-item class="pa-0 mb-2">
-                      <v-list-item-title class="font-weight-medium">
-                        Method:
-                      </v-list-item-title>
-                      <v-list-item-subtitle>{{ method }}</v-list-item-subtitle>
-                    </v-list-item>
-                    <v-list-item class="pa-0">
-                      <v-list-item-title class="font-weight-medium">
-                        Type:
-                      </v-list-item-title>
-                      <v-list-item-subtitle>
-                        {{ studyType === 'blank' ? 'Blank Study' : 'Template'
-                        }}
-                      </v-list-item-subtitle>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </div>
+                        <v-list-item-title class="font-weight-medium">
+                          {{ test.isPublic ? 'Public Study' : 'Private Study' }}
+                        </v-list-item-title>
 
-              <div class="d-flex justify-space-between align-center">
-                <BackButton
-                  label="Back to Study Type"
-                  adjust="start"
-                  @back="goBack"
-                />
-                <v-btn
-                  color="success"
-                  size="large"
-                  :loading="isLoading"
-                  prepend-icon="mdi-plus"
-                  class="px-8"
-                  @click="validate"
-                >
-                  Create Study
-                </v-btn>
-              </div>
-              <!-- ...existing code... -->
-            </v-card-text>
-          </v-card>
+                        <v-list-item-subtitle>
+                          {{ test.isPublic ? 'Visible to everyone' : 'Only invited users' }}
+                        </v-list-item-subtitle>
+                      </v-list-item>
+                      
+                      <!-- Switch on separate row -->
+                      <div class="d-flex justify-center">
+                        <v-switch
+                          v-model="test.isPublic"
+                          color="primary"
+                          hide-details
+                          :label="test.isPublic ? 'Public' : 'Private'"
+                        />
+                      </div>
+                    </v-list>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Action Buttons -->
+          <v-row class="mt-4">
+            <v-col cols="12">
+              <v-card
+                class="custom-card"
+                elevation="4"
+              >
+                <v-card-text class="pa-6">
+                  <div class="d-flex justify-space-between align-center">
+                    <BackButton
+                      label="Back to Study Type"
+                      adjust="start"
+                      @back="goBack"
+                    />
+                    
+                    <v-btn
+                      color="success"
+                      size="large"
+                      :loading="isLoading"
+                      prepend-icon="mdi-plus"
+                      class="px-8"
+                      @click="validate"
+                    >
+                      Create Study
+                    </v-btn>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -233,12 +209,10 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest';
-import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
-import { instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodManagerView, instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
 
 const router = useRouter();
@@ -317,11 +291,8 @@ const handleTestType = () => {
     test.value = { ...test.value, ...extraDetails };
     submit();
   } else if (testCategory === 'accessibility') {
-    if (method.value === 'AUTOMATIC') {
-      submitAutomaticAccessibility();
-    } else if (method.value === 'MANUAL') {
-      submitManualAccessibility();
-    }
+    // Use unified submit function for accessibility tests too
+    submitAccessibility();
   } else {
     submit();
   }
@@ -329,9 +300,7 @@ const handleTestType = () => {
 
 const submit = async () => {
   let testType = category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
-  if (method.value === 'CardSorting') {
-    testType = STUDY_TYPES.CARD_SORTING
-  }
+  if (method.value === STUDY_TYPES.CARD_SORTING) testType = STUDY_TYPES.CARD_SORTING
 
   isLoading.value = true;
   const user = store.getters.user;
@@ -352,85 +321,71 @@ const submit = async () => {
   }
   const newTest = instantiateStudyByType(testType, rawData)
 
-  const testId = await store.dispatch('createStudy', newTest);
+  await store.dispatch('createStudy', newTest);
   isLoading.value = false;
 
+  const testStore = store.getters.test;
   store.commit('RESET_STUDY_DETAILS');
 
-  if (studyType.value === 'Accessibility') {
-    router.push('/sample');
-  } else {
-    if (testType === STUDY_TYPES.CARD_SORTING) {
-      return router.push(`/cardSorting/manager/${testId}`);
-    } else if (testType === STUDY_TYPES.HEURISTIC) {
-      return router.push(`/heuristic/manager/${testId}`);
-    } else if (testType === STUDY_TYPES.USER) {
-      if (test.value.subType === USER_STUDY_SUBTYPES.MODERATED) {
-        return router.push(`/usertest/moderated/manager/${testId}`);
-      } else if (test.value.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
-        return router.push(`/usertest/unmoderated/manager/${testId}`);
-      }
-    }
+  if (studyType.value === 'Accessibility') router.push('/sample');
+  else {
+    const methodView = getMethodManagerView(testType, newTest.subType)
+    router.push({ name: methodView, params: { id: testStore } })
   }
 };
 
-const submitAutomaticAccessibility = async () => {
+const submitAccessibility = async () => {
+  // Store the method value before it gets reset
+  const selectedMethod = method.value;
+  
+  // Determine the test type based on method
+  let testType = selectedMethod === 'AUTOMATIC' 
+    ? STUDY_TYPES.ACCESSIBILITY_AUTOMATIC 
+    : STUDY_TYPES.ACCESSIBILITY_MANUAL;
+
   isLoading.value = true;
   const user = store.getters.user;
-  const newTest = new AutomaticAccessibilityTest({
-    title: test.value.title,
-    description: test.value.description,
-    isPublic: test.value.isPublic || false,
+  
+  const rawData = {
+    id: null,
+    title: test.value.title,              // Use 'title' for accessibility tests
+    description: test.value.description,  // Use 'description' for accessibility tests
+    testType: testType,
+    isPublic: test.value.isPublic || false, // Ensure isPublic is always set
     testAdmin: new StudyAdmin({
       userDocId: user.id,
       email: user.email,
     }),
+    creationDate: Date.now(),
+    updateDate: Date.now(),
     status: 'draft',
+    // Accessibility-specific properties
     websiteUrl: '',
     collaborators: {
       [user.id]: 'admin'
-    },
-    type: 'AUTOMATIC'
-  });
+    }
+  };
+
   try {
-    const createdTest = await store.dispatch('automaticAccessibility/addTest', newTest);
+    const newTest = instantiateStudyByType(testType, rawData);
+    const testId = await store.dispatch('createStudy', newTest);
+    
     isLoading.value = false;
     store.commit('RESET_STUDY_DETAILS');
-    router.push(`/accessibility/automatic/${createdTest.id}`);
+    
+    console.log('Routing decision - selectedMethod:', selectedMethod);
+    
+    // Route to the appropriate accessibility page using the stored method value
+    if (selectedMethod === 'AUTOMATIC') {
+      router.push(`/accessibility/automatic/${testId}`);
+    } else {
+      router.push(`/accessibility/manual/${testId}`);
+    }
   } catch (error) {
     isLoading.value = false;
     toast.error(error.message);
   }
 };
-
-const submitManualAccessibility = async () => {
-  isLoading.value = true;
-  const user = store.getters.user;
-  const newTest = new ManualAccessibilityTest({
-    title: test.value.title,
-    description: test.value.description,
-    isPublic: test.value.isPublic || false,
-    testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
-    }),
-    status: 'draft',
-    websiteUrl: '',
-    collaborators: {
-      [user.id]: 'admin'
-    }
-  });
-  try {
-    const createdTest = await store.dispatch('manualAccessibility/createTest', newTest);
-    isLoading.value = false;
-    store.commit('RESET_STUDY_DETAILS');
-    router.push(`/accessibility/manual/${createdTest.id}`);
-  } catch (error) {
-    isLoading.value = false;
-    toast.error(error.message);
-  }
-};
-
 
 const goBack = () => {
   router.push({ name: 'study-create-step3' })

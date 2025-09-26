@@ -252,6 +252,7 @@
                               {{ $t('HeuristicsTable.titles.descriptions') }}
                             </h4>
                             <AddDescBtn
+                              :ref="el => descBtn[index] = el"
                               :question-index="questionSelect"
                               :heuristic-index="itemSelect"
                               @update-description="updateDescription"
@@ -552,7 +553,7 @@ const dialogQuestion = ref(false)
 const formEditRef = ref(null)
 const formQuestionRef = ref(null)
 const formHeurisRef = ref(null)
-const descBtn = ref(null)
+const descBtn = ref([])
 const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 
@@ -625,6 +626,7 @@ onMounted(() => {
     title: '',
     questions: [{ id: 0, title: '', descriptions: [], comparison: [] }],
   };
+  store.commit("SET_HEURISTICS", heuristics.value)
   heuristicForm.value.total = heuristicForm.value.questions.length;
 });
 
@@ -729,9 +731,14 @@ const editQuestions = (item) => {
 };
 
 const editDescription = (desc) => {
-  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc);
-  descBtn.value.editSetup(ind);
-};
+  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc)
+  const btn = descBtn.value[itemSelect.value]
+  if (btn && typeof btn.editSetup === 'function') {
+    btn.editSetup(ind)
+  } else {
+    console.warn('AddDescBtn ref not ready or missing editSetup method')
+  }
+}
 
 const setupQuestion = (heuristicIndex) => {
   if (!heuristics.value[heuristicIndex]) {

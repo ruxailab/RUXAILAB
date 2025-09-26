@@ -1,20 +1,15 @@
 <template>
-  <v-app>
-    <v-overlay
-      v-model="isLoading"
-      class="align-center justify-center"
-      opacity="0.8"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="primary"
-      />
-      <div class="mt-4 text-h6">
-        Loading WCAG Data...
-      </div>
-    </v-overlay>
-
+  <PageWrapper
+    title="Accessibility Test Report"
+    :loading="isLoading"
+    loading-text="Loading WCAG Data..."
+    :side-gap="false"
+  >
+  <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Review detailed accessibility issues and success criteria based on WCAG guidelines.
+      </p>
+    </template>
     <v-alert
       v-if="error"
       type="error"
@@ -270,7 +265,7 @@
                 Accessibility Issues
                 <v-chip
                   v-if="currentRuleIssueCounts.total > 0"
-                  :color="currentRuleIssueCounts.errors > 0 ? 'error' : 
+                  :color="currentRuleIssueCounts.errors > 0 ? 'error' :
                           currentRuleIssueCounts.warnings > 0 ? 'warning' : 'info'"
                   size="small"
                   class="ml-2"
@@ -630,7 +625,7 @@
                   <template #append>
                     <v-chip
                       v-if="getRuleIssueCount(rule.id) > 0"
-                      :color="getRuleIssueCount(rule.id, 'error') > 0 ? 'error' : 
+                      :color="getRuleIssueCount(rule.id, 'error') > 0 ? 'error' :
                              getRuleIssueCount(rule.id, 'warning') > 0 ? 'warning' : 'info'"
                       size="x-small"
                       class="ml-1"
@@ -650,13 +645,14 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-app>
+  </PageWrapper>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import wcagData from '@/assets/WacgAxe.json'
 
 // Store and route
@@ -677,8 +673,8 @@ const testId = computed(() => route.params.testId || route.params.id)
 
 // Computed properties from store
 const report = computed(() => store.getters['automaticReport/report'])
-const reportLoading = computed(() => store.getters['automaticReport/isLoading'])
-const reportError = computed(() => store.getters['automaticReport/error'])
+const reportLoading = computed(() => store.getters.loading)
+const reportError = computed(() => store.getters.getError)
 
 // Pa11y issues
 const allIssues = computed(() => report.value?.ReportIssues || [])
@@ -688,7 +684,7 @@ const transformWcagData = (data) => {
   return data.map((item, index) => {
     const principleKey = Object.keys(item)[0]
     const principleData = item[principleKey]
-    
+
     return {
       id: principleKey,
       title: principleData.title,
@@ -705,8 +701,8 @@ const transformWcagData = (data) => {
 const principles = computed(() => wcagDataParsed.value)
 
 const currentPrinciple = computed(() => {
-  return selectedPrincipleIdx.value !== null 
-    ? principles.value[selectedPrincipleIdx.value] 
+  return selectedPrincipleIdx.value !== null
+    ? principles.value[selectedPrincipleIdx.value]
     : {}
 })
 
@@ -725,16 +721,16 @@ const currentRule = computed(() => {
 // Filter issues related to current rule
 const currentRuleIssues = computed(() => {
   if (!currentRule.value?.id || !allIssues.value.length) return []
-  
+
   const ruleId = currentRule.value.id
-  
+
   // Try to match pa11y issues with WCAG rules
   return allIssues.value.filter(issue => {
     // Direct WCAG reference match
     if (issue.runnerExtras?.wcagReference) {
       return issue.runnerExtras.wcagReference.includes(ruleId)
     }
-    
+
     // Code-based matching (you can extend this based on your pa11y setup)
     return matchIssueToWcagRule(issue, ruleId)
   })
@@ -750,19 +746,19 @@ const matchIssueToWcagRule = (issue, wcagRuleId) => {
     'WCAG2AA.Principle1.Guideline1_1.1_1_1.H67.2': '1.1.1',
     'WCAG2AA.Principle1.Guideline1_1.1_1_1.H30.2': '1.1.1',
     'WCAG2AA.Principle1.Guideline1_1.1_1_1.H24': '1.1.1',
-    
+
     // 1.2.1 Audio-only and Video-only
     'WCAG2AA.Principle1.Guideline1_2.1_2_1.G158': '1.2.1',
     'WCAG2AA.Principle1.Guideline1_2.1_2_1.G159': '1.2.1',
-    
+
     // 1.2.2 Captions (Prerecorded)
     'WCAG2AA.Principle1.Guideline1_2.1_2_2.G87': '1.2.2',
     'WCAG2AA.Principle1.Guideline1_2.1_2_2.G93': '1.2.2',
-    
+
     // 1.2.3 Audio Description or Media Alternative
     'WCAG2AA.Principle1.Guideline1_2.1_2_3.G69': '1.2.3',
     'WCAG2AA.Principle1.Guideline1_2.1_2_3.G78': '1.2.3',
-    
+
     // 1.3.1 Info and Relationships
     'WCAG2AA.Principle1.Guideline1_3.1_3_1.H42.2': '1.3.1',
     'WCAG2AA.Principle1.Guideline1_3.1_3_1.H43': '1.3.1',
@@ -771,115 +767,115 @@ const matchIssueToWcagRule = (issue, wcagRuleId) => {
     'WCAG2AA.Principle1.Guideline1_3.1_3_1.H48': '1.3.1',
     'WCAG2AA.Principle1.Guideline1_3.1_3_1.H71.NoLegend': '1.3.1',
     'WCAG2AA.Principle1.Guideline1_3.1_3_1.H85.2': '1.3.1',
-    
+
     // 1.3.2 Meaningful Sequence
     'WCAG2AA.Principle1.Guideline1_3.1_3_2.G57': '1.3.2',
-    
+
     // 1.3.3 Sensory Characteristics
     'WCAG2AA.Principle1.Guideline1_3.1_3_3.G96': '1.3.3',
-    
+
     // 1.4.1 Use of Color
     'WCAG2AA.Principle1.Guideline1_4.1_4_1.G14': '1.4.1',
     'WCAG2AA.Principle1.Guideline1_4.1_4_1.G182': '1.4.1',
-    
+
     // 1.4.2 Audio Control
     'WCAG2AA.Principle1.Guideline1_4.1_4_2.F23': '1.4.2',
-    
+
     // 1.4.3 Contrast (Minimum)
     'WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail': '1.4.3',
     'WCAG2AA.Principle1.Guideline1_4.1_4_3.G145.Fail': '1.4.3',
     'WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Abs': '1.4.3',
     'WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Alpha': '1.4.3',
-    
+
     // 1.4.4 Resize text
     'WCAG2AA.Principle1.Guideline1_4.1_4_4.G142': '1.4.4',
-    
+
     // 1.4.5 Images of Text
     'WCAG2AA.Principle1.Guideline1_4.1_4_5.G140': '1.4.5',
-    
+
     // 2.1.1 Keyboard
     'WCAG2AA.Principle2.Guideline2_1.2_1_1.G90': '2.1.1',
     'WCAG2AA.Principle2.Guideline2_1.2_1_1.SCR20.DblClick': '2.1.1',
     'WCAG2AA.Principle2.Guideline2_1.2_1_1.SCR35': '2.1.1',
-    
+
     // 2.1.2 No Keyboard Trap
     'WCAG2AA.Principle2.Guideline2_1.2_1_2.F10': '2.1.2',
-    
+
     // 2.2.1 Timing Adjustable
     'WCAG2AA.Principle2.Guideline2_2.2_2_1.F40.2': '2.2.1',
     'WCAG2AA.Principle2.Guideline2_2.2_2_1.F41.2': '2.2.1',
-    
+
     // 2.2.2 Pause, Stop, Hide
     'WCAG2AA.Principle2.Guideline2_2.2_2_2.F4': '2.2.2',
     'WCAG2AA.Principle2.Guideline2_2.2_2_2.F47': '2.2.2',
-    
+
     // 2.3.1 Three Flashes or Below Threshold
     'WCAG2AA.Principle2.Guideline2_3.2_3_1.G19': '2.3.1',
-    
+
     // 2.4.1 Bypass Blocks
     'WCAG2AA.Principle2.Guideline2_4.2_4_1.G1,G123,G124.NoSuchID': '2.4.1',
     'WCAG2AA.Principle2.Guideline2_4.2_4_1.H64.1': '2.4.1',
-    
+
     // 2.4.2 Page Titled
     'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl': '2.4.2',
     'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.EmptyTitle': '2.4.2',
-    
+
     // 2.4.3 Focus Order
     'WCAG2AA.Principle2.Guideline2_4.2_4_3.H4.2': '2.4.3',
     'WCAG2AA.Principle2.Guideline2_4.2_4_3.F85': '2.4.3',
-    
+
     // 2.4.4 Link Purpose (In Context)
     'WCAG2AA.Principle2.Guideline2_4.2_4_4.H77,H78,H79,H80,H81': '2.4.4',
     'WCAG2AA.Principle2.Guideline2_4.2_4_4.H30.2': '2.4.4',
-    
+
     // 2.4.5 Multiple Ways
     'WCAG2AA.Principle2.Guideline2_4.2_4_5.G125': '2.4.5',
     'WCAG2AA.Principle2.Guideline2_4.2_4_5.G64': '2.4.5',
-    
+
     // 2.4.6 Headings and Labels
     'WCAG2AA.Principle2.Guideline2_4.2_4_6.G130': '2.4.6',
     'WCAG2AA.Principle2.Guideline2_4.2_4_6.G131': '2.4.6',
-    
+
     // 2.4.7 Focus Visible
     'WCAG2AA.Principle2.Guideline2_4.2_4_7.G149,G165': '2.4.7',
     'WCAG2AA.Principle2.Guideline2_4.2_4_7.G195': '2.4.7',
-    
+
     // 3.1.1 Language of Page
     'WCAG2AA.Principle3.Guideline3_1.3_1_1.H57.2': '3.1.1',
     'WCAG2AA.Principle3.Guideline3_1.3_1_1.H57.3.Lang': '3.1.1',
-    
+
     // 3.1.2 Language of Parts
     'WCAG2AA.Principle3.Guideline3_1.3_1_2.H58': '3.1.2',
     'WCAG2AA.Principle3.Guideline3_1.3_1_2.H58.1.Lang': '3.1.2',
-    
+
     // 3.2.1 On Focus
     'WCAG2AA.Principle3.Guideline3_2.3_2_1.G107': '3.2.1',
-    
+
     // 3.2.2 On Input
     'WCAG2AA.Principle3.Guideline3_2.3_2_2.H32.2': '3.2.2',
-    
+
     // 3.2.3 Consistent Navigation
     'WCAG2AA.Principle3.Guideline3_2.3_2_3.G61': '3.2.3',
-    
+
     // 3.2.4 Consistent Identification
     'WCAG2AA.Principle3.Guideline3_2.3_2_4.G197': '3.2.4',
-    
+
     // 3.3.1 Error Identification
     'WCAG2AA.Principle3.Guideline3_3.3_3_1.G83,G84,G85': '3.3.1',
-    
+
     // 3.3.2 Labels or Instructions
     'WCAG2AA.Principle3.Guideline3_3.3_3_2.G131,G162,G17': '3.3.2',
-    
+
     // 3.3.3 Error Suggestion
     'WCAG2AA.Principle3.Guideline3_3.3_3_3.G177': '3.3.3',
-    
+
     // 3.3.4 Error Prevention (Legal, Financial, Data)
     'WCAG2AA.Principle3.Guideline3_3.3_3_4.G98,G99,G155,G164,G168.LegalForms': '3.3.4',
-    
+
     // 4.1.1 Parsing
     'WCAG2AA.Principle4.Guideline4_1.4_1_1.F77': '4.1.1',
     'WCAG2AA.Principle4.Guideline4_1.4_1_1.F70': '4.1.1',
-    
+
     // 4.1.2 Name, Role, Value
     'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.A.NoContent': '4.1.2',
     'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.A.EmptyWithName': '4.1.2',
@@ -888,16 +884,16 @@ const matchIssueToWcagRule = (issue, wcagRuleId) => {
     'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.InputText.Name': '4.1.2',
     'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Select.Name': '4.1.2',
     'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Textarea.Name': '4.1.2',
-    
+
     // Add more mappings as needed...
   }
-  
+
   // Try exact match first
   const mappedWcagRule = codeToWcagMapping[issue.code]
   if (mappedWcagRule === wcagRuleId) {
     return true
   }
-  
+
   // Try partial matches for codes that might have variations
   const issueCodeBase = issue.code.split('.').slice(0, 4).join('.')
   for (const [code, ruleId] of Object.entries(codeToWcagMapping)) {
@@ -906,7 +902,7 @@ const matchIssueToWcagRule = (issue, wcagRuleId) => {
       return true
     }
   }
-  
+
   return false
 }
 
@@ -929,8 +925,8 @@ const currentRuleIndex = computed(() => {
     for (let gIdx = 0; gIdx < (principle.Guidelines || []).length; gIdx++) {
       const guideline = principle.Guidelines[gIdx]
       for (let rIdx = 0; rIdx < (guideline.Rules || []).length; rIdx++) {
-        if (pIdx === selectedPrincipleIdx.value && 
-            gIdx === selectedGuidelineIdx.value && 
+        if (pIdx === selectedPrincipleIdx.value &&
+            gIdx === selectedGuidelineIdx.value &&
             rIdx === selectedRuleIdx.value) {
           return index
         }
@@ -1019,21 +1015,21 @@ const getIssueColor = (type) => {
 // Get issue count for a specific rule
 const getRuleIssueCount = (ruleId, issueType = null) => {
   if (!allIssues.value.length) return 0
-  
+
   const ruleIssues = allIssues.value.filter(issue => {
     // Direct WCAG reference match
     if (issue.runnerExtras?.wcagReference) {
       return issue.runnerExtras.wcagReference.includes(ruleId)
     }
-    
+
     // Code-based matching
     return matchIssueToWcagRule(issue, ruleId)
   })
-  
+
   if (issueType) {
     return ruleIssues.filter(issue => issue.type === issueType).length
   }
-  
+
   return ruleIssues.length
 }
 
@@ -1075,7 +1071,7 @@ const selectGuideline = (gIdx, pIdx = null) => {
   if (pIdx !== null) {
     selectedPrincipleIdx.value = pIdx
   }
-  
+
   selectedGuidelineIdx.value = gIdx
   selectedRuleIdx.value = null
   selectedIssue.value = null
@@ -1142,24 +1138,24 @@ watch(
 onMounted(async () => {
   try {
     isLoading.value = true
-    
+
     // Transform and load the WCAG data
     wcagDataParsed.value = transformWcagData(wcagData)
-    
+
     // Fetch pa11y report if testId is available
     if (testId.value) {
       await store.dispatch('automaticReport/fetchReport', testId.value)
     }
-    
+
     // Auto-select first principle, guideline, and rule
     if (wcagDataParsed.value.length > 0) {
       selectedPrincipleIdx.value = 0
       const firstPrinciple = wcagDataParsed.value[0]
-      
+
       if (firstPrinciple?.Guidelines?.length > 0) {
         selectedGuidelineIdx.value = 0
         const firstGuideline = firstPrinciple.Guidelines[0]
-        
+
         if (firstGuideline?.Rules?.length > 0) {
           selectedRuleIdx.value = 0
         }

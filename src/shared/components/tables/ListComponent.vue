@@ -26,7 +26,7 @@
           </v-avatar>
         </template>
         <span>
-          {{ item.header?.templateType ?? getTestType(item) }}
+          {{ getTestType(item) }}
         </span>
       </v-tooltip>
     </template>
@@ -44,7 +44,14 @@
           Session Date: {{formatDateTime(item.testDate, 'es')}}
         </div>
         <div v-else class="text-caption text-medium-emphasis">
-          Fecha creación: {{ formatItemDate(item) }}
+          <!-- If study does not belong to logged in user -->
+          <span v-if="item.testAuthorEmail">
+            Last Updated:
+          </span>
+          <span v-else>
+            Creation Date:
+          </span>
+           {{ formatItemDate(item) }}
         </div>
       </div>
     </template>
@@ -82,7 +89,7 @@
         color="primary"
         prepend-icon="mdi-account-multiple"
       >
-        {{ item.numberColaborators ?? 0 }}
+        {{ getParticipantCount(item) }}
       </v-chip>
     </template>
 

@@ -139,7 +139,8 @@
       "invite": "Invite evaluators to answer your test!",
       "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
       "start": "Get started!",
-      "edit": "Create and customize your tasks and heuristics for your research needs."
+      "edit": "Create and customize your tasks and heuristics for your research needs.",
+      "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
     }
   },
   "errors": {
@@ -230,8 +231,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Options",
-      "noOptions": "No options"
+      "options": "Options"
     },
     "messages": {},
     "placeHolders": {},
@@ -429,8 +429,7 @@
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest": "Post-Test",
-      "eyeTrackingCalibration": "Eye Tracking Calibration"
+      "postTest": "Post-Test"
     },
     "buttons": {
       "done": "Done"
@@ -696,5 +695,9 @@
     "finalMessage": "Final message",
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
     "finalMessagePlaceholder": "Enter Final message"
+  },
+  "CardSorting": {
+    "noCategory": "No category",
+    "noCards": "No cards found"
   }
 }

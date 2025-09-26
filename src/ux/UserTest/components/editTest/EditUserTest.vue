@@ -70,7 +70,7 @@ import { useStore } from 'vuex'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
-import TestConfigForm from '@/ux/UserTest/components/TestConfigForm.vue'
+import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 
 // Props
 const props = defineProps({

@@ -659,5 +659,9 @@
     "finalMessage": "Mensaje final",
     "finalMessageDescription": "Este es un mensaje final que dejas para el participante al finalizar la prueba.",
     "finalMessagePlaceholder": "Ingresar mensaje final"
+  },
+  "CardSorting": {
+    "noCategory": "Sin categoría",
+    "noCards": "No hay tarjetas"
   }
 }

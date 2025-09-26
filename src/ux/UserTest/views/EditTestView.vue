@@ -10,7 +10,6 @@
     </template>
 
     <v-container>
-      <Snackbar />
       <ButtonSave
         :visible="true"
         @click="save"
@@ -23,7 +22,7 @@
           class="pb-0 mb-0"
         >
           <v-tab @click="index = 0">
-            Test
+            Test configuration
           </v-tab>
           <v-tab @click="index = 1">
             {{ $t('ModeratedTest.consentForm') }}
@@ -51,7 +50,7 @@
           </div>
 
           <!-- COSENT FORM -->
-          <v-card
+          <div
             v-if="index === 1"
             rounded="xxl"
           >
@@ -61,36 +60,36 @@
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
               @update:value="consent = $event"
             />
-          </v-card>
+        </div>
 
           <!-- PRE-TEST -->
-          <v-card
+          <div
             v-if="index === 2"
-            rounded="xxl"
           >
             <UserVariables
               type="pre-test"
-              @update="preTest"
               @change="change = true"
+              @update="store.dispatch('setPreTest', $event)"
             />
-          </v-card>
+          </div>
 
           <!-- TASKS -->
-          <ListTasks
-            v-if="index === 3"
+          <div
+          v-if="index === 3"
+          >
+            <ListTasks
           />
-
+          </div>
           <!-- POST-TEST -->
-          <v-card
+          <div
             v-if="index === 4"
-            rounded="xxl"
           >
             <UserVariables
               type="post-test"
-              @update="postTest = $event"
               @change="change = true"
+              @update="store.dispatch('setPostTest', $event)"
             />
-          </v-card>
+        </div>
         </v-col>
       </div>
     </v-container>
@@ -103,11 +102,10 @@ import { useStore } from 'vuex'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
-import TestConfigForm from '@/ux/UserTest/components/TestConfigForm.vue'
+import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
-import Snackbar from '@/shared/components/Snackbar.vue'
 
 // Store
 const store = useStore()
@@ -147,21 +145,18 @@ const getPostTest = () => {
 }
 
 const save = async () => {
-  console.log('Saving test changes...')
   change.value = false;
 
   const testStructure = {
-      welcomeMessage: welcomeMessage.value,
-      finalMessage: finalMessage.value,
-      preTest: store.getters.preTest,
-      userTasks: store.getters.tasks,
-      postTest: store.getters.postTest,
-      consent: consent.value,
+    welcomeMessage: welcomeMessage.value,
+    finalMessage: finalMessage.value,
+    preTest: store.getters.preTest,
+    userTasks: store.getters.tasks,
+    postTest: store.getters.postTest,
+    consent: consent.value,
   }
 
   const rawData = { ...test.value, testStructure: testStructure };
-
-  console.log('Raw data to save:', rawData.testStructure);
   const study = instantiateStudyByType(rawData.testType, rawData);
   await store.dispatch('updateStudy', study);
 }

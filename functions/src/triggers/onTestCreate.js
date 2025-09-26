@@ -14,11 +14,11 @@ export const onTestCreate = functions.onTrigger({
 
     user.myTests[snapshot.id] = {
       testDocId: snapshot.id,
-      testTitle: test.testTitle,
-      testType: test.testType,
-      subType: test.subType,
-      numberColaborators: test.numberColaborators || 0,
-      creationDate: test.creationDate,
+      testTitle: test.testTitle || test.title || 'Untitled Test',
+      testType: test.testType || 'UNKNOWN',
+      subType: test.subType || null,
+      numberColaborators: test.cooperators?.length || 0,
+      creationDate: test.creationDate || test.createdAt || Date.now(),
       updateDate: Date.now(),
     }
 
