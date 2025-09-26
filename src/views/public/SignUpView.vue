@@ -144,7 +144,12 @@ const emailRules = [
 
 const passwordRules = [
   v => !!v || t('errors.passwordRequired'),
-  v => signupSchema.shape.password.safeParse(v).success || t('errors.passwordValidate'),
+  v => {
+    const result = signupSchema.shape.password.safeParse(v)
+    if (result.success) return true
+    const firstIssue = result.error.issues?.[0]
+    return firstIssue?.message || t('errors.passwordValidate')
+  },
 ]
 
 const comparePassword = [
