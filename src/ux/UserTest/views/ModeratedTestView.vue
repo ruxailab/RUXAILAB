@@ -49,9 +49,12 @@
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <!-- Proceed Button -->
-            <v-btn class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
-              Proceed to next step
-            </v-btn>
+            <v-row class="ma-0" justify="center"> 
+              <v-btn variant="outlined" class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
+                Proceed to next step
+              </v-btn>
+            </v-row>
+           
             <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
           </div>
 
@@ -575,7 +578,7 @@ const mappingSteps = async () => {
             taskTime: 0,
             completed: false,
             susAnswers: [],
-            nasaTlxAnswers: {}
+            nasaTlxAnswers: null,
           });
           console.log('Nueva tarea creada:', i, newTask);
           return newTask;
