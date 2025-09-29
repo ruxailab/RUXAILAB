@@ -1,28 +1,14 @@
 <template>
   <div>
     <v-overlay :model-value="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      />
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
-    <IntroAnswer
-      v-if="intro"
-      @go-to-coops="goToCoops"
-    />
-    <v-row
-      v-else-if="hasAnswers"
-      justify="center"
-      class="ma-0"
-    >
+    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
+    <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
       <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs
-            v-model="tab"
-            bg-color="transparent"
-            color="#FCA326"
-          >
+          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
             <v-tab @click="tab = 0">
               General Analytics
             </v-tab>
@@ -32,16 +18,10 @@
             <v-tab @click="tab = 2">
               Sentiment Analysis
             </v-tab>
-            <v-tab
-              v-if="showSUS"
-              @click="tab = 3"
-            >
+            <v-tab v-if="showSUS" @click="tab = 3">
               SUS Analytics
             </v-tab>
-            <v-tab
-              v-if="showNasa"
-              @click="tab = 4"
-            >
+            <v-tab v-if="showNasa" @click="tab = 4">
               Nasa-TLX Analytics
             </v-tab>
             <v-tab v-if="showEye" @click="tab = 5">
@@ -51,10 +31,7 @@
         </template>
 
         <template #content>
-          <div
-            style="background-color: #E8EAF2;"
-            class="ma-0 pa-0"
-          >
+          <div style="background-color: #E8EAF2;" class="ma-0 pa-0">
             <GeneralAnalytics v-if="tab === 0" />
             <UserAnalytics v-if="tab === 1" />
             <SentimentAnalysisView v-if="tab === 2" />
