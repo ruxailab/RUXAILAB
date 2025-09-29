@@ -2,6 +2,11 @@ import { admin, functions } from '../f.firebase.js'
 
 export const receiveCalibration = functions.onRequest({
     handler: async (req, res) => {
+
+        res.set("Access-Control-Allow-Origin", "https://eye-tracking-28179.web.app");
+        res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
         if (req.method !== "POST") {
             return res.status(405).send("Method Not Allowed");
         }
