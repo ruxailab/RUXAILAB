@@ -141,6 +141,7 @@ const getters = {
 
   // Get configuration
   getConfiguration: (state) => {
+    console.log('getConfiguration getter called, returning:', JSON.stringify(state.configuration, null, 2))
     return state.configuration
   }
 }
@@ -668,13 +669,18 @@ const actions = {
 
       console.log('Fetching configData from Firestore for testId:', testId);
 
-      // Fetch configData from Firestore (replace with actual Firestore fetch logic)
+      // Fetch configData from Firestore
       const configData = await assessmentController.getConfigData(userId, testId);
 
-      // Commit the fetched configData to the store
-      commit('SET_CONFIGURATION', configData);
-
-      return configData;
+      if (configData && Object.keys(configData).length > 0) {
+        // Commit the fetched configData to the store
+        commit('SET_CONFIGURATION', configData);
+        console.log('ConfigData successfully fetched and set in store:', JSON.stringify(configData, null, 2));
+        return configData;
+      } else {
+        console.log('No configData found in Firestore for testId:', testId);
+        return null;
+      }
     } catch (error) {
       console.error('Failed to fetch configData from Firestore:', error);
       throw error;

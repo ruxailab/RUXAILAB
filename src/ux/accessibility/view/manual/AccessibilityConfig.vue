@@ -526,10 +526,7 @@ const saveConfiguration = async () => {
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
     toast.success(`WCAG ${selectedCompliance.value} configuration saved!`)
 
-    // Optionally redirect to assessment page after a delay
-    setTimeout(() => {
-      router.push(`/accessibility/manual/preview/${testId.value}`)
-    }, 1000)
+    
 
   } catch (err) {
     console.error('Failed to save configuration:', err)

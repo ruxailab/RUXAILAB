@@ -31,23 +31,25 @@
 
     <!-- Debug Panel (only show if there are issues) -->
     <v-alert
-      v-if="principles.length === 0 && !isLoading"
+      v-if="(principles.length === 0 && !isLoading && hasConfigData) || (!hasConfigData && !isLoading)"
       type="warning"
       class="ma-2"
       variant="outlined"
     >
-      <div class="text-subtitle-2 font-weight-bold mb-2">Information</div>
+      <div class="text-subtitle-2 font-weight-bold mb-2">Debug Information</div>
       <div class="text-caption">
+        <div><strong>Configuration Data Set:</strong> {{ hasConfigData ? 'Yes' : 'No' }}</div>
         <div><strong>Viewing User ID:</strong> {{ viewingUserId }}</div>
         <div><strong>Viewing Mode:</strong> {{ viewingUserType }}</div>
         <div><strong>User Role:</strong> {{ currentUserRole }}</div>
         <div><strong>Can Save:</strong> {{ canSaveAssessments }}</div>
-        <div><strong>Compliance Level:</strong> {{ complianceLevel }}</div>
-        <div><strong>Principles Available:</strong> {{ principles.length }}</div>
-        <div><strong>Selected Guidelines:</strong> {{ configuration.selectedGuidelines?.length || 0 }}</div>
-        <div><strong>Raw WCAG Data Available:</strong> {{ store.state.Assessment?.wcagData?.principles?.length || 0 }}</div>
-        <div><strong>Filtered WCAG Data Available:</strong> {{ store.state.Assessment?.filteredWcagData?.principles?.length || 0 }}</div>
-        <div><strong>Configuration:</strong> {{ JSON.stringify(configuration, null, 2) }}</div>
+        <div v-if="hasConfigData"><strong>Compliance Level:</strong> {{ complianceLevel }}</div>
+        <div v-if="hasConfigData"><strong>Principles Available:</strong> {{ principles.length }}</div>
+        <div v-if="hasConfigData"><strong>Selected Guidelines:</strong> {{ configuration.selectedGuidelines?.length || 0 }}</div>
+        <div v-if="hasConfigData"><strong>Raw WCAG Data Available:</strong> {{ store.state.Assessment?.wcagData?.principles?.length || 0 }}</div>
+        <div v-if="hasConfigData"><strong>Filtered WCAG Data Available:</strong> {{ store.state.Assessment?.filteredWcagData?.principles?.length || 0 }}</div>
+        <div v-if="hasConfigData"><strong>Configuration:</strong> {{ JSON.stringify(configuration, null, 2) }}</div>
+        <div v-if="!hasConfigData"><strong>Test ConfigData:</strong> {{ test?.configData ? 'Present but empty' : 'Not present' }}</div>
       </div>
     </v-alert>
     <template #subtitle>
@@ -55,8 +57,39 @@
         Evaluate the accessibility of your project based on selected WCAG guidelines
       </p>
     </template>
+
+    <!-- Configuration Not Set Message -->
+    <v-container
+      v-if="!isLoading && !hasConfigData"
+      fluid
+      class="pa-4"
+    >
+      <v-alert
+        type="info"
+        variant="outlined"
+        class="ma-4"
+        prepend-icon="mdi-information"
+      >
+        <v-alert-title class="text-h6 mb-2">Configuration Required</v-alert-title>
+        <div class="text-body-1">
+          Configuration data is not set for this accessibility test. Please configure the test settings before proceeding with the assessment.
+        </div>
+        <div class="mt-3">
+          <v-btn
+            color="primary"
+            variant="outlined"
+            prepend-icon="mdi-cog"
+            @click="$router.push({ name: 'accessibility-config', params: { testId: route.params.testId || route.params.id } })"
+          >
+            Configure Test
+          </v-btn>
+        </div>
+      </v-alert>
+    </v-container>
+
     <!-- Full width container without padding -->
     <v-container
+      v-else-if="!isLoading && hasConfigData"
       fluid
       class="pa-0 ma-0 fill-height"
     >
@@ -535,7 +568,10 @@
     </v-container>
 
     <!-- Compact Floating Action Button -->
-    <v-tooltip location="left">
+    <v-tooltip
+      v-if="hasConfigData"
+      location="left"
+    >
       <template #activator="{ props }">
         <v-btn
           data-testid="create-test-btn"
@@ -812,10 +848,25 @@ const viewingUserType = computed(() => {
 
 // Add a computed property to fetch configuration data from Vuex
 const configuration = computed(() => store.getters['Assessment/getConfiguration'])
-
+console.log('Configuration value:', JSON.stringify(configuration.value, null, 2))
 // Example usage: Replace or augment logic to use configuration data
 // For instance, if you need to use complianceLevel from the configuration:
 const complianceLevel = computed(() => configuration.value.complianceLevel || 'AA')
+
+// Check if configData is set (either in test data or loaded in store)
+const hasConfigData = computed(() => {
+  // First check test data
+  const testData = test.value
+  const hasTestConfigData = testData && testData.configData && Object.keys(testData.configData).length > 0
+  
+  // Then check store configuration  
+  const storeConfig = configuration.value
+  const hasStoreConfigData = storeConfig && Object.keys(storeConfig).length > 0
+  
+  console.log('hasConfigData check:', { hasTestConfigData, hasStoreConfigData, testConfigData: testData?.configData, storeConfig })
+  
+  return hasTestConfigData || hasStoreConfigData
+})
 
 // Check if user can save assessments
 const canSaveAssessments = computed(() => {
@@ -963,30 +1014,42 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
 }
 
 const setupConfiguration = async (testData, testId) => {
-  const configData = testData.configData || {
-    complianceLevel: 'AA',
-    includeNonInterference: true,
-    showExperimentalRules: false,
-    enableAutomaticSave: true,
-    selectedGuidelines: [],
-    selectedRulesByGuideline: {}
+  let configData = null
+
+  // First try to get configData from testData
+  if (testData.configData && Object.keys(testData.configData).length > 0) {
+    configData = testData.configData
+    console.log('AccessibilityPreviewTest: Using configData from test data:', JSON.stringify(configData, null, 2))
+  } else {
+    // Try to fetch configData from Firestore using the Assessment store action
+    try {
+      console.log('AccessibilityPreviewTest: Attempting to fetch configData from Firestore for testId:', testId)
+      configData = await store.dispatch('Assessment/fetchConfigData', testId)
+      if (configData && Object.keys(configData).length > 0) {
+        console.log('AccessibilityPreviewTest: Successfully fetched configData from Firestore:', JSON.stringify(configData, null, 2))
+      } else {
+        console.log('AccessibilityPreviewTest: No configuration data found in Firestore')
+        return
+      }
+    } catch (error) {
+      console.error('AccessibilityPreviewTest: Failed to fetch configData from Firestore:', error)
+      console.log('AccessibilityPreviewTest: No configuration data available')
+      return
+    }
   }
-  await store.dispatch('Assessment/updateConfiguration', { configData, testId })
-  console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
-  console.log('Current configuration:', configData)
-  console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
-  console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
-  console.log('Current user role:', currentUserRole.value)
-  console.log('Can save assessments:', canSaveAssessments.value)
-  console.log('Test data:', {
-    id: testData.id,
-    title: testData.title,
-    testAdmin: testData.testAdmin,
-    userId: testData.userId,
-    cooperators: testData.cooperators,
-    collaborators: testData.collaborators,
-    configData: testData.configData
-  })
+
+  // Apply the configuration
+  if (configData) {
+    await store.dispatch('Assessment/updateConfiguration', { configData, testId })
+    console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
+    console.log('Current configuration string:', JSON.stringify(configData, null, 2))
+    console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
+    console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
+    console.log('Current user role:', currentUserRole.value)
+    console.log('Can save assessments:', canSaveAssessments.value)
+  } else {
+    console.log('AccessibilityPreviewTest: No valid configuration data to apply')
+  }
 }
 
 // Initialize the assessment when component mounts
@@ -998,11 +1061,20 @@ onMounted(async () => {
     const targetUserId = getTargetUserId()
     console.log('Target user ID from route:', targetUserId)
     const testData = await loadTestData(testId)
+    
+    // Check if configData exists in test data, but continue to try fetching from Firestore
+    if (!testData.configData || Object.keys(testData.configData).length === 0) {
+      console.log('AccessibilityPreviewTest: No configData in test data, will attempt to fetch from Firestore')
+    }
+    
     await initializeAssessment()
     const authUser = await handleAuthentication()
     const userIdToLoad = determineUserIdToLoad(targetUserId, authUser)
     await loadAssessmentData(userIdToLoad, testId)
     await setupConfiguration(testData, testId)
+    
+    // Final configuration check
+    console.log('Final configuration after setup:', JSON.stringify(configuration.value, null, 2))
   } catch (err) {
     console.error('Failed to initialize assessment:', err)
     error.value = 'Failed to load assessment data. Please try refreshing the page.'
@@ -1035,6 +1107,15 @@ watch(
       principlesCount: newPrinciples?.length || 0,
       principles: newPrinciples?.map(p => ({ id: p.id, title: p.title, guidelinesCount: p.Guidelines?.length || 0 })) || []
     })
+  },
+  { immediate: true, deep: true }
+)
+
+// Watch for configuration changes to debug
+watch(
+  () => configuration.value,
+  (newConfig) => {
+    console.log('Configuration changed:', JSON.stringify(newConfig, null, 2))
   },
   { immediate: true, deep: true }
 )
