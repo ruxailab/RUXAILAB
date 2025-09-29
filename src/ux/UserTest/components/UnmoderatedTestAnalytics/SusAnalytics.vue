@@ -5,7 +5,7 @@
   >
     <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-h3 font-weight-bold text-primary mb-2">
+      <h1 class="text-h3 font-weight-bold text-primary">
         SUS Analytics
       </h1>
       <p class="text-h6 text-grey-darken-1">
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Overview Cards -->
-    <v-row class="mb-8">
+    <v-row class="mb-2">
       <v-col
         cols="12"
         md="4"
@@ -64,7 +64,7 @@
               <div class="text-caption text-grey-darken-1 mb-1">
                 Total Respondents
               </div>
-              <div class="text-h2 font-weight-bold text-secondary mb-1">
+              <div class="text-h2 font-weight-bold text-green mb-1">
                 {{ analytics.totalRespondents }}
               </div>
               <div class="text-caption text-grey">
@@ -99,7 +99,7 @@
               <div class="text-caption text-grey-darken-1 mb-1">
                 Score Range
               </div>
-              <div class="text-h2 font-weight-bold text-info mb-1">
+              <div class="text-h2 font-weight-bold text-purple mb-1">
                 {{ analytics.minScore }} - {{ analytics.maxScore }}
               </div>
               <div class="text-caption text-grey">
@@ -123,7 +123,7 @@
     </v-row>
 
     <!-- Score Distribution Chart -->
-    <v-row class="mb-8">
+    <v-row class="mb-2">
       <v-col cols="12">
         <v-card
           elevation="2"
@@ -273,10 +273,10 @@
       >
         <v-card-title class="d-flex justify-space-between align-center pa-6 pb-4">
           <div>
-            <div class="text-h5 font-weight-bold mb-1">
+            <div class="text-h5 font-weight-bold">
               SUS Response Details
             </div>
-            <div class="text-body-2 text-grey-darken-1">
+            <div class="text-body-3 text-grey-darken-1">
               {{ selectedResponse.name }}
             </div>
           </div>
@@ -293,7 +293,7 @@
 
         <v-card-text class="pa-6">
           <!-- Final SUS Score -->
-          <div class="mb-6">
+          <div class="mb-0">
             <div class="d-flex justify-space-between align-center">
               <div class="text-body-1 text-grey-darken-1">
                 Final SUS Score
@@ -331,7 +331,7 @@
               >
                 <div class="d-flex justify-space-between align-center d-sm-flex flex-column flex-sm-row">
                   <div class="question-text flex-grow-1 pr-4 d-flex align-center mb-2 mb-sm-0">
-                    <strong>Q{{ index + 1 }}: </strong> {{ question }}
+                    <strong>Q{{ index + 1 }}: </strong>  {{ question }}
                   </div>
                   <div class="response-score d-flex align-center">
                     <span class="text-h5 font-weight-bold mr-2">
@@ -463,7 +463,7 @@ function getResponseLabel(score) {
 
 .v-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
 }
 
 .v-chip {

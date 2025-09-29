@@ -169,7 +169,7 @@ const startAudioRecording = async () => {
       mediaRecorder.value.remote.start()
     }
   }
-    
+
   } catch (error) {
     console.error('Error accessing audio stream:', error)
     recordingAudio.value = false
@@ -177,9 +177,10 @@ const startAudioRecording = async () => {
 }
 
 const stopAudioRecording = () => {
-  if (mediaRecorder.value) {
-    mediaRecorder.value.local.stop()
-    mediaRecorder.value.remote?.stop()
-  }
+  if (!recordingAudio.value) return
+  mediaRecorder.value.local.stop()
+  mediaRecorder.value.remote?.stop()
 }
+
+defineExpose({ stopAudioRecording })
 </script>
