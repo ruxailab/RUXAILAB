@@ -12,6 +12,7 @@ import {
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios';
+import EmailController from '@/shared/controllers/EmailController';
 
 /**
  * Controller for authentication operations
@@ -85,7 +86,13 @@ export default class AuthController {
   }
   // Reset Password
   async resetPassword(email) {
-    return sendPasswordResetEmail(auth, email)
+    // return sendPasswordResetEmail(auth, email)
+    const emailController = new EmailController()
+    await emailController.send({
+      to: email,
+      subject: 'Password Reset',
+      template: 'passwordReset',
+    })
   }
 
   async autoSignIn() {

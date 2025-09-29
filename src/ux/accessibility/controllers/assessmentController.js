@@ -1,4 +1,4 @@
-import { db } from '../app/plugins/firebase';
+import { db } from '@/app/plugins/firebase';
 import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const ASSESSMENTS_COLLECTION = 'assessments';

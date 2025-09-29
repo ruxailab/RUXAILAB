@@ -4,7 +4,7 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre o email" class="flex-grow-1" />
+          variant="outlined" placeholder="Buscar por nombre" class="flex-grow-1" />
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">Reset</v-btn>
@@ -57,6 +57,7 @@
           :progress="(calculateSatisfaction() / 5) * 100" />
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12" lg="6">
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
@@ -238,7 +239,7 @@
 
           <v-row>
             <v-col v-for="taskStat in getTasksPerformance()" :key="taskStat.taskId" cols="12" md="6" lg="4">
-              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" outlined>
+              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" variant="outlined">
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
@@ -418,10 +419,8 @@ const store = useStore();
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
 const answers = computed(() => {
-  if (!store.getters.visibleUserAnswers) {
-    return {};
-  }
-  return store.getters.visibleUserAnswers;
+  if (!store.getters.visibleUserAnswers) return {}
+  return store.getters.visibleUserAnswers
 });
 
 // Filter definitions based on pre-test questions
@@ -899,13 +898,13 @@ onMounted(() => {
     testStructure.value.userTasks.forEach((task, i) => {
       testTasks.value[i] = task.taskName;
     });
-  }
 
-  if (answers.value && typeof answers.value === 'object') {
-    let c = 0;
-    for (const key in answers.value) {
-      taskAnswers.value[c] = answers.value[key];
-      c++;
+    if (answers.value && typeof answers.value === 'object') {
+      let c = 0;
+      for (const key in answers.value) {
+        taskAnswers.value[c] = answers.value[key];
+        c++;
+      }
     }
   }
 

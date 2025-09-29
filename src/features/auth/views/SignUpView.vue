@@ -152,7 +152,7 @@ const onSignUp = async () => {
   if (valid) {
     try {
       loadingType.value = 'signin'
-      store.dispatch('setLoading', true)
+      store.commit('setLoading', true)
       await store.dispatch('signup', {
         email: email.value,
         password: password.value,
@@ -161,7 +161,7 @@ const onSignUp = async () => {
     } catch (error) {
       console.error('Signup failed:', error)
     } finally {
-      store.dispatch('setLoading', false)
+      store.commit('setLoading', false)
     }
   }
 }
@@ -172,16 +172,16 @@ const redirectToSignin = () => {
 
 const onGoogleSignInStart = () => {
   loadingType.value = 'google'
-  store.dispatch('setLoading', true)
+  store.commit('setLoading', true)
 }
 
 const onGoogleSignInSuccess = async () => {
   await router.push('/admin')
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
 }
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
 }
 </script>
 

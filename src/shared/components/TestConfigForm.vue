@@ -1,6 +1,6 @@
 <template>
-  <VRow>
-    <VCol cols="12">
+  <v-row>
+    <v-col cols="12">
       <TextareaForm
         v-model="welcomeMessageComputed"
         :title="$t('ModeratedTest.welcomeMessage')"
@@ -12,8 +12,8 @@
         :title="$t('ModeratedTest.finalMessage')"
         :subtitle="$t('ModeratedTest.finalMessageDescription')"
       />
-    </VCol>
-  </VRow>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
