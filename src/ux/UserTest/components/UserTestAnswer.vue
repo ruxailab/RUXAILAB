@@ -46,7 +46,6 @@
 
         <template #content>
           <div
-            style="background-color: #E8EAF2;"
             class="ma-0 pa-0"
           >
             <GeneralAnalytics v-if="tab === 0" />
