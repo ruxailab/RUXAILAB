@@ -432,6 +432,22 @@
     },
     "buttons": {
       "done": "Done"
+    },
+    "WelcomeStep": {
+      "welcome": "Welcome to RUXAILAB!",
+      "description": "You are going to participate in a user test that aims to evaluate the ease of use and understanding of a digital application. This type of test helps us detect possible technological barriers and improve the experience for everyone.",
+      "howItWorks": "How does this test work?",
+      "phases": "Throughout the test, we will guide you through different phases. In each one, you will be clearly told what to do. There are no right or wrong answers: what interests us is how you interact with the system.",
+      "summary": "Here you can see a summary of the phases you will follow:",
+      "steps": {
+        "consent": "Consent",
+        "preQuestions": "Initial questions",
+        "tasks": "Tasks",
+        "postQuestions": "Final questions",
+        "submission": "Final submission"
+      },
+      "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
+      "startTest": "Start the test"
     }
   },
   "AccessNotAllowed": {
