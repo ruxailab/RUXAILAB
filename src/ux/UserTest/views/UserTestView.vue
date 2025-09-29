@@ -55,10 +55,11 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="text-body-1 my-4 text-justify text-white">
+          <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded @click="startTest">
+          <v-btn color="white" variant="outlined" rounded @click="startTest" class="mt-4"
+            :disabled="isStartTestDisabled">
             Start Test
           </v-btn>
         </v-col>

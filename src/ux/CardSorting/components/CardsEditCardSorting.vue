@@ -24,8 +24,15 @@
               :items-per-page="5"
               class="elevation-0 rounded-lg"
               style="background: #FFFFFF; border: 1px solid #E5E7EB;"
-              :no-data-text="$t('noCategories')"
+              :no-data-text="$t('noCards')"
             >
+              <!-- DESCRIPTION -->
+              <template #item.description="{ item }">
+                <v-icon :color="item.description ? 'success' : 'error'">
+                  {{ item.description ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
+                </v-icon>
+              </template>
+
               <!-- IMAGE -->
                <template #item.image="{ item }">
                 <v-icon :color="item.image ? 'success' : 'error'">
@@ -69,23 +76,20 @@
               label="Show Image"
               @update:model-value="onChange()"
             />
-            <v-checkbox
-              v-model="options.card_random"
-              label="Randomize the order of cards"
-              @update:model-value="onChange()"
-            />
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-    <CreateCardSortingForm :value="card" v-model:dialog="dialog" @save="save" :options="options" />
+    <CardSortingForm :value="card" v-model:dialog="dialog" @save="save" :options="options" />
   </v-container>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import CreateCardSortingForm from '../components/dialogs/CreateCardSortingForm.vue'
+import CardSortingForm from '../components/dialogs/CardSortingForm.vue'
 import { useStore } from 'vuex';
+import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions';
+import { CardSortingStudyCard } from '../models/CardSortingStudyCard';
 
 // Emits
 const emit = defineEmits(['change', 'cards', 'options'])
@@ -99,9 +103,9 @@ const test = computed(() => store.getters.test)
 // Variables
 const cards = ref([])
 const editedIndex = ref(-1)
-const card = ref({})
+const card = ref(new CardSortingStudyCard())
 const dialog = ref(false)
-const options = ref({})
+const options = ref(new CardSortingStudyOptions())
 const headers = ref([
   { title: 'Name', align: 'start', sortable: false, value: 'title', width: '10%' },
   { title: 'Description', value: 'description', sortable: false, align: 'center' },
@@ -113,26 +117,44 @@ const headers = ref([
 const onChange = () => {
   emit('change')
   emit('options', options.value)
+  emit('cards', cards.value)
 }
 
-const save = (newCard) => {
+const save = (newCardRaw) => {
+  const newCard = new CardSortingStudyCard(newCardRaw)
+
   if (editedIndex.value > -1) {
-    Object.assign(cards.value[editedIndex.value], newCard)
+    cards.value[editedIndex.value] = newCard
     editedIndex.value = -1
-    card.value = {}
   } else {
     cards.value.push(newCard)
   }
 
-  emit('change')
-  emit('cards', cards.value)
+  onChange()
+}
+
+const editItem = (item) => {
+  editedIndex.value = cards.value.indexOf(item)
+  card.value = new CardSortingStudyCard(item)
+  dialog.value = true
+  onChange()
+}
+
+const deleteItem = (item) => {
+  const index = cards.value.indexOf(item)
+  cards.value.splice(index, 1)
+  onChange()
 }
 
 const getCards = () => {
-  cards.value = test.value.testStructure.cardSorting.cards || []
-  options.value = test.value.testStructure.cardSorting.options || {}
-  emit('options', options.value)
-  emit('cards', cards.value)
+  if (!test.value.testStructure.cardSorting) return
+
+  test.value.testStructure.cardSorting.cards.map(card => {
+    cards.value.push(new CardSortingStudyCard(card))
+  })
+
+  options.value = new CardSortingStudyOptions(test.value.testStructure.cardSorting.options)
+  onChange()
 }
 
 onMounted(() => {
