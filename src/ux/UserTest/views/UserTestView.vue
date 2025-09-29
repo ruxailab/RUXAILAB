@@ -1,7 +1,7 @@
 <template>
   <div v-if="test">
     <div>
-      <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+      <IrisTracker v-if="hasEyeTracking" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
 
@@ -55,7 +55,7 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="description">
+          <p align="justify" class="text-body-1 my-4 text-justify text-white">
             {{ test.testDescription }}
           </p>
           <v-btn color="white" variant="outlined" rounded @click="startTest">
@@ -313,7 +313,7 @@ function saveScreenRecording(data) {
 }
 
 const openCalibration = () => {
-  window.open(`${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/configuration?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
+  window.open(`${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
   calibrationInProgress.value = true;
 };
 
