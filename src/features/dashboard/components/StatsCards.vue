@@ -2,7 +2,7 @@
   <v-row class="mb-6">
     <!-- Total Studies Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -35,7 +35,7 @@
 
     <!-- Storage Quota Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -68,7 +68,7 @@
 
     <!-- Current Plan Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -101,7 +101,7 @@
 
     <!-- Total Participants Card -->
     <v-col
-      cols="12"
+      cols="6"
       sm="6"
       md="3"
     >
@@ -173,14 +173,14 @@ defineProps({
 }
 
 .stats-value {
-    font-size: 2.0rem;
+    font-size: 20px;
     font-weight: 700;
     color: rgb(var(--v-theme-on-surface));
     line-height: 1.2;
 }
 
 .stats-label {
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 400;
 }
 </style>

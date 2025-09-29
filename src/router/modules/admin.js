@@ -24,13 +24,19 @@ export default [
     path: '/profile',
     name: 'Profile',
     meta: { authorize: [1] },
-    component: Profile,
+    redirect: () => ({
+      path: '/admin',
+      query: { section: 'profile' }
+    }),
   },
   {
     path: '/notifications',
     name: 'notifications',
     meta: { authorize: [1] },
-    component: Notification,
+    redirect: () => ({
+      path: '/admin',
+      query: { section: 'notifications' }
+    }),
   },
   {
     path: '/choose',

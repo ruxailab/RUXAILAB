@@ -108,7 +108,7 @@ export default {
       if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
-            ([, answer]) => answer.hidden === false
+            ([, answer]) => answer.hidden !== true
           )
         );
       }
@@ -151,21 +151,16 @@ export default {
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
-      console.log('getCurrentTestAnswerDoc')
       const currentTest = rootState.Tests.Test
-      console.log('currentTest', currentTest)
       if (!currentTest || !currentTest.answersDocId) {
-        console.log('No current test or answersDocId')
-        return
+        return console.log('No current test or answersDocId')
       }
       const currentAnswerDocId = currentTest.answersDocId
-      console.log('currentAnswerDocId', currentAnswerDocId)
       commit('setLoading', true)
       try {
         const answerDoc = await answerController.getAnswerById(
           currentAnswerDocId,
         )
-        console.log('answerDoc', answerDoc)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
         console.error('Error in getCurrentTestAnswerDoc', e)
