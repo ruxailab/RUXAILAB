@@ -1,21 +1,30 @@
-@update:model-value="showValidationErrors = false"<template>
-  <v-app>
-    <v-container class="pa-3">
-      <v-row justify="center">
-        <v-col cols="12" lg="10" xl="8">
-          <!-- Compact Header -->
-          <v-card class="mb-3" elevation="2" rounded="lg">
-            <v-card-title class="text-h6 font-weight-bold pa-4 d-flex align-center">
-              <v-icon color="primary" class="mr-2" size="24">
-                mdi-cog
-              </v-icon>
-              Accessibility Configuration
-              <v-spacer />
-              <v-chip :color="step === 1 ? 'primary' : 'success'" variant="flat" size="small">
-                Step {{ step }}/2
-              </v-chip>
-            </v-card-title>
-          </v-card>
+<template>
+  <PageWrapper 
+    title="Accessibility Configuration"
+    :loading="isLoading"
+    loading-text="Loading accessibility configuration..."
+  >
+    <template #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Set up and customize your accessibility test parameters
+      </p>
+    </template>
+    
+    <v-row justify="center">
+      <v-col cols="12" lg="10" xl="8">
+        <!-- Compact Header -->
+        <v-card class="mb-3" elevation="2" rounded="lg">
+          <v-card-title class="text-h6 font-weight-bold pa-4 d-flex align-center">
+            <v-icon color="primary" class="mr-2" size="24">
+              mdi-cog
+            </v-icon>
+            Accessibility Configuration
+            <v-spacer />
+            <v-chip :color="step === 1 ? 'primary' : 'success'" variant="flat" size="small">
+              Step {{ step }}/2
+            </v-chip>
+          </v-card-title>
+        </v-card>
 
           <!-- Step 1: Compliance Level Selection -->
           <v-card v-if="step === 1" elevation="2" rounded="lg" class="mb-3">
@@ -235,21 +244,24 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
-  </v-app>
+  </PageWrapper>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 const route = useRoute()
 const store = useStore()
 const router = useRouter()
 const toast = useToast()
-const testId = ref(route.params.testId || '');
+const testId = ref(route.params.testId || route.params.id || '');
+
+console.log('AccessibilityConfig: Route params:', route.params)
+console.log('AccessibilityConfig: Resolved testId:', testId.value)
 
 // Stepper state
 const step = ref(1)
@@ -406,6 +418,21 @@ const filteredPrinciples = computed(() => {
 const saveComplianceAndContinue = async () => {
   try {
     isLoading.value = true
+    
+    // Debug: Check if we have testId
+    console.log('saveComplianceAndContinue: testId value:', testId.value)
+    console.log('saveComplianceAndContinue: route params:', route.params)
+    
+    if (!testId.value) {
+      // Try to get testId from route params again
+      testId.value = route.params.testId || route.params.id || ''
+      console.log('saveComplianceAndContinue: Updated testId from route:', testId.value)
+    }
+    
+    if (!testId.value) {
+      throw new Error('Test ID is missing from route parameters')
+    }
+    
     // Ensure WCAG data is loaded
     if (!store.state.Assessment.wcagData) {
       await store.dispatch('Assessment/initializeAssessment')
@@ -421,10 +448,17 @@ const saveComplianceAndContinue = async () => {
     console.log("Saving compliance configuration:", testId.value, configData)
     await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
     await store.dispatch('Assessment/filterByComplianceLevel', selectedCompliance.value)
-    // Reset guideline selection
-    selectedGuidelines.value = []
-    selectedRulesByGuideline.value = {}
-    toast.success(`WCAG ${selectedCompliance.value} compliance level saved! Now select guidelines.`)
+    
+    // Also save to the test document
+    await store.dispatch('updateStudy', { 
+      id: testId.value, 
+      configData: configData 
+    })
+
+    // Pre-select all guidelines and rules based on compliance level
+    preselectGuidelinesForComplianceLevel()
+
+    toast.success(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
     step.value = 2
   } catch (err) {
     console.log(err)
@@ -452,6 +486,20 @@ const saveConfiguration = async () => {
     error.value = ''
     success.value = ''
 
+    // Debug: Check if we have testId
+    console.log('saveConfiguration: testId value:', testId.value)
+    console.log('saveConfiguration: route params:', route.params)
+    
+    if (!testId.value) {
+      // Try to get testId from route params again
+      testId.value = route.params.testId || route.params.id || ''
+      console.log('saveConfiguration: Updated testId from route:', testId.value)
+    }
+    
+    if (!testId.value) {
+      throw new Error('Test ID is missing from route parameters')
+    }
+
     // Prepare configuration data
     const configData = {
       complianceLevel: selectedCompliance.value,
@@ -465,15 +513,22 @@ const saveConfiguration = async () => {
 
     // Fetch testId from route params
     console.log("Saving configuration for testId:", testId)
-    // Save to store (you would typically save to your backend/Firestore here)
+    
+    // Save to Assessment store for immediate use
     await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
+    
+    // Also save to the test document in Firestore so it persists
+    await store.dispatch('updateStudy', { 
+      id: testId.value, 
+      configData: configData 
+    })
 
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
     toast.success(`WCAG ${selectedCompliance.value} configuration saved!`)
 
     // Optionally redirect to assessment page after a delay
     setTimeout(() => {
-      router.push(`/preview/${testId.value}`)
+      router.push(`/accessibility/manual/preview/${testId.value}`)
     }, 1000)
 
   } catch (err) {
@@ -485,23 +540,118 @@ const saveConfiguration = async () => {
   }
 }
 
+// Pre-select all guidelines and rules based on the selected compliance level
+const preselectGuidelinesForComplianceLevel = () => {
+  // Determine which levels to include based on compliance level
+  let allowedLevels = []
+  if (selectedCompliance.value === 'A') allowedLevels = ['A']
+  else if (selectedCompliance.value === 'AA') allowedLevels = ['A', 'AA']
+  else if (selectedCompliance.value === 'AAA') allowedLevels = ['A', 'AA', 'AAA']
+  else allowedLevels = ['A', 'AA', 'AAA']
+
+  // Reset selections
+  const newSelectedGuidelines = []
+  const newSelectedRulesByGuideline = {}
+
+  // Iterate through filtered principles to get all applicable guidelines and rules
+  filteredPrinciples.value.forEach(principle => {
+    principle.Guidelines.forEach(guideline => {
+      // Select the guideline
+      newSelectedGuidelines.push(guideline.id)
+
+      // Select all rules for this guideline that match the compliance level
+      const applicableRules = guideline.rules
+        ? guideline.rules
+          .filter(rule => allowedLevels.includes(rule.level))
+          .map(rule => rule.id)
+        : []
+
+      if (applicableRules.length > 0) {
+        newSelectedRulesByGuideline[guideline.id] = applicableRules
+      }
+    })
+  })
+
+  // Update reactive state
+  selectedGuidelines.value = newSelectedGuidelines
+  selectedRulesByGuideline.value = newSelectedRulesByGuideline
+
+  console.log(`Pre-selected ${newSelectedGuidelines.length} guidelines for WCAG ${selectedCompliance.value} compliance level`)
+}
+
+// Watch for compliance level changes on step 2 to re-preselect guidelines
+watch(selectedCompliance, (newLevel, oldLevel) => {
+  // Only auto-reselect if we're on step 2 and the level actually changed
+  if (step.value === 2 && newLevel !== oldLevel && filteredPrinciples.value.length > 0) {
+    preselectGuidelinesForComplianceLevel()
+    console.log(`Compliance level changed from ${oldLevel} to ${newLevel}, reselecting guidelines`)
+  }
+})
+
+// Watch for route parameter changes to update testId
+watch(() => route.params, (newParams) => {
+  const newTestId = newParams.testId || newParams.id || ''
+  if (newTestId && newTestId !== testId.value) {
+    console.log('Route params changed, updating testId:', newTestId)
+    testId.value = newTestId
+  }
+}, { immediate: true })
+
 const resetToDefaults = () => {
   selectedCompliance.value = 'AA'
   includeNonInterference.value = true
   showExperimentalRules.value = false
   enableAutomaticSave.value = true
-  selectedGuidelines.value = []
-  selectedRulesByGuideline.value = {}
   showValidationErrors.value = false
-  step.value = 1
-  success.value = 'Configuration reset to defaults'
-  toast.info('Configuration reset to defaults')
+
+  if (step.value === 2) {
+    // If we're on step 2, pre-select guidelines for the compliance level
+    preselectGuidelinesForComplianceLevel()
+    success.value = 'Configuration reset to defaults with pre-selected guidelines'
+    toast.info('Configuration reset to defaults with pre-selected guidelines')
+  } else {
+    // If we're on step 1, clear selections and go back to step 1
+    selectedGuidelines.value = []
+    selectedRulesByGuideline.value = {}
+    step.value = 1
+    success.value = 'Configuration reset to defaults'
+    toast.info('Configuration reset to defaults')
+  }
 }
 
 const loadExistingConfiguration = async () => {
   try {
-    // Load existing configuration from store
-    const config = await store.dispatch('Assessment/getConfiguration')
+    // Debug: Check if we have testId
+    console.log('loadExistingConfiguration: testId value:', testId.value)
+    console.log('loadExistingConfiguration: route params:', route.params)
+    
+    if (!testId.value) {
+      // Try to get testId from route params again
+      testId.value = route.params.testId || route.params.id || ''
+      console.log('loadExistingConfiguration: Updated testId from route:', testId.value)
+    }
+    
+    if (!testId.value) {
+      console.warn('loadExistingConfiguration: No test ID available, skipping configuration load')
+      return
+    }
+    
+    // First load the test data to get the saved configuration
+    await store.dispatch('getStudy', { id: testId.value })
+    const testData = store.getters.test
+    
+    let config = null
+    
+    // Try to get configuration from test data first
+    if (testData && testData.configData) {
+      config = testData.configData
+      console.log('Loaded configuration from test document:', config)
+    } else {
+      // Fallback to Assessment store
+      config = await store.dispatch('Assessment/getConfiguration')
+      console.log('Loaded configuration from Assessment store:', config)
+    }
+    
     if (config) {
       selectedCompliance.value = config.complianceLevel || 'AA'
       includeNonInterference.value = config.includeNonInterference ?? true
@@ -509,6 +659,11 @@ const loadExistingConfiguration = async () => {
       enableAutomaticSave.value = config.enableAutomaticSave ?? true
       selectedGuidelines.value = config.selectedGuidelines || []
       selectedRulesByGuideline.value = config.selectedRulesByGuideline ? { ...config.selectedRulesByGuideline } : {}
+      
+      // If we have selected guidelines, go to step 2
+      if (selectedGuidelines.value.length > 0) {
+        step.value = 2
+      }
     }
   } catch (err) {
     console.error('Failed to load configuration:', err)
@@ -517,6 +672,9 @@ const loadExistingConfiguration = async () => {
 
 // Lifecycle
 onMounted(async () => {
+  console.log('AccessibilityConfig onMounted: route params:', route.params)
+  console.log('AccessibilityConfig onMounted: testId:', testId.value)
+  
   // Always ensure WCAG data is loaded before config UI
   if (!store.state.Assessment.wcagData) {
     await store.dispatch('Assessment/initializeAssessment')

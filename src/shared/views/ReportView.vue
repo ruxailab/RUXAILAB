@@ -1,8 +1,6 @@
 <template>
   <PageWrapper
     :title="showIntroView ? $t('Reports Dashboard') : ''"
-    :loading="loading"
-    :loading-text="$t('HeuristicsReport.messages.reports_loading')"
     :side-gap="true"
   >
     <v-dialog
@@ -235,7 +233,6 @@ const toast = useToast();
 const props = defineProps({ id: { type: String, default: '' } });
 const emit = defineEmits(['goToCoops']);
 
-const loading = ref(true);
 const dialog = ref(false);
 const loadingBtn = ref(false);
 const report = ref(null);
@@ -245,6 +242,7 @@ const lastUpdated = ref(new Date());
 
 const user = computed(() => store.getters.user);
 const test = computed(() => store.getters.test);
+const loading = computed(() => store.getters.loading);
 
 const showIntroView = computed(() => {
   return (reports.value.length > 0);
@@ -358,7 +356,7 @@ const dialogText = computed(() =>
 );
 
 watch(reports, () => {
-  if (Object.values(reports.value)) loading.value = false;
+  if (Object.values(reports.value)) store.commit('setLoading', false);
 });
 
 const getCurrentAnswer = async () => {
@@ -386,13 +384,13 @@ const getStatusColor = (status) => (status === t('HeuristicsReport.status.submit
 const getStatusIcon = (status) => (status === t('HeuristicsReport.status.submitted') ? 'mdi-check-circle' : 'mdi-progress-clock');
 
 onMounted(async () => {
-  const timeout = setTimeout(() => (loading.value = false), 10000);
+  store.commit('setLoading', true);
   try {
     await store.dispatch('getCurrentTestAnswerDoc');
   } catch (error) {
     console.error('Error:', error);
   } finally {
-    clearTimeout(timeout);
+    store.commit('setLoading', false);
   }
 });
 </script>

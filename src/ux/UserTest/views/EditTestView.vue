@@ -12,7 +12,7 @@
       <div>
         <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
           <v-tab @click="index = 0">
-            Test
+            Test configuration
           </v-tab>
           <v-tab @click="index = 1">
             {{ $t('ModeratedTest.consentForm') }}
@@ -39,25 +39,25 @@
           </div>
 
           <!-- COSENT FORM -->
-          <v-card v-if="index === 1" rounded="xxl">
+          <div v-if="index === 1" rounded="xxl">
             <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
               @update:value="consent = $event" />
-          </v-card>
+          </div>
 
           <!-- PRE-TEST -->
-          <v-card v-if="index === 2" rounded="xxl">
+          <div v-if="index === 2">
             <UserVariables type="pre-test" @change="change = true" @update="store.dispatch('setPreTest', $event)" />
-          </v-card>
+          </div>
 
           <!-- TASKS -->
-          <ListTasks v-if="index === 3" />
-
+          <div v-if="index === 3">
+            <ListTasks />
+          </div>
           <!-- POST-TEST -->
-          <v-card v-if="index === 4" rounded="xxl">
+          <div v-if="index === 4">
             <UserVariables type="post-test" @change="change = true" @update="store.dispatch('setPostTest', $event)" />
-          </v-card>
-
+          </div>
           <v-card v-if="index === 5 && hasEyeTracking" rounded="xxl">
             <EyeTrackingConfig />
           </v-card>

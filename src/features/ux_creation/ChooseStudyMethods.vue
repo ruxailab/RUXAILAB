@@ -104,27 +104,27 @@ const methodsByCategory = {
     {
       id: 'MANUAL',
       name: 'Manual Testing',
-      description: '',
-      icon: 'mdi-clipboard-check',
-      color: 'secondary',
+      description: 'Human evaluators assess accessibility using assistive technologies',
+      icon: 'mdi-eye-check',
+      color: 'orange darken-5',
       available: true
     },
     {
       id: 'AUTOMATIC',
       name: 'Automatic Testing',
-      description: '',
-      icon: 'mdi-clipboard-check',
-      color: 'secondary',
+      description: 'Automated tools to identify common accessibility issues',
+      icon: 'mdi-robot',
+      color: 'teal darken-3',
       available: true
     },
     {
-      id: 'AI',
-      name: 'AI Powered Testing',
-      description: '',
-      icon: 'mdi-clipboard-check',
-      color: 'secondary',
-      available: false
-    }
+      id: 'AI_ASSISTED',
+      name: 'AI-Assisted Testing',
+      description: 'AI-driven tools to identify and suggest fixes for accessibility issues',
+      icon: 'mdi-brain',
+      color: 'purple darken-3',
+      available: false,
+    },
   ]
 }
 

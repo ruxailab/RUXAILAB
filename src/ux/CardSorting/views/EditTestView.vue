@@ -61,7 +61,7 @@
               v-model="consent"
               :title="$t('ModeratedTest.consentForm')"
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-              @update:value="consent = $event"
+              @update:value="consent = $event; change = true"
             />
           </div>
 
@@ -129,6 +129,9 @@ import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 import TestConfigForm from '@/shared/components/TestConfigForm.vue';
+import { CardSortingStudyCategory } from '../models/CardSortingStudyCategory';
+import { CardSortingStudyCard } from '../models/CardSortingStudyCard';
+import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions';
 
 // Variables
 const index = ref(0);
@@ -161,14 +164,19 @@ const submit = async () => {
     postTest: store.getters.postTest,
     consent: consent.value,
     cardSorting: {
-      categories: categories.value,
-      cards: cards.value,
-      options: { ...optionsCards.value, ...optionsCategories.value}
+      categories: categories.value.map(category => category.toJson()),
+      cards: cards.value.map(card => card.toJson()),
+      options: {
+        card_description: optionsCards.value.card_description,
+        card_image: optionsCards.value.card_image,
+        category_description: optionsCategories.value.category_description,
+        category_image: optionsCategories.value.category_image,
+      }
     },
   }
 
-  const rawData = { ...test.value, testStructure: testStructure };
-  const study = instantiateStudyByType(rawData.testType, rawData);
+  const rawData = { ...test.value, testStructure: testStructure }
+  const study = instantiateStudyByType(rawData.testType, rawData)
   await store.dispatch('updateStudy', study)
 }
 
@@ -184,12 +192,34 @@ const getConsent = () => {
   consent.value = test.value.testStructure?.consent || ''
 }
 
+const getCategories = () => {
+  if (!test.value.testStructure.cardSorting) return
+
+  test.value.testStructure.cardSorting.categories.map(cat => {
+    categories.value.push(new CardSortingStudyCategory(cat))
+  })
+}
+
+const getCards = () => {
+  if (!test.value.testStructure.cardSorting) return
+
+  test.value.testStructure.cardSorting.cards.map(card => {
+    cards.value.push(new CardSortingStudyCard(card))
+  })
+}
+
+const getOptions = () => {
+  if (!test.value.testStructure.cardSorting) return
+  optionsCategories.value = new CardSortingStudyOptions(test.value.testStructure.cardSorting.options)
+  optionsCards.value = new CardSortingStudyOptions(test.value.testStructure.cardSorting.options)
+}
+
 const getPreTest = () => {
-  store.dispatch('setPreTest', test.value.testStructure.preTest || [])
+  store.dispatch('setPreTest', test.value.testStructure?.preTest || [])
 }
 
 const getPostTest = () => {
-  store.dispatch('setPostTest', test.value.testStructure.postTest || [])
+  store.dispatch('setPostTest', test.value.testStructure?.postTest || [])
 }
 
 // Lifecycle
@@ -197,5 +227,10 @@ onMounted(() => {
   getWelcome()
   getFinalMessage()
   getConsent()
+  getCategories()
+  getCards()
+  getOptions()
+  getPreTest()
+  getPostTest()
 })
 </script>

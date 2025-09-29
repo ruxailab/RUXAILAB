@@ -27,7 +27,7 @@
         </div>
 
         <v-row justify="center" v-if="callStarted">
-          <v-card class="pa-2 buttonCard" depressed>
+          <v-card v-if="!caller" class="pa-2 buttonCard" depressed>
             <v-tooltip location="bottom" v-if="!caller">
               <template #activator="{ props }">
                 <v-btn class="mx-3" :class="{ red: isSharingScreen, white: !isSharingScreen }" variant="flat" icon
@@ -178,15 +178,24 @@ async function init() {
     }
   };
 
+  const { hasCam, hasMic } = await detectDevices();
+
+  // Add video and audio transceivers
+  if (!hasCam) peerConnection.value.addTransceiver('video', { direction: 'recvonly' });
+  if (!hasMic) peerConnection.value.addTransceiver('audio', { direction: 'recvonly' });
+
   // Get local media stream if not already available
   if (!localStream.value) {
     try {
-      localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      if (localVideo.value) localVideo.value.srcObject = localStream.value;
+      if (hasCam || hasMic) localStream.value = await navigator.mediaDevices.getUserMedia({ video: hasCam, audio: hasMic })
+      else localStream.value = new MediaStream()
     } catch (err) {
-      console.error('Error accessing camera/microphone:', err);
+      console.error('Error accessing camera/microphone:', err)
+      localStream.value = new MediaStream()
     }
   }
+
+  if (localVideo.value) localVideo.value.srcObject = localStream.value;
 
   // Add local tracks to peer connection
   localStream.value.getTracks().forEach(track => peerConnection.value.addTrack(track, localStream.value));
@@ -217,6 +226,7 @@ function listenForCandidates() {
   onValue(candidateRef, async (snapshot) => {
     const data = snapshot.val();
     if (!data) return;
+
     const candidates = Object.values(data);
     for (const candidate of candidates) {
       try {
@@ -252,7 +262,7 @@ async function startCall() {
   const offerExists = snapshot.exists();
 
   // If room already exists, recreate offer for reconnection
-  if (offerExists && peerConnection.value.signalingState === 'closed') {
+  if (offerExists && peerConnection.value && peerConnection.value.signalingState === 'closed') {
     console.log('Caller reconnection: recreating offer...');
     peerConnection.value = null;
     await init();
@@ -271,9 +281,7 @@ async function startCall() {
   const answerRef = dbRef(database, `calls/${props.roomId}/answer`);
   onValue(answerRef, async (snapshot) => {
     const data = snapshot.val();
-    if (data && peerConnection.value.signalingState === 'have-local-offer') {
-      console.log('signaling state => ', peerConnection.value.signalingState)
-      console.log('offer data =>', data)
+    if (data && (peerConnection.value && peerConnection.value.signalingState === 'have-local-offer')) {
       await peerConnection.value.setRemoteDescription(new RTCSessionDescription(data));
       callStarted.value = true;
       listenForCandidates();
@@ -341,6 +349,18 @@ async function endCall() {
   localStream.value = null;
   peerConnection.value = null;
   callStarted.value = false;
+}
+
+const detectDevices = async () => {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const hasCam = devices.some(d => d.kind === 'videoinput');
+    const hasMic = devices.some(d => d.kind === 'audioinput');
+    return { hasCam, hasMic };
+  } catch (e) {
+    console.warn('enumerateDevices falhou, assumindo sem câmera:', e);
+    return { hasCam: false, hasMic: false };
+  }
 }
 
 // Initialize call on mount

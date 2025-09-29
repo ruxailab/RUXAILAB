@@ -5,13 +5,13 @@
     color="primary"
     class="hidden-sm-and-down pt-3"
   >
-    <!-- Navigation header -->
+    <!-- Navigation header 
     <div v-if="!mini">
       <v-list-item>
         <h3>{{ test.testTitle }}</h3>
       </v-list-item>
     </div>
-
+-->
     <!-- Navigation options -->
     <v-list
       v-if="items"

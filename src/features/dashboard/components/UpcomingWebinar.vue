@@ -2,8 +2,20 @@
   <v-card
     elevation="2"
     rounded="lg"
-    class="upcoming-webinar-card"
+    class="upcoming-webinar-card position-relative"
   >
+    <!-- Coming Soon Overlay -->
+    <div class="coming-soon-overlay">
+      <v-chip
+        color="primary"
+        variant="elevated"
+        size="small"
+        class="coming-soon-chip"
+      >
+        Coming Soon
+      </v-chip>
+    </div>
+
     <!-- Hero Image Section -->
     <v-img
       class="align-end text-white"
@@ -81,9 +93,10 @@
         block
         rounded="lg"
         class="join-button"
-        prepend-icon="mdi-video"
+        prepend-icon="mdi-calendar-clock"
+        disabled
       >
-        Join the event
+        Coming in November
       </v-btn>
     </v-card-text>
   </v-card>
@@ -106,15 +119,32 @@ const webinar = computed(() => {
 
     // Default webinar data
     return {
-        title: 'Upcoming Office Hours',
-        description: 'Next Generation conversation will happen on Discord.',
-        date: '17 Nov 23',
-        duration: '18:00 UTC'
+        title: 'Monthly Office Hours',
+        description: 'Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.',
+        date: 'Nov 2025',
+        duration: 'Monthly'
     }
 })
 </script>
 
 <style scoped>
+.upcoming-webinar-card {
+    position: relative;
+}
+
+.coming-soon-overlay {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+}
+
+.coming-soon-chip {
+    font-weight: 600;
+    font-size: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
 .webinar-hero {
     background: linear-gradient(135deg, #e8e3ff 0%, #d4c5ff 100%);
     height: 200px;
