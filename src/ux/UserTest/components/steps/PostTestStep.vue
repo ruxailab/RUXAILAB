@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + postTestTitle">
+  <ShowInfo :title="testTitle + ' - ' + 'PosTest'">
     <template #content>
       <div class="test-content pa-4 rounded-xl">
         <div

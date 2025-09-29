@@ -8,18 +8,18 @@
         class="elevation-2 rounded-lg pa-6"
         width="100%"
       >
-            <v-row class="pa-4 ">
+            <v-row class="pa-4 pa-0">
         <v-col>
 
           <v-card-title
-            class="text-h5 font-weight-bold mb-0 pb-0"
+            class="text-h5 font-weight-bold pa-0"
             :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
           >
           {{ title }}
         </v-card-title>
        
           <p
-            class="text-body-1 mb-6"
+            class="text-body-1"
             style="color: #4B5563;"
           >
             {{ subtitle }}
