@@ -61,6 +61,7 @@
               cols="auto"
             >
               <AudioRecorder
+                ref="audioRecorder"
                 :test-id="testId"
                 :task-index="taskIndex"
                 :remote-stream="remoteStream"
@@ -201,6 +202,18 @@
 </template>
 
 <script setup>
+import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
+import { useStore } from 'vuex';
+import ShowInfo from '@/shared/components/ShowInfo.vue';
+import TipButton from '@/ux/UserTest/components/TipButton.vue';
+import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
+import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue';
+import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue';
+import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
+import Timer from '@/ux/UserTest/components/Timer.vue';
+import SusForm from '@/ux/UserTest/SusForm.vue';
+import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
+
 const props = defineProps({
     task: Object,
     taskName: String,
@@ -235,18 +248,6 @@ const emit = defineEmits([
     'update:nasaTlxAnswers',
 ]);
 
-import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
-import { useStore } from 'vuex';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import TipButton from '@/ux/UserTest/components/TipButton.vue';
-import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
-import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue';
-import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue';
-import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
-import Timer from '@/ux/UserTest/components/Timer.vue';
-import SusForm from '@/ux/UserTest/SusForm.vue';
-import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
-
 onBeforeUnmount(() => {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -271,6 +272,7 @@ const normalizedLink = computed(() => {
 });
 
 const stage = ref(1);
+const audioRecorder = ref(null);
 const elapsedTimeDisplay = ref('0:00');
 let taskStartTime = null;
 let timerInterval = null;
@@ -305,6 +307,8 @@ function startTask() {
 const showPostForm = ref({ userCompleted: undefined });
 
 function handleShowPostForm(userCompleted) {
+  audioRecorder.value?.stopAudioRecording();
+
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
@@ -348,10 +352,6 @@ watch(() => props.postAnswer, val => { localPostAnswer.value = val; });
 watch(() => props.taskAnswer, val => { localTaskAnswer.value = val; });
 watch(() => props.taskObservations, val => { localTaskObservations.value = val; });
 
-function onPostAnswerInput(val) {
-    localPostAnswer.value = val;
-    emit('update:postAnswer', val);
-}
 function onUpdateTaskAnswer(val) {
     localTaskAnswer.value = val;
     emit('update:taskAnswer', val);
