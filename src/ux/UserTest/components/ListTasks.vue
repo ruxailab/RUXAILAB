@@ -14,7 +14,7 @@
           sm="6"
         >
           <v-card-title
-            class="text-h5 font-weight-bold mb-4"
+            class="text-h5 font-weight-bold pa-0"
             :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
           >
             {{ $t('UserTestTable.titles.currentTasks') }}
