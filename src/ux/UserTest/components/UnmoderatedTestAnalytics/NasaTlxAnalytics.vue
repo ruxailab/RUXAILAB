@@ -10,7 +10,7 @@
     >
       <!-- Header Section -->
       <div class="mb-8">
-        <h1 class="text-h3 font-weight-bold text-primary mb-2">
+        <h1 class="text-h3 font-weight-bold text-primary">
           NASA TLX Analytics
         </h1>
         <p class="text-h6 text-grey-darken-1">
@@ -19,7 +19,7 @@
       </div>
 
       <!-- Overview Cards -->
-      <v-row class="mb-8">
+      <v-row class="mb-0">
         <v-col
           cols="12"
           md="4"
@@ -139,7 +139,7 @@
             elevation="2"
             style="border-radius: 12px;"
           >
-            <v-card-title class="text-h5 pb-2">
+            <v-card-title class="text-h5 pa-5">
               Workload Dimension Breakdown
             </v-card-title>
             <v-card-text class="pa-6">
@@ -245,7 +245,7 @@
             elevation="2"
             style="border-radius: 12px;"
           >
-            <v-card-title class="text-h5 pb-2">
+            <v-card-title class="text-h5 pa-5">
               <v-icon
                 start
                 color="primary"
