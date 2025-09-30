@@ -371,7 +371,6 @@ const filterModeratedSessions = async () => {
   .filter(
     (val, index, self) => index === self.findIndex(m => m.id === val.id)
   );
-  console.log("filteredModeratedSessions", filteredModeratedSessions.value)
 };
 
 
