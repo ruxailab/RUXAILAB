@@ -253,7 +253,7 @@ watch(
   height: 60px;
   min-width: 60px;
   min-height: 60px;
-  background: rgba(var(--v-theme-surface-variant), 0.3);
+  background: rgba(var(--v-theme-primary), 0.1);
   border-radius: 12px;
   transition: background-color 0.2s ease;
   flex-shrink: 0;
