@@ -144,7 +144,6 @@ const checkIfHasNewNotifications = () => {
 };
 
 const goToNotificationRedirect = async (notification) => {
-  if(notification.accessLevel === 0) {
     const accepted = await showAcceptDialog()
     if (!accepted) return
     const study = await new StudyController().getStudy({ id: notification.testId })
@@ -153,7 +152,6 @@ const goToNotificationRedirect = async (notification) => {
       test: study,
       cooperator: user.value,
     });
-  }
 
   await store.dispatch('markNotificationAsRead', {
     notification,
