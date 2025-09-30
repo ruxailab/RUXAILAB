@@ -234,24 +234,14 @@
                 </div>
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5">
                   <div class="d-flex align-center ga-2 mb-3">
-                    <v-icon color="primary" size="18">mdi-calendar</v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">
-                      {{ dateFieldType === 'start' ? 'Start Date & Time' : 'End Date' }}
-                    </span>
-                    <v-spacer />
-                    <!-- Dropdown to choose field -->
-                    <v-select
-                      v-model="dateFieldType"
-                      :items="[
-                        { title: 'Start Date & Time', value: 'start' },
-                        { title: 'End Date', value: 'end' }
-                      ]"
-                      density="compact"
-                      hide-details
-                      style="max-width: 180px"
-                    />
+                    <v-icon
+                      color="primary"
+                      size="18"
+                    >
+                      mdi-calendar
+                    </v-icon>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">End Date</span>
                   </div>
-
                   <v-menu
                     v-model="dateMenu"
                     :close-on-content-click="false"
@@ -262,8 +252,8 @@
                   >
                     <template v-slot:activator="{ props }">
                       <v-text-field
-                        :model-value="dateFieldType === 'end' ? formattedEndDate : formattedStartDate"
-                        :label="dateFieldType === 'start' ? 'Select Start Date & Time' : 'Select End Date'"
+                        :model-value="formattedEndDate"
+                        label="Select End Date"
                         variant="outlined"
                         density="comfortable"
                         readonly
@@ -271,133 +261,97 @@
                         hide-details
                         prepend-inner-icon="mdi-calendar"
                         v-bind="props"
-                        @click:clear="clearDate"
+                        @click:clear="clearEndDate"
                       />
                     </template>
-
                     <v-date-picker
-                      :v-model="dateFieldType === 'end' ? endDatePickerModel : startDatePickerModel"
+                      v-model="datePickerModel"
                       @update:model-value="onDateChange"
                     />
                   </v-menu>
-                  <v-dialog
-                    v-model="timeDialog"
-                    max-width="400"
-                    v-if="dateFieldType === 'start'"
-                  >
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        color="primary"
-                        variant="outlined"
-                        class="text-none mt-4"
-                        block
-                        v-bind="props"
-                        :disabled="!isTimePickerEnabled"
-                        @click="openTimeDialog"
-                      >
-                        {{ timePickerModel || 'Select Time' }}
-                      </v-btn>
-                    </template>
-                    <v-card class="rounded-xl pa-4">
-                      <v-card-title class="text-h6 font-weight-bold text-grey-darken-4">
-                        Select Start Time
-                      </v-card-title>
-                      <v-card-text>
-                        <v-time-picker
-                          v-model="timePickerModel"
-                          full-width
-                          format="24hr"
-                          @update:model-value="onTimeChange"
-                        />
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer />
-                        <v-btn
-                          color="grey-darken-2"
-                          variant="outlined"
-                          class="text-none"
-                          @click="timeDialog = false"
-                        >Cancel</v-btn>
-                        <v-btn
-                          color="primary"
-                          variant="flat"
-                          class="text-none"
-                          @click="timeDialog = false"
-                        >Confirm</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
                 </div>
               </div>
             </v-card-text>
           </v-card>
         </div>
       </div>
-      <div class="actions-card-container">
-        <v-card
-          class="actions-card"
-          elevation="0"
-        >
-          <div class="d-flex align-start ga-3 pa-6 pb-0">
-            <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-              <v-icon
-                color="amber-darken-2"
-                size="20"
-              >mdi-lightning-bolt</v-icon>
-            </div>
-            <div>
-              <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Quick Actions</h3>
-              <p class="text-caption text-grey-darken-1">Perform common tasks instantly</p>
-            </div>
+
+      <!-- Quick Actions Card -->
+      <v-card
+        class="actions-card"
+        elevation="0"
+      >
+        <div class="d-flex align-start ga-3 pa-6 pb-0">
+          <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
+            <v-icon
+              color="amber-darken-2"
+              size="20"
+            >
+              mdi-lightning-bolt
+            </v-icon>
           </div>
-          <v-card-text class="py-6">
-            <div class="d-flex ga-3 flex-wrap">
-              <v-btn
-                color="secondary"
-                variant="flat"
-                class="text-none font-weight-semibold rounded-s py-3"
-                height="48"
-                :disabled="hasTemplate || !object"
-                @click="tempDialog = true"
+          <div>
+            <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+              Quick Actions
+            </h3>
+            <p class="text-caption text-grey-darken-1">
+              Perform common tasks instantly
+            </p>
+          </div>
+        </div>
+        <v-card-text class="py-6">
+          <div class="d-flex ga-3 flex-wrap">
+            <v-btn
+              color="secondary"
+              variant="flat"
+              class="text-none font-weight-semibold rounded-s py-3"
+              height="48"
+              :disabled="hasTemplate || !object"
+              @click="tempDialog = true"
+            >
+              <v-icon
+                start
+                size="18"
               >
-                <v-icon
-                  start
-                  size="18"
-                >mdi-file-document-plus-outline</v-icon>
-                {{ $t('pages.settings.createTemplate') }}
-              </v-btn>
-              <v-btn
-                color="orange-darken-1"
-                variant="flat"
-                class="text-none font-weight-semibold rounded-s py-3"
-                height="48"
-                :disabled="!object"
-                @click="duplicateStudy()"
+                mdi-file-document-plus-outline
+              </v-icon>
+              {{ $t('pages.settings.createTemplate') }}
+            </v-btn>
+            <v-btn
+              color="orange-darken-1"
+              variant="flat"
+              class="text-none font-weight-semibold rounded-s py-3"
+              height="48"
+              :disabled="!object"
+              @click="duplicateStudy()"
+            >
+              <v-icon
+                start
+                size="18"
               >
-                <v-icon
-                  start
-                  size="18"
-                >mdi-content-duplicate</v-icon>
-                {{ $t('buttons.duplicateTest') }}
-              </v-btn>
-              <v-btn
-                color="error"
-                variant="flat"
-                class="text-none font-weight-semibold rounded-s py-3"
-                height="48"
-                :disabled="!object"
-                @click="dialogDel = true"
+                mdi-content-duplicate
+              </v-icon>
+              {{ $t('buttons.duplicateTest') }}
+            </v-btn>
+            <v-btn
+              color="error"
+              variant="flat"
+              class="text-none font-weight-semibold rounded-s py-3"
+              height="48"
+              :disabled="!object"
+              @click="dialogDel = true"
+            >
+              <v-icon
+                start
+                size="18"
               >
-                <v-icon
-                  start
-                  size="18"
-                >mdi-delete-outline</v-icon>
-                {{ $t('pages.settings.deleteTest') }}
-              </v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
+                mdi-delete-outline
+              </v-icon>
+              {{ $t('pages.settings.deleteTest') }}
+            </v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
     </div>
 
     <v-dialog
@@ -465,7 +419,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted, reactive } from 'vue';
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import FormTestDescription from '@/shared/components/FormTestDescription';
@@ -495,7 +449,12 @@ const props = defineProps({
   },
 });
 
-const object = reactive({
+const template = ref({
+  templateTitle: '',
+  templateDescription: '',
+  isTemplatePublic: false,
+});
+const object = ref({
   testTitle: '',
   testDescription: '',
   testType: 'MANUAL',
@@ -506,13 +465,7 @@ const object = reactive({
   testAdmin: null,
   collaborators: {},
   configData: {},
-  progress: {},
-  startDateTime: { date: null, time: null },
-});
-const template = ref({
-  templateTitle: '',
-  templateDescription: '',
-  isTemplatePublic: false,
+  progress: {}
 });
 const valids = ref([false, true, true]);
 const dialogDel = ref(false);
@@ -520,10 +473,8 @@ const loading = ref(false);
 const loadingPage = ref(true);
 const tempDialog = ref(false);
 const dateMenu = ref(false);
-const timeDialog = ref(false);
 const form1 = ref(null);
 const tempform = ref(null);
-const dateFieldType = ref('end');
 
 const statusOptions = [
   { title: 'Active', value: 'active' },
@@ -563,37 +514,24 @@ const dialogText = computed(() => {
   return "Are you sure you want to delete this test?";
 });
 const hasTemplate = computed(() => {
-  if (object && 'template' in object) {
-    return object.template !== null;
+  if (object.value && 'template' in object.value) {
+    return object.value.template !== null;
   }
   return false;
 });
 
-const isTimePickerEnabled = computed(() => {
-  const enabled = !!object.startDateTime?.date;
-  console.log('isTimePickerEnabled:', enabled, 'startDateTime:', object.startDateTime);
-  return enabled;
-});
-
-const formattedStartDate = computed(() => {
-  if (object.startDateTime?.date) {
-    const date = new Date(object.startDateTime.date + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
-  return '';
-});
-
 const formattedEndDate = computed(() => {
-  if (object.endDate) {
+  if (object.value?.endDate) {
     try {
-      const date = new Date(object.endDate + 'T00:00:00');
+      // Crear la fecha correctamente desde el string ISO
+      const date = new Date(object.value.endDate + 'T00:00:00');
       if (isNaN(date.getTime())) {
         return '';
       }
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
+        day: 'numeric'
       });
     } catch (error) {
       console.error('Error formatting date:', error);
@@ -603,53 +541,20 @@ const formattedEndDate = computed(() => {
   return '';
 });
 
-const startDatePickerModel = computed({
+const datePickerModel = computed({
   get() {
-    if (object.startDateTime?.date) {
-      return new Date(object.startDateTime.date + 'T00:00:00');
+    if (object.value?.endDate) {
+      return new Date(object.value.endDate + 'T00:00:00');
     }
     return null;
   },
   set(newDate) {
-    if (newDate) {
-      if (!object.startDateTime) {
-        object.startDateTime = { date: null, time: null };
-      }
-      object.startDateTime.date = newDate.toISOString().split('T')[0];
+    if (newDate && object.value) {
+      const formattedDate = newDate.toISOString().split('T')[0];
+      object.value.endDate = formattedDate;
       store.commit('SET_LOCAL_CHANGES', true);
-      console.log('Start date updated:', object.startDateTime.date);
     }
-  },
-});
-
-const endDatePickerModel = computed({
-  get() {
-    if (object.endDate) {
-      return new Date(object.endDate + 'T00:00:00');
-    }
-    return null;
-  },
-  set(newDate) {
-    if (newDate) {
-      object.endDate = newDate.toISOString().split('T')[0];
-      store.commit('SET_LOCAL_CHANGES', true);
-      console.log('End date updated:', object.endDate);
-    }
-  },
-});
-
-const timePickerModel = computed({
-  get() {
-    return object.startDateTime?.time || null;
-  },
-  set(newTime) {
-    if (!object.startDateTime) {
-      object.startDateTime = { date: null, time: null };
-    }
-    object.startDateTime.time = newTime;
-    store.commit('SET_LOCAL_CHANGES', true);
-    console.log('Time updated:', newTime);
-  },
+  }
 });
 
 // Helper function to create object based on test type
@@ -662,19 +567,18 @@ const createObjectFromTest = (testData) => {
   if (isAccessibilityTest) {
     // Dynamic mapping for accessibility tests
     return {
-      ...testData,
+      ...testData, 
       testTitle: testData.title || testData.testTitle || testData.name || '',
       testDescription: testData.description || testData.testDescription || testData.desc || '',
       testType: testData.testType,
       status: testData.status || 'draft',
       endDate: testData.endDate || testData.end_date || null,
-      startDateTime: testData.startDateTime || { date: null, time: null },
       isPublic: testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
       websiteUrl: testData.websiteUrl || testData.website_url || testData.url || '',
       testAdmin: testData.testAdmin || testData.admin || null,
       collaborators: testData.collaborators || testData.cooperators || {},
       configData: testData.configData || testData.config || {},
-      progress: testData.progress || testData.progressData || {},
+      progress: testData.progress || testData.progressData || {}
     };
   } else {
     
@@ -686,11 +590,10 @@ const createObjectFromTest = (testData) => {
 
 watch(
   test,
-  (newTest) => {
+  newTest => {
     if (newTest !== null && newTest !== undefined) {
       const mappedObject = createObjectFromTest(newTest);
-      Object.assign(object, mappedObject);
-      console.log('Test data mapped to object:', object);
+      object.value = mappedObject;
     }
   },
   { immediate: true }
@@ -752,12 +655,12 @@ const onSubmit = async () => {
 };
 
 const submit = async () => {
-  const title = object.testTitle;
+  const title = object.value.testTitle;
   if (title.length > 0 && title.length < 200) {
     loading.value = true;
     try {
-      console.log('Saving object with endDate:', object.endDate);
-      const study = instantiateStudyByType(object.testType, object);
+      console.log('Saving object with endDate:', object.value.endDate);
+      const study = instantiateStudyByType(object.value.testType, object.value);
       console.log('Study object to save:', study);
       await store.dispatch('updateStudy', study);
       await store.dispatch('getStudy', { id: props.id });
@@ -776,7 +679,7 @@ const submit = async () => {
   }
 };
 
-const preventNav = (event) => {
+const preventNav = event => {
   if (!localChanges.value) return;
   event.preventDefault();
   event.returnValue = '';
@@ -810,11 +713,12 @@ const fetchTestData = async () => {
   }
 };
 
+// Function to log current component state
 const logCurrentState = () => {
-  // For debugging if needed
+  // This function can be used for debugging if needed
 };
 
-const deleteStudy = async (item) => {
+const deleteStudy = async item => {
   loading.value = true;
   try {
     const auxUser = { ...user.value };
@@ -886,40 +790,21 @@ const closeDialog = () => {
   };
 };
 
-const updateObject = (newObject) => {
-  Object.assign(object, newObject);
+const updateObject = newObject => {
+  object.value = { ...newObject };
   store.commit('SET_LOCAL_CHANGES', true);
 };
 
 const onDateChange = (date) => {
-  if (dateFieldType.value === 'end') {
-    endDatePickerModel.value = date;
-  } else {
-    startDatePickerModel.value = date;
-  }
+  console.log('Date picker changed to:', date);
   dateMenu.value = false;
-  console.log('Date changed:', date, 'Field type:', dateFieldType.value);
 };
 
-const onTimeChange = (time) => {
-  timePickerModel.value = time;
-  timeDialog.value = false;
-  console.log('Time picker changed:', time);
-};
-
-const openTimeDialog = () => {
-  timeDialog.value = true;
-  console.log('Time dialog opened');
-};
-
-const clearDate = () => {
-  if (dateFieldType.value === 'end') {
-    object.endDate = null;
-  } else {
-    object.startDateTime = { date: null, time: null };
+const clearEndDate = () => {
+  if (object.value) {
+    object.value.endDate = null;
+    store.commit('SET_LOCAL_CHANGES', true);
   }
-  store.commit('SET_LOCAL_CHANGES', true);
-  console.log('Date cleared, Field type:', dateFieldType.value);
 };
 
 const duplicateStudy = async () => {
@@ -941,7 +826,6 @@ const duplicateStudy = async () => {
       updateDate: Date.now(),
       status: test.value.status,
       endDate: test.value.endDate,
-      startDateTime: test.value.startDateTime,
     };
 
     const study = instantiateStudyByType(rawData.testType, rawData);
@@ -1010,13 +894,10 @@ const duplicateStudy = async () => {
   height: 40px;
 }
 
-.actions-card-container {
-  margin-top: 24px;
-}
-
+/* Quick Actions Horizontal Layout */
 .actions-card {
-  max-width: 1400px; /* Match settings-layout max-width */
-  width: 100%; /* Span full grid width */
+  width: 100%;
+  margin-top: 24px;
 }
 
 .actions-card .d-flex {

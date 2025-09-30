@@ -61,7 +61,7 @@
         cols="12"
         lg="4"
       >
-        <NextSession :nextSession="closestStudy" />
+        <NextSession :next-session="sessions" />
       </v-col>
     </v-row>
 
@@ -98,6 +98,11 @@ const props = defineProps({
     required: true,
     default: () => [],
   },
+  sessions: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
 })
 
 const store = useStore()
@@ -105,8 +110,6 @@ const store = useStore()
 const totalStudies = ref(12)
 const usedStorage = ref(150)
 const totalParticipants = ref(0)
-
-const closestStudy = computed(() => store.getters.closestStudy)
 
 const userDisplayName = computed(() => {
   const user = store.getters['auth/getUser']
@@ -119,18 +122,6 @@ const userDisplayName = computed(() => {
 watch(() => props.items, (newVal) => {
   totalStudies.value = newVal.length
 }, { immediate: true })
-
-watch(closestStudy, (val) => {
-    console.log("Updated closest study:", val)
-  }, { immediate: true }
-)
-
-onMounted(async () => {
-  await store.dispatch('getAllStudies')
-  await store.dispatch('getClosestUpcomingStudy')
-
-  console.log("Closest study ready:", closestStudy.value)
-})
 </script>
 
 <style scoped>
