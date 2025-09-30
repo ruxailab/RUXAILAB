@@ -77,6 +77,7 @@
         rounded="lg"
         prepend-icon="mdi-play-circle"
         :disabled="closestSession.status !== 'upcoming'"
+        @click="goto(closestSession.redirectsTo)"
         class="action-button mt-6"
       >
         {{ closestSession.status === 'upcoming' ? 'Join Now' : 'Completed' }}
@@ -109,6 +110,7 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { STUDY_TYPES } from "@/shared/constants/methodDefinitions"
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   nextSession: {
@@ -116,6 +118,8 @@ const props = defineProps({
     default: () => []
   }
 })
+
+const router = useRouter()
 
 const closestSession = computed(() => {
   if (!Array.isArray(props.nextSession) || props.nextSession.length === 0) {
@@ -158,6 +162,10 @@ function getStudyType(data) {
     return 'Moderated Usability Test'
   }
   return 'N/A'
+}
+
+const goto = (url) => {
+  router.push(url)
 }
 
 watch(closestSession, (val) => {

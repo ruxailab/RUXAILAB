@@ -80,7 +80,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
+          <DashboardView :items="tests" :sessions="nextModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -182,6 +182,7 @@ const activeSubSection = ref(null);
 const tempDialog = ref(false);
 const temp = ref({});
 const filteredModeratedSessions = ref([]);
+const nextModeratedSessions = ref([]);
 const selectedMethodFilter = ref('all');
 const drawerOpen = ref(false);
 const studyController = new StudyController()
@@ -393,6 +394,36 @@ const filterModeratedSessions = async () => {
   filteredModeratedSessions.value = cooperatorArray
 };
 
+const filterNextModeratedSessions = async () => {
+  const userModeratedTests = Object.values(user.value.notifications)
+  const cooperatorArray = [];
+  for (const test of userModeratedTests) {
+    console.log("test", test)
+    const testObj = await studyController.getStudy({ id: test.testId });
+    if (testObj) {
+      const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
+      if (cooperatorObj) {
+        Object.assign(cooperatorObj, {
+          testTitle: testObj.testTitle,
+          testAdmin: testObj.testAdmin,
+          id: testObj.id,
+          testType: testObj.testType,
+          subType: testObj.subType,
+          redirectsTo: test.redirectsTo
+        });
+        cooperatorArray.push(cooperatorObj);
+      }
+    }
+  }
+  nextModeratedSessions.value = cooperatorArray
+  .filter(
+    (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
+  )
+  .filter(
+    (val, index, self) => index === self.findIndex(m => m.id === val.id)
+  );
+  console.log("nextModeratedSessions.value", nextModeratedSessions.value)
+};
 
 const reloadMyTemplates = async () => {
   tempDialog.value = false
@@ -422,6 +453,7 @@ const handleToggleDrawer = () => {
 
 onMounted(() => {
   filterModeratedSessions();
+  filterNextModeratedSessions()
 
   // Handle query parameters for section navigation
   if (route.query.section) {
