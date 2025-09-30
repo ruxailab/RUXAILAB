@@ -17,22 +17,22 @@
     </v-card-title>
 
     <v-card-text
-      v-if="nextSession"
+      v-if="closestSession"
       class="pa-6"
     >
       <!-- Session Header -->
       <div class="session-header mb-4 text-center">
-        <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
+        <h3 class="session-title mb-2">{{ closestSession.testTitle }}</h3>
         <p class="session-description text-body-2 text-grey-darken-1 mb-3">
-          {{ nextSession.testDescription }}
+          {{ closestSession.testDescription || 'No description available' }}
         </p>
         <v-chip
-          :color="getStatusColor(nextSession.status)"
+          :color="getStatusColor(closestSession.status)"
           variant="tonal"
           size="small"
           class="status-chip"
         >
-          {{ getStatusText(nextSession.status) }}
+          {{ getStatusText(closestSession.status) }}
         </v-chip>
       </div>
 
@@ -41,28 +41,28 @@
         <div class="info-item">
           <v-icon icon="mdi-microscope" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ getStudyType(nextSession) || 'N/A' }}</div>
+            <div class="info-value">{{ getStudyType(closestSession) }}</div>
             <div>Tipo de Estudio</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ nextSession.testAdmin?.email || 'Unknown' }}</div>
+            <div class="info-value">{{ closestSession.testAdmin?.email || 'Unknown' }}</div>
             <div>Owner</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-calendar" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ formatDate(nextSession.startDateTime?.date) }}</div>
+            <div class="info-value">{{ formatDate(closestSession.testDate) }}</div>
             <div>Fecha</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-clock-outline" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ formatTime(nextSession.startDateTime?.time) }}</div>
+            <div class="info-value">{{ formatTime(closestSession.testDate) }}</div>
             <div>Horario</div>
           </div>
         </div>
@@ -76,10 +76,10 @@
         block
         rounded="lg"
         prepend-icon="mdi-play-circle"
-        :disabled="nextSession.status !== 'upcoming'"
+        :disabled="closestSession.status !== 'upcoming'"
         class="action-button mt-6"
       >
-        {{ nextSession.status === 'upcoming' ? 'Join Now' : 'Completed' }}
+        {{ closestSession.status === 'upcoming' ? 'Join Now' : 'Completed' }}
       </v-btn>
     </v-card-text>
 
@@ -107,29 +107,28 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { STUDY_TYPES } from "@/shared/constants/methodDefinitions"
 
 const props = defineProps({
   nextSession: {
-    type: Object,
-    default: null
+    type: Array,
+    default: () => []
   }
 })
 
-// Sample default data
-// const nextSession = computed(() => ({
-//   id: 1,
-//   testTitle: 'cvbbb',
-//   testDescription: '',
-//   studyType: 'USER_UNMODERATED',
-//   startDateTime: {
-//     date: '10/07/2025',
-//     time: '06:30'
-//   },
-//   status: 'upcoming',
-//   testAdmin: { email: 'abc@gmail.com' }
-// }))
+const closestSession = computed(() => {
+  if (!Array.isArray(props.nextSession) || props.nextSession.length === 0) {
+    return null
+  }
+
+  // Only future sessions
+  const upcoming = props.nextSession
+    .filter(s => s.testDate && new Date(s.testDate) > new Date())
+    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))
+
+  return upcoming.length > 0 ? upcoming[0] : null
+})
 
 const getStatusColor = (status) => {
   return status === 'upcoming' ? 'success' : 'grey'
@@ -139,44 +138,36 @@ const getStatusText = (status) => {
   return status === 'upcoming' ? 'Starting Soon' : 'Completed'
 }
 
-const formatDate = (date) => {
-  if (!date) return 'N/A'
-  return new Date(date).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })
+const formatDate = (dateStr) => {
+  if (!dateStr) return 'N/A'
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
-const formatTime = (time) => {
-  if (!time) return 'N/A'
-  const [hours, minutes] = time.split(':')
-  const date = new Date(2025, 8, 30, hours, minutes) // Using Sep 30, 2025 as base date
+const formatTime = (dateStr) => {
+  if (!dateStr) return 'N/A'
+  const date = new Date(dateStr)
   return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 
 function getStudyType(data) {
-  const testType = (data.testType || data.header?.templateType || '').toUpperCase()
-  const subType = (data.subType || data.header?.templateSubType || '').toUpperCase()
+  const testType = (data.testType || '').toUpperCase()
+  const subType = (data.subType || '').toUpperCase()
 
-  if (!testType) return ''
-
-  switch (testType) {
-    case STUDY_TYPES.USER:
-      if (subType === 'USER_UNMODERATED') {
-        return 'Usability Test'
-      } else if (subType === 'USER_MODERATED') {
-        return 'Moderated Usability Test'
-      }
-      return testType
-    case STUDY_TYPES.HEURISTIC:
-      return 'Heuristic'
-    case STUDY_TYPES.CARD_SORTING:
-      return 'Card Sorting'
-    case STUDY_TYPES.ACCESSIBILITY_MANUAL:
-      return 'Manual Accessibility'
-    case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
-      return 'Automatic Accessibility'
-    default:
-      return testType
+  if (testType === STUDY_TYPES.USER && subType === 'USER_MODERATED') {
+    return 'Moderated Usability Test'
   }
+  return 'N/A'
 }
+
+watch(closestSession, (val) => {
+  console.log("Closest future session chosen:", val)
+}, { immediate: true })
+
+props.nextSession.forEach(s => {
+  console.log("Test:", s.testTitle, "date:", s.testDate, ">", new Date(s.testDate) > new Date())
+})
+
 </script>
 
 <style scoped>

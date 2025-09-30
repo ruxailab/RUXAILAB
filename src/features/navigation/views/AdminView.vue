@@ -80,7 +80,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView :items="tests" />
+          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -346,12 +346,10 @@ const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
 
 const filterModeratedSessions = async () => {
-  const userModeratedTests = Object.values(user.value.myAnswers).filter(
-    (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
-  );
+  const userModeratedTests = Object.values(user.value.notifications)
   const cooperatorArray = [];
   for (const test of userModeratedTests) {
-    const testObj = await studyController.getStudy({ id: test.testDocId });
+    const testObj = await studyController.getStudy({ id: test.testId });
     if (testObj) {
       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
       if (cooperatorObj) {
@@ -366,8 +364,16 @@ const filterModeratedSessions = async () => {
       }
     }
   }
-  filteredModeratedSessions.value = cooperatorArray;
+  filteredModeratedSessions.value = cooperatorArray
+  .filter(
+    (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
+  )
+  .filter(
+    (val, index, self) => index === self.findIndex(m => m.id === val.id)
+  );
+  console.log("filteredModeratedSessions", filteredModeratedSessions.value)
 };
+
 
 const reloadMyTemplates = async () => {
   tempDialog.value = false
