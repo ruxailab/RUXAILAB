@@ -332,73 +332,71 @@
             </v-card-text>
           </v-card>
         </div>
-
-        <div class="actions-card-container">
-          <v-card
-            class="actions-card"
-            elevation="0"
-          >
-            <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="amber-darken-2"
-                  size="20"
-                >mdi-lightning-bolt</v-icon>
-              </div>
-              <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Quick Actions</h3>
-                <p class="text-caption text-grey-darken-1">Perform common tasks instantly</p>
-              </div>
+      </div>
+      <div class="actions-card-container">
+        <v-card
+          class="actions-card"
+          elevation="0"
+        >
+          <div class="d-flex align-start ga-3 pa-6 pb-0">
+            <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
+              <v-icon
+                color="amber-darken-2"
+                size="20"
+              >mdi-lightning-bolt</v-icon>
             </div>
-            <v-card-text class="py-6">
-              <div class="d-flex ga-3 flex-wrap">
-                <v-btn
-                  color="secondary"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-s py-3"
-                  height="48"
-                  :disabled="hasTemplate || !object"
-                  @click="tempDialog = true"
-                >
-                  <v-icon
-                    start
-                    size="18"
-                  >mdi-file-document-plus-outline</v-icon>
-                  {{ $t('pages.settings.createTemplate') }}
-                </v-btn>
-                <v-btn
-                  color="orange-darken-1"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-s py-3"
-                  height="48"
-                  :disabled="!object"
-                  @click="duplicateStudy()"
-                >
-                  <v-icon
-                    start
-                    size="18"
-                  >mdi-content-duplicate</v-icon>
-                  {{ $t('buttons.duplicateTest') }}
-                </v-btn>
-                <v-btn
-                  color="error"
-                  variant="flat"
-                  class="text-none font-weight-semibold rounded-s py-3"
-                  height="48"
-                  :disabled="!object"
-                  @click="dialogDel = true"
-                >
-                  <v-icon
-                    start
-                    size="18"
-                  >mdi-delete-outline</v-icon>
-                  {{ $t('pages.settings.deleteTest') }}
-                </v-btn>
-              </div>
-            </v-card-text>
-          </v-card>
-        </div>
-
+            <div>
+              <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">Quick Actions</h3>
+              <p class="text-caption text-grey-darken-1">Perform common tasks instantly</p>
+            </div>
+          </div>
+          <v-card-text class="py-6">
+            <div class="d-flex ga-3 flex-wrap">
+              <v-btn
+                color="secondary"
+                variant="flat"
+                class="text-none font-weight-semibold rounded-s py-3"
+                height="48"
+                :disabled="hasTemplate || !object"
+                @click="tempDialog = true"
+              >
+                <v-icon
+                  start
+                  size="18"
+                >mdi-file-document-plus-outline</v-icon>
+                {{ $t('pages.settings.createTemplate') }}
+              </v-btn>
+              <v-btn
+                color="orange-darken-1"
+                variant="flat"
+                class="text-none font-weight-semibold rounded-s py-3"
+                height="48"
+                :disabled="!object"
+                @click="duplicateStudy()"
+              >
+                <v-icon
+                  start
+                  size="18"
+                >mdi-content-duplicate</v-icon>
+                {{ $t('buttons.duplicateTest') }}
+              </v-btn>
+              <v-btn
+                color="error"
+                variant="flat"
+                class="text-none font-weight-semibold rounded-s py-3"
+                height="48"
+                :disabled="!object"
+                @click="dialogDel = true"
+              >
+                <v-icon
+                  start
+                  size="18"
+                >mdi-delete-outline</v-icon>
+                {{ $t('pages.settings.deleteTest') }}
+              </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
       </div>
     </div>
 
