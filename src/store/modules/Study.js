@@ -20,6 +20,7 @@ export default {
     studyCategory: null,
     studyMethod: null,
     studyType: null,
+    closestStudy: null,
   },
   getters: {
     tests(state) {
@@ -33,6 +34,9 @@ export default {
     },
     coops(state) {
       return state.Test.coop
+    },
+    closestStudy(state) {
+      return state.closestStudy
     },
   },
   mutations: {
@@ -82,6 +86,9 @@ export default {
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
+    },
+    SET_CLOSEST_STUDY(state, study) {
+      state.closestStudy = study
     }
   },
   actions: {
@@ -248,6 +255,39 @@ export default {
       } finally {
         commit('setLoading', false)
       }
+    },
+    async getClosestUpcomingStudy({ state, commit }) {
+      if (!state.tests || state.tests.length === 0) return null
+
+      const now = new Date()
+      const studies = []
+
+      for (const doc of state.tests) {
+        try {
+          const testDoc = await studyController.getStudy({ id: doc.testDocId })
+          if (!testDoc?.startDateTime?.date || !testDoc?.startDateTime?.time) continue
+
+          const [hours, minutes] = testDoc.startDateTime.time.split(":").map(Number)
+          const startDate = new Date(testDoc.startDateTime.date)
+          startDate.setHours(hours, minutes, 0, 0)
+
+          if (startDate > now) {
+            studies.push({ ...testDoc, startDate })
+          }
+        } catch (e) {
+          console.error("Error fetching study", e)
+        }
+      }
+
+      if (studies.length === 0) {
+        commit('SET_CLOSEST_STUDY', null)
+        return null
+      }
+
+      studies.sort((a, b) => a.startDate - b.startDate)
+      const closest = studies[0]
+      commit('SET_CLOSEST_STUDY', closest)
+      return closest
     },
   }
 }

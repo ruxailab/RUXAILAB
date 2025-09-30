@@ -26,6 +26,7 @@ export default class Study { // mudar nome para Study e mover para Shared
     status, // transformar em um ENUM
     endDate,
     creationDate,
+    startDateTime,
   } = {}) {
     /**
      * Defines the test id.
@@ -146,6 +147,12 @@ export default class Study { // mudar nome para Study e mover para Shared
      */
     this.endDate = endDate ?? null
 
+    /** 
+     * Defines the test start date & time (only if in future).
+     * 
+     * @type {{ date: string, time: string } | null}
+     */ 
+    this.startDateTime = startDateTime ?? null
   }
 
   /**
@@ -171,6 +178,7 @@ export default class Study { // mudar nome para Study e mover para Shared
       status: this.status,
       endDate: this.endDate,
       subType: this.subType,
+      startDateTime: this.startDateTime,
     }
   }
 }
