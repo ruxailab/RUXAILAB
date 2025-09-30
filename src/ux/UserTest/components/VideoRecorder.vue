@@ -130,6 +130,8 @@ const stopRecording = () => {
     mediaRecorder.value.stop()
   }
 }
+
+defineExpose({ stopRecording })
 </script>
 
 <style scoped>

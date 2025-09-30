@@ -94,6 +94,7 @@
               cols="auto"
             >
               <ScreenRecorder
+                ref="screenRecorder"
                 :test-id="testId"
                 :task-index="taskIndex"
                 @show-loading="$emit('show-loading')"
@@ -273,6 +274,8 @@ const normalizedLink = computed(() => {
 
 const stage = ref(1);
 const audioRecorder = ref(null);
+const videoRecorder = ref(null);
+const screenRecorder = ref(null);
 const elapsedTimeDisplay = ref('0:00');
 let taskStartTime = null;
 let timerInterval = null;
@@ -306,8 +309,14 @@ function startTask() {
 
 const showPostForm = ref({ userCompleted: undefined });
 
-function handleShowPostForm(userCompleted) {
+function stopMediaRecorders() {
   audioRecorder.value?.stopAudioRecording();
+  videoRecorder.value?.stopRecording();
+  screenRecorder.value?.stopRecording();
+}
+
+function handleShowPostForm(userCompleted) {
+  stopMediaRecorders();
 
   if (timerInterval) {
     clearInterval(timerInterval);
