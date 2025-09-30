@@ -119,6 +119,14 @@ const recordScreen = async () => {
     mediaRecorder.value.stop();
   }
 };
+
+const stopRecording = () => {
+  if (isRecording.value) {
+    mediaRecorder.value.stop();
+  }
+};
+
+defineExpose({ stopRecording });
 </script>
 
 <style scoped></style>
