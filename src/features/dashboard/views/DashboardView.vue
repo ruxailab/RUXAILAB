@@ -61,7 +61,7 @@
         cols="12"
         lg="4"
       >
-        <NextSession />
+        <NextSession :nextSession="closestStudy" />
       </v-col>
     </v-row>
 
@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -102,12 +102,12 @@ const props = defineProps({
 
 const store = useStore()
 
-// Dashboard data
 const totalStudies = ref(12)
 const usedStorage = ref(150)
 const totalParticipants = ref(0)
 
-// User info
+const closestStudy = computed(() => store.getters.closestStudy)
+
 const userDisplayName = computed(() => {
   const user = store.getters['auth/getUser']
   if (user && user.displayName) {
@@ -115,9 +115,22 @@ const userDisplayName = computed(() => {
   }
   return 'User'
 })
+
 watch(() => props.items, (newVal) => {
   totalStudies.value = newVal.length
 }, { immediate: true })
+
+watch(closestStudy, (val) => {
+    console.log("Updated closest study:", val)
+  }, { immediate: true }
+)
+
+onMounted(async () => {
+  await store.dispatch('getAllStudies')
+  await store.dispatch('getClosestUpcomingStudy')
+
+  console.log("Closest study ready:", closestStudy.value)
+})
 </script>
 
 <style scoped>
