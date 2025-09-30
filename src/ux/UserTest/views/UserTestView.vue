@@ -1,10 +1,10 @@
 <template>
   <div v-if="test">
     <div>
-      <IrisTracker v-if="hasEyeTracking" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+      <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
-
+    
 
     <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
@@ -15,14 +15,33 @@
 
     <Snackbar />
 
-    <SubmitDialog :model-value="dialog" :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')" :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')" @cancel="dialog = false" @submit="handleSubmit" />
+    <SubmitDialog
+      :model-value="dialog"
+      :title="$t('HeuristicsTestView.messages.submitTest')"
+      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :cancel-label="$t('buttons.cancel')"
+      :submit-label="$t('buttons.submit')"
+      @cancel="dialog = false"
+      @submit="handleSubmit"
+    />
 
-    <v-dialog :model-value="fromlink && !noExistUser && !logined" max-width="400" persistent>
-      <v-card v-if="user" class="rounded-xl pa-6">
-        <v-row class="ma-0 pa-0" justify="center">
-          <v-avatar color="primary-lighten-4" size="120">
+    <v-dialog
+      :model-value="fromlink && !noExistUser && !logined"
+      max-width="400"
+      persistent
+    >
+      <v-card
+        v-if="user"
+        class="rounded-xl pa-6"
+      >
+        <v-row
+          class="ma-0 pa-0"
+          justify="center"
+        >
+          <v-avatar
+            color="primary-lighten-4"
+            size="120"
+          >
             <v-icon size="80">
               mdi-account-circle
             </v-icon>
@@ -37,41 +56,84 @@
           </p>
         </v-card-text>
         <v-card-actions class="d-flex flex-column pa-0">
-          <v-btn color="primary" block variant="flat" class="my-2" @click="setTest">
+          <v-btn
+            color="primary"
+            block
+            variant="flat"
+            class="my-2"
+            @click="setTest"
+          >
             Continue as {{ user.email }}
           </v-btn>
           <p class="text-caption mt-2">
             Not you?
-            <a href="#" class="text-primary font-weight-medium" @click.prevent="signOut">Change account</a>
+            <a
+              href="#"
+              class="text-primary font-weight-medium"
+              @click.prevent="signOut"
+            >Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-container fluid class="pa-0">
-      <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
-        <v-col md="8" class="ma-5 pa-5">
-          <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;">
+    <v-container
+      fluid
+      class="pa-0"
+    >
+      <v-row
+        v-if="test && start"
+        class="start-screen background-img pa-0 ma-0"
+        align="center"
+      >
+        <v-col
+          md="8"
+          class="ma-5 pa-5"
+        >
+          <img
+            src="@/assets/ruxailab-long-crop-white.png"
+            alt="RUXAILAB"
+            class="mb-10"
+            style="max-width: 300px;"
+          >
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded @click="startTest" class="mt-4"
-            :disabled="isStartTestDisabled">
+          <v-btn
+            color="white"
+            variant="outlined"
+            rounded
+            @click="startTest"
+            class="mt-4"
+            :disabled="isStartTestDisabled"
+          >
             Start Test
           </v-btn>
         </v-col>
       </v-row>
 
-      <v-row v-else class="main-test-interface pa-0 ma-0">
-        <v-col ref="rightView" class="right-view pa-6">
-          <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
+      <v-row
+        v-else
+        class="main-test-interface pa-0 ma-0"
+      >
+        <v-col
+          ref="rightView"
+          class="right-view pa-6"
+        >
+          <v-row
+            v-if="globalIndex >= 1"
+            class="stepper-row sticky-stepper"
+          >
             <v-col cols="12">
-              <v-stepper :model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
+              <v-stepper
+                :model-value="stepperValue"
+                class="main-stepper rounded-xl elevation-3"
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
-                style="visibility:visible">
+                style="visibility:visible"
+              >
                 <v-stepper-header>
                   <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1" color="white"
                     complete-icon="mdi-check" />
@@ -97,16 +159,34 @@
             </v-col>
           </v-row>
           <!-- Stepper secundario para tareas -->
-          <v-row v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
-            class="task-stepper-row" justify="center">
-            <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
-              <v-stepper :model-value="taskIndex + 1" class="task-stepper rounded-xl elevation-1 w-100"
-                style="max-width: 100%;">
+          <v-row
+            v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
+            class="task-stepper-row"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              md="8"
+              lg="6"
+              class="d-flex justify-center"
+            >
+              <v-stepper
+                :model-value="taskIndex + 1"
+                class="task-stepper rounded-xl elevation-1 w-100"
+                style="max-width: 100%;"
+              >
                 <v-stepper-header>
-                  <template v-for="(task, idx) in test.testStructure.userTasks" :key="idx">
-                    <v-stepper-item :value="idx + 1" :title="`Tarea ${idx + 1}`" :complete="taskIndex > idx"
+                  <template
+                    v-for="(task, idx) in test.testStructure.userTasks"
+                    :key="idx"
+                  >
+                    <v-stepper-item
+                      :value="idx + 1"
+                      :title="`Tarea ${idx + 1}`"
+                      :complete="taskIndex > idx"
                       :color="taskIndex > idx ? 'success' : (taskIndex === idx ? 'primary' : 'grey')"
-                      complete-icon="mdi-check" />
+                      complete-icon="mdi-check"
+                    />
                     <v-divider v-if="idx < test.testStructure.userTasks.length - 1" />
                   </template>
                 </v-stepper-header>
@@ -133,13 +213,14 @@
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
             @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
 
-          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER"
-            ref="taskStepComponent" :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex"
-            :test-id="testId" v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
+          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
+            :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
+            v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
-            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
+            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
+            :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
             @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
             @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
@@ -162,7 +243,7 @@
       </v-row>
     </v-container>
     <!-- Floating Action Button -->
-    <!--TODO: Remove if not necessary
+         <!--TODO: Remove if not necessary
     <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
       class="mb-10 mr-5">
       <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
@@ -217,7 +298,7 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
-import EyeTrackingCalibrationStep from '../components/steps/EyeTrackingCalibrationStep.vue';
+import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
 import { db } from '@/app/plugins/firebase';
 import IrisTracker from '../components/IrisTracker.vue';
 
@@ -278,6 +359,29 @@ const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
 });
 
+const isStartTestDisabled = computed(() => {
+  if (!test.value) return true;
+
+  // Check if testStructure is empty array or doesn't exist
+  const hasValidTasks = test.value.testStructure && 
+                       Array.isArray(test.value.testStructure.userTasks) && 
+                       test.value.testStructure.userTasks.length > 0;
+  
+  if (!hasValidTasks) return true;
+
+  // Check if status is different from 'active'
+  if (test.value.status !== 'active') return true;
+
+  // Check if endDate is lower than current date
+  if (test.value.endDate) {
+    const currentDate = new Date();
+    const endDate = new Date(test.value.endDate);
+    if (endDate < currentDate) return true;
+  }
+
+  return false;
+});
+
 const stepperValue = computed(() => {
   if (globalIndex.value === 0) return -1; // Welcome
 
@@ -314,10 +418,11 @@ function saveScreenRecording(data) {
 }
 
 const openCalibration = () => {
-  window.open(`${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
+  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
   calibrationInProgress.value = true;
-};
+  console.log('calibrationInProgress.value', calibrationInProgress.value);
 
+}
 
 const closeCalibration = () => {
   calibrationInProgress.value = false;
@@ -345,10 +450,11 @@ function saveIrisDataIntoTask() {
   } else {
     toggleTracking(false);
   }
-}
+} 
 
 const saveAnswer = async () => {
   try {
+    localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
@@ -503,17 +609,17 @@ const completeStep = (id, type, userCompleted = true) => {
       // }
 
       if (id < localTestAnswer.tasks.length - 1) {
-        taskIndex.value = id + 1;
-        startTimer();
-      } else {
-        if (allTasksCompleted.value) {
-          console.log('All tasks completed, moving to post-test');
-          taskIndex.value = id + 1; // to help saving methods
-          globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-        } else {
-          console.log('Última task finalizada, mas ainda há tasks incompletas.');
-        }
-      }
+  taskIndex.value = id + 1;
+  startTimer();
+} else {
+  if (allTasksCompleted.value) {
+    console.log('All tasks completed, moving to post-test');
+    taskIndex.value = id + 1; // to help saving methods
+    globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+  } else {
+    console.log('Última task finalizada, mas ainda há tasks incompletas.');
+  }
+}
 
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -586,13 +692,13 @@ const calculateProgress = () => {
     if (localTestAnswer.consentCompleted) completedSteps++;
 
     let tasksCompleted = 0;
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
+    if (Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0) {
+      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
         if (localTestAnswer.tasks[i]?.completed) {
           tasksCompleted++;
         }
       }
-      if (tasksCompleted === items.value[1].value.length) {
+      if (tasksCompleted === localTestAnswer.tasks.length) {
         completedSteps++;
       }
     }
@@ -638,6 +744,9 @@ const setTest = async () => {
       fullName: currentUserTestAnswer.value.fullName || '',
     });
     fullName.value = localTestAnswer.fullName;
+    await mappingSteps();
+    await autoComplete();
+    localTestAnswer.progress = calculateProgress();
   } catch (error) {
     console.error('Error setting test:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to load test data. Please try again.' });
@@ -802,7 +911,7 @@ onMounted(async () => {
   if (user.value) {
     await setTest();
     await autoComplete();
-    //calculateProgress();
+    calculateProgress();
   }
   if (!user.value?.id) return
 
@@ -956,3 +1065,4 @@ onBeforeUnmount(() => {
   ;
 }
 </style>
+

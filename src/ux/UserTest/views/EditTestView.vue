@@ -1,5 +1,8 @@
 <template>
-  <PageWrapper title="Edit Test" :side-gap="true">
+  <PageWrapper
+    title="Edit Test"
+    :side-gap="true"
+  >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Customize the settings and preferences of your test
@@ -7,10 +10,17 @@
     </template>
 
     <v-container>
-      <ButtonSave :visible="true" @click="save" />
+      <ButtonSave
+        :visible="true"
+        @click="save"
+      />
 
       <div>
-        <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
+        <v-tabs
+          bg-color="transparent"
+          color="#FCA326"
+          class="pb-0 mb-0"
+        >
           <v-tab @click="index = 0">
             Test configuration
           </v-tab>
@@ -26,41 +36,60 @@
           <v-tab @click="index = 4">
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
-          <v-tab v-if="hasEyeTracking" @click="index = 5">
-            Eye Tracking Configurations
-          </v-tab>
         </v-tabs>
 
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
-              @update:welcome-message="welcomeMessage = $event" @update:final-message="finalMessage = $event" />
+            <TestConfigForm
+              :welcome="welcomeMessage"
+              :final-message="finalMessage"
+              @update:welcome-message="welcomeMessage = $event"
+              @update:final-message="finalMessage = $event"
+            />
           </div>
 
           <!-- COSENT FORM -->
-          <div v-if="index === 1" rounded="xxl">
-            <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+          <div
+            v-if="index === 1"
+            rounded="xxl"
+          >
+            <TextareaForm
+              v-model="consent"
+              :title="$t('ModeratedTest.consentForm')"
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-              @update:value="consent = $event" />
-          </div>
+              @update:value="consent = $event"
+            />
+        </div>
 
           <!-- PRE-TEST -->
-          <div v-if="index === 2">
-            <UserVariables type="pre-test" @change="change = true" @update="store.dispatch('setPreTest', $event)" />
+          <div
+            v-if="index === 2"
+          >
+            <UserVariables
+              type="pre-test"
+              @change="change = true"
+              @update="store.dispatch('setPreTest', $event)"
+            />
           </div>
 
           <!-- TASKS -->
-          <div v-if="index === 3">
-            <ListTasks />
+          <div
+          v-if="index === 3"
+          >
+            <ListTasks
+          />
           </div>
           <!-- POST-TEST -->
-          <div v-if="index === 4">
-            <UserVariables type="post-test" @change="change = true" @update="store.dispatch('setPostTest', $event)" />
-          </div>
-          <v-card v-if="index === 5 && hasEyeTracking" rounded="xxl">
-            <EyeTrackingConfig />
-          </v-card>
+          <div
+            v-if="index === 4"
+          >
+            <UserVariables
+              type="post-test"
+              @change="change = true"
+              @update="store.dispatch('setPostTest', $event)"
+            />
+        </div>
         </v-col>
       </div>
     </v-container>
@@ -77,7 +106,6 @@ import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
-import EyeTrackingConfig from '../components/EyeTrackingConfig.vue'
 
 // Store
 const store = useStore()
@@ -116,10 +144,6 @@ const getPostTest = () => {
   store.dispatch('setPostTest', test.value.testStructure.postTest || [])
 }
 
-const hasEyeTracking = computed(() => {
-  return (test.value.testStructure.userTasks || []).some(task => task.hasEye === true)
-})
-
 const save = async () => {
   change.value = false;
 
@@ -131,9 +155,6 @@ const save = async () => {
     postTest: store.getters.postTest,
     consent: consent.value,
   }
-
-  console.log('test.value:', test.value)
-  console.log('store.getters.test.calibrationConfig:', store.getters.test.calibrationConfig)
 
   const rawData = { ...test.value, testStructure: testStructure };
   const study = instantiateStudyByType(rawData.testType, rawData);
