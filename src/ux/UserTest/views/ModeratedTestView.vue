@@ -662,20 +662,24 @@ onMounted(async () => {
       router.push('/managerview/' + test.value.id);
       return;
     }
-    sessionCooperator.value = test.value.cooperators.find(
-      (user) => user.userDocId === route.params.token,
-    );
+
     if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
       toast.error(t('errors.globalError'));
       router.push('/admin');
       return;
     }
-    if (sessionCooperator.value.testDate) {
-      testDate.value = sessionCooperator.value.testDate;
-    } else {
-      toast.warning("Your session doesn't have a scheduled date");
-      router.push('/managerview/' + test.value.id);
-      return;
+
+    if(!isUserTestAdmin.value){
+      sessionCooperator.value = test.value.cooperators.find(
+        (user) => user.userDocId === route.params.token,
+      );
+      if (sessionCooperator.value?.testDate) {
+        testDate.value = sessionCooperator.value.testDate;
+      } else {
+        toast.warning("Your session doesn't have a scheduled date");
+        router.push('/managerview/' + test.value.id);
+        return;
+      }    
     }
   } else {
     toast.info('Use a session link to access the test');
