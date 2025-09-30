@@ -96,6 +96,7 @@
             v-if="filteredModeratedSessions.length > 0"
             :items="filteredModeratedSessions"
             type="sessions"
+            :sort-by="[{ key: 'testDate', order: 'desc' }]"
             @clicked="goTo"
           />
           <div
@@ -346,11 +347,16 @@ const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
 
 const filterModeratedSessions = async () => {
-  const userModeratedTests = Object.values(user.value.myAnswers).filter(
+  const userModeratedTestsAnswers = Object.values(user.value.myAnswers).filter(
     (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
   );
+
+  const userModeratedTestsAsModerator = Object.values(user.value.myTests).filter(
+    (test) => test.subType === USER_STUDY_SUBTYPES.MODERATED
+  );
+
   const cooperatorArray = [];
-  for (const test of userModeratedTests) {
+  for (const test of userModeratedTestsAnswers) {
     const testObj = await studyController.getStudy({ id: test.testDocId });
     if (testObj) {
       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
@@ -366,7 +372,25 @@ const filterModeratedSessions = async () => {
       }
     }
   }
-  filteredModeratedSessions.value = cooperatorArray;
+
+  for (const test of userModeratedTestsAsModerator) {
+    const testObj = await studyController.getStudy({ id: test.testDocId });
+    if (testObj) {
+      testObj.cooperators?.forEach(cooperatorObj => {
+       const obj = Object.assign(cooperatorObj, {
+          testTitle: testObj.testTitle,
+          testAdmin: testObj.testAdmin,
+          id: testObj.id,
+          testType: testObj.testType,
+          subType: testObj.subType,
+          evaluator: cooperatorObj.email
+        });
+        cooperatorArray.push(obj);
+      });
+    }
+  }
+  
+  filteredModeratedSessions.value = cooperatorArray
 };
 
 const reloadMyTemplates = async () => {
