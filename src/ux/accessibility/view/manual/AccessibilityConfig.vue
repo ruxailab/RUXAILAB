@@ -586,11 +586,21 @@ watch(selectedCompliance, (newLevel, oldLevel) => {
 })
 
 // Watch for route parameter changes to update testId
-watch(() => route.params, (newParams) => {
+watch(() => route.params, async (newParams) => {
   const newTestId = newParams.testId || newParams.id || ''
   if (newTestId && newTestId !== testId.value) {
-    console.log('Route params changed, updating testId:', newTestId)
+    console.log('Route params changed, updating testId from', testId.value, 'to', newTestId)
+    
+    // Reset assessment state for new test
+    await store.dispatch('Assessment/resetAssessmentState')
+    
     testId.value = newTestId
+    
+    // Reload configuration for new test
+    if (!store.state.Assessment.wcagData) {
+      await store.dispatch('Assessment/initializeAssessment')
+    }
+    await loadExistingConfiguration()
   }
 }, { immediate: true })
 
@@ -671,6 +681,9 @@ const loadExistingConfiguration = async () => {
 onMounted(async () => {
   console.log('AccessibilityConfig onMounted: route params:', route.params)
   console.log('AccessibilityConfig onMounted: testId:', testId.value)
+  
+  // Reset assessment state for new test configuration
+  await store.dispatch('Assessment/resetAssessmentState')
   
   // Always ensure WCAG data is loaded before config UI
   if (!store.state.Assessment.wcagData) {

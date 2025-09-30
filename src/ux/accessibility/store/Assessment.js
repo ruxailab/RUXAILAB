@@ -306,6 +306,26 @@ const mutations = {
     state.selectedRuleIdx = 0
     state.completedRules = []
     state.notes = {}
+    state.ruleAssessments = {}
+  },
+
+  // Reset entire assessment state (for switching between tests)
+  RESET_ASSESSMENT_STATE(state) {
+    state.selectedPrincipleIdx = 0
+    state.selectedGuidelineIdx = 0
+    state.selectedRuleIdx = 0
+    state.wcagData = null
+    state.filteredWcagData = { principles: [] } // Explicitly set empty filtered data
+    state.completedRules = []
+    state.notes = {}
+    state.ruleAssessments = {}
+    state.configuration = {
+      complianceLevel: 'AA',
+      includeNonInterference: true,
+      showExperimentalRules: false,
+      enableAutomaticSave: true,
+      updatedAt: null
+    }
   }
 
 }
@@ -320,7 +340,9 @@ const actions = {
     console.log('Received configData:', configData); // Log the received configData
     console.log('Received testId:', testId); // Log the received testId
 
-    commit('SET_CONFIGURATION', configData);
+    // Add testId to configuration for tracking
+    const configWithTestId = { ...configData, testId };
+    commit('SET_CONFIGURATION', configWithTestId);
 
     // Re-filter WCAG data if config changes
     if (configData.complianceLevel) {
@@ -351,11 +373,16 @@ const actions = {
   },
 
   // Filter WCAG data by compliance level
-  filterByComplianceLevel({ state, commit }, complianceLevel) {
+  filterByComplianceLevel({ state, commit }, payload) {
     if (!state.wcagData) return
-    // Use selectedGuidelines and selectedRulesByGuideline from config if present
-    const selectedGuidelines = state.configuration.selectedGuidelines || null
-    const selectedRulesByGuideline = state.configuration.selectedRulesByGuideline || null
+
+    // Handle both old format (string) and new format (object)
+    const complianceLevel = typeof payload === 'string' ? payload : payload.complianceLevel
+    const selectedGuidelines = typeof payload === 'object' ? payload.selectedGuidelines : null
+    const selectedRulesByGuideline = typeof payload === 'object' ? payload.selectedRulesByGuideline : null
+
+    console.log('filterByComplianceLevel called with:', { complianceLevel, selectedGuidelines, selectedRulesByGuideline })
+
     const filtered = filterWcagByComplianceLevel(
       state.wcagData,
       complianceLevel,
@@ -427,8 +454,10 @@ const actions = {
 
       console.log('Transformed data:', transformedData)
       commit('SET_WCAG_DATA', transformedData)
-      // Filter by config
-      await dispatch('filterByComplianceLevel', state.configuration.complianceLevel)
+      // DO NOT filter by default config - only filter when explicit configuration is applied
+      // This ensures no data shows when config is not set
+      commit('SET_FILTERED_WCAG_DATA', { principles: [] })
+      console.log('WCAG data initialized but NO filtering applied - awaiting configuration')
       return transformedData
     } catch (error) {
       console.error('Error initializing assessment:', error)
@@ -657,9 +686,9 @@ const actions = {
   // Add a new action to fetch configData from Firestore
   async fetchConfigData({ commit, state, rootState }, testId) {
     try {
-      // Check if configData is already available in the store
-      if (state.configuration && state.configuration.testId === testId) {
-        console.log('ConfigData already available in the store');
+      // Check if configData is already available in the store for this specific testId
+      if (state.configuration && state.configuration.testId === testId && Object.keys(state.configuration).length > 2) {
+        console.log('ConfigData already available in the store for testId:', testId);
         return state.configuration;
       }
 
@@ -673,10 +702,11 @@ const actions = {
       const configData = await assessmentController.getConfigData(userId, testId);
 
       if (configData && Object.keys(configData).length > 0) {
-        // Commit the fetched configData to the store
-        commit('SET_CONFIGURATION', configData);
-        console.log('ConfigData successfully fetched and set in store:', JSON.stringify(configData, null, 2));
-        return configData;
+        // Add testId to configuration and commit
+        const configWithTestId = { ...configData, testId };
+        commit('SET_CONFIGURATION', configWithTestId);
+        console.log('ConfigData successfully fetched and set in store:', JSON.stringify(configWithTestId, null, 2));
+        return configWithTestId;
       } else {
         console.log('No configData found in Firestore for testId:', testId);
         return null;
@@ -685,6 +715,12 @@ const actions = {
       console.error('Failed to fetch configData from Firestore:', error);
       throw error;
     }
+  },
+
+  // Reset assessment state (for switching between tests)
+  resetAssessmentState({ commit }) {
+    console.log('Resetting assessment state for new test');
+    commit('RESET_ASSESSMENT_STATE');
   },
 }
 
