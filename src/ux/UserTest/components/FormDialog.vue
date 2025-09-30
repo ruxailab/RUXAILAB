@@ -5,11 +5,16 @@
     persistent
     @update:model-value="$emit('update:dialog', $event)"
   >
-    <v-card class="dataCard">
-      <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
-        New task
-      </p>
-      <v-divider />
+    <v-card class="dataCard pa-6">
+        <v-card-title class="form-header d-flex align-center">
+      <v-icon color="primary" size="28" class="mr-3">mdi-clipboard-text-outline</v-icon>
+      <div>
+        <h2 class="text-h5 font-weight-bold">Create New Task</h2>
+        <p class="text-body-2 text-grey-darken-1 mb-0">
+          Configure your task step by step
+        </p>
+      </div>
+    </v-card-title>
       <v-card-text>
         <FormTask
           ref="form"
@@ -82,20 +87,3 @@ const reset = () => {
 </script>
 
 
-<style scoped>
-.subtitleView {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-}
-
-.dataCard {
-  background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-}
-</style>
