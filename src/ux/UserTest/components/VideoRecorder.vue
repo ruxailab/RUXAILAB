@@ -49,6 +49,7 @@ import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 
 const props = defineProps({
   testId: {
@@ -108,6 +109,12 @@ const startRecording = async () => {
       await uploadBytes(storageReference, videoBlob)
 
       recordedVideo.value = await getDownloadURL(storageReference)
+
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: props.taskIndex,
+        mediaType: MEDIA_FIELD_MAP.webcam,
+        url: recordedVideo.value
+      });
 
       currentUserTestAnswer.value.tasks[props.taskIndex].webcamRecordURL = recordedVideo.value
 
