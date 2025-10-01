@@ -50,6 +50,7 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType';
 
 const props = defineProps({
   testId: String,
@@ -103,6 +104,11 @@ const recordScreen = async () => {
       await uploadBytes(storageReference, videoBlob);
       videoUrl.value = await getDownloadURL(storageReference);
 
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: props.taskIndex,
+        mediaType: MEDIA_FIELD_MAP.screen,
+        url: videoUrl.value
+      });
       currentUserTestAnswer.value.tasks[props.taskIndex].screenRecordURL = videoUrl.value;
 
       // Stop all tracks
