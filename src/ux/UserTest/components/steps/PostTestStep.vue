@@ -25,11 +25,13 @@
               variant="outlined"
               density="comfortable"
               class="mt-2"
+              @update:model-value="updateAnswer(i, $event)"
             />
             <v-radio-group
               v-if="item.selectionField"
               v-model="localAnswers[i].answer"
               class="mt-2"
+              @update:model-value="updateAnswer(i, $event)"
             >
               <v-radio
                 v-for="(selection, j) in item.selectionFields"
@@ -80,7 +82,14 @@ const emit = defineEmits(['done', 'update:postTestAnswer']);
 
 const localAnswers = ref([...props.postTestAnswer]);
 
-watch(localAnswers, (val) => {
-  emit('update:postTestAnswer', val);
-}, { deep: true });
+const updateAnswer = (index, value) => {
+  localAnswers.value[index].answer = value;
+  emit('update:postTestAnswer', localAnswers.value);
+};
+
+watch(() => props.postTestAnswer, (newAnswers) => {
+  if (newAnswers) {
+    localAnswers.value = [...newAnswers];
+  }
+}, { deep: true, immediate: true });
 </script>
