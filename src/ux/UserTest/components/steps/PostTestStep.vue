@@ -21,7 +21,6 @@
             <v-text-field
               v-if="item.textField"
               v-model="localAnswers[i].answer"
-              :disabled="postTestCompleted"
               :placeholder="item.title"
               variant="outlined"
               density="comfortable"
@@ -30,7 +29,6 @@
             <v-radio-group
               v-if="item.selectionField"
               v-model="localAnswers[i].answer"
-              :disabled="postTestCompleted"
               class="mt-2"
             >
               <v-radio
@@ -38,7 +36,6 @@
                 :key="j"
                 :label="selection"
                 :value="selection"
-                :disabled="postTestCompleted"
                 density="compact"
               />
             </v-radio-group>
@@ -56,7 +53,6 @@
               block
               color="primary"
               variant="flat"
-              :disabled="postTestCompleted"
               @click="$emit('done')"
             >
               Done

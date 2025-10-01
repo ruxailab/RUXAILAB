@@ -44,31 +44,29 @@
     <v-row v-if="!caller && !callStarted" class="participant-controls-row" justify="center" no-gutters>
       <v-col cols="12" class="participant-controls-container">
         <div class="participant-controls-content">
-          <!-- Status Chip -->
-          <div class="mb-4">
-            <v-chip 
-              :color="roomExists ? 'success' : 'warning'" 
-              size="large" 
-              class="px-4 py-2"
-            >
-              <v-icon left size="20">
-                {{ roomExists ? 'mdi-check-circle' : 'mdi-clock-outline' }}
-              </v-icon>
-              {{ roomExists ? 'Room is ready!' : 'Waiting for moderator...' }}
-            </v-chip>
-          </div>
-
-          <!-- Join Room Button -->
+          <!-- Single Unified Join Button -->
           <v-btn 
-            color="primary" 
+            :color="roomExists ? 'primary' : 'warning'" 
             size="x-large" 
             class="join-room-btn"
             @click="answerCall"
             :disabled="!roomExists"
-            :loading="!roomExists"
+            :variant="roomExists ? 'flat' : 'outlined'"
           >
-            <v-icon left size="24">mdi-video</v-icon>
-            {{ roomExists ? 'Join Room' : 'Waiting for moderator...' }}
+            <template v-if="!roomExists">
+              <v-progress-circular
+                indeterminate
+                size="20"
+                width="2"
+                class="me-2"
+              ></v-progress-circular>
+              <v-icon left size="24">mdi-clock-outline</v-icon>
+              Waiting for moderator...
+            </template>
+            <template v-else>
+              <v-icon left size="24">mdi-video</v-icon>
+              Join Room
+            </template>
           </v-btn>
         </div>
       </v-col>
@@ -452,6 +450,33 @@
             <div class="step-content">
               <h4 class="step-title">Tasks</h4>
               <p class="step-description">User testing tasks</p>
+              
+              <!-- Task dropdown when active and moderator -->
+              <div v-if="currentStepperValue === 2 && caller && test?.testStructure?.userTasks" class="tasks-dropdown mt-3">
+                <v-select
+                  :items="taskDropdownItems"
+                  :model-value="currentTaskIndex"
+                  @update:model-value="goToSpecificTask"
+                  item-title="title"
+                  item-value="index"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  class="task-selector"
+                  placeholder="Select a task"
+                  prepend-inner-icon="mdi-format-list-bulleted"
+                >
+                  <template #item="{ props, item }">
+                    <v-list-item v-bind="props" :title="item.raw.title">
+                      <template #prepend>
+                        <v-icon size="20" :color="item.raw.index < currentTaskIndex ? 'success' : item.raw.index === currentTaskIndex ? 'primary' : 'grey'">
+                          {{ item.raw.index < currentTaskIndex ? 'mdi-check-circle' : item.raw.index === currentTaskIndex ? 'mdi-play-circle' : 'mdi-circle-outline' }}
+                        </v-icon>
+                      </template>
+                    </v-list-item>
+                  </template>
+                </v-select>
+              </div>
             </div>
           </div>
 
@@ -621,6 +646,18 @@ const currentStepperValue = computed(() => {
   return 0;
 });
 
+// Computed property for task dropdown items
+const taskDropdownItems = computed(() => {
+  if (!props.test?.testStructure?.userTasks) return [];
+  
+  return props.test.testStructure.userTasks.map((task, index) => ({
+    title: `Task ${index + 1}: ${task.name || task.title || `User Task ${index + 1}`}`,
+    index: index,
+    completed: index < (props.currentTaskIndex || 0),
+    active: index === (props.currentTaskIndex || 0)
+  }));
+});
+
 // Toggle camera on/off
 function toggleCamera() {
   if (!localStream.value) return;
@@ -716,6 +753,17 @@ function goToStep(stepType) {
   }
   
   emit('stepSelected', { globalIndex, taskIndex, stepType });
+}
+
+// Go to specific task within Tasks step
+function goToSpecificTask(taskIndex) {
+  if (!props.caller) return; // Only moderator can change tasks
+  
+  emit('stepSelected', { 
+    globalIndex: 4, // Tasks globalIndex
+    taskIndex: taskIndex,
+    stepType: 'tasks'
+  });
 }
 
 async function toggleCameraScreen() {
@@ -1550,6 +1598,26 @@ onBeforeUnmount(() => {
 .moderator-notice {
   text-align: center;
   margin-bottom: 16px;
+}
+
+.tasks-dropdown {
+  margin-top: 12px;
+}
+
+.task-selector {
+  font-size: 0.875rem;
+}
+
+.task-selector :deep(.v-field) {
+  border-radius: 8px;
+  background-color: rgba(var(--v-theme-surface), 0.8);
+}
+
+.task-selector :deep(.v-field__input) {
+  font-size: 0.875rem;
+  min-height: 36px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .panel-section {
