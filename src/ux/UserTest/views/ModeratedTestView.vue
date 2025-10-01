@@ -267,14 +267,14 @@ const roomId = computed(() => {
 });
 
 const stepperValue = computed(() => {
-  if (globalIndex.value === 0) return -1;
-  if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
-  if (globalIndex.value === 2 && taskIndex.value === 0) return 1;
-  if (globalIndex.value === 3 && taskIndex.value === 0) return 2; // 👈 PANTALLA INFORMATIVA
-  if (globalIndex.value === 4 && taskIndex.value >= 0) return 2;   // 👈 TAREAS
-  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3;
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4;
-  return 0;
+  if (globalIndex.value === 0) return 0; // Welcome step
+  if (globalIndex.value === 1 && taskIndex.value === 0) return 1; // Consent
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 2; // Pre-test
+  if (globalIndex.value === 3 && taskIndex.value === 0) return 3; // Pre-tasks (informational)
+  if (globalIndex.value === 4 && taskIndex.value >= 0) return 3;   // Tasks (still step 3)
+  if (globalIndex.value === 5) return 4; // Post-test
+  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 5; // Completion
+  return 1; // Default to first step
 });
 
 // Watchers
