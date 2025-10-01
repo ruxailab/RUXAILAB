@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-col>
+    <!-- <v-col>
       <v-row>
         <v-tooltip
           v-if="!recording"
@@ -39,7 +39,7 @@
           <span>Stop Recording</span>
         </v-tooltip>
       </v-row>
-    </v-col>
+    </v-col> -->
   </div>
 </template>
 
@@ -74,9 +74,22 @@ const recordedChunks = ref([])
 const mediaRecorder = ref(null)
 const recordedVideo = ref('')
 
-const startRecording = async () => {
-  recording.value = true
+async function hasCamera() {
   try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.some(device => device.kind === "videoinput");
+  } catch (err) {
+    console.error("Erro ao verificar dispositivos:", err);
+    return false;
+  }
+}
+
+const startRecording = async () => {
+  try {
+    const cameraAvailable = await hasCamera();
+    if (!cameraAvailable) return;
+
+    recording.value = true
     videoStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
     })
@@ -137,7 +150,7 @@ const stopRecording = () => {
   }
 }
 
-defineExpose({ stopRecording })
+defineExpose({ startRecording, stopRecording })
 </script>
 
 <style scoped>
