@@ -48,7 +48,6 @@
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType';
 
@@ -63,7 +62,6 @@ const store = useStore();
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
 
 const { t } = useI18n();
-const toast = useToast();
 
 const isCapturing = ref(false);
 const isRecording = ref(false);
@@ -117,7 +115,6 @@ const recordScreen = async () => {
       isCapturing.value = false;
 
       emit('stopShowLoading');
-      toast.success(t('alerts.genericSuccess'));
     };
 
     isRecording.value = true;

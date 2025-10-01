@@ -122,7 +122,6 @@ const startRecording = async () => {
       recording.value = false
 
       emit('stopShowLoading')
-      toast.success(t('alerts.genericSuccess'))
     }
 
     mediaRecorder.value.start()
