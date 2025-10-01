@@ -145,7 +145,7 @@
               @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 
-            <PostTestStep v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            <PostTestStep v-if="globalIndex === 5"
               :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
               :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
