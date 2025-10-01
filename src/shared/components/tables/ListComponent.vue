@@ -2,7 +2,7 @@
   <v-data-table
     :headers="headers"
     :items="items"
-    :sort-by="[{ key: 'updateDate', order: 'desc' }]"
+    :sort-by="sortBy || [{ key: 'updateDate', order: 'desc' }]"
     item-key="id"
     density="comfortable"
     class="rounded-lg"
@@ -81,6 +81,14 @@
       </div>
     </template>
 
+    <template #item.evaluator="{ item }">
+      <div class="d-flex align-center">
+        <span class="text-body-1">
+          {{ item.email }}
+        </span>
+      </div>
+    </template>
+
     <!-- Participants Column -->
     <template #item.participants="{ item }">
       <v-chip
@@ -133,6 +141,11 @@ const props = defineProps({
   type: {
     type: String,
     required: true,
+  },
+  sortBy: {
+    type: Array,
+    required: false,
+    default: null,
   },
 })
 
