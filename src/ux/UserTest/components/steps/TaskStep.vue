@@ -317,6 +317,7 @@ function stopMediaRecorders() {
 
 function handleShowPostForm(userCompleted) {
   stopMediaRecorders();
+  console.log('Stopping media recorders...');
 
   if (timerInterval) {
     clearInterval(timerInterval);

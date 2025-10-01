@@ -48,6 +48,7 @@ import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 
 const props = defineProps({
   testId: {
@@ -125,9 +126,11 @@ const startAudioRecording = async () => {
 
       recordedAudio.value = await getDownloadURL(storageReference)
 
-      console.log('evaluator audio =>', recordedAudio.value)
-
-      currentUserTestAnswer.value.tasks[props.taskIndex].audioRecordURL = recordedAudio.value
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: props.taskIndex,
+        mediaType: MEDIA_FIELD_MAP.audio,
+        url: recordedAudio.value
+      });
 
       audioStream.value.getTracks().forEach((track) => track.stop())
       audioStream.value = null
@@ -163,7 +166,11 @@ const startAudioRecording = async () => {
         const downloadURL = await getDownloadURL(storageReference)
 
         console.log('moderator audio =>', downloadURL)
-        currentUserTestAnswer.value.tasks[props.taskIndex].moderatorAudioURL = downloadURL
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: props.taskIndex,
+          mediaType: MEDIA_FIELD_MAP.moderator,
+          url: downloadURL
+        });
       }
 
       mediaRecorder.value.remote.start()
