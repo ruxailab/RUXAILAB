@@ -96,9 +96,17 @@
 
           <!-- Hide Form Elements while on Video Call Mode -->
           <div v-show="!displayVideoCallComponent">
-            <!--Step 0: Welcome -->
-            <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
-              @start="displayVideoCallComponent = true; globalIndex = 1" />
+            <!--Step 0: Welcome - Different for Moderator vs Participant -->
+            <ModeratorWelcomeStep 
+              v-if="globalIndex === 0 && isUserTestAdmin" 
+              :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" 
+            />
+            <WelcomeStep 
+              v-else-if="globalIndex === 0 && !isUserTestAdmin" 
+              :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" 
+            />
 
             <!--Step 1: Consent -->
             <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
@@ -198,6 +206,7 @@ import { useStore } from 'vuex';
 import { onBeforeUnmount } from 'vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
+import ModeratorWelcomeStep from '@/ux/UserTest/components/steps/ModeratorWelcomeStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
