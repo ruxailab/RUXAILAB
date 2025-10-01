@@ -1,7 +1,8 @@
 <template>
-  <v-container fluid class="video-call-container fill-height mt-6" :class="{ 'panel-open': showSidePanel }">
+  <v-container fluid class="video-call-container mt-6" :class="{ 'panel-open': showSidePanel }">
 
-    <v-row class="video-row fill-height justify-center" no-gutters>
+    <!-- Videos Row -->
+    <v-row class="video-row justify-center" no-gutters>
       <v-col cols="12" class="d-flex justify-center align-center">
         <div class="videos-container">
           <!-- Local Video -->
@@ -39,7 +40,39 @@
       </v-col>
     </v-row>
 
+    <!-- Participant Join Controls Row (completely separate from videos) -->
+    <v-row v-if="!caller && !callStarted" class="participant-controls-row" justify="center" no-gutters>
+      <v-col cols="12" class="participant-controls-container">
+        <div class="participant-controls-content">
+          <!-- Status Chip -->
+          <div class="mb-4">
+            <v-chip 
+              :color="roomExists ? 'success' : 'warning'" 
+              size="large" 
+              class="px-4 py-2"
+            >
+              <v-icon left size="20">
+                {{ roomExists ? 'mdi-check-circle' : 'mdi-clock-outline' }}
+              </v-icon>
+              {{ roomExists ? 'Room is ready!' : 'Waiting for moderator...' }}
+            </v-chip>
+          </div>
 
+          <!-- Join Room Button -->
+          <v-btn 
+            color="primary" 
+            size="x-large" 
+            class="join-room-btn"
+            @click="answerCall"
+            :disabled="!roomExists"
+            :loading="!roomExists"
+          >
+            <v-icon left size="24">mdi-video</v-icon>
+            {{ roomExists ? 'Join Room' : 'Waiting for moderator...' }}
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
 
     <!-- Fixed Bottom Control Bar -->
     <div class="bottom-control-bar">
@@ -104,6 +137,57 @@
         
         <!-- Right side - panel toggles -->
         <div class="control-bar-right">
+          <!-- Open Room button (for moderator) -->
+          <v-tooltip v-if="caller && !callStarted" location="top">
+            <template #activator="{ props }">
+              <v-btn 
+                v-bind="props"
+                color="success"
+                class="control-btn control-btn-primary me-2" 
+                size="large"
+                @click="startCall"
+              >
+                <v-icon left size="20">mdi-video-plus</v-icon>
+                Open Room
+              </v-btn>
+            </template>
+            <span>Start the video call session</span>
+          </v-tooltip>
+
+          <!-- End Call button (for moderator when call is active) -->
+          <v-tooltip v-if="caller && callStarted" location="top">
+            <template #activator="{ props }">
+              <v-btn 
+                v-bind="props"
+                color="error"
+                class="control-btn control-btn-danger me-2" 
+                size="large"
+                @click="endCall"
+              >
+                <v-icon left size="20">mdi-phone-hangup</v-icon>
+                End Call
+              </v-btn>
+            </template>
+            <span>End the video call session</span>
+          </v-tooltip>
+
+          <!-- End Call button (for participant when call is active) -->
+          <v-tooltip v-if="!caller && callStarted" location="top">
+            <template #activator="{ props }">
+              <v-btn 
+                v-bind="props"
+                color="error"
+                class="control-btn control-btn-danger me-2" 
+                size="large"
+                @click="endCall"
+              >
+                <v-icon left size="20">mdi-phone-hangup</v-icon>
+                Leave Call
+              </v-btn>
+            </template>
+            <span>Leave the video call session</span>
+          </v-tooltip>
+
           <!-- Stepper menu button -->
           <v-tooltip location="top">
             <template #activator="{ props }">
@@ -163,45 +247,12 @@
           
           <!-- Connection controls when call is not started -->
           <div v-if="!callStarted" class="session-controls">
-            <!-- Open Room button (for caller) -->
-            <v-btn 
-              v-if="caller"
-              color="primary" 
-              size="large" 
-              block 
-              class="mb-3"
-              @click="startCall"
-            >
-              <v-icon left>mdi-video-plus</v-icon>
-              Open Room
-            </v-btn>
-
-            <!-- Join Room button (for participant) -->
-            <v-btn 
-              v-else
-              color="primary" 
-              size="large" 
-              block 
-              class="mb-3"
-              @click="answerCall"
-              :disabled="!roomExists"
-            >
-              <v-icon left>mdi-video</v-icon>
-              {{ roomExists ? 'Join Room' : 'Waiting for moderator...' }}
-            </v-btn>
-
-            <!-- Status message -->
-            <div class="status-message">
-              <v-chip 
-                :color="caller ? 'blue' : (roomExists ? 'green' : 'orange')" 
-                size="small" 
-                class="mb-2"
-              >
-                <v-icon left size="16">
-                  {{ caller ? 'mdi-account-star' : (roomExists ? 'mdi-check' : 'mdi-clock') }}
-                </v-icon>
-                {{ caller ? 'Moderador' : (roomExists ? 'Listo para unirse' : 'Esperando...') }}
-              </v-chip>
+            <!-- Note: Join Room controls moved to main interface for better visibility -->
+            <div v-if="!caller" class="participant-info">
+              <p class="text-body-2 mb-0">
+                <v-icon left size="16">mdi-information</v-icon>
+                Join room controls are now in the main interface above
+              </p>
             </div>
           </div>
 
@@ -458,6 +509,54 @@
       class="panel-overlay"
       @click="showSidePanel = false; showStepperPanel = false"
     ></div>
+
+    <!-- Join Room Dialog for Participants -->
+    <v-dialog
+      v-model="showJoinDialog"
+      max-width="400"
+      persistent
+    >
+      <v-card class="rounded-xl pa-6 text-center">
+        <v-avatar
+          color="primary"
+          size="80"
+          class="mb-4"
+        >
+          <v-icon size="40" color="white">mdi-video-plus</v-icon>
+        </v-avatar>
+        
+        <v-card-title class="text-h6 font-weight-bold mb-2">
+          Video Call Started
+        </v-card-title>
+        
+        <v-card-text class="text-body-1 mb-4">
+          The moderator has started the video call. Would you like to join now?
+        </v-card-text>
+        
+        <v-card-actions class="d-flex flex-column pa-0">
+          <v-btn
+            color="primary"
+            size="large"
+            block
+            variant="flat"
+            class="mb-2"
+            @click="joinRoomFromDialog"
+          >
+            <v-icon left>mdi-video</v-icon>
+            Join Video Call
+          </v-btn>
+          
+          <v-btn
+            color="grey"
+            size="small"
+            variant="text"
+            @click="dismissJoinDialog"
+          >
+            Maybe later
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -489,6 +588,7 @@ const localStream = ref(null);       // user's local media stream
 const peerConnection = ref(null);    // WebRTC peer connection
 const callStarted = ref(false);      // call status
 const roomExists = ref(false);
+const showJoinDialog = ref(false);   // show join room dialog for participants
 
 const isSharingScreen = ref(false);
 const screenStream = ref(null);
@@ -570,6 +670,17 @@ function toggleStepperPanel() {
 // Proceed to next step
 function proceedToNextStep() {
   emit('proceedToNextStep');
+}
+
+// Join room from dialog
+function joinRoomFromDialog() {
+  showJoinDialog.value = false;
+  answerCall();
+}
+
+// Dismiss join dialog
+function dismissJoinDialog() {
+  showJoinDialog.value = false;
 }
 
 // Go to specific step
@@ -741,7 +852,14 @@ async function init() {
   // Listen for caller disconnect (for callee)
   if (!props.caller) {
     onValue(dbRef(database, `calls/${props.roomId}`), (snapshot) => {
+      const wasRoomAvailable = roomExists.value;
       roomExists.value = snapshot.exists();
+      
+      // Show dialog when room becomes available for the first time
+      if (!wasRoomAvailable && roomExists.value && !callStarted.value) {
+        showJoinDialog.value = true;
+      }
+      
       if (!snapshot.exists() && callStarted.value) {
         console.log('Room removed by caller, ending connection...');
 
@@ -753,6 +871,7 @@ async function init() {
         peerConnection.value = null;
         localStream.value = null;
         callStarted.value = false;
+        showJoinDialog.value = false; // Hide dialog when room is removed
       }
     });
   }
@@ -915,7 +1034,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .video-call-container {
   display: flex;
-
+  flex-direction: column;
+  min-height: auto;
   transition: margin-right 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
@@ -927,11 +1047,12 @@ onBeforeUnmount(() => {
 }
 
 .video-row {
-  flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  min-height: 400px;
+  flex: 0 0 auto; /* Don't grow to fill height */
 }
 
 .videos-container {
@@ -1069,7 +1190,100 @@ onBeforeUnmount(() => {
   transform: scale(1.05) !important;
 }
 
+.control-btn-primary {
+  width: auto !important;
+  height: 48px !important;
+  border-radius: 24px !important;
+  padding: 0 20px !important;
+  background: #4caf50 !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
+}
 
+.control-btn-primary:hover {
+  background: #45a049 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4) !important;
+}
+
+.control-btn-danger {
+  width: auto !important;
+  height: 48px !important;
+  border-radius: 24px !important;
+  padding: 0 20px !important;
+  background: #f44336 !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3) !important;
+}
+
+.control-btn-danger:hover {
+  background: #d32f2f !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4) !important;
+}
+
+/* Participant controls in main interface - completely separate row */
+.participant-controls-row {
+  margin-top: 40px;
+  margin-bottom: 24px;
+  min-height: 120px;
+  flex: 0 0 auto; /* Fixed height, don't grow */
+  clear: both; /* Ensure it clears any floating elements */
+  position: relative; /* Ensure proper positioning context */
+  width: 100%;
+}
+
+.participant-controls-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 !important;
+  width: 100%;
+}
+
+.participant-controls-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  border: 2px solid rgba(25, 118, 210, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.join-room-btn {
+  width: 100%;
+  max-width: 300px;
+  height: 56px !important;
+  border-radius: 28px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.join-room-btn:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4) !important;
+}
+
+.join-room-btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
 
 /* Video container for overlays */
 .video-container {
