@@ -82,10 +82,46 @@
             </template>
             <span>{{ isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone' }}</span>
           </v-tooltip>
+
+          <!-- Screen share button -->
+          <v-tooltip location="top">
+            <template #activator="{ props }">
+              <v-btn 
+                v-bind="props"
+                :class="{ 'control-btn-active': isSharingScreen, 'control-btn-enabled': !isSharingScreen }" 
+                class="control-btn" 
+                icon 
+                size="large"
+                @click="handleScreenShare"
+              >
+                <v-icon size="28">{{ isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot' }}</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ isSharingScreen ? 'Stop sharing screen' : 'Share screen' }}</span>
+          </v-tooltip>
+
         </div>
         
-        <!-- Right side - panel toggle -->
+        <!-- Right side - panel toggles -->
         <div class="control-bar-right">
+          <!-- Stepper menu button -->
+          <v-tooltip location="top">
+            <template #activator="{ props }">
+              <v-btn 
+                v-bind="props"
+                :class="{ 'control-btn-active': showStepperPanel, 'control-btn-enabled': !showStepperPanel }" 
+                class="control-btn" 
+                icon 
+                size="large"
+                @click="toggleStepperPanel"
+              >
+                <v-icon size="28">mdi-format-list-numbered</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
+          </v-tooltip>
+
+          <!-- Side panel toggle button -->
           <v-tooltip location="top">
             <template #activator="{ props }">
               <v-btn 
@@ -96,7 +132,7 @@
                 size="large"
                 @click="toggleSidePanel"
               >
-                <v-icon size="28">mdi-dock-right</v-icon>
+                <v-icon size="28">mdi-account-group</v-icon>
               </v-btn>
             </template>
             <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
@@ -273,17 +309,160 @@
       </div>
     </div>
 
-    <!-- Overlay for panel (mobile) -->
+    <!-- Stepper Panel -->
+    <div class="stepper-panel" :class="{ 'stepper-panel-open': showStepperPanel }">
+      <div class="stepper-panel-header">
+        <h3>Test Progress</h3>
+        <v-btn 
+          icon 
+          size="small" 
+          variant="text" 
+          @click="toggleStepperPanel"
+          class="close-btn"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </div>
+      
+      <div class="stepper-panel-content">
+        <!-- Moderator indicator -->
+        <div v-if="!caller" class="moderator-notice">
+          <v-chip size="small" color="orange" class="mb-4">
+            <v-icon left size="16">mdi-information</v-icon>
+            Solo el moderador puede cambiar los pasos
+          </v-chip>
+        </div>
+        
+        <!-- Custom Stepper -->
+        <div class="custom-stepper">
+          <!-- Consent Step -->
+          <div 
+            class="step-item"
+            :class="{ 
+              'step-active': currentStepperValue === 0, 
+              'step-completed': currentStepperValue >= 1,
+              'step-clickable': caller 
+            }"
+            @click="caller && goToStep('consent')"
+          >
+            <div class="step-indicator">
+              <div class="step-number">
+                <v-icon v-if="currentStepperValue >= 1" color="white" size="16">mdi-check</v-icon>
+                <span v-else>1</span>
+              </div>
+              <div class="step-line" v-if="currentStepperValue >= 1"></div>
+            </div>
+            <div class="step-content">
+              <h4 class="step-title">Consent</h4>
+              <p class="step-description">User consent and agreement</p>
+            </div>
+          </div>
+
+          <!-- Pre-test Step -->
+          <div 
+            class="step-item"
+            :class="{ 
+              'step-active': currentStepperValue === 1, 
+              'step-completed': currentStepperValue >= 2,
+              'step-clickable': caller 
+            }"
+            @click="caller && goToStep('pretest')"
+          >
+            <div class="step-indicator">
+              <div class="step-number">
+                <v-icon v-if="currentStepperValue >= 2" color="white" size="16">mdi-check</v-icon>
+                <span v-else>2</span>
+              </div>
+              <div class="step-line" v-if="currentStepperValue >= 2"></div>
+            </div>
+            <div class="step-content">
+              <h4 class="step-title">Pre-test</h4>
+              <p class="step-description">Initial questionnaire</p>
+            </div>
+          </div>
+
+          <!-- Tasks Step -->
+          <div 
+            class="step-item"
+            :class="{ 
+              'step-active': currentStepperValue === 2, 
+              'step-completed': currentStepperValue >= 3,
+              'step-clickable': caller 
+            }"
+            @click="caller && goToStep('tasks')"
+          >
+            <div class="step-indicator">
+              <div class="step-number">
+                <v-icon v-if="currentStepperValue >= 3" color="white" size="16">mdi-check</v-icon>
+                <span v-else>3</span>
+              </div>
+              <div class="step-line" v-if="currentStepperValue >= 3"></div>
+            </div>
+            <div class="step-content">
+              <h4 class="step-title">Tasks</h4>
+              <p class="step-description">User testing tasks</p>
+            </div>
+          </div>
+
+          <!-- Post-test Step -->
+          <div 
+            class="step-item"
+            :class="{ 
+              'step-active': currentStepperValue === 3, 
+              'step-completed': currentStepperValue >= 4,
+              'step-clickable': caller 
+            }"
+            @click="caller && goToStep('posttest')"
+          >
+            <div class="step-indicator">
+              <div class="step-number">
+                <v-icon v-if="currentStepperValue >= 4" color="white" size="16">mdi-check</v-icon>
+                <span v-else>4</span>
+              </div>
+              <div class="step-line" v-if="currentStepperValue >= 4"></div>
+            </div>
+            <div class="step-content">
+              <h4 class="step-title">Post-test</h4>
+              <p class="step-description">Final questionnaire</p>
+            </div>
+          </div>
+
+          <!-- Completion Step -->
+          <div 
+            class="step-item"
+            :class="{ 
+              'step-active': currentStepperValue === 4, 
+              'step-completed': currentStepperValue === 5,
+              'step-clickable': caller 
+            }"
+            @click="caller && goToStep('completion')"
+          >
+            <div class="step-indicator">
+              <div class="step-number">
+                <v-icon v-if="currentStepperValue === 5" color="white" size="16">mdi-check</v-icon>
+                <span v-else>5</span>
+              </div>
+            </div>
+            <div class="step-content">
+              <h4 class="step-title">Completion</h4>
+              <p class="step-description">Test finished</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay for panels (mobile) -->
     <div 
-      v-if="showSidePanel" 
+      v-if="showSidePanel || showStepperPanel" 
       class="panel-overlay"
-      @click="toggleSidePanel"
+      @click="showSidePanel = false; showStepperPanel = false"
     ></div>
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { database } from '@/app/plugins/firebase/index';
 import { ref as dbRef, set, onValue, push, off, get, onDisconnect } from 'firebase/database';
 
@@ -291,11 +470,16 @@ import { ref as dbRef, set, onValue, push, off, get, onDisconnect } from 'fireba
 const props = defineProps({
   caller: Boolean, // whether the user is the caller
   roomId: String,  // unique room identifier
+  currentGlobalIndex: Number,
+  currentTaskIndex: Number,
+  test: Object,
+  localTestAnswer: Object,
 });
 
 const emit = defineEmits([
     'setRemoteStream',
-    'proceedToNextStep'
+    'proceedToNextStep',
+    'stepSelected'
 ]);
 
 const localVideo = ref(null);
@@ -315,6 +499,27 @@ const isMicrophoneEnabled = ref(true);
 
 // Side panel control
 const showSidePanel = ref(false);
+const showStepperPanel = ref(false);
+
+// Computed properties for stepper
+const hasEyeTracking = computed(() => {
+  return props.test?.testStructure?.userTasks?.some(task => task.hasEye) || false;
+});
+
+const currentStepperValue = computed(() => {
+  const globalIndex = props.currentGlobalIndex;
+  const taskIndex = props.currentTaskIndex || 0;
+
+  if (globalIndex === 0) return -1; // Welcome
+  if (globalIndex === 1 && taskIndex === 0) return 0; // Consent
+  if (globalIndex === 2 && taskIndex === 0) return 1; // PreTest
+  if (globalIndex === 3 && taskIndex === 0) return 2; // PreTasks (informational screen)
+  if (globalIndex === 4 && taskIndex >= 0) return 2;  // Tasks (same stepper value as PreTasks)
+  if (globalIndex === 5 && !props.localTestAnswer?.postTestCompleted) return 3; // PostTest
+  if (globalIndex === 6 && props.localTestAnswer?.postTestCompleted) return 4; // Completion
+  
+  return 0;
+});
 
 // Toggle camera on/off
 function toggleCamera() {
@@ -341,11 +546,65 @@ function toggleMicrophone() {
 // Toggle side panel
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value;
+  // Close stepper panel if side panel is being opened
+  if (showSidePanel.value) {
+    showStepperPanel.value = false;
+  }
+}
+
+// Handle screen share (placeholder without logic)
+function handleScreenShare() {
+  console.log('Screen share button clicked');
+  // TODO: Implement screen share logic
+}
+
+// Toggle stepper panel
+function toggleStepperPanel() {
+  showStepperPanel.value = !showStepperPanel.value;
+  // Close side panel if stepper panel is being opened
+  if (showStepperPanel.value) {
+    showSidePanel.value = false;
+  }
 }
 
 // Proceed to next step
 function proceedToNextStep() {
   emit('proceedToNextStep');
+}
+
+// Go to specific step
+function goToStep(stepType) {
+  if (!props.caller) return; // Only moderator can change steps
+  
+  let globalIndex = 0;
+  let taskIndex = 0;
+  
+  switch (stepType) {
+    case 'consent':
+      globalIndex = 1;
+      taskIndex = 0;
+      break;
+    case 'pretest':
+      globalIndex = 2;
+      taskIndex = 0;
+      break;
+    case 'tasks':
+      globalIndex = 4; // Skip PreTasks (globalIndex 3) and go directly to Tasks
+      taskIndex = 0;
+      break;
+    case 'posttest':
+      globalIndex = 5;
+      taskIndex = 0;
+      break;
+    case 'completion':
+      globalIndex = 6;
+      taskIndex = 0;
+      break;
+    default:
+      return;
+  }
+  
+  emit('stepSelected', { globalIndex, taskIndex, stepType });
 }
 
 async function toggleCameraScreen() {
@@ -742,11 +1001,19 @@ onBeforeUnmount(() => {
   margin: 0 auto;
 }
 
-.control-bar-left,
-.control-bar-right {
+.control-bar-left {
   flex: 0 0 120px;
   display: flex;
   justify-content: center;
+}
+
+.control-bar-right {
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .control-buttons-container {
@@ -907,6 +1174,170 @@ onBeforeUnmount(() => {
   padding: 24px;
 }
 
+/* Stepper Panel */
+.stepper-panel {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+  z-index: 1600;
+  transition: right 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.stepper-panel-open {
+  right: 0;
+}
+
+.stepper-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f5f5f5;
+}
+
+.stepper-panel-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.stepper-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Custom Stepper Styles */
+.custom-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.step-clickable {
+  cursor: pointer;
+}
+
+.step-clickable:hover {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+  border-color: rgba(var(--v-theme-primary), 0.2);
+  transform: translateX(4px);
+}
+
+.step-active {
+  background-color: rgba(var(--v-theme-primary), 0.1);
+  border-color: rgba(var(--v-theme-primary), 0.3);
+}
+
+.step-completed {
+  background-color: rgba(var(--v-theme-success), 0.05);
+  border-color: rgba(var(--v-theme-success), 0.2);
+}
+
+.step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 16px;
+  position: relative;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background-color: #e0e0e0;
+  color: #666;
+  border: 3px solid #e0e0e0;
+}
+
+.step-active .step-number {
+  background-color: rgba(var(--v-theme-primary), 1);
+  color: white;
+  border-color: rgba(var(--v-theme-primary), 1);
+  box-shadow: 0 0 0 4px rgba(var(--v-theme-primary), 0.2);
+}
+
+.step-completed .step-number {
+  background-color: rgba(var(--v-theme-success), 1);
+  color: white;
+  border-color: rgba(var(--v-theme-success), 1);
+}
+
+.step-line {
+  width: 3px;
+  height: 30px;
+  background-color: rgba(var(--v-theme-success), 1);
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+.step-content {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.step-title {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.step-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.step-active .step-title {
+  color: rgba(var(--v-theme-primary), 1);
+}
+
+.step-completed .step-title {
+  color: rgba(var(--v-theme-success), 1);
+}
+
+.step-clickable:hover .step-title {
+  color: rgba(var(--v-theme-primary), 1);
+}
+
+.step-clickable:hover .step-number {
+  transform: scale(1.1);
+  box-shadow: 0 2px 12px rgba(var(--v-theme-primary), 0.3);
+}
+
+.moderator-notice {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
 .panel-section {
   margin-bottom: 32px;
 }
@@ -983,13 +1414,23 @@ onBeforeUnmount(() => {
     right: -100%;
   }
   
+  .stepper-panel {
+    width: 100%;
+    right: -100%;
+  }
+  
   .panel-overlay {
     display: block;
   }
   
-  .control-bar-left,
+  .control-bar-left {
+    flex: 0 0 60px;
+  }
+  
   .control-bar-right {
     flex: 0 0 60px;
+    flex-direction: row;
+    gap: 12px;
   }
   
   .bottom-control-bar {
