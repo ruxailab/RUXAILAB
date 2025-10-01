@@ -45,7 +45,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -76,7 +75,6 @@ const props = defineProps({
 const emit = defineEmits(['recordingStarted', 'showLoading', 'stopShowLoading'])
 
 const store = useStore()
-const toast = useToast()
 const { t } = useI18n()
 
 // Reactive state
@@ -137,7 +135,6 @@ const startAudioRecording = async () => {
 
       emit('recordingStarted', false)
       emit('stopShowLoading')
-      toast.success(t('alerts.genericSuccess'))
       recordingAudio.value = false
     }
 
