@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-col>
+    <!-- <v-col>
       <v-row>
         <v-tooltip
           v-if="!isCapturing"
@@ -40,7 +40,7 @@
           <span>{{ isRecording ? 'Stop Recording' : 'Record Screen' }}</span>
         </v-tooltip>
       </v-row>
-    </v-col>
+    </v-col> -->
   </div>
 </template>
 
@@ -76,7 +76,7 @@ const captureScreen = async () => {
       cursor: true,
     });
     isCapturing.value = true;
-    recordScreen();
+    await recordScreen();
   } catch (err) {
     console.error(err);
   }
@@ -129,7 +129,7 @@ const stopRecording = () => {
   }
 };
 
-defineExpose({ stopRecording });
+defineExpose({ captureScreen, stopRecording });
 </script>
 
 <style scoped></style>

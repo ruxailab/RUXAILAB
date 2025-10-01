@@ -57,49 +57,10 @@
               <TipButton :task="task" />
             </v-col>
             <v-col
-              v-if="task?.hasAudioRecord !== false"
-              cols="auto"
-            >
-              <AudioRecorder
-                ref="audioRecorder"
-                :test-id="testId"
-                :task-index="taskIndex"
-                :remote-stream="remoteStream"
-                :should-record-moderator="shouldRecordModerator"
-                @show-loading="$emit('show-loading')"
-                @stop-show-loading="$emit('stop-show-loading')"
-                @recording-started="$emit('recording-started', $event)"
-              />
-            </v-col>
-            <v-col
               v-if="isVisualizerVisible"
               cols="auto"
             >
               <AudioVisualizer />
-            </v-col>
-            <v-col
-              v-if="task?.hasCamRecord !== false"
-              cols="auto"
-            >
-              <VideoRecorder
-                ref="videoRecorder"
-                :test-id="testId"
-                :task-index="taskIndex"
-                @show-loading="$emit('show-loading')"
-                @stop-show-loading="$emit('stop-show-loading')"
-              />
-            </v-col>
-            <v-col
-              v-if="task?.hasScreenRecord !== false"
-              cols="auto"
-            >
-              <ScreenRecorder
-                ref="screenRecorder"
-                :test-id="testId"
-                :task-index="taskIndex"
-                @show-loading="$emit('show-loading')"
-                @stop-show-loading="$emit('stop-show-loading')"
-              />
             </v-col>
             <v-spacer />
             <v-col cols="auto">
@@ -198,6 +159,33 @@
           autoplay
         />
       </div>
+
+      <AudioRecorder
+        ref="audioRecorder"
+        :test-id="testId"
+        :task-index="taskIndex"
+        :remote-stream="remoteStream"
+        :should-record-moderator="shouldRecordModerator"
+        @show-loading="$emit('show-loading')"
+        @stop-show-loading="$emit('stop-show-loading')"
+        @recording-started="$emit('recording-started', $event)"
+      />
+
+      <ScreenRecorder
+        ref="screenRecorder"
+        :test-id="testId"
+        :task-index="taskIndex"
+        @show-loading="$emit('show-loading')"
+        @stop-show-loading="$emit('stop-show-loading')"
+      />
+
+      <VideoRecorder
+        ref="videoRecorder"
+        :test-id="testId"
+        :task-index="taskIndex"
+        @show-loading="$emit('show-loading')"
+        @stop-show-loading="$emit('stop-show-loading')"
+      />
     </template>
   </ShowInfo>
 </template>
@@ -256,6 +244,7 @@ onBeforeUnmount(() => {
     }
 });
 const store = useStore();
+
 const susAnswersFromStore = computed(() => {
     return store.state.tasks?.[props.taskIndex]?.susAnswers || [];
 });
@@ -288,7 +277,8 @@ function updateElapsedTime() {
     elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function startTask() {
+async function startTask() {
+    await startMediaRecorders();
     stage.value = 2;
     taskStartTime = Date.now();
     timerInterval = setInterval(updateElapsedTime, 1000);
@@ -313,6 +303,12 @@ function stopMediaRecorders() {
   audioRecorder.value?.stopAudioRecording();
   videoRecorder.value?.stopRecording();
   screenRecorder.value?.stopRecording();
+}
+
+async function startMediaRecorders() {
+  await audioRecorder.value?.startAudioRecording();
+  await screenRecorder.value?.captureScreen();
+  await videoRecorder.value?.startRecording();
 }
 
 function handleShowPostForm(userCompleted) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-col>
+    <!-- <v-col>
       <v-row>
         <v-tooltip
           v-if="!recordingAudio"
@@ -38,14 +38,13 @@
           <span>Stop Audio Record</span>
         </v-tooltip>
       </v-row>
-    </v-col>
+    </v-col> -->
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 
@@ -75,7 +74,6 @@ const props = defineProps({
 const emit = defineEmits(['recordingStarted', 'showLoading', 'stopShowLoading'])
 
 const store = useStore()
-const { t } = useI18n()
 
 // Reactive state
 const recordingAudio = ref(false)
@@ -87,12 +85,25 @@ const recordedAudio = ref('')
 // Computed properties
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
 
+async function hasAudio() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.some(device => device.kind === "audioinput");
+  } catch (err) {
+    console.error("Erro ao verificar dispositivos:", err);
+    return false;
+  }
+}
+
 // Methods
 const startAudioRecording = async () => {
-  recordingAudio.value = true
-  emit('recordingStarted', true)
-
   try {
+    const audioAvailable = await hasAudio();
+    if (!audioAvailable) return;
+
+    recordingAudio.value = true
+    emit('recordingStarted', true)
+
     audioStream.value = await navigator.mediaDevices.getUserMedia({
       audio: true
     })
@@ -186,5 +197,5 @@ const stopAudioRecording = () => {
   mediaRecorder.value.remote?.stop()
 }
 
-defineExpose({ stopAudioRecording })
+defineExpose({ startAudioRecording, stopAudioRecording })
 </script>
