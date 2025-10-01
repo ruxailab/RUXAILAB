@@ -48,14 +48,12 @@
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
-            <!-- Proceed Button -->
-            <v-row class="ma-0" justify="center"> 
-              <v-btn variant="outlined" class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
-                Proceed to next step
-              </v-btn>
-            </v-row>
-           
-            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
+            <VideoCall 
+              :roomId="roomId" 
+              :caller="isUserTestAdmin" 
+              @setRemoteStream="remoteStream = $event"
+              @proceedToNextStep="proceedToNextStep"
+            />
           </div>
 
           <!-- Hide Form Elements while on Video Call Mode -->
