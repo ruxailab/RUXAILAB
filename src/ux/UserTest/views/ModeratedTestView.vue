@@ -49,12 +49,12 @@
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <!-- Proceed Button -->
-            <v-row class="ma-0" justify="center"> 
+            <v-row class="ma-0" justify="center">
               <v-btn variant="outlined" class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
                 Proceed to next step
               </v-btn>
             </v-row>
-           
+
             <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
           </div>
 
@@ -172,6 +172,7 @@ import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
+import { MEDIA_FIELD_MAP } from "@/shared/constants/mediasType";
 
 const store = useStore();
 const router = useRouter();
@@ -201,6 +202,7 @@ const submitDialog = ref(false);
 const remoteStream = ref(null);
 
 // Computed properties
+const mediaUrls = computed(() => store.getters.mediaUrls);
 const test = computed(() => store.getters.test);
 const testId = computed(() => store.getters.test?.id || null);
 const user = computed(() => {
@@ -310,6 +312,8 @@ const handleSubmit = async () => {
 
 const saveAnswer = async () => {
   try {
+    attachMediaToTasks(localTestAnswer, mediaUrls.value);
+
     localTestAnswer.fullName = fullName.value;
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
@@ -333,6 +337,21 @@ const saveAnswer = async () => {
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
   }
 };
+
+const attachMediaToTasks = (answer, mediaUrls) => {
+  if (!answer?.tasks?.length) return
+
+  for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
+    const task = answer.tasks[taskIndex]
+    if (!task) continue
+
+    for (const type in medias) {
+      const field = MEDIA_FIELD_MAP?.[type] || type
+      const url = medias[type]
+      if (url != null) task[field] = url
+    }
+  }
+}
 
 const setTestAnswer = async () => {
   loggedIn.value = true;
@@ -679,7 +698,7 @@ onMounted(async () => {
         toast.warning("Your session doesn't have a scheduled date");
         router.push('/managerview/' + test.value.id);
         return;
-      }    
+      }
     }
   } else {
     toast.info('Use a session link to access the test');
