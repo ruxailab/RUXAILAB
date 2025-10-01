@@ -750,6 +750,13 @@ onMounted(async () => {
   }
 
   globalIndex.value = 0;
+  
+  // Initialize localTestAnswer with existing data from currentUserTestAnswer
+  if (currentUserTestAnswer.value && Object.keys(currentUserTestAnswer.value).length > 0) {
+    Object.assign(localTestAnswer, currentUserTestAnswer.value);
+    console.log('LocalTestAnswer initialized with existing data:', localTestAnswer);
+  }
+  
   await mappingSteps();
 });
 
