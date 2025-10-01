@@ -4,7 +4,7 @@
       <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
-    
+
 
     <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
@@ -301,6 +301,7 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue';
 import { db } from '@/app/plugins/firebase';
 import IrisTracker from '../components/IrisTracker.vue';
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType';
 
 const fullName = ref('');
 const logined = ref(null);
@@ -326,7 +327,7 @@ const timerComponent = computed(() => {
   return taskStepComponent.value?.$refs?.timerComponent || null;
 });
 
-//  Eye tracking web gazer testing 
+//  Eye tracking web gazer testing
 
 const isTracking = ref(false)
 const isRecording = ref(false)
@@ -335,19 +336,21 @@ const eyeCalibrationStepDone = ref(false)
 const calibrationCompleted = ref(false)
 const calibrationInProgress = ref(false)
 
-//  Eye tracking web gazer testing 
+//  Eye tracking web gazer testing
 
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
 
 const store = useStore();
 const router = useRouter();
 
+const mediaUrls = computed(() => store.getters.mediaUrls);
 const test = computed(() => store.getters.test);
 const testId = computed(() => store.getters.test?.id || null);
 const user = computed(() => {
   if (store.getters.user) setExistUser();
   return store.getters.user;
 });
+
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer || {});
 const showSaveBtn = computed(() => !localTestAnswer.submitted);
 
@@ -363,10 +366,10 @@ const isStartTestDisabled = computed(() => {
   if (!test.value) return true;
 
   // Check if testStructure is empty array or doesn't exist
-  const hasValidTasks = test.value.testStructure && 
-                       Array.isArray(test.value.testStructure.userTasks) && 
+  const hasValidTasks = test.value.testStructure &&
+                       Array.isArray(test.value.testStructure.userTasks) &&
                        test.value.testStructure.userTasks.length > 0;
-  
+
   if (!hasValidTasks) return true;
 
   // Check if status is different from 'active'
@@ -413,15 +416,10 @@ function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
 
-function saveScreenRecording(data) {
-  localTestAnswer.tasks[taskIndex.value].screenRecordingData.push(data)
-}
-
 const openCalibration = () => {
   window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
   calibrationInProgress.value = true;
   console.log('calibrationInProgress.value', calibrationInProgress.value);
-
 }
 
 const closeCalibration = () => {
@@ -450,10 +448,12 @@ function saveIrisDataIntoTask() {
   } else {
     toggleTracking(false);
   }
-} 
+}
 
 const saveAnswer = async () => {
   try {
+    attachMediaToTasks(localTestAnswer, mediaUrls.value);
+
     localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
     if (user.value && user.value?.email) {
@@ -469,6 +469,7 @@ const saveAnswer = async () => {
       });
     } else {
       Object.assign(currentUserTestAnswer.value, localTestAnswer);
+      console.log('Generated userDocId for anonymous user:', currentUserTestAnswer.value);
       await store.dispatch('saveTestAnswer', {
         data: currentUserTestAnswer.value,
         answerDocId: test.value.answersDocId,
@@ -496,6 +497,21 @@ const handleSubmit = () => {
   dialog.value = false;
   submitAnswer();
 };
+
+const attachMediaToTasks = (answer, mediaUrls) => {
+  if (!answer?.tasks?.length) return
+
+  for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
+    const task = answer.tasks[taskIndex]
+    if (!task) continue
+
+    for (const type in medias) {
+      const field = MEDIA_FIELD_MAP?.[type] || type
+      const url = medias[type]
+      if (url != null) task[field] = url
+    }
+  }
+}
 
 const startTest = async () => {
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
