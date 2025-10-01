@@ -46,13 +46,51 @@
             </v-col>
           </v-row>
 
+          <!-- Stepper secundario para tareas -->
+          <v-row
+            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            class="task-stepper-row"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              md="8"
+              lg="6"
+              class="d-flex justify-center"
+            >
+              <v-stepper
+                :model-value="taskIndex + 1"
+                class="task-stepper rounded-xl elevation-2"
+                style="max-width: 100%;"
+              >
+                <v-stepper-header>
+                  <template v-for="(task, index) in test.testStructure.userTasks" :key="index">
+                    <v-stepper-item
+                      :value="index + 1"
+                      :title="task.taskName"
+                      :complete="localTestAnswer.tasks[index]?.completed || false"
+                      :color="taskIndex < index ? 'primary' : 'success'"
+                      complete-icon="mdi-check"
+                    />
+                    <v-divider v-if="index < test.testStructure.userTasks.length - 1" />
+                  </template>
+                </v-stepper-header>
+              </v-stepper>
+            </v-col>
+          </v-row>
+
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <VideoCall 
               :roomId="roomId" 
-              :caller="isUserTestAdmin" 
+              :caller="isUserTestAdmin"
+              :current-global-index="globalIndex"
+              :current-task-index="taskIndex"
+              :test="test"
+              :local-test-answer="localTestAnswer"
               @setRemoteStream="remoteStream = $event"
               @proceedToNextStep="proceedToNextStep"
+              @stepSelected="handleStepSelected"
             />
           </div>
 
@@ -291,6 +329,23 @@ const proceedToNextStep = async () => {
     globalIndex: globalIndex.value,
     taskIndex: taskIndex.value,
     showVideoCall: false
+  });
+};
+
+const handleStepSelected = async ({ globalIndex: newGlobalIndex, taskIndex: newTaskIndex }) => {
+  if (!isUserTestAdmin.value) return;
+  
+  globalIndex.value = newGlobalIndex;
+  taskIndex.value = newTaskIndex;
+  
+  // Moderator stays in video call, but participant sees the selected step
+  // Don't change displayVideoCallComponent for moderator
+  
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  await update(roomRef, {
+    globalIndex: newGlobalIndex,
+    taskIndex: newTaskIndex,
+    showVideoCall: false  // Set to false so participant sees the step content immediately
   });
 };
 
