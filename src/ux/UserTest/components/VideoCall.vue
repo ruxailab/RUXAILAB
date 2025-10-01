@@ -3,6 +3,12 @@
 
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
+      <v-col cols="12" class="d-flex justify-center align-center" v-show="isSharingScreen">
+        <div class="video-container">
+          <video ref="screenVideo" autoplay playsinline class="video-element"></video>
+          <div class="video-label">Compartilhando tela</div>
+        </div>
+      </v-col>
       <v-col cols="12" class="d-flex justify-center align-center">
         <div class="videos-container">
           <!-- Local Video -->
@@ -343,7 +349,7 @@
                 {{ isMicrophoneEnabled ? 'Silenciar micrófono' : 'Activar micrófono' }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!caller && callStarted" @click="toggleCameraScreen">
+            <v-list-item v-if="callStarted" @click="handleScreenShare">
               <template #prepend>
                 <v-icon :color="isSharingScreen ? 'blue' : 'grey'">
                   {{ isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot' }}
@@ -608,6 +614,7 @@ const emit = defineEmits([
 
 const localVideo = ref(null);
 const remoteVideo = ref(null);
+const screenVideo = ref(null);
 
 const localStream = ref(null);       // user's local media stream
 const peerConnection = ref(null);    // WebRTC peer connection
@@ -691,8 +698,11 @@ function toggleSidePanel() {
 
 // Handle screen share (placeholder without logic)
 function handleScreenShare() {
-  console.log('Screen share button clicked');
-  // TODO: Implement screen share logic
+  if (isSharingScreen.value) {
+    stopScreenShare();
+  } else {
+    startScreenShare();
+  }
 }
 
 // Toggle stepper panel
@@ -766,34 +776,24 @@ function goToSpecificTask(taskIndex) {
   });
 }
 
-async function toggleCameraScreen() {
-  if (isSharingScreen.value) {
-    stopScreenShare();
-  } else {
-    startScreenShare();
-  }
-}
-
 async function startScreenShare() {
   try {
     screenStream.value = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
 
     const videoTrack = screenStream.value.getVideoTracks()[0];
-    const audioTrack = screenStream.value.getAudioTracks()[0];
+    // const audioTrack = screenStream.value.getAudioTracks()[0];
 
     const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
+    console.log('senders =>', peerConnection.value.getSenders().map(s => s.track));
+
+    // TODO: Implement logic to add new track and notify the other peer about it
     if (sender) {
       sender.replaceTrack(videoTrack);
+      // peerConnection.value.addTrack(videoTrack, screenStream.value);
     }
 
-    const audioSender = peerConnection.value.getSenders().find(s => s.track.kind === 'audio');
-    if (audioSender) {
-      audioSender.replaceTrack(audioTrack);
-    }
-
-    localStream.value = screenStream.value;
-    if (localVideo.value) {
-      localVideo.value.srcObject = localStream.value;
+    if(screenVideo.value) {
+      screenVideo.value.srcObject = screenStream.value;
     }
 
     videoTrack.onended = () => {
@@ -816,20 +816,14 @@ async function stopScreenShare() {
   localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
   const videoTrack = localStream.value.getVideoTracks()[0];
-  const audioTrack = localStream.value.getAudioTracks()[0];
 
   const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
   if (sender) {
     sender.replaceTrack(videoTrack);
   }
 
-  const audioSender = peerConnection.value.getSenders().find(s => s.track.kind === 'audio');
-  if (audioSender) {
-    audioSender.replaceTrack(audioTrack);
-  }
-
-  if (localVideo.value) {
-    localVideo.value.srcObject = localStream.value;
+  if (screenVideo.value) {
+    screenVideo.value.srcObject = null
   }
 
   isSharingScreen.value = false;
@@ -842,6 +836,7 @@ async function init() {
 
   // Listen for remote tracks
   peerConnection.value.ontrack = (event) => {
+    console.log('a new track have arrived =>', event.streams[0].getTracks());
     if (remoteVideo.value && remoteVideo.value.srcObject !== event.streams[0]) {
       remoteVideo.value.srcObject = event.streams[0];
 
