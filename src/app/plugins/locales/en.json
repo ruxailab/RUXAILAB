@@ -405,6 +405,9 @@
       "postForm": "Post Form",
       "writeNewPost": "Write a new post question"
     },
+    "messages": {
+      "noTasks": "You don't have any task, create one to proceed."
+    },
     "inputs": {
       "consent": "Consent",
       "variableName": "Variable Name",
