@@ -42,7 +42,7 @@
         class="mb-4 text-white"
         @click="transcribeSession"
       >
-        🎙 Transcribe
+        🎙-- Transcribe
       </v-btn>
     </div>
 
@@ -54,7 +54,7 @@
       v-if="transcriptSegments.length"
       :transcriptSegments="transcriptSegments"
     />
-   
+
     <div v-else class="text-center grey--text">
       <p>No transcription segments to display.</p>
     </div>
@@ -77,8 +77,8 @@
 <script setup>
 import { ref } from 'vue'
 
-// External Libraries
-import axios from 'axios'
+// Services
+import { transcribe } from '@/app/services/transcription/TranscriptionService'
 
 // JS props (no types)
 const props = defineProps({
@@ -432,23 +432,23 @@ async function transcribeAudio(provider, model, audioUrl, role) {
       return []
     }
 
+    // // const response = await axios.post(
+    // //   'http://127.0.0.1:8000/api/v1/transcribe',
+    // //   {
+    // //     audio_url: audioUrl,
+    // //     provider,
+    // //     model,
+    // //   },
+    // // )
     // const response = await axios.post(
-    //   'http://127.0.0.1:8000/api/v1/transcribe',
+    //   'https://transcription-api-gpu-990683238789.europe-west4.run.app/api/v1/transcribe',
     //   {
     //     audio_url: audioUrl,
     //     provider,
     //     model,
     //   },
     // )
-    const response = await axios.post(
-      'https://transcription-api-gpu-990683238789.europe-west4.run.app/api/v1/transcribe',
-      {
-        audio_url: audioUrl,
-        provider,
-        model,
-      },
-    )
-
+    const response = await transcribe({ audio_url: audioUrl, provider, model })
 
     const data = response.data
 
