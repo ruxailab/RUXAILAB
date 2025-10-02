@@ -351,10 +351,10 @@ const notifyCooperator = (guest) => {
   console.log('Notifying cooperator:', guest);
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-      notifyCooperatorAccessibility(guest);
-      return;
-    }
+    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
+    //  notifyCooperatorAccessibility(guest);
+    //  return;
+    //}
 
     // admin - 0, evaluator -1, guest - 2
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
