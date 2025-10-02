@@ -519,6 +519,11 @@
       "currentTest": "Current test",
       "createTemplate": "CREATE TEMPLATE",
       "deleteTest": "DELETE TEST"
+    },
+    "editTest": {
+      "title": "Edit test",
+      "description": "Customize the settings and preferences of your test.",
+      "updatedTest": "Test updated successfully"
     }
   },
   "alerts": {
