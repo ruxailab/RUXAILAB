@@ -224,10 +224,11 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 };
 
-const handleSendEmail = async () => {
+const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
+  console.log()
   await emailController.send({
-    to: 'juliobonow@gmail.com',
+    to: guest.email,
     subject: 'You have been invited to evaluate a test!',
     attachments: [],
     template: 'invite',
@@ -378,7 +379,7 @@ const notifyCooperator = (guest) => {
 
 const reinvite = async (guest) => {
   notifyCooperator(guest);
-  await handleSendEmail();
+  await handleSendEmail(guest);
 };
 
 const removeCoop = async (coop) => {
