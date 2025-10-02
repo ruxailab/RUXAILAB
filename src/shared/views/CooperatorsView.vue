@@ -311,7 +311,7 @@ const submit = async () => {
 
   for (const guest of newCooperators) {
     notifyCooperator(guest);
-    await handleSendEmail();
+    await handleSendEmail(guest);
   }
 };
 
