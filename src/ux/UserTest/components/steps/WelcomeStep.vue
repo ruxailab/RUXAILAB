@@ -5,16 +5,16 @@
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.WelcomeStep.welcome') }}
         </h2>
-        <p class="text-body-1 mb-4 text-grey-darken-1">
+        <p class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.description') }}
         </p>
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.WelcomeStep.howItWorks') }}
         </h2>
-        <p class="text-body-1 mb-4 text-grey-darken-1">
+        <p class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.phases') }}
         </p>
-        <p class="text-body-1 mb-4 text-grey-darken-1">
+        <p class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.summary') }}
         </p>
         <v-stepper
@@ -31,6 +31,7 @@
             <v-divider />
             <v-stepper-item
               value="2"
+              class="red"
               :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
             />
             <v-divider />
@@ -62,7 +63,7 @@
           hide-actions
           class="my-6"
         />
-        <p class="text-body-1 mb-6 text-grey-darken-1">
+        <p class="text-body-1 mb-6 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.ready') }}
         </p>
         <v-btn
@@ -105,5 +106,32 @@ const { smAndDown } = useDisplay();
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+:deep(.v-stepper-vertical-item__avatar.v-avatar) {
+  background: rgb(var(--v-theme-primary)) !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important;
+}
+
+:deep(.v-stepper-vertical-item__avatar.v-avatar.v-avatar--density-default) {
+  background: rgb(var(--v-theme-primary)) !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important;
+}
+
+:deep(.v-stepper-item__avatar.v-avatar) {
+  background: rgb(var(--v-theme-primary)) !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important;
+}
+
+:deep(.v-stepper-item__title) {
+  color: rgb(var(--v-theme-primary)) !important;
+  font-weight: 600 !important;
+}
+
+:deep(.v-stepper-item) {
+  opacity:1;
 }
 </style>
