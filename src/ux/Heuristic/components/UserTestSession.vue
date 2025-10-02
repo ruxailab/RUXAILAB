@@ -267,12 +267,12 @@ export default {
                     return []
                 }
 
-                // const response = await axios.post(`${process.env.TRANSCRIPTION_API_BASE_URL}/api/v1/transcribe`, {
+                // const response = await axios.post('http://127.0.0.1:8000/api/v1/transcribe', {
                 //     audio_url: audioUrl,
                 //     provider: "openai",
                 //     model: "whisper-1"
                 // })
-                const response = await axios.post(`${process.env.TRANSCRIPTION_API_BASE_URL}/api/v1/transcribe`, {
+                const response = await axios.post('http://127.0.0.1:8000/api/v1/transcribe', {
                     audio_url: audioUrl,
                     provider: "whisper",
                     model: "tiny"
