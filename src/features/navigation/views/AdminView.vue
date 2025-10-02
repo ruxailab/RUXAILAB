@@ -191,7 +191,7 @@ const methodOptions = computed(() => {
   const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id) // Solo métodos disponibles
 
   return [
-    { value: 'all', text: 'Todos los Métodos' },
+    { value: 'all', text: 'All Methods' },
     ...options.map(option => ({
       value: option.value,
       text: option.text
