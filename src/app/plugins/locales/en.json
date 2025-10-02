@@ -323,8 +323,7 @@
         "needMoreThan1Answer": "This page needs more than 1 answer to be generated.",
         "runWeightFunction": "This page needs weight function (python) to be running, can be in emulators or in deploy mode, and the weights to be full marked on your creating test page."
       }
-    },
-    "analytics": {}
+    }
   },
   "HeuristicsReport": {
     "titles": {
@@ -451,6 +450,20 @@
       },
       "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
       "startTest": "Start the test"
+    },
+    "PreTasksStep": {
+      "title": "Tasks",
+      "heading": "Let's begin the tasks phase",
+      "description": "You are going to complete <strong>{numTasks}</strong> tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
+      "instruction": "When you are ready, click the button to begin.",
+      "startButton": "Start tasks",
+      "recordingTitle": "Recording Information",
+      "recordingDescription": "During the tasks, we may collect different types of data to understand your interaction with the system. Depending on the specific task, the following may be recorded:",
+      "screenRecording": "Screen Recording",
+      "webcamRecording": "Webcam",
+      "audioRecording": "Audio",
+      "eyeTracking": "Eye Tracking",
+      "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
   },
   "AccessNotAllowed": {
@@ -722,5 +735,42 @@
   "CardSorting": {
     "noCategory": "No category",
     "noCards": "No cards found"
+  },
+  "analytics": {
+    "searchByName": "Search by name",
+    "search": "Search",
+    "reset": "Reset",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "effectiveness": "Effectiveness",
+    "effectivenessDescription": "Percentage of tasks completed successfully",
+    "efficiency": "Efficiency",
+    "efficiencyDescription": "Average time: {avgTime}",
+    "satisfaction": "Satisfaction",
+    "satisfactionDescription": "Average user satisfaction score",
+    "conclusionRate": "Conclusion Rate",
+    "perfectCompletionRate": "Perfect completion rate achieved",
+    "testsInProgress": "Tests in Progress",
+    "totalDuration": "Total Duration",
+    "avgTimePerTask": "Avg Time/Task",
+    "efficientTaskCompletion": "Efficient task completion rate",
+    "longestTask": "Longest Task",
+    "taskLabel": "Task",
+    "totalAnswers": "Total Answers",
+    "day": "day",
+    "evaluator": "Evaluator",
+    "latestUser": "Latest User",
+    "taskPerformance": "Task Performance",
+    "taskPerformanceDescription": "Success and error rates for each test task",
+    "success": "success",
+    "successCount": "Success",
+    "errors": "Errors",
+    "preTest": "Pre Test",
+    "preTestDescription": "Results from the pre-test form",
+    "postTest": "Post Test",
+    "postTestDescription": "Results from the post-test form",
+    "all": "All",
+    "question": "Question {number}",
+    "comingSoon": "Coming Soon"
   }
 }
