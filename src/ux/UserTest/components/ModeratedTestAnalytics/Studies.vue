@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-background">
+  <div class="bg-background pa-4">
     <div v-if="isUserStudy">
       <div v-if="isModerated">
         <!-- DEBUG -->
@@ -8,44 +8,74 @@
         selectedTaskId: {{ selectedTaskId }} <br />
         tasksForSelectedUser: {{ tasksForSelectedUser }} -->
 
+        <!-- Top controls (replaces left columns) -->
+        <v-row class="mb-2" no-gutters>
+          <v-col cols="12" md="4" class="pr-md-2 mb-2 mb-md-0">
+            <v-select
+              v-model="selectedUserID"
+              :items="userOptions"
+              item-title="label"
+              item-value="value"
+              label="Evaluator"
+              variant="outlined"
+              density="comfortable"
+              prepend-inner-icon="mdi-account"
+              :menu-props="{ maxHeight: 320 }"
+              clearable
+            >
+              <template #item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  :title="item?.raw?.label"
+                  :subtitle="item?.raw?.subtitle"
+                />
+              </template>
+              <template #selection="{ item }">
+                <span>{{ item?.raw?.label }}</span>
+                <!-- <span
+                  v-if="item?.raw?.subtitle"
+                  class="text-caption text-medium-emphasis"
+                >
+                  &nbsp;•&nbsp;{{ item.raw.subtitle }}
+                </span> -->
+              </template>
+            </v-select>
+          </v-col>
+
+          <v-col cols="12" md="4" class="pr-md-2 mb-2 mb-md-0">
+            <v-select
+              v-model="selectedTaskId"
+              :items="taskOptions"
+              item-title="label"
+              item-value="value"
+              label="Task"
+              variant="outlined"
+              density="comfortable"
+              prepend-inner-icon="mdi-clipboard-list-outline"
+              :disabled="!selectedUserID"
+              :menu-props="{ maxHeight: 320 }"
+            >
+              <template #item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  :title="item?.raw?.label"
+                  :subtitle="item?.raw?.subtitle"
+                />
+              </template>
+              <template #selection="{ item }">
+                <span>{{ item?.raw?.label }}</span>
+                <span
+                  v-if="item?.raw?.subtitle"
+                  class="text-caption text-medium-emphasis"
+                >
+                  &nbsp;•&nbsp;{{ item.raw.subtitle }}
+                </span>
+              </template>
+            </v-select>
+          </v-col>
+        </v-row>
+
         <v-row class="ma-0">
-          <!-- Users -->
-          <v-col class="ma-0 pa-0 task-list" cols="3">
-            <v-item-group v-model="selectedUserID">
-              <v-item v-for="item in usersID" :key="item" :value="item">
-                <template #default="{ isSelected, toggle }">
-                  <v-list-item :active="isSelected" @click="toggle()">
-                    <v-list-item-title>{{
-                      getCooperatorEmail(item)
-                    }}</v-list-item-title>
-                  </v-list-item>
-                </template>
-              </v-item>
-            </v-item-group>
-          </v-col>
-
-          <!-- Tasks for selected user -->
-          <v-col class="ma-0 pa-0 task-list" cols="3">
-            <v-item-group v-model="selectedTaskId">
-              <v-item
-                v-for="[key, task] in tasksForSelectedUser"
-                :key="key"
-                :value="key"
-              >
-                <template #default="{ isSelected, toggle }">
-                  <v-list-item :active="isSelected" @click="toggle()">
-                    <v-list-item-title>
-                      {{ `Task ${key}` }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ task.transcriptionsCount ?? 0 }} runs
-                    </v-list-item-subtitle>
-                  </v-list-item>
-                </template>
-              </v-item>
-            </v-item-group>
-          </v-col>
-
           <!-- Tabs + content -->
           <div v-if="selectedTask">
             <!-- remove this v-if if you want tabs always visible -->
@@ -99,7 +129,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { useStore } from 'vuex'
 
@@ -133,11 +163,6 @@ const selectedTask = computed(() => {
   return pair ? pair[1] : null
 })
 
-// // auto-select first user
-// watch(usersID, (ids) => {
-//   if (!selectedUserID.value && ids.length) selectedUserID.value = ids[0]
-// }, { immediate: true })
-
 // computed
 const tasksForSelectedUser = computed(() => {
   const map = testAnswerDocument.value?.taskAnswers ?? {}
@@ -160,20 +185,58 @@ const tasksForSelectedUser = computed(() => {
   return []
 })
 
-// // auto-select first task when user changes / tasks load
-// watch(tasksForSelectedUser, (tasks) => {
-//   if (tasks.length === 0) selectedTaskId.value = null
-//   else if (selectedTaskId.value == null || selectedTaskId.value >= tasks.length) {
-//     selectedTaskId.value = 0
-//   }
-// }, { immediate: true })
-
 // handy flags
 const isUserStudy = computed(
   () => (testAnswerDocument.value?.type ?? null) === STUDY_TYPES.USER,
 )
 const isModerated = computed(
   () => (testDocument.value?.subType ?? null) === USER_STUDY_SUBTYPES.MODERATED,
+)
+
+/* options for selects */
+const userOptions = computed(() => {
+  const ids = usersID.value || []
+  return ids.map((uid) => ({
+    value: uid,
+    label: getCooperatorEmail(uid) || uid,
+    subtitle: uid, // optional: show raw uid under email
+  }))
+})
+
+const taskOptions = computed(() => {
+  const list = tasksForSelectedUser.value || [] // [ [key, task], ... ]
+  return list.map(([key, task]) => ({
+    value: String(key),
+    label: `Task ${key}`,
+    subtitle: `${task?.transcriptionsCount ?? 0} runs`,
+  }))
+})
+
+/* auto-select the first user when list loads */
+watch(
+  usersID,
+  (ids) => {
+    if (!selectedUserID.value && Array.isArray(ids) && ids.length) {
+      selectedUserID.value = ids[0]
+    }
+  },
+  { immediate: true },
+)
+
+/* when user changes, pick first task for that user */
+watch(
+  tasksForSelectedUser,
+  (pairs) => {
+    const has = Array.isArray(pairs) && pairs.length
+    if (!has) {
+      selectedTaskId.value = null
+      return
+    }
+    // if current taskId not in new list, reset to first
+    const ok = pairs.some(([k]) => String(k) === String(selectedTaskId.value))
+    if (!ok) selectedTaskId.value = String(pairs[0][0])
+  },
+  { immediate: true },
 )
 
 function getCooperatorEmail(userDocId) {
