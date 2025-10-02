@@ -145,7 +145,14 @@ const checkIfHasNewNotifications = () => {
 
 const goToNotificationRedirect = async (notification) => {
     const accepted = await showAcceptDialog()
-    if (!accepted) return
+    if (!accepted) {
+      // mark as read and exit
+      await store.dispatch('markNotificationAsRead', {
+        notification,
+        user: user.value,
+      });
+      return
+    }
     const study = await new StudyController().getStudy({ id: notification.testId })
 
     await store.dispatch('acceptStudyCollaboration', {
