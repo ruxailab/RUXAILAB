@@ -31,7 +31,7 @@
               size="large"
               class="px-6 text-capitalize"
               rounded="lg"
-              @click="dialog = true"
+              @click="() => {dialog = true; task = new Task();}"
             >
               <v-icon start>
                 mdi-plus-circle
