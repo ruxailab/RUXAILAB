@@ -101,9 +101,10 @@ const localTask = ref({ ...props.task });
 // Required props for the step components
 const selectItems = [
   { label: 'No Answer', value: 'no-answer' },
-  { label: 'Text Area', value: 'text-area' },
-  { label: 'Post Test', value: 'post-test' },
-  { label: 'Post Form', value: 'post-form' },
+  { label: 'Short Answer', value: 'post-test' },
+    { label: 'Paragraph Answer', value: 'text-area' },
+
+  { label: 'Google Forms Link', value: 'post-form' },
   { label: 'NASA TLX', value: 'nasa-tlx' },
   { label: 'System Usability Scale', value: 'sus' }
 ];

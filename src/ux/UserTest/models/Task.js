@@ -44,7 +44,7 @@ export default class Task {
     });
   }
 
-  toJson() {
+  toFirestore() {
     const json = {}
     if (this.taskName !== null) json.taskName = this.taskName;
     if (this.taskDescription !== null) json.taskDescription = this.taskDescription;
