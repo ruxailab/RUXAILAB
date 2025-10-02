@@ -161,12 +161,12 @@ const {
 } = useCooperatorActions();
 
 // Direct notification helper
-const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null } = {}) => {
+const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null, author } = {}) => {
   const notification = new Notification({
     title,
     description,
     redirectsTo,
-    author: 'Admin',
+    author,
     read: false,
     testId
   });
@@ -212,9 +212,11 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId && test.value) {
+    const author = test.value.testAdmin.email;
     await sendNotification(
       user.userDocId,
       title,
+      author,
       content,
       '/',
       test.value.id
@@ -329,12 +331,14 @@ const notifyCooperatorAccessibility = async (guest) => {
     }
 
     if (guest.userDocId && path) {
+      const author = test.value.testAdmin.email;
       await sendNotification(
         guest.userDocId,
         title,
         description,
         path,
-        test.value.id
+        test.value.id,
+        author,
       );
     }
   }
