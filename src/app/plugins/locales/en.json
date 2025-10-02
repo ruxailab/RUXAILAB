@@ -448,6 +448,20 @@
       },
       "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
       "startTest": "Start the test"
+    },
+    "PreTasksStep": {
+      "title": "Tasks",
+      "heading": "Let's begin the tasks phase",
+      "description": "You are going to complete <strong>{numTasks}</strong> tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
+      "instruction": "When you are ready, click the button to begin.",
+      "startButton": "Start tasks",
+      "recordingTitle": "Recording Information",
+      "recordingDescription": "During the tasks, we may collect different types of data to understand your interaction with the system. Depending on the specific task, the following may be recorded:",
+      "screenRecording": "Screen Recording",
+      "webcamRecording": "Webcam",
+      "audioRecording": "Audio",
+      "eyeTracking": "Eye Tracking",
+      "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
   },
   "AccessNotAllowed": {

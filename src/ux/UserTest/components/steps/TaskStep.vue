@@ -8,23 +8,129 @@
             class="rich-text mb-4"
             v-html="task?.taskDescription || taskDescription"
           />
-          <v-row
-            v-if="task?.taskLink || taskLink"
-            justify="center"
+          
+          <!-- Task Preview Information -->
+          <v-card 
+            variant="outlined" 
+            color="secondary" 
+            class="my-6 mx-auto"
+            max-width="700"
           >
-            <v-col
-              cols="12"
-              class="text-center"
-            >
-              <a
-                :href="normalizedLink"
-                target="_blank"
-                class="text-primary font-weight-medium"
-              >
-                {{ task?.taskLink || taskLink }}
-              </a>
-            </v-col>
-          </v-row>
+            <v-card-text class="pa-4">
+              <div class="d-flex align-center mb-3">
+                <v-icon 
+                  color="secondary" 
+                  size="24" 
+                  class="mr-2"
+                >
+                  mdi-play-circle-outline
+                </v-icon>
+                <h3 class="text-h6 font-weight-bold text-secondary">
+                  Task Preview
+                </h3>
+              </div>
+              
+              <!-- Recording Information -->
+              <template v-if="hasAnyRecording">
+                <p class="text-body-1 text-left mb-4 text-grey-darken-3">
+                  This task will record the following data during your interaction:
+                </p>
+                
+                <!-- Recording Features Grid -->
+                <div class="recording-features-grid mb-4">
+                  <!-- Screen Recording -->
+                  <div v-if="task?.hasScreenRecord" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">mdi-monitor-screenshot</v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Screen Record</h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        Record the participant's screen activity. Captures clicks, scrolling, and 
+                        interactions to analyze user behavior and identify pain points.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Camera Recording -->
+                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">mdi-camera</v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Camera</h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        Record participant's facial expressions and reactions. Captures emotions, 
+                        confusion, and satisfaction to understand user experience beyond interactions.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Audio Recording -->
+                  <div v-if="task?.hasAudioRecord" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">mdi-microphone</v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Audio Record</h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        Record participant's verbal feedback and comments. Captures think-aloud 
+                        protocols, frustrations, and insights that reveal thought processes.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Eye Tracking -->
+                  <div v-if="task?.hasEye" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">mdi-eye</v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Eye Tracker</h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        Track where participants look during the task. Provides heatmaps and gaze 
+                        patterns to understand visual attention and navigation behavior.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              
+              <!-- Tool Window Information -->
+              <template v-if="task?.taskLink || taskLink">
+                <v-divider class="my-3" />
+                <div class="d-flex align-start mb-2">
+                  <v-icon 
+                    color="secondary" 
+                    size="20" 
+                    class="mr-2 mt-1"
+                  >
+                    mdi-open-in-new
+                  </v-icon>
+                  <div>
+                    <p class="text-body-2 font-weight-medium mb-1">
+                      New Window Will Open
+                    </p>
+                    <p class="text-body-1 text-grey-darken-3 mb-4">
+                      When you start the task, a new window will open with the tool you need to use.
+                    </p>
+              
+                    <p class="text-body-1 text-grey-darken-3">
+                      💡 <strong>Tip:</strong> You can switch between tabs or close the new window at any time. 
+                      The recording will continue until you complete the task.
+                    </p>
+                  </div>
+                </div>
+              </template>
+              
+              <template v-else>
+                <p class="text-body-2 text-grey-darken-1 text-center">
+                  This task will be completed within the current interface.
+                </p>
+              </template>
+            </v-card-text>
+          </v-card>
+
           <v-row
             justify="center"
             class="mt-6"
@@ -41,21 +147,111 @@
         </template>
         <!-- STAGE 2: Task answer -->
         <template v-else-if="stage === 2">
+          <!-- Task Description During Execution -->
+          <v-card 
+            variant="outlined" 
+            color="primary" 
+            class="mb-4"
+          >
+            <v-card-text class="pa-3">
+           
+              
+              <!-- Two Column Layout -->
+              <v-row>
+                <!-- Left Column: Task Description -->
+                <v-col cols="8">
+                     <div class="d-flex align-center mb-3">
+                <v-icon 
+                  color="primary" 
+                  size="20" 
+                  class="mr-2"
+                >
+                  mdi-clipboard-text-outline
+                </v-icon>
+                <span class="text-subtitle-2 font-weight-bold text-primary">
+                  Task Description
+                </span>
+              </div>
+                  <div 
+                    class="rich-text text-body-1" 
+                    v-html="task?.taskDescription || taskDescription"
+                  />
+                </v-col>
+                
+                <!-- Right Column: Help & Actions -->
+                <v-col cols="4">
+                  <v-row>
+                    <!-- Help Section -->
+                    <v-col 
+                      v-if="task?.taskTip"
+                      cols="6"
+                    >
+                      <div 
+                        class="help-section pa-2 text-center rounded h-100"
+                        style="background-color: rgba(76, 175, 80, 0.05); border: 1px solid rgba(76, 175, 80, 0.2);"
+                      >
+                        <div class="d-flex align-center mb-1">
+                          <v-icon 
+                            color="success" 
+                            size="16" 
+                            class="mr-1"
+                          >
+                            mdi-help-circle-outline
+                          </v-icon>
+                          <span class="text-caption font-weight-medium text-success">
+                            Need Help?
+                          </span>
+                        </div>
+                        <p class="text-caption text-grey-darken-3 mb-2" style="font-size: 11px; line-height: 1.3;">
+                          Having trouble? Get helpful guidance to complete this task.
+                        </p>
+                        <TipButton :task="task" />
+                      </div>
+                    </v-col>
+                    
+                    <!-- Reopen Tool Section -->
+                    <v-col 
+                      v-if="task?.taskLink || taskLink"
+                      :cols="task?.taskTip ? 6 : 12"
+                    >
+                      <div 
+                        class="tool-section pa-2 rounded text-center h-100"
+                        style="background-color: rgba(121, 85, 72, 0.05); border: 1px solid rgba(121, 85, 72, 0.2);"
+                      >
+                        <div class="d-flex align-center mb-1">
+                          <v-icon 
+                            color="secondary" 
+                            size="16" 
+                            class="mr-1"
+                          >
+                            mdi-open-in-new
+                          </v-icon>
+                          <span class="text-caption font-weight-medium text-secondary">
+                            External Tool
+                          </span>
+                        </div>
+                        <p class="text-caption text-grey-darken-3 mb-2" style=" line-height: 1.3;">
+                          Accidentally closed the tool window? Reopen it here.
+                        </p>
+                        <v-btn
+                          color="secondary"
+                          variant="outlined"
+                          size="small"
+                          block
+                          prepend-icon="mdi-open-in-new"
+                          @click="reopenTool"
+                        >
+                          Reopen Tool
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+          
           <v-row class="mb-4 d-flex align-center">
-            <v-col cols="auto">
-              <v-chip
-                color="primary"
-                class="mr-2"
-              >
-                Time: {{ elapsedTimeDisplay }}
-              </v-chip>
-            </v-col>
-            <v-col
-              v-if="task?.taskTip"
-              cols="auto"
-            >
-              <TipButton :task="task" />
-            </v-col>
             <v-col
               v-if="task?.hasAudioRecord !== false"
               cols="auto"
@@ -139,7 +335,7 @@
                 class="mr-2"
                 @click="handleShowPostForm(false)"
               >
-                Could not finish
+                I can not finish the task
               </v-btn>
             </v-col>
             <v-col>
@@ -150,7 +346,7 @@
                 class="ml-2"
                 @click="handleShowPostForm(true)"
               >
-                Done
+              Task completed
               </v-btn>
             </v-col>
           </v-row>
@@ -186,7 +382,7 @@
                 :disabled="doneTaskDisabled"
                 @click="emitDoneOrCouldNotFinish()"
               >
-                Finalizar tarea
+                Finish task
               </v-btn>
             </v-col>
           </v-row>
@@ -272,6 +468,13 @@ const normalizedLink = computed(() => {
   return link.match(/^https?:\/\//i) ? link : `https://${link}`;
 });
 
+const hasAnyRecording = computed(() => {
+  return props.task?.hasScreenRecord || 
+         props.task?.hasCamRecord || 
+         props.task?.hasAudioRecord || 
+         props.task?.hasEye;
+});
+
 const stage = ref(1);
 const audioRecorder = ref(null);
 const videoRecorder = ref(null);
@@ -305,6 +508,16 @@ function startTask() {
             if (timer && timer.startTimer) timer.startTimer();
         }, 100);
     });
+}
+
+function reopenTool() {
+    const link = props.task?.taskLink || props.taskLink;
+    if (link) {
+        const url = link.startsWith('http://') || link.startsWith('https://')
+            ? link
+            : `https://${link}`;
+        window.open(url, '_blank');
+    }
 }
 
 const showPostForm = ref({ userCompleted: undefined });
@@ -377,3 +590,68 @@ function onTimerStopped(elapsedTime) {
     emit('timer-stopped', elapsedTime, props.taskIndex);
 }
 </script>
+
+<style scoped>
+.recording-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  max-width: 100%;
+}
+
+.recording-feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid rgba(var(--v-theme-secondary), 0.2);
+  border-radius: 12px;
+  background: rgba(var(--v-theme-secondary), 0.02);
+  transition: all 0.2s ease;
+}
+
+.recording-feature-card:hover {
+  border-color: rgba(var(--v-theme-secondary), 0.3);
+  background: rgba(var(--v-theme-secondary), 0.05);
+}
+
+.feature-icon-container {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--v-theme-secondary), 0.1);
+  border-radius: 12px;
+}
+
+.feature-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.feature-content h4 {
+  margin-bottom: 8px;
+}
+
+.feature-content p {
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .recording-features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .recording-feature-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .feature-icon-container {
+    align-self: center;
+  }
+}
+</style>
