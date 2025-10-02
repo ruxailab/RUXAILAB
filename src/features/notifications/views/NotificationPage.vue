@@ -169,7 +169,10 @@ const goToNotificationRedirect = async (notification) => {
   if(notification.redirectsTo === null) return
  
   const accepted = await showAcceptDialog()
-  if (!accepted) return
+  if (!accepted) {
+    await markAsRead(notification)
+    return
+  }
   const study = await new StudyController().getStudy({ id: notification.testId })
     
   await store.dispatch('acceptStudyCollaboration', {
