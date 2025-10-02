@@ -81,6 +81,7 @@
       fluid
       class="pa-0"
     >
+    {{ test.finalMessage }}
       <v-row
         v-if="test && start"
         class="start-screen background-img pa-0 ma-0"
@@ -146,13 +147,13 @@
                     color="white" complete-icon="mdi-check" />
                   <v-divider v-if="hasEyeTracking" />
 
-                  <v-stepper-item :value="hasEyeTracking ? 3 : 2" title="Tasks"
+                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Tasks"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Post-test"
+                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Post-test"
                     :complete="stepperValue >= (hasEyeTracking ? 5 : 4)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Completion"
+                  <v-stepper-item :value="hasEyeTracking ? 6 : 5" title="Completion"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)" color="white" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
@@ -182,7 +183,7 @@
                   >
                     <v-stepper-item
                       :value="idx + 1"
-                      :title="`Tarea ${idx + 1}`"
+                      :title="`Task ${idx + 1}`"
                       :complete="taskIndex > idx"
                       :color="taskIndex > idx ? 'success' : (taskIndex === idx ? 'primary' : 'grey')"
                       complete-icon="mdi-check"
@@ -199,7 +200,8 @@
             :consent-text="test.testStructure.consent" :full-name-model="fullName"
             :consent-completed-model="localTestAnswer.consentCompleted" @update:fullNameModel="val => fullName = val"
             @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-            @continue="completeStep(taskIndex, 'consent')" />
+            @continue="completeStep(taskIndex, 'consent')" 
+            @declineConsent="handleConsentDecline" />
 
           <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest" :pre-test-answer="localTestAnswer.preTestAnswer"
@@ -236,7 +238,7 @@
 
           <FinishStep
             v-if="globalIndex === (hasEyeTracking ? 7 : 6) && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
-            :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
+            :final-message="$t('finishTest.finalMessage')" :congratulations="test.testStructure.finalMessage"
             :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
             @submit="dialog = true" />
         </v-col>
@@ -491,6 +493,20 @@ const submitAnswer = async () => {
     console.error('Error submitting answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
   }
+};
+
+const handleConsentDecline = () => {
+  // User declined consent, end the test
+  store.commit('SET_TOAST', { 
+    type: 'info', 
+    message: 'Test ended due to consent decline. Thank you for your time.',
+    timeout: 5000
+  });
+  
+  // Navigate back to admin or appropriate page
+  setTimeout(() => {
+    router.push('/admin');
+  }, 2000);
 };
 
 const handleSubmit = () => {
