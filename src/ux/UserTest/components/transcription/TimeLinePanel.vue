@@ -97,14 +97,22 @@
     <!--------------------- Transcription ---------------------->
     <!---------------------------------------------------------->
 
+    <!-- Runs list -->
     <TranscriptionList
       v-if="transcriptSegments.length"
       :transcriptSegments="transcriptSegments"
     />
 
-    <div v-else class="text-center grey--text">
-      <p>No transcription segments to display.</p>
-    </div>
+    <!-- Empty state -->
+    <v-alert
+      v-else
+      type="info"
+      variant="tonal"
+      density="comfortable"
+      class="mb-4"
+    >
+      No transcriptions yet for this task.
+    </v-alert>
   </div>
 
   <v-snackbar
