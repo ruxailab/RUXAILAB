@@ -1,11 +1,11 @@
 <template>
   <PageWrapper
-    title="Edit Test"
+    :title="t('pages.editTest.title')"
     :side-gap="true"
   >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Customize the settings and preferences of your test
+        {{ t('pages.editTest.description') }}
       </p>
     </template>
 
@@ -106,9 +106,13 @@ import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
 
 // Store
 const store = useStore()
+const toast = useToast()
+const { t } = useI18n()
 
 // Variables
 const change = ref(false)
@@ -145,20 +149,26 @@ const getPostTest = () => {
 }
 
 const save = async () => {
-  change.value = false;
+  try {
+    change.value = false;
 
-  const testStructure = {
-    welcomeMessage: welcomeMessage.value,
-    finalMessage: finalMessage.value,
-    preTest: store.getters.preTest,
-    userTasks: store.getters.tasks,
-    postTest: store.getters.postTest,
-    consent: consent.value,
+    const testStructure = {
+      welcomeMessage: welcomeMessage.value,
+      finalMessage: finalMessage.value,
+      preTest: store.getters.preTest,
+      userTasks: store.getters.tasks,
+      postTest: store.getters.postTest,
+      consent: consent.value,
+    }
+
+    const rawData = { ...test.value, testStructure: testStructure };
+    const study = instantiateStudyByType(rawData.testType, rawData);
+    await store.dispatch('updateStudy', study);
+    toast.success(t('pages.editTest.updatedTest'));
+  } catch (error) {
+    console.error('Error saving test:', error);
+    toast.error(t('errors.globalError'));
   }
-
-  const rawData = { ...test.value, testStructure: testStructure };
-  const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateStudy', study);
 }
 
 // Lifecycle
