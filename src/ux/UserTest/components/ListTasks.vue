@@ -172,10 +172,11 @@ const deleteItem = async (item) => {
 const addTask = async (newTask) => {
   try {
     if (editedIndex.value > -1) {
-      Object.assign(allTasks.value[editedIndex.value], newTask);
+
+      Object.assign(allTasks.value[editedIndex.value], newTask.toFirestore());
       editedIndex.value = -1;
     } else {
-      allTasks.value.push(newTask);
+      allTasks.value.push(newTask.toFirestore());
     }
     await store.dispatch('setTasks', allTasks.value);
     task.value = new Task();

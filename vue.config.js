@@ -1,6 +1,9 @@
 const webpack = require('webpack')
 
 module.exports = {
+  productionSourceMap: false,
+  css: { sourceMap: false },
+
   transpileDependencies: [
     'vuetify',
     'resize-detector',
