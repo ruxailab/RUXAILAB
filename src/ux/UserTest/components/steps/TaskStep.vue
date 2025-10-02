@@ -306,9 +306,9 @@ function stopMediaRecorders() {
 }
 
 async function startMediaRecorders() {
-  await audioRecorder.value?.startAudioRecording();
-  await screenRecorder.value?.captureScreen();
-  await videoRecorder.value?.startRecording();
+  if (props.task?.hasAudioRecord) await audioRecorder.value?.startAudioRecording();
+  if (props.task?.hasCamRecord) await videoRecorder.value?.startRecording();
+  if (props.task?.hasScreenRecord) await screenRecorder.value?.captureScreen();
 }
 
 function handleShowPostForm(userCompleted) {
