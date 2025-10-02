@@ -20,7 +20,7 @@
         <v-btn-toggle v-model="format" mandatory density="comfortable">
           <v-btn value="csv">CSV</v-btn>
           <v-btn value="json">JSON</v-btn>
-          <!-- <v-btn value="pdf" disabled>PDF (coming soon)</v-btn> -->
+          <v-btn value="pdf">PDF</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -78,10 +78,140 @@
       >
     </template>
   </v-snackbar>
+
+  <!-- PDF Preview + Editor -->
+  <v-dialog v-model="showPreview" max-width="1000">
+    <v-card>
+      <v-card-title class="d-flex justify-space-between align-center">
+        <span class="text-subtitle-1">PDF Preview</span>
+        <div class="d-flex gap-2">
+          <v-btn variant="text" @click="showPreview = false">Close</v-btn>
+          <v-btn color="primary" @click="downloadPdf">Download PDF</v-btn>
+        </div>
+      </v-card-title>
+
+      <v-card-text>
+        <v-row>
+          <!-- Editor side -->
+          <v-col cols="12" md="5">
+            <v-text-field
+              v-model="pdfTitle"
+              label="Report Title"
+              variant="outlined"
+              density="comfortable"
+              class="mb-2"
+            />
+            <v-row class="mb-2">
+              <v-col cols="6">
+                <v-text-field
+                  v-model="pdfMeta.date"
+                  label="Date"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="pdfMeta.moderator"
+                  label="Moderator"
+                  variant="outlined"
+                  density="comfortable"
+                />
+              </v-col>
+            </v-row>
+            <v-text-field
+              v-model="pdfMeta.user"
+              label="User"
+              variant="outlined"
+              density="comfortable"
+              class="mb-3"
+            />
+
+            <div class="text-caption text-medium-emphasis mb-1">
+              Executive Summary (rich text)
+            </div>
+            <QuillEditor
+              v-model:content="pdfSummaryHtml"
+              contentType="html"
+              theme="snow"
+              style="height: 220px"
+            />
+          </v-col>
+
+          <!-- Live preview side -->
+          <v-col cols="12" md="7">
+            <div class="pdf-preview">
+              <h2 class="m-0">{{ pdfTitle }}</h2>
+              <div class="mt-1 text-caption">
+                <strong>Date:</strong> {{ pdfMeta.date }} &nbsp;|&nbsp;
+                <strong>Moderator:</strong>
+                {{ pdfMeta.moderator || '-' }} &nbsp;|&nbsp;
+                <strong>User:</strong> {{ pdfMeta.user || '-' }}
+              </div>
+
+              <div class="mt-4" v-html="pdfSummaryHtml"></div>
+
+              <div v-for="(run, i) in previewRuns" :key="run.id" class="mt-6">
+                <h3 class="text-subtitle-2 m-0">
+                  Run {{ i + 1 }} · {{ run.provider }}/{{ run.model }} ·
+                  {{ formatDate(run.createdAt) }}
+                </h3>
+                <table class="seg-table mt-2">
+                  <thead>
+                    <tr>
+                      <th>Role</th>
+                      <th>Start</th>
+                      <th>End</th>
+                      <th>Text</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in buildPreviewRows(run)" :key="row.key">
+                      <td>{{ row.role }}</td>
+                      <td>{{ row.start }}</td>
+                      <td>{{ row.end }}</td>
+                      <td>{{ row.text }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
+<style scoped>
+.pdf-preview {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px 30px;
+}
+.seg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.seg-table th,
+.seg-table td {
+  border: 1px solid #e6e6e6;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+.seg-table thead th {
+  background: #fff7ea;
+}
+</style>
+
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import { QuillEditor } from '@vueup/vue-quill'
+
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 
 /* ---------------------- Props ---------------------- */
@@ -97,6 +227,17 @@ const runs = ref([]) // sorted desc by createdAt
 const scope = ref('latest') // 'latest' | 'all'
 const format = ref('csv') // 'csv' | 'json'
 const snackbar = ref({ visible: false, text: '', color: '' })
+/* --------- PDF Preview + Editor state --------- */
+const showPreview = ref(false)
+const previewRuns = ref([])
+
+const pdfTitle = ref('Session PDF Report')
+const pdfMeta = ref({
+  date: new Date().toISOString().slice(0, 10),
+  moderator: '',
+  user: '',
+})
+const pdfSummaryHtml = ref('<p>Add an executive summary here…</p>')
 
 const controller = new TranscriptionController()
 
@@ -154,6 +295,11 @@ function onExport() {
         : `transcriptions_task-${props.taskId}_user-${props.userDocId}.json`
     downloadBlob(JSON.stringify(payload, null, 2), fn, 'application/json')
     toast('JSON exported', 'green')
+  } else if (format.value === 'pdf') {
+    // 🔶 Open preview with editor, then user hits Download
+    previewRuns.value = sel
+    showPreview.value = true
+    // toast('PDF export coming soon', 'orange')
   }
 }
 
@@ -291,6 +437,156 @@ function cleanRunForJson(run) {
   }
 }
 
+/* Build simple rows for the HTML table preview */
+function buildPreviewRows(run) {
+  const rows = []
+  const ev = (run?.evaluator?.segments || []).map((s, idx) => ({
+    key: `e-${idx}`,
+    role: 'evaluator',
+    startSec: Number(s.start) || 0,
+    endSec: Number(s.end) || 0,
+    start: formatClock(s.start),
+    end: formatClock(s.end),
+    text: s.text || '',
+  }))
+  const mod = (run?.moderator?.segments || []).map((s, idx) => ({
+    key: `m-${idx}`,
+    role: 'moderator',
+    startSec: Number(s.start) || 0,
+    endSec: Number(s.end) || 0,
+    start: formatClock(s.start),
+    end: formatClock(s.end),
+    text: s.text || '',
+  }))
+  return [...ev, ...mod].sort((a, b) => a.startSec - b.startSec)
+}
+
+/* ---------- Make + download PDF (jsPDF + autoTable) ---------- */
+async function downloadPdf() {
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+
+  // === Logo (load once) ===
+  const logo = await loadLogo('/brand/logo.png', 10) // target height = 10pt
+
+  // THEME
+  const M = 48 // margin
+  const PAGE_W = doc.internal.pageSize.getWidth()
+  const PAGE_H = doc.internal.pageSize.getHeight()
+  const CONTENT_W = PAGE_W - M * 2
+  const COLORS = {
+    text: [34, 34, 34],
+    sub: [120, 120, 120],
+    line: [255, 163, 38],      // orange accent
+    tableHead: [255, 163, 38], // orange head
+    zebra: [246, 246, 246],    // striped rows
+    cardBg: [255, 247, 234],   // summary card bg
+    border: [230, 230, 230],
+  }
+
+  let y = M
+
+  // ===== HEADER =====
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(22)
+  doc.text('Session PDF Report', PAGE_W / 2, y, { align: 'center' })
+  y += 24
+
+  // Meta row
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(...COLORS.sub)
+  doc.setFontSize(11)
+  doc.text(`Date: ${pdfMeta.value.date || '-'}`, M, y)
+  doc.text(`Moderator: ${pdfMeta.value.moderator || '-'}`, M + 220, y)
+  doc.text(`User: ${pdfMeta.value.user || '-'}`, M + 420, y)
+  y += 16
+
+  // Thin separator line
+  // drawRule(doc, M, y, PAGE_W - M, y, COLORS.border, 0.6)
+  y += 12
+  doc.setTextColor(...COLORS.text)
+
+  // ===== EXECUTIVE SUMMARY (padded card) =====
+  const summaryPlain = stripHtml(pdfSummaryHtml.value || '')
+  if (summaryPlain.trim()) {
+    // Title
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12)
+    doc.text('Executive Summary', M, y); y += 8
+
+    // Card box
+    const cardPad = 10
+    const summaryLines = doc.splitTextToSize(summaryPlain, CONTENT_W - cardPad * 2)
+    const cardH = summaryLines.length * 13 + cardPad * 2
+
+    ensurePageSpace(cardH + 12)
+    drawFilledRect(doc, M, y, CONTENT_W, cardH, COLORS.cardBg, COLORS.border)
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(11)
+    doc.text(summaryLines, M + cardPad, y + cardPad + 10)
+    y += cardH + 16
+  }
+
+  // ===== TASKS (runs) =====
+  const sel = previewRuns.value // selected runs from your preview dialog
+  sel.forEach((run, idx) => {
+    // Section header title + line
+    ensurePageSpace(48)
+    y += 14
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12)
+    const when = formatDate(run.createdAt)
+    doc.text(`Task (${idx + 1})  •  ${run.provider}/${run.model}  •  ${when}`, M, y)
+    
+    ensurePageSpace(32)
+
+    // Table body (sorted by start time)
+    const rows = [
+      ...(Array.isArray(run?.evaluator?.segments) ? run.evaluator.segments.map(s => ({
+        role: 'evaluator', start: formatClock(s.start), end: formatClock(s.end), text: s.text || '', startSec: Number(s.start) || 0
+      })) : []),
+      ...(Array.isArray(run?.moderator?.segments) ? run.moderator.segments.map(s => ({
+        role: 'moderator', start: formatClock(s.start), end: formatClock(s.end), text: s.text || '', startSec: Number(s.start) || 0
+      })) : []),
+    ].sort((a, b) => a.startSec - b.startSec)
+
+    autoTable(doc, {
+      startY: y + 6,
+      head: [['Role', 'Start', 'End', 'Text']],
+      body: rows.map(r => [r.role, r.start, r.end, r.text]),
+      styles: { fontSize: 10, cellPadding: 6, valign: 'top' },
+      headStyles: { fillColor: COLORS.tableHead, textColor: [255, 255, 255] },
+      alternateRowStyles: { fillColor: COLORS.zebra },
+      columnStyles: {
+        0: { cellWidth: 90 },  // Role
+        1: { cellWidth: 60 },  // Start
+        2: { cellWidth: 60 },  // End
+        3: { cellWidth: 'auto' }, // Text
+      },
+      margin: { left: M, right: M },
+      theme: 'grid',
+    })
+
+    y = doc.lastAutoTable.finalY + 18
+  })
+
+  // ===== FOOTER (page numbers + hairline) =====
+  addPageNumbers(doc, M, COLORS, logo)
+
+
+  const fn = scope.value === 'latest'
+    ? fileName(`transcription_latest_task-${props.taskId}_user-${props.userDocId}`, 'pdf')
+    : fileName(`transcriptions_task-${props.taskId}_user-${props.userDocId}`, 'pdf')
+
+  doc.save(fn)
+  toast('PDF downloaded', 'green')
+  showPreview.value = false
+
+  // --- Helpers (closure uses outer vars) ---
+  function ensurePageSpace(h) {
+    if (y + h > PAGE_H - M) {
+      doc.addPage()
+      y = M
+    }
+  }
+}
+
 /* --------------------- Helpers --------------------- */
 function fileName(base, ext) {
   const stamp = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '')
@@ -334,5 +630,93 @@ function formatDate(ts) {
 
 function toast(text, color) {
   snackbar.value = { visible: true, text, color }
+}
+
+function stripHtml(html) {
+  const el = document.createElement('div'); el.innerHTML = html || ''
+  return (el.textContent || el.innerText || '').replace(/\u00A0/g, ' ')
+}
+
+function pad2(n){ return String(Math.floor(n)).padStart(2,'0') }
+
+function formatClock(sec){
+  const s = Number(sec) || 0; const m = Math.floor(s / 60); const r = Math.floor(s % 60)
+  return `${pad2(m)}:${pad2(r)}`
+}
+
+function drawRule(doc, x1, y1, x2, y2, rgb = [200,200,200], w = 0.6) {
+  doc.setDrawColor(...rgb)
+  doc.setLineWidth(w)
+  doc.line(x1, y1, x2, y2)
+}
+
+function drawFilledRect(doc, x, y, w, h, fillRgb, borderRgb) {
+  doc.setFillColor(...fillRgb)
+  doc.setDrawColor(...borderRgb)
+  doc.setLineWidth(0.6)
+  doc.rect(x, y, w, h, 'FD')
+}
+
+function addPageNumbers(doc, M, COLORS, logo) {
+  const pageCount = doc.getNumberOfPages()
+  const footerH = 30
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
+    const W = doc.internal.pageSize.getWidth()
+    const H = doc.internal.pageSize.getHeight()
+
+    // hairline
+    drawRule(doc, M, H - footerH, W - M, H - footerH, COLORS.border, 0.6)
+
+    // logo on the left (centered vertically in footer)
+    if (logo?.dataUrl) {
+      const y = H - footerH + (footerH - logo.h) / 2
+      doc.addImage(logo.dataUrl, 'PNG', M, y, logo.w, logo.h)
+    }
+
+    // page number on the right
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(120)
+    doc.text(`Page ${i} of ${pageCount}`, W - M, H - 12, { align: 'right' })
+  }
+}
+
+async function loadImageAsDataURL(url) {
+  try {
+    const res = await fetch(url, { mode: 'cors' })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const blob = await res.blob()
+    // pick correct encoder
+    const isPng = (blob.type || '').includes('png')
+    const isJpg = (blob.type || '').includes('jpeg') || (blob.type || '').includes('jpg')
+    if (!isPng && !isJpg) {
+      console.warn('Logo is not PNG/JPEG. Content-Type:', blob.type)
+    }
+    const reader = new FileReader()
+    const dataUrl = await new Promise((resolve, reject) => {
+      reader.onloadend = () => resolve(reader.result)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
+    return dataUrl // e.g. "data:image/png;base64,...."
+  } catch (e) {
+    console.error('Failed to load logo for PDF:', e)
+    return null
+  }
+}
+
+async function loadLogo(url, targetH = 16) {
+  const dataUrl = await loadImageAsDataURL(url)
+  if (!dataUrl) return null
+  const { w, h } = await getImageSize(dataUrl)
+  const ratio = w / h || 1
+  return { dataUrl, w: targetH * ratio, h: targetH }
+}
+
+function getImageSize(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight })
+    img.src = dataUrl
+  })
 }
 </script>
