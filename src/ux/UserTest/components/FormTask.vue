@@ -41,7 +41,7 @@
     <!-- Content Area with v-if for forced re-rendering -->
     <div class="stepper-content">
       <v-card-text v-if="step === '1'">
-        <TaskBasicInfo 
+        <TaskBasicInfo
           :model-value="localTask"
           :validation-rules="requiredRule"
           @update:model-value="handleTaskUpdate"
@@ -49,7 +49,7 @@
       </v-card-text>
 
       <v-card-text v-if="step === '2'">
-        <TaskConfiguration 
+        <TaskConfiguration
           :model-value="localTask"
           :select-items="selectItems"
           :validation-rules="requiredRule"
@@ -58,14 +58,14 @@
       </v-card-text>
 
       <v-card-text v-if="step === '3'">
-        <TaskAdvancedOptions 
+        <TaskAdvancedOptions
           :model-value="localTask"
           @update:model-value="handleTaskUpdate"
         />
       </v-card-text>
 
       <v-card-text v-if="step === '4'">
-        <TaskPreview 
+        <TaskPreview
           :task="localTask"
         />
       </v-card-text>
@@ -79,11 +79,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import TaskBasicInfo from './task-steps/TaskBasicInfo.vue';
 import TaskConfiguration from './task-steps/TaskConfiguration.vue';
 import TaskAdvancedOptions from './task-steps/TaskAdvancedOptions.vue';
 import TaskPreview from './task-steps/TaskPreview.vue';
+import Task from '../models/Task';
 
 const props = defineProps({
   task: {
@@ -96,11 +97,6 @@ const emit = defineEmits(['validate', 'update:task', 'complete']);
 
 const step = ref("1");
 const localTask = ref({ ...props.task });
-
-// Watch for step changes to debug
-watch(step, (newStep, oldStep) => {
-  console.log('Step changed from', oldStep, 'to', newStep);
-});
 
 // Required props for the step components
 const selectItems = [
@@ -115,8 +111,8 @@ const selectItems = [
 const requiredRule = [(v) => !!v || 'Field Required'];
 
 const handleTaskUpdate = (updatedTask) => {
-  localTask.value = { ...updatedTask };
-  emit('update:task', { ...updatedTask });
+  localTask.value = Task.fromJson({ ...updatedTask });
+  emit('update:task', localTask.value);
 };
 
 const goToNextStep = () => {
@@ -134,7 +130,7 @@ const goToPreviousStep = () => {
 };
 
 const valida = () => {
-  emit('validate', true);
+  emit('validate', localTask.value);
   return true;
 };
 
@@ -143,10 +139,7 @@ const resetVal = () => {
   localTask.value = { ...props.task };
 };
 
-defineExpose({
-  valida,
-  resetVal
-});
+defineExpose({ valida, resetVal });
 </script>
 
 <style scoped>
