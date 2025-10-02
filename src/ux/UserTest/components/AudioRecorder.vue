@@ -124,30 +124,32 @@ const startAudioRecording = async () => {
     }
 
     mediaRecorder.value.local.onstop = async () => {
-      emit('showLoading')
-      const audioBlob = new Blob(recordedChunks.value.local, { type: 'audio/webm' })
-      const storage = getStorage()
-      const storageReference = storageRef(
-        storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}_evaluator/${Date.now()}.webm`
-      )
-      await uploadBytes(storageReference, audioBlob)
+  emit('showLoading')
 
-      recordedAudio.value = await getDownloadURL(storageReference)
+  const audioBlob = new Blob(recordedChunks.value.local, { type: 'audio/webm' })
+  const storage = getStorage()
+  const storageReference = storageRef(
+    storage,
+    `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}_evaluator/${Date.now()}.webm`
+  )
+  await uploadBytes(storageReference, audioBlob)
+  recordedAudio.value = await getDownloadURL(storageReference)
 
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: props.taskIndex,
-        mediaType: MEDIA_FIELD_MAP.audio,
-        url: recordedAudio.value
-      });
+  await store.dispatch('updateTaskMediaUrl', {
+    taskIndex: props.taskIndex,
+    mediaType: MEDIA_FIELD_MAP.audio,
+    url: recordedAudio.value
+  });
 
-      audioStream.value.getTracks().forEach((track) => track.stop())
-      audioStream.value = null
+  if (audioStream.value) {
+    audioStream.value.getTracks().forEach((track) => track.stop())
+    audioStream.value = null
+  }
 
-      emit('recordingStarted', false)
-      emit('stopShowLoading')
-      recordingAudio.value = false
-    }
+  emit('recordingStarted', false)
+  emit('stopShowLoading')
+  recordingAudio.value = false
+}
 
     mediaRecorder.value.local.start()
 
@@ -193,9 +195,17 @@ const startAudioRecording = async () => {
 
 const stopAudioRecording = () => {
   if (!recordingAudio.value) return
-  mediaRecorder.value.local.stop()
-  mediaRecorder.value.remote?.stop()
+
+  if (mediaRecorder.value?.local && mediaRecorder.value.local.state !== "inactive") {
+    mediaRecorder.value.local.stop()
+  }
+
+  if (mediaRecorder.value?.remote && mediaRecorder.value.remote.state !== "inactive") {
+    mediaRecorder.value.remote.stop()
+  }
 }
+
+
 
 defineExpose({ startAudioRecording, stopAudioRecording })
 </script>
