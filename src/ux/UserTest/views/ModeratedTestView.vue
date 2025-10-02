@@ -114,7 +114,8 @@
               :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
               @update:fullNameModel="val => fullName = val"
               @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-              @continue="completeStep(taskIndex, 'consent')" />
+              @continue="completeStep(taskIndex, 'consent')"
+              @declineConsent="handleConsentDecline" />
 
             <!--Step 2: Pre-test -->
             <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
@@ -356,6 +357,24 @@ const handleStepSelected = async ({ globalIndex: newGlobalIndex, taskIndex: newT
     taskIndex: newTaskIndex,
     showVideoCall: false  // Set to false so participant sees the step content immediately
   });
+};
+
+const handleConsentDecline = async () => {
+  // User declined consent, end the moderated test
+  store.commit('SET_TOAST', { 
+    type: 'info', 
+    message: 'Test ended due to consent decline. Thank you for your time.',
+    timeout: 5000
+  });
+  
+  // Clean up room data
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  await set(roomRef, null);
+  
+  // Navigate back to admin
+  setTimeout(() => {
+    router.push('/admin');
+  }, 2000);
 };
 
 const handleSubmit = async () => {
