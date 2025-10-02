@@ -34,7 +34,7 @@
                 color="primary"
                 @click="startTask"
               >
-                Empezar tarea
+                Start task
               </v-btn>
             </v-col>
           </v-row>
@@ -47,7 +47,7 @@
                 color="primary"
                 class="mr-2"
               >
-                Tiempo: {{ elapsedTimeDisplay }}
+                Time: {{ elapsedTimeDisplay }}
               </v-chip>
             </v-col>
             <v-col

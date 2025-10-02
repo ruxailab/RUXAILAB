@@ -46,23 +46,67 @@
             </v-col>
           </v-row>
 
+          <!-- Stepper secundario para tareas -->
+          <v-row
+            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            class="task-stepper-row"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              md="8"
+              lg="6"
+              class="d-flex justify-center"
+            >
+              <v-stepper
+                :model-value="taskIndex + 1"
+                class="task-stepper rounded-xl elevation-2"
+                style="max-width: 100%;"
+              >
+                <v-stepper-header>
+                  <template v-for="(task, index) in test.testStructure.userTasks" :key="index">
+                    <v-stepper-item
+                      :value="index + 1"
+                      :title="task.taskName"
+                      :complete="localTestAnswer.tasks[index]?.completed || false"
+                      :color="taskIndex < index ? 'primary' : 'success'"
+                      complete-icon="mdi-check"
+                    />
+                    <v-divider v-if="index < test.testStructure.userTasks.length - 1" />
+                  </template>
+                </v-stepper-header>
+              </v-stepper>
+            </v-col>
+          </v-row>
+
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
-            <!-- Proceed Button -->
-            <v-row class="ma-0" justify="center">
-              <v-btn variant="outlined" class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
-                Proceed to next step
-              </v-btn>
-            </v-row>
-
-            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
+            <VideoCall 
+              :roomId="roomId" 
+              :caller="isUserTestAdmin"
+              :current-global-index="globalIndex"
+              :current-task-index="taskIndex"
+              :test="test"
+              :local-test-answer="localTestAnswer"
+              @setRemoteStream="remoteStream = $event"
+              @proceedToNextStep="proceedToNextStep"
+              @stepSelected="handleStepSelected"
+            />
           </div>
 
           <!-- Hide Form Elements while on Video Call Mode -->
           <div v-show="!displayVideoCallComponent">
-            <!--Step 0: Welcome -->
-            <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
-              @start="displayVideoCallComponent = true; globalIndex = 1" />
+            <!--Step 0: Welcome - Different for Moderator vs Participant -->
+            <ModeratorWelcomeStep 
+              v-if="globalIndex === 0 && isUserTestAdmin" 
+              :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" 
+            />
+            <WelcomeStep 
+              v-else-if="globalIndex === 0 && !isUserTestAdmin" 
+              :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" 
+            />
 
             <!--Step 1: Consent -->
             <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
@@ -101,7 +145,7 @@
               @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 
-            <PostTestStep v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            <PostTestStep v-if="globalIndex === 5"
               :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
               :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
@@ -162,6 +206,7 @@ import { useStore } from 'vuex';
 import { onBeforeUnmount } from 'vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
+import ModeratorWelcomeStep from '@/ux/UserTest/components/steps/ModeratorWelcomeStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
@@ -224,14 +269,14 @@ const roomId = computed(() => {
 });
 
 const stepperValue = computed(() => {
-  if (globalIndex.value === 0) return -1;
-  if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
-  if (globalIndex.value === 2 && taskIndex.value === 0) return 1;
-  if (globalIndex.value === 3 && taskIndex.value === 0) return 2; // 👈 PANTALLA INFORMATIVA
-  if (globalIndex.value === 4 && taskIndex.value >= 0) return 2;   // 👈 TAREAS
-  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3;
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4;
-  return 0;
+  if (globalIndex.value === 0) return 0; // Welcome step
+  if (globalIndex.value === 1 && taskIndex.value === 0) return 1; // Consent
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 2; // Pre-test
+  if (globalIndex.value === 3 && taskIndex.value === 0) return 3; // Pre-tasks (informational)
+  if (globalIndex.value === 4 && taskIndex.value >= 0) return 3;   // Tasks (still step 3)
+  if (globalIndex.value === 5) return 4; // Post-test
+  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 5; // Completion
+  return 1; // Default to first step
 });
 
 // Watchers
@@ -295,6 +340,23 @@ const proceedToNextStep = async () => {
     globalIndex: globalIndex.value,
     taskIndex: taskIndex.value,
     showVideoCall: false
+  });
+};
+
+const handleStepSelected = async ({ globalIndex: newGlobalIndex, taskIndex: newTaskIndex }) => {
+  if (!isUserTestAdmin.value) return;
+  
+  globalIndex.value = newGlobalIndex;
+  taskIndex.value = newTaskIndex;
+  
+  // Moderator stays in video call, but participant sees the selected step
+  // Don't change displayVideoCallComponent for moderator
+  
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  await update(roomRef, {
+    globalIndex: newGlobalIndex,
+    taskIndex: newTaskIndex,
+    showVideoCall: false  // Set to false so participant sees the step content immediately
   });
 };
 
@@ -707,6 +769,13 @@ onMounted(async () => {
   }
 
   globalIndex.value = 0;
+  
+  // Initialize localTestAnswer with existing data from currentUserTestAnswer
+  if (currentUserTestAnswer.value && Object.keys(currentUserTestAnswer.value).length > 0) {
+    Object.assign(localTestAnswer, currentUserTestAnswer.value);
+    console.log('LocalTestAnswer initialized with existing data:', localTestAnswer);
+  }
+  
   await mappingSteps();
 });
 
