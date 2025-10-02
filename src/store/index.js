@@ -31,7 +31,6 @@ export default createStore({
     RESET_TOAST(state) {
       state.toastMessage = '';
       state.toastType = 'info';
-      console.log(state)
     },
     setLoading(state, payload) {
       state.loading = payload

@@ -60,7 +60,7 @@
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
               @update:value="consent = $event"
             />
-        </div>
+          </div>
 
           <!-- PRE-TEST -->
           <div
@@ -75,10 +75,9 @@
 
           <!-- TASKS -->
           <div
-          v-if="index === 3"
+            v-if="index === 3"
           >
-            <ListTasks
-          />
+            <ListTasks />
           </div>
           <!-- POST-TEST -->
           <div
@@ -89,7 +88,7 @@
               @change="change = true"
               @update="store.dispatch('setPostTest', $event)"
             />
-        </div>
+          </div>
         </v-col>
       </div>
     </v-container>
