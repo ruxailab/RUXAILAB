@@ -161,12 +161,12 @@ const {
 } = useCooperatorActions();
 
 // Direct notification helper
-const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null } = {}) => {
+const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null, author } = {}) => {
   const notification = new Notification({
     title,
     description,
     redirectsTo,
-    author: 'Admin',
+    author,
     read: false,
     testId
   });
@@ -212,9 +212,11 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId && test.value) {
+    const author = test.value.testAdmin.email;
     await sendNotification(
       user.userDocId,
       title,
+      author,
       content,
       '/',
       test.value.id
@@ -222,10 +224,11 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 };
 
-const handleSendEmail = async () => {
+const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
+  console.log()
   await emailController.send({
-    to: 'juliobonow@gmail.com',
+    to: guest.email,
     subject: 'You have been invited to evaluate a test!',
     attachments: [],
     template: 'invite',
@@ -302,12 +305,14 @@ const submit = async () => {
     console.error('Error updating study:', error);
   }
 
-  cooperatorsEdit.value.forEach(async (guest) => {
-    if (cooperatorsUpdate.value.find(c => c.email === guest.email)) {
-      notifyCooperator(guest);
-      await handleSendEmail();
-    }
-  })
+  const newCooperators = cooperatorsEdit.value.filter(
+    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
+  );
+
+  for (const guest of newCooperators) {
+    notifyCooperator(guest);
+    await handleSendEmail(guest);
+  }
 };
 
 
@@ -329,24 +334,27 @@ const notifyCooperatorAccessibility = async (guest) => {
     }
 
     if (guest.userDocId && path) {
+      const author = test.value.testAdmin.email;
       await sendNotification(
         guest.userDocId,
         title,
         description,
         path,
-        test.value.id
+        test.value.id,
+        author,
       );
     }
   }
 };
 
 const notifyCooperator = (guest) => {
+  console.log('Notifying cooperator:', guest);
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-      notifyCooperatorAccessibility(guest);
-      return;
-    }
+    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
+    //  notifyCooperatorAccessibility(guest);
+    //  return;
+    //}
 
     // admin - 0, evaluator -1, guest - 2
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
@@ -371,7 +379,7 @@ const notifyCooperator = (guest) => {
 
 const reinvite = async (guest) => {
   notifyCooperator(guest);
-  await handleSendEmail();
+  await handleSendEmail(guest);
 };
 
 const removeCoop = async (coop) => {
