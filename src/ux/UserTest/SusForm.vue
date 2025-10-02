@@ -3,8 +3,36 @@
     ref="form"
     v-model="valid"
   >
+    <!-- Information header -->
+    <v-card 
+      variant="outlined" 
+      color="primary" 
+      class="mb-6"
+    >
+      <v-card-text class="text-center">
+        <v-icon 
+          size="48" 
+          color="primary" 
+          class="mb-2"
+        >
+          mdi-clipboard-list-outline
+        </v-icon>
+        <h3 class="text-h6 font-weight-bold text-primary mb-2">
+          System Usability Scale (SUS)
+        </h3>
+        <p class="text-body-2 text-grey-darken-3 mb-2">
+          Please evaluate the system you just used by answering the following <strong>10 questions</strong>. 
+          Rate each statement on a scale from <strong>Strongly Disagree</strong> to <strong>Strongly Agree</strong>.
+        </p>
+        <p class="text-body-2 text-grey-darken-3">
+          Your honest feedback helps us understand the usability of the system. All questions are required.
+        </p>
+      </v-card-text>
+    </v-card>
+
+    <!-- Progress indicator -->
     <div class="d-flex align-center mb-4">
-      <span class="text-subtitle-1">Progreso: {{ completedCount }}/10</span>
+      <span class="text-subtitle-1">Progress: {{ completedCount }}/10</span>
       <v-progress-linear
         class="ml-4"
         :model-value="(completedCount / 10) * 100"
