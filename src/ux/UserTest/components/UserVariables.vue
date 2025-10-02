@@ -126,7 +126,7 @@
                       >
                         <v-checkbox
                           v-model="item.selectionField"
-                          label="Multiple Choice"
+                          label="Options List"
                           color="primary"
                           @update:model-value="selectField(i); markDirty()"
                         />
@@ -137,7 +137,7 @@
                       >
                         <v-checkbox
                           v-model="item.textField"
-                          label="Text Input"
+                          label="Short Answer"
                           color="primary"
                           @update:model-value="selectText(i); markDirty()"
                         />
