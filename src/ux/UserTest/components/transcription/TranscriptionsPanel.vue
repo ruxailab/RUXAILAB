@@ -12,7 +12,7 @@
 
     <!-- Empty state -->
     <v-alert
-      v-if="!loading && transcriptionsArray.length === 0"
+      v-if="!loading && !hasRuns"
       type="info"
       variant="tonal"
       density="comfortable"
@@ -23,7 +23,10 @@
 
     <!-- Runs list -->
     <v-expansion-panels v-else variant="accordion">
-      <v-expansion-panel v-for="(run, i) in transcriptionsArray" :key="run.id">
+      <v-expansion-panel
+        v-for="(run, i) in transcriptionsArray"
+        :key="run?.id || i"
+      >
         <v-expansion-panel-title>
           <div class="w-100 d-flex align-center justify-space-between">
             <div class="d-flex align-center gap-2">
@@ -81,9 +84,6 @@
             v-if="segmentsFor(run).length"
             :transcriptSegments="segmentsFor(run)"
           />
-          <div v-else class="text-medium-emphasis text-caption">
-            No segments in this run.
-          </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -110,7 +110,7 @@
 </template>
 
 <script setup>
-import { watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 
 import TranscriptionList from './TranscriptionList.vue'
 
@@ -142,6 +142,12 @@ const confirmOpen = ref(false)
 const runToDelete = ref(null)
 const deletingId = ref(null)
 
+const hasRuns = computed(
+  () =>
+    Array.isArray(transcriptionsArray.value) &&
+    transcriptionsArray.value.length > 0,
+)
+
 // Controllers
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 const transcriptionController = new TranscriptionController()
@@ -157,7 +163,10 @@ watch(
 )
 
 async function fetchSelectedTaskTranscriptions() {
-  if (!props.answerDocId || !props.userDocId || !props.taskId) return
+  if (!props.answerDocId || !props.userDocId || !props.taskId) {
+    loading.value = false // don't leave the spinner on if we early-return
+    return
+  }
 
   loading.value = true
   try {
@@ -168,10 +177,12 @@ async function fetchSelectedTaskTranscriptions() {
         props.taskId,
       )
 
-    console.log('Fetched transcriptions:', transcriptions)
-    transcriptionsArray.value = transcriptions
+    transcriptionsArray.value = Array.isArray(transcriptions)
+      ? transcriptions
+      : []
   } catch (error) {
     console.error('Error fetching transcriptions:', error)
+    transcriptionsArray.value = [] // ✅ fallback
   } finally {
     loading.value = false
   }
@@ -192,7 +203,6 @@ async function confirmDelete() {
 
     // refetch to get the new list
     await fetchSelectedTaskTranscriptions()
-
 
     // TODO: ADD THIS LATER
     // // recompute meta from refreshed list
