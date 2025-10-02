@@ -28,23 +28,70 @@
       </div>
     </div>
 
-    <!---------------------------------------------------------->
-    <!------------------------ Button -------------------------->
-    <!---------------------------------------------------------->
-    <div
+    <!---------------------------------------------------------------------->
+    <!------------------------ Selectors & Button -------------------------->
+    <!---------------------------------------------------------------------->
+    <v-sheet
       v-if="audioUrlEvaluator || audioUrlModerator"
-      class="d-flex justify-end"
+      elevation="0"
+      class="pa-3 mt-4 mb-4 rounded-lg controls-bar"
+      color="white"
     >
-      <v-btn
-        :loading="isTranscribing"
-        :disabled="isTranscribing"
-        color="orange"
-        class="mb-4 text-white"
-        @click="transcribeSession"
-      >
-        🎙-- Transcribe
-      </v-btn>
-    </div>
+      <v-row class="align-center">
+        <!-- Provider -->
+        <v-col cols="12" md="4" lg="4">
+          <v-select
+            label="Provider"
+            :items="providers"
+            item-title="label"
+            item-value="value"
+            v-model="selectedProvider"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-robot-outline"
+            hide-details
+            :menu-props="{ maxHeight: 260 }"
+            @update:modelValue="
+              (val) => {
+                selectedProvider = val
+                selectedModel = modelsByProvider[val]?.[0] || ''
+              }
+            "
+          />
+        </v-col>
+
+        <!-- Model -->
+        <v-col cols="12" md="4" lg="4">
+          <v-select
+            label="Model"
+            :items="modelOptions"
+            item-title="label"
+            item-value="value"
+            v-model="selectedModel"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-cube-outline"
+            hide-details
+            :menu-props="{ maxHeight: 260 }"
+          />
+        </v-col>
+
+        <!-- Button -->
+        <v-col cols="12" md="4" lg="4" class="d-flex align-end">
+          <v-btn
+            block
+            color="orange"
+            class="text-white"
+            height="46"
+            :loading="isTranscribing"
+            :disabled="isTranscribing || !selectedProvider || !selectedModel"
+            @click="transcribeSession"
+          >
+            🎙 Transcribe
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-sheet>
 
     <!---------------------------------------------------------->
     <!--------------------- Transcription ---------------------->
@@ -75,7 +122,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 // Services
 import { transcribe } from '@/app/services/transcription/TranscriptionService'
@@ -98,6 +145,27 @@ const snackbar = ref({
   color: '', // Use a valid color name or hex code
 })
 
+// UI selections
+const selectedProvider = ref('whisper') // default
+const selectedModel = ref('tiny') // default
+
+const providers = [
+  { label: 'Whisper (local)', value: 'whisper' },
+  { label: 'OpenAI Whisper API', value: 'openai' },
+]
+
+const modelsByProvider = {
+  whisper: ['tiny', 'base', 'medium', 'large'],
+  openai: ['whisper-1'],
+}
+
+const modelOptions = computed(() =>
+  (modelsByProvider[selectedProvider.value] || []).map((m) => ({
+    label: m,
+    value: m,
+  })),
+)
+
 import TranscriptionList from '@/ux/UserTest/components/transcription/TranscriptionList.vue'
 
 // Controllers
@@ -114,10 +182,12 @@ async function transcribeSession() {
   }
   isTranscribing.value = true
 
-  const provider = 'whisper'
-  const model = 'tiny' // You can change the model as needed
+  // const provider = 'whisper'
+  // const model = 'tiny' // You can change the model as needed
   // const provider = "openai"
   // const model = "whisper-1"
+  const provider = selectedProvider.value
+  const model = selectedModel.value
 
   try {
     // Show snackbar notificationz
@@ -448,9 +518,7 @@ async function transcribeAudio(provider, model, audioUrl, role) {
     //     model,
     //   },
     // )
-    const response = await transcribe({ audio_url: audioUrl, provider, model })
-
-    const data = response.data
+    const data = await transcribe({ audio_url: audioUrl, provider, model })
 
     if (data.status !== 'success' || !data.segments) {
       throw new Error(
