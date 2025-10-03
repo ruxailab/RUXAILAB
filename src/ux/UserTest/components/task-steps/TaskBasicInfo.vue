@@ -1,5 +1,6 @@
 <template>
   <div class="task-basic-info">
+    <v-form ref="basicInfoForm">
     <div class="step-header mb-6">
       <h3 class="text-h6 font-weight-bold mb-2">Step 1: Task Basic Information</h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
@@ -35,14 +36,18 @@
           <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
           Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow.
         </p>
-        <div class="description-editor">
+        <div class="description-editor" :class="{ 'editor-error': showDescriptionError && !localTask.taskDescription?.trim() }">
           <quill-editor
             v-model:value="localTask.taskDescription"
             :options="editorOptions"
             class="custom-editor"
-            @change="validateStep"
+            @change="onChangeEditor"
+            @blur="checkDescriptionValidation"
           />
         </div>
+          <span v-if="showDescriptionError && !localTask.taskDescription?.trim()" class="error-text ml-4">
+            {{ t('Field Required') }}
+          </span>
       </v-col>
 
       <v-col cols="12">
@@ -63,8 +68,7 @@
         />
       </v-col>
     </v-row>
-
-   
+   </v-form>
   </div>
 </template>
 
@@ -87,6 +91,8 @@ const emit = defineEmits(['update:modelValue', 'validate']);
 const { t } = useI18n();
 
 const localTask = ref({ ...props.modelValue });
+const basicInfoForm = ref(null);
+const showDescriptionError = ref(false);
 
 const editorOptions = {
   theme: 'snow',
@@ -113,12 +119,35 @@ const completionPercentage = computed(() => {
 });
 
 const isValid = computed(() => {
-  return !!(localTask.value.taskName?.trim() && localTask.value.taskDescription?.trim());
+  basicInfoForm.value?.validate?.();
+
+  const nameOk = !!localTask.value.taskName?.trim();
+  const descOk = !!localTask.value.taskDescription?.trim();
+  return nameOk && descOk;
 });
+
+const onChangeEditor = (content) => {
+  localTask.value.taskDescription = content.html
+  validateStep();
+};
+
+const checkTaskNameValidation = () => {
+  const nameOk = !!localTask.value.taskName?.trim();
+  return nameOk;
+};
+
+const checkDescriptionValidation = () => {
+  const descOk = !!localTask.value.taskDescription?.trim();
+  if(!descOk) showDescriptionError.value = true;
+  else showDescriptionError.value = false;
+  return descOk;
+};
 
 const validateStep = () => {
   emit('validate', isValid.value);
 };
+
+defineExpose({ isValid, checkDescriptionValidation, checkTaskNameValidation });
 
 // Watch for local changes and emit
 watch(
@@ -132,6 +161,18 @@ watch(
 </script>
 
 <style scoped>
+.editor-error {
+  border: 1px solid red !important;
+}
+
+.error-text {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  font-weight: 300;
+}
+
 .task-basic-info {
   max-width: 100%;
 }
@@ -146,7 +187,7 @@ watch(
 
 .description-editor {
   border: 1px solid rgba(var(--v-theme-outline), 0.3);
-  border-radius: 8px;
+  border-radius: 0px;
   overflow: hidden;
   transition: border-color 0.2s ease;
 }
@@ -159,6 +200,7 @@ watch(
   min-height: 120px;
   font-size: 14px;
   line-height: 1.5;
+  padding: 8px;
 }
 
 :deep(.custom-editor .ql-toolbar) {
