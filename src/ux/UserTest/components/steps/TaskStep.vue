@@ -8,6 +8,8 @@
             class="rich-text mb-4"
             v-html="task?.taskDescription || taskDescription"
           />
+                   TASKINDEX {{ taskIndex }}
+
           
           <!-- Task Preview Information -->
           <v-card 
@@ -546,16 +548,25 @@ function handleShowPostForm(userCompleted) {
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {
+  console.log('--------')
+  console.log(showPostForm.value)
+    console.log('--------')
+
   if (showPostForm.value.userCompleted) {
     emit('done', savedTime, props.taskIndex);
   } else {
     emit('couldNotFinish', savedTime, props.taskIndex);
   }
 
-  stage.value = 1;
+  // Reset state for next task
   showPostForm.value = { userCompleted: undefined };
   taskStartTime = null;
   elapsedTimeDisplay.value = '0:00';
+  
+  // Reset stage after a small delay to allow parent to handle the transition
+  nextTick(() => {
+    stage.value = 1;
+  });
 }
 
 const localPostAnswer = ref(props.postAnswer);
@@ -566,6 +577,14 @@ const isVisualizerVisible = ref(false);
 watch(() => props.postAnswer, val => { localPostAnswer.value = val; });
 watch(() => props.taskAnswer, val => { localTaskAnswer.value = val; });
 watch(() => props.taskObservations, val => { localTaskObservations.value = val; });
+
+// Reset stage when taskIndex changes (new task loaded)
+watch(() => props.taskIndex, () => {
+    stage.value = 1;
+    taskStartTime = null;
+    elapsedTimeDisplay.value = '0:00';
+    showPostForm.value = { userCompleted: undefined };
+});
 
 function onUpdateTaskAnswer(val) {
     localTaskAnswer.value = val;

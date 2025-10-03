@@ -7,6 +7,7 @@ export default class TaskAnswer {
     taskObservations,
     taskTime,
     completed,
+    attempted,
     audioRecordURL,
     moderatorAudioURL,
     screenRecordURL,
@@ -21,6 +22,7 @@ export default class TaskAnswer {
     this.taskObservations = taskObservations ?? ''
     this.taskTime = taskTime ?? null
     this.completed = completed ?? null
+    this.attempted = attempted ?? false
     this.audioRecordURL = audioRecordURL ?? null
     this.moderatorAudioURL = moderatorAudioURL ?? null
     this.screenRecordURL = screenRecordURL ?? null
@@ -42,6 +44,7 @@ export default class TaskAnswer {
       taskObservations: this.taskObservations,
       taskTime: this.taskTime,
       completed: this.completed,
+      attempted: this.attempted,
       audioRecordURL: this.audioRecordURL,
       moderatorAudioURL: this.moderatorAudioURL,
       screenRecordURL: this.screenRecordURL,
