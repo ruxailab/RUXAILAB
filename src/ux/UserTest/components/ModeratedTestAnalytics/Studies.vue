@@ -76,9 +76,56 @@
         </v-row>
 
         <v-row class="ma-0">
-          <!-- Tabs + content -->
+          <v-col cols="12">
+            <div v-if="selectedTask">
+              <v-tabs
+                v-model="tab"
+                bg-color="transparent"
+                color="#FCA326"
+                class="mb-3"
+                grow
+              >
+                <v-tab value="timeline">Timeline</v-tab>
+                <v-tab value="transcriptions">Transcriptions</v-tab>
+                <v-tab value="export">Export Data</v-tab>
+              </v-tabs>
+
+              <div class="panel-shell">
+                <TimelinePanel
+                  v-if="tab === 'timeline'"
+                  :key="`timeline-${selectedUserID}:${selectedTaskId}`"
+                  :answer-doc-id="testDocument?.answersDocId"
+                  :user-doc-id="selectedUserID"
+                  :task-id="selectedTaskId"
+                  :audio-url-evaluator="selectedTask?.audioRecordURL"
+                  :audio-url-moderator="selectedTask?.moderatorAudioURL"
+                />
+
+                <TranscriptionsPanel
+                  v-else-if="tab === 'transcriptions'"
+                  :key="`transcriptions-${selectedUserID}:${selectedTaskId}`"
+                  :answer-doc-id="testDocument?.answersDocId"
+                  :user-doc-id="selectedUserID"
+                  :task-id="selectedTaskId"
+                  :latestTranscriptionId="
+                    selectedTask?.latestTranscriptionDocId
+                  "
+                />
+
+                <ExportPanel
+                  v-else
+                  :key="`export-${selectedUserID}:${selectedTaskId}`"
+                  :answer-doc-id="testDocument?.answersDocId"
+                  :user-doc-id="selectedUserID"
+                  :task-id="selectedTaskId"
+                />
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+
+        <!-- <v-row class="ma-0">
           <div v-if="selectedTask">
-            <!-- remove this v-if if you want tabs always visible -->
             <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
               <v-tab value="timeline">Timeline</v-tab>
               <v-tab value="transcriptions">Transcriptions</v-tab>
@@ -86,8 +133,6 @@
             </v-tabs>
 
             <div style="background-color: #e8eaf2" class="ma-0 pa-0">
-              <!-- <p v-if="tab === 'timeline'">Timeline Content</p> -->
-              <!-- Added Key Prop So that it reloads when user/task changes -->
               <TimelinePanel
                 v-if="tab === 'timeline'"
                 :key="`${selectedUserID}:${selectedTaskId}`"
@@ -97,7 +142,6 @@
                 :audio-url-evaluator="selectedTask?.audioRecordURL"
                 :audio-url-moderator="selectedTask?.moderatorAudioURL"
               />
-              <!-- :transcription-id="selectedTask?.latestTranscriptionDocId" -->
               <TranscriptionsPanel
                 v-if="tab === 'transcriptions'"
                 :key="`${selectedUserID}:${selectedTaskId}`"
@@ -115,18 +159,24 @@
               />
             </div>
           </div>
-        </v-row>
-      </div>
-      <div v-else>
-        <h6>Sorry Studies isn't available for Un-moderated tests</h6>
+        </v-row> -->
       </div>
     </div>
-
+    <!-- 
     <div v-else>
       <h6>Sorry Studies isn't available for Heuristic tests</h6>
-    </div>
+    </div> -->
   </div>
 </template>
+
+<style scoped>
+.panel-shell {
+  background: #e8eaf2;
+  width: 100%; /* ✅ full width */
+  padding: 0;
+  border-radius: 0;
+}
+</style>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
