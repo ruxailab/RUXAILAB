@@ -41,6 +41,9 @@
             <v-tab v-if="showEye" @click="tab = 4">
               Eye-Tracking Analytics
             </v-tab>
+            <v-tab @click="tab = 5">
+              Studies
+            </v-tab>
           </v-tabs>
         </template>
 
