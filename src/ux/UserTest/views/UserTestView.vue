@@ -81,7 +81,6 @@
       fluid
       class="pa-0"
     >
-    {{ test.finalMessage }}
       <v-row
         v-if="test && start"
         class="start-screen background-img pa-0 ma-0"
@@ -111,7 +110,7 @@
             class="mt-4"
             :disabled="isStartTestDisabled"
           >
-            Start Teste
+            Start Test
           </v-btn>
         </v-col>
       </v-row>
@@ -194,6 +193,7 @@
               </v-stepper>
             </v-col>
           </v-row>
+
           <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
 
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
@@ -628,30 +628,33 @@ const completeStep = (id, type, userCompleted = true) => {
         return;
       }
       localTestAnswer.tasks[id].completed = userCompleted;
-      allTasksCompleted.value = true;
-
+      
+      // Mark this task as attempted (whether completed successfully or could not finish)
+      localTestAnswer.tasks[id].attempted = true;
+      
+      // Check if all tasks have been attempted
+      let allTasksAttempted = true;
       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (!localTestAnswer.tasks[i]?.completed) {
-          allTasksCompleted.value = false;
+        if (!localTestAnswer.tasks[i]?.attempted) {
+          allTasksAttempted = false;
           break;
         }
       }
-      // if (allTasksCompleted.value) {
-      //   items.value[1].icon = 'mdi-check-circle-outline';
-      // }
+      allTasksCompleted.value = allTasksAttempted;
 
       if (id < localTestAnswer.tasks.length - 1) {
-  taskIndex.value = id + 1;
-  startTimer();
-} else {
-  if (allTasksCompleted.value) {
-    console.log('All tasks completed, moving to post-test');
-    taskIndex.value = id + 1; // to help saving methods
-    globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-  } else {
-    console.log('Última task finalizada, mas ainda há tasks incompletas.');
-  }
-}
+        taskIndex.value = id + 1;
+        startTimer();
+      } else {
+        console.log('All tasks attempted:', allTasksCompleted.value);
+        if (allTasksCompleted.value) {
+          console.log('All tasks completed, moving to post-test');
+          taskIndex.value = id + 1; // to help saving methods
+          globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+        } else {
+          console.log('Última task finalizada, mas ainda há tasks incompletas.');
+        }
+      }
 
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -696,10 +699,10 @@ const autoComplete = async () => {
   if (items.value[1]?.value && Array.isArray(items.value[1].value)) {
     allTasksCompleted.value = true;
     for (let i = 0; i < items.value[1].value.length; i++) {
-      if (localTestAnswer.tasks && localTestAnswer.tasks[i]?.completed && items.value[1].value[i]) {
+      if (localTestAnswer.tasks && localTestAnswer.tasks[i]?.attempted && items.value[1].value[i]) {
         items.value[1].value[i].icon = 'mdi-check-bold';
       }
-      if (!localTestAnswer.tasks || !localTestAnswer.tasks[i]?.completed) {
+      if (!localTestAnswer.tasks || !localTestAnswer.tasks[i]?.attempted) {
         allTasksCompleted.value = false;
       }
     }
@@ -840,6 +843,7 @@ const mappingSteps = async () => {
             postAnswer: '',
             taskTime: 0,
             completed: false,
+            attempted: false, // Track whether task has been attempted
             susAnswers: [],
             nasaTlxAnswers: {}
           });
