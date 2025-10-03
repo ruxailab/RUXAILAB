@@ -116,6 +116,8 @@ import { getMethodManagerView } from '../constants/methodDefinitions';
 import { useRouter ,useRoute} from 'vue-router';
 import Notification from '@/shared/models/Notification';
 import EmailController from '../controllers/EmailController';
+import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
 
 
 const uidgen = new UIDGenerator();
@@ -148,6 +150,8 @@ const emit = defineEmits(['open-invite-dialog'])
 const store = useStore();
 const route = useRoute();
 const slots = useSlots();
+const toast = useToast();
+const { t } = useI18n();
 
 // Use composables
 const {
@@ -185,6 +189,7 @@ const sendNotification = async ({ userId, title, description, redirectsTo = '/',
 
 // Variables
 let showIntroComponent = ref(true);
+const inviteMessages = ref('');
 const verified = ref(false);
 const messageModel = ref(false);
 const selectedUser = ref([]);
@@ -231,6 +236,11 @@ const handleSendEmail = async (guest) => {
     subject: 'You have been invited to evaluate a test!',
     attachments: [],
     template: 'invite',
+    data: {
+      message: inviteMessages.value || '',
+      testTitle: test.value.testTitle,
+      adminEmail: test.value.testAdmin.email,
+    }
   })
 }
 
@@ -240,7 +250,7 @@ const handleSendInvitations = async (invitationData) => {
   const { selectedCoops, selectedRole, inviteMessage } = invitationData;
   const tokens = {};
 
-
+  inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value];
 
   selectedCoops.forEach((coop) => {
@@ -314,8 +324,14 @@ const submit = async () => {
 };
 
 const sendMenssages = async (guest) => {
-  notifyCooperator(guest);
-  await handleSendEmail(guest);
+  try {
+    notifyCooperator(guest);
+    await handleSendEmail(guest);
+    toast.success(t('pages.cooperators.invitationSent'));
+  } catch (error) {
+    console.error('Error sending messages:', error);
+    toast.error(t('errors.sendError'));
+  }
 }
 
 const notifyCooperatorAccessibility = async (guest) => {
@@ -368,7 +384,7 @@ const notifyCooperator = (guest) => {
     sendNotification({
       userId: guest.userDocId,
       title: 'Cooperation Invite!',
-      description: `You have been invited to test ${test.value.testTitle}!`,
+      description: inviteMessages.value || `You have been invited to test ${test.value.testTitle || 'a study'}!`,
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
