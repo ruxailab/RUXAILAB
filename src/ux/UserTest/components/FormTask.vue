@@ -40,8 +40,9 @@
 
     <!-- Content Area with v-if for forced re-rendering -->
     <div class="stepper-content">
-      <v-card-text v-if="step === '1'">
+      <v-card-text v-show="step === '1'">
         <TaskBasicInfo
+          ref="taskBasicInfoRef"
           :model-value="localTask"
           :validation-rules="requiredRule"
           @update:model-value="handleTaskUpdate"
@@ -93,6 +94,8 @@ const props = defineProps({
   },
 });
 
+const taskBasicInfoRef = ref(null);
+
 const emit = defineEmits(['validate', 'update:task', 'complete']);
 
 const step = ref("1");
@@ -131,8 +134,18 @@ const goToPreviousStep = () => {
 };
 
 const valida = () => {
-  emit('validate', localTask.value);
-  return true;
+  const descOk = taskBasicInfoRef.value?.checkDescriptionValidation();
+  const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation();
+
+  // trigger visual validator for task name
+  taskBasicInfoRef.value?.isValid?.value;
+  
+  if (nameOk && descOk) {
+    emit('validate', localTask.value);
+    return true;
+  }
+
+  return false;
 };
 
 const resetVal = () => {
