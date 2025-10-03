@@ -390,40 +390,75 @@ const filterModeratedSessions = async () => {
       });
     }
   }
-  
+
   filteredModeratedSessions.value = cooperatorArray
 };
 
 const filterNextModeratedSessions = async () => {
-  const userModeratedTests = Object.values(user.value.notifications)
-  const cooperatorArray = [];
-  for (const test of userModeratedTests) {
-    console.log("test", test)
-    const testObj = await studyController.getStudy({ id: test.testId });
-    if (testObj) {
-      const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
-      if (cooperatorObj) {
-        Object.assign(cooperatorObj, {
-          testTitle: testObj.testTitle,
-          testAdmin: testObj.testAdmin,
-          id: testObj.id,
-          testType: testObj.testType,
-          subType: testObj.subType,
-          redirectsTo: test.redirectsTo
-        });
-        cooperatorArray.push(cooperatorObj);
-      }
-    }
-  }
-  nextModeratedSessions.value = cooperatorArray
-  .filter(
-    (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
-  )
-  .filter(
-    (val, index, self) => index === self.findIndex(m => m.id === val.id)
+  const userModeratedTests = Object.values(user.value?.notifications || {});
+
+  const results = await Promise.all(
+    userModeratedTests.map(async (test) => {
+      const testObj = await studyController.getStudy({ id: test.testId });
+      if (!testObj) return null;
+
+      const cooperatorObj = (testObj.cooperators || []).find(
+        (coop) => coop.userDocId == user.value.id
+      );
+      if (!cooperatorObj) return null;
+
+      return {
+        ...cooperatorObj,
+        testTitle: testObj.testTitle,
+        testAdmin: testObj.testAdmin,
+        id: testObj.id,
+        testType: testObj.testType,
+        subType: testObj.subType,
+        redirectsTo: test.redirectsTo,
+      };
+    })
   );
-  console.log("nextModeratedSessions.value", nextModeratedSessions.value)
+
+  // Remove nulos e aplica os mesmos filtros de antes
+  const cooperatorArray = results.filter(Boolean);
+
+  nextModeratedSessions.value = cooperatorArray
+    .filter((answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED)
+    .filter((val, index, self) => index === self.findIndex((m) => m.id === val.id));
+
+  console.log("nextModeratedSessions.value", nextModeratedSessions.value);
 };
+
+// const filterNextModeratedSessions = async () => {
+//   const userModeratedTests = Object.values(user.value.notifications)
+//   const cooperatorArray = [];
+//   for (const test of userModeratedTests) {
+//     console.log("test", test)
+//     const testObj = await studyController.getStudy({ id: test.testId });
+//     if (testObj) {
+//       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
+//       if (cooperatorObj) {
+//         Object.assign(cooperatorObj, {
+//           testTitle: testObj.testTitle,
+//           testAdmin: testObj.testAdmin,
+//           id: testObj.id,
+//           testType: testObj.testType,
+//           subType: testObj.subType,
+//           redirectsTo: test.redirectsTo
+//         });
+//         cooperatorArray.push(cooperatorObj);
+//       }
+//     }
+//   }
+//   nextModeratedSessions.value = cooperatorArray
+//   .filter(
+//     (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
+//   )
+//   .filter(
+//     (val, index, self) => index === self.findIndex(m => m.id === val.id)
+//   );
+//   console.log("nextModeratedSessions.value", nextModeratedSessions.value)
+// };
 
 const reloadMyTemplates = async () => {
   tempDialog.value = false
