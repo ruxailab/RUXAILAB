@@ -15,7 +15,8 @@
         md="4"
       >
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          Task Link (URL) <span class="text-error">*</span>
+          Task Link (URL) 
+          <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon
@@ -42,7 +43,8 @@
         md="4"
       >
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          Estimated Time (minutes) <span class="text-error">*</span>
+          Estimated Time (minutes) 
+          <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon
@@ -70,7 +72,8 @@
         md="4"
       >
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('titles.answerType') }} <span class="text-error">*</span>
+          {{ $t('titles.answerType') }} 
+          <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon
@@ -115,7 +118,8 @@
         cols="12"
       >
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('switches.postTest') }} <span class="text-error">*</span>
+          {{ $t('switches.postTest') }} 
+          <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon
@@ -141,7 +145,8 @@
         cols="12"
       >
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('switches.postForm') }} <span class="text-error">*</span>
+          {{ $t('switches.postForm') }} 
+          <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon
