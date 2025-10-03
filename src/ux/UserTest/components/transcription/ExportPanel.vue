@@ -1,70 +1,143 @@
 <template>
-  <div class="pa-4">
-    <div class="d-flex align-center justify-space-between mb-3">
-      <h3 class="text-h6 m-0">Export Data</h3>
-      <v-progress-circular v-if="loading" indeterminate size="20" />
-    </div>
+  <!-- Info / empty states -->
+  <v-alert
+    v-if="!loading && runs.length === 0"
+    type="info"
+    variant="tonal"
+    density="comfortable"
+    class="mb-3"
+  >
+    No transcriptions yet for this task.
+  </v-alert>
+
+  <v-skeleton-loader
+    v-else-if="loading"
+    type="heading, text, actions"
+    class="mt-2"
+  />
+
+  <v-card v-else class="export-surface">
+    <v-toolbar
+      density="compact"
+      color="transparent"
+      class="export-toolbar mb-3"
+    >
+      <v-toolbar-title class="text-h6 d-flex align-center gap-2">
+        <v-icon size="18">mdi-tray-arrow-down</v-icon>
+        Export Data
+      </v-toolbar-title>
+
+      <v-spacer />
+
+      <!-- tiny meta chips -->
+      <div v-if="!loading && runs.length" class="flex gap-2 align-center mr-2">
+        <v-chip size="x-small" variant="flat" color="blue-grey-lighten-4">
+          {{ runs.length }} runs
+        </v-chip>
+        <v-chip
+          v-if="runs[0]"
+          size="x-small"
+          variant="flat"
+          color="blue-grey-lighten-4"
+        >
+          {{ runs[0].provider }} / {{ runs[0].model }}
+        </v-chip>
+        <v-chip
+          v-if="runs[0]"
+          size="x-small"
+          variant="flat"
+          color="blue-grey-lighten-4"
+        >
+          {{ formatDate(runs[0].createdAt) }}
+        </v-chip>
+      </div>
+
+      <!-- refresh icon -->
+      <v-tooltip text="Refresh">
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-refresh"
+            variant="text"
+            :disabled="loading"
+            @click="refetch"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-progress-circular
+        v-if="loading"
+        indeterminate
+        size="18"
+        class="ml-2"
+      />
+    </v-toolbar>
 
     <!-- Controls -->
     <v-row class="mb-4" dense>
       <v-col cols="12" md="6">
-        <div class="text-caption text-medium-emphasis mb-1">Scope</div>
-        <v-btn-toggle v-model="scope" mandatory density="comfortable">
-          <v-btn value="latest">Latest run</v-btn>
-          <v-btn value="all">All runs for this task</v-btn>
+        <!-- Scope -->
+        <span class="sr-only" id="scopeLabel">Scope</span>
+        <v-btn-toggle
+          aria-labelledby="scopeLabel"
+          v-model="scope"
+          mandatory
+          density="comfortable"
+          class="toggle--responsive seg"
+          rounded="xl"
+          variant="tonal"
+          color="orange-darken-2"
+          :disabled="!runs.length"
+        >
+          <v-btn value="latest" prepend-icon="mdi-history">Latest run</v-btn>
+          <v-btn value="all" prepend-icon="mdi-format-list-bulleted"
+            >All runs for this task</v-btn
+          >
         </v-btn-toggle>
       </v-col>
 
       <v-col cols="12" md="6">
-        <div class="text-caption text-medium-emphasis mb-1">Format</div>
-        <v-btn-toggle v-model="format" mandatory density="comfortable">
-          <v-btn value="csv">CSV</v-btn>
-          <v-btn value="json">JSON</v-btn>
-          <v-btn value="pdf">PDF</v-btn>
+        <!-- Format -->
+        <span class="sr-only" id="formatLabel">Format</span>
+        <v-btn-toggle
+          aria-labelledby="formatLabel"
+          v-model="format"
+          mandatory
+          density="comfortable"
+          class="toggle--responsive seg"
+          rounded="xl"
+          variant="tonal"
+          color="orange-darken-2"
+          :disabled="!runs.length"
+        >
+          <v-btn value="csv" prepend-icon="mdi-file-delimited-outline"
+            >CSV</v-btn
+          >
+          <v-btn value="json" prepend-icon="mdi-code-json">JSON</v-btn>
+          <v-btn value="pdf" prepend-icon="mdi-file-pdf-box">PDF</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
 
-    <!-- Info / empty states -->
-    <v-alert
-      v-if="!loading && runs.length === 0"
-      type="info"
-      variant="tonal"
-      density="comfortable"
-      class="mb-3"
-    >
-      No transcriptions yet for this task.
-    </v-alert>
+    <v-card-actions class="export-actions">
+      <div v-if="runs.length" class="text-caption text-medium-emphasis mr-4">
+        {{ selectionSummary }} • {{ runs.length }} run{{
+          runs.length === 1 ? '' : 's'
+        }}
+      </div>
 
-    <div v-else class="text-caption text-medium-emphasis mb-4">
-      Loaded {{ runs.length }} run<span v-if="runs.length !== 1">s</span>.
-      <span v-if="runs.length">
-        Latest: {{ formatDate(runs[0]?.createdAt) }}</span
-      >
-    </div>
-
-    <!-- Actions -->
-    <div class="d-flex gap-2">
       <v-btn
-        color="primary"
+      variant="elevated"
+        color="orange"
+        class="text-white"
         :disabled="loading || runs.length === 0"
+        :prepend-icon="formatIcon"
         @click="onExport"
       >
-        Export
+        {{ exportLabel }}
       </v-btn>
-
-      <v-btn variant="text" :disabled="loading" @click="refetch">
-        Refresh
-      </v-btn>
-    </div>
-
-    <!-- (Optional) tiny peek -->
-    <div v-if="runs.length && scope === 'latest'" class="mt-4 text-caption">
-      <strong>Latest run:</strong>
-      {{ runs[0]?.provider }} · {{ runs[0]?.model }} ·
-      {{ formatDate(runs[0]?.createdAt) }}
-    </div>
-  </div>
+    </v-card-actions>
+  </v-card>
 
   <v-snackbar
     v-model="snackbar.visible"
@@ -184,6 +257,64 @@
 </template>
 
 <style scoped>
+.export-surface {
+  display: flex;
+  flex-direction: column;
+}
+.export-actions {
+  justify-content:flex-end;
+  gap: 8px;
+}
+@media (max-width: 960px) {
+  .export-actions {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .export-actions .v-btn {
+    width: 100%;
+  }
+}
+
+.toggle--responsive {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toggle--responsive .v-btn {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.actions .v-btn {
+  min-width: 140px;
+}
+@media (max-width: 960px) {
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .actions .v-btn {
+    width: 100%;
+  }
+}
+
+/* PDF dialog: prevent overflow on small screens */
+.scroll-panel {
+  max-height: 60vh;
+  overflow: auto;
+}
+
+/* Tables: allow horizontal scroll on mobile */
+.scroll-x {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-x table {
+  width: 100%;
+}
+
 .pdf-preview {
   background: #fff;
   border: 1px solid #eee;
@@ -203,6 +334,17 @@
 }
 .seg-table thead th {
   background: #fff7ea;
+}
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
 
@@ -240,6 +382,27 @@ const pdfMeta = ref({
 const pdfSummaryHtml = ref('<p>Add an executive summary here…</p>')
 
 const controller = new TranscriptionController()
+
+const formatIcon = computed(
+  () =>
+    ({
+      csv: 'mdi-file-delimited-outline',
+      json: 'mdi-code-json',
+      pdf: 'mdi-file-pdf-box',
+    }[format.value]),
+)
+
+const exportLabel = computed(() =>
+  format.value === 'pdf'
+    ? 'Preview & Export PDF'
+    : `Export ${format.value.toUpperCase()}`,
+)
+
+const selectionSummary = computed(() => {
+  const selScope = scope.value === 'latest' ? 'Latest run' : 'All runs'
+  const selFormat = format.value.toUpperCase()
+  return `${selScope} • ${selFormat}`
+})
 
 /* --------------------- Fetching -------------------- */
 watch(
@@ -476,10 +639,10 @@ async function downloadPdf() {
   const COLORS = {
     text: [34, 34, 34],
     sub: [120, 120, 120],
-    line: [255, 163, 38],      // orange accent
+    line: [255, 163, 38], // orange accent
     tableHead: [255, 163, 38], // orange head
-    zebra: [246, 246, 246],    // striped rows
-    cardBg: [255, 247, 234],   // summary card bg
+    zebra: [246, 246, 246], // striped rows
+    cardBg: [255, 247, 234], // summary card bg
     border: [230, 230, 230],
   }
 
@@ -509,17 +672,23 @@ async function downloadPdf() {
   const summaryPlain = stripHtml(pdfSummaryHtml.value || '')
   if (summaryPlain.trim()) {
     // Title
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(12)
-    doc.text('Executive Summary', M, y); y += 8
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
+    doc.text('Executive Summary', M, y)
+    y += 8
 
     // Card box
     const cardPad = 10
-    const summaryLines = doc.splitTextToSize(summaryPlain, CONTENT_W - cardPad * 2)
+    const summaryLines = doc.splitTextToSize(
+      summaryPlain,
+      CONTENT_W - cardPad * 2,
+    )
     const cardH = summaryLines.length * 13 + cardPad * 2
 
     ensurePageSpace(cardH + 12)
     drawFilledRect(doc, M, y, CONTENT_W, cardH, COLORS.cardBg, COLORS.border)
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
     doc.text(summaryLines, M + cardPad, y + cardPad + 10)
     y += cardH + 16
   }
@@ -530,33 +699,50 @@ async function downloadPdf() {
     // Section header title + line
     ensurePageSpace(48)
     y += 14
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
     const when = formatDate(run.createdAt)
-    doc.text(`Task (${idx + 1})  •  ${run.provider}/${run.model}  •  ${when}`, M, y)
-    
+    doc.text(
+      `Task (${idx + 1})  •  ${run.provider}/${run.model}  •  ${when}`,
+      M,
+      y,
+    )
+
     ensurePageSpace(32)
 
     // Table body (sorted by start time)
     const rows = [
-      ...(Array.isArray(run?.evaluator?.segments) ? run.evaluator.segments.map(s => ({
-        role: 'evaluator', start: formatClock(s.start), end: formatClock(s.end), text: s.text || '', startSec: Number(s.start) || 0
-      })) : []),
-      ...(Array.isArray(run?.moderator?.segments) ? run.moderator.segments.map(s => ({
-        role: 'moderator', start: formatClock(s.start), end: formatClock(s.end), text: s.text || '', startSec: Number(s.start) || 0
-      })) : []),
+      ...(Array.isArray(run?.evaluator?.segments)
+        ? run.evaluator.segments.map((s) => ({
+            role: 'evaluator',
+            start: formatClock(s.start),
+            end: formatClock(s.end),
+            text: s.text || '',
+            startSec: Number(s.start) || 0,
+          }))
+        : []),
+      ...(Array.isArray(run?.moderator?.segments)
+        ? run.moderator.segments.map((s) => ({
+            role: 'moderator',
+            start: formatClock(s.start),
+            end: formatClock(s.end),
+            text: s.text || '',
+            startSec: Number(s.start) || 0,
+          }))
+        : []),
     ].sort((a, b) => a.startSec - b.startSec)
 
     autoTable(doc, {
       startY: y + 6,
       head: [['Role', 'Start', 'End', 'Text']],
-      body: rows.map(r => [r.role, r.start, r.end, r.text]),
+      body: rows.map((r) => [r.role, r.start, r.end, r.text]),
       styles: { fontSize: 10, cellPadding: 6, valign: 'top' },
       headStyles: { fillColor: COLORS.tableHead, textColor: [255, 255, 255] },
       alternateRowStyles: { fillColor: COLORS.zebra },
       columnStyles: {
-        0: { cellWidth: 90 },  // Role
-        1: { cellWidth: 60 },  // Start
-        2: { cellWidth: 60 },  // End
+        0: { cellWidth: 90 }, // Role
+        1: { cellWidth: 60 }, // Start
+        2: { cellWidth: 60 }, // End
         3: { cellWidth: 'auto' }, // Text
       },
       margin: { left: M, right: M },
@@ -569,10 +755,16 @@ async function downloadPdf() {
   // ===== FOOTER (page numbers + hairline) =====
   addPageNumbers(doc, M, COLORS, logo)
 
-
-  const fn = scope.value === 'latest'
-    ? fileName(`transcription_latest_task-${props.taskId}_user-${props.userDocId}`, 'pdf')
-    : fileName(`transcriptions_task-${props.taskId}_user-${props.userDocId}`, 'pdf')
+  const fn =
+    scope.value === 'latest'
+      ? fileName(
+          `transcription_latest_task-${props.taskId}_user-${props.userDocId}`,
+          'pdf',
+        )
+      : fileName(
+          `transcriptions_task-${props.taskId}_user-${props.userDocId}`,
+          'pdf',
+        )
 
   doc.save(fn)
   toast('PDF downloaded', 'green')
@@ -633,18 +825,23 @@ function toast(text, color) {
 }
 
 function stripHtml(html) {
-  const el = document.createElement('div'); el.innerHTML = html || ''
+  const el = document.createElement('div')
+  el.innerHTML = html || ''
   return (el.textContent || el.innerText || '').replace(/\u00A0/g, ' ')
 }
 
-function pad2(n){ return String(Math.floor(n)).padStart(2,'0') }
+function pad2(n) {
+  return String(Math.floor(n)).padStart(2, '0')
+}
 
-function formatClock(sec){
-  const s = Number(sec) || 0; const m = Math.floor(s / 60); const r = Math.floor(s % 60)
+function formatClock(sec) {
+  const s = Number(sec) || 0
+  const m = Math.floor(s / 60)
+  const r = Math.floor(s % 60)
   return `${pad2(m)}:${pad2(r)}`
 }
 
-function drawRule(doc, x1, y1, x2, y2, rgb = [200,200,200], w = 0.6) {
+function drawRule(doc, x1, y1, x2, y2, rgb = [200, 200, 200], w = 0.6) {
   doc.setDrawColor(...rgb)
   doc.setLineWidth(w)
   doc.line(x1, y1, x2, y2)
@@ -675,7 +872,9 @@ function addPageNumbers(doc, M, COLORS, logo) {
     }
 
     // page number on the right
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(120)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(9)
+    doc.setTextColor(120)
     doc.text(`Page ${i} of ${pageCount}`, W - M, H - 12, { align: 'right' })
   }
 }
@@ -687,7 +886,8 @@ async function loadImageAsDataURL(url) {
     const blob = await res.blob()
     // pick correct encoder
     const isPng = (blob.type || '').includes('png')
-    const isJpg = (blob.type || '').includes('jpeg') || (blob.type || '').includes('jpg')
+    const isJpg =
+      (blob.type || '').includes('jpeg') || (blob.type || '').includes('jpg')
     if (!isPng && !isJpg) {
       console.warn('Logo is not PNG/JPEG. Content-Type:', blob.type)
     }
