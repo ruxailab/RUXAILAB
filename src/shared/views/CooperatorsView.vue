@@ -204,6 +204,7 @@ const showIntroView = computed(() => {
 // Computeds
 const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
+const userAuth = computed(() => store.getters.user);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
 const loading = computed(() => store.getters.loading);
@@ -239,7 +240,9 @@ const handleSendEmail = async (guest) => {
     data: {
       message: inviteMessages.value || '',
       testTitle: test.value.testTitle,
+      testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
+      adminName: userAuth.value.name || userAuth.value.email,
     }
   })
 }
@@ -307,19 +310,19 @@ const submit = async () => {
   const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}))
   test.value.cooperators = [...coops]
 
-  try {
-    await store.dispatch('updateStudy', test.value);
-    await store.dispatch('getStudy', { id: test.value.id });
-  } catch (error) {
-    console.error('Error updating study:', error);
-  }
-
   const newCooperators = cooperatorsEdit.value.filter(
     (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
   );
 
-  for (const guest of newCooperators) {
-    await sendMenssages(guest);
+  try {
+    await store.dispatch('updateStudy', test.value);
+
+    await Promise.all([
+      store.dispatch('getStudy', { id: test.value.id }),
+      ...newCooperators.map(guest => sendMenssages(guest))
+    ]);
+  } catch (error) {
+    console.error('Error updating study:', error);
   }
 };
 
