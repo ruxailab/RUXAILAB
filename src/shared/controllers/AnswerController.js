@@ -6,6 +6,9 @@ const COLLECTION = 'answers'
 
 const userController = new UserController()
 
+
+import { increment } from 'firebase/firestore'
+
 export default class AnswerController extends Controller {
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
@@ -79,5 +82,15 @@ export default class AnswerController extends Controller {
     await super.update(COLLECTION, answerDocId, {
       [fieldPath]: data.toFirestore(),
     });
+  }
+
+    async updateTaskTranscriptionMeta({ answerDocId, userDocId, taskId, latestId, inc = 1 }) {
+    const base = `taskAnswers.${userDocId}.tasks.${taskId}`
+
+    const update = {
+      [`${base}.latestTranscriptionDocId`]: latestId,
+      [`${base}.transcriptionsCount`]: increment(inc)
+    }
+    return super.update(COLLECTION, answerDocId, update)
   }
 }
