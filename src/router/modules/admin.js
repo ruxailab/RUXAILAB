@@ -1,141 +1,65 @@
-import EditTest from '@/views/admin/EditTestView.vue'
-import TestList from '@/views/admin/DashboardView.vue'
-import AnswerView from '@/views/admin/AnswerView.vue'
-import ManagerView from '@/views/admin/ManagerView.vue'
-import ReportView from '@/views/admin/ReportView.vue'
-import CooperatorsView from '@/views/admin/CooperatorsView.vue'
-import SettingsView from '@/views/admin/SettingsView.vue'
-import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import TemplateView from '@/views/admin/TemplateView.vue'
-import CreateView from '@/views/admin/CreateView.vue'
-import CreateBlankView from '@/views/admin/CreateBlankView'
-import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
-import FinalReportView from '@/views/admin/FinalReportView'
-import Profile from '@/views/admin/ProfileView.vue'
-import Notification from '@/views/admin/NotificationPage.vue'
-import Choose from '@/views/admin/Choose.vue'
-import Inspection from '@/views/admin/Inspection.vue'
-import Testing from '@/views/admin/Testing.vue'
-
+import TestList from '@/features/navigation/views/AdminView.vue'
+import Profile from '@/features/auth/views/ProfileView.vue'
+import Notification from '@/features/notifications/views/NotificationPage.vue'
+import Choose from '@/features/ux_creation/Choose.vue'
+import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
+import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
+import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
+import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 export default [
   {
-    path: '/testslist',
-    name: 'TestList',
+    path: '/dashboard',
+    name: 'Dashboard',
+    meta: { authorize: [1] },
+    component: DashboardView,
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
     meta: { authorize: [1] },
     component: TestList,
   },
   {
-    path:'/choose',
-    name:'Choose',
+    path: '/profile',
+    name: 'Profile',
     meta: { authorize: [1] },
-    component:Choose,
-  },
-  {
-    path:'/profile',
-    name:'Profile',
-    meta: { authorize: [1] },
-    component:Profile,
+    redirect: () => ({
+      path: '/admin',
+      query: { section: 'profile' }
+    }),
   },
   {
     path: '/notifications',
     name: 'notifications',
     meta: { authorize: [1] },
-    component: Notification,
+    redirect: () => ({
+      path: '/admin',
+      query: { section: 'notifications' }
+    }),
   },
   {
-    path: '/managerview/:id/:token?',
-    name: 'ManagerView',
-    meta: { authorize: [0, 1] },
-    component: ManagerView,
-    props: true,
-    children: [
-      {
-        path: '/reportview/:id',
-        name: 'ReportView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: ReportView,
-      },
-      {
-        path: '/finalreportview/:id',
-        name: 'FinalReportView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: FinalReportView,
-      },
-      {
-        path: '/answerview/:id',
-        name: 'AnswerView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: AnswerView,
-      },
-      {
-        path: '/edittest/:id',
-        name: 'EditTest',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: EditTest,
-      },
-      {
-        path: '/settingsview/:id',
-        name: 'SettingsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: SettingsView,
-      },
-      {
-        path: '/cooperators/:id',
-        name: 'CooperatorsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: CooperatorsView,
-      },
-      {
-        path: '/analyticsview/:id/:heuristic?',
-        name: 'AnalyticsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: AnalyticsView,
-      },
-      {
-        path: '/templateview/:id',
-        name: 'TemplateView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: TemplateView,
-      },
-    ],
+    path: '/choose',
+    name: 'study-create-step1',
+    meta: { authorize: [1] },
+    component: Choose,
+  },
+  {
+    path: '/methods',
+    name: 'study-create-step2',
+    meta: { authorize: [1] },
+    component: ChooseStudyMethods,
   },
   {
     path: '/createtest',
-    name: 'Create View',
+    name: 'study-create-step3',
     meta: { authorize: [1] },
-    component: CreateView,
+    component: ChooseStudyType,
   },
   {
-    path: '/createBlank',
-    name: 'Create Blank View',
+    path: '/studydetails',
+    name: 'study-create-step4',
     meta: { authorize: [1] },
-    component: CreateBlankView,
-  },
-  {
-    path: '/inspection',
-    name: 'Inspection',
-    meta: { authorize: [1] },
-    component: Inspection,
-  },
-  {
-    path: '/testing',
-    name: 'Testing',
-    meta: { authorize: [1] },
-    component: Testing,
-  },
-  {
-    path: '/fromtemplate',
-    name: 'Create from template',
-    meta: { authorize: [1] },
-    component: CreateFromTemplate,
-  },
+    component: StudyDetailsForm,
+  }
 ]
