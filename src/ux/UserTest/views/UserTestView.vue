@@ -1,10 +1,11 @@
 <template>
   <div v-if="test">
+    <!-- EYE TRACKER NOT READY 
     <div>
       <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
-
+-->
 
     <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
@@ -112,6 +113,75 @@
           >
             Start Test
           </v-btn>
+          
+          <!-- Messages when test is disabled -->
+          <v-alert
+            v-if="testDisabledReason === 'already-completed'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-check-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Already Completed</strong><br>
+              You have already completed and submitted this test. Thank you for your participation!
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'Test has expired'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-clock-alert</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Expired</strong><br>
+              This test is no longer available as it has passed its end date.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'Test is not active'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-pause-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Not Active</strong><br>
+              This test is currently not active. Please contact the administrator.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'Test has no tasks configured'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-alert-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Configuration Error</strong><br>
+              This test has no tasks configured. Please contact the administrator.
+            </span>
+          </v-alert>
         </v-col>
       </v-row>
 
@@ -384,7 +454,32 @@ const isStartTestDisabled = computed(() => {
     if (endDate < currentDate) return true;
   }
 
+  // Check if user has already submitted the test
+  if (localTestAnswer.submitted) return true;
+
   return false;
+});
+
+const testDisabledReason = computed(() => {
+  if (!test.value) return 'Test not found';
+  
+  const hasValidTasks = test.value.testStructure &&
+                       Array.isArray(test.value.testStructure.userTasks) &&
+                       test.value.testStructure.userTasks.length > 0;
+  
+  if (!hasValidTasks) return 'Test has no tasks configured';
+  
+  if (test.value.status !== 'active') return 'Test is not active';
+  
+  if (test.value.endDate) {
+    const currentDate = new Date();
+    const endDate = new Date(test.value.endDate);
+    if (endDate < currentDate) return 'Test has expired';
+  }
+  
+  if (localTestAnswer.submitted) return 'already-completed';
+  
+  return null;
 });
 
 const stepperValue = computed(() => {
