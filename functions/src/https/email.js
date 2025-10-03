@@ -6,7 +6,6 @@ import * as path from "path";
 export const sendEmail = functions.onCall({
   handler: async (data) => {
     const content = data.data;
-    console.log(content);
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
