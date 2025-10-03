@@ -226,7 +226,6 @@ const handleSendMessage = async ({ user, title, content }) => {
 
 const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
-  console.log()
   await emailController.send({
     to: guest.email,
     subject: 'You have been invited to evaluate a test!',
@@ -310,12 +309,14 @@ const submit = async () => {
   );
 
   for (const guest of newCooperators) {
-    notifyCooperator(guest);
-    await handleSendEmail(guest);
+    await sendMenssages(guest);
   }
 };
 
-
+const sendMenssages = async (guest) => {
+  notifyCooperator(guest);
+  await handleSendEmail(guest);
+}
 
 const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
@@ -348,7 +349,6 @@ const notifyCooperatorAccessibility = async (guest) => {
 };
 
 const notifyCooperator = (guest) => {
-  console.log('Notifying cooperator:', guest);
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
@@ -378,8 +378,7 @@ const notifyCooperator = (guest) => {
 };
 
 const reinvite = async (guest) => {
-  notifyCooperator(guest);
-  await handleSendEmail(guest);
+  await sendMenssages(guest)
 };
 
 const removeCoop = async (coop) => {
