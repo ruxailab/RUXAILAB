@@ -79,11 +79,6 @@
           <div v-else class="text-medium-emphasis text-caption">
             No segments in this run.
           </div>
-
-          <TranscriptionList
-            v-if="segmentsFor(run).length"
-            :transcriptSegments="segmentsFor(run)"
-          />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
