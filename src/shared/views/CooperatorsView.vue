@@ -204,6 +204,7 @@ const showIntroView = computed(() => {
 // Computeds
 const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
+const userAuth = computed(() => store.getters.user);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
 const loading = computed(() => store.getters.loading);
@@ -239,7 +240,9 @@ const handleSendEmail = async (guest) => {
     data: {
       message: inviteMessages.value || '',
       testTitle: test.value.testTitle,
+      testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
+      adminName: userAuth.value.name || userAuth.value.email,
     }
   })
 }
