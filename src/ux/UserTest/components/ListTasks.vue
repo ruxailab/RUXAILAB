@@ -157,7 +157,6 @@ const headers = ref([
   { title: 'Type', value: 'taskType', sortable: false, align: 'center' },
   { title: 'Estimated Time (min)', value: 'estimatedTime', sortable: false, align: 'center' },
   { title: 'Tip', value: 'taskTip', sortable: false, align: 'center' },
-  { title: 'Post Question', value: 'postQuestion', sortable: false, align: 'center' },
   { title: 'Screen Record', value: 'hasScreenRecord', sortable: false, align: 'center' },
   { title: 'Camera', value: 'hasCamRecord', sortable: false, align: 'center' },
   { title: 'Eye Tracker', value: 'hasEye', sortable: false, align: 'center' },
