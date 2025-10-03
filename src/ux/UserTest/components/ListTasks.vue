@@ -50,6 +50,24 @@
             :no-data-text="$t('UserTestTable.messages.noTasks')"
           >
             <!-- Custom Column Templates -->
+            <template #item.taskType="{ item }">
+              <v-chip
+                v-if="item.taskType"
+                :color="getTaskTypeColor(item.taskType)"
+                size="small"
+                variant="flat"
+              >
+                <v-icon
+                  start
+                  size="small"
+                >
+                  {{ getTaskTypeIcon(item.taskType) }}
+                </v-icon>
+                {{ getTaskTypeLabel(item.taskType) }}
+              </v-chip>
+              <span v-else class="text-grey-400">N/A</span>
+            </template>
+
             <template #item.taskDescription="{ item }">
               <v-icon :color="item.taskDescription ? 'success' : 'error'">
                 {{ item.taskDescription ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
@@ -62,11 +80,7 @@
               </v-icon>
             </template>
 
-            <template #item.postQuestion="{ item }">
-              <v-icon :color="item.postQuestion ? 'success' : 'error'">
-                {{ item.postQuestion ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
-              </v-icon>
-            </template>
+          
 
             <template #item.hasScreenRecord="{ item }">
               <v-icon :color="item.hasScreenRecord ? 'success' : 'error'">
@@ -140,8 +154,8 @@ const task = ref(new Task());
 
 const headers = ref([
   { title: 'Name', align: 'start', sortable: false, value: 'taskName', width: '10%' },
+  { title: 'Type', value: 'taskType', sortable: false, align: 'center' },
   { title: 'Estimated Time (min)', value: 'estimatedTime', sortable: false, align: 'center' },
-  { title: 'Description', value: 'taskDescription', sortable: false, align: 'center' },
   { title: 'Tip', value: 'taskTip', sortable: false, align: 'center' },
   { title: 'Post Question', value: 'postQuestion', sortable: false, align: 'center' },
   { title: 'Screen Record', value: 'hasScreenRecord', sortable: false, align: 'center' },
@@ -191,6 +205,43 @@ const setAllTasks = () => {
     store.getters.tasks,
     store.state.Tests.Test.testStructure.userTasks
   );
+};
+
+// Helper functions for task type chips
+const getTaskTypeColor = (taskType) => {
+  const colors = {
+    'no-answer': 'grey',
+    'text-area': 'primary',
+    'post-test': 'secondary',
+    'post-form': 'success',
+    'nasa-tlx': 'warning',
+    'sus': 'info'
+  };
+  return colors[taskType] || 'grey';
+};
+
+const getTaskTypeIcon = (taskType) => {
+  const icons = {
+    'no-answer': 'mdi-minus-circle',
+    'text-area': 'mdi-text-box',
+    'post-test': 'mdi-clipboard-check',
+    'post-form': 'mdi-form-select',
+    'nasa-tlx': 'mdi-rocket',
+    'sus': 'mdi-account-check'
+  };
+  return icons[taskType] || 'mdi-help-circle';
+};
+
+const getTaskTypeLabel = (taskType) => {
+  const labels = {
+    'no-answer': 'No Answer',
+    'text-area': 'Text Area',
+    'post-test': 'Post Test',
+    'post-form': 'Post Form',
+    'nasa-tlx': 'NASA-TLX',
+    'sus': 'SUS'
+  };
+  return labels[taskType] || 'Unknown';
 };
 
 onMounted(() => {
