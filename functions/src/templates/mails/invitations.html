@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{testTitle}} - Invitation</title>
+  </head>
+  <body style="margin:0; padding:0; font-family: Arial, sans-serif; background:#f5f5f5;">
+    <table align="center" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; background:#ffffff; border-radius:8px; overflow:hidden;">
+      <!-- Logo -->
+      <tr>
+        <td style="text-align:center; padding:20px; background:#222;">
+          <img src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/refs/heads/develop/src/assets/ruxailab-long-crop-white.png"
+               alt="RUXAILAB Logo"
+               style="display:block; margin:0 auto; max-width:180px;">
+        </td>
+      </tr>
+
+      <!-- Message -->
+      <tr>
+        <td style="padding:30px; color:#333; font-size:16px; line-height:1.5;">
+          <p>Hello,</p>
+          <p>{{message}}</p>
+          <p>
+            You have been invited to participate in the study:
+            <br>
+            <strong>{{testTitle}}</strong>
+          </p>
+          <p style="margin:0 0 15px 0; font-size:14px; color:#555;">
+            Organized by <strong>{{adminName}}</strong>
+          </p>
+          <p>
+            {{testDescription}}
+          </p>
+          <p>
+            Click the button below to access the platform and begin your participation:
+          </p>
+        </td>
+      </tr>
+
+      <!-- Button -->
+      <tr>
+        <td style="padding:0 30px 30px 30px; text-align:center;">
+          <a href="{{site}}"
+             style="display:inline-block; margin:10px; padding:14px 28px; background:#4CAF50; color:#fff; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold;">
+             Access Platform
+          </a>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td style="background:#f0f0f0; padding:20px; text-align:center; font-size:13px; color:#555; line-height:1.5;">
+          <p>Need help? Contact: <a href="mailto:{{adminEmail}}" style="color:#4CAF50; text-decoration:none;">{{adminEmail}}</a></p>
+          <p style="margin-top:15px; font-size:12px; color:#999;">
+            © 2025 RUXAILAB - All rights reserved.
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

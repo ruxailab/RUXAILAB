@@ -1,5 +1,5 @@
-import Controller from '@/controllers/BaseController'
-import TestController from '@/controllers/TestController'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import TestController from '@/controllers/StudyController'
 import { doc, updateDoc, collection, getDocs } from 'firebase/firestore'
 
 // Mock Firebase Firestore
