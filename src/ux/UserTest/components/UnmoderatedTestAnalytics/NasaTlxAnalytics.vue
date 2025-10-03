@@ -522,9 +522,10 @@ const tableHeaders = [
 
 const test = computed(() => store.getters.test.testStructure)
 const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {});
-const nasaTlxData = computed(() => Object.values(testAnswerDocument.value).flatMap((item, index) => {
+const nasaTlxData = computed(() => Object.values(testAnswerDocument.value || {}).flatMap((item, index) => {
   return Object.values(item.tasks || {})
     .filter(task => test.value?.userTasks[task.taskId]?.taskType === "nasa-tlx")
+    .filter(task => task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object')
     .map((task) => {
       const scores = Object.values(task.nasaTlxAnswers)
       return {

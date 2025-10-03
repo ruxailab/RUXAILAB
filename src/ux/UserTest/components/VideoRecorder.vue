@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-col>
+    <!-- <v-col>
       <v-row>
         <v-tooltip
           v-if="!recording"
@@ -39,7 +39,7 @@
           <span>Stop Recording</span>
         </v-tooltip>
       </v-row>
-    </v-col>
+    </v-col> -->
   </div>
 </template>
 
@@ -49,6 +49,7 @@ import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 
 const props = defineProps({
   testId: {
@@ -73,9 +74,22 @@ const recordedChunks = ref([])
 const mediaRecorder = ref(null)
 const recordedVideo = ref('')
 
-const startRecording = async () => {
-  recording.value = true
+async function hasCamera() {
   try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.some(device => device.kind === "videoinput");
+  } catch (err) {
+    console.error("Erro ao verificar dispositivos:", err);
+    return false;
+  }
+}
+
+const startRecording = async () => {
+  try {
+    const cameraAvailable = await hasCamera();
+    if (!cameraAvailable) return;
+
+    recording.value = true
     videoStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
     })
@@ -109,13 +123,18 @@ const startRecording = async () => {
 
       recordedVideo.value = await getDownloadURL(storageReference)
 
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: props.taskIndex,
+        mediaType: MEDIA_FIELD_MAP.webcam,
+        url: recordedVideo.value
+      });
+
       currentUserTestAnswer.value.tasks[props.taskIndex].webcamRecordURL = recordedVideo.value
 
       videoStream.value.getTracks().forEach((track) => track.stop())
       recording.value = false
 
       emit('stopShowLoading')
-      toast.success(t('alerts.genericSuccess'))
     }
 
     mediaRecorder.value.start()
@@ -130,6 +149,8 @@ const stopRecording = () => {
     mediaRecorder.value.stop()
   }
 }
+
+defineExpose({ startRecording, stopRecording })
 </script>
 
 <style scoped>

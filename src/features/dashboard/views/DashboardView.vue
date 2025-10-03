@@ -61,7 +61,7 @@
         cols="12"
         lg="4"
       >
-        <NextSession />
+        <NextSession :next-session="sessions" />
       </v-col>
     </v-row>
 
@@ -98,16 +98,19 @@ const props = defineProps({
     required: true,
     default: () => [],
   },
+  sessions: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
 })
 
 const store = useStore()
 
-// Dashboard data
 const totalStudies = ref(12)
 const usedStorage = ref(150)
 const totalParticipants = ref(0)
 
-// User info
 const userDisplayName = computed(() => {
   const user = store.getters['auth/getUser']
   if (user && user.displayName) {
@@ -115,6 +118,7 @@ const userDisplayName = computed(() => {
   }
   return 'User'
 })
+
 watch(() => props.items, (newVal) => {
   totalStudies.value = newVal.length
 }, { immediate: true })

@@ -142,7 +142,7 @@
                       >
                         <v-text-field
                           v-model="userprofile.username"
-                          :label="$t('SIGNIN.username')"
+                          :label="$t('profile.username')"
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-account"
@@ -156,7 +156,7 @@
                       >
                         <v-text-field
                           v-model="user.email"
-                          :label="$t('SIGNIN.email')"
+                          :label="$t('profile.email')"
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-email"
@@ -170,7 +170,7 @@
                       >
                         <v-text-field
                           v-model="userprofile.contactNo"
-                          :label="$t('SIGNIN.contact')"
+                          :label="$t('profile.contact')"
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-phone"
@@ -419,7 +419,7 @@
           >
             <v-text-field
               v-model="editProfileData.username"
-              :label="$t('SIGNIN.username')"
+              :label="$t('profile.username')"
               variant="outlined"
               density="compact"
               prepend-inner-icon="mdi-account"
@@ -428,7 +428,7 @@
             />
             <v-text-field
               v-model="editProfileData.contactNo"
-              :label="$t('SIGNIN.contact')"
+              :label="$t('profile.contact')"
               variant="outlined"
               density="compact"
               prepend-inner-icon="mdi-phone"
@@ -708,17 +708,17 @@ const specialCharIcon = computed(() =>
 );
 const profileItems = computed(() => [
   {
-    label: t('SIGNIN.username'),
+    label: t('profile.username'),
     value: userprofile.value.username,
     icon: 'mdi-account',
   },
   {
-    label: t('SIGNIN.email'),
+    label: t('profile.email'),
     value: user.value.email,
     icon: 'mdi-email',
   },
   {
-    label: t('SIGNIN.contact'),
+    label: t('profile.contact'),
     value: userprofile.value.contactNo,
     icon: 'mdi-phone',
   },

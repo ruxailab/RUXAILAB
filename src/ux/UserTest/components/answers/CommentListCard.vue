@@ -17,10 +17,10 @@
         </ul>
       </template>
       <template v-else-if="answer">
-        <span>Respuesta: {{ Array.isArray(answer) ? answer.join(', ') : answer }}</span>
+        <span>Answer: {{ Array.isArray(answer) ? answer.join(', ') : answer }}</span>
       </template>
       <template v-else>
-        <span>No hay respuestas o tipo no soportado.</span>
+        <span>No answers or unsupported type.</span>
       </template>
     </div>
   </v-card>

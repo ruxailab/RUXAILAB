@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-overlay :model-value="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      />
-    </v-overlay>
     <IntroAnswer
       v-if="intro"
       @go-to-coops="goToCoops"
@@ -29,25 +23,22 @@
             <v-tab @click="tab = 1">
               Individual Analytics
             </v-tab>
-            <v-tab @click="tab = 2">
+            <!-- <v-tab @click="tab = 2">
               Sentiment Analysis
-            </v-tab>
-            <v-tab @click="tab = 3">
-              Studies
-            </v-tab>
+            </v-tab> -->
             <v-tab
               v-if="showSUS"
-              @click="tab = 4"
+              @click="tab = 2"
             >
               SUS Analytics
             </v-tab>
             <v-tab
               v-if="showNasa"
-              @click="tab = 5"
+              @click="tab = 3"
             >
               Nasa-TLX Analytics
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 6">
+            <v-tab v-if="showEye" @click="tab = 4">
               Eye-Tracking Analytics
             </v-tab>
           </v-tabs>
@@ -59,11 +50,11 @@
           >
             <GeneralAnalytics v-if="tab === 0" />
             <UserAnalytics v-if="tab === 1" />
-            <SentimentAnalysisView v-if="tab === 2" />
-            <Studies v-if="tab === 3" />
-            <SusAnalytics v-if="tab === 4" />
-            <NasaTlxAnalytics v-if="tab === 5" />
-            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 6" />
+            <!-- <SentimentAnalysisView v-if="tab === 2" /> -->
+            <SusAnalytics v-if="tab === 2" />
+            <NasaTlxAnalytics v-if="tab === 3" />
+            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 4" />
+            <Studies v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -81,12 +72,12 @@ import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
 import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
-import Studies from '@/ux/UserTest/components/ModeratedTestAnalytics/Studies.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
-import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+// import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
+import Studies from '@/ux/UserTest/components/ModeratedTestAnalytics/Studies.vue';
 
 defineProps({
   id: {
@@ -153,9 +144,6 @@ const allIrisTrackingData = computed(() => {
 
   return tasks;
 });
-
-
-const loading = computed(() => store.getters.loading);
 
 const goToCoops = () => {
   emit('goToCoops');
