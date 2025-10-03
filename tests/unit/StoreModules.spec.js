@@ -19,11 +19,11 @@ jest.mock('@/controllers/UserController', () => {
   }))
 })
 
-import TestModule from '@/store/modules/Test'
-import AuthModule from '@/store/modules/Auth'
+import TestModule from '@/store/modules/Study'
+import AuthModule from '@/features/auth/store/Auth'
 
-import TestController from '@/controllers/TestController'
-import AuthController from '@/controllers/AuthController'
+import TestController from '@/controllers/StudyController'
+import AuthController from '@/features/auth/controllers/AuthController'
 
 /**
  * This is a simplified test that verifies error handling basics in the store modules.
