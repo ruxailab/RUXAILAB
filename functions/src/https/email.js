@@ -6,7 +6,6 @@ import * as path from "path";
 export const sendEmail = functions.onCall({
   handler: async (data) => {
     const content = data.data;
-    console.log(content);
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -26,7 +25,9 @@ export const sendEmail = functions.onCall({
         .replace("{{site}}", process.env.SITE_URL)
         .replace("{{message}}", content.data.message)
         .replace(/{{testTitle}}/g, content.data.testTitle)
-        .replace(/{{adminEmail}}/g, content.data.adminEmail);
+        .replace(/{{testDescription}}/g, content.data.testDescription)
+        .replace(/{{adminEmail}}/g, content.data.adminEmail)
+        .replace(/{{adminName}}/g, content.data.adminName);
     }
     else if (content.template === 'passwordReset') {
       const actionCodeSettings = {
