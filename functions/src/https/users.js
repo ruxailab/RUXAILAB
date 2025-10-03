@@ -1,10 +1,31 @@
 import { admin, functions } from '../f.firebase.js'
-import nodemailer from 'nodemailer'
 
 export const deleteAuth = functions.onCall({
   handler: async (data) => {
     try {
-      await admin.auth().deleteUser(data.id)
+      const db = admin.firestore()
+
+      const testsRef = db.collection('tests')
+      const testsQuery = await testsRef
+        .where("testAdmin.userDocId", "==", data.data.userId)
+        .get()
+
+      if (!testsQuery.empty) {
+        for (const testDoc of testsQuery.docs) {
+          const testData = testDoc.data()
+
+          const answersDocId = testData.answersDocId
+          if (answersDocId) await db.collection("answers").doc(answersDocId).delete()
+
+          await deleteFolderFiles(testDoc.id)
+          await db.collection("tests").doc(testDoc.id).delete()
+        }
+      }
+
+      const userDocRef = db.collection('users').doc(data.data.userId)
+      await userDocRef.delete()
+
+      await admin.auth().deleteUser(data.data.userId)
       return 'User deleted successfully.'
     } catch (err) {
       console.error('Error deleting user:', err)
@@ -13,30 +34,12 @@ export const deleteAuth = functions.onCall({
   }
 })
 
-export const sendEmail = functions.onCall({
-  handler: async (data) => {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.VUE_APP_FIREBASE_EMAIL,
-        pass: process.env.VUE_APP_FIREBASE_PASSWORD,
-      },
-    })
+const deleteFolderFiles = async (testId) => {
+  const folderPath = `tests/${testId}/`;
+  const [files] = await admin.storage().bucket().getFiles({ prefix: folderPath });
 
-    const mail = {
-      from: 'Uramaki Lab',
-      to: data.guest.email,
-      subject: 'You have been invited to evaluate a test!',
-      html: data.template,
-      attachments: data.attachments ?? [],
-    }
-
-    try {
-      const info = await transporter.sendMail(mail)
-      return `Message sent: ${info.messageId}`
-    } catch (error) {
-      console.error('Error sending email:', error)
-      return `Error sending email: ${error.message}`
-    }
+  if (files.length > 0) {
+    console.log(`Deletando ${files.length} arquivos da pasta ${folderPath}`);
+    await Promise.all(files.map(file => file.delete()));
   }
-})
+}

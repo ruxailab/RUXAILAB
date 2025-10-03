@@ -1,0 +1,195 @@
+<template>
+  <v-data-table
+    :headers="headers"
+    :items="items"
+    :sort-by="sortBy || [{ key: 'updateDate', order: 'desc' }]"
+    item-key="id"
+    density="comfortable"
+    class="rounded-lg"
+    elevation="2"
+    hover
+    @click:row="emitClick"
+  >
+    <!-- Type Column -->
+    <template #item.type="{ item }">
+      <v-tooltip location="top">
+        <template #activator="{ props }">
+          <v-avatar
+            v-bind="props"
+            size="32"
+            :color="getAvatarColor(item)"
+            style="color: #fff"
+          >
+            <v-icon size="18">
+              {{ getTypeIcon(item) }}
+            </v-icon>
+          </v-avatar>
+        </template>
+        <span>
+          {{ getTestType(item) }}
+        </span>
+      </v-tooltip>
+    </template>
+
+    <!-- Name Column -->
+    <template #item.name="{ item }">
+      <div
+        class="d-flex flex-column"
+        style="line-height: 1;"
+      >
+        <div class="text-subtitle-1 font-weight-medium text-on-surface">
+          {{ getItemTitle(item) }}
+        </div>
+        <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
+          Session Date: {{formatDateTime(item.testDate, 'es')}}
+        </div>
+        <div v-else class="text-caption text-medium-emphasis">
+          <!-- If study does not belong to logged in user -->
+          <span v-if="item.testAuthorEmail">
+            Last Updated:
+          </span>
+          <span v-else>
+            Creation Date:
+          </span>
+           {{ formatItemDate(item) }}
+        </div>
+      </div>
+    </template>
+
+    <!-- Owner Column -->
+    <template #item.owner="{ item }">
+      <div class="d-flex align-center">
+        <v-avatar
+          size="32"
+          class="mr-3"
+        >
+          <v-img
+            v-if="getOwnerImage(item)"
+            :src="getOwnerImage(item)"
+            cover
+          />
+          <span
+            v-else
+            class="font-weight-medium"
+          >
+            {{ getOwnerName(item)?.[0]?.toUpperCase() ?? '?' }}
+          </span>
+        </v-avatar>
+        <span class="text-body-1">
+          {{ getOwnerName(item) }}
+        </span>
+      </div>
+    </template>
+
+    <template #item.evaluator="{ item }">
+      <div class="d-flex align-center">
+        <span class="text-body-1">
+          {{ item.email }}
+        </span>
+      </div>
+    </template>
+
+    <!-- Participants Column -->
+    <template #item.participants="{ item }">
+      <v-chip
+        size="small"
+        variant="tonal"
+        color="primary"
+        prepend-icon="mdi-account-multiple"
+      >
+        {{ getParticipantCount(item) }}
+      </v-chip>
+    </template>
+
+     <!-- Status Column -->
+    <template #item.status="{ item }">
+      <v-chip
+        label
+        variant="tonal"
+        :color="getSessionStatus(item.testDate).variant"
+      >
+        {{ getSessionStatus(item.testDate).label }}
+      </v-chip>
+    </template>
+
+    <!-- No Data Slot -->
+    <template #no-data>
+      <div class="text-center pa-4">
+        <span>
+          {{ getEmptyStateMessage(t) }}
+        </span>
+      </div>
+    </template>
+  </v-data-table>
+</template>
+
+<script setup>
+import { toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useItemFormatting } from '@/shared/composables/useItemFormatting'
+import { useItemTypes } from '@/shared/composables/useItemTypes'
+import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
+import { formatDateTime } from '@/shared/utils/dateUtils'
+import { getSessionStatus } from '@/shared/utils/sessionsUtils'
+
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+  type: {
+    type: String,
+    required: true,
+  },
+  sortBy: {
+    type: Array,
+    required: false,
+    default: null,
+  },
+})
+
+const emit = defineEmits(['clicked'])
+
+const { t } = useI18n()
+
+// Composables
+const typeRef = toRef(props, 'type')
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
+const { getItemTitle, getOwnerName, getOwnerImage, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
+const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
+
+// Event handlers
+const emitClick = (event, { item }) => {
+  emit('clicked', item)
+}
+</script>
+
+<style scoped>
+/* Custom hover effect for rows */
+:deep(.v-data-table__tr:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.04) !important;
+}
+
+/* Ensure proper cursor for clickable rows */
+:deep(.v-data-table__tr) {
+  cursor: pointer;
+}
+
+/* Add margin between rows */
+:deep(.v-data-table__tr td) {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+/* Header styling */
+:deep(.v-data-table-header__content) {
+  font-weight: 700 !important;
+  color: #1F2937 !important;
+}
+
+/* Optional: Add a subtle border between rows for better separation */
+:deep(.v-data-table__tr:not(:last-child)) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+</style>

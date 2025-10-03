@@ -8,7 +8,7 @@ firebase.json
 firestore.indexes.json
 firestore.rules
 firestore-debug.log
-/docs 
+/docs
 
 # local env files
 .env.local
@@ -22,7 +22,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 firebase-debug.log
-database-debug.log 
+database-debug.log
 ui-debug.log
 
 # Editor directories and files
