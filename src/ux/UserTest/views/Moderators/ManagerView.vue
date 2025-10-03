@@ -123,59 +123,24 @@
             cols="12"
             md="6"
           >
-            <ModeratorActions :test="test" />
-          </v-col>
-        </v-row>        <!-- Fila con 3 módulos -->
-        <v-row class="modules-section">
-          <!-- Módulo 1: Participants -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <ParticipantsInfo :test="test" />
-          </v-col>
-
-          <!-- Módulo 2: Tasks Information -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <TasksInfo :test="test" />
-          </v-col>
-
-          <!-- Módulo 3: Test Settings -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <TestSettings :test="test" />
-          </v-col>
-        </v-row>
-
-        <!-- Segunda fila con 3 módulos -->
-        <v-row class="mb-2 modules-section">
-          <!-- Módulo 4: Storage -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <StorageInfo :test="test" />
-          </v-col>
-
-          <!-- Módulo 5: Analytics -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <Analytics :test="test" />
-          </v-col>
-
-          <!-- Módulo 6: Moderator Actions -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <ModeratorActions :test="test" />
+            <!-- Empty slot for future components -->
+            <v-card
+              class="h-100 d-flex align-center justify-center"
+              variant="outlined"
+              style="min-height: 200px;"
+            >
+              <div class="text-center text-grey-lighten-1">
+                <v-icon
+                  size="48"
+                  class="mb-2"
+                >
+                  mdi-plus-circle-outline
+                </v-icon>
+                <p class="text-body-2">
+                  Space for additional modules
+                </p>
+              </div>
+            </v-card>
           </v-col>
         </v-row>
       </v-container>
@@ -196,7 +161,6 @@ import StudyOverview from '@/ux/UserTest/components/manager/StudyOverview.vue';
 import ParticipantsInfo from '@/ux/UserTest/components/manager/ParticipantsInfo.vue';
 import TasksInfo from '@/ux/UserTest/components/manager/TasksInfo.vue';
 import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue';
-import ModeratorActions from '@/ux/UserTest/components/manager/ModeratorActions.vue';
 
 // Stores
 const store = useStore()
