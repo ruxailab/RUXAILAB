@@ -25,6 +25,11 @@ export function useDataTableConfig(type) {
 
     if (typeRef.value === 'sessions') {
         headers.value.push({
+            title: 'Evaluator',
+            key: 'evaluator',
+            sortable: true,
+        })
+        headers.value.push({
             title: 'Status',
             key: 'status',
             sortable: true,

@@ -13,8 +13,12 @@ export default {
     answers: [],
     evaluatorStatistics: [],
     finalReport: [],
+    mediaUrls: {},
   },
   getters: {
+    mediaUrls(state) {
+      return state.mediaUrls
+    },
     testAnswerDocument(state, rootState) {
       if (rootState.test) {
         const testOptions = rootState.test.testOptions
@@ -147,6 +151,10 @@ export default {
       ) {
         state.testAnswerDocument.taskAnswers[userId].tasks[taskId].completed = value;
       }
+    },
+    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url }) {
+      if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
+      state.mediaUrls[taskIndex][mediaType] = url
     }
   },
   actions: {
@@ -285,5 +293,9 @@ export default {
 
       commit('SET_EVALUATOR_STATISTICS', table)
     },
+
+    async updateTaskMediaUrl({ commit }, { taskIndex, mediaType, url }) {
+      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url });
+    }
   },
 }

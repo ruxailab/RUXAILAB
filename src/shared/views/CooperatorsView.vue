@@ -116,6 +116,8 @@ import { getMethodManagerView } from '../constants/methodDefinitions';
 import { useRouter ,useRoute} from 'vue-router';
 import Notification from '@/shared/models/Notification';
 import EmailController from '../controllers/EmailController';
+import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
 
 
 const uidgen = new UIDGenerator();
@@ -148,6 +150,8 @@ const emit = defineEmits(['open-invite-dialog'])
 const store = useStore();
 const route = useRoute();
 const slots = useSlots();
+const toast = useToast();
+const { t } = useI18n();
 
 // Use composables
 const {
@@ -161,12 +165,12 @@ const {
 } = useCooperatorActions();
 
 // Direct notification helper
-const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null } = {}) => {
+const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null, author } = {}) => {
   const notification = new Notification({
     title,
     description,
     redirectsTo,
-    author: 'Admin',
+    author,
     read: false,
     testId
   });
@@ -185,6 +189,7 @@ const sendNotification = async ({ userId, title, description, redirectsTo = '/',
 
 // Variables
 let showIntroComponent = ref(true);
+const inviteMessages = ref('');
 const verified = ref(false);
 const messageModel = ref(false);
 const selectedUser = ref([]);
@@ -199,6 +204,7 @@ const showIntroView = computed(() => {
 // Computeds
 const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
+const userAuth = computed(() => store.getters.user);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
 const loading = computed(() => store.getters.loading);
@@ -212,9 +218,11 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId && test.value) {
+    const author = test.value.testAdmin.email;
     await sendNotification(
       user.userDocId,
       title,
+      author,
       content,
       '/',
       test.value.id
@@ -222,13 +230,20 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 };
 
-const handleSendEmail = async () => {
+const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
   await emailController.send({
-    to: 'juliobonow@gmail.com',
+    to: guest.email,
     subject: 'You have been invited to evaluate a test!',
     attachments: [],
     template: 'invite',
+    data: {
+      message: inviteMessages.value || '',
+      testTitle: test.value.testTitle,
+      testDescription: test.value.testDescription,
+      adminEmail: test.value.testAdmin.email,
+      adminName: userAuth.value.name || userAuth.value.email,
+    }
   })
 }
 
@@ -238,7 +253,7 @@ const handleSendInvitations = async (invitationData) => {
   const { selectedCoops, selectedRole, inviteMessage } = invitationData;
   const tokens = {};
 
-
+  inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value];
 
   selectedCoops.forEach((coop) => {
@@ -295,22 +310,32 @@ const submit = async () => {
   const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}))
   test.value.cooperators = [...coops]
 
+  const newCooperators = cooperatorsEdit.value.filter(
+    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
+  );
+
   try {
     await store.dispatch('updateStudy', test.value);
-    await store.dispatch('getStudy', { id: test.value.id });
+
+    await Promise.all([
+      store.dispatch('getStudy', { id: test.value.id }),
+      ...newCooperators.map(guest => sendMenssages(guest))
+    ]);
   } catch (error) {
     console.error('Error updating study:', error);
   }
-
-  cooperatorsEdit.value.forEach(async (guest) => {
-    if (cooperatorsUpdate.value.find(c => c.email === guest.email)) {
-      notifyCooperator(guest);
-      await handleSendEmail();
-    }
-  })
 };
 
-
+const sendMenssages = async (guest) => {
+  try {
+    notifyCooperator(guest);
+    await handleSendEmail(guest);
+    toast.success(t('pages.cooperators.invitationSent'));
+  } catch (error) {
+    console.error('Error sending messages:', error);
+    toast.error(t('errors.sendError'));
+  }
+}
 
 const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
@@ -329,12 +354,14 @@ const notifyCooperatorAccessibility = async (guest) => {
     }
 
     if (guest.userDocId && path) {
+      const author = test.value.testAdmin.email;
       await sendNotification(
         guest.userDocId,
         title,
         description,
         path,
-        test.value.id
+        test.value.id,
+        author,
       );
     }
   }
@@ -343,10 +370,10 @@ const notifyCooperatorAccessibility = async (guest) => {
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-      notifyCooperatorAccessibility(guest);
-      return;
-    }
+    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
+    //  notifyCooperatorAccessibility(guest);
+    //  return;
+    //}
 
     // admin - 0, evaluator -1, guest - 2
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
@@ -360,7 +387,7 @@ const notifyCooperator = (guest) => {
     sendNotification({
       userId: guest.userDocId,
       title: 'Cooperation Invite!',
-      description: `You have been invited to test ${test.value.testTitle}!`,
+      description: inviteMessages.value || `You have been invited to test ${test.value.testTitle || 'a study'}!`,
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
@@ -370,8 +397,7 @@ const notifyCooperator = (guest) => {
 };
 
 const reinvite = async (guest) => {
-  notifyCooperator(guest);
-  await handleSendEmail();
+  await sendMenssages(guest)
 };
 
 const removeCoop = async (coop) => {

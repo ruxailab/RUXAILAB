@@ -167,16 +167,18 @@ const paginatedInboxNotifications = computed(() => {
 
 const goToNotificationRedirect = async (notification) => {
   if(notification.redirectsTo === null) return
-  if(notification.accessLevel === 0) {
-    const accepted = await showAcceptDialog()
-    if (!accepted) return
-    const study = await new StudyController().getStudy({ id: notification.testId })
-    
-    await store.dispatch('acceptStudyCollaboration', {
-      test: study,
-      cooperator: user.value,
-    });
+ 
+  const accepted = await showAcceptDialog()
+  if (!accepted) {
+    await markAsRead(notification)
+    return
   }
+  const study = await new StudyController().getStudy({ id: notification.testId })
+    
+  await store.dispatch('acceptStudyCollaboration', {
+    test: study,
+    cooperator: user.value,
+  });
   
   if (!notification.read) {
     await markAsRead(notification)
