@@ -231,7 +231,8 @@ export default {
             /// Tests where user is a cooperator
             if (userDoc.myAnswers) {
               for (const answer of Object.values(userDoc.myAnswers)) {
-                tests.push(answer)
+                const study = await studyController.getStudy({ id: answer.testDocId })
+                tests.push(Object.assign(answer, study))
               }
             }
 
