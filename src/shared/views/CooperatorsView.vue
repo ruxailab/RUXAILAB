@@ -307,19 +307,19 @@ const submit = async () => {
   const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}))
   test.value.cooperators = [...coops]
 
-  try {
-    await store.dispatch('updateStudy', test.value);
-    await store.dispatch('getStudy', { id: test.value.id });
-  } catch (error) {
-    console.error('Error updating study:', error);
-  }
-
   const newCooperators = cooperatorsEdit.value.filter(
     (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
   );
 
-  for (const guest of newCooperators) {
-    await sendMenssages(guest);
+  try {
+    await store.dispatch('updateStudy', test.value);
+
+    await Promise.all([
+      store.dispatch('getStudy', { id: test.value.id }),
+      ...newCooperators.map(guest => sendMenssages(guest))
+    ]);
+  } catch (error) {
+    console.error('Error updating study:', error);
   }
 };
 
