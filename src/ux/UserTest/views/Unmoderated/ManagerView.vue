@@ -199,13 +199,7 @@ const navigator = computed(() => {
     ...getNavigatorDefault(test.value, accessLevel.value, route, 'userTest/unmoderated'),
   ]
 
-  if (accessLevel.value === 0 && test.value) {
-    items.push({
-      title: 'Export Data',
-      icon: 'mdi-download',
-      path: `/userTest/unmoderated/answers/${test.value.id}`,
-    })
-  }
+
 
   return items
 })

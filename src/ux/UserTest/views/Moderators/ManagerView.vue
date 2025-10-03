@@ -200,13 +200,6 @@ const navigator = computed(() => {
     ...getNavigatorDefault(test.value, accessLevel.value, route, 'userTest/moderated'),
   ]
 
-  if (accessLevel.value === 0 && test.value) {
-    items.push({
-      title: 'Sessions',
-      icon: 'mdi-calendar-check',
-      path: `/userTest/moderated/sessions/${test.value.id}`,
-    })
-  }
 
   return items
 })
