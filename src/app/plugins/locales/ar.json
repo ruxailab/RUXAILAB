@@ -1,0 +1,598 @@
+{
+  "language": "اللغة",
+  "SIGNIN": {
+    "sign-in": "تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "dont-have-account": "ليس لديك حساب؟ سجل الآن",
+    "sign-up": "التسجيل",
+    "contact": "رقم الاتصال",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول",
+    "continueWithGoogle": "المتابعة باستخدام جوجل",
+    "or": "أو",
+    "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول"
+  },
+  "common": {
+    "loading": "جاري التحميل",
+    "continueAs": "المتابعة كـ",
+    "notUser": "لست {userEmail}؟",
+    "name": "الاسم",
+    "changeAccount": "تغيير الحساب",
+    "editAndInvite": "تحرير ودعوة أشخاص إلى اختبارك",
+    "analyzeProject": "تحليل المشروع والمقيمين",
+    "comment": "تعليق",
+    "inputImage": "أدخل صورة من اختيارك متعلقة بالموضوع",
+    "title": "العنوان",
+    "description": "الوصف",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "add": "إضافة",
+    "text": "النص",
+    "value": "القيمة",
+    "save": "حفظ",
+    "editDelete": "تحرير/حذف",
+    "type": "النوع",
+    "noNotifications": "ليس لديك إشعارات حتى الآن",
+    "notifications": "الإشعارات",
+    "unread": "غير مقروء",
+    "inbox": "صندوق الوارد",
+    "timeAgo": {
+      "years": "منذ {count} سنة",
+      "months": "منذ {count} شهر",
+      "days": "منذ {count} يوم",
+      "hours": "منذ {count} ساعة",
+      "minutes": "منذ {count} دقيقة",
+      "now": "الآن"
+    },
+    "viewAll": "عرض الكل",
+    "sentBy": "مرسل من قبل",
+    "new": "جديد"
+  },
+  "PROFILE": {
+    "title": "الملف الشخصي",
+    "editProfile": "تحرير الملف الشخصي",
+    "account": "الحساب",
+    "admin": "المدير",
+    "changePassword": "تغيير كلمة المرور",
+    "passwordRequirements": "تأكد من استيفاء هذه المتطلبات",
+    "passwordMinimumRequirements": "8 أحرف على الأقل، حرف كبير ورمز",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "editDetails": "تحرير التفاصيل",
+    "saveChanges": "حفظ التغييرات",
+    "country": "البلد",
+    "missingInfo": "معلومات مفقودة",
+    "deleteAccountTitle": "حذف الحساب",
+    "deleteAccountConfirm": "هل أنت متأكد تمامًا؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteAccountWarning": "سيؤدي هذا إلى حذف حسابك بشكل دائم وإزالة بياناتك من خوادمنا.",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordMinLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "passwordUppercase": "يجب أن تحتوي على حرف كبير",
+    "passwordSymbol": "يجب أن تحتوي على رمز",
+    "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+    "passwordsMatch": "يجب أن تتطابق كلمات المرور"
+  },
+  "titles": {
+    "manager": "المدير",
+    "test": "الاختبار",
+    "preview": "معاينة",
+    "reports": "التقارير",
+    "answers": "الإجابات",
+    "analytics": "التحليلات",
+    "cooperators": "المتعاونون",
+    "template": "النموذج",
+    "finalReport": "التقرير النهائي",
+    "answerType": "نوع الإجابة:",
+    "drawer": {
+      "Manager": "المدير",
+      "Test": "الاختبار",
+      "Preview": "المعاينة",
+      "Reports": "التقارير",
+      "Answers": "الإجابات",
+      "Analytics": "التحليلات",
+      "Cooperators": "المتعاونون",
+      "Template": "النموذج",
+      "Final Report": "التقرير النهائي",
+      "Answer Test": "الإجابة على الاختبار",
+      "Settings": "الإعدادات"
+    },
+    "heuristic": "تقييم الاستدلالات الخاصة بالاستخدام"
+  },
+  "descriptions": {
+    "edit": "ابدأ في إنشاء وتحرير اختبارك.",
+    "cooperators": "قم بدعوة أشخاص لمساعدتك في اختبارك.",
+    "reports": "تحقق من أداء المقيمين لديك.",
+    "answers": "شاهد كيف يقوم المقيمون بتقييم مشروعك.",
+    "analytics": "حلل التعليقات والإجابات من المقيمين لديك.",
+    "finalReport": "أضف بيانات إضافية إلى اختبارك.",
+    "intro": {
+      "reports": "تابع تقدم المقيمين وحالة الإجابات أثناء قيامهم بإكمال اختبارك.",
+      "answers": "احصل على ملاحظات سريعة حول مشروعك من خلال تحليل بيانات إجابات المستخدمين الآخرين.",
+      "analytics": "تعمق في اختبارك وشاهد ما يقوله الناس عنه.",
+      "invite": "قم بدعوة المقيمين للإجابة على اختبارك!",
+      "cooperators": "أضف متعاونين يمكنهم مساعدتك في تحسين مشروعك وجمع البيانات لدراساتك.",
+      "start": "ابدأ!",
+      "edit": "أنشئ وقم بتخصيص مهامك واستدلالاتك وفقًا لاحتياجات بحثك."
+    }
+  },
+  "errors": {
+    "invalidInvitation": "دعوة غير صالحة",
+    "signupWithInvitationEmail": "يجب على المستخدم التسجيل باستخدام نفس البريد الإلكتروني للدعوة.",
+    "emailIsRequired": "البريد الإلكتروني مطلوب",
+    "invalidEmail": "بريد إلكتروني غير صالح",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordValidate": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "differentPasswords": "كلمات مرور مختلفة",
+    "fieldRequired": "حقل مطلوب",
+    "passwordUppercase": "يجب أن تحتوي على حرف كبير",
+    "passwordSymbol": "يجب أن تحتوي على رمز",
+    "userNotExist": "هذا المستخدم غير موجود.",
+    "incorrectPassword": "كلمة مرور غير صحيحة",
+    "incorrectCredential": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    "globalError": "حدث خطأ، نعتذر عن الإزعاج."
+  },
+  "Introduction": {
+    "title": "مختبر UX عن بعد",
+    "subtitle": "ماذا عن إجراء اختبارات الاستخدام عن بعد؟",
+    "description": "انضم إلى مشروعنا مفتوح المصدر وابدأ في إنشاء مختبر الاستخدام الخاص بك وشاركه مع الأصدقاء. البحث لم يكن أسهل من قبل!",
+    "cta": "ابدأ"
+  },
+  "Dashboard": {
+    "createNewTest": "إنشاء اختبار جديد",
+    "tests": "الاختبارات",
+    "templates": "القوالب",
+    "search": "بحث",
+    "myTests": "اختباراتي",
+    "sharedWithMe": "تمت مشاركتها معي",
+    "publicTests": "الاختبارات العامة",
+    "personal": "شخصي",
+    "explore": "استكشف"
+  },
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "تحرير الاستدلال",
+      "editQuestion": "تحرير السؤال",
+      "newQuestion": "سؤال جديد",
+      "creatingHeuristic": "إنشاء استدلال",
+      "currentHeuristics": "الاستدلالات",
+      "addNewHeuristic": "إضافة استدلال جديد",
+      "searchHeuristics": "بحث في الاستدلالات...",
+      "noHeuristicsFound": "لم يتم العثور على استدلالات",
+      "addNewQuestion": "إضافة سؤال جديد",
+      "questions": "الأسئلة",
+      "descriptions": "الوصوفات",
+      "actions": "الإجراءات",
+      "titles": "العنوان",
+      "cancel": "إلغاء",
+      "ok": "موافق",
+      "add": "إضافة",
+      "deleteHeuristic": "حذف الاستدلال",
+      "deleteQuestion": "حذف السؤال",
+      "addNewDescription": "إضافة وصف جديد",
+      "addOption": "إضافة خيار جديد",
+      "hasValue": "لديه قيمة"
+    },
+    "placeholders": {
+      "titleHeuristic": "عنوان الاستدلال",
+      "titleYourHeuristic": "عنوان الاستدلال الخاص بك",
+      "titleYourQuestion": "عنوان السؤال الخاص بك",
+      "titleQuestion": "عنوان السؤال",
+      "titleNewQuestion": "عنوان السؤال الجديد",
+      "optionDescription": "وصف الخيار"
+    },
+    "messages": {
+      "noHeuristics": "ليس لديك أي استدلالات، قم بإنشاء واحدة للمتابعة.",
+      "youMustHave": "يجب أن تكون قد أدخلت شيئًا خاطئًا...",
+      "noHeuristicsDeleteAll": "عذرًا، لا يمكنك حذف جميع أسئلة الاستدلال.",
+      "noCsvFileSelected": "لم يتم تحديد ملف CSV. يرجى تحديد واحد قبل المتابعة.",
+      "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا."
+    },
+    "validation": {
+      "nameRequired": "الاسم مطلوب",
+      "questionRequired": "يجب ملء السؤال",
+      "textRequired": "النص مطلوب",
+      "positiveValue": "يجب أن تكون القيمة عددًا موجبًا",
+      "addQuestion": "يرجى إضافة سؤال واحد على الأقل إلى استدلالك"
+    },
+    "AddCommentBtn": {
+      "showComment": "إظهار التعليق",
+      "addComment": "إضافة تعليق",
+      "hideTextArea": "إخفاء منطقة النص"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "الخيارات",
+      "noOptions": "لا يوجد خيارات"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "الأوزان",
+      "heuristics": "الاستدلالات"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "يحتاج إلى استدلالين على الأقل لتحديد الأوزان."
+    },
+    "actions": {
+      "saveWeights": "حفظ قيم الأوزان"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "الإعدادات"
+    },
+    "messages": {
+      "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
+      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة."
+    },
+    "placeHolders": {
+      "importCsv": "قم باستيراد ملف CSV الخاص بك هنا."
+    },
+    "actions": {
+      "downloadCsvTemplate": "تحميل نموذج CSV",
+      "update": "تحديث"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "هل أنت متأكد أنك تريد تقديم هذا الاختبار؟",
+      "submitOnce": "هل أنت متأكد أنك تريد تقديم اختبارك؟ يمكنك القيام بذلك مرة واحدة فقط.",
+      "noHeuristics": "هذا الاختبار ليس لديه أي استدلالات"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "submit": "تقديم",
+      "save": "حفظ",
+      "continueAs": "المتابعة كـ {userEmail}",
+      "notMail": "ليس {userEmail}؟",
+      "changeAccount": "تغيير الحساب",
+      "startTest": "بدء الاختبار"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "الاستدلالات",
+      "options": "الخيارات",
+      "weights": "الأوزان",
+      "settings": "الإعدادات"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "الإجابات",
+      "statistics": "الإحصائيات",
+      "evaluators": "المقيمون",
+      "heuristics": "الاستدلالات",
+      "analytics": "التحليلات"
+    },
+    "statistics": {
+      "usabilityPercentage": "نسبة الاستخدام",
+      "max": "الحد الأقصى",
+      "min": "الحد الأدنى",
+      "std": "الانحراف المعياري"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "الجدول",
+        "graphic": "الرسم البياني"
+      },
+      "messages": {
+        "graphForMoreThan3": "يمكن إنشاء الرسم البياني فقط مع 3 مقيمين أو أكثر، يرجى جمع المزيد من البيانات من بحثك للمتابعة."
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "بيانات الاستدلالات",
+        "answersByEvaluator": "الإجابات حسب المقيم",
+        "answersByHeuristics": "الإجابات حسب الاستدلالات",
+        "graphic": "الرسم البياني",
+        "weights": "الأوزان"
+      },
+      "messages": {
+        "needMoreThan1Answer": "تحتاج هذه الصفحة إلى أكثر من إجابة واحدة ليتم إنشاؤها.",
+        "runWeightFunction": "تحتاج هذه الصفحة إلى تشغيل وظيفة الأوزان (Python)، يمكن أن تكون في وضع المحاكاة أو النشر، ويجب تحديد الأوزان بالكامل في صفحة إنشاء الاختبار."
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "التقارير",
+      "last_updated": "آخر تحديث"
+    },
+    "headers": {
+      "evaluator": "المقيم",
+      "last_update": "آخر تحديث",
+      "progress": "التقدم",
+      "status": "الحالة",
+      "more": "المزيد"
+    },
+    "messages": {
+      "confirm_delete_report": "هل أنت متأكد أنك تريد حذف هذا التقرير؟",
+      "reports_loading": "جارٍ تحميل التقارير",
+      "remove_report": "إزالة التقرير",
+      "sure_to_delete": "هل أنت متأكد أنك تريد حذف تقرير {user}؟ لا يمكن التراجع عن هذا الإجراء.",
+      "report_deleted": "تم حذف التقرير بنجاح"
+    },
+    "status": {
+      "submitted": "تم التقديم",
+      "in_progress": "قيد التقدم"
+    }
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "المتعاونون"
+    },
+    "headers": {
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "invited": "تمت الدعوة",
+      "accepted": "تم القبول",
+      "more": "المزيد",
+      "title": "العنوان",
+      "content": "المحتوى"
+    },
+    "actions": {
+      "send_invitation": "إرسال دعوة",
+      "send_message": "إرسال رسالة",
+      "reinvite": "إعادة دعوة",
+      "remove_cooperator": "إزالة المتعاون",
+      "cancel_invitation": "إلغاء الدعوة",
+      "cancel": "إلغاء",
+      "send": "إرسال",
+      "select_cooperator": "اختيار المتعاون"
+    },
+    "roles": {
+      "administrator": "المدير",
+      "evaluator": "المقيم",
+      "guest": "الضيف"
+    },
+    "messages": {
+      "cooperators_loading": "جارٍ تحميل المتعاونين",
+      "no_users": "لا يوجد مستخدمون مسجلون بهذا البريد الإلكتروني، اضغط Enter للاختيار على أي حال.",
+      "remove_cooperator": "هل أنت متأكد أنك تريد إزالة {email} من المتعاونين؟",
+      "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
+      "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
+      "message_title_hint": "اكتب عنوانًا لرسالتك",
+      "message_content_hint": "اكتب محتوى رسالتك"
+    }
+  },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "نموذج الموافقة",
+      "userVariables": "متغيرات المستخدم",
+      "currentTasks": "المهام الحالية",
+      "postForm": "نموذج ما بعد الاختبار",
+      "writeNewPost": "كتابة سؤال جديد بعد الاختبار"
+    },
+    "inputs": {
+      "consent": "الموافقة",
+      "variableName": "اسم المتغير",
+      "description": "الوصف",
+      "selection": "الاختيار",
+      "writeQuestion": "كتابة سؤال"
+    },
+    "checkboxes": {
+      "selectionField": "حقل الاختيار",
+      "textField": "حقل النص",
+      "textAnswer": "إجابة نصية",
+      "selectionAnswer": "إجابة الاختيار"
+    },
+    "buttons": {
+      "createNewVariable": "إنشاء متغير جديد",
+      "createNewPost": "إنشاء سؤال جديد بعد الاختبار"
+    }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "ما قبل الاختبار - الموافقة",
+      "preTestForm": "ما قبل الاختبار - النموذج",
+      "preTest": "ما قبل الاختبار",
+      "postTest": "ما بعد الاختبار"
+    },
+    "buttons": {
+      "done": "تم"
+    }
+  },
+  "AccessNotAllowed": {
+    "notAllowed": "الوصول غير مسموح",
+    "noAccess": "ليس لديك إذن للوصول إلى الصفحة التي تحاول الوصول إليها.",
+    "goHome": "الذهاب إلى الصفحة الرئيسية"
+  },
+  "pages": {
+    "intros": {
+      "click": "انقر هنا!",
+      "learnMore": "تعلم المزيد",
+      "docTitle": "قراءة الوثائق",
+      "docSubtitle": "انقر للوصول إلى الوثائق حول كيفية استخدام الصفحة.",
+      "discTitle": "انضم إلى المجتمع!",
+      "discSubtitle": "ستجد الدعم على خادم Discord الخاص بنا."
+    },
+    "finalReport": {
+      "select": "اختر عناصر PDF الخاصة بك",
+      "heuristic": "الاستدلال",
+      "to": "إلى",
+      "createHeuristics": "يرجى إنشاء استدلالات لتتمكن من اختيارها هنا.",
+      "createUserTask": "يرجى إنشاء مهام لتتمكن من اختيارها هنا.",
+      "pdf": "إنشاء PDF",
+      "elements": "العناصر",
+      "options": {
+        "options": "خيارات الاختبار",
+        "comments": "تعليقات الإجابات",
+        "statistics": "الإحصائيات",
+        "answersByEvaluator": "الإجابات حسب المقيم",
+        "answersByHeuristics": "الإجابات حسب الاستدلالات",
+        "finalReport": "التقرير النهائي",
+        "loading": "جارٍ التحميل..."
+      },
+      "ContructionHeading": "الصفحة قيد الإنشاء",
+      "ContructionParagraph": "نحن نعمل بجد لتحسين موقعنا. يرجى العودة قريبًا!"
+    },
+    "landing": {
+      "feedbackTitle": "احصل على ملاحظات سريعة حول مشاريعك",
+      "feedbackSubtitle1": "تم إنشاء مختبر UX عن بعد لتوفير مجموعة من الأدوات لخبراء UX الذين يرغبون في إنشاء اختبارات UX الخاصة بهم وإجرائها مع المستخدمين.",
+      "feedbackSubtitle2": "أظهر COVID-19 للعالم أن وجود المستخدمين الفعليين ليس ممكنًا دائمًا، لذلك نحن هنا لحل هذه المشكلة!",
+      "uxTitle": "ابدأ مختبر UX الخاص بك",
+      "uxSubtitle1": "إذا كنت باحثًا أو شركة أو محترفًا ترغب في إجراء اختبار UX، ستجد هنا عدة أدوات لمساعدتك في تحليل ومتابعة اختباراتك باستخدام تقنيات UX مختلفة.",
+      "uxSubtitle2": "ساعدنا في تنمية هذا المجتمع مفتوح المصدر وانضم إلينا على GitHub! :)",
+      "footer": "نحن نبحث عن شركاء جدد لمساعدتنا في تنمية المشروع! لا تتردد في الاتصال بنا على "
+    },
+    "listTests": {
+      "createdBy": "تم الإنشاء بواسطة",
+      "me": "أنا",
+      "progress": "التقدم",
+      "updated": "تم التحديث في",
+      "version": "الإصدار:",
+      "noTests": "لم يتم العثور على اختبارات",
+      "noTemplates": "لم يتم العثور على قوالب"
+    },
+    "createTest": {
+      "title": "إنشاء اختبار جديد",
+      "blankTitle": "إنشاء اختبار فارغ",
+      "blankSubtitle": "قم بإنشاء اختبار فارغ للبدء بنموذج جديد تمامًا.",
+      "templateTitle": "إنشاء من نموذج",
+      "templateSubtitle": "قم بإنشاء اختبار بناءً على نموذج تم إنشاؤه بواسطة أحد مستخدمينا.",
+      "create": "إنشاء اختبار",
+      "templateInfo": "معلومات النموذج",
+      "deleteTemplate": "حذف النموذج",
+      "noDescription": "النموذج ليس لديه وصف.",
+      "public": "اجعل الاختبار عامًا لجميع المستخدمين (للقراءة فقط)"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "currentTest": "الاختبار الحالي",
+      "createTemplate": "إنشاء نموذج",
+      "deleteTest": "حذف الاختبار"
+    }
+  },
+  "alerts": {
+    "copy": "تم النسخ بنجاح",
+    "noCopy": "فشل النسخ",
+    "deleteTemplate": "هل أنت متأكد أنك تريد حذف هذا النموذج؟ لا يمكن التراجع عن هذا الإجراء!",
+    "deleteTest": "هل أنت متأكد أنك تريد حذف هذا الاختبار؟",
+    "addDescription": "يرجى إضافة وصف",
+    "errorOccurred": "حدث خطأ",
+    "leave": "هل أنت متأكد أنك تريد المغادرة؟",
+    "sureLeave": "هل أنت متأكد أنك تريد المغادرة؟ سيتم تجاهل جميع التغييرات.",
+    "imageURL": "أدخل رابط الصورة:",
+    "deleteHeuristic": "هل أنت متأكد أنك تريد حذف الاستدلال؟",
+    "deleteAccount": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
+    "genericSuccess": "تمت العملية بنجاح"
+  },
+  "buttons": {
+    "saveandleave": "حفظ وترك",
+    "next": "التالي",
+    "previous": "السابق",
+    "seeCode": "رؤية الكود",
+    "username": "اسم المستخدم",
+    "goToConsole": "الذهاب إلى وحدة التحكم",
+    "signout": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "returnToConsole": "العودة إلى وحدة التحكم",
+    "tip": "نصيحة",
+    "cancel": "إلغاء",
+    "create": "إنشاء",
+    "close": "إغلاق",
+    "save": "حفظ",
+    "stay": "البقاء",
+    "leave": "المغادرة",
+    "help": "مساعدة",
+    "delete": "حذف",
+    "deleteAccount": "حذف الحساب",
+    "back": "عودة"
+  },
+  "switches": {
+    "noAnswer": "لا توجد إجابة",
+    "textArea": "منطقة النص",
+    "timer": "الموقت",
+    "postTest": "سؤال ما بعد الاختبار",
+    "screenRecord": "تسجيل الشاشة",
+    "camera": "الكاميرا",
+    "eyeTracker": "تتبع العين",
+    "audioRecord": "تسجيل الصوت",
+    "nasa": "NASA-TLX"
+  },
+  "inputs": {
+    "consentForm": "نموذج الموافقة",
+    "preForm": "نموذج ما قبل الاختبار",
+    "postForm": "نموذج ما بعد الاختبار"
+  },
+  "Createblank": {
+    "title": "ما نوع الاختبار الذي تريد البدء به؟",
+    "test": "الاختبار",
+    "testType_1": {
+      "testTitle": "استدلالات الاستخدام",
+      "text": [
+        "نسبة الاستخدام",
+        "تقرير PDF النهائي",
+        "قم بدعوة خبراء لتقييم تطبيقك"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "استخدام المستخدم",
+      "text": [
+        "تسجيل الكاميرا والصوت والشاشة",
+        "تحليل متقدم للإجابات",
+        "اختبارات مع أو بدون إشراف"
+      ]
+    }
+  },
+  "TestDialog": {
+    "heading": "إنشاء الاختبار",
+    "sub-heading": "أضف اسمًا لاختبارك!",
+    "test-name": "اسم الاختبار",
+    "test-description": "وصف الاختبار",
+    "test-label": "اجعل الاختبار عامًا لجميع المستخدمين"
+  },
+  "help": {
+    "createtest": "كيفية إنشاء اختبار؟",
+    "createtestanswer": "لإنشاء اختبار، انقر على أيقونة الزائد، واختر اختبار الاستدلال. ثم حدد تفاصيل مشروعك. أخيرًا، انتقل إلى صفحة المدير المخصصة.",
+    "heuristictest": "كيفية إعداد اختبار الاستدلال الخاص بي؟",
+    "heuristictestanswer": "لإعداد اختبار الاستدلال الخاص بك، ابدأ بالوصول إلى خيار 'تحرير الاختبار'. ثم انقر على زر الزائد لإضافة عنوان وسؤال إلى استدلالك. بعد ذلك، انتقل إلى قسم الخيارات لإنشاء خيارات الإجابة وقيمها. أخيرًا، احفظ التغييرات.",
+    "deletetest": "كيفية حذف اختباري؟",
+    "deletetestanswer": "لحذف اختبارك، انتقل إلى الشريط الجانبي الأيسر وانقر على زر 'الإعدادات'. ثم اختر زر 'حذف الاختبار'.",
+    "createtemplate": "كيفية إنشاء نموذج؟",
+    "createtemplateanswer": "لإنشاء نموذج لاختبارك، انتقل إلى الشريط الجانبي الأيسر وانقر على زر 'الإعدادات'. ثم اختر خيار 'إنشاء نموذج'.",
+    "usetemplate": "كيفية استخدام نموذج؟",
+    "usetemplateanswer": "لاستخدام نموذج، انتقل إلى صفحة الاختبارات. ضمن قسم إنشاء النماذج، ستجد النماذج الشخصية الخاصة بك. بالإضافة إلى ذلك، يمكنك استكشاف النماذج العامة.",
+    "previewtest": "كيفية معاينة اختبارك؟",
+    "previewtestanswer": "في الشريط الجانبي الأيسر، انقر على خيار 'المعاينة'، ثم ابدأ الاختبار بالإجابة على الأسئلة وأخيرًا انقر على الزر في أسفل اليمين لحفظ وتقديم المعاينة التي يمكن تحليلها لاحقًا في قسم 'الإجابات'.",
+    "importcsv": "كيفية استيراد ملف CSV الخاص بي؟",
+    "importcsvanswer": "لاستيراد ملف CSV الخاص بك، انتقل إلى قسم 'تحرير الاختبار'، ثم انقر على زر 'تحديث'. اختر ملف CSV الخاص بك الذي يحتوي على الاستدلالات.",
+    "invitecooperators": "كيفية دعوة المتعاونين؟",
+    "invitecooperatorsanswer": "لدعوة المتعاونين، انتقل إلى صفحة مدير اختبارك. من هناك، اختر 'المتعاونون' في الشريط الجانبي الأيسر. انقر على 'اختيار المتعاون' وأدخل بريد المتعاون الإلكتروني. اختر دور المتعاون، ثم أرسل الدعوة بالنقر على الزر في أسفل اليمين.",
+    "analyseresults": "كيفية تحليل النتائج؟",
+    "analyseresultsanswer": "لتحليل نتائجك، انتقل إلى صفحة مدير اختبارك. من هناك، اختر 'الإجابات' في الشريط الجانبي الأيسر. هنا يمكنك تصور الإحصائيات والمقيمين والاستدلالات.",
+    "sendmessage": "كيفية إرسال رسالة إلى المتعاونين؟",
+    "sendmessageanswer": "لإرسال رسالة، انتقل إلى صفحة مدير اختبارك. اختر 'المتعاونون' من الشريط الجانبي الأيسر. انقر على أيقونة النقاط الثلاث بجوار المتعاون الذي تريد إرسال رسالة إليه. ثم اختر 'إرسال رسالة' واكتب رسالتك مع عنوان ومحتوى.",
+    "testCreation": "إنشاء الاختبارات",
+    "templates": "قوالب",
+    "cooperators": "المتعاونون",
+    "analytics": "تحليلات",
+    "help_center": "مركز المساعدة",
+    "howCanWeHelp": "كيف يمكننا مساعدتك؟"
+  },
+  "user": "المستخدم",
+  "account": "الحساب",
+  "security": "الأمان",
+  "personalInfo": "المعلومات الشخصية",
+  "contact": "الاتصال",
+  "country": "البلد",
+  "editDetails": "تعديل التفاصيل",
+  "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
+  "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
+  "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
+  "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
+  "yourPassword": "كلمة المرور الخاصة بك",
+  "usernameRequired": "اسم المستخدم مطلوب",
+  "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
+  "countryRequired": "البلد مطلوب",
+  "contactNumberRequired": "رقم الاتصال مطلوب",
+  "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)"
+}
