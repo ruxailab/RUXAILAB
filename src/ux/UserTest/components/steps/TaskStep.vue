@@ -14,7 +14,7 @@
             variant="outlined" 
             color="secondary" 
             class="my-6 mx-auto"
-            max-width="700"
+            max-width="1000"
           >
             <v-card-text class="pa-4">
               <div class="d-flex align-center mb-3">
@@ -46,8 +46,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Screen Record</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Record the participant's screen activity. Captures clicks, scrolling, and 
-                        interactions to analyze user behavior and identify pain points.
+                        Captures clicks, scrolling, and interactions to analyze user behavior.
                       </p>
                     </div>
                   </div>
@@ -60,8 +59,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Camera</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Record participant's facial expressions and reactions. Captures emotions, 
-                        confusion, and satisfaction to understand user experience beyond interactions.
+                        Records facial expressions and reactions to understand user emotions.
                       </p>
                     </div>
                   </div>
@@ -74,8 +72,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Audio Record</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Record participant's verbal feedback and comments. Captures think-aloud 
-                        protocols, frustrations, and insights that reveal thought processes.
+                        Captures verbal feedback and think-aloud protocols during the task.
                       </p>
                     </div>
                   </div>
@@ -88,8 +85,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Eye Tracker</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Track where participants look during the task. Provides heatmaps and gaze 
-                        patterns to understand visual attention and navigation behavior.
+                        Tracks visual attention patterns and gaze behavior during the task.
                       </p>
                     </div>
                   </div>

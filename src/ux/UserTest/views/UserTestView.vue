@@ -111,7 +111,7 @@
             class="mt-4"
             :disabled="isStartTestDisabled"
           >
-            Start Test
+            Start Teste
           </v-btn>
         </v-col>
       </v-row>
@@ -677,33 +677,33 @@ const completeStep = (id, type, userCompleted = true) => {
 };
 
 const autoComplete = async () => {
-  if (!localTestAnswer || !items.value) return;
+  if (!localTestAnswer || !items.value || !Array.isArray(items.value) || items.value.length < 3) return;
 
   // PRE-TEST
-  if (items.value[0]?.value) {
-    if (localTestAnswer.consentCompleted) {
+  if (items.value[0]?.value && Array.isArray(items.value[0].value)) {
+    if (localTestAnswer.consentCompleted && items.value[0].value[0]) {
       items.value[0].value[0].icon = 'mdi-check-circle-outline';
     }
-    if (localTestAnswer.preTestCompleted) {
+    if (localTestAnswer.preTestCompleted && items.value[0].value[1]) {
       items.value[0].value[1].icon = 'mdi-check-circle-outline';
     }
-    if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
+    if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted && items.value[0]) {
       items.value[0].icon = 'mdi-check-circle-outline';
     }
   }
 
   // TASKS
-  if (items.value[1]?.value) {
+  if (items.value[1]?.value && Array.isArray(items.value[1].value)) {
     allTasksCompleted.value = true;
     for (let i = 0; i < items.value[1].value.length; i++) {
-      if (localTestAnswer.tasks[i]?.completed) {
+      if (localTestAnswer.tasks && localTestAnswer.tasks[i]?.completed && items.value[1].value[i]) {
         items.value[1].value[i].icon = 'mdi-check-bold';
       }
-      if (!localTestAnswer.tasks[i]?.completed) {
+      if (!localTestAnswer.tasks || !localTestAnswer.tasks[i]?.completed) {
         allTasksCompleted.value = false;
       }
     }
-    if (allTasksCompleted.value) {
+    if (allTasksCompleted.value && items.value[1]) {
       items.value[1].icon = 'mdi-check-bold';
     }
   }
