@@ -7,6 +7,7 @@ export default class EmailController {
    * @param subject Email subject
    * @param template Email type (e.g., 'invitation')
    * @param attachments Optional attachments
+   * @param data Additional data for the email template
    *
    * @returns
    */

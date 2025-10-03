@@ -5,6 +5,9 @@ import * as path from "path";
 
 export const sendEmail = functions.onCall({
   handler: async (data) => {
+    const content = data.data;
+    console.log(content);
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT || 587),
@@ -16,17 +19,22 @@ export const sendEmail = functions.onCall({
     });
 
     let htmlTemplate = "";
-    if (data.data.template === 'invite') {
+    if (content.template === 'invite') {
       const templatePath = path.join(process.cwd(), "src/templates/mails/invitations.html");
       htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+      htmlTemplate = htmlTemplate
+        .replace("{{site}}", process.env.SITE_URL)
+        .replace("{{message}}", content.data.message)
+        .replace(/{{testTitle}}/g, content.data.testTitle)
+        .replace(/{{adminEmail}}/g, content.data.adminEmail);
     }
-    else if (data.data.template === 'passwordReset') {
+    else if (content.template === 'passwordReset') {
       const actionCodeSettings = {
         url: "http://localhost:8080/signin",
         handleCodeInApp: false,
       }
 
-      const link = await admin.auth().generatePasswordResetLink(data.data.to, actionCodeSettings);
+      const link = await admin.auth().generatePasswordResetLink(content.to, actionCodeSettings);
       const templatePath = path.join(process.cwd(), "src/templates/mails/passwordReset.html");
       htmlTemplate = fs.readFileSync(templatePath, "utf-8");
       htmlTemplate = htmlTemplate
@@ -35,15 +43,15 @@ export const sendEmail = functions.onCall({
 
     const mail = {
       from: 'no-reply@ruxailab.com',
-      to: data.data.to,
-      subject: data.data.subject,
+      to: content.to,
+      subject: content.subject,
       html: htmlTemplate,
-      attachments: data.data.attachments ?? [],
+      attachments: content.attachments ?? [],
     };
 
     try {
       await transporter.sendMail(mail);
-      console.log('Email sent successfully to', data.data.to);
+      console.log('Email sent successfully to', content.to);
       return 'Email sent successfully.';
     } catch (err) {
       console.error('Error sending email:', err);
