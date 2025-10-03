@@ -119,9 +119,11 @@
               <v-list-item @click="showTaskDetails(item)" prepend-icon="mdi-clipboard-list">
                 <v-list-item-title>Task Details</v-list-item-title>
               </v-list-item>
+              <!--
               <v-list-item @click="toggleHideSession(item)" :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'">
                 <v-list-item-title>{{ item.hidden ? 'Show' : 'Hide' }}</v-list-item-title>
               </v-list-item>
+              -->
             </v-list>
           </v-menu>
         </template>
