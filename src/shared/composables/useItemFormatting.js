@@ -25,7 +25,7 @@ export function useItemFormatting(type) {
     }
 
     const getParticipantCount = (item) => {
-        return item.numberColaborators ?? 0
+        return item.numberColaborators ?? item.cooperators?.length ?? 0
     }
 
     const formatItemDate = (item) => {

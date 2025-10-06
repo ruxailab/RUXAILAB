@@ -8,13 +8,15 @@
             class="rich-text mb-4"
             v-html="task?.taskDescription || taskDescription"
           />
+                   TASKINDEX {{ taskIndex }}
+
           
           <!-- Task Preview Information -->
           <v-card 
             variant="outlined" 
             color="secondary" 
             class="my-6 mx-auto"
-            max-width="700"
+            max-width="1000"
           >
             <v-card-text class="pa-4">
               <div class="d-flex align-center mb-3">
@@ -46,8 +48,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Screen Record</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Record the participant's screen activity. Captures clicks, scrolling, and 
-                        interactions to analyze user behavior and identify pain points.
+                        Captures clicks, scrolling, and interactions to analyze user behavior.
                       </p>
                     </div>
                   </div>
@@ -60,8 +61,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Camera</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Record participant's facial expressions and reactions. Captures emotions, 
-                        confusion, and satisfaction to understand user experience beyond interactions.
+                        Records facial expressions and reactions to understand user emotions.
                       </p>
                     </div>
                   </div>
@@ -74,8 +74,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Audio Record</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Record participant's verbal feedback and comments. Captures think-aloud 
-                        protocols, frustrations, and insights that reveal thought processes.
+                        Captures verbal feedback and think-aloud protocols during the task.
                       </p>
                     </div>
                   </div>
@@ -88,8 +87,7 @@
                     <div class="feature-content">
                       <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Eye Tracker</h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Track where participants look during the task. Provides heatmaps and gaze 
-                        patterns to understand visual attention and navigation behavior.
+                        Tracks visual attention patterns and gaze behavior during the task.
                       </p>
                     </div>
                   </div>
@@ -550,16 +548,25 @@ function handleShowPostForm(userCompleted) {
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {
+  console.log('--------')
+  console.log(showPostForm.value)
+    console.log('--------')
+
   if (showPostForm.value.userCompleted) {
     emit('done', savedTime, props.taskIndex);
   } else {
     emit('couldNotFinish', savedTime, props.taskIndex);
   }
 
-  stage.value = 1;
+  // Reset state for next task
   showPostForm.value = { userCompleted: undefined };
   taskStartTime = null;
   elapsedTimeDisplay.value = '0:00';
+  
+  // Reset stage after a small delay to allow parent to handle the transition
+  nextTick(() => {
+    stage.value = 1;
+  });
 }
 
 const localPostAnswer = ref(props.postAnswer);
@@ -570,6 +577,14 @@ const isVisualizerVisible = ref(false);
 watch(() => props.postAnswer, val => { localPostAnswer.value = val; });
 watch(() => props.taskAnswer, val => { localTaskAnswer.value = val; });
 watch(() => props.taskObservations, val => { localTaskObservations.value = val; });
+
+// Reset stage when taskIndex changes (new task loaded)
+watch(() => props.taskIndex, () => {
+    stage.value = 1;
+    taskStartTime = null;
+    elapsedTimeDisplay.value = '0:00';
+    showPostForm.value = { userCompleted: undefined };
+});
 
 function onUpdateTaskAnswer(val) {
     localTaskAnswer.value = val;
