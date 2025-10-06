@@ -1,10 +1,11 @@
 <template>
   <div v-if="test">
+    <!-- EYE TRACKER NOT READY 
     <div>
       <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
-
+-->
 
     <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
@@ -81,7 +82,6 @@
       fluid
       class="pa-0"
     >
-    {{ test.finalMessage }}
       <v-row
         v-if="test && start"
         class="start-screen background-img pa-0 ma-0"
@@ -113,6 +113,75 @@
           >
             Start Test
           </v-btn>
+          
+          <!-- Messages when test is disabled -->
+          <v-alert
+            v-if="testDisabledReason === 'already-completed'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-check-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Already Completed</strong><br>
+              You have already completed and submitted this test. Thank you for your participation!
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'Test has expired'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-clock-alert</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Expired</strong><br>
+              This test is no longer available as it has passed its end date.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'Test is not active'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-pause-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Not Active</strong><br>
+              This test is currently not active. Please contact the administrator.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'Test has no tasks configured'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-alert-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Configuration Error</strong><br>
+              This test has no tasks configured. Please contact the administrator.
+            </span>
+          </v-alert>
         </v-col>
       </v-row>
 
@@ -194,6 +263,7 @@
               </v-stepper>
             </v-col>
           </v-row>
+
           <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
 
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
@@ -384,7 +454,32 @@ const isStartTestDisabled = computed(() => {
     if (endDate < currentDate) return true;
   }
 
+  // Check if user has already submitted the test
+  if (localTestAnswer.submitted) return true;
+
   return false;
+});
+
+const testDisabledReason = computed(() => {
+  if (!test.value) return 'Test not found';
+  
+  const hasValidTasks = test.value.testStructure &&
+                       Array.isArray(test.value.testStructure.userTasks) &&
+                       test.value.testStructure.userTasks.length > 0;
+  
+  if (!hasValidTasks) return 'Test has no tasks configured';
+  
+  if (test.value.status !== 'active') return 'Test is not active';
+  
+  if (test.value.endDate) {
+    const currentDate = new Date();
+    const endDate = new Date(test.value.endDate);
+    if (endDate < currentDate) return 'Test has expired';
+  }
+  
+  if (localTestAnswer.submitted) return 'already-completed';
+  
+  return null;
 });
 
 const stepperValue = computed(() => {
@@ -628,30 +723,33 @@ const completeStep = (id, type, userCompleted = true) => {
         return;
       }
       localTestAnswer.tasks[id].completed = userCompleted;
-      allTasksCompleted.value = true;
-
+      
+      // Mark this task as attempted (whether completed successfully or could not finish)
+      localTestAnswer.tasks[id].attempted = true;
+      
+      // Check if all tasks have been attempted
+      let allTasksAttempted = true;
       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (!localTestAnswer.tasks[i]?.completed) {
-          allTasksCompleted.value = false;
+        if (!localTestAnswer.tasks[i]?.attempted) {
+          allTasksAttempted = false;
           break;
         }
       }
-      // if (allTasksCompleted.value) {
-      //   items.value[1].icon = 'mdi-check-circle-outline';
-      // }
+      allTasksCompleted.value = allTasksAttempted;
 
       if (id < localTestAnswer.tasks.length - 1) {
-  taskIndex.value = id + 1;
-  startTimer();
-} else {
-  if (allTasksCompleted.value) {
-    console.log('All tasks completed, moving to post-test');
-    taskIndex.value = id + 1; // to help saving methods
-    globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-  } else {
-    console.log('Última task finalizada, mas ainda há tasks incompletas.');
-  }
-}
+        taskIndex.value = id + 1;
+        startTimer();
+      } else {
+        console.log('All tasks attempted:', allTasksCompleted.value);
+        if (allTasksCompleted.value) {
+          console.log('All tasks completed, moving to post-test');
+          taskIndex.value = id + 1; // to help saving methods
+          globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+        } else {
+          console.log('Última task finalizada, mas ainda há tasks incompletas.');
+        }
+      }
 
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -677,33 +775,33 @@ const completeStep = (id, type, userCompleted = true) => {
 };
 
 const autoComplete = async () => {
-  if (!localTestAnswer || !items.value) return;
+  if (!localTestAnswer || !items.value || !Array.isArray(items.value) || items.value.length < 3) return;
 
   // PRE-TEST
-  if (items.value[0]?.value) {
-    if (localTestAnswer.consentCompleted) {
+  if (items.value[0]?.value && Array.isArray(items.value[0].value)) {
+    if (localTestAnswer.consentCompleted && items.value[0].value[0]) {
       items.value[0].value[0].icon = 'mdi-check-circle-outline';
     }
-    if (localTestAnswer.preTestCompleted) {
+    if (localTestAnswer.preTestCompleted && items.value[0].value[1]) {
       items.value[0].value[1].icon = 'mdi-check-circle-outline';
     }
-    if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
+    if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted && items.value[0]) {
       items.value[0].icon = 'mdi-check-circle-outline';
     }
   }
 
   // TASKS
-  if (items.value[1]?.value) {
+  if (items.value[1]?.value && Array.isArray(items.value[1].value)) {
     allTasksCompleted.value = true;
     for (let i = 0; i < items.value[1].value.length; i++) {
-      if (localTestAnswer.tasks[i]?.completed) {
+      if (localTestAnswer.tasks && localTestAnswer.tasks[i]?.attempted && items.value[1].value[i]) {
         items.value[1].value[i].icon = 'mdi-check-bold';
       }
-      if (!localTestAnswer.tasks[i]?.completed) {
+      if (!localTestAnswer.tasks || !localTestAnswer.tasks[i]?.attempted) {
         allTasksCompleted.value = false;
       }
     }
-    if (allTasksCompleted.value) {
+    if (allTasksCompleted.value && items.value[1]) {
       items.value[1].icon = 'mdi-check-bold';
     }
   }
@@ -840,6 +938,7 @@ const mappingSteps = async () => {
             postAnswer: '',
             taskTime: 0,
             completed: false,
+            attempted: false, // Track whether task has been attempted
             susAnswers: [],
             nasaTlxAnswers: {}
           });

@@ -480,6 +480,7 @@ const statusOptions = [
   { title: 'Active', value: 'active' },
   { title: 'Pending', value: 'pending' },
   { title: 'Finished', value: 'finished' },
+  { title: 'Upcoming', value: 'upcoming' },
 ];
 
 const titleRequired = [

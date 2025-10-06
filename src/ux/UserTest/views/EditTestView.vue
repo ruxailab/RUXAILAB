@@ -149,6 +149,22 @@ const getPostTest = () => {
 
 const save = async () => {
   try {
+    // Validate pre-test variables
+    const preTestVariables = store.getters.preTest || []
+    const invalidPreTest = preTestVariables.filter(item => !item.title || !item.title.trim())
+    if (invalidPreTest.length > 0) {
+      toast.error('Cannot save: Some pre-test variables are missing titles')
+      return
+    }
+
+    // Validate post-test variables
+    const postTestVariables = store.getters.postTest || []
+    const invalidPostTest = postTestVariables.filter(item => !item.title || !item.title.trim())
+    if (invalidPostTest.length > 0) {
+      toast.error('Cannot save: Some post-test variables are missing titles')
+      return
+    }
+
     change.value = false;
 
     const testStructure = {

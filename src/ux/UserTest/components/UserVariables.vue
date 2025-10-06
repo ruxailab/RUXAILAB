@@ -40,7 +40,22 @@
                 :disabled="isSaving"
               >
                 <v-expansion-panel-title class="py-3 px-4">
-                  <span class="text-body-1 font-weight-medium">{{ item.title || 'Untitled Variable' }}</span>
+                  <div class="d-flex align-center">
+                    <span 
+                      class="text-body-1 font-weight-medium"
+                      :class="{ 'text-error': !item.title || !item.title.trim() }"
+                    >
+                      {{ item.title || 'Untitled Variable' }}
+                    </span>
+                    <v-icon 
+                      v-if="!item.title || !item.title.trim()"
+                      color="error"
+                      size="small"
+                      class="ml-2"
+                    >
+                      mdi-alert-circle
+                    </v-icon>
+                  </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text class="pa-4">
                   <v-form @submit.prevent>
@@ -279,10 +294,17 @@ const isDirty = ref(false)
 
 const test = computed(() => store.getters.test)
 
+const allItemsValid = computed(() => {
+  return items.value.every(item => item.title && item.title.trim())
+})
+
 const markDirty = () => {
   isDirty.value = true
   emit('change')
-  emit('update', items.value)
+  // Only emit update if all items are valid
+  if (allItemsValid.value) {
+    emit('update', items.value)
+  }
 }
 
 const showModal = () => {
@@ -358,6 +380,13 @@ const saveNewItem = async () => {
 
 const saveState = async () => {
   try {
+    // Validate all items have titles before saving
+    const invalidItems = items.value.filter(item => !item.title || !item.title.trim())
+    if (invalidItems.length > 0) {
+      console.error('Cannot save: Some variables are missing titles')
+      return
+    }
+
     isSaving.value = true
     emit('update', items.value)
     emit('change')
