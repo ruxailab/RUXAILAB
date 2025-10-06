@@ -146,7 +146,7 @@
                 <div class="d-flex align-center mb-4 user-header">
                   <v-avatar size="48" color="primary" class="mr-3">
                     <span class="text-white text-subtitle-1 font-weight-bold">{{ dialogItem.fullName?.[0]?.toUpperCase()
-                      }}</span>
+                    }}</span>
                   </v-avatar>
                   <div>
                     <div class="text-subtitle-1 font-weight-medium">{{ dialogItem.fullName }}</div>
@@ -228,6 +228,12 @@
 
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
+                      <v-expansion-panel v-if="dialogItem.tasks[taskSelect].irisTrackingData?.length > 0"
+                        @click.stop="openSessionAnalytics">
+                        <v-expansion-panel-title expand-icon="mdi-chevron-down">
+                          Eye Tracking Analytics
+                        </v-expansion-panel-title>
+                      </v-expansion-panel>
                       <v-expansion-panel v-if="dialogItem.tasks[taskSelect].webcamRecordURL">
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">Webcam
                           Recording</v-expansion-panel-title>
@@ -260,6 +266,11 @@
                         </v-expansion-panel-text>
                       </v-expansion-panel>
                     </v-expansion-panels>
+                    <!-- Diálogo que chama o componente em tela cheia -->
+                    <v-dialog v-model="showSessionAnalytics" fullscreen>
+                      <SessionAnalytics :tasks="dialogItem.tasks" :taskSelect="taskSelect"
+                        @close="showSessionAnalytics = false" />
+                    </v-dialog>
                   </div>
                 </div>
               </v-col>
@@ -280,6 +291,7 @@ import { useStore } from 'vuex';
 import TaskDetailsModal from './TaskDetailsModal.vue';
 import { useToast } from 'vue-toastification';
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
+import SessionAnalytics from '../SessionAnalytics.vue';
 
 const toast = useToast()
 
@@ -295,6 +307,7 @@ const testTasks = ref([]);
 const taskAnswers = ref([]);
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
+const showSessionAnalytics = ref(false)
 
 // Búsqueda por nombre / email
 const searchTerm = ref('');
@@ -449,6 +462,10 @@ const tableData = computed(() => {
     };
   });
 });
+
+const openSessionAnalytics = () => {
+  showSessionAnalytics.value = true
+}
 
 const formatTime = (time) => {
   const minutes = Math.floor(time / 60);

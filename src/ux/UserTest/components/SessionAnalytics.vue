@@ -63,11 +63,11 @@
                     <v-col cols="12" md="5">
                         <div class="video-box mb-2 video-rect-box">
                             <video ref="mainVideo1" class="video-rect-skeleton"
-                                :src="require('@/assets/videos/video1.mp4')" poster=""></video>
+                                 poster=""></video>
                         </div>
                         <div class="video-box screen-video-box video-rect-box">
                             <video ref="mainVideo2" class="video-rect-skeleton"
-                                :src="require('@/assets/videos/video2.mp4')" poster=""></video>
+                                 poster=""></video>
                         </div>
                     </v-col>
                     <!-- Col-6 derecha: audio y transcript -->
@@ -145,11 +145,11 @@
 
 
 <script>
-import SessionTimeline from './SessionTimeline.vue';
-import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue';
-import EyeTrackingStats from '../sessions/EyeTrackingStats.vue';
-import SentimentSummary from '../sessions/SentimentSummary.vue';
-import NotesStats from '../sessions/NotesStats.vue';
+import SessionTimeline from './sessions/SessionTimeline.vue';
+import TranscriptWordCloud from './sessions/TranscriptWordCloud.vue';
+import EyeTrackingStats from './sessions/EyeTrackingStats.vue';
+import SentimentSummary from './sessions/SentimentSummary.vue';
+import NotesStats from './sessions/NotesStats.vue';
 export default {
     components: {
         SessionTimeline,
