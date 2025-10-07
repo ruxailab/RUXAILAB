@@ -366,18 +366,34 @@
             <v-list-item-subtitle class="text-body-1 mb-2">
               {{ note.text }}
             </v-list-item-subtitle>
-            <v-img
-              v-if="note.imagePreview"
-              :src="note.imagePreview"
-              max-height="300"
-              cover
-              class="mt-2 mb-2 rounded"
-            />
+            <div v-if="note.imagePreview" class="image-container mt-2 mb-2">
+              <v-img
+                :src="note.imagePreview"
+                max-height="300"
+                cover
+                class="rounded position-relative"
+              >
+                <div class="image-overlay">
+                  <v-btn
+                    icon
+                    size="small"
+                    color="white"
+                    variant="elevated"
+                    class="download-btn"
+                    @click="downloadImage(note)"
+                  >
+                    <v-icon size="16">mdi-download</v-icon>
+                  </v-btn>
+                </div>
+              </v-img>
+            </div>
             <v-chip
               v-if="note.imageName"
               size="small"
-              color="grey-lighten-2"
-              class="mt-2"
+              color="primary"
+              variant="elevated"
+              class="mt-2 download-chip"
+              @click="downloadImage(note)"
             >
               <v-icon
                 size="small"
@@ -386,6 +402,12 @@
                 mdi-image
               </v-icon>
               {{ note.imageName }}
+              <v-icon
+                size="small"
+                class="ml-1"
+              >
+                mdi-download
+              </v-icon>
             </v-chip>
           </v-list-item>
           <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
@@ -657,6 +679,58 @@ const openNotesDialog = (item) => {
     ruleId: item.ruleId,
     ruleTitle: item.ruleTitle,
     notes: item.notes || [],
+  }
+}
+
+// Download image function
+const downloadImage = async (note) => {
+  try {
+    if (!note.imageUrl && !note.imagePreview) {
+      toast.error('No image available for download')
+      return
+    }
+
+    // Use imageUrl if available, otherwise use imagePreview
+    const imageUrl = note.imageUrl || note.imagePreview
+    const imageName = note.imageName || 'image.jpg'
+
+    // Create a temporary link element and trigger download
+    const link = document.createElement('a')
+    link.href = imageUrl
+    link.download = imageName
+    link.target = '_blank'
+    
+    // For cross-origin images, we need to fetch and create a blob
+    try {
+      const response = await fetch(imageUrl)
+      if (response.ok) {
+        const blob = await response.blob()
+        const blobUrl = window.URL.createObjectURL(blob)
+        link.href = blobUrl
+        
+        // Trigger download
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        // Clean up the blob URL
+        window.URL.revokeObjectURL(blobUrl)
+        
+        toast.success(`Downloaded ${imageName}`)
+      } else {
+        throw new Error('Failed to fetch image')
+      }
+    } catch (fetchError) {
+      // Fallback: try direct download link
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      toast.success(`Download initiated for ${imageName}`)
+    }
+  } catch (error) {
+    console.error('Error downloading image:', error)
+    toast.error('Failed to download image: ' + error.message)
   }
 }
 
@@ -1153,5 +1227,88 @@ const loadAssessmentData = async (userId) => {
 /* Avatar styling */
 .v-avatar {
   flex-shrink: 0;
+}
+
+/* Image download styling */
+.image-container {
+  position: relative;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
+.download-btn {
+  backdrop-filter: blur(4px);
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+  transform: scale(1.1);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cursor-pointer:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced download chip styling */
+.download-chip {
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3) !important;
+  border: none !important;
+}
+
+.download-chip:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4) !important;
+  background: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%) !important;
+}
+
+.download-chip:active {
+  transform: translateY(0) scale(1.02) !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.5) !important;
+}
+
+.download-chip .v-icon {
+  color: white !important;
+  transition: all 0.2s ease !important;
+}
+
+.download-chip:hover .v-icon {
+  transform: scale(1.1) !important;
+}
+
+/* Pulse animation for attention */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.5);
+  }
+  100% {
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+  }
+}
+
+.download-chip {
+  animation: pulse-glow 2s infinite;
 }
 </style>
