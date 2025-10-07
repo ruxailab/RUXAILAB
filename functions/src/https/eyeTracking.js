@@ -6,6 +6,15 @@ export const receiveCalibration = functions.onRequest({
             return res.status(405).send("Method Not Allowed");
         }
 
+
+         const userId = req.get("X-User-ID");
+        if (!userId) {
+            return res.status(400).json({ error: "Missing X-User-ID header" });
+        }
+
+        console.log("Calibration triggered by user:", userId);
+
+
         try {
             const {
                 session_id,
@@ -28,6 +37,7 @@ export const receiveCalibration = functions.onRequest({
                 screen_height,
                 screen_width,
                 k,
+                userId,
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
             };
 
