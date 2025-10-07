@@ -228,7 +228,7 @@ export const METHOD_STATUSES = {
 export const METHOD_DEFINITIONS = {
   HEURISTICS: {
     id: "HEURISTICS",
-    name: "Evaluación Heurística",
+    name: "Heuristic Evaluation",
     nameEn: "Heuristic Evaluation",
     icon: "mdi-clipboard-check",
     color: "#2196F3",
@@ -238,7 +238,7 @@ export const METHOD_DEFINITIONS = {
   },
   USER_MODERATED: {
     id: "USER_MODERATED",
-    name: "Test Moderado",
+    name: "Moderated User Test",
     nameEn: "Moderated Usability Test",
     icon: "mdi-account-voice",
     color: "#4CAF50",
@@ -248,7 +248,7 @@ export const METHOD_DEFINITIONS = {
   },
   USER_UNMODERATED: {
     id: "USER_UNMODERATED",
-    name: "Test No Moderado",
+    name: "Unmoderated User Test",
     nameEn: "Unmoderated Usability Test",
     icon: "mdi-monitor-screenshot",
     color: "#FF9800",
@@ -258,7 +258,7 @@ export const METHOD_DEFINITIONS = {
   },
   SURVEY: {
     id: "SURVEY",
-    name: "Encuesta",
+    name: "Survey",
     nameEn: "Survey",
     icon: "mdi-clipboard-text",
     color: "#FF5722",
@@ -268,7 +268,7 @@ export const METHOD_DEFINITIONS = {
   },
   INTERVIEW: {
     id: "INTERVIEW",
-    name: "Entrevista",
+    name: "Interview",
     nameEn: "Interview",
     icon: "mdi-microphone",
     color: "#E91E63",
@@ -298,7 +298,7 @@ export const METHOD_DEFINITIONS = {
   },
   ACCESSIBILITY_MANUAL: {
     id: "ACCESSIBILITY_MANUAL",
-    name: "Evaluación Manual",
+    name: "Accessibility Manual Evaluation",
     nameEn: "Manual Evaluation",
     icon: "mdi-hand-extended",
     color: "#607D8B",
@@ -308,7 +308,7 @@ export const METHOD_DEFINITIONS = {
   },
   ACCESSIBILITY_AUTOMATIC: {
     id: "ACCESSIBILITY_AUTOMATIC",
-    name: "Evaluación Automática",
+    name: "Accessibility Automatic Evaluation",
     nameEn: "Automatic Evaluation",
     icon: "mdi-robot",
     color: "#795548",

@@ -13,8 +13,12 @@ export default {
     answers: [],
     evaluatorStatistics: [],
     finalReport: [],
+    mediaUrls: {},
   },
   getters: {
+    mediaUrls(state) {
+      return state.mediaUrls
+    },
     testAnswerDocument(state, rootState) {
       if (rootState.test) {
         const testOptions = rootState.test.testOptions
@@ -108,7 +112,7 @@ export default {
       if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
-            ([, answer]) => answer.hidden === false
+            ([, answer]) => answer.hidden !== true
           )
         );
       }
@@ -147,25 +151,24 @@ export default {
       ) {
         state.testAnswerDocument.taskAnswers[userId].tasks[taskId].completed = value;
       }
+    },
+    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url }) {
+      if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
+      state.mediaUrls[taskIndex][mediaType] = url
     }
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
-      console.log('getCurrentTestAnswerDoc')
       const currentTest = rootState.Tests.Test
-      console.log('currentTest', currentTest)
       if (!currentTest || !currentTest.answersDocId) {
-        console.log('No current test or answersDocId')
-        return
+        return console.log('No current test or answersDocId')
       }
       const currentAnswerDocId = currentTest.answersDocId
-      console.log('currentAnswerDocId', currentAnswerDocId)
       commit('setLoading', true)
       try {
         const answerDoc = await answerController.getAnswerById(
           currentAnswerDocId,
         )
-        console.log('answerDoc', answerDoc)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
         console.error('Error in getCurrentTestAnswerDoc', e)
@@ -290,5 +293,9 @@ export default {
 
       commit('SET_EVALUATOR_STATISTICS', table)
     },
+
+    async updateTaskMediaUrl({ commit }, { taskIndex, mediaType, url }) {
+      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url });
+    }
   },
 }

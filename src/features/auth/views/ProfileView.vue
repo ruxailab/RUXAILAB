@@ -142,7 +142,7 @@
                       >
                         <v-text-field
                           v-model="userprofile.username"
-                          :label="$t('SIGNIN.username')"
+                          :label="$t('profile.username')"
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-account"
@@ -156,7 +156,7 @@
                       >
                         <v-text-field
                           v-model="user.email"
-                          :label="$t('SIGNIN.email')"
+                          :label="$t('profile.email')"
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-email"
@@ -170,7 +170,7 @@
                       >
                         <v-text-field
                           v-model="userprofile.contactNo"
-                          :label="$t('SIGNIN.contact')"
+                          :label="$t('profile.contact')"
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-phone"
@@ -419,7 +419,7 @@
           >
             <v-text-field
               v-model="editProfileData.username"
-              :label="$t('SIGNIN.username')"
+              :label="$t('profile.username')"
               variant="outlined"
               density="compact"
               prepend-inner-icon="mdi-account"
@@ -428,7 +428,7 @@
             />
             <v-text-field
               v-model="editProfileData.contactNo"
-              :label="$t('SIGNIN.contact')"
+              :label="$t('profile.contact')"
               variant="outlined"
               density="compact"
               prepend-inner-icon="mdi-phone"
@@ -544,6 +544,7 @@
               variant="outlined"
               class="text-capitalize"
               min-width="120"
+              :disabled="isDeleting"
               @click="closeDeleteDialog"
             >
               {{ $t('common.cancel') }}
@@ -553,8 +554,9 @@
               variant="flat"
               class="text-capitalize"
               min-width="120"
+              :loading="isDeleting"
               :disabled="deleteConfirmText !== 'DELETE'"
-              @click="deleteStep = 2"
+              @click="handlerDeleteConfirmText"
             >
               {{ $t('Proceed') }}
             </v-btn>
@@ -603,7 +605,7 @@
               :loading="isDeleting"
               :disabled="!userPassword || isDeleting"
               min-width="120"
-              @click="deleteAccount"
+              @click="handlerDeleteAccount"
             >
               <v-icon start>
                 mdi-delete
@@ -626,15 +628,13 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
+  fetchSignInMethodsForEmail,
+  reauthenticateWithPopup,
+  GoogleAuthProvider,
 } from 'firebase/auth';
 import {
   getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
   doc,
-  deleteDoc,
   getDoc,
   updateDoc,
 } from 'firebase/firestore';
@@ -708,17 +708,17 @@ const specialCharIcon = computed(() =>
 );
 const profileItems = computed(() => [
   {
-    label: t('SIGNIN.username'),
+    label: t('profile.username'),
     value: userprofile.value.username,
     icon: 'mdi-account',
   },
   {
-    label: t('SIGNIN.email'),
+    label: t('profile.email'),
     value: user.value.email,
     icon: 'mdi-email',
   },
   {
-    label: t('SIGNIN.contact'),
+    label: t('profile.contact'),
     value: userprofile.value.contactNo,
     icon: 'mdi-phone',
   },
@@ -860,31 +860,46 @@ const changePassword = async () => {
   }
 };
 
-const deleteAccount = async () => {
-  if (!userPassword.value) {
-    return toast.error(t('PROFILE.passwordRequired'));
-  }
-
+const handlerDeleteConfirmText = async (value) => {
   const auth = getAuth();
-  const user = auth.currentUser;
-  console.log(user)
+  const user = auth.currentUser
+  if (user.providerData.includes(a => a.providerId !== 'google.com')) return deleteStep.value = 2
 
-  isDeleting.value = true;
   try {
-    const email = user.email;
-    const credential = EmailAuthProvider.credential(email, userPassword.value)
-    await reauthenticateWithCredential(user, credential);
-
-    await store.dispatch('deleteAuth', user.uid);
-    toast.success(t('PROFILE.accountDeletedSuccess'));
-
-    deleteAccountDialog.value = false;
-    signOut();
+    isDeleting.value = true
+    await reauthenticateWithPopup(user, new GoogleAuthProvider())
+    return await deleteAccount(user)
   } catch (error) {
-    console.error('Error during account deletion:', error);
-    toast.error(t('PROFILE.accountDeletionFailed'));
+    console.error('Error during account deletion:', error)
+    toast.error(t('PROFILE.accountDeletionFailed'))
   } finally {
-    isDeleting.value = false;
+    isDeleting.value = false
+    deleteAccountDialog.value = false
+  }
+};
+
+const deleteAccount = async (user) => {
+  await store.dispatch('deleteAuth', user.uid)
+  toast.success(t('PROFILE.accountDeletedSuccess'))
+  signOut()
+};
+
+const handlerDeleteAccount = async () => {
+  const auth = getAuth()
+  const user = auth.currentUser
+  if (!userPassword.value) return toast.error(t('PROFILE.passwordRequired'))
+
+  try {
+    isDeleting.value = true
+    const cred = EmailAuthProvider.credential(user.email, userPassword.value)
+    await reauthenticateWithCredential(user, cred)
+    await deleteAccount(user)
+  } catch (error) {
+    console.error('Error during account deletion:', error)
+    toast.error(t('PROFILE.accountDeletionFailed'))
+  } finally {
+    isDeleting.value = false
+    deleteAccountDialog.value = false
   }
 };
 

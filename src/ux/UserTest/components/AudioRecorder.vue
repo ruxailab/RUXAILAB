@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-col>
+    <!-- <v-col>
       <v-row>
         <v-tooltip
           v-if="!recordingAudio"
@@ -38,16 +38,15 @@
           <span>Stop Audio Record</span>
         </v-tooltip>
       </v-row>
-    </v-col>
+    </v-col> -->
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
-import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 
 const props = defineProps({
   testId: {
@@ -75,8 +74,6 @@ const props = defineProps({
 const emit = defineEmits(['recordingStarted', 'showLoading', 'stopShowLoading'])
 
 const store = useStore()
-const toast = useToast()
-const { t } = useI18n()
 
 // Reactive state
 const recordingAudio = ref(false)
@@ -88,12 +85,25 @@ const recordedAudio = ref('')
 // Computed properties
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
 
+async function hasAudio() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.some(device => device.kind === "audioinput");
+  } catch (err) {
+    console.error("Erro ao verificar dispositivos:", err);
+    return false;
+  }
+}
+
 // Methods
 const startAudioRecording = async () => {
-  recordingAudio.value = true
-  emit('recordingStarted', true)
-
   try {
+    const audioAvailable = await hasAudio();
+    if (!audioAvailable) return;
+
+    recordingAudio.value = true
+    emit('recordingStarted', true)
+
     audioStream.value = await navigator.mediaDevices.getUserMedia({
       audio: true
     })
@@ -125,16 +135,17 @@ const startAudioRecording = async () => {
 
       recordedAudio.value = await getDownloadURL(storageReference)
 
-      console.log('evaluator audio =>', recordedAudio.value)
-
-      currentUserTestAnswer.value.tasks[props.taskIndex].audioRecordURL = recordedAudio.value
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: props.taskIndex,
+        mediaType: MEDIA_FIELD_MAP.audio,
+        url: recordedAudio.value
+      });
 
       audioStream.value.getTracks().forEach((track) => track.stop())
       audioStream.value = null
 
       emit('recordingStarted', false)
       emit('stopShowLoading')
-      toast.success(t('alerts.genericSuccess'))
       recordingAudio.value = false
     }
 
@@ -163,13 +174,17 @@ const startAudioRecording = async () => {
         const downloadURL = await getDownloadURL(storageReference)
 
         console.log('moderator audio =>', downloadURL)
-        currentUserTestAnswer.value.tasks[props.taskIndex].moderatorAudioURL = downloadURL
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: props.taskIndex,
+          mediaType: MEDIA_FIELD_MAP.moderator,
+          url: downloadURL
+        });
       }
 
       mediaRecorder.value.remote.start()
     }
   }
-    
+
   } catch (error) {
     console.error('Error accessing audio stream:', error)
     recordingAudio.value = false
@@ -177,9 +192,10 @@ const startAudioRecording = async () => {
 }
 
 const stopAudioRecording = () => {
-  if (mediaRecorder.value) {
-    mediaRecorder.value.local.stop()
-    mediaRecorder.value.remote?.stop()
-  }
+  if (!recordingAudio.value) return
+  mediaRecorder.value.local.stop()
+  mediaRecorder.value.remote?.stop()
 }
+
+defineExpose({ startAudioRecording, stopAudioRecording })
 </script>

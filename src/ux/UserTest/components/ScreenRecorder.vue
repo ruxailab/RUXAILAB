@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-col>
+    <!-- <v-col>
       <v-row>
         <v-tooltip
           v-if="!isCapturing"
@@ -40,7 +40,7 @@
           <span>{{ isRecording ? 'Stop Recording' : 'Record Screen' }}</span>
         </v-tooltip>
       </v-row>
-    </v-col>
+    </v-col> -->
   </div>
 </template>
 
@@ -48,8 +48,8 @@
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType';
 
 const props = defineProps({
   testId: String,
@@ -62,7 +62,6 @@ const store = useStore();
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
 
 const { t } = useI18n();
-const toast = useToast();
 
 const isCapturing = ref(false);
 const isRecording = ref(false);
@@ -77,7 +76,7 @@ const captureScreen = async () => {
       cursor: true,
     });
     isCapturing.value = true;
-    recordScreen();
+    await recordScreen();
   } catch (err) {
     console.error(err);
   }
@@ -103,6 +102,11 @@ const recordScreen = async () => {
       await uploadBytes(storageReference, videoBlob);
       videoUrl.value = await getDownloadURL(storageReference);
 
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: props.taskIndex,
+        mediaType: MEDIA_FIELD_MAP.screen,
+        url: videoUrl.value
+      });
       currentUserTestAnswer.value.tasks[props.taskIndex].screenRecordURL = videoUrl.value;
 
       // Stop all tracks
@@ -111,7 +115,6 @@ const recordScreen = async () => {
       isCapturing.value = false;
 
       emit('stopShowLoading');
-      toast.success(t('alerts.genericSuccess'));
     };
 
     isRecording.value = true;
@@ -119,6 +122,14 @@ const recordScreen = async () => {
     mediaRecorder.value.stop();
   }
 };
+
+const stopRecording = () => {
+  if (isRecording.value) {
+    mediaRecorder.value.stop();
+  }
+};
+
+defineExpose({ captureScreen, stopRecording });
 </script>
 
 <style scoped></style>

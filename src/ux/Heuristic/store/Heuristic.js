@@ -10,8 +10,6 @@ export default {
         testWeights: {},
         scoresPercentage: [],
         currentImageUrl: '',
-
-
     },
     getters: {
         heuristics(state, getters, rootState) {
@@ -63,10 +61,7 @@ export default {
         },
         SET_CURRENT_IMAGE_URL(state, payload) {
             state.currentImageUrl = payload
-        },
-        SET_CURRENT_IMAGE_URL(state, url) {
-            state.currentImageUrl = url
-        },
+        }
     },
     actions: {
         async setHeuristics({ commit }, payload) {

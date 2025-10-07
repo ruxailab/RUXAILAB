@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper 
+  <PageWrapper
     title="Accessibility Test Preview"
     :loading="isLoading"
     loading-text="Loading WCAG Data..."
@@ -25,7 +25,7 @@
       prepend-icon="mdi-eye"
     >
       <v-alert-title>Viewing Mode</v-alert-title>
-      You are viewing assessment data for user ID: <strong>{{ viewingUserId }}</strong>. 
+      You are viewing assessment data for user ID: <strong>{{ viewingUserId }}</strong>.
       This is read-only mode - you cannot save changes to another user's assessment.
     </v-alert>
 
@@ -838,7 +838,7 @@ const selectedCriteria = ref([])
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 // Computed properties from store
-const isLoading = computed(() => store.getters.isLoading || false)
+const isLoading = computed(() => store.getters.loading || false)
 
 // Check if user has access to this test - Proper role-based access control
 const hasAccess = computed(() => {
@@ -850,31 +850,31 @@ const hasAccess = computed(() => {
 const isAdmin = computed(() => {
   const currentUser = user.value || store.state.Auth.user
   const currentTest = test.value
-  
+
   if (!currentUser || !currentTest) return false
-  
+
   // Check if user is test owner
   if (currentTest.userId === currentUser.id) return true
-  
+
   // Check if user is test admin
   if (currentTest.testAdmin?.userDocId === currentUser.id) return true
-  
+
   // Check if user has admin role in collaborators
   const collaborators = currentTest.collaborators || {}
   const userCollaborator = collaborators[currentUser.id]
   if (userCollaborator === 'admin' || (userCollaborator && userCollaborator.role === 'admin')) {
     return true
   }
-  
+
   // Check if user has admin role in cooperators
   const cooperators = currentTest.cooperators || []
-  const userCooperator = cooperators.find(coop => 
+  const userCooperator = cooperators.find(coop =>
     coop.userDocId === currentUser.id || coop.email === currentUser.email
   )
   if (userCooperator && (userCooperator.role === 'admin' || userCooperator.accessLevel >= 999)) {
     return true
   }
-  
+
   return false
 })
 
@@ -882,9 +882,9 @@ const isAdmin = computed(() => {
 const isOwner = computed(() => {
   const currentUser = user.value || store.state.Auth.user
   const currentTest = test.value
-  
+
   if (!currentUser || !currentTest) return false
-  
+
   return currentTest.userId === currentUser.id || currentTest.testAdmin?.userDocId === currentUser.id
 })
 
@@ -892,23 +892,23 @@ const isOwner = computed(() => {
 const currentUserRole = computed(() => {
   const currentUser = user.value || store.state.Auth.user
   const currentTest = test.value
-  
+
   if (!currentUser || !currentTest) return 'anonymous'
-  
+
   if (isOwner.value) return 'admin'
   if (isAdmin.value) return 'admin'
-  
+
   // Check cooperators
   const cooperators = currentTest.cooperators || []
-  const userCooperator = cooperators.find(coop => 
+  const userCooperator = cooperators.find(coop =>
     coop.userDocId === currentUser.id || coop.email === currentUser.email
   )
   if (userCooperator) return `cooperator (${userCooperator.role || 'default'})`
-  
+
   // Check legacy collaborators
   const collaborators = currentTest.collaborators || {}
   if (collaborators[currentUser.id]) return `collaborator (${collaborators[currentUser.id]})`
-  
+
   return 'no-access'
 })
 
@@ -1002,31 +1002,31 @@ const hasConfigData = computed(() => {
 const canSaveAssessments = computed(() => {
   const currentUser = user.value || store.state.Auth.user
   const currentTest = test.value
-  
+
   // Must have a user logged in
   if (!currentUser || !currentUser.id) return false
-  
+
   // Must have test data
   if (!currentTest) return false
-  
+
   // Cannot save when viewing another user's data
   const targetUserId = route.params.userId || route.query.userId
   if (targetUserId && targetUserId !== currentUser.id) return false
-  
+
   // Check if user is owner/admin
   if (isOwner.value || isAdmin.value) return true
-  
+
   // Check if user is in cooperators list (any cooperator can save assessments)
   const cooperators = currentTest.cooperators || []
-  const userCooperator = cooperators.find(coop => 
+  const userCooperator = cooperators.find(coop =>
     coop.userDocId === currentUser.id || coop.email === currentUser.email
   )
   if (userCooperator) return true
-  
+
   // Check legacy collaborators
   const collaborators = currentTest.collaborators || {}
   if (collaborators[currentUser.id]) return true
-  
+
   return false
 })
 

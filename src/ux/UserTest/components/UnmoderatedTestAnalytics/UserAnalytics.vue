@@ -4,7 +4,7 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre o email" class="flex-grow-1" />
+          variant="outlined" placeholder="Buscar por nombre" class="flex-grow-1" />
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">Reset</v-btn>
@@ -119,9 +119,11 @@
               <v-list-item @click="showTaskDetails(item)" prepend-icon="mdi-clipboard-list">
                 <v-list-item-title>Task Details</v-list-item-title>
               </v-list-item>
+              <!--
               <v-list-item @click="toggleHideSession(item)" :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'">
                 <v-list-item-title>{{ item.hidden ? 'Show' : 'Hide' }}</v-list-item-title>
               </v-list-item>
+              -->
             </v-list>
           </v-menu>
         </template>

@@ -7,6 +7,7 @@ export default class TaskAnswer {
     taskObservations,
     taskTime,
     completed,
+    attempted,
     audioRecordURL,
     moderatorAudioURL,
     screenRecordURL,
@@ -21,6 +22,7 @@ export default class TaskAnswer {
     this.taskObservations = taskObservations ?? ''
     this.taskTime = taskTime ?? null
     this.completed = completed ?? null
+    this.attempted = attempted ?? false
     this.audioRecordURL = audioRecordURL ?? null
     this.moderatorAudioURL = moderatorAudioURL ?? null
     this.screenRecordURL = screenRecordURL ?? null
@@ -28,7 +30,7 @@ export default class TaskAnswer {
     this.postAnswer = postAnswer ?? null
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
-    this.nasaTlxAnswers = nasaTlxAnswers ?? new NasaTlxAnswer()
+    this.nasaTlxAnswers = nasaTlxAnswers ?? null
   }
 
   static toModel(data) {
@@ -42,6 +44,7 @@ export default class TaskAnswer {
       taskObservations: this.taskObservations,
       taskTime: this.taskTime,
       completed: this.completed,
+      attempted: this.attempted,
       audioRecordURL: this.audioRecordURL,
       moderatorAudioURL: this.moderatorAudioURL,
       screenRecordURL: this.screenRecordURL,
@@ -49,7 +52,7 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore()
+      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
     }
   }
 }

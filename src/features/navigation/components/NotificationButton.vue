@@ -144,16 +144,21 @@ const checkIfHasNewNotifications = () => {
 };
 
 const goToNotificationRedirect = async (notification) => {
-  if(notification.accessLevel === 0) {
     const accepted = await showAcceptDialog()
-    if (!accepted) return
+    if (!accepted) {
+      // mark as read and exit
+      await store.dispatch('markNotificationAsRead', {
+        notification,
+        user: user.value,
+      });
+      return
+    }
     const study = await new StudyController().getStudy({ id: notification.testId })
 
     await store.dispatch('acceptStudyCollaboration', {
       test: study,
       cooperator: user.value,
     });
-  }
 
   await store.dispatch('markNotificationAsRead', {
     notification,
@@ -172,7 +177,10 @@ const goToNotificationRedirect = async (notification) => {
 };
 
 const goToNotificationPage = () => {
-  router.push('/notifications');
+  router.push({ 
+    path: '/admin', 
+    query: { section: 'notifications' } 
+  }).catch(() => { });
 };
 
 </script>

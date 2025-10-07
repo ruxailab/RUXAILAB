@@ -80,7 +80,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView :items="tests" />
+          <DashboardView :items="tests" :sessions="nextModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -96,6 +96,7 @@
             v-if="filteredModeratedSessions.length > 0"
             :items="filteredModeratedSessions"
             type="sessions"
+            :sort-by="[{ key: 'testDate', order: 'desc' }]"
             @clicked="goTo"
           />
           <div
@@ -160,7 +161,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
@@ -173,6 +174,7 @@ import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const search = ref('');
 const activeSection = ref('dashboard');
@@ -180,6 +182,7 @@ const activeSubSection = ref(null);
 const tempDialog = ref(false);
 const temp = ref({});
 const filteredModeratedSessions = ref([]);
+const nextModeratedSessions = ref([]);
 const selectedMethodFilter = ref('all');
 const drawerOpen = ref(false);
 const studyController = new StudyController()
@@ -189,7 +192,7 @@ const methodOptions = computed(() => {
   const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id) // Solo métodos disponibles
 
   return [
-    { value: 'all', text: 'Todos los Métodos' },
+    { value: 'all', text: 'All Methods' },
     ...options.map(option => ({
       value: option.value,
       text: option.text
@@ -345,11 +348,16 @@ const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
 const getPublicTemplates = () => store.dispatch('getPublicTemplates');
 
 const filterModeratedSessions = async () => {
-  const userModeratedTests = Object.values(user.value.myAnswers).filter(
+  const userModeratedTestsAnswers = Object.values(user.value.myAnswers).filter(
     (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
   );
+
+  const userModeratedTestsAsModerator = Object.values(user.value.myTests).filter(
+    (test) => test.subType === USER_STUDY_SUBTYPES.MODERATED
+  );
+
   const cooperatorArray = [];
-  for (const test of userModeratedTests) {
+  for (const test of userModeratedTestsAnswers) {
     const testObj = await studyController.getStudy({ id: test.testDocId });
     if (testObj) {
       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
@@ -365,8 +373,92 @@ const filterModeratedSessions = async () => {
       }
     }
   }
-  filteredModeratedSessions.value = cooperatorArray;
+
+  for (const test of userModeratedTestsAsModerator) {
+    const testObj = await studyController.getStudy({ id: test.testDocId });
+    if (testObj) {
+      testObj.cooperators?.forEach(cooperatorObj => {
+       const obj = Object.assign(cooperatorObj, {
+          testTitle: testObj.testTitle,
+          testAdmin: testObj.testAdmin,
+          id: testObj.id,
+          testType: testObj.testType,
+          subType: testObj.subType,
+          evaluator: cooperatorObj.email
+        });
+        cooperatorArray.push(obj);
+      });
+    }
+  }
+
+  filteredModeratedSessions.value = cooperatorArray
 };
+
+const filterNextModeratedSessions = async () => {
+  const userModeratedTests = Object.values(user.value?.notifications || {});
+
+  const results = await Promise.all(
+    userModeratedTests.map(async (test) => {
+      const testObj = await studyController.getStudy({ id: test.testId });
+      if (!testObj) return null;
+
+      const cooperatorObj = (testObj.cooperators || []).find(
+        (coop) => coop.userDocId == user.value.id
+      );
+      if (!cooperatorObj) return null;
+
+      return {
+        ...cooperatorObj,
+        testTitle: testObj.testTitle,
+        testAdmin: testObj.testAdmin,
+        id: testObj.id,
+        testType: testObj.testType,
+        subType: testObj.subType,
+        redirectsTo: test.redirectsTo,
+      };
+    })
+  );
+
+  // Remove nulos e aplica os mesmos filtros de antes
+  const cooperatorArray = results.filter(Boolean);
+
+  nextModeratedSessions.value = cooperatorArray
+    .filter((answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED)
+    .filter((val, index, self) => index === self.findIndex((m) => m.id === val.id));
+
+  console.log("nextModeratedSessions.value", nextModeratedSessions.value);
+};
+
+// const filterNextModeratedSessions = async () => {
+//   const userModeratedTests = Object.values(user.value.notifications)
+//   const cooperatorArray = [];
+//   for (const test of userModeratedTests) {
+//     console.log("test", test)
+//     const testObj = await studyController.getStudy({ id: test.testId });
+//     if (testObj) {
+//       const cooperatorObj = testObj.cooperators?.find(coop => coop.userDocId == user.value.id);
+//       if (cooperatorObj) {
+//         Object.assign(cooperatorObj, {
+//           testTitle: testObj.testTitle,
+//           testAdmin: testObj.testAdmin,
+//           id: testObj.id,
+//           testType: testObj.testType,
+//           subType: testObj.subType,
+//           redirectsTo: test.redirectsTo
+//         });
+//         cooperatorArray.push(cooperatorObj);
+//       }
+//     }
+//   }
+//   nextModeratedSessions.value = cooperatorArray
+//   .filter(
+//     (answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED
+//   )
+//   .filter(
+//     (val, index, self) => index === self.findIndex(m => m.id === val.id)
+//   );
+//   console.log("nextModeratedSessions.value", nextModeratedSessions.value)
+// };
 
 const reloadMyTemplates = async () => {
   tempDialog.value = false
@@ -396,10 +488,40 @@ const handleToggleDrawer = () => {
 
 onMounted(() => {
   filterModeratedSessions();
+  filterNextModeratedSessions()
+
+  // Handle query parameters for section navigation
+  if (route.query.section) {
+    activeSection.value = route.query.section;
+    if (route.query.subsection) {
+      activeSubSection.value = route.query.subsection;
+    }
+  }
 
   // Escuchar evento del toolbar para toggle del drawer
   window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer);
 });
+
+// Watch for route changes to handle navigation
+watch(
+  () => route.query.section,
+  (newSection) => {
+    if (newSection) {
+      activeSection.value = newSection;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => route.query.subsection,
+  (newSubSection) => {
+    if (newSubSection) {
+      activeSubSection.value = newSubSection;
+    }
+  },
+  { immediate: true }
+);
 
 onUnmounted(() => {
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer);

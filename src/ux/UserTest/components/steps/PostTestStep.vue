@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + postTestTitle">
+  <ShowInfo :title="testTitle + ' - ' + 'PosTest'">
     <template #content>
       <div class="test-content pa-4 rounded-xl">
         <div
@@ -21,24 +21,23 @@
             <v-text-field
               v-if="item.textField"
               v-model="localAnswers[i].answer"
-              :disabled="postTestCompleted"
               :placeholder="item.title"
               variant="outlined"
               density="comfortable"
               class="mt-2"
+              @update:model-value="updateAnswer(i, $event)"
             />
             <v-radio-group
               v-if="item.selectionField"
               v-model="localAnswers[i].answer"
-              :disabled="postTestCompleted"
               class="mt-2"
+              @update:model-value="updateAnswer(i, $event)"
             >
               <v-radio
                 v-for="(selection, j) in item.selectionFields"
                 :key="j"
                 :label="selection"
                 :value="selection"
-                :disabled="postTestCompleted"
                 density="compact"
               />
             </v-radio-group>
@@ -56,7 +55,6 @@
               block
               color="primary"
               variant="flat"
-              :disabled="postTestCompleted"
               @click="$emit('done')"
             >
               Done
@@ -84,7 +82,14 @@ const emit = defineEmits(['done', 'update:postTestAnswer']);
 
 const localAnswers = ref([...props.postTestAnswer]);
 
-watch(localAnswers, (val) => {
-  emit('update:postTestAnswer', val);
-}, { deep: true });
+const updateAnswer = (index, value) => {
+  localAnswers.value[index].answer = value;
+  emit('update:postTestAnswer', localAnswers.value);
+};
+
+watch(() => props.postTestAnswer, (newAnswers) => {
+  if (newAnswers) {
+    localAnswers.value = [...newAnswers];
+  }
+}, { deep: true, immediate: true });
 </script>

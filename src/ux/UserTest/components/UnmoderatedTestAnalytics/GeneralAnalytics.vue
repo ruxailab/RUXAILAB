@@ -4,13 +4,13 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre o email" class="flex-grow-1" />
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
+          variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{ $t('analytics.search') }}</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
-          @click="resetFilters">Reset</v-btn>
+          @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
         <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
-          :title="showFilters ? 'Ocultar filtros' : 'Mostrar filtros'" @click="toggleFilters">
+          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
       </div>
@@ -42,21 +42,23 @@
     <!-- UX Metrics Row (ahora primera fila) -->
     <v-row class="">
       <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" label="Eficacia" color="success"
-          icon="mdi-target-account" description="Porcentaje de tareas completadas exitosamente"
+        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" :label="$t('analytics.effectiveness')" color="success"
+          icon="mdi-target-account" :description="$t('analytics.effectivenessDescription')"
           :progress="calculateEffectiveness()" />
       </v-col>
       <v-col cols="12" md="4">
-        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" label="Eficiencia" color="info"
-          icon="mdi-speedometer" :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
+        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" :label="$t('analytics.efficiency')" color="info"
+          icon="mdi-speedometer" :description="$t('analytics.efficiencyDescription', { avgTime: calculateEfficiency().avgTime })"
           :progress="Math.min(calculateEfficiency().score * 10, 100)" />
       </v-col>
       <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" label="Satisfacción" color="warning"
-          icon="mdi-heart" description="Puntuación promedio de satisfacción del usuario"
-          :progress="(calculateSatisfaction() / 5) * 100" />
+        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')" color="warning"
+          icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
+          :progress="(calculateSatisfaction() / 5) * 100" 
+          :disabled="true" />
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12" lg="6">
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
@@ -67,14 +69,14 @@
                   mdi-target
                 </v-icon>
                 <h3 class="text-h5 font-weight-medium text-on-surface">
-                  Conclusion Rate
+                  {{ $t('analytics.conclusionRate') }}
                 </h3>
               </div>
               <div class="text-h2 font-weight-bold text-primary mb-2">
                 {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
               </div>
               <p class="text-body-1 text-medium-emphasis">
-                Perfect completion rate achieved
+                {{ $t('analytics.perfectCompletionRate') }}
               </p>
             </div>
             <div class="text-end">
@@ -105,7 +107,7 @@
                 {{ getTestsInProgress().totalInProgress }}
               </div>
               <p class="text-body-2 text-medium-emphasis">
-                Tests in Progress
+                {{ $t('analytics.testsInProgress') }}
               </p>
             </div>
             <v-divider vertical class="mx-4" />
@@ -114,7 +116,7 @@
                 16m
               </div>
               <p class="text-body-2 text-medium-emphasis">
-                Total Duration
+                {{ $t('analytics.totalDuration') }}
               </p>
             </div>
           </div>
@@ -135,12 +137,12 @@
                     {{ calculateAverageTime().formatedTime }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Avg Time/Task
+                    {{ $t('analytics.avgTimePerTask') }}
                   </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
-                Efficient task completion rate
+                {{ $t('analytics.efficientTaskCompletion') }}
               </p>
             </v-card>
           </v-col>
@@ -158,12 +160,12 @@
                     {{ findLongestTask().averageTime.formatedTime }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Longest Task
+                    {{ $t('analytics.longestTask') }}
                   </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
-                Task: <strong>"{{ findLongestTask().taskName }}"</strong>
+                {{ $t('analytics.taskLabel') }}: <strong>"{{ findLongestTask().taskName }}"</strong>
               </p>
             </v-card>
           </v-col>
@@ -180,7 +182,7 @@
                     {{ getTotalAnswers() }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Total Answers
+                    {{ $t('analytics.totalAnswers') }}
                   </p>
                 </div>
               </div>
@@ -188,7 +190,7 @@
                 <v-icon color="success" size="16" class="me-1">
                   mdi-trending-up
                 </v-icon>
-                <span class="text-caption text-success">+{{ getTasksTodayCount() }}/day</span>
+                <span class="text-caption text-success">+{{ getTasksTodayCount() }}/{{ $t('analytics.day') }}</span>
               </div>
             </v-card>
           </v-col>
@@ -202,10 +204,10 @@
                 </v-avatar>
                 <div>
                   <div class="text-body-1 font-weight-bold text-accent">
-                    Evaluator
+                    {{ $t('analytics.evaluator') }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Latest User
+                    {{ $t('analytics.latestUser') }}
                   </p>
                 </div>
               </div>
@@ -228,17 +230,17 @@
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Rendimiento por Tarea
+                {{ $t('analytics.taskPerformance') }}
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Tasa de aciertos y errores por cada tarea del test
+                {{ $t('analytics.taskPerformanceDescription') }}
               </p>
             </div>
           </div>
 
           <v-row>
             <v-col v-for="taskStat in getTasksPerformance()" :key="taskStat.taskId" cols="12" md="6" lg="4">
-              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" outlined>
+              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" variant="outlined">
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
@@ -246,7 +248,7 @@
                   <v-chip
                     :color="taskStat.successRate >= 70 ? 'success' : taskStat.successRate >= 50 ? 'warning' : 'error'"
                     variant="tonal" size="small">
-                    {{ taskStat.successRate.toFixed(1) }}% éxito
+                    {{ taskStat.successRate.toFixed(1) }}% {{ $t('analytics.success') }}
                   </v-chip>
                 </div>
 
@@ -257,11 +259,11 @@
                 <div class="d-flex justify-space-between text-body-2">
                   <div class="d-flex align-center">
                     <div class="legend-dot bg-success mr-2"></div>
-                    <span>Aciertos: {{ taskStat.success }}</span>
+                    <span>{{ $t('analytics.successCount') }}: {{ taskStat.success }}</span>
                   </div>
                   <div class="d-flex align-center">
                     <div class="legend-dot bg-error mr-2"></div>
-                    <span>Errores: {{ taskStat.errors }}</span>
+                    <span>{{ $t('analytics.errors') }}: {{ taskStat.errors }}</span>
                   </div>
                 </div>
               </v-card>
@@ -278,10 +280,10 @@
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Pre Test
+                {{ $t('analytics.preTest') }}
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Resultados del formulario previo al test
+                {{ $t('analytics.preTestDescription') }}
               </p>
             </div>
           </div>
@@ -309,10 +311,10 @@
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Post Test
+                {{ $t('analytics.postTest') }}
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Resultados del formulario posterior al test
+                {{ $t('analytics.postTestDescription') }}
               </p>
             </div>
           </div>
@@ -340,6 +342,7 @@
 
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 import UxMetricCard from '../answers/UxMetricCard.vue';
 import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
@@ -413,15 +416,14 @@ function getPreTextAnswers(questionIdx) {
 }
 
 const store = useStore();
+const { t } = useI18n();
 
 
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
 const answers = computed(() => {
-  if (!store.getters.visibleUserAnswers) {
-    return {};
-  }
-  return store.getters.visibleUserAnswers;
+  if (!store.getters.visibleUserAnswers) return {}
+  return store.getters.visibleUserAnswers
 });
 
 // Filter definitions based on pre-test questions
@@ -451,15 +453,15 @@ const filterDefinitions = computed(() => {
 
     const baseItems = isCategorical ? options.map(o => ({ title: o, value: o })) : [];
     if (isCategorical && baseItems.length) {
-      // Insertar 'Todos' al inicio
+      // Insert 'All' at the beginning
       if (!baseItems.find(it => it.value === ALL_VALUE)) {
-        baseItems.unshift({ title: 'Todos', value: ALL_VALUE });
+        baseItems.unshift({ title: t('analytics.all'), value: ALL_VALUE });
       }
     }
 
     return {
       index: idx,
-      title: q.title || q.question || `Pregunta ${idx + 1}`,
+      title: q.title || q.question || t('analytics.question', { number: idx + 1 }),
       options,
       isCategorical,
       items: baseItems
@@ -718,19 +720,45 @@ const calculateEffectiveness = () => {
 };
 
 const calculateEfficiency = () => {
-  if (!taskAnswers.value.length) return { score: 0, avgTime: '0 min 0 s' };
+  if (!filteredSessions.value.length) return { score: 0, avgTime: '0 min 0 s' };
 
-  const avgTime = averageTimePerTask.value;
-  const avgTimeFormatted = formatTime(avgTime);
+  let totalSuccessfulTasks = 0;
+  let totalSuccessfulTaskTime = 0; // in milliseconds - only time from successful tasks
+  let totalTimeSpent = 0; // in milliseconds - time from all tasks (for reference)
 
-  // Score based on average time (lower is better)
-  // Assuming 2 minutes as optimal time, anything above reduces efficiency
-  const optimalTime = 120000; // 2 minutes in milliseconds
-  const efficiency = Math.max(0, Math.min(10, (optimalTime / avgTime) * 10));
+  // Calculate total successful tasks and time spent on successful tasks only
+  filteredSessions.value.forEach((answer) => {
+    Object.values(answer.tasks || {}).forEach((task) => {
+      totalTimeSpent += task.taskTime || 0;
+      // Count as successful if task is completed and not explicitly marked as failed
+      if (task.completed && task.success !== false) {
+        totalSuccessfulTasks++;
+        totalSuccessfulTaskTime += task.taskTime || 0;
+      }
+    });
+  });
+
+  const avgTimeFormatted = formatTime(totalSuccessfulTaskTime / Math.max(1, totalSuccessfulTasks));
+
+  // ISO 9241-11/9241-210 Efficiency Formula: 
+  // Efficiency = Number of successfully completed tasks / Time spent on successful tasks
+  // Convert to tasks per minute for better readability
+  const efficiencyRatio = totalSuccessfulTaskTime > 0 ? (totalSuccessfulTasks / (totalSuccessfulTaskTime / 60000)) : 0;
+  
+  // Dynamic normalization based on actual efficiency ratio
+  // Use logarithmic scale to better represent efficiency variations
+  // Score = 10 * (1 - e^(-efficiency_ratio * scale_factor))
+  const scaleFactor = 2; // Adjustable based on typical task complexity
+  const normalizedScore = efficiencyRatio > 0 ? 
+    Math.min(10, 10 * (1 - Math.exp(-efficiencyRatio * scaleFactor))) : 0;
 
   return {
-    score: efficiency,
-    avgTime: avgTimeFormatted.formatedTime
+    score: normalizedScore,
+    avgTime: avgTimeFormatted.formatedTime,
+    tasksPerMinute: efficiencyRatio.toFixed(2),
+    totalTasks: totalSuccessfulTasks,
+    totalSuccessfulTime: formatTime(totalSuccessfulTaskTime).formatedTime,
+    totalTime: formatTime(totalTimeSpent).formatedTime
   };
 };
 
@@ -899,13 +927,13 @@ onMounted(() => {
     testStructure.value.userTasks.forEach((task, i) => {
       testTasks.value[i] = task.taskName;
     });
-  }
 
-  if (answers.value && typeof answers.value === 'object') {
-    let c = 0;
-    for (const key in answers.value) {
-      taskAnswers.value[c] = answers.value[key];
-      c++;
+    if (answers.value && typeof answers.value === 'object') {
+      let c = 0;
+      for (const key in answers.value) {
+        taskAnswers.value[c] = answers.value[key];
+        c++;
+      }
     }
   }
 

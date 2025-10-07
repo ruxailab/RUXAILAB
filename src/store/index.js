@@ -31,7 +31,6 @@ export default createStore({
     RESET_TOAST(state) {
       state.toastMessage = '';
       state.toastType = 'info';
-      console.log(state)
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -70,9 +69,6 @@ export default createStore({
     },
     localChanges(state) {
       return state.localChanges
-    },
-    isLoading(state) {
-      return state.loading
     },
     getError(state) {
       return state.error

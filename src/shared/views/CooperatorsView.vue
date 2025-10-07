@@ -1,11 +1,12 @@
 <template>
   <PageWrapper
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
-    :loading="loading"
-    :loading-text="$t('HeuristicsCooperators.messages.cooperators_loading')"
   >
     <!-- Actions Slot -->
-    <template #actions v-if="!showIntroView">
+    <template
+      v-if="!showIntroView"
+      #actions
+    >
       <v-btn
         color="primary"
         size="large"
@@ -19,7 +20,10 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template #subtitle v-if="!showIntroView">
+    <template
+      v-if="!showIntroView"
+      #subtitle
+    >
       <p class="text-body-1 text-grey-darken-1">
         Manage people who participate in your study
       </p>
@@ -31,7 +35,7 @@
     />
     <CooperatorTable
       v-else
-      :hasRoleColumn="hasRoleColumn"
+      :has-role-column="hasRoleColumn"
       :cooperators="cooperatorsEdit"
       :loading="loading"
       :show-date-columns="showDateColumns"
@@ -44,7 +48,8 @@
       @send-message="openMessageDialog"
       @reinvite="reinvite"
       @remove-cooperator="removeCoop"
-      @cancel-invitation="cancelInvitation" />
+      @cancel-invitation="cancelInvitation"
+    />
 
     <!-- Leave Alert Dialog -->
     <v-dialog
@@ -110,6 +115,9 @@ import Cooperators from '../models/Cooperators';
 import { getMethodManagerView } from '../constants/methodDefinitions';
 import { useRouter ,useRoute} from 'vue-router';
 import Notification from '@/shared/models/Notification';
+import EmailController from '../controllers/EmailController';
+import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
 
 
 const uidgen = new UIDGenerator();
@@ -142,6 +150,8 @@ const emit = defineEmits(['open-invite-dialog'])
 const store = useStore();
 const route = useRoute();
 const slots = useSlots();
+const toast = useToast();
+const { t } = useI18n();
 
 // Use composables
 const {
@@ -155,12 +165,12 @@ const {
 } = useCooperatorActions();
 
 // Direct notification helper
-const sendNotification = async (userId, title, description, redirectsTo = '/', testId = null) => {
+const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null, author } = {}) => {
   const notification = new Notification({
     title,
     description,
     redirectsTo,
-    author: 'Admin',
+    author,
     read: false,
     testId
   });
@@ -179,9 +189,11 @@ const sendNotification = async (userId, title, description, redirectsTo = '/', t
 
 // Variables
 let showIntroComponent = ref(true);
+const inviteMessages = ref('');
 const verified = ref(false);
 const messageModel = ref(false);
 const selectedUser = ref([]);
+const cooperatorsUpdate = ref([]);
 const showInviteDialog = ref(false);
 const drawerOpen = ref(false);
 
@@ -192,9 +204,10 @@ const showIntroView = computed(() => {
 // Computeds
 const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
+const userAuth = computed(() => store.getters.user);
 const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
-const loading = computed(() => store.getters.isLoading);
+const loading = computed(() => store.getters.loading);
 
 // Methods
 const openMessageDialog = (item) => {
@@ -205,9 +218,11 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId && test.value) {
+    const author = test.value.testAdmin.email;
     await sendNotification(
       user.userDocId,
       title,
+      author,
       content,
       '/',
       test.value.id
@@ -215,13 +230,31 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 };
 
+const handleSendEmail = async (guest) => {
+  const emailController = new EmailController()
+  await emailController.send({
+    to: guest.email,
+    subject: 'You have been invited to evaluate a test!',
+    attachments: [],
+    template: 'invite',
+    data: {
+      message: inviteMessages.value || '',
+      testTitle: test.value.testTitle,
+      testDescription: test.value.testDescription,
+      adminEmail: test.value.testAdmin.email,
+      adminName: userAuth.value.name || userAuth.value.email,
+    }
+  })
+}
+
 const handleSendInvitations = async (invitationData) => {
-  const { selectedCoops, selectedRole } = invitationData;
+  if (!test.value) return;
+
+  const { selectedCoops, selectedRole, inviteMessage } = invitationData;
   const tokens = {};
 
-  if (!test.value) {
-    return;
-  }
+  inviteMessages.value = inviteMessage
+  cooperatorsUpdate.value = [...cooperatorsEdit.value];
 
   selectedCoops.forEach((coop) => {
     const token = uidgen.generateSync();
@@ -272,35 +305,44 @@ const changeRole = async (item, newValue) => {
 };
 
 const submit = async () => {
-  if (!test.value) {
-    return;
-  }
-  
-  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}));
-  test.value.cooperators = [...coops];
-  
+  if (!test.value) return;
+
+  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}))
+  test.value.cooperators = [...coops]
+
+  const newCooperators = cooperatorsEdit.value.filter(
+    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
+  );
+
   try {
     await store.dispatch('updateStudy', test.value);
-    await store.dispatch('getStudy', { id: test.value.id });
+
+    await Promise.all([
+      store.dispatch('getStudy', { id: test.value.id }),
+      ...newCooperators.map(guest => sendMenssages(guest))
+    ]);
   } catch (error) {
     console.error('Error updating study:', error);
   }
-  
-  cooperatorsEdit.value.forEach((guest) => {
-    if (!guest.accepted) {
-      notifyCooperator(guest);
-    }
-  });
 };
 
-
+const sendMenssages = async (guest) => {
+  try {
+    notifyCooperator(guest);
+    await handleSendEmail(guest);
+    toast.success(t('pages.cooperators.invitationSent'));
+  } catch (error) {
+    console.error('Error sending messages:', error);
+    toast.error(t('errors.sendError'));
+  }
+}
 
 const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
     let path = '';
     let title = 'Cooperation Invite!';
     let description = `You have been invited to test ${test.value.testTitle || 'a study'}!`;
-    
+
     if (test.value.testType === 'MANUAL') {
       path = `accessibility/manual/preview/${test.value.id}`;
       title = 'Manual Accessibility Test Invitation';
@@ -310,14 +352,16 @@ const notifyCooperatorAccessibility = async (guest) => {
       title = 'Automatic Accessibility Test Invitation';
       description = `You have been invited to view the automatic accessibility report for "${test.value.testTitle || 'a study'}". Click to view the results.`;
     }
-    
+
     if (guest.userDocId && path) {
+      const author = test.value.testAdmin.email;
       await sendNotification(
         guest.userDocId,
         title,
         description,
         path,
-        test.value.id
+        test.value.id,
+        author,
       );
     }
   }
@@ -325,14 +369,12 @@ const notifyCooperatorAccessibility = async (guest) => {
 
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
-    console.log(guest.email + '---' + guest.accessLevel)
-    
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-      notifyCooperatorAccessibility(guest);
-      return;
-    }
-    
+    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
+    //  notifyCooperatorAccessibility(guest);
+    //  return;
+    //}
+
     // admin - 0, evaluator -1, guest - 2
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
     const managerRoute = router.resolve({
@@ -341,11 +383,11 @@ const notifyCooperator = (guest) => {
     });
 
     const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
-    
+
     sendNotification({
       userId: guest.userDocId,
       title: 'Cooperation Invite!',
-      description: `You have been invited to test ${test.value.testTitle}!`,
+      description: inviteMessages.value || `You have been invited to test ${test.value.testTitle || 'a study'}!`,
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
@@ -354,8 +396,8 @@ const notifyCooperator = (guest) => {
   }
 };
 
-const reinvite = (guest) => {
-  notifyCooperator(guest);
+const reinvite = async (guest) => {
+  await sendMenssages(guest)
 };
 
 const removeCoop = async (coop) => {
@@ -398,9 +440,9 @@ watch(test, (newTest) => {
 
 onMounted(async () => {
   store.dispatch('getAllUsers');
-  
+
   const testId = props.id || route.params.id;
-  
+
   if (testId) {
     try {
       await store.dispatch('getStudy', { id: testId });

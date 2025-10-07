@@ -1,7 +1,7 @@
 <template>
-  <PageWrapper 
+  <PageWrapper
     title="Accessibility Test Answers"
-    :loading="pageLoading"
+    :loading="loading"
     loading-text="Loading accessibility test results..."
   >
     <template #subtitle>
@@ -20,11 +20,11 @@
       class="mb-6 rounded-lg"
       prominent
     >
-      <div class="d-flex flex-column align-center justify-center py-4">
-        <v-icon 
-          color="info" 
-          size="64" 
-          class="mb-4"
+      <div class="d-flex flex-column align-center justify-center">
+        <v-icon
+          color="info"
+          size="48"
+          class="mb-2"
         >
           mdi-information-outline
         </v-icon>
@@ -32,10 +32,10 @@
         <span class="text-body-1">No Assessment Available for this Test</span>
       </div>
     </v-alert>
-    
-  <!-- Main Report Content -->
-  <div v-else-if="hasReport">
-  <!-- Report Header -->
+
+    <!-- Main Report Content -->
+    <div v-else-if="report">
+      <!-- Report Header -->
       <v-card
         class="mb-6 rounded-lg"
         elevation="2"
@@ -499,263 +499,179 @@ const issuesCounts = computed(() => {
   const issues = (report.value && Array.isArray(report.value.ReportIssues)) ? report.value.ReportIssues : []
   if (issues.length) {
     return {
-      errors: issues.filter(i => i?.type === 'error').length,
-      warnings: issues.filter(i => i?.type === 'warning').length,
-      notices: issues.filter(i => i?.type === 'notice').length,
+      selectedIssue: null,
+      testId,
+      tabs: ['Summary & Issues', 'Issues & Preview', 'Issues & Details'],
+      currentTab: 0,
+      page: 1,
+      itemsPerPage: 10,
+      infiniteScrollCount: 20, // Number of issues to show initially in infinite scroll
     }
-  }
-  return issuesSummary.value || { errors: 0, warnings: 0, notices: 0 }
-})
-const totalIssues = computed(() => issuesCounts.value.errors + issuesCounts.value.warnings + issuesCounts.value.notices)
-
-// Accessibility score calculation
-const SCORE_WEIGHTS = { error: 5, warning: 2, notice: 1 }
-const accessibilityScore = computed(() => {
-  const c = issuesCounts.value
-  const e = Number(c?.errors) || 0
-  const w = Number(c?.warnings) || 0
-  const n = Number(c?.notices) || 0
-  const penalty = e * SCORE_WEIGHTS.error + w * SCORE_WEIGHTS.warning + n * SCORE_WEIGHTS.notice
-  // Bounded curve: as penalty grows, score approaches 0 but doesn't instantly drop to 0
-  // score = 100 * (1 - penalty / (penalty + K)) with K as a softness constant
-  const K = 100
-  const score = Math.round(100 * (1 - penalty / (penalty + K)))
-  return Math.min(100, Math.max(0, score))
-})
-
-const getScoreColor = (score) => {
-  if (score >= 90) return 'success'
-  if (score >= 70) return 'warning'
-  return 'error'
-}
-
-// Additional insights
-const uniqueRulesCount = computed(() => {
-  const issues = (report.value && Array.isArray(report.value.ReportIssues)) ? report.value.ReportIssues : []
-  const set = new Set(issues.map(i => i && i.code).filter(Boolean))
-  return set.size
-})
-
-const uniqueSelectorsCount = computed(() => {
-  const issues = (report.value && Array.isArray(report.value.ReportIssues)) ? report.value.ReportIssues : []
-  const set = new Set(issues.map(i => i && i.selector).filter(Boolean))
-  return set.size
-})
-
-const topIssueCode = computed(() => {
-  const issues = (report.value && Array.isArray(report.value.ReportIssues)) ? report.value.ReportIssues : []
-  const counts = issues.reduce((acc, i) => {
-    const code = i && i.code
-    if (!code) return acc
-    acc[code] = (acc[code] || 0) + 1
-    return acc
-  }, {})
-  const entries = Object.entries(counts)
-  if (entries.length === 0) return null
-  entries.sort((a, b) => b[1] - a[1])
-  return { code: entries[0][0], count: entries[0][1] }
-})
-
-const mostCommonType = computed(() => {
-  const c = issuesCounts.value
-  const total = (c.errors || 0) + (c.warnings || 0) + (c.notices || 0)
-  if (!total) return { type: null, percent: null }
-  const pairs = [
-    { type: 'error', count: c.errors || 0 },
-    { type: 'warning', count: c.warnings || 0 },
-    { type: 'notice', count: c.notices || 0 },
-  ]
-  pairs.sort((a, b) => b.count - a.count)
-  if (pairs[0].count === 0) return { type: null, percent: null }
-  const percent = Math.round((pairs[0].count / total) * 100)
-  return { type: pairs[0].type, percent }
-})
-const filteredIssues = computed(() => {
-  if (!report.value || !Array.isArray(report.value.ReportIssues)) return []
-  const active = new Set(activeFilters.value.map(t => String(t).toLowerCase()))
-  const allowed = new Set(['error', 'warning', 'notice'])
-  return report.value.ReportIssues.filter(issue => {
-    const t = String(issue.type || '').toLowerCase()
-    return allowed.has(t) && active.has(t)
-  })
-})
-
-// Table mapping
-const tableHeaders = [
-  { title: 'Type', key: 'type', sortable: true },
-  { title: 'Code', key: 'code', sortable: true },
-  { title: 'Message', key: 'message', sortable: false },
-  { title: 'Selector', key: 'selector', sortable: false },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-]
-
-const tableItems = computed(() =>
-  filteredIssues.value.map((issue, idx) => ({
-    ...issue,
-    rowKey: `${issue?.code ?? 'issue'}-${idx}`,
-  }))
-)
-
-const infiniteIssues = computed(() => {
-  return filteredIssues.value.slice(0, infiniteScrollCount.value)
-})
-
-const filteredIssueCounts = computed(() => {
-  const issues = filteredIssues.value
-  return {
-    errors: issues.filter(issue => issue.type === 'error').length,
-    warnings: issues.filter(issue => issue.type === 'warning').length,
-    notices: issues.filter(issue => issue.type === 'notice').length,
-    total: issues.length
-  }
-})
-
-// Filter action button states
-const isAllSelected = computed(() => {
-  const all = ['error', 'warning', 'notice']
-  return all.every(t => activeFilters.value.includes(t))
-})
-
-const isNoneSelected = computed(() => activeFilters.value.length === 0)
-
-// Methods
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleString()
-}
-
-const getIssueCounts = () => {
-  // Provide safe defaults to avoid runtime errors before data loads
-  return issuesSummary.value || { errors: 0, warnings: 0, notices: 0 }
-}
-
-const getIssueColor = (type) => {
-  switch ((type || '').toLowerCase()) {
-    case 'error':
-      return 'error'
-    case 'warning':
-      return 'warning'
-    case 'notice':
-      return 'info'
-    default:
-      return 'grey'
-  }
-}
-
-const getIssueIcon = (type) => {
-  switch ((type || '').toLowerCase()) {
-    case 'error':
-      return 'mdi-alert-circle'
-    case 'warning':
-      return 'mdi-alert'
-    case 'notice':
-      return 'mdi-information'
-    default:
-      return 'mdi-help-circle'
-  }
-}
-
-const getTabIcon = (index) => {
-  const icons = ['mdi-chart-box', 'mdi-format-list-checks']
-  return icons[index] || 'mdi-tab'
-}
-
-const selectIssue = (issue) => {
-  const originalIndex = report.value.ReportIssues.findIndex(
-    (reportIssue) => reportIssue === issue
-  )
-  selectedIssue.value = originalIndex >= 0 ? originalIndex : null
-}
-
-// Safely determine if an issue is the currently selected one
-const isIssueSelected = (issue) => {
-  if (
-    selectedIssue.value === null ||
-    !report.value ||
-    !report.value.ReportIssues ||
-    !Array.isArray(report.value.ReportIssues)
-  ) {
-    return false
-  }
-  return report.value.ReportIssues[selectedIssue.value] === issue
-}
-
-const openIssueDialog = (issue) => {
-  selectedIssueObj.value = issue
-  issueDialog.value = true
-}
-
-// Reset selection and pagination whenever filters change
-watch(activeFilters, () => {
-  selectedIssue.value = null
-  infiniteScrollCount.value = 20
-})
-
-const clearAllFilters = () => {
-  activeFilters.value = []
-  selectedIssue.value = null
-  infiniteScrollCount.value = 20
-}
-
-const selectAllFilters = () => {
-  activeFilters.value = ['error', 'warning', 'notice']
-  selectedIssue.value = null
-  infiniteScrollCount.value = 20
-}
-
-const onInfiniteScroll = (e) => {
-  const el = e.target
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
-    if (infiniteScrollCount.value < filteredIssues.value.length) {
-      infiniteScrollCount.value += 20
+  },
+  computed: {
+    ...mapState('automaticReport', ['report']),
+    loading() {
+      return this.$store.getters.loading;
+    },
+    error() {
+      return this.$store.getters.getError;
+    },
+    paginatedIssues() {
+      if (!this.report || !this.report.ReportIssues) return []
+      const start = (this.page - 1) * this.itemsPerPage
+      return this.report.ReportIssues.slice(start, start + this.itemsPerPage)
+    },
+    totalPages() {
+      if (!this.report || !this.report.ReportIssues) return 1
+      return Math.ceil(this.report.ReportIssues.length / this.itemsPerPage) || 1
+    },
+    infiniteIssues() {
+      if (!this.report || !this.report.ReportIssues) return []
+      return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
+    },
+  },
+    mounted() {
+    if (!this.testId) {
+      this.$store.commit('setError', {
+        errorCode: 'NO_TEST_ID',
+        message: 'No testId provided in route.'
+      })
+      return
     }
-  }
+    this.fetchReport(this.testId).then(() => {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.renderModifiedHtml()
+        }, 100)
+      })
+    })
+  },
+  methods: {
+    ...mapActions('automaticReport', ['fetchReport']),
+    formatDate(dateString) {
+      const date = new Date(dateString)
+      return date.toLocaleString()
+    },
+    getIssueCounts() {
+      if (
+        !this.report ||
+        !this.report.ReportIssues ||
+        !Array.isArray(this.report.ReportIssues)
+      ) {
+        return { errors: 0, warnings: 0, notices: 0 }
+      }
+      return {
+        errors: this.report.ReportIssues.filter(
+          (issue) => issue && issue.type === 'error',
+        ).length,
+        warnings: this.report.ReportIssues.filter(
+          (issue) => issue && issue.type === 'warning',
+        ).length,
+        notices: this.report.ReportIssues.filter(
+          (issue) => issue && issue.type === 'notice',
+        ).length,
+      }
+    },
+    getIssueColor(type) {
+      switch (type) {
+        case 'error':
+          return 'error'
+        case 'warning':
+          return 'warning'
+        case 'notice':
+          return 'info'
+        default:
+          return 'grey'
+      }
+    },
+    getTabIcon(index) {
+      const icons = ['mdi-chart-pie', 'mdi-web', 'mdi-information']
+      return icons[index] || 'mdi-tab'
+    },
+    selectIssue(index) {
+      this.selectedIssue = index
+      this.scrollToIssue(index)
+    },
+    renderModifiedHtml() {
+      if (
+        !this.$refs.previewFrame ||
+        !this.$refs.previewFrame.parentNode ||
+        !this.report?.modifiedHtml
+      ) {
+        console.warn('Required data or elements not available')
+        return
+      }
+      try {
+        const frame = this.$refs.previewFrame
+        frame.addEventListener('load', () => {
+          if (!frame.contentWindow || !frame.contentDocument) {
+            console.warn('iframe not ready')
+            return
+          }
+          frame.contentWindow.addEventListener('click', (event) => {
+            const issueMarker = event.target.closest('.a11y-issue-marker')
+            if (issueMarker) {
+              const issueId = issueMarker.getAttribute('data-issue-id')
+              const index = parseInt(issueId.replace('issue-', ''))
+              this.selectIssue(index)
+            }
+          })
+        })
+      } catch (error) {
+        console.error('Error setting up iframe:', error)
+      }
+    },
+    scrollToIssue(index) {
+      if (
+        !this.$refs.previewFrame ||
+        !this.$refs.previewFrame.parentNode ||
+        !this.report
+      )
+        return
+      const frame = this.$refs.previewFrame
+      const frameDoc = frame.contentDocument || frame.contentWindow.document
+      const element = frameDoc.querySelector(`[data-issue-id="issue-${index}"]`)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        this.highlightElement(`issue-${index}`)
+      }
+    },
+    highlightElement(issueId) {
+      if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)
+        return
+      const frame = this.$refs.previewFrame
+      const frameDoc = frame.contentDocument || frame.contentWindow.document
+      this.unhighlightElements()
+      const element = frameDoc.querySelector(`[data-issue-id="${issueId}"]`)
+      if (element) {
+        element.style.boxShadow = '0 0 0 4px rgba(255, 0, 0, 0.5)'
+        element.style.zIndex = '1000'
+      }
+    },
+    unhighlightElements() {
+      if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)
+        return
+      const frame = this.$refs.previewFrame
+      const frameDoc = frame.contentDocument || frame.contentWindow.document
+      const elements = frameDoc.querySelectorAll('.a11y-issue')
+      elements.forEach((el) => {
+        el.style.boxShadow = ''
+        el.style.zIndex = ''
+      })
+    },
+    onInfiniteScroll(e) {
+      const el = e.target
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
+        if (
+          this.infiniteScrollCount < (this.report?.ReportIssues?.length || 0)
+        ) {
+          this.infiniteScrollCount += 20
+        }
+      }
+    },
+  },
+
 }
-
-// Helpers
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-let aborted = false
-onUnmounted(() => { aborted = true })
-
-const fetchWithRetry = async (id) => {
-  const maxAttempts = 5
-  let attempt = 0
-  let delay = 800 // ms
-  while (!aborted && attempt < maxAttempts) {
-    try {
-      await store.dispatch('automaticReport/fetchReport', id)
-      if (hasReport.value) return true
-    } catch (e) {
-      // continue retrying
-    }
-    attempt += 1
-    await sleep(delay)
-    // exponential backoff with cap
-    delay = Math.min(delay * 1.5, 4000)
-  }
-  return hasReport.value
-}
-
-const initialize = async () => {
-  if (!testId.value) {
-    store.commit('setError', { errorCode: 'NO_TEST_ID', message: 'No testId provided in route.' })
-    isBootstrapping.value = false
-    return
-  }
-  isBootstrapping.value = true
-  await fetchWithRetry(testId.value)
-  isBootstrapping.value = false
-}
-
-// Lifecycle
-onMounted(initialize)
-
-// Refetch when route param changes
-watch(() => testId.value, () => {
-  if (!testId.value) return
-  initialize()
-})
 </script>
 
 <style scoped>

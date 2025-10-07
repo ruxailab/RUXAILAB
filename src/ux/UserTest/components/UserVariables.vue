@@ -1,28 +1,32 @@
 <template>
-  <v-container
-    fluid
-    class="pa-0 bg-grey-lighten-5"
-  >
-    <v-row justify="center">
+  <v-row justify="center">
       <v-col
-        cols="12"
-        md="10"
         lg="12"
+        class="px-0 py-5"
       >
-        <v-card class="elevation-2 rounded-lg pa-6">
+               <v-card
+        class="elevation-2 rounded-lg pa-6"
+        width="100%"
+      >
+      <v-row class="pa-4 ">
+        <v-col>
           <v-card-title
-            class="text-h5 font-weight-bold mb-4"
+            class="text-h5 font-weight-bold mb-0 pa-0"
             :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
           >
             {{ type === 'pre-test' ? 'Pre-Test' : 'Post-Test'}} Variables
           </v-card-title>
-          <v-card-text>
+        
             <p
               class="text-body-1 mb-6"
               style="color: #4B5563;"
             >
               Configure the variables for the {{ props.type }} section. Add, edit, or remove variables as needed.
             </p>
+              </v-col>
+         </v-row>
+                   <v-card-text>
+
             <v-expansion-panels
               v-if="items.length > 0"
               variant="accordion"
@@ -36,7 +40,22 @@
                 :disabled="isSaving"
               >
                 <v-expansion-panel-title class="py-3 px-4">
-                  <span class="text-body-1 font-weight-medium">{{ item.title || 'Untitled Variable' }}</span>
+                  <div class="d-flex align-center">
+                    <span 
+                      class="text-body-1 font-weight-medium"
+                      :class="{ 'text-error': !item.title || !item.title.trim() }"
+                    >
+                      {{ item.title || 'Untitled Variable' }}
+                    </span>
+                    <v-icon 
+                      v-if="!item.title || !item.title.trim()"
+                      color="error"
+                      size="small"
+                      class="ml-2"
+                    >
+                      mdi-alert-circle
+                    </v-icon>
+                  </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text class="pa-4">
                   <v-form @submit.prevent>
@@ -122,7 +141,7 @@
                       >
                         <v-checkbox
                           v-model="item.selectionField"
-                          label="Multiple Choice"
+                          label="Options List"
                           color="primary"
                           @update:model-value="selectField(i); markDirty()"
                         />
@@ -133,7 +152,7 @@
                       >
                         <v-checkbox
                           v-model="item.textField"
-                          label="Text Input"
+                          label="Short Answer"
                           color="primary"
                           @update:model-value="selectText(i); markDirty()"
                         />
@@ -247,7 +266,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+
 </template>
 
 <script setup>
@@ -275,10 +294,17 @@ const isDirty = ref(false)
 
 const test = computed(() => store.getters.test)
 
+const allItemsValid = computed(() => {
+  return items.value.every(item => item.title && item.title.trim())
+})
+
 const markDirty = () => {
   isDirty.value = true
   emit('change')
-  emit('update', items.value)
+  // Only emit update if all items are valid
+  if (allItemsValid.value) {
+    emit('update', items.value)
+  }
 }
 
 const showModal = () => {
@@ -354,6 +380,13 @@ const saveNewItem = async () => {
 
 const saveState = async () => {
   try {
+    // Validate all items have titles before saving
+    const invalidItems = items.value.filter(item => !item.title || !item.title.trim())
+    if (invalidItems.length > 0) {
+      console.error('Cannot save: Some variables are missing titles')
+      return
+    }
+
     isSaving.value = true
     emit('update', items.value)
     emit('change')

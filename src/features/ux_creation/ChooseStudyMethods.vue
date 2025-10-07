@@ -139,8 +139,6 @@ const categoryNames = {
 
 const selectMethod = (methodId, available) => {
   if (!available) return
-console.log('methodId', methodId)
-console.log(currentCategory.value)
   selectedMethod.value = methodId
   store.commit('SET_STUDY_METHOD', methodId)
   router.push({ name: 'study-create-step3' })
