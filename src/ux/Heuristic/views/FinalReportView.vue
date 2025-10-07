@@ -1,11 +1,28 @@
 <template>
-  <div class="finalReportView">
+  <PageWrapper
+    :title="answers.length > 0 ? $t('Final Report') : ''"
+    :loading="loading"
+    :loading-text="$t('HeuristicsReport.messages.reports_loading')"
+    :side-gap="true"
+  >
+  
+    <!-- Subtitle Slot - only show when answers exist -->
+    <template v-if="answers.length > 0" #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        Prepare the final report for the heuristic evaluation
+      </p>
+    </template>
+    
+    <!-- Show IntroFinalReport when no answers -->
+    <IntroFinalReport
+      v-if="answers.length === 0"
+      @go-to-coops="goToCoops"
+    />
+    
+    <!-- Show main content when answers exist -->
+    <div v-else class="finalReportView">
     <v-container>
-      <ShowInfo
-        style="padding: 0!important;"
-        :title="$t('titles.drawer.Final Report')"
-      />
-
+      
       <v-stepper
         :model-value="step"
         style="background-color:#F5F7FF"
@@ -87,25 +104,40 @@
         </v-stepper-window>
       </v-stepper>
     </v-container>
-  </div>
+    </div>
+  </PageWrapper>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import TextControls from '@/ux/Heuristic/components/FinalReportControls.vue';
-import FinalReportSelectionBox from '@/ux/Heuristic/components/FinalReportSelectionBox.vue';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
+import { useRouter } from 'vue-router';
+import TextControls from '@/ux/Heuristic/components/final_report/FinalReportControls.vue';
+import FinalReportSelectionBox from '@/ux/Heuristic/components/final_report/FinalReportSelectionBox.vue';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
+import IntroFinalReport from '@/ux/Heuristic/components/IntroFinalReport.vue';
+
 
 const store = useStore();
+const router = useRouter();
 
 const step = ref(0);
 const object = ref({});
+let intro = ref(null);
 
 const loading = ref(false)
 
 const test = computed(() => store.getters.test);
+
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+
+const answers = computed(() => {
+  if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {
+    return Object.values(testAnswerDocument.value.heuristicAnswers);
+  }
+  return [];
+});
 
 const setInnerHtml = () => {
   const textarea = document.getElementById('myTextarea');
@@ -132,23 +164,18 @@ const handleNext = async () => {
   step.value++;
 };
 
+const goToCoops = () => {
+  if (test.value?.id) {
+    router.push(`/heuristic/cooperators/${test.value.id}`);
+  }
+};
+
 onMounted(() => {
   setInnerHtml();
 });
 </script>
 
 <style scoped>
-.teste {
-  position: fixed;
-  right: 8%;
-  bottom: 10%;
-}
-
-.final-report-box {
-  background-color: whitesmoke;
-  width: 100%;
-  padding: 0;
-}
 
 .form-control {
   background-color: white;
@@ -163,7 +190,4 @@ onMounted(() => {
   font-size: small;
 }
 
-.min-h-500 {
-  min-height: 500px;
-}
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <v-card v-if="test" class="pa-4 mb-6" elevation="1">
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4">
-      <v-icon size="24" color="grey-darken-1" class="mr-3">mdi-timeline-text-outline</v-icon>
-      <h3 class="text-h6 text-grey-darken-1">Actividad Reciente</h3>
+      <v-icon size="24" color="primary" class="header-icon">mdi-timeline-text-outline</v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">Actividad Reciente</v-card-title>
     </div>
     
     <!-- Métrica principal -->
@@ -25,6 +25,7 @@
 import { computed } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   test: {
@@ -34,6 +35,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['view-all'])
+const router = useRouter()
+
+// Navigate to activity section
+const navigateToActivity = () => {
+  if (props.test?.id) {
+    router.push(`/heuristic/activity/${props.test.id}`)
+  }
+}
 
 // Computed properties
 const activities = computed(() => {
@@ -63,7 +72,7 @@ const activities = computed(() => {
           description: `Invitación pendiente para ${coop.email}`,
           timeAgo: 'Pendiente',
           color: 'info',
-          timestamp: new Date(coop.updateDate || props.test.createDate)
+          timestamp: new Date(coop.updateDate || props.test.creationDate)
         })
       }
     })
@@ -126,5 +135,26 @@ const viewAll = () => emit('view-all')
 
 .info-value {
   color: rgb(var(--v-theme-on-surface));
+}
+
+.clickable-header {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-header:hover .header-icon {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+.clickable-header:hover .clickable-title {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+.header-icon {
+  transition: color 0.2s ease;
+}
+
+.clickable-title {
+  transition: color 0.2s ease;
 }
 </style>

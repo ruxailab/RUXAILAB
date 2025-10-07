@@ -1,14 +1,16 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container
-        fluid
+    <v-container
+      fluid
+      class="pa-6"
+    >
+      <v-card
+        elevation="2"
         class="pa-6"
       >
         <!-- Header Section -->
         <div class="d-flex align-center justify-space-between mb-8">
           <div>
-            <h1 class="text-h3 font-weight-bold text-on-surface mb-2">
+            <h1 class="text-h4 font-weight-bold text-on-surface">
               {{ $t('HeuristicsTable.titles.currentHeuristics') }}
             </h1>
           </div>
@@ -27,7 +29,7 @@
         </div>
 
         <!-- Search Row -->
-        <v-row class="mb-8">
+        <v-row>
           <v-col cols="12">
             <v-text-field
               v-model="search"
@@ -50,7 +52,7 @@
           >
             <v-card
               elevation="2"
-              class="mb-4 heuristic-card"
+              class="heuristic-card"
               :class="{ 'expanded': itemSelect === index }"
             >
               <!-- Heuristic Header -->
@@ -121,21 +123,30 @@
                       {{ $t('HeuristicsTable.titles.addNewQuestion') }}
                     </v-tooltip>
                   </v-btn>
+                <span>
                   <v-btn
                     icon="mdi-pencil"
                     variant="text"
                     size="small"
                     color="primary"
+                    :disabled="testAnswerDocLength > 0"
                     @click="editHeuris(heuristic)"
                   >
                     <v-icon>mdi-pencil</v-icon>
-                    <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
-                      {{ $t('HeuristicsTable.titles.editHeuristic') }}
-                    </v-tooltip>
                   </v-btn>
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                  >
+                    <template v-if="testAnswerDocLength > 0">
+                      This study has answers
+                    </template>
+                    <template v-else>
+                      {{ $t('HeuristicsTable.titles.editHeuristic') }}
+                    </template>
+                  </v-tooltip>
+                </span>
+                <span>
                   <v-btn
                     icon="mdi-delete"
                     variant="text"
@@ -145,13 +156,22 @@
                     @click="deleteHeuristic(index)"
                   >
                     <v-icon>mdi-delete</v-icon>
+                        </v-btn>
                     <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
+                    activator="parent"
+                    location="top"
+                  >
+                    <template v-if="testAnswerDocLength > 0">
+                      This study has answers
+                    </template>
+                    <template v-else>
                       {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
-                    </v-tooltip>
-                  </v-btn>
+                    </template>
+                  </v-tooltip>
+
+
+            
+                  </span>
                 </div>
               </v-card-title>
 
@@ -232,6 +252,7 @@
                               {{ $t('HeuristicsTable.titles.descriptions') }}
                             </h4>
                             <AddDescBtn
+                              :ref="el => descBtn[index] = el"
                               :question-index="questionSelect"
                               :heuristic-index="itemSelect"
                               @update-description="updateDescription"
@@ -455,7 +476,7 @@
               class="text-h5 pa-6"
               style="background-color: #fca326; color: white;"
             >
-              {{ itemEdit ? itemEdit.title : '' }}
+              {{ itemEdit && !isDialogClosing ? itemEdit.title : $t('HeuristicsTable.titles.loading') }}
             </v-card-title>
             <v-card-text class="pa-6 pt-0">
               <v-form
@@ -463,6 +484,7 @@
                 @submit.prevent="validateEdit"
               >
                 <v-text-field
+                  v-if="itemEdit && !isDialogClosing"
                   v-model="itemEdit.titleEdit"
                   :label="
                     itemEdit && itemEdit.title === $t('HeuristicsTable.titles.editHeuristic')
@@ -474,6 +496,13 @@
                   :rules="itemEdit ? itemEdit.rule : []"
                   autofocus
                 />
+                <v-alert
+                  v-else-if="dialogEdit"
+                  type="error"
+                  class="mt-4"
+                >
+                  {{ $t('HeuristicsTable.errors.failedToLoadEditForm') }}
+                </v-alert>
               </v-form>
             </v-card-text>
             <v-card-actions class="pa-6 pt-0">
@@ -481,6 +510,7 @@
               <v-btn
                 variant="text"
                 @click="closeDialog('dialogEdit')"
+                :disabled="isProcessing"
               >
                 {{ $t('HeuristicsTable.titles.cancel') }}
               </v-btn>
@@ -488,19 +518,19 @@
                 color="primary"
                 variant="elevated"
                 @click="validateEdit"
+                :disabled="isProcessing || !itemEdit || isDialogClosing"
               >
                 {{ $t('HeuristicsTable.titles.ok') }}
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-      </v-container>
-    </v-main>
-  </v-app>
+      </v-card>
+    </v-container> 
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
@@ -523,7 +553,9 @@ const dialogQuestion = ref(false)
 const formEditRef = ref(null)
 const formQuestionRef = ref(null)
 const formHeurisRef = ref(null)
-const descBtn = ref(null)
+const descBtn = ref([])
+const isProcessing = ref(false)
+const questionHeuristicIndex = ref(null)
 
 const headers = ref([
   { title: t('HeuristicsTable.titles.title'), align: 'start', value: 'title' },
@@ -532,6 +564,9 @@ const headers = ref([
 
 const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')]);
 const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')]);
+
+const test = computed(() => store.getters.test);
+
 
 const heuristics = computed(() => {
   // 1. Try heuristics getter
@@ -591,6 +626,7 @@ onMounted(() => {
     title: '',
     questions: [{ id: 0, title: '', descriptions: [], comparison: [] }],
   };
+  store.commit("SET_HEURISTICS", heuristics.value)
   heuristicForm.value.total = heuristicForm.value.questions.length;
 });
 
@@ -663,19 +699,31 @@ const deleteQuestion = (qIndex) => {
 }
 
 const editHeuris = (item) => {
+  const heuristicIndex = heuristics.value.findIndex(h => h.id === item.id)
+  if (heuristicIndex === -1) {
+    console.warn('Heuristic not found:', item);
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return
+  }
   itemEdit.value = {
     title: t('HeuristicsTable.titles.editHeuristic'),
-    titleEdit: item.title,
+    titleEdit: item.title || '',
     rule: nameRequired.value,
     id: item.id,
   }
+  itemSelect.value = heuristicIndex
   dialogEdit.value = true
 }
 
 const editQuestions = (item) => {
+  if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
+    console.warn('Invalid heuristic for question edit, itemSelect:', itemSelect.value);
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return;
+  }
   itemEdit.value = {
     title: t('HeuristicsTable.titles.editQuestion'),
-    titleEdit: item.title,
+    titleEdit: item.title || '',
     rule: questionRequired.value,
     id: item.id,
   };
@@ -683,25 +731,31 @@ const editQuestions = (item) => {
 };
 
 const editDescription = (desc) => {
-  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc);
-  descBtn.value.editSetup(ind);
-};
+  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc)
+  const btn = descBtn.value[itemSelect.value]
+  if (btn && typeof btn.editSetup === 'function') {
+    btn.editSetup(ind)
+  } else {
+    console.warn('AddDescBtn ref not ready or missing editSetup method')
+  }
+}
 
 const setupQuestion = (heuristicIndex) => {
-  if (heuristics.value[heuristicIndex] === undefined) {
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
-    return;
+  if (!heuristics.value[heuristicIndex]) {
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    return
   }
-  const questions = heuristics.value[heuristicIndex].questions || [];
-  const lastQuestionId = questions.length > 0 ? questions[questions.length - 1].id : -1;
+  questionHeuristicIndex.value = heuristicIndex  // remember index
+  const questions = heuristics.value[heuristicIndex].questions || []
+  const lastQuestionId = questions.length > 0 ? questions[questions.length - 1].id : -1
   newQuestion.value = {
     id: lastQuestionId + 1,
     title: '',
     descriptions: [],
     comparison: [],
-  };
-  dialogQuestion.value = true;
-};
+  }
+  dialogQuestion.value = true
+}
 
 const deleteItem = (item) => {
   const newHeuristics = [...heuristics.value];
@@ -725,6 +779,7 @@ const addHeuris = () => {
 };
 
 const closeDialog = (dialogName) => {
+  if (isProcessing.value) return;
   if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
     formHeurisRef.value.resetValidation()
     formHeurisRef.value.reset()
@@ -732,12 +787,10 @@ const closeDialog = (dialogName) => {
   if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
     formQuestionRef.value.resetValidation();
     formQuestionRef.value.reset();
-    // Do not reset newQuestion here to prevent null access
   }
   if (dialogName === 'dialogEdit' && formEditRef.value) {
     formEditRef.value.resetValidation()
     formEditRef.value.reset()
-    itemEdit.value = null
   }
 
   if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
@@ -746,37 +799,66 @@ const closeDialog = (dialogName) => {
 };
 
 const addQuestion = () => {
-  if (!newQuestion.value) {
-    toast.error(t('HeuristicsTable.errors.questionNotInitialized'));
-    return;
+  if (!newQuestion.value || questionHeuristicIndex.value === null) {
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    return
   }
   if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false;
-    const newHeuristics = [...heuristics.value];
-    newHeuristics[itemSelect.value].questions.push({ ...newQuestion.value });
-    newHeuristics[itemSelect.value].total = newHeuristics[itemSelect.value].questions.length;
-    store.dispatch('setHeuristics', newHeuristics);
-    newQuestion.value = null; // Reset after adding
-    formQuestionRef.value.resetValidation();
-    emit('change');
+    dialogQuestion.value = false
+    const newHeuristics = [...heuristics.value]
+    newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
+    newHeuristics[questionHeuristicIndex.value].total =
+      newHeuristics[questionHeuristicIndex.value].questions.length
+    store.dispatch('setHeuristics', newHeuristics)
+    newQuestion.value = null
+    questionHeuristicIndex.value = null
+    formQuestionRef.value.resetValidation()
+    emit('change')
   }
-};
+}
 
 const validateEdit = () => {
-  if (formEditRef.value.validate()) {
+  if (isProcessing.value) {
+    console.warn('Validation in progress, aborting');
+    return;
+  }
+  if (!itemEdit.value) {
+    console.warn('itemEdit is null, aborting validation');
     dialogEdit.value = false;
+    return;
+  }
+  if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
+    console.warn('Invalid itemSelect or heuristic not found:', itemSelect.value);
+    dialogEdit.value = false;
+    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    return;
+  }
+  isProcessing.value = true;
+
+  if (formEditRef.value.validate()) {
     const newHeuristics = [...heuristics.value];
     if (itemEdit.value.title === t('HeuristicsTable.titles.editHeuristic')) {
       newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit;
     } else {
-      const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(q => q.id === itemEdit.value.id);
+      const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(
+        (q) => q.id === itemEdit.value.id
+      );
       if (questionIndex !== -1) {
         newHeuristics[itemSelect.value].questions[questionIndex].title = itemEdit.value.titleEdit;
+      } else {
+        console.warn('Question not found for id:', itemEdit.value.id);
+        toast.error(t('HeuristicsTable.errors.invalidQuestion'));
       }
     }
     store.dispatch('setHeuristics', newHeuristics);
-    itemEdit.value = null;
     emit('change');
+    dialogEdit.value = false;
+    nextTick(() => {
+      dialogEdit.value = false
+      isProcessing.value = false
+    });
+  } else {
+    isProcessing.value = false;
   }
 };
 
@@ -784,48 +866,3 @@ const updateDescription = () => {
   emit('change');
 };
 </script>
-
-<style scoped>
-.heuristic-card {
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.heuristic-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-.heuristic-card.expanded {
-  border-color: #3B82F6;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
-}
-
-.questions-list {
-  width: 100%;
-}
-
-.question-card {
-  transition: all 0.2s ease;
-  cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.question-card:hover {
-  border-color: #3B82F6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-:deep(.v-field--variant-outlined) {
-  --v-field-border-width: 1px;
-}
-
-:deep(.v-btn--variant-elevated) {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-:deep(.v-btn--variant-elevated:hover) {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-</style>

@@ -11,7 +11,7 @@
       @go-to-coops="goToCoops"
     />
     <v-row
-      v-else-if="answers != null && intro == false"
+      v-else-if="answers != null || intro == false"
       justify="center"
       class="ma-0 mt-4"
     >
@@ -457,7 +457,7 @@
             </v-card>
 
             <!-- Tab 4 - Analytics -->
-            <AnalyticsView v-if="tab == 3" />
+            <HeuristicsAnalytics v-if="tab == 3" />
           </div>
         </template>
       </ShowInfo>
@@ -470,14 +470,16 @@ import { ref, computed, watch, onMounted, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import BarChart from '@/ux/Heuristic/components/BarChart.vue';
+import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue';
 import RadarChart from '@/shared/components/charts/RadarChart.vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import IntroAnswer from '@/shared/components/IntroAnswer.vue';
-import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue';
-import RadarWeight from '@/ux/Heuristic/components/RadarWeight.vue';
+import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer.vue';
+import RadarWeight from '@/ux/Heuristic/components/weights_evaluation/RadarWeight.vue';
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
+
 import axios from 'axios';
 import { standardDeviation, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
+import { heuristicsStatisticsHeaders, weightsStatisticsHeader, heuristicsEvaluatorHeader } from '@/ux/Heuristic/utils/headers.js'
 
 const store = useStore();
 const router = useRouter();
@@ -495,7 +497,7 @@ const emit = defineEmits(['goToCoops']);
 const tab = ref(0);
 const ind = ref(0);
 const resultEvaluator = ref(statistics());
-const intro = ref(null);
+let intro = ref(null);
 const tabelacompleta = ref(null);
 const decisionmatrix = ref(null);
 const relative = ref(null);
@@ -511,7 +513,7 @@ const testWeights = computed(() => store.state.Tests.Test.testWeights || []);
 
 const heuristicsEvaluator = computed(() => {
   const table = {
-    header: [{ title: 'HEURISTICS', align: 'start', value: 'heuristic' }],
+    header: heuristicsEvaluatorHeader,
     items: [],
   };
   const options = test.value && test.value.testOptions ? test.value.testOptions.map((op) => op.value) : [];
@@ -555,14 +557,7 @@ const heuristicsEvaluator = computed(() => {
 
 const heuristicsStatistics = computed(() => {
   const table = {
-    header: [
-      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
-      { title: 'Percentage (%)', value: 'percentage', align: 'center', sortable: false },
-      { title: 'Standard deviation', value: 'sd', align: 'center', sortable: false },
-      { title: 'Average', value: 'average', align: 'center', sortable: false },
-      { title: 'Max', value: 'max', align: 'center', sortable: false },
-      { title: 'Min', value: 'min', align: 'center', sortable: false },
-    ],
+    header: heuristicsStatisticsHeaders,
     items: [],
   };
 
@@ -600,11 +595,7 @@ const heuristicsLength = computed(() => (relative.value ? relative.value.length 
 
 const weightsStatistics = computed(() => {
   const tableWeights = {
-    header: [
-      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
-      { title: 'Usability Score (%)', value: 'percentage', align: 'center', sortable: true },
-      { title: 'Relative Weights', value: 'rw', align: 'center', sortable: true },
-    ],
+    header: weightsStatisticsHeader,
     items: [],
   };
 
@@ -695,6 +686,7 @@ const goToDataHeuristic = (item) => {
 };
 
 const goToCoops = () => {
+  router.push(`/heuristic/edit/${test.value.id}`);
   emit('goToCoops');
 };
 

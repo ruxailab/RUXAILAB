@@ -5,25 +5,13 @@
     color="primary"
     class="hidden-sm-and-down pt-3"
   >
-    <!-- Navigation header -->
+    <!-- Navigation header 
     <div v-if="!mini">
       <v-list-item>
-        <v-row dense>
-          <v-col class="pa-0 ma-0">
-            <v-select
-              class="pa-0 ma-0"
-              density="compact"
-              item-title="testTitle"
-              :items="testsList"
-              :model-value="test.testTitle"
-              style="max-width: 240px"
-              @update:model-value="changeTest"
-            />
-          </v-col>
-        </v-row>
+        <h3>{{ test.testTitle }}</h3>
       </v-list-item>
     </div>
-
+-->
     <!-- Navigation options -->
     <v-list
       v-if="items"
@@ -100,11 +88,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-
 const props = defineProps({
   items: {
     type: Array,
@@ -115,28 +101,9 @@ const props = defineProps({
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
 
 const mini = ref(true);
-const tests = ref([]);
-
 const test = computed(() => store.state.Tests.Test);
-const testsList = computed(() => tests.value);
-
-const fetchTests = async () => {
-  try {
-    await store.dispatch('getTestsAdminByUser');
-    tests.value = store.state.Tests.tests;
-  } catch (error) {
-    console.error('Error fetching tests:', error);
-  }
-};
-
-const changeTest = async (testName) => {
-  const testId = testsList.value.find((t) => t.testTitle === testName)?.testDocId;
-  await store.dispatch('getStudy', { id: testId });
-  router.replace({ name: 'ManagerView', params: { id: testId } });
-};
 
 const go = (item) => {
   if (route.path === item.path) return;
@@ -144,9 +111,6 @@ const go = (item) => {
   router.push(item.path);
 };
 
-onMounted(async () => {
-  await fetchTests();
-});
 </script>
 
 <style scoped>

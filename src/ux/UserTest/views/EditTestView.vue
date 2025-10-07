@@ -1,16 +1,15 @@
 <template>
   <PageWrapper
-    title="Edit Test"
+    :title="t('pages.editTest.title')"
     :side-gap="true"
   >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Customize the settings and preferences of your test
+        {{ t('pages.editTest.description') }}
       </p>
     </template>
 
     <v-container>
-      <Snackbar />
       <ButtonSave
         :visible="true"
         @click="save"
@@ -23,7 +22,7 @@
           class="pb-0 mb-0"
         >
           <v-tab @click="index = 0">
-            Test
+            Test configuration
           </v-tab>
           <v-tab @click="index = 1">
             {{ $t('ModeratedTest.consentForm') }}
@@ -51,7 +50,7 @@
           </div>
 
           <!-- COSENT FORM -->
-          <v-card
+          <div
             v-if="index === 1"
             rounded="xxl"
           >
@@ -61,36 +60,35 @@
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
               @update:value="consent = $event"
             />
-          </v-card>
+          </div>
 
           <!-- PRE-TEST -->
-          <v-card
+          <div
             v-if="index === 2"
-            rounded="xxl"
           >
             <UserVariables
               type="pre-test"
-              @update="preTest"
               @change="change = true"
+              @update="store.dispatch('setPreTest', $event)"
             />
-          </v-card>
+          </div>
 
           <!-- TASKS -->
-          <ListTasks
+          <div
             v-if="index === 3"
-          />
-
+          >
+            <ListTasks />
+          </div>
           <!-- POST-TEST -->
-          <v-card
+          <div
             v-if="index === 4"
-            rounded="xxl"
           >
             <UserVariables
               type="post-test"
-              @update="postTest = $event"
               @change="change = true"
+              @update="store.dispatch('setPostTest', $event)"
             />
-          </v-card>
+          </div>
         </v-col>
       </div>
     </v-container>
@@ -103,21 +101,22 @@ import { useStore } from 'vuex'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
-import TestConfigForm from '@/ux/UserTest/components/TestConfigForm.vue'
+import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
-import Snackbar from '@/shared/components/Snackbar.vue'
+import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
 
 // Store
 const store = useStore()
+const toast = useToast()
+const { t } = useI18n()
 
 // Variables
 const change = ref(false)
 const welcomeMessage = ref('')
 const finalMessage = ref('')
-const preTest = ref([])
-const postTest = ref([])
 const consent = ref('')
 const index = ref(0)
 
@@ -136,20 +135,55 @@ const getConsent = () => {
   consent.value = test.value.testStructure.consent || ''
 }
 
-const save = async () => {
-  change.value = false;
+const getTasks = () => {
+  store.dispatch('setTasks', test.value.testStructure.userTasks || [])
+}
 
-  const testStructure = {
+const getPreTest = () => {
+  store.dispatch('setPreTest', test.value.testStructure.preTest || [])
+}
+
+const getPostTest = () => {
+  store.dispatch('setPostTest', test.value.testStructure.postTest || [])
+}
+
+const save = async () => {
+  try {
+    // Validate pre-test variables
+    const preTestVariables = store.getters.preTest || []
+    const invalidPreTest = preTestVariables.filter(item => !item.title || !item.title.trim())
+    if (invalidPreTest.length > 0) {
+      toast.error('Cannot save: Some pre-test variables are missing titles')
+      return
+    }
+
+    // Validate post-test variables
+    const postTestVariables = store.getters.postTest || []
+    const invalidPostTest = postTestVariables.filter(item => !item.title || !item.title.trim())
+    if (invalidPostTest.length > 0) {
+      toast.error('Cannot save: Some post-test variables are missing titles')
+      return
+    }
+
+    change.value = false;
+
+    const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: preTest.value,
-      postTest: postTest.value,
+      preTest: store.getters.preTest,
+      userTasks: store.getters.tasks,
+      postTest: store.getters.postTest,
       consent: consent.value,
-  }
+    }
 
-  const rawData = { ...test.value, testStructure: testStructure };
-  const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateStudy', study);
+    const rawData = { ...test.value, testStructure: testStructure };
+    const study = instantiateStudyByType(rawData.testType, rawData);
+    await store.dispatch('updateStudy', study);
+    toast.success(t('pages.editTest.updatedTest'));
+  } catch (error) {
+    console.error('Error saving test:', error);
+    toast.error(t('errors.globalError'));
+  }
 }
 
 // Lifecycle
@@ -157,6 +191,9 @@ onMounted(() => {
   getWelcome()
   getFinalMessage()
   getConsent()
+  getPreTest()
+  getPostTest()
+  getTasks()
 })
 </script>
 

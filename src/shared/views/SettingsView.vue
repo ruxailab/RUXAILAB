@@ -1,9 +1,8 @@
 <template>
   <PageWrapper
-    title="Test Configuration"
+    title="Study Configuration"
     :loading="loadingPage"
     loading-text="Loading Settings"
-    :side-gap="true"
   >
     <!-- Actions Slot for Save Button -->
     <template #actions>
@@ -243,16 +242,33 @@
                     </v-icon>
                     <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">End Date</span>
                   </div>
-                  <v-text-field
-                    v-model="object.endDate"
-                    type="date"
-                    label="Select End Date"
-                    variant="outlined"
-                    density="comfortable"
-                    clearable
-                    hide-details
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
-                  />
+                  <v-menu
+                    v-model="dateMenu"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ props }">
+                      <v-text-field
+                        :model-value="formattedEndDate"
+                        label="Select End Date"
+                        variant="outlined"
+                        density="comfortable"
+                        readonly
+                        clearable
+                        hide-details
+                        prepend-inner-icon="mdi-calendar"
+                        v-bind="props"
+                        @click:clear="clearEndDate"
+                      />
+                    </template>
+                    <v-date-picker
+                      v-model="datePickerModel"
+                      @update:model-value="onDateChange"
+                    />
+                  </v-menu>
                 </div>
               </div>
             </v-card-text>
@@ -438,12 +454,25 @@ const template = ref({
   templateDescription: '',
   isTemplatePublic: false,
 });
-const object = ref(null);
+const object = ref({
+  testTitle: '',
+  testDescription: '',
+  testType: 'MANUAL',
+  status: 'draft',
+  endDate: null,
+  isPublic: false,
+  websiteUrl: '',
+  testAdmin: null,
+  collaborators: {},
+  configData: {},
+  progress: {}
+});
 const valids = ref([false, true, true]);
 const dialogDel = ref(false);
 const loading = ref(false);
 const loadingPage = ref(true);
 const tempDialog = ref(false);
+const dateMenu = ref(false);
 const form1 = ref(null);
 const tempform = ref(null);
 
@@ -451,6 +480,7 @@ const statusOptions = [
   { title: 'Active', value: 'active' },
   { title: 'Pending', value: 'pending' },
   { title: 'Finished', value: 'finished' },
+  { title: 'Upcoming', value: 'upcoming' },
 ];
 
 const titleRequired = [
@@ -490,24 +520,108 @@ const hasTemplate = computed(() => {
   return false;
 });
 
+const formattedEndDate = computed(() => {
+  if (object.value?.endDate) {
+    try {
+      // Crear la fecha correctamente desde el string ISO
+      const date = new Date(object.value.endDate + 'T00:00:00');
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
+  }
+  return '';
+});
+
+const datePickerModel = computed({
+  get() {
+    if (object.value?.endDate) {
+      return new Date(object.value.endDate + 'T00:00:00');
+    }
+    return null;
+  },
+  set(newDate) {
+    if (newDate && object.value) {
+      const formattedDate = newDate.toISOString().split('T')[0];
+      object.value.endDate = formattedDate;
+      store.commit('SET_LOCAL_CHANGES', true);
+    }
+  }
+});
+
+// Helper function to create object based on test type
+const createObjectFromTest = (testData) => {
+  if (!testData) return null;
+
+  // Check if this is an accessibility test (automatic or manual)
+  const isAccessibilityTest = testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL';
+  
+  if (isAccessibilityTest) {
+    // Dynamic mapping for accessibility tests
+    return {
+      ...testData, 
+      testTitle: testData.title || testData.testTitle || testData.name || '',
+      testDescription: testData.description || testData.testDescription || testData.desc || '',
+      testType: testData.testType,
+      status: testData.status || 'draft',
+      endDate: testData.endDate || testData.end_date || null,
+      isPublic: testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
+      websiteUrl: testData.websiteUrl || testData.website_url || testData.url || '',
+      testAdmin: testData.testAdmin || testData.admin || null,
+      collaborators: testData.collaborators || testData.cooperators || {},
+      configData: testData.configData || testData.config || {},
+      progress: testData.progress || testData.progressData || {}
+    };
+  } else {
+    
+    return {
+      ...testData,
+    };
+  }
+};
+
 watch(
   test,
   newTest => {
     if (newTest !== null && newTest !== undefined) {
-      object.value = {
-        ...newTest,
-        status: newTest.status || 'pending',
-        endDate: newTest.endDate || null
-      };
+      const mappedObject = createObjectFromTest(newTest);
+      object.value = mappedObject;
     }
   },
   { immediate: true }
 );
 
+
+
 onMounted(async () => {
-  if (!store.getters.test && props.id) {
-    await store.dispatch('getStudy', { id: props.id });
+  if (props.id) {
+    try {
+      console.log('Fetching test data for ID:', props.id);
+      // Always fetch the study data when component mounts
+      await store.dispatch('getStudy', { id: props.id });
+      
+      // Log the fetched test data
+      const testData = store.getters.test;
+      console.log('Fetched test data:', testData);
+      if (!testData) {
+        toast.error('Test not found');
+      }
+    } catch (error) {
+      console.error('Error fetching test data:', error);
+      toast.error('Failed to load test data');
+    }
+  } else {
+    toast.error('Test ID is missing');
   }
+  
   loadingPage.value = false;
 });
 
@@ -545,7 +659,9 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     loading.value = true;
     try {
+      console.log('Saving object with endDate:', object.value.endDate);
       const study = instantiateStudyByType(object.value.testType, object.value);
+      console.log('Study object to save:', study);
       await store.dispatch('updateStudy', study);
       await store.dispatch('getStudy', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
@@ -569,6 +685,39 @@ const preventNav = event => {
   event.returnValue = '';
 };
 
+// Function to fetch and log test data
+const fetchTestData = async () => {
+  if (!props.id) {
+    return;
+  }
+  
+  try {
+    loading.value = true;
+    
+    // Dispatch the getStudy action
+    await store.dispatch('getStudy', { id: props.id });
+    
+    // Get the test data from store
+    const testData = store.getters.test;
+    
+    if (testData) {
+      toast.success('Test data fetched successfully!');
+    } else {
+      toast.warning('No test data found');
+    }
+  } catch (error) {
+    console.error('Error fetching test data:', error);
+    toast.error('Failed to fetch test data: ' + error.message);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Function to log current component state
+const logCurrentState = () => {
+  // This function can be used for debugging if needed
+};
+
 const deleteStudy = async item => {
   loading.value = true;
   try {
@@ -577,7 +726,7 @@ const deleteStudy = async item => {
     item.auxUser = auxUser;
     await store.dispatch('deleteStudy', item);
     toast.success('Test deleted successfully!');
-    router.push({ name: 'TestList' });
+    router.push({ name: 'Admin' });
   } catch (error) {
     toast.error('Failed to delete test.');
     console.error('Error deleting test:', error);
@@ -603,6 +752,7 @@ const createTemplate = async () => {
       templateDescription: template.value.templateDescription,
       templateTitle: template.value.templateTitle,
       templateType: test.value.testType,
+      templateSubType: test.value.subType || null,
       templateVersion: '1.0.0',
       templateAuthor: new TemplateAuthor({
         userEmail: test.value.testAdmin.email,
@@ -640,23 +790,21 @@ const closeDialog = () => {
   };
 };
 
-const updateTemplate = updates => {
-  template.value = { ...template.value, ...updates };
-};
-
-const updateTemplateTitle = value => {
-  updateTemplate({ templateTitle: value });
-  store.commit('SET_LOCAL_CHANGES', true);
-};
-
-const updateTemplateDescription = value => {
-  updateTemplate({ templateDescription: value });
-  store.commit('SET_LOCAL_CHANGES', true);
-};
-
 const updateObject = newObject => {
   object.value = { ...newObject };
   store.commit('SET_LOCAL_CHANGES', true);
+};
+
+const onDateChange = (date) => {
+  console.log('Date picker changed to:', date);
+  dateMenu.value = false;
+};
+
+const clearEndDate = () => {
+  if (object.value) {
+    object.value.endDate = null;
+    store.commit('SET_LOCAL_CHANGES', true);
+  }
 };
 
 const duplicateStudy = async () => {

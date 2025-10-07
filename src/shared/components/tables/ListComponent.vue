@@ -2,7 +2,7 @@
   <v-data-table
     :headers="headers"
     :items="items"
-    :sort-by="[{ key: 'updateDate', order: 'desc' }]"
+    :sort-by="sortBy || [{ key: 'updateDate', order: 'desc' }]"
     item-key="id"
     density="comfortable"
     class="rounded-lg"
@@ -26,7 +26,7 @@
           </v-avatar>
         </template>
         <span>
-          {{ item.header?.templateType ?? getTestType(item) }}
+          {{ getTestType(item) }}
         </span>
       </v-tooltip>
     </template>
@@ -40,8 +40,18 @@
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
-        <div class="text-caption text-medium-emphasis">
-          Fecha creación: {{ formatItemDate(item) }}
+        <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
+          Session Date: {{formatDateTime(item.testDate, 'es')}}
+        </div>
+        <div v-else class="text-caption text-medium-emphasis">
+          <!-- If study does not belong to logged in user -->
+          <span v-if="item.testAuthorEmail">
+            Last Updated:
+          </span>
+          <span v-else>
+            Creation Date:
+          </span>
+           {{ formatItemDate(item) }}
         </div>
       </div>
     </template>
@@ -71,6 +81,14 @@
       </div>
     </template>
 
+    <template #item.evaluator="{ item }">
+      <div class="d-flex align-center">
+        <span class="text-body-1">
+          {{ item.email }}
+        </span>
+      </div>
+    </template>
+
     <!-- Participants Column -->
     <template #item.participants="{ item }">
       <v-chip
@@ -79,7 +97,18 @@
         color="primary"
         prepend-icon="mdi-account-multiple"
       >
-        {{ item.numberColaborators ?? 0 }}
+        {{ getParticipantCount(item) }}
+      </v-chip>
+    </template>
+
+     <!-- Status Column -->
+    <template #item.status="{ item }">
+      <v-chip
+        label
+        variant="tonal"
+        :color="getSessionStatus(item.testDate).variant"
+      >
+        {{ getSessionStatus(item.testDate).label }}
       </v-chip>
     </template>
 
@@ -100,6 +129,8 @@ import { useI18n } from 'vue-i18n'
 import { useItemFormatting } from '@/shared/composables/useItemFormatting'
 import { useItemTypes } from '@/shared/composables/useItemTypes'
 import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
+import { formatDateTime } from '@/shared/utils/dateUtils'
+import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 
 const props = defineProps({
   items: {
@@ -110,6 +141,11 @@ const props = defineProps({
   type: {
     type: String,
     required: true,
+  },
+  sortBy: {
+    type: Array,
+    required: false,
+    default: null,
   },
 })
 

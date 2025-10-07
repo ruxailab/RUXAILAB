@@ -70,12 +70,15 @@
   },
   "profile": {
     "title": "Profile",
+    "username": "Username",
+    "email": "Email",
     "editProfile": "Edit Profile",
     "account": "Account",
     "admin": "Admin",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
+    "contact": "Contact No",
     "passwordRequirements": "Ensure these requirements",
     "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
     "newPassword": "New Password",
@@ -138,7 +141,8 @@
       "invite": "Invite evaluators to answer your test!",
       "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
       "start": "Get started!",
-      "edit": "Create and customize your tasks and heuristics for your research needs."
+      "edit": "Create and customize your tasks and heuristics for your research needs.",
+      "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
     }
   },
   "errors": {
@@ -155,7 +159,8 @@
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
-    "globalError": "An error has occurred, sorry for the inconvenience."
+    "globalError": "An error has occurred, sorry for the inconvenience.",
+    "sendError": "Failed to send invitation. Please try again"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -229,8 +234,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Options",
-      "noOptions": "No options"
+      "options": "Options"
     },
     "messages": {},
     "placeHolders": {},
@@ -323,8 +327,7 @@
         "needMoreThan1Answer": "This page needs more than 1 answer to be generated.",
         "runWeightFunction": "This page needs weight function (python) to be running, can be in emulators or in deploy mode, and the weights to be full marked on your creating test page."
       }
-    },
-    "analytics": {}
+    }
   },
   "HeuristicsReport": {
     "titles": {
@@ -405,6 +408,9 @@
       "postForm": "Post Form",
       "writeNewPost": "Write a new post question"
     },
+    "messages": {
+      "noTasks": "You don't have any task, create one to proceed."
+    },
     "inputs": {
       "consent": "Consent",
       "variableName": "Variable Name",
@@ -432,6 +438,36 @@
     },
     "buttons": {
       "done": "Done"
+    },
+    "WelcomeStep": {
+      "welcome": "Welcome to RUXAILAB!",
+      "description": "You are going to participate in a user test that aims to evaluate the ease of use and understanding of a digital application. This type of test helps us detect possible technological barriers and improve the experience for everyone.",
+      "howItWorks": "How does this test work?",
+      "phases": "Throughout the test, we will guide you through different phases. In each one, you will be clearly told what to do. There are no right or wrong answers: what interests us is how you interact with the system.",
+      "summary": "Here you can see a summary of the phases you will follow:",
+      "steps": {
+        "consent": "Consent",
+        "preQuestions": "Initial questions",
+        "tasks": "Tasks",
+        "postQuestions": "Final questions",
+        "submission": "Final submission"
+      },
+      "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
+      "startTest": "Start the test"
+    },
+    "PreTasksStep": {
+      "title": "Tasks",
+      "heading": "Let's begin the tasks phase",
+      "description": "You are going to complete <strong>{numTasks}</strong> tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
+      "instruction": "When you are ready, click the button to begin.",
+      "startButton": "Start tasks",
+      "recordingTitle": "Recording Information",
+      "recordingDescription": "During the tasks, we may collect different types of data to understand your interaction with the system. Depending on the specific task, the following may be recorded:",
+      "screenRecording": "Screen Recording",
+      "webcamRecording": "Webcam",
+      "audioRecording": "Audio",
+      "eyeTracking": "Eye Tracking",
+      "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
   },
   "AccessNotAllowed": {
@@ -503,6 +539,14 @@
       "currentTest": "Current test",
       "createTemplate": "CREATE TEMPLATE",
       "deleteTest": "DELETE TEST"
+    },
+    "editTest": {
+      "title": "Edit test",
+      "description": "Customize the settings and preferences of your test.",
+      "updatedTest": "Test updated successfully"
+    },
+    "cooperators": {
+      "invitationSent": "Invitation sent successfully"
     }
   },
   "alerts": {
@@ -694,5 +738,46 @@
     "finalMessage": "Final message",
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
     "finalMessagePlaceholder": "Enter Final message"
+  },
+  "CardSorting": {
+    "noCategory": "No category",
+    "noCards": "No cards found"
+  },
+  "analytics": {
+    "searchByName": "Search by name",
+    "search": "Search",
+    "reset": "Reset",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "effectiveness": "Effectiveness",
+    "effectivenessDescription": "Percentage of tasks completed successfully",
+    "efficiency": "Efficiency",
+    "efficiencyDescription": "Average time: {avgTime}",
+    "satisfaction": "Satisfaction",
+    "satisfactionDescription": "Average user satisfaction score",
+    "conclusionRate": "Conclusion Rate",
+    "perfectCompletionRate": "Perfect completion rate achieved",
+    "testsInProgress": "Tests in Progress",
+    "totalDuration": "Total Duration",
+    "avgTimePerTask": "Avg Time/Task",
+    "efficientTaskCompletion": "Efficient task completion rate",
+    "longestTask": "Longest Task",
+    "taskLabel": "Task",
+    "totalAnswers": "Total Answers",
+    "day": "day",
+    "evaluator": "Evaluator",
+    "latestUser": "Latest User",
+    "taskPerformance": "Task Performance",
+    "taskPerformanceDescription": "Success and error rates for each test task",
+    "success": "success",
+    "successCount": "Success",
+    "errors": "Errors",
+    "preTest": "Pre Test",
+    "preTestDescription": "Results from the pre-test form",
+    "postTest": "Post Test",
+    "postTestDescription": "Results from the post-test form",
+    "all": "All",
+    "question": "Question {number}",
+    "comingSoon": "Coming Soon"
   }
 }

@@ -16,13 +16,17 @@ export default class AutomaticAccessibilityTest {
         this.version = data.version || '2.1';
         this.collaborators = data.collaborators || {};
 
+        // Add cooperators field for compatibility with other test types
+        this.cooperators = data.cooperators || [];
+
         // Timestamps
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
 
         // Test-specific data
-        this.testType = data.type || 'AUTOMATIC';
-        this.isPublic = data.isPublic || false;
+        this.testType = data.testType || data.type || 'AUTOMATIC';
+        this.subType = data.subType || 'AUTOMATIC'; // Add subType for compatibility
+        this.isPublic = data.isPublic !== undefined ? data.isPublic : false;
     }
 
     /**
@@ -38,9 +42,9 @@ export default class AutomaticAccessibilityTest {
 
             const plainObj = {};
             for (const key in obj) {
-                 if (Object.hasOwn(obj, key)) {
-                   plainObj[key] = toPlainObject(obj[key])
-                 }
+                if (Object.hasOwn(obj, key)) {
+                    plainObj[key] = toPlainObject(obj[key])
+                }
             }
             return plainObj;
         };
@@ -48,13 +52,17 @@ export default class AutomaticAccessibilityTest {
         // Create a plain object with all the data
         const plainData = {
             title: this.title,
+            testTitle: this.title, // Add testTitle for compatibility with Firebase functions
             description: this.description,
             websiteUrl: this.websiteUrl,
             testAdmin: toPlainObject(this.testAdmin),
             status: this.status,
             version: this.version,
             collaborators: toPlainObject(this.collaborators),
+            cooperators: toPlainObject(this.cooperators),
             testType: this.testType,
+            subType: this.subType, // Add subType for compatibility
+            creationDate: this.createdAt, // Add creationDate for compatibility with Firebase functions
             isPublic: this.isPublic,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt

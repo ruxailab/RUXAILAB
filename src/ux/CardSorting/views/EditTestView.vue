@@ -10,7 +10,6 @@
     </template>
 
     <v-container>
-      <Snackbar />
       <ButtonSave
         :visible="change"
         @click="save"
@@ -45,25 +44,16 @@
         <VCol cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <VRow>
-              <VCol cols="12">
-                <TextareaForm
-                  v-model="welcomeMessage"
-                  :title="$t('ModeratedTest.welcomeMessage')"
-                  :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
-                />
-
-                <TextareaForm
-                  v-model="finalMessage"
-                  :title="$t('ModeratedTest.finalMessage')"
-                  :subtitle="$t('ModeratedTest.finalMessageDescription')"
-                />
-              </VCol>
-            </VRow>
+            <TestConfigForm
+              :welcome="welcomeMessage"
+              :final-message="finalMessage"
+              @update:welcome-message="welcomeMessage = $event; change = true"
+              @update:final-message="finalMessage = $event; change = true"
+            />
           </div>
 
           <!-- CONSENT FORM -->
-          <v-card
+          <div
             v-if="index === 1"
             rounded="xxl"
           >
@@ -71,8 +61,9 @@
               v-model="consent"
               :title="$t('ModeratedTest.consentForm')"
               subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+              @update:value="consent = $event; change = true"
             />
-          </v-card>
+          </div>
 
           <!-- PRE-TEST -->
           <v-card
@@ -81,8 +72,8 @@
           >
             <UserVariables
               type="pre-test"
-              @update="preTest = $event"
               @change="change = true"
+              @update="store.dispatch('setPreTest', $event)"
             />
           </v-card>
 
@@ -117,8 +108,8 @@
           >
             <UserVariables
               type="post-test"
-              @update="postTest = $event"
               @change="change = true"
+              @update="store.dispatch('setPostTest', $event)"
             />
           </v-card>
         </VCol>
@@ -129,7 +120,6 @@
 
 <script setup>
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue';
-import Snackbar from '@/shared/components/Snackbar.vue';
 import TextareaForm from '@/shared/components/TextareaForm.vue';
 import UserVariables from '@/shared/components/UserVariables.vue';
 import CardsEditCardSorting from '../components/CardsEditCardSorting.vue';
@@ -138,14 +128,16 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import TestConfigForm from '@/shared/components/TestConfigForm.vue';
+import { CardSortingStudyCategory } from '../models/CardSortingStudyCategory';
+import { CardSortingStudyCard } from '../models/CardSortingStudyCard';
+import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions';
 
 // Variables
 const index = ref(0);
 const change = ref(false);
 const welcomeMessage = ref('')
 const finalMessage = ref('')
-const preTest = ref([])
-const postTest = ref([])
 const consent = ref('')
 const categories = ref([])
 const cards = ref([])
@@ -165,23 +157,26 @@ const save = async () => {
 }
 
 const submit = async () => {
-  const object = {
-    testStructure: {
-      welcomeMessage: welcomeMessage.value,
-      finalMessage: finalMessage.value,
-      preTest: preTest.value,
-      postTest: postTest.value,
-      consent: consent.value,
-      cardSorting: {
-        categories: categories.value,
-        cards: cards.value,
-        options: { ...optionsCards.value, ...optionsCategories.value}
-      },
-    }
+  const testStructure = {
+    welcomeMessage: welcomeMessage.value,
+    finalMessage: finalMessage.value,
+    preTest: store.getters.preTest,
+    postTest: store.getters.postTest,
+    consent: consent.value,
+    cardSorting: {
+      categories: categories.value.map(category => category.toJson()),
+      cards: cards.value.map(card => card.toJson()),
+      options: {
+        card_description: optionsCards.value.card_description,
+        card_image: optionsCards.value.card_image,
+        category_description: optionsCategories.value.category_description,
+        category_image: optionsCategories.value.category_image,
+      }
+    },
   }
 
-  const rawData = { ...test.value, ...object }
-  const study = instantiateStudyByType(rawData.testType, rawData);
+  const rawData = { ...test.value, testStructure: testStructure }
+  const study = instantiateStudyByType(rawData.testType, rawData)
   await store.dispatch('updateStudy', study)
 }
 
@@ -197,10 +192,45 @@ const getConsent = () => {
   consent.value = test.value.testStructure?.consent || ''
 }
 
+const getCategories = () => {
+  if (!test.value.testStructure.cardSorting) return
+
+  test.value.testStructure.cardSorting.categories.map(cat => {
+    categories.value.push(new CardSortingStudyCategory(cat))
+  })
+}
+
+const getCards = () => {
+  if (!test.value.testStructure.cardSorting) return
+
+  test.value.testStructure.cardSorting.cards.map(card => {
+    cards.value.push(new CardSortingStudyCard(card))
+  })
+}
+
+const getOptions = () => {
+  if (!test.value.testStructure.cardSorting) return
+  optionsCategories.value = new CardSortingStudyOptions(test.value.testStructure.cardSorting.options)
+  optionsCards.value = new CardSortingStudyOptions(test.value.testStructure.cardSorting.options)
+}
+
+const getPreTest = () => {
+  store.dispatch('setPreTest', test.value.testStructure?.preTest || [])
+}
+
+const getPostTest = () => {
+  store.dispatch('setPostTest', test.value.testStructure?.postTest || [])
+}
+
 // Lifecycle
 onMounted(() => {
   getWelcome()
   getFinalMessage()
   getConsent()
+  getCategories()
+  getCards()
+  getOptions()
+  getPreTest()
+  getPostTest()
 })
 </script>

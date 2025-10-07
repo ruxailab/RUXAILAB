@@ -23,7 +23,7 @@ export default [
         component: ReportView,
       },
       {
-        path: '/userTest/unmoderated/answers/:id/:token?',
+        path: '/userTest/unmoderated/answer/:id/:token?',
         name: 'UserUnmoderatedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
@@ -67,7 +67,7 @@ export default [
         component: ReportView,
       },
       {
-        path: '/userTest/moderated/answers/:id/:token?',
+        path: '/userTest/moderated/answer/:id/:token?',
         name: 'UserModeratedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
@@ -88,7 +88,7 @@ export default [
         component: SettingsView,
       },
       {
-        path: '/userTest/moderated/cooperators/:coopid/:token?',
+        path: '/userTest/moderated/cooperators/:id/:token?',
         name: 'UserModeratedCooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },

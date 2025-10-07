@@ -21,14 +21,30 @@ export function useDataTableConfig(type) {
             key: 'owner',
             sortable: false,
         },
-        {
+    ])
+
+    if (typeRef.value === 'sessions') {
+        headers.value.push({
+            title: 'Evaluator',
+            key: 'evaluator',
+            sortable: true,
+        })
+        headers.value.push({
+            title: 'Status',
+            key: 'status',
+            sortable: true,
+        })
+    }
+
+    if (typeRef.value !== 'sessions' && typeRef.value !== 'myTemplates' && typeRef.value !== 'publicTemplates') {
+        headers.value.push({
             title: 'Participants',
             key: 'participants',
             sortable: true,
             align: 'center',
             value: item => item.numberColaborators ?? 0
-        }
-    ])
+        })
+    }
 
     const getEmptyStateMessage = (t) => {
         const currentType = typeRef.value

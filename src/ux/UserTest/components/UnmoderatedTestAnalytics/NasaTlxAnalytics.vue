@@ -10,7 +10,7 @@
     >
       <!-- Header Section -->
       <div class="mb-8">
-        <h1 class="text-h3 font-weight-bold text-primary mb-2">
+        <h1 class="text-h3 font-weight-bold text-primary">
           NASA TLX Analytics
         </h1>
         <p class="text-h6 text-grey-darken-1">
@@ -19,7 +19,7 @@
       </div>
 
       <!-- Overview Cards -->
-      <v-row class="mb-8">
+      <v-row class="mb-0">
         <v-col
           cols="12"
           md="4"
@@ -139,7 +139,7 @@
             elevation="2"
             style="border-radius: 12px;"
           >
-            <v-card-title class="text-h5 pb-2">
+            <v-card-title class="text-h5 pa-5">
               Workload Dimension Breakdown
             </v-card-title>
             <v-card-text class="pa-6">
@@ -245,7 +245,7 @@
             elevation="2"
             style="border-radius: 12px;"
           >
-            <v-card-title class="text-h5 pb-2">
+            <v-card-title class="text-h5 pa-5">
               <v-icon
                 start
                 color="primary"
@@ -522,9 +522,10 @@ const tableHeaders = [
 
 const test = computed(() => store.getters.test.testStructure)
 const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {});
-const nasaTlxData = computed(() => Object.values(testAnswerDocument.value).flatMap((item, index) => {
+const nasaTlxData = computed(() => Object.values(testAnswerDocument.value || {}).flatMap((item, index) => {
   return Object.values(item.tasks || {})
     .filter(task => test.value?.userTasks[task.taskId]?.taskType === "nasa-tlx")
+    .filter(task => task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object')
     .map((task) => {
       const scores = Object.values(task.nasaTlxAnswers)
       return {

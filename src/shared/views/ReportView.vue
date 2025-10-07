@@ -1,8 +1,6 @@
 <template>
   <PageWrapper
-    :title="$t('Reports Dashboard')"
-    :loading="loading"
-    :loading-text="$t('HeuristicsReport.messages.reports_loading')"
+    :title="showIntroView ? $t('Reports Dashboard') : ''"
     :side-gap="true"
   >
     <v-dialog
@@ -39,8 +37,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <template #subtitle>
+    <template #subtitle v-if="showIntroView">
       <div class="d-flex align-center">
         <v-icon
           icon="mdi-update"
@@ -53,7 +50,7 @@
       </div>
     </template>
 
-    <template #filters>
+    <template #filters v-if="showIntroView">
       <div class="d-flex align-center justify-space-between mb-6">
         <div class="d-flex align-center gap-4">
           <v-text-field
@@ -224,7 +221,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
-import Intro from '@/shared/components/IntroReports.vue';
+import Intro from '@/shared/components/introduction_cards/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
@@ -236,7 +233,6 @@ const toast = useToast();
 const props = defineProps({ id: { type: String, default: '' } });
 const emit = defineEmits(['goToCoops']);
 
-const loading = ref(true);
 const dialog = ref(false);
 const loadingBtn = ref(false);
 const report = ref(null);
@@ -246,6 +242,12 @@ const lastUpdated = ref(new Date());
 
 const user = computed(() => store.getters.user);
 const test = computed(() => store.getters.test);
+const loading = computed(() => store.getters.loading);
+
+const showIntroView = computed(() => {
+  return (reports.value.length > 0);
+});
+
 
 const allHeaders = ref([
   { title: 'Evaluator', key: 'evaluator' },
@@ -354,7 +356,7 @@ const dialogText = computed(() =>
 );
 
 watch(reports, () => {
-  if (Object.values(reports.value)) loading.value = false;
+  if (Object.values(reports.value)) store.commit('setLoading', false);
 });
 
 const getCurrentAnswer = async () => {
@@ -364,7 +366,7 @@ const getCurrentAnswer = async () => {
 const removeReport = async (report) => {
   loadingBtn.value = true;
 
-  await store.dispatch("reports/removeReport", { report, test: test.value });
+  await store.dispatch("Reports/removeReport", { report, test: test.value });
 
   await getCurrentAnswer();
   toast?.success(t("alerts.genericSuccess"));
@@ -382,13 +384,13 @@ const getStatusColor = (status) => (status === t('HeuristicsReport.status.submit
 const getStatusIcon = (status) => (status === t('HeuristicsReport.status.submitted') ? 'mdi-check-circle' : 'mdi-progress-clock');
 
 onMounted(async () => {
-  const timeout = setTimeout(() => (loading.value = false), 10000);
+  store.commit('setLoading', true);
   try {
     await store.dispatch('getCurrentTestAnswerDoc');
   } catch (error) {
     console.error('Error:', error);
   } finally {
-    clearTimeout(timeout);
+    store.commit('setLoading', false);
   }
 });
 </script>

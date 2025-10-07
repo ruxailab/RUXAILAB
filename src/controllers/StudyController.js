@@ -1,6 +1,4 @@
 // imports
-
-import Study from '@/shared/models/Study'
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
@@ -27,11 +25,19 @@ export default class StudyController extends Controller {
     return await super.create(COLLECTION, payload.toFirestore())
   }
   async duplicateStudy(payload) {
-    // Duplicate answers doc for another test
-    const answerDoc = await answerController.createAnswer(payload.answer)
-    payload.test.answersDocId = answerDoc.id
+    try {
+      const answerDoc = await answerController.createAnswer(
+        new StudyAnswer({ type: payload.test.testType }),
+      )
 
-    return await super.create(COLLECTION, payload.test.toFirestore())
+      const duplicatedStudy = payload.test
+      duplicatedStudy.answersDocId = answerDoc.id
+
+      return await super.create(COLLECTION, duplicatedStudy.toFirestore())
+    } catch (error) {
+      console.error("Error duplicating study:", error)
+      throw error
+    }
   }
 
   async deleteStudy(payload) {
@@ -98,7 +104,6 @@ export default class StudyController extends Controller {
     )
     testToUpdate.cooperators[index].accepted = true
     testToUpdate.cooperators[index].userDocId = userToUpdate.id
-    testToUpdate.numberColaborators = testToUpdate.numberColaborators + 1
 
     // Update invitation on test to accepted
     return await super.update(
@@ -132,7 +137,10 @@ export default class StudyController extends Controller {
   async getAllStudies() {
     try {
       const response = await super.readAll('tests')
-      const res = response.map(Study.toTest)
+      const res = response.map((t) => {
+        const rawData = Object.assign({ id: t.id }, t.data())
+        return instantiateStudyByType(rawData.testType, rawData)
+      })
       return res
     } catch (err) {
       throw err

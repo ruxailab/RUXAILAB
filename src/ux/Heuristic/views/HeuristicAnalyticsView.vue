@@ -1,12 +1,13 @@
 <template>
   <div>
     <!-- Vista de analíticas para metodología heurística -->
-    <AnalyticsView v-bind="$attrs" />
+    <HeuristicsAnalytics v-bind="$attrs" />
   </div>
 </template>
 
 <script setup>
-import AnalyticsView from '@/views/admin/[deprecated]AnalyticsView.vue';
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
+
 </script>
 
 <style scoped>

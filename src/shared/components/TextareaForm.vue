@@ -1,38 +1,46 @@
 <template>
-    <v-row justify="center">
+  <v-row justify="center">
       <v-col
-        cols="12"
-        md="10"
         lg="12"
-        class="px-0 py-10"
+        class="px-0 py-5"
       >
-        <v-card
-          class="elevation-2 rounded-lg pa-6"
-          width="100%"
-        >
-          <v-card-title class="text-h5" style="line-height: none; padding: 0 1rem">
-            {{ title }}
-          </v-card-title>
-          <v-card-text>
-            <p
-              class="text-body-1 mb-6"
-              style="color: #4B5563;"
-            >
-              {{ subtitle }}
-            </p>
-            <quill-editor
-              v-model:value="value"
-              :options="editorOptions"
-              class="editor-container"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+               <v-card
+        class="elevation-2 rounded-lg pa-6"
+        width="100%"
+      >
+            <v-row class="pa-4 pa-0">
+        <v-col>
+
+          <v-card-title
+            class="text-h5 font-weight-bold pa-0"
+            :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+          >
+          {{ title }}
+        </v-card-title>
+       
+          <p
+            class="text-body-1"
+            style="color: #4B5563;"
+          >
+            {{ subtitle }}
+          </p>
+</v-col>
+         </v-row>
+
+           <v-card-text>
+          <quill-editor
+            v-model:value="value"
+            :options="editorOptions"
+            class="editor-container"
+          />
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 
 const props = defineProps({
   title: {

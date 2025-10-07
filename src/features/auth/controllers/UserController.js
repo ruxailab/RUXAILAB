@@ -17,7 +17,6 @@ export default class UserController extends Controller {
       myTests: {},
       myAnswers: {},
       notifications: [],
-      inbox: [],
     }).toFirestore();
     return super.set(COLLECTION, payload.id, user);
   }
@@ -66,39 +65,24 @@ export default class UserController extends Controller {
   }
 
   async addNotification(payload) {
-    // Add Notification to User
     const userToUpdate = await this.getById(payload.userId)
     userToUpdate.notifications.push(payload.notification.toFirestore())
-    userToUpdate.inbox.push(payload.notification.toFirestore())
     return this.update(payload.userId, userToUpdate.toFirestore())
   }
 
   async markNotificationAsRead(payload) {
     const userToUpdate = new User(payload.user);
 
-    // Find notification in notifications array
+    // Find the notification in the notifications array
     const notificationIndex = userToUpdate.notifications.findIndex(
       (n) => n.createdDate === payload.notification.createdDate,
     );
 
-    // Find notification in inbox array
-    const inboxIndex = userToUpdate.inbox.findIndex(
-      (n) => n.createdDate === payload.notification.createdDate,
-    );
-
-    // Update notifications array
     if (notificationIndex !== -1) {
+      // Mark notification as read
       userToUpdate.notifications[notificationIndex].read = true;
-      userToUpdate.notifications.splice(notificationIndex, 1);
-    }
+      userToUpdate.notifications[notificationIndex].readAt = Date.now();
 
-    // Update inbox array
-    if (inboxIndex !== -1) {
-      userToUpdate.inbox[inboxIndex].read = true;
-      userToUpdate.inbox[inboxIndex].readAt = Date.now();
-    }
-
-    if (notificationIndex !== -1 || inboxIndex !== -1) {
       // Save updated user data to Firestore
       const updatedUser = await this.update(
         userToUpdate.id,
@@ -106,6 +90,7 @@ export default class UserController extends Controller {
       );
       return updatedUser;
     } else {
+      // Notification was not found in the array
       throw new Error('Notification not found.');
     }
   }

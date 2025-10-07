@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="test" class="pa-4" elevation="1">
     <div class="d-flex justify-space-between align-center mb-4">
-      <h3 class="text-h6">{{ $t('manager.participants') }}</h3>
+      <h3 class="text-h6">Participants</h3>
       <div class="d-flex gap-2">
         <v-btn 
           size="small" 

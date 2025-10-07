@@ -1,108 +1,69 @@
 <template>
-  <v-app>
-    <AccessibilityDrawer ref="accessibilityDrawer" v-model="drawerOpen" :items="navItems" @toggle="onDrawerToggle" />
-
-    <v-main>
-      
-        <router-view />
-      
-    </v-main>
-  </v-app>
+  <ManagerView 
+    :navigator="filteredNavItems"
+    :top-cards="topCards"
+    :bottom-cards="bottomCards"
+  >
+    <!-- Loading overlay -->
+    <v-overlay v-model="isLoading" contained class="align-center justify-center">
+      <div class="text-center">
+        <v-progress-circular indeterminate size="64" color="primary" />
+        <div class="mt-4 text-h6">Loading test data...</div>
+        <div class="text-caption">Checking access permissions</div>
+      </div>
+    </v-overlay>
+    
+    <!-- Access level indicator -->
+    <div v-if="!isLoading && userRole" class="ma-2 text-caption text-grey">
+      Access: {{ getAccessLevelText }}
+    </div>
+  </ManagerView>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import AccessibilityDrawer from '@/ux/accessibility/components/atoms/AccessibilityDrawer.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import ManagerView from '@/shared/views/template/ManagerView.vue'
+import { useAccessibilityAccess } from '@/ux/accessibility/composables/useAccessibilityAccess.js'
+import { getAccessibilityNavigator, getAccessibilityTopCards, getAccessibilityBottomCards } from '@/shared/utils/managerDefault.js'
 
 const route = useRoute()
-const testId = ref(route.params.testId || '')
-const accessibilityDrawer = ref(null)
-const drawerOpen = ref(false)
+const router = useRouter()
+const store = useStore()
+const testId = ref(route.params.id || '')
 
-// Navigation items for the drawer
-const navItems = computed(() => [
-  {
-    title: 'Home',
-    icon: 'mdi-home',
-    path: `/accessibility/manual/${testId.value}`,
-  },
-  {
-    title: 'Config',
-    icon: 'mdi-cog',
-    path: `/config/${testId.value}`,
-  },
-  {
-    title: 'Edit Test',
-    icon: 'mdi-pencil',
-    path: `/edit/${testId.value}`,
-  },
-  {
-    title: 'Preview',
-    icon: 'mdi-clipboard-check',
-    path: `/preview/${testId.value}`,
-  },
-  {
-    title: 'Answers',
-    icon: 'mdi-comment-question',
-    path: `/result/${testId.value}`,
-  },
-  {
-    title: 'Cooperator',
-    icon: 'mdi-account-multiple',
-    path: `/cooperative/${testId.value}`,
-  },
-])
+// Use the accessibility access control composable
+const { 
+  userRole, 
+  isLoading, 
+  fetchAccessData, 
+  getAccessLevelText 
+} = useAccessibilityAccess()
 
-const onDrawerToggle = (isOpen) => {
-  const contentCol = document.querySelector('.content-col')
-  if (contentCol) {
-    if (isOpen) {
-      contentCol.style.marginLeft = '256px'
-      contentCol.style.width = 'calc(100% - 256px)'
-    } else {
-      contentCol.style.marginLeft = '56px'
-      contentCol.style.width = 'calc(100% - 56px)'
-    }
+// Get test data from store
+const test = computed(() => store.getters.test)
+
+// Use centralized navigation and cards from managerDefault
+const filteredNavItems = computed(() => {
+  return getAccessibilityNavigator(test.value, userRole.value, route, 'accessibility/manual')
+})
+
+const topCards = computed(() => {
+  return getAccessibilityTopCards(test.value, userRole.value, 'accessibility/manual')
+})
+
+const bottomCards = computed(() => {
+  return getAccessibilityBottomCards(test.value, userRole.value, 'accessibility/manual')
+})
+
+onMounted(async () => {
+  await fetchAccessData(testId.value)
+  
+  // Redirect non-admin users trying to access manager page
+  if (userRole.value !== 'admin' && route.path === `/accessibility/manual/${testId.value}`) {
+    console.log('Non-admin user redirected to preview')
+    router.push(`/accessibility/manual/preview/${testId.value}`)
   }
-}
-
-// Initialize the content area position
-onMounted(() => {
-  // Initial position based on the drawer's default state
-  onDrawerToggle(true) // Assuming drawer starts open by default
 })
 </script>
-
-<style scoped>
-.fill-height {
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Content area styles */
-.content-col {
-  margin-left: 256px;
-  /* Default to drawer open */
-  width: calc(100% - 256px);
-  height: 100%;
-  transition: margin 0.3s ease, width 0.3s ease;
-  overflow-y: auto;
-  padding: 16px !important;
-}
-
-/* Ensure proper spacing for the drawer */
-:deep(.v-navigation-drawer) {
-  position: fixed;
-  z-index: 100;
-  height: 100vh;
-  overflow-y: auto;
-}
-
-/* Adjust for mobile */
-@media (max-width: 960px) {
-  .content-col {
-    margin-left: 56px !important;
-    width: calc(100% - 56px) !important;
-  }
-}
-</style>

@@ -391,10 +391,27 @@
       "preTestConsent": "Formulario de Consentimiento",
       "preTestForm": "Preguntas iniciales",
       "preTest": "Preguntas finales",
-      "postTest": "Post-Prueba"
+      "postTest": "Post-Prueba",
+      "eyeTrackingCalibration": "Calibración de Seguimiento Ocular"
     },
     "buttons": {
-      "done": "Listo"
+      "done": "Hecho"
+    },
+    "WelcomeStep": {
+      "welcome": "¡Bienvenido a RUXAILAB!",
+      "description": "Vas a participar en un test de usuario que tiene como objetivo evaluar la facilidad de uso y comprensión de una aplicación digital. Este tipo de test nos ayuda a detectar posibles barreras tecnológicas y mejorar la experiencia de todas las personas.",
+      "howItWorks": "¿Cómo funciona este test?",
+      "phases": "A lo largo del test, te guiaremos por diferentes fases. En cada una se te indicará con claridad qué debes hacer. No hay respuestas correctas o incorrectas: lo que nos interesa es cómo interactúas con el sistema.",
+      "summary": "Aquí puedes ver un resumen de las fases que vas a seguir:",
+      "steps": {
+        "consent": "Consentimiento",
+        "preQuestions": "Preguntas iniciales",
+        "tasks": "Tareas",
+        "postQuestions": "Preguntas finales",
+        "submission": "Envío final"
+      },
+      "ready": "Cuando estés preparado o preparada, pulsa el botón para comenzar. Podrás avanzar a tu ritmo y detenerte en cualquier momento si lo necesitas.",
+      "startTest": "Comenzar el test"
     }
   },
   "AccessNotAllowed": {
@@ -614,6 +631,9 @@
     "editProfile": "Editar perfil",
     "account": "Cuenta",
     "admin": "Administrador",
+    "email": "Correo electrónico",
+    "username": "Nombre de usuario",
+    "contact": "Número de contacto",
     "changePassword": "Cambiar contraseña",
     "passwordRequirements": "Asegúrese de cumplir estos requisitos",
     "passwordMinimumRequirements": "Mínimo 8 caracteres, mayúscula y símbolo",
@@ -657,5 +677,46 @@
     "finalMessage": "Mensaje final",
     "finalMessageDescription": "Este es un mensaje final que dejas para el participante al finalizar la prueba.",
     "finalMessagePlaceholder": "Ingresar mensaje final"
+  },
+  "CardSorting": {
+    "noCategory": "Sin categoría",
+    "noCards": "No hay tarjetas"
+  },
+  "analytics": {
+    "searchByName": "Buscar por nombre",
+    "search": "Buscar",
+    "reset": "Reset",
+    "showFilters": "Mostrar filtros",
+    "hideFilters": "Ocultar filtros",
+    "effectiveness": "Eficacia",
+    "effectivenessDescription": "Porcentaje de tareas completadas exitosamente",
+    "efficiency": "Eficiencia",
+    "efficiencyDescription": "Tiempo promedio: {avgTime}",
+    "satisfaction": "Satisfacción",
+    "satisfactionDescription": "Puntuación promedio de satisfacción del usuario",
+    "conclusionRate": "Tasa de Conclusión",
+    "perfectCompletionRate": "Tasa de finalización perfecta lograda",
+    "testsInProgress": "Tests en Progreso",
+    "totalDuration": "Duración Total",
+    "avgTimePerTask": "Tiempo Promedio/Tarea",
+    "efficientTaskCompletion": "Tasa de finalización eficiente de tareas",
+    "longestTask": "Tarea Más Larga",
+    "taskLabel": "Tarea",
+    "totalAnswers": "Total de Respuestas",
+    "day": "día",
+    "evaluator": "Evaluador",
+    "latestUser": "Último Usuario",
+    "taskPerformance": "Rendimiento por Tarea",
+    "taskPerformanceDescription": "Tasa de aciertos y errores por cada tarea del test",
+    "success": "éxito",
+    "successCount": "Aciertos",
+    "errors": "Errores",
+    "preTest": "Pre Test",
+    "preTestDescription": "Resultados del formulario previo al test",
+    "postTest": "Post Test",
+    "postTestDescription": "Resultados del formulario posterior al test",
+    "all": "Todos",
+    "question": "Pregunta {number}",
+    "comingSoon": "Próximamente"
   }
 }

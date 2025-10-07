@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + preTestTitle">
+  <ShowInfo :title="testTitle + ' - ' + 'PreTest'">
     <template #content>
       <div class="test-content pa-4 rounded-xl">
         <div
@@ -22,7 +22,6 @@
             <v-text-field
               v-if="item.textField"
               v-model="localAnswers[i].answer"
-              :disabled="preTestCompleted"
               :placeholder="item.title"
               variant="outlined"
               density="comfortable"
@@ -34,7 +33,6 @@
             <v-radio-group
               v-if="item.selectionField"
               v-model="localAnswers[i].answer"
-              :disabled="preTestCompleted"
               class="mt-2"
               @update:model-value="updateAnswer(i, $event)"
             >
@@ -43,7 +41,6 @@
                 :key="j"
                 :label="selection"
                 :value="selection"
-                :disabled="preTestCompleted"
                 density="compact"
               />
             </v-radio-group>
@@ -62,7 +59,6 @@
               block
               color="primary"
               variant="flat"
-              :disabled="preTestCompleted"
               @click="$emit('done')"
             >
               Done
@@ -80,7 +76,6 @@ import ShowInfo from "@/shared/components/ShowInfo.vue";
 
 const props = defineProps({
   testTitle: String,
-  preTestTitle: String,
   preTest: Array,
   preTestAnswer: Array,
   preTestCompleted: Boolean,

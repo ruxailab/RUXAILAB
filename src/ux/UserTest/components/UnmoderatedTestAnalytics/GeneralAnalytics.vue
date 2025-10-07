@@ -1,99 +1,94 @@
 <template>
-  <div>
+  <div class="bg-background">
+    <!-- Filtros dinámicos -->
+    <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
+      <div class="d-flex align-center mb-3 flex-wrap button-bar">
+        <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
+          variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{ $t('analytics.search') }}</v-btn>
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
+          @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
+
+        <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
+          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
+          <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        </v-btn>
+      </div>
+      <v-expand-transition>
+        <div v-show="showFilters">
+          <v-row dense>
+            <v-col v-for="def in filterDefinitions" :key="'filter-' + def.index" cols="12" sm="6" md="3">
+              <!-- Label / tooltip above field -->
+              <v-tooltip v-if="(def.title || '').length > 42" location="top">
+                <template #activator="{ props }">
+                  <div class="filter-label truncate-2" v-bind="props">{{ def.title }}</div>
+                </template>
+                <span class="text-wrap">{{ def.title }}</span>
+              </v-tooltip>
+              <div v-else class="filter-label truncate-2">{{ def.title }}</div>
+              <!-- Categórico (multi-select) -->
+              <v-select v-if="def.isCategorical && def.items.length" :items="def.items"
+                v-model="selectedFilters[def.index]" multiple chips clearable density="compact" variant="outlined"
+                hide-details class="filter-field" @update:model-value="val => onFilterChange(def.index, val)" />
+              <!-- Texto libre / numérico (match contiene) -->
+              <v-text-field v-else v-model="selectedFilters[def.index]" density="compact" variant="outlined"
+                hide-details clearable class="filter-field" @input="onFreeTextFilter(def.index)" />
+            </v-col>
+          </v-row>
+        </div>
+      </v-expand-transition>
+    </v-card>
+
     <!-- UX Metrics Row (ahora primera fila) -->
-    <v-row>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <UxMetricCard
-          :value="`${calculateEffectiveness().toFixed(1)}%`"
-          label="Eficacia"
-          color="success"
-          icon="mdi-target-account"
-          description="Porcentaje de tareas completadas exitosamente"
-          :progress="calculateEffectiveness()"
-        />
+    <v-row class="">
+      <v-col cols="12" md="4">
+        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" :label="$t('analytics.effectiveness')" color="success"
+          icon="mdi-target-account" :description="$t('analytics.effectivenessDescription')"
+          :progress="calculateEffectiveness()" />
       </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <UxMetricCard
-          :value="calculateEfficiency().score.toFixed(1)"
-          label="Eficiencia"
-          color="info"
-          icon="mdi-speedometer"
-          :description="`Tiempo promedio: ${calculateEfficiency().avgTime}`"
-          :progress="Math.min(calculateEfficiency().score * 10, 100)"
-        />
+      <v-col cols="12" md="4">
+        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" :label="$t('analytics.efficiency')" color="info"
+          icon="mdi-speedometer" :description="$t('analytics.efficiencyDescription', { avgTime: calculateEfficiency().avgTime })"
+          :progress="Math.min(calculateEfficiency().score * 10, 100)" />
       </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <UxMetricCard
-          :value="`${calculateSatisfaction().toFixed(1)}/5`"
-          label="Satisfacción"
-          color="warning"
-          icon="mdi-heart"
-          description="Puntuación promedio de satisfacción del usuario"
-          :progress="(calculateSatisfaction() / 5) * 100"
-        />
+      <v-col cols="12" md="4">
+        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')" color="warning"
+          icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
+          :progress="(calculateSatisfaction() / 5) * 100" 
+          :disabled="true" />
       </v-col>
     </v-row>
+
     <v-row>
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
               <div class="d-flex align-center mb-3">
-                <v-icon
-                  color="primary"
-                  size="28"
-                  class="me-3"
-                >
+                <v-icon color="primary" size="28" class="me-3">
                   mdi-target
                 </v-icon>
                 <h3 class="text-h5 font-weight-medium text-on-surface">
-                  Conclusion Rate
+                  {{ $t('analytics.conclusionRate') }}
                 </h3>
               </div>
               <div class="text-h2 font-weight-bold text-primary mb-2">
                 {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
               </div>
               <p class="text-body-1 text-medium-emphasis">
-                Perfect completion rate achieved
+                {{ $t('analytics.perfectCompletionRate') }}
               </p>
             </div>
             <div class="text-end">
-              <v-chip
-                color="success"
-                variant="flat"
-                size="small"
-                class="mb-2"
-              >
-                <v-icon
-                  start
-                  size="16"
-                >
+              <v-chip color="success" variant="flat" size="small" class="mb-2">
+                <v-icon start size="16">
                   mdi-trending-up
                 </v-icon>
                 Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
               </v-chip>
               <br>
-              <v-chip
-                color="error"
-                variant="flat"
-                size="small"
-              >
-                <v-icon
-                  start
-                  size="16"
-                >
+              <v-chip color="error" variant="flat" size="small">
+                <v-icon start size="16">
                   mdi-trending-down
                 </v-icon>
                 Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
@@ -101,13 +96,8 @@
             </div>
           </div>
 
-          <v-progress-linear
-            :model-value="getConclusionAverage()"
-            color="primary"
-            height="12"
-            rounded
-            class="mb-6 progress-glow"
-          />
+          <v-progress-linear :model-value="getConclusionAverage()" color="primary" height="12" rounded
+            class="mb-6 progress-glow" />
 
           <v-divider class="mb-6" />
 
@@ -117,41 +107,28 @@
                 {{ getTestsInProgress().totalInProgress }}
               </div>
               <p class="text-body-2 text-medium-emphasis">
-                Tests in Progress
+                {{ $t('analytics.testsInProgress') }}
               </p>
             </div>
-            <v-divider
-              vertical
-              class="mx-4"
-            />
+            <v-divider vertical class="mx-4" />
             <div class="text-center">
               <div class="text-h4 font-weight-bold text-accent mb-1">
                 16m
               </div>
               <p class="text-body-2 text-medium-emphasis">
-                Total Duration
+                {{ $t('analytics.totalDuration') }}
               </p>
             </div>
           </div>
         </v-card>
       </v-col>
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <v-row class="h-100">
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="primary"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="primary" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-clock-fast
                   </v-icon>
                 </v-avatar>
@@ -160,30 +137,21 @@
                     {{ calculateAverageTime().formatedTime }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Avg Time/Task
+                    {{ $t('analytics.avgTimePerTask') }}
                   </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
-                Efficient task completion rate
+                {{ $t('analytics.efficientTaskCompletion') }}
               </p>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card
-              v-if="testStructure?.userTasks && taskAnswers.length"
-              class="pa-6 elevation-3 rounded-xl h-100 stat-card"
-            >
+            <v-card v-if="testStructure?.userTasks && taskAnswers.length"
+              class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="error"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="error" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-timer-alert
                   </v-icon>
                 </v-avatar>
@@ -192,27 +160,20 @@
                     {{ findLongestTask().averageTime.formatedTime }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Longest Task
+                    {{ $t('analytics.longestTask') }}
                   </p>
                 </div>
               </div>
               <p class="text-caption text-medium-emphasis">
-                Task: <strong>"{{ findLongestTask().taskName }}"</strong>
+                {{ $t('analytics.taskLabel') }}: <strong>"{{ findLongestTask().taskName }}"</strong>
               </p>
             </v-card>
           </v-col>
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="success"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="success" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-check-circle
                   </v-icon>
                 </v-avatar>
@@ -221,43 +182,32 @@
                     {{ getTotalAnswers() }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Total Answers
+                    {{ $t('analytics.totalAnswers') }}
                   </p>
                 </div>
               </div>
               <div class="d-flex align-center">
-                <v-icon
-                  color="success"
-                  size="16"
-                  class="me-1"
-                >
+                <v-icon color="success" size="16" class="me-1">
                   mdi-trending-up
                 </v-icon>
-                <span class="text-caption text-success">+{{ getTasksTodayCount() }}/day</span>
+                <span class="text-caption text-success">+{{ getTasksTodayCount() }}/{{ $t('analytics.day') }}</span>
               </div>
             </v-card>
           </v-col>
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar
-                  color="accent"
-                  size="48"
-                  class="me-3"
-                >
-                  <v-icon
-                    color="white"
-                    size="24"
-                  >
+                <v-avatar color="accent" size="48" class="me-3">
+                  <v-icon color="white" size="24">
                     mdi-account-circle
                   </v-icon>
                 </v-avatar>
                 <div>
                   <div class="text-body-1 font-weight-bold text-accent">
-                    Evaluator
+                    {{ $t('analytics.evaluator') }}
                   </div>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Latest User
+                    {{ $t('analytics.latestUser') }}
                   </p>
                 </div>
               </div>
@@ -271,94 +221,49 @@
     </v-row>
 
     <!-- Chart Section -->
-    <AnswersTimeline
-      :task-answers="taskAnswers"
-      @refresh="onRefreshTimeline"
-      @export="onExportTimeline"
-    />
+    <AnswersTimeline :task-answers="filteredSessions" @refresh="onRefreshTimeline" @export="onExportTimeline" />
 
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card
-          flat
-          class="pa-8"
-        >
+        <v-card flat class="pa-8">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Answers Timeline
+                {{ $t('analytics.taskPerformance') }}
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Track your answer submissions over time
+                {{ $t('analytics.taskPerformanceDescription') }}
               </p>
-            </div>
-            <div class="d-flex ga-2">
-              <v-btn
-                variant="outlined"
-                size="small"
-                color="primary"
-              >
-                <v-icon start>
-                  mdi-download
-                </v-icon>
-                Export
-              </v-btn>
-              <v-btn
-                variant="flat"
-                size="small"
-                color="primary"
-              >
-                <v-icon start>
-                  mdi-refresh
-                </v-icon>
-                Refresh
-              </v-btn>
             </div>
           </div>
 
           <v-row>
-            <v-col
-              v-for="taskStat in getTasksPerformance()"
-              :key="taskStat.taskId"
-              cols="12"
-              md="6"
-              lg="4"
-            >
-              <v-card
-                class="pa-4 elevation-2 rounded-lg task-chart-card"
-                border
-              >
+            <v-col v-for="taskStat in getTasksPerformance()" :key="taskStat.taskId" cols="12" md="6" lg="4">
+              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" variant="outlined">
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
                   </h4>
                   <v-chip
                     :color="taskStat.successRate >= 70 ? 'success' : taskStat.successRate >= 50 ? 'warning' : 'error'"
-                    variant="tonal"
-                    size="small"
-                  >
-                    {{ taskStat.successRate.toFixed(1) }}% éxito
+                    variant="tonal" size="small">
+                    {{ taskStat.successRate.toFixed(1) }}% {{ $t('analytics.success') }}
                   </v-chip>
                 </div>
 
                 <div class="chart-container-small mb-4">
-                  <canvas
-                    :id="'task-chart-' + taskStat.taskId"
-                    class="task-chart"
-                    width="120"
-                    height="120"
-                  />
+                  <canvas :id="'task-chart-' + taskStat.taskId" class="task-chart" width="120" height="120"></canvas>
                 </div>
 
                 <div class="d-flex justify-space-between text-body-2">
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-success mr-2" />
-                    <span>Aciertos: {{ taskStat.success }}</span>
+                    <div class="legend-dot bg-success mr-2"></div>
+                    <span>{{ $t('analytics.successCount') }}: {{ taskStat.success }}</span>
                   </div>
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-error mr-2" />
-                    <span>Errores: {{ taskStat.errors }}</span>
+                    <div class="legend-dot bg-error mr-2"></div>
+                    <span>{{ $t('analytics.errors') }}: {{ taskStat.errors }}</span>
                   </div>
                 </div>
               </v-card>
@@ -371,46 +276,27 @@
     <!-- Mostrar todas las preguntas del pre-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card
-          flat
-          class="pa-8 "
-        >
+        <v-card flat class="pa-8 ">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Pre Test
+                {{ $t('analytics.preTest') }}
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Resultados del formulario previo al test
+                {{ $t('analytics.preTestDescription') }}
               </p>
             </div>
           </div>
           <v-row>
             <template v-for="(q, idx) in (testStructure?.preTest || [])">
-              <v-col
-                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'pre-sel-' + (q.title || q.question || idx)"
-                cols="12"
-                md="6"
-                lg="4"
-              >
-                <SelectionPieChart
-                  :question-title="q.title || q.question"
-                  :options="q.selectionFields"
-                  :counts="getPreSelectionCounts(idx)"
-                  :canvas-id="'pretest-selection-chart-' + idx"
-                  :chart-colors="chartColors"
-                />
+              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'pre-sel-' + (q.title || q.question || idx)" cols="12" md="6" lg="4">
+                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
+                  :counts="getPreSelectionCounts(idx)" :canvas-id="'pretest-selection-chart-' + idx"
+                  :chart-colors="chartColors" />
               </v-col>
-              <v-col
-                v-else
-                :key="'pre-com-' + (q.title || q.question || idx)"
-                cols="12"
-              >
-                <CommentListCard
-                  :question-title="q.title || q.question"
-                  :answer="getPreTextAnswers(idx)"
-                />
+              <v-col v-else :key="'pre-com-' + (q.title || q.question || idx)" cols="12">
+                <CommentListCard :question-title="q.title || q.question" :answer="getPreTextAnswers(idx)" />
               </v-col>
             </template>
           </v-row>
@@ -421,49 +307,27 @@
     <!-- Mostrar todas las preguntas del post-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card
-          flat
-          class="pa-8 "
-        >
+        <v-card flat class="pa-8 ">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-                Post Test
+                {{ $t('analytics.postTest') }}
               </h3>
               <p class="text-body-1 text-medium-emphasis">
-                Resultados del formulario posterior al test
+                {{ $t('analytics.postTestDescription') }}
               </p>
             </div>
           </div>
           <v-row>
-            <template
-              v-for="(q, idx) in postTestQuestions"
-              :key="'ptq-' + (q.question || idx)"
-            >
-              <v-col
-                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'sel-' + (q.question || idx)"
-                cols="12"
-                md="6"
-                lg="4"
-              >
-                <SelectionPieChart
-                  :question-title="q.title || q.question"
-                  :options="q.selectionFields"
-                  :counts="getSelectionCounts(idx)"
-                  :canvas-id="'posttest-selection-chart-' + idx"
-                  :chart-colors="chartColors"
-                />
+            <template v-for="(q, idx) in filteredSessions[0]?.postTestAnswer || []">
+              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'sel-' + (q.question || idx)" cols="12" md="6" lg="4">
+                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
+                  :counts="getSelectionCounts(idx)" :canvas-id="'posttest-selection-chart-' + idx"
+                  :chart-colors="chartColors" />
               </v-col>
-              <v-col
-                v-else
-                :key="'com-' + (q.question || idx)"
-                cols="12"
-              >
-                <CommentListCard
-                  :question-title="q.title || q.question"
-                  :answer="getPostTextAnswers(idx)"
-                />
+              <v-col v-else :key="'com-' + (q.question || idx)" cols="12">
+                <CommentListCard :question-title="q.title || q.question" :answer="q.answer" />
               </v-col>
             </template>
           </v-row>
@@ -473,32 +337,179 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import UxMetricCard from '../answers/UxMetricCard.vue';
+import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
+import AnswersTimeline from '../answers/AnswersTimeline.vue';
 
-const store = useStore();
-
+// Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([]);
 const taskAnswers = ref([]);
+
+// Filtering system
+const searchTerm = ref('');
+const selectedFilters = ref({});
+const showFilters = ref(true);
+const ALL_VALUE = '__ALL__';
+
+// Colores para el gráfico
+const chartColors = ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#EC407A', '#FF7043', '#26A69A', '#D4E157'];
+
+// Encuentra todas las preguntas de selección
+const selectionQuestions = computed(() => {
+  if (!taskAnswers.value.length || !taskAnswers.value[0].postTestAnswer) return [];
+  return taskAnswers.value[0].postTestAnswer.filter(q => Array.isArray(q.selectionFields) && q.selectionFields.length > 0);
+});
+
+// Devuelve los recuentos de respuestas para una pregunta de selección específica (por índice)
+function getSelectionCounts(questionIdx) {
+  const counts = {};
+  const q = filteredSessions.value[0]?.postTestAnswer?.[questionIdx];
+  if (!q) return counts;
+  q.selectionFields.forEach(opt => { counts[opt] = 0; });
+  filteredSessions.value.forEach(ans => {
+    if (ans.postTestAnswer && ans.postTestAnswer[questionIdx] && ans.postTestAnswer[questionIdx].answer) {
+      const answer = ans.postTestAnswer[questionIdx].answer;
+      if (Array.isArray(answer)) {
+        answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
+      } else if (counts[answer] !== undefined) {
+        counts[answer]++;
+      }
+    }
+  });
+  return counts;
+}
+
+function getPreSelectionCounts(questionIdx) {
+  const counts = {};
+  const q = filteredSessions.value[0]?.preTestAnswer?.[questionIdx];
+  if (!testStructure.value?.preTest?.[questionIdx]?.selectionFields) return counts;
+  const options = testStructure.value.preTest[questionIdx].selectionFields;
+  options.forEach(opt => { counts[opt] = 0; });
+  filteredSessions.value.forEach(ans => {
+    const answerObj = ans.preTestAnswer?.[questionIdx];
+    if (answerObj && answerObj.answer !== undefined) {
+      const answer = answerObj.answer;
+      if (Array.isArray(answer)) {
+        answer.forEach(a => { if (counts[a] !== undefined) counts[a]++; });
+      } else if (counts[answer] !== undefined) {
+        counts[answer]++;
+      }
+    }
+  });
+  return counts;
+}
+
+function getPreTextAnswers(questionIdx) {
+  const list = [];
+  filteredSessions.value.forEach(ans => {
+    const a = ans.preTestAnswer?.[questionIdx]?.answer;
+    if (a !== undefined && a !== null && a !== '') list.push(a);
+  });
+  return list;
+}
+
+const store = useStore();
+const { t } = useI18n();
+
 
 const test = computed(() => store.getters.test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
 const answers = computed(() => {
-  if (!store.getters.visibleUserAnswers) {
-    return {};
-  }
-  return store.getters.visibleUserAnswers;
+  if (!store.getters.visibleUserAnswers) return {}
+  return store.getters.visibleUserAnswers
+});
+
+// Filter definitions based on pre-test questions
+const filterDefinitions = computed(() => {
+  const pre = testStructure.value?.preTest || [];
+  return pre.map((q, idx) => {
+    // valores desde respuestas reales
+    const answerValueSet = new Set();
+    Object.values(answers.value).forEach(s => {
+      const a = s.preTestAnswer?.[idx]?.answer;
+      if (a !== undefined && a !== null && a !== '') answerValueSet.add(a);
+    });
+
+    // valores declarados en la estructura (selectionFields) si es tipo selección
+    if (q?.type === 'selection' && Array.isArray(q.selectionFields)) {
+      q.selectionFields.forEach(opt => {
+        if (opt !== undefined && opt !== null && opt !== '') answerValueSet.add(opt);
+      });
+    }
+
+    const options = Array.from(answerValueSet).sort();
+
+    // Forzar dropdown si es pregunta de selección aunque solo haya 1 opción todavía
+    const isSelection = q?.type === 'selection';
+    const isCategoricalByCount = options.length >= 2 && options.length <= 50;
+    const isCategorical = isSelection || isCategoricalByCount;
+
+    const baseItems = isCategorical ? options.map(o => ({ title: o, value: o })) : [];
+    if (isCategorical && baseItems.length) {
+      // Insert 'All' at the beginning
+      if (!baseItems.find(it => it.value === ALL_VALUE)) {
+        baseItems.unshift({ title: t('analytics.all'), value: ALL_VALUE });
+      }
+    }
+
+    return {
+      index: idx,
+      title: q.title || q.question || t('analytics.question', { number: idx + 1 }),
+      options,
+      isCategorical,
+      items: baseItems
+    };
+  });
+});
+
+// Check if there are active filters
+const hasActiveFilters = computed(() => {
+  const someFilters = Object.entries(selectedFilters.value).some(([k, v]) => {
+    if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE);
+    return !!v; // texto
+  });
+  return someFilters || !!searchTerm.value.trim();
+});
+
+// Filtered sessions based on search term and filters
+const filteredSessions = computed(() => {
+  const term = searchTerm.value.trim().toLowerCase();
+  return Object.values(answers.value).filter(session => {
+    if (term) {
+      const name = (session.fullName || '').toLowerCase();
+      const email = (session.email || '').toLowerCase();
+      if (!name.includes(term) && !email.includes(term)) return false;
+    }
+    return filterDefinitions.value.every(def => {
+      const sel = selectedFilters.value[def.index];
+      // Sin filtro aplicado
+      if (sel === undefined || sel === null || sel === '' || (Array.isArray(sel) && (sel.length === 0 || sel.includes(ALL_VALUE)))) return true;
+      const ans = session.preTestAnswer?.[def.index]?.answer || '';
+      if (def.isCategorical) {
+        return Array.isArray(sel) ? sel.includes(ans) : true;
+      } else {
+        // texto libre: substring case-insensitive
+        if (typeof sel === 'string') return ans.toString().toLowerCase().includes(sel.toLowerCase());
+        return true;
+      }
+    });
+  });
 });
 const averageTimePerTask = computed(() => {
   let totalTasks = 0;
   let totalTaskTime = 0;
 
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
-  taskAnswers.value.forEach((answer) => {
-    Object.values(answer.tasks).forEach((task) => {
+  filteredSessions.value.forEach((answer) => {
+    Object.values(answer.tasks || {}).forEach((task) => {
       totalTaskTime += task.taskTime;
       totalTasks++;
     });
@@ -520,19 +531,19 @@ const formatTime = (time) => {
 };
 
 const findLongestTask = () => {
-  if (!taskAnswers.value.length) return { taskName: 'Task', averageTime: formatTime(0) };
+  if (!filteredSessions.value.length) {
+    return { taskName: 'Task', averageTime: formatTime(0) };
+  }
 
   const taskAverages = {};
 
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
+    if (!answer.tasks) return;
     for (const taskId in answer.tasks) {
-      const taskTime = answer.tasks[taskId].taskTime;
+      const taskTime = answer.tasks[taskId]?.taskTime ?? 0;
 
       if (!taskAverages[taskId]) {
-        taskAverages[taskId] = {
-          totalTime: taskTime,
-          count: 1,
-        };
+        taskAverages[taskId] = { totalTime: taskTime, count: 1 };
       } else {
         taskAverages[taskId].totalTime += taskTime;
         taskAverages[taskId].count++;
@@ -541,8 +552,7 @@ const findLongestTask = () => {
   });
 
   for (const taskId in taskAverages) {
-    const averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
-    taskAverages[taskId].averageTime = averageTime;
+    taskAverages[taskId].averageTime = taskAverages[taskId].totalTime / taskAverages[taskId].count;
   }
 
   let longestTask = null;
@@ -556,9 +566,11 @@ const findLongestTask = () => {
   }
 
   const taskMap = {};
-  testStructure.value.userTasks.forEach((task) => {
-    taskMap[task.taskId] = task;
-  });
+  if (testStructure.value && Array.isArray(testStructure.value.userTasks)) {
+    testStructure.value.userTasks.forEach((task) => {
+      taskMap[task.taskId] = task;
+    });
+  }
 
   return {
     taskName: taskMap[longestTask]?.taskName || 'Task',
@@ -571,11 +583,11 @@ const calculateAverageTime = () => {
 };
 
 const getConclusionAverage = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
   let eachConclusion = 0;
   let totalAnswers = 0;
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     eachConclusion += answer.progress;
     totalAnswers++;
   });
@@ -583,11 +595,11 @@ const getConclusionAverage = () => {
 };
 
 const getTestsInProgress = () => {
-  if (!taskAnswers.value.length) return { totalInProgress: 0, totalCompleted: 0 };
+  if (!filteredSessions.value.length) return { totalInProgress: 0, totalCompleted: 0 };
 
   let totalProgress = 0;
   let totalCompleted = 0;
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     if (answer.submitted) {
       totalCompleted++;
     } else {
@@ -601,31 +613,31 @@ const getTestsInProgress = () => {
 };
 
 const maxProgressPerTask = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
-  const progressArray = taskAnswers.value.map((answer) => answer.progress);
+  const progressArray = filteredSessions.value.map((answer) => answer.progress);
   return Math.max(...progressArray);
 };
 
 const minProgressPerTask = () => {
-  if (!taskAnswers.value.length) return 0;
+  if (!filteredSessions.value.length) return 0;
 
-  const progressArray = taskAnswers.value.map((answer) => answer.progress);
+  const progressArray = filteredSessions.value.map((answer) => answer.progress);
   return Math.min(...progressArray);
 };
 
 const getTotalAnswers = () => {
-  return taskAnswers.value.length;
+  return filteredSessions.value.length;
 };
 
 const getLatestResponse = () => {
-  if (!taskAnswers.value.length) return { cooperatorEmail: '', lastUpdate: '' };
+  if (!filteredSessions.value.length) return { cooperatorEmail: '', lastUpdate: '' };
 
-  let latestResponse = taskAnswers.value[0].userDocId;
-  let lastUpdate = taskAnswers.value[0].lastUpdate;
+  let latestResponse = filteredSessions.value[0].userDocId;
+  let lastUpdate = filteredSessions.value[0].lastUpdate;
 
-  taskAnswers.value.forEach((answer) => {
-    if (answer.lastUpdate > taskAnswers.value[0].lastUpdate) {
+  filteredSessions.value.forEach((answer) => {
+    if (answer.lastUpdate > filteredSessions.value[0].lastUpdate) {
       latestResponse = answer.userDocId;
       lastUpdate = answer.lastUpdate;
     }
@@ -643,7 +655,7 @@ const getTasksTodayCount = () => {
 
   let tasksToday = 0;
 
-  taskAnswers.value.forEach((answer) => {
+  filteredSessions.value.forEach((answer) => {
     const answerDate = new Date(answer.lastUpdate);
     answerDate.setHours(0, 0, 0, 0);
 
@@ -671,21 +683,239 @@ const getFormattedDate = (date) => {
   return new Date(date).toLocaleString();
 };
 
-watch(
-  () => testStructure.value,
-  (newVal) => {
-    if (newVal && Array.isArray(newVal.userTasks)) {
-      testTasks.value = newVal.userTasks.map(task => task.taskName);
+// Filter methods
+const onFilterChange = (idx, val) => {
+  if (!val || !val.length) { selectedFilters.value[idx] = []; return; }
+  if (val.includes(ALL_VALUE)) { selectedFilters.value[idx] = [ALL_VALUE]; } else { selectedFilters.value[idx] = val; }
+};
+
+const onFreeTextFilter = (idx) => {
+  // simple trigger (v-model already updates)
+  selectedFilters.value[idx] = selectedFilters.value[idx];
+};
+
+const resetFilters = () => { selectedFilters.value = {}; searchTerm.value = ''; };
+
+const toggleFilters = () => { showFilters.value = !showFilters.value; };
+
+const triggerSearch = () => { /* no-op: computed already reacts; placeholder for future debounce */ };
+
+// UX Metrics Functions
+const calculateEffectiveness = () => {
+  if (!filteredSessions.value.length) return 0;
+
+  let completedTasks = 0;
+  let totalTasks = 0;
+
+  filteredSessions.value.forEach((answer) => {
+    totalTasks += Object.keys(answer.tasks || {}).length;
+    Object.values(answer.tasks || {}).forEach((task) => {
+      if (task.completed) {
+        completedTasks++;
+      }
+    });
+  });
+
+  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+};
+
+const calculateEfficiency = () => {
+  if (!filteredSessions.value.length) return { score: 0, avgTime: '0 min 0 s' };
+
+  let totalSuccessfulTasks = 0;
+  let totalSuccessfulTaskTime = 0; // in milliseconds - only time from successful tasks
+  let totalTimeSpent = 0; // in milliseconds - time from all tasks (for reference)
+
+  // Calculate total successful tasks and time spent on successful tasks only
+  filteredSessions.value.forEach((answer) => {
+    Object.values(answer.tasks || {}).forEach((task) => {
+      totalTimeSpent += task.taskTime || 0;
+      // Count as successful if task is completed and not explicitly marked as failed
+      if (task.completed && task.success !== false) {
+        totalSuccessfulTasks++;
+        totalSuccessfulTaskTime += task.taskTime || 0;
+      }
+    });
+  });
+
+  const avgTimeFormatted = formatTime(totalSuccessfulTaskTime / Math.max(1, totalSuccessfulTasks));
+
+  // ISO 9241-11/9241-210 Efficiency Formula: 
+  // Efficiency = Number of successfully completed tasks / Time spent on successful tasks
+  // Convert to tasks per minute for better readability
+  const efficiencyRatio = totalSuccessfulTaskTime > 0 ? (totalSuccessfulTasks / (totalSuccessfulTaskTime / 60000)) : 0;
+  
+  // Dynamic normalization based on actual efficiency ratio
+  // Use logarithmic scale to better represent efficiency variations
+  // Score = 10 * (1 - e^(-efficiency_ratio * scale_factor))
+  const scaleFactor = 2; // Adjustable based on typical task complexity
+  const normalizedScore = efficiencyRatio > 0 ? 
+    Math.min(10, 10 * (1 - Math.exp(-efficiencyRatio * scaleFactor))) : 0;
+
+  return {
+    score: normalizedScore,
+    avgTime: avgTimeFormatted.formatedTime,
+    tasksPerMinute: efficiencyRatio.toFixed(2),
+    totalTasks: totalSuccessfulTasks,
+    totalSuccessfulTime: formatTime(totalSuccessfulTaskTime).formatedTime,
+    totalTime: formatTime(totalTimeSpent).formatedTime
+  };
+};
+
+const calculateSatisfaction = () => {
+  if (!filteredSessions.value.length) return 0;
+
+  let totalSatisfaction = 0;
+  let ratingsCount = 0;
+
+  filteredSessions.value.forEach((answer) => {
+    if (answer.satisfaction && typeof answer.satisfaction === 'number') {
+      totalSatisfaction += answer.satisfaction;
+      ratingsCount++;
+    } else {
+      // If no satisfaction data, simulate based on completion rate
+      const userProgress = answer.progress;
+      const simulatedRating = userProgress >= 90 ? 4.5 :
+        userProgress >= 70 ? 4.0 :
+          userProgress >= 50 ? 3.5 :
+            userProgress >= 30 ? 3.0 : 2.5;
+      totalSatisfaction += simulatedRating;
+      ratingsCount++;
     }
-  },
-  { immediate: true }
-);
+  });
+
+  return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount;
+};
+
+const getTasksPerformance = () => {
+  // Recoger todos los taskId únicos presentes en filteredSessions
+  const allTaskIds = new Set();
+  filteredSessions.value.forEach(answer => {
+    if (answer.tasks) {
+      Object.keys(answer.tasks).forEach(taskId => allTaskIds.add(taskId));
+    }
+  });
+
+  // Para cada taskId, calcular los datos reales
+  const result = [];
+  allTaskIds.forEach(taskId => {
+    let success = 0;
+    let errors = 0;
+    let total = 0;
+    let taskName = taskId;
+
+    // Buscar el nombre de la tarea si está en testStructure
+    if (testStructure.value && testStructure.value.userTasks) {
+      const found = testStructure.value.userTasks.find(t => t.taskId === taskId);
+      if (found) taskName = found.taskName;
+    }
+
+    filteredSessions.value.forEach(answer => {
+      if (answer.tasks && answer.tasks[taskId]) {
+        total++;
+        const task = answer.tasks[taskId];
+        if (task.completed && task.success !== false) {
+          success++;
+        } else {
+          errors++;
+        }
+      }
+    });
+
+    result.push({
+      taskId,
+      taskName,
+      success,
+      errors,
+      total,
+      successRate: total === 0 ? 0 : (success / total) * 100
+    });
+  });
+  return result;
+};
+
+const createTaskCharts = async () => {
+  await nextTick();
+
+  const tasksData = getTasksPerformance();
+
+  tasksData.forEach((task) => {
+    // Usar el id único basado en el taskId
+    const canvasId = 'task-chart-' + (task.taskId || '');
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+    const innerRadius = radius * 0.6;
+
+    if (!task.total || isNaN(task.successRate)) {
+      // Draw empty donut (gray)
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
+      ctx.closePath();
+      ctx.fillStyle = '#e0e0e0';
+      ctx.fill();
+      // Draw center text
+      ctx.fillStyle = '#999';
+      ctx.font = 'bold 14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('0%', centerX, centerY + 5);
+      return;
+    }
+
+    // Calculate angles
+    const successAngle = (task.success / task.total) * 2 * Math.PI;
+    const errorAngle = (task.errors / task.total) * 2 * Math.PI;
+
+    // Draw success arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, successAngle);
+    ctx.arc(centerX, centerY, innerRadius, successAngle, 0, true);
+    ctx.closePath();
+    ctx.fillStyle = '#4CAF50';
+    ctx.fill();
+
+    // Draw error arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, successAngle, successAngle + errorAngle);
+    ctx.arc(centerX, centerY, innerRadius, successAngle + errorAngle, successAngle, true);
+    ctx.closePath();
+    ctx.fillStyle = '#F44336';
+    ctx.fill();
+
+    // Draw center text
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${task.successRate.toFixed(0)}%`, centerX, centerY + 5);
+  });
+};
 
 watch(
   () => answers.value,
   (newAnswers) => {
     if (newAnswers && typeof newAnswers === 'object') {
       taskAnswers.value = Object.values(newAnswers);
+      // Update charts when data changes
+      setTimeout(() => createTaskCharts(), 500);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => testStructure.value,
+  (newVal) => {
+    if (newVal && Array.isArray(newVal.userTasks)) {
+      testTasks.value = newVal.userTasks.map(task => task.taskName);
+      // Update charts when structure changes
+      setTimeout(() => createTaskCharts(), 500);
     }
   },
   { immediate: true }
@@ -697,38 +927,27 @@ onMounted(() => {
     testStructure.value.userTasks.forEach((task, i) => {
       testTasks.value[i] = task.taskName;
     });
-  }
 
-  if (answers.value && typeof answers.value === 'object') {
-    let c = 0;
-    for (const key in answers.value) {
-      taskAnswers.value[c] = answers.value[key];
-      c++;
+    if (answers.value && typeof answers.value === 'object') {
+      let c = 0;
+      for (const key in answers.value) {
+        taskAnswers.value[c] = answers.value[key];
+        c++;
+      }
     }
   }
+
+  // Create initial charts
+  setTimeout(() => createTaskCharts(), 1000);
 });
 </script>
 
 <style scoped>
-.conclusion-card {
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-}
-
-.stat-card {
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
-.chart-card {
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-}
 
 .chart-container-large {
   height: 400px;
@@ -738,6 +957,38 @@ onMounted(() => {
 
 .progress-glow {
   filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
+}
+
+.ux-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+.task-chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.chart-container-small {
+  height: 150px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-chart {
+  max-width: 120px;
+  max-height: 120px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 /* Responsive adjustments */
@@ -755,5 +1006,46 @@ onMounted(() => {
   .conclusion-card .text-h1 {
     font-size: 2rem !important;
   }
+}
+
+/* Filter styles */
+.filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+  line-height: 1.15;
+  color: #475569;
+}
+
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(11px * 1.15 * 2);
+  max-height: calc(11px * 1.15 * 2);
+}
+
+.filter-field :deep(.v-field__input) {
+  min-height: 36px;
+}
+
+.flex-grow-1 {
+  flex: 1 1 auto;
+  min-width: 240px;
+}
+
+.button-bar {
+  gap: 14px;
+}
+
+.search-btn {
+  min-width: 140px;
+  height: 40px;
+  font-weight: 600;
+  letter-spacing: .3px;
 }
 </style>

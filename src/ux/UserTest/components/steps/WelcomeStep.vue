@@ -3,25 +3,19 @@
     <template #content>
       <div class="test-content pa-6 rounded-xl text-center fade-in">
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
-          ¡Bienvenido a RUXAILAB!
+          {{ $t('UserTestView.WelcomeStep.welcome') }}
         </h2>
-        <p class="text-body-1 mb-4 text-grey-darken-1">
-          Vas a participar en un test de usuario que tiene como objetivo evaluar la facilidad de uso y
-          comprensión de una aplicación digital.
-          Este tipo de test nos ayuda a detectar posibles barreras tecnológicas y mejorar la experiencia de
-          todas las personas.
+        <p class="text-body-1 mb-4 text-grey-darken-3">
+          {{ $t('UserTestView.WelcomeStep.description') }}
         </p>
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
-          ¿Como funciona este test?
+          {{ $t('UserTestView.WelcomeStep.howItWorks') }}
         </h2>
-        <p class="text-body-1 mb-4 text-grey-darken-1">
-          A lo largo del test, te guiaremos por diferentes fases. En cada una se te indicará con claridad qué
-          debes hacer. No hay respuestas correctas o incorrectas: lo que nos interesa es cómo interactúas con
-          el
-          sistema.
+        <p class="text-body-1 mb-4 text-grey-darken-3">
+          {{ $t('UserTestView.WelcomeStep.phases') }}
         </p>
-        <p class="text-body-1 mb-4 text-grey-darken-1">
-          Aquí puedes ver un resumen de las fases que vas a seguir:
+        <p class="text-body-1 mb-4 text-grey-darken-3">
+          {{ $t('UserTestView.WelcomeStep.summary') }}
         </p>
         <v-stepper
           v-if="!smAndDown"
@@ -32,39 +26,45 @@
           <v-stepper-header>
             <v-stepper-item
               value="1"
-              title="Consentimiento"
+              :title="$t('UserTestView.WelcomeStep.steps.consent')"
             />
             <v-divider />
             <v-stepper-item
               value="2"
-              title="Preguntas iniciales"
+              class="red"
+              :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
             />
             <v-divider />
             <v-stepper-item
               value="3"
-              title="Tareas"
+              :title="$t('UserTestView.WelcomeStep.steps.tasks')"
             />
             <v-divider />
             <v-stepper-item
               value="4"
-              title="Preguntas finales"
+              :title="$t('UserTestView.WelcomeStep.steps.postQuestions')"
             />
             <v-divider />
             <v-stepper-item
               value="5"
-              title="Envio final"
+              :title="$t('UserTestView.WelcomeStep.steps.submission')"
             />
           </v-stepper-header>
         </v-stepper>
         <v-stepper-vertical
           v-else
-          :items="['Consentimiento informado', 'Preguntas iniciales', 'Tareas', 'Preguntas finales', 'Envio final']"
+          :items="[
+            $t('UserTestView.WelcomeStep.steps.consent'), 
+            $t('UserTestView.WelcomeStep.steps.preQuestions'), 
+            $t('UserTestView.WelcomeStep.steps.tasks'), 
+            $t('UserTestView.WelcomeStep.steps.postQuestions'), 
+            $t('UserTestView.WelcomeStep.steps.submission')
+          ]"
           hide-actions
           class="my-6"
         />
-        <p class="text-body-1 mb-6 text-grey-darken-1">
-          Cuando estés preparado o preparada, pulsa el botón para comenzar. Podrás avanzar a tu ritmo y
-          detenerte en cualquier momento si lo necesitas.
+        <p class="text-body-1 mb-6 text-grey-darken-3">
+          {{ $t('UserTestView.WelcomeStep.ready') }}
         </p>
         <v-btn
           color="primary"
@@ -72,7 +72,7 @@
           size="large"
           @click="$emit('start')"
         >
-          Comenzar el test
+          {{ $t('UserTestView.WelcomeStep.startTest') }}
         </v-btn>
       </div>
     </template>
@@ -106,5 +106,32 @@ const { smAndDown } = useDisplay();
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+:deep(.v-stepper-vertical-item__avatar.v-avatar) {
+  background: rgb(var(--v-theme-primary)) !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important;
+}
+
+:deep(.v-stepper-vertical-item__avatar.v-avatar.v-avatar--density-default) {
+  background: rgb(var(--v-theme-primary)) !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important;
+}
+
+:deep(.v-stepper-item__avatar.v-avatar) {
+  background: rgb(var(--v-theme-primary)) !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important;
+}
+
+:deep(.v-stepper-item__title) {
+  color: rgb(var(--v-theme-primary)) !important;
+  font-weight: 600 !important;
+}
+
+:deep(.v-stepper-item) {
+  opacity:1;
 }
 </style>

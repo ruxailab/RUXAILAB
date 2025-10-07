@@ -1,89 +1,91 @@
 <template>
-  <v-form ref="form">
-    <v-row justify="space-around">
-      <v-col
-        class="mt-4"
-        cols="5"
-      >
-        <v-text-field
-          v-model="localTask.taskName"
-          :label="$t('common.name')"
-          :rules="requiredRule"
-          variant="outlined"
-          density="compact"
-        />
-        <quill-editor
-          v-model:value="localTask.taskDescription"
-          class="mb-5"
-          style="height: 40%;"
-        />
-        <v-text-field
-          v-model="localTask.taskTip"
-          :label="$t('buttons.tip')"
-          variant="outlined"
-          density="compact"
-        />
-      </v-col>
+  <v-stepper v-model="step" class="pa-6" non-linear>
+    <v-stepper-header>
+      <v-stepper-item
+        :complete="step > 1"
+        :step="1"
+        value="1"
+        editable
+        title="Basic Info"
+        @click="step = '1'"
+      />
+      <v-divider />
+      <v-stepper-item
+        :complete="step > 2"
+        :step="2"
+        value="2"
+        editable
+        title="Configuration"
+        @click="step = '2'"
+      />
+      <v-divider />
+      <v-stepper-item
+        :complete="step > 3"
+        :step="3"
+        value="3"
+        editable
+        title="Advanced"
+        @click="step = '3'"
+      />
+      <v-divider />
+      <v-stepper-item
+        :complete="step > 4"
+        :step="4"
+        value="4"
+        editable
+        title="Preview"
+        @click="step = '4'"
+      />
+    </v-stepper-header>
 
-      <v-col
-        class="mt-4"
-        cols="5"
-      >
-        <v-text-field
-          v-model="localTask.taskLink"
-          label="Link"
-          variant="outlined"
-          density="compact"
+    <!-- Content Area with v-if for forced re-rendering -->
+    <div class="stepper-content">
+      <v-card-text v-show="step === '1'">
+        <TaskBasicInfo
+          ref="taskBasicInfoRef"
+          :model-value="localTask"
+          :validation-rules="requiredRule"
+          @update:model-value="handleTaskUpdate"
         />
-        <span class="text-subtitle-1">{{ $t('titles.answerType') }}</span>
-        <v-select
-          v-model="localTask.taskType"
-          :items="selectItems"
-          item-title="label"
-          item-value="value"
-          :label="$t('titles.answerType')"
-          :rules="requiredRule"
-          variant="outlined"
-          density="compact"
-          class="mt-4"
-        />
+      </v-card-text>
 
-        <v-text-field
-          v-if="localTask.taskType === 'form'"
-          v-model="localTask.postQuestion"
-          :label="$t('switches.postTest')"
-          variant="outlined"
-          density="compact"
+      <v-card-text v-if="step === '2'">
+        <TaskConfiguration
+          :model-value="localTask"
+          :select-items="selectItems"
+          :validation-rules="requiredRule"
+          @update:model-value="handleTaskUpdate"
         />
-        <v-text-field
-          v-if="task.taskType === 'post-form'"
-          v-model="localTask.postForm"
-          :label="$t('switches.postForm')"
-          variant="outlined"
-          density="compact"
-          :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']"
-        />
+      </v-card-text>
 
-        <v-checkbox
-          v-model="localTask.hasScreenRecord"
-          :label="$t('switches.screenRecord')"
+      <v-card-text v-if="step === '3'">
+        <TaskAdvancedOptions
+          :model-value="localTask"
+          @update:model-value="handleTaskUpdate"
         />
-        <v-checkbox
-          v-model="localTask.hasCamRecord"
-          :label="$t('switches.camera')"
+      </v-card-text>
+
+      <v-card-text v-if="step === '4'">
+        <TaskPreview
+          :task="localTask"
         />
-        <v-checkbox
-          v-model="localTask.hasAudioRecord"
-          :label="$t('switches.audioRecord')"
-        />
-      </v-col>
-    </v-row>
-  </v-form>
+      </v-card-text>
+    </div>
+
+    <v-stepper-actions
+      @click:prev="goToPreviousStep"
+      @click:next="goToNextStep"
+    />
+  </v-stepper>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref } from 'vue';
+import TaskBasicInfo from './task-steps/TaskBasicInfo.vue';
+import TaskConfiguration from './task-steps/TaskConfiguration.vue';
+import TaskAdvancedOptions from './task-steps/TaskAdvancedOptions.vue';
+import TaskPreview from './task-steps/TaskPreview.vue';
+import Task from '../models/Task';
 
 const props = defineProps({
   task: {
@@ -92,56 +94,71 @@ const props = defineProps({
   },
 });
 
-const { t } = useI18n();
+const taskBasicInfoRef = ref(null);
 
+const emit = defineEmits(['validate', 'update:task', 'complete']);
+
+const step = ref("1");
+const localTask = ref({ ...props.task });
+
+// Required props for the step components
 const selectItems = [
-  { label: t('switches.noAnswer'), value: 'no-answer' },
-  { label: t('switches.textArea'), value: 'text-area' },
-  { label: t('switches.postTest'), value: 'post-test' },
-  { label: t('switches.postForm'), value: 'post-form' },
-  { label: t('switches.nasa'), value: 'nasa-tlx' },
+  { label: 'No Answer', value: 'no-answer' },
+  { label: 'Short Answer', value: 'post-test' },
+    { label: 'Paragraph Answer', value: 'text-area' },
+
+  { label: 'Google Forms Link', value: 'post-form' },
+  { label: 'NASA TLX', value: 'nasa-tlx' },
   { label: 'System Usability Scale', value: 'sus' }
 ];
 
-const emit = defineEmits(['validate', 'update:task']);
-
-const form = ref(null);
 const requiredRule = [(v) => !!v || 'Field Required'];
-const localTask = ref({ ...props.task });
 
-// Watch for changes in the task prop
-watch(
-  () => props.task,
-  (newTask) => {
-    localTask.value = { ...newTask };
-  },
-  { deep: true }
-);
+const handleTaskUpdate = (updatedTask) => {
+  localTask.value = Task.fromJson({ ...updatedTask });
+  emit('update:task', localTask.value);
+};
 
-// Watch for changes in localTask and emit update
-watch(
-  localTask,
-  (newLocalTask) => {
-    emit('update:task', { ...newLocalTask });
-  },
-  { deep: true }
-);
+const goToNextStep = () => {
+  const currentStepNum = parseInt(step.value);
+  if (currentStepNum < 4) {
+    step.value = String(currentStepNum + 1);
+  }
+};
 
-// Methods
+const goToPreviousStep = () => {
+  const currentStepNum = parseInt(step.value);
+  if (currentStepNum > 1) {
+    step.value = String(currentStepNum - 1);
+  }
+};
+
 const valida = () => {
-  const valid = form.value.validate();
-  emit('validate', valid);
+  const descOk = taskBasicInfoRef.value?.checkDescriptionValidation();
+  const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation();
+
+  // trigger visual validator for task name
+  taskBasicInfoRef.value?.isValid?.value;
+  
+  if (nameOk && descOk) {
+    emit('validate', localTask.value);
+    return true;
+  }
+
+  return false;
 };
 
 const resetVal = () => {
-  form.value.resetValidation();
+  step.value = "1";
+  localTask.value = { ...props.task };
 };
 
-// Expose methods to parent if needed
-defineExpose({
-  valida,
-  resetVal,
-});
+defineExpose({ valida, resetVal });
 </script>
 
-<style></style>
+<style scoped>
+.stepper-content {
+  min-height: 400px;
+  padding: 16px;
+}
+</style>

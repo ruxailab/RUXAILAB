@@ -1,5 +1,4 @@
 import Cooperators from './Cooperators'
-import Template from './Template'
 // import Cooperators from '@/models/Cooperators'
 
 /**
@@ -26,6 +25,7 @@ export default class Study { // mudar nome para Study e mover para Shared
     studyConclusion,
     status, // transformar em um ENUM
     endDate,
+    creationDate,
   } = {}) {
     /**
      * Defines the test id.
@@ -102,7 +102,7 @@ export default class Study { // mudar nome para Study e mover para Shared
      *
      * @type {number}
      */
-    this.creationDate = Date.now()
+    this.creationDate = creationDate
 
     /**
      * Defines a timestamp of the test last updated date.
@@ -112,9 +112,9 @@ export default class Study { // mudar nome para Study e mover para Shared
     this.updateDate = updateDate ?? null
 
     /**
-     * Defines the test template document.
+     * Defines the test template document id.
      *
-     * @type {Template}
+     * @type {String}
      */
     this.templateDoc = templateDoc ?? null
 
@@ -162,7 +162,7 @@ export default class Study { // mudar nome para Study e mover para Shared
       testStructure: this.testStructure,
       testOptions: this.testOptions,
       answersDocId: this.answersDocId,
-      cooperators: this.cooperators,
+      cooperators: this.cooperators.map((c) => c.toFirestore()),
       creationDate: this.creationDate,
       updateDate: this.updateDate,
       templateDoc: this.templateDoc,

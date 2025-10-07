@@ -174,11 +174,9 @@ export default {
      */
     async getStudy({ commit }, payload) {
       commit('setLoading', true)
-      console.log('oi')
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
-        return res
       } catch (e) {
         commit('setError', true)
       } finally {
@@ -221,8 +219,23 @@ export default {
           const userController = new UserController()
           const userDoc = await userController.getById(user.uid)
 
-          if (userDoc && userDoc.myTests) {
-            const tests = Object.values(userDoc.myTests)
+          if (userDoc) {
+            const tests = []
+
+            if (userDoc.myTests) {
+              for (const test of Object.values(userDoc.myTests)) {
+                tests.push(test)
+              }
+            }
+
+            /// Tests where user is a cooperator
+            if (userDoc.myAnswers) {
+              for (const answer of Object.values(userDoc.myAnswers)) {
+                const study = await studyController.getStudy({ id: answer.testDocId })
+                tests.push(Object.assign(answer, study))
+              }
+            }
+
             commit('SET_TESTS', tests)
           } else {
             console.error('User document or myTests field not found in Firestore')

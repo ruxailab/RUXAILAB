@@ -13,8 +13,12 @@ export default {
     answers: [],
     evaluatorStatistics: [],
     finalReport: [],
+    mediaUrls: {},
   },
   getters: {
+    mediaUrls(state) {
+      return state.mediaUrls
+    },
     testAnswerDocument(state, rootState) {
       if (rootState.test) {
         const testOptions = rootState.test.testOptions
@@ -62,9 +66,11 @@ export default {
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
-        return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
+        const taskAnswers = state.testAnswerDocument.taskAnswers || {}
+
+        return taskAnswers[rootState.user.id]
           ? UserStudyEvaluatorAnswer.toModel(
-            state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
+            taskAnswers[rootState.user.id],
           )
           : new UserStudyEvaluatorAnswer({
             userDocId: rootState.user.id,
@@ -87,12 +93,9 @@ export default {
             postTestCompleted: false,
             tasks: (() => {
               const tasks = {};
-              // Ensure userTasks exists before accessing its length
               const userTasksLength = rootState.test.testStructure.userTasks?.length || 0;
               for (let i = 0; i < userTasksLength; i++) {
-                tasks[i] = new TaskAnswer({
-                  taskId: i
-                });
+                tasks[i] = new TaskAnswer({ taskId: i });
               }
               return tasks;
             })(),
@@ -109,7 +112,7 @@ export default {
       if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
-            ([, answer]) => answer.hidden === false
+            ([, answer]) => answer.hidden !== true
           )
         );
       }
@@ -148,13 +151,17 @@ export default {
       ) {
         state.testAnswerDocument.taskAnswers[userId].tasks[taskId].completed = value;
       }
+    },
+    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url }) {
+      if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
+      state.mediaUrls[taskIndex][mediaType] = url
     }
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
       const currentTest = rootState.Tests.Test
       if (!currentTest || !currentTest.answersDocId) {
-        return
+        return console.log('No current test or answersDocId')
       }
       const currentAnswerDocId = currentTest.answersDocId
       commit('setLoading', true)
@@ -164,6 +171,7 @@ export default {
         )
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
+        console.error('Error in getCurrentTestAnswerDoc', e)
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -285,5 +293,9 @@ export default {
 
       commit('SET_EVALUATOR_STATISTICS', table)
     },
+
+    async updateTaskMediaUrl({ commit }, { taskIndex, mediaType, url }) {
+      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url });
+    }
   },
 }

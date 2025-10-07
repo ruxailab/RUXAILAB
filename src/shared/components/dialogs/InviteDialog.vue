@@ -8,7 +8,7 @@
                 {{ title || 'Send Invitation' }}
             </v-card-title>
             <v-card-text class="pt-4">
-                <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :items="users" item-title="email"
+                <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :items="users.filter(user => user?.email != null)" item-title="email"
                     :label="selectLabel || 'Select cooperator'" multiple variant="outlined" density="comfortable"
                     @update:model-value="validateEmail">
                     <template #no-data>

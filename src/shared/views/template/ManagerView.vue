@@ -1,37 +1,53 @@
 <template>
-  <v-container class="pa-0 ma-0" fluid>
+  <v-container
+    class="pa-0 ma-0"
+    fluid
+  >
     <Snackbar />
-    <Loadding />
+    <Loading />
 
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+    <v-row
+      v-if="test"
+      class="nav pa-0 ma-0"
+      dense
+    >
       <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="$route.path.includes('manager')">
-          <ManagerBanner :title="test.testTitle" />
+          <slot>
+            <div>
+              <ManagerBanner :title="test.testTitle" />
+              <v-container class="card-container">
+                <div v-if="topCards.length">
+                  <div class="presentation-text">
+                    {{ $t('common.editAndInvite') }}
+                  </div>
 
-          <div>
-            <v-container class="card-container">
-              <div v-if="topCards.length">
-                <div class="presentation-text">
-                  {{ $t('common.editAndInvite') }}
+                  <!-- Top Cards -->
+                  <CardsManager
+                    :cards="topCards"
+                    :per-row="2"
+                    @click="go"
+                  />
                 </div>
 
-                <!-- Top Cards -->
-                <CardsManager :cards="topCards" :per-row="2" @click="go" />
-              </div>
+                <div v-if="bottomCards.length">
+                  <div class="presentation-text mt-5">
+                    {{ $t('common.analyzeProject') }}
+                  </div>
 
-              <div v-if="bottomCards.length">
-                <div class="presentation-text mt-5">
-                  {{ $t('common.analyzeProject') }}
+                  <!-- Bottom Cards -->
+                  <CardsManager
+                    :cards="bottomCards"
+                    :per-row="2"
+                    @click="go"
+                  />
                 </div>
-
-                <!-- Bottom Cards -->
-                <CardsManager :cards="bottomCards" :per-row="2" @click="go" />
-              </div>
-            </v-container>
-          </div>
+              </v-container>
+            </div>
+          </slot>
         </div>
 
         <router-view />
@@ -42,7 +58,7 @@
 
 <script setup>
 import Snackbar from '@/shared/components/Snackbar.vue'
-import Loadding from '@/shared/components/Loadding.vue'
+import Loading from '@/shared/components/Loading.vue'
 import Drawer from '@/shared/components/Drawer.vue';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
 import { computed } from 'vue';
@@ -90,13 +106,6 @@ const go = (item) => {
   overflow: scroll;
 }
 
-.nav {
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
 .background::-webkit-scrollbar {
   display: none;
 }
@@ -116,7 +125,6 @@ const go = (item) => {
   color: rgb(87, 84, 100);
   font-weight: 700;
   font-size: 22px;
-  margin-bottom: 20px;
 }
 
 .back-gradient {
@@ -124,49 +132,5 @@ const go = (item) => {
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
-.text-div {
-  max-width: 45%;
-}
-
-.card-container {
-  width: 70%;
-}
-
-@media screen and (max-width: 960px) {
-  .presentation-text {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .text-div {
-    max-width: 100%;
-    margin: 0px 10px;
-    text-justify: center;
-  }
-
-  .image-back {
-    height: 300px;
-  }
-
-  .mobile-center {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .card-container {
-    width: 85%;
-  }
-
-  .back-gradient {
-    height: 100%;
-  }
-
-  .manager-bg {
-    height: 100%;
-    margin: 0 !important;
-  }
-}
 </style>
 

@@ -60,7 +60,7 @@
               density="compact"
               class="py-1 notification-list"
             >
-              <template v-for="(notification, i) in user.notifications || []" :key="notification.id">
+              <template v-for="(notification, i) in sortedNotifications || []" :key="notification.id">
                 <NotificationItem
                   :notification="notification"
                   @go-to-redirect="goToNotificationRedirect"
@@ -90,49 +90,97 @@
         </v-card-text>
       </v-card>
     </v-menu>
+
+    <AcceptInvitationDialog
+    v-model="dialogVisible"
+    @cancel="onReject"
+    @submit="onAccept"
+  />
   </div>
 </template>
 
 <script setup>
-
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue';
-
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-
-// Helper to render multiline description
-function formatMultiline(text) {
-  if (!text) return '';
-  return text.replace(/\n/g, '<br>');
-}
-import { useI18n } from 'vue-i18n';
+import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue';
+import StudyController from '@/controllers/StudyController';
 
 // Initialize store, router, and i18n
 const store = useStore();
 const router = useRouter();
-const { t } = useI18n();
 
 const user = computed(() => store.getters.user);
+
+const sortedNotifications = computed(() => {
+  return [...user.value.notifications].sort(
+    (a, b) => b.createdDate - a.createdDate
+  )
+})
+
+const dialogVisible = ref(false)
+let resolveDialog
+
+const onAccept = () => {
+  dialogVisible.value = false
+  resolveDialog(true)
+}
+
+const onReject = () => {
+  dialogVisible.value = false
+  resolveDialog(false)
+}
+
+function showAcceptDialog() {
+  dialogVisible.value = true
+  return new Promise((resolve) => {
+    resolveDialog = resolve
+  })
+}
 
 const checkIfHasNewNotifications = () => {
   return user.value.notifications.filter((n) => !n.read).length;
 };
 
 const goToNotificationRedirect = async (notification) => {
+    const accepted = await showAcceptDialog()
+    if (!accepted) {
+      // mark as read and exit
+      await store.dispatch('markNotificationAsRead', {
+        notification,
+        user: user.value,
+      });
+      return
+    }
+    const study = await new StudyController().getStudy({ id: notification.testId })
+
+    await store.dispatch('acceptStudyCollaboration', {
+      test: study,
+      cooperator: user.value,
+    });
+
   await store.dispatch('markNotificationAsRead', {
     notification,
     user: user.value,
   });
   if (notification.redirectsTo) {
-    window.open(`/${notification.redirectsTo}`, '_blank');
+    try {
+      window.open(window.location.origin + notification.redirectsTo, '_blank')
+    } catch(e) {
+      console.error(e)
+      window.open(window.location.origin + '/' + notification.redirectsTo, '_blank')
+    }
   } else {
     goToNotificationPage();
   }
 };
 
 const goToNotificationPage = () => {
-  router.push('/notifications');
+  router.push({ 
+    path: '/admin', 
+    query: { section: 'notifications' } 
+  }).catch(() => { });
 };
 
 </script>

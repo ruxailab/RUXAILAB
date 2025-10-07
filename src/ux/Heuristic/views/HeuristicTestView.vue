@@ -382,6 +382,7 @@
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
+                      :disable="currentUserTestAnswer?.submitted"
                     >
                       <template #answer>
                         <v-select
@@ -395,6 +396,7 @@
                           variant="outlined"
                           density="compact"
                           @update:model-value="calculateProgress()"
+                          :disabled="currentUserTestAnswer?.submitted"
                         />
                         <v-alert v-else type="error" class="mt-4">
                           {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
@@ -460,6 +462,7 @@
                             color="testPrimary"
                             variant="flat"
                             @click="dialog = true"
+                            :disabled="currentUserTestAnswer?.submitted"
                           >
                             <v-icon start>
                               mdi-send
@@ -602,6 +605,7 @@ const heuristics = computed(() => {
   // Fallback to empty array
   return [];
 });
+
 const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
@@ -613,11 +617,14 @@ const showSaveBtn = computed(() => {
   if (currentUserTestAnswer.value.submitted) return false
   return true
 })
-const cooperators = computed(() => store.getters.cooperators)
-const loading = computed(() => store.getters.loading)
-const currentImageUrl = computed(() => store.state.Tests.currentImageUrl)
 
-const startTest = () => {
+const isUserTestAdmin = computed(() => {
+  return test.value.testAdmin.userDocId === user.value?.id
+});
+
+const loading = computed(() => store.getters.loading)
+
+const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
       errorCode: 400,
@@ -625,6 +632,14 @@ const startTest = () => {
     });
     return;
   }
+
+  if (!isUserTestAdmin.value) {
+    await store.dispatch('acceptStudyCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
+  }
+
   start.value = false;
 };
 
@@ -632,10 +647,11 @@ const updateComment = (comment, heurisIndex, answerIndex) => {
   if (!currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[answerIndex]) {
     return;
   }
-  if (comment != '' && comment != undefined) {
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].heuristicComment = comment;
-  } else {
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].answerImageUrl = currentImageUrl.value;
+  const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
+  if (comment !== '' && comment !== undefined) {
+    question.heuristicComment = comment;
+  } else if (store.state.Heuristic.currentImageUrl) {
+    question.answerImageUrl = store.state.Heuristic.currentImageUrl;
   }
 };
 
@@ -817,12 +833,6 @@ watch(user, async () => {
     if (logined.value) setTest()
   }
 }, { deep: true })
-
-watch(calculatedProgress, (newVal) => {
-  if (newVal == 100) {
-    review.value = false
-  }
-})
 
 onBeforeMount(async () => {
   if (route.params.token) {

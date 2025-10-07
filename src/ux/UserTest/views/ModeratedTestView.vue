@@ -9,7 +9,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+           {{ test.testDescription }}
           </p>
           <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
             Start Test
@@ -27,20 +27,53 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item color="white" value="1" title="Consent" :complete="stepperValue >= 1"
+                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1"
                     :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="2" title="Pre-test" :complete="stepperValue >= 2"
+                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2"
                     :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="3" title="Tasks" :complete="stepperValue >= 3"
+                  <v-stepper-item value="3" title="Tasks" :complete="stepperValue >= 3"
                     :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="4" title="Post-test" :complete="stepperValue >= 4"
+                  <v-stepper-item value="4" title="Post-test" :complete="stepperValue >= 4"
                     :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item color="white" value="5" title="Completion" :complete="stepperValue === 5"
+                  <v-stepper-item value="5" title="Completion" :complete="stepperValue === 5"
                     :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                </v-stepper-header>
+              </v-stepper>
+            </v-col>
+          </v-row>
+
+          <!-- Stepper secundario para tareas -->
+          <v-row
+            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            class="task-stepper-row"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              md="8"
+              lg="6"
+              class="d-flex justify-center"
+            >
+              <v-stepper
+                :model-value="taskIndex + 1"
+                class="task-stepper rounded-xl elevation-2"
+                style="max-width: 100%;"
+              >
+                <v-stepper-header>
+                  <template v-for="(task, index) in test.testStructure.userTasks" :key="index">
+                    <v-stepper-item
+                      :value="index + 1"
+                      :title="task.taskName"
+                      :complete="localTestAnswer.tasks[index]?.completed || false"
+                      :color="taskIndex < index ? 'primary' : 'success'"
+                      complete-icon="mdi-check"
+                    />
+                    <v-divider v-if="index < test.testStructure.userTasks.length - 1" />
+                  </template>
                 </v-stepper-header>
               </v-stepper>
             </v-col>
@@ -48,18 +81,32 @@
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
-            <!-- Proceed Button -->
-            <v-btn class="mt-6" v-if="isUserTestAdmin" @click="proceedToNextStep()">
-              Proceed to next step
-            </v-btn>
-            <VideoCall :roomId="roomId" :caller="isUserTestAdmin" @setRemoteStream="remoteStream = $event" />
+            <VideoCall 
+              :roomId="roomId" 
+              :caller="isUserTestAdmin"
+              :current-global-index="globalIndex"
+              :current-task-index="taskIndex"
+              :test="test"
+              :local-test-answer="localTestAnswer"
+              @setRemoteStream="remoteStream = $event"
+              @proceedToNextStep="proceedToNextStep"
+              @stepSelected="handleStepSelected"
+            />
           </div>
 
           <!-- Hide Form Elements while on Video Call Mode -->
           <div v-show="!displayVideoCallComponent">
-            <!--Step 0: Welcome -->
-            <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
-              @start="displayVideoCallComponent = true; globalIndex = 1" />
+            <!--Step 0: Welcome - Different for Moderator vs Participant -->
+            <ModeratorWelcomeStep 
+              v-if="globalIndex === 0 && isUserTestAdmin" 
+              :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" 
+            />
+            <WelcomeStep 
+              v-else-if="globalIndex === 0 && !isUserTestAdmin" 
+              :stepper-value="stepperValue"
+              @start="displayVideoCallComponent = true; globalIndex = 1" 
+            />
 
             <!--Step 1: Consent -->
             <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
@@ -67,7 +114,8 @@
               :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
               @update:fullNameModel="val => fullName = val"
               @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-              @continue="completeStep(taskIndex, 'consent')" />
+              @continue="completeStep(taskIndex, 'consent')"
+              @declineConsent="handleConsentDecline" />
 
             <!--Step 2: Pre-test -->
             <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
@@ -98,7 +146,7 @@
               @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 
-            <PostTestStep v-if="globalIndex === 5 && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            <PostTestStep v-if="globalIndex === 5"
               :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
               :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
@@ -149,7 +197,7 @@
 </template>
 
 <script setup>
-import { ref as dbRef, onValue, off, update, set } from "firebase/database";
+import { ref as dbRef, onValue, off, update, set, onDisconnect } from "firebase/database";
 import { database } from "@/app/plugins/firebase/index";
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -159,6 +207,7 @@ import { useStore } from 'vuex';
 import { onBeforeUnmount } from 'vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
+import ModeratorWelcomeStep from '@/ux/UserTest/components/steps/ModeratorWelcomeStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
@@ -169,6 +218,7 @@ import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
+import { MEDIA_FIELD_MAP } from "@/shared/constants/mediasType";
 
 const store = useStore();
 const router = useRouter();
@@ -198,6 +248,7 @@ const submitDialog = ref(false);
 const remoteStream = ref(null);
 
 // Computed properties
+const mediaUrls = computed(() => store.getters.mediaUrls);
 const test = computed(() => store.getters.test);
 const testId = computed(() => store.getters.test?.id || null);
 const user = computed(() => {
@@ -219,14 +270,14 @@ const roomId = computed(() => {
 });
 
 const stepperValue = computed(() => {
-  if (globalIndex.value === 0) return -1;
-  if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
-  if (globalIndex.value === 2 && taskIndex.value === 0) return 1;
-  if (globalIndex.value === 3 && taskIndex.value === 0) return 2; // 👈 PANTALLA INFORMATIVA
-  if (globalIndex.value === 4 && taskIndex.value >= 0) return 2;   // 👈 TAREAS
-  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) return 3;
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 4;
-  return 0;
+  if (globalIndex.value === 0) return 0; // Welcome step
+  if (globalIndex.value === 1 && taskIndex.value === 0) return 1; // Consent
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 2; // Pre-test
+  if (globalIndex.value === 3 && taskIndex.value === 0) return 3; // Pre-tasks (informational)
+  if (globalIndex.value === 4 && taskIndex.value >= 0) return 3;   // Tasks (still step 3)
+  if (globalIndex.value === 5) return 4; // Post-test
+  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 5; // Completion
+  return 1; // Default to first step
 });
 
 // Watchers
@@ -293,11 +344,47 @@ const proceedToNextStep = async () => {
   });
 };
 
+const handleStepSelected = async ({ globalIndex: newGlobalIndex, taskIndex: newTaskIndex }) => {
+  if (!isUserTestAdmin.value) return;
+  
+  globalIndex.value = newGlobalIndex;
+  taskIndex.value = newTaskIndex;
+  
+  // Moderator stays in video call, but participant sees the selected step
+  // Don't change displayVideoCallComponent for moderator
+  
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  await update(roomRef, {
+    globalIndex: newGlobalIndex,
+    taskIndex: newTaskIndex,
+    showVideoCall: false  // Set to false so participant sees the step content immediately
+  });
+};
+
+const handleConsentDecline = async () => {
+  // User declined consent, end the moderated test
+  store.commit('SET_TOAST', { 
+    type: 'info', 
+    message: 'Test ended due to consent decline. Thank you for your time.',
+    timeout: 5000
+  });
+  
+  // Clean up room data
+  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  await set(roomRef, null);
+  
+  // Navigate back to admin
+  setTimeout(() => {
+    router.push('/admin');
+  }, 2000);
+};
+
 const handleSubmit = async () => {
   submitDialog.value = false;
   try {
     localTestAnswer.submitted = true;
     await saveAnswer();
+    await router.push({ name: 'Admin' });
   } catch (error) {
     console.error('Error submitting answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
@@ -306,6 +393,8 @@ const handleSubmit = async () => {
 
 const saveAnswer = async () => {
   try {
+    attachMediaToTasks(localTestAnswer, mediaUrls.value);
+
     localTestAnswer.fullName = fullName.value;
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
@@ -330,6 +419,21 @@ const saveAnswer = async () => {
   }
 };
 
+const attachMediaToTasks = (answer, mediaUrls) => {
+  if (!answer?.tasks?.length) return
+
+  for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
+    const task = answer.tasks[taskIndex]
+    if (!task) continue
+
+    for (const type in medias) {
+      const field = MEDIA_FIELD_MAP?.[type] || type
+      const url = medias[type]
+      if (url != null) task[field] = url
+    }
+  }
+}
+
 const setTestAnswer = async () => {
   loggedIn.value = true;
   await store.dispatch('getCurrentTestAnswerDoc');
@@ -340,12 +444,19 @@ const signOut = async () => {
   router.push('/signin');
 };
 
-const startTest = () => {
+const startTest = async () => {
   // Check if the test has no tasks
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', { type: 'info', message: "This test doesn't have any tasks." });
     router.push(`/missions/${test.value.id}`);
     return;
+  }
+
+  if (!isUserTestAdmin.value) {
+    await store.dispatch('acceptStudyCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
   }
 
   // First, add the class for the exit animation
@@ -356,6 +467,8 @@ const startTest = () => {
 
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`);
+
+  onDisconnect(roomRef).set(null);
 
   onValue(roomRef, (snapshot) => {
     const data = snapshot.val();
@@ -565,7 +678,7 @@ const mappingSteps = async () => {
             taskTime: 0,
             completed: false,
             susAnswers: [],
-            nasaTlxAnswers: {}
+            nasaTlxAnswers: null,
           });
           console.log('Nueva tarea creada:', i, newTask);
           return newTask;
@@ -649,20 +762,24 @@ onMounted(async () => {
       router.push('/managerview/' + test.value.id);
       return;
     }
-    sessionCooperator.value = test.value.cooperators.find(
-      (user) => user.userDocId === route.params.token,
-    );
+
     if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
       toast.error(t('errors.globalError'));
       router.push('/admin');
       return;
     }
-    if (sessionCooperator.value.testDate) {
-      testDate.value = sessionCooperator.value.testDate;
-    } else {
-      toast.warning("Your session doesn't have a scheduled date");
-      router.push('/managerview/' + test.value.id);
-      return;
+
+    if(!isUserTestAdmin.value){
+      sessionCooperator.value = test.value.cooperators.find(
+        (user) => user.userDocId === route.params.token,
+      );
+      if (sessionCooperator.value?.testDate) {
+        testDate.value = sessionCooperator.value.testDate;
+      } else {
+        toast.warning("Your session doesn't have a scheduled date");
+        router.push('/managerview/' + test.value.id);
+        return;
+      }
     }
   } else {
     toast.info('Use a session link to access the test');
@@ -670,14 +787,14 @@ onMounted(async () => {
     return;
   }
 
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    });
-  }
-
   globalIndex.value = 0;
+  
+  // Initialize localTestAnswer with existing data from currentUserTestAnswer
+  if (currentUserTestAnswer.value && Object.keys(currentUserTestAnswer.value).length > 0) {
+    Object.assign(localTestAnswer, currentUserTestAnswer.value);
+    console.log('LocalTestAnswer initialized with existing data:', localTestAnswer);
+  }
+  
   await mappingSteps();
 });
 
