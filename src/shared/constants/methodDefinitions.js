@@ -72,6 +72,11 @@ export function instantiateStudyByType(type, rawData) {
       return new HeuristicStudy(normalizedData);
     case STUDY_TYPES.CARD_SORTING:
       return new CardSortingStudy(normalizedData);
+    case STUDY_TYPES.ACCESSIBILITY:
+    case ACCESSIBILITY_STUDY_SUBTYPES.MANUAL:
+      return new ManualAccessibilityTest(normalizedData);
+    case ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC:
+      return new AutomaticAccessibilityTest(normalizedData);
     default:
       return new Study(normalizedData);
   }

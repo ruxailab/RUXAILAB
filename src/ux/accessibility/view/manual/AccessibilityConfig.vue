@@ -253,6 +253,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 
 const route = useRoute()
 const store = useStore()
@@ -449,11 +450,28 @@ const saveComplianceAndContinue = async () => {
     await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
     await store.dispatch('Assessment/filterByComplianceLevel', selectedCompliance.value)
     
-    // Also save to the test document
-    await store.dispatch('updateStudy', { 
-      id: testId.value, 
-      configData: configData 
-    })
+    // Get the existing test data and merge with config
+    let existingTest = store.getters.test
+    if (!existingTest) {
+      // If test is not loaded, load it first
+      await store.dispatch('getStudy', { id: testId.value })
+      existingTest = store.getters.test
+    }
+    
+    if (existingTest) {
+      const rawData = {
+        ...existingTest,
+        configData: configData
+      }
+      
+      // Create proper study object using the factory function
+      const study = instantiateStudyByType(existingTest.testType, rawData)
+      
+      // Save to the test document
+      await store.dispatch('updateStudy', study)
+    } else {
+      console.warn('Could not load existing test data for testId:', testId.value)
+    }
 
     // Pre-select all guidelines and rules based on compliance level
     preselectGuidelinesForComplianceLevel()
@@ -517,11 +535,28 @@ const saveConfiguration = async () => {
     // Save to Assessment store for immediate use
     await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
     
-    // Also save to the test document in Firestore so it persists
-    await store.dispatch('updateStudy', { 
-      id: testId.value, 
-      configData: configData 
-    })
+    // Get the existing test data and merge with config
+    let existingTest = store.getters.test
+    if (!existingTest) {
+      // If test is not loaded, load it first
+      await store.dispatch('getStudy', { id: testId.value })
+      existingTest = store.getters.test
+    }
+    
+    if (existingTest) {
+      const rawData = {
+        ...existingTest,
+        configData: configData
+      }
+      
+      // Create proper study object using the factory function
+      const study = instantiateStudyByType(existingTest.testType, rawData)
+      
+      // Save to the test document in Firestore so it persists
+      await store.dispatch('updateStudy', study)
+    } else {
+      console.warn('Could not load existing test data for testId:', testId.value)
+    }
 
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
     toast.success(`WCAG ${selectedCompliance.value} configuration saved!`)
