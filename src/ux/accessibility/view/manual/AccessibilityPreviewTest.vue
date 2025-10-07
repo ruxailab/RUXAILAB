@@ -367,38 +367,88 @@
                     density="compact"
                   />
                   <div class="d-flex align-center mb-2">
-                    <v-file-input
-                      v-model="note.image"
-                      accept="image/*"
-                      label="Attach image"
-                      prepend-icon="mdi-image"
-                      show-size
-                      hide-details
-                      class="mr-3"
-                      style="max-width: 250px"
-                      density="compact"
-                      @change="onImageChange(idx)"
-                    />
+                    <div class="file-input-wrapper" style="max-width: 250px">
+                      <v-file-input
+                        v-if="!note.imageUrl"
+                        v-model="note.image"
+                        accept="image/*"
+                        label="Attach image"
+                        prepend-icon="mdi-image"
+                        show-size
+                        hide-details
+                        density="compact"
+                        @change="onImageChange(idx)"
+                      />
+                      <v-text-field
+                        v-else
+                        :model-value="note.imageName || 'Uploaded image'"
+                        label="Attached image"
+                        prepend-icon="mdi-image"
+                        readonly
+                        hide-details
+                        density="compact"
+                        variant="outlined"
+                        class="uploaded-image-field"
+                      >
+                        <template #append-inner>
+                          <v-tooltip location="top">
+                            <template #activator="{ props }">
+                              <v-btn
+                                icon="mdi-refresh"
+                                size="x-small"
+                                variant="plain"
+                                color="primary"
+                                v-bind="props"
+                                @click="replaceImage(idx)"
+                              />
+                            </template>
+                            <span>Replace image</span>
+                          </v-tooltip>
+                        </template>
+                      </v-text-field>
+                    </div>
                     <div
                       v-if="note.imagePreview"
-                      class="note-image-preview d-flex align-center"
+                      class="note-image-preview d-flex align-center ml-3"
                     >
-                      <img
+                      <v-img
                         :src="note.imagePreview"
                         alt="Notes attachment"
-                        style="
-                          max-width: 80px;
-                          max-height: 60px;
-                          border-radius: 4px;
-                        "
-                      >
-                      <v-btn
-                        icon="mdi-close"
-                        size="x-small"
-                        variant="plain"
-                        class="ml-1"
-                        @click="removeImage(idx)"
+                        max-width="80"
+                        max-height="60"
+                        style="border-radius: 4px; cursor: pointer;"
+                        @click="viewFullImage(note.imagePreview)"
                       />
+                      <v-tooltip location="top">
+                        <template #activator="{ props }">
+                          <v-btn
+                            icon="mdi-close"
+                            size="x-small"
+                            variant="plain"
+                            color="error"
+                            class="ml-1"
+                            v-bind="props"
+                            @click="removeImage(idx)"
+                          />
+                        </template>
+                        <span>Remove image</span>
+                      </v-tooltip>
+                      <v-tooltip
+                        v-if="note.imageUrl"
+                        location="top"
+                      >
+                        <template #activator="{ props }">
+                          <v-btn
+                            icon="mdi-cloud-check"
+                            size="x-small"
+                            variant="plain"
+                            color="success"
+                            class="ml-1"
+                            v-bind="props"
+                          />
+                        </template>
+                        <span>Image uploaded</span>
+                      </v-tooltip>
                     </div>
                   </div>
                 </v-window-item>
@@ -680,6 +730,8 @@
                       <v-chip
                         size="small"
                         color="grey-lighten-2"
+                        @click="note.imageUrl ? viewFullImage(note.imageUrl) : null"
+                        :class="{ 'cursor-pointer': note.imageUrl }"
                       >
                         <v-icon
                           start
@@ -713,6 +765,57 @@
               mdi-download
             </v-icon>
             Export JSON
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Image Viewer Dialog -->
+    <v-dialog
+      v-model="showImageViewer"
+      max-width="90vw"
+      max-height="90vh"
+    >
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center pa-2">
+          <span class="text-h6">Image Viewer</span>
+          <v-btn
+            icon
+            size="small"
+            @click="showImageViewer = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pa-2">
+          <div class="d-flex justify-center">
+            <v-img
+              :src="currentImageUrl"
+              alt="Full size image"
+              max-width="100%"
+              max-height="80vh"
+              contain
+            />
+          </div>
+        </v-card-text>
+        <v-card-actions class="pa-2">
+          <v-spacer />
+          <v-btn
+            color="primary"
+            variant="text"
+            :href="currentImageUrl"
+            target="_blank"
+          >
+            <v-icon start>
+              mdi-download
+            </v-icon>
+            Download
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="showImageViewer = false"
+          >
+            Close
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -813,12 +916,10 @@ const currentUserRole = computed(() => {
 // Only show principles if config data exists - STRICT: no fallback data allowed
 const principles = computed(() => {
   if (!hasConfigData.value) {
-    console.log('No config data - returning empty principles array')
     return []
   }
   
   const filteredPrinciples = store.state.Assessment?.filteredWcagData?.principles || []
-  console.log('Config data exists - returning filtered principles:', filteredPrinciples.length)
   return filteredPrinciples
 })
 const selectedPrincipleIdx = computed({
@@ -878,7 +979,6 @@ const viewingUserType = computed(() => {
 
 // Add a computed property to fetch configuration data from Vuex
 const configuration = computed(() => store.getters['Assessment/getConfiguration'])
-console.log('Configuration value:', JSON.stringify(configuration.value, null, 2))
 // Example usage: Replace or augment logic to use configuration data
 // For instance, if you need to use complianceLevel from the configuration:
 const complianceLevel = computed(() => configuration.value.complianceLevel || 'AA')
@@ -894,15 +994,6 @@ const hasConfigData = computed(() => {
   const hasStoreConfigData = storeConfig && 
     Object.keys(storeConfig).length > 0 && 
     (storeConfig.selectedGuidelines || storeConfig.testId || storeConfig.updatedAt)
-  
-  console.log('hasConfigData check:', { 
-    hasTestConfigData, 
-    hasStoreConfigData, 
-    testConfigData: testData?.configData, 
-    storeConfig,
-    storeConfigKeys: Object.keys(storeConfig || {}),
-    hasSelectedGuidelines: !!storeConfig?.selectedGuidelines
-  })
   
   return hasTestConfigData || hasStoreConfigData
 })
@@ -939,21 +1030,37 @@ const canSaveAssessments = computed(() => {
   return false
 })
 
-// Helper to restore notes from store (including tabs)
+
+
+// Helper to restore notes from store (including tabs and images)
 function restoreNotesFromAssessment(assessment) {
   if (
     assessment &&
     Array.isArray(assessment.notes) &&
     assessment.notes.length > 0
   ) {
-    notes.value = assessment.notes.map((n) => ({
-      text: n.text || '',
-      image: null,
-      imagePreview: '', // imagePreview will be set on upload only
-      imageName: n.imageName || null,
-    }))
+    notes.value = assessment.notes.map((n, index) => {
+      const restoredNote = {
+        text: n.text || '',
+        image: null, // Never restore File objects
+        imagePreview: n.imageUrl || '', // Use saved image URL for preview
+        imageName: n.imageName || null,
+        imageUrl: n.imageUrl || null, // Store the uploaded image URL
+        filePath: n.filePath || null, // Store the file path for deletion
+        uploadedAt: n.uploadedAt || null
+      }
+      
+      return restoredNote
+    })
   } else {
-    notes.value = [{ text: '', image: null, imagePreview: '', imageName: null }]
+    notes.value = [{ 
+      text: '', 
+      image: null, 
+      imagePreview: '', 
+      imageName: null, 
+      imageUrl: null, 
+      filePath: null 
+    }]
   }
   activeNoteTab.value = 0
 }
@@ -988,7 +1095,6 @@ const getTargetUserId = () => {
 const loadTestData = async (testId) => {
   await store.dispatch('getStudy', { id: testId })
   await new Promise(resolve => setTimeout(resolve, 100))
-  console.log('AccessibilityPreviewTest: Test data loaded, proceeding with initialization')
   const testData = store.getters.test
   if (!testData) {
     throw new Error('Failed to load test data')
@@ -1009,17 +1115,15 @@ const handleAuthentication = async () => {
       authUser = store.state.Auth.user
     }
   } catch (authError) {
-    console.warn('Authentication not available, proceeding without user context:', authError)
+    // Authentication not available, proceeding without user context
   }
   return authUser
 }
 
 const determineUserIdToLoad = (targetUserId, authUser) => {
   if (targetUserId) {
-    console.log('Loading assessment data for target user:', targetUserId)
     return targetUserId
   } else if (authUser && authUser.id) {
-    console.log('Loading assessment data for current user:', authUser.id)
     return authUser.id
   }
   return null
@@ -1027,7 +1131,6 @@ const determineUserIdToLoad = (targetUserId, authUser) => {
 
 const loadAssessmentData = async (userIdToLoad, testId) => {
   if (!userIdToLoad) {
-    console.log('No user ID available, proceeding with read-only access')
     return
   }
   try {
@@ -1035,7 +1138,6 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
       userId: userIdToLoad,
       testId,
     })
-    console.log('Loaded assessment data:', loadedAssessment)
     if (loadedAssessment && loadedAssessment.assessmentData) {
       const currentRuleId = currentRule.value?.id
       if (currentRuleId) {
@@ -1048,7 +1150,7 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
       }
     }
   } catch (assessmentError) {
-    console.warn('Could not load user assessment data:', assessmentError)
+    // Could not load user assessment data
   }
 }
 
@@ -1058,21 +1160,14 @@ const setupConfiguration = async (testData, testId) => {
   // First try to get configData from testData
   if (testData.configData && Object.keys(testData.configData).length > 0) {
     configData = testData.configData
-    console.log('AccessibilityPreviewTest: Using configData from test data:', JSON.stringify(configData, null, 2))
   } else {
     // Try to fetch configData from Firestore using the Assessment store action
     try {
-      console.log('AccessibilityPreviewTest: Attempting to fetch configData from Firestore for testId:', testId)
       configData = await store.dispatch('Assessment/fetchConfigData', testId)
-      if (configData && Object.keys(configData).length > 0) {
-        console.log('AccessibilityPreviewTest: Successfully fetched configData from Firestore:', JSON.stringify(configData, null, 2))
-      } else {
-        console.log('AccessibilityPreviewTest: No configuration data found in Firestore - STOPPING HERE')
+      if (!configData || Object.keys(configData).length === 0) {
         return
       }
     } catch (error) {
-      console.error('AccessibilityPreviewTest: Failed to fetch configData from Firestore:', error)
-      console.log('AccessibilityPreviewTest: No configuration data available - STOPPING HERE')
       return
     }
   }
@@ -1080,14 +1175,7 @@ const setupConfiguration = async (testData, testId) => {
   // Apply the configuration ONLY if we have valid config data
   if (configData && Object.keys(configData).length > 0) {
     await store.dispatch('Assessment/updateConfiguration', { configData, testId })
-    console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
-    console.log('Current configuration string:', JSON.stringify(configData, null, 2))
-    console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
-    console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
-    console.log('Current user role:', currentUserRole.value)
-    console.log('Can save assessments:', canSaveAssessments.value)
   } else {
-    console.log('AccessibilityPreviewTest: NO valid configuration data - NOT applying any configuration')
     // Ensure no filtered data exists
     store.commit('Assessment/SET_FILTERED_WCAG_DATA', { principles: [] })
   }
@@ -1104,22 +1192,13 @@ onMounted(async () => {
     await store.dispatch('Assessment/resetAssessmentState')
     
     const targetUserId = getTargetUserId()
-    console.log('Target user ID from route:', targetUserId)
     const testData = await loadTestData(testId)
-    
-    // Check if configData exists in test data, but continue to try fetching from Firestore
-    if (!testData.configData || Object.keys(testData.configData).length === 0) {
-      console.log('AccessibilityPreviewTest: No configData in test data, will attempt to fetch from Firestore')
-    }
     
     await initializeAssessment()
     const authUser = await handleAuthentication()
     const userIdToLoad = determineUserIdToLoad(targetUserId, authUser)
     await loadAssessmentData(userIdToLoad, testId)
     await setupConfiguration(testData, testId)
-    
-    // Final configuration check
-    console.log('Final configuration after setup:', JSON.stringify(configuration.value, null, 2))
   } catch (err) {
     console.error('Failed to initialize assessment:', err)
     error.value = 'Failed to load assessment data. Please try refreshing the page.'
@@ -1133,45 +1212,27 @@ watch(
   () => currentRule.value?.id,
   (newRuleId, oldRuleId) => {
     if (newRuleId && newRuleId !== oldRuleId) {
-      const assessment =
-        store.getters['Assessment/getRuleAssessment'](newRuleId)
+      const assessment = store.getters['Assessment/getRuleAssessment'](newRuleId)
+      
+      // Restore form values
       severity.value = assessment.severity || ''
       status.value = assessment.status || ''
       selectedCriteria.value = []
+      
+      // Restore notes and images
       restoreNotesFromAssessment(assessment)
     }
   },
   { immediate: true },
 )
 
-// Watch for changes in filtered WCAG data to debug
-watch(
-  () => store.state.Assessment?.filteredWcagData?.principles,
-  (newPrinciples) => {
-    console.log('Filtered WCAG data updated:', {
-      principlesCount: newPrinciples?.length || 0,
-      principles: newPrinciples?.map(p => ({ id: p.id, title: p.title, guidelinesCount: p.Guidelines?.length || 0 })) || []
-    })
-  },
-  { immediate: true, deep: true }
-)
 
-// Watch for configuration changes to debug
-watch(
-  () => configuration.value,
-  (newConfig) => {
-    console.log('Configuration changed:', JSON.stringify(newConfig, null, 2))
-  },
-  { immediate: true, deep: true }
-)
 
 // Watch for testId changes to reset state
 watch(
   () => route.params.testId || route.params.id,
   async (newTestId, oldTestId) => {
     if (newTestId && newTestId !== oldTestId) {
-      console.log('Test ID changed from', oldTestId, 'to', newTestId, '- resetting assessment state')
-      
       // Reset state for new test
       await store.dispatch('Assessment/resetAssessmentState')
       
@@ -1366,7 +1427,14 @@ const prevRule = () => {
 
 // Add a new note tab
 const addNote = () => {
-  notes.value.push({ text: '', image: null, imagePreview: '', imageName: null })
+  notes.value.push({ 
+    text: '', 
+    image: null, 
+    imagePreview: '', 
+    imageName: null,
+    imageUrl: null,
+    filePath: null
+  })
   activeNoteTab.value = notes.value.length - 1
 }
 
@@ -1384,6 +1452,22 @@ const removeNote = (idx) => {
 const onImageChange = (idx) => {
   const file = notes.value[idx].image
   if (file && file instanceof File) {
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.')
+      notes.value[idx].image = null
+      return
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    if (file.size > maxSize) {
+      toast.error('File size too large. Maximum size is 10MB.')
+      notes.value[idx].image = null
+      return
+    }
+
     notes.value[idx].imageName = file.name
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -1401,6 +1485,22 @@ const removeImage = (idx) => {
   notes.value[idx].image = null
   notes.value[idx].imagePreview = ''
   notes.value[idx].imageName = null
+  // Also clear imageUrl if it exists (for saved images)
+  if (notes.value[idx].imageUrl) {
+    notes.value[idx].imageUrl = null
+    notes.value[idx].filePath = null
+  }
+}
+
+// Replace existing uploaded image
+const replaceImage = (idx) => {
+  // Clear existing image data to show file input
+  notes.value[idx].imageUrl = null
+  notes.value[idx].filePath = null
+  notes.value[idx].imagePreview = ''
+  notes.value[idx].imageName = null
+  notes.value[idx].image = null
+  // Focus will automatically shift to the file input since imageUrl is now null
 }
 
 // Download assessment data as JSON file
@@ -1429,6 +1529,12 @@ const downloadAssessmentData = () => {
 const showAssessmentDialog = ref(false)
 const assessmentData = ref({})
 
+// Image viewer state
+const showImageViewer = ref(false)
+const currentImageUrl = ref('')
+
+
+
 // View all assessment data
 const viewAssessmentDocument = () => {
   try {
@@ -1444,9 +1550,20 @@ const viewAssessmentDocument = () => {
   }
 }
 
-// Save assessment
+// View full size image
+const viewFullImage = (imageUrl) => {
+  if (imageUrl) {
+    currentImageUrl.value = imageUrl
+    showImageViewer.value = true
+  }
+}
+
+// Save assessment with image handling
 const saveAssessment = async () => {
+  let isLoading = false
   try {
+    isLoading = true
+    
     // Check if user is authenticated
     const currentUser = user.value || store.state.Auth.user
     if (!currentUser || !currentUser.id) {
@@ -1472,13 +1589,20 @@ const saveAssessment = async () => {
       throw new Error('Test ID is missing')
     }
 
-    // Prepare the assessment data
+    // Prepare the assessment data with image handling
     const notesToSave = notes.value
-      .filter((note) => note.text.trim() !== '') // Only save non-empty notes
-      .map(({ text, imageName }) => ({
-        text,
-        imageName: imageName || null,
-      }))
+      .map((note) => {
+        // Include all note data, including images for upload
+        const noteData = {
+          text: note.text || '',
+          image: note.image || null, // File object for new uploads
+          imageName: note.imageName || null,
+          imageUrl: note.imageUrl || null, // Existing image URL
+          filePath: note.filePath || null // Existing file path
+        }
+        
+        return noteData
+      })
 
     const assessmentData = {
       ruleId,
@@ -1493,29 +1617,44 @@ const saveAssessment = async () => {
       updatedAt: new Date().toISOString(),
     }
 
-    // Save to Firestore via Vuex
-    await store.dispatch('Assessment/updateRuleAssessment', {
+    // Save to Firestore via Vuex (this will handle image uploads)
+    const result = await store.dispatch('Assessment/updateRuleAssessment', {
       userId: currentUser.id,
       testId,
       ruleId,
-      assessment: {
-        ...assessmentData,
-        // Include any additional metadata you need
-      },
+      assessment: assessmentData
     })
 
-    // Also update the local store
+    // Update local notes with uploaded image URLs
+    if (result.updatedNotes && result.updatedNotes.length > 0) {
+      notes.value = result.updatedNotes.map(note => ({
+        text: note.text || '',
+        image: null, // Clear the File object after upload
+        imageName: note.imageName || null,
+        imagePreview: note.imageUrl || '', // Use uploaded URL for preview
+        imageUrl: note.imageUrl || null,
+        filePath: note.filePath || null
+      }))
+    }
+
+    // Also update the local store for completion tracking
     await store.dispatch('Assessment/saveAssessment', {
       userId: currentUser.id,
       testId,
-      testType: 'manual', // or get this from props/route
+      testType: 'manual'
     })
 
-    toast.success('Assessment saved successfully')
+    const successMessage = result.uploadedImages && result.uploadedImages.length > 0 
+      ? `Assessment saved successfully with ${result.uploadedImages.length} image(s)` 
+      : 'Assessment saved successfully'
+    
+    toast.success(successMessage)
   } catch (err) {
     console.error('Failed to save assessment:', err)
     error.value = err.message || 'Failed to save assessment. Please try again.'
     toast.error(error.value)
+  } finally {
+    isLoading = false
   }
 }
 
@@ -1669,6 +1808,71 @@ const resetAssessment = () => {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
+/* Image handling styles */
+.note-image-preview {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.v-img {
+  border: 1px solid #e0e0e0;
+}
+
+.v-img:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Upload progress and status indicators */
+.upload-progress {
+  margin-top: 8px;
+}
+
+.upload-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.upload-status.success {
+  color: #4caf50;
+}
+
+.upload-status.error {
+  color: #f44336;
+}
+
+/* File input styling */
+.v-file-input {
+  margin-top: 8px;
+}
+
+.file-input-wrapper {
+  min-width: 250px;
+}
+
+.uploaded-image-field {
+  background-color: #f8f9fa;
+}
+
+.uploaded-image-field .v-field__input {
+  font-weight: 500;
+  color: #1976d2 !important;
+}
+
+.uploaded-image-field .v-field__prepend-inner {
+  color: #4caf50 !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1366px) {
   .text-h5 {
@@ -1681,6 +1885,12 @@ const resetAssessment = () => {
 
   .v-card-text {
     padding: 12px !important;
+  }
+
+  .note-image-preview img,
+  .note-image-preview .v-img {
+    max-width: 60px !important;
+    max-height: 45px !important;
   }
 }
 </style>

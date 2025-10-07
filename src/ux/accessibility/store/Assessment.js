@@ -55,7 +55,7 @@ const getters = {
       // fallback for legacy notes
       const legacyNote = state.notes[ruleId];
       const notes = typeof legacyNote === 'string'
-        ? [{ text: legacyNote, imageName: null }]
+        ? [{ text: legacyNote, imageName: null, imageUrl: null, filePath: null }]
         : [];
 
       return {
@@ -65,22 +65,44 @@ const getters = {
       };
     }
 
-    // Normalize notes
+    // Normalize notes with full image metadata
     let normalizedNotes = [];
 
     if (Array.isArray(ra.notes)) {
       normalizedNotes = ra.notes.map(n => {
         if (typeof n === 'string') {
-          return { text: n, imageName: null };
+          return {
+            text: n,
+            imageName: null,
+            imageUrl: null,
+            filePath: null,
+            uploadedAt: null
+          };
         }
         return {
           text: n.text || '',
-          imageName: n.imageName || null
+          imageName: n.imageName || null,
+          imageUrl: n.imageUrl || null,
+          filePath: n.filePath || null,
+          uploadedAt: n.uploadedAt || null
         };
       });
     } else if (typeof ra.notes === 'string') {
-      normalizedNotes = [{ text: ra.notes, imageName: null }];
+      normalizedNotes = [{
+        text: ra.notes,
+        imageName: null,
+        imageUrl: null,
+        filePath: null,
+        uploadedAt: null
+      }];
     }
+
+    console.log('🔍 getRuleAssessment for rule:', ruleId, {
+      hasAssessment: !!ra,
+      notesCount: normalizedNotes.length,
+      notesWithImages: normalizedNotes.filter(n => n.imageUrl).length,
+      notes: normalizedNotes
+    });
 
     return {
       ...ra,
@@ -245,11 +267,17 @@ const mutations = {
 
   // Update rule assessment
   UPDATE_RULE_ASSESSMENT(state, { ruleId, assessment }) {
-    // Always store notes as array of { text, imageName }
+    // Always store notes as array with full image metadata
     let notes = assessment.notes
     if (notes && !Array.isArray(notes)) {
       if (typeof notes === 'string') {
-        notes = [{ text: notes, imageName: null }]
+        notes = [{
+          text: notes,
+          imageName: null,
+          imageUrl: null,
+          filePath: null,
+          uploadedAt: null
+        }]
       } else {
         notes = []
       }
@@ -257,10 +285,29 @@ const mutations = {
     if (Array.isArray(notes)) {
       notes = notes.map(n =>
         typeof n === 'string'
-          ? { text: n, imageName: null }
-          : { text: n.text || '', imageName: n.imageName || null }
+          ? {
+            text: n,
+            imageName: null,
+            imageUrl: null,
+            filePath: null,
+            uploadedAt: null
+          }
+          : {
+            text: n.text || '',
+            imageName: n.imageName || null,
+            imageUrl: n.imageUrl || null,
+            filePath: n.filePath || null,
+            uploadedAt: n.uploadedAt || null
+          }
       )
     }
+
+    console.log('💾 UPDATE_RULE_ASSESSMENT for rule:', ruleId, {
+      notesCount: notes?.length || 0,
+      notesWithImages: notes?.filter(n => n.imageUrl).length || 0,
+      assessment: { ...assessment, notes }
+    });
+
     state.ruleAssessments = {
       ...state.ruleAssessments,
       [ruleId]: {
@@ -273,11 +320,17 @@ const mutations = {
 
   // Update notes for a rule
   UPDATE_RULE_NOTES(state, { ruleId, notes }) {
-    // Always store notes as array of { text, imageName }
+    // Always store notes as array with full image metadata
     let formattedNotes = notes
     if (notes && !Array.isArray(notes)) {
       if (typeof notes === 'string') {
-        formattedNotes = [{ text: notes, imageName: null }]
+        formattedNotes = [{
+          text: notes,
+          imageName: null,
+          imageUrl: null,
+          filePath: null,
+          uploadedAt: null
+        }]
       } else {
         formattedNotes = []
       }
@@ -285,8 +338,20 @@ const mutations = {
     if (Array.isArray(formattedNotes)) {
       formattedNotes = formattedNotes.map(n =>
         typeof n === 'string'
-          ? { text: n, imageName: null }
-          : { text: n.text || '', imageName: n.imageName || null }
+          ? {
+            text: n,
+            imageName: null,
+            imageUrl: null,
+            filePath: null,
+            uploadedAt: null
+          }
+          : {
+            text: n.text || '',
+            imageName: n.imageName || null,
+            imageUrl: n.imageUrl || null,
+            filePath: n.filePath || null,
+            uploadedAt: n.uploadedAt || null
+          }
       )
     }
     state.notes = {
@@ -332,7 +397,7 @@ const mutations = {
 
 // Import the assessment controller
 import * as assessmentController from '../controllers/assessmentController';
-import { saveConfigData } from '../controllers/assessmentController';
+import { saveConfigData, uploadNoteImages } from '../controllers/assessmentController';
 
 const actions = {
   // Update configuration (local and Firestore)
@@ -628,55 +693,125 @@ const actions = {
     try {
       if (!userId) throw new Error('User ID is required');
 
+      console.log('📥 Loading assessment from Firestore:', { userId, testId });
+
       const assessment = await assessmentController.getAssessment(userId, testId);
-      if (!assessment) return null;
+      if (!assessment) {
+        console.log('📭 No assessment found for:', { userId, testId });
+        return null;
+      }
+
+      console.log('📦 Loaded assessment data:', {
+        itemCount: assessment.assessmentData?.length || 0,
+        assessment: assessment.assessmentData
+      });
 
       // Update the store with loaded assessment data
       const ruleAssessments = {};
       const completedRules = [];
 
       assessment.assessmentData.forEach(item => {
-        const { ruleId, status, severity, notes } = item;
-        ruleAssessments[ruleId] = { status, severity, notes };
+        const { ruleId, status, severity, notes, ...otherProps } = item;
+
+        // Ensure notes preserve full image metadata
+        const processedNotes = Array.isArray(notes)
+          ? notes.map(note => ({
+            text: note.text || '',
+            imageName: note.imageName || null,
+            imageUrl: note.imageUrl || null,
+            filePath: note.filePath || null,
+            uploadedAt: note.uploadedAt || null
+          }))
+          : [];
+
+        ruleAssessments[ruleId] = {
+          status,
+          severity,
+          notes: processedNotes,
+          ...otherProps // Include any additional metadata
+        };
+
         if (status) completedRules.push(ruleId);
+
+        console.log(`📝 Loaded rule ${ruleId}:`, {
+          status,
+          severity,
+          notesCount: processedNotes.length,
+          notesWithImages: processedNotes.filter(n => n.imageUrl).length
+        });
       });
 
       commit('SET_RULE_ASSESSMENTS', ruleAssessments);
       commit('SET_COMPLETED_RULES', completedRules);
 
+      console.log('✅ Assessment loading completed:', {
+        rulesLoaded: Object.keys(ruleAssessments).length,
+        completedRules: completedRules.length,
+        totalImagesLoaded: Object.values(ruleAssessments).reduce((total, rule) =>
+          total + (rule.notes?.filter(n => n.imageUrl).length || 0), 0)
+      });
+
       return assessment;
     } catch (error) {
-      console.error('Failed to load assessment:', error);
+      console.error('❌ Failed to load assessment:', error);
       throw error;
     }
   },
 
-  // Update a single rule assessment
-  async updateRuleAssessment({ commit, state }, { userId, testId, ruleId, assessment }) {
-    console.log("this goes here")
+  // Update a single rule assessment with image handling
+  async updateRuleAssessment({ commit, state }, { userId, testId, ruleId, assessment, imageFiles = [] }) {
+    console.log("Updating rule assessment with images:", ruleId);
     try {
       if (!userId) throw new Error('User ID is required');
+
+      // Process image files from notes
+      const processedImageFiles = [];
+      if (assessment.notes && Array.isArray(assessment.notes)) {
+        assessment.notes.forEach(note => {
+          if (note.image && note.image instanceof File) {
+            processedImageFiles.push(note.image);
+          }
+        });
+      }
 
       // First update local state
       commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment });
 
-      // Then update in Firestore
-      await assessmentController.updateRuleAssessment(
+      // Prepare assessment data with metadata
+      const assessmentData = {
+        ruleId,
+        ...assessment,
+        // Add any additional metadata
+        ...(state.wcagData && {
+          ruleTitle: findRuleTitle(ruleId, state.wcagData),
+          principle: findPrincipleForRule(ruleId, state.wcagData),
+          guideline: findGuidelineForRule(ruleId, state.wcagData)
+        })
+      };
+
+      // Update in Firestore with image handling
+      const result = await assessmentController.updateRuleAssessment(
         userId,
         testId,
-        {
-          ruleId,
-          ...assessment,
-          // Add any additional metadata
-          ...(state.wcagData && {
-            ruleTitle: findRuleTitle(ruleId, state.wcagData),
-            principle: findPrincipleForRule(ruleId, state.wcagData),
-            guideline: findGuidelineForRule(ruleId, state.wcogData)
-          })
-        }
+        assessmentData,
+        processedImageFiles
       );
 
-      return { success: true };
+      // Update local state with uploaded image URLs
+      if (result.updatedNotes && result.updatedNotes.length > 0) {
+        const updatedAssessment = {
+          ...assessment,
+          notes: result.updatedNotes
+        };
+        commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment: updatedAssessment });
+      }
+
+      console.log('Rule assessment updated successfully with images:', result);
+      return {
+        success: true,
+        uploadedImages: result.uploadedImages || [],
+        updatedNotes: result.updatedNotes || []
+      };
     } catch (error) {
       console.error('Failed to update rule assessment:', error);
       throw error;
@@ -721,6 +856,32 @@ const actions = {
   resetAssessmentState({ commit }) {
     console.log('Resetting assessment state for new test');
     commit('RESET_ASSESSMENT_STATE');
+  },
+
+  // Upload images for assessment notes
+  async uploadAssessmentImages({ commit }, { userId, testId, ruleId, imageFiles }) {
+    try {
+      if (!userId || !testId || !ruleId) {
+        throw new Error('Missing required parameters for image upload');
+      }
+
+      if (!Array.isArray(imageFiles) || imageFiles.length === 0) {
+        return { success: true, uploadedImages: [] };
+      }
+
+      console.log('Uploading images for rule:', ruleId, 'Count:', imageFiles.length);
+
+      const uploadedImages = await uploadNoteImages(imageFiles, userId, testId, ruleId);
+
+      console.log('Images uploaded successfully:', uploadedImages);
+      return {
+        success: true,
+        uploadedImages
+      };
+    } catch (error) {
+      console.error('Failed to upload assessment images:', error);
+      throw error;
+    }
   },
 }
 
