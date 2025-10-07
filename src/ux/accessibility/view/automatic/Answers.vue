@@ -494,184 +494,166 @@ const isBootstrapping = ref(true)
 const pageLoading = computed(() => isLoading.value || isBootstrapping.value)
 
 // Computed properties
-// Normalized counts and totals (prefer live report data; fallback to store summary)
-const issuesCounts = computed(() => {
-  const issues = (report.value && Array.isArray(report.value.ReportIssues)) ? report.value.ReportIssues : []
-  if (issues.length) {
-    return {
-      selectedIssue: null,
-      testId,
-      tabs: ['Summary & Issues', 'Issues & Preview', 'Issues & Details'],
-      currentTab: 0,
-      page: 1,
-      itemsPerPage: 10,
-      infiniteScrollCount: 20, // Number of issues to show initially in infinite scroll
-    }
-  },
-  computed: {
-    ...mapState('automaticReport', ['report']),
-    loading() {
-      return this.$store.getters.loading;
-    },
-    error() {
-      return this.$store.getters.getError;
-    },
-    paginatedIssues() {
-      if (!this.report || !this.report.ReportIssues) return []
-      const start = (this.page - 1) * this.itemsPerPage
-      return this.report.ReportIssues.slice(start, start + this.itemsPerPage)
-    },
-    totalPages() {
-      if (!this.report || !this.report.ReportIssues) return 1
-      return Math.ceil(this.report.ReportIssues.length / this.itemsPerPage) || 1
-    },
-    infiniteIssues() {
-      if (!this.report || !this.report.ReportIssues) return []
-      return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
-    },
-  },
-    mounted() {
-    if (!this.testId) {
-      this.$store.commit('setError', {
-        errorCode: 'NO_TEST_ID',
-        message: 'No testId provided in route.'
-      })
-      return
-    }
-    this.fetchReport(this.testId).then(() => {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.renderModifiedHtml()
-        }, 100)
+const loading = computed(() => store.getters.isLoading)
+
+const error = computed(() => store.getters.getError)
+
+const getIssueCounts = () => {
+  if (
+    !report.value ||
+    !report.value.ReportIssues ||
+    !Array.isArray(report.value.ReportIssues)
+  ) {
+    return { errors: 0, warnings: 0, notices: 0 }
+  }
+  return {
+    errors: report.value.ReportIssues.filter(
+      (issue) => issue && issue.type === 'error',
+    ).length,
+    warnings: report.value.ReportIssues.filter(
+      (issue) => issue && issue.type === 'warning',
+    ).length,
+    notices: report.value.ReportIssues.filter(
+      (issue) => issue && issue.type === 'notice',
+    ).length,
+  }
+}
+
+// Helper functions
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleString()
+}
+
+const getIssueColor = (type) => {
+  switch (type) {
+    case 'error':
+      return 'error'
+    case 'warning':
+      return 'warning'
+    case 'notice':
+      return 'info'
+    default:
+      return 'grey'
+  }
+}
+
+const getTabIcon = (index) => {
+  const icons = ['mdi-chart-pie', 'mdi-web', 'mdi-information']
+  return icons[index] || 'mdi-tab'
+}
+
+const selectIssue = (index) => {
+  selectedIssue.value = index
+  scrollToIssue(index)
+}
+
+const previewFrame = ref(null)
+
+const renderModifiedHtml = () => {
+  if (
+    !previewFrame.value ||
+    !previewFrame.value.parentNode ||
+    !report.value?.modifiedHtml
+  ) {
+    console.warn('Required data or elements not available')
+    return
+  }
+  try {
+    const frame = previewFrame.value
+    frame.addEventListener('load', () => {
+      if (!frame.contentWindow || !frame.contentDocument) {
+        console.warn('iframe not ready')
+        return
+      }
+      frame.contentWindow.addEventListener('click', (event) => {
+        const issueMarker = event.target.closest('.a11y-issue-marker')
+        if (issueMarker) {
+          const issueId = issueMarker.getAttribute('data-issue-id')
+          const index = parseInt(issueId.replace('issue-', ''))
+          selectIssue(index)
+        }
       })
     })
-  },
-  methods: {
-    ...mapActions('automaticReport', ['fetchReport']),
-    formatDate(dateString) {
-      const date = new Date(dateString)
-      return date.toLocaleString()
-    },
-    getIssueCounts() {
-      if (
-        !this.report ||
-        !this.report.ReportIssues ||
-        !Array.isArray(this.report.ReportIssues)
-      ) {
-        return { errors: 0, warnings: 0, notices: 0 }
-      }
-      return {
-        errors: this.report.ReportIssues.filter(
-          (issue) => issue && issue.type === 'error',
-        ).length,
-        warnings: this.report.ReportIssues.filter(
-          (issue) => issue && issue.type === 'warning',
-        ).length,
-        notices: this.report.ReportIssues.filter(
-          (issue) => issue && issue.type === 'notice',
-        ).length,
-      }
-    },
-    getIssueColor(type) {
-      switch (type) {
-        case 'error':
-          return 'error'
-        case 'warning':
-          return 'warning'
-        case 'notice':
-          return 'info'
-        default:
-          return 'grey'
-      }
-    },
-    getTabIcon(index) {
-      const icons = ['mdi-chart-pie', 'mdi-web', 'mdi-information']
-      return icons[index] || 'mdi-tab'
-    },
-    selectIssue(index) {
-      this.selectedIssue = index
-      this.scrollToIssue(index)
-    },
-    renderModifiedHtml() {
-      if (
-        !this.$refs.previewFrame ||
-        !this.$refs.previewFrame.parentNode ||
-        !this.report?.modifiedHtml
-      ) {
-        console.warn('Required data or elements not available')
-        return
-      }
-      try {
-        const frame = this.$refs.previewFrame
-        frame.addEventListener('load', () => {
-          if (!frame.contentWindow || !frame.contentDocument) {
-            console.warn('iframe not ready')
-            return
-          }
-          frame.contentWindow.addEventListener('click', (event) => {
-            const issueMarker = event.target.closest('.a11y-issue-marker')
-            if (issueMarker) {
-              const issueId = issueMarker.getAttribute('data-issue-id')
-              const index = parseInt(issueId.replace('issue-', ''))
-              this.selectIssue(index)
-            }
-          })
-        })
-      } catch (error) {
-        console.error('Error setting up iframe:', error)
-      }
-    },
-    scrollToIssue(index) {
-      if (
-        !this.$refs.previewFrame ||
-        !this.$refs.previewFrame.parentNode ||
-        !this.report
-      )
-        return
-      const frame = this.$refs.previewFrame
-      const frameDoc = frame.contentDocument || frame.contentWindow.document
-      const element = frameDoc.querySelector(`[data-issue-id="issue-${index}"]`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        this.highlightElement(`issue-${index}`)
-      }
-    },
-    highlightElement(issueId) {
-      if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)
-        return
-      const frame = this.$refs.previewFrame
-      const frameDoc = frame.contentDocument || frame.contentWindow.document
-      this.unhighlightElements()
-      const element = frameDoc.querySelector(`[data-issue-id="${issueId}"]`)
-      if (element) {
-        element.style.boxShadow = '0 0 0 4px rgba(255, 0, 0, 0.5)'
-        element.style.zIndex = '1000'
-      }
-    },
-    unhighlightElements() {
-      if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)
-        return
-      const frame = this.$refs.previewFrame
-      const frameDoc = frame.contentDocument || frame.contentWindow.document
-      const elements = frameDoc.querySelectorAll('.a11y-issue')
-      elements.forEach((el) => {
-        el.style.boxShadow = ''
-        el.style.zIndex = ''
-      })
-    },
-    onInfiniteScroll(e) {
-      const el = e.target
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
-        if (
-          this.infiniteScrollCount < (this.report?.ReportIssues?.length || 0)
-        ) {
-          this.infiniteScrollCount += 20
-        }
-      }
-    },
-  },
-
+  } catch (error) {
+    console.error('Error setting up iframe:', error)
+  }
 }
+
+const scrollToIssue = (index) => {
+  if (
+    !previewFrame.value ||
+    !previewFrame.value.parentNode ||
+    !report.value
+  )
+    return
+  const frame = previewFrame.value
+  const frameDoc = frame.contentDocument || frame.contentWindow.document
+  const element = frameDoc.querySelector(`[data-issue-id="issue-${index}"]`)
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    highlightElement(`issue-${index}`)
+  }
+}
+
+const highlightElement = (issueId) => {
+  if (!previewFrame.value || !previewFrame.value.parentNode)
+    return
+  const frame = previewFrame.value
+  const frameDoc = frame.contentDocument || frame.contentWindow.document
+  unhighlightElements()
+  const element = frameDoc.querySelector(`[data-issue-id="${issueId}"]`)
+  if (element) {
+    element.style.boxShadow = '0 0 0 4px rgba(255, 0, 0, 0.5)'
+    element.style.zIndex = '1000'
+  }
+}
+
+const unhighlightElements = () => {
+  if (!previewFrame.value || !previewFrame.value.parentNode)
+    return
+  const frame = previewFrame.value
+  const frameDoc = frame.contentDocument || frame.contentWindow.document
+  const elements = frameDoc.querySelectorAll('.a11y-issue')
+  elements.forEach((el) => {
+    el.style.boxShadow = ''
+    el.style.zIndex = ''
+  })
+}
+
+const onInfiniteScroll = (e) => {
+  const el = e.target
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
+    if (
+      infiniteScrollCount.value < (report.value?.ReportIssues?.length || 0)
+    ) {
+      infiniteScrollCount.value += 20
+    }
+  }
+}
+
+// Lifecycle hooks
+onMounted(async () => {
+  if (!testId.value) {
+    store.commit('setError', {
+      errorCode: 'NO_TEST_ID',
+      message: 'No testId provided in route.'
+    })
+    return
+  }
+  
+  try {
+    await store.dispatch('automaticReport/fetchReport', testId.value)
+    isBootstrapping.value = false
+    
+    // Wait for next tick and then render
+    await new Promise(resolve => setTimeout(resolve, 100))
+    renderModifiedHtml()
+  } catch (error) {
+    console.error('Error fetching report:', error)
+    isBootstrapping.value = false
+  }
+})
 </script>
 
 <style scoped>
