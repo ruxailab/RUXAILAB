@@ -264,7 +264,7 @@
             </v-col>
           </v-row>
 
-          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
+          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" :welcome-message="test?.testStructure?.welcomeMessage" @start="globalIndex = 1" />
 
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
             :consent-text="test.testStructure.consent" :full-name-model="fullName"
