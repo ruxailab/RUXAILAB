@@ -63,7 +63,7 @@ export default [
         path: '/userTest/moderated/report/:id/:token?',
         name: 'UserModeratedReportView',
         props: true,
-        meta: { authorize: [0] },
+        meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
