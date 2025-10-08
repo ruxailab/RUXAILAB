@@ -1,4 +1,5 @@
 {
+  "language": "Language",
   "auth": {
     "signupSuccess": "Sign up successful",
     "logoutSuccess": "Logout successful",
@@ -31,7 +32,6 @@
       "back_to_signin": "Back to Sign In"
     }
   },
-  "language": "Language",
   "common": {
     "loading": "Loading Test",
     "continueAs": "Continue as",
@@ -234,7 +234,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Options"
+      "options": "Options",
+      "noOptions": "No Options"
     },
     "messages": {},
     "placeHolders": {},
@@ -434,7 +435,8 @@
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest": "Post-Test"
+      "postTest": "Post-Test",
+      "eyeTrackingCalibration": "Eye tracking calibration"
     },
     "buttons": {
       "done": "Done"

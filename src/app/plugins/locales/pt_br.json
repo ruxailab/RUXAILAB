@@ -1,41 +1,47 @@
 {
+  "language": "Língua",
   "auth": {
     "signupSuccess": "Cadastro realizado com sucesso",
     "logoutSuccess": "Logout realizado com sucesso",
     "resetPasswordSuccess": "E-mail de redefinição de senha enviado",
     "deleteSuccess": "Conta excluída com sucesso",
-    "loginSuccess": "Login realizado com sucesso"
-  },
-  "language": "Língua",
-  "SIGNIN": {
-    "sign-in": "Entrar",
-    "email": "E-mail",
-    "username": "Nome de usuário",
-    "password": "Senha",
-    "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
-    "forgot-password": "Esqueci minha senha",
-    "sign-up": "Inscrever-se",
-    "contact": "Número de contato",
-    "confirmPassword": "Confirme sua senha",
-    "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
-  },
-  "FORGOT_PASSWORD": {
-    "reset_password": "Redefinir senha",
-    "email": "E-mail",
-    "instructions": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
-    "reset_button": "Enviar link de redefinição",
-    "back_to_signin": "Voltar para Entrar"
+    "loginSuccess": "Login realizado com sucesso",
+    "SIGNIN": {
+      "sign-in": "Entrar",
+      "sign-in-title": "Bem-vindo de volta",
+      "sign-in-subtitle": "Faça login na sua conta para continuar",
+      "email": "E-mail",
+      "username": "Nome de usuário",
+      "password": "Senha",
+      "signupSubtitle": "Complete seus dados para começar",
+      "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
+      "forgot-password": "Esqueci minha senha",
+      "sign-up": "Inscrever-se",
+      "contact": "Número de contato",
+      "confirmPassword": "Confirmar senha",
+      "alreadyHaveAnAccount": "Já tem uma conta? Entrar",
+      "continueWithGoogle": "Continuar com Google",
+      "rememberMe": "Lembrar-me",
+      "or": "ou continuar com"
+    },
+    "FORGOT_PASSWORD": {
+      "reset_password": "Redefinir senha",
+      "email": "E-mail",
+      "instructions": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
+      "reset_button": "Enviar link de redefinição",
+      "back_to_signin": "Voltar para entrar"
+    }
   },
   "common": {
-    "loading": "Carregando Teste",
+    "loading": "Carregando teste",
     "continueAs": "Continuar como",
     "notUser": "Não é {userEmail}?",
     "name": "Nome",
     "changeAccount": "Mudar de conta",
     "editAndInvite": "Editar e convidar pessoas para o seu teste",
-    "analyzeProject": "Analise o projeto e avaliadores",
+    "analyzeProject": "Analisar o projeto e os avaliadores",
     "comment": "Comentário",
-    "inputImage": "Insira uma imagem de sua escolha referente ao tópico",
+    "inputImage": "Insira uma imagem de sua escolha referente ao tema",
     "title": "Título",
     "description": "Descrição",
     "cancel": "Cancelar",
@@ -44,41 +50,50 @@
     "text": "Texto",
     "value": "Valor",
     "save": "Salvar",
-    "editDelete": "Editar/Apagar",
+    "editDelete": "Editar/Excluir",
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
     "notifications": "Notificações",
-    "unread": "não lido",
+    "unread": "Não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
-      "years": "{count} ano atrás | {count} ano atráss",
-      "months": "{count} mês atrás | {count} mês atráses",
-      "days": "{count} dia atrás | {count} dia atráss",
-      "hours": "{count} hora atrás | count} hora atráss",
-      "minutes": "{count} minuto atrás | {count} minuto atráss",
+      "years": "{count} ano atrás | {count} anos atrás",
+      "months": "{count} mês atrás | {count} meses atrás",
+      "days": "{count} dia atrás | {count} dias atrás",
+      "hours": "{count} hora atrás | {count} horas atrás",
+      "minutes": "{count} minuto atrás | {count} minutos atrás",
       "now": "Agora"
     },
     "viewAll": "Ver tudo",
     "sentBy": "Enviado por",
     "new": "NOVO"
   },
-  "PROFILE": {
+  "profile": {
     "title": "Perfil",
+    "username": "Nome de usuário",
+    "email": "E-mail",
     "editProfile": "Editar perfil",
     "account": "Conta",
     "admin": "Administrador",
+    "security": "Segurança",
+    "personalInfo": "Informações pessoais",
     "changePassword": "Alterar senha",
+    "contact": "Número de contato",
     "passwordRequirements": "Certifique-se de atender a esses requisitos",
-    "passwordMinimumRequirements": "Mínimo de 8 caracteres, maiúscula e símbolo",
+    "passwordMinimumRequirements": "Mínimo de 8 caracteres, uma maiúscula e um símbolo",
     "newPassword": "Nova senha",
     "confirmNewPassword": "Confirmar nova senha",
     "editDetails": "Editar detalhes",
     "saveChanges": "Salvar alterações",
     "country": "País",
+    "typeDeleteToConfirm": "Digite \"EXCLUIR\" para confirmar",
+    "pleaseTypeDeleteToConfirm": "Por favor, digite EXCLUIR para confirmar",
+    "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
+    "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
     "missingInfo": "Informação ausente",
     "deleteAccountTitle": "Excluir conta",
     "deleteAccountConfirm": "Tem certeza absoluta? Esta ação não pode ser desfeita.",
-    "deleteAccountWarning": "Isso excluirá permanentemente sua conta e removerá seus dados de nossos servidores.",
+    "deleteAccountWarning": "Isso excluirá permanentemente sua conta e seus dados de nossos servidores.",
     "passwordRequired": "Senha é obrigatória",
     "passwordMinLength": "A senha deve ter pelo menos 8 caracteres",
     "passwordUppercase": "Deve conter uma letra maiúscula",
@@ -93,7 +108,7 @@
     "reports": "Relatórios",
     "answers": "Respostas",
     "analytics": "Análises",
-    "cooperators": "Cooperadores",
+    "cooperators": "Colaboradores",
     "template": "Modelo",
     "finalReport": "Relatório final",
     "answerType": "Tipo de resposta:",
@@ -104,7 +119,7 @@
       "Reports": "Relatórios",
       "Answers": "Respostas",
       "Analytics": "Análises",
-      "Cooperators": "Cooperadores",
+      "Cooperators": "Colaboradores",
       "Template": "Modelo",
       "Final Report": "Relatório final",
       "Answer Test": "Responder teste",
@@ -126,29 +141,31 @@
       "invite": "Convide avaliadores para responder seu teste!",
       "cooperators": "Adicione colaboradores que possam ajudá-lo a melhorar seu projeto e coletar dados para seus estudos.",
       "start": "Comece!",
-      "edit": "Crie e personalize suas tarefas e heurísticas de acordo com suas necessidades de pesquisa."
+      "edit": "Crie e personalize suas tarefas e heurísticas de acordo com suas necessidades de pesquisa.",
+      "finalReport": "Prepare o relatório final para sua avaliação heurística selecionando os elementos que deseja incluir."
     }
   },
   "errors": {
     "invalidInvitation": "Convite inválido",
     "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite.",
-    "emailIsRequired": "Correo electronico es requerido",
-    "invalidEmail": "Email inválido",
-    "passwordRequired": "Senha requerida",
+    "emailIsRequired": "E-mail é obrigatório",
+    "invalidEmail": "E-mail inválido",
+    "passwordRequired": "Senha é obrigatória",
     "passwordValidate": "A senha deve ter pelo menos 8 caracteres",
-    "differentPasswords": "Senhas diferentes",
-    "fieldRequired": "Campo requerido",
+    "differentPasswords": "As senhas são diferentes",
+    "fieldRequired": "Campo obrigatório",
     "passwordUppercase": "Deve conter uma letra maiúscula",
     "passwordSymbol": "Deve conter um símbolo",
     "userNotExist": "Este usuário não existe.",
-    "incorrectPassword": "Senha incorreta.",
+    "incorrectPassword": "Senha incorreta",
     "incorrectCredential": "Usuário ou senha incorretos.",
-    "globalError": "Ocorreu um erro, desculpe pelo transtorno."
+    "globalError": "Ocorreu um erro, desculpe-nos pelo transtorno.",
+    "sendError": "Não foi possível enviar o convite. Por favor, tente novamente."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
-    "subtitle": "Que tal fazer testes de usabilidade remotamente?",
-    "description": "Junte-se ao nosso projeto OpenSource e comece a criar seu próprio LAB de usabilidade e compartilhe com amigos. Pesquisar nunca foi tão fácil!",
+    "subtitle": "Que tal realizar testes de usabilidade remotamente?",
+    "description": "Junte-se ao nosso projeto de código aberto e comece a criar seu próprio laboratório de usabilidade para compartilhar com amigos. Pesquisar nunca foi tão fácil!",
     "cta": "Começar"
   },
   "Dashboard": {
@@ -198,21 +215,21 @@
     "messages": {
       "noHeuristics": "Você não tem nenhuma heurística, crie uma para continuar.",
       "youMustHave": "Você deve ter digitado algo errado...",
-      "noHeuristicsDeleteAll": "Desculpe, mas você não pode excluir todas as perguntas de heurísticas",
+      "noHeuristicsDeleteAll": "Desculpe, mas você não pode excluir todas as perguntas de heurísticas.",
       "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar.",
-      "changeWeights": "Esteja ciente que alterando a ordem das heuristicas, os pesos NÃO MUDAM automaticamente, você deve alterá-los manualmente."
+      "changeWeights": "Esteja ciente que, ao alterar a ordem das heurísticas, os pesos não mudam automaticamente; você deve ajustá-los manualmente."
     },
     "validation": {
-      "nameRequired": "Nome é requerido",
+      "nameRequired": "Nome é obrigatório",
       "questionRequired": "A pergunta deve ser preenchida",
       "textRequired": "O texto é obrigatório",
-      "addQuestion": "Por favor adicione pelo menos uma pergunta à sua heurística"
+      "positiveValue": "O valor deve ser um número positivo",
+      "addQuestion": "Por favor, adicione pelo menos uma pergunta à sua heurística"
     },
     "AddCommentBtn": {
       "showComment": "Mostrar comentário",
       "addComment": "Adicionar comentário",
-      "hideTextArea": "Ocultar área de texto",
-      "positiveValue": "O valor precisa ser um número positivo"
+      "hideTextArea": "Ocultar área de texto"
     }
   },
   "HeuristicsOptionsTable": {
@@ -230,7 +247,7 @@
       "heuristics": "Heurísticas"
     },
     "messages": {
-      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para poder colocar os pesos"
+      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para atribuir pesos."
     },
     "actions": {
       "saveWeights": "Salvar valores de peso"
@@ -241,11 +258,11 @@
       "settings": "Configurações"
     },
     "messages": {
-      "acceptCsv": "Aceitar arquivo CSV",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado"
+      "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar."
     },
     "placeHolders": {
-      "importCsv": "Importar CSV"
+      "importCsv": "Importe seu arquivo CSV de teste aqui."
     },
     "actions": {
       "downloadCsvTemplate": "Baixar modelo CSV",
@@ -254,16 +271,16 @@
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "Enviar teste",
-      "submitOnce": "Você só pode enviar uma vez",
-      "noHeuristics": "Não há heurísticas disponíveis"
+      "submitTest": "Tem certeza de que deseja enviar este teste?",
+      "submitOnce": "Tem certeza de que deseja enviar seu teste? Você só pode enviá-lo uma vez.",
+      "noHeuristics": "Este teste não tem heurísticas disponíveis"
     },
     "actions": {
       "cancel": "Cancelar",
       "submit": "Enviar",
       "save": "Salvar",
-      "continueAs": "Continuar como",
-      "notMail": "Não é seu e-mail?",
+      "continueAs": "Continuar como {userEmail}",
+      "notMail": "Não é {userEmail}?",
       "changeAccount": "Mudar conta",
       "startTest": "Iniciar teste"
     }
@@ -278,68 +295,67 @@
   },
   "HeuristicsTestAnswer": {
     "titles": {
-      "answers": "[TODO]",
-      "statistics": "[TODO]",
-      "evaluators": "[TODO]",
-      "heuristics": "[TODO]",
-      "analytics": "[TODO]"
+      "answers": "Respostas",
+      "statistics": "Estatísticas",
+      "evaluators": "Avaliadores",
+      "heuristics": "Heurísticas",
+      "analytics": "Análises"
     },
     "statistics": {
-      "usabilityPercentage": "[TODO]",
-      "max": "[TODO]",
-      "min": "[TODO]",
-      "std": "[TODO]"
+      "usabilityPercentage": "Porcentagem de usabilidade",
+      "max": "Máximo",
+      "min": "Mínimo",
+      "std": "Desvio padrão"
     },
     "evaluators": {
       "headers": {
-        "table": "[TODO]",
-        "graphic": "[TODO]"
+        "table": "Tabela",
+        "graphic": "Gráfico"
       },
       "messages": {
-        "graphForMoreThan3": "[TODO]"
+        "graphForMoreThan3": "O gráfico só pode ser gerado com 3 ou mais avaliadores, por favor, coletar mais dados da sua pesquisa para continuar."
       }
     },
     "heuristics": {
       "headers": {
-        "heuristicsData": "[TODO]",
-        "answersByEvaluator": "[TODO]",
-        "answersByHeuristics": "[TODO]",
-        "graphic": "[TODO]",
-        "weights": "[TODO]"
+        "heuristicsData": "Dados de heurísticas",
+        "answersByEvaluator": "Respostas por avaliador",
+        "answersByHeuristics": "Respostas por heurísticas",
+        "graphic": "Gráfico",
+        "weights": "Pesos"
       },
       "messages": {
-        "needMoreThan1Answer": "[TODO]",
-        "runWeightFunction": "[TODO]"
+        "needMoreThan1Answer": "Esta página precisa de mais de uma resposta para ser gerada.",
+        "runWeightFunction": "Esta página exige que a função de pesos (Python) esteja em execução, seja em emuladores ou em modo implantado, e que os pesos estejam completamente configurados na página de criação do teste."
       }
-    },
-    "analytics": {}
+    }
   },
   "HeuristicsReport": {
     "titles": {
-      "reports": "[TODO]",
-      "last_updated": "[TODO]"
+      "reports": "Relatórios",
+      "last_updated": "Última atualização"
     },
     "headers": {
-      "evaluator": "[TODO]",
-      "last_update": "[TODO]",
-      "progress": "[TODO]",
-      "status": "[TODO]",
-      "more": "[TODO]"
+      "evaluator": "Avaliador",
+      "last_update": "Última atualização",
+      "progress": "Progresso",
+      "status": "Status",
+      "more": "Mais"
     },
     "messages": {
-      "confirm_delete_report": "[TODO]",
-      "reports_loading": "[TODO]",
-      "remove_report": "[TODO]",
-      "sure_to_delete": "[TODO] {user}",
-      "report_deleted": "[TODO]"
+      "confirm_delete_report": "Tem certeza de que deseja excluir este relatório?",
+      "reports_loading": "Carregando relatórios",
+      "remove_report": "Remover relatório",
+      "sure_to_delete": "Tem certeza de que deseja excluir o relatório de {user}? Esta ação não pode ser desfeita.",
+      "report_deleted": "Relatório excluído com sucesso"
     },
     "status": {
-      "submitted": "[TODO]",
-      "in_progress": "[TODO]"
+      "submitted": "Enviado",
+      "in_progress": "Em progresso"
     }
   },
   "UsabilityCooperators": {
-    "inviteEvaluator": "Convidar Avaliador para Teste",
+    "inviteEvaluator": "Convidar avaliador para o teste",
     "email": "E-mail",
     "scheduledAt": "Agendado para",
     "inviteMessage": "Mensagem de convite",
@@ -349,7 +365,7 @@
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "Cooperadores"
+      "cooperators": "Colaboradores"
     },
     "headers": {
       "email": "E-mail",
@@ -364,11 +380,11 @@
       "send_invitation": "Enviar convite",
       "send_message": "Enviar mensagem",
       "reinvite": "Reenviar convite",
-      "remove_cooperator": "Remover cooperador",
+      "remove_cooperator": "Remover colaborador",
       "cancel_invitation": "Cancelar convite",
       "cancel": "Cancelar",
       "send": "Enviar",
-      "select_cooperator": "Selecionar cooperador"
+      "select_cooperator": "Selecionar colaborador"
     },
     "roles": {
       "administrator": "Administrador",
@@ -376,50 +392,84 @@
       "guest": "Convidado"
     },
     "messages": {
-      "cooperators_loading": "Carregando cooperadores...",
-      "no_users": "Nenhum usuário encontrado",
-      "remove_cooperator": "Tem certeza de que deseja remover este cooperador?",
-      "cancel_invitation": "Tem certeza de que deseja cancelar este convite?",
-      "change_role": "Alterar a função de {email} de {old} para {new}?",
+      "cooperators_loading": "Carregando colaboradores...",
+      "no_users": "Nenhum usuário registrado com esse e-mail, pressione Enter para selecioná-lo mesmo assim.",
+      "remove_cooperator": "Tem certeza de que deseja remover {email} dos colaboradores?",
+      "cancel_invitation": "Tem certeza de que deseja cancelar o convite de {email}?",
+      "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
       "message_title_hint": "Digite o título da mensagem",
       "message_content_hint": "Digite o conteúdo da mensagem"
     }
   },
   "UserTestTable": {
     "titles": {
-      "consentForm": "Formulário de Consentimento",
-      "userVariables": "Variáveis do Usuário",
-      "currentTasks": "Tarefas",
-      "postForm": "Pós-Formulário",
-      "writeNewPost": "Escrever uma nova pergunta de postagem"
+      "consentForm": "Formulário de consentimento",
+      "userVariables": "Variáveis do usuário",
+      "currentTasks": "Tarefas atuais",
+      "postForm": "Formulário posterior",
+      "writeNewPost": "Escrever uma nova pergunta posterior"
+    },
+    "messages": {
+      "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar."
     },
     "inputs": {
       "consent": "Consentimento",
-      "variableName": "Nome da Variável",
+      "variableName": "Nome da variável",
       "description": "Descrição",
       "selection": "Seleção",
       "writeQuestion": "Escrever uma pergunta"
     },
     "checkboxes": {
-      "selectionField": "Campo de Seleção",
-      "textField": "Campo de Texto",
-      "textAnswer": "Resposta de Texto",
-      "selectionAnswer": "Resposta de Seleção"
+      "selectionField": "Campo de seleção",
+      "textField": "Campo de texto",
+      "textAnswer": "Resposta de texto",
+      "selectionAnswer": "Resposta de seleção"
     },
     "buttons": {
-      "createNewVariable": "Criar uma nova variável de usuário",
-      "createNewPost": "Criar uma nova pergunta no pós formulário"
+      "createNewVariable": "Criar uma nova variável",
+      "createNewPost": "Criar uma nova pergunta posterior"
     }
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Pré-Teste - Consentimento",
-      "preTestForm": "Pré-Teste - Formulário",
-      "preTest": "Pré-Teste",
-      "postTest": "Pós-Teste"
+      "preTestConsent": "Consentimento pré-teste",
+      "preTestForm": "Formulário pré-teste",
+      "preTest": "Pré-teste",
+      "postTest": "Pós-teste",
+      "eyeTrackingCalibration": "Calibração de rastreamento ocular"
     },
     "buttons": {
       "done": "Concluído"
+    },
+    "WelcomeStep": {
+      "welcome": "Bem-vindo ao RUXAILAB!",
+      "description": "Você está prestes a participar de um teste de usuário que visa avaliar a facilidade de uso e a compreensão de uma aplicação digital. Esse tipo de teste nos ajuda a identificar possíveis barreiras tecnológicas e melhorar a experiência para todos.",
+      "howItWorks": "Como funciona este teste?",
+      "phases": "Ao longo do teste, guiaremos você por diferentes fases. Em cada uma, indicaremos claramente o que fazer. Não há respostas certas ou erradas: o que nos interessa é como você interage com o sistema.",
+      "summary": "Aqui está um resumo das fases que você seguirá:",
+      "steps": {
+        "consent": "Consentimento",
+        "preQuestions": "Perguntas iniciais",
+        "tasks": "Tarefas",
+        "postQuestions": "Perguntas finais",
+        "submission": "Envio final"
+      },
+      "ready": "Quando estiver pronto, clique no botão para começar. Você pode avançar no seu próprio ritmo e pausar a qualquer momento, se necessário.",
+      "startTest": "Iniciar o teste"
+    },
+    "PreTasksStep": {
+      "title": "Tarefas",
+      "heading": "Vamos começar com a fase de tarefas",
+      "description": "Você completará <strong>{numTasks}</strong> tarefas relacionadas ao uso da ferramenta. Não há respostas certas ou erradas: o que importa é como você interage.",
+      "instruction": "Quando estiver pronto, clique no botão para começar.",
+      "startButton": "Iniciar tarefas",
+      "recordingTitle": "Informações de gravação",
+      "recordingDescription": "Durante as tarefas, podemos coletar diferentes tipos de dados para entender sua interação com o sistema. Dependendo da tarefa específica, os seguintes elementos podem ser gravados:",
+      "screenRecording": "Gravação de tela",
+      "webcamRecording": "Câmera web",
+      "audioRecording": "Áudio",
+      "eyeTracking": "Rastreamento ocular",
+      "recordingNote": "Você será notificado antes que qualquer gravação comece. Todos os dados são coletados apenas para fins de pesquisa e tratados de acordo com as diretrizes de privacidade."
     }
   },
   "AccessNotAllowed": {
@@ -434,35 +484,36 @@
       "docTitle": "Ler documentação",
       "docSubtitle": "Clique para acessar a documentação sobre como usar a página de ",
       "discTitle": "Junte-se à comunidade!",
-      "discSubtitle": "Você encontrará suporte em nosso servidor discord."
+      "discSubtitle": "Você encontrará suporte em nosso servidor do Discord."
     },
     "finalReport": {
       "select": "SELECIONE SEUS ELEMENTOS PDF",
       "heuristic": "Heurística",
       "to": "para",
-      "createHeuristics": "Por favor, crie heurísticas para que você possa selecioná-las aqui.",
+      "createHeuristics": "Por favor, crie heurísticas para selecioná-las aqui.",
+      "createUserTask": "Por favor, crie tarefas para selecioná-las aqui.",
       "pdf": "Gerar PDF",
       "elements": "Elementos",
       "options": {
-        "options": "Opções de teste",
-        "comments": "Responde aos comentários",
+        "options": "Opções do teste",
+        "comments": "Comentários das respostas",
         "statistics": "Estatísticas",
         "answersByEvaluator": "Respostas dos avaliadores",
-        "answersByHeuristics": "Respostas por heurística",
-        "finalReport": "Relatório Final",
+        "answersByHeuristics": "Respostas por heurísticas",
+        "finalReport": "Relatório final",
         "loading": "Carregando..."
       },
-      "ContructionHeading": "Página em Construção",
-      "ContructionParagraph": "Estamos trabalhando arduamente para melhorar nosso site. Por favor, volte em breve!"
+      "ContructionHeading": "Página em construção",
+      "ContructionParagraph": "Estamos trabalhando arduamente para melhorar nosso site. Volte em breve!"
     },
     "landing": {
       "feedbackTitle": "Receba feedback rapidamente sobre seus projetos",
-      "feedbackSubtitle1": "UX Remote LAB foi criado para fornecer um conjunto de ferramentas para diferentes especialistas em UX que desejam criar seus próprios testes de UX e realizá-los com os usuários.",
-      "feedbackSubtitle2": "COVID-19 mostrou ao mundo que às vezes a presença física de usuários reais não é possível então estamos aqui para resolver esse problema!",
-      "uxTitle": "Comece seu próprio UX LAB",
-      "uxSubtitle1": "Se você é um pesquisador, uma empresa ou um profissional que deseja realizar um teste de UX, aqui você encontrará diversas ferramentas para ajudar a analisar e acompanhar seus testes utilizando diferentes técnicas de UX.",
-      "uxSubtitle2": "Ajude-nos a desenvolver esta comunidade Open Source e junte-se a nós no GitHub! :)",
-      "footer": "Estamos à procura de novos parceiros que nos ajudem a fazer crescer o projeto! Sinta-se à vontade para nos contatar em "
+      "feedbackSubtitle1": "O UX Remote LAB foi criado para fornecer um conjunto de ferramentas para diferentes especialistas em UX que desejam criar seus próprios testes de usabilidade e realizá-los com usuários.",
+      "feedbackSubtitle2": "O COVID-19 mostrou ao mundo que, às vezes, a presença física de usuários reais não é possível, então estamos aqui para resolver esse problema!",
+      "uxTitle": "Inicie seu próprio laboratório de UX",
+      "uxSubtitle1": "Se você é um pesquisador, uma empresa ou um profissional que deseja realizar um teste de UX, aqui encontrará diversas ferramentas para analisar e acompanhar seus testes utilizando diferentes técnicas de UX.",
+      "uxSubtitle2": "Ajude-nos a crescer esta comunidade de código aberto e junte-se a nós no GitHub! :)",
+      "footer": "Estamos à procura de novos parceiros para ajudar a expandir o projeto! Sinta-se à vontade para nos contatar em "
     },
     "listTests": {
       "createdBy": "Criado por",
@@ -476,8 +527,8 @@
     "createTest": {
       "title": "Criar um novo teste",
       "blankTitle": "Criar um teste em branco",
-      "blankSubtitle": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
-      "templateTitle": "Criar a partir do modelo",
+      "blankSubtitle": "Crie um teste em branco para começar com um modelo completamente novo.",
+      "templateTitle": "Criar a partir de um modelo",
       "templateSubtitle": "Crie um teste baseado em um modelo criado por um de nossos usuários.",
       "create": "Criar teste",
       "templateInfo": "Informações do modelo",
@@ -488,28 +539,36 @@
     "settings": {
       "title": "Configurações",
       "currentTest": "Teste atual",
-      "createTemplate": "CRIAR TEMPLATE",
+      "createTemplate": "CRIAR MODELO",
       "deleteTest": "EXCLUIR TESTE"
+    },
+    "editTest": {
+      "title": "Editar teste",
+      "description": "Personalize as configurações e preferências do seu teste.",
+      "updatedTest": "Teste atualizado com sucesso"
+    },
+    "cooperators": {
+      "invitationSent": "Convite enviado com sucesso"
     }
   },
   "alerts": {
-    "copy": "Cópia bem sucedida",
-    "noCopy": "Cópia malsucedida",
+    "copy": "Cópia bem-sucedida",
+    "noCopy": "Cópia mal-sucedida",
     "deleteTemplate": "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita!",
     "deleteTest": "Tem certeza de que deseja excluir este teste?",
-    "addDescription": "Por favor adicione uma descrição",
+    "addDescription": "Por favor, adicione uma descrição",
     "errorOccurred": "Ocorreu um erro",
-    "leave": "Tem certeza que deseja sair?",
-    "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
+    "leave": "Tem certeza de que deseja sair?",
+    "sureLeave": "Tem certeza de que deseja sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
-    "deleteHeuristic": "Tem certeza de excluir a heurística ",
+    "deleteHeuristic": "Tem certeza de que deseja excluir a heurística ",
     "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
     "genericSuccess": "Operação bem-sucedida"
   },
   "buttons": {
     "next": "Próximo",
     "previous": "Anterior",
-    "seeCode": "Veja o código",
+    "seeCode": "Ver o código",
     "username": "Nome de usuário",
     "goToConsole": "Ir para o console",
     "signout": "Sair",
@@ -519,31 +578,34 @@
     "create": "Criar",
     "cancel": "Cancelar",
     "close": "Fechar",
-    "leave": "Sair",
+    "save": "Salvar",
     "stay": "Ficar",
+    "leave": "Sair",
+    "saveandleave": "Salvar e sair",
     "help": "Ajuda",
-    "delete": "Deletar",
+    "delete": "Excluir",
     "deleteAccount": "Excluir conta",
-    "back": "Trás",
+    "back": "Voltar",
+    "duplicateTest": "Duplicar teste",
     "submit": "Enviar",
     "couldNotFinish": "Não consegui concluir"
   },
   "switches": {
     "noAnswer": "Sem resposta",
-    "textArea": "Area de texto",
+    "textArea": "Área de texto",
     "timer": "Temporizador",
-    "postTest": "Pós Questão",
+    "postTest": "Pergunta posterior",
     "screenRecord": "Gravação de tela",
-    "camera": "Camera",
-    "eyeTracker": "Eye Tracker",
-    "audioRecord": "Gravação de audio",
-    "postForm": "Pós-Formulário",
+    "camera": "Câmera",
+    "eyeTracker": "Rastreamento ocular",
+    "audioRecord": "Gravação de áudio",
+    "postForm": "Formulário posterior",
     "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
-    "preForm": "Pré-Formulário",
-    "postForm": "Pós-Formulário"
+    "preForm": "Formulário prévio",
+    "postForm": "Formulário posterior"
   },
   "Createblank": {
     "title": "Que tipo de teste você está procurando iniciar?",
@@ -551,8 +613,8 @@
     "testType_1": {
       "testTitle": "Heurística de Usabilidade",
       "text": [
-        "Porcentagem de Usabilidade",
-        "Relatório Final em PDF",
+        "Porcentagem de usabilidade",
+        "Relatório final em PDF",
         "Convide especialistas para avaliar sua aplicação"
       ]
     },
@@ -566,17 +628,17 @@
     },
     "UsabilityUser": {
       "SelfTest": {
-        "title": "Auto Teste",
-        "type": "não moderado",
+        "title": "Teste autônomo",
+        "type": "Não moderado",
         "text": [
-          "Responder no tempo livre",
+          "Responder no seu tempo livre",
           "Análise aprimorada de respostas",
           "Personalização de tarefas"
         ]
       },
       "LiveTest": {
-        "title": "Teste ao Vivo",
-        "type": "moderado",
+        "title": "Teste ao vivo",
+        "type": "Moderado",
         "text": [
           "Gravação de webcam, áudio e tela",
           "Análise aprimorada de respostas",
@@ -586,72 +648,83 @@
     }
   },
   "TestDialog": {
-    "heading": "Criação de Teste",
+    "heading": "Criação de teste",
     "sub-heading": "Adicione um nome ao seu teste!",
-    "test-name": "Nome do Teste",
-    "test-description": "Descrição do Teste",
+    "test-name": "Nome do teste",
+    "test-description": "Descrição do teste",
     "test-label": "Teste público para todos os usuários"
+  },
+  "finishTest": {
+    "title": "Finalizar teste",
+    "finalMessage": "Mensagem final",
+    "congratulations": "Parabéns! Você completou o teste, agora pode enviar suas respostas.",
+    "submitMessage": "Clique aqui para enviar suas respostas. Após enviá-las, você não poderá alterá-las!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "Como criar um teste?",
     "createtestanswer": "Para criar um teste, clique no ícone de mais e selecione Teste Heurístico. Em seguida, especifique os detalhes do seu projeto. Por fim, acesse a página do gerenciador dedicada.",
-    "heuristictest": "Como configurar meu Teste Heurístico?",
-    "heuristictestanswer": "Para configurar seu Teste Heurístico, acesse a opção 'Editar Teste'. Em seguida, clique no botão de ícone de mais para adicionar um título e a pergunta do seu teste. Depois, vá até a seção de opções para criar as opções de resposta e seus respectivos valores. Por fim, salve as modificações.",
+    "heuristictest": "Como configurar meu teste heurístico?",
+    "heuristictestanswer": "Para configurar seu teste heurístico, acesse a opção 'Editar Teste'. Em seguida, clique no botão de mais para adicionar um título e a pergunta à sua heurística. Depois, vá até a seção de opções para criar as opções de resposta e seus respectivos valores. Por fim, salve as alterações.",
     "deletetest": "Como excluir meu teste?",
-    "deletetestanswer": "Para excluir seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Depois, selecione o botão 'EXCLUIR TESTE'.",
+    "deletetestanswer": "Para excluir seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Em seguida, selecione o botão 'EXCLUIR TESTE'.",
     "createtemplate": "Como criar um modelo?",
-    "createtemplateanswer": "Para criar um modelo para seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Depois, selecione a opção 'CRIAR MODELO'.",
+    "createtemplateanswer": "Para criar um modelo para seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Em seguida, selecione a opção 'CRIAR MODELO'.",
     "usetemplate": "Como usar um modelo?",
-    "usetemplateanswer": "Para utilizar um modelo, acesse a página de Testes. Na seção Criar Modelos, você encontrará seus modelos pessoais. Além disso, você pode explorar modelos públicos.",
+    "usetemplateanswer": "Para utilizar um modelo, acesse a página de Testes. Na seção Criar Modelos, você encontrará seus modelos pessoais. Além disso, pode explorar modelos públicos.",
     "previewtest": "Como visualizar meu teste?",
-    "previewtestanswer": "Na barra lateral esquerda, clique na opção 'Visualizar', inicie o teste respondendo às perguntas e, por fim, clique no botão no canto inferior direito para salvar e enviar a visualização. Posteriormente, ela poderá ser analisada na seção 'Respostas'.",
+    "previewtestanswer": "Na barra lateral esquerda, clique na opção 'Visualizar', inicie o teste respondendo às perguntas e, por fim, clique no botão no canto inferior direito para salvar e enviar a visualização, que poderá ser analisada na seção 'Respostas'.",
     "importcsv": "Como importar meu arquivo CSV?",
-    "importcsvanswer": "Para importar seu CSV, vá até a seção 'Editar Teste' e clique no botão 'ATUALIZAR'. Selecione seu arquivo CSV contendo as heurísticas.",
+    "importcsvanswer": "Para importar seu arquivo CSV, vá até a seção 'Editar Teste' e clique no botão 'ATUALIZAR'. Selecione seu arquivo CSV contendo as heurísticas.",
     "invitecooperators": "Como convidar colaboradores?",
-    "invitecooperatorsanswer": "Para convidar colaboradores, vá até a página do gerenciador do seu teste. Lá, selecione 'Colaboradores' na barra lateral esquerda. Clique em 'Selecionar colaborador' e insira o e-mail do colaborador. Escolha o papel do colaborador e envie o convite clicando no botão no canto inferior direito.",
+    "invitecooperatorsanswer": "Para convidar colaboradores, vá até a página de administração do seu teste. Lá, selecione 'Colaboradores' na barra lateral esquerda. Clique em 'Selecionar colaborador' e insira o e-mail do colaborador. Escolha o papel do colaborador e envie o convite clicando no botão no canto inferior direito.",
     "analyseresults": "Como analisar os resultados?",
-    "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
+    "analyseresultsanswer": "Para analisar seus resultados, vá até a página de administração do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
-    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo.",
-    "testCreation": "Criação de Testes",
+    "sendmessageanswer": "Para enviar uma mensagem, vá até a página de administração do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Em seguida, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo.",
+    "testCreation": "Criação de testes",
     "templates": "Modelos",
     "cooperators": "Colaboradores",
     "analytics": "Análises",
-    "help_center": "Central de Ajuda",
+    "help_center": "Central de ajuda",
     "howCanWeHelp": "Como podemos ajudar?",
     "categories": "CATEGORIAS",
-    "viewAll": "Ver Tudo",
+    "viewAll": "Ver tudo",
     "noArticlesFound": "Nenhum artigo encontrado",
     "browseAllCategories": "Navegue por todas as categorias para encontrar a ajuda que você precisa",
-    "viewAllArticles": "Ver Todos os Artigos",
+    "viewAllArticles": "Ver todos os artigos",
     "videoAltText": "Vídeo demonstrativo de FAQ mostrando os passos visuais para resolver a pergunta frequente. Não há conteúdo de áudio presente neste vídeo instrucional."
   },
-  "user": "USUÁRIO",
-  "account": "Conta",
-  "security": "Segurança",
-  "personalInfo": "Informações pessoais",
-  "contact": "Contato",
-  "country": "País",
-  "editDetails": "Editar detalhes",
-  "typeDeleteToConfirm": "Digite \"DELETE\" para confirmar",
-  "pleaseTypeDeleteToConfirm": "Por favor, digite DELETE para confirmar",
-  "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
-  "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
-  "yourPassword": "Sua senha",
-  "usernameRequired": "Nome de usuário é obrigatório",
-  "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
-  "countryRequired": "País é obrigatório",
-  "contactNumberRequired": "Número de contato é obrigatório",
-  "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
+  "PROFILE": {
+    "user": "USUÁRIO",
+    "account": "Conta",
+    "security": "Segurança",
+    "personalInfo": "Informações pessoais",
+    "contact": "Contato",
+    "country": "País",
+    "editDetails": "Editar detalhes",
+    "typeDeleteToConfirm": "Digite \"EXCLUIR\" para confirmar",
+    "pleaseTypeDeleteToConfirm": "Por favor, digite EXCLUIR para confirmar",
+    "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
+    "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
+    "yourPassword": "Sua senha",
+    "usernameRequired": "Nome de usuário é obrigatório",
+    "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
+    "countryRequired": "País é obrigatório",
+    "contactNumberRequired": "Número de contato é obrigatório",
+    "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
+    "email": "E-mail",
+    "username": "Nome de usuário"
+  },
   "ModeratedTest": {
     "preTest": "PRÉ-TESTE",
     "tasks": "TAREFAS",
     "postTest": "PÓS-TESTE",
-    "consentForm": "Termo de Consentimento",
+    "consentForm": "Formulário de consentimento",
     "consentDescription": "Este é um campo de consentimento com um texto para confirmar o consentimento.",
     "welcomeMessage": "Mensagem de boas-vindas",
     "welcomeMessageDescription": "Esta mensagem será a primeira coisa que os participantes verão antes da sessão começar.",
-    "landingPage": "Página Inicial",
+    "landingPage": "Página inicial",
     "landingPageDescription": "Este URL será carregado automaticamente quando o participante iniciar a sessão.",
     "url": "URL da sua página de destino",
     "participantCamera": "Câmera do participante",
@@ -660,12 +733,53 @@
       "required": "Obrigatório",
       "disabled": "Desativado"
     },
-    "preForm": "Pré-Formulário",
+    "preForm": "Formulário prévio",
     "preFormDescription": "Este é um questionário prévio para coletar dados dos participantes.",
-    "postForm": "Pós-Formulário",
+    "postForm": "Formulário posterior",
     "postFormDescription": "Este é um questionário posterior para coletar dados dos participantes.",
     "finalMessage": "Mensagem final",
-    "finalMessageDescription": "Esta é uma mensagem final que você deixa para o participante ao concluir o teste.",
+    "finalMessageDescription": "Esta é a mensagem final que você deixa para o participante ao concluir o teste.",
     "finalMessagePlaceholder": "Digite a mensagem final"
+  },
+  "CardSorting": {
+    "noCategory": "Sem categoria",
+    "noCards": "Nenhuma cartão encontrado"
+  },
+  "analytics": {
+    "searchByName": "Pesquisar por nome",
+    "search": "Pesquisar",
+    "reset": "Redefinir",
+    "showFilters": "Mostrar filtros",
+    "hideFilters": "Ocultar filtros",
+    "effectiveness": "Efetividade",
+    "effectivenessDescription": "Porcentagem de tarefas concluídas com sucesso",
+    "efficiency": "Eficiência",
+    "efficiencyDescription": "Tempo médio: {avgTime}",
+    "satisfaction": "Satisfação",
+    "satisfactionDescription": "Pontuação média de satisfação do usuário",
+    "conclusionRate": "Taxa de conclusão",
+    "perfectCompletionRate": "Taxa de conclusão perfeita alcançada",
+    "testsInProgress": "Testes em progresso",
+    "totalDuration": "Duração total",
+    "avgTimePerTask": "Tempo médio por tarefa",
+    "efficientTaskCompletion": "Taxa de conclusão eficiente de tarefas",
+    "longestTask": "Tarefa mais longa",
+    "taskLabel": "Tarefa",
+    "totalAnswers": "Total de respostas",
+    "day": "Dia",
+    "evaluator": "Avaliador",
+    "latestUser": "Último usuário",
+    "taskPerformance": "Desempenho da tarefa",
+    "taskPerformanceDescription": "Taxas de acertos e erros para cada tarefa do teste",
+    "success": "Sucesso",
+    "successCount": "Acertos",
+    "errors": "Erros",
+    "preTest": "Pré-teste",
+    "preTestDescription": "Resultados do formulário pré-teste",
+    "postTest": "Pós-teste",
+    "postTestDescription": "Resultados do formulário pós-teste",
+    "all": "Todos",
+    "question": "Pergunta {number}",
+    "comingSoon": "Em breve"
   }
 }
