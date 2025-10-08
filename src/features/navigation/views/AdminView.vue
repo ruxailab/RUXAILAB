@@ -425,8 +425,6 @@ const filterNextModeratedSessions = async () => {
   nextModeratedSessions.value = cooperatorArray
     .filter((answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED)
     .filter((val, index, self) => index === self.findIndex((m) => m.id === val.id));
-
-  console.log("nextModeratedSessions.value", nextModeratedSessions.value);
 };
 
 // const filterNextModeratedSessions = async () => {
