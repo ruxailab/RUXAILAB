@@ -168,6 +168,7 @@ const goto = (url) => {
   router.push(url)
 }
 
+//TODO: Remove debug logs
 watch(closestSession, (val) => {
   console.log("Closest future session chosen:", val)
 }, { immediate: true })
