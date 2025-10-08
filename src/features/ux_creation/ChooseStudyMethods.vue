@@ -61,7 +61,9 @@ const methodsByCategory = {
       description: 'Real-time sessions with facilitator guidance and immediate feedback',
       icon: 'mdi-account-voice',
       color: 'success',
-      available: true
+      available: false,
+      comingSoon: true
+
     },
     {
       id: METHOD_DEFINITIONS.CARD_SORTING.id,
@@ -69,7 +71,9 @@ const methodsByCategory = {
       description: 'Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic.',
       icon: 'mdi-card-multiple',
       color: 'error',
-      available: true
+      available: false,
+      comingSoon: true
+
     },
     {
       id: 'ab-testing',
