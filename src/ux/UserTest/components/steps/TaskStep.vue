@@ -355,6 +355,7 @@
       </div>
 
       <AudioRecorder
+        v-if="task?.hasAudioRecord"
         ref="audioRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -366,6 +367,7 @@
       />
 
       <ScreenRecorder
+        v-if="task?.hasScreenRecord"
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -374,6 +376,7 @@
       />
 
       <VideoRecorder
+        v-if="task?.hasCamRecord"
         ref="videoRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -511,15 +514,27 @@ function reopenTool() {
 const showPostForm = ref({ userCompleted: undefined });
 
 function stopMediaRecorders() {
-  audioRecorder.value?.stopAudioRecording();
-  videoRecorder.value?.stopRecording();
-  screenRecorder.value?.stopRecording();
+  if (props.task?.hasAudioRecord && audioRecorder.value) {
+    audioRecorder.value.stopAudioRecording();
+  }
+  if (props.task?.hasCamRecord && videoRecorder.value) {
+    videoRecorder.value.stopRecording();
+  }
+  if (props.task?.hasScreenRecord && screenRecorder.value) {
+    screenRecorder.value.stopRecording();
+  }
 }
 
 async function startMediaRecorders() {
-  if (props.task?.hasAudioRecord) await audioRecorder.value?.startAudioRecording();
-  if (props.task?.hasCamRecord) await videoRecorder.value?.startRecording();
-  if (props.task?.hasScreenRecord) await screenRecorder.value?.captureScreen();
+  if (props.task?.hasAudioRecord && audioRecorder.value) {
+    await audioRecorder.value.startAudioRecording();
+  }
+  if (props.task?.hasCamRecord && videoRecorder.value) {
+    await videoRecorder.value.startRecording();
+  }
+  if (props.task?.hasScreenRecord && screenRecorder.value) {
+    await screenRecorder.value.captureScreen();
+  }
 }
 
 function handleShowPostForm(userCompleted) {
