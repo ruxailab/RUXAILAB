@@ -81,6 +81,7 @@ const recordedChunks = ref([])
 const mediaRecorder = ref(null)
 const audioStream = ref(null)
 const recordedAudio = ref('')
+const recordingTaskIndex = ref(null) // Store the task index when recording starts
 
 // Computed properties
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
@@ -101,6 +102,7 @@ const startAudioRecording = async () => {
     const audioAvailable = await hasAudio();
     if (!audioAvailable) return;
 
+    recordingTaskIndex.value = props.taskIndex; // Store the current task index when recording starts
     recordingAudio.value = true
     emit('recordingStarted', true)
 
@@ -127,16 +129,17 @@ const startAudioRecording = async () => {
       emit('showLoading')
       const audioBlob = new Blob(recordedChunks.value.local, { type: 'audio/webm' })
       const storage = getStorage()
+      const correctTaskIndex = recordingTaskIndex.value;
       const storageReference = storageRef(
         storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}_evaluator/${Date.now()}.webm`
+        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`
       )
       await uploadBytes(storageReference, audioBlob)
 
       recordedAudio.value = await getDownloadURL(storageReference)
 
       await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: props.taskIndex,
+        taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.audio,
         url: recordedAudio.value
       });
@@ -166,16 +169,17 @@ const startAudioRecording = async () => {
       mediaRecorder.value.remote.onstop = async () => {
         const blob = new Blob(recordedChunks.value.remote, { type: 'audio/webm' })
         const storage = getStorage()
+        const correctTaskIndex = recordingTaskIndex.value;
         const storageReference = storageRef(
           storage,
-          `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}_moderator/${Date.now()}.webm`
+          `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`
         )
         await uploadBytes(storageReference, blob)
         const downloadURL = await getDownloadURL(storageReference)
 
         console.log('moderator audio =>', downloadURL)
         await store.dispatch('updateTaskMediaUrl', {
-          taskIndex: props.taskIndex,
+          taskIndex: correctTaskIndex,
           mediaType: MEDIA_FIELD_MAP.moderator,
           url: downloadURL
         });
