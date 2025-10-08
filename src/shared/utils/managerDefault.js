@@ -22,7 +22,6 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
   if (accessLevel === ACCESS_LEVEL.GUEST) {
     items.push(
       { title: 'Answer Test', icon: ICONS.DOCUMENT, path: `/testview/${test.id}` },
-      { title: 'Reports', icon: ICONS.BOOK, path: `/${type}/report/${test.id}` },
       { title: 'Answers', icon: ICONS.ORDER, path: `/${type}/answer/${test.id}` }
     )
   }
