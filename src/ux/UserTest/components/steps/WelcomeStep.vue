@@ -5,7 +5,8 @@
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.WelcomeStep.welcome') }}
         </h2>
-        <p class="text-body-1 mb-4 text-grey-darken-3">
+        <div v-if="welcomeMessage" v-html="welcomeMessage" class="text-body-1 mb-4 text-grey-darken-3"></div>
+        <p v-else class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.description') }}
         </p>
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
@@ -85,6 +86,7 @@ import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { useDisplay } from 'vuetify';
 const props = defineProps({
     stepperValue: { type: Number, required: true },
+    welcomeMessage: { type: String, default: '' },
 });
 const emit = defineEmits(['start']);
 const { smAndDown } = useDisplay();

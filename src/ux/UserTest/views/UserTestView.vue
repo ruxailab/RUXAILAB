@@ -264,7 +264,7 @@
             </v-col>
           </v-row>
 
-          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" @start="globalIndex = 1" />
+          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" :welcome-message="test?.testStructure?.welcomeMessage" @start="globalIndex = 1" />
 
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
             :consent-text="test.testStructure.consent" :full-name-model="fullName"
@@ -550,9 +550,9 @@ function saveIrisDataIntoTask() {
 const saveAnswer = async () => {
   try {
     attachMediaToTasks(localTestAnswer, mediaUrls.value);
-
     localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
+  
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
       localTestAnswer.invited = true;
@@ -574,6 +574,7 @@ const saveAnswer = async () => {
       });
     }
     router.push('/admin');
+
   } catch (error) {
     console.error('Error saving answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
@@ -750,7 +751,8 @@ const completeStep = (id, type, userCompleted = true) => {
           console.log('Última task finalizada, mas ainda há tasks incompletas.');
         }
       }
-
+      //TODO: Show proper toast not the following one
+      /*
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
@@ -758,6 +760,7 @@ const completeStep = (id, type, userCompleted = true) => {
           timeout: 3000,
         });
       }
+        */
     }
 
     if (type === 'postTest') {
