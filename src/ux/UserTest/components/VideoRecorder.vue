@@ -73,6 +73,7 @@ const videoStream = ref(null)
 const recordedChunks = ref([])
 const mediaRecorder = ref(null)
 const recordedVideo = ref('')
+const recordingTaskIndex = ref(null) // Store the task index when recording starts
 
 async function hasCamera() {
   try {
@@ -90,6 +91,8 @@ const startRecording = async () => {
     if (!cameraAvailable) return;
 
     recording.value = true
+    recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
+    console.log('VideoRecorder: Recording started for task index:', props.taskIndex);
     videoStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
     })
@@ -115,21 +118,31 @@ const startRecording = async () => {
         type: 'video/webm',
       })
       const storage = getStorage()
+      const correctTaskIndex = recordingTaskIndex.value;
       const storageReference = storageRef(
         storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}/video/${recordedVideo.value}`,
+        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
       )
       await uploadBytes(storageReference, videoBlob)
 
       recordedVideo.value = await getDownloadURL(storageReference)
-
+      console.log('webcam url =>', correctTaskIndex, recordedVideo.value);
+      console.log('Tasks array:', currentUserTestAnswer.value.tasks);
+      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length);
+      console.log('Task at index:', currentUserTestAnswer.value.tasks?.[correctTaskIndex]);
+      
       await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: props.taskIndex,
+        taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.webcam,
         url: recordedVideo.value
       });
 
-      currentUserTestAnswer.value.tasks[props.taskIndex].webcamRecordURL = recordedVideo.value
+      // Add safety check before setting the property
+      if (currentUserTestAnswer.value.tasks && currentUserTestAnswer.value.tasks[correctTaskIndex]) {
+        currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL = recordedVideo.value;
+      } else {
+        console.error('Task not found at index:', correctTaskIndex, 'Available tasks:', currentUserTestAnswer.value.tasks?.length);
+      }
 
       videoStream.value.getTracks().forEach((track) => track.stop())
       recording.value = false

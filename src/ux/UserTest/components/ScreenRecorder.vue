@@ -69,9 +69,12 @@ const videoUrl = ref('');
 const videoStream = ref(null);
 const mediaRecorder = ref(null);
 const chunks = ref([]);
+const recordingTaskIndex = ref(null); // Store the task index when recording starts
 
 const captureScreen = async () => {
   try {
+    recordingTaskIndex.value = props.taskIndex; // Store the current task index when recording starts
+    console.log('ScreenRecorder: Recording started for task index:', props.taskIndex);
     videoStream.value = await navigator.mediaDevices.getDisplayMedia({
       cursor: true,
     });
@@ -96,18 +99,30 @@ const recordScreen = async () => {
       emit('showLoading');
       const videoBlob = new Blob(chunks.value, { type: 'video/webm' });
       const storage = getStorage();
-      const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}/screen_record/${videoUrl.value}`;
+      const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`;
       const storageReference = storageRef(storage, storagePath);
 
       await uploadBytes(storageReference, videoBlob);
       videoUrl.value = await getDownloadURL(storageReference);
 
+      // Use the task index from when recording started, not the current one
+      const correctTaskIndex = recordingTaskIndex.value;
+      console.log('screen record =>', correctTaskIndex, videoUrl.value);
+      console.log('Tasks array:', currentUserTestAnswer.value.tasks);
+      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length);
+      
       await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: props.taskIndex,
+        taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.screen,
         url: videoUrl.value
       });
-      currentUserTestAnswer.value.tasks[props.taskIndex].screenRecordURL = videoUrl.value;
+      
+      // Add safety check before setting the property
+      if (currentUserTestAnswer.value.tasks && currentUserTestAnswer.value.tasks[correctTaskIndex]) {
+        currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL = videoUrl.value;
+      } else {
+        console.error('Task not found at index:', correctTaskIndex, 'Available tasks:', currentUserTestAnswer.value.tasks?.length);
+      }
 
       // Stop all tracks
       videoStream.value.getTracks().forEach((track) => track.stop());
