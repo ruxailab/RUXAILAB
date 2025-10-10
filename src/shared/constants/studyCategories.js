@@ -49,7 +49,7 @@ export const STUDY_CATEGORIES = [
         icon: 'mdi-access-point',
         color: 'primary',
         hasSubMethods: true,
-        comingSoon: true,
+        comingSoon: false,
     },
 ]
 

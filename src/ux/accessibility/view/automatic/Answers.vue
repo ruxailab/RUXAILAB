@@ -538,9 +538,154 @@ const getIssueColor = (type) => {
   }
 }
 
+const getIssueIcon = (type) => {
+  switch (type) {
+    case 'error':
+      return 'mdi-alert-circle'
+    case 'warning':
+      return 'mdi-alert'
+    case 'notice':
+      return 'mdi-information'
+    default:
+      return 'mdi-help-circle'
+  }
+}
+
 const getTabIcon = (index) => {
   const icons = ['mdi-chart-pie', 'mdi-web', 'mdi-information']
   return icons[index] || 'mdi-tab'
+}
+
+const getScoreColor = (score) => {
+  if (score >= 80) return 'success'
+  if (score >= 60) return 'warning'
+  return 'error'
+}
+
+// Computed properties for metrics
+const accessibilityScore = computed(() => {
+  const counts = getIssueCounts()
+  const totalIssues = counts.errors + counts.warnings + counts.notices
+  
+  if (totalIssues === 0) return 100
+  
+  // Weight errors more heavily than warnings and notices
+  const weightedScore = 100 - (
+    (counts.errors * 10) + 
+    (counts.warnings * 5) + 
+    (counts.notices * 2)
+  )
+  
+  return Math.max(0, Math.min(100, Math.round(weightedScore)))
+})
+
+const totalIssues = computed(() => {
+  const counts = getIssueCounts()
+  return counts.errors + counts.warnings + counts.notices
+})
+
+const uniqueRulesCount = computed(() => {
+  if (!report.value?.ReportIssues) return 0
+  const uniqueCodes = new Set(report.value.ReportIssues.map(issue => issue.code))
+  return uniqueCodes.size
+})
+
+const uniqueSelectorsCount = computed(() => {
+  if (!report.value?.ReportIssues) return 0
+  const uniqueSelectors = new Set(
+    report.value.ReportIssues
+      .map(issue => issue.selector)
+      .filter(selector => selector)
+  )
+  return uniqueSelectors.size
+})
+
+const mostCommonType = computed(() => {
+  const counts = getIssueCounts()
+  const total = counts.errors + counts.warnings + counts.notices
+  
+  if (total === 0) return null
+  
+  const types = [
+    { type: 'error', count: counts.errors },
+    { type: 'warning', count: counts.warnings },
+    { type: 'notice', count: counts.notices }
+  ]
+  
+  const sorted = types.sort((a, b) => b.count - a.count)
+  const most = sorted[0]
+  
+  return {
+    type: most.type,
+    percent: Math.round((most.count / total) * 100)
+  }
+})
+
+const topIssueCode = computed(() => {
+  if (!report.value?.ReportIssues || report.value.ReportIssues.length === 0) return null
+  
+  const codeCounts = {}
+  report.value.ReportIssues.forEach(issue => {
+    if (issue.code) {
+      codeCounts[issue.code] = (codeCounts[issue.code] || 0) + 1
+    }
+  })
+  
+  const sorted = Object.entries(codeCounts).sort((a, b) => b[1] - a[1])
+  if (sorted.length === 0) return null
+  
+  return {
+    code: sorted[0][0],
+    count: sorted[0][1]
+  }
+})
+
+const issuesCounts = computed(() => getIssueCounts())
+
+// Table-related computed properties
+const tableHeaders = computed(() => [
+  { title: 'Type', key: 'type', sortable: true, width: '120px' },
+  { title: 'Code', key: 'code', sortable: true, width: '180px' },
+  { title: 'Message', key: 'message', sortable: false },
+  { title: 'Selector', key: 'selector', sortable: false },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: '120px' }
+])
+
+const tableItems = computed(() => {
+  if (!report.value?.ReportIssues) return []
+  
+  return report.value.ReportIssues
+    .filter(issue => activeFilters.value.includes(issue.type))
+    .map((issue, index) => ({
+      ...issue,
+      rowKey: `issue-${index}-${issue.code}`
+    }))
+})
+
+const filteredIssueCounts = computed(() => {
+  const filtered = tableItems.value
+  return {
+    total: filtered.length,
+    errors: filtered.filter(i => i.type === 'error').length,
+    warnings: filtered.filter(i => i.type === 'warning').length,
+    notices: filtered.filter(i => i.type === 'notice').length
+  }
+})
+
+const isAllSelected = computed(() => activeFilters.value.length === 3)
+const isNoneSelected = computed(() => activeFilters.value.length === 0)
+
+const clearAllFilters = () => {
+  activeFilters.value = []
+}
+
+const selectAllFilters = () => {
+  activeFilters.value = ['error', 'warning', 'notice']
+}
+
+const openIssueDialog = (issue) => {
+  selectedIssueObj.value = issue
+  issueDialog.value = true
 }
 
 const selectIssue = (index) => {
