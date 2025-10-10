@@ -569,14 +569,31 @@ const accessibilityScore = computed(() => {
   
   if (totalIssues === 0) return 100
   
-  // Weight errors more heavily than warnings and notices
-  const weightedScore = 100 - (
-    (counts.errors * 10) + 
-    (counts.warnings * 5) + 
-    (counts.notices * 2)
+  // Improved weighted scoring system using logarithmic scale
+  // This provides more granular scoring and prevents scores from dropping to 0 too quickly
+  
+  // Weight factors for different issue types
+  const errorWeight = 5
+  const warningWeight = 2
+  const noticeWeight = 0.5
+  
+  // Calculated weighted issue count
+  const weightedIssues = (
+    (counts.errors * errorWeight) + 
+    (counts.warnings * warningWeight) + 
+    (counts.notices * noticeWeight)
   )
   
-  return Math.max(0, Math.min(100, Math.round(weightedScore)))
+  // Use of logarithmic decay for more realistic scoring
+  // Formula: 100 * e^(-k * weightedIssues) where k controls decay rate
+  const decayRate = 0.015 // Adjusted for balanced scoring
+  const score = 100 * Math.exp(-decayRate * weightedIssues)
+  
+  // Alternative linear approach with diminishing returns
+  // Uncomment to use this instead:
+  // const score = 100 / (1 + (weightedIssues / 20))
+  
+  return Math.max(0, Math.min(100, Math.round(score)))
 })
 
 const totalIssues = computed(() => {
