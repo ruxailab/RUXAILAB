@@ -382,7 +382,7 @@ const notifyCooperator = (guest) => {
       params: { id: test.value.id }
     });
 
-    const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
+    const path = guest.accessLevel == 0 ? managerRoute.href : `/accessibility/manual/preview/${test.value.id}`;
 
     sendNotification({
       userId: guest.userDocId,
