@@ -173,12 +173,20 @@ const goToNotificationRedirect = async (notification) => {
     await markAsRead(notification)
     return
   }
-  const study = await new StudyController().getStudy({ id: notification.testId })
+  
+  // Check if it's an accessibility study (skiping acceptStudyCollaboration for accessibility tests)
+  const isAccessibilityStudy = notification.redirectsTo && 
+    notification.redirectsTo.includes('/accessibility/manual/preview/') ||
+    notification.redirectsTo.includes('/accessibility/automatic/preview/')
+  
+  if (!isAccessibilityStudy) {
+    const study = await new StudyController().getStudy({ id: notification.testId })
     
-  await store.dispatch('acceptStudyCollaboration', {
-    test: study,
-    cooperator: user.value,
-  });
+    await store.dispatch('acceptStudyCollaboration', {
+      test: study,
+      cooperator: user.value,
+    });
+  }
   
   if (!notification.read) {
     await markAsRead(notification)

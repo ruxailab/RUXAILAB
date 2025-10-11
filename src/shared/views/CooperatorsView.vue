@@ -219,14 +219,14 @@ const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId && test.value) {
     const author = test.value.testAdmin.email;
-    await sendNotification(
-      user.userDocId,
-      title,
-      author,
-      content,
-      '/',
-      test.value.id
-    );
+    await sendNotification({
+      userId: user.userDocId,
+      title: title,
+      description: content,
+      redirectsTo: '/',
+      testId: test.value.id,
+      author: author
+    });
   }
 };
 
@@ -370,10 +370,11 @@ const notifyCooperatorAccessibility = async (guest) => {
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-    //  notifyCooperatorAccessibility(guest);
-    //  return;
-    //}
+    if (test.value.subType === 'ACCESSIBILITY_MANUAL' || test.value.subType === 'ACCESSIBILITY_AUTOMATIC') {
+      console.log('Notifying cooperator for accessibility test');
+      // notifyCooperatorAccessibility(guest);
+     
+    }
 
     // admin - 0, evaluator -1, guest - 2
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
@@ -382,7 +383,10 @@ const notifyCooperator = (guest) => {
       params: { id: test.value.id }
     });
 
-    const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
+    let path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
+    if(test.value.subType === 'ACCESSIBILITY_MANUAL' || test.value.subType === 'ACCESSIBILITY_AUTOMATIC'){
+      path = `/accessibility/manual/preview/${test.value.id}`;
+    }
 
     sendNotification({
       userId: guest.userDocId,
