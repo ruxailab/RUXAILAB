@@ -41,6 +41,9 @@
             <v-tab v-if="showEye" @click="tab = 4">
               Eye-Tracking Analytics
             </v-tab>
+            <v-tab @click="tab = 5">
+              Studies
+            </v-tab>
           </v-tabs>
         </template>
 
@@ -54,6 +57,7 @@
             <SusAnalytics v-if="tab === 2" />
             <NasaTlxAnalytics v-if="tab === 3" />
             <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 4" />
+            <Studies v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -76,6 +80,7 @@ import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
+import Studies from '@/ux/UserTest/components/ModeratedTestAnalytics/Studies.vue';
 
 defineProps({
   id: {
