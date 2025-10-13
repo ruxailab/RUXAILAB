@@ -385,7 +385,7 @@ const notifyCooperator = (guest) => {
 
     let path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
     if(test.value.subType === 'ACCESSIBILITY_MANUAL' || test.value.subType === 'ACCESSIBILITY_AUTOMATIC'){
-      path = `/accessibility/manual/preview/${test.value.id}`;
+      path = `/accessibility/manual/${test.value.id}`;
     }
 
     sendNotification({

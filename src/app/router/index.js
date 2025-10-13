@@ -19,17 +19,18 @@ router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
   let user = store.state.Auth.user
 
-  // Special handling for accessibility preview routes - allow complete public access
-  const isAccessibilityPreview = to.path.includes('/accessibility/') && to.path.includes('/preview/')
-
-  if (isAccessibilityPreview) {
-    console.log('Accessibility preview route detected - allowing public access')
-    return next() // Allow immediate access without any checks
-  }
-
+  // Always ensure user is loaded if not already in store
   if (!user) {
     await store.dispatch('autoSignIn')
     user = store.state.Auth.user
+  }
+
+  // Special handling for accessibility preview routes - allow public access but with user loaded
+  const isAccessibilityPreview = to.path.includes('/accessibility/') && to.path.includes('/preview/')
+
+  if (isAccessibilityPreview) {
+    console.log('Accessibility preview route detected - allowing public access (user loaded:', !!user, ')')
+    return next() // Allow access with or without user
   }
 
   if (to.path === '/') return next(redirect())
