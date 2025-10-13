@@ -229,7 +229,7 @@
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
                       <v-expansion-panel v-if="dialogItem.tasks[taskSelect].irisTrackingData?.length > 0"
-                        @click.stop="openSessionAnalytics">
+                        @click.stop="openSessionAnalyticsDialog">
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">
                           Eye Tracking Analytics
                         </v-expansion-panel-title>
@@ -271,6 +271,8 @@
                       <SessionAnalytics :tasks="dialogItem.tasks" :taskSelect="taskSelect"
                         @close="showSessionAnalytics = false" />
                     </v-dialog>
+                    <SessionAnalyticsDialog v-model="showSessionAnalyticsDialog"
+                      :task-answer="dialogItem.tasks[taskSelect]" :fromEyeTracking="true" />
                   </div>
                 </div>
               </v-col>
@@ -292,6 +294,7 @@ import TaskDetailsModal from './TaskDetailsModal.vue';
 import { useToast } from 'vue-toastification';
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
 import SessionAnalytics from '../SessionAnalytics.vue';
+import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue';
 
 const toast = useToast()
 
@@ -308,6 +311,7 @@ const taskAnswers = ref([]);
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
 const showSessionAnalytics = ref(false)
+const showSessionAnalyticsDialog = ref(false)
 
 // Búsqueda por nombre / email
 const searchTerm = ref('');
@@ -465,6 +469,10 @@ const tableData = computed(() => {
 
 const openSessionAnalytics = () => {
   showSessionAnalytics.value = true
+}
+
+const openSessionAnalyticsDialog = () => {
+  showSessionAnalyticsDialog.value = true
 }
 
 const formatTime = (time) => {

@@ -1,0 +1,198 @@
+<template>
+    <v-dialog v-model="open" fullscreen transition="dialog-bottom-transition" persistent>
+        <v-card>
+            <v-toolbar dark color="primary">
+                <v-btn icon @click="close">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-toolbar-title>
+                    Task Analysis: {{ taskAnswer?.taskName || 'Untitled Task' }}
+                </v-toolbar-title>
+            </v-toolbar>
+
+            <v-card-text>
+                <v-row class="mb-4">
+                    <v-col cols="12" md="6">
+                        <div class="video-box mb-2 video-rect-box" v-if="rightTab !== 'eye'">
+                            <video ref="mainVideo1" class="video-rect-skeleton" controls
+                                :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator">
+                                <source :src="taskAnswer?.evaluatorVideo ?? defaultVideos.evaluator" type="video/mp4" />
+                            </video>
+                        </div>
+
+                        <div class="video-box screen-video-box video-rect-box">
+                            <video ref="mainVideo2" class="video-rect-skeleton" controls
+                                :poster="taskAnswer?.screenPoster ?? defaultPosters.screen">
+                                <source :src="taskAnswer?.screenVideo ?? defaultVideos.screen" type="video/mp4" />
+                            </video>
+                        </div>
+                    </v-col>
+
+                    <v-col cols="12" md="6">
+                        <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
+                            <v-tab value="general">General</v-tab>
+                            <v-tab value="eye">Eye Tracker</v-tab>
+                            <v-tab value="sentimental">Sentimental</v-tab>
+                            <v-tab value="transcript">Transcripción</v-tab>
+                            <v-tab value="notes">Notas</v-tab>
+                        </v-tabs>
+
+                        <v-window v-model="rightTab" class="mt-4">
+                            <v-window-item value="general">
+                                <h4 class="text-subtitle-1 mb-1">General Analytics</h4>
+                                <TranscriptWordCloud :transcript="taskAnswer?.transcript ?? mockTranscript" />
+                                <SentimentSummary :sentiments="taskAnswer?.sentiments ?? mockSentiments" class="mb-4" />
+                                <NotesStats :totalNotes="taskAnswer?.notesCount ?? mockNotesCount" class="mb-4" />
+                            </v-window-item>
+
+                            <v-window-item value="eye">
+                                <EyeTrackingStats
+                                    :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
+                                    :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
+                                    class="mb-4" />
+                            </v-window-item>
+
+                            <v-window-item value="sentimental">
+                                <h4 class="text-subtitle-1 mb-1">Sentimental Analysis</h4>
+                                <v-skeleton-loader type="text" width="80%" />
+                                <v-skeleton-loader type="text" width="60%" />
+                            </v-window-item>
+
+                            <v-window-item value="transcript">
+                                <h4 class="text-subtitle-1 mb-1">Audio Transcript</h4>
+                                <v-skeleton-loader type="text" width="80%" />
+                                <v-skeleton-loader type="text" width="60%" />
+                            </v-window-item>
+
+                            <v-window-item value="notes">
+                                <h4 class="text-subtitle-1 mb-2">Notas</h4>
+                                <v-sheet class="pa-4 rounded-lg mb-6" color="#f5f5f5">
+                                    <v-skeleton-loader type="text" width="80%" />
+                                    <v-skeleton-loader type="text" width="60%" />
+                                </v-sheet>
+                            </v-window-item>
+                        </v-window>
+                    </v-col>
+                </v-row>
+
+                <v-col cols="12" class="mt-4">
+                    {{ ' videoDuration -' + videoDuration }}
+                    {{ ' videoCurrentTime -' + videoCurrentTime }}
+                    {{ ' isPlaying -' + isPlaying }}
+                    <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
+                        @seek="onSeek" @togglePlay="togglePlay" />
+                </v-col>
+            </v-card-text>
+        </v-card>
+    </v-dialog>
+</template>
+
+<script setup>
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import SessionTimeline from '../sessions/SessionTimeline.vue'
+import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue'
+import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
+import SentimentSummary from '../sessions/SentimentSummary.vue'
+import NotesStats from '../sessions/NotesStats.vue'
+
+const props = defineProps({
+    modelValue: { type: Boolean, required: true },
+    taskAnswer: { type: Object, default: null },
+    fromEyeTracking: { type: Boolean, default: false }
+})
+const emit = defineEmits(['update:modelValue'])
+
+const open = ref(props.modelValue)
+watch(() => props.modelValue, val => open.value = val)
+watch(open, val => emit('update:modelValue', val))
+
+const rightTab = ref('general')
+const mainVideo1 = ref(null)
+const mainVideo2 = ref(null)
+const isPlaying = ref(false)
+const videoDuration = ref(0)
+const videoCurrentTime = ref(0)
+let rafId = null
+
+const defaultVideos = {
+    evaluator: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
+    screen: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'
+}
+const defaultPosters = {
+    evaluator: 'https://dummyimage.com/800x450/eeeeee/000000&text=Evaluator+Video',
+    screen: 'https://dummyimage.com/800x450/eeeeee/000000&text=Screen+Recording'
+}
+const mockTranscript = 'Usuario realizó la tarea correctamente...'
+const mockEyeTracking = { accuracy: 92, fixations: 34 }
+const mockSentiments = ['positivo', 'neutral', 'negativo']
+const mockNotesCount = 5
+
+const updateLoop = () => {
+    const video = mainVideo2.value
+    if (!video) return
+    videoCurrentTime.value = video.currentTime
+    if (!video.paused) rafId = requestAnimationFrame(updateLoop)
+}
+
+const togglePlay = () => {
+    const video = mainVideo2.value
+    if (!video) return
+
+    if (isPlaying.value) {
+        video.pause()
+        cancelAnimationFrame(rafId)
+        isPlaying.value = false
+    } else {
+        video.play()
+        isPlaying.value = true
+        updateLoop()
+    }
+}
+
+const onSeek = (time) => {
+    const video = mainVideo2.value
+    if (!video) return
+    cancelAnimationFrame(rafId)
+    video.currentTime = time
+    videoCurrentTime.value = time
+    if (isPlaying.value) updateLoop()
+}
+
+const close = () => open.value = false
+
+onMounted(() => {
+    const video = mainVideo2.value
+    if (!video) return
+
+    video.addEventListener('loadedmetadata', () => {
+        videoDuration.value = video.duration
+    })
+
+    video.addEventListener('play', () => {
+        isPlaying.value = true
+        updateLoop()
+    })
+
+    video.addEventListener('pause', () => {
+        isPlaying.value = false
+        cancelAnimationFrame(rafId)
+    })
+})
+
+onBeforeUnmount(() => cancelAnimationFrame(rafId))
+</script>
+
+
+<style scoped>
+.video-rect-skeleton {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+}
+
+.video-rect-box {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+</style>
