@@ -8,8 +8,8 @@ export default class ManualAccessibilityTest {
   constructor(data = {}) {
     // Basic test information
     this.id = data.id || null;
-    this.title = data.title || '';
-    this.description = data.description || '';
+    this.testTitle = data.testTitle || '';
+    this.testDescription = data.testDescription || '';
     this.websiteUrl = data.websiteUrl || '';
     this.testAdmin = data.testAdmin || null;
     this.status = data.status || 'draft'; // draft, in-progress, completed, archived
@@ -81,9 +81,8 @@ export default class ManualAccessibilityTest {
 
     // Create a plain object with all the data
     const plainData = {
-      title: this.title,
-      testTitle: this.title, // Add testTitle for compatibility with Firebase functions
-      description: this.description,
+      testTitle: this.testTitle,
+      testDescription: this.testDescription,
       websiteUrl: this.websiteUrl,
       testAdmin: toPlainObject(this.testAdmin),
       status: this.status,
