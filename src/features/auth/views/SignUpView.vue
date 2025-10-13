@@ -1,12 +1,8 @@
 <template>
-  <div class="signup-wrapper d-flex">
+  <div class="signup-wrapper">
     <!-- LEFT: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img
-        src="@/assets/ruxailab.png"
-        alt="RUXAILAB"
-        class="logo-img"
-      >
+      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
     </div>
 
     <!-- RIGHT: FORM -->
@@ -188,9 +184,10 @@ const onGoogleSignInError = (error) => {
 <style scoped>
 .signup-wrapper {
   display: flex;
-  height: 100vh;
-  background-color: #ffffff;
   flex-direction: row;
+  min-height: 100vh;
+  background-color: #ffffff;
+  flex-wrap: wrap;
 }
 
 .logo-side {
@@ -217,22 +214,44 @@ const onGoogleSignInError = (error) => {
 
 .signup-box {
   width: 100%;
-  max-width: 500px;
-  padding: 48px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 10px solid rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.25rem;
+  max-width: 450px;
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .subtitle {
   font-size: 0.95rem;
   color: #555;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* RESPONSIVE STYLES */
+@media (max-width: 960px) {
+  .logo-side {
+    display: none;
+  }
+
+  .form-side {
+    width: 100%;
+    padding: 24px;
+  }
+
+  .signup-box {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .signup-box {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
 }
 </style>
