@@ -1,9 +1,6 @@
 <template>
     <v-container fluid class="py-6" style="height: 100%; background-color: white;">
-        <!-- TOP TITLE -->
-        <!------------------------------------------------------------------------------------------------------------------------->
-        <!----------------------------------------------------- Title ------------------------------------------------------------->
-        <!------------------------------------------------------------------------------------------------------------------------->
+        <!-- Título -->
         <v-row class="mb-6">
             <v-col cols="12" class="text-center">
                 <h1 class="text-h4 font-weight-bold d-flex align-center justify-center">
@@ -12,9 +9,10 @@
                 </h1>
             </v-col>
         </v-row>
+
         <v-card flat>
             <v-row class="ma-0 pa-0">
-                <!-- Selector de usuario -->
+                <!-- Lista de usuários -->
                 <v-col class="ma-0 pa-0 task-list" cols="3">
                     <v-list density="compact" class="list-scroll">
                         <v-list-subheader>Evaluators</v-list-subheader>
@@ -28,16 +26,19 @@
                         </v-list>
                     </v-list>
                 </v-col>
+
                 <v-divider vertical inset />
-                <!-- Lista de tareas -->
+
+                <!-- Lista de tarefas -->
                 <v-col class="ma-0 pa-1 answer-list" cols="9">
                     <div v-if="selectedUserId">
                         <h3 class="text-h6 font-weight-bold mb-4">Tasks for User {{ selectedUserId }}</h3>
                         <v-list>
                             <v-list-item v-for="task in mockTasks" :key="task.taskId" @click="openTaskDialog(task)">
                                 <v-list-item-title>{{ task.taskName }}</v-list-item-title>
-                                <v-list-item-subtitle><v-skeleton-loader type="text"
-                                        width="40%" /></v-list-item-subtitle>
+                                <v-list-item-subtitle>
+                                    <v-skeleton-loader type="text" width="40%" />
+                                </v-list-item-subtitle>
                             </v-list-item>
                         </v-list>
                     </div>
@@ -49,90 +50,9 @@
         </v-card>
     </v-container>
 
-    <v-dialog v-model="taskDialog" fullscreen>
-        <v-card>
-            <v-toolbar dark color="primary">
-                <v-btn icon @click="taskDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-toolbar-title>Task Analysis: {{ selectedTask?.taskName || '' }}</v-toolbar-title>
-            </v-toolbar>
-            <v-card-text>
-                <v-row class="mb-4">
-                    <!-- Col-6 izquierda: videos tipo iMovie -->
-                    <v-col cols="12" md="5">
-                        <div class="video-box mb-2 video-rect-box">
-                            <video ref="mainVideo1" class="video-rect-skeleton"
-                                 poster=""></video>
-                        </div>
-                        <div class="video-box screen-video-box video-rect-box">
-                            <video ref="mainVideo2" class="video-rect-skeleton"
-                                 poster=""></video>
-                        </div>
-                    </v-col>
-                    <!-- Col-6 derecha: audio y transcript -->
-                    <v-col cols="12" md="7">
-                        <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
-                            <v-tab value="general">General</v-tab>
-                            <v-tab value="eye">Eye Tracker</v-tab>
-                            <v-tab value="sentimental">Sentimental</v-tab>
-                            <v-tab value="transcript">Transcripción</v-tab>
-                            <v-tab value="notes">Notas</v-tab>
-                        </v-tabs>
-                        <v-window v-model="rightTab" class="mt-4">
-                            <v-window-item value="general">
-                                <h4 class="text-subtitle-1 mb-1">General Analytics</h4>
-                                <TranscriptWordCloud :transcript="mockTranscript" class="mb-4" />
-                                <EyeTrackingStats :accuracy="mockEyeTracking.accuracy"
-                                    :fixations="mockEyeTracking.fixations" class="mb-4" />
-                                <SentimentSummary :sentiments="mockSentiments" class="mb-4" />
-                                <NotesStats :totalNotes="mockNotesCount" class="mb-4" />
-                            </v-window-item>
-                            <v-window-item value="eye">
-                                <h4 class="text-subtitle-1 mb-1">Eye Tracker Data</h4>
-                                <v-skeleton-loader type="text" width="80%" />
-                                <v-skeleton-loader type="text" width="60%" />
-                            </v-window-item>
-                            <v-window-item value="sentimental">
-                                <h4 class="text-subtitle-1 mb-1">Sentimental Analysis</h4>
-                                <v-skeleton-loader type="text" width="80%" />
-                                <v-skeleton-loader type="text" width="60%" />
-                            </v-window-item>
-                            <v-window-item value="transcript">
-                                <h4 class="text-subtitle-1 mb-1">Audio Transcript</h4>
-                                <v-skeleton-loader type="text" width="80%" />
-                                <v-skeleton-loader type="text" width="60%" />
+    <!-- Diálogo da tarefa -->
+    <SessionAnalyticsDialog v-model="taskDialog" :task-answer="selectedTask" />
 
-                                <h4 class="text-subtitle-1 mb-2">Timeline de la transcripción</h4>
-                                <v-sheet class="pa-4 rounded-lg mb-6" color="#fffef5">
-                                    <v-timeline side="end" density="comfortable">
-                                        <v-timeline-item v-for="i in 3" :key="i" dot-color="orange-darken-2"
-                                            icon="mdi-laptop-account" size="small">
-                                            <v-skeleton-loader type="text" width="90%" />
-                                        </v-timeline-item>
-                                    </v-timeline>
-                                </v-sheet>
-                                <h4 class="text-subtitle-1 mb-2">Extra Data</h4>
-                                <v-skeleton-loader type="text" width="70%" />
-                                <v-skeleton-loader type="text" width="50%" />
-                            </v-window-item>
-                            <v-window-item value="notes">
-                                <h4 class="text-subtitle-1 mb-2">Notas</h4>
-                                <v-sheet class="pa-4 rounded-lg mb-6" color="#f5f5f5">
-                                    <v-skeleton-loader type="text" width="80%" />
-                                    <v-skeleton-loader type="text" width="60%" />
-                                </v-sheet>
-                            </v-window-item>
-                        </v-window>
-                    </v-col>
-                </v-row>
-                <SessionTimeline ref="sessionTimeline" :currentTime="currentTime" :duration="videoDuration"
-                    :playing="isPlaying" @play-pause="handleTimelinePlayPause" @timeline-selected="handleTimelineSeek"
-                    @video-duration="handleVideoDuration" />
-
-            </v-card-text>
-        </v-card>
-    </v-dialog>
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" :timeout="4000">
         {{ snackbar.text }}
         <template #actions>
@@ -145,18 +65,10 @@
 
 
 <script>
-import SessionTimeline from './sessions/SessionTimeline.vue';
-import TranscriptWordCloud from './sessions/TranscriptWordCloud.vue';
-import EyeTrackingStats from './sessions/EyeTrackingStats.vue';
-import SentimentSummary from './sessions/SentimentSummary.vue';
-import NotesStats from './sessions/NotesStats.vue';
+import SessionAnalyticsDialog from './dialogs/SessionAnalyticsDialog.vue';
 export default {
     components: {
-        SessionTimeline,
-        TranscriptWordCloud,
-        EyeTrackingStats,
-        SentimentSummary,
-        NotesStats
+        SessionAnalyticsDialog
     },
     data() {
         return {
@@ -198,6 +110,8 @@ export default {
             this.currentTime = v1.currentTime;
         },
         openTaskDialog(task) {
+            console.log('openTaskDialog', task);
+
             this.selectedTask = task;
             this.taskDialog = true;
             this.selectedThumb = 1;
