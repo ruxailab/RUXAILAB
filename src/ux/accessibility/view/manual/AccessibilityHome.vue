@@ -1,5 +1,4 @@
 <template>
-  
     <!-- Manager-style Header (uses same image as ManagerView) -->
     <div class="h-64 w-full">
       <ManagerBanner />

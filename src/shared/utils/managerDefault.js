@@ -1,5 +1,5 @@
 import { ACCESS_LEVEL } from "./accessLevel"
-import { ICONS, createCardConfig } from "../constants/theme"
+import { ICONS, createCardConfig, INTRO_IMAGES } from "../constants/theme"
 
 export const getNavigatorDefault = (test, accessLevel, route, type) => {
   if (!test) return [];
@@ -156,10 +156,9 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
   const cards = [
     {
       title: 'View Dashboard',
-      subtitle: 'Access detailed accessibility tools',
-      icon: 'mdi-view-dashboard',
+      description: 'Access detailed accessibility tools',
+      image: INTRO_IMAGES.MANAGER,
       path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/${testId}`,
-      color: 'info'
     }
   ];
 
@@ -168,17 +167,15 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
       cards.push(
         {
           title: 'Configure Test',
-          subtitle: 'Set up accessibility test parameters',
-          icon: 'mdi-cog',
+          description: 'Set up accessibility test parameters',
+          image: INTRO_IMAGES.EDIT,
           path: `/accessibility/manual/config/${testId}`,
-          color: 'primary'
         },
         {
           title: 'Manage Cooperators',
-          subtitle: 'Invite and manage test participants',
-          icon: 'mdi-account-group',
+          description: 'Invite and manage test participants',
+          image: INTRO_IMAGES.COOPS,
           path: `/accessibility/manual/cooperative/${testId}`,
-          color: 'success'
         }
       );
     }
@@ -187,17 +184,15 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
       cards.push(
         {
           title: 'Analyze Website',
-          subtitle: 'Run automated accessibility analysis',
-          icon: 'mdi-magnify',
+          description: 'Run automated accessibility analysis',
+          image: INTRO_IMAGES.ANALYTICS,
           path: `/accessibility/automatic/analyse/${testId}`,
-          color: 'primary'
         },
         {
           title: 'Manage Cooperators',
-          subtitle: 'Share reports with team members',
-          icon: 'mdi-account-group',
+          description: 'Share reports with team members',
+          image: INTRO_IMAGES.COOPS,
           path: `/accessibility/automatic/cooperation/${testId}`,
-          color: 'success'
         }
       );
     }
@@ -239,19 +234,17 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
   if (isManual) {
     cards.push({
       title: 'Preview Test',
-      subtitle: 'See how the test appears to participants',
-      icon: 'mdi-clipboard-check',
+      description: 'See how the test appears to participants',
+      image: INTRO_IMAGES.MANAGER,
       path: `/accessibility/manual/preview/${testId}`,
-      color: 'info'
     });
 
     if (userRole === 'admin') {
       cards.push({
         title: 'View Results',
-        subtitle: 'Analyze accessibility test answers',
-        icon: 'mdi-chart-bar',
+        description: 'Analyze accessibility test answers',
+        image: INTRO_IMAGES.ANSWER,
         path: `/accessibility/manual/result/${testId}`,
-        color: 'warning'
       });
     }
   }
@@ -259,19 +252,17 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
   if (isAutomatic) {
     cards.push({
       title: 'View Report',
-      subtitle: 'See accessibility analysis results',
-      icon: 'mdi-chart-bar',
+      description: 'See accessibility analysis results',
+      image: INTRO_IMAGES.REPORTS,
       path: `/accessibility/automatic/reports/${testId}`,
-      color: 'info'
     });
 
     if (userRole === 'admin') {
       cards.push({
         title: 'Test Settings',
-        subtitle: 'Configure analysis parameters',
-        icon: 'mdi-cog',
+        description: 'Configure analysis parameters',
+        image: INTRO_IMAGES.EDIT,
         path: `/accessibility/automatic/settings/${testId}`,
-        color: 'warning'
       });
     }
   }

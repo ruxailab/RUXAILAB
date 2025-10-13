@@ -1,9 +1,5 @@
 <template>
-  <div v-if="isLoading" class="d-flex justify-center align-center" style="min-height: 400px;">
-    <v-progress-circular indeterminate color="primary" :size="50"></v-progress-circular>
-  </div>
   <ManagerView 
-    v-else
     :navigator="filteredNavItems"
     :top-cards="topCards"
     :bottom-cards="bottomCards"

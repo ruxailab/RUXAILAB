@@ -23,7 +23,7 @@ import { accessibilityGuard } from '@/ux/accessibility/guards/accessibilityGuard
 const accessibilityRoutes = [
     // Manual Accessibility Routes
     {
-        path: '/accessibility/manual/:id',
+        path: '/accessibility/manual/manager/:id',
         name: 'AccessibilityManualManager',
         meta: { authorize: [0, 1] },
         component: AccessibilityManagerView,

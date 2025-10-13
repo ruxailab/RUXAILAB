@@ -284,7 +284,7 @@ const goTo = (test) => {
   // Handle MANUAL and AUTOMATIC tests with router navigation
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
     const baseUrl = activeSection.value === 'studies' ? test.testDocId || test.id : test.id;
-    router.push(`/accessibility/manual/${baseUrl}`);
+    router.push(`/accessibility/manual/manager/${baseUrl}`);
     return;
   }
 
