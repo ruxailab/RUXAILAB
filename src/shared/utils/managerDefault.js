@@ -158,7 +158,7 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
       title: 'View Dashboard',
       subtitle: 'Access detailed accessibility tools',
       icon: 'mdi-view-dashboard',
-      path: isManual ? `/accessibility/manual/home/${testId}` : `/accessibility/automatic/home/${testId}`,
+      path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/${testId}`,
       color: 'info'
     }
   ];

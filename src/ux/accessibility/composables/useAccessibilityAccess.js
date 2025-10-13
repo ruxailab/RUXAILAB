@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
+import { getCurrentUser } from '@/ux/accessibility/utils/getCurrentUser'
 
 export function useAccessibilityAccess() {
     const store = useStore()
@@ -43,24 +44,47 @@ export function useAccessibilityAccess() {
     }
 
     const determineUserRole = (currentUser, studyData) => {
-        const currentUserId = currentUser.id
+        // Try multiple possible user ID fields
+        const currentUserId = currentUser.id || currentUser.uid || currentUser.userDocId
+
+        console.log('=== DETERMINING USER ROLE ===')
+        console.log('Current User Object:', currentUser)
+        console.log('Current User ID (extracted):', currentUserId)
+        console.log('Test Admin UserDocId:', studyData.testAdmin?.userDocId)
+        console.log('Cooperators:', studyData.cooperators)
+
+        // Check if user is the test admin
         const isTestAdmin = studyData.testAdmin?.userDocId === currentUserId
         console.log('Is Test Admin:', isTestAdmin)
-        const isCooperator = studyData.cooperators?.some(coop => coop.userDocId === currentUserId)
-        console.log('Is Cooperator:', isCooperator)
+
+        // Check if user is a cooperator and get their access level
+        const cooperator = studyData.cooperators?.find(coop => coop.userDocId === currentUserId)
+        console.log('Cooperator found:', cooperator)
+        console.log('Cooperator accessLevel:', cooperator?.accessLevel)
 
         if (isTestAdmin) {
             userRole.value = 'admin'
-            accessLevel.value = 999
+            accessLevel.value = 0
             console.log('Access granted: User is test admin - full access to all pages')
-        } else if (isCooperator) {
-            userRole.value = 'cooperator'
-            accessLevel.value = 500
-            console.log('Access granted: User is cooperator - preview page only')
+        } else if (cooperator) {
+            // Check cooperator's accessLevel
+            if (cooperator.accessLevel === 0) {
+                userRole.value = 'admin'
+                accessLevel.value = 0
+                console.log('Access granted: Cooperator with accessLevel 0 - full access to all pages')
+            } else if (cooperator.accessLevel === 1 || cooperator.accessLevel === 2) {
+                userRole.value = 'cooperator'
+                accessLevel.value = cooperator.accessLevel
+                console.log(`Access limited: Cooperator with accessLevel ${cooperator.accessLevel} - only home and preview pages`)
+            } else {
+                userRole.value = 'user'
+                accessLevel.value = 99
+                console.log('Limited access: Unknown access level - preview only')
+            }
         } else {
             userRole.value = 'user'
-            accessLevel.value = 0
-            console.log('Limited access: User gets preview only')
+            accessLevel.value = 99
+            console.log('Limited access: Not admin or cooperator - preview only')
         }
     }
 
@@ -68,8 +92,11 @@ export function useAccessibilityAccess() {
         try {
             isLoading.value = true
             console.log('=== FETCHING STUDY AND USER INFORMATION ===')
-            const currentUser = store.state.Auth.user
-            console.log('Current User from Auth Store:')
+
+            // Use centralized getCurrentUser utility
+            const currentUser = await getCurrentUser(store)
+
+            console.log('Current User:')
             console.log(JSON.stringify(currentUser, null, 2))
 
             if (testId) {
@@ -113,8 +140,15 @@ export function useAccessibilityAccess() {
 
     const getAccessLevelText = computed(() => {
         if (!userRole.value) return ''
-        if (userRole.value === 'admin') return 'Full Access (Test Admin)'
-        if (userRole.value === 'cooperator') return 'Preview Only (Cooperator)'
+        if (userRole.value === 'admin') {
+            if (accessLevel.value === 0) {
+                return 'Full Access (Admin/Cooperator Level 0)'
+            }
+            return 'Full Access (Test Admin)'
+        }
+        if (userRole.value === 'cooperator') {
+            return `Limited Access (Cooperator Level ${accessLevel.value})`
+        }
         return 'Preview Only'
     })
 

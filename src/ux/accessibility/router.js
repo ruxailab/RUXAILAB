@@ -17,6 +17,9 @@ import AccessibilityAnswers from '@/ux/accessibility/view/automatic/Answers.vue'
 import AccessibilityReport from '@/ux/accessibility/view/automatic/Report.vue';
 import AccessibilityAnalyse from '@/ux/accessibility/view/automatic/EditTest.vue';
 
+// Navigation guard
+import { accessibilityGuard } from '@/ux/accessibility/guards/accessibilityGuard.js';
+
 const accessibilityRoutes = [
     // Manual Accessibility Routes
     {
@@ -38,6 +41,7 @@ const accessibilityRoutes = [
                 name: 'EditAccessibilityTest',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: SettingsView,
             },
             {
@@ -52,6 +56,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilityTestAnswers',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: AccessibilityTestAnswers,
             },
             {
@@ -59,6 +64,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilityTestCooperative',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: CooperatorsView,
             },
             {
@@ -66,6 +72,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilityConfig',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: AccessibilityConfig,
             },
         ],
@@ -98,6 +105,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilityAnalyse',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: AccessibilityAnalyse,
             },
             {
@@ -105,6 +113,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilityAnswers',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: AccessibilityAnswers,
             },
             {
@@ -119,6 +128,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilityCooperation',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: CooperatorsView,
             },
             {
@@ -126,6 +136,7 @@ const accessibilityRoutes = [
                 name: 'AccessibilitySettings',
                 props: true,
                 meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
                 component: SettingsView,
             },
         ],

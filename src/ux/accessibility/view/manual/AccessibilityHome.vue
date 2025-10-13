@@ -22,6 +22,8 @@ import { useStore } from 'vuex';
 import CardsManager from '@/shared/components/CardsManager';
 import ManagerBanner from '@/shared/components/ManagerBanner.vue';
 import { ICONS, createCardConfig } from '@/shared/constants/theme';
+import { hasAdminAccess } from '@/ux/accessibility/utils/accessControl';
+import { getCurrentUser } from '@/ux/accessibility/utils/getCurrentUser';
 
 const route = useRoute();
 const router = useRouter();
@@ -31,13 +33,18 @@ const { t } = useI18n();
 const testId = ref(route.params.id || '');
 const userRole = ref(null);
 
-// Get user role from parent component or fetch it
-const getUserRole = async () => {
+// Get user role based on access control rules
+const checkUserRole = async () => {
   try {
-    const currentUser = store.state.Auth.user;
-    if (!currentUser) return 'user';
+    // Use centralized getCurrentUser utility
+    const currentUser = await getCurrentUser(store);
     
-    // Get study data
+    if (!currentUser) {
+      console.log('AccessibilityHome - No current user available');
+      return 'user';
+    }
+    
+    // Wait for study data to be loaded if not already available
     let studyData = null;
     if (store.getters.test) {
       studyData = store.getters.test;
@@ -47,28 +54,43 @@ const getUserRole = async () => {
       studyData = store.state.Test;
     }
     
-    if (!studyData) return 'user';
+    // If no study data, try to fetch it
+    if (!studyData && testId.value) {
+      console.log('AccessibilityHome - Fetching study data for:', testId.value);
+      try {
+        await store.dispatch('getStudy', { id: testId.value });
+        studyData = store.getters.test || store.state.Study?.Test || store.state.Test;
+      } catch (err) {
+        console.error('AccessibilityHome - Error fetching study:', err);
+      }
+    }
     
-    const currentUserId = currentUser.id;
-    const isTestAdmin = studyData.testAdmin?.userDocId === currentUserId;
-    const isCooperator = studyData.cooperators?.some(coop => coop.userDocId === currentUserId);
-    
-    if (isTestAdmin) {
-      return 'admin';
-    } else if (isCooperator) {
-      return 'cooperator';
-    } else {
+    if (!studyData) {
+      console.log('AccessibilityHome - No study data available');
       return 'user';
     }
+    
+    console.log('AccessibilityHome - Study data:', studyData);
+    console.log('AccessibilityHome - Current user:', currentUser);
+    console.log('AccessibilityHome - Current user.id:', currentUser.id);
+    console.log('AccessibilityHome - Current user.uid:', currentUser.uid);
+    console.log('AccessibilityHome - Test admin:', studyData.testAdmin);
+    console.log('AccessibilityHome - Cooperators:', studyData.cooperators);
+    
+    // Use simple admin check from utility
+    const isAdmin = hasAdminAccess(currentUser, studyData);
+    console.log('AccessibilityHome - Has admin access:', isAdmin);
+    return isAdmin ? 'admin' : 'user';
   } catch (error) {
-    console.error('Error getting user role:', error);
+    console.error('AccessibilityHome - Error getting user role:', error);
     return 'user';
   }
 };
 
 onMounted(async () => {
-  userRole.value = await getUserRole();
-  console.log('AccessibilityHome user role:', userRole.value);
+  userRole.value = await checkUserRole();
+  console.log('AccessibilityHome - User role:', userRole.value);
+  console.log('AccessibilityHome - Will show', userRole.value === 'admin' ? 'ALL' : 'LIMITED', 'cards');
 });
 
 // Direct manual accessibility cards implementation
@@ -146,6 +168,9 @@ const getManualAccessibilityCards = (t, testId, userRole) => {
   if (userRole !== 'admin') {
     // For cooperators and regular users, only show non-admin cards
     filteredConfigs = manualAccessibilityCardsConfig.filter(config => !config.requiresAdmin);
+    console.log('AccessibilityHome - Filtered cards for non-admin:', filteredConfigs.map(c => c.titleKey));
+  } else {
+    console.log('AccessibilityHome - Showing all cards for admin');
   }
 
   return filteredConfigs.map(config => {

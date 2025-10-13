@@ -1,22 +1,13 @@
 <template>
+  <div v-if="isLoading" class="d-flex justify-center align-center" style="min-height: 400px;">
+    <v-progress-circular indeterminate color="primary" :size="50"></v-progress-circular>
+  </div>
   <ManagerView 
+    v-else
     :navigator="filteredNavItems"
     :top-cards="topCards"
     :bottom-cards="bottomCards"
   >
-    <!-- Loading overlay -->
-    <v-overlay v-model="isLoading" contained class="align-center justify-center">
-      <div class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-4 text-h6">Loading test data...</div>
-        <div class="text-caption">Checking access permissions</div>
-      </div>
-    </v-overlay>
-    
-    <!-- Access level indicator -->
-    <div v-if="!isLoading && userRole" class="ma-2 text-caption text-grey">
-      Access: {{ getAccessLevelText }}
-    </div>
   </ManagerView>
 </template>
 
@@ -59,11 +50,8 @@ const bottomCards = computed(() => {
 
 onMounted(async () => {
   await fetchAccessData(testId.value)
-  
-  // Redirect non-admin users trying to access manager page
-  if (userRole.value !== 'admin' && route.path === `/accessibility/manual/${testId.value}`) {
-    console.log('Non-admin user redirected to preview')
-    router.push(`/accessibility/manual/preview/${testId.value}`)
-  }
+  console.log('User role determined:', userRole.value)
+  // Home page is accessible to all users (admin and cooperators)
+  // The page will show filtered content based on user role
 })
 </script>
