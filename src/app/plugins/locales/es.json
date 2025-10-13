@@ -781,5 +781,138 @@
     "all": "Todos",
     "question": "Pregunta {number}",
     "comingSoon": "Próximamente"
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
+    "selectEvaluationType": "Selecciona el tipo de evaluación que deseas realizar para tu estudio",
+    "backToDashboard": "Volver al Panel",
+    "chooseMethod": "Elegir Método de {category}",
+    "selectMethod": "Selecciona el método específico para tu estudio",
+    "backToCategories": "Volver a Categorías",
+    "chooseStudyType": "Elegir Tipo de Estudio",
+    "selectStudyType": "Selecciona cómo deseas crear tu estudio",
+    "backToMethods": "Volver a Métodos",
+    "studyDetails": "Detalles del Estudio",
+    "provideStudyInfo": "Proporciona información básica sobre tu estudio",
+    "backToStudyType": "Volver a Tipo de Estudio",
+    "createStudy": "Crear Estudio",
+    "multipleMethods": "Múltiples Métodos",
+    "comingSoon": "Próximamente",
+    "steps": {
+      "category": "Categoría",
+      "methods": "Métodos",
+      "studyType": "Tipo de Estudio",
+      "details": "Detalles"
+    },
+    "categories": {
+      "test": {
+        "title": "Prueba",
+        "description": "Realiza pruebas controladas con usuarios reales para medir la usabilidad y el rendimiento."
+      },
+      "inquiry": {
+        "title": "Encuesta",
+        "description": "Recopila información a través de encuestas, entrevistas y otros métodos de investigación."
+      },
+      "inspection": {
+        "title": "Inspección",
+        "description": "Evaluación experta utilizando principios y directrices de usabilidad establecidos."
+      },
+      "accessibility": {
+        "title": "Accesibilidad",
+        "description": "Evalúa tu producto para cumplir con las normas y mejores prácticas de accesibilidad."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Pruebas de Usabilidad (Sin Moderador)",
+          "description": "Los participantes completan tareas de forma independiente mientras se registran sus interacciones."
+        },
+        "usability_moderated": {
+          "name": "Pruebas de Usabilidad (Moderadas)",
+          "description": "Sesiones en tiempo real con la guía de un facilitador y retroalimentación inmediata."
+        },
+        "card_sorting_unmoderated": {
+          "name": "Clasificación de Tarjetas (Sin Moderador)",
+          "description": "Los participantes organizan tarjetas de forma independiente, sin la presencia de un moderador, lo que permite recolectar datos sobre cómo agrupan y categorizan la información según su propia lógica."
+        },
+        "ab_testing": {
+          "name": "Pruebas A/B",
+          "description": "Compara dos versiones para determinar cuál tiene mejor rendimiento."
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Evaluación Heurística",
+          "description": "Revisión experta utilizando principios y directrices de usabilidad establecidos."
+        },
+        "cognitive_walkthrough": {
+          "name": "Recorrido Cognitivo",
+          "description": "Evaluación paso a paso de los procesos de finalización de tareas de los usuarios."
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Pruebas Manuales",
+          "description": "Evaluadores humanos evalúan la accesibilidad utilizando tecnologías de asistencia."
+        },
+        "automatic_testing": {
+          "name": "Pruebas Automáticas",
+          "description": "Herramientas automatizadas para identificar problemas comunes de accesibilidad."
+        },
+        "ai_assisted_testing": {
+          "name": "Pruebas Asistidas por IA",
+          "description": "Herramientas impulsadas por IA para identificar y sugerir correcciones para problemas de accesibilidad."
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Comenzar con un Estudio en Blanco",
+        "description": "Crea un estudio desde cero con personalización completa",
+        "features": [
+          "Personalización completa",
+          "Construir desde cero",
+          "Control total sobre las configuraciones"
+        ]
+      },
+      "template": {
+        "title": "Crear desde una Plantilla",
+        "description": "Usa plantillas predefinidas para comenzar rápidamente",
+        "features": [
+          "Configuración rápida",
+          "Configuraciones predefinidas",
+          "Mejores prácticas incluidas"
+        ]
+      }
+    },
+    "details": {
+      "basicInformation": "Información Básica",
+      "studyTitle": "Título del Estudio",
+      "enterTitle": "Ingresa un título descriptivo para tu estudio",
+      "studyDescription": "Descripción del Estudio",
+      "enterDescription": "Describe el propósito y los objetivos de tu estudio",
+      "websiteName": "Nombre del Sitio Web",
+      "enterWebsiteName": "Ingresa el nombre del sitio web",
+      "websiteUrl": "URL del Sitio Web (opcional)",
+      "enterWebsiteUrl": "Ingresa la URL del sitio web",
+      "privacySettings": "Configuraciones de Privacidad",
+      "controlVisibility": "Controla quién puede ver tu estudio",
+      "publicStudy": "Estudio Público",
+      "privateStudy": "Estudio Privado",
+      "visibleToEveryone": "Visible para todos",
+      "onlyInvitedUsers": "Solo usuarios invitados",
+      "public": "Público",
+      "private": "Privado",
+      "validation": {
+        "enterTitle": "Ingresa un título",
+        "max200Characters": "Máximo 200 caracteres",
+        "max600Characters": "Máximo 600 caracteres",
+        "enterWebsiteName": "Ingresa el nombre del sitio web",
+        "enterWebsiteUrl": "Ingresa la URL del sitio web",
+        "urlProtocol": "La URL debe comenzar con http:// o https://",
+        "validUrl": "Ingresa una URL válida (por ejemplo, https://ejemplo.com)"
+      }
+    }
   }
 }

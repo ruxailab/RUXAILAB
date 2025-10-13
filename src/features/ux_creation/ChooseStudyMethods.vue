@@ -2,24 +2,33 @@
   <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="2" :steps="steps" />
+      <StepperHeader :current-step="2" :steps="translatedSteps" />
 
       <!-- Page Header -->
-      <SectionHeader :title="`Choose ${categoryNames[currentCategory]} Method`"
-        subtitle="Select the specific method for your study" />
+      <SectionHeader
+        :title="$t('studyCreation.chooseMethod', { category: $t(`studyCreation.categories.${currentCategory}.title`) })"
+        :subtitle="$t('studyCreation.selectMethod')"
+      />
 
       <!-- Methods Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="method in availableMethods" :key="method.id" cols="12" md="6" lg="5">
-          <SelectableCard :selected="selectedMethod === method.id" :icon="method.icon" :title="method.name"
-            text-class="text-start pa-8" :description="method.description" :color="method.color"
-            :disabled="!method.available" :badge="method.comingSoon ? { text: 'Coming Soon', color: 'warning' } : null"
-            @click="() => selectMethod(method.id, method.available)" />
+        <v-col v-for="method in translatedMethods" :key="method.id" cols="12" md="6" lg="5">
+          <SelectableCard
+            :selected="selectedMethod === method.id"
+            :icon="method.icon"
+            :title="method.name"
+            text-class="text-start pa-8"
+            :description="method.description"
+            :color="method.color"
+            :disabled="!method.available"
+            :badge="method.comingSoon ? { text: $t('studyCreation.comingSoon'), color: 'warning' } : null"
+            @click="() => selectMethod(method.id, method.available)"
+          />
         </v-col>
       </v-row>
 
       <!-- Back Button -->
-      <BackButton label="Back to Categories" @back="goBack" />
+      <BackButton :label="$t('studyCreation.backToCategories')" @back="goBack" />
     </v-container>
   </v-container>
 </template>
@@ -32,114 +41,115 @@ import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions'
 
 const router = useRouter()
 const store = useStore()
+const { t } = useI18n()
 const selectedMethod = ref('')
 
-const steps = [
-  { value: 1, title: 'Category', complete: true },
-  { value: 2, title: 'Methods', complete: false },
-  { value: 3, title: 'Study Type', complete: false },
-  { value: 4, title: 'Details', complete: false }
-]
+const translatedSteps = computed(() => [
+  { value: 1, title: t('studyCreation.steps.category'), complete: true },
+  { value: 2, title: t('studyCreation.steps.methods'), complete: false },
+  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
+  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+])
 
 const methodsByCategory = {
   test: [
     {
       id: METHOD_DEFINITIONS.USER_UNMODERATED.id,
-      name: 'Usability Testing (Unmoderated)',
-      description: 'Participants complete tasks independently while their interactions are recorded',
+      nameKey: 'studyCreation.methods.test.usability_unmoderated.name',
+      descKey: 'studyCreation.methods.test.usability_unmoderated.description',
       icon: 'mdi-monitor-screenshot',
       color: 'primary',
-      available: true
+      available: true,
     },
     {
       id: METHOD_DEFINITIONS.USER_MODERATED.id,
-      name: 'Usability Testing (Moderated)',
-      description: 'Real-time sessions with facilitator guidance and immediate feedback',
+      nameKey: 'studyCreation.methods.test.usability_moderated.name',
+      descKey: 'studyCreation.methods.test.usability_moderated.description',
       icon: 'mdi-account-voice',
       color: 'success',
       available: false,
-      comingSoon: true
-
+      comingSoon: true,
     },
     {
       id: METHOD_DEFINITIONS.CARD_SORTING.id,
-      name: 'Card Sorting (Unmoderated)',
-      description: 'Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic.',
+      nameKey: 'studyCreation.methods.test.card_sorting_unmoderated.name',
+      descKey: 'studyCreation.methods.test.card_sorting_unmoderated.description',
       icon: 'mdi-card-multiple',
       color: 'error',
       available: false,
-      comingSoon: true
-
+      comingSoon: true,
     },
     {
       id: 'ab-testing',
-      name: 'A/B Testing',
-      description: 'Compare two versions to determine which performs better',
+      nameKey: 'studyCreation.methods.test.ab_testing.name',
+      descKey: 'studyCreation.methods.test.ab_testing.description',
       icon: 'mdi-compare',
       color: 'warning',
       available: false,
-      comingSoon: true
-    }
+      comingSoon: true,
+    },
   ],
   inspection: [
     {
       id: METHOD_DEFINITIONS.HEURISTICS.id,
-      name: 'Heuristic Evaluation',
-      description: 'Expert review using established usability principles and guidelines',
+      nameKey: 'studyCreation.methods.inspection.heuristic_evaluation.name',
+      descKey: 'studyCreation.methods.inspection.heuristic_evaluation.description',
       icon: 'mdi-clipboard-check',
       color: 'secondary',
-      available: true
+      available: true,
     },
     {
       id: METHOD_DEFINITIONS.COGNITIVE_WALKTHROUGH.id,
-      name: 'Cognitive Walkthrough',
-      description: 'Step-by-step evaluation of user task completion processes',
+      nameKey: 'studyCreation.methods.inspection.cognitive_walkthrough.name',
+      descKey: 'studyCreation.methods.inspection.cognitive_walkthrough.description',
       icon: 'mdi-walk',
       color: 'info',
       available: false,
-      comingSoon: true
-    }
+      comingSoon: true,
+    },
   ],
   accessibility: [
     {
       id: 'MANUAL',
-      name: 'Manual Testing',
-      description: 'Human evaluators assess accessibility using assistive technologies',
+      nameKey: 'studyCreation.methods.accessibility.manual_testing.name',
+      descKey: 'studyCreation.methods.accessibility.manual_testing.description',
       icon: 'mdi-eye-check',
       color: 'orange darken-5',
-      available: true
+      available: true,
     },
     {
       id: 'AUTOMATIC',
-      name: 'Automatic Testing',
-      description: 'Automated tools to identify common accessibility issues',
+      nameKey: 'studyCreation.methods.accessibility.automatic_testing.name',
+      descKey: 'studyCreation.methods.accessibility.automatic_testing.description',
       icon: 'mdi-robot',
       color: 'teal darken-3',
-      available: true
+      available: true,
     },
     {
       id: 'AI_ASSISTED',
-      name: 'AI-Assisted Testing',
-      description: 'AI-driven tools to identify and suggest fixes for accessibility issues',
+      nameKey: 'studyCreation.methods.accessibility.ai_assisted_testing.name',
+      descKey: 'studyCreation.methods.accessibility.ai_assisted_testing.description',
       icon: 'mdi-brain',
       color: 'purple darken-3',
       available: false,
     },
-  ]
+  ],
 }
 
 const currentCategory = computed(() => store.state.Tests.studyCategory)
-const availableMethods = computed(() => methodsByCategory[currentCategory.value] || [])
 
-const categoryNames = {
-  test: 'Test',
-  inspection: 'Inspection',
-  accessibility: 'Accessibility'
-}
+const translatedMethods = computed(() => {
+  return (methodsByCategory[currentCategory.value] || []).map(m => ({
+    ...m,
+    name: t(m.nameKey),
+    description: t(m.descKey),
+  }))
+})
 
 const selectMethod = (methodId, available) => {
   if (!available) return

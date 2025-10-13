@@ -781,5 +781,138 @@
     "all": "All",
     "question": "Question {number}",
     "comingSoon": "Coming Soon"
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Choose Evaluation Category",
+    "selectEvaluationType": "Select the type of evaluation you want to conduct for your study",
+    "backToDashboard": "Back to Dashboard",
+    "chooseMethod": "Choose {category} Method",
+    "selectMethod": "Select the specific method for your study",
+    "backToCategories": "Back to Categories",
+    "chooseStudyType": "Choose Study Type",
+    "selectStudyType": "Select how you want to create your study",
+    "backToMethods": "Back to Methods",
+    "studyDetails": "Study Details",
+    "provideStudyInfo": "Provide basic information about your study",
+    "backToStudyType": "Back to Study Type",
+    "createStudy": "Create Study",
+    "multipleMethods": "Multiple Methods",
+    "comingSoon": "Coming Soon",
+    "steps": {
+      "category": "Category",
+      "methods": "Methods",
+      "studyType": "Study Type",
+      "details": "Details"
+    },
+    "categories": {
+      "test": {
+        "title": "Test",
+        "description": "Conduct controlled testing with real users to measure usability and performance."
+      },
+      "inquiry": {
+        "title": "Inquiry",
+        "description": "Gather insights through surveys, interviews, and other research methods."
+      },
+      "inspection": {
+        "title": "Inspection",
+        "description": "Expert evaluation using established usability principles and guidelines."
+      },
+      "accessibility": {
+        "title": "Accessibility",
+        "description": "Assess your product for accessibility compliance and best practices."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Usability Testing (Unmoderated)",
+          "description": "Participants complete tasks independently while their interactions are recorded"
+        },
+        "usability_moderated": {
+          "name": "Usability Testing (Moderated)",
+          "description": "Real-time sessions with facilitator guidance and immediate feedback"
+        },
+        "card_sorting_unmoderated": {
+          "name": "Card Sorting (Unmoderated)",
+          "description": "Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic."
+        },
+        "ab_testing": {
+          "name": "A/B Testing",
+          "description": "Compare two versions to determine which performs better"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Heuristic Evaluation",
+          "description": "Expert review using established usability principles and guidelines"
+        },
+        "cognitive_walkthrough": {
+          "name": "Cognitive Walkthrough",
+          "description": "Step-by-step evaluation of user task completion processes"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Manual Testing",
+          "description": "Human evaluators assess accessibility using assistive technologies"
+        },
+        "automatic_testing": {
+          "name": "Automatic Testing",
+          "description": "Automated tools to identify common accessibility issues"
+        },
+        "ai_assisted_testing": {
+          "name": "AI-Assisted Testing",
+          "description": "AI-driven tools to identify and suggest fixes for accessibility issues"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Start with Blank Study",
+        "description": "Create a study from scratch with complete customization",
+        "features": [
+          "Complete customization",
+          "Build from ground up",
+          "Full control over settings"
+        ]
+      },
+      "template": {
+        "title": "Create from Template",
+        "description": "Use pre-built templates to get started quickly",
+        "features": [
+          "Quick setup",
+          "Pre-configured settings",
+          "Best practices included"
+        ]
+      }
+    },
+    "details": {
+      "basicInformation": "Basic Information",
+      "studyTitle": "Study Title",
+      "enterTitle": "Enter a descriptive title for your study",
+      "studyDescription": "Study Description",
+      "enterDescription": "Describe the purpose and goals of your study",
+      "websiteName": "Website Name",
+      "enterWebsiteName": "Enter the website name",
+      "websiteUrl": "Website URL (optional)",
+      "enterWebsiteUrl": "Enter the website URL",
+      "privacySettings": "Privacy Settings",
+      "controlVisibility": "Control who can see your study",
+      "publicStudy": "Public Study",
+      "privateStudy": "Private Study",
+      "visibleToEveryone": "Visible to everyone",
+      "onlyInvitedUsers": "Only invited users",
+      "public": "Public",
+      "private": "Private",
+      "validation": {
+        "enterTitle": "Enter a Title",
+        "max200Characters": "Max 200 characters",
+        "max600Characters": "Max 600 characters",
+        "enterWebsiteName": "Enter website name",
+        "enterWebsiteUrl": "Enter website URL",
+        "urlProtocol": "URL must start with http:// or https://",
+        "validUrl": "Enter a valid URL (e.g., https://example.com)"
+      }
+    }
   }
 }

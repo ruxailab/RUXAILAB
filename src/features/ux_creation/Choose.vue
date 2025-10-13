@@ -7,19 +7,19 @@
       <!-- Stepper Header -->
       <StepperHeader
         :current-step="1"
-        :steps="steps"
+        :steps="translatedSteps"
       />
 
       <!-- Page Header -->
       <SectionHeader
-        title="Choose Evaluation Category"
-        subtitle="Select the type of evaluation you want to conduct for your study"
+        :title="$t('studyCreation.chooseEvaluationCategory')"
+        :subtitle="$t('studyCreation.selectEvaluationType')"
       />
 
       <!-- Categories Grid -->
       <v-row justify="center">
         <v-col
-          v-for="category in categories"
+          v-for="category in translatedCategories"
           :key="category.id"
           cols="3"
         >
@@ -32,9 +32,8 @@
             :color="category.color"
             :disabled="category.comingSoon"
             :badge="category.comingSoon
-              ? { text: 'Coming Soon', color: 'warning' }
-              : null
-            "
+              ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
+              : null"
             @click="() => handleCategoryClick(category.id)"
           >
             <template #extra>
@@ -44,7 +43,7 @@
                 variant="tonal"
                 size="small"
               >
-                Multiple Methods
+                {{ $t('studyCreation.multipleMethods') }}
               </v-chip>
             </template>
           </SelectableCard>
@@ -53,7 +52,7 @@
 
       <!-- Back Button -->
       <BackButton
-        label="Back to Dashboard"
+        :label="$t('studyCreation.backToDashboard')"
         @back="goBack"
       />
     </v-container>
@@ -66,30 +65,34 @@ import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import { STUDY_CATEGORIES, getCategoryById } from '@/shared/constants/studyCategories.js'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const store = useStore()
+const { t } = useI18n()
 const selectedCategory = ref(null)
 
-const steps = [
-  { value: 1, title: 'Category', complete: false },
-  { value: 2, title: 'Methods', complete: false },
-  { value: 3, title: 'Study Type', complete: false },
-  { value: 4, title: 'Details', complete: false },
-]
+const translatedSteps = computed(() => [
+  { value: 1, title: t('studyCreation.steps.category'), complete: false },
+  { value: 2, title: t('studyCreation.steps.methods'), complete: false },
+  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
+  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+])
 
-const categories = STUDY_CATEGORIES
+const translatedCategories = computed(() => STUDY_CATEGORIES.map(category => ({
+  ...category,
+  title: t(`studyCreation.categories.${category.id}.title`),
+  description: t(`studyCreation.categories.${category.id}.description`),
+})))
 
 const handleCategoryClick = (categoryId) => {
   const category = getCategoryById(categoryId)
   if (category?.comingSoon) return
 
   selectedCategory.value = categoryId
-
-
   store.commit('SET_STUDY_CATEGORY', categoryId)
   router.push({
     name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3',
