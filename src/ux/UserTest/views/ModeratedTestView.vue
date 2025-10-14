@@ -105,6 +105,7 @@
             <WelcomeStep 
               v-else-if="globalIndex === 0 && !isUserTestAdmin" 
               :stepper-value="stepperValue"
+              :welcome-message="test?.testStructure?.welcomeMessage"
               @start="displayVideoCallComponent = true; globalIndex = 1" 
             />
 

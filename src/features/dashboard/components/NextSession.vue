@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { STUDY_TYPES } from "@/shared/constants/methodDefinitions"
 import { useRouter } from 'vue-router'
 
@@ -167,15 +167,6 @@ function getStudyType(data) {
 const goto = (url) => {
   router.push(url)
 }
-
-watch(closestSession, (val) => {
-  console.log("Closest future session chosen:", val)
-}, { immediate: true })
-
-props.nextSession.forEach(s => {
-  console.log("Test:", s.testTitle, "date:", s.testDate, ">", new Date(s.testDate) > new Date())
-})
-
 </script>
 
 <style scoped>
