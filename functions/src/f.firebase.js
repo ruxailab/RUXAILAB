@@ -27,7 +27,7 @@ function onStorageTrigger({ event, handler }) {
   const storageEvents = {
     finalized: (h) => onObjectFinalized(h),
     deleted: (h) => onObjectDeleted(h),
-    metadataUpdated: (h) => onMetadataUpdated(h),
+    metadataUpdated: (h) => onObjectMetadataUpdated(h),
   }
 
   if (!storageEvents[event]) {
