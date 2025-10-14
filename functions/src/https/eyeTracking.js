@@ -56,6 +56,11 @@ export const receiveCalibration = functions.onRequest({
 });
 
 export const getCalibrationConfig = functions.onRequest({
+    opts: {
+        cors: [
+            "https://eye-tracking-28179.web.app",
+        ],
+    },
     handler: async (req, res) => {
         if (req.method !== "GET") {
             return res.status(405).send("Method Not Allowed");
