@@ -41,7 +41,7 @@ export const accessibilityGuard = async (to, from, next) => {
 
     // Allow home/manager base route for authenticated users (both admin and cooperators)
     // The home page will filter content based on user role
-    const isBaseManagerRoute = to.path.match(/\/accessibility\/(manual|automatic)\/[^\/]+$/);
+    const isBaseManagerRoute = to.path.match(/\/accessibility\/(manual|automatic)(\/manager)?\/[^\/]+$/);
     if (isBaseManagerRoute) {
         return next();
     }
@@ -93,7 +93,7 @@ export const accessibilityGuard = async (to, from, next) => {
             const isManual = to.path.includes('/manual/');
             const redirectPath = isManual
                 ? `/accessibility/manual/${testId}`
-                : `/accessibility/automatic/${testId}`;
+                : `/accessibility/automatic/manager/${testId}`;
 
             return next(redirectPath);
         }

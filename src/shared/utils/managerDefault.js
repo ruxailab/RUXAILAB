@@ -42,7 +42,7 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
     {
       title: 'Manager',
       icon: ICONS.MANAGER,
-      path: `/${type}/${testId}`,
+      path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/manager/${testId}`,
       requiresAdmin: false
     }
   ];
@@ -158,7 +158,7 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
       title: 'View Dashboard',
       description: 'Access detailed accessibility tools',
       image: INTRO_IMAGES.MANAGER,
-      path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/${testId}`,
+      path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/manager/${testId}`,
     }
   ];
 

@@ -87,14 +87,14 @@ const accessibilityRoutes = [
     },
     // Automatic Accessibility Routes
     {
-        path: '/accessibility/automatic/:id',
+        path: '/accessibility/automatic/manager/:id',
         name: 'AccessibilityAutomaticManager',
         meta: { authorize: [0, 1] },
         component: AutomatedAccessibilityManager,
         props: true,
         children: [
             {
-                path: '/accessibility/automatic/:id',
+                path: '',
                 name: 'AutomatedAccessibilityHome',
                 props: true,
                 meta: { authorize: [0, 1] },

@@ -3,21 +3,7 @@
     :navigator="filteredNavItems"
     :top-cards="topCards"
     :bottom-cards="bottomCards"
-  >
-    <!-- Loading overlay -->
-    <v-overlay v-model="isLoading" contained class="align-center justify-center">
-      <div class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-4 text-h6">Loading test data...</div>
-        <div class="text-caption">Checking access permissions</div>
-      </div>
-    </v-overlay>
-    
-    <!-- Access level indicator -->
-    <div v-if="!isLoading && userRole" class="ma-2 text-caption text-grey">
-      Access: {{ getAccessLevelText }}
-    </div>
-  </ManagerView>
+  />
 </template>
 
 <script setup>
@@ -61,7 +47,7 @@ onMounted(async () => {
   await fetchAccessData(testId.value)
   
   // Redirect non-admin users trying to access manager page
-  if (userRole.value !== 'admin' && route.path === `/accessibility/automatic/${testId.value}`) {
+  if (userRole.value !== 'admin' && route.path === `/accessibility/automatic/manager/${testId.value}`) {
     console.log('Non-admin user redirected to reports')
     router.push(`/accessibility/automatic/reports/${testId.value}`)
   }
