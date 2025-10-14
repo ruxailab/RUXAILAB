@@ -77,6 +77,11 @@ export default {
         state.studyMethod = null,
         state.studyType = null
     },
+    SET_CALIBRATION_CONFIG(state, payload) {
+      if (state.Test) {
+        state.Test.calibrationConfig = payload
+      }
+    },
     CLEAN_TEST(state) {
       state.Test = null
       state.testStructure = null

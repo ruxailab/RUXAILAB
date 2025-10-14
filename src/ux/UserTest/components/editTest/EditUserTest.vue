@@ -1,9 +1,5 @@
 <template>
-  <v-tabs
-    bg-color="transparent"
-    color="#FCA326"
-    class="pb-0 mb-0"
-  >
+  <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
     <v-tab @click="index = 0">Test</v-tab>
     <v-tab @click="index = 1">{{ $t('ModeratedTest.consentForm') }}</v-tab>
     <v-tab @click="index = 2">{{ $t('ModeratedTest.preTest') }}</v-tab>
@@ -14,52 +10,29 @@
   <v-col cols="12">
     <!-- TEST -->
     <div v-if="index === 0">
-      <TestConfigForm
-        :welcome="welcomeMessage"
-        :final-message="finalMessage"
+      <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
         @update:welcome-message="saveState('welcomeMessage', $event)"
-        @update:final-message="saveState('finalMessage', $event)"
-      />
+        @update:final-message="saveState('finalMessage', $event)" />
     </div>
 
     <!-- COSENT FORM -->
-    <v-card
-      v-if="index === 1"
-      rounded="xxl"
-    >
-      <TextareaForm
-        v-model="consent"
-        :title="$t('ModeratedTest.consentForm')"
+    <v-card v-if="index === 1" rounded="xxl">
+      <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
         subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-        @update:value="saveState('consent', $event)"
-      />
+        @update:value="saveState('consent', $event)" />
     </v-card>
 
     <!-- PRE-TEST -->
-    <v-card
-      v-if="index === 2"
-      rounded="xxl"
-    >
-      <UserVariables
-        type="pre-test"
-        @update="saveState('preTest', $event)"
-      />
+    <v-card v-if="index === 2" rounded="xxl">
+      <UserVariables type="pre-test" @update="saveState('preTest', $event)" />
     </v-card>
 
     <!-- TASKS -->
-    <ListTasks
-      v-if="index === 3"
-    />
+    <ListTasks v-if="index === 3" />
 
     <!-- POST-TEST -->
-    <v-card
-      v-if="index === 4"
-      rounded="xxl"
-    >
-      <UserVariables
-        type="post-test"
-        @update="saveState('postTest', $event)"
-      />
+    <v-card v-if="index === 4" rounded="xxl">
+      <UserVariables type="post-test" @update="saveState('postTest', $event)" />
     </v-card>
   </v-col>
 </template>
