@@ -36,7 +36,7 @@
               <v-icon start>
                 mdi-plus-circle
               </v-icon>
-              Add New Task
+              {{ $t('buttons.addNewTask') }}
             </v-btn>
           </v-col>
         </v-row>
@@ -65,7 +65,7 @@
                 </v-icon>
                 {{ getTaskTypeLabel(item.taskType) }}
               </v-chip>
-              <span v-else class="text-grey-400">N/A</span>
+              <span v-else class="text-grey-400">{{ $t('UserTestTable.headers.na') }}</span>
             </template>
 
             <template #item.taskDescription="{ item }">
@@ -79,8 +79,6 @@
                 {{ item.taskTip ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
               </v-icon>
             </template>
-
-          
 
             <template #item.hasScreenRecord="{ item }">
               <v-icon :color="item.hasScreenRecord ? 'success' : 'error'">
@@ -141,11 +139,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 import FormDialog from './FormDialog.vue';
 import Task from '../models/Task';
 
 const emit = defineEmits(['change']);
 const store = useStore();
+const { t } = useI18n();
 
 const dialog = ref(false);
 const allTasks = ref([]);
@@ -153,15 +153,15 @@ const editedIndex = ref(-1);
 const task = ref(new Task());
 
 const headers = ref([
-  { title: 'Name', align: 'start', sortable: false, value: 'taskName', width: '10%' },
-  { title: 'Type', value: 'taskType', sortable: false, align: 'center' },
-  { title: 'Estimated Time (min)', value: 'estimatedTime', sortable: false, align: 'center' },
-  { title: 'Tip', value: 'taskTip', sortable: false, align: 'center' },
-  { title: 'Screen Record', value: 'hasScreenRecord', sortable: false, align: 'center' },
-  { title: 'Camera', value: 'hasCamRecord', sortable: false, align: 'center' },
-  { title: 'Eye Tracker', value: 'hasEye', sortable: false, align: 'center' },
-  { title: 'Audio Record', value: 'hasAudioRecord', sortable: false, align: 'center' },
-  { title: 'Actions', value: 'actions', sortable: false, align: 'center', width: '150px' },
+  { title: t('UserTestTable.headers.name'), align: 'start', sortable: false, value: 'taskName', width: '10%' },
+  { title: t('UserTestTable.headers.type'), value: 'taskType', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.estimatedTime'), value: 'estimatedTime', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.tip'), value: 'taskTip', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.screenRecord'), value: 'hasScreenRecord', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.camera'), value: 'hasCamRecord', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.eyeTracker'), value: 'hasEye', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.audioRecord'), value: 'hasAudioRecord', sortable: false, align: 'center' },
+  { title: t('UserTestTable.headers.actions'), value: 'actions', sortable: false, align: 'center', width: '150px' },
 ]);
 
 const editItem = (item) => {
@@ -185,7 +185,6 @@ const deleteItem = async (item) => {
 const addTask = async (newTask) => {
   try {
     if (editedIndex.value > -1) {
-
       Object.assign(allTasks.value[editedIndex.value], newTask.toFirestore());
       editedIndex.value = -1;
     } else {
@@ -233,12 +232,12 @@ const getTaskTypeIcon = (taskType) => {
 
 const getTaskTypeLabel = (taskType) => {
   const labels = {
-    'no-answer': 'No Answer',
-    'text-area': 'Text Area',
-    'post-test': 'Post Test',
-    'post-form': 'Post Form',
-    'nasa-tlx': 'NASA-TLX',
-    'sus': 'SUS'
+    'no-answer': t('switches.noAnswer'),
+    'text-area': t('switches.textArea'),
+    'post-test': t('switches.postTest'),
+    'post-form': t('switches.postForm'),
+    'nasa-tlx': t('switches.nasa'),
+    'sus': t('switches.sus')
   };
   return labels[taskType] || 'Unknown';
 };

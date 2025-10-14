@@ -14,14 +14,14 @@
             class="text-h5 font-weight-bold mb-4"
             :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
           >
-            {{ type === 'pre-test' ? 'Pre-Test' : 'Post-Test'}} Variables
+            {{ type === 'pre-test' ? $t('ModeratedTest.preTestVariables') : $t('ModeratedTest.postTestVariables') }}
           </v-card-title>
           <v-card-text>
             <p
               class="text-body-1 mb-6"
               style="color: #4B5563;"
             >
-              Configure the variables for the {{ props.type }} section. Add, edit, or remove variables as needed.
+              {{ $t('ModeratedTest.configureVariables', { type: type }) }}
             </p>
             <v-expansion-panels
               v-if="items.length > 0"
@@ -42,17 +42,17 @@
                   <v-form @submit.prevent>
                     <v-text-field
                       v-model="item.title"
-                      label="Variable Title"
+                      :label="$t('UserTestTable.inputs.variableName')"
                       variant="outlined"
                       density="comfortable"
-                      :rules="[v => !!v || 'Title is required']"
+                      :rules="[v => !!v || $t('errors.fieldRequired')]"
                       color="primary"
                       class="mb-4"
                       @update:model-value="markDirty"
                     />
                     <v-textarea
                       v-model="item.description"
-                      label="Description (Optional)"
+                      :label="$t('UserTestTable.inputs.description')"
                       variant="outlined"
                       density="comfortable"
                       color="primary"
@@ -68,10 +68,10 @@
                       >
                         <v-text-field
                           v-model="item.selectionFields[index]"
-                          :label="`Option ${index + 1}`"
+                          :label="$t('UserTestTable.inputs.selection') + ` ${index + 1}`"
                           variant="outlined"
                           density="comfortable"
-                          :rules="[v => !!v || 'Option is required']"
+                          :rules="[v => !!v || $t('errors.fieldRequired')]"
                           color="primary"
                           class="mr-2"
                           @update:model-value="markDirty"
@@ -98,7 +98,7 @@
                         v-if="item.selectionFields.length === 0"
                         class="text-body-2 mb-4"
                       >
-                        <span>No options added.</span>
+                        <span>{{ $t('UserTestTable.messages.noOptions') }}</span>
                         <v-btn
                           variant="text"
                           color="accent"
@@ -108,7 +108,7 @@
                           <v-icon start>
                             mdi-plus
                           </v-icon>
-                          Add First Option
+                          {{ $t('UserTestTable.buttons.addFirstOption') }}
                         </v-btn>
                       </div>
                     </div>
@@ -122,7 +122,7 @@
                       >
                         <v-checkbox
                           v-model="item.selectionField"
-                          label="Multiple Choice"
+                          :label="$t('UserTestTable.checkboxes.selectionField')"
                           color="primary"
                           @update:model-value="selectField(i); markDirty()"
                         />
@@ -133,7 +133,7 @@
                       >
                         <v-checkbox
                           v-model="item.textField"
-                          label="Text Input"
+                          :label="$t('UserTestTable.checkboxes.textField')"
                           color="primary"
                           @update:model-value="selectText(i); markDirty()"
                         />
@@ -161,7 +161,7 @@
               type="info"
               icon="mdi-information-outline"
               class="mt-4 rounded-lg"
-              text="No variables added yet. Click below to create a new variable."
+              :text="$t('UserTestTable.messages.noVariables')"
             />
           </v-card-text>
           <v-card-actions>
@@ -179,7 +179,7 @@
                   class="mb-2"
                 />
                 <div class="text-body-1">
-                  Create a new variable
+                  {{ $t('UserTestTable.buttons.createNewVariable') }}
                 </div>
               </v-card-text>
             </v-card>
@@ -200,7 +200,7 @@
           class="text-h6 font-weight-bold mb-4"
           :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
         >
-          Create New Variable
+          {{ $t('ModeratedTest.createNewVariableTitle') }}
         </v-card-title>
         <v-card-text>
           <v-form
@@ -209,10 +209,10 @@
           >
             <v-text-field
               v-model="newItem"
-              label="Variable Name"
+              :label="$t('UserTestTable.inputs.variableName')"
               variant="outlined"
               density="comfortable"
-              :rules="[v => !!v.trim() || 'Variable name is required']"
+              :rules="[v => !!v.trim() || $t('errors.fieldRequired')]"
               color="primary"
               @update:model-value="markDirty"
             />

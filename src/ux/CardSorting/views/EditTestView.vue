@@ -60,7 +60,7 @@
             <TextareaForm
               v-model="consent"
               :title="$t('ModeratedTest.consentForm')"
-              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
+              :subtitle="$t('ModeratedTest.consentFormSubtitle')"
               @update:value="consent = $event; change = true"
             />
           </div>

@@ -153,14 +153,15 @@
     "passwordRequired": "Password is required",
     "passwordValidate": "Password must be at least 8 characters",
     "differentPasswords": "Different passwords",
-    "fieldRequired": "Field required",
+    "fieldRequired": "This field is required",
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
-    "sendError": "Failed to send invitation. Please try again"
+    "sendError": "Failed to send invitation. Please try again",
+    "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -407,17 +408,21 @@
       "userVariables": "User Variables",
       "currentTasks": "Current Tasks",
       "postForm": "Post Form",
-      "writeNewPost": "Write a new post question"
+      "writeNewPost": "Write a new post question",
+      "testConfiguration": "Test Configuration"
     },
     "messages": {
-      "noTasks": "You don't have any task, create one to proceed."
+      "noTasks": "You don't have any task, create one to proceed.",
+      "noVariables": "No variables added yet. Click below to create a new variable.",
+      "noOptions": "No options added."
     },
     "inputs": {
       "consent": "Consent",
-      "variableName": "Variable Name",
-      "description": "Description",
-      "selection": "Selection",
-      "writeQuestion": "Write a question"
+      "variableName": "Variable Title",
+      "description": "Description (Optional)",
+      "selection": "Option",
+      "writeQuestion": "Write a question",
+      "dialogVariableName": "Variable Name"
     },
     "checkboxes": {
       "selectionField": "Selection Field",
@@ -427,7 +432,23 @@
     },
     "buttons": {
       "createNewVariable": "Create a new variable",
-      "createNewPost": "Create a new post question"
+      "createNewPost": "Create a new post question",
+      "addFirstOption": "Add First Option"
+    },
+    "headers": {
+      "name": "Name",
+      "type": "Type",
+      "estimatedTime": "Estimated Time (min)",
+      "tip": "Tip",
+      "screenRecord": "Screen Record",
+      "camera": "Camera",
+      "eyeTracker": "Eye Tracker",
+      "audioRecord": "Audio Record",
+      "actions": "Actions",
+      "na": "N/A"
+    },
+    "fallbacks": {
+      "untitledVariable": "Untitled Variable"
     }
   },
   "UserTestView": {
@@ -588,7 +609,8 @@
     "back": "Back",
     "duplicateTest": "Duplicate Test",
     "submit": "Submit",
-    "couldNotFinish": "Could not finish"
+    "couldNotFinish": "Could not finish",
+    "addNewTask": "Add New Task"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -721,6 +743,7 @@
     "tasks": "TASKS",
     "postTest": "POST-TEST",
     "consentForm": "Consent Form",
+    "consentFormSubtitle": "Edit the consent text for the test. Changes are saved when you click the Save button.",
     "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
     "welcomeMessage": "Welcome message",
     "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
@@ -739,7 +762,11 @@
     "postFormDescription": "This is a post-questionnaire to collect participant data.",
     "finalMessage": "Final message",
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
-    "finalMessagePlaceholder": "Enter Final message"
+    "finalMessagePlaceholder": "Enter Final message",
+    "preTestVariables": "Pre-Test Variables",
+    "postTestVariables": "Post-Test Variables",
+    "configureVariables": "Configure the variables for the {type} section. Add, edit, or remove variables as needed.",
+    "createNewVariableTitle": "Create New Variable"
   },
   "CardSorting": {
     "noCategory": "No category",

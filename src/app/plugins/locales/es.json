@@ -153,14 +153,15 @@
     "passwordRequired": "Se requiere contraseña",
     "passwordValidate": "La contraseña debe tener al menos 8 caracteres",
     "differentPasswords": "Las contraseñas son diferentes",
-    "fieldRequired": "Campo requerido",
+    "fieldRequired": "Este campo es obligatorio",
     "passwordUppercase": "Debe contener una letra mayúscula",
     "passwordSymbol": "Debe contener un símbolo",
     "userNotExist": "Este usuario no existe.",
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
-    "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo."
+    "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
+    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -407,17 +408,21 @@
       "userVariables": "Variables del usuario",
       "currentTasks": "Tareas actuales",
       "postForm": "Formulario posterior",
-      "writeNewPost": "Escribir una nueva pregunta posterior"
+      "writeNewPost": "Escribir una nueva pregunta posterior",
+      "testConfiguration": "Configuración de la Prueba"
     },
     "messages": {
-      "noTasks": "No tienes ninguna tarea, crea una para continuar."
+      "noTasks": "No tienes ninguna tarea, crea una para continuar.",
+      "noVariables": "No se han añadido variables aún. Haz clic abajo para crear una nueva variable.",
+      "noOptions": "No se han añadido opciones."
     },
     "inputs": {
       "consent": "Consentimiento",
-      "variableName": "Nombre de la variable",
-      "description": "Descripción",
-      "selection": "Selección",
-      "writeQuestion": "Escribir una pregunta"
+      "variableName": "Título de la Variable",
+      "description": "Descripción (Opcional)",
+      "selection": "Opción",
+      "writeQuestion": "Escribir una pregunta",
+      "dialogVariableName": "Nombre de la Variable"
     },
     "checkboxes": {
       "selectionField": "Campo de selección",
@@ -427,7 +432,23 @@
     },
     "buttons": {
       "createNewVariable": "Crear una nueva variable",
-      "createNewPost": "Crear una nueva pregunta posterior"
+      "createNewPost": "Crear una nueva pregunta posterior",
+      "addFirstOption": "Agregar la primera opción"
+    },
+    "headers": {
+      "name": "Nombre",
+      "type": "Tipo",
+      "estimatedTime": "Tiempo estimado (min)",
+      "tip": "Consejo",
+      "screenRecord": "Grabación de pantalla",
+      "camera": "Cámara",
+      "eyeTracker": "Seguimiento ocular",
+      "audioRecord": "Grabación de audio",
+      "actions": "Acciones",
+      "na": "N/D"
+    },
+    "fallbacks": {
+      "untitledVariable": "Variable sin Título"
     }
   },
   "UserTestView": {
@@ -588,7 +609,8 @@
     "back": "Volver",
     "duplicateTest": "Duplicar prueba",
     "submit": "Enviar",
-    "couldNotFinish": "No se pudo completar"
+    "couldNotFinish": "No se pudo completar",
+    "addNewTask": "Agregar nueva tarea"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -721,6 +743,7 @@
     "tasks": "TAREAS",
     "postTest": "POSTPRUEBA",
     "consentForm": "Formulario de consentimiento",
+    "consentFormSubtitle": "Edite el texto de consentimiento para la prueba. Los cambios se guardan al hacer clic en el botón Guardar.",
     "consentDescription": "Este es un cuadro de consentimiento con un texto para confirmar el consentimiento.",
     "welcomeMessage": "Mensaje de bienvenida",
     "welcomeMessageDescription": "Este mensaje será lo primero que los participantes verán antes de que comience la sesión.",
@@ -739,7 +762,11 @@
     "postFormDescription": "Este es un cuestionario posterior para recopilar datos de los participantes.",
     "finalMessage": "Mensaje final",
     "finalMessageDescription": "Este es el mensaje final que dejas para el participante al finalizar la prueba.",
-    "finalMessagePlaceholder": "Ingresa el mensaje final"
+    "finalMessagePlaceholder": "Ingresa el mensaje final",
+    "preTestVariables": "Variables de la Prueba Previa",
+    "postTestVariables": "Variables de la Prueba Posterior",
+    "configureVariables": "Configura las variables para la sección {type}. Agrega, edita o elimina variables según sea necesario.",
+    "createNewVariableTitle": "Crear Nueva Variable"
   },
   "CardSorting": {
     "noCategory": "Sin categoría",
