@@ -514,10 +514,9 @@ function handleIrisData(data) {
 }
 
 const openCalibration = () => {
-  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  window.open(`${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
   calibrationInProgress.value = true;
-  console.log('calibrationInProgress.value', calibrationInProgress.value);
-}
+};
 
 const closeCalibration = () => {
   calibrationInProgress.value = false;
