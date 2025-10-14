@@ -94,7 +94,7 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         title: 'Answers',
         icon: ICONS.ORDER,
         path: `/accessibility/automatic/answers/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: false // Allow evaluators to view answers
       },
       {
         title: 'Report',

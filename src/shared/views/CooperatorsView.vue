@@ -384,8 +384,12 @@ const notifyCooperator = (guest) => {
     });
 
     let path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
-    if(test.value.subType === 'ACCESSIBILITY_MANUAL' || test.value.subType === 'ACCESSIBILITY_AUTOMATIC'){
-      path = `/accessibility/manual/${test.value.id}`;
+    
+    // Set specific paths for accessibility tests
+    if(test.value.subType === 'ACCESSIBILITY_MANUAL'){
+      path = `/accessibility/manual/preview/${test.value.id}`;
+    } else if(test.value.subType === 'ACCESSIBILITY_AUTOMATIC'){
+      path = `/accessibility/automatic/reports/${test.value.id}`;
     }
 
     sendNotification({

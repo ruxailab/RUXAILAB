@@ -9,8 +9,9 @@ import { getCurrentUser } from '@/ux/accessibility/utils/getCurrentUser';
 
 /**
  * Check if a route requires admin access
- * Admin-only routes: config, result, cooperative, setting, analyse, answers, settings, cooperation
- * Public routes: home, preview
+ * Admin-only routes: config, result, cooperative, setting, analyse, settings, cooperation
+ * Evaluator access: answers (allow evaluators to view answers)
+ * Public routes: home, preview, reports
  */
 const isAdminOnlyRoute = (path) => {
     const adminOnlyPatterns = [
@@ -19,7 +20,6 @@ const isAdminOnlyRoute = (path) => {
         '/cooperative/',
         '/setting/',
         '/analyse/',
-        '/answers/',
         '/settings/',
         '/cooperation/'
     ];

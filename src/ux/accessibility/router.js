@@ -112,8 +112,7 @@ const accessibilityRoutes = [
                 path: '/accessibility/automatic/answers/:id',
                 name: 'AccessibilityAnswers',
                 props: true,
-                meta: { authorize: [0, 1] },
-                beforeEnter: accessibilityGuard,
+                meta: { authorize: [0, 1] }, // Allow admin (0) and evaluator (1)
                 component: AccessibilityAnswers,
             },
             {
