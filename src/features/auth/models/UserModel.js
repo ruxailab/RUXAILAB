@@ -16,7 +16,7 @@ import UserAnswer from "./UserAnswer";
 export default class User {
     constructor({
         id, accessLevel, email, notifications = [], myAnswers = [], myTests = [],
-        username = null, contactNo = null, country = null, profileImage = '', calibrationId = null
+        username = null, contactNo = null, country = null, profileImage = '', calibrationId = null, storageUsageMB = 0
     } = {}) {
         this.id = id;
         this.accessLevel = accessLevel;
@@ -29,6 +29,7 @@ export default class User {
         this.country = country;
         this.profileImage = profileImage;
         this.calibrationId = calibrationId;
+        this.storageUsageMB = storageUsageMB;
     }
 
     static toUser(data) {
@@ -48,7 +49,8 @@ export default class User {
             contactNo: this.contactNo, // Include contactNo in Firestore representation
             country: this.country, // Include country in Firestore representation
             profileImage: this.profileImage, // Include profileImage in Firestore representation
-            calibrationId: this.calibrationId
+            calibrationId: this.calibrationId,
+            storageUsageMB: this.storageUsageMB
         };
     }
 
