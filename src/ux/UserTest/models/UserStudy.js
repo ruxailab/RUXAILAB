@@ -10,7 +10,6 @@ export default class UserStudy extends Study {
     }
 
     toFirestore() {
-        return Object.assign(super.toFirestore(), {})
         return Object.assign(super.toFirestore(), {
             calibrationConfig: this.calibrationConfig.toFirestore ? this.calibrationConfig.toFirestore() : this.calibrationConfig
         });
