@@ -55,3 +55,42 @@ export const receiveCalibration = functions.onRequest({
     }
 });
 
+export const getCalibrationConfig = functions.onRequest({
+    handler: async (req, res) => {
+        if (req.method !== "GET") {
+            return res.status(405).send("Method Not Allowed");
+        }
+
+        try {
+            const { testId } = req.query;
+
+            if (!testId) {
+                return res.status(400).json({ error: "testId is required" });
+            }
+
+            const db = admin.firestore();
+            const testRef = db.collection("tests").doc(testId);
+            const testDoc = await testRef.get();
+
+            if (!testDoc.exists) {
+                return res.status(404).json({ error: "Test not found" });
+            }
+
+            const testData = testDoc.data();
+            const calibrationConfig = testData.calibrationConfig || null;
+
+            if (!calibrationConfig) {
+                return res.status(404).json({ error: "Calibration config not found in test" });
+            }
+
+            return res.status(200).json({
+                testId,
+                calibrationConfig
+            });
+
+        } catch (error) {
+            console.error("Error getting calibration config:", error);
+            return res.status(500).json({ error: error.message });
+        }
+    }
+});;
