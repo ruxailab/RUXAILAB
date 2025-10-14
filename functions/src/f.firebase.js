@@ -1,4 +1,5 @@
 import admin from 'firebase-admin'
+import { onObjectDeleted, onObjectFinalized, onObjectMetadataUpdated } from 'firebase-functions/storage'
 import firebaseFunctions from 'firebase-functions/v2'
 
 function onRequest({ handler, opts = {} }) {
