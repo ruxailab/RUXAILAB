@@ -3,51 +3,55 @@ import { admin, functions } from "../f.firebase.js";
 /**
  * Cloud Function triggered on Firebase Storage file write (create/update/delete).
  */
-export const onStorageUpdate = functions.storage.object().onFinalize(async (object) => {
+export const onStorageUpdate = functions.onStorageTrigger({
+  event: "finalized",
+  handler: async (event) => {
+    const object = event.data;
     try {
-        const filePath = object.name;
-        const match = filePath.match(/^tests\/([^\/]+)/);
-        if (!match) {
-            console.log("File path does not match expected pattern:", filePath);
-            return null;
+      const filePath = object.name;
+      const match = filePath.match(/^tests\/([^\/]+)/);
+      if (!match) {
+        console.log("File path does not match expected pattern:", filePath);
+        return null;
+      }
+      const testId = match[1];
+
+      const db = admin.firestore();
+      const usersRef = db.collection('users');
+      const querySnapshot = await usersRef
+        .where(`myTests.${testId}`, '!=', null)
+        .get();
+
+      if (querySnapshot.empty) {
+        console.log(`No users found with testId: ${testId}`);
+        return null;
+      }
+
+      const bucket = admin.storage().bucket();
+
+      const batch = db.batch();
+      for (const doc of querySnapshot.docs) {
+        const userData = doc.data();
+        const userTestIds = Object.keys(userData.myTests || {});
+
+        let totalBytes = 0;
+        for (const tid of userTestIds) {
+          const [testFiles] = await bucket.getFiles({ prefix: `tests/${tid}` });
+          for (const file of testFiles) {
+            totalBytes += Number(file.metadata.size || 0);
+          }
         }
-        const testId = match[1];
+        const totalSizeMB = (totalBytes / (1024 * 1024)).toFixed(2);
 
-        const db = admin.firestore();
-        const usersRef = db.collection('users');
-        const querySnapshot = await usersRef
-            .where(`myTests.${testId}`, '!=', null)
-            .get();
+        batch.update(doc.ref, { storageUsageMB: parseFloat(totalSizeMB) });
+      }
 
-        if (querySnapshot.empty) {
-            console.log(`No users found with testId: ${testId}`);
-            return null;
-        }
-
-        const bucket = admin.storage().bucket();
-
-        const batch = db.batch();
-        for (const doc of querySnapshot.docs) {
-            const userData = doc.data();
-            const userTestIds = Object.keys(userData.myTests || {});
-
-            let totalBytes = 0;
-            for (const tid of userTestIds) {
-            const [testFiles] = await bucket.getFiles({ prefix: `tests/${tid}` });
-            for (const file of testFiles) {
-                totalBytes += Number(file.metadata.size || 0);
-            }
-            }
-            const totalSizeMB = (totalBytes / (1024 * 1024)).toFixed(2);
-
-            batch.update(doc.ref, { storageUsageMB: parseFloat(totalSizeMB) });
-        }
-
-        await batch.commit();
-        console.log(`Updated storage usage for testId: ${testId}`);
+      await batch.commit();
+      console.log(`Updated storage usage for testId: ${testId}`);
     } catch (error) {
-        console.error("Error updating storage usage:", error);
+      console.error("Error updating storage usage:", error);
     }
+  }
 });
 
 /**

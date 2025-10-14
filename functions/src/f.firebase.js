@@ -23,10 +23,24 @@ function onTrigger({ path, event, handler }) {
   return firestoreEvents[event](path, handler)
 }
 
+function onStorageTrigger({ event, handler }) {
+  const storageEvents = {
+    finalized: (h) => onObjectFinalized(h),
+    deleted: (h) => onObjectDeleted(h),
+    metadataUpdated: (h) => onMetadataUpdated(h),
+  }
+
+  if (!storageEvents[event]) {
+    throw new Error(`Unsupported Storage event: ${event}`)
+  }
+  return storageEvents[event](handler)
+}
+
 const functions = {
   onRequest,
   onCall,
   onTrigger,
+  onStorageTrigger,
   ...firebaseFunctions
 }
 
