@@ -17,6 +17,7 @@ export default class UserController extends Controller {
       myTests: {},
       myAnswers: {},
       notifications: [],
+      storageUsageMB: 0,
     }).toFirestore();
     return super.set(COLLECTION, payload.id, user);
   }
