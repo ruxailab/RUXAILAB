@@ -1,5 +1,5 @@
 <template>
-    <div class="timeline-wrapper">
+    <v-card class="timeline-wrapper rounded-t-xl border-t-lg">
         <!-- Botão Play/Pause -->
         <v-btn icon color="green" @click="$emit('togglePlay')">
             <v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
@@ -15,7 +15,7 @@
         <span style="width: 60px; text-align: right;">
             {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
         </span>
-    </div>
+    </v-card>
 </template>
 
 <script setup>
@@ -66,10 +66,15 @@ function formatTime(sec) {
 
 <style scoped>
 .timeline-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 5px 10px;
+    padding: 100px;
+    background-color: #f7f7f7;
 }
 
 .timeline-bar {
@@ -87,7 +92,7 @@ function formatTime(sec) {
     background-color: #64b5f6;
     border-radius: 4px;
     top: 0;
-    left: 0;
+    display: flex;
 }
 
 .timeline-thumb {

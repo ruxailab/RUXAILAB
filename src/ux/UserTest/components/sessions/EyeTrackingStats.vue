@@ -35,22 +35,48 @@
             </v-btn-toggle>
         </div>
 
-        <!-- Área para visualização (mock por enquanto) -->
+        <!-- Área para visualização (mostra a resposta da API) -->
         <v-sheet class="d-flex align-center justify-center pa-6" color="#fafafa" rounded="lg">
-            <span class="text-grey">[Eye tracking visualization placeholder]</span>
+            <span class="text-grey" v-if="!predictedData">Carregando predições...</span>
+            <pre v-else class="text-left" style="white-space: pre-wrap;">{{ predictedData }}</pre>
         </v-sheet>
     </v-card>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import { useStore } from 'vuex';
 
-defineProps({
+const props = defineProps({
     accuracy: { type: Number, default: 92 },
     fixations: { type: Number, default: 34 },
+    irisData: { type: Array, required: true }
 })
 
+const store = useStore();
+const calibrationConfig = computed(() => store.state.Tests.Test.calibrationConfig || {})
 const selectedView = ref('prediction')
+const predictedData = ref(null)
+
+onMounted(async () => {
+    try {
+        const response = await axios.post(process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict', {
+            k: calibrationConfig.value.pointNumber,
+            screen_height: 1080,
+            screen_width: 1920,
+            iris_tracking_data: props.irisData
+        }, {
+            headers: { 'Content-Type': 'application/json' }
+        })
+
+        predictedData.value = JSON.stringify(response.data, null, 2)
+        console.log('Resposta do backend:', response.data)
+    } catch (error) {
+        console.error('Erro ao chamar batch_predict:', error)
+        predictedData.value = 'Erro ao obter predições.'
+    }
+})
 </script>
 
 <style scoped>

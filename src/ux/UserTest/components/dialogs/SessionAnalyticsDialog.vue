@@ -47,6 +47,7 @@
 
                             <v-window-item value="eye">
                                 <EyeTrackingStats
+                                    :iris-data="taskAnswer?.irisTrackingData"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
                                     class="mb-4" />
