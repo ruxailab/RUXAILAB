@@ -114,12 +114,12 @@ const usedStorage = ref(0);
 const totalParticipants = ref(0);
 
 const userDisplayName = computed(() => {
-  const user = store.getters['auth/getUser'];
+  const user = store.getters.user;
   return user?.username?.split(' ')[0] || 'User';
 });
 
 const userStorageUsage = computed(() => {
-  const user = store.getters['auth/getUser'];
+  const user = store.getters.user;
   return user?.storageUsageMB || 0;
 });
 
