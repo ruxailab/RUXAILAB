@@ -84,6 +84,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
 import ActiveStudies from '@/features/dashboard/components/ActiveStudies.vue'
@@ -106,22 +107,38 @@ const props = defineProps({
 })
 
 const store = useStore()
+const { t } = useI18n();
 
-const totalStudies = ref(12)
-const usedStorage = ref(150)
-const totalParticipants = ref(0)
+const totalStudies = ref(0);
+const usedStorage = ref(0);
+const totalParticipants = ref(0);
 
 const userDisplayName = computed(() => {
-  const user = store.getters['auth/getUser']
-  if (user && user.displayName) {
-    return user.displayName.split(' ')[0]
-  }
-  return 'User'
-})
+  const user = store.getters['auth/getUser'];
+  return user?.username?.split(' ')[0] || 'User';
+});
 
-watch(() => props.items, (newVal) => {
-  totalStudies.value = newVal.length
-}, { immediate: true })
+const userStorageUsage = computed(() => {
+  const user = store.getters['auth/getUser'];
+  return user?.storageUsageMB || 0;
+});
+
+
+watch(
+  () => userStorageUsage.value,
+  (newVal) => {
+    usedStorage.value = parseFloat(newVal);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.items,
+  (newVal) => {
+    totalStudies.value = newVal.length;
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
