@@ -41,8 +41,8 @@
             <v-tab v-if="showEye" @click="tab = 4">
               Eye-Tracking Analytics
             </v-tab>
-            <v-tab @click="tab = 5">
-              Studies
+            <v-tab v-if="showTranscription" @click="tab = 5">
+              Transcriptions
             </v-tab>
           </v-tabs>
         </template>
@@ -57,7 +57,7 @@
             <SusAnalytics v-if="tab === 2" />
             <NasaTlxAnalytics v-if="tab === 3" />
             <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 4" />
-            <Studies v-if="tab === 5" />
+            <TranscriptionTool v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -80,7 +80,8 @@ import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
-import Studies from '@/ux/UserTest/components/ModeratedTestAnalytics/Studies.vue';
+import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
+import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 
 defineProps({
   id: {
@@ -98,14 +99,8 @@ const ind = ref(0);
 const intro = ref(null);
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
-
+const study = computed(() => store.state.Tests.Test);
 const testStructure = computed(() => store.state.Tests.Test.testStructure);
-
-const answers = computed(() =>
-  testAnswerDocument.value
-    ? Object.values(testAnswerDocument.value)
-    : []
-);
 
 const hasAnswers = computed(() => {
   const answers = testAnswerDocument.value?.taskAnswers;
@@ -126,6 +121,13 @@ const showNasa = computed(() => {
     (task) => task.taskType === 'nasa-tlx'
   );
 });
+
+const showTranscription = computed(() => {
+  if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+    return true
+  }
+  return false
+})
 
 const showEye = computed(() =>
   testAnswerDocument.value &&
