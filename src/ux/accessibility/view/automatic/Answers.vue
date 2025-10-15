@@ -121,12 +121,24 @@
                 <v-col cols="12" sm="4">
                   <v-card class="rounded-lg" elevation="3">
                     <v-card-text class="d-flex flex-column align-center py-8">
-                      <div class="text-subtitle-2 text-medium-emphasis mb-3">Accessibility Score</div>
+                      <div class="d-flex align-center mb-3">
+                        <div class="text-subtitle-2 text-medium-emphasis">Accessibility Score</div>
+                        <v-btn
+                          icon="mdi-information-outline"
+                          size="x-small"
+                          variant="text"
+                          color="info"
+                          class="ml-2"
+                          @click="scoreInfoDialog = true"
+                        />
+                      </div>
                       <v-progress-circular
                         :model-value="accessibilityScore"
                         :color="getScoreColor(accessibilityScore)"
                         size="120"
                         width="12"
+                        class="cursor-pointer"
+                        @click="scoreInfoDialog = true"
                       >
                         <span class="text-h5 font-weight-bold">{{ accessibilityScore }}%</span>
                       </v-progress-circular>
@@ -446,6 +458,129 @@
           </v-window-item>
         </v-window>
       </v-card>
+
+      <!-- Accessibility Score Info Dialog -->
+      <v-dialog v-model="scoreInfoDialog" max-width="600">
+        <v-card class="rounded-lg">
+          <v-card-title class="d-flex align-center bg-primary">
+            <v-icon icon="mdi-chart-line" class="me-2 text-white" />
+            <span class="text-white">Accessibility Score Calculation</span>
+            <v-spacer />
+            <v-btn icon="mdi-close" variant="text" color="white" @click="scoreInfoDialog=false" />
+          </v-card-title>
+          <v-divider />
+          <v-card-text class="pa-6">
+            <div class="mb-4">
+              <div class="text-h6 mb-2">How the Score Works</div>
+              <p class="text-body-2 text-medium-emphasis mb-4">
+                The accessibility score is calculated using a logarithmic scale that weighs different issue types by severity. 
+                This ensures meaningful scores even for pages with many issues.
+              </p>
+            </div>
+
+            <v-divider class="my-4" />
+
+            <div class="mb-4">
+              <div class="text-subtitle-1 font-weight-bold mb-3">Issue Type Weights</div>
+              <v-table density="compact" class="rounded-lg border">
+                <thead>
+                  <tr>
+                    <th>Issue Type</th>
+                    <th class="text-center">Weight</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <v-chip color="error" size="small" class="me-2">ERROR</v-chip>
+                    </td>
+                    <td class="text-center font-weight-bold">×5</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <v-chip color="warning" size="small" class="me-2">WARNING</v-chip>
+                    </td>
+                    <td class="text-center font-weight-bold">×2</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <v-chip color="info" size="small" class="me-2">NOTICE</v-chip>
+                    </td>
+                    <td class="text-center font-weight-bold">×0.5</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+
+            <v-divider class="my-4" />
+
+            <div>
+              <div class="text-subtitle-1 font-weight-bold mb-3">Score Ranges</div>
+              <v-table density="compact" class="rounded-lg border">
+                <thead>
+                  <tr>
+                    <th>Issue Count</th>
+                    <th class="text-center">Expected Score</th>
+                    <th class="text-center">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-weight-medium">0 issues</td>
+                    <td class="text-center">
+                      <v-chip color="success" size="small" variant="flat">100%</v-chip>
+                    </td>
+                    <td class="text-center">
+                      <v-icon icon="mdi-check-circle" color="success" size="small" />
+                      Perfect
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium">1-10 issues</td>
+                    <td class="text-center">
+                      <v-chip color="success" size="small" variant="flat">80-95%</v-chip>
+                    </td>
+                    <td class="text-center">
+                      <v-icon icon="mdi-check-circle" color="success" size="small" />
+                      Excellent
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium">10-100 issues</td>
+                    <td class="text-center">
+                      <v-chip color="warning" size="small" variant="flat">50-80%</v-chip>
+                    </td>
+                    <td class="text-center">
+                      <v-icon icon="mdi-alert" color="warning" size="small" />
+                      Good
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium">100-1,000 issues</td>
+                    <td class="text-center">
+                      <v-chip color="error" size="small" variant="flat">20-50%</v-chip>
+                    </td>
+                    <td class="text-center">
+                      <v-icon icon="mdi-alert-circle" color="error" size="small" />
+                      Needs Work
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium">1,000+ issues</td>
+                    <td class="text-center">
+                      <v-chip color="error" size="small" variant="flat">5-20%</v-chip>
+                    </td>
+                    <td class="text-center">
+                      <v-icon icon="mdi-close-circle" color="error" size="small" />
+                      Critical
+                    </td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </div>
     <div v-else>
       <v-alert
@@ -477,6 +612,7 @@ const infiniteScrollCount = ref(20)
 const activeFilters = ref(['error', 'warning', 'notice'])
 const issueDialog = ref(false)
 const selectedIssueObj = ref(null)
+const scoreInfoDialog = ref(false)
 
 // Constants
 const testId = computed(() => route.params.testId || route.params.id)
@@ -842,6 +978,10 @@ pre {
 
 code {
   font-family: 'Roboto Mono', monospace;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .overflow-y-auto::-webkit-scrollbar {
