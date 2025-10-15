@@ -1,30 +1,6 @@
 <template>
   <!-- Loading overlay -->
-  <v-overlay v-model="isLoading" contained class="align-center justify-center">
-    <div class="text-center">
-      <v-progress-circular indeterminate size="64" color="primary" />
-      <div class="mt-4 text-h6">Loading test data...</div>
-      <div class="text-caption">Checking access permissions</div>
-    </div>
-  </v-overlay>
-
-  <div v-if="!isLoading">
-    <!-- Manager-style Header (uses same image as ManagerView) -->
-    <div class="h-64">
-      <ManagerBanner />
-    </div>
-    <v-container class="card-container pt-6 pb-10">
-      <!-- Access level indicator -->
-      <div v-if="userRole" class="mb-2 text-caption text-grey">
-        Access: {{ getAccessLevelText }}
-      </div>
-      
-      <p class="presentation-text text-center text-md-left mb-4">
-        Browse accessibility tools and actions
-      </p>
-      <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
-    </v-container>
-  </div>
+  <h1 v-if="isLoading" class="text-center my-10">Loading...</h1>
 </template>
 
 <script setup>
@@ -75,7 +51,7 @@ const navItems = computed(() => [
     path: `/accessibility/automatic/answers/${testId.value}`,
   },
   {
-    title: 'Report',
+    title: 'Reports',
     icon: 'mdi-file-document',
     path: `/accessibility/automatic/reports/${testId.value}`,
   },

@@ -430,10 +430,9 @@ const rules = {
 }
 
 // Router composables
-const route = useRoute()
 const router = useRouter()
 const store = useStore()
-const testId = ref(window.location.href.split("/").pop());
+const testId = ref(globalThis.location.href.split("/").pop())
 
 // Computed properties
 const formattedDate = computed(() => {
@@ -628,7 +627,6 @@ const checkExistingAssessment = async () => {
       existingAssessment.value = null
     }
   } catch (error) {
-    console.log("No existing assessment found:", error.message)
     assessmentExists.value = false
     existingAssessment.value = null
   } finally {
