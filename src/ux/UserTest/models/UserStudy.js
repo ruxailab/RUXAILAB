@@ -5,7 +5,10 @@ import EyeCalibrationSettings from './EyeCalibrationSettings'
 export default class UserStudy extends Study {
     constructor(params = {}) {
         super(params)
-        this.calibrationConfig = new EyeCalibrationSettings(params.calibrationConfig) || new EyeCalibrationSettings()
+        this.calibrationConfig = this.calibrationConfig = params.calibrationConfig
+            ? new EyeCalibrationSettings(params.calibrationConfig)
+            : null
+
         this.testType = STUDY_TYPES.USER
     }
 

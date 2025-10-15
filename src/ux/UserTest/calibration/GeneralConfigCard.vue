@@ -7,15 +7,43 @@
                     General Configuration
                 </v-card-title>
 
-                <div class="custom-outline">
-                    <v-slider v-model="pointNumber" :min="2" :max="9" step="1" label="Point Number" thumb-label />
-                    <v-slider v-model="samplePerPoint" :min="10" :max="200" step="1" label="Sample Per Point"
-                        thumb-label />
-                    <v-slider v-model="msPerCapture" :min="20" :step="5" :max="100"
-                        label="Milliseconds Per Point Capture" thumb-label />
-                    <v-slider v-model="threshold" :min="0" :step="5" :max="1000" label="Points Distance Threshold"
-                        thumb-label />
+                <div class="custom-outline space-y-4">
+                    <!-- Point Number -->
+                    <v-tooltip text="Number of calibration points shown on the screen (more points = higher accuracy).">
+                        <template #activator="{ props }">
+                            <v-slider v-bind="props" v-model="pointNumber" :min="2" :max="9" step="1"
+                                label="Point Number" thumb-label />
+                        </template>
+                    </v-tooltip>
+
+                    <!-- Samples Per Point -->
+                    <v-tooltip
+                        text="How many gaze samples are collected per calibration point. Higher values improve precision but increase duration.">
+                        <template #activator="{ props }">
+                            <v-slider v-bind="props" v-model="samplePerPoint" :min="10" :max="200" step="1"
+                                label="Samples Per Point" thumb-label />
+                        </template>
+                    </v-tooltip>
+
+                    <!-- Milliseconds Per Point Capture -->
+                    <v-tooltip
+                        text="Duration (in milliseconds) to capture data per point. Defines how long the user must look at each target.">
+                        <template #activator="{ props }">
+                            <v-slider v-bind="props" v-model="msPerCapture" :min="20" :max="100" step="5"
+                                label="Milliseconds Per Point Capture" thumb-label />
+                        </template>
+                    </v-tooltip>
+
+                    <!-- Points Distance Threshold -->
+                    <v-tooltip
+                        text="Maximum distance (in pixels) allowed between calibration samples before they are discarded. Controls spatial tolerance.">
+                        <template #activator="{ props }">
+                            <v-slider v-bind="props" v-model="threshold" :min="0" :max="1000" step="5"
+                                label="Points Distance Threshold" thumb-label />
+                        </template>
+                    </v-tooltip>
                 </div>
+
 
                 <div class="custom-outline">
                     <RadiusCalibration />
@@ -79,7 +107,6 @@ onMounted(() => {
 .custom-outline {
     border: 1px solid #000;
     padding: 10px;
-    border-radius: 5px;
-    margin: 10px;
+    border-radius: 5px;margin: 10px;
 }
 </style>

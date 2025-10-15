@@ -1,10 +1,16 @@
 <template>
-    <v-row class="d-flex align-center">
+    <v-row class="d-flex align-center" no-gutters>
         <v-col cols="10">
-            <v-slider v-model="radius" :min="10" :max="35" label="Radius" />
+            <v-tooltip text="Adjust the radius of the calibration point. Larger values make the point bigger."
+                location="bottom">
+                <template #activator="{ props }">
+                    <v-slider v-bind="props" v-model="radius" :min="10" :max="35" step="1" label="Radius" thumb-label />
+                </template>
+            </v-tooltip>
         </v-col>
-        <v-col cols="2" style="max-width: 100%; max-height: 100%; display: flex; align-items: stretch;">
-            <canvas ref="radCanvas" style="width: 100%; height: 100%;"></canvas>
+
+        <v-col cols="2" class="d-flex justify-center">
+            <canvas ref="radCanvas" style="width: 100%; height: 150px;"></canvas>
         </v-col>
     </v-row>
 </template>
@@ -40,8 +46,8 @@ watch(radius, (newRadius) => {
     drawBall(newRadius, pointColor.value)
 })
 
-watch(pointColor, (newColor) => {
-    drawBall(radius.value, newColor)
+watch(pointColor, () => {
+    drawBall(radius.value, pointColor.value)
 })
 
 const drawBall = (r, color) => {
