@@ -563,6 +563,15 @@ const getScoreColor = (score) => {
 }
 
 // Computed properties for metrics
+// how the metric are defined for scoring:
+// 0 issues = 100%
+// Small issues (1-10) = 80-95%
+// Medium issues (10-100) = 50-80%
+// Large issues (100-1000) = 20-50%
+// Very large issues (1000+) = 5-20%
+
+
+
 const accessibilityScore = computed(() => {
   const counts = getIssueCounts()
   const totalIssues = counts.errors + counts.warnings + counts.notices
@@ -570,7 +579,7 @@ const accessibilityScore = computed(() => {
   if (totalIssues === 0) return 100
   
   // Improved weighted scoring system using logarithmic scale
-  // This provides more granular scoring and prevents scores from dropping to 0 too quickly
+  // This ensures scores remain meaningful even with high issue counts (1000+)
   
   // Weight factors for different issue types
   const errorWeight = 5
@@ -584,16 +593,21 @@ const accessibilityScore = computed(() => {
     (counts.notices * noticeWeight)
   )
   
-  // Use of logarithmic decay for more realistic scoring
-  // Formula: 100 * e^(-k * weightedIssues) where k controls decay rate
-  const decayRate = 0.015 // Adjusted for balanced scoring
-  const score = 100 * Math.exp(-decayRate * weightedIssues)
+  // Logarithmic scale with floor to prevent scores from reaching 0
+  // Formula: 100 - (100 * log(1 + weightedIssues) / log(maxIssues))
+  // This approach ensures:
+  // - 0 issues = 100%
+  // - Small issues (1-10) = 80-95%
+  // - Medium issues (10-100) = 50-80%
+  // - Large issues (100-1000) = 20-50%
+  // - Very large issues (1000+) = 5-20%
+  const maxWeightedIssues = 10000 // Cap for logarithmic scaling
+  const logScore = 100 - (100 * Math.log(1 + weightedIssues) / Math.log(1 + maxWeightedIssues))
   
-  // Alternative linear approach with diminishing returns
-  // Uncomment to use this instead:
-  // const score = 100 / (1 + (weightedIssues / 20))
+  // Ensure minimum score of 5% for any number of issues
+  const score = Math.max(5, logScore)
   
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(5, Math.min(100, Math.round(score)))
 })
 
 const totalIssues = computed(() => {
