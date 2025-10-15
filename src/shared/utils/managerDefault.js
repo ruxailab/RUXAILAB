@@ -103,7 +103,7 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         requiresAdmin: false // Reports can be viewed by cooperators
       },
       {
-        title: 'Cooperation',
+        title: 'Cooperators',
         icon: ICONS.ACCOUNT_GROUP,
         path: `/accessibility/automatic/cooperation/${testId}`,
         requiresAdmin: true
