@@ -97,7 +97,7 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         requiresAdmin: false // Allow evaluators to view answers
       },
       {
-        title: 'Report',
+        title: 'Reports',
         icon: ICONS.BOOK,
         path: `/accessibility/automatic/reports/${testId}`,
         requiresAdmin: false // Reports can be viewed by cooperators

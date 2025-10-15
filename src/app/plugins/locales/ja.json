@@ -93,7 +93,8 @@
       "Template": "テンプレート",
       "Final Report": "最終レポート",
       "Answer Test": "テストに回答",
-      "Settings": "設定"
+      "Settings": "設定",
+      "Analyse": "分析"
     },
     "heuristic": "ユーザビリティヒューリスティック評価"
   },

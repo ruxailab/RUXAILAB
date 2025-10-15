@@ -123,7 +123,8 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "Analyse": "Analyze"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
