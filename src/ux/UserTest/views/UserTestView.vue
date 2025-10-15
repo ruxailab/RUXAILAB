@@ -442,6 +442,7 @@ function saveIrisDataIntoTask() {
 
 const saveAnswer = async () => {
   try {
+    console.log('Saving answer...');
     attachMediaToTasks(localTestAnswer, mediaUrls.value);
     localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
@@ -451,28 +452,44 @@ const saveAnswer = async () => {
       localTestAnswer.invited = true;
     }
     if (!user.value) {
-      localTestAnswer.userDocId = nanoid(16)
+      localTestAnswer.userDocId = nanoid(16);
+      console.log('Generated userDocId for anonymous user:', localTestAnswer.userDocId);
+    }
+    console.log('Saving answer to Firestore...');
+    if (!user.value) {
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
       });
     } else {
-      Object.assign(currentUserTestAnswer.value, localTestAnswer);
-      console.log('Generated userDocId for anonymous user:', currentUserTestAnswer.value);
+      const updatedAnswer = UserStudyEvaluatorAnswer.toModel({
+        ...currentUserTestAnswer.value,
+        fullName: localTestAnswer.fullName,
+        progress: localTestAnswer.progress,
+        preTestAnswer: localTestAnswer.preTestAnswer,
+        postTestAnswer: localTestAnswer.postTestAnswer,
+        tasks: {
+          ...currentUserTestAnswer.value.tasks,
+          ...localTestAnswer.tasks,
+        },
+      })
+
+      Object.assign(currentUserTestAnswer.value, updatedAnswer)
+
       await store.dispatch('saveTestAnswer', {
         data: currentUserTestAnswer.value,
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
-      });
+      })
     }
-    router.push('/admin');
 
+    router.push('/admin')
   } catch (error) {
-    console.error('Error saving answer:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+    console.error('Error saving answer:', error)
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' })
   }
-};
+}
 
 const submitAnswer = async () => {
   try {
