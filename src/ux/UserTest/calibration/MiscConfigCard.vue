@@ -4,7 +4,7 @@
             <v-card flat>
                 <v-card-title class="text-h5 font-weight-bold mb-4"
                     :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
-                    miscelaneous configuration
+                    Miscelaneous configuration
                 </v-card-title>
                 <div class="custom-outline">
                     Control:
@@ -22,7 +22,7 @@
                 </div>
                 <div class="custom-outline">
                     Model Selection:
-                    <v-select v-model="selectedModel" :items="availableModels" outlined clearable
+                    <v-select v-model="selectedModel" :items="availableModels" outlined
                         placeholder="Select Model"></v-select>
                 </div>
                 <div class="custom-outline">

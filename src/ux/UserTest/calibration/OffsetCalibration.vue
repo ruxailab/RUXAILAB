@@ -1,7 +1,12 @@
 <template>
     <v-row class="d-flex align-center">
         <v-col cols="8">
-            <v-slider v-model="offset" :min="100" :step="5" :max="300" label="offset" />
+            <v-tooltip text="Offset (in pixels) to adjust the calibration area position." location="bottom">
+                <template #activator="{ props }">
+                    <v-slider v-bind="props" v-model="offset" :min="100" :max="300" step="5" label="Offset"
+                        thumb-label />
+                </template>
+            </v-tooltip>
         </v-col>
         <v-col cols="4" style="max-width: 100%; max-height: 100%; display: flex; align-items: stretch;">
             <canvas ref="offCanvas" style="width: 100%; height: 100%;"></canvas>

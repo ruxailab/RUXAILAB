@@ -2,10 +2,10 @@
     <div>
         <v-container>
             <v-row justify="center" align="start">
-                <v-col cols="6">
+                <v-col cols="12" lg="6" md="6">
                     <GeneralConfigCard />
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="12" lg="6" md="6">
                     <MiscConfigCard />
                 </v-col>
             </v-row>
