@@ -125,7 +125,7 @@
                     complete-icon="mdi-check" />
                   <v-divider />
 
-                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Eye Tracking" :complete="stepperValue >= 3"
+                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Calibration" :complete="stepperValue >= 3"
                     color="white" complete-icon="mdi-check" />
                   <v-divider v-if="hasEyeTracking" />
 
