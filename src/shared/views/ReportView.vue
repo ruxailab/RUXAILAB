@@ -270,10 +270,10 @@ const headers = computed(() => {
 const checkIfIsSubmitted = (status) => status ? t('HeuristicsReport.status.submitted') : t('HeuristicsReport.status.in_progress');
 
 const getCooperatorEmail = (userDocId) => {
-  if (userDocId === user.value.id) return t('listTests.me');
+  if (userDocId === user.value.id) return 'You';
   const cooperators = test.value.cooperators || [];
   const found = cooperators.find((c) => c?.userDocId === userDocId);
-  return found?.email || t('common.unknown');
+  return found?.email || 'Unknown';
 };
 
 const formatDate = (timestamp) => {
