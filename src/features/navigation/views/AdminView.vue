@@ -80,7 +80,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
+          <DashboardView :items="filteredTests" :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">

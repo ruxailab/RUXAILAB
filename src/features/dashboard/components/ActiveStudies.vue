@@ -85,7 +85,6 @@ const props = defineProps({
   }
 })
 
-const store = useStore()
 const router = useRouter();
 const answerController = new AnswerController()
 const studyController = new StudyController()
@@ -167,7 +166,9 @@ const finalFour = (studyArr) => {
     progress: calculateProgress(study.answers),
     participants: study.answers?.length || 0,
     daysLeft: study.endDate ? daysLeft(study.endDate) : null,
-    typeIcon: 'mdi-sort-variant'
+    typeIcon: 'mdi-sort-variant',
+    testType: study.testType,
+    subType: study.subType,
   }))
   .filter((study, index, self) =>
     index === self.findIndex(m => m.id === study.id)
@@ -175,11 +176,8 @@ const finalFour = (studyArr) => {
 }
 
 const goToStudy = async (study) => {
-  if (!study?.id) return;
-
-  const testDoc = await studyController.getStudy({ id: study.id });
-  const methodView = getMethodManagerView(testDoc.testType, testDoc.subType)
-  router.push({ name: methodView, params: { id: testDoc.id } })
+  const methodView = getMethodManagerView(study.testType, study.subType)
+  router.push({ name: methodView, params: { id: study.id } })
 }
 
 // Default studies if none provided
