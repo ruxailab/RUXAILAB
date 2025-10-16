@@ -2,7 +2,7 @@
   <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="2" :steps="translatedSteps" />
+      <StepperHeader :current-step="2" :steps="steps" />
 
       <!-- Page Header -->
       <SectionHeader
@@ -12,7 +12,7 @@
 
       <!-- Methods Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="method in translatedMethods" :key="method.id" cols="12" md="6" lg="5">
+        <v-col v-for="method in availableMethods" :key="method.id" cols="12" md="6" lg="5">
           <SelectableCard
             :selected="selectedMethod === method.id"
             :icon="method.icon"
@@ -49,7 +49,7 @@ const store = useStore()
 const { t } = useI18n()
 const selectedMethod = ref('')
 
-const translatedSteps = computed(() => [
+const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
   { value: 2, title: t('studyCreation.steps.methods'), complete: false },
   { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
@@ -142,8 +142,7 @@ const methodsByCategory = {
 }
 
 const currentCategory = computed(() => store.state.Tests.studyCategory)
-
-const translatedMethods = computed(() => {
+const availableMethods = computed(() => {
   return (methodsByCategory[currentCategory.value] || []).map(m => ({
     ...m,
     name: t(m.nameKey),

@@ -2,7 +2,7 @@
   <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="3" :steps="translatedSteps" />
+      <StepperHeader :current-step="3" :steps="steps" />
 
       <!-- Page Header -->
       <SectionHeader
@@ -12,7 +12,7 @@
 
       <!-- Options Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="option in translatedOptions" :key="option.id" cols="12" md="6" lg="5">
+        <v-col v-for="option in options" :key="option.id" cols="12" md="6" lg="5">
           <SelectableCard
             :selected="selectedOption === option.id"
             :icon="option.icon"
@@ -60,14 +60,14 @@ const store = useStore()
 const { t } = useI18n()
 const selectedOption = ref('')
 
-const translatedSteps = computed(() => [
+const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
   { value: 2, title: t('studyCreation.steps.methods'), complete: true },
   { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
   { value: 4, title: t('studyCreation.steps.details'), complete: false },
 ])
 
-const translatedOptions = computed(() => [
+const options = computed(() => [
   {
     id: 'blank',
     title: t('studyCreation.studyTypes.blank.title'),

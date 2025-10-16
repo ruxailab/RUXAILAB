@@ -7,7 +7,7 @@
       <!-- Stepper Header -->
       <StepperHeader
         :current-step="1"
-        :steps="translatedSteps"
+        :steps="steps"
       />
 
       <!-- Page Header -->
@@ -19,7 +19,7 @@
       <!-- Categories Grid -->
       <v-row justify="center">
         <v-col
-          v-for="category in translatedCategories"
+          v-for="category in categories"
           :key="category.id"
           cols="3"
         >
@@ -75,14 +75,14 @@ const store = useStore()
 const { t } = useI18n()
 const selectedCategory = ref(null)
 
-const translatedSteps = computed(() => [
+const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: false },
   { value: 2, title: t('studyCreation.steps.methods'), complete: false },
   { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
   { value: 4, title: t('studyCreation.steps.details'), complete: false },
 ])
 
-const translatedCategories = computed(() => STUDY_CATEGORIES.map(category => ({
+const categories = computed(() => STUDY_CATEGORIES.map(category => ({
   ...category,
   title: t(`studyCreation.categories.${category.id}.title`),
   description: t(`studyCreation.categories.${category.id}.description`),

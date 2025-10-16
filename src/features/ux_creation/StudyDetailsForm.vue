@@ -2,7 +2,7 @@
   <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="4" :steps="translatedSteps" />
+      <StepperHeader :current-step="4" :steps="steps" />
 
       <!-- Page Header -->
       <SectionHeader
@@ -218,7 +218,7 @@ const method = computed(() => store.state.Tests.studyMethod);
 const studyType = computed(() => store.state.Tests.studyType);
 const isLoading = ref(false);
 
-const translatedSteps = computed(() => [
+const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
   { value: 2, title: t('studyCreation.steps.methods'), complete: true },
   { value: 3, title: t('studyCreation.steps.studyType'), complete: true },
