@@ -1,6 +1,6 @@
 <template>
   <PageWrapper
-    :title="showIntroView ? $t('Reports Dashboard') : ''"
+    :title="showIntroView ? $t('HeuristicsReport.titles.reports_dashboard') : ''"
     :side-gap="true"
   >
     <v-dialog
@@ -24,7 +24,7 @@
             variant="text"
             @click="dialog = false"
           >
-            {{ $t('common.cancel') }}
+            {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
             class="bg-red text-white ml-1"
@@ -45,7 +45,7 @@
           class="mr-2 text-medium-emphasis"
         />
         <span class="text-body-2 text-medium-emphasis">
-          Last synced: {{ formatDate(lastUpdated) }}
+          {{ $t('common.timeAgo.now') }}: {{ formatDate(lastUpdated) }}
         </span>
       </div>
     </template>
@@ -56,7 +56,7 @@
           <v-text-field
             v-model="searchQuery"
             prepend-inner-icon="mdi-magnify"
-            label="Search reports..."
+            :label="$t('HeuristicsReport.filters.search_reports')"
             variant="outlined"
             density="compact"
             hide-details
@@ -65,7 +65,7 @@
           <v-select
             v-model="statusFilter"
             :items="statusOptions"
-            label="Filter by status"
+            :label="$t('HeuristicsReport.filters.filter_by_status')"
             variant="outlined"
             density="compact"
             hide-details
@@ -129,7 +129,7 @@
         <template #[`item.progress`]="{ item }">
           <div class="progress-section">
             <div class="d-flex align-center justify-space-between mb-2">
-              <span class="text-body-2 font-weight-medium text-medium-emphasis">Progress</span>
+              <span class="text-body-2 font-weight-medium text-medium-emphasis">{{ $t('HeuristicsReport.headers.progress') }}</span>
               <span class="text-subtitle-1 font-weight-bold text-on-surface">{{ item.progress }}%</span>
             </div>
             <v-progress-linear
@@ -181,14 +181,14 @@
             <v-list min-width="180">
               <v-list-item
                 prepend-icon="mdi-delete"
-                title="Remove Report"
+                :title="$t('HeuristicsReport.messages.remove_report')"
                 class="text-error"
                 @click="dialog = true; report = item"
               />
               <v-list-item
                 v-if="item.hidden"
                 prepend-icon="mdi-eye"
-                title="Unhide Report"
+                :title="$t('HeuristicsReport.actions.unhide_report')"
                 @click="unhideReport(item)"
               />
             </v-list>
@@ -207,10 +207,10 @@
         class="text-medium-emphasis mb-4"
       />
       <h3 class="text-h5 font-weight-medium text-medium-emphasis mb-2">
-        No reports found
+        {{ $t('HeuristicsReport.messages.no_reports_found') }}
       </h3>
       <p class="text-body-1 text-medium-emphasis">
-        Try adjusting your search or filter criteria
+        {{ $t('HeuristicsReport.messages.try_adjusting_search') }}
       </p>
     </div>
   </PageWrapper>
@@ -248,14 +248,13 @@ const showIntroView = computed(() => {
   return (reports.value.length > 0);
 });
 
-
-const allHeaders = ref([
-  { title: 'Evaluator', key: 'evaluator' },
-  { title: 'Last Update', key: 'lastUpdate' },
-  { title: 'Progress', key: 'progress' },
-  { title: 'Status', key: 'status' },
-  { title: 'Hidden', key: 'hidden' },
-  { title: 'Actions', key: 'actions', sortable: false },
+const allHeaders = computed(() => [
+  { title: t('HeuristicsReport.headers.evaluator'), key: 'evaluator' },
+  { title: t('HeuristicsReport.headers.last_update'), key: 'lastUpdate' },
+  { title: t('HeuristicsReport.headers.progress'), key: 'progress' },
+  { title: t('HeuristicsReport.headers.status'), key: 'status' },
+  { title: t('common.hidden'), key: 'hidden' },
+  { title: t('HeuristicsReport.headers.actions'), key: 'actions', sortable: false },
 ]);
 
 const answers = computed(() => store.getters.testAnswerDocument)
@@ -271,10 +270,10 @@ const headers = computed(() => {
 const checkIfIsSubmitted = (status) => status ? t('HeuristicsReport.status.submitted') : t('HeuristicsReport.status.in_progress');
 
 const getCooperatorEmail = (userDocId) => {
-  if (userDocId === user.value.id) return 'You';
+  if (userDocId === user.value.id) return t('listTests.me');
   const cooperators = test.value.cooperators || [];
   const found = cooperators.find((c) => c?.userDocId === userDocId);
-  return found?.email || 'Unknown';
+  return found?.email || t('common.unknown');
 };
 
 const formatDate = (timestamp) => {
@@ -302,7 +301,7 @@ const reports = computed(() => {
   const raw = type === STUDY_TYPES.USER ? doc.taskAnswers || {} : doc.heuristicAnswers || {};
   return Object.values(raw).map((r) => ({
     id: r.userDocId,
-    fullName: r.fullName || "Evaluator",
+    fullName: r.fullName || t('HeuristicsReport.headers.evaluator'),
     evaluator: getCooperatorEmail(r.userDocId),
     userDocId: r.userDocId,
     progress: parseFloat(r.progress).toFixed(2),
@@ -334,7 +333,6 @@ const unhideReport = async (item) => {
     console.error("Session not found for userDocId:", item.id);
     return;
   }
-  console.log(payload)
   try {
     await store.dispatch('updateTaskAnswer', {
       payload: new UserStudyEvaluatorAnswer({
@@ -345,7 +343,7 @@ const unhideReport = async (item) => {
     });
   } catch (error) {
     console.error('Error saving answer:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+    store.commit('SET_TOAST', { type: 'error', message: t('errors.globalError') });
   }
 };
 

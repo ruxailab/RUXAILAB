@@ -66,7 +66,8 @@
     },
     "viewAll": "Ver todo",
     "sentBy": "Enviado por",
-    "new": "NUEVO"
+    "new": "NUEVO",
+    "test": "un estudio"
   },
   "profile": {
     "title": "Perfil",
@@ -334,25 +335,35 @@
   "HeuristicsReport": {
     "titles": {
       "reports": "Informes",
-      "last_updated": "Última actualización"
+      "last_updated": "Última actualización",
+      "reports_dashboard": "Panel de Informes"
     },
     "headers": {
       "evaluator": "Evaluador",
       "last_update": "Última actualización",
       "progress": "Progreso",
       "status": "Estado",
-      "more": "Más"
+      "actions": "Comportamiento"
     },
     "messages": {
       "confirm_delete_report": "¿Estás seguro de que deseas eliminar este informe?",
       "reports_loading": "Cargando informes",
       "remove_report": "Eliminar informe",
       "sure_to_delete": "¿Estás seguro de que deseas eliminar el informe de {user}? Esta acción no se puede deshacer.",
-      "report_deleted": "Informe eliminado con éxito"
+      "report_deleted": "Informe eliminado con éxito",
+      "no_reports_found": "No se encontraron informes",
+      "try_adjusting_search": "Intenta ajustar tus criterios de búsqueda o filtro"
     },
     "status": {
       "submitted": "Enviado",
       "in_progress": "En progreso"
+    },
+    "filters": {
+      "search_reports": "Buscar informes...",
+      "filter_by_status": "Filtrar por estado"
+    },
+    "actions": {
+      "unhide_report": "Mostrar informe"
     }
   },
   "UsabilityCooperators": {
@@ -367,6 +378,9 @@
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Colaboradores"
+    },
+    "subtitles": {
+      "manage_participants": "Gestiona a las personas que participan en tu estudio"
     },
     "headers": {
       "email": "Correo electrónico",
@@ -561,7 +575,26 @@
       "title": "Configuración",
       "currentTest": "Prueba actual",
       "createTemplate": "CREAR PLANTILLA",
-      "deleteTest": "ELIMINAR PRUEBA"
+      "deleteTest": "ELIMINAR PRUEBA",
+      "study_configuration": "Configuración del Estudio",
+      "loading_settings": "Cargando Configuraciones",
+      "manage_test_settings": "Gestiona las configuraciones y preferencias de tu prueba con controles avanzados",
+      "basic_information": "Información Básica",
+      "configure_test_details": "Configura los detalles fundamentales de tu prueba",
+      "advanced_settings": "Configuraciones Avanzadas",
+      "fine_tune_configuration": "Ajusta finamente la configuración de tu prueba",
+      "public_access": "Acceso Público",
+      "allow_users_view": "Permitir a los usuarios ver esta prueba",
+      "test_status": "Estado de la Prueba",
+      "select_status": "Seleccionar Estado",
+      "end_date": "Fecha de Finalización",
+      "select_end_date": "Seleccionar Fecha de Finalización",
+      "quick_actions": "Acciones Rápidas",
+      "perform_common_tasks": "Realiza tareas comunes al instante",
+      "confirm_deletion": "Confirmar Eliminación",
+      "action_cannot_be_undone": "Esta acción no se puede deshacer",
+      "delete_warning": "Todos los datos asociados, resultados y configuraciones se perderán para siempre.",
+      "delete_forever": "Eliminar para Siempre"
     },
     "editTest": {
       "title": "Editar prueba",
@@ -584,7 +617,8 @@
     "imageURL": "Ingresa la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de que deseas eliminar la heurística ",
     "deleteAccount": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
-    "genericSuccess": "Operación exitosa"
+    "genericSuccess": "Operación exitosa",
+    "savedChanges": "Cambios guardados con éxito"
   },
   "buttons": {
     "next": "Siguiente",
@@ -674,7 +708,12 @@
     "sub-heading": "¡Agrega un nombre a tu prueba!",
     "test-name": "Nombre de la prueba",
     "test-description": "Descripción de la prueba",
-    "test-label": "Prueba pública para todos los usuarios"
+    "test-label": "Prueba pública para todos los usuarios",
+    "template": {
+      "title": "Introduce un título para tu plantilla",
+      "description": "Proporciona una descripción para tu plantilla",
+      "public": "Hacer plantilla pública para todos los usuarios"
+    }
   },
   "finishTest": {
     "title": "Finalizar prueba",
@@ -939,6 +978,12 @@
         "enterWebsiteUrl": "Ingresa la URL del sitio web",
         "urlProtocol": "La URL debe comenzar con http:// o https://",
         "validUrl": "Ingresa una URL válida (por ejemplo, https://ejemplo.com)"
+      },
+      "status": {
+        "active": "Activo",
+        "pending": "Pendiente",
+        "finished": "Finalizado",
+        "upcoming": "Próximo"
       }
     }
   }
