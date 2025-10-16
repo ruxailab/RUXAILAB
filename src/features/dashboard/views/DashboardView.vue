@@ -29,7 +29,6 @@
         <div class="component-height">
           <ActiveStudies 
             :studies="items"
-            @update-total="totalParticipants = $event"
           />
         </div>
       </v-col>
@@ -135,7 +134,23 @@ watch(
 watch(
   () => props.items,
   (newVal) => {
-    totalStudies.value = newVal.length;
+    const user = store.getters.user;
+    if (!user || !newVal) {
+      totalStudies.value = 0;
+      totalParticipants.value = 0;
+      return;
+    }
+    // Filters only the studies created by the logged-in user
+    const userStudies = newVal.filter(
+      (study) => study?.testAdmin?.userDocId === user.id
+    );
+
+    // Updates total studies
+    totalStudies.value = userStudies.length;
+
+    // Counts the total unique participants (cooperators)
+    const participants = userStudies.flatMap((s) => s.cooperators || []);
+    totalParticipants.value = participants.length;
   },
   { immediate: true }
 );
