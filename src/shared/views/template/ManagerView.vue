@@ -6,55 +6,53 @@
     <Snackbar />
     <Loading />
 
-    <template v-if="!loading">
-      <v-row
-        v-if="test"
-        class="nav pa-0 ma-0"
-        dense
-      >
-        <Drawer :items="navigator" />
+    <v-row
+      v-if="test"
+      class="nav pa-0 ma-0"
+      dense
+    >
+      <Drawer :items="navigator" />
 
-        <!-- View -->
-        <v-col class="background pa-0 ma-0">
-          <div v-if="$route.path.includes('manager')">
-            <slot>
-              <div>
-                <ManagerBanner :title="test.testTitle" />
-                <v-container class="card-container">
-                  <div v-if="topCards.length">
-                    <div class="presentation-text">
-                      {{ $t('common.editAndInvite') }}
-                    </div>
-
-                    <!-- Top Cards -->
-                    <CardsManager
-                      :cards="topCards"
-                      :per-row="2"
-                      @click="go"
-                    />
+      <!-- View -->
+      <v-col class="background pa-0 ma-0">
+        <div v-if="$route.path.includes('manager')">
+          <slot>
+            <div>
+              <ManagerBanner :title="test.testTitle" />
+              <v-container class="card-container">
+                <div v-if="topCards.length">
+                  <div class="presentation-text">
+                    {{ $t('common.editAndInvite') }}
                   </div>
 
-                  <div v-if="bottomCards.length">
-                    <div class="presentation-text mt-5">
-                      {{ $t('common.analyzeProject') }}
-                    </div>
+                  <!-- Top Cards -->
+                  <CardsManager
+                    :cards="topCards"
+                    :per-row="2"
+                    @click="go"
+                  />
+                </div>
 
-                    <!-- Bottom Cards -->
-                    <CardsManager
-                      :cards="bottomCards"
-                      :per-row="2"
-                      @click="go"
-                    />
+                <div v-if="bottomCards.length">
+                  <div class="presentation-text mt-5">
+                    {{ $t('common.analyzeProject') }}
                   </div>
-                </v-container>
-              </div>
-            </slot>
-          </div>
 
-          <router-view />
-        </v-col>
-      </v-row>
-    </template>
+                  <!-- Bottom Cards -->
+                  <CardsManager
+                    :cards="bottomCards"
+                    :per-row="2"
+                    @click="go"
+                  />
+                </div>
+              </v-container>
+            </div>
+          </slot>
+        </div>
+
+        <router-view />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -92,7 +90,6 @@ const router = useRouter()
 
 // Computed
 const test = computed(() => store.getters.test)
-const loading = computed(() => store.getters.loading)
 
 // Methods
 const go = (item) => {
