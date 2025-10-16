@@ -80,7 +80,7 @@
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
-          <DashboardView :items="tests" :sessions="nextModeratedSessions" />
+          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -182,7 +182,6 @@ const activeSubSection = ref(null);
 const tempDialog = ref(false);
 const temp = ref({});
 const filteredModeratedSessions = ref([]);
-const nextModeratedSessions = ref([]);
 const selectedMethodFilter = ref('all');
 const drawerOpen = ref(false);
 // const studyController = new StudyController()
@@ -366,6 +365,8 @@ const filterModeratedSessions = () => {
         id: testObj.id,
         testType: testObj.testType,
         subType: testObj.subType,
+        testDescription: testObj.testDescription,
+        evaluator: cooperatorObj.email,
       });
     }
 
@@ -380,44 +381,13 @@ const filterModeratedSessions = () => {
           testType: testObj.testType,
           subType: testObj.subType,
           evaluator: coop.email, // keeps the evaluator field
+          testDescription: testObj.testDescription, // keeps the test description field
         });
       });
     }
   });
 
   filteredModeratedSessions.value = cooperatorArray;
-};
-
-const filterNextModeratedSessions = async () => {
-  const userModeratedTests = Object.values(user.value?.notifications || {});
-
-  const results = await Promise.all(
-    userModeratedTests.map(async (testObj) => {
-      if (!testObj) return null;
-
-      const cooperatorObj = (testObj.cooperators || []).find(
-        (coop) => coop.userDocId == user.value.id
-      );
-      if (!cooperatorObj) return null;
-
-      return {
-        ...cooperatorObj,
-        testTitle: testObj.testTitle,
-        testAdmin: testObj.testAdmin,
-        id: testObj.id,
-        testType: testObj.testType,
-        subType: testObj.subType,
-        redirectsTo: test.redirectsTo,
-      };
-    })
-  );
-
-  // Remove nulos e aplica os mesmos filtros de antes
-  const cooperatorArray = results.filter(Boolean);
-
-  nextModeratedSessions.value = cooperatorArray
-    .filter((answer) => answer.subType === USER_STUDY_SUBTYPES.MODERATED)
-    .filter((val, index, self) => index === self.findIndex((m) => m.id === val.id));
 };
 
 const reloadMyTemplates = async () => {
@@ -428,7 +398,7 @@ const reloadMyTemplates = async () => {
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
     case 'studies': await getMyPersonalTests(); break;
-    case 'sessions': await filterModeratedSessions(); break;
+    case 'sessions': filterModeratedSessions(); break;
     case 'templates': await getMyTemplates(); break;
     case 'community':
       if (sub === 'community-studies') await getPublicStudies();
@@ -439,6 +409,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
 
 onMounted(async () => {
   await getMyPersonalTests();
+  filterModeratedSessions()
 });
 
 // Event handler function
@@ -448,7 +419,6 @@ const handleToggleDrawer = () => {
 
 onMounted(() => {
   filterModeratedSessions();
-  filterNextModeratedSessions()
 
   // Handle query parameters for section navigation
   if (route.query.section) {

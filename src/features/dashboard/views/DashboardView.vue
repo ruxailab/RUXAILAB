@@ -60,7 +60,7 @@
         cols="12"
         lg="4"
       >
-        <NextSession :next-session="sessions" />
+        <NextSession  :next-session="nextSession" />
       </v-col>
     </v-row>
 
@@ -83,7 +83,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
 import ActiveStudies from '@/features/dashboard/components/ActiveStudies.vue'
@@ -106,11 +105,11 @@ const props = defineProps({
 })
 
 const store = useStore()
-const { t } = useI18n();
 
 const totalStudies = ref(0);
 const usedStorage = ref(0);
 const totalParticipants = ref(0);
+const nextSession = ref(null);
 
 const userDisplayName = computed(() => {
   const user = store.getters.user;
@@ -122,6 +121,28 @@ const userStorageUsage = computed(() => {
   return user?.storageUsageMB || 0;
 });
 
+
+watch(
+  () => props.sessions,
+  (sessions) => {
+    if (!sessions?.length) {
+      nextSession.value = null;
+      return;
+    }
+
+    const now = new Date();
+    const futureSessions = sessions.filter((s) => new Date(s.testDate) > now);
+
+    if (!futureSessions.length) {
+      nextSession.value = null;
+      return;
+    }
+
+    futureSessions.sort((a, b) => new Date(a.testDate) - new Date(b.testDate));
+    nextSession.value = futureSessions[0];
+  },
+  { immediate: true, deep: true }
+);
 
 watch(
   () => userStorageUsage.value,

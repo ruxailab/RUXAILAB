@@ -17,22 +17,22 @@
     </v-card-title>
 
     <v-card-text
-      v-if="closestSession"
+      v-if="nextSession"
       class="pa-6"
     >
       <!-- Session Header -->
       <div class="session-header mb-4 text-center">
-        <h3 class="session-title mb-2">{{ closestSession.testTitle }}</h3>
+        <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
         <p class="session-description text-body-2 text-grey-darken-1 mb-3">
-          {{ closestSession.testDescription || 'No description available' }}
+          {{ nextSession.testDescription || 'No description available' }}
         </p>
         <v-chip
-          :color="getStatusColor(closestSession.status)"
+          :color="getStatus(nextSession).variant"
           variant="tonal"
           size="small"
           class="status-chip"
         >
-          {{ getStatusText(closestSession.status) }}
+          {{ getStatus(nextSession).label }}
         </v-chip>
       </div>
 
@@ -41,28 +41,35 @@
         <div class="info-item">
           <v-icon icon="mdi-microscope" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ getStudyType(closestSession) }}</div>
+            <div class="info-value">{{ getStudyType(nextSession) }}</div>
             <div>Tipo de Estudio</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ closestSession.testAdmin?.email || 'Unknown' }}</div>
+            <div class="info-value">{{ nextSession.testAdmin?.email || 'Unknown' }}</div>
             <div>Owner</div>
+          </div>
+        </div>
+         <div class="info-item">
+          <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
+          <div class="info-content">
+            <div class="info-value">{{ nextSession.evaluator|| 'Unknown' }}</div>
+            <div>Evaluator</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-calendar" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ formatDate(closestSession.testDate) }}</div>
+            <div class="info-value">{{ formatDate(nextSession.testDate) }}</div>
             <div>Fecha</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-clock-outline" size="24" color="primary" class="info-icon" />
           <div class="info-content">
-            <div class="info-value">{{ formatTime(closestSession.testDate) }}</div>
+            <div class="info-value">{{ formatTime(nextSession.testDate) }}</div>
             <div>Horario</div>
           </div>
         </div>
@@ -76,11 +83,11 @@
         block
         rounded="lg"
         prepend-icon="mdi-play-circle"
-        :disabled="closestSession.status !== 'upcoming'"
-        @click="goto(closestSession.redirectsTo)"
+        :disabled=" getStatus(nextSession) === SESSION_STATUSES.COMPLETED"
+        @click="goto(nextSession)"
         class="action-button mt-6"
       >
-        {{ closestSession.status === 'upcoming' ? 'Join Now' : 'Completed' }}
+        {{ getStatus(nextSession) !== SESSION_STATUSES.COMPLETED ? 'Join Now' : 'Completed' }}
       </v-btn>
     </v-card-text>
 
@@ -108,38 +115,20 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { STUDY_TYPES } from "@/shared/constants/methodDefinitions"
+import { getMethodName, STUDY_TYPES, USER_STUDY_SUBTYPES } from "@/shared/constants/methodDefinitions"
 import { useRouter } from 'vue-router'
+import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils'
 
 const props = defineProps({
   nextSession: {
-    type: Array,
-    default: () => []
+    type:Object,
   }
 })
 
 const router = useRouter()
 
-const closestSession = computed(() => {
-  if (!Array.isArray(props.nextSession) || props.nextSession.length === 0) {
-    return null
-  }
-
-  // Only future sessions
-  const upcoming = props.nextSession
-    .filter(s => s.testDate && new Date(s.testDate) > new Date())
-    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))
-
-  return upcoming.length > 0 ? upcoming[0] : null
-})
-
-const getStatusColor = (status) => {
-  return status === 'upcoming' ? 'success' : 'grey'
-}
-
-const getStatusText = (status) => {
-  return status === 'upcoming' ? 'Starting Soon' : 'Completed'
+const getStatus = () => {
+  return getSessionStatus(props.nextSession.testDate)
 }
 
 const formatDate = (dateStr) => {
@@ -158,13 +147,14 @@ function getStudyType(data) {
   const testType = (data.testType || '').toUpperCase()
   const subType = (data.subType || '').toUpperCase()
 
-  if (testType === STUDY_TYPES.USER && subType === 'USER_MODERATED') {
-    return 'Moderated Usability Test'
+  if (testType === STUDY_TYPES.USER && subType === USER_STUDY_SUBTYPES.MODERATED) {
+    return getMethodName(data)
   }
   return 'N/A'
 }
 
-const goto = (url) => {
+const goto = (session) => {
+  const url = `/testview/${session.id}/${session.userDocId}`
   router.push(url)
 }
 </script>
