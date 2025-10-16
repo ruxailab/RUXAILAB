@@ -216,6 +216,7 @@ const websiteDetails = ref({
 const category = computed(() => store.state.Tests.studyCategory);
 const method = computed(() => store.state.Tests.studyMethod);
 const studyType = computed(() => store.state.Tests.studyType);
+const isLoading = ref(false);
 
 const translatedSteps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
