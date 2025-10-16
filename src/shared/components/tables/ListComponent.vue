@@ -9,6 +9,7 @@
     elevation="2"
     hover
     @click:row="emitClick"
+    :loading="loadingStudy"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">
@@ -124,13 +125,14 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useItemFormatting } from '@/shared/composables/useItemFormatting'
 import { useItemTypes } from '@/shared/composables/useItemTypes'
 import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
 import { formatDateTime } from '@/shared/utils/dateUtils'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
+import store from '@/store'
 
 const props = defineProps({
   items: {
@@ -158,6 +160,10 @@ const typeRef = toRef(props, 'type')
 const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
 const { getItemTitle, getOwnerName, getOwnerImage, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
+
+const loadingStudy = computed(() => {
+  return store.getters.loading
+})
 
 // Event handlers
 const emitClick = (event, { item }) => {
