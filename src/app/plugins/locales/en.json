@@ -1,4 +1,5 @@
 {
+  "language": "Language",
   "auth": {
     "signupSuccess": "Sign up successful",
     "logoutSuccess": "Logout successful",
@@ -31,7 +32,6 @@
       "back_to_signin": "Back to Sign In"
     }
   },
-  "language": "Language",
   "common": {
     "loading": "Loading Test",
     "continueAs": "Continue as",
@@ -66,7 +66,8 @@
     },
     "viewAll": "View all",
     "sentBy": "Sent by",
-    "new": "NEW"
+    "new": "NEW",
+    "test": "a Study"
   },
   "profile": {
     "title": "Profile",
@@ -153,14 +154,15 @@
     "passwordRequired": "Password is required",
     "passwordValidate": "Password must be at least 8 characters",
     "differentPasswords": "Different passwords",
-    "fieldRequired": "Field required",
+    "fieldRequired": "This field is required",
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
-    "sendError": "Failed to send invitation. Please try again"
+    "sendError": "Failed to send invitation. Please try again",
+    "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -234,7 +236,8 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Options"
+      "options": "Options",
+      "noOptions": "No Options"
     },
     "messages": {},
     "placeHolders": {},
@@ -332,25 +335,35 @@
   "HeuristicsReport": {
     "titles": {
       "reports": "Reports",
-      "last_updated": "Last Updated"
+      "last_updated": "Last Updated",
+      "reports_dashboard": "Reports Dashboard"
     },
     "headers": {
       "evaluator": "Evaluator",
       "last_update": "Last Update",
       "progress": "Progress",
       "status": "Status",
-      "more": "More"
+      "actions": "Actions"
     },
     "messages": {
       "confirm_delete_report": "Are you sure you want to delete this report?",
       "reports_loading": "Loading Reports",
       "remove_report": "Remove Report",
       "sure_to_delete": "Are you sure you want to delete {user}'s report? This action can't be undone.",
-      "report_deleted": "Report successfully deleted"
+      "report_deleted": "Report successfully deleted",
+      "no_reports_found": "No reports found",
+      "try_adjusting_search": "Try adjusting your search or filter criteria"
     },
     "status": {
       "submitted": "submitted",
       "in_progress": "in progress"
+    },
+    "filters": {
+      "search_reports": "Search reports...",
+      "filter_by_status": "Filter by status"
+    },
+    "actions": {
+      "unhide_report": "Unhide Report"
     }
   },
   "UsabilityCooperators": {
@@ -365,6 +378,9 @@
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Cooperators"
+    },
+    "subtitles": {
+      "manage_participants": "Manage people who participate in your study"
     },
     "headers": {
       "email": "Email",
@@ -406,17 +422,21 @@
       "userVariables": "User Variables",
       "currentTasks": "Current Tasks",
       "postForm": "Post Form",
-      "writeNewPost": "Write a new post question"
+      "writeNewPost": "Write a new post question",
+      "testConfiguration": "Test Configuration"
     },
     "messages": {
-      "noTasks": "You don't have any task, create one to proceed."
+      "noTasks": "You don't have any task, create one to proceed.",
+      "noVariables": "No variables added yet. Click below to create a new variable.",
+      "noOptions": "No options added."
     },
     "inputs": {
       "consent": "Consent",
-      "variableName": "Variable Name",
-      "description": "Description",
-      "selection": "Selection",
-      "writeQuestion": "Write a question"
+      "variableName": "Variable Title",
+      "description": "Description (Optional)",
+      "selection": "Option",
+      "writeQuestion": "Write a question",
+      "dialogVariableName": "Variable Name"
     },
     "checkboxes": {
       "selectionField": "Selection Field",
@@ -426,7 +446,23 @@
     },
     "buttons": {
       "createNewVariable": "Create a new variable",
-      "createNewPost": "Create a new post question"
+      "createNewPost": "Create a new post question",
+      "addFirstOption": "Add First Option"
+    },
+    "headers": {
+      "name": "Name",
+      "type": "Type",
+      "estimatedTime": "Estimated Time (min)",
+      "tip": "Tip",
+      "screenRecord": "Screen Record",
+      "camera": "Camera",
+      "eyeTracker": "Eye Tracker",
+      "audioRecord": "Audio Record",
+      "actions": "Actions",
+      "na": "N/A"
+    },
+    "fallbacks": {
+      "untitledVariable": "Untitled Variable"
     }
   },
   "UserTestView": {
@@ -434,7 +470,8 @@
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest": "Post-Test"
+      "postTest": "Post-Test",
+      "eyeTrackingCalibration": "Eye tracking calibration"
     },
     "buttons": {
       "done": "Done"
@@ -538,7 +575,26 @@
       "title": "Settings",
       "currentTest": "Current test",
       "createTemplate": "CREATE TEMPLATE",
-      "deleteTest": "DELETE TEST"
+      "deleteTest": "DELETE TEST",
+      "study_configuration": "Study Configuration",
+      "loading_settings": "Loading Settings",
+      "manage_test_settings": "Manage your test settings and preferences with advanced controls",
+      "basic_information": "Basic Information",
+      "configure_test_details": "Configure the fundamental details of your test",
+      "advanced_settings": "Advanced Settings",
+      "fine_tune_configuration": "Fine-tune your test configuration",
+      "public_access": "Public Access",
+      "allow_users_view": "Allow users to view this test",
+      "test_status": "Test Status",
+      "select_status": "Select Status",
+      "end_date": "End Date",
+      "select_end_date": "Select End Date",
+      "quick_actions": "Quick Actions",
+      "perform_common_tasks": "Perform common tasks instantly",
+      "confirm_deletion": "Confirm Deletion",
+      "action_cannot_be_undone": "This action cannot be undone",
+      "delete_warning": "All associated data, results, and configurations will be lost forever.",
+      "delete_forever": "Delete Forever"
     },
     "editTest": {
       "title": "Edit test",
@@ -561,7 +617,8 @@
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
-    "genericSuccess": "Operation successful"
+    "genericSuccess": "Operation successful",
+    "savedChanges": "Changes saved successfully"
   },
   "buttons": {
     "next": "Next",
@@ -586,7 +643,8 @@
     "back": "Back",
     "duplicateTest": "Duplicate Test",
     "submit": "Submit",
-    "couldNotFinish": "Could not finish"
+    "couldNotFinish": "Could not finish",
+    "addNewTask": "Add New Task"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -650,7 +708,12 @@
     "sub-heading": "Add a name to your test!",
     "test-name": "Test Name",
     "test-description": "Test Description",
-    "test-label": "Test public to all users"
+    "test-label": "Test public to all users",
+    "template": {
+      "title": "Enter a title for your template",
+      "description": "Provide a description for your template",
+      "public": "Make template public to all users"
+    }
   },
   "finishTest": {
     "title": "Finish Test",
@@ -719,6 +782,7 @@
     "tasks": "TASKS",
     "postTest": "POST-TEST",
     "consentForm": "Consent Form",
+    "consentFormSubtitle": "Edit the consent text for the test. Changes are saved when you click the Save button.",
     "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
     "welcomeMessage": "Welcome message",
     "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
@@ -737,7 +801,11 @@
     "postFormDescription": "This is a post-questionnaire to collect participant data.",
     "finalMessage": "Final message",
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
-    "finalMessagePlaceholder": "Enter Final message"
+    "finalMessagePlaceholder": "Enter Final message",
+    "preTestVariables": "Pre-Test Variables",
+    "postTestVariables": "Post-Test Variables",
+    "configureVariables": "Configure the variables for the {type} section. Add, edit, or remove variables as needed.",
+    "createNewVariableTitle": "Create New Variable"
   },
   "CardSorting": {
     "noCategory": "No category",
@@ -779,5 +847,144 @@
     "all": "All",
     "question": "Question {number}",
     "comingSoon": "Coming Soon"
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Choose Evaluation Category",
+    "selectEvaluationType": "Select the type of evaluation you want to conduct for your study",
+    "backToDashboard": "Back to Dashboard",
+    "chooseMethod": "Choose {category} Method",
+    "selectMethod": "Select the specific method for your study",
+    "backToCategories": "Back to Categories",
+    "chooseStudyType": "Choose Study Type",
+    "selectStudyType": "Select how you want to create your study",
+    "backToMethods": "Back to Methods",
+    "studyDetails": "Study Details",
+    "provideStudyInfo": "Provide basic information about your study",
+    "backToStudyType": "Back to Study Type",
+    "createStudy": "Create Study",
+    "multipleMethods": "Multiple Methods",
+    "comingSoon": "Coming Soon",
+    "steps": {
+      "category": "Category",
+      "methods": "Methods",
+      "studyType": "Study Type",
+      "details": "Details"
+    },
+    "categories": {
+      "test": {
+        "title": "Test",
+        "description": "Conduct controlled testing with real users to measure usability and performance."
+      },
+      "inquiry": {
+        "title": "Inquiry",
+        "description": "Gather insights through surveys, interviews, and other research methods."
+      },
+      "inspection": {
+        "title": "Inspection",
+        "description": "Expert evaluation using established usability principles and guidelines."
+      },
+      "accessibility": {
+        "title": "Accessibility",
+        "description": "Assess your product for accessibility compliance and best practices."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Usability Testing (Unmoderated)",
+          "description": "Participants complete tasks independently while their interactions are recorded"
+        },
+        "usability_moderated": {
+          "name": "Usability Testing (Moderated)",
+          "description": "Real-time sessions with facilitator guidance and immediate feedback"
+        },
+        "card_sorting_unmoderated": {
+          "name": "Card Sorting (Unmoderated)",
+          "description": "Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic."
+        },
+        "ab_testing": {
+          "name": "A/B Testing",
+          "description": "Compare two versions to determine which performs better"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Heuristic Evaluation",
+          "description": "Expert review using established usability principles and guidelines"
+        },
+        "cognitive_walkthrough": {
+          "name": "Cognitive Walkthrough",
+          "description": "Step-by-step evaluation of user task completion processes"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Manual Testing",
+          "description": "Human evaluators assess accessibility using assistive technologies"
+        },
+        "automatic_testing": {
+          "name": "Automatic Testing",
+          "description": "Automated tools to identify common accessibility issues"
+        },
+        "ai_assisted_testing": {
+          "name": "AI-Assisted Testing",
+          "description": "AI-driven tools to identify and suggest fixes for accessibility issues"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Start with Blank Study",
+        "description": "Create a study from scratch with complete customization",
+        "features": [
+          "Complete customization",
+          "Build from ground up",
+          "Full control over settings"
+        ]
+      },
+      "template": {
+        "title": "Create from Template",
+        "description": "Use pre-built templates to get started quickly",
+        "features": [
+          "Quick setup",
+          "Pre-configured settings",
+          "Best practices included"
+        ]
+      }
+    },
+    "details": {
+      "basicInformation": "Basic Information",
+      "studyTitle": "Study Title",
+      "enterTitle": "Enter a descriptive title for your study",
+      "studyDescription": "Study Description",
+      "enterDescription": "Describe the purpose and goals of your study",
+      "websiteName": "Website Name",
+      "enterWebsiteName": "Enter the website name",
+      "websiteUrl": "Website URL (optional)",
+      "enterWebsiteUrl": "Enter the website URL",
+      "privacySettings": "Privacy Settings",
+      "controlVisibility": "Control who can see your study",
+      "publicStudy": "Public Study",
+      "privateStudy": "Private Study",
+      "visibleToEveryone": "Visible to everyone",
+      "onlyInvitedUsers": "Only invited users",
+      "public": "Public",
+      "private": "Private",
+      "validation": {
+        "enterTitle": "Enter a Title",
+        "max200Characters": "Max 200 characters",
+        "max600Characters": "Max 600 characters",
+        "enterWebsiteName": "Enter website name",
+        "enterWebsiteUrl": "Enter website URL",
+        "urlProtocol": "URL must start with http:// or https://",
+        "validUrl": "Enter a valid URL (e.g., https://example.com)"
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "finished": "Finished",
+        "upcoming": "Upcoming"
+      }
+    }
   }
 }
