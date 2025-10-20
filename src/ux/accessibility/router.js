@@ -10,12 +10,13 @@ import AccessibilityPreviewTest from '@/ux/accessibility/view/manual/Accessibili
 import AccessibilityTestAnswers from '@/ux/accessibility/view/manual/AccessibilityAnswer.vue';
 import AccessibilityConfig from '@/ux/accessibility/view/manual/AccessibilityConfig.vue';
 
-// Automated-Accessibility-Pages (x7)
+// Automated-Accessibility-Pages (x8)
 import AutomatedAccessibilityManager from '@/ux/accessibility/view/automatic/AutomatedAccessibilityManager.vue';
 import AutomatedAccessibilityHome from '@/ux/accessibility/view/automatic/AutomatedAccessibilityHome.vue';
 import AccessibilityAnswers from '@/ux/accessibility/view/automatic/Answers.vue';
 import AccessibilityReport from '@/ux/accessibility/view/automatic/Report.vue';
 import AccessibilityAnalyse from '@/ux/accessibility/view/automatic/EditTest.vue';
+import FinalReport from '@/ux/accessibility/view/automatic/FinalReport.vue';
 
 // Navigation guard
 import { accessibilityGuard } from '@/ux/accessibility/guards/accessibilityGuard.js';
@@ -116,6 +117,14 @@ const accessibilityRoutes = [
                 component: AccessibilityAnswers,
             },
             {
+                path: '/accessibility/automatic/finalreport/:id',
+                name: 'AccessibilityFinalReport',
+                props: true,
+                meta: { authorize: [0, 1] }, // Allow admin (0) and evaluator (1)
+                beforeEnter: accessibilityGuard,
+                component: FinalReport,
+            },
+            {
                 path: '/accessibility/automatic/reports/:id/:token?',
                 name: 'AccessibilityReport',
                 props: true,
@@ -148,6 +157,12 @@ const accessibilityRoutes = [
         meta: { authorize: [] }, // Allow public access with token
         component: AccessibilityReport,
     },
+    {
+        path: '/accessibility/aiassisted/examine',
+        name: 'AI-Assisted Accessibility Examine',
+        props: true,
+        component: () => import('@/ux/accessibility/view/aiassisted/examine.vue'),
+    }
 ];
 
 export default accessibilityRoutes;
