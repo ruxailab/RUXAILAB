@@ -1,22 +1,17 @@
 <template>
-  <v-container fluid>
+    <PageWrapper
+      title="AI-Assisted Analysis Answers"
+      subtitle="Utilize AI to generate and enhance accessibility answers"
+    >
+    <v-container fluid>
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title class="text-h4 pa-6">
-            <v-icon icon="mdi-message-reply" size="large" color="purple" class="mr-3" />
-            AI-Assisted Analysis Answers
-          </v-card-title>
+          
           <v-card-text class="pa-6">
-            <v-alert type="info" variant="tonal" class="mb-4">
-              <strong>Test ID:</strong> {{ testId }}
-            </v-alert>
             
             <v-card variant="outlined" class="pa-4 mb-4">
-              <h3 class="text-h6 mb-3">AI-Generated Findings</h3>
-              <p class="text-body-2 mb-4">
-                This page displays the AI-generated accessibility findings and analysis results.
-              </p>
+
               
               <!-- Sample Finding Cards -->
               <v-card
@@ -55,11 +50,14 @@
       </v-col>
     </v-row>
   </v-container>
+    </PageWrapper>
+  
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
 const route = useRoute();
 const router = useRouter();

@@ -26,6 +26,11 @@ import AIAssistedAccessibilitySettings from '@/ux/accessibility/view/aiassisted/
 import AIAssistedAccessibilityAnswers from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityAnswers.vue';
 import AIAssistedAccessibilityReport from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityReport.vue';
 
+// AI-Assisted Tools
+import ChromaCheck from '@/ux/accessibility/view/aiassisted/tools/ChromaCheck.vue';
+import AnchorSense from '@/ux/accessibility/view/aiassisted/tools/AnchorSense.vue';
+import ImgTagTip from '@/ux/accessibility/view/aiassisted/tools/ImgTagTip.vue';
+
 // Navigation guard
 import { accessibilityGuard } from '@/ux/accessibility/guards/accessibilityGuard.js';
 
@@ -187,6 +192,30 @@ const accessibilityRoutes = [
                 meta: { authorize: [0, 1] },
                 beforeEnter: accessibilityGuard,
                 component: AIAssistedAccessibilityExamine,
+            },
+            {
+                path: '/accessibility/aiassisted/examine/:id/chroma',
+                name: 'AIAssistedAccessibilityExamineChroma',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: ChromaCheck,
+            },
+            {
+                path: '/accessibility/aiassisted/examine/:id/anchorsense',
+                name: 'AIAssistedAccessibilityExamineAnchorsense',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: AnchorSense,
+            },
+            {
+                path: '/accessibility/aiassisted/examine/:id/imgtip',
+                name: 'AIAssistedAccessibilityExamineImgtip',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: ImgTagTip,
             },
             {
                 path: '/accessibility/aiassisted/settings/:id',

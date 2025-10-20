@@ -1,18 +1,13 @@
 <template>
-  <v-container fluid>
+    <PageWrapper
+      title="AI-Assisted Accessibility Report"
+      subtitle="Utilize AI to generate and enhance accessibility reports"
+    >
+<v-container fluid>
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title class="text-h4 pa-6">
-            <v-icon icon="mdi-file-chart" size="large" color="purple" class="mr-3" />
-            AI-Assisted Accessibility Report
-          </v-card-title>
-          <v-card-text class="pa-6">
-            <v-alert type="info" variant="tonal" class="mb-4">
-              <strong>Test ID:</strong> {{ testId }}
-              <span v-if="token" class="ml-4"><strong>Token:</strong> {{ token }}</span>
-            </v-alert>
-            
+            <v-card-text class="pa-6">
             <!-- Summary Cards -->
             <v-row class="mb-4">
               <v-col cols="12" md="3">
@@ -126,11 +121,15 @@
       </v-col>
     </v-row>
   </v-container>
+
+    </PageWrapper>
+  
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { computed } from 'vue';
+import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
 const route = useRoute();
 const router = useRouter();
