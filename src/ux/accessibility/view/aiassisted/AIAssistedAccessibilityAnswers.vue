@@ -38,63 +38,6 @@
 
         <!-- Analysis Results -->
         <div v-if="analysisResult && !loading">
-          <!-- Overall Summary Card -->
-          <v-card variant="outlined" class="mb-4">
-            <v-card-title class="bg-purple-lighten-5">
-              <v-icon icon="mdi-chart-box" class="mr-2" />
-              Analysis Summary
-            </v-card-title>
-            <v-card-text class="pa-6">
-              <v-row>
-                <v-col cols="12" sm="6" md="3">
-                  <v-card color="blue-lighten-5" class="pa-4">
-                    <div class="text-center">
-                      <v-icon icon="mdi-check-circle" color="blue" size="x-large" />
-                      <h3 class="text-h3">{{ analysisResult.toolsCompleted?.length || 0 }}/3</h3>
-                      <p class="text-caption">Tools Completed</p>
-                    </div>
-                  </v-card>
-                </v-col>
-                <v-col cols="12" sm="6" md="3">
-                  <v-card color="orange-lighten-5" class="pa-4">
-                    <div class="text-center">
-                      <v-icon icon="mdi-alert" color="orange" size="x-large" />
-                      <h3 class="text-h3">{{ analysisResult.totalIssues || 0 }}</h3>
-                      <p class="text-caption">Total Issues</p>
-                    </div>
-                  </v-card>
-                </v-col>
-                <v-col cols="12" sm="6" md="3">
-                  <v-card :color="getProgressColor()" class="pa-4">
-                    <div class="text-center">
-                      <v-icon icon="mdi-progress-check" :color="getProgressIconColor()" size="x-large" />
-                      <h3 class="text-h3">{{ completionPercentage }}%</h3>
-                      <p class="text-caption">Completion</p>
-                    </div>
-                  </v-card>
-                </v-col>
-                <v-col cols="12" sm="6" md="3">
-                  <v-card color="purple-lighten-5" class="pa-4">
-                    <div class="text-center">
-                      <v-icon icon="mdi-web" color="purple" size="x-large" />
-                      <h3 class="text-h6 mt-2">{{ analysisResult.inputType }}</h3>
-                      <p class="text-caption">Input Type</p>
-                    </div>
-                  </v-card>
-                </v-col>
-              </v-row>
-
-              <v-divider class="my-4" />
-
-              <!-- Input Source Info -->
-              <v-alert type="info" variant="tonal" density="compact">
-                <strong>Source:</strong>
-                <span v-if="analysisResult.inputType === 'url'"> {{ analysisResult.url }}</span>
-                <span v-else> {{ analysisResult.sourceFileName }}</span>
-              </v-alert>
-            </v-card-text>
-          </v-card>
-
           <!-- Step 1: Tool Selection (if no tool selected) -->
           <ToolSelector 
             v-if="!selectedTool"

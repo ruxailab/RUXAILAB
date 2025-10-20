@@ -159,10 +159,20 @@ class AIAssistedResultController {
     async saveChromaCheckResult(testId, chromaData) {
         try {
             let result = await this.getOrCreateResult(testId);
+
+            // Initialize input source if not already set (from sessionStorage)
+            if (!result.inputType || result.inputType === 'url' && !result.url) {
+                await this._ensureInputSource(result, testId);
+            }
+
             result.updateChromaCheck(chromaData);
 
             const docRef = doc(db, COLLECTION_NAME, testId);
             await updateDoc(docRef, {
+                inputType: result.inputType,
+                url: result.url,
+                sourceFile: result.sourceFile,
+                sourceFileName: result.sourceFileName,
                 chroma_check: result.chroma_check,
                 lastAnalyzedTool: result.lastAnalyzedTool,
                 updatedAt: result.updatedAt,
@@ -187,10 +197,20 @@ class AIAssistedResultController {
     async saveAnchorSenseResult(testId, anchorData) {
         try {
             let result = await this.getOrCreateResult(testId);
+
+            // Initialize input source if not already set (from sessionStorage)
+            if (!result.inputType || result.inputType === 'url' && !result.url) {
+                await this._ensureInputSource(result, testId);
+            }
+
             result.updateAnchorSense(anchorData);
 
             const docRef = doc(db, COLLECTION_NAME, testId);
             await updateDoc(docRef, {
+                inputType: result.inputType,
+                url: result.url,
+                sourceFile: result.sourceFile,
+                sourceFileName: result.sourceFileName,
                 anchor_sense: result.anchor_sense,
                 lastAnalyzedTool: result.lastAnalyzedTool,
                 updatedAt: result.updatedAt,
@@ -215,10 +235,20 @@ class AIAssistedResultController {
     async saveImgTipResult(testId, imgTipData) {
         try {
             let result = await this.getOrCreateResult(testId);
+
+            // Initialize input source if not already set (from sessionStorage)
+            if (!result.inputType || result.inputType === 'url' && !result.url) {
+                await this._ensureInputSource(result, testId);
+            }
+
             result.updateImgTip(imgTipData);
 
             const docRef = doc(db, COLLECTION_NAME, testId);
             await updateDoc(docRef, {
+                inputType: result.inputType,
+                url: result.url,
+                sourceFile: result.sourceFile,
+                sourceFileName: result.sourceFileName,
                 img_tip: result.img_tip,
                 lastAnalyzedTool: result.lastAnalyzedTool,
                 updatedAt: result.updatedAt,
@@ -325,6 +355,48 @@ class AIAssistedResultController {
         } catch (error) {
             console.error('Error deleting result:', error);
             throw error;
+        }
+    }
+
+    /**
+     * Private method to ensure input source is set from sessionStorage
+     * @param {AIAssistedResult} result - The result object to update
+     * @param {string} testId - The test ID
+     * @private
+     */
+    async _ensureInputSource(result, testId) {
+        try {
+            // Try to get input data from sessionStorage (browser environment)
+            if (typeof sessionStorage !== 'undefined') {
+                const inputType = sessionStorage.getItem('ai_examine_input_type');
+
+                if (inputType === 'url') {
+                    const url = sessionStorage.getItem('ai_examine_url');
+                    if (url) {
+                        result.inputType = 'url';
+                        result.url = url;
+                        result.sourceFile = '';
+                        result.sourceFileName = '';
+                        console.log('Input source initialized from sessionStorage: URL');
+                    }
+                } else if (inputType === 'file') {
+                    const fileName = sessionStorage.getItem('ai_examine_file_name');
+                    const fileContent = sessionStorage.getItem('ai_examine_file_content');
+
+                    if (fileName && fileContent) {
+                        // Upload file to storage
+                        const uploadResult = await this.uploadSourceFile(testId, fileName, fileContent);
+                        result.inputType = 'file';
+                        result.sourceFile = uploadResult.storageRef;
+                        result.sourceFileName = fileName;
+                        result.url = '';
+                        console.log('Input source initialized from sessionStorage: File');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error ensuring input source:', error);
+            // Don't throw - allow the tool result to be saved even if input source can't be determined
         }
     }
 

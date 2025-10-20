@@ -9,23 +9,23 @@ export default class AIAssistedResult {
     constructor(data = {}) {
         // Primary identifiers
         this.testId = data.testId || null;
-        
+
         // Input source information
         this.url = data.url || '';
         this.sourceFile = data.sourceFile || ''; // Firebase Storage reference
         this.sourceFileName = data.sourceFileName || '';
-        this.inputType = data.inputType || 'url'; // 'url' or 'file'
-        
+        this.inputType = data.inputType || ''; // 'url' or 'file' - empty by default to force explicit setting
+
         // Tool analysis results
         this.chroma_check = data.chroma_check || null;
         this.anchor_sense = data.anchor_sense || null;
         this.img_tip = data.img_tip || null;
-        
+
         // Metadata
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
         this.lastAnalyzedTool = data.lastAnalyzedTool || null;
-        
+
         // Analysis summary (computed from tool results)
         this.totalIssues = data.totalIssues || 0;
         this.toolsCompleted = data.toolsCompleted || [];
@@ -83,14 +83,14 @@ export default class AIAssistedResult {
             marked_html: chromaData.marked_html || '',
             analyzed_at: new Date().toISOString()
         };
-        
+
         this.lastAnalyzedTool = 'chroma_check';
         this.updatedAt = new Date().toISOString();
-        
+
         if (!this.toolsCompleted.includes('chroma_check')) {
             this.toolsCompleted.push('chroma_check');
         }
-        
+
         this._updateTotalIssues();
     }
 
@@ -105,14 +105,14 @@ export default class AIAssistedResult {
             passed: anchorData.passed || false,
             analyzed_at: new Date().toISOString()
         };
-        
+
         this.lastAnalyzedTool = 'anchor_sense';
         this.updatedAt = new Date().toISOString();
-        
+
         if (!this.toolsCompleted.includes('anchor_sense')) {
             this.toolsCompleted.push('anchor_sense');
         }
-        
+
         this._updateTotalIssues();
     }
 
@@ -127,14 +127,14 @@ export default class AIAssistedResult {
             issues_found: imgTipData.issues_found || 0,
             analyzed_at: new Date().toISOString()
         };
-        
+
         this.lastAnalyzedTool = 'img_tip';
         this.updatedAt = new Date().toISOString();
-        
+
         if (!this.toolsCompleted.includes('img_tip')) {
             this.toolsCompleted.push('img_tip');
         }
-        
+
         this._updateTotalIssues();
     }
 
@@ -144,19 +144,19 @@ export default class AIAssistedResult {
      */
     _updateTotalIssues() {
         let total = 0;
-        
+
         if (this.chroma_check) {
             total += this.chroma_check.total_issues || 0;
         }
-        
+
         if (this.anchor_sense) {
             total += this.anchor_sense.total_issues || 0;
         }
-        
+
         if (this.img_tip) {
             total += this.img_tip.issues_found || 0;
         }
-        
+
         this.totalIssues = total;
     }
 
