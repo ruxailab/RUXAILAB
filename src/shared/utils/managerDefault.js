@@ -36,13 +36,16 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
 
   const isManual = type === 'accessibility/manual';
   const isAutomatic = type === 'accessibility/automatic';
+  const isAIAssisted = type === 'accessibility/aiassisted';
   const testId = route.params.id;
 
   const items = [
     {
       title: 'Manager',
       icon: ICONS.MANAGER,
-      path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/manager/${testId}`,
+      path: isManual ? `/accessibility/manual/${testId}` :
+        isAIAssisted ? `/accessibility/aiassisted/manager/${testId}` :
+          `/accessibility/automatic/manager/${testId}`,
       requiresAdmin: false
     }
   ];
@@ -123,6 +126,41 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
     );
   }
 
+  if (isAIAssisted) {
+    items.push(
+      {
+        title: 'Examine',
+        icon: 'mdi-eye-check',
+        path: `/accessibility/aiassisted/examine/${testId}`,
+        requiresAdmin: true
+      },
+      {
+        title: 'Answers',
+        icon: ICONS.ORDER,
+        path: `/accessibility/aiassisted/answers/${testId}`,
+        requiresAdmin: false // Allow evaluators to view answers
+      },
+      {
+        title: 'Report',
+        icon: ICONS.BOOK,
+        path: `/accessibility/aiassisted/report/${testId}`,
+        requiresAdmin: false // Reports can be viewed by cooperators
+      },
+      {
+        title: 'Cooperators',
+        icon: ICONS.ACCOUNT_GROUP,
+        path: `/accessibility/aiassisted/cooperation/${testId}`,
+        requiresAdmin: true
+      },
+      {
+        title: 'Settings',
+        icon: ICONS.COG,
+        path: `/accessibility/aiassisted/settings/${testId}`,
+        requiresAdmin: true
+      }
+    );
+  }
+
   // Filter based on user role
   if (userRole === 'admin') {
     return items; // Admins get all items
@@ -158,13 +196,16 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
   const testId = test.id;
   const isManual = type === 'accessibility/manual';
   const isAutomatic = type === 'accessibility/automatic';
+  const isAIAssisted = type === 'accessibility/aiassisted';
 
   const cards = [
     {
       title: 'View Dashboard',
       description: 'Access detailed accessibility tools',
       image: INTRO_IMAGES.MANAGER,
-      path: isManual ? `/accessibility/manual/${testId}` : `/accessibility/automatic/manager/${testId}`,
+      path: isManual ? `/accessibility/manual/${testId}` :
+        isAIAssisted ? `/accessibility/aiassisted/manager/${testId}` :
+          `/accessibility/automatic/manager/${testId}`,
     }
   ];
 
@@ -202,6 +243,23 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
         }
       );
     }
+
+    if (isAIAssisted) {
+      cards.push(
+        {
+          title: 'AI Examination',
+          description: 'Run AI-driven accessibility analysis',
+          image: INTRO_IMAGES.ANALYTICS,
+          path: `/accessibility/aiassisted/examine/${testId}`,
+        },
+        {
+          title: 'Manage Cooperators',
+          description: 'Share AI reports with team members',
+          image: INTRO_IMAGES.COOPS,
+          path: `/accessibility/aiassisted/cooperation/${testId}`,
+        }
+      );
+    }
   }
 
   return cards;
@@ -234,6 +292,7 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
   const testId = test.id;
   const isManual = type === 'accessibility/manual';
   const isAutomatic = type === 'accessibility/automatic';
+  const isAIAssisted = type === 'accessibility/aiassisted';
 
   const cards = [];
 
@@ -276,6 +335,31 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
         description: 'Configure analysis parameters',
         image: INTRO_IMAGES.EDIT,
         path: `/accessibility/automatic/settings/${testId}`,
+      });
+    }
+  }
+
+  if (isAIAssisted) {
+    cards.push({
+      title: 'AI Report',
+      description: 'View AI-generated accessibility insights',
+      image: INTRO_IMAGES.REPORTS,
+      path: `/accessibility/aiassisted/report/${testId}`,
+    });
+
+    cards.push({
+      title: 'View Answers',
+      description: 'See AI-analyzed findings and suggestions',
+      image: INTRO_IMAGES.ANSWER,
+      path: `/accessibility/aiassisted/answers/${testId}`,
+    });
+
+    if (userRole === 'admin') {
+      cards.push({
+        title: 'AI Settings',
+        description: 'Configure AI analysis parameters',
+        image: INTRO_IMAGES.EDIT,
+        path: `/accessibility/aiassisted/settings/${testId}`,
       });
     }
   }
