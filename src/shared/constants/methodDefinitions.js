@@ -4,6 +4,7 @@ import Study from "../models/Study";
 import CardSortingStudy from "@/ux/CardSorting/models/CardSortingStudy";
 import ManualAccessibilityTest from "@/ux/accessibility/models/ManualAccessibilityTest";
 import AutomaticAccessibilityTest from "@/ux/accessibility/models/AutomaticAccessibilityTest";
+import AIAssistedAccessibilityTest from "@/ux/accessibility/models/AIAssistedAccessibilityTest";
 import Cooperators from "../models/Cooperators";
 import StudyAdmin from "@/shared/models/StudyAdmin";
 import StudyAnswer from "../models/StudyAnswer";
@@ -36,7 +37,9 @@ export function getStudyTypeFromMethod(methodValue) {
   }
 
   // Accessibility subtypes
-  if (method === ACCESSIBILITY_STUDY_SUBTYPES.MANUAL || method === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC) {
+  if (method === ACCESSIBILITY_STUDY_SUBTYPES.MANUAL ||
+    method === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC ||
+    method === ACCESSIBILITY_STUDY_SUBTYPES.AI_ASSISTED) {
     return STUDY_TYPES.ACCESSIBILITY;
   }
 
@@ -77,6 +80,8 @@ export function instantiateStudyByType(type, rawData) {
       return new ManualAccessibilityTest(normalizedData);
     case ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC:
       return new AutomaticAccessibilityTest(normalizedData);
+    case ACCESSIBILITY_STUDY_SUBTYPES.AI_ASSISTED:
+      return new AIAssistedAccessibilityTest(normalizedData);
     default:
       return new Study(normalizedData);
   }
@@ -131,11 +136,12 @@ export const HEURISTIC_STUDY_SUBTYPES = {
 };
 
 /**
- * Enum for subtypes of heuristic studies.
+ * Enum for subtypes of accessibility studies.
  */
 export const ACCESSIBILITY_STUDY_SUBTYPES = {
   MANUAL: "ACCESSIBILITY_MANUAL",
   AUTOMATIC: "ACCESSIBILITY_AUTOMATIC",
+  AI_ASSISTED: "ACCESSIBILITY_AI_ASSISTED",
 };
 
 /**
@@ -316,6 +322,16 @@ export const METHOD_DEFINITIONS = {
     category: METHOD_CATEGORIES.accessibility.id,
     status: METHOD_STATUSES.AVAILABLE.id,
   },
+  ACCESSIBILITY_AI_ASSISTED: {
+    id: "ACCESSIBILITY_AI_ASSISTED",
+    name: "Accessibility AI-Assisted Evaluation",
+    nameEn: "AI-Assisted Evaluation",
+    icon: "mdi-brain",
+    color: "#9C27B0",
+    description: "AI-driven tools to identify and suggest fixes for accessibility issues",
+    category: METHOD_CATEGORIES.accessibility.id,
+    status: METHOD_STATUSES.AVAILABLE.id,
+  },
   WCAG_AUDIT: {
     id: "WCAG_AUDIT",
     name: "Auditoría WCAG",
@@ -356,6 +372,9 @@ export const getMethodDefinition = (testType, subType = "") => {
       if (subtype === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC) {
         return METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC;
       }
+      if (subtype === ACCESSIBILITY_STUDY_SUBTYPES.AI_ASSISTED) {
+        return METHOD_DEFINITIONS.ACCESSIBILITY_AI_ASSISTED;
+      }
       return null;
     }
     default:
@@ -373,6 +392,7 @@ export const getMethodManagerView = (type, subType) => {
   else if (type === STUDY_TYPES.ACCESSIBILITY) {
     if (subType === ACCESSIBILITY_STUDY_SUBTYPES.MANUAL) return 'AccessibilityManualManager'
     else if (subType === ACCESSIBILITY_STUDY_SUBTYPES.AUTOMATIC) return 'AccessibilityAutomaticManager'
+    else if (subType === ACCESSIBILITY_STUDY_SUBTYPES.AI_ASSISTED) return 'AccessibilityAIAssistedManager'
   }
 }
 

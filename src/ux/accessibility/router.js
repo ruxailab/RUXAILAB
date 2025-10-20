@@ -18,6 +18,14 @@ import AccessibilityReport from '@/ux/accessibility/view/automatic/Report.vue';
 import AccessibilityAnalyse from '@/ux/accessibility/view/automatic/EditTest.vue';
 import FinalReport from '@/ux/accessibility/view/automatic/FinalReport.vue';
 
+// AI-Assisted-Accessibility-Pages
+import AIAssistedAccessibilityManager from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityManager.vue';
+import AIAssistedAccessibilityHome from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityHome.vue';
+import AIAssistedAccessibilityExamine from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityExamine.vue';
+import AIAssistedAccessibilitySettings from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilitySettings.vue';
+import AIAssistedAccessibilityAnswers from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityAnswers.vue';
+import AIAssistedAccessibilityReport from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityReport.vue';
+
 // Navigation guard
 import { accessibilityGuard } from '@/ux/accessibility/guards/accessibilityGuard.js';
 
@@ -157,12 +165,70 @@ const accessibilityRoutes = [
         meta: { authorize: [] }, // Allow public access with token
         component: AccessibilityReport,
     },
+    // AI-Assisted Accessibility Routes
     {
-        path: '/accessibility/aiassisted/examine',
-        name: 'AI-Assisted Accessibility Examine',
+        path: '/accessibility/aiassisted/manager/:id',
+        name: 'AccessibilityAIAssistedManager',
+        meta: { authorize: [0, 1] },
+        component: AIAssistedAccessibilityManager,
         props: true,
-        component: () => import('@/ux/accessibility/view/aiassisted/examine.vue'),
-    }
+        children: [
+            {
+                path: '',
+                name: 'AIAssistedAccessibilityHome',
+                props: true,
+                meta: { authorize: [0, 1] },
+                component: AIAssistedAccessibilityHome,
+            },
+            {
+                path: '/accessibility/aiassisted/examine/:id',
+                name: 'AIAssistedAccessibilityExamine',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: AIAssistedAccessibilityExamine,
+            },
+            {
+                path: '/accessibility/aiassisted/settings/:id',
+                name: 'AIAssistedAccessibilitySettings',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: SettingsView,
+            },
+            {
+                path: '/accessibility/aiassisted/answers/:id',
+                name: 'AIAssistedAccessibilityAnswers',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: AIAssistedAccessibilityAnswers,
+            },
+            {
+                path: '/accessibility/aiassisted/report/:id/:token?',
+                name: 'AIAssistedAccessibilityReport',
+                props: true,
+                meta: { authorize: [] }, // Allow public access with token
+                component: AIAssistedAccessibilityReport,
+            },
+            {
+                path: '/accessibility/aiassisted/cooperation/:id',
+                name: 'AIAssistedAccessibilityCooperation',
+                props: true,
+                meta: { authorize: [0, 1] },
+                beforeEnter: accessibilityGuard,
+                component: CooperatorsView,
+            },
+        ],
+    },
+    // Standalone cooperator access route for AI-Assisted
+    {
+        path: '/accessibility/aiassisted/cooperator/:id/:token',
+        name: 'AIAssistedAccessibilityCooperatorTest',
+        props: true,
+        meta: { authorize: [] }, // Allow public access with token
+        component: AIAssistedAccessibilityReport,
+    },
 ];
 
 export default accessibilityRoutes;

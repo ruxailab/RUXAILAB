@@ -118,12 +118,13 @@ const methodsByCategory = {
       available: true
     },
     {
-      id: 'AI_ASSISTED',
+      id: METHOD_DEFINITIONS.ACCESSIBILITY_AI_ASSISTED.id,
       name: 'AI-Assisted Testing',
       description: 'AI-driven tools to identify and suggest fixes for accessibility issues',
       icon: 'mdi-brain',
       color: 'purple darken-3',
-      available: false,
+      available: true,
+      comingSoon: false
     },
   ]
 }
