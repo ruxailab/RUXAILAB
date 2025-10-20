@@ -96,6 +96,7 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         path: `/accessibility/automatic/answers/${testId}`,
         requiresAdmin: false // Allow evaluators to view answers
       },
+
       {
         title: 'Reports',
         icon: ICONS.BOOK,
@@ -113,7 +114,12 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         icon: ICONS.COG,
         path: `/accessibility/automatic/settings/${testId}`,
         requiresAdmin: true
-      }
+      }, {
+      title: 'Final Report',
+      icon: 'mdi-file-download',
+      path: `/accessibility/automatic/finalreport/${testId}`,
+      requiresAdmin: false // Allow evaluators to download reports
+    }
     );
   }
 
@@ -255,6 +261,13 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
       description: 'See accessibility analysis results',
       image: INTRO_IMAGES.REPORTS,
       path: `/accessibility/automatic/reports/${testId}`,
+    });
+
+    cards.push({
+      title: 'Download Reports',
+      description: 'Export data as CSV or PDF',
+      image: INTRO_IMAGES.ANALYTICS,
+      path: `/accessibility/automatic/finalreport/${testId}`,
     });
 
     if (userRole === 'admin') {
