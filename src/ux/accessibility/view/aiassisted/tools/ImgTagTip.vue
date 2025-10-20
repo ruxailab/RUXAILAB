@@ -232,10 +232,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 const route = useRoute()
 const router = useRouter()
+const store = useStore()
 
 const API_BASE_URL = 'http://localhost:8000'
 
@@ -248,6 +250,7 @@ const inputFileContent = ref('')
 const loading = ref(false)
 const error = ref(null)
 const results = ref(null)
+const saving = ref(false)
 
 const testId = computed(() => route.params.id)
 
@@ -305,6 +308,9 @@ const analyzeUrl = async () => {
     }
 
     results.value = await response.json()
+    
+    // Save results to Firebase
+    await saveResultsToFirebase(results.value)
   } catch (err) {
     error.value = `Failed to connect to AI service: ${err.message}. Please ensure the backend API is running on ${API_BASE_URL}`
     console.error('API Error:', err)
@@ -341,11 +347,43 @@ const analyzeFile = async () => {
     }
 
     results.value = await response.json()
+    
+    // Save results to Firebase
+    await saveResultsToFirebase(results.value)
   } catch (err) {
     error.value = `Failed to connect to AI service: ${err.message}. Please ensure the backend API is running on ${API_BASE_URL}`
     console.error('API Error:', err)
   } finally {
     loading.value = false
+  }
+}
+
+const saveResultsToFirebase = async (imgTipData) => {
+  if (!imgTipData || saving.value) return
+
+  saving.value = true
+  try {
+    await store.dispatch('aiAssistedResults/saveImgTipResult', {
+      testId: testId.value,
+      imgTipData: imgTipData
+    })
+    
+    console.log('ImgTagTip results saved to Firebase')
+    
+    // Show success toast
+    store.commit('SET_TOAST', {
+      message: 'ImgTagTip analysis saved successfully',
+      type: 'success'
+    })
+  } catch (err) {
+    console.error('Error saving to Firebase:', err)
+    // Show error toast but don't block the UI
+    store.commit('SET_TOAST', {
+      message: 'Warning: Could not save results to database',
+      type: 'warning'
+    })
+  } finally {
+    saving.value = false
   }
 }
 

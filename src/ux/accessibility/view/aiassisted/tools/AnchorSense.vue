@@ -254,12 +254,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 const route = useRoute()
 const router = useRouter()
+const store = useStore()
+
+// Get saved input from sessionStorage
+const inputType = ref('')
+const inputUrl = ref('')
+const inputFileName = ref('')
+const inputFileContent = ref('')
 
 const inputMethod = ref('url')
 const urlInput = ref('')
@@ -267,8 +275,32 @@ const selectedFile = ref(null)
 const loading = ref(false)
 const error = ref(null)
 const showResults = ref(false)
+const saving = ref(false)
 
 const testId = computed(() => route.params.id)
+
+// Load saved input on mount
+onMounted(() => {
+  inputType.value = sessionStorage.getItem('ai_examine_input_type') || ''
+  
+  if (inputType.value === 'url') {
+    inputUrl.value = sessionStorage.getItem('ai_examine_url') || ''
+    urlInput.value = inputUrl.value
+    inputMethod.value = 'url'
+  } else if (inputType.value === 'file') {
+    inputFileName.value = sessionStorage.getItem('ai_examine_file_name') || ''
+    inputFileContent.value = sessionStorage.getItem('ai_examine_file_content') || ''
+    inputMethod.value = 'file'
+  }
+
+  // Redirect back if no input provided
+  if (!inputType.value) {
+    router.push({
+      name: 'AIAssistedAccessibilityExamine',
+      params: { id: testId.value }
+    })
+  }
+})
 
 const canAnalyze = computed(() => {
   if (inputMethod.value === 'url') return urlInput.value.trim() !== ''
@@ -322,6 +354,42 @@ const startAnalysis = async () => {
 
   loading.value = false
   showResults.value = true
+  
+  // Save results to Firebase after demo analysis
+  await saveResultsToFirebase(demoResults.value)
+}
+
+const saveResultsToFirebase = async (anchorData) => {
+  if (!anchorData || saving.value) return
+
+  saving.value = true
+  try {
+    await store.dispatch('aiAssistedResults/saveAnchorSenseResult', {
+      testId: testId.value,
+      anchorData: {
+        issues: anchorData.issues,
+        total_issues: anchorData.issuesFound,
+        passed: anchorData.issuesFound === 0
+      }
+    })
+    
+    console.log('AnchorSense results saved to Firebase')
+    
+    // Show success toast
+    store.commit('SET_TOAST', {
+      message: 'AnchorSense analysis saved successfully',
+      type: 'success'
+    })
+  } catch (err) {
+    console.error('Error saving to Firebase:', err)
+    // Show error toast but don't block the UI
+    store.commit('SET_TOAST', {
+      message: 'Warning: Could not save results to database',
+      type: 'warning'
+    })
+  } finally {
+    saving.value = false
+  }
 }
 
 const resetAnalysis = () => {
@@ -329,6 +397,19 @@ const resetAnalysis = () => {
   selectedFile.value = null
   showResults.value = false
   error.value = null
+}
+
+const goBackToInputSelection = () => {
+  // Clear sessionStorage and go back
+  sessionStorage.removeItem('ai_examine_input_type')
+  sessionStorage.removeItem('ai_examine_url')
+  sessionStorage.removeItem('ai_examine_file_name')
+  sessionStorage.removeItem('ai_examine_file_content')
+  
+  router.push({
+    name: 'AIAssistedAccessibilityExamine',
+    params: { id: testId.value }
+  })
 }
 
 const goBack = () => {

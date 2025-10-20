@@ -9,6 +9,7 @@ import Answer from '@/shared/store/Answer'
 import Language from '../features/language/store/Language'
 import Assessment from '../ux/accessibility/store/Assessment'
 import automaticReport from '@/ux/accessibility/store/automaticReport'
+import aiAssistedResults from '@/ux/accessibility/store/aiAssistedResults'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
@@ -85,6 +86,7 @@ export default createStore({
     Answer,
     Language,
     automaticReport,
+    aiAssistedResults,
     UserStudy,
     CardStudy,
     notification,
