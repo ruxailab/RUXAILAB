@@ -31,7 +31,7 @@
                   variant="tonal" size="small">
                   {{ study.status ? (study.status.charAt(0).toUpperCase() + study.status.slice(1)) : 'Unknown' }}
                 </v-chip>
-                <v-icon :icon="study.typeIcon" size="20" color="primary" />
+                <v-icon :icon="getMethodIcon(study)" size="20" color="primary" />
               </div>
 
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
@@ -72,11 +72,9 @@
 
 <script setup>
 import AnswerController from '@/shared/controllers/AnswerController';
-import { getMethodManagerView, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodIcon, getMethodManagerView, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import StudyController from '@/controllers/StudyController';
 
 const props = defineProps({
   studies: {
@@ -87,13 +85,12 @@ const props = defineProps({
 
 const router = useRouter();
 const answerController = new AnswerController()
-const studyController = new StudyController()
 
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
 
 const studies = computed(() => {
-  return props.studies.length > 0 ? studiesWithAnswers.value : defaultStudies
+  return props.studies.length > 0  ? studiesWithAnswers.value : loading  ? [] : defaultStudies
 })
 
 const lastFourStudies = computed(() => {
@@ -112,8 +109,8 @@ async function loadAnswers() {
   loading.value = true;
   const last4 = []
   try {
-    for (const study in lastFourStudies.value) {
-      const testDoc = await studyController.getStudy({ id: lastFourStudies.value[study].testDocId });
+    for (const study in lastFourStudies.value) {    
+      const testDoc = lastFourStudies.value[study]
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({
