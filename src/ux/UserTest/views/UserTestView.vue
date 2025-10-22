@@ -514,7 +514,21 @@ function handleIrisData(data) {
 }
 
 const openCalibration = () => {
-  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  fetch('http://localhost:8081/calibration/camera', {
+  method: 'GET',
+  headers: {
+    'X-User-ID': user.value?.id,
+  },
+  credentials: 'include', // cookies if needed
+})
+  .then(res => res.blob())
+  .then(blob => {
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  })
+  .catch(err => {
+    console.error('Calibration launch failed:', err);
+  });
   calibrationInProgress.value = true;
   console.log('calibrationInProgress.value', calibrationInProgress.value);
 }
