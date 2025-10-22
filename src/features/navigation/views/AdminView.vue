@@ -173,6 +173,116 @@
           </v-expand-transition>
         </v-card>
 
+        <!-- Search + Filters for sessions -->
+         <v-card v-if="activeSection === 'sessions'" class="mb-4 pa-4 elevation-2 overflow-hidden">
+          <div class="d-flex align-center mb-3 flex-wrap button-bar">
+            <v-text-field
+              v-model="searchSessions"
+              prepend-inner-icon="mdi-magnify"
+              density="compact"
+              hide-details
+              variant="outlined"
+              placeholder="Search sessions..."
+              class="flex-grow-1"
+            />
+            <v-btn
+              color="primary"
+              class="search-btn"
+              prepend-icon="mdi-filter-remove"
+              :disabled="!hasActiveSessionFilters"
+              @click="() => { searchSessions=''; selectedSessionStatusFilter=['all']; selectedSessionOwnershipFilter='all'; selectedSessionEvaluatorFilter='all'; selectedSessionDateRange=[] }"
+            >
+              Reset
+            </v-btn>
+            <v-btn
+              :color="showFilters ? 'primary' : 'grey'"
+              variant="tonal"
+              icon
+              size="small"
+              @click="toggleFilters"
+            >
+              <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+            </v-btn>
+          </div>
+
+          <v-expand-transition>
+            <div v-show="showFilters">
+              <v-row dense>
+                <!-- 👤 Ownership -->
+                <v-col cols="12" sm="6" md="3">
+                  <div class="filter-label">Ownership</div>
+                  <v-select
+                    v-model="selectedSessionOwnershipFilter"
+                    :items="ownershipOptions"
+                    item-title="text"
+                    item-value="value"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                  />
+                </v-col>
+
+                <!-- 👥 Evaluator -->
+                <v-col cols="12" sm="6" md="3">
+                  <div class="filter-label">Evaluator</div>
+                  <v-select
+                    v-model="selectedSessionEvaluatorFilter"
+                    :items="evaluatorOptions"
+                    item-title="text"
+                    item-value="value"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                  />
+                </v-col>
+
+                <!-- 📅 Session date -->
+                <v-col cols="12" sm="6" md="3">
+                  <div class="filter-label">Session date</div>
+                  <v-menu
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <template #activator="{ props }">
+                      <v-text-field
+                        v-bind="props"
+                        readonly
+                        variant="outlined"
+                        density="compact"
+                        hide-details
+                        :placeholder="selectedSessionDateRange.length > 1
+                          ? `${new Date(selectedSessionDateRange[0]).toLocaleDateString()} - ${new Date(selectedSessionDateRange[1]).toLocaleDateString()}`
+                          : 'Select range'"
+                        prepend-inner-icon="mdi-calendar"
+                      />
+                    </template>
+                    <v-date-picker v-model="selectedSessionDateRange" multiple="range" />
+                  </v-menu>
+                </v-col>
+
+                <!-- ⚙️ Status -->
+                <v-col cols="12" sm="6" md="3">
+                  <div class="filter-label">Status</div>
+                  <v-select
+                    v-model="selectedSessionStatusFilter"
+                    :items="sessionStatusOptions"
+                    item-title="text"
+                    item-value="value"
+                    multiple
+                    chips
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                  />
+                </v-col>
+              </v-row>
+            </div>
+          </v-expand-transition>
+        </v-card>
+
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
@@ -189,8 +299,8 @@
 
         <div v-if="activeSection === 'sessions'">
           <List
-            v-if="filteredModeratedSessions.length > 0"
-            :items="filteredModeratedSessions"
+            v-if="filteredSessions.length > 0"
+            :items="filteredSessions"
             type="sessions"
             :sort-by="[{ key: 'testDate', order: 'desc' }]"
             @clicked="goTo"
@@ -331,13 +441,50 @@ const hasActiveFilters = computed(() => {
   return !!(
     search.value ||
     creationDateRange.value.length > 0 ||
-    selectedStatusFilter.value != 'all' ||
+    selectedStatusFilter.value.length > 1 ||
     selectedVisibilityFilter.value != 'all' ||
     selectedOwnershipFilter.value != 'all' ||
     selectedParticipantsFilter.value != 'all' ||
     selectedMethodFilter.value != 'all'
   );
 });
+
+// session filters
+// Filters específicos de sessions
+const selectedSessionOwnershipFilter = ref('all');
+const selectedSessionEvaluatorFilter = ref('all');
+const selectedSessionStatusFilter = ref(['all']);
+const selectedSessionDateRange = ref([]);
+const searchSessions = ref('');
+
+// Opções
+const evaluatorOptions = computed(() => {
+  const evaluatorsSet = new Set();
+  filteredModeratedSessions.value.forEach(s => evaluatorsSet.add(s.evaluator));
+  return [{ text: 'All', value: 'all' }, ...Array.from(evaluatorsSet).map(ev => ({ text: ev, value: ev }))];
+});
+
+const sessionStatusOptions = [
+  { value: 'all', text: 'All Statuses' },
+  { value: 'today', text: 'Today' },
+  { value: 'upcoming', text: 'Upcoming' },
+  { value: 'completed', text: 'Completed' },
+];
+
+
+const hasActiveSessionFilters = computed(() => {
+  return (
+    searchSessions.value.length > 0 ||
+    (selectedSessionStatusFilter.value.length > 1 &&
+     !selectedSessionStatusFilter.value.includes('all')) ||
+    (selectedSessionEvaluatorFilter.value !== 'all' &&
+     selectedSessionEvaluatorFilter.value?.length > 0) ||
+    selectedSessionOwnershipFilter.value !== 'all' ||
+    selectedSessionDateRange.value.length === 2
+  );
+});
+
+// ===== end filter options ======
 
 const drawerOpen = ref(false);
 // const studyController = new StudyController()
@@ -415,8 +562,8 @@ const filteredTests = computed(() => {
     selectedVisibilityFilter.value === visibility;
 
     // 👤 Ownership
-    const isMine = test.testAdmin?.userDocId === user.value.id;
-    const isCooperator = test.cooperators?.some(c => c.userDocId === user.value.id);
+    const isMine = test.testAdmin?.userDocId === user.value?.id;
+    const isCooperator = test.cooperators?.some(c => c.userDocId === user.value?.id);
     const ownership =
       isMine ? 'mine' : isCooperator ? 'cooperator' : 'other';
     const matchesOwnership =
@@ -443,10 +590,10 @@ const filteredTests = computed(() => {
 
     // 📅 Creation date
     let inCreationRange = true;
-    if (creationDateRange.value?.length === 2 && test.creationDate) {
+    if (creationDateRange.value?.length > 2 && test.creationDate) {
       const creation = new Date(test.creationDate);
       const start = new Date(creationDateRange.value[0]);
-      const end = new Date(creationDateRange.value[1]);
+      const end = new Date(creationDateRange.value[creationDateRange.value.length -1]);
       inCreationRange = creation >= start && creation <= end;
     }
 
@@ -459,6 +606,46 @@ const filteredTests = computed(() => {
       matchesParticipants &&
       inCreationRange
     );
+  });
+});
+
+const filteredSessions = computed(() => {
+  return filteredModeratedSessions.value.filter(session => {
+    // 🔍 Search
+    const matchesSearch = !searchSessions.value || session.testTitle.toLowerCase().includes(searchSessions.value.toLowerCase());
+
+    // ⚙️ Status
+    const sessionStatus = getSessionStatus(session.testDate).status
+    const matchesStatus =
+      !selectedSessionStatusFilter.value.length ||
+      selectedSessionStatusFilter.value.includes('all') ||
+      selectedSessionStatusFilter.value.includes(sessionStatus);
+
+    // 👤 Ownership
+    const isMine = session.testAdmin.userDocId === user.value?.id;
+    const isCooperator = session.userDocId === user.value?.id;
+    const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other';
+    const matchesOwnership =
+      selectedSessionOwnershipFilter.value === 'all' || selectedSessionOwnershipFilter.value === ownership;
+
+    // 👥 Evaluator
+    const matchesEvaluator =
+      selectedSessionEvaluatorFilter.value === 'all' || selectedSessionEvaluatorFilter.value === session.evaluator;
+
+    // 📅 Session date
+    let inDateRange = true;
+    if (selectedSessionDateRange.value.length > 2 && session.testDate) {
+      const date = new Date(session.testDate);
+      const start = new Date(selectedSessionDateRange.value[0]);
+      const end = new Date(selectedSessionDateRange.value[selectedSessionDateRange.value.length -1]);
+      inDateRange = date >= start && date <= end;
+    }
+
+    return matchesSearch && 
+    matchesStatus && 
+    matchesOwnership && 
+    matchesEvaluator &&
+    inDateRange;
   });
 });
 
@@ -577,7 +764,7 @@ const filterModeratedSessions = () => {
 
     // If the user is a cooperator in the test
     const cooperatorObj = testObj.cooperators?.find(
-      (coop) => coop.userDocId === user.value.id
+      (coop) => coop.userDocId === user.value?.id
     );
     if (cooperatorObj && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
       cooperatorArray.push({
@@ -593,7 +780,7 @@ const filterModeratedSessions = () => {
     }
 
     // If the user is the test administrator
-    if (testObj.testAdmin?.userDocId === user.value.id && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
+    if (testObj.testAdmin?.userDocId === user.value?.id && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
       testObj.cooperators?.forEach((coop) => {
         cooperatorArray.push({
           ...coop,
