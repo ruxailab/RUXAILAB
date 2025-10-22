@@ -52,12 +52,112 @@
           />
 
           <!-- Step 2: Display Selected Tool Result -->
-          <ChromaCheckResult
-            v-if="selectedTool === 'chroma_check' && chromaCheckResults"
-            :results="chromaCheckResults"
-            @back="selectedTool = null"
-            @view-marked-html="showMarkedHtml"
-          />
+          <div v-if="selectedTool === 'chroma_check' && chromaCheckResults">
+            <!-- Primary Actions: Inspect & Download -->
+            <v-card v-if="chromaCheckResults?.marked_html" variant="outlined" class="mb-4">
+              <v-card-title class="bg-purple-lighten-5">
+                <v-icon icon="mdi-magnify" class="mr-2" />
+                Inspect and Export
+              </v-card-title>
+              <v-card-text class="pa-4">
+                <div class="d-flex flex-wrap gap-2">
+                  <v-btn color="green" prepend-icon="mdi-eye" @click="showMarkedHtml(chromaCheckResults?.marked_html)">
+                    Inspect Webpage
+                  </v-btn>
+                  <v-btn color="blue" prepend-icon="mdi-download" @click="downloadMarkedHtmlFromAnswers">
+                    Download Report
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+
+            <!-- Summary Stats -->
+            <v-card variant="outlined" class="mb-4">
+              <v-card-title class="bg-purple-lighten-5">
+                <v-icon icon="mdi-chart-box" class="mr-2" />
+                Analysis Summary
+              </v-card-title>
+              <v-card-text class="pa-4">
+                <div class="d-flex flex-wrap align-center gap-3">
+                  <div class="d-flex align-center px-3 py-2 rounded" :class="chromaCheckResults.passed ? 'bg-green-lighten-5' : 'bg-red-lighten-5'">
+                    <v-icon :icon="chromaCheckResults.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" :color="chromaCheckResults.passed ? 'green' : 'red'" class="mr-2" />
+                    <div class="text-body-2">
+                      <div class="font-weight-medium">Overall Status</div>
+                      <div>{{ chromaCheckResults.passed ? 'Passed' : 'Failed' }}</div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-center px-3 py-2 rounded bg-orange-lighten-5">
+                    <v-icon icon="mdi-alert" color="orange" class="mr-2" />
+                    <div class="text-body-2">
+                      <div class="font-weight-medium">Total Issues</div>
+                      <div>{{ chromaCheckResults.total_issues }}</div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-center px-3 py-2 rounded bg-blue-lighten-5">
+                    <v-icon icon="mdi-file-document" color="blue" class="mr-2" />
+                    <div class="text-body-2">
+                      <div class="font-weight-medium">Violations Found</div>
+                      <div>{{ (chromaCheckResults.violations?.length || 0) }}</div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-center px-3 py-2 rounded bg-purple-lighten-5">
+                    <v-icon icon="mdi-eye" color="purple" class="mr-2" />
+                    <div class="text-body-2">
+                      <div class="font-weight-medium">Standard</div>
+                      <div>WCAG 2.1</div>
+                    </div>
+                  </div>
+                </div>
+              </v-card-text>
+            </v-card>
+
+            <!-- Violations List -->
+            <v-card v-if="(chromaCheckResults.violations?.length || 0) > 0" variant="outlined" class="mb-4">
+              <v-card-title class="bg-red-lighten-5">
+                <v-icon icon="mdi-alert-circle" class="mr-2" />
+                Color Contrast Issues ({{ chromaCheckResults.violations.length }})
+              </v-card-title>
+              <v-card-text class="pa-4">
+                <v-data-table
+                  :headers="violationHeaders"
+                  :items="paginatedRowsCC"
+                  class="elevation-0"
+                >
+                  <template #item.impact="{ value }">
+                    <v-chip :color="getImpactColor(value)" size="small">{{ value }}</v-chip>
+                  </template>
+                  <template #item.elementHtml="{ value }">
+                    <pre class="ma-0 pa-2 bg-grey-lighten-4 rounded" style="max-width: 520px; white-space: pre-wrap; word-break: break-word;">{{ truncateHtml(value) }}</pre>
+                  </template>
+                  <template #item.help_url="{ value }">
+                    <v-btn :href="value" target="_blank" color="purple" variant="text" size="small">
+                      Guide <v-icon icon="mdi-open-in-new" end />
+                    </v-btn>
+                  </template>
+                  <template #item.actions="{ item }">
+                    <v-btn color="purple" variant="text" size="small" @click="openViolationDialogCC(item.violation)">
+                      Details
+                    </v-btn>
+                  </template>
+                </v-data-table>
+                <div class="d-flex justify-end mt-3">
+                  <v-pagination v-model="pageCC" :length="pageCountCC" density="comfortable" />
+                </div>
+              </v-card-text>
+            </v-card>
+
+            <div class="d-flex justify-space-between">
+              <v-btn color="grey" variant="outlined" prepend-icon="mdi-arrow-left" @click="selectedTool = null">
+                Back
+              </v-btn>
+              <v-btn color="grey" variant="outlined" prepend-icon="mdi-refresh" @click="goToExamine">
+                New Analysis
+              </v-btn>
+            </div>
+          </div>
 
           <AnchorSenseResult
             v-if="selectedTool === 'anchor_sense' && anchorSenseResults"
@@ -102,6 +202,47 @@
             frameborder="0"
             style="width: 100%; height: calc(100vh - 140px);"
           />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- Violation Details Dialog (ChromaCheck) -->
+    <v-dialog v-model="showViolationDialogCC" max-width="900">
+      <v-card>
+        <v-toolbar color="purple">
+          <v-toolbar-title>Issue Details</v-toolbar-title>
+          <v-spacer />
+          <v-btn icon @click="showViolationDialogCC = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text class="pa-4">
+          <div class="d-flex align-center mb-3">
+            <v-chip :color="getImpactColor(selectedViolationCC?.impact)" size="small" class="mr-2">
+              {{ selectedViolationCC?.impact }}
+            </v-chip>
+            <span class="font-weight-medium">{{ selectedViolationCC?.description }}</span>
+          </div>
+          <p class="text-body-2 mb-3">{{ selectedViolationCC?.help }}</p>
+
+          <v-card variant="outlined" class="mb-3">
+            <v-card-text>
+              <strong>HTML Element:</strong>
+              <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ selectedViolationCC?.element?.html }}</pre>
+            </v-card-text>
+          </v-card>
+
+          <v-alert v-if="selectedViolationCC?.failure_summary" type="info" variant="tonal" density="compact" class="mb-3">
+            {{ selectedViolationCC?.failure_summary }}
+          </v-alert>
+
+          <div class="d-flex gap-2">
+            <v-btn v-if="selectedViolationCC?.help_url" :href="selectedViolationCC?.help_url" target="_blank" color="purple" variant="text" size="small">
+              Learn More <v-icon icon="mdi-open-in-new" end />
+            </v-btn>
+            <v-spacer />
+            <v-btn color="grey" variant="outlined" @click="showViolationDialogCC = false">Close</v-btn>
+          </div>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -175,6 +316,69 @@ const selectTool = (toolName) => {
 const showMarkedHtml = (markedHtml) => {
   currentMarkedHtml.value = markedHtml;
   showingMarkedHtmlDialog.value = true;
+};
+
+// ChromaCheck table state and helpers (Answers page)
+const pageCC = ref(1);
+const itemsPerPageCC = ref(10);
+const showViolationDialogCC = ref(false);
+const selectedViolationCC = ref(null);
+
+const violationHeaders = [
+  { title: 'Impact', key: 'impact' },
+  { title: 'Description', key: 'description' },
+  { title: 'Element', key: 'elementHtml', sortable: false },
+  { title: 'Help', key: 'help_url', sortable: false },
+  { title: '', key: 'actions', sortable: false }
+];
+
+const violationsListCC = computed(() => chromaCheckResults.value?.violations || []);
+const tableItemsCC = computed(() =>
+  violationsListCC.value.map(v => ({
+    impact: v.impact,
+    description: v.description,
+    elementHtml: v.element?.html || '',
+    help_url: v.help_url,
+    violation: v,
+  }))
+);
+const pageCountCC = computed(() => {
+  const count = Math.ceil(tableItemsCC.value.length / itemsPerPageCC.value);
+  return count > 0 ? count : 1;
+});
+const paginatedRowsCC = computed(() => {
+  const start = (pageCC.value - 1) * itemsPerPageCC.value;
+  return tableItemsCC.value.slice(start, start + itemsPerPageCC.value);
+});
+
+const truncateHtml = (html) => {
+  if (!html) return '';
+  const cleaned = String(html).replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+  return cleaned.length > 140 ? cleaned.slice(0, 140) + '…' : cleaned;
+};
+
+const getImpactColor = (impact) => {
+  const colors = { critical: 'red', serious: 'orange', moderate: 'yellow-darken-2', minor: 'blue' };
+  return colors[impact] || 'grey';
+};
+
+const openViolationDialogCC = (violation) => {
+  selectedViolationCC.value = violation;
+  showViolationDialogCC.value = true;
+};
+
+const downloadMarkedHtmlFromAnswers = () => {
+  const marked = chromaCheckResults.value?.marked_html;
+  if (!marked) return;
+  const blob = new Blob([marked], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'chromacheck_report.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
 const goToExamine = () => {

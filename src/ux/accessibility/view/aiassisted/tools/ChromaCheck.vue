@@ -67,111 +67,107 @@
             <!-- Results Display -->
             <v-expand-transition>
               <div v-if="results && !loading">
+                <!-- Primary Actions: Inspect & Download -->
+                <v-card v-if="results?.marked_html" variant="outlined" class="mb-4">
+                  <v-card-title class="bg-purple-lighten-5">
+                    <v-icon icon="mdi-magnify" class="mr-2" />
+                    Inspect and Export
+                  </v-card-title>
+                  <v-card-text class="pa-4">
+                    <div class="d-flex flex-wrap gap-2">
+                      <v-btn
+                        color="green"
+                        prepend-icon="mdi-eye"
+                        @click="showMarkedHtml"
+                      >
+                        Inspect Webpage
+                      </v-btn>
+                      <v-btn
+                        color="blue"
+                        prepend-icon="mdi-download"
+                        @click="downloadMarkedHtml"
+                      >
+                        Download Report
+                      </v-btn>
+                    </div>
+                  </v-card-text>
+                </v-card>
+
                 <!-- Summary Stats -->
                 <v-card variant="outlined" class="mb-4">
                   <v-card-title class="bg-purple-lighten-5">
                     <v-icon icon="mdi-chart-box" class="mr-2" />
-                    Analysis Results
+                    Analysis Summary
                   </v-card-title>
-                  <v-card-text class="pa-6">
-                    <v-row>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card :color="results.passed ? 'green-lighten-5' : 'red-lighten-5'" class="pa-4">
-                          <div class="text-center">
-                            <v-icon 
-                              :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" 
-                              :color="results.passed ? 'green' : 'red'"
-                              size="x-large"
-                            />
-                            <h3 class="text-h6 mt-2">{{ results.passed ? 'Passed' : 'Failed' }}</h3>
-                            <p class="text-caption">Overall Status</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="orange-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-alert" color="orange" size="x-large" />
-                            <h3 class="text-h3">{{ results.total_issues }}</h3>
-                            <p class="text-caption">Total Issues</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="blue-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-file-document" color="blue" size="x-large" />
-                            <h3 class="text-h3">{{ results.violations?.length || 0 }}</h3>
-                            <p class="text-caption">Violations Found</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="purple-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-eye" color="purple" size="x-large" />
-                            <h3 class="text-h6 mt-2">WCAG 2.1</h3>
-                            <p class="text-caption">Standard</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                    </v-row>
+                  <v-card-text class="pa-4">
+                    <div class="d-flex flex-wrap align-center gap-3">
+                      <div class="d-flex align-center px-3 py-2 rounded" :class="results.passed ? 'bg-green-lighten-5' : 'bg-red-lighten-5'">
+                        <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" :color="results.passed ? 'green' : 'red'" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Overall Status</div>
+                          <div>{{ results.passed ? 'Passed' : 'Failed' }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-orange-lighten-5">
+                        <v-icon icon="mdi-alert" color="orange" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Total Issues</div>
+                          <div>{{ results.total_issues }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-blue-lighten-5">
+                        <v-icon icon="mdi-file-document" color="blue" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Violations Found</div>
+                          <div>{{ (results.violations?.length || 0) }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-purple-lighten-5">
+                        <v-icon icon="mdi-eye" color="purple" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Standard</div>
+                          <div>WCAG 2.1</div>
+                        </div>
+                      </div>
+                    </div>
                   </v-card-text>
                 </v-card>
 
                 <!-- Violations List -->
-                <v-card v-if="results.violations?.length > 0" variant="outlined" class="mb-4">
+                <v-card v-if="(results.violations?.length || 0) > 0" variant="outlined" class="mb-4">
                   <v-card-title class="bg-red-lighten-5">
                     <v-icon icon="mdi-alert-circle" class="mr-2" />
                     Color Contrast Issues ({{ results.violations.length }})
                   </v-card-title>
                   <v-card-text class="pa-4">
-                    <v-expansion-panels>
-                      <v-expansion-panel
-                        v-for="(violation, index) in results.violations"
-                        :key="index"
-                      >
-                        <v-expansion-panel-title>
-                          <div class="d-flex align-center gap-3">
-                            <v-chip 
-                              :color="getImpactColor(violation.impact)" 
-                              size="small"
-                            >
-                              {{ violation.impact }}
-                            </v-chip>
-                            <span class="font-weight-medium">{{ violation.description }}</span>
-                          </div>
-                        </v-expansion-panel-title>
-                        <v-expansion-panel-text>
-                          <div class="pa-2">
-                            <p class="text-body-2 mb-3">{{ violation.help }}</p>
-                            
-                            <v-card variant="outlined" class="mb-3">
-                              <v-card-text>
-                                <strong>HTML Element:</strong>
-                                <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ violation.element?.html }}</pre>
-                              </v-card-text>
-                            </v-card>
-
-                            <v-alert type="info" variant="tonal" density="compact">
-                              {{ violation.failure_summary }}
-                            </v-alert>
-
-                            <v-btn
-                              :href="violation.help_url"
-                              target="_blank"
-                              color="purple"
-                              variant="text"
-                              size="small"
-                              class="mt-2"
-                            >
-                              Learn More
-                              <v-icon icon="mdi-open-in-new" end />
-                            </v-btn>
-                          </div>
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
+                    <v-data-table
+                      :headers="violationHeaders"
+                      :items="paginatedRows"
+                      class="elevation-0"
+                    >
+                      <template #item.impact="{ value }">
+                        <v-chip :color="getImpactColor(value)" size="small">{{ value }}</v-chip>
+                      </template>
+                      <template #item.elementHtml="{ value }">
+                        <pre class="ma-0 pa-2 bg-grey-lighten-4 rounded" style="max-width: 520px; white-space: pre-wrap; word-break: break-word;">{{ truncateHtml(value) }}</pre>
+                      </template>
+                      <template #item.help_url="{ value }">
+                        <v-btn :href="value" target="_blank" color="purple" variant="text" size="small">
+                          Guide <v-icon icon="mdi-open-in-new" end />
+                        </v-btn>
+                      </template>
+                      <template #item.actions="{ item }">
+                        <v-btn color="purple" variant="text" size="small" @click="openViolationDialog(item.violation)">
+                          Details
+                        </v-btn>
+                      </template>
+                    </v-data-table>
+                    <div class="d-flex justify-end mt-3">
+                      <v-pagination v-model="page" :length="pageCount" density="comfortable" />
+                    </div>
                   </v-card-text>
                 </v-card>
 
@@ -179,22 +175,6 @@
                 <v-card variant="outlined">
                   <v-card-text class="pa-4">
                     <div class="d-flex flex-wrap gap-2">
-                      <v-btn
-                        v-if="results.marked_html"
-                        color="green"
-                        prepend-icon="mdi-eye"
-                        @click="showMarkedHtml"
-                      >
-                        View Marked HTML
-                      </v-btn>
-                      <v-btn
-                        v-if="results.marked_html"
-                        color="blue"
-                        prepend-icon="mdi-download"
-                        @click="downloadMarkedHtml"
-                      >
-                        Download Report
-                      </v-btn>
                       <v-btn
                         color="grey"
                         variant="outlined"
@@ -248,6 +228,47 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <!-- Violation Details Dialog -->
+    <v-dialog v-model="showViolationDialog" max-width="900">
+      <v-card>
+        <v-toolbar color="purple">
+          <v-toolbar-title>Issue Details</v-toolbar-title>
+          <v-spacer />
+          <v-btn icon @click="showViolationDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text class="pa-4">
+          <div class="d-flex align-center mb-3">
+            <v-chip :color="getImpactColor(selectedViolation?.impact)" size="small" class="mr-2">
+              {{ selectedViolation?.impact }}
+            </v-chip>
+            <span class="font-weight-medium">{{ selectedViolation?.description }}</span>
+          </div>
+          <p class="text-body-2 mb-3">{{ selectedViolation?.help }}</p>
+
+          <v-card variant="outlined" class="mb-3">
+            <v-card-text>
+              <strong>HTML Element:</strong>
+              <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ selectedViolation?.element?.html }}</pre>
+            </v-card-text>
+          </v-card>
+
+          <v-alert v-if="selectedViolation?.failure_summary" type="info" variant="tonal" density="compact" class="mb-3">
+            {{ selectedViolation?.failure_summary }}
+          </v-alert>
+
+          <div class="d-flex gap-2">
+            <v-btn v-if="selectedViolation?.help_url" :href="selectedViolation?.help_url" target="_blank" color="purple" variant="text" size="small">
+              Learn More <v-icon icon="mdi-open-in-new" end />
+            </v-btn>
+            <v-spacer />
+            <v-btn color="grey" variant="outlined" @click="showViolationDialog = false">Close</v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </PageWrapper>
 </template>
 
@@ -261,7 +282,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useStore()
 
-const API_BASE_URL = 'http://localhost:8000'
+const API_BASE_URL = process.env.VUE_APP_AI_ACCESSIBILITY_API 
 
 // Get saved input from sessionStorage
 const inputType = ref('')
@@ -274,6 +295,20 @@ const error = ref(null)
 const results = ref(null)
 const showingMarkedHtml = ref(false)
 const saving = ref(false)
+
+// Pagination and table state
+const page = ref(1)
+const itemsPerPage = ref(10)
+const showViolationDialog = ref(false)
+const selectedViolation = ref(null)
+
+const violationHeaders = [
+  { title: 'Impact', key: 'impact' },
+  { title: 'Description', key: 'description' },
+  { title: 'Element', key: 'elementHtml', sortable: false },
+  { title: 'Help', key: 'help_url', sortable: false },
+  { title: '', key: 'actions', sortable: false }
+]
 
 const testId = computed(() => route.params.id)
 
@@ -443,6 +478,37 @@ const downloadMarkedHtml = () => {
 const resetAnalysis = () => {
   results.value = null
   error.value = null
+}
+
+// Table helpers
+const violationsList = computed(() => results.value?.violations || [])
+const tableItems = computed(() =>
+  violationsList.value.map(v => ({
+    impact: v.impact,
+    description: v.description,
+    elementHtml: v.element?.html || '',
+    help_url: v.help_url,
+    violation: v,
+  }))
+)
+const pageCount = computed(() => {
+  const count = Math.ceil(tableItems.value.length / itemsPerPage.value)
+  return count > 0 ? count : 1
+})
+const paginatedRows = computed(() => {
+  const start = (page.value - 1) * itemsPerPage.value
+  return tableItems.value.slice(start, start + itemsPerPage.value)
+})
+
+const truncateHtml = (html) => {
+  if (!html) return ''
+  const cleaned = String(html).replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim()
+  return cleaned.length > 140 ? cleaned.slice(0, 140) + '…' : cleaned
+}
+
+const openViolationDialog = (violation) => {
+  selectedViolation.value = violation
+  showViolationDialog.value = true
 }
 
 const goBack = () => {
