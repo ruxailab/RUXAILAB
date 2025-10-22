@@ -364,7 +364,7 @@ export const getMethodCategory = (item) => {
   const testType = item.testType ?? item.header?.templateType ?? "";
   const subType = item.subType ?? item.header?.templateSubType ?? "";
   const definition = getMethodDefinition(testType, subType);
-  return METHOD_CATEGORIES[definition.category];
+  return METHOD_CATEGORIES[definition?.category];
 };
 
 /**
