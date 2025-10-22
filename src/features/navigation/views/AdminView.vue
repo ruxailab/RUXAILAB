@@ -127,6 +127,20 @@
                   />
                 </v-col>
 
+                <!-- 🔹 Method -->
+                <v-col cols="12" sm="6" md="3" v-if="activeSection === 'studies'">
+                  <div class="filter-label">Method</div>
+                  <v-select
+                    v-model="selectedMethodFilter"
+                    :items="methodOptions"
+                    item-title="text"
+                    item-value="value"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                  />
+                </v-col>
+
                 <!-- 👥 Ownership -->
                 <v-col cols="12" sm="6" md="3">
                   <div class="filter-label">Ownership</div>
@@ -308,6 +322,7 @@ const clearFilters = () => {
   selectedVisibilityFilter.value = 'all';
   selectedOwnershipFilter.value = 'all';
   selectedParticipantsFilter.value = 'all';
+  selectedMethodFilter.value = 'all';
   creationDateRange.value = [];
   showFilters.value = false;
 };
@@ -319,7 +334,8 @@ const hasActiveFilters = computed(() => {
     selectedStatusFilter.value != 'all' ||
     selectedVisibilityFilter.value != 'all' ||
     selectedOwnershipFilter.value != 'all' ||
-    selectedParticipantsFilter.value != 'all'
+    selectedParticipantsFilter.value != 'all' ||
+    selectedMethodFilter.value != 'all'
   );
 });
 
@@ -365,6 +381,26 @@ const filteredTests = computed(() => {
     const title = (test.testTitle || test.title || '').toLowerCase();
     const query = (search.value || '').toLowerCase();
     const matchesSearch = !query || title.includes(query);
+
+    // 🔹 Method
+    let matchesMethod = true;
+    if (activeSection.value === 'studies' && test.testType) {
+      const method = selectedMethodFilter.value;
+      const testType = test.testType;
+      const subType = test.subType;
+
+      matchesMethod =
+        method === 'all' ||
+        (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
+        (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
+          testType === STUDY_TYPES.USER &&
+          subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
+        (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
+          testType === STUDY_TYPES.USER &&
+          subType === USER_STUDY_SUBTYPES.MODERATED) ||
+        (method === 'MANUAL' && testType === 'MANUAL') ||
+        (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
+    }
 
     // 🟩 Status (multi)
     const matchesStatus =
@@ -416,6 +452,7 @@ const filteredTests = computed(() => {
 
     return (
       matchesSearch &&
+      matchesMethod &&
       matchesStatus &&
       matchesVisibility &&
       matchesOwnership &&
