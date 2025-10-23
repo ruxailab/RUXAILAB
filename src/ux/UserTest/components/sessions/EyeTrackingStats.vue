@@ -58,6 +58,7 @@ const store = useStore();
 const calibrationConfig = computed(() => store.state.Tests.Test.calibrationConfig || {})
 const selectedView = ref('prediction')
 const predictedData = ref(null)
+const emit = defineEmits(['predictions-ready']);
 
 onMounted(async () => {
     try {
@@ -71,6 +72,7 @@ onMounted(async () => {
         })
 
         predictedData.value = JSON.stringify(response.data, null, 2)
+        emit('predictions-ready', response.data)
         console.log('Resposta do backend:', response.data)
     } catch (error) {
         console.error('Erro ao chamar batch_predict:', error)
