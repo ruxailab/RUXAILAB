@@ -283,9 +283,6 @@ const goTo = (test) => {
 
 // ===== Data fetching & filtering =====
 
-// Fetch all tests where user is admin
-const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
-
 // Build moderated session list (tests of type MODERATED)
 const filterModeratedSessions = () => {
   const cooperatorArray = [];
@@ -331,11 +328,6 @@ const filterModeratedSessions = () => {
 };
 
 // ===== Lifecycle hooks =====
-onMounted(async () => {
-  await getMyPersonalTests();
-  filterModeratedSessions();
-});
-
 onMounted(() => {
   filterModeratedSessions();
 });

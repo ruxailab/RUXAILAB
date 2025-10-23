@@ -1,7 +1,8 @@
 <template>
-  <!-- 🔹 Search & Filters -->
+  <!-- 🔹 Search & Filters Card -->
   <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
     <div class="d-flex align-center mb-3 flex-wrap button-bar">
+      <!-- 🔍 Search bar -->
       <v-text-field
         v-model="search"
         prepend-inner-icon="mdi-magnify"
@@ -11,6 +12,8 @@
         placeholder="Search templates..."
         class="flex-grow-1"
       />
+
+      <!-- ♻️ Reset filters button -->
       <v-btn
         color="primary"
         class="search-btn"
@@ -21,6 +24,7 @@
         Reset
       </v-btn>
 
+      <!-- 🎛️ Toggle filter visibility button -->
       <v-btn
         :color="showFilters ? 'primary' : 'grey'"
         variant="tonal"
@@ -33,10 +37,11 @@
       </v-btn>
     </div>
 
+    <!-- 🔽 Expandable filter section -->
     <v-expand-transition>
       <div v-show="showFilters">
         <v-row dense>
-          <!-- 📅 Creation date -->
+          <!-- 📅 Filter by creation date range -->
           <v-col cols="12" sm="6" md="3">
             <div class="filter-label">Creation date</div>
             <v-menu
@@ -47,6 +52,7 @@
               min-width="290px"
             >
               <template #activator="{ props }">
+                <!-- Shows the selected date range -->
                 <v-text-field
                   v-bind="props"
                   readonly
@@ -62,11 +68,12 @@
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
+              <!-- Vuetify date picker with range selection -->
               <v-date-picker v-model="creationDateRange" multiple="range" />
             </v-menu>
           </v-col>
 
-          <!-- 🧭 Method -->
+          <!-- 🧭 Filter by method -->
           <v-col cols="12" sm="6" md="3">
             <div class="filter-label">Method</div>
             <v-select
@@ -84,14 +91,14 @@
     </v-expand-transition>
   </v-card>
 
-  <!-- 📋 Templates list -->
-  <List
-    :items="filteredTemplates"
-    type="myTemplates"
+  <!-- 📋 Template list table -->
+  <ListComponent
+    :items="filteredTemplates.sort((a, b) => (b.header.creationDate || 0) - (a.header.creationDate || 0))"
+    type="publicTemplates"
     @clicked="setupTempDialog"
   />
 
-  <!-- 🪟 Template dialog -->
+  <!-- 🪟 Template details dialog -->
   <TemplateInfoDialog
     v-model:dialog="tempDialog"
     :template="temp"
@@ -101,54 +108,69 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import List from '@/shared/components/tables/ListComponent.vue'
-import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
-import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
+/**
+ * This component displays a list of public templates with
+ * a search bar, filter controls, and a dialog for viewing template details.
+ */
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import {
+  METHOD_DEFINITIONS,
+  STUDY_TYPES,
+  USER_STUDY_SUBTYPES
+} from '@/shared/constants/methodDefinitions';
+import ListComponent from '@/shared/components/tables/ListComponent.vue';
+import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 
-const store = useStore()
+const store = useStore();
 
-const tempDialog = ref(false)
-const temp = ref({})
-const templates = computed(() => store.state.Templates.templates || [])
+// ===== State =====
+const temp = ref({}); // Current selected template
+const tempDialog = ref(false); // Controls dialog visibility
+const templates = computed(() => store.state.Templates.templates || []); // All templates from Vuex
 
-// ===== Filters =====
+// ===== Filter controls =====
+const search = ref('');
+const showFilters = ref(false);
+const selectedMethodFilter = ref('all');
+const creationDateRange = ref([]);
+
+// Available filtering options for method types
 const methodOptions = [
   { title: 'All', value: 'all' },
   { title: 'Heuristic Evaluation', value: METHOD_DEFINITIONS.HEURISTICS.id },
   { title: 'User Study (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
   { title: 'User Study (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
   { title: 'Manual Accessibility', value: 'MANUAL' },
-  { title: 'Automatic Accessibility', value: 'AUTOMATIC' }
-]
+  { title: 'Automatic Accessibility', value: 'AUTOMATIC' },
+];
 
-const search = ref('')
-const showFilters = ref(false)
-const selectedMethodFilter = ref('all')
-const creationDateRange = ref([])
+// ===== Filter logic =====
+const toggleFilters = () => (showFilters.value = !showFilters.value);
 
-const toggleFilters = () => (showFilters.value = !showFilters.value)
 const clearFilters = () => {
-  search.value = ''
-  selectedMethodFilter.value = 'all'
-  creationDateRange.value = []
-}
+  search.value = '';
+  selectedMethodFilter.value = 'all';
+  creationDateRange.value = [];
+};
 
+// Determines whether there are any active filters
 const hasActiveFilters = computed(() =>
   !!(search.value || selectedMethodFilter.value !== 'all' || creationDateRange.value.length)
-)
+);
 
-// ===== Filtered templates =====
+// ===== Template filtering =====
 const filteredTemplates = computed(() =>
   templates.value?.filter(temp => {
+    // 🔍 Text search filter
     const matchesSearch = temp.header.templateTitle
       .toLowerCase()
-      .includes(search.value.toLowerCase())
+      .includes(search.value.toLowerCase());
 
-    const method = selectedMethodFilter.value
-    const testType = temp.header.templateType
-    const subType = temp.header.templateSubType
+    // 🎛️ Method filter
+    const method = selectedMethodFilter.value;
+    const testType = temp.header.templateType;
+    const subType = temp.header.templateSubType;
 
     const matchesMethod =
       method === 'all' ||
@@ -160,37 +182,48 @@ const filteredTemplates = computed(() =>
         testType === STUDY_TYPES.USER &&
         subType === USER_STUDY_SUBTYPES.MODERATED) ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
-      (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
+      (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
 
-    const creationDate = temp.header?.creationDate
+    // 📅 Date range filter
+    const creationDate = temp.header?.creationDate;
     let inDateRange = true;
     if (creationDateRange.value.length > 2 && creationDate) {
       const date = new Date(creationDate);
       const start = new Date(creationDateRange.value[0]);
-      const end = new Date(creationDateRange.value[creationDateRange.value.length -1]);
+      const end = new Date(creationDateRange.value[creationDateRange.value.length - 1]);
       inDateRange = date >= start && date <= end;
     }
 
-    return matchesSearch && matchesMethod && inDateRange
+    return matchesSearch && matchesMethod && inDateRange;
   })
-)
+);
 
-// ===== Methods =====
-const setupTempDialog = template => {
-  if (!template?.header || !template?.body) return
-  temp.value = { ...template }
-  tempDialog.value = true
-}
+// ===== Dialog handling =====
+const setupTempDialog = (template) => {
+  if (!template?.header || !template?.body) return;
+  temp.value = { ...template };
+  tempDialog.value = true;
+};
 
-const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
+// ===== Data fetching =====
+const getPublicTemplates = () => store.dispatch('getPublicTemplates');
 
 const reloadMyTemplates = async () => {
-  tempDialog.value = false
-  await getMyTemplates()
-}
+  tempDialog.value = false;
+  await getPublicTemplates();
+};
 </script>
 
 <style scoped>
+/* === General styles for layout and filters === */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .button-bar {
   gap: 14px;
 }
@@ -199,14 +232,14 @@ const reloadMyTemplates = async () => {
   min-width: 140px;
   height: 40px;
   font-weight: 600;
-  letter-spacing: .3px;
+  letter-spacing: 0.3px;
 }
 
 .filter-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   margin-bottom: 4px;
   line-height: 1.15;
   color: #475569;
@@ -214,5 +247,16 @@ const reloadMyTemplates = async () => {
 
 .filter-field :deep(.v-field__input) {
   min-height: 36px;
+}
+
+/* Truncate long text in 2 lines */
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(11px * 1.15 * 2);
+  max-height: calc(11px * 1.15 * 2);
 }
 </style>
