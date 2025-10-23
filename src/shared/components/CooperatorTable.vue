@@ -171,7 +171,7 @@
         <template #item.session="{ item }">
           <v-tooltip location="bottom">
             <template #activator="{ props }">
-              <v-btn v-if="item" v-bind="props" class="ml-1" icon @click="goToSession(item.userDocId)">
+              <v-btn v-if="item" v-bind="props" variant="text" class="ml-1" icon @click="goToSession(item.userDocId)">
                 <v-icon>mdi-file-document-arrow-right</v-icon>
               </v-btn>
             </template>
