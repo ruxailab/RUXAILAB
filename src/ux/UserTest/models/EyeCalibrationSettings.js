@@ -22,7 +22,7 @@ export default class EyeCalibrationSettings {
     }
 
     toFirestore() {
-        return Object.assign(super.toFirestore?.() || {}, {
+        return {
             calibName: this.calibName,
             pointNumber: this.pointNumber,
             samplePerPoint: this.samplePerPoint,
@@ -42,8 +42,9 @@ export default class EyeCalibrationSettings {
             threshold: this.threshold,
             calibrations: this.calibrations,
             fromDashboard: this.fromDashboard,
-        })
+        }
     }
+
 
     static fromObject(data = {}) {
         return new EyeCalibrationSettings(data)

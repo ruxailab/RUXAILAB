@@ -16,15 +16,20 @@
                         <div class="video-box mb-2 video-rect-box" v-if="rightTab !== 'eye'">
                             <video ref="mainVideo1" class="video-rect-skeleton" controls
                                 :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator">
-                                <source :src="taskAnswer?.evaluatorVideo ?? defaultVideos.evaluator" type="video/mp4" />
+                                <source :src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
+                                    type="video/mp4" />
                             </video>
                         </div>
 
-                        <div class="video-box screen-video-box video-rect-box">
+                        <div class="video-box screen-video-box video-rect-box" style="position: relative;">
                             <video ref="mainVideo2" class="video-rect-skeleton" controls
                                 :poster="taskAnswer?.screenPoster ?? defaultPosters.screen">
-                                <source :src="taskAnswer?.screenVideo ?? defaultVideos.screen" type="video/mp4" />
+                                <source :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen" type="video/mp4" />
                             </video>
+
+                            <EyeTrackingOverlay v-if="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
+                                :predictedData="predictedData" :current-time="videoCurrentTime"
+                                :is-playing="isPlaying" />
                         </div>
                     </v-col>
 
@@ -46,10 +51,10 @@
                             </v-window-item>
 
                             <v-window-item value="eye">
-                                <EyeTrackingStats
-                                    :iris-data="taskAnswer?.irisTrackingData"
+                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
+                                    @predictions-ready="predictedData = $event, console.log('Predictions ready', $event)"
                                     class="mb-4" />
                             </v-window-item>
 
@@ -95,6 +100,7 @@ import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import SentimentSummary from '../sessions/SentimentSummary.vue'
 import NotesStats from '../sessions/NotesStats.vue'
+import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 
 const props = defineProps({
     modelValue: { type: Boolean, required: true },
@@ -114,6 +120,7 @@ const isPlaying = ref(false)
 const videoDuration = ref(0)
 const videoCurrentTime = ref(0)
 let rafId = null
+const predictedData = ref(null)
 
 const defaultVideos = {
     evaluator: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
@@ -170,14 +177,24 @@ onMounted(() => {
     })
 
     video.addEventListener('play', () => {
+        console.log('video PLAY')
         isPlaying.value = true
         updateLoop()
     })
 
     video.addEventListener('pause', () => {
+        console.log('video PAUSE')
         isPlaying.value = false
         cancelAnimationFrame(rafId)
     })
+})
+
+watch(predictedData, (v) => {
+    console.log('[Pai] predictedData mudou para', v)
+})
+
+watch(isPlaying, (v) => {
+    console.log('[Pai] isPlaying mudou para', v)
 })
 
 onBeforeUnmount(() => cancelAnimationFrame(rafId))
