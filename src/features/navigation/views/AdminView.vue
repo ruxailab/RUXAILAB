@@ -172,117 +172,7 @@
             </div>
           </v-expand-transition>
         </v-card>
-
-        <!-- Search + Filters for sessions -->
-         <v-card v-if="activeSection === 'sessions'" class="mb-4 pa-4 elevation-2 overflow-hidden">
-          <div class="d-flex align-center mb-3 flex-wrap button-bar">
-            <v-text-field
-              v-model="searchSessions"
-              prepend-inner-icon="mdi-magnify"
-              density="compact"
-              hide-details
-              variant="outlined"
-              placeholder="Search sessions..."
-              class="flex-grow-1"
-            />
-            <v-btn
-              color="primary"
-              class="search-btn"
-              prepend-icon="mdi-filter-remove"
-              :disabled="!hasActiveSessionFilters"
-              @click="() => { searchSessions=''; selectedSessionStatusFilter=['all']; selectedSessionOwnershipFilter='all'; selectedSessionEvaluatorFilter='all'; selectedSessionDateRange=[] }"
-            >
-              Reset
-            </v-btn>
-            <v-btn
-              :color="showFilters ? 'primary' : 'grey'"
-              variant="tonal"
-              icon
-              size="small"
-              @click="toggleFilters"
-            >
-              <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
-            </v-btn>
-          </div>
-
-          <v-expand-transition>
-            <div v-show="showFilters">
-              <v-row dense>
-                <!-- 👤 Ownership -->
-                <v-col cols="12" sm="6" md="3">
-                  <div class="filter-label">Ownership</div>
-                  <v-select
-                    v-model="selectedSessionOwnershipFilter"
-                    :items="ownershipOptions"
-                    item-title="text"
-                    item-value="value"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                  />
-                </v-col>
-
-                <!-- 👥 Evaluator -->
-                <v-col cols="12" sm="6" md="3">
-                  <div class="filter-label">Evaluator</div>
-                  <v-select
-                    v-model="selectedSessionEvaluatorFilter"
-                    :items="evaluatorOptions"
-                    item-title="text"
-                    item-value="value"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                  />
-                </v-col>
-
-                <!-- 📅 Session date -->
-                <v-col cols="12" sm="6" md="3">
-                  <div class="filter-label">Session date</div>
-                  <v-menu
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                    max-width="290px"
-                    min-width="290px"
-                  >
-                    <template #activator="{ props }">
-                      <v-text-field
-                        v-bind="props"
-                        readonly
-                        variant="outlined"
-                        density="compact"
-                        hide-details
-                        :placeholder="selectedSessionDateRange.length > 1
-                          ? `${new Date(selectedSessionDateRange[0]).toLocaleDateString()} - ${new Date(selectedSessionDateRange[1]).toLocaleDateString()}`
-                          : 'Select range'"
-                        prepend-inner-icon="mdi-calendar"
-                      />
-                    </template>
-                    <v-date-picker v-model="selectedSessionDateRange" multiple="range" />
-                  </v-menu>
-                </v-col>
-
-                <!-- ⚙️ Status -->
-                <v-col cols="12" sm="6" md="3">
-                  <div class="filter-label">Status</div>
-                  <v-select
-                    v-model="selectedSessionStatusFilter"
-                    :items="sessionStatusOptions"
-                    item-title="text"
-                    item-value="value"
-                    multiple
-                    chips
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                  />
-                </v-col>
-              </v-row>
-            </div>
-          </v-expand-transition>
-        </v-card>
-
+       
         <!-- Render Sections -->
         <div v-if="activeSection === 'dashboard'">
           <!-- Placeholder -->
@@ -298,35 +188,11 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <List
-            v-if="filteredSessions.length > 0"
-            :items="filteredSessions"
-            type="sessions"
-            :sort-by="[{ key: 'testDate', order: 'desc' }]"
-            @clicked="goTo"
-          />
-          <div
-            v-else
-            class="empty-state"
-          >
-            <v-icon
-              icon="mdi-clock-remove-outline"
-              size="48"
-              color="grey-lighten-1"
-              class="mb-2"
-            />
-            <p class="text-h6">
-              You don't have active sessions
-            </p>
-          </div>
+         <SessionsSection />
         </div>
 
         <div v-if="activeSection === 'templates'">
-          <List
-            :items="filteredTemplates"
-            type="myTemplates"
-            @clicked="setupTempDialog"
-          />
+         <TemplatesSection />
         </div>
 
         <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
@@ -353,12 +219,7 @@
           <ProfileView />
         </div>
 
-        <TempDialog
-          v-model:dialog="tempDialog"
-          :template="temp"
-          :allow-create="true"
-          @close="reloadMyTemplates()"
-        />
+       
       </v-container>
     </v-main>
   </div>
@@ -369,14 +230,14 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
-import TempDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
 import ProfileView from '@/features/auth/views/ProfileView.vue';
 import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
 import { DashboardSidebar } from '@/features/navigation/utils';
 import { getMethodManagerView, getMethodOptions, METHOD_DEFINITIONS, METHOD_STATUSES, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import DashboardView from '@/features/dashboard/views/DashboardView.vue';
-// import StudyController from '@/controllers/StudyController';
 import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
+import SessionsSection from '../components/navbarSections/SessionsSection.vue';
+import TemplatesSection from '../components/navbarSections/TemplatesSection.vue';
 
 const store = useStore();
 const router = useRouter();
