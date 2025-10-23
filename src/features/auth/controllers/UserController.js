@@ -1,6 +1,7 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import User from '@/features/auth/models/UserModel'
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
+import { documentId } from 'firebase/firestore';
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -34,6 +35,71 @@ export default class UserController extends Controller {
   async getById(docId) {
     const res = await super.readOne(COLLECTION, docId);
     return new User(Object.assign({ id: res.id }, res.data()));
+  }
+
+  async getUserWithStudies(docId) {
+    const res = await super.readOne(COLLECTION, docId);
+    const user = new User({ id: res.id, ...res.data() });
+
+    const myTestsIds = Object.keys(user.myTests || {});
+    const myAnswersIds = Object.keys(user.myAnswers || {});
+
+    const [testsDocs, answersDocs] = await Promise.all([
+      this._fetchStudiesByIds(myTestsIds),
+      this._fetchStudiesByIds(myAnswersIds),
+    ]);
+
+    const myTests = {};
+    testsDocs.forEach((doc) => {
+      myTests[doc.id] = {
+        ...(user.myTests?.[doc.id] || {}),
+        ...doc,
+      };
+    });
+
+    const myAnswers = {};
+    answersDocs.forEach((doc) => {
+      myAnswers[doc.id] = {
+        ...(user.myAnswers?.[doc.id] || {}),
+        ...doc,
+      };
+    });
+
+    user.myTests = myTests;
+    user.myAnswers = myAnswers;
+
+    return user;
+  }
+
+  async _fetchStudiesByIds(ids) {
+    if (!ids || ids.length === 0) return [];
+
+    try {
+      // If there are few (<= 10), use "in" query (faster and more direct)
+      if (ids.length <= 10) {
+        const q = {
+          field: documentId(),
+          condition: 'in',
+          value: ids,
+        };
+        const res = await super.query('tests', q);
+        return res.docs.map((doc) => {
+          return Object.assign({ id: doc.id }, doc.data());
+        });
+      }
+
+      // If there are many (>10), parallelize individual gets
+      const promises = ids.map((id) => super.readOne('tests', id));
+      const results = await Promise.all(promises);
+      return results
+        .filter((r) => r.exists())
+        .map((r) => {
+          return Object.assign({ id: r.id }, r.data());
+        });
+    } catch (error) {
+      console.error('Error fetching studies by IDs:', error);
+      throw error;
+    }
   }
 
   async updateProfile(docId, payload) {

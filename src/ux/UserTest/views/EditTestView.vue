@@ -12,7 +12,7 @@
       <div>
         <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
           <v-tab @click="index = 0">
-            Test configuration
+            {{ $t('UserTestTable.titles.testConfiguration') }}
           </v-tab>
           <v-tab @click="index = 1">
             {{ $t('ModeratedTest.consentForm') }}
@@ -38,11 +38,10 @@
               @update:welcome-message="welcomeMessage = $event" @update:final-message="finalMessage = $event" />
           </div>
 
-          <!-- COSENT FORM -->
+          <!-- CONSENT FORM -->
           <div v-if="index === 1" rounded="xxl">
             <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
-              subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-              @update:value="consent = $event" />
+              :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="consent = $event" />
           </div>
 
           <!-- PRE-TEST -->

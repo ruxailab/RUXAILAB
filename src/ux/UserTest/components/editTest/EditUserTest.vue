@@ -18,8 +18,7 @@
     <!-- COSENT FORM -->
     <v-card v-if="index === 1" rounded="xxl">
       <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
-        subtitle="Edit the consent text for the test. Changes are saved when you click the Save button."
-        @update:value="saveState('consent', $event)" />
+        :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="saveState('consent', $event)" />
     </v-card>
 
     <!-- PRE-TEST -->

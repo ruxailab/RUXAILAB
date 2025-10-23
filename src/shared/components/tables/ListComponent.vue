@@ -9,6 +9,7 @@
     elevation="2"
     hover
     @click:row="emitClick"
+    :loading="loadingStudy"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">
@@ -18,7 +19,7 @@
             v-bind="props"
             size="32"
             :color="getAvatarColor(item)"
-            style="color: #fff"
+            variant="tonal"
           >
             <v-icon size="18">
               {{ getTypeIcon(item) }}
@@ -40,11 +41,10 @@
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
-        <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
+        <!-- <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
           Session Date: {{formatDateTime(item.testDate, 'es')}}
         </div>
         <div v-else class="text-caption text-medium-emphasis">
-          <!-- If study does not belong to logged in user -->
           <span v-if="item.testAuthorEmail">
             Last Updated:
           </span>
@@ -52,41 +52,42 @@
             Creation Date:
           </span>
            {{ formatItemDate(item) }}
-        </div>
+        </div> -->
       </div>
+    </template>
+
+    <template #item.tags="{ item }">
+      <v-chip
+        v-for="(tag, i) in getTags(item)"
+        :key="i"
+        :color="tag.color"
+        size="small"
+        class="ma-1"
+      >
+        <v-icon start size="14">{{ tag.icon }}</v-icon>
+        {{ tag.label }}
+      </v-chip>
+    </template>
+
+    <template #item.updateDate="{ item }">
+      {{ formatItemDate(item) }}
+    </template>
+
+    <template #item.creationDate="{ item }">
+      {{ formatItemDate(item) }}
+    </template>
+
+     <template #item.testDate="{ item }">
+      {{formatDateTime(item.testDate, 'es')}}
     </template>
 
     <!-- Owner Column -->
     <template #item.owner="{ item }">
-      <div class="d-flex align-center">
-        <v-avatar
-          size="32"
-          class="mr-3"
-        >
-          <v-img
-            v-if="getOwnerImage(item)"
-            :src="getOwnerImage(item)"
-            cover
-          />
-          <span
-            v-else
-            class="font-weight-medium"
-          >
-            {{ getOwnerName(item)?.[0]?.toUpperCase() ?? '?' }}
-          </span>
-        </v-avatar>
-        <span class="text-body-1">
-          {{ getOwnerName(item) }}
-        </span>
-      </div>
+      {{ getOwnerName(item) }}
     </template>
 
     <template #item.evaluator="{ item }">
-      <div class="d-flex align-center">
-        <span class="text-body-1">
-          {{ item.email }}
-        </span>
-      </div>
+        {{ item.email }}
     </template>
 
     <!-- Participants Column -->
@@ -94,7 +95,7 @@
       <v-chip
         size="small"
         variant="tonal"
-        color="primary"
+        :color="getParticipantCount(item) > 0 ? 'info' : 'light'"
         prepend-icon="mdi-account-multiple"
       >
         {{ getParticipantCount(item) }}
@@ -124,13 +125,14 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useItemFormatting } from '@/shared/composables/useItemFormatting'
 import { useItemTypes } from '@/shared/composables/useItemTypes'
 import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
 import { formatDateTime } from '@/shared/utils/dateUtils'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
+import store from '@/store'
 
 const props = defineProps({
   items: {
@@ -156,8 +158,12 @@ const { t } = useI18n()
 // Composables
 const typeRef = toRef(props, 'type')
 const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
-const { getItemTitle, getOwnerName, getOwnerImage, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
+const { getItemTitle, getOwnerName, getTags, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
+
+const loadingStudy = computed(() => {
+  return store.getters.loading
+})
 
 // Event handlers
 const emitClick = (event, { item }) => {

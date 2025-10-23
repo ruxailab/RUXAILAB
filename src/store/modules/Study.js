@@ -222,24 +222,13 @@ export default {
 
         if (user) {
           const userController = new UserController()
-          const userDoc = await userController.getById(user.uid)
+          const userDoc = await userController.getUserWithStudies(user.uid)
 
           if (userDoc) {
-            const tests = []
-
-            if (userDoc.myTests) {
-              for (const test of Object.values(userDoc.myTests)) {
-                tests.push(test)
-              }
-            }
-
-            /// Tests where user is a cooperator
-            if (userDoc.myAnswers) {
-              for (const answer of Object.values(userDoc.myAnswers)) {
-                const study = await studyController.getStudy({ id: answer.testDocId })
-                tests.push(Object.assign(answer, study))
-              }
-            }
+            const tests = [
+              ...Object.values(userDoc.myTests || {}),
+              ...Object.values(userDoc.myAnswers || {}),
+            ];
 
             commit('SET_TESTS', tests)
           } else {

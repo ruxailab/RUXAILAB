@@ -31,7 +31,7 @@
                   variant="tonal" size="small">
                   {{ study.status ? (study.status.charAt(0).toUpperCase() + study.status.slice(1)) : 'Unknown' }}
                 </v-chip>
-                <v-icon :icon="study.typeIcon" size="20" color="primary" />
+                <v-icon :icon="getMethodIcon(study)" size="20" color="primary" />
               </div>
 
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
@@ -72,11 +72,9 @@
 
 <script setup>
 import AnswerController from '@/shared/controllers/AnswerController';
-import { getMethodManagerView, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
+import { getMethodIcon, getMethodManagerView, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import StudyController from '@/controllers/StudyController';
 
 const props = defineProps({
   studies: {
@@ -85,18 +83,14 @@ const props = defineProps({
   }
 })
 
-const store = useStore()
 const router = useRouter();
 const answerController = new AnswerController()
-const studyController = new StudyController()
-
-const emit = defineEmits(["update-total"]);
 
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
 
 const studies = computed(() => {
-  return props.studies.length > 0 ? studiesWithAnswers.value : defaultStudies
+  return props.studies.length > 0  ? studiesWithAnswers.value : loading  ? [] : defaultStudies
 })
 
 const lastFourStudies = computed(() => {
@@ -115,8 +109,8 @@ async function loadAnswers() {
   loading.value = true;
   const last4 = []
   try {
-    for (const study in lastFourStudies.value) {
-      const testDoc = await studyController.getStudy({ id: lastFourStudies.value[study].testDocId });
+    for (const study in lastFourStudies.value) {    
+      const testDoc = lastFourStudies.value[study]
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({
@@ -169,44 +163,18 @@ const finalFour = (studyArr) => {
     progress: calculateProgress(study.answers),
     participants: study.answers?.length || 0,
     daysLeft: study.endDate ? daysLeft(study.endDate) : null,
-    typeIcon: 'mdi-sort-variant'
+    typeIcon: 'mdi-sort-variant',
+    testType: study.testType,
+    subType: study.subType,
   }))
   .filter((study, index, self) =>
     index === self.findIndex(m => m.id === study.id)
   );
 }
 
-async function getTotalAnswersCount(studies) {
-  if (!studies || !studies.length) return 0;
-
-  try {
-    const counts = await Promise.all(
-      studies.map(async (study) => {
-        const testDoc = await studyController.getStudy({ id: study.testDocId });
-        const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
-
-        const answers =
-          answerDoc.type === STUDY_TYPES.USER
-            ? Object.values({ ...answerDoc.taskAnswers })
-            : Object.values({ ...answerDoc.heuristicAnswers });
-
-        return answers.length;
-      })
-    );
-
-    return counts.reduce((acc, len) => acc + len, 0);
-  } catch (err) {
-    console.error("Error in getTotalAnswersCount:", err);
-    return 0;
-  }
-}
-
 const goToStudy = async (study) => {
-  if (!study?.id) return;
-
-  const testDoc = await studyController.getStudy({ id: study.id });
-  const methodView = getMethodManagerView(testDoc.testType, testDoc.subType)
-  router.push({ name: methodView, params: { id: testDoc.id } })
+  const methodView = getMethodManagerView(study.testType, study.subType)
+  router.push({ name: methodView, params: { id: study.id } })
 }
 
 // Default studies if none provided
@@ -260,18 +228,6 @@ watch(
   },
   { immediate: true }
 );
-
-watch(
-  () => props.studies,
-  async (newVal) => {
-    if (newVal && newVal.length > 0) {
-      const total = await getTotalAnswersCount(newVal);
-      emit("update-total", total);
-    }
-  },
-  { immediate: true }
-);
-
 </script>
 
 <style scoped>
