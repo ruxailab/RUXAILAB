@@ -27,20 +27,20 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1"
-                    :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="1" title="Consent" :complete="stepperValue > 1"
+                    :color="stepperValue == 1 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2"
-                    :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="2" title="Pre-test" :complete="stepperValue > 2"
+                    :color="stepperValue == 2 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="3" title="Tasks" :complete="stepperValue >= 3"
-                    :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="3" title="Tasks" :complete="stepperValue > 3"
+                    :color="stepperValue == 3 ? 'warning' : stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="4" title="Post-test" :complete="stepperValue >= 4"
-                    :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="4" title="Post-test" :complete="stepperValue > 4"
+                    :color="stepperValue == 4 ? 'warning' : stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="5" title="Completion" :complete="stepperValue === 5"
-                    :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="5" title="Completion" :complete="stepperValue > 5"
+                    :color="stepperValue == 5 ? 'warning' : stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
             </v-col>
@@ -69,7 +69,7 @@
                       :value="index + 1"
                       :title="task.taskName"
                       :complete="localTestAnswer.tasks[index]?.completed || false"
-                      :color="taskIndex < index ? 'primary' : 'success'"
+                      :color="taskIndex == index ? 'warning' : taskIndex < index ? 'primary' : 'success'"
                       complete-icon="mdi-check"
                     />
                     <v-divider v-if="index < test.testStructure.userTasks.length - 1" />
@@ -277,7 +277,7 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 3 && taskIndex.value === 0) return 3; // Pre-tasks (informational)
   if (globalIndex.value === 4 && taskIndex.value >= 0) return 3;   // Tasks (still step 3)
   if (globalIndex.value === 5) return 4; // Post-test
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 5; // Completion
+  if (globalIndex.value === 6) return 5; // Completion
   return 1; // Default to first step
 });
 
