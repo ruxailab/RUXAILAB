@@ -14,6 +14,7 @@
         :loading="loading"
         :disabled="!localChanges"
         @click="submit()"
++       data-cy="save-button"
       >
         <v-icon
           start
@@ -451,7 +452,7 @@ const props = defineProps({
 
 const template = ref({
   templateTitle: '',
-  templateDescription: '',
+  wtemplateDescription: '',
   isTemplatePublic: false,
 });
 const object = ref({
