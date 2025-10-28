@@ -467,6 +467,7 @@ const object = ref({
   configData: {},
   progress: {}
 });
+const baseVersion = ref(null)
 const valids = ref([false, true, true]);
 const dialogDel = ref(false);
 const loading = ref(false);
@@ -594,6 +595,7 @@ watch(
     if (newTest !== null && newTest !== undefined) {
       const mappedObject = createObjectFromTest(newTest);
       object.value = mappedObject;
+      baseVersion.value = newTest.version ?? null;
     }
   },
   { immediate: true }
