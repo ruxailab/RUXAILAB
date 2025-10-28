@@ -663,14 +663,20 @@ const submit = async () => {
     try {
       console.log('Saving object with endDate:', object.value.endDate);
       const study = instantiateStudyByType(object.value.testType, object.value);
+      study.version = baseVersion.value;
       console.log('Study object to save:', study);
       await store.dispatch('updateStudy', study);
       await store.dispatch('getStudy', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
       toast.success(t('alerts.savedChanges'));
     } catch (error) {
-      toast.error('Failed to save changes.');
-      console.error('Error saving test:', error);
+      if (error.response?.status === 409) {
+        toast.error('Someone else saved changes first. Refresh to see their edits.');
+        await store.dispatch('getStudy', { id: props.id });
+      } else {
+        toast.error('Failed to save changes.');
+        console.error('Error saving test:', error);
+      }
     } finally {
       loading.value = false;
     }
