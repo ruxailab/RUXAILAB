@@ -8,7 +8,7 @@ describe('Concurrent study edit', () => {
 
   it('shows conflict toast when another tab saves first', () => {
     // tab A: type a new title
-    cy.get('[data-cy=study-title-input]').clear().type('Tab A title')
+    cy.get('input[type=text]').first().clear().type('Tab A title')
 
     // simulate tab B saving behind the scenes (cy intercept & stub)
     cy.intercept('PUT', `/api/studies/${studyId}`, (req) => {
