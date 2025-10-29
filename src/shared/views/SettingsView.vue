@@ -1,8 +1,8 @@
 <template>
   <PageWrapper
-    title="Study Configuration"
+    :title="$t('pages.settings.study_configuration')"
     :loading="loadingPage"
-    loading-text="Loading Settings"
+    :loading-text="$t('pages.settings.loading_settings')"
   >
     <!-- Actions Slot for Save Button -->
     <template #actions>
@@ -22,14 +22,14 @@
         >
           mdi-check
         </v-icon>
-        Save Changes
+        {{ $t('buttons.save') }}
       </v-btn>
     </template>
 
     <!-- Subtitle Slot -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Manage your test settings and preferences with advanced controls
+        {{ $t('pages.settings.manage_test_settings') }}
       </p>
     </template>
 
@@ -51,7 +51,7 @@
             mdi-file-document-plus-outline
           </v-icon>
           <h3 class="text-h5 font-weight-bold text-grey-darken-4">
-            Create Template
+            {{ $t('pages.settings.createTemplate') }}
           </h3>
           <v-spacer />
           <v-btn
@@ -73,26 +73,26 @@
               <v-text-field
                 v-model="template.templateTitle"
                 autofocus
-                label="Title"
+                :label="$t('common.title')"
                 :rules="titleRequired"
                 counter="200"
                 variant="outlined"
                 density="comfortable"
-                placeholder="Enter a title for your template"
+                :placeholder="$t('TestDialog.template.title')"
                 class="mb-4"
               />
               <v-textarea
                 v-model="template.templateDescription"
-                label="Description"
+                :label="$t('common.description')"
                 variant="outlined"
                 rows="4"
                 density="comfortable"
-                placeholder="Provide a description for your template"
+                :placeholder="$t('TestDialog.template.description')"
                 class="mb-4"
               />
               <v-checkbox
                 v-model="template.isTemplatePublic"
-                label="Make template public to all users"
+                :label="$t('TestDialog.template.public')"
                 color="primary"
                 hide-details
                 class="mt-0 pt-0"
@@ -145,10 +145,10 @@
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Basic Information
+                  {{ $t('pages.settings.basic_information') }}
                 </h3>
                 <p class="text-caption text-grey-darken-1">
-                  Configure the fundamental details of your test
+                  {{ $t('pages.settings.configure_test_details') }}
                 </p>
               </div>
             </div>
@@ -181,10 +181,10 @@
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Advanced Settings
+                  {{ $t('pages.settings.advanced_settings') }}
                 </h3>
                 <p class="text-caption text-grey-darken-1">
-                  Fine-tune your test configuration
+                  {{ $t('pages.settings.fine_tune_configuration') }}
                 </p>
               </div>
             </div>
@@ -198,10 +198,10 @@
                     >
                       mdi-earth
                     </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Public Access</span>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.public_access') }}</span>
                   </div>
                   <p class="text-caption text-grey-darken-1 mb-4">
-                    Allow users to view this test
+                    {{ $t('pages.settings.allow_users_view') }}
                   </p>
                   <v-switch
                     v-model="object.isPublic"
@@ -221,12 +221,12 @@
                     >
                       mdi-list-status
                     </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Test Status</span>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.test_status') }}</span>
                   </div>
                   <v-select
                     v-model="object.status"
                     :items="statusOptions"
-                    label="Select Status"
+                    :label="$t('pages.settings.select_status')"
                     variant="outlined"
                     density="comfortable"
                     hide-details
@@ -241,7 +241,7 @@
                     >
                       mdi-calendar
                     </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">End Date</span>
+                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.end_date') }}</span>
                   </div>
                   <v-menu
                     v-model="dateMenu"
@@ -254,7 +254,7 @@
                     <template v-slot:activator="{ props }">
                       <v-text-field
                         :model-value="formattedEndDate"
-                        label="Select End Date"
+                        :label="$t('pages.settings.select_end_date')"
                         variant="outlined"
                         density="comfortable"
                         readonly
@@ -293,10 +293,10 @@
           </div>
           <div>
             <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-              Quick Actions
+              {{ $t('pages.settings.quick_actions') }}
             </h3>
             <p class="text-caption text-grey-darken-1">
-              Perform common tasks instantly
+              {{ $t('pages.settings.perform_common_tasks') }}
             </p>
           </div>
         </div>
@@ -372,16 +372,16 @@
           </div>
           <div>
             <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
-              Confirm Deletion
+              {{ $t('pages.settings.confirm_deletion') }}
             </h3>
             <p class="text-subtitle-2 text-grey-darken-1">
-              This action cannot be undone
+              {{ $t('pages.settings.action_cannot_be_undone') }}
             </p>
           </div>
         </v-card-title>
         <v-card-text class="py-4 px-6">
           <p class="text-body-2 text-grey-darken-1">
-            {{ dialogText }} All associated data, results, and configurations will be lost forever.
+            {{ dialogText }} {{ $t('pages.settings.delete_warning') }}
           </p>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
@@ -409,7 +409,7 @@
             >
               mdi-delete
             </v-icon>
-            {{ $t('buttons.delete') }} Forever
+            {{ $t('pages.settings.delete_forever') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -479,15 +479,15 @@ const form1 = ref(null);
 const tempform = ref(null);
 
 const statusOptions = [
-  { title: 'Active', value: 'active' },
-  { title: 'Pending', value: 'pending' },
-  { title: 'Finished', value: 'finished' },
-  { title: 'Upcoming', value: 'upcoming' },
+  { title: t('studyCreation.details.status.active'), value: 'active' },
+  { title: t('studyCreation.details.status.pending'), value: 'pending' },
+  { title: t('studyCreation.details.status.finished'), value: 'finished' },
+  { title: t('studyCreation.details.status.upcoming'), value: 'upcoming' },
 ];
 
 const titleRequired = [
   v => !!v.trim() || t('errors.fieldRequired'),
-  v => v.length <= 200 || 'Max 200 characters',
+  v => v.length <= 200 || t('studyCreation.details.validation.max200Characters'),
 ];
 
 const localChanges = computed({
@@ -511,9 +511,9 @@ const reports = computed(() => store.getters.reports || []);
 const cooperators = computed(() => store.getters.cooperators || {});
 const dialogText = computed(() => {
   if (test.value) {
-    return `Are you sure you want to delete your test "${test.value.testTitle}"?`;
+    return t('alerts.deleteTest', { testTitle: test.value.testTitle });
   }
-  return "Are you sure you want to delete this test?";
+  return t('alerts.deleteTest');
 });
 const hasTemplate = computed(() => {
   if (object.value && 'template' in object.value) {
@@ -525,7 +525,6 @@ const hasTemplate = computed(() => {
 const formattedEndDate = computed(() => {
   if (object.value?.endDate) {
     try {
-      // Crear la fecha correctamente desde el string ISO
       const date = new Date(object.value.endDate + 'T00:00:00');
       if (isNaN(date.getTime())) {
         return '';
@@ -559,15 +558,12 @@ const datePickerModel = computed({
   }
 });
 
-// Helper function to create object based on test type
 const createObjectFromTest = (testData) => {
   if (!testData) return null;
 
-  // Check if this is an accessibility test (automatic or manual)
   const isAccessibilityTest = testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL';
   
   if (isAccessibilityTest) {
-    // Dynamic mapping for accessibility tests
     return {
       ...testData, 
       testTitle: testData.title || testData.testTitle || testData.name || '',
@@ -583,7 +579,6 @@ const createObjectFromTest = (testData) => {
       progress: testData.progress || testData.progressData || {}
     };
   } else {
-    
     return {
       ...testData,
     };
@@ -602,27 +597,23 @@ watch(
   { immediate: true }
 );
 
-
-
 onMounted(async () => {
   if (props.id) {
     try {
       console.log('Fetching test data for ID:', props.id);
-      // Always fetch the study data when component mounts
       await store.dispatch('getStudy', { id: props.id });
       
-      // Log the fetched test data
       const testData = store.getters.test;
       console.log('Fetched test data:', testData);
       if (!testData) {
-        toast.error('Test not found');
+        toast.error(t('errors.globalError'));
       }
     } catch (error) {
       console.error('Error fetching test data:', error);
-      toast.error('Failed to load test data');
+      toast.error(t('errors.globalError'));
     }
   } else {
-    toast.error('Test ID is missing');
+    toast.error(t('errors.globalError'));
   }
   
   loadingPage.value = false;
@@ -682,9 +673,9 @@ const submit = async () => {
       loading.value = false;
     }
   } else if (title.length >= 200) {
-    toast.warning('Title must not exceed 200 characters.');
+    toast.warning(t('studyCreation.details.validation.max200Characters'));
   } else {
-    toast.warning('Test must contain a title.');
+    toast.warning(t('studyCreation.details.validation.enterTitle'));
   }
 };
 
@@ -694,7 +685,6 @@ const preventNav = event => {
   event.returnValue = '';
 };
 
-// Function to fetch and log test data
 const fetchTestData = async () => {
   if (!props.id) {
     return;
@@ -703,26 +693,23 @@ const fetchTestData = async () => {
   try {
     loading.value = true;
     
-    // Dispatch the getStudy action
     await store.dispatch('getStudy', { id: props.id });
     
-    // Get the test data from store
     const testData = store.getters.test;
     
     if (testData) {
-      toast.success('Test data fetched successfully!');
+      toast.success(t('alerts.genericSuccess'));
     } else {
-      toast.warning('No test data found');
+      toast.warning(t('errors.globalError'));
     }
   } catch (error) {
     console.error('Error fetching test data:', error);
-    toast.error('Failed to fetch test data: ' + error.message);
+    toast.error(t('errors.globalError'));
   } finally {
     loading.value = false;
   }
 };
 
-// Function to log current component state
 const logCurrentState = () => {
   // This function can be used for debugging if needed
 };
@@ -734,10 +721,10 @@ const deleteStudy = async item => {
     delete auxUser.myTests[item.id];
     item.auxUser = auxUser;
     await store.dispatch('deleteStudy', item);
-    toast.success('Test deleted successfully!');
+    toast.success(t('alerts.genericSuccess'));
     router.push({ name: 'Admin' });
   } catch (error) {
-    toast.error('Failed to delete test.');
+    toast.error(t('errors.globalError'));
     console.error('Error deleting test:', error);
   } finally {
     loading.value = false;
@@ -748,7 +735,7 @@ const deleteStudy = async item => {
 const createTemplate = async () => {
   const { valid } = await tempform.value.validate();
   if (!valid) {
-    toast.warning('Please fill in the required fields.');
+    toast.warning(t('errors.fieldRequired'));
     return;
   }
 
@@ -777,10 +764,10 @@ const createTemplate = async () => {
     });
 
     await store.dispatch('createTemplate', templateObj);
-    toast.success('Template created successfully!');
+    toast.success(t('alerts.genericSuccess'));
     closeDialog();
   } catch (error) {
-    toast.error('Failed to create template.');
+    toast.error(t('errors.globalError'));
     console.error('Error creating template:', error);
   } finally {
     loading.value = false;
@@ -820,7 +807,7 @@ const duplicateStudy = async () => {
   loading.value = true;
   try {
     const rawData = {
-      testTitle: 'Copy of ' + test.value.testTitle,
+      testTitle: t('buttons.duplicateTest') + ' ' + test.value.testTitle,
       testDescription: test.value.testDescription,
       testType: test.value.testType,
       subType: test.value.subType,
@@ -843,10 +830,10 @@ const duplicateStudy = async () => {
       test: study,
       answer: testAnswerDocument.value,
     });
-    toast.success('Test duplicated successfully!');
+    toast.success(t('alerts.genericSuccess'));
     router.push('/admin');
   } catch (error) {
-    toast.error('Failed to duplicate test.');
+    toast.error(t('errors.globalError'));
     console.error('Error duplicating test:', error);
   } finally {
     loading.value = false;

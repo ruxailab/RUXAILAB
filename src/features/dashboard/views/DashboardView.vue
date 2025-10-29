@@ -29,7 +29,6 @@
         <div class="component-height">
           <ActiveStudies 
             :studies="items"
-            @update-total="totalParticipants = $event"
           />
         </div>
       </v-col>
@@ -61,7 +60,7 @@
         cols="12"
         lg="4"
       >
-        <NextSession :next-session="sessions" />
+        <NextSession  :next-session="nextSession" />
       </v-col>
     </v-row>
 
@@ -107,21 +106,75 @@ const props = defineProps({
 
 const store = useStore()
 
-const totalStudies = ref(12)
-const usedStorage = ref(150)
-const totalParticipants = ref(0)
+const totalStudies = ref(0);
+const usedStorage = ref(0);
+const totalParticipants = ref(0);
+const nextSession = ref(null);
 
 const userDisplayName = computed(() => {
-  const user = store.getters['auth/getUser']
-  if (user && user.displayName) {
-    return user.displayName.split(' ')[0]
-  }
-  return 'User'
-})
+  const user = store.getters.user;
+  return user?.username?.split(' ')[0] || 'User';
+});
 
-watch(() => props.items, (newVal) => {
-  totalStudies.value = newVal.length
-}, { immediate: true })
+const userStorageUsage = computed(() => {
+  const user = store.getters.user;
+  return user?.storageUsageMB || 0;
+});
+
+
+watch(
+  () => props.sessions,
+  (sessions) => {
+    if (!sessions?.length) {
+      nextSession.value = null;
+      return;
+    }
+
+    const now = new Date();
+    const futureSessions = sessions.filter((s) => new Date(s.testDate) > now);
+
+    if (!futureSessions.length) {
+      nextSession.value = null;
+      return;
+    }
+
+    futureSessions.sort((a, b) => new Date(a.testDate) - new Date(b.testDate));
+    nextSession.value = futureSessions[0];
+  },
+  { immediate: true, deep: true }
+);
+
+watch(
+  () => userStorageUsage.value,
+  (newVal) => {
+    usedStorage.value = parseFloat(newVal);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.items,
+  (newVal) => {
+    const user = store.getters.user;
+    if (!user || !newVal) {
+      totalStudies.value = 0;
+      totalParticipants.value = 0;
+      return;
+    }
+    // Filters only the studies created by the logged-in user
+    const userStudies = newVal.filter(
+      (study) => study?.testAdmin?.userDocId === user.id
+    );
+
+    // Updates total studies
+    totalStudies.value = userStudies.length;
+
+    // Counts the total unique participants (cooperators)
+    const participants = userStudies.flatMap((s) => s.cooperators || []);
+    totalParticipants.value = participants.length;
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>

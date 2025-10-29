@@ -633,11 +633,6 @@ const isMicrophoneEnabled = ref(true);
 const showSidePanel = ref(false);
 const showStepperPanel = ref(false);
 
-// Computed properties for stepper
-const hasEyeTracking = computed(() => {
-  return props.test?.testStructure?.userTasks?.some(task => task.hasEye) || false;
-});
-
 const currentStepperValue = computed(() => {
   const globalIndex = props.currentGlobalIndex;
   const taskIndex = props.currentTaskIndex || 0;
@@ -647,8 +642,8 @@ const currentStepperValue = computed(() => {
   if (globalIndex === 2 && taskIndex === 0) return 1; // PreTest
   if (globalIndex === 3 && taskIndex === 0) return 2; // PreTasks (informational screen)
   if (globalIndex === 4 && taskIndex >= 0) return 2;  // Tasks (same stepper value as PreTasks)
-  if (globalIndex === 5 && !props.localTestAnswer?.postTestCompleted) return 3; // PostTest
-  if (globalIndex === 6 && props.localTestAnswer?.postTestCompleted) return 4; // Completion
+  if (globalIndex === 5) return 3; // PostTest
+  if (globalIndex === 6) return 4; // Completion
   
   return 0;
 });

@@ -19,7 +19,7 @@
         <v-form
           ref="inviteForm"
           v-model="valid"
-          validate-on="lazy"
+          validate-on="input"
         >
           <v-row>
             <v-col cols="12" md="6" class="pr-md-8">

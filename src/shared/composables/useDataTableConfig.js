@@ -17,9 +17,15 @@ export function useDataTableConfig(type) {
             value: item => item.header?.templateTitle ?? item.testTitle ?? item.email
         },
         {
+            title: 'Tags',
+            key: 'tags',
+            align: 'start',
+            sortable: false,
+        },
+        {
             title: 'Owner',
             key: 'owner',
-            sortable: false,
+            sortable: true,
         },
     ])
 
@@ -34,6 +40,11 @@ export function useDataTableConfig(type) {
             key: 'status',
             sortable: true,
         })
+        headers.value.push({
+            title: 'Session Date',
+            key: 'testDate',
+            sortable: true,
+        },)
     }
 
     if (typeRef.value !== 'sessions' && typeRef.value !== 'myTemplates' && typeRef.value !== 'publicTemplates') {
@@ -45,6 +56,13 @@ export function useDataTableConfig(type) {
             value: item => item.numberColaborators ?? 0
         })
     }
+
+    headers.value.push(
+        {
+            title: 'Created',
+            key: 'creationDate',
+            sortable: true,
+        })
 
     const getEmptyStateMessage = (t) => {
         const currentType = typeRef.value

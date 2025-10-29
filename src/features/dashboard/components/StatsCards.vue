@@ -21,6 +21,7 @@
               />
             </div>
             <div class="text-right">
+              <!--STUDIES WHERE USER IS TESTADMIN -->
               <div class="stats-value">
                 {{ totalStudies }}/50
               </div>
@@ -54,6 +55,7 @@
               />
             </div>
             <div class="text-right">
+               <!--STORAGE USED BY USER -->
               <div class="stats-value">
                 {{ usedStorage }}/500MB
               </div>
@@ -119,6 +121,7 @@
                 color="secondary"
               />
             </div>
+             <!-- COOPERATORS FROM STUDIES WHERE USER IS TESTADMIN -->
             <div class="text-right">
               <div class="stats-value">
                 {{ totalParticipants }}

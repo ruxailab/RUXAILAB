@@ -25,7 +25,7 @@
       #subtitle
     >
       <p class="text-body-1 text-grey-darken-1">
-        Manage people who participate in your study
+        {{ $t('HeuristicsCooperators.subtitles.manage_participants') }}
       </p>
     </template>
     <!-- Main Content -->
@@ -119,11 +119,9 @@ import EmailController from '../controllers/EmailController';
 import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 
-
 const uidgen = new UIDGenerator();
 const router = useRouter();
 
-// Props
 const props = defineProps({
   id: {
     type: String,
@@ -143,17 +141,14 @@ const props = defineProps({
   }
 });
 
-// Emits
 const emit = defineEmits(['open-invite-dialog'])
 
-// Stores
 const store = useStore();
 const route = useRoute();
 const slots = useSlots();
 const toast = useToast();
 const { t } = useI18n();
 
-// Use composables
 const {
   roleOptions
 } = useCooperatorUtils();
@@ -164,7 +159,6 @@ const {
   handleInvitationCancellation,
 } = useCooperatorActions();
 
-// Direct notification helper
 const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null, author } = {}) => {
   const notification = new Notification({
     title,
@@ -187,7 +181,6 @@ const sendNotification = async ({ userId, title, description, redirectsTo = '/',
   }
 };
 
-// Variables
 let showIntroComponent = ref(true);
 const inviteMessages = ref('');
 const verified = ref(false);
@@ -201,7 +194,6 @@ const showIntroView = computed(() => {
   return (cooperatorsEdit.value.length <= 0) && showIntroComponent.value;
 });
 
-// Computeds
 const dialog = computed(() => store.getters.getDialogLeaveStatus);
 const test = computed(() => store.getters.test);
 const userAuth = computed(() => store.getters.user);
@@ -209,7 +201,6 @@ const users = computed(() => store.state.Users?.users || []);
 const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
 const loading = computed(() => store.getters.loading);
 
-// Methods
 const openMessageDialog = (item) => {
   selectedUser.value = item;
   messageModel.value = true;
@@ -234,7 +225,7 @@ const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
   await emailController.send({
     to: guest.email,
-    subject: 'You have been invited to evaluate a test!',
+    subject: t('HeuristicsCooperators.actions.send_invitation'),
     attachments: [],
     template: 'invite',
     data: {
@@ -340,17 +331,17 @@ const sendMenssages = async (guest) => {
 const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
     let path = '';
-    let title = 'Cooperation Invite!';
-    let description = `You have been invited to test ${test.value.testTitle || 'a study'}!`;
+    let title = t('HeuristicsCooperators.actions.send_invitation');
+    let description = t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') });
 
     if (test.value.testType === 'MANUAL') {
       path = `accessibility/manual/preview/${test.value.id}`;
-      title = 'Manual Accessibility Test Invitation';
-      description = `You have been invited to participate in a manual accessibility evaluation for "${test.value.testTitle || 'a study'}". Please click to start the test.`;
+      title = t('studyCreation.methods.accessibility.manual_testing.name') + ' ' + t('HeuristicsCooperators.actions.send_invitation');
+      description = t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') });
     } else if (test.value.testType === 'AUTOMATIC') {
       path = `accessibility/automatic/preview/${test.value.id}`;
-      title = 'Automatic Accessibility Test Invitation';
-      description = `You have been invited to view the automatic accessibility report for "${test.value.testTitle || 'a study'}". Click to view the results.`;
+      title = t('studyCreation.methods.accessibility.automatic_testing.name') + ' ' + t('HeuristicsCooperators.actions.send_invitation');
+      description = t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') });
     }
 
     if (guest.userDocId && path) {
@@ -386,8 +377,8 @@ const notifyCooperator = (guest) => {
 
     sendNotification({
       userId: guest.userDocId,
-      title: 'Cooperation Invite!',
-      description: inviteMessages.value || `You have been invited to test ${test.value.testTitle || 'a study'}!`,
+      title: t('HeuristicsCooperators.actions.send_invitation'),
+      description: inviteMessages.value || t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') }),
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
@@ -433,7 +424,6 @@ watch(loading, (newVal) => {
   }
 });
 
-// Watch for test data changes
 watch(test, (newTest) => {
   // Test data watcher for reactivity
 }, { immediate: true });
