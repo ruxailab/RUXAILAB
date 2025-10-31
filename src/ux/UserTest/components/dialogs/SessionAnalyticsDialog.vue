@@ -22,14 +22,14 @@
                         </div>
 
                         <div class="video-box screen-video-box video-rect-box" style="position: relative;">
-                            <video ref="mainVideo2" class="video-rect-skeleton" controls
+                            <video ref="mainVideo2" class="video-rect-skeleton"
                                 :poster="taskAnswer?.screenPoster ?? defaultPosters.screen">
                                 <source :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen" type="video/mp4" />
                             </video>
 
-                            <EyeTrackingOverlay v-if="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
-                                :predictedData="predictedData" :current-time="videoCurrentTime"
-                                :is-playing="isPlaying" />
+                            <EyeTrackingOverlay v-show="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
+                                :predictedData="predictedData" :current-time="videoCurrentTime" :is-playing="isPlaying"
+                                :view-mode="selectedView" />
                         </div>
                     </v-col>
 
@@ -54,7 +54,7 @@
                                 <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
-                                    @predictions-ready="predictedData = $event, console.log('Predictions ready', $event)"
+                                    @predictions-ready="predictedData = $event" @view-changed="selectedView = $event"
                                     class="mb-4" />
                             </v-window-item>
 
@@ -121,6 +121,7 @@ const videoDuration = ref(0)
 const videoCurrentTime = ref(0)
 let rafId = null
 const predictedData = ref(null)
+const selectedView = ref('precision')
 
 const defaultVideos = {
     evaluator: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
