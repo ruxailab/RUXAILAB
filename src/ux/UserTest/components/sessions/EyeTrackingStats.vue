@@ -23,7 +23,7 @@
         <div class="mb-6">
             <div class="text-caption text-grey-darken-1 mb-2">Visualization Style</div>
             <v-btn-toggle v-model="selectedView" color="primary" rounded="lg" group>
-                <v-btn value="prediction" class="px-4">
+                <v-btn value="precision" class="px-4">
                     <v-icon start>mdi-crosshairs-gps</v-icon> Prediction Points
                 </v-btn>
                 <v-btn value="heatmap" class="px-4">
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import axios from 'axios'
 import { useStore } from 'vuex';
 
@@ -56,9 +56,13 @@ const props = defineProps({
 
 const store = useStore();
 const calibrationConfig = computed(() => store.state.Tests.Test.calibrationConfig || {})
-const selectedView = ref('prediction')
+const selectedView = ref('precision')
 const predictedData = ref(null)
-const emit = defineEmits(['predictions-ready']);
+const emit = defineEmits(['predictions-ready', 'view-changed']);
+
+watch(selectedView, (value) => {
+    emit('view-changed', value)
+})
 
 onMounted(async () => {
     try {
