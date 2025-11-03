@@ -390,6 +390,8 @@ const notifyCooperator = (guest) => {
       path = `/accessibility/manual/preview/${test.value.id}`;
     } else if(test.value.subType === 'ACCESSIBILITY_AUTOMATIC'){
       path = `/accessibility/automatic/reports/${test.value.id}`;
+    }else if(test.value.subType==='ACCESSIBILITY_AI_ASSISTED'){
+      path = `/accessibility/aiassisted/answers/${test.value.id}`;
     }
 
     sendNotification({
