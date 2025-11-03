@@ -516,22 +516,21 @@ const downloadAnchorSenseReport = () => {
 };
 
 const downloadImgTipReport = () => {
-  if (!imgTipResults.value?.images) return;
+  if (!imgTipResults.value?.issues) return;
 
   // Create a comprehensive text report
   let report = '=== ImgTagTip Analysis Report ===\n\n';
   report += `Analyzed: ${analysisResult.value.inputType === 'url' ? analysisResult.value.url : analysisResult.value.sourceFileName}\n`;
   report += `Date: ${new Date().toLocaleString()}\n`;
-  report += `Total Images: ${imgTipResults.value.total_images}\n`;
-  report += `Issues Found: ${imgTipResults.value.issues_found}\n\n`;
-  report += '=== Image Analysis ===\n\n';
+  report += `Total Issues: ${imgTipResults.value.total_issues || 0}\n`;
+  report += `Status: ${imgTipResults.value.passed ? 'Passed' : 'Failed'}\n\n`;
+  report += '=== Issues Found ===\n\n';
   
-  imgTipResults.value.images.forEach((image, index) => {
-    report += `${index + 1}. Image Analysis\n`;
-    report += `   Current Alt: ${image.current_alt || 'None'}\n`;
-    report += `   Suggested Alt: ${image.suggested_alt || 'N/A'}\n`;
-    report += `   Source: ${image.src}\n`;
-    report += `   Status: ${image.has_issue ? 'Needs Improvement' : 'OK'}\n\n`;
+  imgTipResults.value.issues.forEach((issue, index) => {
+    report += `${index + 1}. ${issue.issue}\n`;
+    report += `   Module: ${issue.module}\n`;
+    report += `   Element: ${issue.element}\n`;
+    report += `   Help: ${issue.help}\n\n`;
   });
 
   const blob = new Blob([report], { type: 'text/plain' });

@@ -440,25 +440,25 @@ const generatePDF = async (toolType) => {
 
         const tableData = toolData.issues.map((issue, index) => [
           index + 1,
-          issue.anchor_text || 'N/A',
-          issue.href || 'N/A',
-          issue.issue_type || 'N/A',
-          issue.ai_suggestion || 'No suggestion'
+          issue.module || 'linkalt',
+          issue.issue?.substring(0, 60) || 'N/A',
+          issue.element?.substring(0, 80) || 'N/A',
+          issue.help?.substring(0, 80) || 'No suggestion'
         ]);
 
         autoTable(doc, {
           startY: yPos,
-          head: [['#', 'Anchor Text', 'href', 'Issue Type', 'AI Suggestion']],
+          head: [['#', 'Module', 'Issue', 'Element', 'How to Fix']],
           body: tableData,
           theme: 'grid',
           headStyles: { fillColor: color },
           styles: { fontSize: 8, cellPadding: 2 },
           columnStyles: {
             0: { cellWidth: 10 },
-            1: { cellWidth: 35 },
-            2: { cellWidth: 40 },
-            3: { cellWidth: 30 },
-            4: { cellWidth: 60 }
+            1: { cellWidth: 25 },
+            2: { cellWidth: 45 },
+            3: { cellWidth: 50 },
+            4: { cellWidth: 45 }
           }
         });
       }
@@ -474,33 +474,33 @@ const generatePDF = async (toolType) => {
       yPos += 12;
 
       // Images Table
-      if (toolData.images && toolData.images.length > 0) {
+      if (toolData.issues && toolData.issues.length > 0) {
         doc.setFont(undefined, 'bold');
         doc.setFontSize(12);
         doc.text('Image Alt Text Issues', 14, yPos);
         yPos += 6;
 
-        const tableData = toolData.images.map((img, index) => [
+        const tableData = toolData.issues.map((issue, index) => [
           index + 1,
-          img.src ? img.src.substring(0, 50) + '...' : 'N/A',
-          img.current_alt || 'Missing',
-          img.suggested_alt || 'No suggestion',
-          img.issue_type || 'N/A'
+          issue.module || 'imagealt',
+          issue.issue?.substring(0, 50) || 'N/A',
+          issue.element?.substring(0, 60) || 'N/A',
+          issue.help?.substring(0, 70) || 'No suggestion'
         ]);
 
         autoTable(doc, {
           startY: yPos,
-          head: [['#', 'Image Source', 'Current Alt', 'Suggested Alt', 'Issue']],
+          head: [['#', 'Module', 'Issue', 'Element', 'How to Fix']],
           body: tableData,
           theme: 'grid',
           headStyles: { fillColor: color },
           styles: { fontSize: 8, cellPadding: 2 },
           columnStyles: {
             0: { cellWidth: 10 },
-            1: { cellWidth: 45 },
-            2: { cellWidth: 35 },
+            1: { cellWidth: 25 },
+            2: { cellWidth: 40 },
             3: { cellWidth: 50 },
-            4: { cellWidth: 35 }
+            4: { cellWidth: 50 }
           }
         });
       }
@@ -652,46 +652,46 @@ const generateCombinedPDF = async () => {
         } else if (tool.key === 'anchor_sense' && toolData.issues && toolData.issues.length > 0) {
           const tableData = toolData.issues.slice(0, 20).map((issue, index) => [
             index + 1,
-            (issue.anchor_text || '').substring(0, 30),
-            issue.issue_type || 'N/A',
-            (issue.ai_suggestion || '').substring(0, 50)
+            issue.module || 'linkalt',
+            (issue.issue || '').substring(0, 40),
+            (issue.help || '').substring(0, 50)
           ]);
 
           autoTable(doc, {
             startY: yPos,
-            head: [['#', 'Anchor Text', 'Issue Type', 'AI Suggestion']],
+            head: [['#', 'Module', 'Issue', 'How to Fix']],
             body: tableData,
             theme: 'grid',
             headStyles: { fillColor: tool.color },
             styles: { fontSize: 8, cellPadding: 2 },
             columnStyles: {
               0: { cellWidth: 10 },
-              1: { cellWidth: 45 },
-              2: { cellWidth: 40 },
-              3: { cellWidth: 70 }
+              1: { cellWidth: 30 },
+              2: { cellWidth: 60 },
+              3: { cellWidth: 65 }
             }
           });
           yPos = doc.lastAutoTable.finalY + 15;
-        } else if (tool.key === 'img_tip' && toolData.images && toolData.images.length > 0) {
-          const tableData = toolData.images.slice(0, 20).map((img, index) => [
+        } else if (tool.key === 'img_tip' && toolData.issues && toolData.issues.length > 0) {
+          const tableData = toolData.issues.slice(0, 20).map((issue, index) => [
             index + 1,
-            (img.src || '').substring(0, 30),
-            (img.current_alt || 'N/A').substring(0, 30),
-            (img.suggested_alt || 'N/A').substring(0, 40)
+            issue.module || 'imagealt',
+            (issue.issue || '').substring(0, 40),
+            (issue.help || '').substring(0, 50)
           ]);
 
           autoTable(doc, {
             startY: yPos,
-            head: [['#', 'Image Source', 'Current Alt', 'Suggested Alt']],
+            head: [['#', 'Module', 'Issue', 'How to Fix']],
             body: tableData,
             theme: 'grid',
             headStyles: { fillColor: tool.color },
             styles: { fontSize: 8, cellPadding: 2 },
             columnStyles: {
               0: { cellWidth: 10 },
-              1: { cellWidth: 45 },
-              2: { cellWidth: 50 },
-              3: { cellWidth: 60 }
+              1: { cellWidth: 30 },
+              2: { cellWidth: 60 },
+              3: { cellWidth: 65 }
             }
           });
           yPos = doc.lastAutoTable.finalY + 15;
