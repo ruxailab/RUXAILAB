@@ -38,6 +38,31 @@
 
         <!-- Analysis Results -->
         <div v-if="analysisResult && !loading">
+          <!-- Summary Card -->
+          <v-card variant="outlined" class="mb-4">
+            <v-card-text class="pa-4">
+              <div class="d-flex align-center justify-space-between mb-3">
+                <div>
+                  <h3 class="text-h6 mb-1">Analysis Progress</h3>
+                  <p class="text-body-2 text-grey">
+                    Source: 
+                    <strong v-if="analysisResult.inputType === 'url'">{{ analysisResult.url }}</strong>
+                    <strong v-else>{{ analysisResult.sourceFileName }}</strong>
+                  </p>
+                </div>
+                <v-chip :color="getProgressIconColor()" size="large">
+                  {{ completionPercentage }}% Complete
+                </v-chip>
+              </div>
+              <v-progress-linear
+                :model-value="completionPercentage"
+                :color="getProgressIconColor()"
+                height="8"
+                rounded
+              />
+            </v-card-text>
+          </v-card>
+
           <!-- Step 1: Tool Selection (if no tool selected) -->
           <ToolSelector 
             v-if="!selectedTool"
@@ -165,11 +190,49 @@
             @back="selectedTool = null"
           />
 
+          <!-- Add action buttons for AnchorSense -->
+          <div v-if="selectedTool === 'anchor_sense' && anchorSenseResults" class="mt-4">
+            <v-card variant="outlined">
+              <v-card-text class="pa-4">
+                <div class="d-flex flex-wrap gap-2">
+                  <v-btn color="green" prepend-icon="mdi-download" @click="downloadAnchorSenseReport">
+                    Export Report
+                  </v-btn>
+                  <v-btn color="grey" variant="outlined" prepend-icon="mdi-arrow-left" @click="selectedTool = null">
+                    Back to Tool Selection
+                  </v-btn>
+                  <v-btn color="grey" variant="outlined" prepend-icon="mdi-refresh" @click="goToExamine">
+                    New Analysis
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+
           <ImgTagTipResult
             v-if="selectedTool === 'img_tip' && imgTipResults"
             :results="imgTipResults"
             @back="selectedTool = null"
           />
+
+          <!-- Add action buttons for ImgTagTip -->
+          <div v-if="selectedTool === 'img_tip' && imgTipResults" class="mt-4">
+            <v-card variant="outlined">
+              <v-card-text class="pa-4">
+                <div class="d-flex flex-wrap gap-2">
+                  <v-btn color="green" prepend-icon="mdi-download" @click="downloadImgTipReport">
+                    Export Report
+                  </v-btn>
+                  <v-btn color="grey" variant="outlined" prepend-icon="mdi-arrow-left" @click="selectedTool = null">
+                    Back to Tool Selection
+                  </v-btn>
+                  <v-btn color="grey" variant="outlined" prepend-icon="mdi-refresh" @click="goToExamine">
+                    New Analysis
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
         </div>
         
         <!-- Back Button -->
@@ -251,7 +314,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import ToolSelector from '@/ux/accessibility/components/aiassisted/ToolSelector.vue';
@@ -275,23 +338,65 @@ const analysisResult = computed(() => store.getters['aiAssistedResults/currentRe
 const toolStatus = computed(() => store.getters['aiAssistedResults/toolStatus']);
 const completionPercentage = computed(() => store.getters['aiAssistedResults/completionPercentage']);
 
-// Get individual tool results
-const chromaCheckResults = computed(() => store.getters['aiAssistedResults/chromaCheckResults']);
-const anchorSenseResults = computed(() => store.getters['aiAssistedResults/anchorSenseResults']);
-const imgTipResults = computed(() => store.getters['aiAssistedResults/imgTipResults']);
+// Get individual tool results with proper null handling
+const chromaCheckResults = computed(() => {
+  const result = store.getters['aiAssistedResults/chromaCheckResults'];
+  console.log('ChromaCheck Results:', result);
+  return result;
+});
+
+const anchorSenseResults = computed(() => {
+  const result = store.getters['aiAssistedResults/anchorSenseResults'];
+  console.log('AnchorSense Results:', result);
+  return result;
+});
+
+const imgTipResults = computed(() => {
+  const result = store.getters['aiAssistedResults/imgTipResults'];
+  console.log('ImgTagTip Results:', result);
+  return result;
+});
+
+// Watch for route changes and reload data
+watch(() => route.params.id, async (newId) => {
+  if (newId) {
+    await loadAnalysisResults();
+  }
+}, { immediate: false });
 
 // Load analysis result on mount
 onMounted(async () => {
+  await loadAnalysisResults();
+});
+
+const loadAnalysisResults = async () => {
   loading.value = true;
+  error.value = null;
+  
   try {
     await store.dispatch('aiAssistedResults/loadResult', testId.value);
+    
+    // Debug: Log the loaded result
+    console.log('Analysis Result Loaded:', analysisResult.value);
+    console.log('Tool Status:', toolStatus.value);
+    
+    // Auto-select tool if only one is completed
+    if (!selectedTool.value) {
+      const completedTools = Object.entries(toolStatus.value)
+        .filter(([_, completed]) => completed)
+        .map(([tool, _]) => tool);
+      
+      if (completedTools.length === 1) {
+        selectedTool.value = completedTools[0];
+      }
+    }
   } catch (err) {
     console.error('Error loading analysis result:', err);
-    error.value = 'Failed to load analysis results';
+    error.value = 'Failed to load analysis results. Please try again.';
   } finally {
     loading.value = false;
   }
-});
+};
 
 const getProgressColor = () => {
   const percentage = completionPercentage.value;
@@ -375,6 +480,65 @@ const downloadMarkedHtmlFromAnswers = () => {
   const a = document.createElement('a');
   a.href = url;
   a.download = 'chromacheck_report.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+const downloadAnchorSenseReport = () => {
+  if (!anchorSenseResults.value?.issues) return;
+
+  // Create a comprehensive text report
+  let report = '=== AnchorSense Analysis Report ===\n\n';
+  report += `Analyzed: ${analysisResult.value.inputType === 'url' ? analysisResult.value.url : analysisResult.value.sourceFileName}\n`;
+  report += `Date: ${new Date().toLocaleString()}\n`;
+  report += `Total Issues: ${anchorSenseResults.value.total_issues}\n`;
+  report += `Status: ${anchorSenseResults.value.passed ? 'Passed' : 'Failed'}\n\n`;
+  report += '=== Issues Found ===\n\n';
+  
+  anchorSenseResults.value.issues.forEach((issue, index) => {
+    report += `${index + 1}. ${issue.issue}\n`;
+    report += `   Module: ${issue.module}\n`;
+    report += `   Element: ${issue.element}\n`;
+    report += `   Help: ${issue.help}\n\n`;
+  });
+
+  const blob = new Blob([report], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `anchorsense_report_${new Date().getTime()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+const downloadImgTipReport = () => {
+  if (!imgTipResults.value?.images) return;
+
+  // Create a comprehensive text report
+  let report = '=== ImgTagTip Analysis Report ===\n\n';
+  report += `Analyzed: ${analysisResult.value.inputType === 'url' ? analysisResult.value.url : analysisResult.value.sourceFileName}\n`;
+  report += `Date: ${new Date().toLocaleString()}\n`;
+  report += `Total Images: ${imgTipResults.value.total_images}\n`;
+  report += `Issues Found: ${imgTipResults.value.issues_found}\n\n`;
+  report += '=== Image Analysis ===\n\n';
+  
+  imgTipResults.value.images.forEach((image, index) => {
+    report += `${index + 1}. Image Analysis\n`;
+    report += `   Current Alt: ${image.current_alt || 'None'}\n`;
+    report += `   Suggested Alt: ${image.suggested_alt || 'N/A'}\n`;
+    report += `   Source: ${image.src}\n`;
+    report += `   Status: ${image.has_issue ? 'Needs Improvement' : 'OK'}\n\n`;
+  });
+
+  const blob = new Blob([report], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `imgtip_report_${new Date().getTime()}.txt`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

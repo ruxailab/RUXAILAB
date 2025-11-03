@@ -71,118 +71,90 @@
                 <v-card variant="outlined" class="mb-4">
                   <v-card-title class="bg-green-lighten-5">
                     <v-icon icon="mdi-chart-box" class="mr-2" />
-                    Analysis Results
+                    Analysis Summary
                   </v-card-title>
-                  <v-card-text class="pa-6">
-                    <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-card color="blue-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-image" color="blue" size="x-large" />
-                            <h3 class="text-h3">{{ results.total_images || 0 }}</h3>
-                            <p class="text-caption">Total Images</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-card color="red-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-alert" color="red" size="x-large" />
-                            <h3 class="text-h3">{{ results.missing_alt || 0 }}</h3>
-                            <p class="text-caption">Missing Alt Text</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-card color="green-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-check-circle" color="green" size="x-large" />
-                            <h3 class="text-h3">{{ results.has_alt || 0 }}</h3>
-                            <p class="text-caption">Has Alt Text</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                    </v-row>
+                  <v-card-text class="pa-4">
+                    <div class="d-flex flex-wrap align-center gap-3">
+                      <div class="d-flex align-center px-3 py-2 rounded" :class="results.passed ? 'bg-green-lighten-5' : 'bg-red-lighten-5'">
+                        <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" :color="results.passed ? 'green' : 'red'" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Overall Status</div>
+                          <div>{{ results.passed ? 'Passed' : 'Issues Found' }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-orange-lighten-5">
+                        <v-icon icon="mdi-alert" color="orange" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Total Issues</div>
+                          <div>{{ results.total_issues }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-green-lighten-5">
+                        <v-icon icon="mdi-image-text" color="green" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Images Analyzed</div>
+                          <div>{{ results.issues?.length || 0 }}</div>
+                        </div>
+                      </div>
+                    </div>
                   </v-card-text>
                 </v-card>
 
-                <!-- Images with Issues -->
-                <v-card v-if="results.images?.length > 0" variant="outlined" class="mb-4">
+                <!-- Issues List -->
+                <v-card v-if="(results.issues?.length || 0) > 0" variant="outlined" class="mb-4">
                   <v-card-title class="bg-orange-lighten-5">
                     <v-icon icon="mdi-image-alert" class="mr-2" />
-                    Images Requiring Alt Text ({{ results.images.length }})
+                    Image Alt Text Issues ({{ results.issues.length }})
                   </v-card-title>
                   <v-card-text class="pa-4">
-                    <v-row>
-                      <v-col
-                        v-for="(image, index) in results.images"
+                    <v-expansion-panels>
+                      <v-expansion-panel
+                        v-for="(issue, index) in results.issues"
                         :key="index"
-                        cols="12"
-                        md="6"
                       >
-                        <v-card variant="outlined" class="mb-3">
-                          <v-card-text>
-                            <div class="d-flex gap-3">
-                              <div v-if="image.src" class="flex-shrink-0">
-                                <v-img
-                                  :src="image.src"
-                                  width="120"
-                                  height="120"
-                                  cover
-                                  class="rounded"
-                                >
-                                  <template #error>
-                                    <v-icon icon="mdi-image-broken" size="large" />
-                                  </template>
-                                </v-img>
-                              </div>
-                              <div class="flex-grow-1">
-                                <div class="mb-2">
-                                  <v-chip
-                                    :color="image.has_alt ? 'green' : 'red'"
-                                    size="small"
-                                    class="mr-2"
-                                  >
-                                    {{ image.has_alt ? 'Has Alt' : 'Missing Alt' }}
-                                  </v-chip>
-                                </div>
-                                
-                                <div class="mb-2">
-                                  <strong>Current Alt:</strong>
-                                  <p class="text-body-2">
-                                    {{ image.current_alt || '(empty)' }}
-                                  </p>
-                                </div>
+                        <v-expansion-panel-title>
+                          <div class="d-flex align-center gap-3">
+                            <v-chip color="orange" size="small">
+                              {{ issue.module || 'imagealt' }}
+                            </v-chip>
+                            <span class="font-weight-medium">{{ issue.issue }}</span>
+                          </div>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
+                          <div class="pa-2">
+                            <p class="text-body-2 mb-3"><strong>Issue:</strong> {{ issue.issue }}</p>
+                            
+                            <v-card variant="outlined" class="mb-3">
+                              <v-card-text>
+                                <strong>Current HTML:</strong>
+                                <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.element }}</pre>
+                              </v-card-text>
+                            </v-card>
 
-                                <v-divider class="my-2" />
-
-                                <div class="mb-2">
-                                  <div class="d-flex align-center mb-1">
-                                    <v-icon icon="mdi-brain" size="small" color="green" class="mr-1" />
-                                    <strong>AI Suggestion:</strong>
-                                  </div>
-                                  <v-card color="green-lighten-5" variant="flat" class="pa-2">
-                                    <p class="text-body-2">
-                                      {{ image.suggested_alt || 'No suggestion available' }}
-                                    </p>
-                                  </v-card>
+                            <v-card color="green-lighten-5" variant="outlined" class="mb-3">
+                              <v-card-text>
+                                <div class="d-flex align-center mb-2">
+                                  <v-icon icon="mdi-lightbulb" color="green" class="mr-2" />
+                                  <strong>How to Fix:</strong>
                                 </div>
+                                <p class="text-body-2">{{ issue.help }}</p>
+                              </v-card-text>
+                            </v-card>
+                          </div>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </v-card-text>
+                </v-card>
 
-                                <v-text-field
-                                  v-if="image.src"
-                                  :model-value="image.src"
-                                  label="Image Source"
-                                  density="compact"
-                                  readonly
-                                  variant="outlined"
-                                  class="mt-2"
-                                />
-                              </div>
-                            </div>
-                          </v-card-text>
-                        </v-card>
-                      </v-col>
-                    </v-row>
+                <!-- No Issues Found -->
+                <v-card v-else variant="outlined" class="mb-4">
+                  <v-card-text class="text-center pa-8">
+                    <v-icon icon="mdi-check-circle" size="80" color="green" class="mb-4" />
+                    <h3 class="text-h5 mb-3">No Issues Found!</h3>
+                    <p class="text-body-1">All images have proper alternative text.</p>
                   </v-card-text>
                 </v-card>
 
@@ -195,7 +167,7 @@
                         prepend-icon="mdi-download"
                         @click="downloadReport"
                       >
-                        Download Report
+                        Export Report
                       </v-btn>
                       <v-btn
                         color="grey"
@@ -239,7 +211,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useStore()
 
-const API_BASE_URL = 'http://localhost:8000'
+const API_BASE_URL = process.env.VUE_APP_AI_ACCESSIBILITY_API
 
 // Get saved input from sessionStorage
 const inputType = ref('')
@@ -293,7 +265,7 @@ const analyzeUrl = async () => {
   results.value = null
 
   try {
-    const response = await fetch(`${API_BASE_URL}/imgtagtip/analyze-url`, {
+    const response = await fetch(`${API_BASE_URL}/altsense/analyze-website-images/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -307,7 +279,14 @@ const analyzeUrl = async () => {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`)
     }
 
-    results.value = await response.json()
+    const apiData = await response.json()
+    
+    // Transform API response to our format
+    results.value = {
+      issues: apiData,
+      total_issues: apiData.length,
+      passed: apiData.length === 0
+    }
     
     // Save results to Firebase
     await saveResultsToFirebase(results.value)
@@ -337,7 +316,7 @@ const analyzeFile = async () => {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch(`${API_BASE_URL}/imgtagtip/analyze-file`, {
+    const response = await fetch(`${API_BASE_URL}/altsense/analyze-file/`, {
       method: 'POST',
       body: formData
     })
@@ -346,7 +325,14 @@ const analyzeFile = async () => {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`)
     }
 
-    results.value = await response.json()
+    const apiData = await response.json()
+    
+    // Transform API response to our format
+    results.value = {
+      issues: apiData,
+      total_issues: apiData.length,
+      passed: apiData.length === 0
+    }
     
     // Save results to Firebase
     await saveResultsToFirebase(results.value)
@@ -388,21 +374,28 @@ const saveResultsToFirebase = async (imgTipData) => {
 }
 
 const downloadReport = () => {
-  if (!results.value) return
+  if (!results.value?.issues) return
 
-  const reportData = {
-    analysis_date: new Date().toISOString(),
-    total_images: results.value.total_images,
-    missing_alt: results.value.missing_alt,
-    has_alt: results.value.has_alt,
-    images: results.value.images
-  }
+  // Create a simple text report
+  let report = '=== ImgTagTip / AltSense Analysis Report ===\n\n'
+  report += `Analyzed: ${inputType.value === 'url' ? inputUrl.value : inputFileName.value}\n`
+  report += `Date: ${new Date().toLocaleString()}\n`
+  report += `Total Issues: ${results.value.total_issues}\n`
+  report += `Status: ${results.value.passed ? 'Passed' : 'Failed'}\n\n`
+  report += '=== Issues Found ===\n\n'
+  
+  results.value.issues.forEach((issue, index) => {
+    report += `${index + 1}. ${issue.issue}\n`
+    report += `   Module: ${issue.module}\n`
+    report += `   Element: ${issue.element}\n`
+    report += `   Help: ${issue.help}\n\n`
+  })
 
-  const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' })
+  const blob = new Blob([report], { type: 'text/plain' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = 'imgtagtip_report.json'
+  a.download = 'imgtip_report.txt'
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
@@ -436,6 +429,12 @@ const goBackToInputSelection = () => {
 </script>
 
 <style scoped>
+pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.85rem;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }

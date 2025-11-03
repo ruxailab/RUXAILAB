@@ -122,9 +122,9 @@ export default class AIAssistedResult {
      */
     updateImgTip(imgTipData) {
         this.img_tip = {
-            images: imgTipData.images || [],
-            total_images: imgTipData.total_images || 0,
-            issues_found: imgTipData.issues_found || 0,
+            issues: imgTipData.issues || [],
+            total_issues: imgTipData.total_issues || 0,
+            passed: imgTipData.passed || false,
             analyzed_at: new Date().toISOString()
         };
 
@@ -154,7 +154,7 @@ export default class AIAssistedResult {
         }
 
         if (this.img_tip) {
-            total += this.img_tip.issues_found || 0;
+            total += this.img_tip.total_issues || 0;
         }
 
         this.totalIssues = total;
@@ -202,7 +202,7 @@ export default class AIAssistedResult {
             isFullyAnalyzed: this.isFullyAnalyzed(),
             chromaIssues: this.chroma_check?.total_issues || 0,
             anchorIssues: this.anchor_sense?.total_issues || 0,
-            imgTipIssues: this.img_tip?.issues_found || 0,
+            imgTipIssues: this.img_tip?.total_issues || 0,
             lastAnalyzed: this.lastAnalyzedTool,
             updatedAt: this.updatedAt
         };

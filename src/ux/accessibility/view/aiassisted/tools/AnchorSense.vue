@@ -7,87 +7,48 @@
       <v-col cols="12">
         <v-card>
           <v-card-text class="pa-6">
-            <!-- Step 1: Input Method Selection -->
-            <v-card variant="outlined" class="mb-4">
-              <v-card-title class="bg-blue-lighten-5">
-                <v-icon icon="mdi-numeric-1-circle" class="mr-2" />
-                Step 1: Choose Input Method
-              </v-card-title>
-              <v-card-text class="pa-6">
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-card 
-                      :class="{ 'selected-input': inputMethod === 'url' }" 
-                      variant="outlined"
-                      hover
-                      @click="inputMethod = 'url'"
-                      class="input-card"
-                    >
-                      <v-card-text class="text-center pa-4">
-                        <v-icon icon="mdi-web" size="x-large" color="blue" />
-                        <h4 class="text-h6 mt-2">Webpage URL</h4>
-                        <p class="text-caption">Enter a website URL to analyze</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-card 
-                      :class="{ 'selected-input': inputMethod === 'file' }" 
-                      variant="outlined"
-                      hover
-                      @click="inputMethod = 'file'"
-                      class="input-card"
-                    >
-                      <v-card-text class="text-center pa-4">
-                        <v-icon icon="mdi-file-code" size="x-large" color="blue" />
-                        <h4 class="text-h6 mt-2">HTML File</h4>
-                        <p class="text-caption">Upload an HTML file</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-
-                <!-- URL Input -->
-                <v-expand-transition>
-                  <div v-if="inputMethod === 'url'" class="mt-4">
-                    <v-text-field
-                      v-model="urlInput"
-                      label="Enter Website URL"
-                      placeholder="https://example.com"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-link"
-                      @keyup.enter="startAnalysis"
-                    />
-                  </div>
-                </v-expand-transition>
-
-                <!-- File Input -->
-                <v-expand-transition>
-                  <div v-if="inputMethod === 'file'" class="mt-4">
-                    <v-file-input
-                      v-model="selectedFile"
-                      label="Upload HTML File"
-                      accept=".html,.htm"
-                      variant="outlined"
-                      prepend-icon="mdi-paperclip"
-                    />
-                  </div>
-                </v-expand-transition>
-
-                <div class="text-center mt-4">
-                  <v-btn
-                    color="blue"
-                    size="large"
-                    :loading="loading"
-                    :disabled="!canAnalyze"
-                    prepend-icon="mdi-play"
-                    @click="startAnalysis"
-                  >
-                    Start Analysis
-                  </v-btn>
+            <!-- Input Display -->
+            <v-alert type="info" variant="tonal" class="mb-4">
+              <div class="d-flex align-center justify-space-between">
+                <div>
+                  <strong>Analyzing:</strong>
+                  <span v-if="inputType === 'url'"> {{ inputUrl }}</span>
+                  <span v-else> {{ inputFileName }}</span>
                 </div>
+                <v-btn
+                  size="small"
+                  variant="text"
+                  prepend-icon="mdi-arrow-left"
+                  @click="goBackToInputSelection"
+                >
+                  Change Input
+                </v-btn>
+              </div>
+            </v-alert>
+
+            <!-- Start Analysis Button -->
+            <v-card v-if="!loading && !results" variant="outlined" class="mb-4">
+              <v-card-text class="text-center pa-8">
+                <v-icon icon="mdi-link-variant" size="80" color="blue" class="mb-4" />
+                <h3 class="text-h5 mb-3">Ready to Analyze Anchor Tags</h3>
+                <p class="text-body-1 mb-6">
+                  AnchorSense will scan your {{ inputType === 'url' ? 'webpage' : 'HTML file' }} for link accessibility issues
+                </p>
+                <v-btn
+                  color="blue"
+                  size="x-large"
+                  prepend-icon="mdi-play"
+                  @click="startAnalysis"
+                >
+                  Start AnchorSense Analysis
+                </v-btn>
               </v-card-text>
             </v-card>
+
+            <!-- Error Display -->
+            <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
+              <strong>Error:</strong> {{ error }}
+            </v-alert>
 
             <!-- Loading State -->
             <v-card v-if="loading" variant="outlined" class="mb-4">
@@ -103,112 +64,84 @@
               </v-card-text>
             </v-card>
 
-            <!-- Error Display -->
-            <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
-              <strong>Error:</strong> {{ error }}
-            </v-alert>
-
-            <!-- Results (Demo) -->
+            <!-- Results Display -->
             <v-expand-transition>
-              <div v-if="showResults && !loading">
-                <!-- Summary -->
+              <div v-if="results && !loading">
+                <!-- Summary Stats -->
                 <v-card variant="outlined" class="mb-4">
                   <v-card-title class="bg-blue-lighten-5">
                     <v-icon icon="mdi-chart-box" class="mr-2" />
-                    Analysis Results
+                    Analysis Summary
                   </v-card-title>
-                  <v-card-text class="pa-6">
-                    <v-row>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="blue-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-link-variant" color="blue" size="x-large" />
-                            <h3 class="text-h3">{{ demoResults.totalLinks }}</h3>
-                            <p class="text-caption">Total Links</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="orange-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-alert" color="orange" size="x-large" />
-                            <h3 class="text-h3">{{ demoResults.issuesFound }}</h3>
-                            <p class="text-caption">Issues Found</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="green-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-check-circle" color="green" size="x-large" />
-                            <h3 class="text-h3">{{ demoResults.aiSuggestions }}</h3>
-                            <p class="text-caption">AI Suggestions</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-card color="purple-lighten-5" class="pa-4">
-                          <div class="text-center">
-                            <v-icon icon="mdi-auto-fix" color="purple" size="x-large" />
-                            <h3 class="text-h3">{{ demoResults.autoFixable }}</h3>
-                            <p class="text-caption">Auto-Fixable</p>
-                          </div>
-                        </v-card>
-                      </v-col>
-                    </v-row>
+                  <v-card-text class="pa-4">
+                    <div class="d-flex flex-wrap align-center gap-3">
+                      <div class="d-flex align-center px-3 py-2 rounded" :class="results.passed ? 'bg-green-lighten-5' : 'bg-red-lighten-5'">
+                        <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" :color="results.passed ? 'green' : 'red'" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Overall Status</div>
+                          <div>{{ results.passed ? 'Passed' : 'Issues Found' }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-orange-lighten-5">
+                        <v-icon icon="mdi-alert" color="orange" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Total Issues</div>
+                          <div>{{ results.total_issues }}</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-center px-3 py-2 rounded bg-blue-lighten-5">
+                        <v-icon icon="mdi-link-variant" color="blue" class="mr-2" />
+                        <div class="text-body-2">
+                          <div class="font-weight-medium">Links Analyzed</div>
+                          <div>{{ results.issues?.length || 0 }}</div>
+                        </div>
+                      </div>
+                    </div>
                   </v-card-text>
                 </v-card>
 
                 <!-- Issues List -->
-                <v-card variant="outlined" class="mb-4">
+                <v-card v-if="(results.issues?.length || 0) > 0" variant="outlined" class="mb-4">
                   <v-card-title class="bg-orange-lighten-5">
                     <v-icon icon="mdi-alert-circle" class="mr-2" />
-                    Anchor Tag Issues ({{ demoResults.issues.length }})
+                    Anchor Tag Issues ({{ results.issues.length }})
                   </v-card-title>
                   <v-card-text class="pa-4">
                     <v-expansion-panels>
                       <v-expansion-panel
-                        v-for="(issue, index) in demoResults.issues"
+                        v-for="(issue, index) in results.issues"
                         :key="index"
                       >
                         <v-expansion-panel-title>
                           <div class="d-flex align-center gap-3">
-                            <v-chip :color="issue.severity" size="small">
-                              {{ issue.severity }}
+                            <v-chip color="orange" size="small">
+                              {{ issue.module || 'linkalt' }}
                             </v-chip>
-                            <span class="font-weight-medium">{{ issue.type }}</span>
+                            <span class="font-weight-medium">{{ issue.issue }}</span>
                           </div>
                         </v-expansion-panel-title>
                         <v-expansion-panel-text>
                           <div class="pa-2">
-                            <p class="text-body-2 mb-3">{{ issue.description }}</p>
+                            <p class="text-body-2 mb-3"><strong>Issue:</strong> {{ issue.issue }}</p>
                             
                             <v-card variant="outlined" class="mb-3">
                               <v-card-text>
                                 <strong>Current HTML:</strong>
-                                <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.html }}</pre>
+                                <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.element }}</pre>
                               </v-card-text>
                             </v-card>
 
                             <v-card color="green-lighten-5" variant="outlined" class="mb-3">
                               <v-card-text>
                                 <div class="d-flex align-center mb-2">
-                                  <v-icon icon="mdi-robot" color="green" class="mr-2" />
-                                  <strong>AI Suggestion:</strong>
+                                  <v-icon icon="mdi-lightbulb" color="green" class="mr-2" />
+                                  <strong>How to Fix:</strong>
                                 </div>
-                                <p class="text-body-2">{{ issue.aiSuggestion }}</p>
-                                <pre class="mt-2 pa-2 bg-white rounded">{{ issue.suggestedFix }}</pre>
+                                <p class="text-body-2">{{ issue.help }}</p>
                               </v-card-text>
                             </v-card>
-
-                            <div class="d-flex gap-2">
-                              <v-btn color="green" size="small" prepend-icon="mdi-check">
-                                Apply Fix
-                              </v-btn>
-                              <v-btn color="grey" size="small" variant="outlined">
-                                Ignore
-                              </v-btn>
-                            </div>
                           </div>
                         </v-expansion-panel-text>
                       </v-expansion-panel>
@@ -216,17 +149,28 @@
                   </v-card-text>
                 </v-card>
 
+                <!-- No Issues Found -->
+                <v-card v-else variant="outlined" class="mb-4">
+                  <v-card-text class="text-center pa-8">
+                    <v-icon icon="mdi-check-circle" size="80" color="green" class="mb-4" />
+                    <h3 class="text-h5 mb-3">No Issues Found!</h3>
+                    <p class="text-body-1">All anchor tags are properly accessible.</p>
+                  </v-card-text>
+                </v-card>
+
                 <!-- Action Buttons -->
                 <v-card variant="outlined">
                   <v-card-text class="pa-4">
                     <div class="d-flex flex-wrap gap-2">
-                      <v-btn color="green" prepend-icon="mdi-download">
+                      <v-btn color="green" prepend-icon="mdi-download" @click="downloadReport">
                         Export Report
                       </v-btn>
-                      <v-btn color="blue" prepend-icon="mdi-code-tags">
-                        Generate Fixed HTML
-                      </v-btn>
-                      <v-btn color="grey" variant="outlined" prepend-icon="mdi-refresh" @click="resetAnalysis">
+                      <v-btn
+                        color="grey"
+                        variant="outlined"
+                        prepend-icon="mdi-refresh"
+                        @click="resetAnalysis"
+                      >
                         New Analysis
                       </v-btn>
                     </div>
@@ -263,18 +207,17 @@ const route = useRoute()
 const router = useRouter()
 const store = useStore()
 
+const API_BASE_URL = process.env.VUE_APP_AI_ACCESSIBILITY_API
+
 // Get saved input from sessionStorage
 const inputType = ref('')
 const inputUrl = ref('')
 const inputFileName = ref('')
 const inputFileContent = ref('')
 
-const inputMethod = ref('url')
-const urlInput = ref('')
-const selectedFile = ref(null)
 const loading = ref(false)
 const error = ref(null)
-const showResults = ref(false)
+const results = ref(null)
 const saving = ref(false)
 
 const testId = computed(() => route.params.id)
@@ -285,12 +228,9 @@ onMounted(() => {
   
   if (inputType.value === 'url') {
     inputUrl.value = sessionStorage.getItem('ai_examine_url') || ''
-    urlInput.value = inputUrl.value
-    inputMethod.value = 'url'
   } else if (inputType.value === 'file') {
     inputFileName.value = sessionStorage.getItem('ai_examine_file_name') || ''
     inputFileContent.value = sessionStorage.getItem('ai_examine_file_content') || ''
-    inputMethod.value = 'file'
   }
 
   // Redirect back if no input provided
@@ -302,61 +242,102 @@ onMounted(() => {
   }
 })
 
-const canAnalyze = computed(() => {
-  if (inputMethod.value === 'url') return urlInput.value.trim() !== ''
-  if (inputMethod.value === 'file') return selectedFile.value !== null
-  return false
-})
+const startAnalysis = () => {
+  if (inputType.value === 'url') {
+    analyzeUrl()
+  } else {
+    analyzeFile()
+  }
+}
 
-// Demo results
-const demoResults = ref({
-  totalLinks: 24,
-  issuesFound: 5,
-  aiSuggestions: 5,
-  autoFixable: 3,
-  issues: [
-    {
-      type: 'Missing aria-label',
-      severity: 'orange',
-      description: 'Link has no descriptive text or aria-label for screen readers',
-      html: '<a href="/products"><i class="icon-cart"></i></a>',
-      aiSuggestion: 'Add an aria-label attribute to describe the link purpose',
-      suggestedFix: '<a href="/products" aria-label="View shopping cart"><i class="icon-cart"></i></a>'
-    },
-    {
-      type: 'Non-descriptive link text',
-      severity: 'yellow',
-      description: 'Link text "click here" is not descriptive',
-      html: '<a href="/about">Click here</a>',
-      aiSuggestion: 'Replace generic text with descriptive content about the destination',
-      suggestedFix: '<a href="/about">Learn more about our company</a>'
-    },
-    {
-      type: 'Empty link',
-      severity: 'red',
-      description: 'Link has no content and no aria-label',
-      html: '<a href="/search"></a>',
-      aiSuggestion: 'Add descriptive text or icon with aria-label',
-      suggestedFix: '<a href="/search" aria-label="Search"><i class="icon-search"></i></a>'
-    }
-  ]
-})
-
-const startAnalysis = async () => {
-  if (!canAnalyze.value) return
+const analyzeUrl = async () => {
+  if (!inputUrl.value) {
+    error.value = 'No URL provided'
+    return
+  }
 
   loading.value = true
   error.value = null
-  showResults.value = false
+  results.value = null
 
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 2000))
+  try {
+    const response = await fetch(`${API_BASE_URL}/linksense/analyze-links`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: inputUrl.value
+      })
+    })
 
-  loading.value = false
-  showResults.value = true
-  
-  // Save results to Firebase after demo analysis
-  await saveResultsToFirebase(demoResults.value)
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} - ${response.statusText}`)
+    }
+
+    const apiData = await response.json()
+    
+    // Transform API response to our format
+    results.value = {
+      issues: apiData,
+      total_issues: apiData.length,
+      passed: apiData.length === 0
+    }
+    
+    // Save results to Firebase
+    await saveResultsToFirebase(results.value)
+  } catch (err) {
+    error.value = `Failed to connect to AI service: ${err.message}. Please ensure the backend API is running on ${API_BASE_URL}`
+    console.error('API Error:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const analyzeFile = async () => {
+  if (!inputFileContent.value) {
+    error.value = 'No file content available'
+    return
+  }
+
+  loading.value = true
+  error.value = null
+  results.value = null
+
+  try {
+    // Create a File object from the stored content
+    const blob = new Blob([inputFileContent.value], { type: 'text/html' })
+    const file = new File([blob], inputFileName.value, { type: 'text/html' })
+    
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(`${API_BASE_URL}/linksense/analyze-file`, {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} - ${response.statusText}`)
+    }
+
+    const apiData = await response.json()
+    
+    // Transform API response to our format
+    results.value = {
+      issues: apiData,
+      total_issues: apiData.length,
+      passed: apiData.length === 0
+    }
+    
+    // Save results to Firebase
+    await saveResultsToFirebase(results.value)
+  } catch (err) {
+    error.value = `Failed to connect to AI service: ${err.message}. Please ensure the backend API is running on ${API_BASE_URL}`
+    console.error('API Error:', err)
+  } finally {
+    loading.value = false
+  }
 }
 
 const saveResultsToFirebase = async (anchorData) => {
@@ -366,11 +347,7 @@ const saveResultsToFirebase = async (anchorData) => {
   try {
     await store.dispatch('aiAssistedResults/saveAnchorSenseResult', {
       testId: testId.value,
-      anchorData: {
-        issues: anchorData.issues,
-        total_issues: anchorData.issuesFound,
-        passed: anchorData.issuesFound === 0
-      }
+      anchorData: anchorData
     })
     
     console.log('AnchorSense results saved to Firebase')
@@ -392,11 +369,45 @@ const saveResultsToFirebase = async (anchorData) => {
   }
 }
 
+const downloadReport = () => {
+  if (!results.value?.issues) return
+
+  // Create a simple text report
+  let report = '=== AnchorSense Analysis Report ===\n\n'
+  report += `Analyzed: ${inputType.value === 'url' ? inputUrl.value : inputFileName.value}\n`
+  report += `Date: ${new Date().toLocaleString()}\n`
+  report += `Total Issues: ${results.value.total_issues}\n`
+  report += `Status: ${results.value.passed ? 'Passed' : 'Failed'}\n\n`
+  report += '=== Issues Found ===\n\n'
+  
+  results.value.issues.forEach((issue, index) => {
+    report += `${index + 1}. ${issue.issue}\n`
+    report += `   Module: ${issue.module}\n`
+    report += `   Element: ${issue.element}\n`
+    report += `   Help: ${issue.help}\n\n`
+  })
+
+  const blob = new Blob([report], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'anchorsense_report.txt'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
 const resetAnalysis = () => {
-  urlInput.value = ''
-  selectedFile.value = null
-  showResults.value = false
+  results.value = null
   error.value = null
+}
+
+const goBack = () => {
+  router.push({
+    name: 'AIAssistedAccessibilityExamine',
+    params: { id: testId.value }
+  })
 }
 
 const goBackToInputSelection = () => {
@@ -406,13 +417,6 @@ const goBackToInputSelection = () => {
   sessionStorage.removeItem('ai_examine_file_name')
   sessionStorage.removeItem('ai_examine_file_content')
   
-  router.push({
-    name: 'AIAssistedAccessibilityExamine',
-    params: { id: testId.value }
-  })
-}
-
-const goBack = () => {
   router.push({
     name: 'AIAssistedAccessibilityExamine',
     params: { id: testId.value }

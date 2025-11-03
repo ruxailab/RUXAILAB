@@ -19,158 +19,94 @@
       <!-- Summary Stats -->
       <v-row class="mb-4">
         <v-col cols="12" sm="6" md="4">
-          <v-card color="blue-lighten-5" class="pa-4">
+          <v-card :color="results.passed ? 'green-lighten-5' : 'red-lighten-5'" class="pa-4">
             <div class="text-center">
-              <v-icon icon="mdi-image" color="blue" size="x-large" />
-              <h3 class="text-h3">{{ results.total_images || 0 }}</h3>
-              <p class="text-caption">Total Images</p>
+              <v-icon 
+                :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" 
+                :color="results.passed ? 'green' : 'red'"
+                size="x-large"
+              />
+              <h3 class="text-h6 mt-2">{{ results.passed ? 'Passed' : 'Failed' }}</h3>
+              <p class="text-caption">Overall Status</p>
             </div>
           </v-card>
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <v-card color="red-lighten-5" class="pa-4">
+          <v-card color="orange-lighten-5" class="pa-4">
             <div class="text-center">
-              <v-icon icon="mdi-alert" color="red" size="x-large" />
-              <h3 class="text-h3">{{ results.issues_found || 0 }}</h3>
+              <v-icon icon="mdi-alert" color="orange" size="x-large" />
+              <h3 class="text-h3">{{ results.total_issues || 0 }}</h3>
               <p class="text-caption">Issues Found</p>
             </div>
           </v-card>
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <v-card color="green-lighten-5" class="pa-4">
+          <v-card color="blue-lighten-5" class="pa-4">
             <div class="text-center">
-              <v-icon icon="mdi-check-circle" color="green" size="x-large" />
-              <h3 class="text-h3">{{ (results.total_images || 0) - (results.issues_found || 0) }}</h3>
-              <p class="text-caption">Has Alt Text</p>
+              <v-icon icon="mdi-image-text" color="blue" size="x-large" />
+              <h3 class="text-h3">{{ results.issues?.length || 0 }}</h3>
+              <p class="text-caption">Images Analyzed</p>
             </div>
           </v-card>
         </v-col>
       </v-row>
 
-      <!-- Images with Issues -->
-      <div v-if="results.images?.length > 0">
+      <!-- Issues List -->
+      <div v-if="results.issues?.length > 0">
         <v-divider class="mb-4" />
         <h3 class="text-h6 mb-3">
           <v-icon icon="mdi-image-alert" color="green" class="mr-2" />
-          Images Requiring Alt Text ({{ results.images.length }})
+          Image Alt Text Issues ({{ results.issues.length }})
         </h3>
         
-        <v-row>
-          <v-col
-            v-for="(image, index) in results.images"
+        <v-expansion-panels>
+          <v-expansion-panel
+            v-for="(issue, index) in results.issues"
             :key="index"
-            cols="12"
-            md="6"
-            lg="4"
           >
-            <v-card variant="outlined" class="image-card">
-              <v-card-text class="pa-4">
-                <!-- Image Preview -->
-                <div class="image-preview-container mb-3">
-                  <v-img
-                    v-if="image.src"
-                    :src="image.src"
-                    height="200"
-                    cover
-                    class="rounded"
-                  >
-                    <template #error>
-                      <div class="d-flex align-center justify-center fill-height bg-grey-lighten-3">
-                        <div class="text-center">
-                          <v-icon icon="mdi-image-broken" size="64" color="grey" />
-                          <p class="text-caption mt-2">Image not available</p>
-                        </div>
-                      </div>
-                    </template>
-                  </v-img>
-                  <div v-else class="no-image-placeholder">
-                    <v-icon icon="mdi-image-off" size="64" color="grey" />
-                    <p class="text-caption mt-2">No preview available</p>
-                  </div>
-                </div>
-
-                <!-- Status Badge -->
-                <div class="mb-3">
-                  <v-chip
-                    :color="image.has_alt ? 'green' : 'red'"
-                    size="small"
-                    class="mr-2"
-                  >
-                    <v-icon 
-                      :icon="image.has_alt ? 'mdi-check' : 'mdi-close'" 
-                      start 
-                      size="small"
-                    />
-                    {{ image.has_alt ? 'Has Alt Text' : 'Missing Alt Text' }}
-                  </v-chip>
-                </div>
+            <v-expansion-panel-title>
+              <div class="d-flex align-center gap-3">
+                <v-chip color="orange" size="small">
+                  {{ issue.module || 'imagealt' }}
+                </v-chip>
+                <span class="font-weight-medium">{{ issue.issue }}</span>
+              </div>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <div class="pa-2">
+                <p class="text-body-2 mb-3"><strong>Issue:</strong> {{ issue.issue }}</p>
                 
-                <!-- Current Alt Text -->
-                <div class="mb-3">
-                  <div class="text-subtitle-2 mb-1">
-                    <v-icon icon="mdi-text" size="small" class="mr-1" />
-                    Current Alt Text:
-                  </div>
-                  <v-card color="grey-lighten-4" variant="flat" class="pa-2">
-                    <p class="text-body-2 mb-0 text-grey-darken-1">
-                      {{ image.current_alt || '(empty)' }}
-                    </p>
-                  </v-card>
-                </div>
+                <v-card variant="outlined" class="mb-3">
+                  <v-card-text>
+                    <strong>Current HTML:</strong>
+                    <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.element }}</pre>
+                  </v-card-text>
+                </v-card>
 
-                <v-divider class="my-3" />
-
-                <!-- AI Suggestion -->
                 <div class="mb-3">
-                  <div class="text-subtitle-2 mb-2 d-flex align-center">
-                    <v-icon icon="mdi-brain" size="small" color="green" class="mr-1" />
-                    AI-Generated Suggestion:
+                  <div class="d-flex align-center mb-2">
+                    <v-icon icon="mdi-lightbulb" size="small" color="green" class="mr-1" />
+                    <strong>How to Fix:</strong>
                   </div>
                   <v-card color="green-lighten-5" variant="flat" class="pa-3">
-                    <p class="text-body-2 mb-0">
-                      {{ image.suggested_alt || 'No suggestion available' }}
-                    </p>
+                    <p class="text-body-2 mb-0">{{ issue.help }}</p>
                   </v-card>
-                  
-                  <v-btn
-                    v-if="image.suggested_alt"
-                    color="green"
-                    variant="text"
-                    size="small"
-                    class="mt-2"
-                    prepend-icon="mdi-content-copy"
-                    @click="copyToClipboard(image.suggested_alt)"
-                  >
-                    Copy Suggestion
-                  </v-btn>
                 </div>
 
-                <!-- Image Source -->
-                <v-text-field
-                  v-if="image.src"
-                  :model-value="image.src"
-                  label="Image Source URL"
-                  density="compact"
-                  readonly
-                  variant="outlined"
-                  hide-details
-                  class="text-caption"
+                <v-btn
+                  color="green"
+                  variant="text"
+                  size="small"
+                  class="mt-3"
+                  prepend-icon="mdi-content-copy"
+                  @click="copyToClipboard(issue.element)"
                 >
-                  <template #append-inner>
-                    <v-btn
-                      icon
-                      size="x-small"
-                      variant="text"
-                      @click="copyToClipboard(image.src)"
-                    >
-                      <v-icon size="small">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                </v-text-field>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+                  Copy Element Code
+                </v-btn>
+              </div>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </div>
 
       <!-- No Issues Found -->

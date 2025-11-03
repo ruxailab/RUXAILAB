@@ -65,40 +65,30 @@
           >
             <v-expansion-panel-title>
               <div class="d-flex align-center gap-3">
-                <v-chip :color="issue.severity" size="small">
-                  {{ issue.type }}
+                <v-chip color="orange" size="small">
+                  {{ issue.module || 'linkalt' }}
                 </v-chip>
-                <span class="font-weight-medium">{{ issue.description }}</span>
+                <span class="font-weight-medium">{{ issue.issue }}</span>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <div class="pa-2">
+                <p class="text-body-2 mb-3"><strong>Issue:</strong> {{ issue.issue }}</p>
+                
                 <v-card variant="outlined" class="mb-3">
                   <v-card-text>
                     <strong>Current HTML:</strong>
-                    <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.html }}</pre>
+                    <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.element }}</pre>
                   </v-card-text>
                 </v-card>
 
                 <div class="mb-3">
                   <div class="d-flex align-center mb-2">
-                    <v-icon icon="mdi-brain" size="small" color="blue" class="mr-1" />
-                    <strong>AI Suggestion:</strong>
+                    <v-icon icon="mdi-lightbulb" size="small" color="green" class="mr-1" />
+                    <strong>How to Fix:</strong>
                   </div>
-                  <v-card color="blue-lighten-5" variant="flat" class="pa-3">
-                    <p class="text-body-2 mb-0">{{ issue.aiSuggestion }}</p>
-                  </v-card>
-                </div>
-
-                <div>
-                  <div class="d-flex align-center mb-2">
-                    <v-icon icon="mdi-code-tags" size="small" color="green" class="mr-1" />
-                    <strong>Suggested Fix:</strong>
-                  </div>
-                  <v-card color="green-lighten-5" variant="flat">
-                    <v-card-text>
-                      <pre class="pa-2 mb-0">{{ issue.suggestedFix }}</pre>
-                    </v-card-text>
+                  <v-card color="green-lighten-5" variant="flat" class="pa-3">
+                    <p class="text-body-2 mb-0">{{ issue.help }}</p>
                   </v-card>
                 </div>
 
@@ -108,9 +98,9 @@
                   size="small"
                   class="mt-3"
                   prepend-icon="mdi-content-copy"
-                  @click="copyToClipboard(issue.suggestedFix)"
+                  @click="copyToClipboard(issue.element)"
                 >
-                  Copy Fixed Code
+                  Copy Element Code
                 </v-btn>
               </div>
             </v-expansion-panel-text>
