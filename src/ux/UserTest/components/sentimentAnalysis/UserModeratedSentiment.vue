@@ -1,19 +1,36 @@
 <template>
   <div>
     <div v-if="usersID">
-      <v-card flat class="task-container">
+      <v-card
+        flat
+        class="task-container"
+      >
         <v-row class="ma-0 pa-0">
           <!------------------------------------------------------------------------------------------------------------------------->
           <!--------------------------------------------- Answers List [Left] ------------------------------------------------------->
           <!------------------------------------------------------------------------------------------------------------------------->
-          <v-col class="ma-0 pa-0 task-list" cols="3">
-            <v-list density="compact" class="list-scroll">
+          <v-col
+            class="ma-0 pa-0 task-list"
+            cols="3"
+          >
+            <v-list
+              density="compact"
+              class="list-scroll"
+            >
               <v-list-subheader>Evaluators</v-list-subheader>
               <v-divider />
 
-              <v-list v-model:selected="selectedUserID" selection-mode="single">
-                <v-list-item v-for="(item, i) in usersID" :key="i" :value="item" :active="selectedUserID === item"
-                  @click="selectedUserID = item">
+              <v-list
+                v-model:selected="selectedUserID"
+                selection-mode="single"
+              >
+                <v-list-item
+                  v-for="(item, i) in usersID"
+                  :key="i"
+                  :value="item"
+                  :active="selectedUserID === item"
+                  @click="selectedUserID = item"
+                >
                   <v-list-item-title>
                     {{ getCooperatorEmail(item) }}
                     <!-- {{ item }} -->
@@ -27,65 +44,105 @@
           <!--------------------------------------------- Vertical Line [Split] ----------------------------------------------------->
           <!------------------------------------------------------------------------------------------------------------------------->
 
-          <v-divider vertical inset />
+          <v-divider
+            vertical
+            inset
+          />
 
           <!------------------------------------------------------------------------------------------------------------------------->
           <!---------------------------------------------------------- Body [Right] ------------------------------------------------->
           <!------------------------------------------------------------------------------------------------------------------------->
-          <v-col v-if="selectedAnswerDocument" class="ma-0 pa-1 answer-list" cols="9">
+          <v-col
+            v-if="selectedAnswerDocument"
+            class="ma-0 pa-1 answer-list"
+            cols="9"
+          >
             <!-- Co-operators -->
-            <ModeratedTestCard :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
-              :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }" />
+            <ModeratedTestCard
+              :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
+              :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }"
+            />
+ 
+              <h2>Tasks</h2>
+              <div class="mt-6" v-for="(task, index) in selectedAnswerDocument.tasks" :key="index">
+                <h3>Task {{ Number(index + 1) }}</h3>
+                {{ task }}
 
-            <h2>Tasks</h2>
-            <div class="mt-6" v-for="(task, index) in selectedAnswerDocument.tasks" :key="index">
-              <h3>Task {{ Number(index + 1) }}</h3>
-              {{ task }}
+                <!-- Audio Wave -->     
+                <AudioWave
+                  ref="audioWave"
+                  v-model:active-region="activeRegion"
+                  :file="task.audioRecordURL"
+                  :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []"
+                />
 
-              <!-- Audio Wave -->
-              <AudioWave :ref="i => audioWaveRefs[index] = i" v-model:active-region="activeRegion"
-                :file="task.audioRecordURL"
-                :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []" />
+                <!-- Audio Wave End Banner-->
+                <v-row class="align-center justify-space-between pa-3">
+                  <!-- Left Text -->
+                  <v-col
+                    cols="12"
+                    md="8"
+                  >
+                    <span class="text--secondary text-caption">
+                      Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
+                    </span>
+                  </v-col>
 
-              <!-- Audio Wave End Banner-->
-              <v-row class="align-center justify-space-between pa-3">
-                <!-- Left Text -->
-                <v-col cols="12" md="8">
-                  <span class="text--secondary text-caption">
-                    Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
-                  </span>
-                </v-col>
-
-                <!-- Right Controls -->
-                <v-col cols="12" md="4" class="text-right">
-                  <v-btn color="orange" class="text-white" @click="analyzeTimeStamp(task)">
-                    + Analyze
-                  </v-btn>
-                </v-col>
-              </v-row>
-              <v-divider class="my-4" />
+                  <!-- Right Controls -->
+                  <v-col
+                    cols="12"
+                    md="4"
+                    class="text-right"
+                  >
+                    <v-btn
+                      color="orange"
+                      class="text-white"
+                      @click="analyzeTimeStamp()"
+                    >
+                      + Analyze
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-divider class="my-4" />
             </div>
-
+            
             <!-- Segments Transcripts Sentiment -->
-            <SentimentTranscriptsList :play-segment="(start, end) => playSegmentInAudioWave(index, start, end)"
+            <SentimentTranscriptsList
+              :play-segment="playSegmentInAudioWave"
               :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []"
-              :delete-region="deleteRegion" />
+              :delete-region="deleteRegion"
+            />
           </v-col>
         </v-row>
       </v-card>
     </div>
 
-    <v-overlay :model-value="overlay.visible" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+    <v-overlay
+      :model-value="overlay.visible"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         {{ overlay.text }}
       </div>
     </v-overlay>
 
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" :timeout="4000">
+    <v-snackbar
+      v-model="snackbar.visible"
+      :color="snackbar.color"
+      :timeout="4000"
+    >
       {{ snackbar.text }}
       <template #actions>
-        <v-btn color="white" variant="text" @click="snackbar.visible = false">
+        <v-btn
+          color="white"
+          variant="text"
+          @click="snackbar.visible = false"
+        >
           Close
         </v-btn>
       </template>
@@ -116,7 +173,6 @@ export default {
   },
   data() {
     return {
-      audioWaveRefs: [],
       selectedUserID: null, // Will store the selected user ID
       selectedAnswerSentiment: null, // The sentiment state for the selectedUserID
       // Active Region Data
@@ -197,13 +253,8 @@ export default {
         this.selectedAnswerSentiment = null;
       }
     },
-    playSegmentInAudioWave(index, start, end) {
-      const wave = this.audioWaveRefs[index];
-      if (wave && wave.playSegment) {
-        wave.playSegment(start, end);
-      } else {
-        console.warn(`AudioWave ref not ready for index ${index}`);
-      }
+    playSegmentInAudioWave(start, end) {
+      this.$refs.audioWave.playSegment(start, end);
     },
     async deleteRegion(region) {
       if (!confirm('Are you sure you want to delete this region?')) return;
@@ -287,25 +338,20 @@ export default {
   font-size: 18px;
   font-weight: 600;
 }
-
 .list-scroll {
   height: 508px;
   overflow: auto;
 }
-
 .list-scroll::-webkit-scrollbar {
   width: 7px;
 }
-
 .list-scroll::-webkit-scrollbar-track {
   background: none;
 }
-
 .list-scroll::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 4px;
 }
-
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
