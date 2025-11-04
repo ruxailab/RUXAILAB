@@ -23,25 +23,25 @@
             <v-tab @click="tab = 1">
               Individual Analytics
             </v-tab>
-            <!-- <v-tab @click="tab = 2">
+            <v-tab v-if="showSentiment" @click="tab = 2">
               Sentiment Analysis
-            </v-tab> -->
+            </v-tab>
             <v-tab
               v-if="showSUS"
-              @click="tab = 2"
+              @click="tab = 3"
             >
               SUS Analytics
             </v-tab>
             <v-tab
               v-if="showNasa"
-              @click="tab = 3"
+              @click="tab = 4"
             >
               Nasa-TLX Analytics
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 4">
+            <v-tab v-if="showEye" @click="tab = 5">
               Eye-Tracking Analytics
             </v-tab>
-            <v-tab v-if="showTranscription" @click="tab = 5">
+            <v-tab v-if="showTranscription" @click="tab = 6">
               Transcriptions
             </v-tab>
           </v-tabs>
@@ -53,11 +53,11 @@
           >
             <GeneralAnalytics v-if="tab === 0" />
             <UserAnalytics v-if="tab === 1" />
-            <!-- <SentimentAnalysisView v-if="tab === 2" /> -->
-            <SusAnalytics v-if="tab === 2" />
-            <NasaTlxAnalytics v-if="tab === 3" />
-            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 4" />
-            <TranscriptionTool v-if="tab === 5" />
+            <SentimentAnalysisView v-if="tab === 2" />
+            <SusAnalytics v-if="tab === 3" />
+            <NasaTlxAnalytics v-if="tab === 4" />
+            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 5" />
+            <TranscriptionTool v-if="tab === 6" />
           </div>
         </template>
       </ShowInfo>
@@ -76,7 +76,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
 import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
-// import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
@@ -121,6 +121,13 @@ const showNasa = computed(() => {
     (task) => task.taskType === 'nasa-tlx'
   );
 });
+
+const showSentiment = computed(() => {
+   if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+    return true
+  }
+  return false
+})
 
 const showTranscription = computed(() => {
   if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {

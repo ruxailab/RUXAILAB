@@ -1,112 +1,73 @@
 <template>
   <div class="waveform-container">
-    <v-overlay
-      v-model="loading"
-      class="text-center"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
-      <div class="white-text mt-3">
-        Loading
-      </div>
+    <v-overlay v-model="loading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">Loading</div>
     </v-overlay>
 
-    <!-- Wave Reference -->
+    <!-- Container da waveform -->
     <div ref="waveform" />
 
-    <!-- Controls -->
-    <v-row
-      align="center"
-      no-gutters
-      class="controls-row"
-    >
+    <v-row align="center" no-gutters class="controls-row">
       <v-col cols="auto">
-        <v-btn
-          icon
-          @click="playPause"
-        >
+        <v-btn icon @click="playPause">
           <v-icon>{{ playing ? 'mdi-pause' : 'mdi-play' }}</v-icon>
         </v-btn>
       </v-col>
 
       <v-col cols="auto">
-        <v-btn @click="changeSpeed">
-          {{ speedText }}
-        </v-btn>
+        <v-btn @click="changeSpeed">{{ speedText }}</v-btn>
       </v-col>
 
-      <v-col
-        cols="auto"
-        class="volume-col"
-      >
+      <v-col cols="auto" class="volume-col">
         <v-icon>mdi-volume-high</v-icon>
-        <v-slider
-          v-model="volume"
-          min="0"
-          max="1"
-          step="0.01"
-          hide-details
-          class="volume-slider"
-          @update:model-value="setVolume"
-        />
+        <v-slider v-model="volume" min="0" max="1" step="0.01" hide-details class="volume-slider"
+          @update:model-value="setVolume" />
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
-import WaveSurfer from 'wavesurfer.js';
-import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
-import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js';
+import { ref, onMounted, onUnmounted, watch, nextTick, watchEffect } from 'vue'
+import { getStorage, ref as storageRef, getBlob } from 'firebase/storage'
+import WaveSurfer from 'wavesurfer.js'
+import RegionsPlugin from 'wavesurfer.js/plugins/regions'
+import TimelinePlugin from 'wavesurfer.js/plugins/timeline'
 
-// Define props
 const props = defineProps({
-  file: {
-    type: String,
-    required: false,
-    default: null,
-  },
-  regions: {
-    type: Array,
-    default: () => [],
-  },
-  activeRegion: {
-    type: Object,
-    required: true,
-  },
-});
+  file: { type: String, required: false, default: null },
+  regions: { type: Array, default: () => [] },
+  activeRegion: { type: Object, required: true },
+})
 
-// Define emits
-const emit = defineEmits(['update:activeRegion']);
+const emit = defineEmits(['update:activeRegion'])
 
-// Reactive state
-const wave_surfer = ref(null);
-const playing = ref(false);
-const volume = ref(1);
-const speedText = ref('1x');
-const loading = ref(false);
-const waveform = ref(null);
-const regionsPlugin = ref(null);
-const timelinePlugin = ref(null);
+const wave_surfer = ref(null)
+const waveform = ref(null)
+const playing = ref(false)
+const volume = ref(1)
+const speedText = ref('1x')
+const loading = ref(false)
+const regionsPlugin = ref(null)
+const timelinePlugin = ref(null)
+let objectURL = null
 
-// Initialize plugins
-regionsPlugin.value = RegionsPlugin.create();
-timelinePlugin.value = TimelinePlugin.create({ height: 12 });
-
-// Methods
-const initWaveSurfer = () => {
-  console.log('Initializing WaveSurfer...');
-
-  // 1. Delete existing instance if it exists
-  if (wave_surfer.value) {
-    wave_surfer.value.destroy();
+// ✅ Cria WaveSurfer apenas quando o container estiver renderizado
+const initWaveSurfer = async () => {
+  if (!waveform.value) {
+    console.warn('Esperando waveform container...')
+    await nextTick()
+    if (!waveform.value) return
   }
 
-  // 2. Create a new instance of WaveSurfer
+  if (wave_surfer.value) {
+    wave_surfer.value.destroy()
+  }
+
+  regionsPlugin.value = RegionsPlugin.create()
+  timelinePlugin.value = TimelinePlugin.create({ height: 12 })
+
   wave_surfer.value = WaveSurfer.create({
     container: waveform.value,
     waveColor: 'orange',
@@ -117,120 +78,142 @@ const initWaveSurfer = () => {
     minPxPerSec: 10,
     dragToSeek: true,
     plugins: [regionsPlugin.value, timelinePlugin.value],
-  });
+  })
 
-  // 3. Update play/pause state when WaveSurfer's playback state changes
-  wave_surfer.value.on('play', () => (playing.value = true));
-  wave_surfer.value.on('pause', () => (playing.value = false));
-
+  wave_surfer.value.on('play', () => (playing.value = true))
+  wave_surfer.value.on('pause', () => (playing.value = false))
   wave_surfer.value.on('ready', () => {
-    loading.value = false;
-    initializeRegions();
-  });
+    loading.value = false
+    initializeRegions()
+  })
 
-  loadAudioFile();
-};
+  await loadAudioFile()
+}
 
+// 🔊 Carrega o áudio via Firebase SDK
+const loadAudioFile = async () => {
+  if (!props.file) return
+
+  loading.value = true
+
+  try {
+    const storage = getStorage()
+    const audioRef = storageRef(storage, props.file)
+    const blob = await getBlob(audioRef)
+
+    if (objectURL) URL.revokeObjectURL(objectURL)
+    objectURL = URL.createObjectURL(blob)
+
+    if (wave_surfer.value) {
+      wave_surfer.value.stop()
+      wave_surfer.value.load(objectURL)
+    }
+  } catch (err) {
+    console.error('Erro ao carregar áudio:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// 🎨 Adiciona regiões
 const initializeRegions = () => {
-  if (!wave_surfer.value) return;
+  if (!wave_surfer.value || !regionsPlugin.value) return
 
-  // Remove any existing regions
-  regionsPlugin.value.getRegions().forEach((region) => region.remove());
+  regionsPlugin.value.getRegions().forEach((r) => r.remove())
 
-  // Add Regions
-  props.regions.forEach((region) => {
+  props.regions?.forEach((region) => {
     regionsPlugin.value.addRegion({
       start: region.start,
       end: region.end,
       color:
         region.sentiment === 'POS'
-          ? 'rgba(0, 255, 0, 0.2)' // Green color for positive sentiment
+          ? 'rgba(0, 255, 0, 0.2)'
           : region.sentiment === 'NEG'
-          ? 'rgba(255, 0, 0, 0.2)' // Red color for negative sentiment
-          : region.sentiment === 'NEU'
-          ? 'rgba(0, 0, 255, 0.2)' // Blue color for neutral sentiment
-          : 'rgba(0, 0, 0, 0.2)', // Default color
+            ? 'rgba(255, 0, 0, 0.2)'
+            : region.sentiment === 'NEU'
+              ? 'rgba(0, 0, 255, 0.2)'
+              : 'rgba(0, 0, 0, 0.2)',
       drag: false,
       resize: false,
-    });
-  });
+    })
+  })
 
-  // Add an active region
-  const initialRegion = regionsPlugin.value.addRegion({
-    start: props.activeRegion.start,
-    end: props.activeRegion.end,
-    color: 'rgba(0, 0, 255, 0.1)',
-    drag: true,
-    resize: true,
-  });
+  if (props.activeRegion) {
+    const r = regionsPlugin.value.addRegion({
+      start: props.activeRegion.start,
+      end: props.activeRegion.end,
+      color: 'rgba(0, 0, 255, 0.1)',
+      drag: true,
+      resize: true,
+    })
 
-  // Listen to updates on the region and emit the changes
-  initialRegion.on('update-end', () => {
-    emit('update:activeRegion', {
-      start: initialRegion.start,
-      end: initialRegion.end,
-    });
-  });
-};
-
-const loadAudioFile = () => {
-  if (!props.file) return;
-
-  loading.value = true;
-
-  if (wave_surfer.value) {
-    wave_surfer.value.stop();
-    wave_surfer.value.load(props.file);
+    r.on('update-end', () => {
+      emit('update:activeRegion', { start: r.start, end: r.end })
+    })
   }
-};
+}
 
+// ▶️ Controles
 const playPause = () => {
-  if (!wave_surfer.value) return;
-  wave_surfer.value.isPlaying() ? wave_surfer.value.pause() : wave_surfer.value.play();
-};
+  if (!wave_surfer.value) return
+  wave_surfer.value.isPlaying() ? wave_surfer.value.pause() : wave_surfer.value.play()
+}
+
+function playSegment(start, end) {
+  console.log(`Playing segment from ${start} to ${end}`)
+  if (!wave_surfer.value) return
+  wave_surfer.value.play(start, end)
+}
 
 const changeSpeed = () => {
-  const speeds = [0.5, 1, 1.5, 2];
-  let currentSpeedIndex = speeds.indexOf(wave_surfer.value.getPlaybackRate());
-  currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
-  const newSpeed = speeds[currentSpeedIndex];
-  wave_surfer.value.setPlaybackRate(newSpeed);
-  speedText.value = `${newSpeed}x`;
-};
+  if (!wave_surfer.value) return
+  const speeds = [0.5, 1, 1.5, 2]
+  let idx = speeds.indexOf(wave_surfer.value.getPlaybackRate())
+  idx = (idx + 1) % speeds.length
+  const newSpeed = speeds[idx]
+  wave_surfer.value.setPlaybackRate(newSpeed)
+  speedText.value = `${newSpeed}x`
+}
 
 const setVolume = () => {
-  if (wave_surfer.value) {
-    wave_surfer.value.setVolume(volume.value);
-  }
-};
+  if (wave_surfer.value) wave_surfer.value.setVolume(volume.value)
+}
 
-const playSegment = (start, end) => {
-  if (!wave_surfer.value) return;
-  console.log('playing segment', start, end);
+onMounted(async () => {
+  // 🕓 Aguarda o container ficar disponível reativamente
+  const stopWatcher = watchEffect(async () => {
+    if (waveform.value) {
+      await initWaveSurfer()
+      stopWatcher() // Para de observar depois que iniciou
+    }
+  })
 
-  wave_surfer.value.seekTo(start / wave_surfer.value.getDuration());
-  wave_surfer.value.play();
-};
+  // Recarrega se props mudarem
+  watch(
+    () => props.file,
+    async () => {
+      if (wave_surfer.value) await loadAudioFile()
+    }
+  )
 
-// Watchers
-watch(
-  () => props.file,
-  () => loadAudioFile()
-);
+  watch(
+    () => props.regions,
+    () => {
+      if (wave_surfer.value) initializeRegions()
+    },
+    { deep: true }
+  )
+})
 
-watch(
-  () => props.regions,
-  () => {
-    if (!wave_surfer.value) return;
-    initializeRegions();
-  },
-  { deep: true }
-);
+onUnmounted(() => {
+  if (objectURL) URL.revokeObjectURL(objectURL)
+  if (wave_surfer.value) wave_surfer.value.destroy()
+})
 
-// Lifecycle hooks
-onMounted(() => {
-  initWaveSurfer();
-});
+defineExpose({
+  playSegment
+})
+
 </script>
 
 <style scoped>
