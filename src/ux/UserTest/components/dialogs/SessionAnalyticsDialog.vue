@@ -14,15 +14,18 @@
                 <v-row class="mb-4">
                     <v-col cols="12" md="6">
                         <div class="video-box mb-2 video-rect-box" v-if="rightTab !== 'eye'">
-                            <video ref="mainVideo1" class="video-rect-skeleton" controls
+                            <video ref="mainVideo1" class="video-rect-skeleton" controls @timeupdate="onTimeUpdate"
+                                @loadedmetadata="onMetadataLoaded"
                                 :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator">
                                 <source :src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
                                     type="video/mp4" />
                             </video>
                         </div>
 
-                        <div class="video-box screen-video-box video-rect-box" style="position: relative;">
-                            <video ref="mainVideo2" class="video-rect-skeleton"
+                        <div class="video-box screen-video-box video-rect-box" style="position: relative;"
+                            v-if="rightTab !== 'sentimental'">
+                            <video ref="mainVideo2" class="video-rect-skeleton" @timeupdate="onTimeUpdate"
+                                @loadedmetadata="onMetadataLoaded"
                                 :poster="taskAnswer?.screenPoster ?? defaultPosters.screen">
                                 <source :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen" type="video/mp4" />
                             </video>
@@ -35,20 +38,20 @@
 
                     <v-col cols="12" md="6">
                         <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
-                            <v-tab value="general">General</v-tab>
+                            <!-- <v-tab value="general">General</v-tab> -->
                             <v-tab value="eye">Eye Tracker</v-tab>
                             <v-tab value="sentimental">Sentimental</v-tab>
-                            <v-tab value="transcript">Transcripción</v-tab>
-                            <v-tab value="notes">Notas</v-tab>
+                            <!-- <v-tab value="transcript">Transcripción</v-tab>
+                            <v-tab value="notes">Notas</v-tab> -->
                         </v-tabs>
 
                         <v-window v-model="rightTab" class="mt-4">
-                            <v-window-item value="general">
+                            <!-- <v-window-item value="general">
                                 <h4 class="text-subtitle-1 mb-1">General Analytics</h4>
                                 <TranscriptWordCloud :transcript="taskAnswer?.transcript ?? mockTranscript" />
                                 <SentimentSummary :sentiments="taskAnswer?.sentiments ?? mockSentiments" class="mb-4" />
                                 <NotesStats :totalNotes="taskAnswer?.notesCount ?? mockNotesCount" class="mb-4" />
-                            </v-window-item>
+                            </v-window-item> -->
 
                             <v-window-item value="eye">
                                 <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
@@ -64,7 +67,7 @@
                                 <v-skeleton-loader type="text" width="60%" />
                             </v-window-item>
 
-                            <v-window-item value="transcript">
+                            <!-- <v-window-item value="transcript">
                                 <h4 class="text-subtitle-1 mb-1">Audio Transcript</h4>
                                 <v-skeleton-loader type="text" width="80%" />
                                 <v-skeleton-loader type="text" width="60%" />
@@ -76,7 +79,7 @@
                                     <v-skeleton-loader type="text" width="80%" />
                                     <v-skeleton-loader type="text" width="60%" />
                                 </v-sheet>
-                            </v-window-item>
+                            </v-window-item> -->
                         </v-window>
                     </v-col>
                 </v-row>
@@ -99,7 +102,6 @@ import SessionTimeline from '../sessions/SessionTimeline.vue'
 import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import SentimentSummary from '../sessions/SentimentSummary.vue'
-import NotesStats from '../sessions/NotesStats.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 
 const props = defineProps({
@@ -113,7 +115,7 @@ const open = ref(props.modelValue)
 watch(() => props.modelValue, val => open.value = val)
 watch(open, val => emit('update:modelValue', val))
 
-const rightTab = ref('general')
+const rightTab = ref('eye')
 const mainVideo1 = ref(null)
 const mainVideo2 = ref(null)
 const isPlaying = ref(false)
@@ -136,11 +138,23 @@ const mockEyeTracking = { accuracy: 92, fixations: 34 }
 const mockSentiments = ['positivo', 'neutral', 'negativo']
 const mockNotesCount = 5
 
-const updateLoop = () => {
+function updateLoop() {
+    if (!isPlaying.value) return
     const video = mainVideo2.value
-    if (!video) return
+    if (video) {
+        videoCurrentTime.value = video.currentTime
+        rafId = requestAnimationFrame(updateLoop)
+    }
+}
+
+function onMetadataLoaded(event) {
+    const video = event.target
+    videoDuration.value = video.duration
+}
+
+function onTimeUpdate(event) {
+    const video = event.target
     videoCurrentTime.value = video.currentTime
-    if (!video.paused) rafId = requestAnimationFrame(updateLoop)
 }
 
 const togglePlay = () => {

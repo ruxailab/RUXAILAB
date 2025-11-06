@@ -228,12 +228,13 @@
 
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
-                      <v-expansion-panel v-if="dialogItem.tasks[taskSelect].irisTrackingData?.length > 0"
-                        @click.stop="openSessionAnalyticsDialog">
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down">
-                          Eye Tracking Analytics
+                      <v-expansion-panel readonly hide-actions @click.stop="openSessionAnalyticsDialog"
+                        class="cursor-pointer">
+                        <v-expansion-panel-title>
+                          Task Analytics
                         </v-expansion-panel-title>
                       </v-expansion-panel>
+
                       <v-expansion-panel v-if="dialogItem.tasks[taskSelect].webcamRecordURL">
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">Webcam
                           Recording</v-expansion-panel-title>
