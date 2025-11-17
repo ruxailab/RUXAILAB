@@ -257,7 +257,7 @@
         </v-toolbar>
         <v-card-text class="pa-0">
           <v-alert type="warning" variant="tonal" class="ma-4">
-            🔴 Red outlines indicate contrast issues. Hover over them to see details.
+            🔴 Red outlines indicate contrast issues. 🎯 Look for the pulsing red highlight for the specific issue you're inspecting.
           </v-alert>
           <iframe
             v-if="currentMarkedHtml"
@@ -300,6 +300,14 @@
           </v-alert>
 
           <div class="d-flex gap-2">
+            <v-btn 
+              color="green" 
+              prepend-icon="mdi-crosshairs-gps" 
+              @click="showMarkedHtmlWithSpecificIssue(selectedViolationCC)"
+              size="small"
+            >
+              Inspect This Issue
+            </v-btn>
             <v-btn v-if="selectedViolationCC?.help_url" :href="selectedViolationCC?.help_url" target="_blank" color="purple" variant="text" size="small">
               Learn More <v-icon icon="mdi-open-in-new" end />
             </v-btn>
@@ -421,6 +429,84 @@ const selectTool = (toolName) => {
 const showMarkedHtml = (markedHtml) => {
   currentMarkedHtml.value = markedHtml;
   showingMarkedHtmlDialog.value = true;
+};
+
+const showMarkedHtmlWithSpecificIssue = (violation) => {
+  if (!chromaCheckResults.value?.marked_html) return;
+  
+  let modifiedHtml = chromaCheckResults.value.marked_html;
+  
+  // Get the element HTML from the violation
+  const elementHtml = violation.element?.html;
+  if (elementHtml) {
+    // Create a unique highlight style for this specific issue
+    const highlightStyle = `
+      <style>
+        .specific-issue-highlight {
+          outline: 4px solid #ff1744 !important;
+          outline-offset: 2px !important;
+          background-color: rgba(255, 23, 68, 0.1) !important;
+          animation: pulse-highlight 2s infinite;
+          position: relative;
+          z-index: 9999 !important;
+        }
+        .specific-issue-highlight::before {
+          content: "🎯 CURRENT ISSUE";
+          position: absolute;
+          top: -30px;
+          left: 0;
+          background: #6228d7;
+          color: white;
+          padding: 4px 8px;
+          font-size: 12px;
+          font-weight: bold;
+          border-radius: 4px;
+          z-index: 10000;
+          animation: none;
+        }
+        @keyframes pulse-highlight {
+          0%, 100% { outline-color: #ff1744; }
+          50% { outline-color: #ff5722; }
+        }
+      </style>
+    `;
+    
+    // Add the style to the head of the HTML
+    modifiedHtml = modifiedHtml.replace('</head>', highlightStyle + '</head>');
+    
+    // Try to find and highlight the specific element
+    // We'll look for the exact HTML content and add our highlight class
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = elementHtml;
+    const tempElement = tempDiv.firstElementChild;
+    
+    if (tempElement) {
+      const tagName = tempElement.tagName.toLowerCase();
+      const attributes = Array.from(tempElement.attributes).map(attr => `${attr.name}="${attr.value}"`).join(' ');
+      
+      // Create a pattern to find this element in the marked HTML
+      const elementPattern = new RegExp(`<${tagName}[^>]*${attributes.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^>]*>`, 'gi');
+      
+      // Replace the first occurrence with the highlighted version
+      modifiedHtml = modifiedHtml.replace(elementPattern, (match) => {
+        return match.replace(`<${tagName}`, `<${tagName} class="specific-issue-highlight"`);
+      });
+    }
+  }
+  
+  currentMarkedHtml.value = modifiedHtml;
+  showingMarkedHtmlDialog.value = true;
+  
+  // Auto-scroll to the highlighted element after the dialog opens
+  setTimeout(() => {
+    const iframe = document.querySelector('iframe');
+    if (iframe && iframe.contentDocument) {
+      const highlightedElement = iframe.contentDocument.querySelector('.specific-issue-highlight');
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, 500);
 };
 
 // ChromaCheck table state and helpers (Answers page)
