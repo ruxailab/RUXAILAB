@@ -22,7 +22,7 @@ import EyeCalibrationSettings from "../models/EyeCalibrationSettings";
 const store = useStore();
 
 const offset = computed({
-    get: () => store.getters.test.calibrationConfig.offset ?? 100,
+    get: () => store.getters.test?.calibrationConfig?.offset ?? 100,
     set: (val) => {
         const config = new EyeCalibrationSettings({
             ...store.getters.test.calibrationConfig,
@@ -34,7 +34,7 @@ const offset = computed({
 });
 
 const pointNumber = computed({
-    get: () => store.getters.test.calibrationConfig.pointNumber ?? 8,
+    get: () => store.getters.test?.calibrationConfig?.pointNumber ?? 8,
     set: (val) => {
         const config = new EyeCalibrationSettings({
             ...store.getters.test.calibrationConfig,
@@ -46,7 +46,7 @@ const pointNumber = computed({
 });
 
 const backgroundColor = computed({
-    get: () => store.getters.test.calibrationConfig.backgroundColor ?? '#FFFFFFFF',
+    get: () => store.getters.test?.calibrationConfig?.backgroundColor ?? '#FFFFFFFF',
     set: (val) => {
         const config = new EyeCalibrationSettings({
             ...store.getters.test.calibrationConfig,

@@ -26,7 +26,7 @@ const radCanvas = ref(null)
 const radius = ref(20)
 
 const pointColor = computed({
-    get: () => store.getters.test.calibrationConfig.pointColor ?? '#000000FF',
+    get: () => store.getters.test?.calibrationConfig?.pointColor ?? '#000000FF',
     set: (value) => {
         const calibrationConfig = new EyeCalibrationSettings({
             ...store.getters.test.calibrationConfig,
@@ -77,7 +77,7 @@ const drawBall = (r, color) => {
 }
 
 onMounted(() => {
-    radius.value = store.getters.test.calibrationConfig.radius ?? 20
+    radius.value = store.getters.test?.calibrationConfig?.radius ?? 20
     drawBall(radius.value, pointColor.value)
 })
 </script>

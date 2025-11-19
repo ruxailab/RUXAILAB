@@ -9,18 +9,30 @@
                 </div>
             </v-col>
             <v-col cols="auto">
-                <v-chip :color="isAnalyzing ? 'grey' : 'primary'" variant="flat" prepend-icon="mdi-eye">
-                    {{ isAnalyzing ? 'Analyzing...' : 'Analysis Completed' }}
+                <v-chip :color="isAnalyzing ? 'grey' : hasError ? 'red-darken-2' : 'primary'" variant="flat"
+                    prepend-icon="mdi-eye">
+                    {{ isAnalyzing ? 'Analyzing...' : hasError ? 'Analysis Failed' : 'Analysis Completed' }}
                 </v-chip>
             </v-col>
         </v-row>
 
         <!-- Loading -->
-        <v-row v-if="isAnalyzing" justify="center" align="center" class="my-12">
+        <v-row v-if="isAnalyzing && !hasError" justify="center" align="center" class="my-12">
             <v-col cols="auto" class="text-center">
                 <v-progress-circular indeterminate size="64" color="primary" />
                 <div class="mt-3 text-body-1 font-weight-medium">Analyzing gaze data...</div>
                 <div class="mt-1 text-body-2 text-grey-darken-1">This may take a few seconds</div>
+            </v-col>
+        </v-row>
+
+        <!-- Error -->
+        <v-row v-else-if="hasError" justify="center" align="center" class="my-12">
+            <v-col cols="auto" class="text-center">
+                <v-icon size="64" color="red-darken-2">mdi-alert-circle-outline</v-icon>
+                <div class="mt-3 text-body-1 font-weight-medium">Analysis failed</div>
+                <div class="mt-1 text-body-2 text-grey-darken-1">
+                    Could not process gaze data. Please try again later.
+                </div>
             </v-col>
         </v-row>
 
@@ -102,6 +114,7 @@ import { useStore } from 'vuex'
 
 const props = defineProps({
     irisData: { type: Array, required: true },
+    userId: { type: String, required: true }
 })
 
 const emit = defineEmits(['predictions-ready', 'view-changed'])
@@ -111,6 +124,7 @@ const calibrationConfig = computed(() => store.state.Tests.Test.calibrationConfi
 const selectedView = ref('precision')
 const predictedData = ref(null)
 const isAnalyzing = ref(true)
+const hasError = ref(false)
 
 const accuracy = ref(0)
 const totalPredictions = ref(0)
@@ -121,13 +135,16 @@ watch(selectedView, (value) => emit('view-changed', value))
 
 onMounted(async () => {
     try {
+        console.log(calibrationConfig);
+
         const res = await axios.post(
             process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
             {
                 k: calibrationConfig.value.pointNumber,
                 screen_height: 1080,
-                screen_width: 1920,
+                screen_width: 2560,
                 iris_tracking_data: props.irisData,
+                calib_id: props.userId
             },
             { headers: { 'Content-Type': 'application/json' } }
         )
@@ -141,6 +158,7 @@ onMounted(async () => {
     } catch (err) {
         console.error('❌ Eye tracking error:', err)
         predictedData.value = 'Error loading predictions.'
+        hasError.value = true
     } finally {
         isAnalyzing.value = false
     }
@@ -228,16 +246,3 @@ function generateInsights(acc, total) {
         })
 }
 </script>
-
-<style scoped>
-.chart-wrapper {
-    width: 100%;
-    aspect-ratio: 1;
-    max-height: 280px;
-}
-
-.v-btn-toggle .v-btn.v-btn--active {
-    background-color: #1976d2 !important;
-    color: white !important;
-}
-</style>

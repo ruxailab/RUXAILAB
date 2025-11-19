@@ -54,7 +54,7 @@
                             </v-window-item> -->
 
                             <v-window-item value="eye">
-                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
+                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData" :userId="userId"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
                                     @predictions-ready="predictedData = $event" @view-changed="selectedView = $event"
@@ -84,13 +84,8 @@
                     </v-col>
                 </v-row>
 
-                <v-col cols="12" class="mt-4">
-                    {{ ' videoDuration -' + videoDuration }}
-                    {{ ' videoCurrentTime -' + videoCurrentTime }}
-                    {{ ' isPlaying -' + isPlaying }}
-                    <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
-                        @seek="onSeek" @togglePlay="togglePlay" />
-                </v-col>
+                <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
+                    @seek="onSeek" @togglePlay="togglePlay" />
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -107,7 +102,8 @@ import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 const props = defineProps({
     modelValue: { type: Boolean, required: true },
     taskAnswer: { type: Object, default: null },
-    fromEyeTracking: { type: Boolean, default: false }
+    fromEyeTracking: { type: Boolean, default: false },
+    userId: { type: String, default: '' }
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -158,6 +154,7 @@ function onTimeUpdate(event) {
 }
 
 const togglePlay = () => {
+    console.log(props.userId);
     const video = mainVideo2.value
     if (!video) return
 
@@ -184,6 +181,7 @@ const onSeek = (time) => {
 const close = () => open.value = false
 
 onMounted(() => {
+
     const video = mainVideo2.value
     if (!video) return
 
