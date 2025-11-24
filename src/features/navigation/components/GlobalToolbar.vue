@@ -28,7 +28,7 @@
       @click="goTo('/admin')"
     >
       <img
-        src="@/assets/ruxailab-long-crop-white.png"
+        src="@/assets/logo_full_white.png"
         alt="RUXAILAB Logo"
         height="25"
         class="mr-3 align-self-center"
