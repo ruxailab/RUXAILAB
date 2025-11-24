@@ -8,7 +8,7 @@
             class="rich-text mb-4"
             v-html="task?.taskDescription || taskDescription"
           />
-                   TASKINDEX {{ taskIndex }}
+                   <!--TASKINDEX {{ taskIndex }}-->
 
           
           <!-- Task Preview Information -->
