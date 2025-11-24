@@ -656,7 +656,8 @@
     "eyeTracker": "Seguimiento ocular",
     "audioRecord": "Grabación de audio",
     "postForm": "Formulario posterior",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sus": "SUS"
   },
   "inputs": {
     "consentForm": "Formulario de consentimiento",
