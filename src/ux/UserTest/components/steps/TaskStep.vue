@@ -8,8 +8,6 @@
             class="rich-text mb-4"
             v-html="task?.taskDescription || taskDescription"
           />
-                   TASKINDEX {{ taskIndex }}
-
           
           <!-- Task Preview Information -->
           <v-card 
