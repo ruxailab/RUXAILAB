@@ -600,7 +600,8 @@
     "eyeTracker": "Rastreamento ocular",
     "audioRecord": "Gravação de áudio",
     "postForm": "Formulário posterior",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sus": "SUS"
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
@@ -781,5 +782,9 @@
     "all": "Todos",
     "question": "Pergunta {number}",
     "comingSoon": "Em breve"
+  },
+  "taskCreation": {
+    "taskDescription": "Descrição da Tarefa",
+    "taskDescriptionHelper": "Forneça instruções detalhadas para os participantes. Inclua o objetivo, contexto e quaisquer etapas específicas que devem seguir."
   }
 }
