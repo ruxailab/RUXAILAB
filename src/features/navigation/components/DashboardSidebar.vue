@@ -122,7 +122,10 @@ const navigationItems = dashboardNavigationItems;
 
 // Methods
 const selectNavigation = (sectionId, childId = null) => {
-    emit('navigate', { sectionId, childId });
+  emit('navigate', { sectionId, childId })
+  if (isMobile.value) {
+    emit('update:modelValue', false)
+  }
 };
 </script>
 
