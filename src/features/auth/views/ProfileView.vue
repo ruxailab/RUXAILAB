@@ -919,13 +919,20 @@ const signOut = async () => {
   }
 };
 
+
 const countryFilter = (item, queryText) => {
   if (!queryText) return true;
-
-  const searchText = queryText.toLowerCase();
-  const countryName = item.name.toLowerCase();
-  return countryName.includes(searchText);
+  
+  // Handle various item formats
+  const name = typeof item === 'string' 
+    ? item 
+    : item?.name || item?.title || '';
+  
+  if (!name) return false;
+  
+  return name.toLowerCase().includes(queryText.toLowerCase());
 };
+
 
 onMounted(() => {
   fetchUserProfile();
