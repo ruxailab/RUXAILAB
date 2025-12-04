@@ -364,4 +364,34 @@ const goBack = () => {
   text-transform: none;
   letter-spacing: normal;
 }
+
+:deep(.v-stepper__header) {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+:deep(.v-stepper-item) {
+  flex: 0 1 auto;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+:deep(.v-stepper-item__title) {
+  font-size: 0.7rem;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 70px;
+  word-break: break-word;
+  margin-top: 4px;
+}
+
+:deep(.v-stepper-header__content) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 </style>
