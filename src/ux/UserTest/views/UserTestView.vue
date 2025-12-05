@@ -584,7 +584,7 @@ const saveAnswer = async () => {
       localTestAnswer.userDocId = user.value.id;
       localTestAnswer.invited = true;
     }
-    if (!user.value) {
+    if (!user.value ||  user.value.isAnonymous) {
       localTestAnswer.userDocId = nanoid(16)
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
@@ -593,6 +593,7 @@ const saveAnswer = async () => {
       });
       await store.dispatch('logout');
       router.push('/signin');
+      return;
     } else {
       Object.assign(currentUserTestAnswer.value, localTestAnswer);
       console.log('Generated userDocId for anonymous user:', currentUserTestAnswer.value);
@@ -1070,6 +1071,7 @@ watch(
 );
 
 onMounted(async () => {
+  fromlink.value = true;
   globalIndex.value = 0;
   // validateTest();
   await nextTick();
