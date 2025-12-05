@@ -156,23 +156,26 @@
             <v-col cols="12">
               <v-card class="custom-card" elevation="4">
                 <v-card-text class="pa-6">
-                  <div class="d-flex justify-space-between align-center">
-                    <BackButton
-                      :label="$t('studyCreation.backToStudyType')"
-                      adjust="start"
-                      @back="goBack"
-                    />
+                  <div class="button-wrapper">
+                    <div class="button-container">
+                      <BackButton
+                        :label="$t('studyCreation.backToStudyType')"
+                        adjust="start"
+                        @back="goBack"
+                      />
                     
                     <v-btn
-                      color="success"
-                      size="large"
-                      :loading="isLoading"
-                      prepend-icon="mdi-plus"
-                      class="px-8"
-                      @click="validate"
-                    >
-                      {{ $t('studyCreation.createStudy') }}
-                    </v-btn>
+                        color="success"
+                        size="large"
+                        :loading="isLoading"
+                        prepend-icon="mdi-plus"
+                        class="px-8 mr-6"
+                        @click="validate"
+                        
+                      >
+                        {{ $t('studyCreation.createStudy') }}
+                      </v-btn>
+                    </div>
                   </div>
                 </v-card-text>
               </v-card>
@@ -393,5 +396,36 @@ const goBack = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  .button-wrapper {
+    justify-content: center;
+  }
+
+  .button-container {
+    justify-content: center;
+    gap: 0.75rem;
+    width: auto;
+  }
+  :deep(.button-container .v-btn) {
+    font-size: 0.75rem !important;
+    padding: 0 0.6rem !important;
+    min-width: auto !important;
+    height: 36px !important;
+  }
 }
 </style>
