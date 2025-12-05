@@ -921,10 +921,11 @@ const signOut = async () => {
 
 const countryFilter = (item, queryText) => {
   if (!queryText) return true;
-
-  const searchText = queryText.toLowerCase();
-  const countryName = item.name.toLowerCase();
-  return countryName.includes(searchText);
+  
+  const text = queryText.toString().toLowerCase();
+  const name = typeof item === 'string' ? item : (item?.name || '');
+  
+  return name.toString().toLowerCase().includes(text);
 };
 
 onMounted(() => {
