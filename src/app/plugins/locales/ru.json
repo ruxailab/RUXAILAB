@@ -47,12 +47,17 @@
     "sentBy": "Отправлено",
     "new": "НОВОЕ"
   },
-  "PROFILE": {
+  "profile": {
     "title": "Профиль",
+    "username": "Имя пользователя",
+    "email": "Электронная почта",
     "editProfile": "Редактировать профиль",
     "account": "Аккаунт",
     "admin": "Администратор",
+    "security": "Безопасность",
+    "personalInfo": "Личная информация",
     "changePassword": "Изменить пароль",
+    "contact": "Контактный номер",
     "passwordRequirements": "Убедитесь, что выполнены эти требования",
     "passwordMinimumRequirements": "Минимум 8 символов, заглавная буква и символ",
     "newPassword": "Новый пароль",
@@ -60,6 +65,10 @@
     "editDetails": "Редактировать детали",
     "saveChanges": "Сохранить изменения",
     "country": "Страна",
+    "typeDeleteToConfirm": "Введите \"DELETE\" для подтверждения",
+    "pleaseTypeDeleteToConfirm": "Пожалуйста, введите DELETE для подтверждения",
+    "finalStepVerifyIdentity": "Последний шаг: подтвердите свою личность",
+    "enterPasswordForAccountDeletion": "Введите пароль для удаления аккаунта",
     "missingInfo": "Отсутствует информация",
     "deleteAccountTitle": "Удалить аккаунт",
     "deleteAccountConfirm": "Вы уверены? Это действие нельзя отменить.",
@@ -69,7 +78,11 @@
     "passwordUppercase": "Должен содержать заглавную букву",
     "passwordSymbol": "Должен содержать символ",
     "confirmPasswordRequired": "Подтверждение пароля обязательно",
-    "passwordsMatch": "Пароли должны совпадать"
+    "passwordsMatch": "Пароли должны совпадать",
+    "yourPassword": "Ваш пароль",
+    "back": "Назад",
+    "deleteForever": "Удалить навсегда",
+    "superAdmin": "Супер администратор"
   },
   "titles": {
     "manager": "Менеджер",

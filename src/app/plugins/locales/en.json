@@ -100,7 +100,11 @@
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "confirmPasswordRequired": "Confirm password is required",
-    "passwordsMatch": "Passwords must match"
+    "passwordsMatch": "Passwords must match",
+    "yourPassword": "Your Password",
+    "back": "Back",
+    "deleteForever": "Delete Forever",
+    "superAdmin": "Super Admin"
   },
   "titles": {
     "manager": "Manager",
@@ -755,27 +759,6 @@
     "browseAllCategories": "Browse all categories to find the help you need",
     "viewAllArticles": "View All Articles",
     "videoAltText": "FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
-  },
-  "PROFILE": {
-    "user": "USER",
-    "account": "Account",
-    "security": "Security",
-    "personalInfo": "Personal Info",
-    "contact": "Contact",
-    "country": "Country",
-    "editDetails": "Edit Details",
-    "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
-    "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
-    "finalStepVerifyIdentity": "Final step: Verify your identity",
-    "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
-    "yourPassword": "Your Password",
-    "usernameRequired": "Username is required",
-    "usernameMinLength": "Username must be at least 3 characters",
-    "countryRequired": "Country is required",
-    "contactNumberRequired": "Contact number is required",
-    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
-    "email": "Email",
-    "username": "Username"
   },
   "ModeratedTest": {
     "preTest": "PRE-TEST",

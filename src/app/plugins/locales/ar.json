@@ -50,12 +50,17 @@
     "sentBy": "مرسل من قبل",
     "new": "جديد"
   },
-  "PROFILE": {
+  "profile": {
     "title": "الملف الشخصي",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
     "editProfile": "تحرير الملف الشخصي",
     "account": "الحساب",
     "admin": "المدير",
+    "security": "الأمان",
+    "personalInfo": "المعلومات الشخصية",
     "changePassword": "تغيير كلمة المرور",
+    "contact": "رقم الاتصال",
     "passwordRequirements": "تأكد من استيفاء هذه المتطلبات",
     "passwordMinimumRequirements": "8 أحرف على الأقل، حرف كبير ورمز",
     "newPassword": "كلمة المرور الجديدة",
@@ -63,6 +68,10 @@
     "editDetails": "تحرير التفاصيل",
     "saveChanges": "حفظ التغييرات",
     "country": "البلد",
+    "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
+    "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
+    "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
+    "enterPasswordForAccountDeletion": "أدخل كلمة المرور لحذف الحساب",
     "missingInfo": "معلومات مفقودة",
     "deleteAccountTitle": "حذف الحساب",
     "deleteAccountConfirm": "هل أنت متأكد تمامًا؟ لا يمكن التراجع عن هذا الإجراء.",
@@ -72,7 +81,11 @@
     "passwordUppercase": "يجب أن تحتوي على حرف كبير",
     "passwordSymbol": "يجب أن تحتوي على رمز",
     "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
-    "passwordsMatch": "يجب أن تتطابق كلمات المرور"
+    "passwordsMatch": "يجب أن تتطابق كلمات المرور",
+    "yourPassword": "كلمة المرور الخاصة بك",
+    "back": "رجوع",
+    "deleteForever": "حذف نهائي",
+    "superAdmin": "المسؤول الفائق"
   },
   "titles": {
     "manager": "المدير",

@@ -47,12 +47,17 @@
     "sentBy": "送信者",
     "new": "新着"
   },
-  "PROFILE": {
+  "profile": {
     "title": "プロフィール",
+    "username": "ユーザー名",
+    "email": "メールアドレス",
     "editProfile": "プロフィールを編集",
     "account": "アカウント",
     "admin": "管理者",
+    "security": "セキュリティ",
+    "personalInfo": "個人情報",
     "changePassword": "パスワードを変更",
+    "contact": "連絡先番号",
     "passwordRequirements": "これらの要件を満たしていることを確認してください",
     "passwordMinimumRequirements": "最低8文字、大文字、記号",
     "newPassword": "新しいパスワード",
@@ -60,6 +65,10 @@
     "editDetails": "詳細を編集",
     "saveChanges": "変更を保存",
     "country": "国",
+    "typeDeleteToConfirm": "\"DELETE\" と入力して確認してください",
+    "pleaseTypeDeleteToConfirm": "確認するために DELETE と入力してください",
+    "finalStepVerifyIdentity": "最終ステップ: あなたの身元を確認してください",
+    "enterPasswordForAccountDeletion": "アカウント削除を続行するにはパスワードを入力してください",
     "missingInfo": "情報が不足しています",
     "deleteAccountTitle": "アカウントを削除",
     "deleteAccountConfirm": "本当によろしいですか？この操作は元に戻せません。",
@@ -69,7 +78,11 @@
     "passwordUppercase": "大文字を含める必要があります",
     "passwordSymbol": "記号を含める必要があります",
     "confirmPasswordRequired": "パスワードの確認は必須です",
-    "passwordsMatch": "パスワードが一致しません"
+    "passwordsMatch": "パスワードが一致しません",
+    "yourPassword": "あなたのパスワード",
+    "back": "戻る",
+    "deleteForever": "永遠に削除",
+    "superAdmin": "スーパー管理者"
   },
   "titles": {
     "manager": "マネージャー",

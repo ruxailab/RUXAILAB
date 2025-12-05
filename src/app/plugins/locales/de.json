@@ -56,12 +56,17 @@
     "sentBy": "Gesendet von",
     "new": "NEU"
   },
-  "PROFILE": {
+  "profile": {
     "title": "Profil",
+    "username": "Benutzername",
+    "email": "E-Mail",
     "editProfile": "Profil bearbeiten",
     "account": "Konto",
     "admin": "Admin",
+    "security": "Sicherheit",
+    "personalInfo": "Persönliche Informationen",
     "changePassword": "Passwort ändern",
+    "contact": "Kontaktnummer",
     "passwordRequirements": "Stellen Sie sicher, dass diese Anforderungen erfüllt sind",
     "passwordMinimumRequirements": "Mindestens 8 Zeichen, Großbuchstaben und ein Symbol",
     "newPassword": "Neues Passwort",
@@ -69,6 +74,10 @@
     "editDetails": "Details bearbeiten",
     "saveChanges": "Änderungen speichern",
     "country": "Land",
+    "typeDeleteToConfirm": "Geben Sie \"LÖSCHEN\" ein, um zu bestätigen",
+    "pleaseTypeDeleteToConfirm": "Bitte geben Sie LÖSCHEN ein, um zu bestätigen",
+    "finalStepVerifyIdentity": "Letzter Schritt: Überprüfen Sie Ihre Identität",
+    "enterPasswordForAccountDeletion": "Geben Sie Ihr Passwort ein, um die Kontolöschung zu bestätigen",
     "missingInfo": "Fehlende Informationen",
     "deleteAccountTitle": "Konto löschen",
     "deleteAccountConfirm": "Sind Sie absolut sicher? Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -78,7 +87,11 @@
     "passwordUppercase": "Muss einen Großbuchstaben enthalten",
     "passwordSymbol": "Muss ein Symbol enthalten",
     "confirmPasswordRequired": "Passwortbestätigung ist erforderlich",
-    "passwordsMatch": "Passwörter müssen übereinstimmen"
+    "passwordsMatch": "Passwörter müssen übereinstimmen",
+    "yourPassword": "Ihr Passwort",
+    "back": "Zurück",
+    "deleteForever": "Endgültig löschen",
+    "superAdmin": "Super Administrator"
   },
   "titles": {
     "manager": "Manager",

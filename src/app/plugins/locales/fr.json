@@ -54,12 +54,17 @@
     "sentBy": "Envoyé par",
     "new": "NOUVEAU"
   },
-  "PROFILE": {
+  "profile": {
     "title": "Profil",
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
     "editProfile": "Modifier le profil",
     "account": "Compte",
     "admin": "Administrateur",
+    "security": "Sécurité",
+    "personalInfo": "Informations personnelles",
     "changePassword": "Changer le mot de passe",
+    "contact": "Contact",
     "passwordRequirements": "Assurez-vous de respecter ces exigences",
     "passwordMinimumRequirements": "Minimum 8 caractères, majuscule et symbole",
     "newPassword": "Nouveau mot de passe",
@@ -67,6 +72,10 @@
     "editDetails": "Modifier les détails",
     "saveChanges": "Enregistrer les modifications",
     "country": "Pays",
+    "typeDeleteToConfirm": "Tapez \"DELETE\" pour confirmer",
+    "pleaseTypeDeleteToConfirm": "Veuillez taper DELETE pour confirmer",
+    "finalStepVerifyIdentity": "Dernière étape : Vérifiez votre identité",
+    "enterPasswordForAccountDeletion": "Entrez votre mot de passe pour procéder à la suppression du compte",
     "missingInfo": "Informations manquantes",
     "deleteAccountTitle": "Supprimer le compte",
     "deleteAccountConfirm": "Êtes-vous absolument sûr ? Cette action ne peut pas être annulée.",
@@ -76,7 +85,11 @@
     "passwordUppercase": "Doit contenir une lettre majuscule",
     "passwordSymbol": "Doit contenir un symbole",
     "confirmPasswordRequired": "La confirmation du mot de passe est requise",
-    "passwordsMatch": "Les mots de passe doivent correspondre"
+    "passwordsMatch": "Les mots de passe doivent correspondre",
+    "yourPassword": "Votre mot de passe",
+    "back": "Retour",
+    "deleteForever": "Supprimer définitivement",
+    "superAdmin": "Super Administrateur"
   },
   "titles": {
     "manager": "Gestionnaire",
