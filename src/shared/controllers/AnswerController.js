@@ -56,13 +56,8 @@ export default class AnswerController extends Controller {
 
     } else if (testType === STUDY_TYPES.USER) {
       if (!payload.userDocId) {
-
-        const taskAnswer = (await this.getAnswerById(answerDocId)).taskAnswers; // get taskAnswers
-
-        const taskAnswerCount = Object.keys(taskAnswer || {}).length; // get number of taskAnswers 
-
-        fieldToUpdate[`taskAnswers.Ev${taskAnswerCount + 1}`] = payload.toFirestore(); // add new taskAnswer with EV prefix for anonymous answers
-
+        const tempId = nanoid(16)
+        fieldToUpdate[`taskAnswers.${tempId}`] = payload.toFirestore();
       } else {
         fieldToUpdate[`taskAnswers.${payload.userDocId}`] = payload.toFirestore()
       }
@@ -84,7 +79,7 @@ export default class AnswerController extends Controller {
     });
   }
 
-    async updateTaskTranscriptionMeta({ answerDocId, userDocId, taskId, latestId, inc = 1 }) {
+  async updateTaskTranscriptionMeta({ answerDocId, userDocId, taskId, latestId, inc = 1 }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {

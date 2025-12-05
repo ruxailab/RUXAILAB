@@ -8,7 +8,8 @@ import {
   sendPasswordResetEmail,
   setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  signInAnonymously
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios';
@@ -84,6 +85,10 @@ export default class AuthController {
       )
     })
   }
+  async signInAnonymously() {
+    console.log('Signing in anonymously')
+    return signInAnonymously(auth)
+  }
   // Reset Password
   async resetPassword(email) {
     // return sendPasswordResetEmail(auth, email)
@@ -94,22 +99,22 @@ export default class AuthController {
       template: 'passwordReset',
     })
   }
-
-  async autoSignIn() {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe()
-          resolve(user)
-        },
-        (error) => {
-          unsubscribe()
-          reject(error)
-        }
-      )
-    })
-  }
+  // I think this isn't needed(two SignIn)
+  // async autoSignIn() {
+  //   return new Promise((resolve, reject) => {
+  //     const unsubscribe = onAuthStateChanged(
+  //       auth,
+  //       (user) => {
+  //         unsubscribe()
+  //         resolve(user)
+  //       },
+  //       (error) => {
+  //         unsubscribe()
+  //         reject(error)
+  //       }
+  //     )
+  //   })
+  // }
 
   async deleteAuth(userId) {
     try {

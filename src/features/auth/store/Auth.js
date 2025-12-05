@@ -132,6 +132,21 @@ export default {
         throw err
       }
     },
+    async signInAnonymously({ commit }) {
+      try {
+        const { user } = await authController.signInAnonymously()
+        // Anonymous users don't have a userController profile yet, 
+        // so we just set the Firebase user to state
+        commit('SET_USER', user)
+      } catch (err) {
+        console.error(err)
+        commit('SET_TOAST', {
+          message: 'Error signing in anonymously',
+          type: 'error',
+        })
+        throw err
+      }
+    },
 
     async logout({ commit }) {
       try {

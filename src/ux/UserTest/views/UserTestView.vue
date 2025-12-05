@@ -32,7 +32,7 @@
       persistent
     >
       <v-card
-        v-if="user"
+        v-if="user && !user.isAnonymous"
         class="rounded-xl pa-6"
       >
         <v-row
@@ -74,6 +74,33 @@
               @click.prevent="signOut"
             >Change account</a>
           </p>
+        </v-card-actions>
+      </v-card>
+      <!-- card for guest users (both invited and public) -->
+      <v-card v-else class="rounded-xl pa-6">
+        <v-row class="ma-0 pa-0" justify="center">
+          <v-avatar color="primary-lighten-4" size="120">
+            <v-icon size="80">mdi-account-circle</v-icon>
+          </v-avatar>
+        </v-row>
+        <v-card-title class="text-center text-h6 font-weight-bold mt-4">
+          Welcome to the test!
+        </v-card-title>
+        <v-card-text class="text-center text-body-1">
+          <p class="font-weight-medium">
+            You've been invited to participate in this test.
+          </p>
+        </v-card-text>
+        <v-card-actions class="d-flex flex-column pa-0">
+          <v-btn
+            color="primary"
+            block
+            variant="flat"
+            class="my-2"
+            @click="setTest()"
+          >
+            Continue as Guest
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -357,7 +384,7 @@ import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import { doc, onSnapshot } from "firebase/firestore";
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 import Snackbar from '@/shared/components/Snackbar';
 import { nanoid } from 'nanoid';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
@@ -564,6 +591,8 @@ const saveAnswer = async () => {
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
       });
+      await store.dispatch('logout');
+      router.push('/signin');
     } else {
       Object.assign(currentUserTestAnswer.value, localTestAnswer);
       console.log('Generated userDocId for anonymous user:', currentUserTestAnswer.value);
@@ -631,8 +660,8 @@ const startTest = async () => {
     router.push(`/missions/${test.value.id}`);
     return;
   }
-
-  if (!isUserTestAdmin.value) {
+  // for unknown users, skip this acceptStudyCollaboration 
+  if (!isUserTestAdmin.value && user.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
@@ -640,12 +669,14 @@ const startTest = async () => {
   }
 
   // Primero añadimos la clase para la animación de salida
+  // First we add a CSS class to trigger the 'leaving'(exit) animation
   const startScreen = document.querySelector('.start-screen');
   if (startScreen) {
     startScreen.classList.add('leaving');
   }
 
   // Esperamos a que termine la animación antes de cambiar el estado
+  // We wait for the animation to complete before hiding the start screen
   setTimeout(() => {
     start.value = false;
   }, 1000);
@@ -1042,7 +1073,7 @@ onMounted(async () => {
   globalIndex.value = 0;
   // validateTest();
   await nextTick();
-  if (user.value) {
+  if (user.value && !user.value.isAnonymous) {
     await setTest();
     await autoComplete();
     calculateProgress();

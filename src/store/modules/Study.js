@@ -32,8 +32,12 @@ export default {
       return state.testStructure
     },
     coops(state) {
-      return state.Test.coop
+      return state.Test.cooperators
     },
+    isPublic(state) {
+      console.log("isPublic from study.js store", state.Test.isPublic)
+      return state.Test.isPublic
+    }
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -177,7 +181,9 @@ export default {
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
+        return res // Retuns the test object
       } catch (e) {
+        console.error("Failed to fetch the Study from the controller", e);
         commit('setError', true)
       } finally {
         commit('setLoading', false)
