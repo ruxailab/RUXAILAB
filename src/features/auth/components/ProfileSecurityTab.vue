@@ -2,34 +2,34 @@
   <v-card class="rounded-xl pa-6" elevation="2">
     <v-card-title class="text-h6 font-weight-bold mb-4">
       <v-icon start color="primary">mdi-lock</v-icon>
-      {{ $t('profile.changePassword') }}
+      {{ $t('profiles.changePassword') }}
     </v-card-title>
     <v-card-text>
       <v-alert type="warning" variant="outlined" class="mb-6">
         <div class="text-subtitle-1 font-weight-medium mb-2">
-          {{ $t('profile.passwordRequirements') }}
+          {{ $t('profiles.passwordRequirements') }}
         </div>
         <div class="text-body-2 mb-3">
-          {{ $t('profile.passwordMinimumRequirements') }}
+          {{ $t('profiles.passwordMinimumRequirements') }}
         </div>
         <div>
           <div class="d-flex align-center mb-2">
             <v-icon size="small" class="mr-2" :color="newPassword.length >= 8 ? 'success' : 'grey-darken-1'">
               {{ newPassword.length >= 8 ? 'mdi-check-circle' : 'mdi-circle-outline' }}
             </v-icon>
-            <span>{{ $t('profile.passwordMinLength') }}</span>
+            <span>{{ $t('profiles.passwordMinLength') }}</span>
           </div>
           <div class="d-flex align-center mb-2">
             <v-icon size="small" class="mr-2" :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey-darken-1'">
               {{ /[A-Z]/.test(newPassword) ? 'mdi-check-circle' : 'mdi-circle-outline' }}
             </v-icon>
-            <span>{{ $t('profile.passwordUppercase') }}</span>
+            <span>{{ $t('profiles.passwordUppercase') }}</span>
           </div>
           <div class="d-flex align-center">
             <v-icon size="small" class="mr-2" :color="specialCharColor">
               {{ specialCharIcon }}
             </v-icon>
-            <span>{{ $t('profile.passwordSymbol') }}</span>
+            <span>{{ $t('profiles.passwordSymbol') }}</span>
           </div>
         </div>
       </v-alert>
@@ -39,7 +39,7 @@
             <v-text-field
               v-model="newPassword"
               :rules="passwordRules"
-              :label="$t('profile.newPassword')"
+              :label="$t('profiles.newPassword')"
               :type="showPassword ? 'text' : 'password'"
               variant="outlined"
               density="compact"
@@ -53,7 +53,7 @@
             <v-text-field
               v-model="confirmPassword"
               :rules="confirmPasswordRules"
-              :label="$t('profile.confirmNewPassword')"
+              :label="$t('profiles.confirmNewPassword')"
               :type="showConfirmPassword ? 'text' : 'password'"
               variant="outlined"
               density="compact"
@@ -74,18 +74,18 @@
           <v-icon start>
             mdi-key
           </v-icon>
-          {{ $t('profile.changePassword') }}
+          {{ $t('profiles.changePassword') }}
         </v-btn>
       </v-form>
       <!-- Delete Account Section -->
       <v-card class="rounded-xl pa-6 mt-6" elevation="2">
         <v-card-title class="text-h6 font-weight-bold">
           <v-icon start color="error">mdi-alert-circle</v-icon>
-          {{ $t('profile.deleteAccountTitle') }}
+          {{ $t('profiles.deleteAccountTitle') }}
         </v-card-title>
         <v-card-text>
           <p class="text-body-1 mb-4">
-            {{ $t('profile.deleteAccountWarning') }}
+            {{ $t('profiles.deleteAccountWarning') }}
           </p>
           <v-btn
             color="error"
@@ -97,7 +97,7 @@
             <v-icon start>
               mdi-delete
             </v-icon>
-            {{ $t('profile.deleteAccountTitle') }}
+            {{ $t('profiles.deleteAccountTitle') }}
           </v-btn>
         </v-card-text>
       </v-card>

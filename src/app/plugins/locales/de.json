@@ -56,7 +56,7 @@
     "sentBy": "Gesendet von",
     "new": "NEU"
   },
-  "PROFILE": {
+  "profiles": {
     "title": "Profil",
     "editProfile": "Profil bearbeiten",
     "account": "Konto",

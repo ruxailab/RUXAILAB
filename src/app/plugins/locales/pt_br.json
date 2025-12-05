@@ -68,10 +68,17 @@
     "sentBy": "Enviado por",
     "new": "NOVO"
   },
-  "profile": {
+  "profiles": {
     "title": "Perfil",
-    "username": "Nome de usuário",
+    "user": "USUÁRIO",
+    "yourPassword": "Sua senha",
+    "usernameRequired": "Nome de usuário é obrigatório",
+    "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
+    "countryRequired": "País é obrigatório",
+    "contactNumberRequired": "Número de contato é obrigatório",
+    "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
     "email": "E-mail",
+    "username": "Nome de usuário",
     "editProfile": "Editar perfil",
     "account": "Conta",
     "admin": "Administrador",
@@ -99,7 +106,9 @@
     "passwordUppercase": "Deve conter uma letra maiúscula",
     "passwordSymbol": "Deve conter um símbolo",
     "confirmPasswordRequired": "Confirmação de senha é obrigatória",
-    "passwordsMatch": "As senhas devem corresponder"
+    "passwordsMatch": "As senhas devem corresponder",
+    "back": "Voltar",
+    "deleteForever": "Excluir para sempre"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -695,27 +704,6 @@
     "browseAllCategories": "Navegue por todas as categorias para encontrar a ajuda que você precisa",
     "viewAllArticles": "Ver todos os artigos",
     "videoAltText": "Vídeo demonstrativo de FAQ mostrando os passos visuais para resolver a pergunta frequente. Não há conteúdo de áudio presente neste vídeo instrucional."
-  },
-  "PROFILE": {
-    "user": "USUÁRIO",
-    "account": "Conta",
-    "security": "Segurança",
-    "personalInfo": "Informações pessoais",
-    "contact": "Contato",
-    "country": "País",
-    "editDetails": "Editar detalhes",
-    "typeDeleteToConfirm": "Digite \"EXCLUIR\" para confirmar",
-    "pleaseTypeDeleteToConfirm": "Por favor, digite EXCLUIR para confirmar",
-    "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
-    "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
-    "yourPassword": "Sua senha",
-    "usernameRequired": "Nome de usuário é obrigatório",
-    "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
-    "countryRequired": "País é obrigatório",
-    "contactNumberRequired": "Número de contato é obrigatório",
-    "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
-    "email": "E-mail",
-    "username": "Nome de usuário"
   },
   "ModeratedTest": {
     "preTest": "PRÉ-TESTE",

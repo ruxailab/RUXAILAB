@@ -69,10 +69,17 @@
     "new": "NUEVO",
     "test": "un estudio"
   },
-  "profile": {
+  "profiles": {
     "title": "Perfil",
-    "username": "Nombre de usuario",
+    "user": "USUARIO",
+    "yourPassword": "Tu contraseña",
+    "usernameRequired": "Se requiere nombre de usuario",
+    "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+    "countryRequired": "Se requiere país",
+    "contactNumberRequired": "Se requiere número de contacto",
+    "enterValidPhoneNumber": "Por favor, ingresa un número de teléfono válido (9-15 dígitos únicamente)",
     "email": "Correo electrónico",
+    "username": "Nombre de usuario",
     "editProfile": "Editar perfil",
     "account": "Cuenta",
     "admin": "Administrador",
@@ -100,7 +107,9 @@
     "passwordUppercase": "Debe contener una letra mayúscula",
     "passwordSymbol": "Debe contener un símbolo",
     "confirmPasswordRequired": "Se requiere confirmar la contraseña",
-    "passwordsMatch": "Las contraseñas deben coincidir"
+    "passwordsMatch": "Las contraseñas deben coincidir",
+    "back": "Volver",
+    "deleteForever": "Eliminar para siempre"
   },
   "titles": {
     "manager": "Gerente",
@@ -756,27 +765,6 @@
     "browseAllCategories": "Explora todas las categorías para encontrar la ayuda que necesitas",
     "viewAllArticles": "Ver todos los artículos",
     "videoAltText": "Video de demostración de preguntas frecuentes que muestra los pasos visuales para resolver la pregunta frecuente. No hay contenido de audio en este video instructivo."
-  },
-  "PROFILE": {
-    "user": "USUARIO",
-    "account": "Cuenta",
-    "security": "Seguridad",
-    "personalInfo": "Información personal",
-    "contact": "Contacto",
-    "country": "País",
-    "editDetails": "Editar detalles",
-    "typeDeleteToConfirm": "Escribe \"ELIMINAR\" para confirmar",
-    "pleaseTypeDeleteToConfirm": "Por favor, escribe ELIMINAR para confirmar",
-    "finalStepVerifyIdentity": "Paso final: Verifica tu identidad",
-    "enterPasswordForAccountDeletion": "Ingresa tu contraseña para proceder con la eliminación de la cuenta",
-    "yourPassword": "Tu contraseña",
-    "usernameRequired": "Se requiere nombre de usuario",
-    "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
-    "countryRequired": "Se requiere país",
-    "contactNumberRequired": "Se requiere número de contacto",
-    "enterValidPhoneNumber": "Por favor, ingresa un número de teléfono válido (9-15 dígitos únicamente)",
-    "email": "Correo electrónico",
-    "username": "Nombre de usuario"
   },
   "ModeratedTest": {
     "preTest": "PREPRUEBA",

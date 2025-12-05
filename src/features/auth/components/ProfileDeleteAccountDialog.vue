@@ -16,7 +16,7 @@
         >
           mdi-alert-circle
         </v-icon>
-        {{ $t('profile.deleteAccountTitle') }}
+        {{ $t('profiles.deleteAccountTitle') }}
         <v-spacer />
       </v-card-title>
 
@@ -28,14 +28,14 @@
             variant="outlined"
             class="mb-4"
           >
-            {{ $t('profile.deleteAccountConfirm') }}
+            {{ $t('profiles.deleteAccountConfirm') }}
           </v-alert>
           <p class="text-body-1 mb-4">
-            {{ $t('profile.deleteAccountWarning') }}
+            {{ $t('profiles.deleteAccountWarning') }}
           </p>
           <div class="text-center">
             <p class="font-weight-bold mb-2">
-              {{ $t('profile.typeDeleteToConfirm') }}
+              {{ $t('profiles.typeDeleteToConfirm') }}
             </p>
             <v-text-field
               v-model="deleteConfirmText"
@@ -43,7 +43,7 @@
               density="compact"
               hide-details
               class="input-field-transition"
-              :rules="[(v) => v === 'DELETE' || $t('profile.pleaseTypeDeleteToConfirm')]"
+              :rules="[(v) => v === 'DELETE' || $t('profiles.pleaseTypeDeleteToConfirm')]"
             />
           </div>
         </v-card-text>
@@ -77,20 +77,20 @@
             variant="outlined"
             class="mb-4"
           >
-            {{ $t('profile.finalStepVerifyIdentity') }}
+            {{ $t('profiles.finalStepVerifyIdentity') }}
           </v-alert>
           <p class="text-center font-weight-bold mb-4">
-            {{ $t('profile.enterPasswordForAccountDeletion') }}
+            {{ $t('profiles.enterPasswordForAccountDeletion') }}
           </p>
           <v-text-field
             v-model="userPassword"
-            :label="$t('profile.yourPassword')"
+            :label="$t('profiles.yourPassword')"
             type="password"
             variant="outlined"
             density="compact"
             prepend-inner-icon="mdi-lock"
             :disabled="isDeleting"
-            :rules="[(v) => !!v || $t('profile.passwordRequired')]"
+            :rules="[(v) => !!v || $t('profiles.passwordRequired')]"
             class="input-field-transition"
           />
         </v-card-text>
@@ -102,7 +102,7 @@
             min-width="120"
             @click="$emit('prev-step')"
           >
-            {{ $t('profile.back') }}
+            {{ $t('profiles.back') }}
           </v-btn>
           <v-btn
             color="error"
@@ -116,7 +116,7 @@
             <v-icon start>
               mdi-delete
             </v-icon>
-            {{ $t('profile.deleteForever') }}
+            {{ $t('profiles.deleteForever') }}
           </v-btn>
         </v-card-actions>
       </div>

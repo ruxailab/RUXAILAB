@@ -47,7 +47,7 @@
     "sentBy": "送信者",
     "new": "新着"
   },
-  "PROFILE": {
+  "profiles": {
     "title": "プロフィール",
     "editProfile": "プロフィールを編集",
     "account": "アカウント",

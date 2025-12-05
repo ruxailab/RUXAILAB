@@ -50,7 +50,7 @@
     "sentBy": "مرسل من قبل",
     "new": "جديد"
   },
-  "PROFILE": {
+  "profiles": {
     "title": "الملف الشخصي",
     "editProfile": "تحرير الملف الشخصي",
     "account": "الحساب",

@@ -2,7 +2,7 @@
   <v-card class="rounded-xl pa-6" elevation="2">
     <v-card-title class="text-h6 font-weight-bold mb-4">
       <v-icon start color="primary">mdi-account-details</v-icon>
-      {{ $t('profile.personalInfo') }}
+      {{ $t('profiles.personalInfo') }}
     </v-card-title>
     <v-card-text>
       <v-form>
@@ -43,7 +43,7 @@
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="userprofile.country"
-              :label="$t('profile.country')"
+              :label="$t('profiles.country')"
               variant="outlined"
               density="compact"
               prepend-inner-icon="mdi-map-marker"
@@ -62,7 +62,7 @@
         <v-icon start>
           mdi-pencil
         </v-icon>
-        {{ $t('profile.editDetails') }}
+        {{ $t('profiles.editDetails') }}
       </v-btn>
       <div v-if="showEditForm" class="mt-6">
         <v-form ref="editProfileForm" v-model="editProfileValid">
@@ -88,7 +88,7 @@
           />
           <v-autocomplete
             v-model="editProfileData.country"
-            :label="$t('profile.country')"
+            :label="$t('profiles.country')"
             variant="outlined"
             density="compact"
             prepend-inner-icon="mdi-map-marker"
@@ -122,7 +122,7 @@
             <v-icon start>
               mdi-content-save
             </v-icon>
-            {{ $t('profile.saveChanges') }}
+            {{ $t('profiles.saveChanges') }}
           </v-btn>
           <v-btn
             variant="text"

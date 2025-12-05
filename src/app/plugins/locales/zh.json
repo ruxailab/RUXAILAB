@@ -47,7 +47,7 @@
     "sentBy": "发送者",
     "new": "新"
   },
-  "PROFILE": {
+  "profiles": {
     "title": "个人资料",
     "editProfile": "编辑个人资料",
     "account": "账户",

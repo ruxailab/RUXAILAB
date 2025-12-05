@@ -47,7 +47,7 @@
     "sentBy": "Отправлено",
     "new": "НОВОЕ"
   },
-  "PROFILE": {
+  "profiles": {
     "title": "Профиль",
     "editProfile": "Редактировать профиль",
     "account": "Аккаунт",
