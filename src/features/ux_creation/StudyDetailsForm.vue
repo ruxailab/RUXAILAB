@@ -156,23 +156,29 @@
             <v-col cols="12">
               <v-card class="custom-card" elevation="4">
                 <v-card-text class="pa-6">
-                  <div class="d-flex justify-space-between align-center">
-                    <BackButton
-                      :label="$t('studyCreation.backToStudyType')"
-                      adjust="start"
-                      @back="goBack"
-                    />
+                  <div class="button-wrapper">
+                    <div class="button-container">
+                      
                     
-                    <v-btn
-                      color="success"
-                      size="large"
-                      :loading="isLoading"
-                      prepend-icon="mdi-plus"
-                      class="px-8"
-                      @click="validate"
-                    >
-                      {{ $t('studyCreation.createStudy') }}
-                    </v-btn>
+                      <v-btn
+                        color="success"
+                        size="large"
+                        :loading="isLoading"
+                        prepend-icon="mdi-plus"
+                        class="px-8 mr-6"
+                        @click="validate"
+
+                      >
+                        {{ $t('studyCreation.createStudy') }}
+                      </v-btn>
+                      <div class="ml-auto">
+                        <BackButton
+                          :label="$t('studyCreation.backToStudyType')"
+                          adjust="start"
+                          @back="goBack"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </v-card-text>
               </v-card>
@@ -363,5 +369,84 @@ const goBack = () => {
 :deep(.v-btn) {
   text-transform: none;
   letter-spacing: normal;
+}
+:deep(.v-stepper__header) {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+:deep(.v-stepper-item) {
+  flex: 0 1 auto;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+:deep(.v-stepper-item__title) {
+  font-size: 0.7rem;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 70px;
+  word-break: break-word;
+  margin-top: 4px;
+}
+:deep(.v-stepper-header__content) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  width: 100%;
+  justify-content: space-between;
+}
+@media (max-width: 600px) {
+  .button-wrapper {
+    justify-content: center;
+  }
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .button-container > .v-btn {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+   .button-container > div {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  .button-container > div .v-btn {
+    width: 100% !important;
+  }
+  
+  :deep(.button-container .v-row) {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  :deep(.button-container .v-row .v-col) {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  :deep(.button-container .v-row .v-btn) {
+    width: 100% !important;
+  }
 }
 </style>
