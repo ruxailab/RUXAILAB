@@ -91,6 +91,7 @@
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
+import { onMounted, onUnmounted } from 'vue';
 const props = defineProps({
   items: {
     type: Array,
@@ -114,8 +115,6 @@ const go = (item) => {
 const toggleDrawer = () => {
   mini.value = !mini.value;
 };
-
-import { onMounted, onUnmounted } from 'vue';
 
 onMounted(() => {
   window.addEventListener('toggle-dashboard-drawer', toggleDrawer);
