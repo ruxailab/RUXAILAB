@@ -68,6 +68,24 @@
   {{ $t('Dashboard.createNewTest') }}
       </v-btn>
     </div>
+
+    <v-hover v-slot="{ isHovering }">
+      <div class="px-4 pb-4 d-lg-none">
+        <v-btn
+          color="error"
+          block
+          size="large"
+          prepend-icon="mdi-logout"
+          rounded="lg"
+          elevation="1"
+          class="logout-button"
+          :class="{ 'logout-hover': isHovering }"
+          @click="signOut"
+        >
+          {{ $t('buttons.signout') }}
+        </v-btn>
+      </div>
+    </v-hover>
   </v-navigation-drawer>
 </template>
 
@@ -75,9 +93,14 @@
 import { computed } from 'vue';
 import { useDisplay } from 'vuetify';
 import { dashboardNavigationItems } from '@/features/dashboard';
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 // Composables
 const { mobile } = useDisplay();
+
+const store = useStore()
+const router = useRouter()
 
 // Props
 const props = defineProps({
@@ -104,6 +127,11 @@ const isOpen = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
 });
+
+const signOut = async () => {
+  await store.dispatch('logout');
+  router.push('/').catch(() => {});
+};
 
 // Para el drawer: en desktop siempre true, en mobile controlado por modelValue
 const drawerState = computed({
@@ -216,4 +244,16 @@ const selectNavigation = (sectionId, childId = null) => {
     font-size: 18px;
     margin-right: 12px;
 }
+
+.logout-button {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: 600 !important;
+  transition: transform 0.2s ease-in-out !important;
+}
+
+.logout-button:hover {
+  transform: translateY(-2px);
+}
+
 </style>
