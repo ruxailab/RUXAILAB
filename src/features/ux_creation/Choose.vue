@@ -21,7 +21,7 @@
         <v-col
           v-for="category in categories"
           :key="category.id"
-          cols="3"
+          cols="12"
           sm="6"
           md="6" 
         >
