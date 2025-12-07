@@ -158,11 +158,6 @@
                 <v-card-text class="pa-6">
                   <div class="button-wrapper">
                     <div class="button-container">
-                      <BackButton
-                        :label="$t('studyCreation.backToStudyType')"
-                        adjust="start"
-                        @back="goBack"
-                      />
                     
                     <v-btn
                         color="success"
@@ -175,6 +170,13 @@
                       >
                         {{ $t('studyCreation.createStudy') }}
                       </v-btn>
+                      <div class="ml-auto">
+                        <BackButton
+                          :label="$t('studyCreation.backToStudyType')"
+                          adjust="start"
+                          @back="goBack"
+                        />
+                      </div>
                     </div>
                   </div>
                 </v-card-text>
@@ -401,15 +403,16 @@ const goBack = () => {
 .button-wrapper {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 .button-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   margin-top: 2rem;
   width: 100%;
+  justify-content: space-between;
 }
 @media (max-width: 600px) {
   .button-wrapper {
@@ -417,15 +420,39 @@ const goBack = () => {
   }
 
   .button-container {
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    width: auto;
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
   }
-  :deep(.button-container .v-btn) {
-    font-size: 0.75rem !important;
-    padding: 0 0.6rem !important;
-    min-width: auto !important;
-    height: 36px !important;
+  
+  .button-container > .v-btn {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+   .button-container > div {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .button-container > div .v-btn {
+    width: 100% !important;
+  }
+  
+  :deep(.button-container .v-row) {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  :deep(.button-container .v-row .v-col) {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  :deep(.button-container .v-row .v-btn) {
+    width: 100% !important;
   }
 }
 </style>
