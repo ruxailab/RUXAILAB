@@ -88,10 +88,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
-import { onMounted, onUnmounted } from 'vue';
+
 const props = defineProps({
   items: {
     type: Array,
