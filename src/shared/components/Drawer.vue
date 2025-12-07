@@ -117,11 +117,11 @@ const toggleDrawer = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('toggle-dashboard-drawer', toggleDrawer);
+  globalThis.addEventListener('toggle-dashboard-drawer', toggleDrawer);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('toggle-dashboard-drawer', toggleDrawer);
+  globalThis.removeEventListener('toggle-dashboard-drawer', toggleDrawer);
 });
 
 </script>
