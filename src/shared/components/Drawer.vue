@@ -3,7 +3,7 @@
     :rail="mini"
     permanent
     color="primary"
-    class="hidden-sm-and-down pt-3"
+    class="pt-3"
   >
     <!-- Navigation header 
     <div v-if="!mini">
@@ -110,6 +110,20 @@ const go = (item) => {
   if (item.path === `/testview/${test.value.id}`) return window.open(item.path);
   router.push(item.path);
 };
+// Toggle drawer from GlobalToolbar
+const toggleDrawer = () => {
+  mini.value = !mini.value;
+};
+
+import { onMounted, onUnmounted } from 'vue';
+
+onMounted(() => {
+  window.addEventListener('toggle-dashboard-drawer', toggleDrawer);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('toggle-dashboard-drawer', toggleDrawer);
+});
 
 </script>
 
