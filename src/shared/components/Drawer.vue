@@ -75,7 +75,7 @@ const miniMode = ref(false);
 const test = computed(() => store.state.Tests.Test);
 
 const initialDrawerState = computed(() => {
-  return mdAndUp.value ? true : false;
+ return mdAndUp.value;
 });
 
 onMounted(() => {
