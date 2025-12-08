@@ -1,7 +1,9 @@
 <template>
   <v-navigation-drawer
-    :rail="mini"
-    permanent
+    v-model="drawerOpen"
+    :rail="miniMode && mdAndUp"
+    :temporary="!mdAndUp"
+    :permanent="mdAndUp"
     color="primary"
     class="pt-3"
   >
@@ -17,71 +19,34 @@
       v-if="items"
       density="compact"
     >
-      <div v-if="mini">
-        <v-tooltip
-          v-for="(item, n) in items"
-          :key="n"
-          location="right"
+      <v-list-item
+        v-for="(item, n) in items"
+        :key="n"
+        @click="go(item)"
+      >
+        <template #prepend>
+          <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
+            {{ item.icon }}
+          </v-icon>
+        </template>
+        <v-list-item-title
+          :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
         >
-          <template #activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              @click="go(item)"
-            >
-              <template #prepend>
-                <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
-                  {{ item.icon }}
-                </v-icon>
-              </template>
-              <v-list-item-title
-                :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
-              >
-                {{ $t(`titles.drawer.${item.title}`) }}
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-          <span>{{ $t(`titles.drawer.${item.title}`) }}</span>
-        </v-tooltip>
-      </div>
-
-      <div v-else>
-        <v-list-item
-          v-for="(item, n) in items"
-          :key="n"
-          @click="go(item)"
-        >
-          <template #prepend>
-            <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
-              {{ item.icon }}
-            </v-icon>
-          </template>
-          <v-list-item-title
-            :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
-          >
-            {{ $t(`titles.drawer.${item.title}`) }}
-          </v-list-item-title>
-        </v-list-item>
-      </div>
+          {{ $t(`titles.drawer.${item.title}`) }}
+        </v-list-item-title>
+      </v-list-item>
     </v-list>
 
-    <!-- Navigation footer -->
-    <div class="footer">
+    <div v-if="mdAndUp" class="footer">
       <v-btn
         icon
         size="small"
         class="mr-2 bg-orange"
-        @click.stop="mini = !mini"
+        @click.stop="toggleMiniMode"
       >
-        <v-icon
-          v-if="!mini"
-          color="white"
-          icon="mdi-chevron-left"
-        />
-        <v-icon
-          v-else
-          color="white"
-          icon="mdi-chevron-right"
-        />
+        <v-icon color="white">
+          {{ miniMode ? 'mdi-chevron-right' : 'mdi-chevron-left' }}
+        </v-icon>
       </v-btn>
     </div>
   </v-navigation-drawer>
@@ -91,6 +56,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
+import { useDisplay } from 'vuetify';
 
 const props = defineProps({
   items: {
@@ -102,18 +68,34 @@ const props = defineProps({
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const { mdAndUp, mobile } = useDisplay();
 
-const mini = ref(true);
+const drawerOpen = ref(false);
+const miniMode = ref(false);
 const test = computed(() => store.state.Tests.Test);
+
+const initialDrawerState = computed(() => {
+  return mdAndUp.value ? true : false;
+});
+
+onMounted(() => {
+  drawerOpen.value = initialDrawerState.value;
+});
 
 const go = (item) => {
   if (route.path === item.path) return;
   if (item.path === `/testview/${test.value.id}`) return window.open(item.path);
   router.push(item.path);
+  if (mobile.value) {
+    drawerOpen.value = false;
+  }
 };
-// Toggle drawer from GlobalToolbar
+
 const toggleDrawer = () => {
-  mini.value = !mini.value;
+  drawerOpen.value = !drawerOpen.value;
+};
+const toggleMiniMode = () => {
+  miniMode.value = !miniMode.value;
 };
 
 onMounted(() => {
@@ -129,8 +111,8 @@ onUnmounted(() => {
 <style scoped>
 .footer {
   position: absolute;
-  bottom: 0;
-  width: 100%;
+  bottom: 10px;
+  width: auto;
   padding: 10px;
 }
 </style>
