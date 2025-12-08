@@ -48,7 +48,7 @@
         cols="12"
         lg="4"
       >
-        <UpcomingWebinar />
+        <UpcomingWebinar v-if = "upcomingWebinarData" :webinarData="upcomingWebinarData"/>
       </v-col>
       <v-col
         cols="12"
@@ -81,7 +81,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -105,12 +106,12 @@ const props = defineProps({
 })
 
 const store = useStore()
-
+const controller = new Controller();
 const totalStudies = ref(0);
 const usedStorage = ref(0);
 const totalParticipants = ref(0);
 const nextSession = ref(null);
-
+const upcomingWebinarData = ref({});
 const userDisplayName = computed(() => {
   const user = store.getters.user;
   return user?.username?.split(' ')[0] || 'User';
@@ -121,6 +122,16 @@ const userStorageUsage = computed(() => {
   return user?.storageUsageMB || 0;
 });
 
+const fetchWebinarData = async () => {
+  try {
+    const snap = await controller.readOne('settings', 'upcomingWebinar')
+    if (snap.exists()) {
+      upcomingWebinarData.value = snap.data()
+    }
+  } catch (e) {
+    console.error('Error fetching upcoming webinar data', e)
+  }
+}
 
 watch(
   () => props.sessions,
@@ -175,6 +186,10 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(()=> {
+  fetchWebinarData();
+})
 </script>
 
 <style scoped>
