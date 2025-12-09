@@ -22,7 +22,11 @@ export default class StudyController extends Controller {
     )
     payload.answersDocId = answerDoc.id
 
-    return await super.create(COLLECTION, payload.toFirestore())
+    const newStudyRef = await super.create(COLLECTION, payload.toFirestore())
+    
+    await userController.addStudyToUser(payload.testAdmin.userDocId, newStudyRef.id)
+
+    return newStudyRef
   }
   async duplicateStudy(payload) {
     try {
@@ -70,9 +74,39 @@ export default class StudyController extends Controller {
     }
   }
 
-  async updateStudy(payload) {
+    async updateStudy(payload) {
     try {
-      return await super.update(COLLECTION, payload.id, payload.toFirestore())
+      const currentDocRef = await super.readOne(COLLECTION, payload.id)
+      
+      if (currentDocRef.exists()) {
+        const currentData = currentDocRef.data()
+        
+        const getDateMillis = (dateVal) => {
+          if (!dateVal) return 0;
+          if (typeof dateVal === 'number') return dateVal;
+          if (typeof dateVal.toMillis === 'function') return dateVal.toMillis();
+          if (dateVal.seconds) return dateVal.seconds * 1000;
+          return 0;
+        };
+
+        const dbDate = getDateMillis(currentData.updateDate);
+        const clientDate = getDateMillis(payload.updateDate);
+
+        console.log(`[VersionLock] Checking Study ${payload.id}`);
+        console.log(`[VersionLock] DB Date: ${dbDate} (Type: ${typeof currentData.updateDate})`);
+        console.log(`[VersionLock] Client Date: ${clientDate} (Type: ${typeof payload.updateDate})`);
+
+        if (dbDate > clientDate) {
+          console.error('[VersionLock] Concurrent Modification Detected!');
+          throw new Error('ConcurrentModification')
+        }
+      } else {
+        console.warn('[VersionLock] Document does not exist in DB');
+      }
+
+      payload.updateDate = Date.now()
+      const updateData = typeof payload.toFirestore === 'function' ? payload.toFirestore() : payload;
+      return await super.update(COLLECTION, payload.id, updateData)
     } catch (e) {
       throw e
     }

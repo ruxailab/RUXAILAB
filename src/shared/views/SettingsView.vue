@@ -650,10 +650,43 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     loading.value = true;
     try {
-      console.log('Saving object with endDate:', object.value.endDate);
-      const study = instantiateStudyByType(object.value.testType, object.value);
-      console.log('Study object to save:', study);
-      await store.dispatch('updateStudy', study);
+      const original = store.getters.test;
+      const updates = { 
+        id: props.id, 
+        updateDate: original.updateDate 
+      };
+      
+      let hasChanges = false;
+
+      if (object.value.testTitle !== original.testTitle) {
+        updates.testTitle = object.value.testTitle;
+        hasChanges = true;
+      }
+      if (object.value.testDescription !== original.testDescription) {
+        updates.testDescription = object.value.testDescription;
+        hasChanges = true;
+      }
+      if (object.value.isPublic !== original.isPublic) {
+        updates.isPublic = object.value.isPublic;
+        hasChanges = true;
+      }
+      if (object.value.status !== original.status) {
+        updates.status = object.value.status;
+        hasChanges = true;
+      }
+      if (object.value.endDate !== original.endDate) {
+        updates.endDate = object.value.endDate;
+        hasChanges = true;
+      }
+
+      if (!hasChanges) {
+        toast.info(t('alerts.noChanges'));
+        loading.value = false;
+        return;
+      }
+
+      console.log('Saving partial update:', updates);
+      await store.dispatch('updateStudy', updates);
       await store.dispatch('getStudy', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
       toast.success(t('alerts.savedChanges'));

@@ -138,14 +138,28 @@ export default {
      * @param {Partial<Test>} payload
      */
 
-    async updateStudy({ commit }, payload) {
+    async updateStudy({ commit, dispatch }, payload) {
       commit('setLoading', true)
       try {
         await studyController.updateStudy(payload)
         commit('SET_TEST', payload);
+        commit('SET_TOAST', { message: 'Saved successfully', type: 'success' });
       } catch (e) {
         console.error('Error in', e)
-        commit('setError', true)
+        if (e.message === 'ConcurrentModification') {
+          console.log('Conflict detected. Fetching latest version token to preserve local changes...');
+          
+          const latestVersion = await studyController.getStudy({ id: payload.id });
+          
+          if (latestVersion) {
+            payload.updateDate = latestVersion.updateDate;
+            
+            commit('SET_TOAST', { message: 'Conflict detected. Retrying to preserve your changes...', type: 'info' });
+            await dispatch('updateStudy', payload);
+          }
+        } else {
+          commit('setError', true)
+        }
       } finally {
         commit('setLoading', false)
       }
