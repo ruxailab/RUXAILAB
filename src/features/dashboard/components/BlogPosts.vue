@@ -52,20 +52,21 @@
           :key="post.id || index"
           :href="post.url"
           target="_blank"
-          class="blog-post-item"
           :class="{ 'border-bottom': index < blogPosts.length - 1 }"
         >
-          <v-list-item-title class="text-body-1 font-weight-medium mb-1">
-            {{ post.title }}
-          </v-list-item-title>
-          <div
-            v-if="post.excerpt"
-            class="excerpt text-body-2 text-medium-emphasis mb-2"
-            :title="post.excerpt"
-          >
-            {{ post.excerpt }}
-          </div>
-          <div class="d-flex align-center justify-space-between">
+          <div class="d-flex align-center justify-space-between py-3 px-1">
+            <div>
+              <v-list-item-title class="text-body-1 font-weight-medium mb-1">
+                {{ post.title }}
+              </v-list-item-title>
+              <v-list-item-subtitle
+                v-if="post.excerpt"
+                class="excerpt text-body-2 text-medium-emphasis mb-2"
+                :title="post.excerpt"
+              >
+                {{ post.excerpt }}
+              </v-list-item-subtitle> 
+            </div>
             <span class="text-caption text-medium-emphasis">{{ post.displayDate }}</span>
             <v-icon
               icon="mdi-open-in-new"
@@ -143,10 +144,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.blog-post-item {
-    padding: 2rem 1.5rem;
-}
-
 .border-bottom {
     border-bottom: 1px solid rgb(var(--v-theme-outline-variant));
 }
