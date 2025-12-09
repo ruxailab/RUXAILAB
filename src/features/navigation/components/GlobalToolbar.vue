@@ -130,7 +130,14 @@ const { t } = useI18n();
 // Computed
 const user = computed(() => store.getters.user);
 const iconSize = computed(() => smAndDown.value ? '18' : '20');
-const isDashboard = computed(() => route.path === '/admin' || route.path.includes('manager'));
+const isDashboard = computed(() => {
+  return route.path === '/admin' || 
+         route.path.includes('manager') || 
+         route.path.includes('/userTest/') || 
+         route.path.includes('/heuristic/') || 
+         route.path.includes('/accessibility/');
+});
+
 
 // Methods
 const goTo = (path) => {
