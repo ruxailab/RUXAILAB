@@ -1,22 +1,11 @@
 <template>
   <div>
-    <IntroAnswer
-      v-if="intro"
-      @go-to-coops="goToCoops"
-    />
-    <v-row
-      v-else-if="hasAnswers"
-      justify="center"
-      class="ma-0"
-    >
+    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
+    <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
       <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs
-            v-model="tab"
-            bg-color="transparent"
-            color="#FCA326"
-          >
+          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
             <v-tab @click="tab = 0">
               General Analytics
             </v-tab>
@@ -48,9 +37,7 @@
         </template>
 
         <template #content>
-          <div
-            class="ma-0 pa-0"
-          >
+          <div class="ma-0 pa-0">
             <GeneralAnalytics v-if="tab === 0" />
             <UserAnalytics v-if="tab === 1" />
             <!-- <SentimentAnalysisView v-if="tab === 2" /> -->
@@ -122,8 +109,15 @@ const showNasa = computed(() => {
   );
 });
 
+const showSentiment = computed(() => {
+  if (study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+    return true
+  }
+  return false
+})
+
 const showTranscription = computed(() => {
-  if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+  if (study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
     return true
   }
   return false
