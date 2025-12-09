@@ -782,8 +782,8 @@ const fetchUserProfile = async () => {
       if (userDoc.exists()) {
         const data = userDoc.data();
         userprofile.value = {
-          profileImage: data.profileImage || '',
-          username: data.username || null,
+          profileImage: data.profileImage || user.photoURL || '',
+          username: data.username || user.displayName || null,
           contactNo: data.contactNo || null,
           country: data.country || null,
         };
