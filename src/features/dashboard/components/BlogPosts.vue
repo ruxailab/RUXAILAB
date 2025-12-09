@@ -97,7 +97,7 @@ import { ref, onMounted } from 'vue'
 const blogUrl = "https://blog-ruxailab.web.app";
 
 const openBlog = () => {
-  window.open(blogUrl, '_blank')
+  window.open(blogUrl, '_blank', 'noopener')
 }
 
 const props = defineProps({
