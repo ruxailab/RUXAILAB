@@ -168,10 +168,6 @@ const isStringEmail = (email) => {
     return typeof email !== 'object' && email !== undefined && email.length > 0;
 };
 
-const isUserEmailValid = (email) => {
-    return props.users.find(user => user.email === email);
-};
-
 const isCoopAlreadySelected = (emailToCheck) => {
     return selectedCoops.value.find(
         coop => (typeof coop === 'object' ? coop.email : coop) === emailToCheck
@@ -188,11 +184,6 @@ const validateEmail = () => {
     if (isStringEmail(email)) {
         if (!isValidEmail(email)) {
             toast.error('Invalid email format');
-            return;
-        }
-
-        if (!isUserEmailValid(email)) {
-            toast.error(`${email} is not a valid email or does not exist`);
             return;
         }
 
