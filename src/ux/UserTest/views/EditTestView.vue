@@ -44,8 +44,8 @@
             <TestConfigForm
               :welcome="welcomeMessage"
               :final-message="finalMessage"
-              @update:welcome-message="welcomeMessage = $event"
-              @update:final-message="finalMessage = $event"
+              @update:welcome-message="updateField('welcomeMessage', $event)"
+              @update:final-message="updateField('finalMessage', $event)"
             />
           </div>
 
@@ -96,8 +96,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref , onUnmounted} from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { doc, onSnapshot } from "firebase/firestore"
+import { db } from "@/app/plugins/firebase" 
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
@@ -119,7 +122,8 @@ const welcomeMessage = ref('')
 const finalMessage = ref('')
 const consent = ref('')
 const index = ref(0)
-
+const route = useRoute()
+let unsubscribe = null
 // Computed
 const test = computed(() => store.getters.test)
 
@@ -186,14 +190,35 @@ const save = async () => {
   }
 }
 
+// Subscribe to test (gets the Real-time updates, no conflicts)
+const subscribeToTest = () => {
+  const testId = route.params.id
+  if (testId) {
+    unsubscribe = onSnapshot(doc(db, "tests", testId), (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const test = docSnapshot.data()
+        store.commit("SET_TEST", test)
+        getWelcome()
+        getFinalMessage()
+        getConsent()
+        getPreTest()
+        getPostTest()
+        getTasks()
+      }
+    }, (error) => {
+      console.error("Error listening to test updates:", error)
+    })
+  }
+}
 // Lifecycle
 onMounted(() => {
-  getWelcome()
-  getFinalMessage()
-  getConsent()
-  getPreTest()
-  getPostTest()
-  getTasks()
+  subscribeToTest();
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe();
+  }
 })
 </script>
 
