@@ -2,7 +2,7 @@
   <div class="signin-wrapper">
     <!-- LEFT: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
+      <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
     </div>
 
     <!-- RIGHT: FORM -->
@@ -209,7 +209,7 @@ const onGoogleSignInError = (error) => {
 }
 
 .logo-img {
-  max-width: 400px;
+  max-width: 600px;
   width: 100%;
 }
 

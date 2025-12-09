@@ -986,5 +986,9 @@
         "upcoming": "Upcoming"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Task Description",
+    "taskDescriptionHelper": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow."
   }
 }

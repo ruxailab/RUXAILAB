@@ -1,7 +1,6 @@
 <template>
   <div
     v-if="user"
-    class="d-none d-lg-flex"
   >
     <v-menu
       v-model="menu"
@@ -186,9 +185,9 @@ const fetchUsername = async () => {
 };
 
 const goToProfile = () => {
-    router.push({ 
-      path: '/admin', 
-      query: { section: 'profile' } 
+    router.push({
+      path: '/admin',
+      query: { section: 'profile' }
     }).catch(() => { });
 };
 
