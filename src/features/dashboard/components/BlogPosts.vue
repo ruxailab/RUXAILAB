@@ -65,7 +65,7 @@
                 :title="post.excerpt"
               >
                 {{ post.excerpt }}
-              </v-list-item-subtitle> 
+              </v-list-item-subtitle>
             </div>
             <span class="text-caption text-medium-emphasis">{{ post.displayDate }}</span>
             <v-icon
@@ -97,7 +97,7 @@ import { ref, onMounted } from 'vue'
 const blogUrl = "https://blog-ruxailab.web.app";
 
 const openBlog = () => {
-  window.open(blogUrl, '_blank')
+  window.open(blogUrl, '_blank', 'noopener')
 }
 
 const props = defineProps({
@@ -114,7 +114,7 @@ const defaultPosts = [
     {
         id: 1,
         title: "GSoC 2025 Journey (Tianqin's project) - Bridging GitHub and Discord",
-        excerpt: "Exploring how Tianqin's project designed and implemented the first version of Disgitbot..."",
+        excerpt: "Exploring how Tianqin's project designed and implemented the first version of Disgitbot...",
         url: 'https://blog-ruxailab.web.app/posts/disgitbot-gsoc-2025.html',
         category: 'Research',
         date: '2 days ago'
