@@ -4,16 +4,120 @@
       <!-- Start Screen -->
       <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
         <v-col md="8" class="ma-5 pa-5">
-          <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;" />
+          <img src="@/assets/logo_full_white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;" />
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
            {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
+          <v-btn color="white" variant="outlined" rounded x-large @click="startTest" :disabled="isStartTestDisabled">
             Start Test
           </v-btn>
+
+          <!-- Messages when test is disabled -->
+          <v-alert
+            v-if="testDisabledReason === 'test-already-completed'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-check-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Already Completed</strong><br>
+              You have already completed and submitted this test. Thank you for your participation!
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-expired'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-clock-alert</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Expired</strong><br>
+              This test is no longer available as it has passed its end date.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-not-active'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-pause-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Not Active</strong><br>
+              This test is currently not active. Please contact the administrator.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-no-tasks-configured'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-alert-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Test Configuration Error</strong><br>
+              This test has no tasks configured. Please contact the administrator.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-session-too-far'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-calendar-clock</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Session Too Far</strong><br>
+              The scheduled session is more than 24 hours away. Please come back closer to the session date.
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-no-data'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-alert-circle</v-icon>
+            </template>
+            <span class="text-white">
+              <strong>No Test Data</strong><br>
+              Test information could not be loaded. Please try again later.
+            </span>
+          </v-alert>
+
         </v-col>
       </v-row>
 
@@ -27,20 +131,20 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1"
-                    :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="1" title="Consent" :complete="stepperValue > 1"
+                    :color="stepperValue == 1 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2"
-                    :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="2" title="Pre-test" :complete="stepperValue > 2"
+                    :color="stepperValue == 2 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="3" title="Tasks" :complete="stepperValue >= 3"
-                    :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="3" title="Tasks" :complete="stepperValue > 3"
+                    :color="stepperValue == 3 ? 'warning' : stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="4" title="Post-test" :complete="stepperValue >= 4"
-                    :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="4" title="Post-test" :complete="stepperValue > 4"
+                    :color="stepperValue == 4 ? 'warning' : stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="5" title="Completion" :complete="stepperValue === 5"
-                    :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item :value="5" title="Completion" :complete="stepperValue > 5"
+                    :color="stepperValue == 5 ? 'warning' : stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
             </v-col>
@@ -69,7 +173,7 @@
                       :value="index + 1"
                       :title="task.taskName"
                       :complete="localTestAnswer.tasks[index]?.completed || false"
-                      :color="taskIndex < index ? 'primary' : 'success'"
+                      :color="taskIndex == index ? 'warning' : taskIndex < index ? 'primary' : 'success'"
                       complete-icon="mdi-check"
                     />
                     <v-divider v-if="index < test.testStructure.userTasks.length - 1" />
@@ -228,6 +332,7 @@ const { t } = useI18n();
 const toast = useToast();
 
 // Data variables
+const testDisabledReason = ref(null);
 const loggedIn = ref(null);
 const sessionCooperator = ref(null);
 const testDate = ref(null);
@@ -277,7 +382,7 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 3 && taskIndex.value === 0) return 3; // Pre-tasks (informational)
   if (globalIndex.value === 4 && taskIndex.value >= 0) return 3;   // Tasks (still step 3)
   if (globalIndex.value === 5) return 4; // Post-test
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 5; // Completion
+  if (globalIndex.value === 6) return 5; // Completion
   return 1; // Default to first step
 });
 
@@ -544,7 +649,7 @@ const handleTimerStopped = (elapsedTime, idx) => {
       localTestAnswer.tasks[idx].taskTime = timeToSave;
       console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
     } else {
-      console.error('Tiempo no válido:', elapsedTime);
+      console.error('TieisStartTestDisabledmpo no válido:', elapsedTime);
     }
   } else {
     console.error('No se pudo guardar el tiempo para la tarea', idx);
@@ -748,6 +853,65 @@ const calculateProgress = () => {
     return 0;
   }
 };
+const isStartTestDisabled = computed(() => {
+  if (!test.value) {
+    testDisabledReason.value = 'test-no-data';
+    return true;
+  }
+
+  const now = new Date();
+  const cooperator = test.value.cooperators.find(
+        (u) => u.userDocId === route.params.token,
+      );
+  const sessionDate = cooperator.testDate ? new Date(cooperator.testDate) : null;
+
+  // 🧩 Test already completed
+  if (localTestAnswer.submitted) {
+    testDisabledReason.value = 'test-already-completed';
+    return true;
+  }
+
+  // 🧩 Test is not active
+  if (test.value.status !== 'active') {
+    testDisabledReason.value = 'test-not-active';
+    return true;
+  }
+
+  // 🧩 Test structure missing
+  if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
+    testDisabledReason.value = 'test-no-tasks-configured';
+    return true;
+  }
+
+  // 🧩 Check session date
+  if (sessionDate) {
+    const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    if (diffHours < 0) {
+      testDisabledReason.value = 'test-expired';
+      return true;
+    }
+
+    if (diffHours > 24) {
+      testDisabledReason.value = 'test-session-too-far';
+      return true;
+    }
+  }
+
+  // 🧩 Test expired (fallback endDate)
+  if (test.value.endDate) {
+    const endDate = new Date(test.value.endDate);
+    if (now > endDate) {
+      testDisabledReason.value = 'test-expired';
+      return true;
+    }
+  }
+
+  // ✅ All good
+  testDisabledReason.value = null;
+  return false;
+});
+
 
 // Lifecycle hooks
 onMounted(async () => {
@@ -852,10 +1016,10 @@ onBeforeUnmount(async () => {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90%;
-  margin-right: -100px;
-  margin-top: 200px;
-  background-image: url(../../../assets/ruxailab-small-red.png);
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;

@@ -98,6 +98,13 @@ const showNasa = computed(() => {
   );
 });
 
+const showSentiment = computed(() => {
+  if (study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+    return true
+  }
+  return false
+})
+
 const showTranscription = computed(() => {
   if (study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
     return true
