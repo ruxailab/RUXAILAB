@@ -82,10 +82,27 @@ export default {
 
     async signin({ commit }, payload) {
       commit('setLoading', true)
+
       try {
-        await authController.signIn(payload.email, payload.password, payload.rememberMe)
+        const { user } = await authController.signIn(
+          payload.email,
+          payload.password,
+          payload.rememberMe
+        )
+
+        const dbUser = await userController.getById(user.uid)
+
+        commit('SET_USER', dbUser)
+
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.loginSuccess'),
+          type: 'success',
+        })
+
       } catch (err) {
         toast.error(i18n.global.t('errors.incorrectCredential'))
+      } finally {
+        commit('setLoading', false)
       }
     },
 
@@ -159,10 +176,6 @@ export default {
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
       } catch (e) {
         console.error(e)
         commit('SET_TOAST', {
