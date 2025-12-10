@@ -919,11 +919,18 @@ const signOut = async () => {
   }
 };
 
-const countryFilter = (item, queryText) => {
+const countryFilter = (value, queryText, item) => {
   if (!queryText) return true;
 
-  const searchText = queryText.toLowerCase();
-  const countryName = item.name.toLowerCase();
+  const searchText = queryText.toString().toLowerCase();
+
+  const nameSource = 
+    item?.raw?.name ??
+    item?.name ??
+    (typeof value === 'string' ? value : value?.name) ??
+    '';
+
+  const countryName = nameSource.toString().toLowerCase();
   return countryName.includes(searchText);
 };
 
