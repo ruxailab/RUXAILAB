@@ -863,7 +863,7 @@ const changePassword = async () => {
 const handlerDeleteConfirmText = async (value) => {
   const auth = getAuth();
   const user = auth.currentUser
-  if (user.providerData.includes(a => a.providerId !== 'google.com')) return deleteStep.value = 2
+  if (user.providerData.some(a => a.providerId !== 'google.com')) return deleteStep.value = 2
 
   try {
     isDeleting.value = true
@@ -879,9 +879,10 @@ const handlerDeleteConfirmText = async (value) => {
 };
 
 const deleteAccount = async (user) => {
+  await user.delete()
   await store.dispatch('deleteAuth', user.uid)
   toast.success(t('PROFILE.accountDeletedSuccess'))
-  signOut()
+  await signOut()
 };
 
 const handlerDeleteAccount = async () => {
