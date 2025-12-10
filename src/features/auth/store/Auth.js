@@ -6,12 +6,27 @@
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
-import { useToast } from 'vue-toastification'
 
 const authController = new AuthController()
 const userController = new UserController()
 
-const toast = useToast()
+// --- Helper Function (Paste the getFirebaseErrorKey function here or import it) ---
+const getFirebaseErrorKey = (error) => {
+  if (!error || !error.code) return 'errors.globalError'
+  switch (error.code) {
+    case 'auth/email-already-in-use': return 'auth.errors.emailInUse'
+    case 'auth/user-not-found': return 'auth.errors.invalidCredentials'
+    case 'auth/wrong-password': return 'auth.errors.invalidCredentials'
+    case 'auth/invalid-email': return 'auth.errors.invalidEmail'
+    case 'auth/weak-password': return 'auth.errors.weakPassword'
+    case 'auth/user-disabled': return 'auth.errors.userDisabled'
+    case 'auth/too-many-requests': return 'auth.errors.tooManyRequests'
+    case 'auth/network-request-failed': return 'errors.networkError'
+    case 'auth/requires-recent-login': return 'auth.errors.requiresRecentLogin'
+    case 'auth/popup-closed-by-user': return 'auth.errors.popupClosed'
+    default: return 'errors.globalError'
+  }
+}
 
 export default {
   state: {
@@ -22,7 +37,6 @@ export default {
     user(state) {
       return state.user
     },
-
     getUserAccessLevel: (state) => (test) => {
       const { user } = state
 
@@ -65,13 +79,22 @@ export default {
       try {
         const { user } = await authController.signUp(payload.email, payload.password)
         await userController.create({ id: user.uid, email: user.email })
+
+        const dbUser = await userController.getById(user.uid)
+        commit('SET_USER', dbUser)
+
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
         })
+
+        return dbUser
       } catch (err) {
+        // Updated error handling
+        const errorKey = getFirebaseErrorKey(err)
+        console.log("The error key is", errorKey)
         commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
+          message: i18n.global.t(errorKey),
           type: 'error',
         })
         throw err
@@ -85,7 +108,15 @@ export default {
       try {
         await authController.signIn(payload.email, payload.password, payload.rememberMe)
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        // Updated error handling
+        const errorKey = getFirebaseErrorKey(err)
+        commit('SET_TOAST', {
+          message: i18n.global.t(errorKey),
+          type: 'error',
+        })
+      } finally {
+        // Added finally block to ensure loading stops
+        commit('setLoading', false)
       }
     },
 
@@ -125,8 +156,10 @@ export default {
           type: 'success',
         })
       } catch (err) {
+        // Updated error handling
+        const errorKey = getFirebaseErrorKey(err)
         commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
+          message: i18n.global.t(errorKey),
           type: 'error',
         })
         throw err
@@ -142,9 +175,10 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        console.error(err)
+        // Updated error handling
+        const errorKey = getFirebaseErrorKey(err)
         commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
+          message: i18n.global.t(errorKey),
           type: 'error',
         })
       } finally {
@@ -159,16 +193,11 @@ export default {
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
+        // Removed Toast here - usually auto-login should be silent UX
+        // If you really want it, keep it.
       } catch (e) {
         console.error(e)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        // Auto sign in errors are usually ignored in UI so the user just sees the login page
       }
     },
 
@@ -181,12 +210,10 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        let errorMsg = i18n.global.t('errors.globalError');
-        if (err.code === 'auth/invalid-email') {
-          errorMsg = i18n.global.t('errors.invalidEmail');
-        }
+        // Updated error handling
+        const errorKey = getFirebaseErrorKey(err)
         commit('SET_TOAST', {
-          message: errorMsg,
+          message: i18n.global.t(errorKey),
           type: 'error',
         })
       } finally {
@@ -204,9 +231,10 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        console.error('Error deleting user:', err)
+        // Updated error handling
+        const errorKey = getFirebaseErrorKey(err)
         commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
+          message: i18n.global.t(errorKey),
           type: 'error',
         })
       } finally {
