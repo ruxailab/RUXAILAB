@@ -15,22 +15,13 @@
             <!-- <v-tab @click="tab = 2">
               Sentiment Analysis
             </v-tab> -->
-            <v-tab
-              v-if="showSUS"
-              @click="tab = 2"
-            >
+            <v-tab v-if="showSUS" @click="tab = 2">
               SUS Analytics
             </v-tab>
-            <v-tab
-              v-if="showNasa"
-              @click="tab = 3"
-            >
+            <v-tab v-if="showNasa" @click="tab = 3">
               Nasa-TLX Analytics
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 4">
-              Eye-Tracking Analytics
-            </v-tab>
-            <v-tab v-if="showTranscription" @click="tab = 5">
+            <v-tab v-if="showTranscription" @click="tab = 4">
               Transcriptions
             </v-tab>
           </v-tabs>
@@ -43,8 +34,7 @@
             <!-- <SentimentAnalysisView v-if="tab === 2" /> -->
             <SusAnalytics v-if="tab === 2" />
             <NasaTlxAnalytics v-if="tab === 3" />
-            <EyeTrackingAnalytics :iris-data="allIrisTrackingData" v-if="tab === 4" />
-            <TranscriptionTool v-if="tab === 5" />
+            <TranscriptionTool v-if="tab === 4" />
           </div>
         </template>
       </ShowInfo>
@@ -66,7 +56,6 @@ import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 // import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
-import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
 import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 
@@ -132,17 +121,6 @@ const showEye = computed(() =>
     )
   )
 );
-
-const allIrisTrackingData = computed(() => {
-  if (!testAnswerDocument.value || !testAnswerDocument.value.taskAnswers) return [];
-
-  const tasks = Object.values(testAnswerDocument.value.taskAnswers)
-    .flatMap(ev => Object.values(ev.tasks || {}))
-    .filter(task => task.irisTrackingData && task.irisTrackingData.length > 0)
-    .flatMap(task => task.irisTrackingData);
-
-  return tasks;
-});
 
 const goToCoops = () => {
   emit('goToCoops');

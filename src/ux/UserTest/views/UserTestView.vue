@@ -1,11 +1,10 @@
 <template>
   <div v-if="test">
-    <!-- EYE TRACKER NOT READY 
+
     <div>
       <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
--->
 
     <!-- <v-overlay v-model="isLoading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
@@ -16,33 +15,14 @@
 
     <Snackbar />
 
-    <SubmitDialog
-      :model-value="dialog"
-      :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')"
-      :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')"
-      @cancel="dialog = false"
-      @submit="handleSubmit"
-    />
+    <SubmitDialog :model-value="dialog" :title="$t('HeuristicsTestView.messages.submitTest')"
+      :message="$t('HeuristicsTestView.messages.submitOnce')" :cancel-label="$t('buttons.cancel')"
+      :submit-label="$t('buttons.submit')" @cancel="dialog = false" @submit="handleSubmit" />
 
-    <v-dialog
-      :model-value="fromlink && !noExistUser && !logined"
-      max-width="400"
-      persistent
-    >
-      <v-card
-        v-if="user"
-        class="rounded-xl pa-6"
-      >
-        <v-row
-          class="ma-0 pa-0"
-          justify="center"
-        >
-          <v-avatar
-            color="primary-lighten-4"
-            size="120"
-          >
+    <v-dialog :model-value="fromlink && !noExistUser && !logined" max-width="400" persistent>
+      <v-card v-if="user" class="rounded-xl pa-6">
+        <v-row class="ma-0 pa-0" justify="center">
+          <v-avatar color="primary-lighten-4" size="120">
             <v-icon size="80">
               mdi-account-circle
             </v-icon>
@@ -57,72 +37,35 @@
           </p>
         </v-card-text>
         <v-card-actions class="d-flex flex-column pa-0">
-          <v-btn
-            color="primary"
-            block
-            variant="flat"
-            class="my-2"
-            @click="setTest"
-          >
+          <v-btn color="primary" block variant="flat" class="my-2" @click="setTest">
             Continue as {{ user.email }}
           </v-btn>
           <p class="text-caption mt-2">
             Not you?
-            <a
-              href="#"
-              class="text-primary font-weight-medium"
-              @click.prevent="signOut"
-            >Change account</a>
+            <a href="#" class="text-primary font-weight-medium" @click.prevent="signOut">Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-container
-      fluid
-      class="pa-0"
-    >
-      <v-row
-        v-if="test && start"
-        class="start-screen background-img pa-0 ma-0"
-        align="center"
-      >
-        <v-col
-          md="8"
-          class="ma-5 pa-5"
-        >
-          <img
-            src="@/assets/logo_full_white.png"
-            alt="RUXAILAB"
-            class="mb-10"
-            style="max-width: 300px;"
-          >
+    <v-container fluid class="pa-0">
+      <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
+        <v-col md="8" class="ma-5 pa-5">
+          <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;">
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-btn
-            color="white"
-            variant="outlined"
-            rounded
-            @click="startTest"
-            class="mt-4"
-            :disabled="isStartTestDisabled"
-          >
+          <v-btn color="white" variant="outlined" rounded @click="startTest" class="mt-4"
+            :disabled="isStartTestDisabled">
             Start Test
           </v-btn>
-          
+
           <!-- Messages when test is disabled -->
-          <v-alert
-            v-if="testDisabledReason === 'already-completed'"
-            type="info"
-            variant="outlined"
-            class="mt-4"
-            color="white"
-            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
-          >
+          <v-alert v-if="testDisabledReason === 'already-completed'" type="info" variant="outlined" class="mt-4"
+            color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-check-circle</v-icon>
             </template>
@@ -132,14 +75,8 @@
             </span>
           </v-alert>
 
-          <v-alert
-            v-else-if="testDisabledReason === 'Test has expired'"
-            type="warning"
-            variant="outlined"
-            class="mt-4"
-            color="white"
-            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
-          >
+          <v-alert v-else-if="testDisabledReason === 'Test has expired'" type="warning" variant="outlined" class="mt-4"
+            color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-clock-alert</v-icon>
             </template>
@@ -149,14 +86,8 @@
             </span>
           </v-alert>
 
-          <v-alert
-            v-else-if="testDisabledReason === 'Test is not active'"
-            type="warning"
-            variant="outlined"
-            class="mt-4"
-            color="white"
-            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
-          >
+          <v-alert v-else-if="testDisabledReason === 'Test is not active'" type="warning" variant="outlined"
+            class="mt-4" color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-pause-circle</v-icon>
             </template>
@@ -166,14 +97,8 @@
             </span>
           </v-alert>
 
-          <v-alert
-            v-else-if="testDisabledReason === 'Test has no tasks configured'"
-            type="error"
-            variant="outlined"
-            class="mt-4"
-            color="white"
-            style="background-color: rgba(255, 255, 255, 0.1); border-color: white;"
-          >
+          <v-alert v-else-if="testDisabledReason === 'Test has no tasks configured'" type="error" variant="outlined"
+            class="mt-4" color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-alert-circle</v-icon>
             </template>
@@ -185,25 +110,13 @@
         </v-col>
       </v-row>
 
-      <v-row
-        v-else
-        class="main-test-interface pa-0 ma-0"
-      >
-        <v-col
-          ref="rightView"
-          class="right-view pa-6"
-        >
-          <v-row
-            v-if="globalIndex >= 1"
-            class="stepper-row sticky-stepper"
-          >
+      <v-row v-else class="main-test-interface pa-0 ma-0">
+        <v-col ref="rightView" class="right-view pa-6">
+          <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
-              <v-stepper
-                :model-value="stepperValue"
-                class="main-stepper rounded-xl elevation-3"
+              <v-stepper :model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
-                style="visibility:visible"
-              >
+                style="visibility:visible">
                 <v-stepper-header>
                   <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1" color="white"
                     complete-icon="mdi-check" />
@@ -212,7 +125,7 @@
                     complete-icon="mdi-check" />
                   <v-divider />
 
-                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Eye Tracking" :complete="stepperValue >= 3"
+                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Calibration" :complete="stepperValue >= 3"
                     color="white" complete-icon="mdi-check" />
                   <v-divider v-if="hasEyeTracking" />
 
@@ -229,34 +142,16 @@
             </v-col>
           </v-row>
           <!-- Stepper secundario para tareas -->
-          <v-row
-            v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
-            class="task-stepper-row"
-            justify="center"
-          >
-            <v-col
-              cols="12"
-              md="8"
-              lg="6"
-              class="d-flex justify-center"
-            >
-              <v-stepper
-                :model-value="taskIndex + 1"
-                class="task-stepper rounded-xl elevation-1 w-100"
-                style="max-width: 100%;"
-              >
+          <v-row v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
+            class="task-stepper-row" justify="center">
+            <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
+              <v-stepper :model-value="taskIndex + 1" class="task-stepper rounded-xl elevation-1 w-100"
+                style="max-width: 100%;">
                 <v-stepper-header>
-                  <template
-                    v-for="(task, idx) in test.testStructure.userTasks"
-                    :key="idx"
-                  >
-                    <v-stepper-item
-                      :value="idx + 1"
-                      :title="`Task ${idx + 1}`"
-                      :complete="taskIndex > idx"
+                  <template v-for="(task, idx) in test.testStructure.userTasks" :key="idx">
+                    <v-stepper-item :value="idx + 1" :title="`Task ${idx + 1}`" :complete="taskIndex > idx"
                       :color="taskIndex > idx ? 'success' : (taskIndex === idx ? 'primary' : 'grey')"
-                      complete-icon="mdi-check"
-                    />
+                      complete-icon="mdi-check" />
                     <v-divider v-if="idx < test.testStructure.userTasks.length - 1" />
                   </template>
                 </v-stepper-header>
@@ -264,14 +159,14 @@
             </v-col>
           </v-row>
 
-          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue" :welcome-message="test?.testStructure?.welcomeMessage" @start="globalIndex = 1" />
+          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
+            :welcome-message="test?.testStructure?.welcomeMessage" @start="globalIndex = 1" />
 
           <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
             :consent-text="test.testStructure.consent" :full-name-model="fullName"
             :consent-completed-model="localTestAnswer.consentCompleted" @update:fullNameModel="val => fullName = val"
             @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-            @continue="completeStep(taskIndex, 'consent')" 
-            @declineConsent="handleConsentDecline" />
+            @continue="completeStep(taskIndex, 'consent')" @declineConsent="handleConsentDecline" />
 
           <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest" :pre-test-answer="localTestAnswer.preTestAnswer"
@@ -285,14 +180,13 @@
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
             @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
 
-          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
-            :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
-            v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
+          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER"
+            ref="taskStepComponent" :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex"
+            :test-id="testId" v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
-            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
-            :submitted="localTestAnswer.submitted"
+            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
             @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
             @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
@@ -315,7 +209,7 @@
       </v-row>
     </v-container>
     <!-- Floating Action Button -->
-         <!--TODO: Remove if not necessary
+    <!--TODO: Remove if not necessary
     <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
       class="mb-10 mr-5">
       <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
@@ -439,8 +333,8 @@ const isStartTestDisabled = computed(() => {
 
   // Check if testStructure is empty array or doesn't exist
   const hasValidTasks = test.value.testStructure &&
-                       Array.isArray(test.value.testStructure.userTasks) &&
-                       test.value.testStructure.userTasks.length > 0;
+    Array.isArray(test.value.testStructure.userTasks) &&
+    test.value.testStructure.userTasks.length > 0;
 
   if (!hasValidTasks) return true;
 
@@ -462,23 +356,23 @@ const isStartTestDisabled = computed(() => {
 
 const testDisabledReason = computed(() => {
   if (!test.value) return 'Test not found';
-  
+
   const hasValidTasks = test.value.testStructure &&
-                       Array.isArray(test.value.testStructure.userTasks) &&
-                       test.value.testStructure.userTasks.length > 0;
-  
+    Array.isArray(test.value.testStructure.userTasks) &&
+    test.value.testStructure.userTasks.length > 0;
+
   if (!hasValidTasks) return 'Test has no tasks configured';
-  
+
   if (test.value.status !== 'active') return 'Test is not active';
-  
+
   if (test.value.endDate) {
     const currentDate = new Date();
     const endDate = new Date(test.value.endDate);
     if (endDate < currentDate) return 'Test has expired';
   }
-  
+
   if (localTestAnswer.submitted) return 'already-completed';
-  
+
   return null;
 });
 
@@ -514,10 +408,9 @@ function handleIrisData(data) {
 }
 
 const openCalibration = () => {
-  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  window.open(`${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
   calibrationInProgress.value = true;
-  console.log('calibrationInProgress.value', calibrationInProgress.value);
-}
+};
 
 const closeCalibration = () => {
   calibrationInProgress.value = false;
@@ -549,37 +442,54 @@ function saveIrisDataIntoTask() {
 
 const saveAnswer = async () => {
   try {
+    console.log('Saving answer...');
     attachMediaToTasks(localTestAnswer, mediaUrls.value);
     localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
-  
+
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
       localTestAnswer.invited = true;
     }
     if (!user.value) {
-      localTestAnswer.userDocId = nanoid(16)
+      localTestAnswer.userDocId = nanoid(16);
+      console.log('Generated userDocId for anonymous user:', localTestAnswer.userDocId);
+    }
+    console.log('Saving answer to Firestore...');
+    if (!user.value) {
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
       });
     } else {
-      Object.assign(currentUserTestAnswer.value, localTestAnswer);
-      console.log('Generated userDocId for anonymous user:', currentUserTestAnswer.value);
+      const updatedAnswer = UserStudyEvaluatorAnswer.toModel({
+        ...currentUserTestAnswer.value,
+        fullName: localTestAnswer.fullName,
+        progress: localTestAnswer.progress,
+        preTestAnswer: localTestAnswer.preTestAnswer,
+        postTestAnswer: localTestAnswer.postTestAnswer,
+        tasks: {
+          ...currentUserTestAnswer.value.tasks,
+          ...localTestAnswer.tasks,
+        },
+      })
+
+      Object.assign(currentUserTestAnswer.value, updatedAnswer)
+
       await store.dispatch('saveTestAnswer', {
         data: currentUserTestAnswer.value,
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
-      });
+      })
     }
-    router.push('/admin');
 
+    router.push('/admin')
   } catch (error) {
-    console.error('Error saving answer:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+    console.error('Error saving answer:', error)
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' })
   }
-};
+}
 
 const submitAnswer = async () => {
   try {
@@ -593,12 +503,12 @@ const submitAnswer = async () => {
 
 const handleConsentDecline = () => {
   // User declined consent, end the test
-  store.commit('SET_TOAST', { 
-    type: 'info', 
+  store.commit('SET_TOAST', {
+    type: 'info',
     message: 'Test ended due to consent decline. Thank you for your time.',
     timeout: 5000
   });
-  
+
   // Navigate back to admin or appropriate page
   setTimeout(() => {
     router.push('/admin');
@@ -724,10 +634,10 @@ const completeStep = (id, type, userCompleted = true) => {
         return;
       }
       localTestAnswer.tasks[id].completed = userCompleted;
-      
+
       // Mark this task as attempted (whether completed successfully or could not finish)
       localTestAnswer.tasks[id].attempted = true;
-      
+
       // Check if all tasks have been attempted
       let allTasksAttempted = true;
       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
@@ -1199,4 +1109,3 @@ onBeforeUnmount(() => {
   ;
 }
 </style>
-
