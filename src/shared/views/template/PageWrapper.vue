@@ -7,14 +7,12 @@
       <v-overlay
         v-if="loading"
         model-value="loading"
-        class="text-center"
+        class="text-center justify-center align-center"
+        persistent
+        opacity="0.8"
       >
-        <v-progress-circular
-          indeterminate
-          color="primary"
-          size="50"
-        />
-        <div class="text-white mt-3">
+        <XLoader />
+        <div class="text-white mt-5 font-weight-bold text-h6">
           {{ loadingText || $t('common.loading') }}
         </div>
       </v-overlay>
@@ -64,6 +62,7 @@
 <script setup>
 import Snackbar from '@/shared/components/Snackbar';
 import Loading from '@/shared/components/Loading.vue';
+import XLoader from '@/shared/components/XLoader.vue';
 
 defineProps({
   title: {
