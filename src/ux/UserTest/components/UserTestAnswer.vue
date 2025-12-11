@@ -1,40 +1,59 @@
 <template>
   <div>
-    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
-    <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
+    <IntroAnswer
+      v-if="intro"
+      @go-to-coops="goToCoops"
+    />
+    <v-row
+      v-else-if="hasAnswers"
+      justify="center"
+      class="ma-0"
+    >
       <ShowInfo hide-col="true">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326">
+          <v-tabs
+            v-model="tab"
+            bg-color="transparent"
+            color="#FCA326"
+          >
             <v-tab @click="tab = 0">
               General Analytics
             </v-tab>
             <v-tab @click="tab = 1">
               Individual Analytics
             </v-tab>
-            <!-- <v-tab @click="tab = 2">
+            <v-tab v-if="showSentiment" @click="tab = 2">
               Sentiment Analysis
-            </v-tab> -->
-            <v-tab v-if="showSUS" @click="tab = 2">
+            </v-tab>
+            <v-tab
+              v-if="showSUS"
+              @click="tab = 3"
+            >
               SUS Analytics
             </v-tab>
-            <v-tab v-if="showNasa" @click="tab = 3">
+            <v-tab
+              v-if="showNasa"
+              @click="tab = 4"
+            >
               Nasa-TLX Analytics
             </v-tab>
-            <v-tab v-if="showTranscription" @click="tab = 4">
+            <v-tab v-if="showTranscription" @click="tab = 5">
               Transcriptions
             </v-tab>
           </v-tabs>
         </template>
 
         <template #content>
-          <div class="ma-0 pa-0">
+          <div
+            class="ma-0 pa-0"
+          >
             <GeneralAnalytics v-if="tab === 0" />
             <UserAnalytics v-if="tab === 1" />
-            <!-- <SentimentAnalysisView v-if="tab === 2" /> -->
-            <SusAnalytics v-if="tab === 2" />
-            <NasaTlxAnalytics v-if="tab === 3" />
-            <TranscriptionTool v-if="tab === 4" />
+            <SentimentAnalysisView v-if="tab === 2" />
+            <SusAnalytics v-if="tab === 3" />
+            <NasaTlxAnalytics v-if="tab === 4" />
+            <TranscriptionTool v-if="tab === 5" />
           </div>
         </template>
       </ShowInfo>
@@ -53,7 +72,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
 import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
 import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
-// import SentimentAnalysisView from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
@@ -99,14 +118,14 @@ const showNasa = computed(() => {
 });
 
 const showSentiment = computed(() => {
-  if (study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+   if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
     return true
   }
   return false
 })
 
 const showTranscription = computed(() => {
-  if (study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
+  if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
     return true
   }
   return false
@@ -121,6 +140,17 @@ const showEye = computed(() =>
     )
   )
 );
+
+const allIrisTrackingData = computed(() => {
+  if (!testAnswerDocument.value || !testAnswerDocument.value.taskAnswers) return [];
+
+  const tasks = Object.values(testAnswerDocument.value.taskAnswers)
+    .flatMap(ev => Object.values(ev.tasks || {}))
+    .filter(task => task.irisTrackingData && task.irisTrackingData.length > 0)
+    .flatMap(task => task.irisTrackingData);
+
+  return tasks;
+});
 
 const goToCoops = () => {
   emit('goToCoops');
