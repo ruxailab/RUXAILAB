@@ -40,7 +40,6 @@
             <h2>Tasks</h2>
             <div class="mt-6" v-for="(task, index) in selectedAnswerDocument.tasks" :key="index">
               <h3>Task {{ Number(index + 1) }}</h3>
-              {{ task }}
 
               <!-- Audio Wave -->
               <AudioWave :ref="i => audioWaveRefs[index] = i" v-model:active-region="activeRegion"
@@ -75,10 +74,12 @@
       </v-card>
     </div>
 
-    <v-overlay :model-value="overlay.visible" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        {{ overlay.text }}
+    <v-overlay :model-value="overlay.visible" class="custom-overlay" persistent>
+      <div class="overlay-content">
+        <v-progress-circular indeterminate color="#fca326" size="50" />
+        <div class="overlay-text mt-3">
+          {{ overlay.text }}
+        </div>
       </div>
     </v-overlay>
 
@@ -234,7 +235,7 @@ export default {
       this.overlay = { visible: true, text: 'Analyzing...' };
 
       try {
-        const response = await axios.post('http://localhost:8001/audio-transcript-sentiment/process', {
+        const response = await axios.post(process.env.VUE_APP_TRANSCRIPTION_SENTIMENT_API_BASE_URL + '/process', {
           url: task.audioRecordURL,
           start_time_ms: this.activeRegion.start * 1000.0, // Convert to milliseconds
           end_time_ms: this.activeRegion.end * 1000.0, // Convert to milliseconds
@@ -281,7 +282,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .cardsTitle {
   color: #455a64;
   font-size: 18px;
@@ -308,5 +309,22 @@ export default {
 
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
+}
+
+.custom-overlay {
+  /* Força o overlay a cobrir a tela inteira e centralizar o conteúdo */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.overlay-content {
+  text-align: center;
+}
+
+.overlay-text {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
 }
 </style>
