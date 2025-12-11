@@ -147,6 +147,7 @@
                           density="compact"
                           prepend-inner-icon="mdi-account"
                           readonly
+                          :class="{ 'no-interact': !editProfileDialog }"
                           class="input-field-transition"
                         />
                       </v-col>
@@ -161,6 +162,7 @@
                           density="compact"
                           prepend-inner-icon="mdi-email"
                           readonly
+                          :class="{ 'no-interact': !editProfileDialog }"
                           class="input-field-transition"
                         />
                       </v-col>
@@ -175,6 +177,7 @@
                           density="compact"
                           prepend-inner-icon="mdi-phone"
                           readonly
+                          :class="{ 'no-interact': !editProfileDialog }"
                           class="input-field-transition"
                         />
                       </v-col>
@@ -189,6 +192,7 @@
                           density="compact"
                           prepend-inner-icon="mdi-map-marker"
                           readonly
+                          :class="{ 'no-interact': !editProfileDialog }"
                           class="input-field-transition"
                         />
                       </v-col>
@@ -937,3 +941,25 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize);
 });
 </script>
+
+<style scoped>
+.no-interact {
+  pointer-events: none;
+  outline: none;
+}
+.no-interact :deep(.v-field__overlay) {
+    opacity: 0 !important;
+}
+.no-interact :deep(.v-field__outline) {
+    border-color: transparent !important;
+}
+.no-interact :deep(.v-field__outline)::before {
+    border-color: transparent !important;
+}
+.no-interact :deep(.v-field__outline)::after {
+    border-color: transparent !important;
+}
+.no-interact :deep(.v-field__input) {
+    color: inherit !important;
+}
+</style>
