@@ -114,7 +114,17 @@ const props = defineProps({
 
 const webinar = computed(() => {
     if (Object.keys(props.webinarData).length > 0) {
-        return props.webinarData
+        const data = { ...props.webinarData }
+        
+        // Timestamp to Date
+        if (data.date && typeof data.date.toDate === 'function') {
+            const dateObj = data.date.toDate()
+            data.date = dateObj.toLocaleDateString('en-US', { 
+                month: 'short', 
+                year: 'numeric' 
+            })
+        }
+        return data
     }
 
     // Default webinar data
