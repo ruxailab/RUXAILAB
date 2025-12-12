@@ -29,7 +29,11 @@
       "email": "Correo electrónico",
       "instructions": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
       "reset_button": "Enviar enlace de restablecimiento",
-      "back_to_signin": "Volver a iniciar sesión"
+      "back_to_signin": "Volver a iniciar sesión",
+      "check_your_email": "Revisa tu correo electrónico",
+      "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
+      "no_email": "¿No recibiste el correo?",
+      "try_again": "Inténtalo de nuevo" 
     }
   },
   "common": {

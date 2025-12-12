@@ -29,7 +29,11 @@
       "email": "Email",
       "instructions": "Enter your email and we'll send you a link to reset your password.",
       "reset_button": "Send Reset Link",
-      "back_to_signin": "Back to Sign In"
+      "back_to_signin": "Back to Sign In",
+      "check_your_email": "Check your email",
+      "reset_link_sent": "We’ve sent a password reset link to",
+      "no_email": "Didn’t get the email?",
+      "try_again": "Try again"
     }
   },
   "common": {
