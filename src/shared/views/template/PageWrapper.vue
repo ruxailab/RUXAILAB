@@ -3,21 +3,10 @@
     <v-main class="ma-5">
       <Snackbar />
 
-      <!-- Loading Overlay -->
-      <v-overlay
+      <LogoLoading
         v-if="loading"
-        model-value="loading"
-        class="text-center"
-      >
-        <v-progress-circular
-          indeterminate
-          color="primary"
-          size="50"
+        :text="loadingText || $t('common.loading')"
         />
-        <div class="text-white mt-3">
-          {{ loadingText || $t('common.loading') }}
-        </div>
-      </v-overlay>
 
       <!-- Main Container -->
       <v-container
@@ -63,7 +52,7 @@
 
 <script setup>
 import Snackbar from '@/shared/components/Snackbar';
-import Loading from '@/shared/components/Loading.vue';
+import LogoLoading from '@/shared/components/LogoLoading.vue';
 
 defineProps({
   title: {
