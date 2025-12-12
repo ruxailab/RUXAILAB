@@ -11,8 +11,7 @@
     "confirmPassword": "تأكيد كلمة المرور",
     "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول",
     "continueWithGoogle": "المتابعة باستخدام جوجل",
-    "or": "أو",
-    "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول"
+    "or": "أو"
   },
   "common": {
     "loading": "جاري التحميل",
@@ -50,12 +49,18 @@
     "sentBy": "مرسل من قبل",
     "new": "جديد"
   },
-  "PROFILE": {
+  "profile": {
+    "superAdmin": "المدير الأعلى",
     "title": "الملف الشخصي",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
     "editProfile": "تحرير الملف الشخصي",
     "account": "الحساب",
     "admin": "المدير",
+    "security": "الأمان",
+    "personalInfo": "المعلومات الشخصية",
     "changePassword": "تغيير كلمة المرور",
+    "contact": "رقم الاتصال",
     "passwordRequirements": "تأكد من استيفاء هذه المتطلبات",
     "passwordMinimumRequirements": "8 أحرف على الأقل، حرف كبير ورمز",
     "newPassword": "كلمة المرور الجديدة",
@@ -63,6 +68,10 @@
     "editDetails": "تحرير التفاصيل",
     "saveChanges": "حفظ التغييرات",
     "country": "البلد",
+    "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
+    "pleaseTypeDeleteToConfirm": "يرجى كتابة DELETE للتأكيد",
+    "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
+    "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة في حذف الحساب",
     "missingInfo": "معلومات مفقودة",
     "deleteAccountTitle": "حذف الحساب",
     "deleteAccountConfirm": "هل أنت متأكد تمامًا؟ لا يمكن التراجع عن هذا الإجراء.",
@@ -72,7 +81,25 @@
     "passwordUppercase": "يجب أن تحتوي على حرف كبير",
     "passwordSymbol": "يجب أن تحتوي على رمز",
     "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
-    "passwordsMatch": "يجب أن تتطابق كلمات المرور"
+    "passwordsMatch": "يجب أن تتطابق كلمات المرور",
+    "usernameRequired": "اسم المستخدم مطلوب",
+    "usernameMinLength": "يجب أن يحتوي اسم المستخدم على 3 أحرف على الأقل",
+    "countryRequired": "البلد مطلوب",
+    "contactNumberRequired": "رقم الاتصال مطلوب",
+    "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
+    "profileImageUpdatedSuccess": "تم تحديث صورة الملف الشخصي بنجاح",
+    "profileImageUploadFailed": "فشل تحميل صورة الملف الشخصي",
+    "noUserSignedIn": "لا يوجد مستخدم مسجل الدخول",
+    "profileLoadFailed": "فشل تحميل الملف الشخصي",
+    "profileUpdatedSuccess": "تم تحديث الملف الشخصي بنجاح",
+    "profileUpdateFailed": "فشل تحديث الملف الشخصي",
+    "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح",
+    "passwordChangeFailed": "فشل تغيير كلمة المرور",
+    "accountDeletionFailed": "فشل حذف الحساب",
+    "accountDeletedSuccess": "تم حذف الحساب بنجاح",
+    "yourPassword": "كلمة المرور الخاصة بك",
+    "back": "عودة",
+    "deleteForever": "حذف نهائي"
   },
   "titles": {
     "manager": "المدير",
@@ -577,22 +604,5 @@
     "analytics": "تحليلات",
     "help_center": "مركز المساعدة",
     "howCanWeHelp": "كيف يمكننا مساعدتك؟"
-  },
-  "user": "المستخدم",
-  "account": "الحساب",
-  "security": "الأمان",
-  "personalInfo": "المعلومات الشخصية",
-  "contact": "الاتصال",
-  "country": "البلد",
-  "editDetails": "تعديل التفاصيل",
-  "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
-  "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
-  "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
-  "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
-  "yourPassword": "كلمة المرور الخاصة بك",
-  "usernameRequired": "اسم المستخدم مطلوب",
-  "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
-  "countryRequired": "البلد مطلوب",
-  "contactNumberRequired": "رقم الاتصال مطلوب",
-  "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)"
+  }
 }
