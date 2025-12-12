@@ -10,9 +10,9 @@
                 </v-toolbar-title>
             </v-toolbar>
 
-            <v-card-text>
+            <v-card-text class="dialog-body">
                 <v-row class="mb-4">
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="6" class="mt-16">
                         <div class="video-box mb-2 video-rect-box" v-if="rightTab !== 'eye'">
                             <video ref="mainVideo1" class="video-rect-skeleton" controls @timeupdate="onTimeUpdate"
                                 @loadedmetadata="onMetadataLoaded"
@@ -54,7 +54,7 @@
                             </v-window-item> -->
 
                             <v-window-item value="eye">
-                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData" :userId="userId"
+                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
                                     @predictions-ready="predictedData = $event" @view-changed="selectedView = $event"
@@ -62,9 +62,8 @@
                             </v-window-item>
 
                             <v-window-item value="sentimental">
-                                <h4 class="text-subtitle-1 mb-1">Sentimental Analysis</h4>
-                                <v-skeleton-loader type="text" width="80%" />
-                                <v-skeleton-loader type="text" width="60%" />
+                                <FacialSentimentPanel :video-element="mainVideo1"
+                                    :webcam-video-url="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator" />
                             </v-window-item>
 
                             <!-- <v-window-item value="transcript">
@@ -96,6 +95,7 @@ import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import SessionTimeline from '../sessions/SessionTimeline.vue'
 import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
+import FacialSentimentPanel from '../sentimentAnalysis/FacialSentimentPanel.vue'
 import SentimentSummary from '../sessions/SentimentSummary.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 
@@ -154,7 +154,6 @@ function onTimeUpdate(event) {
 }
 
 const togglePlay = () => {
-    console.log(props.userId);
     const video = mainVideo2.value
     if (!video) return
 
@@ -181,7 +180,6 @@ const onSeek = (time) => {
 const close = () => open.value = false
 
 onMounted(() => {
-
     const video = mainVideo2.value
     if (!video) return
 
@@ -225,5 +223,14 @@ onBeforeUnmount(() => cancelAnimationFrame(rafId))
     background-color: #f9f9f9;
     border-radius: 10px;
     overflow: hidden;
+}
+
+.dialog-body {
+    margin-bottom: 20vh;
+}
+
+.video-rect-box,
+.video-box {
+    flex: 0 0 auto;
 }
 </style>
