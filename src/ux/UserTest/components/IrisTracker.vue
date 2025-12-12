@@ -7,10 +7,8 @@ import { ref, watch, onMounted, onBeforeUnmount, toRaw, computed } from 'vue'
 import * as tf from '@tensorflow/tfjs'
 import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection'
 import '@tensorflow/tfjs-backend-webgl'
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useStore } from 'vuex'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 const props = defineProps({
     msPerCapture: { type: Number, default: 100 },
@@ -22,194 +20,153 @@ const props = defineProps({
 
 const emit = defineEmits(['faceData', 'screenRecording'])
 
-const store = useStore();
-const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
-
-const { t } = useI18n();
-const toast = useToast();
+const store = useStore()
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
 
 const videoRef = ref(null)
 const mediaStream = ref(null)
 const model = ref(null)
 let trackingLoop = null
-const videoUrl = ref('');
 
-// Variáveis da gravação de tela
 const screenStream = ref(null)
-const mediaRecorder = ref(null)
+const screenRecorder = ref(null)
 const screenChunks = ref([])
+const recordingScreenIndex = ref(null)
+
+const webcamRecorder = ref(null)
+const webcamChunks = ref([])
+const recordingWebcamIndex = ref(null)
 
 onMounted(async () => {
-    console.log('Inicializando backend WebGL...')
     await tf.setBackend('webgl')
     await tf.ready()
-    console.log('Backend pronto:', tf.getBackend())
-
     await initWebcam()
     await waitForVideoReady()
-
-    console.log('Vídeo pronto.')
     await loadModel()
-
     if (props.isRunning) startTracking()
-    if (props.recordScreen) startScreenRecording()
+    if (props.recordScreen) {
+        startScreenRecording()
+        startWebcamRecording()
+    }
 })
 
-watch(() => props.isRunning, (val) => {
-    val ? startTracking() : stopTracking()
-})
+watch(() => props.isRunning, (val) => val ? startTracking() : stopTracking())
 
 watch(() => props.recordScreen, (val) => {
-    val ? startScreenRecording() : stopScreenRecording()
+    val ? (startScreenRecording(), startWebcamRecording())
+        : (stopScreenRecording(), stopWebcamRecording())
 })
 
 onBeforeUnmount(() => {
     stopTracking()
     stopScreenRecording()
-    if (mediaStream.value) {
-        mediaStream.value.getTracks().forEach(track => track.stop())
-    }
+    stopWebcamRecording()
+    if (mediaStream.value) mediaStream.value.getTracks().forEach(track => track.stop())
 })
 
-// ---------- Webcam ----------
 const initWebcam = async () => {
-    try {
-        mediaStream.value = await navigator.mediaDevices.getUserMedia({
-            video: { width: 640, height: 480 }
-        })
-        if (videoRef.value) {
-            videoRef.value.srcObject = mediaStream.value
-        }
-    } catch (err) {
-        console.error(' Erro ao iniciar webcam:', err)
-    }
+    mediaStream.value = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false })
+    if (videoRef.value) videoRef.value.srcObject = mediaStream.value
 }
 
-const waitForVideoReady = () => {
-    return new Promise(resolve => {
-        const check = () => {
-            if (videoRef.value?.readyState >= 3) resolve()
-            else requestAnimationFrame(check)
-        }
-        check()
-    })
-}
+const waitForVideoReady = () => new Promise(resolve => {
+    const check = () => videoRef.value?.readyState >= 3 ? resolve() : requestAnimationFrame(check)
+    check()
+})
 
 const loadModel = async () => {
     model.value = await faceLandmarksDetection.createDetector(
         faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh,
-        {
-            runtime: 'mediapipe',
-            solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
-            refineLandmarks: true,
-            maxFaces: 1
-        }
+        { runtime: 'mediapipe', solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh', refineLandmarks: true, maxFaces: 1 }
     )
-    console.log('✅ Modelo carregado com MediaPipe')
 }
 
-// ---------- Face Tracking ----------
 const startTracking = async () => {
-    if (!model.value) {
-        console.warn('⚠️ Modelo ainda não carregado')
-        return
-    }
-
+    if (!model.value) return
     const loop = async () => {
         if (!props.isRunning) return
-
         try {
             await tf.ready()
-            const backend = tf.engine().backend
-            if (!backend) {
-                console.warn('Backend não disponível ainda...')
-                trackingLoop = setTimeout(loop, props.msPerCapture)
-                return
-            }
-
             const rawModel = toRaw(model.value)
-            const inputImage = tf.browser.fromPixels(videoRef.value);
-            const predictions = await rawModel.estimateFaces(videoRef.value, {
-                flipHorizontal: false
-            });
-            inputImage.dispose();
-
+            const predictions = await rawModel.estimateFaces(videoRef.value, { flipHorizontal: false })
             if (predictions.length > 0) {
                 const keypoints = predictions[0].keypoints
-                const data = {
+                emit('faceData', {
                     timestamp: Date.now(),
                     left_iris_x: keypoints[468]?.x,
                     left_iris_y: keypoints[468]?.y,
                     right_iris_x: keypoints[473]?.x,
                     right_iris_y: keypoints[473]?.y
-                }
-                emit('faceData', data)
+                })
             }
-        } catch (err) {
-            console.error('Erro durante rastreamento:', err)
-        }
-
+        } catch (err) { console.error('Erro durante rastreamento:', err) }
         trackingLoop = setTimeout(loop, props.msPerCapture)
     }
-
     loop()
 }
 
-const stopTracking = () => {
-    if (trackingLoop) {
-        clearTimeout(trackingLoop)
-        trackingLoop = null
-        console.log('Tracking parado.')
-    }
-}
+const stopTracking = () => { if (trackingLoop) { clearTimeout(trackingLoop); trackingLoop = null } }
 
 // ---------- Screen Recording ----------
 const startScreenRecording = async () => {
+    recordingScreenIndex.value = props.taskIndex > 0 ? props.taskIndex - 1 : 0
     try {
-        screenStream.value = await navigator.mediaDevices.getDisplayMedia({
-            video: { cursor: 'always' },
-            audio: false
-        })
-
+        screenStream.value = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: 'always' }, audio: false })
         screenChunks.value = []
-        mediaRecorder.value = new MediaRecorder(screenStream.value, { mimeType: 'video/webm' })
-
-        mediaRecorder.value.ondataavailable = (e) => {
-            if (e.data.size > 0) screenChunks.value.push(e.data)
-        }
-
-        mediaRecorder.value.onstop = async () => {
-
-            console.log('Gravação de tela parada, salvando...');
-
-
+        screenRecorder.value = new MediaRecorder(screenStream.value, { mimeType: 'video/webm' })
+        screenRecorder.value.ondataavailable = e => { if (e.data.size > 0) screenChunks.value.push(e.data) }
+        screenRecorder.value.onstop = async () => {
             const videoBlob = new Blob(screenChunks.value, { type: 'video/webm' })
             const storage = getStorage()
-            const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex > 0 ? props.taskIndex - 1 : props.taskIndex}/screen_record/${videoUrl.value}`
+            const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingScreenIndex.value}/screen_record/screen_${Date.now()}.webm`
             const storageReference = storageRef(storage, storagePath)
-
             await uploadBytes(storageReference, videoBlob)
-            videoUrl.value = await getDownloadURL(storageReference)
+            const videoUrl = await getDownloadURL(storageReference)
 
+            // Dispatch antes de atualizar currentUserTestAnswer
+            await store.dispatch('updateTaskMediaUrl', { taskIndex: recordingScreenIndex.value, mediaType: 'screen', url: videoUrl })
 
-                currentUserTestAnswer.value.tasks[props.taskIndex > 0 ? props.taskIndex - 1 : props.taskIndex].screenRecordURL = videoUrl.value
+            if (currentUserTestAnswer.value.tasks && currentUserTestAnswer.value.tasks[recordingScreenIndex.value]) {
+                currentUserTestAnswer.value.tasks[recordingScreenIndex.value].screenRecordURL = videoUrl
+            }
         }
-
-        mediaRecorder.value.start()
-        console.log('Gravação de tela iniciada...')
-    } catch (err) {
-        console.error('Erro ao iniciar gravação de tela:', err)
-    }
+        screenRecorder.value.start()
+    } catch (err) { console.error('Erro ao iniciar gravação de tela:', err) }
 }
 
 const stopScreenRecording = () => {
-    if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
-        mediaRecorder.value.stop()
-        console.log('Gravação de tela finalizada.')
-    }
-    if (screenStream.value) {
-        screenStream.value.getTracks().forEach(track => track.stop())
-        screenStream.value = null
-    }
+    if (screenRecorder.value && screenRecorder.value.state !== 'inactive') screenRecorder.value.stop()
+    if (screenStream.value) screenStream.value.getTracks().forEach(track => track.stop())
+}
+
+// ---------- Webcam Recording ----------
+const startWebcamRecording = async () => {
+    recordingWebcamIndex.value = props.taskIndex > 0 ? props.taskIndex - 1 : 0
+    try {
+        if (!mediaStream.value) await initWebcam()
+        webcamChunks.value = []
+        webcamRecorder.value = new MediaRecorder(mediaStream.value, { mimeType: 'video/webm' })
+        webcamRecorder.value.ondataavailable = e => { if (e.data.size > 0) webcamChunks.value.push(e.data) }
+        webcamRecorder.value.onstop = async () => {
+            const videoBlob = new Blob(webcamChunks.value, { type: 'video/webm' })
+            const storage = getStorage()
+            const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingWebcamIndex.value}/webcam_record/webcam_${Date.now()}.webm`
+            const storageReference = storageRef(storage, storagePath)
+            await uploadBytes(storageReference, videoBlob)
+            const videoUrl = await getDownloadURL(storageReference)
+
+            await store.dispatch('updateTaskMediaUrl', { taskIndex: recordingWebcamIndex.value, mediaType: 'webcam', url: videoUrl })
+
+            if (currentUserTestAnswer.value.tasks && currentUserTestAnswer.value.tasks[recordingWebcamIndex.value]) {
+                currentUserTestAnswer.value.tasks[recordingWebcamIndex.value].webcamRecordURL = videoUrl
+            }
+        }
+        webcamRecorder.value.start()
+    } catch (err) { console.error('Erro ao iniciar gravação de webcam:', err) }
+}
+
+const stopWebcamRecording = () => {
+    if (webcamRecorder.value && webcamRecorder.value.state !== 'inactive') webcamRecorder.value.stop()
+    if (mediaStream.value) mediaStream.value.getTracks().forEach(track => track.stop())
 }
 </script>
