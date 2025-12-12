@@ -70,6 +70,7 @@
     "test": "un estudio"
   },
   "profile": {
+    "superAdmin": "Súper Administrador",
     "title": "Perfil",
     "username": "Nombre de usuario",
     "email": "Correo electrónico",
@@ -87,8 +88,8 @@
     "editDetails": "Editar detalles",
     "saveChanges": "Guardar cambios",
     "country": "País",
-    "typeDeleteToConfirm": "Escribe \"ELIMINAR\" para confirmar",
-    "pleaseTypeDeleteToConfirm": "Por favor, escribe ELIMINAR para confirmar",
+    "typeDeleteToConfirm": "Escribe \"DELETE\" para confirmar",
+    "pleaseTypeDeleteToConfirm": "Por favor, escribe DELETE para confirmar",
     "finalStepVerifyIdentity": "Paso final: Verifica tu identidad",
     "enterPasswordForAccountDeletion": "Ingresa tu contraseña para proceder con la eliminación de la cuenta",
     "missingInfo": "Información faltante",
@@ -100,7 +101,25 @@
     "passwordUppercase": "Debe contener una letra mayúscula",
     "passwordSymbol": "Debe contener un símbolo",
     "confirmPasswordRequired": "Se requiere confirmar la contraseña",
-    "passwordsMatch": "Las contraseñas deben coincidir"
+    "passwordsMatch": "Las contraseñas deben coincidir",
+    "usernameRequired": "Se requiere nombre de usuario",
+    "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+    "countryRequired": "Se requiere país",
+    "contactNumberRequired": "Se requiere número de contacto",
+    "enterValidPhoneNumber": "Por favor, ingresa un número de teléfono válido (9-15 dígitos únicamente)",
+    "profileImageUpdatedSuccess": "Imagen de perfil actualizada con éxito",
+    "profileImageUploadFailed": "Error al subir la imagen de perfil",
+    "noUserSignedIn": "No hay usuario conectado",
+    "profileLoadFailed": "Error al cargar el perfil",
+    "profileUpdatedSuccess": "Perfil actualizado con éxito",
+    "profileUpdateFailed": "Error al actualizar el perfil",
+    "passwordChangedSuccess": "Contraseña cambiada con éxito",
+    "passwordChangeFailed": "Error al cambiar la contraseña",
+    "accountDeletionFailed": "Error al eliminar la cuenta",
+    "accountDeletedSuccess": "Cuenta eliminada con éxito",
+    "yourPassword": "Tu contraseña",
+    "back": "Volver",
+    "deleteForever": "Eliminar permanentemente"
   },
   "titles": {
     "manager": "Gerente",
@@ -656,7 +675,8 @@
     "eyeTracker": "Seguimiento ocular",
     "audioRecord": "Grabación de audio",
     "postForm": "Formulario posterior",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sus": "SUS"
   },
   "inputs": {
     "consentForm": "Formulario de consentimiento",
@@ -755,27 +775,6 @@
     "browseAllCategories": "Explora todas las categorías para encontrar la ayuda que necesitas",
     "viewAllArticles": "Ver todos los artículos",
     "videoAltText": "Video de demostración de preguntas frecuentes que muestra los pasos visuales para resolver la pregunta frecuente. No hay contenido de audio en este video instructivo."
-  },
-  "PROFILE": {
-    "user": "USUARIO",
-    "account": "Cuenta",
-    "security": "Seguridad",
-    "personalInfo": "Información personal",
-    "contact": "Contacto",
-    "country": "País",
-    "editDetails": "Editar detalles",
-    "typeDeleteToConfirm": "Escribe \"ELIMINAR\" para confirmar",
-    "pleaseTypeDeleteToConfirm": "Por favor, escribe ELIMINAR para confirmar",
-    "finalStepVerifyIdentity": "Paso final: Verifica tu identidad",
-    "enterPasswordForAccountDeletion": "Ingresa tu contraseña para proceder con la eliminación de la cuenta",
-    "yourPassword": "Tu contraseña",
-    "usernameRequired": "Se requiere nombre de usuario",
-    "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
-    "countryRequired": "Se requiere país",
-    "contactNumberRequired": "Se requiere número de contacto",
-    "enterValidPhoneNumber": "Por favor, ingresa un número de teléfono válido (9-15 dígitos únicamente)",
-    "email": "Correo electrónico",
-    "username": "Nombre de usuario"
   },
   "ModeratedTest": {
     "preTest": "PREPRUEBA",

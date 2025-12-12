@@ -272,7 +272,7 @@
                       <SessionAnalytics :tasks="dialogItem.tasks" :taskSelect="taskSelect"
                         @close="showSessionAnalytics = false" />
                     </v-dialog>
-                    <SessionAnalyticsDialog v-model="showSessionAnalyticsDialog"
+                    <SessionAnalyticsDialog v-model="showSessionAnalyticsDialog" :userId="dialogItem.userDocId"
                       :task-answer="dialogItem.tasks[taskSelect]" :fromEyeTracking="true" />
                   </div>
                 </div>
@@ -467,10 +467,6 @@ const tableData = computed(() => {
     };
   });
 });
-
-const openSessionAnalytics = () => {
-  showSessionAnalytics.value = true
-}
 
 const openSessionAnalyticsDialog = () => {
   showSessionAnalyticsDialog.value = true

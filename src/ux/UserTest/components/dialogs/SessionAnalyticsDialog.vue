@@ -83,13 +83,8 @@
                     </v-col>
                 </v-row>
 
-                <v-col cols="12" class="mt-4">
-                    {{ ' videoDuration -' + videoDuration }}
-                    {{ ' videoCurrentTime -' + videoCurrentTime }}
-                    {{ ' isPlaying -' + isPlaying }}
-                    <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
-                        @seek="onSeek" @togglePlay="togglePlay" />
-                </v-col>
+                <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
+                    @seek="onSeek" @togglePlay="togglePlay" />
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -107,7 +102,8 @@ import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 const props = defineProps({
     modelValue: { type: Boolean, required: true },
     taskAnswer: { type: Object, default: null },
-    fromEyeTracking: { type: Boolean, default: false }
+    fromEyeTracking: { type: Boolean, default: false },
+    userId: { type: String, default: '' }
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -236,9 +232,5 @@ onBeforeUnmount(() => cancelAnimationFrame(rafId))
 .video-rect-box,
 .video-box {
     flex: 0 0 auto;
-}
-
-.sentiment-panel {
-    display: block;
 }
 </style>

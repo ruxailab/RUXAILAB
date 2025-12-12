@@ -76,6 +76,7 @@
     "editProfile": "Edit Profile",
     "account": "Account",
     "admin": "Admin",
+    "superAdmin": "Super Admin",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -100,7 +101,25 @@
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "confirmPasswordRequired": "Confirm password is required",
-    "passwordsMatch": "Passwords must match"
+    "passwordsMatch": "Passwords must match",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "countryRequired": "Country is required",
+    "contactNumberRequired": "Contact number is required",
+    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+    "profileImageUpdatedSuccess": "Profile image updated successfully",
+    "profileImageUploadFailed": "Failed to upload profile image",
+    "noUserSignedIn": "No user signed in",
+    "profileLoadFailed": "Failed to load profile",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateFailed": "Failed to update profile",
+    "passwordChangedSuccess": "Password changed successfully",
+    "passwordChangeFailed": "Failed to change password",
+    "accountDeletionFailed": "Account deletion failed",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "yourPassword": "Your Password",
+    "back": "Back",
+    "deleteForever": "Delete Forever"
   },
   "titles": {
     "manager": "Manager",
@@ -756,27 +775,6 @@
     "viewAllArticles": "View All Articles",
     "videoAltText": "FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
   },
-  "PROFILE": {
-    "user": "USER",
-    "account": "Account",
-    "security": "Security",
-    "personalInfo": "Personal Info",
-    "contact": "Contact",
-    "country": "Country",
-    "editDetails": "Edit Details",
-    "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
-    "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
-    "finalStepVerifyIdentity": "Final step: Verify your identity",
-    "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
-    "yourPassword": "Your Password",
-    "usernameRequired": "Username is required",
-    "usernameMinLength": "Username must be at least 3 characters",
-    "countryRequired": "Country is required",
-    "contactNumberRequired": "Contact number is required",
-    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
-    "email": "Email",
-    "username": "Username"
-  },
   "ModeratedTest": {
     "preTest": "PRE-TEST",
     "tasks": "TASKS",
@@ -986,5 +984,9 @@
         "upcoming": "Upcoming"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Task Description",
+    "taskDescriptionHelper": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow."
   }
 }

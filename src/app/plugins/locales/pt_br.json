@@ -70,6 +70,7 @@
   },
   "profile": {
     "title": "Perfil",
+    "superAdmin": "Super Administrador",
     "username": "Nome de usuário",
     "email": "E-mail",
     "editProfile": "Editar perfil",
@@ -86,8 +87,8 @@
     "editDetails": "Editar detalhes",
     "saveChanges": "Salvar alterações",
     "country": "País",
-    "typeDeleteToConfirm": "Digite \"EXCLUIR\" para confirmar",
-    "pleaseTypeDeleteToConfirm": "Por favor, digite EXCLUIR para confirmar",
+    "typeDeleteToConfirm": "Digite \"DELETE\" para confirmar",
+    "pleaseTypeDeleteToConfirm": "Por favor, digite DELETE para confirmar",
     "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
     "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
     "missingInfo": "Informação ausente",
@@ -99,7 +100,25 @@
     "passwordUppercase": "Deve conter uma letra maiúscula",
     "passwordSymbol": "Deve conter um símbolo",
     "confirmPasswordRequired": "Confirmação de senha é obrigatória",
-    "passwordsMatch": "As senhas devem corresponder"
+    "passwordsMatch": "As senhas devem corresponder",
+    "usernameRequired": "Nome de usuário é obrigatório",
+    "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
+    "countryRequired": "País é obrigatório",
+    "contactNumberRequired": "Número de contato é obrigatório",
+    "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
+    "profileImageUpdatedSuccess": "Imagem de perfil atualizada com sucesso",
+    "profileImageUploadFailed": "Falha ao enviar imagem de perfil",
+    "noUserSignedIn": "Nenhum usuário conectado",
+    "profileLoadFailed": "Falha ao carregar perfil",
+    "profileUpdatedSuccess": "Perfil atualizado com sucesso",
+    "profileUpdateFailed": "Falha ao atualizar perfil",
+    "passwordChangedSuccess": "Senha alterada com sucesso",
+    "passwordChangeFailed": "Falha ao alterar senha",
+    "accountDeletionFailed": "Falha ao excluir conta",
+    "accountDeletedSuccess": "Conta excluída com sucesso",
+    "yourPassword": "Sua senha",
+    "back": "Voltar",
+    "deleteForever": "Excluir permanentemente"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -129,7 +148,7 @@
   },
   "descriptions": {
     "edit": "Comece a criar e editar o seu teste.",
-    "cooperators": "Convide pessoas para ajudar no seu teste.",
+    "cooperators": "Convite pessoas para ajudar no seu teste.",
     "reports": "Veja como os seus avaliadores estão se saindo.",
     "answers": "Veja como os seus avaliadores estão avaliando o seu projeto.",
     "analytics": "Analise os comentários e respostas dos seus avaliadores.",
@@ -600,7 +619,8 @@
     "eyeTracker": "Rastreamento ocular",
     "audioRecord": "Gravação de áudio",
     "postForm": "Formulário posterior",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sus": "SUS"
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
@@ -695,27 +715,6 @@
     "viewAllArticles": "Ver todos os artigos",
     "videoAltText": "Vídeo demonstrativo de FAQ mostrando os passos visuais para resolver a pergunta frequente. Não há conteúdo de áudio presente neste vídeo instrucional."
   },
-  "PROFILE": {
-    "user": "USUÁRIO",
-    "account": "Conta",
-    "security": "Segurança",
-    "personalInfo": "Informações pessoais",
-    "contact": "Contato",
-    "country": "País",
-    "editDetails": "Editar detalhes",
-    "typeDeleteToConfirm": "Digite \"EXCLUIR\" para confirmar",
-    "pleaseTypeDeleteToConfirm": "Por favor, digite EXCLUIR para confirmar",
-    "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
-    "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
-    "yourPassword": "Sua senha",
-    "usernameRequired": "Nome de usuário é obrigatório",
-    "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
-    "countryRequired": "País é obrigatório",
-    "contactNumberRequired": "Número de contato é obrigatório",
-    "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
-    "email": "E-mail",
-    "username": "Nome de usuário"
-  },
   "ModeratedTest": {
     "preTest": "PRÉ-TESTE",
     "tasks": "TAREFAS",
@@ -781,5 +780,9 @@
     "all": "Todos",
     "question": "Pergunta {number}",
     "comingSoon": "Em breve"
+  },
+  "taskCreation": {
+    "taskDescription": "Descrição da Tarefa",
+    "taskDescriptionHelper": "Forneça instruções detalhadas para os participantes. Inclua o objetivo, contexto e quaisquer etapas específicas que devem seguir."
   }
 }

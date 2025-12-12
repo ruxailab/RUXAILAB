@@ -16,16 +16,9 @@
     </div>
 
     <!-- COSENT FORM -->
-    <v-card
-      v-if="index === 1"
-      rounded="xxl"
-    >
-      <TextareaForm
-        v-model="consent"
-        :title="$t('ModeratedTest.consentForm')"
-        :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-        @update:value="saveState('consent', $event)"
-      />
+    <v-card v-if="index === 1" rounded="xxl">
+      <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+        :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="saveState('consent', $event)" />
     </v-card>
 
     <!-- PRE-TEST -->

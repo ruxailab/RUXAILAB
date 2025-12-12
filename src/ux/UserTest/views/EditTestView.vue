@@ -39,16 +39,9 @@
           </div>
 
           <!-- CONSENT FORM -->
-          <div
-            v-if="index === 1"
-            rounded="xxl"
-          >
-            <TextareaForm
-              v-model="consent"
-              :title="$t('ModeratedTest.consentForm')"
-              :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-              @update:value="consent = $event"
-            />
+          <div v-if="index === 1" rounded="xxl">
+            <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+              :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="consent = $event" />
           </div>
 
           <!-- PRE-TEST -->
