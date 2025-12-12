@@ -18,7 +18,10 @@ export default class StudyController extends Controller {
   async createStudy(payload) {
     // Create answers doc for test
     const answerDoc = await answerController.createAnswer(
-      new StudyAnswer({ type: payload.testType }),
+      new StudyAnswer({
+        type: payload.testType,
+        welcomeMessage: payload.testStructure?.welcomeMessage ?? '',
+      }),
     )
     payload.answersDocId = answerDoc.id
 
@@ -26,11 +29,14 @@ export default class StudyController extends Controller {
   }
   async duplicateStudy(payload) {
     try {
+      const duplicatedStudy = payload.test
       const answerDoc = await answerController.createAnswer(
-        new StudyAnswer({ type: payload.test.testType }),
+        new StudyAnswer({
+          type: duplicatedStudy.testType,
+          welcomeMessage: duplicatedStudy.testStructure?.welcomeMessage ?? '',
+        }),
       )
 
-      const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
       return await super.create(COLLECTION, duplicatedStudy.toFirestore())

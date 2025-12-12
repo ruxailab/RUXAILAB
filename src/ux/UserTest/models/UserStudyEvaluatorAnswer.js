@@ -16,7 +16,8 @@ export default class UserStudyEvaluatorAnswer {
     userDocId,
     lastUpdate,
     invited,
-    hidden
+    hidden,
+    welcomeMessage,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -33,6 +34,7 @@ export default class UserStudyEvaluatorAnswer {
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
     this.hidden = hidden ?? false
+    this.welcomeMessage = welcomeMessage ?? ''
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
@@ -43,6 +45,7 @@ export default class UserStudyEvaluatorAnswer {
           TaskAnswer.toModel(value),
         ]),
       ),
+      welcomeMessage: data.welcomeMessage ?? ''
     })
   }
   toFirestore() {
@@ -67,6 +70,7 @@ export default class UserStudyEvaluatorAnswer {
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
+      welcomeMessage: this.welcomeMessage,
     }
   }
 }

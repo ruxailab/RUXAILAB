@@ -7,8 +7,20 @@ export default class UserStudyAnswer extends StudyAnswer {
     }
 
     toFirestore() {
+        // serialize taskAnswers flexibly (array or object)
+        const taskAnswersSerialized = this.taskAnswers
+            ? (Array.isArray(this.taskAnswers)
+                ? this.taskAnswers.map(answer => (answer && answer.toFirestore ? answer.toFirestore() : answer))
+                : Object.fromEntries(
+                    Object.entries(this.taskAnswers).map(([k, v]) => [
+                      k,
+                      v && typeof v.toFirestore === 'function' ? v.toFirestore() : v
+                    ])
+                  ))
+            : null
+            
         return Object.assign(super.toFirestore(), {
-            taskAnswers: this.taskAnswers.map(answer => answer.toFirestore())
+            taskAnswers: taskAnswersSerialized
         })
     }
 }
