@@ -29,7 +29,11 @@
       "email": "E-mail",
       "instructions": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
       "reset_button": "Enviar link de redefinição",
-      "back_to_signin": "Voltar para entrar"
+      "back_to_signin": "Voltar para entrar",
+      "check_your_email": "Verifique seu e-mail",
+      "reset_link_sent": "Enviamos um link para redefinir a senha para",
+      "no_email": "Não recebeu o e-mail?",
+      "try_again": "Tente novamente"
     }
   },
   "common": {
