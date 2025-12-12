@@ -31,7 +31,7 @@ export const sendEmail = functions.onCall({
     }
     else if (content.template === 'passwordReset') {
       const actionCodeSettings = {
-        url: "http://localhost:8080/signin",
+        url: "https://ruxailab-prod.web.app/signin",
         handleCodeInApp: false,
       }
 
