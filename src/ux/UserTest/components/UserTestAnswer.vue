@@ -18,10 +18,10 @@
             color="#FCA326"
           >
             <v-tab @click="tab = 0">
-              General Analytics
+              {{ $t('analytics.generalAnalytics') }}
             </v-tab>
             <v-tab @click="tab = 1">
-              Individual Analytics
+              {{ $t('analytics.individualAnalytics') }}
             </v-tab>
             <!-- <v-tab @click="tab = 2">
               Sentiment Analysis
@@ -30,19 +30,19 @@
               v-if="showSUS"
               @click="tab = 2"
             >
-              SUS Analytics
+              {{ $t('analytics.susAnalytics') }}
             </v-tab>
             <v-tab
               v-if="showNasa"
               @click="tab = 3"
             >
-              Nasa-TLX Analytics
+              {{ $t('analytics.nasaTlxAnalytics') }}
             </v-tab>
             <v-tab v-if="showEye" @click="tab = 4">
-              Eye-Tracking Analytics
+              {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
             <v-tab v-if="showTranscription" @click="tab = 5">
-              Transcriptions
+              {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>
         </template>
@@ -82,6 +82,9 @@ import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import EyeTrackingAnalytics from '@/ux/Heuristic/views/EyeTrackingAnalytics.vue';
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
 import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
   id: {
