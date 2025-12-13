@@ -1,18 +1,36 @@
 {
   "language": "اللغة",
-  "SIGNIN": {
-    "sign-in": "تسجيل الدخول",
-    "email": "البريد الإلكتروني",
-    "username": "اسم المستخدم",
-    "password": "كلمة المرور",
-    "dont-have-account": "ليس لديك حساب؟ سجل الآن",
-    "sign-up": "التسجيل",
-    "contact": "رقم الاتصال",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول",
-    "continueWithGoogle": "المتابعة باستخدام جوجل",
-    "or": "أو",
-    "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول"
+  "auth": {
+    "signupSuccess": "تم التسجيل بنجاح",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "resetPasswordSuccess": "تم إرسال بريد إعادة تعيين كلمة المرور",
+    "deleteSuccess": "تم حذف الحساب بنجاح",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "SIGNIN": {
+      "sign-in": "تسجيل الدخول",
+      "sign-in-title": "مرحبًا بعودتك",
+      "sign-in-subtitle": "سجل الدخول إلى حسابك للمتابعة",
+      "email": "البريد الإلكتروني",
+      "username": "اسم المستخدم",
+      "password": "كلمة المرور",
+      "signupSubtitle": "املأ بياناتك للبدء",
+      "dont-have-account": "ليس لديك حساب بعد؟",
+      "forgot-password": "نسيت كلمة المرور؟",
+      "sign-up": "إنشاء حساب",
+      "contact": "رقم الاتصال",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟",
+      "continueWithGoogle": "المتابعة باستخدام جوجل",
+      "rememberMe": "تذكرني",
+      "or": "أو استمر مع"
+    },
+    "FORGOT_PASSWORD": {
+      "reset_password": "إعادة تعيين كلمة المرور",
+      "email": "البريد الإلكتروني",
+      "instructions": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+      "reset_button": "إرسال رابط إعادة التعيين",
+      "back_to_signin": "العودة إلى تسجيل الدخول"
+    }
   },
   "common": {
     "loading": "جاري التحميل",
@@ -39,23 +57,29 @@
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {
-      "years": "منذ {count} سنة",
-      "months": "منذ {count} شهر",
-      "days": "منذ {count} يوم",
-      "hours": "منذ {count} ساعة",
-      "minutes": "منذ {count} دقيقة",
+      "years": "منذ {count} سنة | منذ {count} سنوات",
+      "months": "منذ {count} شهر | منذ {count} أشهر",
+      "days": "منذ {count} يوم | منذ {count} أيام",
+      "hours": "منذ {count} ساعة | منذ {count} ساعات",
+      "minutes": "منذ {count} دقيقة | منذ {count} دقائق",
       "now": "الآن"
     },
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
-    "new": "جديد"
+    "new": "جديد",
+    "test": "دراسة"
   },
-  "PROFILE": {
+  "profile": {
     "title": "الملف الشخصي",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
     "editProfile": "تحرير الملف الشخصي",
     "account": "الحساب",
     "admin": "المدير",
+    "security": "الأمان",
+    "personalInfo": "المعلومات الشخصية",
     "changePassword": "تغيير كلمة المرور",
+    "contact": "رقم الاتصال",
     "passwordRequirements": "تأكد من استيفاء هذه المتطلبات",
     "passwordMinimumRequirements": "8 أحرف على الأقل، حرف كبير ورمز",
     "newPassword": "كلمة المرور الجديدة",
@@ -63,6 +87,10 @@
     "editDetails": "تحرير التفاصيل",
     "saveChanges": "حفظ التغييرات",
     "country": "البلد",
+    "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
+    "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
+    "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
+    "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
     "missingInfo": "معلومات مفقودة",
     "deleteAccountTitle": "حذف الحساب",
     "deleteAccountConfirm": "هل أنت متأكد تمامًا؟ لا يمكن التراجع عن هذا الإجراء.",
@@ -114,7 +142,8 @@
       "invite": "قم بدعوة المقيمين للإجابة على اختبارك!",
       "cooperators": "أضف متعاونين يمكنهم مساعدتك في تحسين مشروعك وجمع البيانات لدراساتك.",
       "start": "ابدأ!",
-      "edit": "أنشئ وقم بتخصيص مهامك واستدلالاتك وفقًا لاحتياجات بحثك."
+      "edit": "أنشئ وقم بتخصيص مهامك واستدلالاتك وفقًا لاحتياجات بحثك.",
+      "finalReport": "قم بإعداد التقرير النهائي لتقييم الاستدلال الخاص بك من خلال تحديد العناصر التي تريد تضمينها."
     }
   },
   "errors": {
@@ -125,13 +154,15 @@
     "passwordRequired": "كلمة المرور مطلوبة",
     "passwordValidate": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
     "differentPasswords": "كلمات مرور مختلفة",
-    "fieldRequired": "حقل مطلوب",
+    "fieldRequired": "هذا الحقل مطلوب",
     "passwordUppercase": "يجب أن تحتوي على حرف كبير",
     "passwordSymbol": "يجب أن تحتوي على رمز",
     "userNotExist": "هذا المستخدم غير موجود.",
     "incorrectPassword": "كلمة مرور غير صحيحة",
     "incorrectCredential": "اسم المستخدم أو كلمة المرور غير صحيحة.",
-    "globalError": "حدث خطأ، نعتذر عن الإزعاج."
+    "globalError": "حدث خطأ، نعتذر عن الإزعاج.",
+    "sendError": "فشل إرسال الدعوة. يرجى المحاولة مرة أخرى",
+    "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين"
   },
   "Introduction": {
     "title": "مختبر UX عن بعد",
@@ -140,13 +171,14 @@
     "cta": "ابدأ"
   },
   "Dashboard": {
-    "createNewTest": "إنشاء اختبار جديد",
+    "createNewTest": "إنشاء دراسة جديدة",
     "tests": "الاختبارات",
     "templates": "القوالب",
     "search": "بحث",
     "myTests": "اختباراتي",
     "sharedWithMe": "تمت مشاركتها معي",
     "publicTests": "الاختبارات العامة",
+    "sessions": "الجلسات",
     "personal": "شخصي",
     "explore": "استكشف"
   },
@@ -298,36 +330,57 @@
         "needMoreThan1Answer": "تحتاج هذه الصفحة إلى أكثر من إجابة واحدة ليتم إنشاؤها.",
         "runWeightFunction": "تحتاج هذه الصفحة إلى تشغيل وظيفة الأوزان (Python)، يمكن أن تكون في وضع المحاكاة أو النشر، ويجب تحديد الأوزان بالكامل في صفحة إنشاء الاختبار."
       }
-    },
-    "analytics": {}
+    }
   },
   "HeuristicsReport": {
     "titles": {
       "reports": "التقارير",
-      "last_updated": "آخر تحديث"
+      "last_updated": "آخر تحديث",
+      "reports_dashboard": "لوحة التقارير"
     },
     "headers": {
       "evaluator": "المقيم",
       "last_update": "آخر تحديث",
       "progress": "التقدم",
       "status": "الحالة",
-      "more": "المزيد"
+      "actions": "الإجراءات"
     },
     "messages": {
       "confirm_delete_report": "هل أنت متأكد أنك تريد حذف هذا التقرير؟",
       "reports_loading": "جارٍ تحميل التقارير",
       "remove_report": "إزالة التقرير",
       "sure_to_delete": "هل أنت متأكد أنك تريد حذف تقرير {user}؟ لا يمكن التراجع عن هذا الإجراء.",
-      "report_deleted": "تم حذف التقرير بنجاح"
+      "report_deleted": "تم حذف التقرير بنجاح",
+      "no_reports_found": "لم يتم العثور على تقارير",
+      "try_adjusting_search": "حاول تعديل بحثك أو معايير التصفية"
     },
     "status": {
       "submitted": "تم التقديم",
       "in_progress": "قيد التقدم"
+    },
+    "filters": {
+      "search_reports": "بحث في التقارير...",
+      "filter_by_status": "تصفية حسب الحالة"
+    },
+    "actions": {
+      "unhide_report": "إظهار التقرير"
     }
+  },
+  "UsabilityCooperators": {
+    "inviteEvaluator": "دعوة المقيم للاختبار",
+    "email": "البريد الإلكتروني",
+    "scheduledAt": "مجدول في",
+    "inviteMessage": "رسالة الدعوة",
+    "placeholderMessage": "مرحبًا، لنقم بإجراء اختبار...",
+    "inviteInfo": "سيتم إرسال دعوة برابط الاختبار إلى بريد المقيم الإلكتروني في الوقت المحدد",
+    "send": "إرسال"
   },
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "المتعاونون"
+    },
+    "subtitles": {
+      "manage_participants": "إدارة الأشخاص الذين يشاركون في دراستك"
     },
     "headers": {
       "email": "البريد الإلكتروني",
@@ -369,14 +422,21 @@
       "userVariables": "متغيرات المستخدم",
       "currentTasks": "المهام الحالية",
       "postForm": "نموذج ما بعد الاختبار",
-      "writeNewPost": "كتابة سؤال جديد بعد الاختبار"
+      "writeNewPost": "كتابة سؤال جديد بعد الاختبار",
+      "testConfiguration": "تكوين الاختبار"
+    },
+    "messages": {
+      "noTasks": "ليس لديك أي مهمة، قم بإنشاء واحدة للمتابعة.",
+      "noVariables": "لم تتم إضافة متغيرات بعد. انقر أدناه لإنشاء متغير جديد.",
+      "noOptions": "لم تتم إضافة خيارات."
     },
     "inputs": {
       "consent": "الموافقة",
-      "variableName": "اسم المتغير",
-      "description": "الوصف",
-      "selection": "الاختيار",
-      "writeQuestion": "كتابة سؤال"
+      "variableName": "عنوان المتغير",
+      "description": "الوصف (اختياري)",
+      "selection": "الخيار",
+      "writeQuestion": "كتابة سؤال",
+      "dialogVariableName": "اسم المتغير"
     },
     "checkboxes": {
       "selectionField": "حقل الاختيار",
@@ -386,7 +446,23 @@
     },
     "buttons": {
       "createNewVariable": "إنشاء متغير جديد",
-      "createNewPost": "إنشاء سؤال جديد بعد الاختبار"
+      "createNewPost": "إنشاء سؤال جديد بعد الاختبار",
+      "addFirstOption": "إضافة الخيار الأول"
+    },
+    "headers": {
+      "name": "الاسم",
+      "type": "النوع",
+      "estimatedTime": "الوقت المقدر (دقيقة)",
+      "tip": "تلميح",
+      "screenRecord": "تسجيل الشاشة",
+      "camera": "الكاميرا",
+      "eyeTracker": "تتبع العين",
+      "audioRecord": "تسجيل الصوت",
+      "actions": "الإجراءات",
+      "na": "غير متاح"
+    },
+    "fallbacks": {
+      "untitledVariable": "متغير غير مسمى"
     }
   },
   "UserTestView": {
@@ -394,11 +470,52 @@
       "preTestConsent": "ما قبل الاختبار - الموافقة",
       "preTestForm": "ما قبل الاختبار - النموذج",
       "preTest": "ما قبل الاختبار",
-      "postTest": "ما بعد الاختبار"
+      "postTest": "ما بعد الاختبار",
+      "eyeTrackingCalibration": "معايرة تتبع العين"
     },
     "buttons": {
       "done": "تم"
+    },
+    "WelcomeStep": {
+      "welcome": "مرحبًا بك في RUXAILAB!",
+      "description": "أنت على وشك المشاركة في اختبار مستخدم يهدف إلى تقييم سهولة الاستخدام والفهم لتطبيق رقمي. يساعدنا هذا النوع من الاختبارات في اكتشاف الحواجز التكنولوجية المحتملة وتحسين التجربة للجميع.",
+      "howItWorks": "كيف يعمل هذا الاختبار؟",
+      "phases": "خلال الاختبار، سنوجهك عبر مراحل مختلفة. في كل مرحلة، سيتم إخبارك بوضوح بما يجب القيام به. لا توجد إجابات صحيحة أو خاطئة: ما يهمنا هو كيفية تفاعلك مع النظام.",
+      "summary": "هنا يمكنك رؤية ملخص للمراحل التي ستتبعها:",
+      "steps": {
+        "consent": "الموافقة",
+        "preQuestions": "الأسئلة الأولية",
+        "tasks": "المهام",
+        "postQuestions": "الأسئلة النهائية",
+        "submission": "التقديم النهائي"
+      },
+      "ready": "عندما تكون مستعدًا، انقر على الزر للبدء. يمكنك التقدم بسرعتك الخاصة والتوقف في أي وقت إذا احتجت إلى ذلك.",
+      "startTest": "بدء الاختبار"
+    },
+    "PreTasksStep": {
+      "title": "المهام",
+      "heading": "لنبدأ مرحلة المهام",
+      "description": "ستكمل <strong>{numTasks}</strong> مهام تتعلق باستخدام الأداة. لا توجد إجابات صحيحة أو خاطئة: المهم هو كيفية تفاعلك.",
+      "instruction": "عندما تكون مستعدًا، انقر على الزر للبدء.",
+      "startButton": "بدء المهام",
+      "recordingTitle": "معلومات التسجيل",
+      "recordingDescription": "خلال المهام، قد نجمع أنواعًا مختلفة من البيانات لفهم تفاعلك مع النظام. اعتمادًا على المهمة المحددة، قد يتم تسجيل ما يلي:",
+      "screenRecording": "تسجيل الشاشة",
+      "webcamRecording": "كاميرا الويب",
+      "audioRecording": "الصوت",
+      "eyeTracking": "تتبع العين",
+      "recordingNote": "سيتم إعلامك قبل بدء أي تسجيل. يتم جمع جميع البيانات لأغراض البحث فقط والتعامل معها وفقًا لإرشادات الخصوصية."
     }
+  },
+  "eyeTracking": {
+    "title": "معايرة تتبع العين",
+    "beforeStart": "قبل بدء المعايرة",
+    "description1": "سنقوم بإعداد جهازك لتسجيل حركة عينيك.",
+    "description2": "اتبع النقاط التي ستظهر على الشاشة.",
+    "start": "بدء المعايرة",
+    "inProgress": "جاري المعايرة...",
+    "completed": "اكتملت المعايرة!",
+    "continue": "المتابعة إلى الاختبار"
   },
   "AccessNotAllowed": {
     "notAllowed": "الوصول غير مسموح",
@@ -468,7 +585,34 @@
       "title": "الإعدادات",
       "currentTest": "الاختبار الحالي",
       "createTemplate": "إنشاء نموذج",
-      "deleteTest": "حذف الاختبار"
+      "deleteTest": "حذف الاختبار",
+      "study_configuration": "تكوين الدراسة",
+      "loading_settings": "جارٍ تحميل الإعدادات",
+      "manage_test_settings": "إدارة إعدادات وتفضيلات اختبارك مع عناصر تحكم متقدمة",
+      "basic_information": "المعلومات الأساسية",
+      "configure_test_details": "تكوين التفاصيل الأساسية لاختبارك",
+      "advanced_settings": "الإعدادات المتقدمة",
+      "fine_tune_configuration": "ضبط تكوين اختبارك بدقة",
+      "public_access": "الوصول العام",
+      "allow_users_view": "السماح للمستخدمين بعرض هذا الاختبار",
+      "test_status": "حالة الاختبار",
+      "select_status": "اختر الحالة",
+      "end_date": "تاريخ الانتهاء",
+      "select_end_date": "اختر تاريخ الانتهاء",
+      "quick_actions": "إجراءات سريعة",
+      "perform_common_tasks": "قم بإجراء المهام الشائعة على الفور",
+      "confirm_deletion": "تأكيد الحذف",
+      "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
+      "delete_warning": "سيتم فقدان جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد.",
+      "delete_forever": "حذف إلى الأبد"
+    },
+    "editTest": {
+      "title": "تحرير الاختبار",
+      "description": "خصص إعدادات وتفضيلات اختبارك.",
+      "updatedTest": "تم تحديث الاختبار بنجاح"
+    },
+    "cooperators": {
+      "invitationSent": "تم إرسال الدعوة بنجاح"
     }
   },
   "alerts": {
@@ -483,10 +627,10 @@
     "imageURL": "أدخل رابط الصورة:",
     "deleteHeuristic": "هل أنت متأكد أنك تريد حذف الاستدلال؟",
     "deleteAccount": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
-    "genericSuccess": "تمت العملية بنجاح"
+    "genericSuccess": "تمت العملية بنجاح",
+    "savedChanges": "تم حفظ التغييرات بنجاح"
   },
   "buttons": {
-    "saveandleave": "حفظ وترك",
     "next": "التالي",
     "previous": "السابق",
     "seeCode": "رؤية الكود",
@@ -502,10 +646,15 @@
     "save": "حفظ",
     "stay": "البقاء",
     "leave": "المغادرة",
+    "saveandleave": "حفظ وترك",
     "help": "مساعدة",
     "delete": "حذف",
     "deleteAccount": "حذف الحساب",
-    "back": "عودة"
+    "back": "عودة",
+    "duplicateTest": "تكرار الاختبار",
+    "submit": "تقديم",
+    "couldNotFinish": "لا يمكن إنهاء",
+    "addNewTask": "إضافة مهمة جديدة"
   },
   "switches": {
     "noAnswer": "لا توجد إجابة",
@@ -516,6 +665,7 @@
     "camera": "الكاميرا",
     "eyeTracker": "تتبع العين",
     "audioRecord": "تسجيل الصوت",
+    "postForm": "نموذج ما بعد الاختبار",
     "nasa": "NASA-TLX"
   },
   "inputs": {
@@ -541,6 +691,26 @@
         "تحليل متقدم للإجابات",
         "اختبارات مع أو بدون إشراف"
       ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "اختبار ذاتي",
+        "type": "غير مشرف عليه",
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
+      },
+      "LiveTest": {
+        "title": "اختبار مباشر",
+        "type": "مشرف عليه",
+        "text": [
+          "تسجيل الكاميرا والصوت والشاشة",
+          "تحليل متقدم للإجابات",
+          "اختبار مباشر مشرف عليه"
+        ]
+      }
     }
   },
   "TestDialog": {
@@ -548,11 +718,23 @@
     "sub-heading": "أضف اسمًا لاختبارك!",
     "test-name": "اسم الاختبار",
     "test-description": "وصف الاختبار",
-    "test-label": "اجعل الاختبار عامًا لجميع المستخدمين"
+    "test-label": "اجعل الاختبار عامًا لجميع المستخدمين",
+    "template": {
+      "title": "أدخل عنوانًا لنموذجك",
+      "description": "قدم وصفًا لنموذجك",
+      "public": "اجعل النموذج عامًا لجميع المستخدمين"
+    }
+  },
+  "finishTest": {
+    "title": "إنهاء الاختبار",
+    "finalMessage": "الرسالة النهائية",
+    "congratulations": "تهانينا! لقد أكملت الاختبار، يمكنك الآن تقديم إجاباتك.",
+    "submitMessage": "انقر هنا لتقديم إجاباتك. بعد التقديم، لن تتمكن من تغيير إجاباتك!",
+    "submitButton": "تقديم"
   },
   "help": {
     "createtest": "كيفية إنشاء اختبار؟",
-    "createtestanswer": "لإنشاء اختبار، انقر على أيقونة الزائد، واختر اختبار الاستدلال. ثم حدد تفاصيل مشروعك. أخيرًا، انتقل إلى صفحة المدير المخصصة.",
+    "createtestanswer": "لإنشاء اختبار، ابدأ بالنقر على أيقونة الزائد، واختر اختبار الاستدلال. ثم حدد تفاصيل مشروعك. أخيرًا، انتقل إلى صفحة المدير المخصصة.",
     "heuristictest": "كيفية إعداد اختبار الاستدلال الخاص بي؟",
     "heuristictestanswer": "لإعداد اختبار الاستدلال الخاص بك، ابدأ بالوصول إلى خيار 'تحرير الاختبار'. ثم انقر على زر الزائد لإضافة عنوان وسؤال إلى استدلالك. بعد ذلك، انتقل إلى قسم الخيارات لإنشاء خيارات الإجابة وقيمها. أخيرًا، احفظ التغييرات.",
     "deletetest": "كيفية حذف اختباري؟",
@@ -576,23 +758,262 @@
     "cooperators": "المتعاونون",
     "analytics": "تحليلات",
     "help_center": "مركز المساعدة",
-    "howCanWeHelp": "كيف يمكننا مساعدتك؟"
+    "howCanWeHelp": "كيف يمكننا مساعدتك؟",
+    "categories": "الفئات",
+    "viewAll": "عرض الكل",
+    "noArticlesFound": "لم يتم العثور على مقالات",
+    "browseAllCategories": "تصفح جميع الفئات للعثور على المساعدة التي تحتاجها",
+    "viewAllArticles": "عرض جميع المقالات",
+    "videoAltText": "فيديو توضيحي للأسئلة الشائعة يوضح الخطوات المرئية لحل السؤال المتكرر. لا يوجد محتوى صوتي في هذا الفيديو التعليمي."
   },
-  "user": "المستخدم",
-  "account": "الحساب",
-  "security": "الأمان",
-  "personalInfo": "المعلومات الشخصية",
-  "contact": "الاتصال",
-  "country": "البلد",
-  "editDetails": "تعديل التفاصيل",
-  "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
-  "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
-  "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
-  "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
-  "yourPassword": "كلمة المرور الخاصة بك",
-  "usernameRequired": "اسم المستخدم مطلوب",
-  "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
-  "countryRequired": "البلد مطلوب",
-  "contactNumberRequired": "رقم الاتصال مطلوب",
-  "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)"
+  "PROFILE": {
+    "user": "المستخدم",
+    "account": "الحساب",
+    "security": "الأمان",
+    "personalInfo": "المعلومات الشخصية",
+    "contact": "الاتصال",
+    "country": "البلد",
+    "editDetails": "تحرير التفاصيل",
+    "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
+    "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
+    "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
+    "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
+    "yourPassword": "كلمة المرور الخاصة بك",
+    "usernameRequired": "اسم المستخدم مطلوب",
+    "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
+    "countryRequired": "البلد مطلوب",
+    "contactNumberRequired": "رقم الاتصال مطلوب",
+    "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم"
+  },
+  "ModeratedTest": {
+    "preTest": "ما قبل الاختبار",
+    "tasks": "المهام",
+    "postTest": "ما بعد الاختبار",
+    "consentForm": "نموذج الموافقة",
+    "consentFormSubtitle": "تحرير نص الموافقة للاختبار. يتم حفظ التغييرات عند النقر على زر الحفظ.",
+    "consentDescription": "هذا صندوق اختيار الموافقة مع نص لتأكيد الموافقة.",
+    "welcomeMessage": "رسالة الترحيب",
+    "welcomeMessageDescription": "ستكون هذه الرسالة أول ما يراه المشاركون قبل بدء الجلسة.",
+    "landingPage": "صفحة الهبوط",
+    "landingPageDescription": "سيتم تحميل هذا الرابط تلقائيًا عندما يبدأ المشارك الجلسة.",
+    "url": "رابط صفحة الهبوط الخاصة بك",
+    "participantCamera": "كاميرا المشارك",
+    "cameraOptions": {
+      "optional": "اختياري",
+      "required": "مطلوب",
+      "disabled": "معطل"
+    },
+    "preForm": "نموذج ما قبل الاختبار",
+    "preFormDescription": "هذا استبيان أولي لجمع بيانات المشارك.",
+    "postForm": "نموذج ما بعد الاختبار",
+    "postFormDescription": "هذا استبيان نهائي لجمع بيانات المشارك.",
+    "finalMessage": "الرسالة النهائية",
+    "finalMessageDescription": "هذه رسالة نهائية تتركها للمشارك في نهاية الاختبار.",
+    "finalMessagePlaceholder": "أدخل الرسالة النهائية",
+    "preTestVariables": "متغيرات ما قبل الاختبار",
+    "postTestVariables": "متغيرات ما بعد الاختبار",
+    "configureVariables": "تكوين المتغيرات لقسم {type}. أضف أو حرر أو أزل المتغيرات حسب الحاجة.",
+    "createNewVariableTitle": "إنشاء متغير جديد"
+  },
+  "CardSorting": {
+    "noCategory": "لا توجد فئة",
+    "noCards": "لم يتم العثور على بطاقات"
+  },
+  "analytics": {
+    "searchByName": "البحث بالاسم",
+    "search": "بحث",
+    "reset": "إعادة تعيين",
+    "showFilters": "إظهار الفلاتر",
+    "hideFilters": "إخفاء الفلاتر",
+    "effectiveness": "الفعالية",
+    "effectivenessDescription": "نسبة المهام المكتملة بنجاح",
+    "efficiency": "الكفاءة",
+    "efficiencyDescription": "متوسط الوقت: {avgTime}",
+    "satisfaction": "الرضا",
+    "satisfactionDescription": "متوسط درجة رضا المستخدم",
+    "conclusionRate": "معدل الإكمال",
+    "perfectCompletionRate": "تم تحقيق معدل إكمال مثالي",
+    "testsInProgress": "الاختبارات قيد التقدم",
+    "totalDuration": "المدة الإجمالية",
+    "avgTimePerTask": "متوسط الوقت/المهمة",
+    "efficientTaskCompletion": "معدل إكمال المهمة بكفاءة",
+    "longestTask": "أطول مهمة",
+    "taskLabel": "المهمة",
+    "totalAnswers": "إجمالي الإجابات",
+    "day": "يوم",
+    "evaluator": "المقيم",
+    "latestUser": "أحدث مستخدم",
+    "taskPerformance": "أداء المهمة",
+    "taskPerformanceDescription": "معدلات النجاح والخطأ لكل مهمة اختبار",
+    "success": "نجاح",
+    "successCount": "نجاح",
+    "errors": "أخطاء",
+    "preTest": "ما قبل الاختبار",
+    "preTestDescription": "نتائج من نموذج ما قبل الاختبار",
+    "postTest": "ما بعد الاختبار",
+    "postTestDescription": "نتائج من نموذج ما بعد الاختبار",
+    "all": "الكل",
+    "question": "سؤال {number}",
+    "comingSoon": "قريبًا",
+    "generalAnalytics": "التحليلات العامة",
+    "individualAnalytics": "التحليلات الفردية",
+    "summary": "ملخص",
+    "completed": "مكتمل",
+    "timeTaken": "الوقت المستغرق",
+    "yes": "نعم",
+    "invited": "مدعو",
+    "answers": "الإجابات",
+    "overallAnalyticsDescription": "عرض التحليلات العامة لدراستك",
+    "susAnalytics": "تحليلات SUS",
+    "nasaTlxAnalytics": "تحليلات NASA-TLX",
+    "eyeTrackingAnalytics": "تحليلات تتبع العين",
+    "transcriptions": "التفريغات النصية",
+    "notCompleted": "غير مكتمل",
+    "tasks": "المهام",
+    "total": "الإجمالي",
+    "user": "المستخدم",
+    "invite": "دعوة",
+    "actions": "إجراءات",
+    "no": "لا"
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "اختر فئة التقييم",
+    "selectEvaluationType": "اختر نوع التقييم الذي تريد إجرائه لدراستك",
+    "backToDashboard": "العودة إلى لوحة التحكم",
+    "chooseMethod": "اختر طريقة {category}",
+    "selectMethod": "اختر الطريقة المحددة لدراستك",
+    "backToCategories": "العودة إلى الفئات",
+    "chooseStudyType": "اختر نوع الدراسة",
+    "selectStudyType": "اختر كيفية إنشاء دراستك",
+    "backToStudyType": "العودة إلى نوع الدراسة",
+    "studyDetails": "تفاصيل الدراسة",
+    "provideStudyInfo": "قدم معلومات أساسية عن دراستك",
+    "createStudy": "إنشاء الدراسة",
+    "multipleMethods": "طرق متعددة",
+    "comingSoon": "قريبًا",
+    "steps": {
+      "category": "الفئة",
+      "methods": "الطرق",
+      "studyType": "نوع الدراسة",
+      "details": "التفاصيل"
+    },
+    "categories": {
+      "test": {
+        "title": "اختبار",
+        "description": "إجراء اختبارات منظمة مع مستخدمين حقيقيين لقياس قابلية الاستخدام والأداء."
+      },
+      "inquiry": {
+        "title": "استفسار",
+        "description": "جمع رؤى من خلال استطلاعات الرأي والمقابلات وطرق بحث أخرى."
+      },
+      "inspection": {
+        "title": "فحص",
+        "description": "تقييم الخبراء باستخدام مبادئ وإرشادات قابلية الاستخدام المعتمدة."
+      },
+      "accessibility": {
+        "title": "إمكانية الوصول",
+        "description": "تقييم منتجك للامتثال لإمكانية الوصول وأفضل الممارسات."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "اختبار قابلية الاستخدام (غير مشرف عليه)",
+          "description": "يكمل المشاركون المهام بشكل مستقل أثناء تسجيل تفاعلاتهم"
+        },
+        "usability_moderated": {
+          "name": "اختبار قابلية الاستخدام (مشرف عليه)",
+          "description": "جلسات فورية مع توجيه من الميسر وملاحظات فورية"
+        },
+        "card_sorting_unmoderated": {
+          "name": "فرز البطاقات (غير مشرف عليه)",
+          "description": "ينظم المشاركون البطاقات بشكل مستقل، دون وجود ميسر، مما يسمح بجمع بيانات حول كيفية تجميعهم وتصنيفهم للمعلومات وفقًا لمنطقهم الخاص."
+        },
+        "ab_testing": {
+          "name": "اختبار A/B",
+          "description": "مقارنة نسختين لتحديد أيهما يعمل بشكل أفضل"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "تقييم الاستدلال",
+          "description": "مراجعة الخبراء باستخدام مبادئ وإرشادات قابلية الاستخدام المعتمدة"
+        },
+        "cognitive_walkthrough": {
+          "name": "الجولة المعرفية",
+          "description": "تقييم خطوة بخطوة لعمليات إكمال مهمة المستخدم"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "اختبار يدوي",
+          "description": "يقيم المقيّمون البشريون إمكانية الوصول باستخدام تقنيات المساعدة"
+        },
+        "automatic_testing": {
+          "name": "اختبار تلقائي",
+          "description": "أدوات آلية لتحديد مشكلات إمكانية الوصول الشائعة"
+        },
+        "ai_assisted_testing": {
+          "name": "اختبار بمساعدة الذكاء الاصطناعي",
+          "description": "أدوات مدعومة بالذكاء الاصطناعي لتحديد واقتراح إصلاحات لمشكلات إمكانية الوصول"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "ابدأ بدراسة فارغة",
+        "description": "إنشاء دراسة من الصفر مع تخصيص كامل",
+        "features": [
+          "تخصيص كامل",
+          "البناء من البداية",
+          "تحكم كامل في الإعدادات"
+        ]
+      },
+      "template": {
+        "title": "إنشاء من نموذج",
+        "description": "استخدم قوالب مسبقة الصنع للبدء بسرعة",
+        "features": [
+          "إعداد سريع",
+          "إعدادات مسبقة التكوين",
+          "تشمل أفضل الممارسات"
+        ]
+      }
+    },
+    "details": {
+      "basicInformation": "المعلومات الأساسية",
+      "studyTitle": "عنوان الدراسة",
+      "enterTitle": "أدخل عنوانًا وصفيًا لدراستك",
+      "studyDescription": "وصف الدراسة",
+      "enterDescription": "صف الغرض والأهداف من دراستك",
+      "websiteName": "اسم الموقع",
+      "enterWebsiteName": "أدخل اسم الموقع",
+      "websiteUrl": "رابط الموقع (اختياري)",
+      "enterWebsiteUrl": "أدخل رابط الموقع",
+      "privacySettings": "إعدادات الخصوصية",
+      "controlVisibility": "تحكم في من يمكنه رؤية دراستك",
+      "publicStudy": "دراسة عامة",
+      "privateStudy": "دراسة خاصة",
+      "visibleToEveryone": "مرئي للجميع",
+      "onlyInvitedUsers": "المستخدمون المدعوون فقط",
+      "public": "عام",
+      "private": "خاص",
+      "validation": {
+        "enterTitle": "أدخل عنوانًا",
+        "max200Characters": "الحد الأقصى 200 حرف",
+        "max600Characters": "الحد الأقصى 600 حرف",
+        "enterWebsiteName": "أدخل اسم الموقع",
+        "enterWebsiteUrl": "أدخل رابط الموقع",
+        "urlProtocol": "يجب أن يبدأ الرابط بـ http:// أو https://",
+        "validUrl": "أدخل رابطًا صالحًا (مثال: https://example.com)"
+      },
+      "status": {
+        "active": "نشط",
+        "pending": "قيد الانتظار",
+        "finished": "منتهي",
+        "upcoming": "قادم"
+      }
+    }
+  }
 }

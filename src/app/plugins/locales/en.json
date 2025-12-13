@@ -473,6 +473,7 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
+
     "buttons": {
       "done": "Done"
     },
@@ -506,6 +507,16 @@
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
+  },
+  "eyeTracking": {
+    "title": "Eye Tracking Calibration",
+    "beforeStart": "Before starting calibration",
+    "description1": "We will prepare your device to record your eye movements.",
+    "description2": "Follow the points that appear on the screen.",
+    "start": "Start calibration",
+    "inProgress": "Calibration in progress...",
+    "completed": "Calibration completed!",
+    "continue": "Continue to the test"
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -846,7 +857,27 @@
     "postTestDescription": "Results from the post-test form",
     "all": "All",
     "question": "Question {number}",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "generalAnalytics": "General Analytics",
+    "individualAnalytics": "Individual Analytics",
+    "summary": "Summary",
+    "completed": "Completed",
+    "timeTaken": "Time taken",
+    "yes": "Yes",
+    "invited": "Invited",
+    "answers": "Answers",
+    "overallAnalyticsDescription": "View the overall analytics of your study",
+    "susAnalytics": "SUS Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
+    "eyeTrackingAnalytics": "Eye-Tracking Analytics",
+    "transcriptions": "Transcriptions",
+    "notCompleted": "Not Completed",
+    "tasks": "Tasks",
+    "total": "Total",
+    "user": "User",
+    "invite": "Invite",
+    "actions": "Actions",
+    "no": "No"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",
