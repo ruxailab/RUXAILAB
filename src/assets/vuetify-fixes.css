@@ -1,0 +1,26 @@
+/*
+   V-TEXTAREA LABEL AND PLACEHOLDER FIX
+   Prevents label from overlapping placeholder on initial render
+*/
+.v-textarea .v-field:not(.v-field--focused):not(.v-field--active):not(.v-field--dirty) .v-field__input::placeholder {
+  opacity: 0 !important;
+}
+
+.v-textarea .v-field--focused .v-field__input::placeholder,
+.v-textarea .v-field--active .v-field__input::placeholder,
+.v-textarea .v-field--dirty .v-field__input::placeholder {
+  opacity: 0.6;
+  transition: opacity 0.2s ease 0.1s;
+}
+
+.v-textarea .v-label {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.v-textarea .v-field--focused .v-label,
+.v-textarea .v-field--active .v-label,
+.v-textarea .v-field--dirty .v-label,
+.v-textarea .v-label.v-field-label--floating {
+  transform: translateY(-50%) scale(0.85) !important;
+}
