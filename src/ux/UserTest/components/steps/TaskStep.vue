@@ -8,8 +8,6 @@
             class="rich-text mb-4"
             v-html="task?.taskDescription || taskDescription"
           />
-                   TASKINDEX {{ taskIndex }}
-
           
           <!-- Task Preview Information -->
           <v-card 
@@ -482,18 +480,18 @@ function updateElapsedTime() {
 }
 
 async function startTask() {
+    const link = props.task?.taskLink || props.taskLink;
+    if (link) {
+    const url = link.startsWith('http://') || link.startsWith('https://')
+      ? link
+      : `https://${link}`;
+    window.open(url, '_blank');
+    }
     await startMediaRecorders();
     stage.value = 2;
     taskStartTime = Date.now();
     timerInterval = setInterval(updateElapsedTime, 1000);
     nextTick(() => {
-        const link = props.task?.taskLink || props.taskLink;
-        if (link) {
-          const url = link.startsWith('http://') || link.startsWith('https://')
-            ? link
-            : `https://${link}`;
-          window.open(url, '_blank');
-        }
         setTimeout(() => {
             const timer = document.querySelector('[ref=timerComponent]');
             if (timer && timer.startTimer) timer.startTimer();

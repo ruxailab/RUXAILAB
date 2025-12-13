@@ -5,7 +5,8 @@
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
           variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{ $t('analytics.search') }}</v-btn>
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{
+          $t('analytics.search') }}</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
@@ -42,20 +43,20 @@
     <!-- UX Metrics Row (ahora primera fila) -->
     <v-row class="">
       <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" :label="$t('analytics.effectiveness')" color="success"
-          icon="mdi-target-account" :description="$t('analytics.effectivenessDescription')"
+        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" :label="$t('analytics.effectiveness')"
+          color="success" icon="mdi-target-account" :description="$t('analytics.effectivenessDescription')"
           :progress="calculateEffectiveness()" />
       </v-col>
       <v-col cols="12" md="4">
         <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" :label="$t('analytics.efficiency')" color="info"
-          icon="mdi-speedometer" :description="$t('analytics.efficiencyDescription', { avgTime: calculateEfficiency().avgTime })"
+          icon="mdi-speedometer"
+          :description="$t('analytics.efficiencyDescription', { avgTime: calculateEfficiency().avgTime })"
           :progress="Math.min(calculateEfficiency().score * 10, 100)" />
       </v-col>
       <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')" color="warning"
-          icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
-          :progress="(calculateSatisfaction() / 5) * 100" 
-          :disabled="true" />
+        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')"
+          color="warning" icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
+          :progress="(calculateSatisfaction() / 5) * 100" :disabled="true" />
       </v-col>
     </v-row>
 
@@ -744,12 +745,12 @@ const calculateEfficiency = () => {
   // Efficiency = Number of successfully completed tasks / Time spent on successful tasks
   // Convert to tasks per minute for better readability
   const efficiencyRatio = totalSuccessfulTaskTime > 0 ? (totalSuccessfulTasks / (totalSuccessfulTaskTime / 60000)) : 0;
-  
+
   // Dynamic normalization based on actual efficiency ratio
   // Use logarithmic scale to better represent efficiency variations
   // Score = 10 * (1 - e^(-efficiency_ratio * scale_factor))
   const scaleFactor = 2; // Adjustable based on typical task complexity
-  const normalizedScore = efficiencyRatio > 0 ? 
+  const normalizedScore = efficiencyRatio > 0 ?
     Math.min(10, 10 * (1 - Math.exp(-efficiencyRatio * scaleFactor))) : 0;
 
   return {

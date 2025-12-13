@@ -629,7 +629,7 @@ async function downloadPdf() {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
 
   // === Logo (load once) ===
-  const logo = await loadLogo('/brand/logo.png', 10) // target height = 10pt
+  const logo = await loadLogo('/brand/logo_full.png', 10) // target height = 10pt
 
   // THEME
   const M = 48 // margin
