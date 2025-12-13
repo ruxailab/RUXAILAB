@@ -12,7 +12,7 @@
 
       <!-- Methods Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="method in availableMethods" :key="method.id" cols="12" md="6" lg="5">
+        <v-col v-for="method in availableMethods" :key="method.id" cols="12" sm="6" md="6" lg="5">
           <SelectableCard
             :selected="selectedMethod === method.id"
             :icon="method.icon"
