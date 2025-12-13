@@ -728,7 +728,7 @@ const saveAnswer = async () => {
   try {
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     });
     toast.success(t('HeuristicsTestView.messages.answerSaved'));
