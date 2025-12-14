@@ -3,6 +3,7 @@
     :model-value="true"
     class="rux-loader-overlay"
     persistent
+    opacity="0.8"
   >
     <div class="rux-loader-wrapper">
       <img
@@ -18,7 +19,7 @@
 </template>
 
 <script setup>
-import logoX from '@/assets/logo_full_white.png';
+import logoX from '@/assets/logo_small_red.png';
 
 const props = defineProps({
   text: {
@@ -31,6 +32,9 @@ const props = defineProps({
 <style scoped>
 .rux-loader-overlay {
   z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .rux-loader-wrapper {
@@ -38,12 +42,13 @@ const props = defineProps({
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 100%;
 }
 
 .rux-loader-icon {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   animation: pulse 1.2s ease-in-out infinite;
 }
 
