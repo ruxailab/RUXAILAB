@@ -9,7 +9,7 @@
         class="ma-5 pa-5"
       >
         <img
-          src="@/assets/ruxailab-long-crop-white.png"
+          src="@/assets/logo_full_white.png"
           alt="RUXAILAB"
           class="mb-10"
           style="max-width: 300px;"
@@ -91,10 +91,10 @@ defineEmits(['start']);
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90%;
-  margin-right: -100px;
-  margin-top: 200px;
-  background-image: url(../../../assets/ruxailab-small-red.png);
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
