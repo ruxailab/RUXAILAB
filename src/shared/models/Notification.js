@@ -2,6 +2,8 @@
  * Create a Notification.
  * @param {string} title - The title value.
  * @param {string} description - The description value.
+ * @param {string} type - The notification type ('invitation' | 'message').
+ * @param {string} senderUserId - The user ID of the sender (for replies).
  */
 
 export default class Notification {
@@ -15,17 +17,19 @@ export default class Notification {
     accessLevel,
     readAt,
     type,
+    senderUserId,
   } = {}) {
     this.title = title;
     this.description = description;
     this.redirectsTo = redirectsTo;
     this.createdDate = Date.now();
     this.author = author;
-    this.read = read;
+    this.read = read ?? false;
     this.testId = testId;
     this.accessLevel = accessLevel ?? null;
     this.readAt = readAt ?? null;
-    this.type = type ?? null;
+    this.type = type ?? 'invitation'; // 'invitation' | 'message'
+    this.senderUserId = senderUserId ?? null;
   }
 
   static toNotification(data) {
@@ -44,6 +48,7 @@ export default class Notification {
       accessLevel: this.accessLevel,
       readAt: this.readAt,
       type: this.type,
+      senderUserId: this.senderUserId,
     };
   }
 }
