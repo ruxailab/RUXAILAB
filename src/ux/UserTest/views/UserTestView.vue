@@ -513,8 +513,15 @@ function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
 
+const BASE_URL = process.env.VUE_APP_RUXAILAB_BASE_URL;
+
 const openCalibration = () => {
-  window.open(`http://localhost:8081/calibration/camera?auth=${user.value?.id}`, '_blank');
+  const eyeLabUrl = process.env.VUE_APP_EYE_LAB_FRONTEND_URL;
+  if(!eyeLabUrl) {
+    console.error('VUE_APP_EYE_LAB_FRONTEND_URL is not configured');
+    return;
+  }
+  window.open(`${eyeLabUrl}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
   calibrationInProgress.value = true;
   console.log('calibrationInProgress.value', calibrationInProgress.value);
 }
@@ -1068,10 +1075,39 @@ onMounted(async () => {
   })
 });
 
+// Listen for calibration completion message from the calibration window
+window.addEventListener('message', (event) => {
+  if (event.data === 'calibrationCompleted') {
+    calibrationCompleted.value = true;
+  }
+});
+
+// Listen for calibration completion via localStorage
+window.addEventListener('storage', (event) => {
+  if (event.key === 'calibrationCompleted' && event.newValue === 'true') {
+    calibrationCompleted.value = true;
+    localStorage.removeItem('calibrationCompleted');
+  }
+});
+
+
 onBeforeUnmount(() => {
   if (videoRecorder.value && typeof videoRecorder.value.stopRecording === 'function') {
     videoRecorder.value.stopRecording();
   }
+  // Remove the message listener
+  window.removeEventListener('message', (event) => {
+    if (event.data === 'calibrationCompleted') {
+      calibrationCompleted.value = true;
+    }
+  });
+  // Remove the storage listener
+  window.removeEventListener('storage', (event) => {
+    if (event.key === 'calibrationCompleted' && event.newValue === 'true') {
+      calibrationCompleted.value = true;
+      localStorage.removeItem('calibrationCompleted');
+    }
+  });
 });
 </script>
 
@@ -1199,4 +1235,3 @@ onBeforeUnmount(() => {
   ;
 }
 </style>
-

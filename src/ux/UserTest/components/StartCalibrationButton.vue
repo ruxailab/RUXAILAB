@@ -2,10 +2,10 @@
     <v-col cols="12" class="text-center">
         <v-btn v-if="!calibrationInProgress" color="primary" variant="flat" size="large"
             @click="$emit('openCalibration')">
-            Comenzar calibración
+            Start calibration
         </v-btn>
         <v-btn v-else disabled color="primary" variant="flat" size="large">
-            En progreso...
+            In progress...
         </v-btn>
     </v-col>
 </template>

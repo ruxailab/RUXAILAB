@@ -77,4 +77,10 @@ export default [
     meta: { authorize: [] },
     component: FAQ,
   },
+  {
+    path: '/calibration/camera',
+    name: 'CalibrationCamera',
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: () => import('@/views/public/CalibrationView.vue'),
+  },
 ]
