@@ -622,7 +622,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
+import { useNotification } from '@/shared/utils/toast';
 import {
   getAuth,
   reauthenticateWithCredential,
@@ -645,7 +645,7 @@ const store = useStore();
 const user = computed(() => store.getters.user || { email: '' });
 
 const { t } = useI18n();
-const toast = useToast();
+const toast = useNotification()
 
 const userprofile = ref({
   profileImage: null,
@@ -759,10 +759,10 @@ const uploadProfileImage = async (event) => {
 
     userprofile.value.profileImage = downloadURL;
     editProfileData.value.profileImage = downloadURL;
-    toast.success(t('profile.profileImageUpdatedSuccess'));
+    toast.showSucess(t('profile.profileImageUpdatedSuccess'));
   } catch (error) {
     console.error('Error uploading image:', error);
-    toast.error(t('profile.profileImageUploadFailed'));
+    toast.showError('profile.profileImageUploadFailed');
   }
 };
 
@@ -791,7 +791,7 @@ const fetchUserProfile = async () => {
     }
   } catch (error) {
     console.error('Error fetching profile:', error);
-    toast.error(t('profile.profileLoadFailed'));
+    toast.showError('profile.profileLoadFailed');
   } finally {
     loading.value = false;
   }
@@ -831,12 +831,12 @@ const saveProfile = async () => {
         country: editProfileData.value.country,
       };
 
-      toast.success(t('profile.profileUpdatedSuccess'));
+      toast.showSuccess('profile.profileUpdatedSuccess');
       editProfileDialog.value = false;
     }
   } catch (error) {
     console.error('Error updating profile:', error);
-    toast.error(t('profile.profileUpdateFailed'));
+    toast.showError('profile.profileUpdateFailed');
   }
 };
 
@@ -848,14 +848,14 @@ const changePassword = async () => {
 
       if (user) {
         await updatePassword(user, newPassword.value);
-        toast.success(t('profile.passwordChangedSuccess'));
+        toast.showSuccess('profile.passwordChangedSuccess');
         newPassword.value = '';
         confirmPassword.value = '';
         passwordForm.value.reset();
       }
     } catch (error) {
       console.error('Error changing password:', error);
-      toast.error(t('profile.passwordChangeFailed'));
+      toast.showError('profile.passwordChangeFailed');
     }
   }
 };
@@ -871,7 +871,7 @@ const handlerDeleteConfirmText = async (value) => {
     return await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('profile.accountDeletionFailed'))
+    toast.showError('profile.accountDeletionFailed');
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
@@ -880,14 +880,14 @@ const handlerDeleteConfirmText = async (value) => {
 
 const deleteAccount = async (user) => {
   await store.dispatch('deleteAuth', user.uid)
-  toast.success(t('profile.accountDeletedSuccess'))
+  toast.showSuccess('profile.accountDeletedSuccess')
   signOut()
 };
 
 const handlerDeleteAccount = async () => {
   const auth = getAuth()
   const user = auth.currentUser
-  if (!userPassword.value) return toast.error(t('profile.passwordRequired'))
+  if (!userPassword.value) return toast.showError('profile.passwordRequired')
 
   try {
     isDeleting.value = true
@@ -896,7 +896,7 @@ const handlerDeleteAccount = async () => {
     await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('profile.accountDeletionFailed'))
+    toast.showError('profile.accountDeletionFailed')
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
@@ -921,10 +921,10 @@ const signOut = async () => {
 
 const countryFilter = (item, queryText) => {
   if (!queryText) return true;
-  
+
   const text = queryText.toString().toLowerCase();
   const name = typeof item === 'string' ? item : (item?.name || '');
-  
+
   return name.toString().toLowerCase().includes(text);
 };
 

@@ -5,13 +5,14 @@
 
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
-import i18n from '@/app/plugins/i18n'
-import { useToast } from 'vue-toastification'
+import i18n from '@/app/plugins/i18n' // Kept for SET_TOAST
+import { useNotification } from '@/shared/utils/toast' // New utility
 
 const authController = new AuthController()
 const userController = new UserController()
 
-const toast = useToast()
+// Replaced useToast() with useNotification()
+const toast = useNotification()
 
 export default {
   state: {
@@ -65,11 +66,14 @@ export default {
       try {
         const { user } = await authController.signUp(payload.email, payload.password)
         await userController.create({ id: user.uid, email: user.email })
+
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
         })
       } catch (err) {
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
@@ -94,23 +98,25 @@ export default {
 
         commit('SET_USER', dbUser)
 
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
 
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        // REFACTORED: Direct usage converted to utility
+        toast.showError('errors.incorrectCredential')
       } finally {
         commit('setLoading', false)
       }
     },
 
     /**
- * Handle Google Authentication
- * @action signInWithGoogle
- * @returns {void}
- */
+     * Handle Google Authentication
+     * @action signInWithGoogle
+     * @returns {void}
+     */
     async signInWithGoogle({ commit }, payload) {
       try {
         const { user } = await authController.signInWithGoogle(payload.rememberMe)
@@ -137,11 +143,14 @@ export default {
         }
 
         commit('SET_USER', dbUser)
+
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
       } catch (err) {
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
@@ -154,12 +163,15 @@ export default {
       try {
         await authController.signOut()
         commit('SET_USER', null)
+
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.logoutSuccess'),
           type: 'success',
         })
       } catch (err) {
         console.error(err)
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
@@ -178,6 +190,7 @@ export default {
         commit('SET_USER', dbUser)
       } catch (e) {
         console.error(e)
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
@@ -189,6 +202,8 @@ export default {
       commit('setLoading', true)
       try {
         await authController.resetPassword(payload.email)
+
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.resetPasswordSuccess'),
           type: 'success',
@@ -198,6 +213,8 @@ export default {
         if (err.code === 'auth/invalid-email') {
           errorMsg = i18n.global.t('errors.invalidEmail');
         }
+
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: errorMsg,
           type: 'error',
@@ -212,12 +229,15 @@ export default {
       try {
         await authController.deleteAuth(payload)
         commit('SET_USER', null)
+
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.deleteSuccess'),
           type: 'success',
         })
       } catch (err) {
         console.error('Error deleting user:', err)
+        // UNCHANGED (Vuex-based toast)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
