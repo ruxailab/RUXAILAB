@@ -8,17 +8,22 @@
           class="rounded-xxl"
           flat
         >
-          <v-row class="ma-0 " justify="space-between">
-            <v-card-title class="text-h5 pl-0"> {{ $t('common.notifications') }}</v-card-title>
-            <v-btn v-if="activeTab === 'unread'"
+          <v-row class="ma-0 mb-4" justify="end">
+            <v-btn
+              v-if="activeTab === 'unread'"
               color="primary"
               :disabled="allRead"
               @click="markAllAsRead"
             >
               Mark all as read
             </v-btn>
-            </v-row>
-          <v-tabs v-model="activeTab" bg-color="secondary">
+          </v-row>
+           <v-tabs
+              v-model="activeTab"
+              bg-color="transparent"
+              hide-slider
+              class="notification-tabs"
+            >
             <v-tab value="unread">{{ $t('common.unread') }}</v-tab>
             <v-tab value="inbox">{{ $t('common.inbox') }}</v-tab>
           </v-tabs>
@@ -223,3 +228,84 @@ const goBack = () => {
   router.go(-1)
 }
 </script>
+<style scoped>
+
+/* Tabs container (pill) */
+:deep(.notification-tabs) {
+  height: 64px;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
+  width: 960px;
+  max-width: 100%;
+  margin: 24px auto;
+  ;
+}
+
+/* Slide group fills height */
+:deep(.notification-tabs .v-slide-group),
+:deep(.notification-tabs .v-slide-group__content) {
+  height: 100%;
+}
+
+/* Individual tabs */
+:deep(.notification-tabs .v-tab) {
+  flex: 1;
+  height: 100%;
+  padding: 0 24px !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: #1f2937;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+/* Inactive hover */
+:deep(.notification-tabs .v-tab:hover:not(.v-tab--selected)) {
+  background-color: #f3f4f6;
+}
+
+/* Active tab */
+:deep(.notification-tabs .v-tab--selected) {
+  background-color: #e53935 !important;
+  color: #ffffff !important;
+}
+
+/* Active + hover */
+:deep(.notification-tabs .v-tab--selected:hover) {
+  background-color: #d32f2f !important;
+}
+
+/* Remove Vuetify overlays */
+:deep(.notification-tabs .v-tab::before),
+:deep(.notification-tabs .v-tab::after) {
+  display: none !important;
+}
+
+/* Remove slider */
+:deep(.v-tabs-slider),
+:deep(.v-tabs-slider-wrapper) {
+  display: none !important;
+}
+
+
+
+:deep(.notification-tabs .v-tab) {
+  font-size: 15px;          /* increase from default */
+  font-weight: 700;
+  letter-spacing: 0.12em;  /* improves readability for uppercase */
+}
+
+/* Active tab text slightly bolder */
+:deep(.notification-tabs .v-tab--selected) {
+  font-size: 16px;
+}
+</style>
