@@ -5,6 +5,7 @@ import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
+import UserStudy from '@/ux/UserTest/models/UserStudy'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()

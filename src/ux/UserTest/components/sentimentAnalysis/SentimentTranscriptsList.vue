@@ -11,84 +11,45 @@
     <!-- Scrollable List -->
     <v-row>
       <v-col cols="12">
-        <v-list
-          v-model:selected="selected"
-          lines="two"
-          class="scrollable-list"
-        >
-          <template
-            v-for="(region, index) in regions"
-            :key="region.title"
-          >
-            <v-list-item>
-              <!-- Prepend Slot: Play Button and Time -->
+        <v-list v-model:selected="selected" lines="two" class="scrollable-list">
+          <template v-for="(region, index) in regions" :key="region.title">
+            <v-list-item class="py-3">
+              <!-- Prepend: ícone e confiança -->
               <template #prepend>
-                <div class="play-segment-container">
-                  <!-- Play Button -->
-                  <v-btn
-                    icon
-                    @click="playSegment(region.start, region.end)"
-                  >
-                    <v-icon
-                      color="orange"
-                      size="large"
-                    >
-                      mdi-play
-                    </v-icon>
-                  </v-btn>
-                  <!-- Start and End Times -->
-                  <div class="segment-time">
-                    {{ region.start.toFixed(2) }} - {{ region.end.toFixed(2) }}
+                <div class="icon-and-confidence text-center mr-3">
+                  <v-icon v-if="region.sentiment === 'POS'" color="green">
+                    mdi-emoticon-happy-outline
+                  </v-icon>
+                  <v-icon v-else-if="region.sentiment === 'NEU'" color="blue">
+                    mdi-emoticon-neutral-outline
+                  </v-icon>
+                  <v-icon v-else color="red">
+                    mdi-emoticon-sad-outline
+                  </v-icon>
+                  <div class="text-caption">
+                    {{ (region.confidence * 100).toFixed(2) }}%
                   </div>
                 </div>
               </template>
 
-              <!-- List Item Content -->
-              <v-list-item-subtitle class="text--primary">
+              <!-- Conteúdo principal -->
+              <v-list-item-title class="white-space-normal text-wrap">
                 {{ region.transcript }}
+              </v-list-item-title>
+
+              <v-list-item-subtitle class="text-caption text-grey">
+                {{ formatTime(region.start) }} - {{ formatTime(region.end) }}
               </v-list-item-subtitle>
 
-              <!-- Append Slot: Sentiment Icon, Confidence, and Delete Button -->
+              <!-- Append: botão delete -->
               <template #append>
-                <div class="icon-and-confidence">
-                  <!-- Face Icon based on sentiment -->
-                  <v-icon
-                    v-if="region.sentiment === 'POS'"
-                    color="green"
-                  >
-                    mdi-emoticon-happy-outline
-                  </v-icon>
-                  <v-icon
-                    v-else-if="region.sentiment === 'NEU'"
-                    color="blue"
-                  >
-                    mdi-emoticon-neutral-outline
-                  </v-icon>
-                  <v-icon
-                    v-else-if="region.sentiment === 'NEG'"
-                    color="red"
-                  >
-                    mdi-emoticon-sad-outline
-                  </v-icon>
-                  <!-- Confidence Value Below the Icon -->
-                  <div>{{ (region.confidence * 100).toFixed(2) }}%</div>
-                </div>
-                <!-- Delete Icon Button -->
-                <v-btn
-                  icon
-                  @click="deleteRegion(region)"
-                >
-                  <v-icon color="red">
-                    mdi-delete
-                  </v-icon>
+                <v-btn icon variant="text" @click="deleteRegion(region)">
+                  <v-icon color="red">mdi-delete</v-icon>
                 </v-btn>
               </template>
             </v-list-item>
 
-            <v-divider
-              v-if="index < regions.length - 1"
-              :key="index"
-            />
+            <v-divider v-if="index < regions.length - 1" />
           </template>
         </v-list>
       </v-col>
@@ -106,15 +67,21 @@ const props = defineProps({
   },
   playSegment: {
     type: Function,
-    default: () => {},
+    default: () => { },
   },
   deleteRegion: {
     type: Function,
-    default: () => {},
+    default: () => { },
   },
 });
 
 const selected = ref([]);
+
+const formatTime = (seconds) => {
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+}
 </script>
 
 <style scoped>
@@ -165,5 +132,15 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.white-space-normal {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+.text-wrap {
+  word-break: break-word;
 }
 </style>

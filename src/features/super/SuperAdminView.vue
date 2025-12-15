@@ -37,7 +37,7 @@
     </v-dialog>
 
     <h1 style="margin-left: 8%; font-weight: 300">
-      {{ $t('PROFILE.superAdmin') }}
+      {{ $t('profile.superAdmin') }}
     </h1>
 
     <v-row
@@ -111,7 +111,7 @@
             >
               <v-card>
                 <v-card-title>
-                  <span class="text-h5">{{ $t('PROFILE.editProfile') }}</span>
+                  <span class="text-h5">{{ $t('profile.editProfile') }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
@@ -252,8 +252,8 @@ const testsHeaders = computed(() => [
 ])
 
 const accessLevels = computed(() => [
-  { title: t('PROFILE.superAdmin'), level: 0 },
-  { title: t('PROFILE.admin'), level: 1 },
+  { title: t('profile.superAdmin'), level: 0 },
+  { title: t('profile.admin'), level: 1 },
   { title: t('common.user'), level: 2 },
 ])
 
