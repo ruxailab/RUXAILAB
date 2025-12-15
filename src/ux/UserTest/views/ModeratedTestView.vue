@@ -307,7 +307,6 @@ import { database } from "@/app/plugins/firebase/index";
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import { onBeforeUnmount } from 'vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
@@ -324,13 +323,12 @@ import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
 import { MEDIA_FIELD_MAP } from "@/shared/constants/mediasType";
+import { showError, showInfo, showWarning } from "@/shared/utils/toast";
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
-const toast = useToast();
-
 // Data variables
 const testDisabledReason = ref(null);
 const loggedIn = ref(null);
@@ -916,20 +914,20 @@ const isStartTestDisabled = computed(() => {
 // Lifecycle hooks
 onMounted(async () => {
   if (!user.value) {
-    toast.error('Login to your RUXAILAB account first to access the test!');
+    showError('Login to your RUXAILAB account first to access the test!');
     router.push('/signin');
     return;
   }
 
   if (route.params.token) {
     if (route.params.token === test.value.id) {
-      toast.info('Use a session link to access your moderated test!');
+      showInfo('Use a session link to access your moderated test!');
       router.push('/managerview/' + test.value.id);
       return;
     }
 
     if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
-      toast.error(t('errors.globalError'));
+      showError('errors.globalError');
       router.push('/admin');
       return;
     }
@@ -941,13 +939,13 @@ onMounted(async () => {
       if (sessionCooperator.value?.testDate) {
         testDate.value = sessionCooperator.value.testDate;
       } else {
-        toast.warning("Your session doesn't have a scheduled date");
+        showWarning("Your session doesn't have a scheduled date");
         router.push('/managerview/' + test.value.id);
         return;
       }
     }
   } else {
-    toast.info('Use a session link to access the test');
+    showInfo('Use a session link to access the test');
     router.push('/managerview/' + test.value.id);
     return;
   }
