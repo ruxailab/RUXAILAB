@@ -5,8 +5,15 @@
     @click="onClick"
   >
     <template #prepend>
-      <v-avatar size="36" class="mr-3" :color="getAvatarColor()">
-        <v-icon size="20" color="white">
+      <v-avatar
+        size="36"
+        class="mr-3"
+        :color="getAvatarColor()"
+      >
+        <v-icon
+          size="20"
+          color="white"
+        >
           {{ getNotificationIcon() }}
         </v-icon>
       </v-avatar>
@@ -33,7 +40,7 @@
     <v-list-item-subtitle class="notification-item-desc">
       <span
         v-html="formatMultiline(truncateDescription(notification.description))"
-      ></span>
+      />
     </v-list-item-subtitle>
     <div class="notification-meta">
       <span class="notification-author">

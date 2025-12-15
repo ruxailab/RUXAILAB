@@ -3,7 +3,10 @@
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
     <!-- Actions Slot -->
-    <template v-if="!showIntroView" #actions>
+    <template
+      v-if="!showIntroView"
+      #actions
+    >
       <v-btn
         color="primary"
         size="large"
@@ -17,13 +20,19 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template v-if="!showIntroView" #subtitle>
+    <template
+      v-if="!showIntroView"
+      #subtitle
+    >
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('HeuristicsCooperators.subtitles.manage_participants') }}
       </p>
     </template>
     <!-- Main Content -->
-    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+    <Intro
+      v-if="showIntroView"
+      @close-intro="showIntroComponent = false"
+    />
     <CooperatorTable
       v-else
       :has-role-column="hasRoleColumn"
@@ -43,7 +52,11 @@
     />
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <LeaveAlert />
     </v-dialog>
 

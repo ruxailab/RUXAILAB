@@ -8,7 +8,9 @@
     <v-card class="rounded-lg">
       <!-- Header -->
       <v-card-title class="bg-primary text-white d-flex align-center">
-        <v-icon class="mr-2">mdi-email-open</v-icon>
+        <v-icon class="mr-2">
+          mdi-email-open
+        </v-icon>
         <span>{{ notification?.title || 'Message' }}</span>
       </v-card-title>
 
@@ -16,8 +18,14 @@
       <v-card-text class="pa-4">
         <!-- Sender Info -->
         <div class="d-flex align-center mb-3">
-          <v-avatar size="40" color="primary" class="mr-3">
-            <v-icon color="white">mdi-account</v-icon>
+          <v-avatar
+            size="40"
+            color="primary"
+            class="mr-3"
+          >
+            <v-icon color="white">
+              mdi-account
+            </v-icon>
           </v-avatar>
           <div>
             <div class="text-subtitle-2 font-weight-bold">
@@ -33,16 +41,27 @@
 
         <!-- Message Body -->
         <div class="message-body pa-3 rounded bg-grey-lighten-4">
-          <p class="text-body-1 mb-0" style="white-space: pre-wrap">
+          <p
+            class="text-body-1 mb-0"
+            style="white-space: pre-wrap"
+          >
             {{ notification?.description }}
           </p>
         </div>
 
         <!-- Reply Section -->
-        <div v-if="showReplyForm" class="mt-4">
+        <div
+          v-if="showReplyForm"
+          class="mt-4"
+        >
           <v-divider class="mb-3" />
           <div class="text-subtitle-2 mb-2">
-            <v-icon size="small" class="mr-1">mdi-reply</v-icon>
+            <v-icon
+              size="small"
+              class="mr-1"
+            >
+              mdi-reply
+            </v-icon>
             Reply
           </div>
           <v-textarea
@@ -71,7 +90,13 @@
           Reply
         </v-btn>
         <v-spacer />
-        <v-btn variant="outlined" color="grey" @click="onClose"> Close </v-btn>
+        <v-btn
+          variant="outlined"
+          color="grey"
+          @click="onClose"
+        >
+          Close
+        </v-btn>
         <v-btn
           v-if="showReplyForm"
           color="primary"

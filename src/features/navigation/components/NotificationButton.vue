@@ -1,6 +1,11 @@
 <template>
   <div v-if="Array.isArray(user.notifications)">
-    <v-menu location="bottom" absolute offset="8" max-width="400">
+    <v-menu
+      location="bottom"
+      absolute
+      offset="8"
+      max-width="400"
+    >
       <template #activator="{ props }">
         <v-badge
           color="red"
@@ -10,7 +15,12 @@
           offset-x="5"
           offset-y="5"
         >
-          <v-btn size="small" icon class="mr-1" v-bind="props">
+          <v-btn
+            size="small"
+            icon
+            class="mr-1"
+            v-bind="props"
+          >
             <v-icon size="20">
               {{
                 checkIfHasNewNotifications() > 0
@@ -22,7 +32,11 @@
         </v-badge>
       </template>
 
-      <v-card class="pa-0" max-width="500" style="overflow: hidden">
+      <v-card
+        class="pa-0"
+        max-width="500"
+        style="overflow: hidden"
+      >
         <!-- Fixed header -->
         <div
           class="bg-secondary"
@@ -54,7 +68,10 @@
             v-if="user.notifications.length > 0"
             style="max-height: 50vh; overflow-y: auto"
           >
-            <v-list density="compact" class="py-1 notification-list">
+            <v-list
+              density="compact"
+              class="py-1 notification-list"
+            >
               <template
                 v-for="(notification, i) in sortedNotifications || []"
                 :key="notification.id"
@@ -74,8 +91,17 @@
           </div>
 
           <!-- No notifications -->
-          <div v-else class="text-center py-6">
-            <v-icon size="36" class="mb-2" color="grey"> mdi-bell-off </v-icon>
+          <div
+            v-else
+            class="text-center py-6"
+          >
+            <v-icon
+              size="36"
+              class="mb-2"
+              color="grey"
+            >
+              mdi-bell-off
+            </v-icon>
             <div class="text-grey text-subtitle-2">
               <strong>{{ $t('common.noNotifications') }}</strong>
             </div>
