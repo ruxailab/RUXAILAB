@@ -251,13 +251,17 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
-import { useToast } from 'vue-toastification'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from '@/shared/utils/toast'
+
 
 const route = useRoute()
 const store = useStore()
 const router = useRouter()
-const toast = useToast()
 const testId = ref(route.params.testId || route.params.id || '');
 
 console.log('AccessibilityConfig: Route params:', route.params)
@@ -458,11 +462,11 @@ const saveComplianceAndContinue = async () => {
     // Pre-select all guidelines and rules based on compliance level
     preselectGuidelinesForComplianceLevel()
 
-    toast.success(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
+    showSuccess(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
     step.value = 2
   } catch (err) {
     console.log(err)
-    toast.error('Failed to save compliance level')
+    showError('Failed to save compliance level')
   } finally {
     console.log("Saving")
     isLoading.value = false
@@ -477,7 +481,7 @@ const saveConfiguration = async () => {
   await new Promise(resolve => setTimeout(resolve, 100))
 
   if (!isValidConfiguration.value) {
-    toast.error('Please fix validation errors before saving')
+    showError('Please fix validation errors before saving')
     return
   }
 
@@ -524,7 +528,7 @@ const saveConfiguration = async () => {
     })
 
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
-    toast.success(`WCAG ${selectedCompliance.value} configuration saved!`)
+    showSuccess(`WCAG ${selectedCompliance.value} configuration saved!`)
 
     // Optionally redirect to assessment page after a delay
     setTimeout(() => {
@@ -534,7 +538,7 @@ const saveConfiguration = async () => {
   } catch (err) {
     console.error('Failed to save configuration:', err)
     error.value = 'Failed to save configuration. Please try again.'
-    toast.error('Failed to save configuration')
+    showError('Failed to save configuration')
   } finally {
     isLoading.value = false
   }
@@ -608,14 +612,14 @@ const resetToDefaults = () => {
     // If we're on step 2, pre-select guidelines for the compliance level
     preselectGuidelinesForComplianceLevel()
     success.value = 'Configuration reset to defaults with pre-selected guidelines'
-    toast.info('Configuration reset to defaults with pre-selected guidelines')
+    showInfo('Configuration reset to defaults with pre-selected guidelines')
   } else {
     // If we're on step 1, clear selections and go back to step 1
     selectedGuidelines.value = []
     selectedRulesByGuideline.value = {}
     step.value = 1
     success.value = 'Configuration reset to defaults'
-    toast.info('Configuration reset to defaults')
+    showInfo('Configuration reset to defaults')
   }
 }
 

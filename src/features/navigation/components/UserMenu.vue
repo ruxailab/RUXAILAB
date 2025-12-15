@@ -129,6 +129,7 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import { getAuth } from 'firebase/auth';
 import UserController from '@/features/auth/controllers/UserController';
+import { showError } from '@/shared/utils/toast'
 
 // Composables
 const router = useRouter();
@@ -179,7 +180,7 @@ const fetchUsername = async () => {
         profileImage.value = user.value?.profileImage || null;
 
         if (toast && typeof toast.error === 'function') {
-            toast.error(t('errors.globalError'));
+            showError('errors.globalError');
         }
     }
 };

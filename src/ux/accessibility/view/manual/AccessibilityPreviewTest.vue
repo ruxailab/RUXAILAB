@@ -666,10 +666,13 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { useToast } from 'vue-toastification'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import {
+  showSuccess,
+  showError,
+} from '@/shared/utils/toast'
 
-const toast = useToast()
+
 const store = useStore()
 const route = useRoute()
 const error = ref('')
@@ -1259,10 +1262,10 @@ const downloadAssessmentData = () => {
     linkElement.setAttribute('download', exportFileDefaultName)
     linkElement.click()
 
-    toast.success('Assessment data exported successfully')
+    showSuccess('Assessment data exported successfully')
   } catch (error) {
     console.error('Error exporting assessment data:', error)
-    toast.error('Failed to export assessment data')
+    showError('Failed to export assessment data')
   }
 }
 // View Assessment Document all rules
@@ -1281,7 +1284,7 @@ const viewAssessmentDocument = () => {
     showAssessmentDialog.value = true
   } catch (error) {
     console.error('Error fetching assessment data:', error)
-    toast.error('Failed to load assessment data')
+    showError('Failed to load assessment data')
   }
 }
 
@@ -1291,14 +1294,14 @@ const saveAssessment = async () => {
     // Check if user is authenticated
     const currentUser = user.value || store.state.Auth.user
     if (!currentUser || !currentUser.id) {
-      toast.error('You must be signed in to save assessments')
+      showError('You must be signed in to save assessments')
       return
     }
 
     // Check if we're viewing another user's data (read-only mode)
     const targetUserId = route.params.userId || route.query.userId
     if (targetUserId && targetUserId !== currentUser.id) {
-      toast.error('Cannot save changes when viewing another user\'s assessment data')
+      showError('Cannot save changes when viewing another user\'s assessment data')
       return
     }
 
@@ -1352,11 +1355,11 @@ const saveAssessment = async () => {
       testType: 'manual', // or get this from props/route
     })
 
-    toast.success('Assessment saved successfully')
+    showSuccess('Assessment saved successfully')
   } catch (err) {
     console.error('Failed to save assessment:', err)
     error.value = err.message || 'Failed to save assessment. Please try again.'
-    toast.error(error.value)
+    showError(error.value)
   }
 }
 

@@ -414,7 +414,12 @@ import { ref, onMounted, watch } from 'vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from '@/shared/utils/toast'
+
 
 // Icons for principles
 const principleIcons = [
@@ -427,7 +432,6 @@ const principleIcons = [
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 
 // State
 const isLoading = ref(true)
@@ -472,7 +476,7 @@ onMounted(async () => {
     console.log('Full route:', route)
     
     if (!route.params.id) {
-      toast.error('Test ID is missing from route parameters. Please check the URL.')
+      showError('Test ID is missing from route parameters. Please check the URL.')
       isLoadingUsers.value = false
       return
     }
@@ -481,7 +485,7 @@ onMounted(async () => {
     await fetchUserEmails()
   } catch (error) {
     console.error('Error in onMounted:', error)
-    toast.error('Failed to load data: ' + error.message)
+    showError('Failed to load data: ' + error.message)
   } finally {
     isLoadingUsers.value = false
   }
@@ -506,7 +510,7 @@ const selectUser = async (user) => {
     console.log('Selecting user:', user)
     
     if (!user || !user.id) {
-      toast.error('Invalid user selection')
+      showError('Invalid user selection')
       console.error('Invalid user object:', user)
       return
     }
@@ -522,7 +526,7 @@ const selectUser = async (user) => {
     await loadAssessmentData(user.id)
   } catch (error) {
     console.error('Error selecting user:', error)
-    toast.error('Failed to load user assessment data: ' + error.message)
+    showError('Failed to load user assessment data: ' + error.message)
   }
 }
 
@@ -530,23 +534,23 @@ const selectUser = async (user) => {
 const viewUserInPreview = (user) => {
   try {
     if (!user || !user.id) {
-      toast.error('Invalid user selection')
+      showError('Invalid user selection')
       return
     }
     
     const testId = route.params.id
     if (!testId) {
-      toast.error('Test ID not found')
+      showError('Test ID not found')
       return
     }
     
     // Navigate to preview page with user ID parameter
     const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
     window.open(previewUrl, '_blank')
-    toast.success(`Opening preview for ${getDisplayName(user.email)}`)
+    showSuccess(`Opening preview for ${getDisplayName(user.email)}`)
   } catch (error) {
     console.error('Error opening preview for user:', error)
-    toast.error('Failed to open preview mode')
+    showError('Failed to open preview mode')
   }
 }
 
@@ -792,11 +796,11 @@ const loadWcagData = async () => {
         })
       })
     } else {
-      toast.error('Failed to load WCAG principles')
+      showError('Failed to load WCAG principles')
     }
   } catch (error) {
     console.error('Error loading WCAG data:', error)
-    toast.error(`Failed to load WCAG data: ${error.message}`)
+    showError(`Failed to load WCAG data: ${error.message}`)
   } finally {
     isLoading.value = false
   }
@@ -832,11 +836,11 @@ const fetchUserIdsForTest = async () => {
     
     if (userIds.value.length === 0) {
       console.log('No assessment documents found for test ID:', testId);
-      toast.info('No assessment data found for this test. Users need to complete assessments first.');
+      showInfo('No assessment data found for this test. Users need to complete assessments first.');
     }
   } catch (error) {
     console.error('Error fetching user IDs:', error);
-    toast.error('Failed to fetch user IDs: ' + error.message);
+    showError('Failed to fetch user IDs: ' + error.message);
     isLoadingUsers.value = false; // Stop loading on error
   }
 };
@@ -866,7 +870,7 @@ const fetchUserEmails = async () => {
     console.log('Final user details:', userDetails.value);
   } catch (error) {
     console.error('Error fetching user emails:', error);
-    toast.error('Failed to fetch user emails.');
+    showError('Failed to fetch user emails.');
     isLoadingUsers.value = false; // Stop loading on error
   }
 };
@@ -918,13 +922,13 @@ const loadAssessmentData = async (userId) => {
       }
     } else {
       console.log('No assessment document found for:', docId)
-      toast.info('No assessment data found for the selected user.');
+      showInfo('No assessment data found for the selected user.');
     }
 
     // Validate WCAG rules are loaded
     if (!allRules.value || allRules.value.length === 0) {
       console.error('WCAG rules not loaded')
-      toast.error('WCAG rules not loaded. Please refresh the page.')
+      showError('WCAG rules not loaded. Please refresh the page.')
       return
     }
 
@@ -948,7 +952,7 @@ const loadAssessmentData = async (userId) => {
     
   } catch (error) {
     console.error('Error loading assessment data:', error)
-    toast.error(
+    showError(
       `Failed to load assessment data: ${error.message || 'Unknown error'}`,
     )
   } finally {

@@ -104,12 +104,14 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
+import {
+  showWarning
+} from '@/shared/utils/toast'
+
 
 const store = useStore();
-const toast = useToast();
 const { t } = useI18n();
 
 const loading = ref(false);
@@ -139,7 +141,7 @@ watch(loader, (newLoader) => {
       setTimeout(() => {
         loading.value = false;
       }, 3000);
-      toast.warning(t('HeuristicsSettings.messages.noCsvFileSelected'));
+      showWarning('HeuristicsSettings.messages.noCsvFileSelected');
       loader.value = null;
     }
   }
