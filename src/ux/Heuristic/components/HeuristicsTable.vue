@@ -260,7 +260,9 @@
                           </div>
                           <v-data-table
                             :headers="headers"
-                            :items="heuristic.questions[questionSelect].descriptions"
+                            :items="Array.isArray(heuristic.questions[questionSelect]?.descriptions)
+                            ? heuristic.questions[questionSelect].descriptions
+                            : Object.values(heuristic.questions[questionSelect]?.descriptions || {})"
                             :items-per-page="5"
                             class="elevation-0"
                           >
@@ -558,7 +560,7 @@ const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 
 const headers = ref([
-  { title: t('HeuristicsTable.titles.title'), align: 'start', value: 'title' },
+  { title: t('HeuristicsTable.titles.titles'), align: 'start', value: 'title' },
   { title: t('HeuristicsTable.titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
@@ -569,16 +571,24 @@ const test = computed(() => store.getters.test);
 
 
 const heuristics = computed(() => {
-  // 1. Try heuristics getter
-  if (store.getters.heuristics && store.getters.heuristics.length) {
-    return store.getters.heuristics;
-  }
-  // 2. Try store.state.Test.test (if it exists and is an array)
-  if (store.state.Tests?.Test.testStructure && Array.isArray(store.state.Tests.Test.testStructure)) {
-    return store.state.Tests.Test.testStructure;
-  }
-  // 3. Fallback to empty array
-  return [];
+  const source =
+    store.getters.heuristics?.length
+      ? store.getters.heuristics
+      : store.state.Tests?.Test.testStructure || [];
+
+  return Array.isArray(source)
+    ? source.map(h => ({
+        ...h,
+        questions: Array.isArray(h.questions)
+          ? h.questions.map(q => ({
+              ...q,
+              descriptions: Array.isArray(q.descriptions)
+                ? q.descriptions
+                : Object.values(q.descriptions || {}),
+            }))
+          : [],
+      }))
+    : [];
 });
 
 const filteredHeuristics = computed(() => {

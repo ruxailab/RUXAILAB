@@ -197,6 +197,9 @@
       "descriptions": "Descriptions",
       "actions": "Actions",
       "titles": "Title",
+      "title": "Title",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
       "cancel": "Cancel",
       "ok": "Ok",
       "add": "Add",
@@ -261,7 +264,8 @@
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "updateSuccess": "Update successful"
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."

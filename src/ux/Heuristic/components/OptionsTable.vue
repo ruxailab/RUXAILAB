@@ -165,7 +165,7 @@ const editIndex = ref(-1);
 const hasValue = ref(true);
 
 const optionsWithFormattedValue = computed(() =>
-  store.state.Tests.Test.testOptions.map((opt) => ({
+  (store.state.Tests.Test.testOptions || []).map((opt) => ({
     ...opt,
     value: opt.value === null ? '-' : opt.value,
   })),
