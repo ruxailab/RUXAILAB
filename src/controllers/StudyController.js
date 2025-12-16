@@ -11,6 +11,21 @@ const COLLECTION = 'tests'
 const answerController = new AnswerController()
 const userController = new UserController()
 
+
+const StudySchema = z.object({
+  id: z.string(),
+
+  testType: z.enum(['USER', 'HEURISTIC', 'CARD_SORTING', 'MANUAL', 'AUTOMATIC']),
+  testTitle: z.string().min(1),
+  testAdmin: z.object({
+    email: z.string().email(),
+    userDocId: z.string()
+  }).passthrough(),
+  creationDate: z.number().optional(),
+  updateDate: z.number().optional(),
+  status: z.string().optional()
+}).passthrough();
+
 export default class StudyController extends Controller {
   constructor() {
     super()
@@ -119,7 +134,14 @@ export default class StudyController extends Controller {
     if (!res.exists()) return null
 
     const rawData = Object.assign({ id: res.id }, res.data())
-    return instantiateStudyByType(rawData.testType, rawData)
+
+    try {
+      const validData = StudySchema.parse(rawData);
+      return instantiateStudyByType(validData.testType, validData)
+    } catch (error) {
+      console.error("CRITICAL: Invalid Study Data found in DB", error);
+      throw new Error(`Study data is corrupted: ${error.message}`);
+    }
   }
 
   async getPublicStudies() {
