@@ -84,12 +84,12 @@ const findImageUrl = () => {
   }
   // Search through all heuristics
   for (const heuristic of currentUserTestAnswer.value.heuristicQuestions) {
-    if (heuristic?.heuristicQuestions) {
+    if (heuristic?.heuristicQuestions && Array.isArray(heuristic.heuristicQuestions)) {
       // Search through all questions in this heuristic
       for (const question of heuristic.heuristicQuestions) {
         // Check if this question matches our heuristicId and questionId
-        if (question.heuristicId == props.questionId && 
-            heuristic.heuristicId == props.heuristicId) {
+        if (question.heuristicId === props.questionId && 
+            heuristic.heuristicId === props.heuristicId) {
           return question.answerImageUrl || null;
         }
       }
@@ -127,23 +127,34 @@ onMounted(() => {
 })
 
 const uploadFile = async () => {
-  const fileInput = document.getElementById(
-    `${props.heuristicId}${props.questionId}`
-  )
-
-  const storage = getStorage()
-  const file = fileInput.files[0]
-
-  const storageReference = storageRef(
-    storage,
-    `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
-  )
-  await uploadBytes(storageReference, file)
-  url.value = await getDownloadURL(storageReference)
-  
-  store.dispatch('setCurrentImageUrl', url.value)
-  imageUploaded.value = true
-  emit('imageUploaded', url.value)
+  try {
+    const fileInput = document.getElementById(
+      `${props.heuristicId}${props.questionId}`
+    )
+    
+    if (!fileInput) {
+      console.error('File input element not found');
+      return;
+    }
+    const file = fileInput.files?.[0];
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
+    const storage = getStorage();
+    const storageReference = storageRef(
+      storage,
+      `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
+    );
+    await uploadBytes(storageReference, file);
+    url.value = await getDownloadURL(storageReference);
+    store.dispatch('setCurrentImageUrl', url.value);
+    imageUploaded.value = true;
+    emit('imageUploaded', url.value);
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    emit('imageUploaded', null, error);
+  }
 };
 </script>
 
