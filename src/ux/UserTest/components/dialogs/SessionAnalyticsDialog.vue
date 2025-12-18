@@ -39,8 +39,8 @@
                     <v-col cols="12" md="6">
                         <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
                             <!-- <v-tab value="general">General</v-tab> -->
-                            <v-tab value="eye">Eye Tracker</v-tab>
-                            <v-tab value="sentimental">Sentimental</v-tab>
+                            <v-tab value="eye" v-if="taskAnswer?.irisTrackingData.length > 0">Eye Tracker</v-tab>
+                            <v-tab value="sentimental" v-if="taskAnswer?.webcamRecordURL">Sentimental</v-tab>
                             <!-- <v-tab value="transcript">Transcripción</v-tab>
                             <v-tab value="notes">Notas</v-tab> -->
                         </v-tabs>
@@ -53,7 +53,7 @@
                                 <NotesStats :totalNotes="taskAnswer?.notesCount ?? mockNotesCount" class="mb-4" />
                             </v-window-item> -->
 
-                            <v-window-item value="eye">
+                            <v-window-item value="eye" v-if="taskAnswer?.irisTrackingData.length > 0">
                                 <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData" :userId="userId"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
@@ -61,9 +61,9 @@
                                     class="mb-4" />
                             </v-window-item>
 
-                            <v-window-item value="sentimental">
+                            <v-window-item value="sentimental" v-if="taskAnswer?.webcamRecordURL">
                                 <FacialSentimentPanel :video-element="mainVideo1"
-                                    :webcam-video-url="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator" />
+                                    :webcam-video-url="taskAnswer?.webcamRecordURL" />
                             </v-window-item>
 
                             <!-- <v-window-item value="transcript">
