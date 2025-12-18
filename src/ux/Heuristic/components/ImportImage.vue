@@ -122,7 +122,6 @@ onMounted(() => {
   if (imageUrl) {
     url.value = imageUrl;
     imageUploaded.value = true;
-    // console.log('Found existing image URL on mount:', imageUrl);
   }
 })
 
