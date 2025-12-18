@@ -37,6 +37,7 @@
     }
   },
   "common": {
+    "hidden": "Oculto",
     "loading": "Carregando teste",
     "continueAs": "Continuar como",
     "notUser": "Não é {userEmail}?",
