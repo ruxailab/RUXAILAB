@@ -12,7 +12,7 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
     items.push(
       { title: 'Test', icon: ICONS.DOCUMENT_EDIT, path: `/${type}/edit/${test.id}` },
       { title: 'Preview', icon: ICONS.PREVIEW, path: `/testview/${test.id}` },
-      { title: 'Reports', icon: ICONS.BOOK, path: `/${type}/report/${test.id}` },
+      // { title: 'Reports', icon: ICONS.BOOK, path: `/${type}/report/${test.id}` },
       { title: 'Answers', icon: ICONS.ORDER, path: `/${type}/answer/${test.id}` },
       { title: 'Cooperators', icon: ICONS.ACCOUNT_GROUP, path: `/${type}/cooperators/${test.id}` },
       { title: 'Settings', icon: ICONS.COG, path: `/${type}/settings/${test.id}` }

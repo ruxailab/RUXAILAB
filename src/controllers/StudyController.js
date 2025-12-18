@@ -5,6 +5,7 @@ import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
+import UserStudy from '@/ux/UserTest/models/UserStudy'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -30,7 +31,7 @@ export default class StudyController extends Controller {
         new StudyAnswer({ type: payload.test.testType }),
       )
 
-      const duplicatedStudy = payload.test
+      const duplicatedStudy = new UserStudy(payload.test)
       duplicatedStudy.answersDocId = answerDoc.id
 
       return await super.create(COLLECTION, duplicatedStudy.toFirestore())
