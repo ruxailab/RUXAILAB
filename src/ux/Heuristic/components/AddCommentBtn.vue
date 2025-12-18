@@ -172,8 +172,8 @@ onMounted(() => {
 })
 
 const updateComment = (input) => {
-  localComment.value = input
-  emit('updateComment', input)
+  localComment.value = input || '';
+  emit('updateComment', input || '');
 }
 
 const handleImageUploaded = (imageUrl) => {
