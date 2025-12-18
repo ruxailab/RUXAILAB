@@ -395,7 +395,6 @@ const testAlreadyStarted = computed(() => {
           localTestAnswer.submitted;
 
   const hasTaskAttempts = Array.isArray(localTestAnswer.tasks) &&
-                          localTestAnswer.tasks.length > 0 &&
                           localTestAnswer.tasks.some(task => {
                             return task && (
                               task.attempted ||
