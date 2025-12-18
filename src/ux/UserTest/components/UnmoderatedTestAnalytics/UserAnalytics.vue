@@ -229,6 +229,7 @@
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
                       <v-expansion-panel readonly hide-actions @click.stop="openSessionAnalyticsDialog"
+                        v-if="dialogItem.tasks[taskSelect].webcamRecordURL || dialogItem.tasks[taskSelect].irisTrackingData > 0"
                         class="cursor-pointer">
                         <v-expansion-panel-title>
                           Task Analytics
