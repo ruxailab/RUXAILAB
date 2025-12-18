@@ -25,7 +25,7 @@
               v-bind="props"
               @click="show = !show"
             >
-              <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
+              <v-icon :color="answerHeu?.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
             </v-btn>
@@ -112,17 +112,23 @@ const store = useStore()
 const show = ref(false)
 const localComment = ref('')
 
-const test = computed(() => store.getters.test)
+const test = computed(() => store.getters.test || {})
 const hasContent = computed(
-  () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl
+  () => props.answerHeu?.heuristicComment || props.answerHeu?.answerImageUrl
 )
 
 const heuristicIdForImage = computed(() => {
-  return props.heurisIndex?.toString() || '0';
+  const index = props.heurisIndex ?? '0';
+  return index.toString();
 })
 
 const questionIdForImage = computed(() => {
-  return props.answerHeu?.heuristicId?.toString() || '0';
+  const id = props.answerHeu?.heuristicId ?? '0';
+  return id.toString();
+})
+
+const testIdForImage = computed(() => {
+  return test.value?.id || '';
 })
 
 const initializeLocalComment = () => {
@@ -172,7 +178,6 @@ const updateComment = (input) => {
 
 const handleImageUploaded = (imageUrl) => {
   if (imageUrl) {
-    console.log('image uploaded:', imageUrl);
     localComment.value = ''; 
     emit('updateComment', '');
     emit('updateImage', imageUrl);
