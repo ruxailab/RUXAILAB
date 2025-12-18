@@ -54,7 +54,7 @@
                             </v-window-item> -->
 
                             <v-window-item value="eye">
-                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
+                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData" :userId="userId"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
                                     @predictions-ready="predictedData = $event" @view-changed="selectedView = $event"

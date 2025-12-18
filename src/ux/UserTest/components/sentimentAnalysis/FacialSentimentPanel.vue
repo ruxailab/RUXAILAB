@@ -150,7 +150,7 @@ function extractVideoNameFromUrl(url) {
 const analyzeVideo = async (videoPath) => {
     try {
         isAnalyzing.value = true
-        const res = await axios.post('http://localhost:5000/process_video', {
+        const res = await axios.post(process.env.VUE_APP_FACIAL_SENTIMENT_API_BASE_URL + '/process_video', {
             video_name: videoPath,
         })
         console.log('[✅ Facial Sentiment API]', res.data)
