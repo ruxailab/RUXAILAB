@@ -72,8 +72,8 @@
         />
         <ImageImport
           v-if="show"
-          :heuristic-id="test.testStructure[heurisIndex]"
-          :question-id="answerHeu.heuristicId"
+          :heuristic-id="heuristicIdForImage"
+          :question-id="questionIdForImage"
           :test-id="store.getters.test.id"
           @image-uploaded="handleImageUploaded"
           :disable="disable"
@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import ImageImport from '@/ux/Heuristic/components/ImportImage.vue'
 
@@ -105,7 +105,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['updateComment'])
+const emit = defineEmits(['updateComment', 'updateImage'])
 
 const store = useStore()
 
@@ -117,47 +117,66 @@ const hasContent = computed(
   () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl
 )
 
+const heuristicIdForImage = computed(() => {
+  return props.heurisIndex?.toString() || '0';
+})
+
+const questionIdForImage = computed(() => {
+  return props.answerHeu?.heuristicId?.toString() || '0';
+})
+
+const initializeLocalComment = () => {
+  if (props.answerHeu?.heuristicComment) {
+    localComment.value = props.answerHeu.heuristicComment;
+  }
+}
+
 watch(
   () => props.heurisIndex,
   () => {
     show.value = false
-    localComment.value = props.answerHeu.heuristicComment || ''
+    initializeLocalComment();
   }
 )
 
 watch(
-  () => props.answerHeu.heuristicComment,
+  () => props.answerHeu,
   (newVal) => {
-    localComment.value = newVal || ''
-    if (newVal && !show.value) {
-      show.value = true
+    if (newVal?.heuristicComment !== undefined) {
+      localComment.value = newVal.heuristicComment || '';
     }
-  }
-)
-
-watch(
-  () => props.answerHeu.answerImageUrl,
-  (newVal) => {
-    if (newVal && !show.value) {
-      show.value = true
+    // Show the comment area if there's content
+    if (hasContent.value && !show.value) {
+      show.value = true;
     }
-  }
+  },
+  { deep: true, immediate: true }
 )
 
 onMounted(() => {
+  initializeLocalComment();
   if (hasContent.value) {
     show.value = true
   }
+  nextTick(() => {
+    if(props.answerHeu?.heuristicComment){
+      emit('updateComment', props.answerHeu.heuristicComment);
+    }
+  });
 })
 
 const updateComment = (input) => {
+  localComment.value = input
   emit('updateComment', input)
 }
 
 const handleImageUploaded = (imageUrl) => {
   if (imageUrl) {
+    console.log('image uploaded:', imageUrl);
     localComment.value = ''; 
-    emit('updateComment', '', props.heurisIndex, props.answerHeu.heuristicId)
+    emit('updateComment', '');
+    emit('updateImage', imageUrl);
+    show.value = true;
   }
 };
 </script>
