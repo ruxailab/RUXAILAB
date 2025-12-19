@@ -244,7 +244,11 @@
                 </v-select>
 
                 <!-- Slot for test-specific advanced settings -->
-                <slot name="advanced-settings" :object="object" :update-object="updateObject" />
+                <slot
+                  name="advanced-settings"
+                  :object="object"
+                  :update-object="updateObject"
+                />
 
                 <!-- Public Test -->
                 <v-checkbox

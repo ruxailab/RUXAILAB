@@ -1,18 +1,45 @@
 <template>
   <div>
-    <VRow class="pa-0 ma-0" dense>
+    <VRow
+      class="pa-0 ma-0"
+      dense
+    >
       <!-- Navigation Drawer -->
-      <v-navigation-drawer v-model="drawer" :rail="mini" permanent color="#3F3D56">
+      <v-navigation-drawer
+        v-model="drawer"
+        :rail="mini"
+        permanent
+        color="#3F3D56"
+      >
         <!-- Navigation Header -->
-        <div v-if="!mini" class="header">
+        <div
+          v-if="!mini"
+          class="header"
+        >
           <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
-                <text-clamp class="titleText" :text="test.testTitle" :max-lines="2" />
+            <v-row
+              dense
+              align="center"
+              justify="space-around"
+            >
+              <v-col
+                class="pa-0 ma-0"
+                cols="8"
+              >
+                <text-clamp
+                  class="titleText"
+                  :text="test.testTitle"
+                  :max-lines="2"
+                />
               </v-col>
               <v-col>
-                <v-progress-circular rotate="-90" :model-value="calculateProgress()" color="#fca326" :size="50"
-                  class="mt-2">
+                <v-progress-circular
+                  rotate="-90"
+                  :model-value="calculateProgress()"
+                  color="#fca326"
+                  :size="50"
+                  class="mt-2"
+                >
                   {{ calculateProgress() }}%
                 </v-progress-circular>
               </v-col>
@@ -21,9 +48,16 @@
         </div>
 
         <!-- Navigation Body -->
-        <v-list class="nav-list" density="compact" max-height="85%"
-          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
-          <div v-for="item in items" :key="item.id">
+        <v-list
+          class="nav-list"
+          density="compact"
+          max-height="85%"
+          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
+        >
+          <div
+            v-for="item in items"
+            :key="item.id"
+          >
             <!-- Pre Test -->
             <!-- <v-list-group v-if="item.id === 0"
               :class="{ 'disabled-group': localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted }"
@@ -130,7 +164,10 @@
       </v-navigation-drawer>
 
       <!-- Right View -->
-      <VCol ref="rightView" class="pa-0 ma-0 right-view">
+      <VCol
+        ref="rightView"
+        class="pa-0 ma-0 right-view"
+      >
         <!-- Consent -->
         <!-- <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
           <template #content>
@@ -175,7 +212,10 @@
         </ShowInfo> -->
 
         <!-- Tasks -->
-        <CardSortingTask v-if="index === 1" :test="test" />
+        <CardSortingTask
+          v-if="index === 1"
+          :test="test"
+        />
       </VCol>
     </VRow>
   </div>

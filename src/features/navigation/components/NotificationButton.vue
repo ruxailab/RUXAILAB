@@ -34,7 +34,10 @@
         style="overflow: hidden;"
       >
         <!-- Fixed header -->
-  <div class="bg-secondary" style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+        <div
+          class="bg-secondary"
+          style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;"
+        >
           <span style="font-weight: bold; font-size: 16px; color: white;">
             {{ $t('common.notifications') }}
           </span>
@@ -60,13 +63,20 @@
               density="compact"
               class="py-1 notification-list"
             >
-              <template v-for="(notification, i) in sortedNotifications || []" :key="notification.id">
+              <template
+                v-for="(notification, i) in sortedNotifications || []"
+                :key="notification.id"
+              >
                 <NotificationItem
                   :notification="notification"
                   @go-to-redirect="goToNotificationRedirect"
                   @mark-as-read="goToNotificationRedirect"
                 />
-                <v-divider v-if="i < (user.notifications?.length || 0) - 1" class="mx-4" color="secondary" />
+                <v-divider
+                  v-if="i < (user.notifications?.length || 0) - 1"
+                  class="mx-4"
+                  color="secondary"
+                />
               </template>
             </v-list>
           </div>
@@ -92,10 +102,10 @@
     </v-menu>
 
     <AcceptInvitationDialog
-    v-model="dialogVisible"
-    @cancel="onReject"
-    @submit="onAccept"
-  />
+      v-model="dialogVisible"
+      @cancel="onReject"
+      @submit="onAccept"
+    />
   </div>
 </template>
 

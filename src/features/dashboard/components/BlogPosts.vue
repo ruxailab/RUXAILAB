@@ -19,8 +19,8 @@
           variant="text"
           size="small"
           color="primary"
-          @click="openBlog"
           target="_blank"
+          @click="openBlog"
         >
           View Blog
         </v-btn>

@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <v-row justify="center" v-if="user">
+    <v-row
+      v-if="user"
+      justify="center"
+    >
       <v-col
         cols="12"
       >
@@ -8,23 +11,39 @@
           class="rounded-xxl"
           flat
         >
-          <v-row class="ma-0 " justify="space-between">
-            <v-card-title class="text-h5 pl-0"> {{ $t('common.notifications') }}</v-card-title>
-            <v-btn v-if="activeTab === 'unread'"
+          <v-row
+            class="ma-0 "
+            justify="space-between"
+          >
+            <v-card-title class="text-h5 pl-0">
+              {{ $t('common.notifications') }}
+            </v-card-title>
+            <v-btn
+              v-if="activeTab === 'unread'"
               color="primary"
               :disabled="allRead"
               @click="markAllAsRead"
             >
               Mark all as read
             </v-btn>
-            </v-row>
-          <v-tabs v-model="activeTab" bg-color="secondary">
-            <v-tab value="unread">{{ $t('common.unread') }}</v-tab>
-            <v-tab value="inbox">{{ $t('common.inbox') }}</v-tab>
+          </v-row>
+          <v-tabs
+            v-model="activeTab"
+            bg-color="secondary"
+          >
+            <v-tab value="unread">
+              {{ $t('common.unread') }}
+            </v-tab>
+            <v-tab value="inbox">
+              {{ $t('common.inbox') }}
+            </v-tab>
           </v-tabs>
           <v-window v-model="activeTab">
             <v-window-item value="unread">
-              <v-card-text v-if="paginatedUnreadNotifications.length > 0" class="pa-0">
+              <v-card-text
+                v-if="paginatedUnreadNotifications.length > 0"
+                class="pa-0"
+              >
                 <notification-list
                   :notifications="paginatedUnreadNotifications"
                   @mark-as-read="markAsRead"
@@ -88,11 +107,11 @@
       </v-col>
     </v-row>
 
-  <AcceptInvitationDialog
-    v-model="dialogVisible"
-    @cancel="onReject"
-    @submit="onAccept"
-  />
+    <AcceptInvitationDialog
+      v-model="dialogVisible"
+      @cancel="onReject"
+      @submit="onAccept"
+    />
   </v-container>
 </template>
 

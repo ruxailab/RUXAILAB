@@ -4,7 +4,10 @@
     :side-gap="true"
   >
     <!-- Subtitle Slot -->
-    <template #subtitle v-if="hasTestAnswerDocument">
+    <template
+      v-if="hasTestAnswerDocument"
+      #subtitle
+    >
       <p class="text-body-1 text-grey-darken-1">
         View the overall analytics of your study
       </p>

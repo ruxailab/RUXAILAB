@@ -11,7 +11,10 @@
 
     <!-- 📄 Main content area -->
     <v-main class="main-content">
-      <v-container fluid class="pa-8">
+      <v-container
+        fluid
+        class="pa-8"
+      >
         <!-- 🔹 Page header (dynamic title + subtitle) -->
         <div class="content-header">
           <h1 class="text-h4 font-weight-bold text-grey-darken-4">
@@ -30,7 +33,10 @@
 
         <!-- 🔸 Dynamic rendering of sections -->
         <div v-if="activeSection === 'dashboard'">
-          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
+          <DashboardView
+            :items="tests"
+            :sessions="filteredModeratedSessions"
+          />
         </div>
 
         <div v-if="activeSection === 'studies'">

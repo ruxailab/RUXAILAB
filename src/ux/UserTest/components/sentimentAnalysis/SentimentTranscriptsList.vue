@@ -11,19 +11,35 @@
     <!-- Scrollable List -->
     <v-row>
       <v-col cols="12">
-        <v-list v-model:selected="selected" lines="two" class="scrollable-list">
-          <template v-for="(region, index) in regions" :key="region.title">
+        <v-list
+          v-model:selected="selected"
+          lines="two"
+          class="scrollable-list"
+        >
+          <template
+            v-for="(region, index) in regions"
+            :key="region.title"
+          >
             <v-list-item class="py-3">
               <!-- Prepend: ícone e confiança -->
               <template #prepend>
                 <div class="icon-and-confidence text-center mr-3">
-                  <v-icon v-if="region.sentiment === 'POS'" color="green">
+                  <v-icon
+                    v-if="region.sentiment === 'POS'"
+                    color="green"
+                  >
                     mdi-emoticon-happy-outline
                   </v-icon>
-                  <v-icon v-else-if="region.sentiment === 'NEU'" color="blue">
+                  <v-icon
+                    v-else-if="region.sentiment === 'NEU'"
+                    color="blue"
+                  >
                     mdi-emoticon-neutral-outline
                   </v-icon>
-                  <v-icon v-else color="red">
+                  <v-icon
+                    v-else
+                    color="red"
+                  >
                     mdi-emoticon-sad-outline
                   </v-icon>
                   <div class="text-caption">
@@ -43,8 +59,14 @@
 
               <!-- Append: botão delete -->
               <template #append>
-                <v-btn icon variant="text" @click="deleteRegion(region)">
-                  <v-icon color="red">mdi-delete</v-icon>
+                <v-btn
+                  icon
+                  variant="text"
+                  @click="deleteRegion(region)"
+                >
+                  <v-icon color="red">
+                    mdi-delete
+                  </v-icon>
                 </v-btn>
               </template>
             </v-list-item>

@@ -1,18 +1,36 @@
 <template>
-  <v-card elevation="2" rounded="lg" class="mb-6" min-height="480px">
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="mb-6"
+    min-height="480px"
+  >
     <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
-        <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
+        <v-icon
+          icon="mdi-flask-outline"
+          class="me-2"
+          color="primary"
+        />
         Active Studies Overview
       </div>
-      <v-btn variant="text" size="small" color="primary">
+      <v-btn
+        variant="text"
+        size="small"
+        color="primary"
+      >
         View All
       </v-btn>
     </v-card-title>
 
     <v-card-text class="pa-4">
       <v-row v-if="loading">
-        <v-col v-for="n in 4" :key="n" cols="12" md="6">
+        <v-col
+          v-for="n in 4"
+          :key="n"
+          cols="12"
+          md="6"
+        >
           <v-skeleton-loader
             type="card"
             class="study-card"
@@ -22,16 +40,33 @@
         </v-col>
       </v-row>
       <v-row v-else>
-        <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
-          <v-card variant="outlined" rounded="lg" class="study-card" @click="goToStudy(study)" hover>
+        <v-col
+          v-for="study in studies.filter(s => s)"
+          :key="study.id"
+          cols="12"
+          md="6"
+        >
+          <v-card
+            variant="outlined"
+            rounded="lg"
+            class="study-card"
+            hover
+            @click="goToStudy(study)"
+          >
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
                 <v-chip
                   :color="study.status === 'active' ? 'success' : study.status === 'finished' ? 'warning' : 'info'"
-                  variant="tonal" size="small">
+                  variant="tonal"
+                  size="small"
+                >
                   {{ study.status ? (study.status.charAt(0).toUpperCase() + study.status.slice(1)) : 'Unknown' }}
                 </v-chip>
-                <v-icon :icon="getMethodIcon(study)" size="20" color="primary" />
+                <v-icon
+                  :icon="getMethodIcon(study)"
+                  size="20"
+                  color="primary"
+                />
               </div>
 
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
@@ -47,18 +82,35 @@
                   <span class="text-caption font-weight-medium">Progress</span>
                   <span class="text-caption">{{ study.progress }}%</span>
                 </div>
-                <v-progress-linear :model-value="study.progress"
-                  :color="study.status === 'active' ? 'success' : 'primary'" height="6" rounded />
+                <v-progress-linear
+                  :model-value="study.progress"
+                  :color="study.status === 'active' ? 'success' : 'primary'"
+                  height="6"
+                  rounded
+                />
               </div>
 
               <!-- Metrics -->
               <div class="d-flex justify-space-between text-caption">
                 <div class="d-flex align-center">
-                  <v-icon icon="mdi-account-group" size="16" class="me-1" color="info" />
+                  <v-icon
+                    icon="mdi-account-group"
+                    size="16"
+                    class="me-1"
+                    color="info"
+                  />
                   <span>{{ study.participants }} participants</span>
                 </div>
-                <div v-if="study.daysLeft !== null" class="d-flex align-center">
-                  <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning" />
+                <div
+                  v-if="study.daysLeft !== null"
+                  class="d-flex align-center"
+                >
+                  <v-icon
+                    icon="mdi-calendar-clock"
+                    size="16"
+                    class="me-1"
+                    color="warning"
+                  />
                   <span>{{ `${study.daysLeft} ${study.daysLeft > 1 ? 'days left' : 'day left'}` }}</span>
                 </div>
               </div>
@@ -90,7 +142,7 @@ const loading = ref(false);
 const studiesWithAnswers = ref([]);
 
 const studies = computed(() => {
-  return props.studies.length > 0  ? studiesWithAnswers.value : loading  ? [] : defaultStudies
+  return props.studies.length > 0  ? studiesWithAnswers.value : loading.value  ? [] : defaultStudies
 })
 
 const lastFourStudies = computed(() => {

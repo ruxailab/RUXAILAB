@@ -1,18 +1,43 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container
+    fluid
+    class="pa-0"
+  >
     <v-row class="ma-0">
       <!-- Categories -->
       <v-col cols="9">
         <v-card class="elevation-2 rounded-lg pa-6">
-          <v-row aling="center" class="pa-4">
-            <v-col cols="12" sm="6">
-              <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+          <v-row
+            aling="center"
+            class="pa-4"
+          >
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-card-title
+                class="text-h5 font-weight-bold mb-4"
+                :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+              >
                 {{ 'Current Cards' }}
               </v-card-title>
             </v-col>
-            <v-col cols="12" sm="6" class="text-right">
-              <v-btn color="primary" variant="flat" size="large" class="px-6 text-capitalize" rounded="lg" @click="dialog = true">
-                <v-icon start>mdi-plus-circle</v-icon>
+            <v-col
+              cols="12"
+              sm="6"
+              class="text-right"
+            >
+              <v-btn
+                color="primary"
+                variant="flat"
+                size="large"
+                class="px-6 text-capitalize"
+                rounded="lg"
+                @click="dialog = true"
+              >
+                <v-icon start>
+                  mdi-plus-circle
+                </v-icon>
                 Add New Card
               </v-btn>
             </v-col>
@@ -34,7 +59,7 @@
               </template>
 
               <!-- IMAGE -->
-               <template #item.image="{ item }">
+              <template #item.image="{ item }">
                 <v-icon :color="item.image ? 'success' : 'error'">
                   {{ item.image ? 'mdi-checkbox-marked-circle-outline' : 'mdi-close-circle-outline' }}
                 </v-icon>
@@ -42,10 +67,21 @@
 
               <!-- ACTIONS -->
               <template #item.actions="{ item }">
-                <v-btn icon variant="text" color="accent" class="mr-2" @click="editItem(item)">
+                <v-btn
+                  icon
+                  variant="text"
+                  color="accent"
+                  class="mr-2"
+                  @click="editItem(item)"
+                >
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn icon variant="text" color="error" @click="deleteItem(item)">
+                <v-btn
+                  icon
+                  variant="text"
+                  color="error"
+                  @click="deleteItem(item)"
+                >
                   <v-icon>mdi-trash-can-outline</v-icon>
                 </v-btn>
               </template>
@@ -57,9 +93,18 @@
       <!-- Settings -->
       <v-col cols="3">
         <v-card class="elevation-2 rounded-lg pa-6">
-          <v-row align="center" class="pa-4">
-            <v-col cols="12" sm="12">
-              <v-card-title class="text-h5 font-weight-bold mb-4" :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+          <v-row
+            align="center"
+            class="pa-4"
+          >
+            <v-col
+              cols="12"
+              sm="12"
+            >
+              <v-card-title
+                class="text-h5 font-weight-bold mb-4"
+                :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+              >
                 {{ 'Settings' }}
               </v-card-title>
               Configure how cards will be displayed
@@ -80,7 +125,12 @@
         </v-card>
       </v-col>
     </v-row>
-    <CardSortingForm :value="card" v-model:dialog="dialog" @save="save" :options="options" />
+    <CardSortingForm
+      v-model:dialog="dialog"
+      :value="card"
+      :options="options"
+      @save="save"
+    />
   </v-container>
 </template>
 

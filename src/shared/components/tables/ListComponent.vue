@@ -8,8 +8,8 @@
     class="rounded-lg"
     elevation="2"
     hover
-    @click:row="emitClick"
     :loading="loadingStudy"
+    @click:row="emitClick"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">
@@ -64,7 +64,12 @@
         size="small"
         class="ma-1"
       >
-        <v-icon start size="14">{{ tag.icon }}</v-icon>
+        <v-icon
+          start
+          size="14"
+        >
+          {{ tag.icon }}
+        </v-icon>
         {{ tag.label }}
       </v-chip>
     </template>
@@ -77,8 +82,8 @@
       {{ formatItemDate(item) }}
     </template>
 
-     <template #item.testDate="{ item }">
-      {{formatDateTime(item.testDate, 'es')}}
+    <template #item.testDate="{ item }">
+      {{ formatDateTime(item.testDate, 'es') }}
     </template>
 
     <!-- Owner Column -->
@@ -87,7 +92,7 @@
     </template>
 
     <template #item.evaluator="{ item }">
-        {{ item.email }}
+      {{ item.email }}
     </template>
 
     <!-- Participants Column -->
@@ -102,7 +107,7 @@
       </v-chip>
     </template>
 
-     <!-- Status Column -->
+    <!-- Status Column -->
     <template #item.status="{ item }">
       <v-chip
         label

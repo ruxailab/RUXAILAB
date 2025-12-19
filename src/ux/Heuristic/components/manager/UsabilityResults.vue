@@ -1,8 +1,22 @@
 <template>
-  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
+  <v-card
+    v-if="test"
+    class="pa-4 mb-0"
+    elevation="3"
+    rounded="lg"
+  >
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToAnswers">
-      <v-icon size="24" color="primary" class="header-icon">mdi-chart-line</v-icon>
+    <div
+      class="d-flex align-center mb-4 clickable-header"
+      @click="navigateToAnswers"
+    >
+      <v-icon
+        size="24"
+        color="primary"
+        class="header-icon"
+      >
+        mdi-chart-line
+      </v-icon>
       <v-card-title 
         class="text-h6 text-primary clickable-title" 
       >
@@ -13,7 +27,13 @@
     <!-- Indicador de usabilidad -->
     <div class="usability-metric">
       <div class="d-flex align-center justify-center mb-3">
-        <v-icon size="20" color="primary" class="mr-2">mdi-speedometer</v-icon>
+        <v-icon
+          size="20"
+          color="primary"
+          class="mr-2"
+        >
+          mdi-speedometer
+        </v-icon>
         <span class="metric-label text-caption text-grey-darken-1">Usabilidad General</span>
       </div>
       
@@ -31,7 +51,10 @@
       
       <!-- Status text -->
       <div class="text-center">
-        <div class="usability-status text-body-2 font-weight-medium" :class="usabilityStatusClass">
+        <div
+          class="usability-status text-body-2 font-weight-medium"
+          :class="usabilityStatusClass"
+        >
           {{ usabilityStatusText }}
         </div>
         <div class="text-caption text-grey-darken-1 mt-1">

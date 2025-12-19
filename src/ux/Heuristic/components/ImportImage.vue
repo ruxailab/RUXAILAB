@@ -9,8 +9,8 @@
         ? $t('common.inputImage')
         : url
       "
-      @change="uploadFile"
       :disabled="disable"
+      @change="uploadFile"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">

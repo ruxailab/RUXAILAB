@@ -1,72 +1,131 @@
 <template>
-    <v-dialog v-model="open" fullscreen transition="dialog-bottom-transition" persistent>
-        <v-card>
-            <v-toolbar dark color="primary">
-                <v-btn icon @click="close">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-toolbar-title>
-                    Task Analysis: {{ taskAnswer?.taskName || 'Untitled Task' }}
-                </v-toolbar-title>
-            </v-toolbar>
+  <v-dialog
+    v-model="open"
+    fullscreen
+    transition="dialog-bottom-transition"
+    persistent
+  >
+    <v-card>
+      <v-toolbar
+        dark
+        color="primary"
+      >
+        <v-btn
+          icon
+          @click="close"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-toolbar-title>
+          Task Analysis: {{ taskAnswer?.taskName || 'Untitled Task' }}
+        </v-toolbar-title>
+      </v-toolbar>
 
-            <v-card-text class="dialog-body">
-                <v-row class="mb-4">
-                    <v-col cols="12" md="6" class="mt-16">
-                        <div class="video-box mb-2 video-rect-box" v-if="rightTab !== 'eye'">
-                            <video ref="mainVideo1" class="video-rect-skeleton" controls @timeupdate="onTimeUpdate"
-                                @loadedmetadata="onMetadataLoaded"
-                                :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator">
-                                <source :src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
-                                    type="video/mp4" />
-                            </video>
-                        </div>
+      <v-card-text class="dialog-body">
+        <v-row class="mb-4">
+          <v-col
+            cols="12"
+            md="6"
+            class="mt-16"
+          >
+            <div
+              v-if="rightTab !== 'eye'"
+              class="video-box mb-2 video-rect-box"
+            >
+              <video
+                ref="mainVideo1"
+                class="video-rect-skeleton"
+                controls
+                :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator"
+                @timeupdate="onTimeUpdate"
+                @loadedmetadata="onMetadataLoaded"
+              >
+                <source
+                  :src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
+                  type="video/mp4"
+                >
+              </video>
+            </div>
 
-                        <div class="video-box screen-video-box video-rect-box" style="position: relative;"
-                            v-if="rightTab !== 'sentimental'">
-                            <video ref="mainVideo2" class="video-rect-skeleton" @timeupdate="onTimeUpdate"
-                                @loadedmetadata="onMetadataLoaded"
-                                :poster="taskAnswer?.screenPoster ?? defaultPosters.screen">
-                                <source :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen" type="video/mp4" />
-                            </video>
+            <div
+              v-if="rightTab !== 'sentimental'"
+              class="video-box screen-video-box video-rect-box"
+              style="position: relative;"
+            >
+              <video
+                ref="mainVideo2"
+                class="video-rect-skeleton"
+                :poster="taskAnswer?.screenPoster ?? defaultPosters.screen"
+                @timeupdate="onTimeUpdate"
+                @loadedmetadata="onMetadataLoaded"
+              >
+                <source
+                  :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen"
+                  type="video/mp4"
+                >
+              </video>
 
-                            <EyeTrackingOverlay v-show="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
-                                :predictedData="predictedData" :current-time="videoCurrentTime" :is-playing="isPlaying"
-                                :view-mode="selectedView" />
-                        </div>
-                    </v-col>
+              <EyeTrackingOverlay
+                v-show="rightTab === 'eye' && predictedData"
+                :video-ref="mainVideo2"
+                :predicted-data="predictedData"
+                :current-time="videoCurrentTime"
+                :is-playing="isPlaying"
+                :view-mode="selectedView"
+              />
+            </div>
+          </v-col>
 
-                    <v-col cols="12" md="6">
-                        <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
-                            <!-- <v-tab value="general">General</v-tab> -->
-                            <v-tab value="eye">Eye Tracker</v-tab>
-                            <v-tab value="sentimental">Sentimental</v-tab>
-                            <!-- <v-tab value="transcript">Transcripción</v-tab>
+          <v-col
+            cols="12"
+            md="6"
+          >
+            <v-tabs
+              v-model="rightTab"
+              bg-color="grey-lighten-4"
+              grow
+            >
+              <!-- <v-tab value="general">General</v-tab> -->
+              <v-tab value="eye">
+                Eye Tracker
+              </v-tab>
+              <v-tab value="sentimental">
+                Sentimental
+              </v-tab>
+              <!-- <v-tab value="transcript">Transcripción</v-tab>
                             <v-tab value="notes">Notas</v-tab> -->
-                        </v-tabs>
+            </v-tabs>
 
-                        <v-window v-model="rightTab" class="mt-4">
-                            <!-- <v-window-item value="general">
+            <v-window
+              v-model="rightTab"
+              class="mt-4"
+            >
+              <!-- <v-window-item value="general">
                                 <h4 class="text-subtitle-1 mb-1">General Analytics</h4>
                                 <TranscriptWordCloud :transcript="taskAnswer?.transcript ?? mockTranscript" />
                                 <SentimentSummary :sentiments="taskAnswer?.sentiments ?? mockSentiments" class="mb-4" />
                                 <NotesStats :totalNotes="taskAnswer?.notesCount ?? mockNotesCount" class="mb-4" />
                             </v-window-item> -->
 
-                            <v-window-item value="eye">
-                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData"
-                                    :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
-                                    :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
-                                    @predictions-ready="predictedData = $event" @view-changed="selectedView = $event"
-                                    class="mb-4" />
-                            </v-window-item>
+              <v-window-item value="eye">
+                <EyeTrackingStats
+                  :iris-data="taskAnswer?.irisTrackingData"
+                  :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
+                  :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
+                  class="mb-4"
+                  @predictions-ready="predictedData = $event"
+                  @view-changed="selectedView = $event"
+                />
+              </v-window-item>
 
-                            <v-window-item value="sentimental">
-                                <FacialSentimentPanel :video-element="mainVideo1"
-                                    :webcam-video-url="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator" />
-                            </v-window-item>
+              <v-window-item value="sentimental">
+                <FacialSentimentPanel
+                  :video-element="mainVideo1"
+                  :webcam-video-url="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
+                />
+              </v-window-item>
 
-                            <!-- <v-window-item value="transcript">
+              <!-- <v-window-item value="transcript">
                                 <h4 class="text-subtitle-1 mb-1">Audio Transcript</h4>
                                 <v-skeleton-loader type="text" width="80%" />
                                 <v-skeleton-loader type="text" width="60%" />
@@ -79,15 +138,20 @@
                                     <v-skeleton-loader type="text" width="60%" />
                                 </v-sheet>
                             </v-window-item> -->
-                        </v-window>
-                    </v-col>
-                </v-row>
+            </v-window>
+          </v-col>
+        </v-row>
 
-                <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
-                    @seek="onSeek" @togglePlay="togglePlay" />
-            </v-card-text>
-        </v-card>
-    </v-dialog>
+        <SessionTimeline
+          :duration="videoDuration"
+          :current-time="videoCurrentTime"
+          :is-playing="isPlaying"
+          @seek="onSeek"
+          @toggle-play="togglePlay"
+        />
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>

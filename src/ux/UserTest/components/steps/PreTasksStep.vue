@@ -2,7 +2,10 @@
   <ShowInfo>
     <template #content>
       <div class="test-content pa-6 rounded-xl text-center">
-           <p class="text-h5 mt-4 mb-4 text-grey-darken-3" v-html="$t('UserTestView.PreTasksStep.description', { numTasks })"></p>
+        <p
+          class="text-h5 mt-4 mb-4 text-grey-darken-3"
+          v-html="$t('UserTestView.PreTasksStep.description', { numTasks })"
+        />
 
         <!-- Recording Information Card -->
         <v-card 
@@ -13,7 +16,6 @@
         >
           <v-card-text class="pa-4">
             <div class="d-flex align-center mb-3">
-              
               <h3 class="text-h6 font-weight-bold text-secondary">
                 {{ $t('UserTestView.PreTasksStep.recordingTitle') }}
               </h3>
@@ -23,7 +25,10 @@
             </p>
             
             <!-- Recording Types -->
-            <div class="d-flex flex-wrap justify-center" style="gap: 12px;">
+            <div
+              class="d-flex flex-wrap justify-center"
+              style="gap: 12px;"
+            >
               <v-chip
                 size="small"
                 color="secondary"
