@@ -99,8 +99,7 @@
 import { computed, onMounted, ref , onUnmounted} from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { doc, onSnapshot } from "firebase/firestore"
-import { db } from "@/app/plugins/firebase" 
+import StudyController from '@/controllers/StudyController' 
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
@@ -110,6 +109,10 @@ import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
+
+
+// Controller
+const studyController = new StudyController()
 
 // Store
 const store = useStore()
@@ -194,19 +197,14 @@ const save = async () => {
 const subscribeToTest = () => {
   const testId = route.params.id
   if (testId) {
-    unsubscribe = onSnapshot(doc(db, "tests", testId), (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const test = docSnapshot.data()
-        store.commit("SET_TEST", test)
-        getWelcome()
-        getFinalMessage()
-        getConsent()
-        getPreTest()
-        getPostTest()
-        getTasks()
-      }
-    }, (error) => {
-      console.error("Error listening to test updates:", error)
+    unsubscribe = studyController.subscribeToStudy(testId, (test) => {
+      store.commit("SET_TEST", test)
+      getWelcome()
+      getFinalMessage()
+      getConsent()
+      getPreTest()
+      getPostTest()
+      getTasks()
     })
   }
 }
