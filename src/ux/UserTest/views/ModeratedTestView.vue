@@ -986,7 +986,8 @@ const calculateProgress = () => {
     return 0;
   }
 };
-const isStartTestDisabled = computed(() => {
+
+const getTestDisabledStatus = () => {
   if (!test.value) {
     testDisabledReason.value = 'test-no-data';
     return true;
@@ -1043,6 +1044,12 @@ const isStartTestDisabled = computed(() => {
   // ✅ All good
   testDisabledReason.value = null;
   return false;
+};
+
+const isStartTestDisabled = ref(false);
+
+watchEffect(() => {
+  isStartTestDisabled.value = getTestDisabledStatus();
 });
 
 

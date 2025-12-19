@@ -142,7 +142,10 @@ const loading = ref(false);
 const studiesWithAnswers = ref([]);
 
 const studies = computed(() => {
-  return props.studies.length > 0  ? studiesWithAnswers.value : loading.value  ? [] : defaultStudies
+  if (props.studies.length > 0) {
+    return studiesWithAnswers.value;
+  }
+  return loading.value ? [] : defaultStudies;
 })
 
 const lastFourStudies = computed(() => {

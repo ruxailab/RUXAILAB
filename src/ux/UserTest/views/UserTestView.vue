@@ -1148,7 +1148,7 @@ onMounted(async () => {
 
   const userRef = doc(db, 'users', user.value.id)
 
-  const unsubscribe = onSnapshot(userRef, (docSnap) => {
+  onSnapshot(userRef, (docSnap) => {
     if (!docSnap.exists()) return
     const data = docSnap.data()
 

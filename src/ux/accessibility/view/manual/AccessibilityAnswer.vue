@@ -102,7 +102,7 @@
                 </template>
 
                 <!-- Status Column -->
-                <template #item.status="{ item }">
+                <template #item.status>
                   <v-chip
                     color="success"
                     size="small"
