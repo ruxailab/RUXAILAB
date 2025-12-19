@@ -155,13 +155,8 @@ export default class StudyController extends Controller {
     return onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
         const rawData = Object.assign({ id: doc.id }, doc.data())
-        try {
-          const validData = StudySchema.parse(rawData)
-          const study = instantiateStudyByType(validData.testType, validData)
-          callback(study)
-        } catch (error) {
-          console.error("Error parsing study update:", error)
-        }
+        const study = instantiateStudyByType(rawData.testType, rawData)
+        callback(study)
       }
     })
   }
