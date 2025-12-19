@@ -1,18 +1,9 @@
 <template>
   <div v-if="test">
-    <!-- EYE TRACKER NOT READY 
     <div>
       <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
--->
-
-    <!-- <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving...
-      </div>
-    </v-overlay> -->
 
     <Snackbar />
 
@@ -258,9 +249,9 @@
               </v-stepper>
             </v-col>
           </v-row>
-          <!-- Stepper secundario para tareas -->
+          <!-- Secondary stepper for tasks -->
           <v-row
-            v-if="globalIndex == (hasEyeTracking.value ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
+            v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
             class="task-stepper-row"
             justify="center"
           >
@@ -311,11 +302,11 @@
             @closeCalibration="closeCalibration()" @openCalibration="openCalibration()"
             :calibrationInProgress="calibrationInProgress" :calibrationCompleted="calibrationCompleted" />
 
-          <PreTasksStep v-if="globalIndex === (hasEyeTracking.value ? 4 : 3) && taskIndex === 0"
+          <PreTasksStep v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking.value ? 5 : 4; saveIrisDataIntoTask(); }" />
+            @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
 
-          <TaskStep v-if="globalIndex === (hasEyeTracking.value ? 5 : 4) && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
+          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
             :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
@@ -331,55 +322,20 @@
             @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 
           <PostTestStep
-            v-if="globalIndex === (hasEyeTracking.value ? 6 : 5)"
+            v-if="globalIndex === (hasEyeTracking ? 6 : 5)"
             :test-title="test.testTitle" 
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer" 
             :post-test-completed="localTestAnswer.postTestCompleted"
             @done="() => { completeStep(taskIndex, 'postTest'); }" />
           <FinishStep
-            v-if="globalIndex === (hasEyeTracking.value ? 7 : 6) && localTestAnswer.postTestCompleted"
+            v-if="globalIndex === (hasEyeTracking ? 7 : 6) && localTestAnswer.postTestCompleted"
             :final-message="$t('finishTest.finalMessage')" :congratulations="test.testStructure.finalMessage"
             :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
             @submit="dialog = true" />
         </v-col>
       </v-row>
     </v-container>
-    <!-- Floating Action Button -->
-         <!--TODO: Remove if not necessary
-    <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
-      class="mb-10 mr-5">
-      <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
-        <template #activator="{ props }">
-          <v-btn v-model="fab" size="large" color="#F9A826" v-bind="props" icon class="btn-fix">
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon v-else size="large">
-              mdi-hammer-screwdriver
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" icon size="small" color="#F9A826" @click="saveAnswer">
-              <v-icon>mdi-content-save</v-icon>
-            </v-btn>
-          </template>
-          <span>Save</span>
-        </v-tooltip>
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" :disabled="localTestAnswer && !localTestAnswer.postTestCompleted" class="text-white"
-              icon size="small" color="#F9A826" @click="dialog = true">
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
-      </v-speed-dial>
-    </v-btn>
-    -->
   </div>
 </template>
 
@@ -426,12 +382,10 @@ const rightView = ref(null);
 const videoRecorder = ref(null);
 const taskStepComponent = ref(null);
 const timerComponent = computed(() => {
-  // Get timer ref from TaskStep
   return taskStepComponent.value?.$refs?.timerComponent || null;
 });
 
-//  Eye tracking web gazer testing
-
+// Eye tracking web gazer testing
 const isTracking = ref(false)
 const isRecording = ref(false)
 const irisData = ref([])
@@ -439,11 +393,11 @@ const eyeCalibrationStepDone = ref(false)
 const calibrationCompleted = ref(false)
 const calibrationInProgress = ref(false)
 
-//  Eye tracking web gazer testing
-
 const localTestAnswer = reactive({
   ...new UserStudyEvaluatorAnswer(),
   tasks: [],
+  // Add field to track calibration completion
+  eyeCalibrationCompleted: false,
 })
 
 const store = useStore();
@@ -467,7 +421,6 @@ const testAlreadyStarted = computed(() => {
           localTestAnswer.submitted;
 
   const hasTaskAttempts = Array.isArray(localTestAnswer.tasks) &&
-                          localTestAnswer.tasks.length > 0 &&
                           localTestAnswer.tasks.some(task => {
                             return task && (
                               task.attempted ||
@@ -486,9 +439,8 @@ const showSaveButton = computed(() => {
 });
 
 const showPreviousButton = computed(() => {
-  if (globalIndex.value === 0) return false; // No previous on welcome
-  if (globalIndex.value === 1 && taskIndex.value === 0) return false; // No previous on consent
-  // Don't show previous on Finish step if test is submitted
+  if (globalIndex.value === 0) return false;
+  if (globalIndex.value === 1 && taskIndex.value === 0) return false;
   if (localTestAnswer.submitted) return false;
   return true;
 });
@@ -504,24 +456,20 @@ const isUserTestAdmin = computed(() => {
 const isStartTestDisabled = computed(() => {
   if (!test.value) return true;
 
-  // Check if testStructure is empty array or doesn't exist
   const hasValidTasks = test.value.testStructure &&
                        Array.isArray(test.value.testStructure.userTasks) &&
                        test.value.testStructure.userTasks.length > 0;
 
   if (!hasValidTasks) return true;
 
-  // Check if status is different from 'active'
   if (test.value.status !== 'active') return true;
 
-  // Check if endDate is lower than current date
   if (test.value.endDate) {
     const currentDate = new Date();
     const endDate = new Date(test.value.endDate);
     if (endDate < currentDate) return true;
   }
 
-  // Check if user has already submitted the test
   if (localTestAnswer.submitted) return true;
 
   return false;
@@ -550,7 +498,7 @@ const testDisabledReason = computed(() => {
 });
 
 const stepperValue = computed(() => {
-  if (globalIndex.value === 0) return -1; // Welcome
+  if (globalIndex.value === 0) return -1;
 
   // Consent
   if (globalIndex.value === 1 && taskIndex.value === 0) return 0;
@@ -560,63 +508,63 @@ const stepperValue = computed(() => {
 
   if (hasEyeTracking.value) {
     // EyeTracking flow
-    if (globalIndex.value === 3) return 2; // Calibration
-    if (globalIndex.value === 4) return 3; // PreTasks
-    if (globalIndex.value === 5) return 3; // Tasks (same value as PreTasks for stepper)
-    if (globalIndex.value === 6) return 4; // PostTest
-    if (globalIndex.value === 7) return 5; // Completion
+    if (globalIndex.value === 3) return 2;
+    if (globalIndex.value === 4) return 3;
+    if (globalIndex.value === 5) return 3;
+    if (globalIndex.value === 6) return 4;
+    if (globalIndex.value === 7) return 5;
   } else {
     // Normal flow
-    if (globalIndex.value === 3) return 2; // PreTasks
-    if (globalIndex.value === 4) return 2; // Tasks (same value as PreTasks for stepper)
-    if (globalIndex.value === 5) return 3; // PostTest
-    if (globalIndex.value === 6) return 4; // Completion
-    if (globalIndex.value === 7) return 5; // Completion (with eye tracking)
+    if (globalIndex.value === 3) return 2;
+    if (globalIndex.value === 4) return 2;
+    if (globalIndex.value === 5) return 3;
+    if (globalIndex.value === 6) return 4;
+    if (globalIndex.value === 7) return 5;
   }
 
   return 0;
 });
 
-// Previous button functionality
+// Previous button functionality - Refactored to reduce cognitive complexity
 const goToPreviousStep = () => {
-  if(localTestAnswer.submitted) return; // No going back if submitted
-  
-  if (globalIndex.value === (hasEyeTracking.value ? 7 : 6)) {
-    // From Completion/Finish to PostTest
-    globalIndex.value = hasEyeTracking.value ? 6 : 5;
-    // Reset postTestCompleted to allow editing
-    localTestAnswer.postTestCompleted = false;
-  } else if (globalIndex.value === (hasEyeTracking.value ? 6 : 5)) {
-    // From PostTest to Tasks
-    globalIndex.value = hasEyeTracking.value ? 5 : 4;
-    // Go to last task
-    taskIndex.value = Math.max(0, (localTestAnswer.tasks?.length || 1) - 1);
-  } else if (globalIndex.value === (hasEyeTracking.value ? 5 : 4)) {
-    // From Tasks
+  if (localTestAnswer.submitted) return;
+
+  const handleStepNavigation = () => {
+    if (globalIndex.value === (hasEyeTracking.value ? 7 : 6)) {
+      // From Completion/Finish to PostTest
+      globalIndex.value = hasEyeTracking.value ? 6 : 5;
+      localTestAnswer.postTestCompleted = false;
+    } else if (globalIndex.value === (hasEyeTracking.value ? 6 : 5)) {
+      // From PostTest to Tasks
+      globalIndex.value = hasEyeTracking.value ? 5 : 4;
+      taskIndex.value = Math.max(0, (localTestAnswer.tasks?.length || 1) - 1);
+    } else if (globalIndex.value === (hasEyeTracking.value ? 5 : 4)) {
+      handleTaskStepNavigation();
+    } else if (globalIndex.value === (hasEyeTracking.value ? 4 : 3)) {
+      // From PreTasks to EyeTracking or PreTest
+      globalIndex.value = hasEyeTracking.value ? 3 : 2;
+    } else if (globalIndex.value === 3 && hasEyeTracking.value) {
+      // From EyeTracking to PreTest
+      globalIndex.value = 2;
+    } else if (globalIndex.value === 2) {
+      // From PreTest to Consent
+      globalIndex.value = 1;
+    } else if (globalIndex.value === 1) {
+      // From Consent to Welcome
+      globalIndex.value = 0;
+    }
+  };
+
+  const handleTaskStepNavigation = () => {
     if (taskIndex.value > 0) {
       taskIndex.value--;
     } else {
       // From first task to PreTasks
       globalIndex.value = hasEyeTracking.value ? 4 : 3;
     }
-  } else if (globalIndex.value === (hasEyeTracking.value ? 4 : 3)) {
-    // From PreTasks to EyeTracking or PreTest
-    if (hasEyeTracking.value) {
-      globalIndex.value = 3; // EyeTracking calibration
-    } else {
-      globalIndex.value = 2; // PreTest
-    }
-  } else if (globalIndex.value === 3 && hasEyeTracking.value) {
-    // From EyeTracking to PreTest
-    globalIndex.value = 2;
-  } else if (globalIndex.value === 2) {
-    // From PreTest to Consent
-    globalIndex.value = 1;
-  } else if (globalIndex.value === 1) {
-    // From Consent to Welcome
-    globalIndex.value = 0;
-  }
-  // Save progress when going back
+  };
+
+  handleStepNavigation();
   saveProgress();
 };
 
@@ -624,27 +572,30 @@ const goToPreviousStep = () => {
 const saveProgress = async () => {
   try {
     isLoading.value = true;
+    isSaving.value = true;
     
     attachMediaToTasks(localTestAnswer, mediaUrls.value);
     localTestAnswer.progress = calculateProgress();
     localTestAnswer.fullName = fullName.value;
+    // Sync calibration status with local reactive variable
+    localTestAnswer.eyeCalibrationCompleted = calibrationCompleted.value;
   
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
       localTestAnswer.invited = true;
     }
     
-    if (!user.value) {
-      localTestAnswer.userDocId = nanoid(16);
+    if (user.value) {
+      Object.assign(currentUserTestAnswer.value, localTestAnswer);
       await store.dispatch('saveTestAnswer', {
-        data: localTestAnswer,
+        data: currentUserTestAnswer.value,
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
       });
     } else {
-      Object.assign(currentUserTestAnswer.value, localTestAnswer);
+      localTestAnswer.userDocId = nanoid(16);
       await store.dispatch('saveTestAnswer', {
-        data: currentUserTestAnswer.value,
+        data: localTestAnswer,
         answerDocId: test.value.answersDocId,
         testType: test.value.testType,
       });
@@ -663,22 +614,23 @@ const saveProgress = async () => {
     });
   } finally {
     isLoading.value = false;
+    isSaving.value = false;
   }
 };
 
 function handleIrisData(data) {
-  localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
+  if (localTestAnswer.tasks[taskIndex.value]) {
+    localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
+  }
 }
-
-const BASE_URL = process.env.VUE_APP_RUXAILAB_BASE_URL;
 
 const openCalibration = () => {
   const eyeLabUrl = process.env.VUE_APP_EYE_LAB_FRONTEND_URL;
-  if(!eyeLabUrl) {
+  if (!eyeLabUrl) {
     console.error('VUE_APP_EYE_LAB_FRONTEND_URL is not configured');
     return;
   }
-  window.open(`${eyeLabUrl}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
+  globalThis.open(`${eyeLabUrl}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`, '_blank');
   calibrationInProgress.value = true;
 }
 
@@ -697,11 +649,11 @@ function toggleTracking(value) {
 function saveIrisDataIntoTask() {
   console.log('saveIrisDataIntoTask', {
     taskIndex: taskIndex.value,
-    hasEye: test.value.testStructure.userTasks[taskIndex.value]?.hasEye,
+    hasEye: test.value?.testStructure?.userTasks[taskIndex.value]?.hasEye,
     globalIndex: globalIndex.value,
   });
 
-  const task = test.value.testStructure.userTasks[taskIndex.value]
+  const task = test.value?.testStructure?.userTasks[taskIndex.value]
 
   if (task?.hasEye === true && globalIndex.value >= 5) {
     toggleTracking(true);
@@ -710,44 +662,10 @@ function saveIrisDataIntoTask() {
   }
 }
 
-const saveAnswer = async () => {
-  try {
-    attachMediaToTasks(localTestAnswer, mediaUrls.value);
-    localTestAnswer.progress = calculateProgress();
-    localTestAnswer.fullName = fullName.value;
-  
-    if (user.value && user.value?.email) {
-      localTestAnswer.userDocId = user.value.id;
-      localTestAnswer.invited = true;
-    }
-    if (!user.value) {
-      localTestAnswer.userDocId = nanoid(16)
-      await store.dispatch('saveTestAnswer', {
-        data: localTestAnswer,
-        answerDocId: test.value.answersDocId,
-        testType: test.value.testType,
-      });
-    } else {
-      Object.assign(currentUserTestAnswer.value, localTestAnswer);
-      console.log('Generated userDocId for anonymous user:', currentUserTestAnswer.value);
-      await store.dispatch('saveTestAnswer', {
-        data: currentUserTestAnswer.value,
-        answerDocId: test.value.answersDocId,
-        testType: test.value.testType,
-      });
-    }
-    // router.push('/admin');
-
-  } catch (error) {
-    console.error('Error saving answer:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
-  }
-};
-
 const submitAnswer = async () => {
   try {
     localTestAnswer.submitted = true;
-    await saveAnswer();
+    await saveProgress();
     store.commit('SET_TOAST', { 
       type: 'success', 
       message: 'Test submitted successfully!',
@@ -867,7 +785,6 @@ const startTimer = () => {
 };
 
 const handleTimerStopped = (elapsedTime, idx) => {
-  // idx is passed from TaskStep, always use it
   console.log('handleTimerStopped llamado con:', { elapsedTime, idx });
 
   if (!localTestAnswer.tasks) {
@@ -881,93 +798,14 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 
   if (localTestAnswer.tasks[idx]) {
-    // Asegurar que el tiempo es un número
     const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave;
-    } else {
-      //TODO: Add error snackbar
     }
-  } else {
-    //TODO: Add error snackbar
   }
 };
 
-// const completeStep = async (id, type, userCompleted = true) => {
-//   try {
-//     if (type === 'consent') {
-//       localTestAnswer.consentCompleted = true;
-//       globalIndex.value = 2; // PreTest
-//     }
-
-//     if (type === 'preTest') {
-//       localTestAnswer.preTestCompleted = true;
-//       globalIndex.value = hasEyeTracking.value ? 3 : 3; // se tiver, vai pro PreCalibration
-//     }
-
-//     if (type === 'eyeCalibration') {
-//       globalIndex.value = 4; // PreTasks
-//       taskIndex.value = 0;
-//       eyeCalibrationStepDone.value = true;
-//     }
-
-//     if (type === 'tasks') {
-//       if (!Array.isArray(localTestAnswer.tasks)) {
-//         localTestAnswer.tasks = [];
-//       }
-      
-//       if(localTestAnswer.tasks[id]){
-//         localTestAnswer.tasks[id].completed = userCompleted;
-//         localTestAnswer.tasks[id].attempted = true;
-//       }
-      
-//       // Check if all tasks have been attempted
-//       let allTasksAttempted = true;
-//       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-//         if (!localTestAnswer.tasks[i]?.attempted) {
-//           allTasksAttempted = false;
-//           break;
-//         }
-//       }
-//       allTasksCompleted.value = allTasksAttempted;
-
-//       if (id < localTestAnswer.tasks.length - 1) {
-//         taskIndex.value = id + 1;
-//         startTimer();
-//       } else {
-//         if (allTasksCompleted.value) {
-//           taskIndex.value = id + 1;
-//           globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-//         }
-//       }
-//       //TODO: Show proper toast not the following one
-//       /*
-//       if (userCompleted) {
-//         store.commit('SET_TOAST', {
-//           type: 'success',
-//           message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
-//           timeout: 3000,
-//         });
-//       }
-//         */
-//     }
-
-//     if (type === 'postTest') {
-//       localTestAnswer.postTestCompleted = true;
-//       // items.value[2].icon = 'mdi-check-circle-outline';
-//       globalIndex.value = hasEyeTracking.value ? 7 : 6; // Finish
-//     }
-
-//     saveIrisDataIntoTask();
-//     calculateProgress();
-
-//     await saveProgress();
-//   } catch (error) {
-//     console.error('Error in completeStep:', error);
-//     store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
-//   }
-// };
-
+// Refactored completeStep to reduce cognitive complexity
 const completeStep = async (id, type, userCompleted = true) => {
   try {
     console.log('completeStep called:', { id, type, userCompleted, currentGlobalIndex: globalIndex.value });
@@ -980,8 +818,8 @@ const completeStep = async (id, type, userCompleted = true) => {
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true;
-      globalIndex.value = hasEyeTracking.value ? 3 : 3; // If has eye tracking, go to calibration
-      console.log('Moved to EyeTracking/PreTasks, globalIndex:', globalIndex.value);
+      globalIndex.value = 3; // This is correct - index 3 shows different components based on hasEyeTracking
+      console.log('Moved to next step, globalIndex:', globalIndex.value);
     }
 
     if (type === 'eyeCalibration') {
@@ -989,70 +827,12 @@ const completeStep = async (id, type, userCompleted = true) => {
       taskIndex.value = 0;
       eyeCalibrationStepDone.value = true;
       calibrationCompleted.value = true;
+      localTestAnswer.eyeCalibrationCompleted = true; // Save to persisted data
       console.log('Moved to PreTasks, globalIndex:', globalIndex.value);
     }
 
     if (type === 'tasks') {
-      if (!Array.isArray(localTestAnswer.tasks)) {
-        localTestAnswer.tasks = [];
-      }
-      
-      // Ensure the task exists
-      if (!localTestAnswer.tasks[id]) {
-        localTestAnswer.tasks[id] = new TaskAnswer({
-          taskId: id,
-          taskAnswer: '',
-          taskObservations: '',
-          postAnswer: '',
-          taskTime: 0,
-          completed: false,
-          attempted: false,
-          susAnswers: [],
-          nasaTlxAnswers: {}
-        });
-      }
-      
-      // Mark task as attempted
-      localTestAnswer.tasks[id].attempted = true;
-      localTestAnswer.tasks[id].completed = userCompleted;
-      
-      console.log('Task marked as:', { 
-        taskId: id, 
-        attempted: localTestAnswer.tasks[id].attempted,
-        completed: localTestAnswer.tasks[id].completed 
-      });
-      
-      // Check if all tasks have been attempted
-      let allTasksAttempted = true;
-      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (!localTestAnswer.tasks[i]?.attempted) {
-          allTasksAttempted = false;
-          break;
-        }
-      }
-      
-      allTasksCompleted.value = allTasksAttempted;
-      console.log('All tasks attempted?', allTasksAttempted);
-
-      // Determine where to go next
-      if (id < localTestAnswer.tasks.length - 1) {
-        // Go to next task
-        taskIndex.value = id + 1;
-        startTimer();
-        console.log('Moving to next task:', taskIndex.value);
-      } else {
-        // This is the last task
-        console.log('Last task completed, checking if all tasks attempted:', allTasksAttempted);
-        
-        if (allTasksAttempted) {
-          // All tasks have been attempted - move to post-test
-          globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-          console.log('All tasks attempted, moving to post-test. globalIndex set to:', globalIndex.value);
-        } else {
-          // Not all tasks attempted - stay on current or go back
-          console.log('Not all tasks attempted, staying');
-        }
-      }
+      handleTaskCompletion(id, userCompleted);
     }
 
     if (type === 'postTest') {
@@ -1082,6 +862,63 @@ const completeStep = async (id, type, userCompleted = true) => {
       type: 'error', 
       message: 'Failed to complete step. Please try again.' 
     });
+  }
+}
+
+const handleTaskCompletion = (id, userCompleted) => {
+  if (!Array.isArray(localTestAnswer.tasks)) {
+    localTestAnswer.tasks = [];
+  }
+  
+  // Ensure the task exists
+  if (!localTestAnswer.tasks[id]) {
+    localTestAnswer.tasks[id] = new TaskAnswer({
+      taskId: id,
+      taskAnswer: '',
+      taskObservations: '',
+      postAnswer: '',
+      taskTime: 0,
+      completed: false,
+      attempted: false,
+      susAnswers: [],
+      nasaTlxAnswers: {}
+    });
+  }
+  
+  // Mark task as attempted
+  localTestAnswer.tasks[id].attempted = true;
+  localTestAnswer.tasks[id].completed = userCompleted;
+  
+  console.log('Task marked as:', { 
+    taskId: id, 
+    attempted: localTestAnswer.tasks[id].attempted,
+    completed: localTestAnswer.tasks[id].completed 
+  });
+  
+  // Check if all tasks have been attempted
+  const allTasksAttempted = localTestAnswer.tasks.every(task => task?.attempted);
+  
+  allTasksCompleted.value = allTasksAttempted;
+  console.log('All tasks attempted?', allTasksAttempted);
+
+  // Determine where to go next
+  if (id < localTestAnswer.tasks.length - 1) {
+    // Go to next task
+    taskIndex.value = id + 1;
+    startTimer();
+    console.log('Moving to next task:', taskIndex.value);
+  } else {
+    // This is the last task
+    console.log('Last task completed, checking if all tasks attempted:', allTasksAttempted);
+    
+    if (allTasksAttempted) {
+      // All tasks have been attempted - move to post-test
+      globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+      console.log('All tasks attempted, moving to post-test. globalIndex set to:', globalIndex.value);
+    } else {
+      // Not all tasks attempted - stay on current or go back
+      console.log('Not all tasks attempted, staying');
+    }
   }
 }
 
@@ -1184,8 +1021,13 @@ const setTest = async () => {
       submitted: currentUserTestAnswer.value.submitted || false,
       progress: currentUserTestAnswer.value.progress || 0,
       fullName: currentUserTestAnswer.value.fullName || '',
+      // Load calibration status from saved data
+      eyeCalibrationCompleted: currentUserTestAnswer.value.eyeCalibrationCompleted || false,
     });
     fullName.value = localTestAnswer.fullName;
+    
+    // Sync the reactive variable with saved data
+    calibrationCompleted.value = localTestAnswer.eyeCalibrationCompleted;
 
     // check if user has existing progress
     const hasExistingProgress = localTestAnswer.consentCompleted ||
@@ -1193,9 +1035,9 @@ const setTest = async () => {
                                 (Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.some(task => task.attempted)) ||
                                 localTestAnswer.postTestCompleted;
 
-    if(hasExistingProgress){
+    if (hasExistingProgress) {
       start.value = false;
-      await restoreProgressState();
+      restoreProgressState();
     }
     await mappingSteps();
     await autoComplete();
@@ -1206,59 +1048,73 @@ const setTest = async () => {
   }
 };
 
-// New function to restore progress state
+// Refactored restoreProgressState to reduce cognitive complexity
 const restoreProgressState = () => {
   if (!localTestAnswer.consentCompleted) {
     globalIndex.value = 1; // Consent
-  } else if (!localTestAnswer.preTestCompleted) {
+    return;
+  }
+
+  if (!localTestAnswer.preTestCompleted) {
     globalIndex.value = 2; // PreTest
-  } else if (hasEyeTracking.value && !calibrationCompleted.value) {
+    return;
+  }
+
+  // Check saved calibration status, not the reactive variable
+  if (hasEyeTracking.value && !localTestAnswer.eyeCalibrationCompleted) {
     globalIndex.value = 3; // Eye Tracking
-  } else {
-    // Find current task status
-    const hasTasks = Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0;
+    return;
+  }
+
+  handlePostPreTestNavigation();
+};
+
+const handlePostPreTestNavigation = () => {
+  const hasTasks = Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0;
+  
+  if (hasTasks) {
+    const activeTaskIndex = findActiveTaskIndex();
     
-    if (hasTasks) {
-      // Find active/incomplete task
-      let activeTaskIndex = -1;
-      
-      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        const task = localTestAnswer.tasks[i];
-        
-        // Task has data but not marked as attempted
-        if ((task.taskAnswer || task.taskObservations || 
-            task.susAnswers?.length > 0 || 
-            (task.nasaTlxAnswers && Object.keys(task.nasaTlxAnswers).length > 0)) && 
-            !task.attempted) {
-          activeTaskIndex = i;
-          break;
-        }
-        
-        // Task is attempted but not completed
-        if (task.attempted && !task.completed) {
-          activeTaskIndex = i;
-          break;
-        }
-      }
-      
-      // If no active task, find first unattempted
-      if (activeTaskIndex === -1) {
-        activeTaskIndex = localTestAnswer.tasks.findIndex(task => !task.attempted);
-      }
-      
-      if (activeTaskIndex !== -1) {
-        taskIndex.value = activeTaskIndex;
-        globalIndex.value = hasEyeTracking.value ? 5 : 4; // Tasks
-      } else if (!localTestAnswer.postTestCompleted) {
-        globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-      } else if (!localTestAnswer.submitted) {
-        globalIndex.value = hasEyeTracking.value ? 7 : 6; // Finish
-      }
+    if (activeTaskIndex !== -1) {
+      taskIndex.value = activeTaskIndex;
+      globalIndex.value = hasEyeTracking.value ? 5 : 4; // Tasks
     } else if (!localTestAnswer.postTestCompleted) {
       globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
     } else if (!localTestAnswer.submitted) {
       globalIndex.value = hasEyeTracking.value ? 7 : 6; // Finish
     }
+  } else {
+    handleNoTasksNavigation();
+  }
+};
+
+const findActiveTaskIndex = () => {
+  for (let i = 0; i < localTestAnswer.tasks.length; i++) {
+    const task = localTestAnswer.tasks[i];
+    
+    // Task has data but not marked as attempted
+    if ((task.taskAnswer || task.taskObservations || 
+        task.susAnswers?.length > 0 || 
+        (task.nasaTlxAnswers && Object.keys(task.nasaTlxAnswers).length > 0)) && 
+        !task.attempted) {
+      return i;
+    }
+    
+    // Task is attempted but not completed
+    if (task.attempted && !task.completed) {
+      return i;
+    }
+  }
+  
+  // If no active task, find first unattempted
+  return localTestAnswer.tasks.findIndex(task => !task.attempted);
+};
+
+const handleNoTasksNavigation = () => {
+  if (!localTestAnswer.postTestCompleted) {
+    globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
+  } else if (!localTestAnswer.submitted) {
+    globalIndex.value = hasEyeTracking.value ? 7 : 6; // Finish
   }
 };
 
@@ -1354,13 +1210,11 @@ const validate = (object) => {
     object.length > 0
   );
 };
+
 watchEffect(() => {
-
   const index = taskIndex.value;
-
   const taskList = test.value?.testStructure?.userTasks;
   const task = Array.isArray(taskList) ? taskList[index] : undefined;
-
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers;
 
   if (task?.taskType === 'sus') {
@@ -1384,11 +1238,10 @@ watch(
   { deep: true }
 );
 
-
 // Scroll to top of the page when step changes
 const scrollToTop = () => {
   // For most browsers
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  globalThis.scrollTo({ top: 0, behavior: 'smooth' });
   // For rightView (in case of overflow)
   if (rightView.value) {
     rightView.value.scrollTop = 0;
@@ -1412,111 +1265,129 @@ watch(
   }
 );
 
-onMounted(async ()=> {
+// Refactored onMounted to reduce cognitive complexity
+onMounted(async () => {
   await nextTick();
-  if(user.value){
-    await setTest();
-    await autoComplete();
-    calculateProgress();
-
-    // Check if user already started the test
-    if(testAlreadyStarted.value){
-      start.value = false;
-      
-      // Restore to the correct step based on actual progress
-      if(!localTestAnswer.consentCompleted){
-        globalIndex.value = 1; // go to consent step
-      } else if(!localTestAnswer.preTestCompleted){
-        globalIndex.value = 2; // go to pre-test step
-      } else if(hasEyeTracking.value && !calibrationCompleted.value){
-        globalIndex.value = 3; // go to Eye Tracking Calibration step
-      } else {
-        // Check task progress more carefully
-        const hasTasks = Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0;
-        
-        if(hasTasks) {
-          // Find the current active task
-          let currentTaskIndex = -1;
-          
-          // First, check if any task was started but not marked as attempted
-          for(let i = 0; i < localTestAnswer.tasks.length; i++) {
-            const task = localTestAnswer.tasks[i];
-            
-            // If task has any data (answer, observations, etc.) but not marked as attempted
-            // OR if it's marked as attempted but not completed
-            if((task.taskAnswer || task.taskObservations || task.susAnswers?.length > 0 || 
-                task.nasaTlxAnswers && Object.keys(task.nasaTlxAnswers).length > 0) && 
-               !task.attempted) {
-              currentTaskIndex = i;
-              break;
-            }
-            
-            // If task is marked as attempted but we're still in tasks section
-            if(task.attempted && !task.completed) {
-              currentTaskIndex = i;
-              break;
-            }
-          }
-          
-          // If no active task found, check for first un-attempted task
-          if(currentTaskIndex === -1) {
-            currentTaskIndex = localTestAnswer.tasks.findIndex(task => !task.attempted);
-          }
-          
-          // Determine where to go based on task status
-          if(currentTaskIndex !== -1) {
-            // There are still tasks to complete
-            taskIndex.value = currentTaskIndex;
-            globalIndex.value = hasEyeTracking.value ? 5 : 4; // go to tasks step
-          } else if(!localTestAnswer.postTestCompleted) {
-            // All tasks are attempted, go to post-test
-            globalIndex.value = hasEyeTracking.value ? 6 : 5; // go to post-test step
-          } else {
-            // Everything completed, go to finish
-            globalIndex.value = hasEyeTracking.value ? 7 : 6; // go to finish step
-          }
-        } else {
-          // No tasks configured or tasks array empty
-          if(!localTestAnswer.postTestCompleted){
-            globalIndex.value = hasEyeTracking.value ? 6 : 5; // go to post-test step
-          } else{
-            globalIndex.value = hasEyeTracking.value ? 7 : 6; // go to finish step
-          }
-        }
-      }
-    } else {
-      // Test not started yet
-      globalIndex.value = 0; // go to welcome step
-    }
+  
+  if (!user.value) {
+    globalIndex.value = 0;
+    return;
   }
 
-  if(!user.value?.id) return;
+  await setTest();
+  await autoComplete();
+  calculateProgress();
+
+  if (testAlreadyStarted.value) {
+    start.value = false;
+    restoreMountedProgressState();
+  } else {
+    globalIndex.value = 0;
+  }
+
+  setupUserSnapshotListener();
+});
+
+const restoreMountedProgressState = () => {
+  if (!localTestAnswer.consentCompleted) {
+    globalIndex.value = 1;
+    return;
+  }
+
+  if (!localTestAnswer.preTestCompleted) {
+    globalIndex.value = 2;
+    return;
+  }
+
+  // Check saved calibration status, not the reactive variable
+  if (hasEyeTracking.value && !localTestAnswer.eyeCalibrationCompleted) {
+    globalIndex.value = 3;
+    return;
+  }
+
+  handleMountedTaskNavigation();
+};
+
+const handleMountedTaskNavigation = () => {
+  const hasTasks = Array.isArray(localTestAnswer.tasks) && localTestAnswer.tasks.length > 0;
+  
+  if (hasTasks) {
+    const currentTaskIndex = findMountedActiveTask();
+    
+    if (currentTaskIndex !== -1) {
+      taskIndex.value = currentTaskIndex;
+      globalIndex.value = hasEyeTracking.value ? 5 : 4;
+    } else if (!localTestAnswer.postTestCompleted) {
+      globalIndex.value = hasEyeTracking.value ? 6 : 5;
+    } else {
+      globalIndex.value = hasEyeTracking.value ? 7 : 6;
+    }
+  } else {
+    handleMountedNoTasks();
+  }
+};
+
+const findMountedActiveTask = () => {
+  for (let i = 0; i < localTestAnswer.tasks.length; i++) {
+    const task = localTestAnswer.tasks[i];
+    
+    if ((task.taskAnswer || task.taskObservations || task.susAnswers?.length > 0 || 
+        task.nasaTlxAnswers && Object.keys(task.nasaTlxAnswers).length > 0) && 
+       !task.attempted) {
+      return i;
+    }
+    
+    if (task.attempted && !task.completed) {
+      return i;
+    }
+  }
+  
+  return localTestAnswer.tasks.findIndex(task => !task.attempted);
+};
+
+const handleMountedNoTasks = () => {
+  if (!localTestAnswer.postTestCompleted) {
+    globalIndex.value = hasEyeTracking.value ? 6 : 5;
+  } else {
+    globalIndex.value = hasEyeTracking.value ? 7 : 6;
+  }
+};
+
+const setupUserSnapshotListener = () => {
+  if (!user.value?.id) return;
+  
   let firstSnapshot = true;
   const userRef = doc(db, 'users', user.value.id);
-  const unsubscribe = onSnapshot(userRef, (docSnap) => {
+  
+  onSnapshot(userRef, (docSnap) => {
     if (!docSnap.exists()) return;
+    
     const data = docSnap.data();
     if (firstSnapshot) {
       firstSnapshot = false;
       return;
     }
+    
     if (data.calibrationId) {
       calibrationCompleted.value = true;
+      localTestAnswer.eyeCalibrationCompleted = true; // Also update saved data
     }
   });
-});
+};
 
 // Listen for calibration completion message from the calibration window
-window.addEventListener('message', (event) => {
+globalThis.addEventListener('message', (event) => {
   if (event.data === 'calibrationCompleted') {
     calibrationCompleted.value = true;
+    localTestAnswer.eyeCalibrationCompleted = true; // Update saved data
   }
 });
 
 // Listen for calibration completion via localStorage
-window.addEventListener('storage', (event) => {
+globalThis.addEventListener('storage', (event) => {
   if (event.key === 'calibrationCompleted' && event.newValue === 'true') {
     calibrationCompleted.value = true;
+    localTestAnswer.eyeCalibrationCompleted = true; // Update saved data
     localStorage.removeItem('calibrationCompleted');
   }
 });
@@ -1526,22 +1397,22 @@ onBeforeUnmount(() => {
     videoRecorder.value.stopRecording();
   }
   // Remove the message listener
-  window.removeEventListener('message', (event) => {
+  globalThis.removeEventListener('message', (event) => {
     if (event.data === 'calibrationCompleted') {
       calibrationCompleted.value = true;
+      localTestAnswer.eyeCalibrationCompleted = true;
     }
   });
   // Remove the storage listener
-  window.removeEventListener('storage', (event) => {
+  globalThis.removeEventListener('storage', (event) => {
     if (event.key === 'calibrationCompleted' && event.newValue === 'true') {
       calibrationCompleted.value = true;
+      localTestAnswer.eyeCalibrationCompleted = true;
       localStorage.removeItem('calibrationCompleted');
     }
   });
 });
 </script>
-
-
 
 <style scoped>
 .start-screen {
@@ -1557,8 +1428,6 @@ onBeforeUnmount(() => {
       #303f9f 100%);
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-
 
 .start-screen.leaving,
 .start-screen.leaving>*,
@@ -1620,7 +1489,6 @@ onBeforeUnmount(() => {
   transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
 .main-stepper.stepper-animate {
   background: #00213F !important;
   opacity: 0.3;
@@ -1665,4 +1533,3 @@ onBeforeUnmount(() => {
   ;
 }
 </style>
-
