@@ -59,7 +59,10 @@
     </v-tabs>
 
     <div class="mt-responsive">
-      <HeuristicsTable v-if="index == 0" @change="emit('change')" />
+      <HeuristicsTable
+        v-if="index == 0"
+        @change="emit('change')"
+      />
       <OptionsTable v-if="index == 1" />
       <WeightTable v-if="index == 2" />
       <HeuristicsSenttings v-if="index == 3" />

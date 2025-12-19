@@ -1,8 +1,14 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="3" :steps="steps" />
+      <StepperHeader
+        :current-step="3"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -11,8 +17,17 @@
       />
 
       <!-- Options Grid -->
-      <v-row justify="center" class="mb-8">
-        <v-col v-for="option in options" :key="option.id" cols="12" md="6" lg="5">
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
+        <v-col
+          v-for="option in options"
+          :key="option.id"
+          cols="12"
+          md="6"
+          lg="5"
+        >
           <SelectableCard
             :selected="selectedOption === option.id"
             :icon="option.icon"
@@ -20,14 +35,26 @@
             :description="option.description"
             :color="option.color"
             :badge="option.recommended ? { text: $t('studyCreation.comingSoon'), color: 'warning' } : null"
-            @click="() => selectOption(option.id)"
             :disabled="option.disabled"
+            @click="() => selectOption(option.id)"
           >
             <template #extra>
-              <v-list class="bg-transparent pl-8 text-start" density="compact">
-                <v-list-item v-for="feature in option.features" :key="feature" class="pa-0 mb-1">
+              <v-list
+                class="bg-transparent pl-8 text-start"
+                density="compact"
+              >
+                <v-list-item
+                  v-for="feature in option.features"
+                  :key="feature"
+                  class="pa-0 mb-1"
+                >
                   <template #prepend>
-                    <v-icon icon="mdi-check" color="success" size="16" class="mr-2" />
+                    <v-icon
+                      icon="mdi-check"
+                      color="success"
+                      size="16"
+                      class="mr-2"
+                    />
                   </template>
                   <v-list-item-title class="text-body-2">
                     {{ feature }}
@@ -40,7 +67,10 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton :label="$t('studyCreation.backToMethods')" @back="goBack" />
+      <BackButton
+        :label="$t('studyCreation.backToMethods')"
+        @back="goBack"
+      />
     </v-container>
   </v-container>
 </template>

@@ -4,14 +4,23 @@
     class="rounded-lg"
     max-width="950"
     @click:outside="$emit('update:dialog', false)"
-  @update:model-value="$emit('update:dialog', $event)"
+    @update:model-value="$emit('update:dialog', $event)"
   >
     <v-card class="rounded-xxl elevation-8">
       <v-card-title class="bg-gradient-primary text-white pa-6 rounded-top-lg d-flex align-center">
-        <v-icon class="mr-3" size="28">mdi-account-plus-outline</v-icon>
+        <v-icon
+          class="mr-3"
+          size="28"
+        >
+          mdi-account-plus-outline
+        </v-icon>
         <div>
-          <h2 class="text-h5 font-weight-bold mb-1">{{ $t('UsabilityCooperators.inviteEvaluator') }}</h2>
-          <p class="text-body-2 mb-0 opacity-90">Send evaluation invitations to participants</p>
+          <h2 class="text-h5 font-weight-bold mb-1">
+            {{ $t('UsabilityCooperators.inviteEvaluator') }}
+          </h2>
+          <p class="text-body-2 mb-0 opacity-90">
+            Send evaluation invitations to participants
+          </p>
         </div>
       </v-card-title>
 
@@ -22,15 +31,24 @@
           validate-on="input"
         >
           <v-row>
-            <v-col cols="12" md="6" class="pr-md-8">
+            <v-col
+              cols="12"
+              md="6"
+              class="pr-md-8"
+            >
               <div class="form-section">
                 <!-- Participant Selection -->
                 <div class="field-group mb-6">
                   <label class="field-label">
-                    <v-icon class="mr-2" size="20">mdi-account-outline</v-icon>
+                    <v-icon
+                      class="mr-2"
+                      size="20"
+                    >mdi-account-outline</v-icon>
                     {{ $t('UsabilityCooperators.email') }}
                   </label>
-                  <p class="field-description mb-3">Select the participant you want to invite to this evaluation session.</p>
+                  <p class="field-description mb-3">
+                    Select the participant you want to invite to this evaluation session.
+                  </p>
                   <v-autocomplete
                     v-model="comboboxModel.userId"
                     :items="filteredUsers"
@@ -49,12 +67,19 @@
                   >
                     <template #selection="{ item }">
                       <div class="d-flex align-center">
-                        <v-avatar size="24" color="primary" class="mr-2">
+                        <v-avatar
+                          size="24"
+                          color="primary"
+                          class="mr-2"
+                        >
                           <span class="text-white text-caption">{{ item.raw.email.charAt(0).toUpperCase() }}</span>
                         </v-avatar>
                         <div class="text-truncate">
                           <span class="text-body-2 font-weight-medium">{{ item.raw.email }}</span>
-                          <span v-if="item.raw.name" class="text-caption text-grey-darken-1 ml-1">({{ item.raw.name }})</span>
+                          <span
+                            v-if="item.raw.name"
+                            class="text-caption text-grey-darken-1 ml-1"
+                          >({{ item.raw.name }})</span>
                         </div>
                       </div>
                     </template>
@@ -67,7 +92,11 @@
                         class="participant-item"
                       >
                         <template #prepend>
-                          <v-avatar size="40" color="primary" class="mr-3">
+                          <v-avatar
+                            size="40"
+                            color="primary"
+                            class="mr-3"
+                          >
                             <span class="text-white font-weight-bold">{{ item.raw.email.charAt(0).toUpperCase() }}</span>
                           </v-avatar>
                         </template>
@@ -87,9 +116,19 @@
                     
                     <template #no-data>
                       <div class="pa-4 text-center">
-                        <v-icon size="48" color="grey-lighten-1" class="mb-2">mdi-account-search</v-icon>
-                        <p class="text-body-2 text-grey-darken-1">No participants found</p>
-                        <p class="text-caption text-grey-darken-2">Try adjusting your search terms</p>
+                        <v-icon
+                          size="48"
+                          color="grey-lighten-1"
+                          class="mb-2"
+                        >
+                          mdi-account-search
+                        </v-icon>
+                        <p class="text-body-2 text-grey-darken-1">
+                          No participants found
+                        </p>
+                        <p class="text-caption text-grey-darken-2">
+                          Try adjusting your search terms
+                        </p>
                       </div>
                     </template>
                   </v-autocomplete>
@@ -98,10 +137,17 @@
                 <!-- Schedule Section -->
                 <div class="field-group mb-6">
                   <div class="field-label">
-                    <v-icon class="mr-2" size="20">mdi-calendar-clock</v-icon>
+                    <v-icon
+                      class="mr-2"
+                      size="20"
+                    >
+                      mdi-calendar-clock
+                    </v-icon>
                     {{ $t('UsabilityCooperators.scheduledAt') }}
                   </div>
-                  <p class="field-description mb-3">Choose the date and time for the evaluation session.</p>
+                  <p class="field-description mb-3">
+                    Choose the date and time for the evaluation session.
+                  </p>
                   
                   <v-row class="mt-2">
                     <v-col cols="7">
@@ -174,10 +220,17 @@
                 <!-- Invitation Message -->
                 <div class="field-group mb-6">
                   <div class="field-label">
-                    <v-icon class="mr-2" size="20">mdi-message-text-outline</v-icon>
+                    <v-icon
+                      class="mr-2"
+                      size="20"
+                    >
+                      mdi-message-text-outline
+                    </v-icon>
                     {{ $t('UsabilityCooperators.inviteMessage') }}
                   </div>
-                  <p class="field-description mb-3">Write a personalized message to include with the invitation.</p>
+                  <p class="field-description mb-3">
+                    Write a personalized message to include with the invitation.
+                  </p>
                   <v-textarea
                     v-model="inviteMessage"
                     color="primary"
@@ -198,17 +251,37 @@
               </div>
             </v-col>
 
-            <v-col cols="12" md="6" class="pl-md-8">
+            <v-col
+              cols="12"
+              md="6"
+              class="pl-md-8"
+            >
               <!-- Preview Section -->
               <div class="preview-section">
                 <div class="preview-header mb-4">
-                  <v-icon class="mr-2" size="24" color="primary">mdi-eye-outline</v-icon>
-                  <h3 class="text-h6 font-weight-bold">Invitation Preview</h3>
+                  <v-icon
+                    class="mr-2"
+                    size="24"
+                    color="primary"
+                  >
+                    mdi-eye-outline
+                  </v-icon>
+                  <h3 class="text-h6 font-weight-bold">
+                    Invitation Preview
+                  </h3>
                 </div>
                 
-                <v-card class="invitation-preview elevation-2" outlined>
+                <v-card
+                  class="invitation-preview elevation-2"
+                  border
+                >
                   <v-card-title class="bg-grey-lighten-4 py-3">
-                    <v-icon class="mr-2" color="primary">mdi-email-outline</v-icon>
+                    <v-icon
+                      class="mr-2"
+                      color="primary"
+                    >
+                      mdi-email-outline
+                    </v-icon>
                     <span class="text-subtitle-1">Evaluation Invitation</span>
                   </v-card-title>
                   

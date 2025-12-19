@@ -16,22 +16,34 @@
     class="mt-2"
   />
 
-  <v-card v-else class="export-surface">
+  <v-card
+    v-else
+    class="export-surface"
+  >
     <v-toolbar
       density="compact"
       color="transparent"
       class="export-toolbar mb-3"
     >
       <v-toolbar-title class="text-h6 d-flex align-center gap-2">
-        <v-icon size="18">mdi-tray-arrow-down</v-icon>
+        <v-icon size="18">
+          mdi-tray-arrow-down
+        </v-icon>
         Export Data
       </v-toolbar-title>
 
       <v-spacer />
 
       <!-- tiny meta chips -->
-      <div v-if="!loading && runs.length" class="flex gap-2 align-center mr-2">
-        <v-chip size="x-small" variant="flat" color="blue-grey-lighten-4">
+      <div
+        v-if="!loading && runs.length"
+        class="flex gap-2 align-center mr-2"
+      >
+        <v-chip
+          size="x-small"
+          variant="flat"
+          color="blue-grey-lighten-4"
+        >
           {{ runs.length }} runs
         </v-chip>
         <v-chip
@@ -74,13 +86,22 @@
     </v-toolbar>
 
     <!-- Controls -->
-    <v-row class="mb-4" dense>
-      <v-col cols="12" md="6">
+    <v-row
+      class="mb-4"
+      dense
+    >
+      <v-col
+        cols="12"
+        md="6"
+      >
         <!-- Scope -->
-        <span class="sr-only" id="scopeLabel">Scope</span>
+        <span
+          id="scopeLabel"
+          class="sr-only"
+        >Scope</span>
         <v-btn-toggle
-          aria-labelledby="scopeLabel"
           v-model="scope"
+          aria-labelledby="scopeLabel"
           mandatory
           density="comfortable"
           class="toggle--responsive seg"
@@ -89,19 +110,33 @@
           color="orange-darken-2"
           :disabled="!runs.length"
         >
-          <v-btn value="latest" prepend-icon="mdi-history">Latest run</v-btn>
-          <v-btn value="all" prepend-icon="mdi-format-list-bulleted"
-            >All runs for this task</v-btn
+          <v-btn
+            value="latest"
+            prepend-icon="mdi-history"
           >
+            Latest run
+          </v-btn>
+          <v-btn
+            value="all"
+            prepend-icon="mdi-format-list-bulleted"
+          >
+            All runs for this task
+          </v-btn>
         </v-btn-toggle>
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <!-- Format -->
-        <span class="sr-only" id="formatLabel">Format</span>
+        <span
+          id="formatLabel"
+          class="sr-only"
+        >Format</span>
         <v-btn-toggle
-          aria-labelledby="formatLabel"
           v-model="format"
+          aria-labelledby="formatLabel"
           mandatory
           density="comfortable"
           class="toggle--responsive seg"
@@ -110,24 +145,40 @@
           color="orange-darken-2"
           :disabled="!runs.length"
         >
-          <v-btn value="csv" prepend-icon="mdi-file-delimited-outline"
-            >CSV</v-btn
+          <v-btn
+            value="csv"
+            prepend-icon="mdi-file-delimited-outline"
           >
-          <v-btn value="json" prepend-icon="mdi-code-json">JSON</v-btn>
-          <v-btn value="pdf" prepend-icon="mdi-file-pdf-box">PDF</v-btn>
+            CSV
+          </v-btn>
+          <v-btn
+            value="json"
+            prepend-icon="mdi-code-json"
+          >
+            JSON
+          </v-btn>
+          <v-btn
+            value="pdf"
+            prepend-icon="mdi-file-pdf-box"
+          >
+            PDF
+          </v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
 
     <v-card-actions class="export-actions">
-      <div v-if="runs.length" class="text-caption text-medium-emphasis mr-4">
+      <div
+        v-if="runs.length"
+        class="text-caption text-medium-emphasis mr-4"
+      >
         {{ selectionSummary }} • {{ runs.length }} run{{
           runs.length === 1 ? '' : 's'
         }}
       </div>
 
       <v-btn
-      variant="elevated"
+        variant="elevated"
         color="orange"
         class="text-white"
         :disabled="loading || runs.length === 0"
@@ -146,27 +197,47 @@
   >
     {{ snackbar.text }}
     <template #actions>
-      <v-btn color="white" variant="text" @click="snackbar.visible = false"
-        >Close</v-btn
+      <v-btn
+        color="white"
+        variant="text"
+        @click="snackbar.visible = false"
       >
+        Close
+      </v-btn>
     </template>
   </v-snackbar>
 
   <!-- PDF Preview + Editor -->
-  <v-dialog v-model="showPreview" max-width="1000">
+  <v-dialog
+    v-model="showPreview"
+    max-width="1000"
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
         <span class="text-subtitle-1">PDF Preview</span>
         <div class="d-flex gap-2">
-          <v-btn variant="text" @click="showPreview = false">Close</v-btn>
-          <v-btn color="primary" @click="downloadPdf">Download PDF</v-btn>
+          <v-btn
+            variant="text"
+            @click="showPreview = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="downloadPdf"
+          >
+            Download PDF
+          </v-btn>
         </div>
       </v-card-title>
 
       <v-card-text>
         <v-row>
           <!-- Editor side -->
-          <v-col cols="12" md="5">
+          <v-col
+            cols="12"
+            md="5"
+          >
             <v-text-field
               v-model="pdfTitle"
               label="Report Title"
@@ -205,16 +276,21 @@
             </div>
             <QuillEditor
               v-model:content="pdfSummaryHtml"
-              contentType="html"
+              content-type="html"
               theme="snow"
               style="height: 220px"
             />
           </v-col>
 
           <!-- Live preview side -->
-          <v-col cols="12" md="7">
+          <v-col
+            cols="12"
+            md="7"
+          >
             <div class="pdf-preview">
-              <h2 class="m-0">{{ pdfTitle }}</h2>
+              <h2 class="m-0">
+                {{ pdfTitle }}
+              </h2>
               <div class="mt-1 text-caption">
                 <strong>Date:</strong> {{ pdfMeta.date }} &nbsp;|&nbsp;
                 <strong>Moderator:</strong>
@@ -222,9 +298,16 @@
                 <strong>User:</strong> {{ pdfMeta.user || '-' }}
               </div>
 
-              <div class="mt-4" v-html="pdfSummaryHtml"></div>
+              <div
+                class="mt-4"
+                v-html="pdfSummaryHtml"
+              />
 
-              <div v-for="(run, i) in previewRuns" :key="run.id" class="mt-6">
+              <div
+                v-for="(run, i) in previewRuns"
+                :key="run.id"
+                class="mt-6"
+              >
                 <h3 class="text-subtitle-2 m-0">
                   Run {{ i + 1 }} · {{ run.provider }}/{{ run.model }} ·
                   {{ formatDate(run.createdAt) }}
@@ -239,7 +322,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="row in buildPreviewRows(run)" :key="row.key">
+                    <tr
+                      v-for="row in buildPreviewRows(run)"
+                      :key="row.key"
+                    >
                       <td>{{ row.role }}</td>
                       <td>{{ row.start }}</td>
                       <td>{{ row.end }}</td>
@@ -255,98 +341,6 @@
     </v-card>
   </v-dialog>
 </template>
-
-<style scoped>
-.export-surface {
-  display: flex;
-  flex-direction: column;
-}
-.export-actions {
-  justify-content:flex-end;
-  gap: 8px;
-}
-@media (max-width: 960px) {
-  .export-actions {
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  .export-actions .v-btn {
-    width: 100%;
-  }
-}
-
-.toggle--responsive {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.toggle--responsive .v-btn {
-  flex: 1 1 220px;
-  min-width: 0;
-}
-
-.actions .v-btn {
-  min-width: 140px;
-}
-@media (max-width: 960px) {
-  .actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .actions .v-btn {
-    width: 100%;
-  }
-}
-
-/* PDF dialog: prevent overflow on small screens */
-.scroll-panel {
-  max-height: 60vh;
-  overflow: auto;
-}
-
-/* Tables: allow horizontal scroll on mobile */
-.scroll-x {
-  display: block;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.scroll-x table {
-  width: 100%;
-}
-
-.pdf-preview {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 20px 30px;
-}
-.seg-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-.seg-table th,
-.seg-table td {
-  border: 1px solid #e6e6e6;
-  padding: 6px 8px;
-  vertical-align: top;
-}
-.seg-table thead th {
-  background: #fff7ea;
-}
-.sr-only {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-</style>
 
 <script setup>
 import { ref, watch, computed } from 'vue'
@@ -920,3 +914,95 @@ function getImageSize(dataUrl) {
   })
 }
 </script>
+
+<style scoped>
+.export-surface {
+  display: flex;
+  flex-direction: column;
+}
+.export-actions {
+  justify-content:flex-end;
+  gap: 8px;
+}
+@media (max-width: 960px) {
+  .export-actions {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .export-actions .v-btn {
+    width: 100%;
+  }
+}
+
+.toggle--responsive {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toggle--responsive .v-btn {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.actions .v-btn {
+  min-width: 140px;
+}
+@media (max-width: 960px) {
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .actions .v-btn {
+    width: 100%;
+  }
+}
+
+/* PDF dialog: prevent overflow on small screens */
+.scroll-panel {
+  max-height: 60vh;
+  overflow: auto;
+}
+
+/* Tables: allow horizontal scroll on mobile */
+.scroll-x {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-x table {
+  width: 100%;
+}
+
+.pdf-preview {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px 30px;
+}
+.seg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.seg-table th,
+.seg-table td {
+  border: 1px solid #e6e6e6;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+.seg-table thead th {
+  background: #fff7ea;
+}
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>

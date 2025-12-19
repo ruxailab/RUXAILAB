@@ -14,7 +14,13 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h5 pa-6">
-            <v-icon left class="mr-3" color="primary">mdi-account-multiple</v-icon>
+            <v-icon
+              start
+              class="mr-3"
+              color="primary"
+            >
+              mdi-account-multiple
+            </v-icon>
             Select a User to View Assessment Results
           </v-card-title>
           <v-card-text class="pa-6">
@@ -25,24 +31,36 @@
               variant="outlined"
               class="mb-4"
             >
-              <div class="text-subtitle-2 mb-2">Information</div>
+              <div class="text-subtitle-2 mb-2">
+                Information
+              </div>
               <div><strong>Found User IDs:</strong> {{ userIds.join(', ') || 'None' }}</div>
               <div><strong>User Details:</strong> {{ userDetails.length }} users loaded</div>
             </v-alert>
             <!-- Loading overlay while fetching users -->
-            <div v-if="isLoadingUsers" class="text-center py-8">
+            <div
+              v-if="isLoadingUsers"
+              class="text-center py-8"
+            >
               <v-progress-circular
                 indeterminate
                 color="primary"
                 size="48"
                 class="mb-4"
-              ></v-progress-circular>
-              <div class="text-h6 mb-2">Loading Users</div>
-              <div class="text-body-2 text-grey">Fetching assessment participants...</div>
+              />
+              <div class="text-h6 mb-2">
+                Loading Users
+              </div>
+              <div class="text-body-2 text-grey">
+                Fetching assessment participants...
+              </div>
             </div>
 
             <!-- User table (only show when not loading) -->
-            <v-card v-if="!isLoadingUsers" elevation="2">
+            <v-card
+              v-if="!isLoadingUsers"
+              elevation="2"
+            >
               <v-data-table
                 :headers="userHeaders"
                 :items="userDetails"
@@ -56,13 +74,21 @@
               >
                 <!-- Email/User Info Column -->
                 <template #item.email="{ item }">
-                  <div class="d-flex align-center py-2 cursor-pointer" @click="selectUser(item)">
+                  <div
+                    class="d-flex align-center py-2 cursor-pointer"
+                    @click="selectUser(item)"
+                  >
                     <v-avatar
                       size="40"
                       color="primary"
                       class="me-3"
                     >
-                      <v-icon size="20" color="white">mdi-account</v-icon>
+                      <v-icon
+                        size="20"
+                        color="white"
+                      >
+                        mdi-account
+                      </v-icon>
                     </v-avatar>
                     <div>
                       <div class="font-weight-medium text-body-1 mb-0">
@@ -82,7 +108,12 @@
                     size="small"
                     variant="tonal"
                   >
-                    <v-icon start size="16">mdi-check-circle</v-icon>
+                    <v-icon
+                      start
+                      size="16"
+                    >
+                      mdi-check-circle
+                    </v-icon>
                     Assessment Available
                   </v-chip>
                 </template>
@@ -142,8 +173,12 @@
                 Back to User Selection
               </v-btn>
               <div>
-                <div class="text-h6">{{ getDisplayName(selectedUser?.email) }}</div>
-                <div class="text-body-2 text-grey">{{ selectedUser?.email }}</div>
+                <div class="text-h6">
+                  {{ getDisplayName(selectedUser?.email) }}
+                </div>
+                <div class="text-body-2 text-grey">
+                  {{ selectedUser?.email }}
+                </div>
               </div>
             </div>
             <div class="d-flex ga-2 align-center">
@@ -155,8 +190,13 @@
               >
                 View in Preview Mode
               </v-btn>
-              <v-avatar color="primary" size="40">
-                <v-icon color="white">mdi-account</v-icon>
+              <v-avatar
+                color="primary"
+                size="40"
+              >
+                <v-icon color="white">
+                  mdi-account
+                </v-icon>
               </v-avatar>
             </div>
           </v-card-text>
@@ -333,79 +373,79 @@
       v-model="notesDialog.show"
       max-width="800px"
     >
-    <v-card>
-      <v-card-title class="d-flex justify-space-between align-center">
-        <span>Notes for {{ notesDialog.ruleId }} -
-          {{ notesDialog.ruleTitle }}</span>
-        <v-btn
-          icon
-          @click="notesDialog.show = false"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-      <v-card-text class="pt-4">
-        <v-list>
-          <v-list-item
-            v-for="(note, index) in notesDialog.notes"
-            :key="index"
-            class="mb-4"
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>Notes for {{ notesDialog.ruleId }} -
+            {{ notesDialog.ruleTitle }}</span>
+          <v-btn
+            icon
+            @click="notesDialog.show = false"
           >
-            <template #prepend>
-              <v-avatar
-                color="primary"
-                size="40"
-                class="mr-4"
-              >
-                <span class="text-white">{{ index + 1 }}</span>
-              </v-avatar>
-            </template>
-            <v-list-item-title class="text-h6 mb-2">
-              Note {{ index + 1 }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="text-body-1 mb-2">
-              {{ note.text }}
-            </v-list-item-subtitle>
-            <v-img
-              v-if="note.imagePreview"
-              :src="note.imagePreview"
-              max-height="300"
-              cover
-              class="mt-2 mb-2 rounded"
-            />
-            <v-chip
-              v-if="note.imageName"
-              size="small"
-              color="grey-lighten-2"
-              class="mt-2"
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pt-4">
+          <v-list>
+            <v-list-item
+              v-for="(note, index) in notesDialog.notes"
+              :key="index"
+              class="mb-4"
             >
-              <v-icon
+              <template #prepend>
+                <v-avatar
+                  color="primary"
+                  size="40"
+                  class="mr-4"
+                >
+                  <span class="text-white">{{ index + 1 }}</span>
+                </v-avatar>
+              </template>
+              <v-list-item-title class="text-h6 mb-2">
+                Note {{ index + 1 }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="text-body-1 mb-2">
+                {{ note.text }}
+              </v-list-item-subtitle>
+              <v-img
+                v-if="note.imagePreview"
+                :src="note.imagePreview"
+                max-height="300"
+                cover
+                class="mt-2 mb-2 rounded"
+              />
+              <v-chip
+                v-if="note.imageName"
                 size="small"
-                class="mr-1"
+                color="grey-lighten-2"
+                class="mt-2"
               >
-                mdi-image
-              </v-icon>
-              {{ note.imageName }}
-            </v-chip>
-          </v-list-item>
-          <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
-            <v-list-item-title class="text-grey">
-              No notes available for this rule.
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          color="primary"
-          @click="notesDialog.show = false"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+                <v-icon
+                  size="small"
+                  class="mr-1"
+                >
+                  mdi-image
+                </v-icon>
+                {{ note.imageName }}
+              </v-chip>
+            </v-list-item>
+            <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
+              <v-list-item-title class="text-grey">
+                No notes available for this rule.
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            @click="notesDialog.show = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </PageWrapper>
 </template>
 

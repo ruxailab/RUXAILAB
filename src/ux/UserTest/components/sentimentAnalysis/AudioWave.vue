@@ -1,28 +1,56 @@
 <template>
   <div class="waveform-container">
-    <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">Loading</div>
+    <v-overlay
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
+      <div class="white-text mt-3">
+        Loading
+      </div>
     </v-overlay>
 
     <!-- Container da waveform -->
     <div ref="waveform" />
 
-    <v-row align="center" no-gutters class="controls-row">
+    <v-row
+      align="center"
+      no-gutters
+      class="controls-row"
+    >
       <v-col cols="auto">
-        <v-btn icon @click="playPause">
+        <v-btn
+          icon
+          @click="playPause"
+        >
           <v-icon>{{ playing ? 'mdi-pause' : 'mdi-play' }}</v-icon>
         </v-btn>
       </v-col>
 
       <v-col cols="auto">
-        <v-btn @click="changeSpeed">{{ speedText }}</v-btn>
+        <v-btn @click="changeSpeed">
+          {{ speedText }}
+        </v-btn>
       </v-col>
 
-      <v-col cols="auto" class="volume-col">
+      <v-col
+        cols="auto"
+        class="volume-col"
+      >
         <v-icon>mdi-volume-high</v-icon>
-        <v-slider v-model="volume" min="0" max="1" step="0.01" hide-details class="volume-slider"
-          @update:model-value="setVolume" />
+        <v-slider
+          v-model="volume"
+          min="0"
+          max="1"
+          step="0.01"
+          hide-details
+          class="volume-slider"
+          @update:model-value="setVolume"
+        />
       </v-col>
     </v-row>
   </div>

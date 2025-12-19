@@ -1,16 +1,18 @@
 <template>
-  
-    <!-- Manager-style Header (uses same image as ManagerView) -->
-    <div class="h-64 w-full">
-      <ManagerBanner />
-    </div>
-    <v-container class="card-container pt-6 pb-10">
-      <p class="presentation-text text-center text-md-left mb-4">
-        {{ $t('accessibility.description') }}
-      </p>
-      <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
-    </v-container>
-  
+  <!-- Manager-style Header (uses same image as ManagerView) -->
+  <div class="h-64 w-full">
+    <ManagerBanner />
+  </div>
+  <v-container class="card-container pt-6 pb-10">
+    <p class="presentation-text text-center text-md-left mb-4">
+      {{ $t('accessibility.description') }}
+    </p>
+    <CardsManager
+      :cards="managerCards"
+      :per-row="mdAndUp ? 3 : 1"
+      @click="go"
+    />
+  </v-container>
 </template>
 
 <script setup>

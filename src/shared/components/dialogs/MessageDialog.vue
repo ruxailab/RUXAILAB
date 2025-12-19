@@ -1,31 +1,62 @@
 <template>
-    <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" max-width="500">
-        <v-card class="rounded-lg">
-            <v-card-title style="color: white;" class="bg-primary rounded-top-lg">
-                <v-icon color="white" class="mr-2">
-                    mdi-email
-                </v-icon>
-                {{ title || 'Send a Message' }}
-            </v-card-title>
-            <v-card-text>
-                <v-text-field v-model="messageTitle" required :label="titleLabel || 'Title'"
-                    :hint="titleHint || 'Type a title for your message'" variant="outlined" class="rounded-lg mt-4" />
-                <v-textarea v-model="messageContent" required :label="contentLabel || 'Content'"
-                    :hint="contentHint || 'Type the content of your message'" variant="outlined" class="rounded-lg" />
-            </v-card-text>
-            <v-divider />
-            <v-card-actions>
-                <v-spacer />
-                <v-btn color="red" variant="outlined" class="rounded-lg" @click="onCancel">
-                    {{ cancelText || 'Cancel' }}
-                </v-btn>
-                <v-btn color="orange" class="rounded-lg" :disabled="!messageTitle.trim() || !messageContent.trim()"
-                    @click="onSend">
-                    {{ sendText || 'Send' }}
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+  <v-dialog
+    :model-value="show"
+    max-width="500"
+    @update:model-value="$emit('update:show', $event)"
+  >
+    <v-card class="rounded-lg">
+      <v-card-title
+        style="color: white;"
+        class="bg-primary rounded-top-lg"
+      >
+        <v-icon
+          color="white"
+          class="mr-2"
+        >
+          mdi-email
+        </v-icon>
+        {{ title || 'Send a Message' }}
+      </v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="messageTitle"
+          required
+          :label="titleLabel || 'Title'"
+          :hint="titleHint || 'Type a title for your message'"
+          variant="outlined"
+          class="rounded-lg mt-4"
+        />
+        <v-textarea
+          v-model="messageContent"
+          required
+          :label="contentLabel || 'Content'"
+          :hint="contentHint || 'Type the content of your message'"
+          variant="outlined"
+          class="rounded-lg"
+        />
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          color="red"
+          variant="outlined"
+          class="rounded-lg"
+          @click="onCancel"
+        >
+          {{ cancelText || 'Cancel' }}
+        </v-btn>
+        <v-btn
+          color="orange"
+          class="rounded-lg"
+          :disabled="!messageTitle.trim() || !messageContent.trim()"
+          @click="onSend"
+        >
+          {{ sendText || 'Send' }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>

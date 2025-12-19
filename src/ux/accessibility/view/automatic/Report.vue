@@ -5,7 +5,7 @@
     loading-text="Loading WCAG Data..."
     :side-gap="false"
   >
-  <template #subtitle>
+    <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Review detailed accessibility issues and success criteria based on WCAG guidelines.
       </p>
@@ -123,8 +123,15 @@
               Accessibility Report
             </v-card-title>
             <v-card-text class="py-1">
-              <v-row class="ma-0" dense>
-                <v-col cols="12" md="6" class="py-0">
+              <v-row
+                class="ma-0"
+                dense
+              >
+                <v-col
+                  cols="12"
+                  md="6"
+                  class="py-0"
+                >
                   <v-chip
                     prepend-icon="mdi-link"
                     variant="outlined"
@@ -135,7 +142,11 @@
                     {{ report.ReportUrl || 'No URL' }}
                   </v-chip>
                 </v-col>
-                <v-col cols="12" md="6" class="py-0">
+                <v-col
+                  cols="12"
+                  md="6"
+                  class="py-0"
+                >
                   <v-chip
                     prepend-icon="mdi-calendar"
                     variant="outlined"
@@ -251,7 +262,10 @@
                       </li>
                     </ul>
                   </div>
-                  <div v-else class="text-body-2 text-grey-darken-1">
+                  <div
+                    v-else
+                    class="text-body-2 text-grey-darken-1"
+                  >
                     No specific criteria defined for this rule.
                   </div>
                 </v-card-text>
@@ -261,12 +275,16 @@
             <!-- Accessibility Issues Section -->
             <div class="mb-4">
               <h2 class="text-h6 font-weight-bold mb-2 d-flex align-center">
-                <v-icon icon="mdi-alert-circle" class="mr-2" size="small" />
+                <v-icon
+                  icon="mdi-alert-circle"
+                  class="mr-2"
+                  size="small"
+                />
                 Accessibility Issues
                 <v-chip
                   v-if="currentRuleIssueCounts.total > 0"
                   :color="currentRuleIssueCounts.errors > 0 ? 'error' :
-                          currentRuleIssueCounts.warnings > 0 ? 'warning' : 'info'"
+                    currentRuleIssueCounts.warnings > 0 ? 'warning' : 'info'"
                   size="small"
                   class="ml-2"
                 >
@@ -275,8 +293,15 @@
               </h2>
 
               <!-- Issue Summary Cards -->
-              <v-row class="mb-3" dense v-if="currentRuleIssueCounts.total > 0">
-                <v-col cols="4" class="py-1">
+              <v-row
+                v-if="currentRuleIssueCounts.total > 0"
+                class="mb-3"
+                dense
+              >
+                <v-col
+                  cols="4"
+                  class="py-1"
+                >
                   <v-card
                     :color="currentRuleIssueCounts.errors > 0 ? 'error' : 'grey-lighten-3'"
                     :variant="currentRuleIssueCounts.errors > 0 ? 'elevated' : 'outlined'"
@@ -286,11 +311,16 @@
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.errors }}
                       </div>
-                      <div class="text-caption">Errors</div>
+                      <div class="text-caption">
+                        Errors
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col cols="4" class="py-1">
+                <v-col
+                  cols="4"
+                  class="py-1"
+                >
                   <v-card
                     :color="currentRuleIssueCounts.warnings > 0 ? 'warning' : 'grey-lighten-3'"
                     :variant="currentRuleIssueCounts.warnings > 0 ? 'elevated' : 'outlined'"
@@ -300,11 +330,16 @@
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.warnings }}
                       </div>
-                      <div class="text-caption">Warnings</div>
+                      <div class="text-caption">
+                        Warnings
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col cols="4" class="py-1">
+                <v-col
+                  cols="4"
+                  class="py-1"
+                >
                   <v-card
                     :color="currentRuleIssueCounts.notices > 0 ? 'info' : 'grey-lighten-3'"
                     :variant="currentRuleIssueCounts.notices > 0 ? 'elevated' : 'outlined'"
@@ -314,7 +349,9 @@
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.notices }}
                       </div>
-                      <div class="text-caption">Notices</div>
+                      <div class="text-caption">
+                        Notices
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -407,7 +444,9 @@
                     size="32"
                     class="mb-2"
                   />
-                  <div class="text-body-2">Loading accessibility report...</div>
+                  <div class="text-body-2">
+                    Loading accessibility report...
+                  </div>
                 </v-card-text>
               </v-card>
 
@@ -436,11 +475,17 @@
             </div>
 
             <!-- Issue Details Section -->
-            <div v-if="selectedIssue !== null && currentRuleIssues[selectedIssue]" class="mb-4">
+            <div
+              v-if="selectedIssue !== null && currentRuleIssues[selectedIssue]"
+              class="mb-4"
+            >
               <h2 class="text-h6 font-weight-bold mb-2">
                 Issue Details
               </h2>
-              <v-card variant="outlined" class="mb-2">
+              <v-card
+                variant="outlined"
+                class="mb-2"
+              >
                 <v-card-text class="pa-3">
                   <v-list density="compact">
                     <v-list-item>
@@ -530,8 +575,8 @@
                   variant="outlined"
                   size="small"
                   prepend-icon="mdi-chevron-left"
-                  @click="prevRule"
                   :disabled="!hasPrevRule"
+                  @click="prevRule"
                 >
                   Previous
                 </v-btn>
@@ -542,8 +587,8 @@
                   variant="outlined"
                   size="small"
                   append-icon="mdi-chevron-right"
-                  @click="nextRule"
                   :disabled="!hasNextRule"
+                  @click="nextRule"
                 >
                   Next
                 </v-btn>
@@ -626,7 +671,7 @@
                     <v-chip
                       v-if="getRuleIssueCount(rule.id) > 0"
                       :color="getRuleIssueCount(rule.id, 'error') > 0 ? 'error' :
-                             getRuleIssueCount(rule.id, 'warning') > 0 ? 'warning' : 'info'"
+                        getRuleIssueCount(rule.id, 'warning') > 0 ? 'warning' : 'info'"
                       size="x-small"
                       class="ml-1"
                     >

@@ -60,7 +60,7 @@
         cols="12"
         lg="4"
       >
-        <NextSession  :next-session="nextSession" />
+        <NextSession :next-session="nextSession" />
       </v-col>
     </v-row>
 

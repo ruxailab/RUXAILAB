@@ -8,11 +8,20 @@
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center">
           <div class="icon-container mr-3">
-            <v-icon color="white" size="24">mdi-format-list-checks</v-icon>
+            <v-icon
+              color="white"
+              size="24"
+            >
+              mdi-format-list-checks
+            </v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">Tasks Overview</h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">Task structure and completion</p>
+            <h3 class="text-h6 text-white mb-0">
+              Tasks Overview
+            </h3>
+            <p class="text-body-2 text-white opacity-90 mb-0">
+              Task structure and completion
+            </p>
           </div>
         </div>
         <v-chip
@@ -21,16 +30,31 @@
           variant="outlined"
           class="border-white text-white"
         >
-          <v-icon start size="16">mdi-flask</v-icon>
+          <v-icon
+            start
+            size="16"
+          >
+            mdi-flask
+          </v-icon>
           Beta
         </v-chip>
       </div>
     </div>
     
     <v-card-text class="pa-4">
-      <div v-if="!hasUserTasks" class="text-center text-medium-emphasis py-8">
-        <v-icon size="48" color="grey-lighten-1">mdi-clipboard-text-outline</v-icon>
-        <div class="text-body-2 mt-2">No tasks configured</div>
+      <div
+        v-if="!hasUserTasks"
+        class="text-center text-medium-emphasis py-8"
+      >
+        <v-icon
+          size="48"
+          color="grey-lighten-1"
+        >
+          mdi-clipboard-text-outline
+        </v-icon>
+        <div class="text-body-2 mt-2">
+          No tasks configured
+        </div>
       </div>
       
       <div v-else>
@@ -50,7 +74,11 @@
         <div class="mb-3">
           <div class="d-flex justify-space-between align-center">
             <span class="text-body-2">Total Tasks</span>
-            <v-chip size="small" color="primary" variant="outlined">
+            <v-chip
+              size="small"
+              color="primary"
+              variant="outlined"
+            >
               {{ totalTasks }}
             </v-chip>
           </div>
@@ -59,7 +87,11 @@
         <div class="mb-3">
           <div class="d-flex justify-space-between align-center">
             <span class="text-body-2">Avg. Task Duration</span>
-            <v-chip size="small" color="info" variant="outlined">
+            <v-chip
+              size="small"
+              color="info"
+              variant="outlined"
+            >
               {{ averageTaskDuration }}
             </v-chip>
           </div>
@@ -68,15 +100,24 @@
         <div class="mb-3">
           <div class="d-flex justify-space-between align-center">
             <span class="text-body-2">Success Rate</span>
-            <v-chip size="small" color="success" variant="outlined">
+            <v-chip
+              size="small"
+              color="success"
+              variant="outlined"
+            >
               {{ taskSuccessRate }}%
             </v-chip>
           </div>
         </div>
         
         <!-- Task Types Summary -->
-        <div v-if="taskTypes.length > 0" class="mt-4">
-          <div class="text-caption text-medium-emphasis mb-2">Task Types</div>
+        <div
+          v-if="taskTypes.length > 0"
+          class="mt-4"
+        >
+          <div class="text-caption text-medium-emphasis mb-2">
+            Task Types
+          </div>
           <div class="d-flex flex-wrap gap-1">
             <v-chip
               v-for="type in taskTypes"

@@ -1,8 +1,14 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="2" :steps="steps" />
+      <StepperHeader
+        :current-step="2"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -11,8 +17,17 @@
       />
 
       <!-- Methods Grid -->
-      <v-row justify="center" class="mb-8">
-        <v-col v-for="method in availableMethods" :key="method.id" cols="12" md="6" lg="5">
+      <v-row
+        justify="center"
+        class="mb-8"
+      >
+        <v-col
+          v-for="method in availableMethods"
+          :key="method.id"
+          cols="12"
+          md="6"
+          lg="5"
+        >
           <SelectableCard
             :selected="selectedMethod === method.id"
             :icon="method.icon"
@@ -28,7 +43,10 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton :label="$t('studyCreation.backToCategories')" @back="goBack" />
+      <BackButton
+        :label="$t('studyCreation.backToCategories')"
+        @back="goBack"
+      />
     </v-container>
   </v-container>
 </template>

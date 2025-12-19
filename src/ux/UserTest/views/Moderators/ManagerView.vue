@@ -11,7 +11,6 @@
         v-if="test"
         class="dashboard-container"
       >
-      
         <!-- Main Dashboard Layout: Two Columns -->
         <v-row class="dashboard-main-row">
           <!-- Left Column: Dashboard Header -->
@@ -19,13 +18,17 @@
             cols="12"
             lg="6"
           >
-
             <!-- Dashboard Header with Gradient -->
             <div class="dashboard-header gradient-header">
               <div class="header-content">
                 <div class="d-flex align-center mb-3">
                   <div class="header-icon-container mr-3">
-                    <v-icon color="white" size="28">mdi-chart-box-outline</v-icon>
+                    <v-icon
+                      color="white"
+                      size="28"
+                    >
+                      mdi-chart-box-outline
+                    </v-icon>
                   </div>
                   <div class="flex-grow-1">
                     <h1 class="dashboard-title text-white mb-0">
@@ -88,7 +91,9 @@
         <!-- Management Modules Section (Full Width) -->
         <div class="section-header">
           <h2 class="section-title">
-            <v-icon class="section-icon">mdi-view-dashboard</v-icon>
+            <v-icon class="section-icon">
+              mdi-view-dashboard
+            </v-icon>
             Management Modules
           </h2>
           <p class="section-description">

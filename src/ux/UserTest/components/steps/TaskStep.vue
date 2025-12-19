@@ -39,12 +39,22 @@
                 <!-- Recording Features Grid -->
                 <div class="recording-features-grid mb-4">
                   <!-- Screen Recording -->
-                  <div v-if="task?.hasScreenRecord" class="recording-feature-card">
+                  <div
+                    v-if="task?.hasScreenRecord"
+                    class="recording-feature-card"
+                  >
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">mdi-monitor-screenshot</v-icon>
+                      <v-icon
+                        size="48"
+                        color="secondary"
+                      >
+                        mdi-monitor-screenshot
+                      </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Screen Record</h4>
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                        Screen Record
+                      </h4>
                       <p class="text-body-2 text-grey-darken-3">
                         Captures clicks, scrolling, and interactions to analyze user behavior.
                       </p>
@@ -52,12 +62,22 @@
                   </div>
 
                   <!-- Camera Recording -->
-                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
+                  <div
+                    v-if="task?.hasCamRecord"
+                    class="recording-feature-card"
+                  >
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">mdi-camera</v-icon>
+                      <v-icon
+                        size="48"
+                        color="secondary"
+                      >
+                        mdi-camera
+                      </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Camera</h4>
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                        Camera
+                      </h4>
                       <p class="text-body-2 text-grey-darken-3">
                         Records facial expressions and reactions to understand user emotions.
                       </p>
@@ -65,12 +85,22 @@
                   </div>
 
                   <!-- Audio Recording -->
-                  <div v-if="task?.hasAudioRecord" class="recording-feature-card">
+                  <div
+                    v-if="task?.hasAudioRecord"
+                    class="recording-feature-card"
+                  >
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">mdi-microphone</v-icon>
+                      <v-icon
+                        size="48"
+                        color="secondary"
+                      >
+                        mdi-microphone
+                      </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Audio Record</h4>
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                        Audio Record
+                      </h4>
                       <p class="text-body-2 text-grey-darken-3">
                         Captures verbal feedback and think-aloud protocols during the task.
                       </p>
@@ -78,12 +108,22 @@
                   </div>
 
                   <!-- Eye Tracking -->
-                  <div v-if="task?.hasEye" class="recording-feature-card">
+                  <div
+                    v-if="task?.hasEye"
+                    class="recording-feature-card"
+                  >
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">mdi-eye</v-icon>
+                      <v-icon
+                        size="48"
+                        color="secondary"
+                      >
+                        mdi-eye
+                      </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">Eye Tracker</h4>
+                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                        Eye Tracker
+                      </h4>
                       <p class="text-body-2 text-grey-darken-3">
                         Tracks visual attention patterns and gaze behavior during the task.
                       </p>
@@ -150,24 +190,22 @@
             class="mb-4"
           >
             <v-card-text class="pa-3">
-           
-              
               <!-- Two Column Layout -->
               <v-row>
                 <!-- Left Column: Task Description -->
                 <v-col cols="8">
-                     <div class="d-flex align-center mb-3">
-                <v-icon 
-                  color="primary" 
-                  size="20" 
-                  class="mr-2"
-                >
-                  mdi-clipboard-text-outline
-                </v-icon>
-                <span class="text-subtitle-2 font-weight-bold text-primary">
-                  Task Description
-                </span>
-              </div>
+                  <div class="d-flex align-center mb-3">
+                    <v-icon 
+                      color="primary" 
+                      size="20" 
+                      class="mr-2"
+                    >
+                      mdi-clipboard-text-outline
+                    </v-icon>
+                    <span class="text-subtitle-2 font-weight-bold text-primary">
+                      Task Description
+                    </span>
+                  </div>
                   <div 
                     class="rich-text text-body-1" 
                     v-html="task?.taskDescription || taskDescription"
@@ -198,7 +236,10 @@
                             Need Help?
                           </span>
                         </div>
-                        <p class="text-caption text-grey-darken-3 mb-2" style="font-size: 11px; line-height: 1.3;">
+                        <p
+                          class="text-caption text-grey-darken-3 mb-2"
+                          style="font-size: 11px; line-height: 1.3;"
+                        >
                           Having trouble? Get helpful guidance to complete this task.
                         </p>
                         <TipButton :task="task" />
@@ -226,7 +267,10 @@
                             External Tool
                           </span>
                         </div>
-                        <p class="text-caption text-grey-darken-3 mb-2" style=" line-height: 1.3;">
+                        <p
+                          class="text-caption text-grey-darken-3 mb-2"
+                          style=" line-height: 1.3;"
+                        >
                           Accidentally closed the tool window? Reopen it here.
                         </p>
                         <v-btn
@@ -303,7 +347,7 @@
                 class="ml-2"
                 @click="handleShowPostForm(true)"
               >
-              Task completed
+                Task completed
               </v-btn>
             </v-col>
           </v-row>
