@@ -29,7 +29,7 @@ export function useDeleteAccount() {
     const signOut = async () => {
         try {
             await store.dispatch('logout');
-            window.location.href = '/';
+            globalThis.location.href = '/';
         } catch (error) {
             console.log(error);
         }
