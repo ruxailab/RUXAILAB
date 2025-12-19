@@ -549,7 +549,7 @@ const datePickerModel = computed({
   },
   set(newDate) {
     if (newDate && object.value) {
-      const formattedDate = newDate.toISOString().split('T')[0];
+      const formattedDate = newDate.toLocaleDateString('sv-SE');
       object.value.endDate = formattedDate;
       store.commit('SET_LOCAL_CHANGES', true);
     }
