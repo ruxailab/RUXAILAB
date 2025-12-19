@@ -44,8 +44,8 @@
             <TestConfigForm
               :welcome="welcomeMessage"
               :final-message="finalMessage"
-              @update:welcome-message="updateField('welcomeMessage', $event)"
-              @update:final-message="updateField('finalMessage', $event)"
+              @update:welcome-message="welcomeMessage = $event; change = true"
+              @update:final-message="finalMessage = $event; change = true"
             />
           </div>
 
