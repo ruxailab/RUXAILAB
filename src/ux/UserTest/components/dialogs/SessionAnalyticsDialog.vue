@@ -44,6 +44,7 @@
                   :src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
                   type="video/mp4"
                 >
+                <track kind="captions">
               </video>
             </div>
 
@@ -63,6 +64,7 @@
                   :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen"
                   type="video/mp4"
                 >
+                <track kind="captions">
               </video>
 
               <EyeTrackingOverlay

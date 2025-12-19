@@ -10,7 +10,7 @@
         class="spin-loader"
         width="60"
         height="60"
-        contain
+        cover
       />
     </template>
     <template v-else>
