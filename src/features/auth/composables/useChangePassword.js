@@ -1,13 +1,12 @@
 import { ref, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import {
     getAuth,
     updatePassword,
 } from 'firebase/auth';
+import i18n from '@/app/plugins/i18n';
 
 export function useChangePassword() {
-    const { t } = useI18n();
     const toast = useToast();
 
     const newPassword = ref('');
@@ -22,15 +21,15 @@ export function useChangePassword() {
     };
 
     const passwordRules = computed(() => [
-        (v) => !!v || t('profile.passwordRequired'),
-        (v) => v.length >= 8 || t('profile.passwordMinLength'),
-        (v) => /[A-Z]/.test(v) || t('profile.passwordUppercase'),
-        (v) => hasSpecialChar(v) || t('profile.passwordSymbol'),
+        (v) => !!v || i18n.global.t('profile.passwordRequired'),
+        (v) => (v && v.length >= 8) || i18n.global.t('profile.passwordMinLength'),
+        (v) => (v && /[A-Z]/.test(v)) || i18n.global.t('profile.passwordUppercase'),
+        (v) => (v && hasSpecialChar(v)) || i18n.global.t('profile.passwordSymbol'),
     ]);
 
     const confirmPasswordRules = computed(() => [
-        (v) => !!v || t('profile.confirmPasswordRequired'),
-        (v) => v === newPassword.value || t('profile.passwordsMatch'),
+        (v) => !!v || i18n.global.t('profile.confirmPasswordRequired'),
+        (v) => v === newPassword.value || i18n.global.t('profile.passwordsMatch'),
     ]);
 
     const specialCharColor = computed(() =>
@@ -48,14 +47,14 @@ export function useChangePassword() {
 
             if (user) {
                 await updatePassword(user, newPassword.value);
-                toast.success(t('profile.passwordChangedSuccess'));
+                toast.success(i18n.global.t('profile.passwordChangedSuccess'));
                 newPassword.value = '';
                 confirmPassword.value = '';
                 return true;
             }
         } catch (error) {
             console.error('Error changing password:', error);
-            toast.error(t('profile.passwordChangeFailed'));
+            toast.error(i18n.global.t('profile.passwordChangeFailed'));
             return false;
         }
     };
