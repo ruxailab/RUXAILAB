@@ -1,37 +1,18 @@
 <template>
-  <v-row
-    class="d-flex align-center"
-    no-gutters
-  >
-    <v-col cols="10">
-      <v-tooltip
-        text="Adjust the radius of the calibration point. Larger values make the point bigger."
-        location="bottom"
-      >
-        <template #activator="{ props }">
-          <v-slider
-            v-bind="props"
-            v-model="radius"
-            :min="10"
-            :max="35"
-            step="1"
-            label="Radius"
-            thumb-label
-          />
-        </template>
-      </v-tooltip>
-    </v-col>
+    <v-row class="d-flex align-center" no-gutters>
+        <v-col cols="10">
+            <v-tooltip text="Adjust the radius of the calibration point. Larger values make the point bigger."
+                location="bottom">
+                <template #activator="{ props }">
+                    <v-slider v-bind="props" v-model="radius" :min="10" :max="35" step="1" label="Radius" thumb-label />
+                </template>
+            </v-tooltip>
+        </v-col>
 
-    <v-col
-      cols="2"
-      class="d-flex justify-center"
-    >
-      <canvas
-        ref="radCanvas"
-        style="width: 100%; height: 150px;"
-      />
-    </v-col>
-  </v-row>
+        <v-col cols="2" class="d-flex justify-center">
+            <canvas ref="radCanvas" style="width: 100%; height: 150px;"></canvas>
+        </v-col>
+    </v-row>
 </template>
 
 <script setup>

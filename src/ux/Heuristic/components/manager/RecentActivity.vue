@@ -1,48 +1,22 @@
 <template>
-  <v-card
-    v-if="test"
-    class="pa-4 mb-0"
-    elevation="3"
-    rounded="lg"
-  >
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4">
-      <v-icon
-        size="24"
-        color="primary"
-        class="header-icon"
-      >
-        mdi-timeline-text-outline
-      </v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">
-        Actividad Reciente
-      </v-card-title>
+      <v-icon size="24" color="primary" class="header-icon">mdi-timeline-text-outline</v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">Actividad Reciente</v-card-title>
     </div>
     
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">
-        Actividades (7 días en total)
-      </div>
-      <div class="metric-value text-h3 font-weight-bold">
-        {{ recentActivitiesCount }}
-      </div>
-      <div
-        class="metric-change text-caption"
-        :class="changeColor"
-      >
-        {{ activityChange }}
-      </div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">Actividades (7 días en total)</div>
+      <div class="metric-value text-h3 font-weight-bold">{{ recentActivitiesCount }}</div>
+      <div class="metric-change text-caption" :class="changeColor">{{ activityChange }}</div>
     </div>
     
     <!-- Información adicional -->
     <div class="additional-info">
-      <div class="info-subtitle text-caption text-grey-darken-1">
-        Última actividad
-      </div>
-      <div class="info-value text-body-2 font-weight-medium">
-        {{ lastActivityTime }}
-      </div>
+      <div class="info-subtitle text-caption text-grey-darken-1">Última actividad</div>
+      <div class="info-value text-body-2 font-weight-medium">{{ lastActivityTime }}</div>
     </div>
   </v-card>
 </template>

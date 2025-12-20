@@ -47,14 +47,8 @@
       <div v-show="showFilters">
         <v-row dense>
           <!-- 👤 Ownership filter -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Ownership
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Ownership</div>
             <v-select
               v-model="selectedSessionOwnershipFilter"
               :items="ownershipOptions"
@@ -67,14 +61,8 @@
           </v-col>
 
           <!-- 👥 Evaluator filter -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Evaluator
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Evaluator</div>
             <v-select
               v-model="selectedSessionEvaluatorFilter"
               :items="evaluatorOptions"
@@ -87,14 +75,8 @@
           </v-col>
 
           <!-- 📅 Session date range filter -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Session date
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Session date</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -116,22 +98,13 @@
                 />
               </template>
               <!-- Vuetify date picker (supports range mode) -->
-              <v-date-picker
-                v-model="selectedSessionDateRange"
-                multiple="range"
-              />
+              <v-date-picker v-model="selectedSessionDateRange" multiple="range" />
             </v-menu>
           </v-col>
 
           <!-- ⚙️ Status filter -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Status
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Status</div>
             <v-select
               v-model="selectedSessionStatusFilter"
               :items="sessionStatusOptions"
@@ -159,19 +132,14 @@
   />
 
   <!-- 🕓 Empty state (no sessions found) -->
-  <div
-    v-else
-    class="empty-state"
-  >
+  <div v-else class="empty-state">
     <v-icon
       icon="mdi-clock-remove-outline"
       size="48"
       color="grey-lighten-1"
       class="mb-2"
     />
-    <p class="text-h6">
-      You don't have active sessions
-    </p>
+    <p class="text-h6">You don't have active sessions</p>
   </div>
 </template>
 

@@ -19,23 +19,12 @@
     <div>
       <div v-if="audioUrlEvaluator">
         <h4>🎧 Evaluator Audio</h4>
-        <audio
-          :src="audioUrlEvaluator"
-          controls
-          style="width: 100%"
-        />
+        <audio :src="audioUrlEvaluator" controls style="width: 100%" />
       </div>
 
-      <div
-        v-if="audioUrlModerator"
-        class="mt-4"
-      >
+      <div v-if="audioUrlModerator" class="mt-4">
         <h4>🎤 Moderator Audio</h4>
-        <audio
-          :src="audioUrlModerator"
-          controls
-          style="width: 100%"
-        />
+        <audio :src="audioUrlModerator" controls style="width: 100%" />
       </div>
     </div>
 
@@ -50,23 +39,19 @@
     >
       <v-row class="align-center">
         <!-- Provider -->
-        <v-col
-          cols="12"
-          md="4"
-          lg="4"
-        >
+        <v-col cols="12" md="4" lg="4">
           <v-select
-            v-model="selectedProvider"
             label="Provider"
             :items="providers"
             item-title="label"
             item-value="value"
+            v-model="selectedProvider"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-robot-outline"
             hide-details
             :menu-props="{ maxHeight: 260 }"
-            @update:model-value="
+            @update:modelValue="
               (val) => {
                 selectedProvider = val
                 selectedModel = modelsByProvider[val]?.[0] || ''
@@ -76,17 +61,13 @@
         </v-col>
 
         <!-- Model -->
-        <v-col
-          cols="12"
-          md="4"
-          lg="4"
-        >
+        <v-col cols="12" md="4" lg="4">
           <v-select
-            v-model="selectedModel"
             label="Model"
             :items="modelOptions"
             item-title="label"
             item-value="value"
+            v-model="selectedModel"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-cube-outline"
@@ -96,12 +77,7 @@
         </v-col>
 
         <!-- Button -->
-        <v-col
-          cols="12"
-          md="4"
-          lg="4"
-          class="d-flex align-end"
-        >
+        <v-col cols="12" md="4" lg="4" class="d-flex align-end">
           <v-btn
             block
             color="orange"
@@ -124,7 +100,7 @@
     <!-- Runs list -->
     <TranscriptionList
       v-if="transcriptSegments.length"
-      :transcript-segments="transcriptSegments"
+      :transcriptSegments="transcriptSegments"
     />
 
     <!-- Empty state -->
@@ -146,11 +122,7 @@
   >
     {{ snackbar.text }}
     <template #actions>
-      <v-btn
-        color="white"
-        variant="text"
-        @click="snackbar.visible = false"
-      >
+      <v-btn color="white" variant="text" @click="snackbar.visible = false">
         Close
       </v-btn>
     </template>

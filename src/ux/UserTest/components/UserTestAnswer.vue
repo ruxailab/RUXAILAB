@@ -23,10 +23,7 @@
             <v-tab @click="tab = 1">
               Individual Analytics
             </v-tab>
-            <v-tab
-              v-if="showSentiment"
-              @click="tab = 2"
-            >
+            <v-tab v-if="showSentiment" @click="tab = 2">
               Sentiment Analysis
             </v-tab>
             <v-tab
@@ -41,10 +38,7 @@
             >
               Nasa-TLX Analytics
             </v-tab>
-            <v-tab
-              v-if="showTranscription"
-              @click="tab = 5"
-            >
+            <v-tab v-if="showTranscription" @click="tab = 5">
               Transcriptions
             </v-tab>
           </v-tabs>

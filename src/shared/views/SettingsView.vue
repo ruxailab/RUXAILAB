@@ -250,7 +250,7 @@
                     max-width="290px"
                     min-width="auto"
                   >
-                    <template #activator="{ props }">
+                    <template v-slot:activator="{ props }">
                       <v-text-field
                         :model-value="formattedEndDate"
                         :label="$t('pages.settings.select_end_date')"

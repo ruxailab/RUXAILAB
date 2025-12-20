@@ -12,10 +12,7 @@
           {{ finalMessage }}!
         </h3>
 
-        <div
-          class="text-body-1 mt-2 text-grey-darken-1"
-          v-html="congratulations"
-        />
+        <div class="text-body-1 mt-2 text-grey-darken-1" v-html="congratulations"></div>
 
         <p class="text-body-1 mt-6 text-grey-darken-1">
           {{ submitMessage }}

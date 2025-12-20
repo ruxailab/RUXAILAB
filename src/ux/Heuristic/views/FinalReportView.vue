@@ -5,11 +5,9 @@
     :loading-text="$t('HeuristicsReport.messages.reports_loading')"
     :side-gap="true"
   >
+  
     <!-- Subtitle Slot - only show when answers exist -->
-    <template
-      v-if="answers.length > 0"
-      #subtitle
-    >
+    <template v-if="answers.length > 0" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Prepare the final report for the heuristic evaluation
       </p>
@@ -22,92 +20,90 @@
     />
     
     <!-- Show main content when answers exist -->
-    <div
-      v-else
-      class="finalReportView"
-    >
-      <v-container>
-        <v-stepper
-          :model-value="step"
-          style="background-color:#F5F7FF"
-          class="final-report-box rounded pt-0 mb-4"
-          elevation="0"
+    <div v-else class="finalReportView">
+    <v-container>
+      
+      <v-stepper
+        :model-value="step"
+        style="background-color:#F5F7FF"
+        class="final-report-box rounded pt-0 mb-4"
+        elevation="0"
+      >
+        <v-stepper-header
+          style="background-color: #F5F7FF;"
+          class="pt-2"
         >
-          <v-stepper-header
-            style="background-color: #F5F7FF;"
-            class="pt-2"
+          <v-stepper-item
+            :complete="value > 1"
+            value="1"
+            color="orange"
           >
-            <v-stepper-item
-              :complete="value > 1"
-              value="1"
-              color="orange"
-            >
-              Report Conclusion
-            </v-stepper-item>
-            <v-divider />
-            <v-stepper-item
-              :complete="value > 2"
-              value="2"
-              color="orange"
-            >
-              Generate Report
-            </v-stepper-item>
-          </v-stepper-header>
+            Report Conclusion
+          </v-stepper-item>
+          <v-divider />
+          <v-stepper-item
+            :complete="value > 2"
+            value="2"
+            color="orange"
+          >
+            Generate Report
+          </v-stepper-item>
+        </v-stepper-header>
 
-          <v-stepper-window
-            style="background-color:#F5F7FF"
-            class="mt-0"
+        <v-stepper-window
+          style="background-color:#F5F7FF"
+          class="mt-0"
+        >
+          <v-stepper-window-item
+            value="1"
+            class="align-mid pt-5 min-h-500"
           >
-            <v-stepper-window-item
-              value="1"
-              class="align-mid pt-5 min-h-500"
+            <div v-if="loading">
+              Saving Conclusion on Test....
+            </div>
+            <div
+              v-else
+              class=" container"
             >
-              <div v-if="loading">
-                Saving Conclusion on Test....
+              <div class="row">
+                <TextControls />
               </div>
-              <div
-                v-else
-                class=" container"
+
+              <div class="row">
+                <div class="col">
+                  <div
+                    id="myTextarea"
+                    contenteditable
+                    class="form-control"
+                  />
+                </div>
+              </div>
+              <v-row
+                class="ma-0"
+                justify="end"
               >
-                <div class="row">
-                  <TextControls />
-                </div>
-
-                <div class="row">
-                  <div class="col">
-                    <div
-                      id="myTextarea"
-                      contenteditable
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-                <v-row
-                  class="ma-0"
-                  justify="end"
+                <v-btn
+                  class="mt-4"
+                  align="right"
+                  color="orange"
+                  elevation="0"
+                  @click="handleNext"
                 >
-                  <v-btn
-                    class="mt-4"
-                    align="right"
-                    color="orange"
-                    elevation="0"
-                    @click="handleNext"
-                  >
-                    {{ $t('buttons.next') }}
-                  </v-btn>
-                </v-row>
-              </div>
-            </v-stepper-window-item>
+                  {{ $t('buttons.next') }}
+                </v-btn>
+              </v-row>
+            </div>
+          </v-stepper-window-item>
 
-            <v-stepper-window-item
-              value="2"
-              class="align-mid pt-5 min-h-500"
-            >
-              <FinalReportSelectionBox @return-step="step--" />
-            </v-stepper-window-item>
-          </v-stepper-window>
-        </v-stepper>
-      </v-container>
+          <v-stepper-window-item
+            value="2"
+            class="align-mid pt-5 min-h-500"
+          >
+            <FinalReportSelectionBox @return-step="step--" />
+          </v-stepper-window-item>
+        </v-stepper-window>
+      </v-stepper>
+    </v-container>
     </div>
   </PageWrapper>
 </template>

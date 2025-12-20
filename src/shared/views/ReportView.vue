@@ -37,10 +37,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <template
-      v-if="showIntroView"
-      #subtitle
-    >
+    <template #subtitle v-if="showIntroView">
       <div class="d-flex align-center">
         <v-icon
           icon="mdi-update"
@@ -53,10 +50,7 @@
       </div>
     </template>
 
-    <template
-      v-if="showIntroView"
-      #filters
-    >
+    <template #filters v-if="showIntroView">
       <div class="d-flex align-center justify-space-between mb-6">
         <div class="d-flex align-center gap-4">
           <v-text-field

@@ -1,9 +1,5 @@
 <template>
-  <v-stepper
-    v-model="step"
-    class="pa-6"
-    non-linear
-  >
+  <v-stepper v-model="step" class="pa-6" non-linear>
     <v-stepper-header>
       <v-stepper-item
         :complete="step > 1"

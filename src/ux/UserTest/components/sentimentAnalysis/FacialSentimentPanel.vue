@@ -1,160 +1,80 @@
 <template>
-  <v-card
-    variant="outlined"
-    elevation="2"
-    rounded="xl"
-    class="pa-4 overflow-y-auto"
-  >
-    <!-- Header -->
-    <v-row
-      class="mb-4"
-      align="center"
-      justify="space-between"
-    >
-      <v-col cols="auto">
-        <h3 class="text-h5 font-weight-bold mb-1">
-          Facial Sentiment Analysis
-        </h3>
-        <div class="text-body-2 text-grey">
-          Emotion insights based on facial expressions
-        </div>
-      </v-col>
-      <v-col cols="auto">
-        <v-chip
-          :color="isAnalyzing ? 'grey' : 'primary'"
-          variant="flat"
-          prepend-icon="mdi-face-recognition"
-        >
-          {{ isAnalyzing ? 'Analyzing...' : 'Analysis Complete' }}
-        </v-chip>
-      </v-col>
-    </v-row>
-
-    <!-- Loading -->
-    <v-row
-      v-if="isAnalyzing"
-      justify="center"
-      align="center"
-      class="my-12"
-    >
-      <v-col
-        cols="auto"
-        class="text-center"
-      >
-        <v-progress-circular
-          indeterminate
-          size="64"
-          color="primary"
-        />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing emotions...
-        </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
-        </div>
-      </v-col>
-    </v-row>
-
-    <!-- Result -->
-    <!-- Result -->
-    <v-row v-else>
-      <!-- Summary Metrics -->
-      <v-col
-        v-for="metric in summaryMetrics"
-        :key="metric.label"
-        cols="12"
-        sm="6"
-        md="3"
-      >
-        <v-card
-          class="pa-4"
-          elevation="2"
-          rounded="xl"
-        >
-          <div class="d-flex justify-space-between align-center mb-1">
-            <span class="font-weight-medium text-grey-darken-1">
-              {{ metric.label }}
-            </span>
-            <v-icon :color="metric.color">
-              {{ metric.icon }}
-            </v-icon>
-          </div>
-          <div class="text-h6 font-weight-bold">
-            {{ metric.value }}
-          </div>
-          <v-progress-linear
-            :model-value="metric.progress"
-            :color="metric.color"
-            height="6"
-            class="mt-2"
-            rounded
-          />
-        </v-card>
-      </v-col>
-
-      <!-- Charts and Insights -->
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card
-          class="pa-4"
-          elevation="2"
-          rounded="xl"
-        >
-          <h4 class="text-subtitle-1 font-weight-medium mb-3">
-            Overall Emotion Profile
-          </h4>
-          <div class="chart-wrapper">
-            <Radar
-              :data="radarData"
-              :options="radarOptions"
-              height="260"
-            />
-          </div>
-        </v-card>
-      </v-col>
-
-      <!-- Insights -->
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card
-          class="pa-4"
-          elevation="2"
-          rounded="xl"
-        >
-          <h4 class="text-subtitle-1 font-weight-medium mb-3">
-            Key Insights
-          </h4>
-          <v-row>
-            <v-col
-              v-for="(insight, index) in insights"
-              :key="index"
-              cols="12"
-            >
-              <v-alert
-                :type="insight.type"
-                variant="tonal"
-                class="rounded-xl"
-                border="start"
-                :border-color="insight.color"
-              >
-                <v-icon
-                  class="mr-2"
-                  :color="insight.color"
-                >
-                  {{ insight.icon }}
-                </v-icon>
-                <span class="font-weight-medium">{{ insight.text }}</span>
-              </v-alert>
+    <v-card variant="outlined" elevation="2" rounded="xl" class="pa-4 overflow-y-auto">
+        <!-- Header -->
+        <v-row class="mb-4" align="center" justify="space-between">
+            <v-col cols="auto">
+                <h3 class="text-h5 font-weight-bold mb-1">Facial Sentiment Analysis</h3>
+                <div class="text-body-2 text-grey">
+                    Emotion insights based on facial expressions
+                </div>
             </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-card>
+            <v-col cols="auto">
+                <v-chip :color="isAnalyzing ? 'grey' : 'primary'" variant="flat" prepend-icon="mdi-face-recognition">
+                    {{ isAnalyzing ? 'Analyzing...' : 'Analysis Complete' }}
+                </v-chip>
+            </v-col>
+        </v-row>
+
+        <!-- Loading -->
+        <v-row v-if="isAnalyzing" justify="center" align="center" class="my-12">
+            <v-col cols="auto" class="text-center">
+                <v-progress-circular indeterminate size="64" color="primary" />
+                <div class="mt-3 text-body-1 font-weight-medium">
+                    Analyzing emotions...
+                </div>
+                <div class="mt-1 text-body-2 text-grey-darken-1">
+                    This may take 1–2 minutes
+                </div>
+            </v-col>
+        </v-row>
+
+        <!-- Result -->
+        <!-- Result -->
+        <v-row v-else>
+            <!-- Summary Metrics -->
+            <v-col v-for="metric in summaryMetrics" :key="metric.label" cols="12" sm="6" md="3">
+                <v-card class="pa-4" elevation="2" rounded="xl">
+                    <div class="d-flex justify-space-between align-center mb-1">
+                        <span class="font-weight-medium text-grey-darken-1">
+                            {{ metric.label }}
+                        </span>
+                        <v-icon :color="metric.color">{{ metric.icon }}</v-icon>
+                    </div>
+                    <div class="text-h6 font-weight-bold">{{ metric.value }}</div>
+                    <v-progress-linear :model-value="metric.progress" :color="metric.color" height="6" class="mt-2"
+                        rounded />
+                </v-card>
+            </v-col>
+
+            <!-- Charts and Insights -->
+            <v-col cols="12" md="6">
+                <v-card class="pa-4" elevation="2" rounded="xl">
+                    <h4 class="text-subtitle-1 font-weight-medium mb-3">
+                        Overall Emotion Profile
+                    </h4>
+                    <div class="chart-wrapper">
+                        <Radar :data="radarData" :options="radarOptions" height="260" />
+                    </div>
+                </v-card>
+            </v-col>
+
+            <!-- Insights -->
+            <v-col cols="12" md="6">
+                <v-card class="pa-4" elevation="2" rounded="xl">
+                    <h4 class="text-subtitle-1 font-weight-medium mb-3">Key Insights</h4>
+                    <v-row>
+                        <v-col v-for="(insight, index) in insights" :key="index" cols="12">
+                            <v-alert :type="insight.type" variant="tonal" class="rounded-xl" border="start"
+                                :border-color="insight.color">
+                                <v-icon class="mr-2" :color="insight.color">{{ insight.icon }}</v-icon>
+                                <span class="font-weight-medium">{{ insight.text }}</span>
+                            </v-alert>
+                        </v-col>
+                    </v-row>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-card>
 </template>
 
 <script setup>

@@ -1,11 +1,7 @@
 <template>
   <div>
     <Loading />
-    <StartScreenTest
-      v-if="!isTestStarted && test"
-      :test="test"
-      @start="isTestStarted = true"
-    />
+    <StartScreenTest v-if="!isTestStarted && test" @start="isTestStarted = true" :test="test" />
     <!-- <CardSortingTest v-if="isTestStarted" :test="test" /> -->
   </div>
 </template>

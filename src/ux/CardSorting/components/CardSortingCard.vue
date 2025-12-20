@@ -1,25 +1,17 @@
 <template>
   <VCard class="cards">
-    <v-card-title
-      class="d-flex justify-between align-center"
-      style="cursor: pointer"
-    >
+    <v-card-title class="d-flex justify-between align-center" style="cursor: pointer">
       <div>
-        <v-icon style="cursor: pointer;">
-          mdi-drag
-        </v-icon>
+        <v-icon style="cursor: pointer;">mdi-drag</v-icon>
       </div>
 
       <div class="ml-3">
         {{ props.element.title }}
       </div>
 
-      <div
-        v-if="props.options.card_tooltip && props.element.tooltip"
-        class="d-flex ml-auto align-center"
-      >
+      <div class="d-flex ml-auto align-center" v-if="props.options.card_tooltip && props.element.tooltip">
         <v-tooltip :text="element.tooltip">
-          <template #activator="{ props }">
+          <template v-slot:activator="{ props }">
             <v-icon v-bind="props">
               mdi-information-slab-circle-outline
             </v-icon>

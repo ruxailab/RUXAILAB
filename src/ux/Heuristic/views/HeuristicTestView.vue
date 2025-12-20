@@ -379,10 +379,10 @@
                         currentUserTestAnswer.heuristicQuestions[heurisIndex]
                           ?.heuristicQuestions[i] || {}
                       "
-                      :disable="currentUserTestAnswer?.submitted"
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
+                      :disable="currentUserTestAnswer?.submitted"
                     >
                       <template #answer>
                         <v-select
@@ -395,14 +395,10 @@
                           item-value="value"
                           variant="outlined"
                           density="compact"
-                          :disabled="currentUserTestAnswer?.submitted"
                           @update:model-value="calculateProgress()"
+                          :disabled="currentUserTestAnswer?.submitted"
                         />
-                        <v-alert
-                          v-else
-                          type="error"
-                          class="mt-4"
-                        >
+                        <v-alert v-else type="error" class="mt-4">
                           {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
                         </v-alert>
                       </template>
@@ -452,7 +448,7 @@
                             :src="require('../../../../public/finalMessage.svg')"
                             alt="Final test svg"
                             class="img-fluid"
-                          >
+                          />
                         </v-col>
                         <v-col
                           cols="12"
@@ -465,8 +461,8 @@
                           <v-btn
                             color="testPrimary"
                             variant="flat"
-                            :disabled="currentUserTestAnswer?.submitted"
                             @click="dialog = true"
+                            :disabled="currentUserTestAnswer?.submitted"
                           >
                             <v-icon start>
                               mdi-send

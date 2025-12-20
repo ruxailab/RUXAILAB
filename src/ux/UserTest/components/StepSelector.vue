@@ -11,27 +11,22 @@
           size="large"
           @click="toggleStepPanel"
         >
-          <v-icon size="28">
-            mdi-view-list
-          </v-icon>
+          <v-icon size="28">mdi-view-list</v-icon>
         </v-btn>
       </template>
       <span>{{ showStepPanel ? 'Hide steps' : 'Show steps' }}</span>
     </v-tooltip>
 
     <!-- Step Selection Panel -->
-    <div
-      class="step-panel"
-      :class="{ 'step-panel-open': showStepPanel }"
-    >
+    <div class="step-panel" :class="{ 'step-panel-open': showStepPanel }">
       <div class="step-panel-header">
         <h3>Test Steps</h3>
         <v-btn 
           icon 
           size="small" 
           variant="text" 
-          class="close-btn"
           @click="toggleStepPanel"
+          class="close-btn"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -45,14 +40,10 @@
             size="large" 
             class="mb-3"
           >
-            <v-icon start>
-              mdi-play-circle
-            </v-icon>
+            <v-icon left>mdi-play-circle</v-icon>
             Step {{ currentStep }} of {{ totalSteps }}
           </v-chip>
-          <p class="step-description">
-            {{ getCurrentStepDescription() }}
-          </p>
+          <p class="step-description">{{ getCurrentStepDescription() }}</p>
         </div>
 
         <div class="steps-list">
@@ -102,10 +93,7 @@
                 </div>
               </div>
               
-              <div
-                v-if="index + 1 !== currentStep"
-                class="step-item-action"
-              >
+              <div class="step-item-action" v-if="index + 1 !== currentStep">
                 <v-btn
                   size="small"
                   variant="text"
@@ -125,26 +113,22 @@
             size="large"
             block
             class="mb-2"
-            :disabled="currentStep >= totalSteps"
             @click="proceedToNextStep"
+            :disabled="currentStep >= totalSteps"
           >
-            <v-icon start>
-              mdi-arrow-right
-            </v-icon>
+            <v-icon left>mdi-arrow-right</v-icon>
             {{ currentStep >= totalSteps ? 'Test Complete' : `Proceed to Step ${currentStep + 1}` }}
           </v-btn>
           
           <v-btn
-            v-if="currentStep > 1"
             color="primary"
             size="large"
             block
             variant="outlined"
             @click="resetToFirstStep"
+            v-if="currentStep > 1"
           >
-            <v-icon start>
-              mdi-restart
-            </v-icon>
+            <v-icon left>mdi-restart</v-icon>
             Restart Test
           </v-btn>
         </div>
@@ -156,7 +140,7 @@
       v-if="showStepPanel" 
       class="step-panel-overlay"
       @click="toggleStepPanel"
-    />
+    ></div>
   </div>
 </template>
 

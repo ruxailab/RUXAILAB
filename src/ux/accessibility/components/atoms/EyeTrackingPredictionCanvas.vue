@@ -1,102 +1,43 @@
 <template>
-  <div
-    class="eye-tracking-container"
-    style="position: relative;"
-  >
-    <!-- Config Toggle Button -->
-    <v-btn
-      icon
-      color="primary"
-      class="config-btn"
-      elevation="4"
-      rounded
-      :aria-label="configOpen ? 'Close settings' : 'Open settings'"
-      @click="configOpen = !configOpen"
-    >
-      <v-icon>{{ configOpen ? 'mdi-cog-off-outline' : 'mdi-cog-outline' }}</v-icon>
-    </v-btn>
+    <div class="eye-tracking-container" style="position: relative;">
+        <!-- Config Toggle Button -->
+        <v-btn icon color="primary" class="config-btn" elevation="4" rounded @click="configOpen = !configOpen"
+            :aria-label="configOpen ? 'Close settings' : 'Open settings'">
+            <v-icon>{{ configOpen ? 'mdi-cog-off-outline' : 'mdi-cog-outline' }}</v-icon>
+        </v-btn>
 
-    <!-- Config Panel with Transition -->
-    <v-slide-x-transition>
-      <v-card
-        v-if="configOpen"
-        class="config-panel"
-        elevation="6"
-        rounded
-        border
-      >
-        <v-card-text>
-          <v-row
-            align="center"
-            justify="space-around"
-            class="g-4"
-          >
-            <v-col
-              cols="12"
-              sm="4"
-              class="text-center"
-            >
-              <label>
-                Color:
-                <input
-                  v-model="circleColor"
-                  type="color"
-                >
-              </label>
-            </v-col>
+        <!-- Config Panel with Transition -->
+        <v-slide-x-transition>
+            <v-card v-if="configOpen" class="config-panel" elevation="6" rounded outlined>
+                <v-card-text>
+                    <v-row align="center" justify="space-around" class="g-4">
+                        <v-col cols="12" sm="4" class="text-center">
+                            <label>
+                                Color:
+                                <input type="color" v-model="circleColor" />
+                            </label>
+                        </v-col>
 
-            <v-col
-              cols="12"
-              sm="4"
-              class="text-center"
-            >
-              <v-label class="mb-1">
-                Radius
-              </v-label>
-              <v-slider
-                v-model="circleRadius"
-                min="5"
-                max="100"
-                step="1"
-                show-ticks
-                tick-size="3"
-                class="mx-auto"
-                style="max-width: 180px;"
-              />
-            </v-col>
+                        <v-col cols="12" sm="4" class="text-center">
+                            <v-label class="mb-1">Radius</v-label>
+                            <v-slider v-model="circleRadius" min="5" max="100" step="1" ticks tick-size="3"
+                                class="mx-auto" style="max-width: 180px;" />
+                        </v-col>
 
-            <v-col
-              cols="12"
-              sm="4"
-              class="text-center"
-            >
-              <v-label class="mb-1">
-                Opacity
-              </v-label>
-              <v-slider
-                v-model="circleOpacity"
-                min="0.01"
-                max="1"
-                step="0.01"
-                show-ticks
-                tick-size="3"
-                class="mx-auto"
-                style="max-width: 180px;"
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </v-slide-x-transition>
+                        <v-col cols="12" sm="4" class="text-center">
+                            <v-label class="mb-1">Opacity</v-label>
+                            <v-slider v-model="circleOpacity" min="0.01" max="1" step="0.01" ticks tick-size="3"
+                                class="mx-auto" style="max-width: 180px;" />
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+        </v-slide-x-transition>
 
-    <!-- Canvas -->
-    <canvas
-      ref="canvas"
-      :width="screenWidth"
-      :height="screenHeight"
-      style="border: 1px solid #ccc; display: block; margin: 1rem auto;"
-    />
-  </div>
+        <!-- Canvas -->
+        <canvas ref="canvas" :width="screenWidth" :height="screenHeight"
+            style="border: 1px solid #ccc; display: block; margin: 1rem auto;"></canvas>
+    </div>
 </template>
 
 <script setup>

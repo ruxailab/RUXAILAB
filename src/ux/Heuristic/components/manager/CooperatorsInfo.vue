@@ -1,35 +1,15 @@
 <template>
-  <v-card
-    v-if="test"
-    class="pa-4 mb-0"
-    elevation="3"
-    rounded="lg"
-  >
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div
-      class="d-flex align-center mb-4 clickable-header"
-      @click="navigateToCooperators"
-    >
-      <v-icon
-        size="24"
-        color="primary"
-        class="header-icon"
-      >
-        mdi-account-group
-      </v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">
-        Cooperators
-      </v-card-title>
+    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToCooperators">
+      <v-icon size="24" color="primary" class="header-icon">mdi-account-group</v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">Cooperators</v-card-title>
     </div>
     
     <!-- Total cooperadores -->
     <div class="total-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">
-        Total invited
-      </div>
-      <div class="metric-value text-h4 font-weight-bold">
-        {{ totalInvited }}
-      </div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">Total invited</div>
+      <div class="metric-value text-h4 font-weight-bold">{{ totalInvited }}</div>
     </div>
     
     <!-- Métricas en dos columnas con igual importancia -->
@@ -37,13 +17,7 @@
       <!-- Aceptados -->
       <div class="metric-item">
         <div class="d-flex align-center mb-2">
-          <v-icon
-            size="16"
-            color="success"
-            class="mr-2"
-          >
-            mdi-check-circle
-          </v-icon>
+          <v-icon size="16" color="success" class="mr-2">mdi-check-circle</v-icon>
           <span class="metric-label text-caption text-grey-darken-1">Accepted</span>
         </div>
         <div class="d-flex align-center justify-center">
@@ -55,13 +29,7 @@
       <!-- Pendientes -->
       <div class="metric-item">
         <div class="d-flex align-center mb-2">
-          <v-icon
-            size="16"
-            color="warning"
-            class="mr-2"
-          >
-            mdi-clock-outline
-          </v-icon>
+          <v-icon size="16" color="warning" class="mr-2">mdi-clock-outline</v-icon>
           <span class="metric-label text-caption text-grey-darken-1">Pending</span>
         </div>
         <div class="d-flex align-center justify-center">

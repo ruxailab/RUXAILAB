@@ -1,28 +1,17 @@
 <template>
   <div class="answer-type-preview">
     <!-- No Answer Preview -->
-    <div
-      v-if="taskType === 'no-answer'"
-      class="preview-content"
-    >
+    <div v-if="taskType === 'no-answer'" class="preview-content">
       <div class="preview-mockup">
         <div class="mockup-message">
-          <v-icon
-            color="success"
-            class="mr-2"
-          >
-            mdi-check-circle
-          </v-icon>
+          <v-icon color="success" class="mr-2">mdi-check-circle</v-icon>
           <span class="text-body-2">Task completed! No additional feedback required.</span>
         </div>
       </div>
     </div>
 
     <!-- Text Area Preview -->
-    <div
-      v-else-if="taskType === 'text-area'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'text-area'" class="preview-content">
       <div class="preview-mockup">
         <v-textarea
           readonly
@@ -32,30 +21,17 @@
           class="preview-textarea"
         />
         <div class="mockup-actions">
-          <v-btn
-            color="primary"
-            size="small"
-            disabled
-          >
-            Submit Feedback
-          </v-btn>
+          <v-btn color="primary" size="small" disabled>Submit Feedback</v-btn>
         </div>
       </div>
     </div>
 
     <!-- Post-Test Questions Preview -->
-    <div
-      v-else-if="taskType === 'post-test'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'post-test'" class="preview-content">
       <div class="preview-mockup">
-        <div class="text-subtitle-2 mb-3">
-          Post-Task Questions
-        </div>
+        <div class="text-subtitle-2 mb-3">Post-Task Questions</div>
         <div class="question-item mb-3">
-          <div class="text-body-2 mb-2">
-            1. How would you rate the difficulty of this task?
-          </div>
+          <div class="text-body-2 mb-2">1. How would you rate the difficulty of this task?</div>
           <v-rating 
             v-model="mockRating" 
             readonly 
@@ -65,9 +41,7 @@
           />
         </div>
         <div class="question-item">
-          <div class="text-body-2 mb-2">
-            2. Any additional comments?
-          </div>
+          <div class="text-body-2 mb-2">2. Any additional comments?</div>
           <v-text-field
             readonly
             placeholder="Optional feedback..."
@@ -79,31 +53,15 @@
     </div>
 
     <!-- External Form Preview -->
-    <div
-      v-else-if="taskType === 'post-form'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'post-form'" class="preview-content">
       <div class="preview-mockup">
         <div class="external-form-notice">
-          <v-icon
-            color="info"
-            size="32"
-            class="mb-2"
-          >
-            mdi-open-in-new
-          </v-icon>
-          <div class="text-subtitle-2 mb-2">
-            External Form
-          </div>
+          <v-icon color="info" size="32" class="mb-2">mdi-open-in-new</v-icon>
+          <div class="text-subtitle-2 mb-2">External Form</div>
           <div class="text-body-2 text-grey-darken-1 mb-3">
             Participants will be redirected to complete an external form after the task.
           </div>
-          <v-btn
-            color="info"
-            variant="outlined"
-            size="small"
-            disabled
-          >
+          <v-btn color="info" variant="outlined" size="small" disabled>
             Open External Form
           </v-btn>
         </div>
@@ -111,14 +69,9 @@
     </div>
 
     <!-- NASA-TLX Preview -->
-    <div
-      v-else-if="taskType === 'nasa-tlx'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'nasa-tlx'" class="preview-content">
       <div class="preview-mockup">
-        <div class="text-subtitle-2 mb-3">
-          NASA Task Load Index
-        </div>
+        <div class="text-subtitle-2 mb-3">NASA Task Load Index</div>
         <div class="nasa-item mb-3">
           <div class="d-flex justify-space-between align-center mb-2">
             <span class="text-body-2">Mental Demand</span>
@@ -145,21 +98,14 @@
             thumb-size="12"
           />
         </div>
-        <div class="text-caption text-grey-darken-1 text-center">
-          + 4 more dimensions
-        </div>
+        <div class="text-caption text-grey-darken-1 text-center">+ 4 more dimensions</div>
       </div>
     </div>
 
     <!-- SUS Preview -->
-    <div
-      v-else-if="taskType === 'sus'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'sus'" class="preview-content">
       <div class="preview-mockup">
-        <div class="text-subtitle-2 mb-3">
-          System Usability Scale
-        </div>
+        <div class="text-subtitle-2 mb-3">System Usability Scale</div>
         <div class="sus-item mb-3">
           <div class="text-body-2 mb-2">
             1. I think that I would like to use this system frequently.
@@ -183,28 +129,16 @@
             <span>Strongly Agree</span>
           </div>
         </div>
-        <div class="text-caption text-grey-darken-1 text-center">
-          + 9 more statements
-        </div>
+        <div class="text-caption text-grey-darken-1 text-center">+ 9 more statements</div>
       </div>
     </div>
 
     <!-- Default/Unknown Type -->
-    <div
-      v-else
-      class="preview-content"
-    >
+    <div v-else class="preview-content">
       <div class="preview-mockup">
         <div class="text-center text-grey-darken-1">
-          <v-icon
-            size="48"
-            class="mb-2"
-          >
-            mdi-help-circle-outline
-          </v-icon>
-          <div class="text-body-2">
-            Select an answer type to see preview
-          </div>
+          <v-icon size="48" class="mb-2">mdi-help-circle-outline</v-icon>
+          <div class="text-body-2">Select an answer type to see preview</div>
         </div>
       </div>
     </div>

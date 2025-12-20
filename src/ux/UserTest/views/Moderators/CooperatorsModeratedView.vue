@@ -1,10 +1,6 @@
 <template>
   <div>
-    <CooperatorsView
-      :has-role-column="false"
-      :show-date-columns="true"
-      :show-session-column="true"
-    >
+    <CooperatorsView :hasRoleColumn="false" :showDateColumns="true" :showSessionColumn="true">
       <template #dialog="{ isDrawerOpen, setDrawerOpen }">
         <CreateInviteDialog 
           :dialog="isDrawerOpen" 

@@ -2,11 +2,7 @@
   <div class="container px-4 py-8">
     <v-row>
       <!-- Left Section: Profile Details -->
-      <v-col
-        cols="12"
-        md="4"
-        lg="3"
-      >
+      <v-col cols="12" md="4" lg="3">
         <UserProfileCard
           :userprofile="profile.userprofile.value"
           :user-email="user.email"
@@ -15,15 +11,8 @@
       </v-col>
 
       <!-- Right Section: Tabs and Content -->
-      <v-col
-        cols="12"
-        md="8"
-        lg="9"
-      >
-        <v-card
-          flat
-          class="rounded-xl"
-        >
+      <v-col cols="12" md="8" lg="9">
+        <v-card flat class="rounded-xl">
           <!-- Tabs Section -->
           <v-tabs
             v-model="activeTab"
@@ -34,61 +23,28 @@
             :stacked="isSmallScreen"
             align-tabs="center"
           >
-            <v-tab
-              value="0"
-              class="text-body-1 font-weight-medium"
-            >
-              <v-icon
-                size="small"
-                start
-              >
-                mdi-account
-              </v-icon>
+            <v-tab value="0" class="text-body-1 font-weight-medium">
+              <v-icon size="small" start>mdi-account</v-icon>
               {{ $t('profile.account') }}
             </v-tab>
-            <v-tab
-              value="1"
-              class="text-body-1 font-weight-medium"
-            >
-              <v-icon
-                size="small"
-                start
-              >
-                mdi-shield-lock
-              </v-icon>
+            <v-tab value="1" class="text-body-1 font-weight-medium">
+              <v-icon size="small" start>mdi-shield-lock</v-icon>
               {{ $t('profile.security') }}
             </v-tab>
           </v-tabs>
 
-          <v-window
-            v-model="activeTab"
-            class="pa-4"
-          >
+          <v-window v-model="activeTab" class="pa-4">
             <!-- Account Tab Content -->
-            <v-window-item
-              value="0"
-              transition="fade-transition"
-            >
-              <v-card
-                class="rounded-xl pa-6"
-                elevation="2"
-              >
+            <v-window-item value="0" transition="fade-transition">
+              <v-card class="rounded-xl pa-6" elevation="2">
                 <v-card-title class="text-h6 font-weight-bold mb-4">
-                  <v-icon
-                    start
-                    color="primary"
-                  >
-                    mdi-account-details
-                  </v-icon>
+                  <v-icon start color="primary">mdi-account-details</v-icon>
                   {{ $t('profile.personalInfo') }}
                 </v-card-title>
                 <v-card-text>
                   <v-form>
                     <v-row dense>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
+                      <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="profile.userprofile.value.username"
                           :label="$t('profile.username')"
@@ -99,10 +55,7 @@
                           class="input-field-transition"
                         />
                       </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
+                      <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="user.email"
                           :label="$t('profile.email')"
@@ -113,10 +66,7 @@
                           class="input-field-transition"
                         />
                       </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
+                      <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="profile.userprofile.value.contactNo"
                           :label="$t('profile.contact')"
@@ -127,10 +77,7 @@
                           class="input-field-transition"
                         />
                       </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
+                      <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="profile.userprofile.value.country"
                           :label="$t('profile.country')"
@@ -149,9 +96,7 @@
                     class="mt-4 text-capitalize"
                     @click="editProfileDialog = true"
                   >
-                    <v-icon start>
-                      mdi-pencil
-                    </v-icon>
+                    <v-icon start>mdi-pencil</v-icon>
                     {{ $t('profile.editDetails') }}
                   </v-btn>
                 </v-card-text>
@@ -159,10 +104,7 @@
             </v-window-item>
 
             <!-- Security Tab Content -->
-            <v-window-item
-              value="1"
-              transition="fade-transition"
-            >
+            <v-window-item value="1" transition="fade-transition">
               <ChangePasswordForm />
               <DeleteAccountSection :is-small-screen="isSmallScreen" />
             </v-window-item>
