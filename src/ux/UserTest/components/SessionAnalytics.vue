@@ -156,16 +156,16 @@ export default {
             currentTime: 0,
             videoDuration: 100,
             isPlaying: false,
-            timelineInterval: null
+            _timelineInterval: null
         };
     },
     mounted() {
-        this.timelineInterval = setInterval(() => {
+        this._timelineInterval = setInterval(() => {
             this.updateTimeline();
         }, 200);
     },
     beforeUnmount() {
-        clearInterval(this.timelineInterval);
+        clearInterval(this._timelineInterval);
     },
     methods: {
         emitTimelineUpdate() {

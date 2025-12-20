@@ -15,7 +15,7 @@
           :style="backgroundImage"
           elevation="3"
           rounded="lg"
-          @click="emits('click', item.path)"
+          @click="$emit('click', item.path)"
         >
           <div class="d-flex justify-center align-center pa-2">
             <v-img
@@ -65,8 +65,6 @@ const props = defineProps({
     required: false,
   },
 });
-
-const emits = defineEmits(['click']);
 
 const backgroundImage = computed(() => {
   // Softer gradient: blend colors more gradually
