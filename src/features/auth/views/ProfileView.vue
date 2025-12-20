@@ -124,7 +124,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import UserProfileCard from '../components/UserProfileCard.vue';
 import EditProfileDialog from '../components/EditProfileDialog.vue';
@@ -143,6 +143,14 @@ const isSmallScreen = ref(false);
 const checkScreenSize = () => {
   isSmallScreen.value = window.innerWidth < 960;
 };
+
+// Refetch profile when dialog closes to ensure latest data is displayed
+watch(editProfileDialog, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    // Dialog was closed, refetch profile
+    profile.fetchUserProfile();
+  }
+});
 
 onMounted(() => {
   profile.fetchUserProfile();

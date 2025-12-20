@@ -1,8 +1,21 @@
 <template>
     <v-card class="rounded-xl pa-6" elevation="4">
         <v-card-text class="text-center">
-            <v-avatar size="120" class="mb-4">
-                <v-img :src="userprofile.profileImage" alt="No Image" class="avatar-transition bg-ternary" />
+            <v-avatar size="120" class="mb-4 bg-ternary">
+                <v-img 
+                    v-if="userprofile.profileImage" 
+                    :key="userprofile.profileImage"
+                    :src="userprofile.profileImage" 
+                    alt="Profile Image" 
+                    cover 
+                >
+                    <template #placeholder>
+                        <v-progress-circular indeterminate color="primary" size="40" />
+                    </template>
+                </v-img>
+                <v-icon v-else size="60" color="grey-lighten-1">
+                    mdi-account-circle
+                </v-icon>
             </v-avatar>
             <h2 class="text-h6 font-weight-bold mb-2">
                 {{ userprofile.username || $t('profile.title') }}

@@ -16,9 +16,9 @@
         </div>
         <div>
           <div class="d-flex align-center mb-2">
-            <v-icon size="small" class="mr-2" :color="password.newPassword.length >= 8 ? 'success' : 'grey-darken-1'">
+            <v-icon size="small" class="mr-2" :color="newPassword.length >= 8 ? 'success' : 'grey-darken-1'">
               {{
-                password.newPassword.length >= 8
+                newPassword.length >= 8
                   ? 'mdi-check-circle'
                   : 'mdi-circle-outline'
               }}
@@ -26,9 +26,9 @@
             <span>{{ $t('profile.passwordMinLength') }}</span>
           </div>
           <div class="d-flex align-center mb-2">
-            <v-icon size="small" class="mr-2" :color="/[A-Z]/.test(password.newPassword) ? 'success' : 'grey-darken-1'">
+            <v-icon size="small" class="mr-2" :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey-darken-1'">
               {{
-                /[A-Z]/.test(password.newPassword)
+                /[A-Z]/.test(newPassword)
                   ? 'mdi-check-circle'
                   : 'mdi-circle-outline'
               }}
@@ -36,32 +36,40 @@
             <span>{{ $t('profile.passwordUppercase') }}</span>
           </div>
           <div class="d-flex align-center">
-            <v-icon size="small" class="mr-2" :color="password.specialCharColor">
-              {{ password.specialCharIcon }}
+            <v-icon size="small" class="mr-2" :color="specialCharColor">
+              {{ specialCharIcon }}
             </v-icon>
             <span>{{ $t('profile.passwordSymbol') }}</span>
           </div>
         </div>
       </v-alert>
 
-      <v-form ref="formRef" v-model="password.valid">
+      <v-form ref="formRef" v-model="valid">
+        <v-alert v-if="isGoogleUser" type="info" variant="outlined" class="mb-4">
+          {{ $t('profile.googleUserPasswordInfo') }}
+        </v-alert>
         <v-row dense>
-          <v-col cols="12" sm="6">
-            <v-text-field v-model="password.newPassword" :rules="password.passwordRules"
-              :label="$t('profile.newPassword')" :type="password.showPassword ? 'text' : 'password'" variant="outlined"
-              density="compact" prepend-inner-icon="mdi-lock"
-              :append-icon="password.showPassword ? 'mdi-eye' : 'mdi-eye-off'" class="input-field-transition"
-              @click:append="password.showPassword = !password.showPassword" />
+          <v-col v-if="!isGoogleUser" cols="12">
+            <v-text-field v-model="currentPassword" :rules="currentPasswordRules" :label="$t('profile.currentPassword')"
+              :type="showCurrentPassword ? 'text' : 'password'" variant="outlined" density="compact"
+              prepend-inner-icon="mdi-lock-check" :append-inner-icon="showCurrentPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              class="input-field-transition" @click:append-inner="toggleCurrentPasswordVisibility()" />
           </v-col>
           <v-col cols="12" sm="6">
-            <v-text-field v-model="password.confirmPassword" :rules="password.confirmPasswordRules"
-              :label="$t('profile.confirmNewPassword')" :type="password.showConfirmPassword ? 'text' : 'password'"
+            <v-text-field v-model="newPassword" :rules="passwordRules" :label="$t('profile.newPassword')"
+              :type="showPassword ? 'text' : 'password'" variant="outlined" density="compact"
+              prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              class="input-field-transition" @click:append-inner="togglePasswordVisibility()" />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field v-model="confirmPassword" :rules="confirmPasswordRules"
+              :label="$t('profile.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'"
               variant="outlined" density="compact" prepend-inner-icon="mdi-lock-check"
-              :append-icon="password.showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'" class="input-field-transition"
-              @click:append="password.showConfirmPassword = !password.showConfirmPassword" />
+              :append-inner-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'" class="input-field-transition"
+              @click:append-inner="toggleConfirmPasswordVisibility()" />
           </v-col>
         </v-row>
-        <v-btn :disabled="!password.valid || isChanging" :loading="isChanging" color="primary" variant="flat"
+        <v-btn :disabled="!valid || isChanging" :loading="isChanging" color="primary" variant="flat"
           class="mt-4 text-capitalize" @click="handleChangePassword">
           <v-icon start>
             mdi-key
@@ -80,18 +88,37 @@ import { useChangePassword } from '../composables/useChangePassword';
 const formRef = ref(null);
 const isChanging = ref(false);
 
-const password = useChangePassword();
+const {
+  currentPassword,
+  newPassword,
+  confirmPassword,
+  showCurrentPassword,
+  showPassword,
+  showConfirmPassword,
+  valid,
+  isGoogleUser,
+  currentPasswordRules,
+  passwordRules,
+  confirmPasswordRules,
+  specialCharColor,
+  specialCharIcon,
+  changePassword,
+  resetForm,
+  toggleCurrentPasswordVisibility,
+  togglePasswordVisibility,
+  toggleConfirmPasswordVisibility,
+} = useChangePassword();
 
 const handleChangePassword = async () => {
   if (!formRef.value.validate()) return;
 
   isChanging.value = true;
-  const success = await password.changePassword();
+  const success = await changePassword();
   isChanging.value = false;
 
   if (success && formRef.value) {
     formRef.value.reset();
-    password.resetForm();
+    resetForm();
   }
 };
 </script>

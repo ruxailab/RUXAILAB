@@ -8,10 +8,32 @@
             </v-card-title>
             <v-card-text>
                 <div class="text-center mb-6">
-                    <v-avatar size="100" class="avatar-transition bg-ternary">
-                        <v-img :src="localProfileData.profileImage" alt="No Image" />
+                    <v-avatar size="100" class="bg-ternary">
+                        <v-img 
+                            v-if="localProfileData.profileImage" 
+                            :key="localProfileData.profileImage"
+                            :src="localProfileData.profileImage" 
+                            alt="Profile Image" 
+                            cover 
+                        >
+                            <template #placeholder>
+                                <v-progress-circular indeterminate color="primary" />
+                            </template>
+                        </v-img>
+                        <v-icon v-else size="50" color="grey-lighten-1">
+                            mdi-account-circle
+                        </v-icon>
+                        <!-- Small upload indicator overlay -->
+                        <v-progress-circular 
+                            v-if="isUploadingImage" 
+                            indeterminate 
+                            color="primary" 
+                            size="20"
+                            width="2"
+                            class="upload-indicator"
+                        />
                     </v-avatar>
-                    <v-btn icon size="small" class="ml-2" @click="selectImage">
+                    <v-btn icon size="small" class="ml-2" @click="selectImage" :disabled="isUploadingImage">
                         <v-icon>mdi-camera</v-icon>
                     </v-btn>
                     <input ref="fileInput" type="file" accept="image/*" style="display: none"
@@ -88,6 +110,7 @@ const fileInput = ref(null);
 const formRef = ref(null);
 const isValid = ref(false);
 const isSaving = ref(false);
+const isUploadingImage = ref(false);
 
 const localProfileData = ref({
     username: '',
@@ -128,9 +151,45 @@ const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const downloadURL = await props.onUploadImage(file);
-    if (downloadURL) {
-        localProfileData.value.profileImage = downloadURL;
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        console.error('Selected file is not an image');
+        return;
+    }
+
+    // Warn if file is very large (over 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+        console.warn('Large file detected, compressing before upload...');
+    }
+
+    try {
+        // Create instant preview
+        const previewUrl = URL.createObjectURL(file);
+        localProfileData.value.profileImage = previewUrl;
+        
+        // Show uploading state but don't block UI
+        isUploadingImage.value = true;
+        
+        // Upload in background
+        const downloadURL = await props.onUploadImage(file, (preview) => {
+            // This callback is called immediately with preview
+            localProfileData.value.profileImage = preview;
+        });
+        
+        if (downloadURL) {
+            // Clean up preview URL
+            URL.revokeObjectURL(previewUrl);
+            localProfileData.value.profileImage = downloadURL;
+        }
+    } catch (error) {
+        console.error('Error uploading image:', error);
+    } finally {
+        isUploadingImage.value = false;
+        // Reset file input
+        if (fileInput.value) {
+            fileInput.value.value = '';
+        }
     }
 };
 
@@ -159,3 +218,14 @@ const countryFilter = (item, queryText) => {
     return name.toString().toLowerCase().includes(text);
 };
 </script>
+
+<style scoped>
+.upload-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    padding: 2px;
+}
+</style>
