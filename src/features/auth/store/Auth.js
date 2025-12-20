@@ -100,7 +100,12 @@ export default {
         })
 
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        if (err.code == 'auth/user-not-found') {
+          toast.error(i18n.global.t('errors.userNotFound'))
+        }
+        else {
+          toast.error(i18n.global.t('errors.incorrectCredential'))
+        }
       } finally {
         commit('setLoading', false)
       }
