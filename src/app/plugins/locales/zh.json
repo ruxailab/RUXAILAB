@@ -22,7 +22,7 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    }   
+    }
   },
   "common": {
     "loading": "加载测试",
@@ -169,7 +169,8 @@
     "userNotExist": "该用户不存在。",
     "incorrectPassword": "密码错误",
     "incorrectCredential": "用户名或密码错误。",
-    "globalError": "发生错误，给您带来不便，敬请谅解。"
+    "globalError": "发生错误，给您带来不便，敬请谅解。",
+    "userNotFound": "找不到使用此电子邮件的用户。"
   },
   "Introduction": {
     "title": "UX远程实验室",

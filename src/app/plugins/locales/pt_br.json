@@ -184,7 +184,8 @@
     "incorrectPassword": "Senha incorreta",
     "incorrectCredential": "Usuário ou senha incorretos.",
     "globalError": "Ocorreu um erro, desculpe-nos pelo transtorno.",
-    "sendError": "Não foi possível enviar o convite. Por favor, tente novamente."
+    "sendError": "Não foi possível enviar o convite. Por favor, tente novamente.",
+    "userNotFound": "Não foi possível encontrar um usuário com este e-mail."
   },
   "Introduction": {
     "title": "UX LAB Remoto",

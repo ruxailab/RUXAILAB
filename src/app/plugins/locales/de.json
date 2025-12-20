@@ -176,7 +176,8 @@
     "userNotExist": "Dieser Benutzer existiert nicht.",
     "incorrectPassword": "Falsches Passwort",
     "incorrectCredential": "Falscher Benutzername oder Passwort.",
-    "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten."
+    "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
+    "userNotFound": "Kann keinen Benutzer mit dieser E-Mail finden."
   },
   "Introduction": {
     "title": "UX Remote LAB",

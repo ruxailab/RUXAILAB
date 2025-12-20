@@ -174,7 +174,8 @@
     "userNotExist": "Cet utilisateur n'existe pas.",
     "incorrectPassword": "Mot de passe incorrect",
     "incorrectCredential": "Nom d'utilisateur ou mot de passe incorrect.",
-    "globalError": "Une erreur est survenue, désolé pour le désagrément."
+    "globalError": "Une erreur est survenue, désolé pour le désagrément.",
+    "userNotFound": "Impossible de trouver un utilisateur avec cet e-mail."
   },
   "Introduction": {
     "title": "UX Remote LAB",

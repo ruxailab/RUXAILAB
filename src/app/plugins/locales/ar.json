@@ -171,7 +171,8 @@
     "userNotExist": "هذا المستخدم غير موجود.",
     "incorrectPassword": "كلمة مرور غير صحيحة",
     "incorrectCredential": "اسم المستخدم أو كلمة المرور غير صحيحة.",
-    "globalError": "حدث خطأ، نعتذر عن الإزعاج."
+    "globalError": "حدث خطأ، نعتذر عن الإزعاج.",
+    "userNotFound": "لا يمكن العثور على مستخدم بهذا البريد الإلكتروني."
   },
   "Introduction": {
     "title": "مختبر UX عن بعد",

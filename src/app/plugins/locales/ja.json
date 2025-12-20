@@ -169,7 +169,8 @@
     "userNotExist": "このユーザーは存在しません。",
     "incorrectPassword": "パスワードが間違っています",
     "incorrectCredential": "ユーザー名またはパスワードが間違っています。",
-    "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。"
+    "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。",
+    "userNotFound": "このメールアドレスのユーザーが見つかりません。"
   },
   "Introduction": {
     "title": "UXリモートラボ",
