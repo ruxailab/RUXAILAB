@@ -1,8 +1,5 @@
 <template>
-  <canvas
-    ref="canvas"
-    class="overlay-canvas"
-  />
+    <canvas ref="canvas" class="overlay-canvas"></canvas>
 </template>
 
 <script setup>

@@ -65,10 +65,7 @@
                 </v-icon>
                 {{ getTaskTypeLabel(item.taskType) }}
               </v-chip>
-              <span
-                v-else
-                class="text-grey-400"
-              >{{ $t('UserTestTable.headers.na') }}</span>
+              <span v-else class="text-grey-400">{{ $t('UserTestTable.headers.na') }}</span>
             </template>
 
             <template #item.taskDescription="{ item }">

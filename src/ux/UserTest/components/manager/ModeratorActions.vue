@@ -1,12 +1,7 @@
 <template>
   <v-card class="h-100">
     <v-card-title class="d-flex align-center pb-2">
-      <v-icon
-        class="mr-2"
-        color="primary"
-      >
-        mdi-account-supervisor
-      </v-icon>
+      <v-icon class="mr-2" color="primary">mdi-account-supervisor</v-icon>
       Moderator Actions
     </v-card-title>
     
@@ -18,9 +13,7 @@
           block
           @click="startSession"
         >
-          <v-icon start>
-            mdi-play
-          </v-icon>
+          <v-icon start>mdi-play</v-icon>
           Start Session
         </v-btn>
         
@@ -30,9 +23,7 @@
           block
           @click="scheduleSession"
         >
-          <v-icon start>
-            mdi-calendar-plus
-          </v-icon>
+          <v-icon start>mdi-calendar-plus</v-icon>
           Schedule Session
         </v-btn>
         
@@ -42,9 +33,7 @@
           block
           @click="viewSessions"
         >
-          <v-icon start>
-            mdi-calendar-check
-          </v-icon>
+          <v-icon start>mdi-calendar-check</v-icon>
           View Sessions
         </v-btn>
         
@@ -54,9 +43,7 @@
           block
           @click="editTest"
         >
-          <v-icon start>
-            mdi-pencil
-          </v-icon>
+          <v-icon start>mdi-pencil</v-icon>
           Edit Test
         </v-btn>
         
@@ -66,9 +53,7 @@
           block
           @click="moderatorGuide"
         >
-          <v-icon start>
-            mdi-book-open-variant
-          </v-icon>
+          <v-icon start>mdi-book-open-variant</v-icon>
           Moderator Guide
         </v-btn>
         
@@ -79,9 +64,7 @@
           block
           @click="pauseTest"
         >
-          <v-icon start>
-            mdi-pause
-          </v-icon>
+          <v-icon start>mdi-pause</v-icon>
           Pause Test
         </v-btn>
         
@@ -92,9 +75,7 @@
           block
           @click="resumeTest"
         >
-          <v-icon start>
-            mdi-play
-          </v-icon>
+          <v-icon start>mdi-play</v-icon>
           Resume Test
         </v-btn>
       </div>

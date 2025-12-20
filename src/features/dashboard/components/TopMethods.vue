@@ -16,8 +16,10 @@
     </v-chip>
 
     <v-card-title class="d-flex align-center py-4">
+
       <div class="d-flex align-center justify-space-between">
         <span class="text-h6 font-weight-bold">Most used methods</span>
+      
       </div>
     </v-card-title>
 

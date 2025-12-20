@@ -8,20 +8,11 @@
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center">
           <div class="icon-container mr-3">
-            <v-icon
-              color="white"
-              size="24"
-            >
-              mdi-database
-            </v-icon>
+            <v-icon color="white" size="24">mdi-database</v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">
-              Storage Usage
-            </h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">
-              Media files and storage metrics
-            </p>
+            <h3 class="text-h6 text-white mb-0">Storage Usage</h3>
+            <p class="text-body-2 text-white opacity-90 mb-0">Media files and storage metrics</p>
           </div>
         </div>
         <v-chip
@@ -30,12 +21,7 @@
           variant="outlined"
           class="border-white text-white"
         >
-          <v-icon
-            start
-            size="16"
-          >
-            mdi-flask
-          </v-icon>
+          <v-icon start size="16">mdi-flask</v-icon>
           Beta
         </v-chip>
       </div>
@@ -61,11 +47,7 @@
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Media Files</span>
-          <v-chip
-            size="small"
-            color="primary"
-            variant="outlined"
-          >
+          <v-chip size="small" color="primary" variant="outlined">
             {{ totalMediaFiles }}
           </v-chip>
         </div>
@@ -74,11 +56,7 @@
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Video Recordings</span>
-          <v-chip
-            size="small"
-            color="success"
-            variant="outlined"
-          >
+          <v-chip size="small" color="success" variant="outlined">
             {{ videoCount }} ({{ videoSizeFormatted }})
           </v-chip>
         </div>
@@ -87,11 +65,7 @@
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Audio Recordings</span>
-          <v-chip
-            size="small"
-            color="warning"
-            variant="outlined"
-          >
+          <v-chip size="small" color="warning" variant="outlined">
             {{ audioCount }} ({{ audioSizeFormatted }})
           </v-chip>
         </div>
@@ -100,11 +74,7 @@
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Screen Recordings</span>
-          <v-chip
-            size="small"
-            color="info"
-            variant="outlined"
-          >
+          <v-chip size="small" color="info" variant="outlined">
             {{ screenCount }} ({{ screenSizeFormatted }})
           </v-chip>
         </div>
@@ -112,9 +82,7 @@
       
       <!-- Storage breakdown -->
       <div class="mt-4">
-        <div class="text-caption text-medium-emphasis mb-2">
-          Storage Breakdown
-        </div>
+        <div class="text-caption text-medium-emphasis mb-2">Storage Breakdown</div>
         <div class="d-flex flex-column gap-1">
           <div class="d-flex justify-space-between text-caption">
             <span>Responses Data</span>
@@ -138,8 +106,8 @@
         variant="text" 
         size="small" 
         color="primary"
-        disabled="true"
         @click="manageStorage"
+        disabled="true"
       >
         Manage Storage
       </v-btn>

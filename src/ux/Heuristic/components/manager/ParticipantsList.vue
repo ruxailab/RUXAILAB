@@ -1,13 +1,7 @@
 <template>
-  <v-card
-    v-if="test"
-    class="pa-4"
-    elevation="1"
-  >
+  <v-card v-if="test" class="pa-4" elevation="1">
     <div class="d-flex justify-space-between align-center mb-4">
-      <h3 class="text-h6">
-        Participants
-      </h3>
+      <h3 class="text-h6">Participants</h3>
       <div class="d-flex gap-2">
         <v-btn 
           size="small" 
@@ -23,41 +17,23 @@
           variant="text" 
           :icon="showAllParticipants ? 'mdi-chevron-up' : 'mdi-chevron-down'"
           @click="toggleShowAll"
-        />
+        ></v-btn>
       </div>
     </div>
     
     <!-- Filtros -->
     <div class="filters mb-4">
-      <v-chip-group
-        v-model="selectedFilter"
-        mandatory
-      >
-        <v-chip
-          value="all"
-          size="small"
-        >
+      <v-chip-group v-model="selectedFilter" mandatory>
+        <v-chip value="all" size="small">
           {{ $t('manager.all') }} ({{ participants.length }})
         </v-chip>
-        <v-chip
-          value="completed"
-          size="small"
-          color="success"
-        >
+        <v-chip value="completed" size="small" color="success">
           {{ $t('manager.completed') }} ({{ completedCount }})
         </v-chip>
-        <v-chip
-          value="inProgress"
-          size="small"
-          color="warning"
-        >
+        <v-chip value="inProgress" size="small" color="warning">
           {{ $t('manager.inProgress') }} ({{ inProgressCount }})
         </v-chip>
-        <v-chip
-          value="notStarted"
-          size="small"
-          color="grey"
-        >
+        <v-chip value="notStarted" size="small" color="grey">
           {{ $t('manager.notStarted') }} ({{ notStartedCount }})
         </v-chip>
       </v-chip-group>
@@ -71,18 +47,13 @@
         class="participant-item"
       >
         <div class="participant-avatar">
-          <v-avatar
-            :color="getStatusColor(participant)"
-            size="40"
-          >
+          <v-avatar :color="getStatusColor(participant)" size="40">
             <v-icon>mdi-account</v-icon>
           </v-avatar>
         </div>
         
         <div class="participant-info flex-grow-1">
-          <div class="participant-name">
-            {{ participant.email }}
-          </div>
+          <div class="participant-name">{{ participant.email }}</div>
           <div class="participant-status">
             <v-chip 
               :color="getStatusColor(participant)" 
@@ -98,15 +69,13 @@
         </div>
         
         <div class="participant-progress">
-          <div class="progress-text mb-1">
-            {{ participant.progress || 0 }}%
-          </div>
+          <div class="progress-text mb-1">{{ participant.progress || 0 }}%</div>
           <v-progress-linear
             :model-value="participant.progress || 0"
             :color="getStatusColor(participant)"
             height="4"
             rounded
-          />
+          ></v-progress-linear>
         </div>
         
         <div class="participant-actions">
@@ -115,28 +84,16 @@
             variant="text"
             icon="mdi-dots-vertical"
             @click="showParticipantMenu(participant)"
-          />
+          ></v-btn>
         </div>
       </div>
     </div>
     
     <!-- Estado vacío -->
-    <div
-      v-if="filteredParticipants.length === 0"
-      class="text-center py-6 text-grey-darken-1"
-    >
-      <v-icon
-        size="48"
-        class="mb-2"
-      >
-        mdi-account-group-outline
-      </v-icon>
-      <div v-if="selectedFilter === 'all'">
-        {{ $t('manager.noParticipants') }}
-      </div>
-      <div v-else>
-        {{ $t('manager.noParticipantsInFilter') }}
-      </div>
+    <div v-if="filteredParticipants.length === 0" class="text-center py-6 text-grey-darken-1">
+      <v-icon size="48" class="mb-2">mdi-account-group-outline</v-icon>
+      <div v-if="selectedFilter === 'all'">{{ $t('manager.noParticipants') }}</div>
+      <div v-else>{{ $t('manager.noParticipantsInFilter') }}</div>
     </div>
     
     <!-- Menú de acciones del participante -->
@@ -148,37 +105,19 @@
       <v-list density="compact">
         <v-list-item @click="viewParticipantDetails">
           <v-list-item-title>
-            <v-icon
-              size="small"
-              class="mr-2"
-            >
-              mdi-eye
-            </v-icon>
+            <v-icon size="small" class="mr-2">mdi-eye</v-icon>
             {{ $t('manager.viewDetails') }}
           </v-list-item-title>
         </v-list-item>
         <v-list-item @click="sendReminder">
           <v-list-item-title>
-            <v-icon
-              size="small"
-              class="mr-2"
-            >
-              mdi-email
-            </v-icon>
+            <v-icon size="small" class="mr-2">mdi-email</v-icon>
             {{ $t('manager.sendReminder') }}
           </v-list-item-title>
         </v-list-item>
-        <v-list-item
-          class="text-error"
-          @click="removeParticipant"
-        >
+        <v-list-item @click="removeParticipant" class="text-error">
           <v-list-item-title>
-            <v-icon
-              size="small"
-              class="mr-2"
-            >
-              mdi-account-remove
-            </v-icon>
+            <v-icon size="small" class="mr-2">mdi-account-remove</v-icon>
             {{ $t('manager.removeParticipant') }}
           </v-list-item-title>
         </v-list-item>

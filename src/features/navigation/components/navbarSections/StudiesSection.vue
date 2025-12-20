@@ -39,14 +39,8 @@
       <div v-show="showFilters">
         <v-row dense>
           <!-- 📅 Creation date -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Creation date
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Creation date</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -70,22 +64,13 @@
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
-              <v-date-picker
-                v-model="creationDateRange"
-                multiple="range"
-              />
+              <v-date-picker v-model="creationDateRange" multiple="range" />
             </v-menu>
           </v-col>
 
           <!-- ⚙️ Status -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Status
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Status</div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -100,14 +85,8 @@
           </v-col>
 
           <!-- 🔓 Visibility -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Visibility
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Visibility</div>
             <v-select
               v-model="selectedVisibilityFilter"
               :items="visibilityOptions"
@@ -120,14 +99,8 @@
           </v-col>
 
           <!-- 🧭 Method -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Method
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Method</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -140,14 +113,8 @@
           </v-col>
 
           <!-- 👥 Ownership -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Ownership
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Ownership</div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -160,14 +127,8 @@
           </v-col>
 
           <!-- 👤 Participants -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Participants
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Participants</div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -184,11 +145,7 @@
   </v-card>
 
   <!-- 📋 Study list -->
-  <List
-    :items="filteredTests"
-    type="myTests"
-    @clicked="goTo"
-  />
+  <List :items="filteredTests" type="myTests" @clicked="goTo" />
 </template>
 
 <script setup>

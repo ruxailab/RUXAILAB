@@ -42,14 +42,8 @@
       <div v-show="showFilters">
         <v-row dense>
           <!-- 📅 Filter by creation date range -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Creation date
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Creation date</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -75,22 +69,13 @@
                 />
               </template>
               <!-- Vuetify date picker with range selection -->
-              <v-date-picker
-                v-model="creationDateRange"
-                multiple="range"
-              />
+              <v-date-picker v-model="creationDateRange" multiple="range" />
             </v-menu>
           </v-col>
 
           <!-- 🧭 Filter by method -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="3"
-          >
-            <div class="filter-label">
-              Method
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <div class="filter-label">Method</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"

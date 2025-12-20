@@ -9,15 +9,8 @@
         tasksForSelectedUser: {{ tasksForSelectedUser }} -->
 
         <!-- Top controls (replaces left columns) -->
-        <v-row
-          class="mb-2"
-          no-gutters
-        >
-          <v-col
-            cols="12"
-            md="4"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
+        <v-row class="mb-2" no-gutters>
+          <v-col cols="12" md="4" class="pr-md-2 mb-2 mb-md-0">
             <v-select
               v-model="selectedUserID"
               :items="userOptions"
@@ -49,11 +42,7 @@
             </v-select>
           </v-col>
 
-          <v-col
-            cols="12"
-            md="4"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
+          <v-col cols="12" md="4" class="pr-md-2 mb-2 mb-md-0">
             <v-select
               v-model="selectedTaskId"
               :items="taskOptions"
@@ -96,15 +85,9 @@
                 class="mb-3"
                 grow
               >
-                <v-tab value="timeline">
-                  Timeline
-                </v-tab>
-                <v-tab value="transcriptions">
-                  Transcriptions
-                </v-tab>
-                <v-tab value="export">
-                  Export Data
-                </v-tab>
+                <v-tab value="timeline">Timeline</v-tab>
+                <v-tab value="transcriptions">Transcriptions</v-tab>
+                <v-tab value="export">Export Data</v-tab>
               </v-tabs>
 
               <div class="panel-shell">
@@ -124,7 +107,7 @@
                   :answer-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
-                  :latest-transcription-id="
+                  :latestTranscriptionId="
                     selectedTask?.latestTranscriptionDocId
                   "
                 />
@@ -185,6 +168,15 @@
     </div> -->
   </div>
 </template>
+
+<style scoped>
+.panel-shell {
+  background: #e8eaf2;
+  width: 100%; /* ✅ full width */
+  padding: 0;
+  border-radius: 0;
+}
+</style>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
@@ -312,12 +304,3 @@ function getCooperatorEmail(userDocId) {
   return cooperatorEmail
 }
 </script>
-
-<style scoped>
-.panel-shell {
-  background: #e8eaf2;
-  width: 100%; /* ✅ full width */
-  padding: 0;
-  border-radius: 0;
-}
-</style>

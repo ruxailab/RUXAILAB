@@ -169,7 +169,7 @@
                         :items="itemsHeuristic"
                         :search="search"
                         height="375px"
-                        density="compact"
+                        dense
                       >
                         <template
                           v-for="header in headersHeuristic"

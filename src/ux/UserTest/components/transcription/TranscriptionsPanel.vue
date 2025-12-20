@@ -1,7 +1,7 @@
 <template>
   <div class="pa-4">
     <div class="d-flex align-center justify-space-between mb-3">
-      <h3 class="text-h6 m-0" />
+      <h3 class="text-h6 m-0"></h3>
       <v-progress-circular
         v-if="loading"
         indeterminate
@@ -22,10 +22,7 @@
     </v-alert>
 
     <!-- Runs list -->
-    <v-expansion-panels
-      v-else
-      variant="accordion"
-    >
+    <v-expansion-panels v-else variant="accordion">
       <v-expansion-panel
         v-for="(run, i) in transcriptionsArray"
         :key="run?.id || i"
@@ -33,15 +30,16 @@
         <v-expansion-panel-title>
           <div class="w-100 d-flex align-center justify-space-between">
             <div class="d-flex align-center gap-2">
-              <span class="font-weight-medium">Transcription {{ transcriptionsArray.length - i }}</span>
+              <span class="font-weight-medium"
+                >Transcription {{ transcriptionsArray.length - i }}</span
+              >
               <v-chip
                 v-if="run.id === latestTranscriptionId"
                 size="x-small"
                 color="success"
                 text-color="white"
+                >Latest</v-chip
               >
-                Latest
-              </v-chip>
             </div>
 
             <!-- actions -->
@@ -76,12 +74,9 @@
           <!-- full transcription list for this run -->
           <TranscriptionList
             v-if="segmentsFor(run).length"
-            :transcript-segments="segmentsFor(run)"
+            :transcriptSegments="segmentsFor(run)"
           />
-          <div
-            v-else
-            class="text-medium-emphasis text-caption"
-          >
+          <div v-else class="text-medium-emphasis text-caption">
             No segments in this run.
           </div>
         </v-expansion-panel-text>
@@ -89,31 +84,20 @@
     </v-expansion-panels>
 
     <!-- confirm -->
-    <v-dialog
-      v-model="confirmOpen"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmOpen" max-width="420">
       <v-card>
-        <v-card-title class="text-h6">
-          Delete transcription?
-        </v-card-title>
+        <v-card-title class="text-h6">Delete transcription?</v-card-title>
         <v-card-text>
           This action can’t be undone. The run will be removed from this task.
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn
-            variant="text"
-            @click="confirmOpen = false"
-          >
-            Cancel
-          </v-btn>
+          <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
           <v-btn
             color="error"
             :loading="deletingId === runToDelete?.id"
             @click="confirmDelete"
+            >Delete</v-btn
           >
-            Delete
-          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

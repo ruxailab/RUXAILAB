@@ -1,106 +1,44 @@
 <template>
-  <v-container
-    fluid
-    class="video-call-container mt-6"
-    :class="{ 'panel-open': showSidePanel }"
-  >
+  <v-container fluid class="video-call-container mt-6" :class="{ 'panel-open': showSidePanel }">
+
     <!-- Videos Row -->
-    <v-row
-      class="video-row justify-center"
-      no-gutters
-    >
-      <v-col
-        v-show="isSharingScreen"
-        cols="12"
-        class="d-flex justify-center align-center"
-      >
-        <div
-          v-show="isSharingScreen"
-          class="video-container"
-        >
-          <video
-            ref="screenVideo"
-            autoplay
-            playsinline
-            class="video-element"
-          />
-          <div class="video-label">
-            Compartilhando tela
-          </div>
+    <v-row class="video-row justify-center" no-gutters>
+      <v-col cols="12" class="d-flex justify-center align-center" v-show="isSharingScreen">
+        <div class="video-container" v-show="isSharingScreen">
+          <video ref="screenVideo" autoplay playsinline class="video-element"></video>
+          <div class="video-label">Compartilhando tela</div>
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        class="d-flex justify-center align-center"
-      >
+      <v-col cols="12" class="d-flex justify-center align-center">
         <div class="videos-container">
           <!-- Local Video -->
           <div class="video-container">
-            <video
-              ref="localVideo"
-              autoplay
-              muted
-              playsinline
-              class="video-element"
-            />
+            <video ref="localVideo" autoplay muted playsinline class="video-element"></video>
             
             <!-- Camera disabled overlay -->
-            <div
-              v-if="!isCameraEnabled"
-              class="camera-disabled-overlay"
-            >
-              <v-icon
-                size="64"
-                color="white"
-                class="mb-2"
-              >
-                mdi-video-off
-              </v-icon>
-              <p class="text-white">
-                Camera is off
-              </p>
+            <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
+              <v-icon size="64" color="white" class="mb-2">mdi-video-off</v-icon>
+              <p class="text-white">Camera is off</p>
             </div>
             
             <!-- Microphone muted indicator -->
-            <div
-              v-if="!isMicrophoneEnabled"
-              class="mic-muted-indicator"
-            >
-              <v-icon
-                size="24"
-                color="white"
-              >
-                mdi-microphone-off
-              </v-icon>
+            <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
+              <v-icon size="24" color="white">mdi-microphone-off</v-icon>
             </div>
             
             <!-- Video label -->
-            <div class="video-label">
-              Tu video
-            </div>
+            <div class="video-label">Tu video</div>
           </div>
 
           <!-- Remote Video -->
           <div class="video-container">
-            <div
-              v-show="!callStarted"
-              class="not-connected-message"
-            >
+            <div v-show="!callStarted" class="not-connected-message">
               Not connected
             </div>
-            <video
-              v-show="callStarted"
-              ref="remoteVideo"
-              autoplay
-              playsinline
-              class="video-element"
-            />
+            <video v-show="callStarted" ref="remoteVideo" autoplay playsinline class="video-element"></video>
             
             <!-- Video label -->
-            <div
-              v-if="callStarted"
-              class="video-label"
-            >
+            <div v-if="callStarted" class="video-label">
               {{ caller ? 'Participante' : 'Moderador' }}
             </div>
           </div>
@@ -109,25 +47,17 @@
     </v-row>
 
     <!-- Participant Join Controls Row (completely separate from videos) -->
-    <v-row
-      v-if="!caller && !callStarted"
-      class="participant-controls-row"
-      justify="center"
-      no-gutters
-    >
-      <v-col
-        cols="12"
-        class="participant-controls-container"
-      >
+    <v-row v-if="!caller && !callStarted" class="participant-controls-row" justify="center" no-gutters>
+      <v-col cols="12" class="participant-controls-container">
         <div class="participant-controls-content">
           <!-- Single Unified Join Button -->
           <v-btn 
             :color="roomExists ? 'primary' : 'warning'" 
             size="x-large" 
             class="join-room-btn"
+            @click="answerCall"
             :disabled="!roomExists"
             :variant="roomExists ? 'flat' : 'outlined'"
-            @click="answerCall"
           >
             <template v-if="!roomExists">
               <v-progress-circular
@@ -135,22 +65,12 @@
                 size="20"
                 width="2"
                 class="me-2"
-              />
-              <v-icon
-                start
-                size="24"
-              >
-                mdi-clock-outline
-              </v-icon>
+              ></v-progress-circular>
+              <v-icon left size="24">mdi-clock-outline</v-icon>
               Waiting for moderator...
             </template>
             <template v-else>
-              <v-icon
-                start
-                size="24"
-              >
-                mdi-video
-              </v-icon>
+              <v-icon left size="24">mdi-video</v-icon>
               Join Room
             </template>
           </v-btn>
@@ -162,7 +82,7 @@
     <div class="bottom-control-bar">
       <div class="control-bar-layout">
         <!-- Left side - spacer -->
-        <div class="control-bar-left" />
+        <div class="control-bar-left"></div>
         
         <!-- Center - main controls -->
         <div class="control-buttons-container">
@@ -177,9 +97,7 @@
                 size="large"
                 @click="toggleCamera"
               >
-                <v-icon size="28">
-                  {{ isCameraEnabled ? 'mdi-video' : 'mdi-video-off' }}
-                </v-icon>
+                <v-icon size="28">{{ isCameraEnabled ? 'mdi-video' : 'mdi-video-off' }}</v-icon>
               </v-btn>
             </template>
             <span>{{ isCameraEnabled ? 'Turn off camera' : 'Turn on camera' }}</span>
@@ -196,9 +114,7 @@
                 size="large"
                 @click="toggleMicrophone"
               >
-                <v-icon size="28">
-                  {{ isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off' }}
-                </v-icon>
+                <v-icon size="28">{{ isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off' }}</v-icon>
               </v-btn>
             </template>
             <span>{{ isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone' }}</span>
@@ -215,22 +131,18 @@
                 size="large"
                 @click="handleScreenShare"
               >
-                <v-icon size="28">
-                  {{ isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot' }}
-                </v-icon>
+                <v-icon size="28">{{ isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot' }}</v-icon>
               </v-btn>
             </template>
             <span>{{ isSharingScreen ? 'Stop sharing screen' : 'Share screen' }}</span>
           </v-tooltip>
+
         </div>
         
         <!-- Right side - panel toggles -->
         <div class="control-bar-right">
           <!-- Open Room button (for moderator) -->
-          <v-tooltip
-            v-if="caller && !callStarted"
-            location="top"
-          >
+          <v-tooltip v-if="caller && !callStarted" location="top">
             <template #activator="{ props }">
               <v-btn 
                 v-bind="props"
@@ -239,12 +151,7 @@
                 size="large"
                 @click="startCall"
               >
-                <v-icon
-                  start
-                  size="20"
-                >
-                  mdi-video-plus
-                </v-icon>
+                <v-icon left size="20">mdi-video-plus</v-icon>
                 Open Room
               </v-btn>
             </template>
@@ -252,10 +159,7 @@
           </v-tooltip>
 
           <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip
-            v-if="caller && callStarted"
-            location="top"
-          >
+          <v-tooltip v-if="caller && callStarted" location="top">
             <template #activator="{ props }">
               <v-btn 
                 v-bind="props"
@@ -264,12 +168,7 @@
                 size="large"
                 @click="endCall"
               >
-                <v-icon
-                  start
-                  size="20"
-                >
-                  mdi-phone-hangup
-                </v-icon>
+                <v-icon left size="20">mdi-phone-hangup</v-icon>
                 End Call
               </v-btn>
             </template>
@@ -277,10 +176,7 @@
           </v-tooltip>
 
           <!-- End Call button (for participant when call is active) -->
-          <v-tooltip
-            v-if="!caller && callStarted"
-            location="top"
-          >
+          <v-tooltip v-if="!caller && callStarted" location="top">
             <template #activator="{ props }">
               <v-btn 
                 v-bind="props"
@@ -289,12 +185,7 @@
                 size="large"
                 @click="endCall"
               >
-                <v-icon
-                  start
-                  size="20"
-                >
-                  mdi-phone-hangup
-                </v-icon>
+                <v-icon left size="20">mdi-phone-hangup</v-icon>
                 Leave Call
               </v-btn>
             </template>
@@ -312,9 +203,7 @@
                 size="large"
                 @click="toggleStepperPanel"
               >
-                <v-icon size="28">
-                  mdi-format-list-numbered
-                </v-icon>
+                <v-icon size="28">mdi-format-list-numbered</v-icon>
               </v-btn>
             </template>
             <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
@@ -331,9 +220,7 @@
                 size="large"
                 @click="toggleSidePanel"
               >
-                <v-icon size="28">
-                  mdi-account-group
-                </v-icon>
+                <v-icon size="28">mdi-account-group</v-icon>
               </v-btn>
             </template>
             <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
@@ -343,18 +230,15 @@
     </div>
 
     <!-- Side Panel -->
-    <div
-      class="side-panel"
-      :class="{ 'side-panel-open': showSidePanel }"
-    >
+    <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
         <h3>Panel de Herramientas</h3>
         <v-btn 
           icon 
           size="small" 
           variant="text" 
-          class="close-btn"
           @click="toggleSidePanel"
+          class="close-btn"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -366,32 +250,18 @@
           <h4>Control de Sesión</h4>
           
           <!-- Connection controls when call is not started -->
-          <div
-            v-if="!callStarted"
-            class="session-controls"
-          >
+          <div v-if="!callStarted" class="session-controls">
             <!-- Note: Join Room controls moved to main interface for better visibility -->
-            <div
-              v-if="!caller"
-              class="participant-info"
-            >
+            <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
-                <v-icon
-                  start
-                  size="16"
-                >
-                  mdi-information
-                </v-icon>
+                <v-icon left size="16">mdi-information</v-icon>
                 Join room controls are now in the main interface above
               </p>
             </div>
           </div>
 
           <!-- Call controls when call is active -->
-          <div
-            v-else
-            class="session-controls"
-          >
+          <div v-else class="session-controls">
             <!-- Proceed to next step (only for moderator) -->
             <v-btn 
               v-if="caller"
@@ -401,9 +271,7 @@
               class="mb-3"
               @click="proceedToNextStep"
             >
-              <v-icon start>
-                mdi-arrow-right
-              </v-icon>
+              <v-icon left>mdi-arrow-right</v-icon>
               Proceed to Next Step
             </v-btn>
 
@@ -415,25 +283,14 @@
               variant="outlined"
               @click="endCall"
             >
-              <v-icon start>
-                mdi-phone-hangup
-              </v-icon>
+              <v-icon left>mdi-phone-hangup</v-icon>
               End Call
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
-              <v-chip
-                color="green"
-                size="small"
-                class="mb-2"
-              >
-                <v-icon
-                  start
-                  size="16"
-                >
-                  mdi-phone
-                </v-icon>
+              <v-chip color="green" size="small" class="mb-2">
+                <v-icon left size="16">mdi-phone</v-icon>
                 Llamada activa
               </v-chip>
             </div>
@@ -443,71 +300,27 @@
         <div class="panel-section">
           <h4>Participantes</h4>
           <div class="participant-item">
-            <v-avatar
-              size="32"
-              :color="caller ? 'blue' : 'green'"
-            >
-              <v-icon color="white">
-                {{ caller ? 'mdi-account-star' : 'mdi-account' }}
-              </v-icon>
+            <v-avatar size="32" :color="caller ? 'blue' : 'green'">
+              <v-icon color="white">{{ caller ? 'mdi-account-star' : 'mdi-account' }}</v-icon>
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">{{ caller ? 'Moderador (Tú)' : 'Participante (Tú)' }}</span>
               <div class="participant-status">
-                <v-chip
-                  v-if="isCameraEnabled"
-                  size="x-small"
-                  color="green"
-                >
-                  Cámara
-                </v-chip>
-                <v-chip
-                  v-else
-                  size="x-small"
-                  color="red"
-                >
-                  Sin cámara
-                </v-chip>
-                <v-chip
-                  v-if="isMicrophoneEnabled"
-                  size="x-small"
-                  color="green"
-                  class="ml-1"
-                >
-                  Micrófono
-                </v-chip>
-                <v-chip
-                  v-else
-                  size="x-small"
-                  color="red"
-                  class="ml-1"
-                >
-                  Sin micrófono
-                </v-chip>
+                <v-chip size="x-small" color="green" v-if="isCameraEnabled">Cámara</v-chip>
+                <v-chip size="x-small" color="red" v-else>Sin cámara</v-chip>
+                <v-chip size="x-small" color="green" v-if="isMicrophoneEnabled" class="ml-1">Micrófono</v-chip>
+                <v-chip size="x-small" color="red" v-else class="ml-1">Sin micrófono</v-chip>
               </div>
             </div>
           </div>
-          <div
-            v-if="callStarted"
-            class="participant-item"
-          >
-            <v-avatar
-              size="32"
-              :color="caller ? 'green' : 'blue'"
-            >
-              <v-icon color="white">
-                {{ caller ? 'mdi-account' : 'mdi-account-star' }}
-              </v-icon>
+          <div class="participant-item" v-if="callStarted">
+            <v-avatar size="32" :color="caller ? 'green' : 'blue'">
+              <v-icon color="white">{{ caller ? 'mdi-account' : 'mdi-account-star' }}</v-icon>
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">{{ caller ? 'Participante' : 'Moderador' }}</span>
               <div class="participant-status">
-                <v-chip
-                  size="x-small"
-                  color="green"
-                >
-                  Conectado
-                </v-chip>
+                <v-chip size="x-small" color="green">Conectado</v-chip>
               </div>
             </div>
           </div>
@@ -536,10 +349,7 @@
                 {{ isMicrophoneEnabled ? 'Silenciar micrófono' : 'Activar micrófono' }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item
-              v-if="callStarted"
-              @click="handleScreenShare"
-            >
+            <v-list-item v-if="callStarted" @click="handleScreenShare">
               <template #prepend>
                 <v-icon :color="isSharingScreen ? 'blue' : 'grey'">
                   {{ isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot' }}
@@ -555,18 +365,15 @@
     </div>
 
     <!-- Stepper Panel -->
-    <div
-      class="stepper-panel"
-      :class="{ 'stepper-panel-open': showStepperPanel }"
-    >
+    <div class="stepper-panel" :class="{ 'stepper-panel-open': showStepperPanel }">
       <div class="stepper-panel-header">
         <h3>Test Progress</h3>
         <v-btn 
           icon 
           size="small" 
           variant="text" 
-          class="close-btn"
           @click="toggleStepperPanel"
+          class="close-btn"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -574,21 +381,9 @@
       
       <div class="stepper-panel-content">
         <!-- Moderator indicator -->
-        <div
-          v-if="!caller"
-          class="moderator-notice"
-        >
-          <v-chip
-            size="small"
-            color="orange"
-            class="mb-4"
-          >
-            <v-icon
-              start
-              size="16"
-            >
-              mdi-information
-            </v-icon>
+        <div v-if="!caller" class="moderator-notice">
+          <v-chip size="small" color="orange" class="mb-4">
+            <v-icon left size="16">mdi-information</v-icon>
             Solo el moderador puede cambiar los pasos
           </v-chip>
         </div>
@@ -607,27 +402,14 @@
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon
-                  v-if="currentStepperValue >= 1"
-                  color="white"
-                  size="16"
-                >
-                  mdi-check
-                </v-icon>
+                <v-icon v-if="currentStepperValue >= 1" color="white" size="16">mdi-check</v-icon>
                 <span v-else>1</span>
               </div>
-              <div
-                v-if="currentStepperValue >= 1"
-                class="step-line"
-              />
+              <div class="step-line" v-if="currentStepperValue >= 1"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">
-                Consent
-              </h4>
-              <p class="step-description">
-                User consent and agreement
-              </p>
+              <h4 class="step-title">Consent</h4>
+              <p class="step-description">User consent and agreement</p>
             </div>
           </div>
 
@@ -643,27 +425,14 @@
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon
-                  v-if="currentStepperValue >= 2"
-                  color="white"
-                  size="16"
-                >
-                  mdi-check
-                </v-icon>
+                <v-icon v-if="currentStepperValue >= 2" color="white" size="16">mdi-check</v-icon>
                 <span v-else>2</span>
               </div>
-              <div
-                v-if="currentStepperValue >= 2"
-                class="step-line"
-              />
+              <div class="step-line" v-if="currentStepperValue >= 2"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">
-                Pre-test
-              </h4>
-              <p class="step-description">
-                Initial questionnaire
-              </p>
+              <h4 class="step-title">Pre-test</h4>
+              <p class="step-description">Initial questionnaire</p>
             </div>
           </div>
 
@@ -679,36 +448,21 @@
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon
-                  v-if="currentStepperValue >= 3"
-                  color="white"
-                  size="16"
-                >
-                  mdi-check
-                </v-icon>
+                <v-icon v-if="currentStepperValue >= 3" color="white" size="16">mdi-check</v-icon>
                 <span v-else>3</span>
               </div>
-              <div
-                v-if="currentStepperValue >= 3"
-                class="step-line"
-              />
+              <div class="step-line" v-if="currentStepperValue >= 3"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">
-                Tasks
-              </h4>
-              <p class="step-description">
-                User testing tasks
-              </p>
+              <h4 class="step-title">Tasks</h4>
+              <p class="step-description">User testing tasks</p>
               
               <!-- Task dropdown when active and moderator -->
-              <div
-                v-if="currentStepperValue === 2 && caller && test?.testStructure?.userTasks"
-                class="tasks-dropdown mt-3"
-              >
+              <div v-if="currentStepperValue === 2 && caller && test?.testStructure?.userTasks" class="tasks-dropdown mt-3">
                 <v-select
                   :items="taskDropdownItems"
                   :model-value="currentTaskIndex"
+                  @update:model-value="goToSpecificTask"
                   item-title="title"
                   item-value="index"
                   variant="outlined"
@@ -717,18 +471,11 @@
                   class="task-selector"
                   placeholder="Select a task"
                   prepend-inner-icon="mdi-format-list-bulleted"
-                  @update:model-value="goToSpecificTask"
                 >
                   <template #item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :title="item.raw.title"
-                    >
+                    <v-list-item v-bind="props" :title="item.raw.title">
                       <template #prepend>
-                        <v-icon
-                          size="20"
-                          :color="item.raw.index < currentTaskIndex ? 'success' : item.raw.index === currentTaskIndex ? 'primary' : 'grey'"
-                        >
+                        <v-icon size="20" :color="item.raw.index < currentTaskIndex ? 'success' : item.raw.index === currentTaskIndex ? 'primary' : 'grey'">
                           {{ item.raw.index < currentTaskIndex ? 'mdi-check-circle' : item.raw.index === currentTaskIndex ? 'mdi-play-circle' : 'mdi-circle-outline' }}
                         </v-icon>
                       </template>
@@ -751,27 +498,14 @@
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon
-                  v-if="currentStepperValue >= 4"
-                  color="white"
-                  size="16"
-                >
-                  mdi-check
-                </v-icon>
+                <v-icon v-if="currentStepperValue >= 4" color="white" size="16">mdi-check</v-icon>
                 <span v-else>4</span>
               </div>
-              <div
-                v-if="currentStepperValue >= 4"
-                class="step-line"
-              />
+              <div class="step-line" v-if="currentStepperValue >= 4"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">
-                Post-test
-              </h4>
-              <p class="step-description">
-                Final questionnaire
-              </p>
+              <h4 class="step-title">Post-test</h4>
+              <p class="step-description">Final questionnaire</p>
             </div>
           </div>
 
@@ -787,23 +521,13 @@
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon
-                  v-if="currentStepperValue === 5"
-                  color="white"
-                  size="16"
-                >
-                  mdi-check
-                </v-icon>
+                <v-icon v-if="currentStepperValue === 5" color="white" size="16">mdi-check</v-icon>
                 <span v-else>5</span>
               </div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">
-                Completion
-              </h4>
-              <p class="step-description">
-                Test finished
-              </p>
+              <h4 class="step-title">Completion</h4>
+              <p class="step-description">Test finished</p>
             </div>
           </div>
         </div>
@@ -815,7 +539,7 @@
       v-if="showSidePanel || showStepperPanel" 
       class="panel-overlay"
       @click="showSidePanel = false; showStepperPanel = false"
-    />
+    ></div>
 
     <!-- Join Room Dialog for Participants -->
     <v-dialog
@@ -829,12 +553,7 @@
           size="80"
           class="mb-4"
         >
-          <v-icon
-            size="40"
-            color="white"
-          >
-            mdi-video-plus
-          </v-icon>
+          <v-icon size="40" color="white">mdi-video-plus</v-icon>
         </v-avatar>
         
         <v-card-title class="text-h6 font-weight-bold mb-2">
@@ -854,9 +573,7 @@
             class="mb-2"
             @click="joinRoomFromDialog"
           >
-            <v-icon start>
-              mdi-video
-            </v-icon>
+            <v-icon left>mdi-video</v-icon>
             Join Video Call
           </v-btn>
           

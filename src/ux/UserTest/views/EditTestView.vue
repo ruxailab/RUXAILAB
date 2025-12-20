@@ -1,8 +1,5 @@
 <template>
-  <PageWrapper
-    :title="t('pages.editTest.title')"
-    :side-gap="true"
-  >
+  <PageWrapper :title="t('pages.editTest.title')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ t('pages.editTest.description') }}
@@ -10,17 +7,10 @@
     </template>
 
     <v-container>
-      <ButtonSave
-        :visible="true"
-        @click="save"
-      />
+      <ButtonSave :visible="true" @click="save" />
 
       <div>
-        <v-tabs
-          bg-color="transparent"
-          color="#FCA326"
-          class="pb-0 mb-0"
-        >
+        <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
           <v-tab @click="index = 0">
             {{ $t('UserTestTable.titles.testConfiguration') }}
           </v-tab>
@@ -36,10 +26,7 @@
           <v-tab @click="index = 4">
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
-          <v-tab
-            v-if="hasEyeTracking"
-            @click="index = 5"
-          >
+          <v-tab v-if="hasEyeTracking" @click="index = 5">
             Eye Tracking Configurations
           </v-tab>
         </v-tabs>
@@ -47,34 +34,19 @@
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm
-              :welcome="welcomeMessage"
-              :final-message="finalMessage"
-              @update:welcome-message="welcomeMessage = $event"
-              @update:final-message="finalMessage = $event"
-            />
+            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
+              @update:welcome-message="welcomeMessage = $event" @update:final-message="finalMessage = $event" />
           </div>
 
           <!-- CONSENT FORM -->
-          <div
-            v-if="index === 1"
-            rounded="xxl"
-          >
-            <TextareaForm
-              v-model="consent"
-              :title="$t('ModeratedTest.consentForm')"
-              :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-              @update:value="consent = $event"
-            />
+          <div v-if="index === 1" rounded="xxl">
+            <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+              :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="consent = $event" />
           </div>
 
           <!-- PRE-TEST -->
           <div v-if="index === 2">
-            <UserVariables
-              type="pre-test"
-              @change="change = true"
-              @update="store.dispatch('setPreTest', $event)"
-            />
+            <UserVariables type="pre-test" @change="change = true" @update="store.dispatch('setPreTest', $event)" />
           </div>
 
           <!-- TASKS -->
@@ -83,17 +55,10 @@
           </div>
           <!-- POST-TEST -->
           <div v-if="index === 4">
-            <UserVariables
-              type="post-test"
-              @change="change = true"
-              @update="store.dispatch('setPostTest', $event)"
-            />
+            <UserVariables type="post-test" @change="change = true" @update="store.dispatch('setPostTest', $event)" />
           </div>
 
-          <v-card
-            v-if="index === 5 && hasEyeTracking"
-            rounded="xxl"
-          >
+          <v-card v-if="index === 5 && hasEyeTracking" rounded="xxl">
             <EyeTrackingConfig />
           </v-card>
         </v-col>

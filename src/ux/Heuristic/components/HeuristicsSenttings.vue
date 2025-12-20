@@ -49,11 +49,8 @@
                 counter
                 multiple
               >
-                <template #selection="{ fileNames }">
-                  <template
-                    v-for="(fileName, index) in fileNames"
-                    :key="fileName"
-                  >
+                <template v-slot:selection="{ fileNames }">
+                  <template v-for="(fileName, index) in fileNames" :key="fileName">
                     <v-chip
                       v-if="index < 2"
                       class="me-2"
@@ -74,10 +71,7 @@
                 </template>
               </v-file-input>
             </v-col>
-            <v-col
-              cols="2"
-              class="pb-8"
-            >
+            <v-col cols="2" class="pb-8">
               <v-btn
                 :loading="loadingUpdate"
                 :disabled="loadingUpdate || testAnswerDocLength > 0"

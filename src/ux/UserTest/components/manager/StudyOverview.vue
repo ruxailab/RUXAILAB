@@ -1,11 +1,7 @@
 <template>
-  <v-row>
+    <v-row>
     <!-- Total Users -->
-    <v-col
-      cols="12"
-      md="6"
-      class="py-0"
-    >
+    <v-col cols="12" md="6" class="py-0">
       <v-card 
         class="study-card study-card-primary-blur"
         elevation="8"
@@ -13,20 +9,11 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">
-                Total Participants
-              </h3>
-              <div class="metric-value-small text-white">
-                {{ totalUsers }}
-              </div>
+              <h3 class="card-title-small mb-1 text-white">Total Participants</h3>
+              <div class="metric-value-small text-white">{{ totalUsers }}</div>
             </div>
             <div class="icon-container-small">
-              <v-icon
-                size="20"
-                color="white"
-              >
-                mdi-account-group
-              </v-icon>
+              <v-icon size="20" color="white">mdi-account-group</v-icon>
             </div>
           </div>
         </v-card-text>
@@ -34,11 +21,7 @@
     </v-col>
 
     <!-- Completed Tests -->
-    <v-col
-      cols="12"
-      md="6"
-      class="py-0"
-    >
+    <v-col cols="12" md="6"  class="py-0">
       <v-card 
         class="study-card study-card-primary-blur"
         elevation="8"
@@ -46,21 +29,12 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">
-                Completed
-              </h3>
-              <div class="metric-value-small text-white">
-                {{ completedTests }}
-              </div>
+              <h3 class="card-title-small mb-1 text-white">Completed</h3>
+              <div class="metric-value-small text-white">{{ completedTests }}</div>
               <span class="progress-text-small text-white opacity-90">{{ completionPercentage }}% rate</span>
             </div>
             <div class="icon-container-small">
-              <v-icon
-                size="20"
-                color="white"
-              >
-                mdi-check-circle
-              </v-icon>
+              <v-icon size="20" color="white">mdi-check-circle</v-icon>
             </div>
           </div>
         </v-card-text>
@@ -68,11 +42,7 @@
     </v-col>
 
     <!-- In Progress -->
-    <v-col
-      cols="12"
-      md="6"
-      m
-    >
+    <v-col cols="12" md="6" m >
       <v-card 
         class="study-card study-card-primary-blur"
         elevation="8"
@@ -80,21 +50,12 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">
-                In Progress
-              </h3>
-              <div class="metric-value-small text-white">
-                {{ inProgressTests }}
-              </div>
+              <h3 class="card-title-small mb-1 text-white">In Progress</h3>
+              <div class="metric-value-small text-white">{{ inProgressTests }}</div>
               <span class="progress-text-small text-white opacity-90">{{ inProgressPercentage }}% active</span>
             </div>
             <div class="icon-container-small">
-              <v-icon
-                size="20"
-                color="white"
-              >
-                mdi-clock-outline
-              </v-icon>
+              <v-icon size="20" color="white">mdi-clock-outline</v-icon>
             </div>
           </div>
         </v-card-text>
@@ -102,10 +63,7 @@
     </v-col>
 
     <!-- Average Completion Time -->
-    <v-col
-      cols="12"
-      md="6"
-    >
+    <v-col cols="12" md="6">
       <v-card 
         class="study-card study-card-primary-blur"
         elevation="8"
@@ -113,21 +71,12 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">
-                Average Time
-              </h3>
-              <div class="metric-value-small text-white">
-                {{ averageCompletionTime }}
-              </div>
+              <h3 class="card-title-small mb-1 text-white">Average Time</h3>
+              <div class="metric-value-small text-white">{{ averageCompletionTime }}</div>
               <span class="progress-text-small text-white opacity-90">Completion time</span>
             </div>
             <div class="icon-container-small">
-              <v-icon
-                size="20"
-                color="white"
-              >
-                mdi-timer-outline
-              </v-icon>
+              <v-icon size="20" color="white">mdi-timer-outline</v-icon>
             </div>
           </div>
         </v-card-text>

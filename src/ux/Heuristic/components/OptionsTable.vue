@@ -1,124 +1,121 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
-  >
-    <v-card
-      elevation="2"
-      class="pa-6"
-    >
-      <!-- Header Section -->
-      <div class="d-flex align-center justify-space-between mb-8">
-        <div>
-          <h1 class="text-h4 font-weight-bold text-on-surface">
-            {{ $t('HeuristicsOptionsTable.titles.options') }}
-          </h1>
+      <v-container
+        fluid
+        class="pa-6"
+      >
+        <v-card
+          elevation="2"
+          class="pa-6"
+        >
+        <!-- Header Section -->
+        <div class="d-flex align-center justify-space-between mb-8">
+          <div>
+            <h1 class="text-h4 font-weight-bold text-on-surface">
+              {{ $t('HeuristicsOptionsTable.titles.options') }}
+            </h1>
+          </div>
+
+          <v-btn
+            color="primary"
+            prepend-icon="mdi-plus"
+            variant="elevated"
+            size="large"
+            :disabled="testAnswerDocLength > 0"
+            class="text-none"
+            @click="dialog = true"
+          >
+            {{ $t('HeuristicsTable.titles.addOption') }}
+          </v-btn>
         </div>
 
-        <v-btn
-          color="primary"
-          prepend-icon="mdi-plus"
-          variant="elevated"
-          size="large"
-          :disabled="testAnswerDocLength > 0"
-          class="text-none"
-          @click="dialog = true"
-        >
-          {{ $t('HeuristicsTable.titles.addOption') }}
-        </v-btn>
-      </div>
+        <!-- Options Table -->
+        <v-card>
+          <v-data-table
+            :headers="headers"
+            :items="optionsWithFormattedValue"
+            :items-per-page="-1"
+            class="elevation-0"
+          >
+            <!-- Custom header styling -->
+            <template #headers="{ columns }">
+              <tr class="table-header">
+                <th
+                  v-for="column in columns"
+                  :key="column.key"
+                  class="text-left font-weight-medium text-ternary pa-4"
+                  :style="{ width: column.width }"
+                >
+                  {{ column.title }}
+                </th>
+              </tr>
+            </template>
 
-      <!-- Options Table -->
-      <v-card>
-        <v-data-table
-          :headers="headers"
-          :items="optionsWithFormattedValue"
-          :items-per-page="-1"
-          class="elevation-0"
-        >
-          <!-- Custom header styling -->
-          <template #headers="{ columns }">
-            <tr class="table-header">
-              <th
-                v-for="column in columns"
-                :key="column.key"
-                class="text-left font-weight-medium text-ternary pa-4"
-                :style="{ width: column.width }"
-              >
-                {{ column.title }}
-              </th>
-            </tr>
-          </template>
+            <!-- Custom row styling -->
+            <template #item="{ item }">
+              <tr class="table-row">
+                <td class="pa-4">
+                  <span class="text-body-1 text-on-surface">{{ item.text }}</span>
+                </td>
+                <td class="pa-4">
+                  <span class="text-body-2 text-on-surface">{{ item.description }}</span>
+                </td>
+                <td class="pa-4">
+                  <span class="text-body-1 text-on-surface font-weight-medium">{{ item.value }}</span>
+                </td>
+                <td class="pa-4">
+                  <div class="d-flex gap-2">
+                    <v-btn
+                      icon="mdi-pencil"
+                      variant="text"
+                      size="small"
+                      color="primary"
+                      :disabled="testAnswerDocLength > 0"
+                      @click="editItem(item)"
+                    />
+                    <v-btn
+                      icon="mdi-delete"
+                      variant="text"
+                      size="small"
+                      color="error"
+                      :disabled="testAnswerDocLength > 0"
+                      @click="deleteItem(item)"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </template>
 
-          <!-- Custom row styling -->
-          <template #item="{ item }">
-            <tr class="table-row">
-              <td class="pa-4">
-                <span class="text-body-1 text-on-surface">{{ item.text }}</span>
-              </td>
-              <td class="pa-4">
-                <span class="text-body-2 text-on-surface">{{ item.description }}</span>
-              </td>
-              <td class="pa-4">
-                <span class="text-body-1 text-on-surface font-weight-medium">{{ item.value }}</span>
-              </td>
-              <td class="pa-4">
-                <div class="d-flex gap-2">
-                  <v-btn
-                    icon="mdi-pencil"
-                    variant="text"
-                    size="small"
-                    color="primary"
-                    :disabled="testAnswerDocLength > 0"
-                    @click="editItem(item)"
-                  />
-                  <v-btn
-                    icon="mdi-delete"
-                    variant="text"
-                    size="small"
-                    color="error"
-                    :disabled="testAnswerDocLength > 0"
-                    @click="deleteItem(item)"
-                  />
-                </div>
-              </td>
-            </tr>
-          </template>
+            <!-- Empty state -->
+            <template #no-data>
+              <v-card class="text-center pa-8 my-6" variant="outlined">
+                <v-icon
+                  icon="mdi-cog-outline"
+                  size="64"
+                  color="primary"
+                  class="mb-4"
+                />
+                <h3 class="text-h6 text-ternary mb-2">
+                  {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
+                </h3>
+                <p class="text-body-2 text-ternary">
+                  {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
+                </p>
+              </v-card>
+            </template>
+          </v-data-table>
+        </v-card>
 
-          <!-- Empty state -->
-          <template #no-data>
-            <v-card
-              class="text-center pa-8 my-6"
-              variant="outlined"
-            >
-              <v-icon
-                icon="mdi-cog-outline"
-                size="64"
-                color="primary"
-                class="mb-4"
-              />
-              <h3 class="text-h6 text-ternary mb-2">
-                {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
-              </h3>
-              <p class="text-body-2 text-ternary">
-                {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
-              </p>
-            </v-card>
-          </template>
-        </v-data-table>
-      </v-card>
-
-      <!-- AddOptionBtn Component -->
-      <AddOptionBtn
-        v-model:dialog="dialog"
-        :option="option"
-        :has-value="hasValue"
-        @change-has-value="updateHasValue"
-        @add-option="updateOptions"
-        @change="emitChange"
-      />
-    </v-card>
-  </v-container>
+        <!-- AddOptionBtn Component -->
+        <AddOptionBtn
+          v-model:dialog="dialog"
+          :option="option"
+          :has-value="hasValue"
+          @change-has-value="updateHasValue"
+          @add-option="updateOptions"
+          @change="emitChange"
+        />
+        </v-card>
+      </v-container>
 </template>
 
 <script setup>

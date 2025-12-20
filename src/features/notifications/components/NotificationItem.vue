@@ -4,36 +4,28 @@
     @click="onClick"
   >
     <template #prepend>
-      <v-avatar
-        size="36"
-        class="mr-3"
-      >
-        <v-icon
-          size="28"
-          :color="!notification.read ? 'primary' : 'grey'"
-        >
+      <v-avatar size="36" class="mr-3">
+        <v-icon size="28" :color="!notification.read ? 'primary' : 'grey'">
           {{ getTestIcon(notification.testType) }}
         </v-icon>
       </v-avatar>
     </template>
-    <v-list-item-title class="notification-item-title">
-      {{ notification.title }}
-      <span
-        v-if="notification.type"
-        class="ml-2 text-caption text-primary"
-      >({{ notification.type }})</span>
-    </v-list-item-title>
-    <v-list-item-subtitle class="notification-item-desc">
-      <span v-html="formatMultiline(notification.description)" />
-    </v-list-item-subtitle>
-    <div class="notification-meta">
-      <span class="notification-author">
-        {{ $t('common.sentBy') }}: {{ notification.author }}
-      </span>
-      <p class="notification-date">
-        {{ formatDate(notification.createdDate) }}
-      </p>
-    </div>
+      <v-list-item-title class="notification-item-title">
+        {{ notification.title }}
+        <span v-if="notification.type" class="ml-2 text-caption text-primary">({{ notification.type }})</span>
+      </v-list-item-title>
+      <v-list-item-subtitle class="notification-item-desc">
+        <span v-html="formatMultiline(notification.description)"></span>
+      </v-list-item-subtitle>
+      <div class="notification-meta">
+        <span class="notification-author">
+          {{ $t('common.sentBy') }}: {{ notification.author }}
+        </span>
+        <p class="notification-date">
+          {{ formatDate(notification.createdDate) }}
+        </p>
+      </div>
+   
   </v-list-item>
 </template>
 

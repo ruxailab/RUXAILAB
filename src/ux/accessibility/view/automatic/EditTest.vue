@@ -3,7 +3,7 @@
     title="Website Analysis"
     subtitle="Analyze website accessibility using automated tools"
   >
-    <template #subtitle>
+  <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Enter a website URL to run an automated accessibility test and get a detailed report.
       </p>
@@ -254,10 +254,10 @@ import axios from 'axios'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
-  name: 'Home',
   components: {
     PageWrapper
   },
+  name: 'Home',
   data() {
     return {
       url: '',

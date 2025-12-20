@@ -1,53 +1,37 @@
 <template>
-  <v-container>
-    <v-col>
-      <v-card flat>
-        <v-card-title
-          class="text-h5 font-weight-bold mb-4"
-          :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
-        >
-          Miscelaneous configuration
-        </v-card-title>
-        <div class="custom-outline">
-          Control:
-          <v-checkbox
-            v-model="customColors"
-            label="Use Custom Colors"
-            color="black"
-          />
-        </div>
-        <div v-if="customColors">
-          <div class="custom-outline">
-            Background Color:
-            <v-color-picker
-              v-model="backgroundColor"
-              hide-inputs
-            />
-          </div>
-          <div class="custom-outline">
-            Point Color:
-            <v-color-picker
-              v-model="pointColor"
-              hide-inputs
-            />
-          </div>
-        </div>
-        <div class="custom-outline">
-          Model Selection:
-          <v-select
-            v-model="selectedModel"
-            :items="availableModels"
-            variant="outlined"
-            placeholder="Select Model"
-          />
-        </div>
-        <div class="custom-outline">
-          <b>Note:</b> The selected model will be used for the calibration process. The default model is
-          Linear Regression. Some models may take longer to train than others. So please be patient.
-        </div>
-      </v-card>
-    </v-col>
-  </v-container>
+    <v-container>
+        <v-col>
+            <v-card flat>
+                <v-card-title class="text-h5 font-weight-bold mb-4"
+                    :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+                    Miscelaneous configuration
+                </v-card-title>
+                <div class="custom-outline">
+                    Control:
+                    <v-checkbox v-model="customColors" label="Use Custom Colors" color="black"></v-checkbox>
+                </div>
+                <div v-if="customColors">
+                    <div class="custom-outline">
+                        Background Color:
+                        <v-color-picker v-model="backgroundColor" hide-inputs></v-color-picker>
+                    </div>
+                    <div class="custom-outline">
+                        Point Color:
+                        <v-color-picker v-model="pointColor" hide-inputs></v-color-picker>
+                    </div>
+                </div>
+                <div class="custom-outline">
+                    Model Selection:
+                    <v-select v-model="selectedModel" :items="availableModels" outlined
+                        placeholder="Select Model"></v-select>
+                </div>
+                <div class="custom-outline">
+                    <b>Note:</b> The selected model will be used for the calibration process. The default model is
+                    Linear Regression. Some models may take longer to train than others. So please be patient.
+                </div>
+            </v-card>
+        </v-col>
+    </v-container>
 </template>
 
 <script setup>

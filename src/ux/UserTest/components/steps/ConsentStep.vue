@@ -76,12 +76,7 @@
   >
     <v-card class="rounded-xl">
       <v-card-title class="text-h6 font-weight-bold text-error d-flex align-center">
-        <v-icon
-          class="mr-2"
-          color="error"
-        >
-          mdi-alert-circle
-        </v-icon>
+        <v-icon class="mr-2" color="error">mdi-alert-circle</v-icon>
         Consent Declined
       </v-card-title>
       <v-card-text class="pt-4">
