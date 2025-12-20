@@ -65,6 +65,7 @@ export function useProfile() {
                     username: profileData.username,
                     contactNo: profileData.contactNo,
                     country: profileData.country,
+                    profileImage: profileData.profileImage,
                 });
 
                 userprofile.value = {
@@ -72,6 +73,7 @@ export function useProfile() {
                     username: profileData.username,
                     contactNo: profileData.contactNo,
                     country: profileData.country,
+                    profileImage: profileData.profileImage,
                 };
 
                 toast.success(t('profile.profileUpdatedSuccess'));
@@ -84,23 +86,43 @@ export function useProfile() {
         }
     };
 
-    const uploadProfileImage = async (file) => {
+    const uploadProfileImage = async (file, onPreviewReady = null) => {
         try {
             const auth = getAuth();
             const user = auth.currentUser;
             if (!user) throw new Error(t('profile.noUserSignedIn'));
 
+            // Create immediate preview URL
+            const previewUrl = URL.createObjectURL(file);
+
+            // Call preview callback immediately if provided
+            if (onPreviewReady) {
+                onPreviewReady(previewUrl);
+            }
+
+            // Update UI immediately with preview
+            userprofile.value.profileImage = previewUrl;
+
+            // Compress image for upload (smaller size for faster upload)
+            // Use more aggressive compression for faster upload
+            const compressedFile = await compressImage(file, 300, 0.6);
+
             const storage = getStorage();
             const storageReference = storageRef(storage, `profileImages/${user.uid}`);
 
-            const snapshot = await uploadBytes(storageReference, file);
+            // Upload in background
+            const snapshot = await uploadBytes(storageReference, compressedFile);
             const downloadURL = await getDownloadURL(snapshot.ref);
 
+            // Update database
             const db = getFirestore();
             const userDocRef = doc(db, 'users', user.uid);
             await updateDoc(userDocRef, { profileImage: downloadURL });
 
+            // Clean up preview URL and update with final URL
+            URL.revokeObjectURL(previewUrl);
             userprofile.value.profileImage = downloadURL;
+
             toast.success(t('profile.profileImageUpdatedSuccess'));
             return downloadURL;
         } catch (error) {
@@ -108,6 +130,58 @@ export function useProfile() {
             toast.error(t('profile.profileImageUploadFailed'));
             return null;
         }
+    };
+
+    const compressImage = (file, maxWidth, quality) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Resize if image is larger than maxWidth
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    // Use better image rendering for quality
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob) {
+                                resolve(new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now(),
+                                }));
+                            } else {
+                                reject(new Error('Canvas to Blob conversion failed'));
+                            }
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+
+                img.onerror = () => reject(new Error('Image load failed'));
+            };
+
+            reader.onerror = () => reject(new Error('FileReader error'));
+        });
     };
 
     return {
