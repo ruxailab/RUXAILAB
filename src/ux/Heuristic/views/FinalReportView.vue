@@ -1,109 +1,62 @@
 <template>
-  <PageWrapper
-    :title="answers.length > 0 ? $t('Final Report') : ''"
-    :loading="loading"
-    :loading-text="$t('HeuristicsReport.messages.reports_loading')"
-    :side-gap="true"
-  >
-  
+  <PageWrapper :title="answers.length > 0 ? $t('Final Report') : ''" :loading="loading"
+    :loading-text="$t('HeuristicsReport.messages.reports_loading')" :side-gap="true">
+
     <!-- Subtitle Slot - only show when answers exist -->
     <template v-if="answers.length > 0" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Prepare the final report for the heuristic evaluation
       </p>
     </template>
-    
+
     <!-- Show IntroFinalReport when no answers -->
-    <IntroFinalReport
-      v-if="answers.length === 0"
-      @go-to-coops="goToCoops"
-    />
-    
+    <IntroFinalReport v-if="answers.length === 0" @go-to-coops="goToCoops" />
+
     <!-- Show main content when answers exist -->
     <div v-else class="finalReportView">
-    <v-container>
-      
-      <v-stepper
-        :model-value="step"
-        style="background-color:#F5F7FF"
-        class="final-report-box rounded pt-0 mb-4"
-        elevation="0"
-      >
-        <v-stepper-header
-          style="background-color: #F5F7FF;"
-          class="pt-2"
-        >
-          <v-stepper-item
-            :complete="value > 1"
-            value="1"
-            color="orange"
-          >
-            Report Conclusion
-          </v-stepper-item>
-          <v-divider />
-          <v-stepper-item
-            :complete="value > 2"
-            value="2"
-            color="orange"
-          >
-            Generate Report
-          </v-stepper-item>
-        </v-stepper-header>
+      <v-container>
 
-        <v-stepper-window
-          style="background-color:#F5F7FF"
-          class="mt-0"
-        >
-          <v-stepper-window-item
-            value="1"
-            class="align-mid pt-5 min-h-500"
-          >
-            <div v-if="loading">
-              Saving Conclusion on Test....
-            </div>
-            <div
-              v-else
-              class=" container"
-            >
-              <div class="row">
-                <TextControls />
+        <v-stepper :model-value="step" style="background-color:#F5F7FF" class="final-report-box rounded pt-0 mb-4"
+          elevation="0">
+          <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
+            <v-stepper-item :complete="step > 1" :value="1" color="orange">
+              Report Conclusion
+            </v-stepper-item>
+            <v-divider />
+            <v-stepper-item :complete="step > 2" :value="2" color="orange">
+              Generate Report
+            </v-stepper-item>
+          </v-stepper-header>
+
+          <v-stepper-window style="background-color:#F5F7FF" class="mt-0">
+            <v-stepper-window-item :value="1" class="align-mid pt-5 min-h-500">
+              <div v-if="loading">
+                Saving Conclusion on Test....
               </div>
-
-              <div class="row">
-                <div class="col">
-                  <div
-                    id="myTextarea"
-                    contenteditable
-                    class="form-control"
-                  />
+              <div v-else class=" container">
+                <div class="row">
+                  <TextControls />
                 </div>
-              </div>
-              <v-row
-                class="ma-0"
-                justify="end"
-              >
-                <v-btn
-                  class="mt-4"
-                  align="right"
-                  color="orange"
-                  elevation="0"
-                  @click="handleNext"
-                >
-                  {{ $t('buttons.next') }}
-                </v-btn>
-              </v-row>
-            </div>
-          </v-stepper-window-item>
 
-          <v-stepper-window-item
-            value="2"
-            class="align-mid pt-5 min-h-500"
-          >
-            <FinalReportSelectionBox @return-step="step--" />
-          </v-stepper-window-item>
-        </v-stepper-window>
-      </v-stepper>
-    </v-container>
+                <div class="row">
+                  <div class="col">
+                    <div id="myTextarea" contenteditable class="form-control" />
+                  </div>
+                </div>
+                <v-row class="ma-0" justify="end">
+                  <v-btn class="mt-4" align="right" color="orange" elevation="0" @click="handleNext">
+                    {{ $t('buttons.next') }}
+                  </v-btn>
+                </v-row>
+              </div>
+            </v-stepper-window-item>
+
+            <v-stepper-window-item :value="2" class="align-mid pt-5 min-h-500">
+              <FinalReportSelectionBox @return-step="step--" />
+            </v-stepper-window-item>
+          </v-stepper-window>
+        </v-stepper>
+      </v-container>
     </div>
   </PageWrapper>
 </template>
@@ -122,7 +75,7 @@ import IntroFinalReport from '@/ux/Heuristic/components/IntroFinalReport.vue';
 const store = useStore();
 const router = useRouter();
 
-const step = ref(0);
+const step = ref(1);
 const object = ref({});
 let intro = ref(null);
 
@@ -176,7 +129,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .form-control {
   background-color: white;
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
@@ -189,5 +141,4 @@ onMounted(() => {
   overflow: auto;
   font-size: small;
 }
-
 </style>
