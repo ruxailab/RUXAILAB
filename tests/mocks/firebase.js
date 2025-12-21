@@ -46,3 +46,15 @@ jest.mock('firebase/database', () => {
     getDatabase: jest.fn(),
   }
 })
+
+// Axios v1 ships ESM entrypoints; mock it to avoid Jest ESM parsing issues.
+jest.mock('axios', () => {
+  const mockAxios = {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    create: jest.fn(() => mockAxios),
+  }
+  return { __esModule: true, default: mockAxios, ...mockAxios }
+})
