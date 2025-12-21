@@ -37,7 +37,7 @@
                 v-if="run.id === latestTranscriptionId"
                 size="x-small"
                 color="success"
-                text-color="white"
+                class="text-white"
                 >Latest</v-chip
               >
             </div>

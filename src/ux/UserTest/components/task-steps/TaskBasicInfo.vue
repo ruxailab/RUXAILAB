@@ -41,7 +41,7 @@
             v-model:value="localTask.taskDescription"
             :options="editorOptions"
             class="custom-editor"
-            @change="onChangeEditor"
+            @update:modelValue="onChangeEditor"
             @blur="checkDescriptionValidation"
           />
         </div>

@@ -20,13 +20,13 @@
 
                         <v-col cols="12" sm="4" class="text-center">
                             <v-label class="mb-1">Radius</v-label>
-                            <v-slider v-model="circleRadius" min="5" max="100" step="1" ticks tick-size="3"
+                            <v-slider v-model="circleRadius" min="5" max="100" step="1" show-ticks tick-size="3"
                                 class="mx-auto" style="max-width: 180px;" />
                         </v-col>
 
                         <v-col cols="12" sm="4" class="text-center">
                             <v-label class="mb-1">Opacity</v-label>
-                            <v-slider v-model="circleOpacity" min="0.01" max="1" step="0.01" ticks tick-size="3"
+                            <v-slider v-model="circleOpacity" min="0.01" max="1" step="0.01" show-ticks tick-size="3"
                                 class="mx-auto" style="max-width: 180px;" />
                         </v-col>
                     </v-row>

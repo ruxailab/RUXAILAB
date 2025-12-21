@@ -7,10 +7,10 @@
     <template v-if="type === 'logo'">
       <v-img
         :src="logo"
-        class="spin-loader"
+        class="spin-loader object-fit-contain"
         width="60"
         height="60"
-        contain
+
       />
     </template>
     <template v-else>

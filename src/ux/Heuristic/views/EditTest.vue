@@ -77,11 +77,11 @@
         <div class="mt-responsive">
           <HeuristicsTable
             v-if="index == 0"
-            @change="change = true"
+            @update:modelValue="change = true"
           />
           <OptionsTable
             v-if="index == 1"
-            @change="change = true"
+            @update:modelValue="change = true"
           />
           <WeightTable v-if="index == 2" />
           <HeuristicsSenttings v-if="index == 3" />

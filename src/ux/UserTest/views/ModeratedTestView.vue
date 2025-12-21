@@ -11,7 +11,7 @@
           <p class="text-body-1 mb-5 text-white text-justify">
            {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded x-large @click="startTest" :disabled="isStartTestDisabled">
+          <v-btn color="white" variant="outlined" rounded size="x-large" @click="startTest" :disabled="isStartTestDisabled">
             Start Test
           </v-btn>
 

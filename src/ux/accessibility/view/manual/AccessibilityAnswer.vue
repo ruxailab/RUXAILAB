@@ -14,7 +14,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h5 pa-6">
-            <v-icon left class="mr-3" color="primary">mdi-account-multiple</v-icon>
+            <v-icon start class="mr-3" color="primary">mdi-account-multiple</v-icon>
             Select a User to View Assessment Results
           </v-card-title>
           <v-card-text class="pa-6">
@@ -76,7 +76,7 @@
                 </template>
 
                 <!-- Status Column -->
-                <template #item.status="{ item }">
+                <template #item.status>
                   <v-chip
                     color="success"
                     size="small"

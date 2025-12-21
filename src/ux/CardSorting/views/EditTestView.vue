@@ -72,7 +72,7 @@
           >
             <UserVariables
               type="pre-test"
-              @change="change = true"
+              @update:modelValue="change = true"
               @update="store.dispatch('setPreTest', $event)"
             />
           </v-card>
@@ -83,7 +83,7 @@
             rounded="xxl"
           >
             <CategoriesEditCardSorting
-              @change="change = true"
+              @update:modelValue="change = true"
               @categories="categories = $event"
               @options="optionsCategories = $event"
             />
@@ -95,7 +95,7 @@
             rounded="xxl"
           >
             <CardsEditCardSorting
-              @change="change = true"
+              @update:modelValue="change = true"
               @cards="cards = $event"
               @options="optionsCards = $event"
             />
@@ -108,7 +108,7 @@
           >
             <UserVariables
               type="post-test"
-              @change="change = true"
+              @update:modelValue="change = true"
               @update="store.dispatch('setPostTest', $event)"
             />
           </v-card>

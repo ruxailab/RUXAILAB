@@ -22,7 +22,7 @@
                 </div>
                 <div class="custom-outline">
                     Model Selection:
-                    <v-select v-model="selectedModel" :items="availableModels" outlined
+                    <v-select v-model="selectedModel" :items="availableModels" variant="outlined"
                         placeholder="Select Model"></v-select>
                 </div>
                 <div class="custom-outline">

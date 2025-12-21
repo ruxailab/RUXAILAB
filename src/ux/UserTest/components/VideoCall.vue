@@ -66,11 +66,11 @@
                 width="2"
                 class="me-2"
               ></v-progress-circular>
-              <v-icon left size="24">mdi-clock-outline</v-icon>
+              <v-icon start size="24">mdi-clock-outline</v-icon>
               Waiting for moderator...
             </template>
             <template v-else>
-              <v-icon left size="24">mdi-video</v-icon>
+              <v-icon start size="24">mdi-video</v-icon>
               Join Room
             </template>
           </v-btn>
@@ -151,7 +151,7 @@
                 size="large"
                 @click="startCall"
               >
-                <v-icon left size="20">mdi-video-plus</v-icon>
+                <v-icon start size="20">mdi-video-plus</v-icon>
                 Open Room
               </v-btn>
             </template>
@@ -168,7 +168,7 @@
                 size="large"
                 @click="endCall"
               >
-                <v-icon left size="20">mdi-phone-hangup</v-icon>
+                <v-icon start size="20">mdi-phone-hangup</v-icon>
                 End Call
               </v-btn>
             </template>
@@ -185,7 +185,7 @@
                 size="large"
                 @click="endCall"
               >
-                <v-icon left size="20">mdi-phone-hangup</v-icon>
+                <v-icon start size="20">mdi-phone-hangup</v-icon>
                 Leave Call
               </v-btn>
             </template>
@@ -254,7 +254,7 @@
             <!-- Note: Join Room controls moved to main interface for better visibility -->
             <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
-                <v-icon left size="16">mdi-information</v-icon>
+                <v-icon start size="16">mdi-information</v-icon>
                 Join room controls are now in the main interface above
               </p>
             </div>
@@ -271,7 +271,7 @@
               class="mb-3"
               @click="proceedToNextStep"
             >
-              <v-icon left>mdi-arrow-right</v-icon>
+              <v-icon start>mdi-arrow-right</v-icon>
               Proceed to Next Step
             </v-btn>
 
@@ -283,14 +283,14 @@
               variant="outlined"
               @click="endCall"
             >
-              <v-icon left>mdi-phone-hangup</v-icon>
+              <v-icon start>mdi-phone-hangup</v-icon>
               End Call
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
               <v-chip color="green" size="small" class="mb-2">
-                <v-icon left size="16">mdi-phone</v-icon>
+                <v-icon start size="16">mdi-phone</v-icon>
                 Llamada activa
               </v-chip>
             </div>
@@ -383,7 +383,7 @@
         <!-- Moderator indicator -->
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
-            <v-icon left size="16">mdi-information</v-icon>
+            <v-icon start size="16">mdi-information</v-icon>
             Solo el moderador puede cambiar los pasos
           </v-chip>
         </div>
@@ -573,7 +573,7 @@
             class="mb-2"
             @click="joinRoomFromDialog"
           >
-            <v-icon left>mdi-video</v-icon>
+            <v-icon start>mdi-video</v-icon>
             Join Video Call
           </v-btn>
           
