@@ -1,8 +1,5 @@
 <template>
-  <PageWrapper
-    :title="t('pages.editTest.title')"
-    :side-gap="true"
-  >
+  <PageWrapper :title="t('pages.editTest.title')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ t('pages.editTest.description') }}
@@ -10,10 +7,7 @@
     </template>
 
     <v-container>
-      <ButtonSave
-        :visible="true"
-        @click="save"
-      />
+      <ButtonSave :visible="true" @click="save" />
 
       <!-- MOBILE: SELECT -->
       <v-select
@@ -105,6 +99,7 @@ import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
 import TestConfigForm from '@/shared/components/TestConfigForm.vue'
+import EyeTrackingConfig from '../components/EyeTrackingConfig.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
@@ -155,6 +150,11 @@ const getPostTest = () => {
 }
 
 // Save
+const hasEyeTracking = computed(() => {
+  return (test.value.testStructure.userTasks || []).some(task => task.hasEye === true)
+})
+
+
 const save = async () => {
   try {
     const preTestInvalid = (store.getters.preTest || []).some(i => !i.title?.trim())
