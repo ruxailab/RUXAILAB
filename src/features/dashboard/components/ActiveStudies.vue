@@ -178,7 +178,7 @@ const goToStudy = async (study) => {
 }
 
 const viewAllStudies = () => {
-  window.dispatchEvent(new CustomEvent('change-section', { detail: 'studies' }))
+  globalThis.dispatchEvent(new CustomEvent('change-section', { detail: 'studies' }))
 }
 
 // Default studies if none provided
