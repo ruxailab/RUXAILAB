@@ -1,12 +1,6 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
-  >
-    <v-card
-      elevation="2"
-      class="pa-6"
-    >
+  <v-container fluid class="pa-6">
+    <v-card elevation="2" class="pa-6">
       <div>
         <!-- Header Section -->
         <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
@@ -16,55 +10,26 @@
 
         <!-- Download CSV Template -->
         <div class="mb-8">
-          <v-btn
-            color="accent"
-            variant="elevated"
-            size="large"
-            class="text-none"
-            @click="downloadTemplate"
-          >
+          <v-btn color="accent" variant="elevated" size="large" class="text-none" @click="downloadTemplate">
             {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
           </v-btn>
         </div>
 
         <!-- File Upload Section -->
         <div>
-          <v-row
-            align="center"
-            class="mb-4"
-          >
+          <v-row align="center" class="mb-4">
             <v-col cols="10">
-              <v-file-input
-                ref="myFile"
-                v-model="csvFile"
-                accept=".csv"
-                :label="$t('HeuristicsSettings.placeHolders.importCsv')"
-                variant="outlined"
-                density="comfortable"
-                prepend-icon=""
-                prepend-inner-icon="mdi-paperclip"
-                show-size
-                truncate-length="15"
-                :disabled="testAnswerDocLength > 0"
-                counter
-                multiple
-              >
+              <v-file-input ref="myFile" v-model="csvFile" accept=".csv"
+                :label="$t('HeuristicsSettings.placeHolders.importCsv')" variant="outlined" density="comfortable"
+                prepend-icon="" prepend-inner-icon="mdi-paperclip" show-size truncate-length="15"
+                :disabled="testAnswerDocLength > 0" counter>
                 <template v-slot:selection="{ fileNames }">
                   <template v-for="(fileName, index) in fileNames" :key="fileName">
-                    <v-chip
-                      v-if="index < 2"
-                      class="me-2"
-                      color="deep-purple-accent-4"
-                      size="small"
-                      label
-                    >
+                    <v-chip v-if="index < 2" class="me-2" color="deep-purple-accent-4" size="small" label>
                       {{ fileName }}
                     </v-chip>
 
-                    <span
-                      v-else-if="index === 2"
-                      class="text-overline text-grey-darken-3 mx-2"
-                    >
+                    <span v-else-if="index === 2" class="text-overline text-grey-darken-3 mx-2">
                       +{{ files.length - 2 }} File(s)
                     </span>
                   </template>
@@ -72,14 +37,8 @@
               </v-file-input>
             </v-col>
             <v-col cols="2" class="pb-8">
-              <v-btn
-                :loading="loadingUpdate"
-                :disabled="loadingUpdate || testAnswerDocLength > 0"
-                color="primary"
-                variant="elevated"
-                class="text-none"
-                @click="changeToJSON"
-              >
+              <v-btn :loading="loadingUpdate" :disabled="loadingUpdate || testAnswerDocLength > 0" color="primary"
+                variant="elevated" class="text-none" @click="changeToJSON">
                 <v-icon start>
                   mdi-cloud-upload
                 </v-icon>
@@ -87,12 +46,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-alert
-            v-if="errorMessage"
-            type="error"
-            density="compact"
-            class="mt-2"
-          >
+          <v-alert v-if="errorMessage" type="error" density="compact" class="mt-2">
             {{ errorMessage }}
           </v-alert>
         </div>
@@ -253,7 +207,6 @@ const downloadTemplate = async () => {
 </script>
 
 <style scoped>
-
 :deep(.v-file-input .v-field) {
   background-color: #F8FAFC;
 }
