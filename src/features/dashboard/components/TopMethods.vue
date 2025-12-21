@@ -33,7 +33,6 @@
                 <div class="method-name">
                   {{ method.name }}
                 </div>
-                <!-- <div class="method-type">{{ method.type }}</div> -->
               </div>
             </div>
             <div class=" usage-stats">
