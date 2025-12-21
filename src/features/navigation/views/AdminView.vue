@@ -103,7 +103,7 @@ const activeSubSection = ref(null);
 
 // 🔸 Data
 const filteredModeratedSessions = ref([]);
-let unsubscribeTests = null; // Unsub function for real-time tests
+let unsubscribeTests = null;// Unsub function for real-time tests
 
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
@@ -231,9 +231,9 @@ onMounted(async () => {
 
   // Drawer toggle event listener (triggered from toolbar)
   window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer);
-  
+      
   // Change section event listener
-  window.addEventListener('change-section', (event) => {
+  globalThis.addEventListener('change-section', (event) => {
     activeSection.value = event.detail;
   });
 });
