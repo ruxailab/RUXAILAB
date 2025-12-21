@@ -162,10 +162,13 @@ const mockRating = ref(4);
 <style scoped>
 .answer-type-preview {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .preview-content {
-  min-height: 120px;
+  width: 100%;
+  max-width: 520px; /* prevents ultra-thin layout */
 }
 
 .preview-mockup {
@@ -173,27 +176,19 @@ const mockRating = ref(4);
   border: 1px solid rgba(var(--v-theme-outline), 0.2);
   border-radius: 8px;
   padding: 16px;
+  overflow-x: hidden;
 }
 
-.mockup-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  text-align: center;
+/* ---- TEXT WRAPPING FIXES ---- */
+.text-body-2,
+.text-subtitle-2 {
+  word-break: break-word;
+  white-space: normal;
 }
 
-.mockup-actions {
-  text-align: right;
-  margin-top: 12px;
-}
-
-.preview-textarea {
-  pointer-events: none;
-}
-
+/* ---- QUESTION ITEMS ---- */
 .question-item {
-  padding: 8px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(var(--v-theme-outline), 0.1);
 }
 
@@ -201,42 +196,47 @@ const mockRating = ref(4);
   border-bottom: none;
 }
 
-.external-form-notice {
-  text-align: center;
-  padding: 20px;
+/* ---- RATING FIX ---- */
+:deep(.v-rating) {
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 
-.nasa-item {
-  background: white;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.1);
-}
-
-.sus-item {
-  background: white;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.1);
-}
-
-.sus-radio-group {
-  margin: 8px 0 4px 0;
-}
-
+/* ---- RADIO GROUP FIX ---- */
 :deep(.sus-radio-group .v-selection-control-group) {
+  flex-wrap: wrap;
   justify-content: space-between;
+  gap: 6px;
 }
 
-/* Make form elements non-interactive in preview */
-:deep(.preview-mockup .v-field--disabled) {
-  opacity: 0.8;
+/* ---- NASA SLIDER FIX ---- */
+:deep(.v-slider) {
+  max-width: 100%;
 }
 
-:deep(.preview-mockup .v-slider) {
-  pointer-events: none;
+/* ---- MOBILE OPTIMIZATION ---- */
+@media (max-width: 520px) {
+  .preview-content {
+    max-width: 100%;
+  }
+
+  .preview-mockup {
+    padding: 12px;
+  }
+
+  :deep(.v-rating) {
+    transform: scale(0.9);
+    transform-origin: left center;
+  }
+
+  :deep(.sus-radio-group) {
+    font-size: 12px;
+  }
 }
 
+/* ---- Make preview non-interactive ---- */
+:deep(.preview-mockup .v-field--disabled),
+:deep(.preview-mockup .v-slider),
 :deep(.preview-mockup .v-radio-group) {
   pointer-events: none;
 }

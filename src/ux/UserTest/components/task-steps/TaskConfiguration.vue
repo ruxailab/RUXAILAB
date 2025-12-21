@@ -93,9 +93,14 @@
           variant="outlined"
           density="comfortable"
           prepend-inner-icon="mdi-format-list-bulleted"
+          :menu-props="{
+            maxHeight: 300,
+            eager: false
+          }"
           @update:model-value="validateStep"
         >
-          <template #item="{ props, item }">
+          <!-- Custom item ONLY on non-mobile -->
+          <template v-if="!isMobileSelect" #item="{ props, item }">
             <v-list-item
               v-bind="props"
               class="answer-type-item"
@@ -106,7 +111,9 @@
                   size="20"
                 />
               </template>
-              <v-list-item-subtitle>{{ getAnswerTypeDescription(item.raw.value) }}</v-list-item-subtitle>
+              <v-list-item-subtitle>
+                {{ getAnswerTypeDescription(item.raw.value) }}
+              </v-list-item-subtitle>
             </v-list-item>
           </template>
         </v-select>
@@ -175,12 +182,16 @@
       class="mt-6 answer-preview-card"
       elevation="0"
     >
-      <v-card-title class="text-subtitle-1 font-weight-medium d-flex align-center">
+      <v-card-title
+        class="answer-preview-title text-subtitle-1 font-weight-medium d-flex align-start"
+      >
         <v-icon
           :icon="getAnswerTypeIcon(localTask.taskType)"
-          class="mr-2"
+          class="mr-2 mt-1"
         />
-        Answer Type Preview
+        <span class="answer-preview-title-text">
+          Answer Type Preview
+        </span>
       </v-card-title>
       <v-card-text>
         <AnswerTypePreview :task-type="localTask.taskType" />
@@ -193,6 +204,10 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AnswerTypePreview from './AnswerTypePreview.vue';
+import { useDisplay } from 'vuetify';
+
+const { width } = useDisplay();
+const isMobileSelect = computed(() => width.value < 550);
 
 const props = defineProps({
   modelValue: {
@@ -287,6 +302,17 @@ watch(
   background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
   border-radius: 12px;
   border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+.answer-preview-title {
+  flex-wrap: wrap;        /* allows wrapping on small screens */
+  white-space: normal;
+}
+
+.answer-preview-title-text {
+  flex: 1;
+  min-width: 0;           /* CRITICAL: prevents text clipping */
+  word-break: break-word;
 }
 
 .answer-type-item {
