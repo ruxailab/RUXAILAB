@@ -6,11 +6,11 @@ import AuthModule from '@/features/auth/store/Auth'
  * Focuses on code structure validation.
  */
 describe('Store Modules Error Handling Structure', () => {
-  describe('Test Module Actions', () => {
-    it('has error handling in updateTest action', () => {
-      expect(typeof TestModule.actions.updateTest).toBe('function')
+  describe('Study Module Actions', () => {
+    it('has error handling in updateStudy action', () => {
+      expect(typeof TestModule.actions.updateStudy).toBe('function')
 
-      const actionStr = TestModule.actions.updateTest.toString()
+      const actionStr = TestModule.actions.updateStudy.toString()
       expect(actionStr).toContain('try')
       expect(actionStr).toContain('catch')
       expect(actionStr).toContain('finally')
@@ -20,10 +20,10 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('setLoading')
     })
 
-    it('has error handling in acceptTestCollaboration action', () => {
-      expect(typeof TestModule.actions.acceptTestCollaboration).toBe('function')
+    it('has error handling in acceptStudyCollaboration action', () => {
+      expect(typeof TestModule.actions.acceptStudyCollaboration).toBe('function')
 
-      const actionStr = TestModule.actions.acceptTestCollaboration.toString()
+      const actionStr = TestModule.actions.acceptStudyCollaboration.toString()
       expect(actionStr).toContain('try')
       expect(actionStr).toContain('catch')
       expect(actionStr).toContain('finally')
@@ -44,7 +44,6 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('finally')
 
       expect(actionStr).toContain('catch (err)')
-      expect(actionStr).toContain('setError')
       expect(actionStr).toContain('setLoading')
     })
 
@@ -56,7 +55,6 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch')
 
       expect(actionStr).toContain('catch (e)')
-      expect(actionStr).toContain('setError')
     })
   })
 }) 

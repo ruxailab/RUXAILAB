@@ -40,3 +40,9 @@ jest.mock('firebase/analytics', () => {
     getAnalytics: jest.fn(),
   }
 })
+
+jest.mock('firebase/database', () => {
+  return {
+    getDatabase: jest.fn(),
+  }
+})
