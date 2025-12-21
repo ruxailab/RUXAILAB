@@ -1,6 +1,7 @@
 <template>
   <v-dialog
-    v-model="deleteAccountDialog"
+    :model-value="deleteAccountDialog"
+    @update:model-value="closeDeleteDialog"
     max-width="500px"
     persistent
     transition="dialog-bottom-transition"
@@ -38,7 +39,8 @@
               {{ $t('profile.typeDeleteToConfirm') }}
             </p>
             <v-text-field
-              v-model="deleteConfirmText"
+              :model-value="deleteConfirmText"
+              @update:model-value="$emit('update:deleteConfirmText', $event)"
               variant="outlined"
               density="compact"
               hide-details
@@ -83,7 +85,8 @@
             {{ $t('profile.enterPasswordForAccountDeletion') }}
           </p>
           <v-text-field
-            v-model="userPassword"
+            :model-value="userPassword"
+            @update:model-value="$emit('update:userPassword', $event)"
             :label="$t('profile.yourPassword')"
             type="password"
             variant="outlined"
@@ -131,7 +134,7 @@ const props = defineProps({
   userPassword: String,
   isDeleting: Boolean,
 });
-const emit = defineEmits(['next-step', 'prev-step', 'delete-account', 'close-dialog']);
+const emit = defineEmits(['next-step', 'prev-step', 'delete-account', 'close-dialog', 'update:deleteConfirmText', 'update:userPassword']);
 function closeDeleteDialog() {
   emit('close-dialog');
 }

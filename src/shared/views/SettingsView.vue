@@ -265,8 +265,8 @@
                       />
                     </template>
                     <v-date-picker
-                      v-model="datePickerModel"
-                      @update:model-value="onDateChange"
+                      :model-value="datePickerModel"
+                      @update:model-value="(val) => { updateDatePicker(val); onDateChange(val); }"
                     />
                   </v-menu>
                 </div>
@@ -540,21 +540,20 @@ const formattedEndDate = computed(() => {
   return '';
 });
 
-const datePickerModel = computed({
-  get() {
-    if (object.value?.endDate) {
-      return new Date(object.value.endDate + 'T00:00:00');
-    }
-    return null;
-  },
-  set(newDate) {
-    if (newDate && object.value) {
-      const formattedDate = newDate.toISOString().split('T')[0];
-      object.value.endDate = formattedDate;
-      store.commit('SET_LOCAL_CHANGES', true);
-    }
+const datePickerModel = computed(() => {
+  if (object.value?.endDate) {
+    return new Date(object.value.endDate + 'T00:00:00');
   }
+  return null;
 });
+
+const updateDatePicker = (newDate) => {
+  if (newDate && object.value) {
+    const formattedDate = newDate.toISOString().split('T')[0];
+    object.value.endDate = formattedDate;
+    store.commit('SET_LOCAL_CHANGES', true);
+  }
+};
 
 const createObjectFromTest = (testData) => {
   if (!testData) return null;
