@@ -1,29 +1,5 @@
-// Mock controllers directly
-jest.mock('@/controllers/TestController', () => {
-  return jest.fn().mockImplementation(() => ({
-    updateTest: jest.fn(),
-    acceptTestCollaboration: jest.fn()
-  }))
-})
-
-jest.mock('@/controllers/AuthController', () => {
-  return jest.fn().mockImplementation(() => ({
-    signOut: jest.fn(),
-    autoSignIn: jest.fn()
-  }))
-})
-
-jest.mock('@/controllers/UserController', () => {
-  return jest.fn().mockImplementation(() => ({
-    getById: jest.fn()
-  }))
-})
-
 import TestModule from '@/store/modules/Study'
 import AuthModule from '@/features/auth/store/Auth'
-
-import TestController from '@/controllers/StudyController'
-import AuthController from '@/features/auth/controllers/AuthController'
 
 /**
  * This is a simplified test that verifies error handling basics in the store modules.

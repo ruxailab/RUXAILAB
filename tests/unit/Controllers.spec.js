@@ -21,16 +21,9 @@ jest.mock('firebase/firestore', () => {
 })
 
 // Mock the firebase db instance
-jest.mock('@/firebase', () => {
+jest.mock('@/app/plugins/firebase', () => {
   return {
     db: {}
-  }
-})
-
-// Mock Test model
-jest.mock('@/models/Test', () => {
-  return {
-    toTest: jest.fn(data => data)
   }
 })
 
