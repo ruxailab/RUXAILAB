@@ -40,7 +40,7 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 - [Request a Feature 🚀](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)
 
-For commercial support, academic collaborations, and answers to common questions, please use [Get Support]() to contact us.
+For commercial support, academic collaborations, and answers to common questions, please open a discussion.
 
 ### Development Environment
 
@@ -61,7 +61,13 @@ Follow these steps to set up the development environment and run the application
 ```bash
 # Install dependencies
 npm install
-pip install
+
+# Create your local env file
+cp .env.example .env
+
+# (Optional) Python dependencies (only needed for Python tools/functions)
+python -m pip install -r weight_function/requirements.txt
+python -m pip install -r ishikawa_tools/requirements.txt
 ```
 
 Open Firebase / Firestore and start a project.
@@ -69,11 +75,12 @@ Open Firebase / Firestore and start a project.
 - In the project dashboard, on the left hand side menu, click on build, click on realtime database and activate it.
 - In the project dashboard, click on the settings button on the left side of the screen (gear icon).
 - In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen.
+- If you haven't created a web app, you need to create one first before being able to see firebaseConfig.
   <div align="center">
     <img src="public/FBexample.png" alt="FBexample" height="450" />
   </div>
 
-In the folder of your project, create a file with the name .env and put the following data:
+Fill in `.env` with your Firebase project credentials (minimum needed to run the app):
 
 ```ini
 VUE_APP_FIREBASE_API_KEY=""
@@ -89,7 +96,9 @@ VUE_APP_I18N_LOCALE="en"
 VUE_APP_I18N_FALLBACK_LOCALE="en"
 ```
 
-Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
+See `.env.example` for optional integrations (Cloud Functions URL, transcription/sentiment APIs, Eye Lab, etc.). Some features require `VUE_APP_CLOUD_FUNCTIONS_URL`.
+
+Then run:
 
 ```bash
  # Run the application locally
@@ -98,10 +107,22 @@ Then, complete the information in your .env file with the firebase information, 
 
 ## Running with Firebase Emulators
 
-- Add `firebase.json` file with the following code snippet:
+You can run the app using either:
 
-```javascript
-    {
+1) **Firebase (Cloud)**: create a Firebase project, fill `.env`, then run `npm run serve`.
+2) **Firebase Emulators (Local)**: run the Firebase emulators on your machine and point the app to them.
+
+### Option A: Firebase (Cloud)
+
+- Create a Firebase project and fill `.env` with your project credentials.
+- Run `npm run serve`.
+
+### Option B: Firebase Emulators (Local)
+
+1. Ensure you have a `firebase.json` in the project root (you can use the existing one, or create/replace it with this):
+
+```json
+{
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
@@ -130,70 +151,50 @@ Then, complete the information in your .env file with the firebase information, 
     ]
   },
   "emulators": {
-    "auth": {
-      "port": 9099
-    },
-    "functions": {
-      "port": 5001
-    },
-    "firestore": {
-      "port": 8081
-    },
-    "hosting": {
-      "port": 5000
-    },
-    "ui": {
-      "enabled": true
-    },
+    "auth": { "port": 9099 },
+    "functions": { "port": 5001 },
+    "firestore": { "port": 8081 },
+    "hosting": { "port": 5000 },
+    "ui": { "enabled": true },
     "singleProjectMode": true,
-    "storage": {
-      "port": 9199
-    }
+    "storage": { "port": 9199 }
   },
   "storage": {
     "rules": "storage.rules"
   }
 }
-
 ```
 
-Setup your Firebase Emulators by uncommenting the lines under 'emulators if running locally' in src/index.js.
+2. Point the frontend to the emulators by uncommenting the lines under `// Emulators if running locally` in `src/app/plugins/firebase/index.js`.
 
-Run:
+3. Start the emulators:
 
 ```bash
-
-firebase use (choose your option)
+firebase use <alias>
 firebase emulators:start
-
 ```
+
+4. In another terminal, run `npm run serve`.
 
 ## Running Python Function
 
 To calculate heuristic weights, run:
 
 ```bash
-# Run locally
- firebase init functions
- firebase use weight_function
- firebase emulators:start --only functions
+firebase use <alias>
+firebase emulators:start --only functions
 ```
 
-Then get the url, go to the .env file and add the following sentence:
+Configure `VUE_APP_CLOUD_FUNCTIONS_URL` in `.env` (see `.env.example`) if you want the frontend to call deployed/emulated functions.
 
-```javascript
-// Your previous code
-VUE_APP_FIREBASE_PYTHON_FUNCTION = 'url'
-```
-
-If you want to deply the fuction, change your account from spark to blaze, run:
+If you want to deploy the function, change your account from spark to blaze, run:
 
 ```bash
    firebase deploy --only functions
 ```
 
 Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
-There you can get the url and replace on .env file.
+There you can get the url and replace it in `.env`.
 
 ## Docker Setup
 
