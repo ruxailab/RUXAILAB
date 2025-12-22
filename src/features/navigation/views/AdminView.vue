@@ -30,7 +30,7 @@
 
         <!-- 🔸 Dynamic rendering of sections -->
         <div v-if="activeSection === 'dashboard'">
-          <DashboardView :items="tests" :sessions="filteredModeratedSessions"/>
+          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
