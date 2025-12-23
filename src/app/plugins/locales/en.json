@@ -854,7 +854,8 @@
     "postTestDescription": "Results from the post-test form",
     "all": "All",
     "question": "Question {number}",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "downloadResume": "Download Resume PDF"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",
