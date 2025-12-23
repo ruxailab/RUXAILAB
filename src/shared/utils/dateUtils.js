@@ -1,8 +1,3 @@
-/**
- * Utilidades para formatear fechas en la aplicación
- */
-
-// Mapeo de meses en español
 const MONTHS_ES = {
     0: 'January',
     1: 'February',
