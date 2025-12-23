@@ -20,24 +20,42 @@ export default {
       return state.mediaUrls
     },
     testAnswerDocument(state, rootState) {
-      if (rootState.test) {
+      if (!state.testAnswerDocument) {
+        return null
+      }
+
+      // Return a transformed copy to avoid mutating state inside getter
+      if (rootState.test && state.testAnswerDocument.heuristicAnswers) {
         const testOptions = rootState.test.testOptions
 
-        if (state.testAnswerDocument && state.testAnswerDocument.heuristicAnswers) {
-          for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
-            value.heuristicQuestions.forEach(heuristic => {
-              heuristic.heuristicQuestions.forEach(question => {
-                question.heuristicAnswer = question.heuristicAnswer?.text ? question.heuristicAnswer : {
-                  text: testOptions.find(op => op.value === question.heuristicAnswer)?.text ?? "", value: question.heuristicAnswer,
-                }
-              })
-            })
+        // Create a shallow copy with transformed heuristicAnswers
+        const transformedDoc = {
+          ...state.testAnswerDocument,
+          heuristicAnswers: {}
+        }
+
+        for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
+          transformedDoc.heuristicAnswers[key] = {
+            ...value,
+            heuristicQuestions: value.heuristicQuestions.map(heuristic => ({
+              ...heuristic,
+              heuristicQuestions: heuristic.heuristicQuestions.map(question => ({
+                ...question,
+                heuristicAnswer: question.heuristicAnswer?.text
+                  ? question.heuristicAnswer
+                  : {
+                    text: testOptions?.find(op => op.value === question.heuristicAnswer)?.text ?? "",
+                    value: question.heuristicAnswer,
+                  }
+              }))
+            }))
           }
         }
+
+        return transformedDoc
       }
 
       return state.testAnswerDocument
-      // return {}
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
