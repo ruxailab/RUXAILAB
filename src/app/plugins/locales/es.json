@@ -33,10 +33,11 @@
       "check_your_email": "Revisa tu correo electrónico",
       "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
       "no_email": "¿No recibiste el correo?",
-      "try_again": "Inténtalo de nuevo" 
+      "try_again": "Inténtalo de nuevo"
     }
   },
   "common": {
+    "hidden": "Oculto",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",

@@ -3,32 +3,25 @@
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4 clickable-header" @click="navigateToAnswers">
       <v-icon size="24" color="primary" class="header-icon">mdi-chart-line</v-icon>
-      <v-card-title 
-        class="text-h6 text-primary clickable-title" 
-      >
+      <v-card-title class="text-h6 text-primary clickable-title">
         Resultados
       </v-card-title>
     </div>
-    
+
     <!-- Indicador de usabilidad -->
     <div class="usability-metric">
       <div class="d-flex align-center justify-center mb-3">
         <v-icon size="20" color="primary" class="mr-2">mdi-speedometer</v-icon>
         <span class="metric-label text-caption text-grey-darken-1">Usabilidad General</span>
       </div>
-      
+
       <!-- Circular progress indicator -->
       <div class="d-flex justify-center mb-3">
-        <v-progress-circular
-          :model-value="usabilityPercentage"
-          size="80"
-          width="8"
-          :color="usabilityColor"
-        >
+        <v-progress-circular :model-value="usabilityPercentage" size="80" width="8" :color="usabilityColor">
           <span class="text-h5 font-weight-bold">{{ usabilityPercentage }}%</span>
         </v-progress-circular>
       </div>
-      
+
       <!-- Status text -->
       <div class="text-center">
         <div class="usability-status text-body-2 font-weight-medium" :class="usabilityStatusClass">
@@ -70,7 +63,7 @@ const usabilityPercentage = computed(() => {
 })
 
 const participantsCount = computed(() => {
-  return props.test?.participants?.length || 0
+  return props.test?.cooperators?.length || 0
 })
 
 const usabilityColor = computed(() => {

@@ -21,13 +21,15 @@
         <v-col
           v-for="category in categories"
           :key="category.id"
-          cols="3"
+          cols="12"
+          sm="6"
+          md="3"
         >
           <SelectableCard
             :selected="selectedCategory === category.id"
             :icon="category.icon"
             :title="category.title"
-            text-class="pa-8 text-center"
+            text-class="pa-4 pa-sm-8 text-center"
             :description="category.description"
             :color="category.color"
             :disabled="category.comingSoon"
