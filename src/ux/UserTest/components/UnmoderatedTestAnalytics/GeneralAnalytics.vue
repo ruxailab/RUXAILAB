@@ -10,6 +10,9 @@
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
+        <v-btn color="info" class="search-btn" prepend-icon="mdi-download" @click="downloadPdfResume">{{
+          $t('analytics.downloadResume') }}</v-btn>
+
         <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
           :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
@@ -348,6 +351,7 @@ import UxMetricCard from '../answers/UxMetricCard.vue';
 import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
 import AnswersTimeline from '../answers/AnswersTimeline.vue';
+import axios from 'axios';
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([]);
@@ -518,6 +522,35 @@ const averageTimePerTask = computed(() => {
 
   return totalTasks === 0 ? 0 : totalTaskTime / totalTasks;
 });
+
+const downloadPdfResume = async () => {
+  try {
+    const response = await axios.post(
+      process.env.VUE_APP_LARAVEL_PDF + '/generate-pdf',
+      {
+        payload: {
+          title: test.value.testTitle || '',
+          type: test.value.testType || '',
+          taskAnswers: answers.value,
+        }
+      },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        responseType: 'arraybuffer' // Recebe como binary
+      }
+    );
+
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${test.value.testTitle || 'resume'}.pdf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+  }
+}
 
 const formatTime = (time) => {
   const seconds = Math.floor(time / 1000);

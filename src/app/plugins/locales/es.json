@@ -118,6 +118,7 @@
     "profileLoadFailed": "Error al cargar el perfil",
     "profileUpdatedSuccess": "Perfil actualizado con éxito",
     "profileUpdateFailed": "Error al actualizar el perfil",
+    "googleUserPasswordInfo": "Iniciaste sesión con Google. Haz clic en el botón a continuación para verificar con Google y establecer una contraseña para tu cuenta.",
     "passwordChangedSuccess": "Contraseña cambiada con éxito",
     "passwordChangeFailed": "Error al cambiar la contraseña",
     "accountDeletionFailed": "Error al eliminar la cuenta",
@@ -850,7 +851,8 @@
     "postTestDescription": "Resultados del formulario posterior a la prueba",
     "all": "Todos",
     "question": "Pregunta {number}",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "downloadResume": "Descargar resumen PDF"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
