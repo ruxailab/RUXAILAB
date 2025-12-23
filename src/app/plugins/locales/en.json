@@ -37,6 +37,7 @@
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",

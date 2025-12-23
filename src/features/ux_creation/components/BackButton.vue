@@ -1,9 +1,10 @@
 <template>
   <v-row :justify="adjust">
-    <v-col cols="auto">
+    <v-col cols="12" sm="auto">
       <v-btn
         variant="outlined"
         :prepend-icon="icon"
+        class="w-100 w-sm-auto"
         @click="onBack"
       >
         {{ label }}
