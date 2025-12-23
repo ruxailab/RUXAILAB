@@ -12,7 +12,7 @@
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center">
           <img
-            src="@/assets/ruxailab.png"
+            src="@/assets/logo_full.png"
             alt="RUXAILAB"
             height="32"
             class="mr-3"

@@ -30,6 +30,7 @@ export default class StudyController extends Controller {
         new StudyAnswer({ type: payload.test.testType }),
       )
 
+      // Use the correct study type from the payload (already instantiated correctly in SettingsView)
       const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
