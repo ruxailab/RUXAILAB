@@ -8,21 +8,38 @@
                 {{ title || 'Send Invitation' }}
             </v-card-title>
             <v-card-text class="pt-4">
-                <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :items="users.filter(user => user?.email != null)" item-title="email"
-                    :label="selectLabel || 'Select cooperator'" multiple variant="outlined" density="comfortable"
-                    @update:model-value="validateEmail">
+                <v-combobox 
+                    :key="comboboxKey" 
+                    ref="combobox" 
+                    v-model="comboboxModel" 
+                    :items="filteredUsers" 
+                    item-title="email"
+                    :label="selectLabel || 'Select cooperator'" 
+                    multiple 
+                    variant="outlined" 
+                    density="comfortable"
+                    chips
+                    closable-chips
+                    @update:model-value="onComboboxChange"
+                    @keydown.enter="handleEnterKey"
+                    clearable
+                >
                     <template #no-data>
-                        {{ noDataText || 'There are no users registered with that email, press enter to select anyways.'
-                        }}
+                        {{ noDataText || 'Type email address and press Enter to add any email' }}
                     </template>
                 </v-combobox>
 
-                <v-chip-group>
-                    <v-chip v-for="(coop, i) in selectedCoops" :key="i" closable @click:close="removeSelectedCoop(i)"
-                        class="ml-2 mt-2">
-                        {{ typeof coop == 'object' ? coop.email : coop }}
+                <div class="mt-3">
+                    <v-chip 
+                        v-for="(coop, i) in selectedCoops" 
+                        :key="i" 
+                        closable 
+                        @click:close="removeSelectedCoop(i)"
+                        class="ml-1 mr-1 mt-2"
+                    >
+                        {{ getCoopEmail(coop) }}
                     </v-chip>
-                </v-chip-group>
+                </div>
 
                 <v-select v-model="selectedRole" :items="roleOptions" :label="roleLabel || 'Role'" variant="outlined"
                     density="comfortable" class="mt-4" />
@@ -76,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
 import { useToast } from 'vue-toastification';
 
@@ -128,6 +145,7 @@ const comboboxKey = ref(0);
 const selectedRole = ref(1);
 const inviteMessage = ref('');
 const combobox = ref(null);
+const pendingEmailInput = ref(''); // Track what user is currently typing
 
 // Date and time for scheduling (accessibility tests)
 const date = ref(
@@ -159,49 +177,101 @@ const minTime = computed(() => {
     }
 });
 
-// Methods
-const removeSelectedCoop = (index) => {
-    selectedCoops.value.splice(index, 1);
+const filteredUsers = computed(() => {
+    return props.users.filter(user => user?.email != null);
+});
+
+// Helper methods
+const getCoopEmail = (coop) => {
+    return typeof coop === 'object' ? coop.email : coop;
 };
 
-const isStringEmail = (email) => {
-    return typeof email !== 'object' && email !== undefined && email.length > 0;
+const getEmailFromItem = (item) => {
+    if (typeof item === 'string') return item;
+    if (typeof item === 'object' && item.email) return item.email;
+    return null;
 };
 
 const isCoopAlreadySelected = (emailToCheck) => {
-    return selectedCoops.value.find(
-        coop => (typeof coop === 'object' ? coop.email : coop) === emailToCheck
+    return selectedCoops.value.some(
+        coop => getCoopEmail(coop) === emailToCheck
     );
 };
 
-const validateEmail = () => {
-    const email = comboboxModel.value.pop();
-    comboboxKey.value++;
-
-    if (!email) return;
-
-    // Handle string email input
-    if (isStringEmail(email)) {
-        if (!isValidEmail(email)) {
-            toast.error('Invalid email format');
-            return;
-        }
-
-        if (!selectedCoops.value.includes(email)) {
-            selectedCoops.value.push(email);
-        }
-        return;
+const addCoop = (item) => {
+    const email = getEmailFromItem(item);
+    
+    if (!email) {
+        toast.error('Invalid email');
+        return false;
     }
 
-    // Handle object email input
-    if (selectedCoops.value.includes(email)) return;
-
-    if (isCoopAlreadySelected(email.email)) {
-        toast.warning(`${email.email} has already been selected`);
-        return;
+    // Validate email format for string inputs
+    if (typeof item === 'string' && !isValidEmail(email)) {
+        toast.error('Invalid email format');
+        return false;
     }
 
-    selectedCoops.value.push(email);
+    // Check if already selected
+    if (isCoopAlreadySelected(email)) {
+        toast.warning(`${email} is already selected`);
+        return false;
+    }
+
+    // Add to selected coops
+    selectedCoops.value.push(item);
+    return true;
+};
+
+const handleEnterKey = async (event) => {
+    // Prevent default to avoid form submission if inside a form
+    event.preventDefault();
+    
+    // Get the current input value from combobox
+    const inputElement = combobox.value?.$el?.querySelector('input');
+    if (inputElement) {
+        const inputValue = inputElement.value.trim();
+        
+        if (inputValue) {
+            // Check if input matches an existing user
+            const existingUser = filteredUsers.value.find(user => 
+                user.email.toLowerCase() === inputValue.toLowerCase()
+            );
+            
+            const itemToAdd = existingUser || inputValue;
+            
+            if (addCoop(itemToAdd)) {
+                // Clear the input
+                comboboxModel.value = [];
+                pendingEmailInput.value = '';
+                comboboxKey.value++;
+                
+                // Focus back on input for next entry
+                await nextTick();
+                inputElement.focus();
+            }
+        }
+    }
+};
+
+const onComboboxChange = (newValue) => {
+    // When user selects from dropdown or chips are removed
+    if (Array.isArray(newValue)) {
+        const lastItem = newValue[newValue.length - 1];
+        
+        // If something was added
+        if (lastItem && !isCoopAlreadySelected(getEmailFromItem(lastItem))) {
+            addCoop(lastItem);
+        }
+        
+        // Always clear the combobox model to show placeholder
+        comboboxModel.value = [];
+        comboboxKey.value++;
+    }
+};
+
+const removeSelectedCoop = (index) => {
+    selectedCoops.value.splice(index, 1);
 };
 
 const onCancel = () => {
@@ -230,6 +300,8 @@ const resetForm = () => {
     comboboxModel.value = [];
     inviteMessage.value = '';
     selectedRole.value = 1;
+    pendingEmailInput.value = '';
+    comboboxKey.value++;
     combobox.value?.blur();
 };
 
@@ -237,6 +309,14 @@ const resetForm = () => {
 watch(() => props.show, (newVal) => {
     if (!newVal) {
         resetForm();
+    } else {
+        // When dialog opens, focus the combobox
+        nextTick(() => {
+            const input = combobox.value?.$el?.querySelector('input');
+            if (input) {
+                input.focus();
+            }
+        });
     }
 });
 </script>
