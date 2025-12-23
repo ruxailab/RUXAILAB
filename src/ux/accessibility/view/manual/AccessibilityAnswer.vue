@@ -1,9 +1,7 @@
 <template>
-  <PageWrapper 
-    :title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
+  <PageWrapper :title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
     :loading="isLoading"
-    :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'"
-  >
+    :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ currentPage === 'userSelection' ? 'Select a user to view their accessibility assessment results' : 'Review the detailed accessibility assessment results for the selected user' }}
@@ -14,55 +12,43 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h5 pa-6">
-            <v-icon left class="mr-3" color="primary">mdi-account-multiple</v-icon>
+            <v-icon start class="mr-3" color="primary">
+              mdi-account-multiple
+            </v-icon>
             Select a User to View Assessment Results
           </v-card-title>
           <v-card-text class="pa-6">
             <!-- Debug Information -->
-            <v-alert 
-              v-if="!isLoadingUsers && userDetails.length === 0"
-              type="info" 
-              variant="outlined"
-              class="mb-4"
-            >
-              <div class="text-subtitle-2 mb-2">Information</div>
+            <v-alert v-if="!isLoadingUsers && userDetails.length === 0" type="info" variant="outlined" class="mb-4">
+              <div class="text-subtitle-2 mb-2">
+                Information
+              </div>
               <div><strong>Found User IDs:</strong> {{ userIds.join(', ') || 'None' }}</div>
               <div><strong>User Details:</strong> {{ userDetails.length }} users loaded</div>
             </v-alert>
             <!-- Loading overlay while fetching users -->
             <div v-if="isLoadingUsers" class="text-center py-8">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-                size="48"
-                class="mb-4"
-              ></v-progress-circular>
-              <div class="text-h6 mb-2">Loading Users</div>
-              <div class="text-body-2 text-grey">Fetching assessment participants...</div>
+              <v-progress-circular indeterminate color="primary" size="48" class="mb-4" />
+              <div class="text-h6 mb-2">
+                Loading Users
+              </div>
+              <div class="text-body-2 text-grey">
+                Fetching assessment participants...
+              </div>
             </div>
 
             <!-- User table (only show when not loading) -->
             <v-card v-if="!isLoadingUsers" elevation="2">
-              <v-data-table
-                :headers="userHeaders"
-                :items="userDetails"
-                :items-per-page="10"
-                :loading="isLoadingUsers"
-                loading-text="Fetching users..."
-                class="user-table elevation-0"
-                height="50vh"
-                density="compact"
-                @click:row="(event, { item }) => selectUser(item)"
-              >
+              <v-data-table :headers="userHeaders" :items="userDetails" :items-per-page="10" :loading="isLoadingUsers"
+                loading-text="Fetching users..." class="user-table elevation-0" height="50vh" density="compact"
+                @click:row="(event, { item }) => selectUser(item)">
                 <!-- Email/User Info Column -->
                 <template #item.email="{ item }">
                   <div class="d-flex align-center py-2 cursor-pointer" @click="selectUser(item)">
-                    <v-avatar
-                      size="40"
-                      color="primary"
-                      class="me-3"
-                    >
-                      <v-icon size="20" color="white">mdi-account</v-icon>
+                    <v-avatar size="40" color="primary" class="me-3">
+                      <v-icon size="20" color="white">
+                        mdi-account
+                      </v-icon>
                     </v-avatar>
                     <div>
                       <div class="font-weight-medium text-body-1 mb-0">
@@ -76,13 +62,11 @@
                 </template>
 
                 <!-- Status Column -->
-                <template #item.status="{ item }">
-                  <v-chip
-                    color="success"
-                    size="small"
-                    variant="tonal"
-                  >
-                    <v-icon start size="16">mdi-check-circle</v-icon>
+                <template #item.status>
+                  <v-chip color="success" size="small" variant="tonal">
+                    <v-icon start size="16">
+                      mdi-check-circle
+                    </v-icon>
                     Assessment Available
                   </v-chip>
                 </template>
@@ -90,34 +74,19 @@
                 <!-- Actions Column -->
                 <template #item.actions="{ item }">
                   <div class="d-flex ga-2">
-                    <v-btn
-                      color="primary"
-                      variant="flat"
-                      size="small"
-                      prepend-icon="mdi-eye"
-                      @click="selectUser(item)"
-                    >
+                    <v-btn color="primary" variant="flat" size="small" prepend-icon="mdi-eye" @click="selectUser(item)">
                       View Results
                     </v-btn>
-                    <v-btn
-                      color="secondary"
-                      variant="outlined"
-                      size="small"
-                      prepend-icon="mdi-test-tube"
-                      @click="viewUserInPreview(item)"
-                    >
+                    <v-btn color="secondary" variant="outlined" size="small" prepend-icon="mdi-test-tube"
+                      @click="viewUserInPreview(item)">
                       View in Preview
                     </v-btn>
                   </div>
                 </template>
               </v-data-table>
             </v-card>
-            
-            <v-alert
-              v-if="userDetails.length === 0 && !isLoadingUsers"
-              type="info"
-              class="mt-4"
-            >
+
+            <v-alert v-if="userDetails.length === 0 && !isLoadingUsers" type="info" class="mt-4">
               No users found for this assessment test.
             </v-alert>
           </v-card-text>
@@ -132,31 +101,28 @@
         <v-card class="mb-4">
           <v-card-text class="d-flex align-center justify-space-between pa-4">
             <div class="d-flex align-center">
-              <v-btn
-                color="primary"
-                variant="outlined"
-                prepend-icon="mdi-arrow-left"
-                class="mr-4"
-                @click="goBackToUserSelection"
-              >
+              <v-btn color="primary" variant="outlined" prepend-icon="mdi-arrow-left" class="mr-4"
+                @click="goBackToUserSelection">
                 Back to User Selection
               </v-btn>
               <div>
-                <div class="text-h6">{{ getDisplayName(selectedUser?.email) }}</div>
-                <div class="text-body-2 text-grey">{{ selectedUser?.email }}</div>
+                <div class="text-h6">
+                  {{ getDisplayName(selectedUser?.email) }}
+                </div>
+                <div class="text-body-2 text-grey">
+                  {{ selectedUser?.email }}
+                </div>
               </div>
             </div>
             <div class="d-flex ga-2 align-center">
-              <v-btn
-                color="secondary"
-                variant="outlined"
-                prepend-icon="mdi-test-tube"
-                @click="viewUserInPreview(selectedUser)"
-              >
+              <v-btn color="secondary" variant="outlined" prepend-icon="mdi-test-tube"
+                @click="viewUserInPreview(selectedUser)">
                 View in Preview Mode
               </v-btn>
               <v-avatar color="primary" size="40">
-                <v-icon color="white">mdi-account</v-icon>
+                <v-icon color="white">
+                  mdi-account
+                </v-icon>
               </v-avatar>
             </div>
           </v-card-text>
@@ -169,60 +135,26 @@
 
           <!-- Level Filter -->
           <v-card-subtitle class="pb-2">
-            <v-row
-              align="center"
-              class="ma-0"
-            >
-              <v-col
-                cols="auto"
-                class="pa-0"
-              >
+            <v-row align="center" class="ma-0">
+              <v-col cols="auto" class="pa-0">
                 <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
               </v-col>
-              <v-col
-                cols="auto"
-                class="pa-0 ml-3"
-              >
-                <v-btn-toggle
-                  v-model="selectedLevel"
-                  mandatory
-                  color="primary"
-                  variant="outlined"
-                  divided
-                  density="compact"
-                >
-                  <v-btn
-                    value="A"
-                    size="small"
-                    :class="{ 'level-a': selectedLevel === 'A' }"
-                  >
+              <v-col cols="auto" class="pa-0 ml-3">
+                <v-btn-toggle v-model="selectedLevel" mandatory color="primary" variant="outlined" divided
+                  density="compact">
+                  <v-btn value="A" size="small" :class="{ 'level-a': selectedLevel === 'A' }">
                     A
                   </v-btn>
-                  <v-btn
-                    value="AA"
-                    size="small"
-                    :class="{ 'level-aa': selectedLevel === 'AA' }"
-                  >
+                  <v-btn value="AA" size="small" :class="{ 'level-aa': selectedLevel === 'AA' }">
                     AA
                   </v-btn>
-                  <v-btn
-                    value="AAA"
-                    size="small"
-                    :class="{ 'level-aaa': selectedLevel === 'AAA' }"
-                  >
+                  <v-btn value="AAA" size="small" :class="{ 'level-aaa': selectedLevel === 'AAA' }">
                     AAA
                   </v-btn>
                 </v-btn-toggle>
               </v-col>
-              <v-col
-                cols="auto"
-                class="pa-0 ml-3"
-              >
-                <v-chip
-                  size="small"
-                  :color="getLevelChipColor(selectedLevel)"
-                  variant="outlined"
-                >
+              <v-col cols="auto" class="pa-0 ml-3">
+                <v-chip size="small" :color="getLevelChipColor(selectedLevel)" variant="outlined">
                   {{ getLevelDescription(selectedLevel) }}
                 </v-chip>
               </v-col>
@@ -230,28 +162,14 @@
           </v-card-subtitle>
 
           <!-- Tabs for Principles -->
-          <v-tabs
-            v-model="activeTab"
-            grow
-            show-arrows
-            class="principle-tabs"
-          >
-            <v-tab
-              v-for="(principle, index) in principles"
-              :key="index"
-              :value="index"
-              :class="`principle-tab principle-${index}`"
-            >
+          <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
+            <v-tab v-for="(principle, index) in principles" :key="index" :value="index"
+              :class="`principle-tab principle-${index}`">
               <v-icon start>
                 {{ getPrincipleIcon(index) }}
               </v-icon>
               {{ principle.title }}
-              <v-chip
-                size="x-small"
-                class="ml-2"
-                color="primary"
-                variant="outlined"
-              >
+              <v-chip size="x-small" class="ml-2" color="primary" variant="outlined">
                 {{ getFilteredRulesCount(index) }}
               </v-chip>
             </v-tab>
@@ -259,66 +177,35 @@
 
           <v-card-text class="pa-0">
             <v-window v-model="activeTab">
-              <v-window-item
-                v-for="(principle, pIndex) in principles"
-                :key="pIndex"
-                :value="pIndex"
-              >
-                <v-data-table
-                  :headers="headers"
-                  :items="getRulesForPrinciple(pIndex)"
-                  :items-per-page="10"
-                  :loading="isLoading"
-                  class="elevation-1"
-                  height="65vh"
-                >
+              <v-window-item v-for="(principle, pIndex) in principles" :key="pIndex" :value="pIndex">
+                <v-data-table :headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
+                  :loading="isLoading" class="elevation-1" height="65vh">
                   <template #item.status="{ item }">
-                    <v-chip
-                      :color="getStatusColor(item.status)"
-                      class="text-uppercase"
-                      size="small"
-                    >
+                    <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
                       {{ item.status || 'Not Set' }}
                     </v-chip>
                   </template>
 
                   <template #item.severity="{ item }">
-                    <v-chip
-                      :color="getSeverityColor(item.severity)"
-                      class="text-uppercase"
-                      size="small"
-                      variant="outlined"
-                    >
+                    <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
+                      variant="outlined">
                       {{ item.severity || 'Not Set' }}
                     </v-chip>
                   </template>
 
                   <template #item.level="{ item }">
-                    <v-chip
-                      :color="getLevelChipColor(item.level)"
-                      class="text-uppercase"
-                      size="small"
-                      variant="tonal"
-                    >
+                    <v-chip :color="getLevelChipColor(item.level)" class="text-uppercase" size="small" variant="tonal">
                       {{ item.level || 'N/A' }}
                     </v-chip>
                   </template>
 
                   <template #item.notes="{ item }">
-                    <v-btn
-                      v-if="item.notes && item.notes.length > 0"
-                      icon
-                      size="small"
-                      @click="openNotesDialog(item)"
-                    >
+                    <v-btn v-if="item.notes && item.notes.length > 0" icon size="small" @click="openNotesDialog(item)">
                       <v-icon size="small">
                         mdi-note-text-outline
                       </v-icon>
                     </v-btn>
-                    <span
-                      v-else
-                      class="text-grey"
-                    >-</span>
+                    <span v-else class="text-grey">-</span>
                   </template>
                 </v-data-table>
               </v-window-item>
@@ -329,83 +216,53 @@
     </v-row>
 
     <!-- Notes Dialog -->
-    <v-dialog
-      v-model="notesDialog.show"
-      max-width="800px"
-    >
-    <v-card>
-      <v-card-title class="d-flex justify-space-between align-center">
-        <span>Notes for {{ notesDialog.ruleId }} -
-          {{ notesDialog.ruleTitle }}</span>
-        <v-btn
-          icon
-          @click="notesDialog.show = false"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-      <v-card-text class="pt-4">
-        <v-list>
-          <v-list-item
-            v-for="(note, index) in notesDialog.notes"
-            :key="index"
-            class="mb-4"
-          >
-            <template #prepend>
-              <v-avatar
-                color="primary"
-                size="40"
-                class="mr-4"
-              >
-                <span class="text-white">{{ index + 1 }}</span>
-              </v-avatar>
-            </template>
-            <v-list-item-title class="text-h6 mb-2">
-              Note {{ index + 1 }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="text-body-1 mb-2">
-              {{ note.text }}
-            </v-list-item-subtitle>
-            <v-img
-              v-if="note.imagePreview"
-              :src="note.imagePreview"
-              max-height="300"
-              cover
-              class="mt-2 mb-2 rounded"
-            />
-            <v-chip
-              v-if="note.imageName"
-              size="small"
-              color="grey-lighten-2"
-              class="mt-2"
-            >
-              <v-icon
-                size="small"
-                class="mr-1"
-              >
-                mdi-image
-              </v-icon>
-              {{ note.imageName }}
-            </v-chip>
-          </v-list-item>
-          <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
-            <v-list-item-title class="text-grey">
-              No notes available for this rule.
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          color="primary"
-          @click="notesDialog.show = false"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <v-dialog v-model="notesDialog.show" max-width="800px">
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>Notes for {{ notesDialog.ruleId }} -
+            {{ notesDialog.ruleTitle }}</span>
+          <v-btn icon @click="notesDialog.show = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pt-4">
+          <v-list>
+            <v-list-item v-for="(note, index) in notesDialog.notes" :key="index" class="mb-4">
+              <template #prepend>
+                <v-avatar color="primary" size="40" class="mr-4">
+                  <span class="text-white">{{ index + 1 }}</span>
+                </v-avatar>
+              </template>
+              <v-list-item-title class="text-h6 mb-2">
+                Note {{ index + 1 }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="text-body-1 mb-2">
+                {{ note.text }}
+              </v-list-item-subtitle>
+              <v-img v-if="note.imagePreview" :src="note.imagePreview" max-height="300" cover
+                class="mt-2 mb-2 rounded" />
+              <v-chip v-if="note.imageName" size="small" color="grey-lighten-2" class="mt-2">
+                <v-icon size="small" class="mr-1">
+                  mdi-image
+                </v-icon>
+                {{ note.imageName }}
+              </v-chip>
+            </v-list-item>
+            <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
+              <v-list-item-title class="text-grey">
+                No notes available for this rule.
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="primary" @click="notesDialog.show = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </PageWrapper>
 </template>
 
@@ -466,21 +323,21 @@ onMounted(async () => {
   try {
     // Load WCAG data first (this affects general loading state)
     await loadWcagData()
-    
+
     // Then fetch users (this affects user loading state)
     isLoadingUsers.value = true
-    
+
     // Debug route parameters
     console.log('Route params:', route.params)
     console.log('Test ID from route:', route.params.id)
     console.log('Full route:', route)
-    
+
     if (!route.params.id) {
       showError('Test ID is missing from route parameters. Please check the URL.')
       isLoadingUsers.value = false
       return
     }
-    
+
     await fetchUserIdsForTest()
     await fetchUserEmails()
   } catch (error) {
@@ -508,20 +365,20 @@ const goBackToUserSelection = () => {
 const selectUser = async (user) => {
   try {
     console.log('Selecting user:', user)
-    
+
     if (!user || !user.id) {
       showError('Invalid user selection')
       console.error('Invalid user object:', user)
       return
     }
-    
+
     selectedUser.value = user
     selectedUserId.value = user.email
     currentPage.value = 'assessmentResults'
-    
+
     console.log('Selected user ID:', user.id)
     console.log('Selected user email:', user.email)
-    
+
     // Load assessment data for the selected user
     await loadAssessmentData(user.id)
   } catch (error) {
@@ -537,13 +394,13 @@ const viewUserInPreview = (user) => {
       showError('Invalid user selection')
       return
     }
-    
+
     const testId = route.params.id
     if (!testId) {
       showError('Test ID not found')
       return
     }
-    
+
     // Navigate to preview page with user ID parameter
     const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
     window.open(previewUrl, '_blank')
@@ -814,7 +671,7 @@ const fetchUserIdsForTest = async () => {
 
     const testId = route.params.id
     console.log('Fetching user IDs for test ID:', testId)
-    
+
     if (!testId) {
       throw new Error('Test ID is required')
     }
@@ -830,10 +687,10 @@ const fetchUserIdsForTest = async () => {
       console.log('Assessment document:', doc.id, 'data:', data);
       return data.userId;
     });
-    
+
     userIds.value = foundUserIds;
     console.log('Found user IDs:', userIds.value)
-    
+
     if (userIds.value.length === 0) {
       console.log('No assessment documents found for test ID:', testId);
       showInfo('No assessment data found for this test. Users need to complete assessments first.');
@@ -898,7 +755,7 @@ const loadAssessmentData = async (userId) => {
 
     const docId = `${userId}_${testId}`;
     console.log('Looking for assessment document:', docId)
-    
+
     const docRef = doc(db, 'assessments', docId);
     const docSnap = await getDoc(docRef);
 
@@ -949,7 +806,7 @@ const loadAssessmentData = async (userId) => {
 
     assessmentRules.value = assessmentLookup
     assessmentData.value = mergedData
-    
+
   } catch (error) {
     console.error('Error loading assessment data:', error)
     showError(
