@@ -851,7 +851,8 @@
     "postTestDescription": "Resultados del formulario posterior a la prueba",
     "all": "Todos",
     "question": "Pregunta {number}",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "downloadResume": "Descargar resumen PDF"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
