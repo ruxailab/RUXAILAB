@@ -17,17 +17,22 @@
       />
 
       <!-- Categories Grid -->
-      <v-row justify="center">
+      <v-row justify="center" class="mx-0">
         <v-col
           v-for="category in categories"
           :key="category.id"
-          cols="3"
+          cols="12"
+          sm="6"
+          md="6"
+          lg="3"
+          xl="3"
+          class="mb-4"
         >
           <SelectableCard
             :selected="selectedCategory === category.id"
             :icon="category.icon"
             :title="category.title"
-            text-class="pa-8 text-center"
+            text-class="pa-4 pa-sm-6 pa-md-8 text-center"
             :description="category.description"
             :color="category.color"
             :disabled="category.comingSoon"
@@ -42,6 +47,7 @@
                 color="primary"
                 variant="tonal"
                 size="small"
+                class="mt-2"
               >
                 {{ $t('studyCreation.multipleMethods') }}
               </v-chip>
