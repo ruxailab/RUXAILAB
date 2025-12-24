@@ -4,11 +4,11 @@
     class="dashboard-container"
   >
     <!-- Header with User Welcome -->
-    <div class="dashboard-header mb-6">
-      <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
+    <div class="dashboard-header mb-4 mb-md-6">
+      <h1 class="text-h5 text-md-h4 font-weight-bold text-grey-darken-4 mb-1 mb-md-2">
         Welcome back, {{ userDisplayName }}! 👋
       </h1>
-      <p class="text-subtitle-1 text-grey-darken-1">
+      <p class="text-body-2 text-md-subtitle-1 text-grey-darken-1">
         Here's what's happening with your research projects today
       </p>
     </div>
@@ -21,12 +21,14 @@
     />
 
     <!-- Second Row: Activity Timeline and Active Studies -->
-    <v-row class="mb-6">
+    <v-row class="mb-4 mb-md-6">
       <v-col
         cols="12"
+        md="8"
         lg="8"
+        class="mb-4 mb-md-0"
       >
-        <div class="component-height">
+        <div class="responsive-component">
           <ActiveStudies 
             :studies="items"
           />
@@ -34,48 +36,47 @@
       </v-col>
       <v-col
         cols="12"
+        md="4"
         lg="4"
       >
-        <div class="component-height">
+        <div class="responsive-component">
           <ActivityTimeline />
         </div>
       </v-col>
     </v-row>
 
     <!-- Third Row: Upcoming Webinar and Top Methods -->
-    <v-row class="mb-6">
+    <v-row class="mb-4 mb-md-6">
       <v-col
         cols="12"
-        lg="4"
+        sm="6"
+        md="4"
+        class="mb-4 mb-sm-0 mb-md-0"
       >
         <UpcomingWebinar />
       </v-col>
       <v-col
         cols="12"
-        lg="4"
+        sm="6"
+        md="4"
+        class="mb-4 mb-sm-0 mb-md-0"
       >
         <TopMethods />
       </v-col>
       <v-col
         cols="12"
-        lg="4"
+        sm="12"
+        md="4"
       >
-        <NextSession  :next-session="nextSession" />
+        <NextSession :next-session="nextSession" />
       </v-col>
     </v-row>
 
     <!-- Fourth Row: Blog Posts and Next Session -->
-    <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="6"
-      >
+    <v-row class="mb-4 mb-md-6">
+      <v-col cols="12" lg="6">
         <BlogPosts />
       </v-col>
-      <v-col
-        cols="12"
-        lg="6"
-      />
     </v-row>
   </v-container>
 </template>
@@ -120,7 +121,6 @@ const userStorageUsage = computed(() => {
   const user = store.getters.user;
   return user?.storageUsageMB || 0;
 });
-
 
 watch(
   () => props.sessions,
@@ -179,7 +179,7 @@ watch(
 
 <style scoped>
 .dashboard-container {
-  padding: 24px;
+  padding: 16px;
   background-color: rgb(var(--v-theme-background));
   min-height: 100vh;
 }
@@ -188,29 +188,63 @@ watch(
   text-align: left;
 }
 
-.component-height {
-  height: 500px;
+.responsive-component {
+  min-height: 400px;
+  height: auto;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
-.component-height :deep(.v-card) {
-  height: 100%;
+.responsive-component :deep(.v-card) {
+  height: auto;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.component-height :deep(.v-card-text) {
+.responsive-component :deep(.v-card-text) {
   flex: 1;
   overflow-y: auto;
 }
 
-@media (max-width: 960px) {
+/* Mobile-first responsive design */
+@media (max-width: 600px) {
   .dashboard-container {
-    padding: 16px;
+    padding: 12px;
   }
   
-  .component-height {
-    height: auto;
-    min-height: 400px;
+  .dashboard-header h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.3;
+  }
+  
+  .responsive-component {
+    min-height: 350px;
+    max-height: 400px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 960px) {
+  .responsive-component {
+    min-height: 450px;
+  }
+}
+
+@media (min-width: 961px) {
+  .dashboard-container {
+    padding: 24px;
+  }
+  
+  .responsive-component {
+    height: 500px;
+  }
+}
+
+/* Ensure touch-friendly targets on mobile */
+@media (max-width: 960px) {
+  :deep(.clickable-item) {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 </style>
