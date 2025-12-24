@@ -3,20 +3,19 @@
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4 clickable-header" @click="navigateToStorage">
       <v-icon size="24" color="primary" class="header-icon">mdi-database</v-icon>
-      <v-card-title 
-        class="text-h6 text-primary clickable-title" 
-      >
+      <v-card-title class="text-h6 text-primary clickable-title">
         Storage
       </v-card-title>
     </div>
-    
+
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
       <div class="metric-subtitle text-caption text-grey-darken-1">Almacenamiento (actual)</div>
       <div class="metric-value text-h3 font-weight-bold">{{ storageUsed }}</div>
-      <div class="metric-change text-caption" :class="storageGrowth >= 0 ? 'text-success' : 'text-error'">{{ storageGrowthFormatted }}</div>
+      <div class="metric-change text-caption" :class="storageGrowth >= 0 ? 'text-success' : 'text-error'">{{
+        storageGrowthFormatted }}</div>
     </div>
-    
+
     <!-- Información adicional -->
     <div class="additional-info">
       <div class="info-subtitle text-caption text-grey-darken-1">Límite disponible</div>
@@ -49,7 +48,7 @@ const navigateToStorage = () => {
 const storageUsed = computed(() => {
   // Simulamos el cálculo del storage usado basado en los datos del test
   const baseStorage = 450 // MB base
-  const participantsStorage = (props.test?.participants?.length || 0) * 15 // 15MB por participante
+  const participantsStorage = (props.test?.cooperators?.length || 0) * 15 // 15MB por participante
   const heuristicsStorage = (props.test?.heuristics?.length || 0) * 5 // 5MB por heurística
   const totalMB = baseStorage + participantsStorage + heuristicsStorage
   return `${totalMB}MB`
@@ -62,13 +61,13 @@ const storageLimit = computed(() => {
 
 const storageGrowth = computed(() => {
   // Simulamos el crecimiento basado en actividad reciente
-  const recentParticipants = props.test?.participants?.filter(p => {
+  const recentParticipants = props.test?.cooperators?.filter(p => {
     const participationDate = new Date(p.createdAt || p.joinedAt)
     const weekAgo = new Date()
     weekAgo.setDate(weekAgo.getDate() - 7)
     return participationDate > weekAgo
   }).length || 0
-  
+
   // Crecimiento aproximado del 0.1% por participante reciente
   return recentParticipants * 0.1
 })

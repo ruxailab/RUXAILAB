@@ -13,12 +13,7 @@
     <v-card-text class="pa-4">
       <v-row v-if="loading">
         <v-col v-for="n in 4" :key="n" cols="12" md="6">
-          <v-skeleton-loader
-            type="card"
-            class="study-card"
-            elevation="2"
-            rounded="lg"
-          />
+          <v-skeleton-loader type="card" class="study-card" elevation="2" rounded="lg" />
         </v-col>
       </v-row>
       <v-row v-else>
@@ -55,7 +50,7 @@
               <div class="d-flex justify-space-between text-caption">
                 <div class="d-flex align-center">
                   <v-icon icon="mdi-account-group" size="16" class="me-1" color="info" />
-                  <span>{{ study.participants }} participants</span>
+                  <span>{{ study.cooperators?.length || 0 }} participants</span>
                 </div>
                 <div v-if="study.daysLeft !== null" class="d-flex align-center">
                   <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning" />
@@ -90,7 +85,7 @@ const loading = ref(false);
 const studiesWithAnswers = ref([]);
 
 const studies = computed(() => {
-  return props.studies.length > 0  ? studiesWithAnswers.value : loading  ? [] : defaultStudies
+  return props.studies.length > 0 ? studiesWithAnswers.value : loading ? [] : defaultStudies
 })
 
 const lastFourStudies = computed(() => {
@@ -109,7 +104,7 @@ async function loadAnswers() {
   loading.value = true;
   const last4 = []
   try {
-    for (const study in lastFourStudies.value) {    
+    for (const study in lastFourStudies.value) {
       const testDoc = lastFourStudies.value[study]
       const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
       if (answerDoc.type === STUDY_TYPES.USER) {
@@ -140,7 +135,7 @@ const calculateProgress = (answers) => {
 }
 
 const daysLeft = (date) => {
-  if(!date) return 0
+  if (!date) return 0
   const futureDate = new Date(date);
   const today = new Date();
 
@@ -167,9 +162,9 @@ const finalFour = (studyArr) => {
     testType: study.testType,
     subType: study.subType,
   }))
-  .filter((study, index, self) =>
-    index === self.findIndex(m => m.id === study.id)
-  );
+    .filter((study, index, self) =>
+      index === self.findIndex(m => m.id === study.id)
+    );
 }
 
 const goToStudy = async (study) => {
