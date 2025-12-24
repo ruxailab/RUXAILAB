@@ -28,10 +28,10 @@
       @click="goTo('/admin')"
     >
       <img
-        src="@/assets/ruxailab-long-crop-white.png"
+        :src="xs ? logoSmall : logoFull"
         alt="RUXAILAB Logo"
-        height="25"
-        class="mr-3 align-self-center"
+        :height="xs ? '30' : '25'"
+        :class="xs ? 'mr-1 align-self-center' : 'mr-3 align-self-center'"
         style="vertical-align: middle;"
       >
     </v-toolbar-title>
@@ -116,6 +116,8 @@ import LocaleChanger from '@/features/language/components/LocaleChanger.vue';
 import HelpButton from '@/features/navigation/components/HelpButton.vue';
 import UserMenu from './UserMenu.vue';
 import NotificationButton from './NotificationButton.vue';
+import logoFull from "@/assets/logo_full_white.png";
+import logoSmall from "@/assets/logo_small_red.png";
 
 // Emits
 defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer']);
@@ -124,7 +126,7 @@ defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer']);
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
-const { smAndDown } = useDisplay();
+const { smAndDown , xs } = useDisplay();
 const { t } = useI18n();
 
 // Computed
@@ -159,4 +161,10 @@ const toggleDashboardDrawer = () => {
   padding-left: 10px;
 }
 
+@media (max-width: 600px) {
+  :deep(.v-toolbar__content) {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
 </style>

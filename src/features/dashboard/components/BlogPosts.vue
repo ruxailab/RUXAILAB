@@ -20,7 +20,7 @@
           variant="text"
           :size="buttonSize"
           color="primary"
-          :href="blogUrl"
+          @click="openBlog"
           target="_blank"
           class="view-blog-btn"
         >
@@ -55,7 +55,6 @@
           :key="post.id || index"
           :href="post.url"
           target="_blank"
-          class="blog-post-item"
           :class="{ 'border-bottom': index < blogPosts.length - 1 }"
           :density="isMobile ? 'compact' : 'default'"
         >
@@ -128,6 +127,12 @@
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from 'vue'
 
+const blogUrl = "https://blog-ruxailab.web.app";
+
+const openBlog = () => {
+  window.open(blogUrl, '_blank', 'noopener')
+}
+
 const props = defineProps({
     posts: {
         type: Array,
@@ -186,27 +191,27 @@ const updateWindowWidth = () => {
 const defaultPosts = [
     {
         id: 1,
-        title: 'The Future of UX Research: AI-Powered Insights',
-        excerpt: 'Exploring how artificial intelligence is revolutionizing user experience research methodologies...',
-        url: 'https://blog-ruxailab.web.app/ai-ux-research',
+        title: "GSoC 2025 Journey (Tianqin's project) - Bridging GitHub and Discord",
+        excerpt: "Exploring how Tianqin's project designed and implemented the first version of Disgitbot...",
+        url: 'https://blog-ruxailab.web.app/posts/disgitbot-gsoc-2025.html',
         category: 'Research',
         date: '2 days ago',
         displayDate: '2 days ago'
     },
     {
         id: 2,
-        title: 'Accessibility Testing: Best Practices for 2024',
-        excerpt: 'A comprehensive guide to ensuring your applications are accessible to all users...',
-        url: 'https://blog-ruxailab.web.app/accessibility-testing-2024',
+        title: 'Introducing the RUXAILAB Blog',
+        excerpt: 'We’re excited to launch the RUXAILAB Blog, a space to share insights, tutorials, and...',
+        url: 'https://blog-ruxailab.web.app/posts/ruxailab-blog.html',
         category: 'Accessibility',
         date: '1 week ago',
         displayDate: '1 week ago'
     },
     {
         id: 3,
-        title: 'Remote Usability Testing: Tools and Techniques',
-        excerpt: 'Learn how to conduct effective usability tests in a remote-first world...',
-        url: 'https://blog-ruxailab.web.app/remote-usability-testing',
+        title: 'RUXAILAB Selected for Google Summer of Code 2025',
+        excerpt: 'We are proud to announce that RUXAILAB has been officially selected as a mentoring...',
+        url: 'https://blog-ruxailab.web.app/posts/ruxailab-gsoc.html',
         category: 'Methods',
         date: '2 weeks ago',
         displayDate: '2 weeks ago'
