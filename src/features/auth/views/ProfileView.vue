@@ -41,6 +41,7 @@
                   <v-icon start color="primary">mdi-account-details</v-icon>
                   {{ $t('profile.personalInfo') }}
                 </v-card-title>
+
                 <v-card-text>
                   <v-form>
                     <v-row dense>
@@ -51,10 +52,11 @@
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-account"
-                          readonly
+                          disabled
                           class="input-field-transition"
                         />
                       </v-col>
+
                       <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="user.email"
@@ -62,10 +64,11 @@
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-email"
-                          readonly
+                          disabled
                           class="input-field-transition"
                         />
                       </v-col>
+
                       <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="profile.userprofile.value.contactNo"
@@ -73,10 +76,11 @@
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-phone"
-                          readonly
+                          disabled
                           class="input-field-transition"
                         />
                       </v-col>
+
                       <v-col cols="12" sm="6">
                         <v-text-field
                           v-model="profile.userprofile.value.country"
@@ -84,12 +88,13 @@
                           variant="outlined"
                           density="compact"
                           prepend-inner-icon="mdi-map-marker"
-                          readonly
+                          disabled
                           class="input-field-transition"
                         />
                       </v-col>
                     </v-row>
                   </v-form>
+
                   <v-btn
                     color="primary"
                     variant="flat"
@@ -144,10 +149,9 @@ const checkScreenSize = () => {
   isSmallScreen.value = window.innerWidth < 960;
 };
 
-// Refetch profile when dialog closes to ensure latest data is displayed
+// Refetch profile when dialog closes
 watch(editProfileDialog, (newVal, oldVal) => {
   if (oldVal === true && newVal === false) {
-    // Dialog was closed, refetch profile
     profile.fetchUserProfile();
   }
 });
