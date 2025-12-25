@@ -59,7 +59,7 @@
       </ShowInfo>
     </v-row>
     <div v-else>
-      <IntroAnswer />
+      <IntroAnswer @go-to-coops="goToCoops" />
     </div>
   </div>
 </template>
@@ -67,6 +67,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
@@ -88,14 +89,15 @@ defineProps({
 const emit = defineEmits(['goToCoops']);
 
 const store = useStore();
+const router = useRouter();
 
 const tab = ref(0);
 const ind = ref(0);
 const intro = ref(null);
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
-const study = computed(() => store.state.Tests.Test);
-const testStructure = computed(() => store.state.Tests.Test.testStructure);
+const study = computed(() => store.getters.test || {});
+const testStructure = computed(() => store.getters.test?.testStructure || {});
 
 const hasAnswers = computed(() => {
   const answers = testAnswerDocument.value?.taskAnswers;
@@ -153,6 +155,12 @@ const allIrisTrackingData = computed(() => {
 });
 
 const goToCoops = () => {
+  if (!study.value?.id) return;
+  
+  const isModerated = study.value.subType === 'Moderated';
+  const routeBase = isModerated ? '/userTest/moderated' : '/userTest/unmoderated';
+  
+  router.push(`${routeBase}/edit/${study.value.id}`);
   emit('goToCoops');
 };
 

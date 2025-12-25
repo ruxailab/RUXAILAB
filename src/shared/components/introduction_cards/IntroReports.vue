@@ -32,7 +32,7 @@ const items = computed(() => [
 ])
 
 const goToDoc = () => {
-  router.push('/reports/documentation').catch(() => {})
+  router.push('/help').catch(() => {})
 }
 
 const goToCoops = () => {

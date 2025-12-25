@@ -44,7 +44,7 @@ const goToCoops = () => {
 }
 
 const goToDoc = () => {
-  router.push('/answers/documentation').catch(() => {})
+  router.push('/help').catch(() => {})
 }
 
 const goToDisc = () => {
