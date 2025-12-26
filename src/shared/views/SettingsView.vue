@@ -642,6 +642,7 @@ const validate = (valid, index) => {
 const onSubmit = async () => {
   await submit();
   store.commit('SET_LOCAL_CHANGES', false);
+  store.commit('SET_DIALOG_LEAVE', false);
   router.push({ name: store.state.pathTo });
 };
 
