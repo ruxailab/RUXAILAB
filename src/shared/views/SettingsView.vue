@@ -523,15 +523,17 @@ const hasTemplate = computed(() => {
 const formattedEndDate = computed(() => {
   if (object.value?.endDate) {
     try {
-      const date = new Date(object.value.endDate + 'T00:00:00');
+      let date;
+      if (typeof object.value.endDate === 'number') {
+        date = new Date(object.value.endDate);
+      } else {
+        date = new Date(object.value.endDate);
+      }
+      
       if (isNaN(date.getTime())) {
         return '';
       }
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+      return date.toLocaleDateString();
     } catch (error) {
       console.error('Error formatting date:', error);
       return '';
@@ -543,14 +545,22 @@ const formattedEndDate = computed(() => {
 const datePickerModel = computed({
   get() {
     if (object.value?.endDate) {
-      return new Date(object.value.endDate + 'T00:00:00');
+      if (typeof object.value.endDate === 'number') {
+        const date = new Date(object.value.endDate);
+        if (!isNaN(date.getTime())) {
+          return date;
+        }
+      }
+      const date = new Date(object.value.endDate);
+      if (!isNaN(date.getTime())) {
+        return date;
+      }
     }
     return null;
   },
   set(newDate) {
     if (newDate && object.value) {
-      const formattedDate = newDate.toISOString().split('T')[0];
-      object.value.endDate = formattedDate;
+      object.value.endDate = newDate.getTime();
       store.commit('SET_LOCAL_CHANGES', true);
     }
   }
