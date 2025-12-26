@@ -523,14 +523,9 @@ const hasTemplate = computed(() => {
 const formattedEndDate = computed(() => {
   if (object.value?.endDate) {
     try {
-      let date;
-      if (typeof object.value.endDate === 'number') {
-        date = new Date(object.value.endDate);
-      } else {
-        date = new Date(object.value.endDate);
-      }
-      
-      if (isNaN(date.getTime())) {
+      const date = new Date(object.value.endDate);
+
+      if (Number.isNaN(date.getTime())) {
         return '';
       }
       return date.toLocaleDateString();
@@ -552,7 +547,7 @@ const datePickerModel = computed({
         }
       }
       const date = new Date(object.value.endDate);
-      if (!isNaN(date.getTime())) {
+      if (!Number.isNaN(date.getTime())) {
         return date;
       }
     }
