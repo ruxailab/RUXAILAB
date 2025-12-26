@@ -1,8 +1,7 @@
 <template>
   <div v-if="test">
-
     <div>
-      <IrisTracker :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+      <IrisTracker v-if="test.hasEye" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
 
@@ -542,7 +541,7 @@ const startTest = async () => {
     return;
   }
 
-  if (!isUserTestAdmin.value) {
+  if (!isUserTestAdmin.value && user.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
@@ -952,18 +951,16 @@ onMounted(async () => {
   globalIndex.value = 0;
   // validateTest();
   await nextTick();
-  if (user.value) {
-    await setTest();
-    await autoComplete();
-    calculateProgress();
-  }
+  await setTest();
+  await autoComplete();
+  calculateProgress();
   if (!user.value?.id) return
 
   let firstSnapshot = true
 
   const userRef = doc(db, 'users', user.value.id)
 
-  const unsubscribe = onSnapshot(userRef, (docSnap) => {
+  onSnapshot(userRef, (docSnap) => {
     if (!docSnap.exists()) return
     const data = docSnap.data()
 

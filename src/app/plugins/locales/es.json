@@ -33,10 +33,11 @@
       "check_your_email": "Revisa tu correo electrónico",
       "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
       "no_email": "¿No recibiste el correo?",
-      "try_again": "Inténtalo de nuevo" 
+      "try_again": "Inténtalo de nuevo"
     }
   },
   "common": {
+    "hidden": "Oculto",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
@@ -117,6 +118,7 @@
     "profileLoadFailed": "Error al cargar el perfil",
     "profileUpdatedSuccess": "Perfil actualizado con éxito",
     "profileUpdateFailed": "Error al actualizar el perfil",
+    "googleUserPasswordInfo": "Iniciaste sesión con Google. Haz clic en el botón a continuación para verificar con Google y establecer una contraseña para tu cuenta.",
     "passwordChangedSuccess": "Contraseña cambiada con éxito",
     "passwordChangeFailed": "Error al cambiar la contraseña",
     "accountDeletionFailed": "Error al eliminar la cuenta",
@@ -906,7 +908,8 @@
     "postTestDescription": "Resultados del formulario posterior a la prueba",
     "all": "Todos",
     "question": "Pregunta {number}",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "downloadResume": "Descargar resumen PDF"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
