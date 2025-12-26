@@ -1,5 +1,7 @@
 // imports
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import { doc, onSnapshot } from "firebase/firestore"
+import { db } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
@@ -146,5 +148,16 @@ export default class StudyController extends Controller {
     } catch (err) {
       throw err
     }
+  }
+
+  subscribeToStudy(studyId, callback) {
+    const docRef = doc(db, COLLECTION, studyId)
+    return onSnapshot(docRef, (doc) => {
+      if (doc.exists()) {
+        const rawData = Object.assign({ id: doc.id }, doc.data())
+        const study = instantiateStudyByType(rawData.testType, rawData)
+        callback(study)
+      }
+    })
   }
 }
