@@ -10,6 +10,9 @@
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
+        <v-btn color="info" class="search-btn" prepend-icon="mdi-download" @click="downloadPdfResume">{{
+          $t('analytics.downloadResume') }}</v-btn>
+
         <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
           :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
@@ -348,6 +351,7 @@ import UxMetricCard from '../answers/UxMetricCard.vue';
 import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
 import AnswersTimeline from '../answers/AnswersTimeline.vue';
+import axios from 'axios';
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([]);
@@ -518,6 +522,35 @@ const averageTimePerTask = computed(() => {
 
   return totalTasks === 0 ? 0 : totalTaskTime / totalTasks;
 });
+
+const downloadPdfResume = async () => {
+  try {
+    const response = await axios.post(
+      process.env.VUE_APP_LARAVEL_PDF + '/generate-pdf',
+      {
+        payload: {
+          title: test.value.testTitle || '',
+          type: test.value.testType || '',
+          taskAnswers: answers.value,
+        }
+      },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        responseType: 'arraybuffer' // Recebe como binary
+      }
+    );
+
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${test.value.testTitle || 'resume'}.pdf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+  }
+}
 
 const formatTime = (time) => {
   const seconds = Math.floor(time / 1000);
@@ -941,6 +974,95 @@ onMounted(() => {
   // Create initial charts
   setTimeout(() => createTaskCharts(), 1000);
 });
+
+// Refresh timeline data
+const onRefreshTimeline = async () => {
+  try {
+    if (store.dispatch) {
+      const possibleActions = [
+        'getCurrentTestAnswerDoc',
+        'Answer/getCurrentTestAnswerDoc',
+        'Tests/fetchVisibleUserAnswers',
+        'Tests/fetchAnswers',
+        'fetchVisibleUserAnswers',
+        'fetchAnswers'
+      ];
+      let dispatched = false;
+      for (const act of possibleActions) {
+        try {
+          await store.dispatch(act);
+          dispatched = true;
+          break;
+        } catch (e) {
+          // Ignore and try next
+        }
+      }
+      if (dispatched) {
+        await nextTick();
+        // recreate charts
+        setTimeout(() => createTaskCharts(), 300);
+        return;
+      }
+    }
+
+    // fallback to rebuild local cache from current store answers and force charts redraw
+    taskAnswers.value = answers.value && typeof answers.value === 'object'
+      ? Object.values(answers.value)
+      : [];
+    await nextTick();
+    setTimeout(() => createTaskCharts(), 300);
+  } catch (err) {
+    console.error('Refresh timeline failed:', err);
+  }
+};
+
+// Download timeline data as CSV
+const onExportTimeline = () => {
+  if (!filteredSessions.value.length) return;
+
+  const now = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(now.getMonth() - 1);
+
+  const counts = {};
+
+  // Initialize all days
+  const iterator = new Date(oneMonthAgo);
+  while (iterator <= now) {
+    const key = iterator.toISOString().split('T')[0];
+    counts[key] = 0;
+    iterator.setDate(iterator.getDate() + 1);
+  }
+
+  // Count answers per day
+  filteredSessions.value.forEach(a => {
+    if (!a.lastUpdate) return;
+    const d = new Date(a.lastUpdate);
+    if (d >= oneMonthAgo && d <= now) {
+      const key = d.toISOString().split('T')[0];
+      if (counts[key] !== undefined) counts[key]++;
+    }
+  });
+
+  // Build CSV
+  const csv = [
+    'Date,Number of Answers',
+    ...Object.entries(counts).map(
+      ([date, count]) => `${date},${count}`
+    ),
+  ].join('\n');
+
+  // Download
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = `answers_timeline_${Date.now()}.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
 </script>
 
 <style scoped>
