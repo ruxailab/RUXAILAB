@@ -549,7 +549,10 @@ const datePickerModel = computed({
   },
   set(newDate) {
     if (newDate && object.value) {
-      const formattedDate = newDate.toISOString().split('T')[0];
+      const year = newDate.getFullYear();
+      const month = String(newDate.getMonth() + 1).padStart(2, '0');
+      const day = String(newDate.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
       object.value.endDate = formattedDate;
       store.commit('SET_LOCAL_CHANGES', true);
     }
