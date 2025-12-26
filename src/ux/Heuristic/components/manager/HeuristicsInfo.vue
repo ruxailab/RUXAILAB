@@ -3,7 +3,7 @@
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4 clickable-header" @click="navigateToEdit">
       <v-icon size="24" color="primary" class="header-icon">mdi-file-document-edit-outline</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">Edit</v-card-title>
+      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.edit') }}</v-card-title>
     </div>
 
     <!-- Métricas principales en dos columnas -->
@@ -12,7 +12,7 @@
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="primary" class="mr-2">mdi-list-box-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">Heuristics</span>
+          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.heuristics') }}</span>
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-primary">{{ heuristicsCount }}</div>
       </div>
@@ -21,7 +21,7 @@
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="info" class="mr-2">mdi-help-circle-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">Questions</span>
+          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.questions') }}</span>
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-info">{{ questionsCount }}</div>
       </div>
@@ -32,7 +32,7 @@
       <div class="metric-item-bottom">
         <div class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="success" class="mr-2">mdi-checkbox-multiple-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">Total Options</span>
+          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.totalOptions') }}</span>
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-success">{{ optionsCount }}</div>
       </div>
@@ -48,7 +48,7 @@
           <v-icon start size="small">
             {{ isQualitative ? 'mdi-text' : 'mdi-chart-bar' }}
           </v-icon>
-          {{ isQualitative ? 'Qualitative' : 'Quantitative' }}
+          {{ isQualitative ? $t('Dashboard.cards.qualitative') : $t('Dashboard.cards.quantitative') }}
         </v-chip>
 
         <v-chip
@@ -59,7 +59,7 @@
           <v-icon start size="small">
             {{ hasWeights ? 'mdi-weight' : 'mdi-weight-off' }}
           </v-icon>
-          Weights {{ hasWeights ? 'ON' : 'OFF' }}
+          {{ $t('Dashboard.cards.weights') }} {{ hasWeights ? $t('Dashboard.cards.on') : $t('Dashboard.cards.off') }}
         </v-chip>
       </div>
     </div>
