@@ -542,7 +542,7 @@ const datePickerModel = computed({
     if (object.value?.endDate) {
       if (typeof object.value.endDate === 'number') {
         const date = new Date(object.value.endDate);
-        if (!isNaN(date.getTime())) {
+        if (!Number.isNaN(date.getTime())) {
           return date;
         }
       }
