@@ -137,26 +137,26 @@ const rules = {
   required: (v) => !!v || t('errors.passwordRequired'),
 }
 
-const checkForm = () => form.value?.validate()
-
 const onSignIn = async () => {
-  const isValid = await checkForm()
-  if (isValid) {
-    try {
-      store.commit('setLoading', true)
-      loadingType.value = 'signin'
-      await store.dispatch('signin', {
-        email: email.value,
-        password: password.value,
-        rememberMe: rememberMe.value,
-      })
-      await router.push('/admin')
-    } catch (error) {
-      console.error('Authentication error:', error)
-    } finally {
-      loadingType.value = ''
-      store.commit('setLoading', false)
-    }
+  if (!form.value) return
+  
+  const { valid } = await form.value.validate()
+  if (!valid) return
+  
+  try {
+    store.commit('setLoading', true)
+    loadingType.value = 'signin'
+    await store.dispatch('signin', {
+      email: email.value,
+      password: password.value,
+      rememberMe: rememberMe.value,
+    })
+    await router.push('/admin')
+  } catch (error) {
+    console.error('Authentication error:', error)
+  } finally {
+    loadingType.value = ''
+    store.commit('setLoading', false)
   }
 }
 

@@ -37,6 +37,7 @@
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -117,6 +118,11 @@
     "profileLoadFailed": "Failed to load profile",
     "profileUpdatedSuccess": "Profile updated successfully",
     "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "Password changed successfully",
     "passwordChangeFailed": "Failed to change password",
     "accountDeletionFailed": "Account deletion failed",

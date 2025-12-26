@@ -95,22 +95,6 @@ export default class AuthController {
     })
   }
 
-  async autoSignIn() {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe()
-          resolve(user)
-        },
-        (error) => {
-          unsubscribe()
-          reject(error)
-        }
-      )
-    })
-  }
-
   async deleteAuth(userId) {
     try {
       await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth', { data: { userId } })

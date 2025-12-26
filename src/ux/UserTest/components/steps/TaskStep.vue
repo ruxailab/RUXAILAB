@@ -4,38 +4,26 @@
       <div class="test-content pa-4 rounded-xl">
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
-          <div
-            class="rich-text mb-4"
-            v-html="task?.taskDescription || taskDescription"
-          />
-          
+          <div class="rich-text mb-4" v-html="task?.taskDescription || taskDescription" />
+
           <!-- Task Preview Information -->
-          <v-card 
-            variant="outlined" 
-            color="secondary" 
-            class="my-6 mx-auto"
-            max-width="1000"
-          >
+          <v-card variant="outlined" color="secondary" class="my-6 mx-auto" max-width="1000">
             <v-card-text class="pa-4">
               <div class="d-flex align-center mb-3">
-                <v-icon 
-                  color="secondary" 
-                  size="24" 
-                  class="mr-2"
-                >
+                <v-icon color="secondary" size="24" class="mr-2">
                   mdi-play-circle-outline
                 </v-icon>
                 <h3 class="text-h6 font-weight-bold text-secondary">
                   Task Preview
                 </h3>
               </div>
-              
+
               <!-- Recording Information -->
               <template v-if="hasAnyRecording">
                 <p class="text-body-1 text-left mb-4 text-grey-darken-3">
                   This task will record the following data during your interaction:
                 </p>
-                
+
                 <!-- Recording Features Grid -->
                 <div class="recording-features-grid mb-4">
                   <!-- Screen Recording -->
@@ -91,16 +79,12 @@
                   </div>
                 </div>
               </template>
-              
+
               <!-- Tool Window Information -->
               <template v-if="task?.taskLink || taskLink">
                 <v-divider class="my-3" />
                 <div class="d-flex align-start mb-2">
-                  <v-icon 
-                    color="secondary" 
-                    size="20" 
-                    class="mr-2 mt-1"
-                  >
+                  <v-icon color="secondary" size="20" class="mr-2 mt-1">
                     mdi-open-in-new
                   </v-icon>
                   <div>
@@ -110,15 +94,15 @@
                     <p class="text-body-1 text-grey-darken-3 mb-4">
                       When you start the task, a new window will open with the tool you need to use.
                     </p>
-              
+
                     <p class="text-body-1 text-grey-darken-3">
-                      💡 <strong>Tip:</strong> You can switch between tabs or close the new window at any time. 
+                      💡 <strong>Tip:</strong> You can switch between tabs or close the new window at any time.
                       The recording will continue until you complete the task.
                     </p>
                   </div>
                 </div>
               </template>
-              
+
               <template v-else>
                 <p class="text-body-2 text-grey-darken-1 text-center">
                   This task will be completed within the current interface.
@@ -127,15 +111,9 @@
             </v-card-text>
           </v-card>
 
-          <v-row
-            justify="center"
-            class="mt-6"
-          >
+          <v-row justify="center" class="mt-6">
             <v-col cols="auto">
-              <v-btn
-                color="primary"
-                @click="startTask"
-              >
+              <v-btn color="primary" @click="startTask">
                 Start task
               </v-btn>
             </v-col>
@@ -144,54 +122,34 @@
         <!-- STAGE 2: Task answer -->
         <template v-else-if="stage === 2">
           <!-- Task Description During Execution -->
-          <v-card 
-            variant="outlined" 
-            color="primary" 
-            class="mb-4"
-          >
+          <v-card variant="outlined" color="primary" class="mb-4">
             <v-card-text class="pa-3">
-           
-              
+
+
               <!-- Two Column Layout -->
               <v-row>
                 <!-- Left Column: Task Description -->
                 <v-col cols="8">
-                     <div class="d-flex align-center mb-3">
-                <v-icon 
-                  color="primary" 
-                  size="20" 
-                  class="mr-2"
-                >
-                  mdi-clipboard-text-outline
-                </v-icon>
-                <span class="text-subtitle-2 font-weight-bold text-primary">
-                  Task Description
-                </span>
-              </div>
-                  <div 
-                    class="rich-text text-body-1" 
-                    v-html="task?.taskDescription || taskDescription"
-                  />
+                  <div class="d-flex align-center mb-3">
+                    <v-icon color="primary" size="20" class="mr-2">
+                      mdi-clipboard-text-outline
+                    </v-icon>
+                    <span class="text-subtitle-2 font-weight-bold text-primary">
+                      Task Description
+                    </span>
+                  </div>
+                  <div class="rich-text text-body-1" v-html="task?.taskDescription || taskDescription" />
                 </v-col>
-                
+
                 <!-- Right Column: Help & Actions -->
                 <v-col cols="4">
                   <v-row>
                     <!-- Help Section -->
-                    <v-col 
-                      v-if="task?.taskTip"
-                      cols="6"
-                    >
-                      <div 
-                        class="help-section pa-2 text-center rounded h-100"
-                        style="background-color: rgba(76, 175, 80, 0.05); border: 1px solid rgba(76, 175, 80, 0.2);"
-                      >
+                    <v-col v-if="task?.taskTip" cols="6">
+                      <div class="help-section pa-2 text-center rounded h-100"
+                        style="background-color: rgba(76, 175, 80, 0.05); border: 1px solid rgba(76, 175, 80, 0.2);">
                         <div class="d-flex align-center mb-1">
-                          <v-icon 
-                            color="success" 
-                            size="16" 
-                            class="mr-1"
-                          >
+                          <v-icon color="success" size="16" class="mr-1">
                             mdi-help-circle-outline
                           </v-icon>
                           <span class="text-caption font-weight-medium text-success">
@@ -204,22 +162,13 @@
                         <TipButton :task="task" />
                       </div>
                     </v-col>
-                    
+
                     <!-- Reopen Tool Section -->
-                    <v-col 
-                      v-if="task?.taskLink || taskLink"
-                      :cols="task?.taskTip ? 6 : 12"
-                    >
-                      <div 
-                        class="tool-section pa-2 rounded text-center h-100"
-                        style="background-color: rgba(121, 85, 72, 0.05); border: 1px solid rgba(121, 85, 72, 0.2);"
-                      >
+                    <v-col v-if="task?.taskLink || taskLink" :cols="task?.taskTip ? 6 : 12">
+                      <div class="tool-section pa-2 rounded text-center h-100"
+                        style="background-color: rgba(121, 85, 72, 0.05); border: 1px solid rgba(121, 85, 72, 0.2);">
                         <div class="d-flex align-center mb-1">
-                          <v-icon 
-                            color="secondary" 
-                            size="16" 
-                            class="mr-1"
-                          >
+                          <v-icon color="secondary" size="16" class="mr-1">
                             mdi-open-in-new
                           </v-icon>
                           <span class="text-caption font-weight-medium text-secondary">
@@ -229,14 +178,8 @@
                         <p class="text-caption text-grey-darken-3 mb-2" style=" line-height: 1.3;">
                           Accidentally closed the tool window? Reopen it here.
                         </p>
-                        <v-btn
-                          color="secondary"
-                          variant="outlined"
-                          size="small"
-                          block
-                          prepend-icon="mdi-open-in-new"
-                          @click="reopenTool"
-                        >
+                        <v-btn color="secondary" variant="outlined" size="small" block prepend-icon="mdi-open-in-new"
+                          @click="reopenTool">
                           Reopen Tool
                         </v-btn>
                       </div>
@@ -246,64 +189,33 @@
               </v-row>
             </v-card-text>
           </v-card>
-          
+
           <v-row class="mb-4 d-flex align-center">
-            <v-col
-              v-if="isVisualizerVisible"
-              cols="auto"
-            >
+            <v-col v-if="isVisualizerVisible" cols="auto">
               <AudioVisualizer />
             </v-col>
             <v-spacer />
             <v-col cols="auto">
-              <Timer
-                ref="timerComponent"
-                :task-index="taskIndex"
-                @timer-stopped="onTimerStopped"
-              />
+              <Timer ref="timerComponent" :task-index="taskIndex" @timer-stopped="onTimerStopped" />
             </v-col>
           </v-row>
           <div class="mt-4">
-            <v-textarea
-              v-if="task?.taskType === 'text-area' && !submitted"
-              :id="'id-' + (task?.taskName || taskName)"
-              v-model="localTaskAnswer"
-              variant="outlined"
-              label="Answer"
-              rows="3"
-              @update:model-value="onUpdateTaskAnswer"
-            />
-            <v-textarea
-              v-if="!submitted"
-              :id="'id-' + (task?.taskName || taskName) + '-obs'"
-              v-model="localTaskObservations"
-              variant="outlined"
-              label="Observation (optional)"
-              rows="3"
-              @update:model-value="onUpdateTaskObservations"
-            />
+            <v-textarea v-if="task?.taskType === 'text-area' && !submitted" :id="'id-' + (task?.taskName || taskName)"
+              v-model="localTaskAnswer" variant="outlined" label="Answer" rows="3"
+              @update:model-value="onUpdateTaskAnswer" />
+            <v-textarea v-if="!submitted" :id="'id-' + (task?.taskName || taskName) + '-obs'"
+              v-model="localTaskObservations" variant="outlined" label="Observation (optional)" rows="3"
+              @update:model-value="onUpdateTaskObservations" />
           </div>
           <v-row justify="space-between">
             <v-col>
-              <v-btn
-                color="error"
-                block
-                variant="outlined"
-                class="mr-2"
-                @click="handleShowPostForm(false)"
-              >
+              <v-btn color="error" block variant="outlined" class="mr-2" @click="handleShowPostForm(false)">
                 I can not finish the task
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn
-                color="primary"
-                block
-                variant="flat"
-                class="ml-2"
-                @click="handleShowPostForm(true)"
-              >
-              Task completed
+              <v-btn color="primary" block variant="flat" class="ml-2" @click="handleShowPostForm(true)">
+                Task completed
               </v-btn>
             </v-col>
           </v-row>
@@ -311,76 +223,37 @@
         <!-- STAGE 3:POST-TASK form -->
         <template v-else-if="stage === 3">
           <div v-if="task?.taskType === 'sus'">
-            <SusForm
-              v-model="localSusAnswers"
-              :task-index="taskIndex"
-              @update:model-value="val => emit('update:susAnswers', val)"
-            />
+            <SusForm v-model="localSusAnswers" :task-index="taskIndex"
+              @update:model-value="val => emit('update:susAnswers', val)" />
           </div>
           <div v-if="task?.taskType === 'nasa-tlx'">
-            <nasaTlxForm
-              :nasa-tlx="nasaTlxAnswers"
-              @update:nasa-tlx="onUpdateNasaTlx"
-            />
+            <nasaTlxForm :nasa-tlx="nasaTlxAnswers" @update:nasa-tlx="onUpdateNasaTlx" />
           </div>
           <v-row justify="end">
             <v-col cols="12">
-              <p
-                v-if="task?.taskType === 'sus' && doneTaskDisabled"
-                class="text-error mb-4"
-              >
+              <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
                 Por favor, responde a todas las preguntas antes de continuar.
               </p>
-              <v-btn
-                color="primary"
-                block
-                variant="flat"
-                class="ml-2"
-                :disabled="doneTaskDisabled"
-                @click="emitDoneOrCouldNotFinish()"
-              >
+              <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
+                @click="emitDoneOrCouldNotFinish()">
                 Finish task
               </v-btn>
             </v-col>
           </v-row>
         </template>
-        <video
-          v-if="videoUrl === ''"
-          id="vpreview"
-          class="d-none"
-          autoplay
-        />
+        <video v-if="videoUrl === ''" id="vpreview" class="d-none" autoplay />
       </div>
 
-      <AudioRecorder
-        v-if="task?.hasAudioRecord"
-        ref="audioRecorder"
-        :test-id="testId"
-        :task-index="taskIndex"
-        :remote-stream="remoteStream"
-        :should-record-moderator="shouldRecordModerator"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
-        @recording-started="$emit('recording-started', $event)"
-      />
+      <AudioRecorder v-if="task?.hasAudioRecord" ref="audioRecorder" :test-id="testId" :task-index="taskIndex"
+        :remote-stream="remoteStream" :should-record-moderator="shouldRecordModerator"
+        @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')"
+        @recording-started="$emit('recording-started', $event)" />
 
-      <ScreenRecorder
-        v-if="task?.hasScreenRecord"
-        ref="screenRecorder"
-        :test-id="testId"
-        :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
-      />
+      <ScreenRecorder v-if="task?.hasScreenRecord" ref="screenRecorder" :test-id="testId" :task-index="taskIndex"
+        @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
 
-      <VideoRecorder
-        v-if="task?.hasCamRecord"
-        ref="videoRecorder"
-        :test-id="testId"
-        :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
-      />
+      <VideoRecorder v-if="task?.hasCamRecord" ref="videoRecorder" :test-id="testId" :task-index="taskIndex"
+        @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
     </template>
   </ShowInfo>
 </template>
@@ -399,54 +272,54 @@ import SusForm from '@/ux/UserTest/SusForm.vue';
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
 
 const props = defineProps({
-    task: Object,
-    taskName: String,
-    taskDescription: String,
-    taskLink: String,
-    postQuestion: String,
-    postForm: String,
-    postAnswer: String,
-    taskAnswer: String,
-    taskObservations: String,
-    susAnswers: Array,
-    nasaTlxAnswers: Object,
-    testId: String,
-    taskIndex: Number,
-    submitted: Boolean,
-    doneTaskDisabled: Boolean,
-    videoUrl: String,
-    remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
-    shouldRecordModerator: Boolean // props that indicate whether to record the moderator's video
+  task: Object,
+  taskName: String,
+  taskDescription: String,
+  taskLink: String,
+  postQuestion: String,
+  postForm: String,
+  postAnswer: String,
+  taskAnswer: String,
+  taskObservations: String,
+  susAnswers: Array,
+  nasaTlxAnswers: Object,
+  testId: String,
+  taskIndex: Number,
+  submitted: Boolean,
+  doneTaskDisabled: Boolean,
+  videoUrl: String,
+  remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
+  shouldRecordModerator: Boolean // props that indicate whether to record the moderator's video
 });
 const emit = defineEmits([
-    'done',
-    'couldNotFinish',
-    'update:postAnswer',
-    'update:taskAnswer',
-    'update:taskObservations',
-    'show-loading',
-    'stop-show-loading',
-    'recording-started',
-    'timer-stopped',
-    'update:susAnswers',
-    'update:nasaTlxAnswers',
+  'done',
+  'couldNotFinish',
+  'update:postAnswer',
+  'update:taskAnswer',
+  'update:taskObservations',
+  'show-loading',
+  'stop-show-loading',
+  'recording-started',
+  'timer-stopped',
+  'update:susAnswers',
+  'update:nasaTlxAnswers',
 ]);
 
 onBeforeUnmount(() => {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 });
 const store = useStore();
 
 const susAnswersFromStore = computed(() => {
-    return store.state.tasks?.[props.taskIndex]?.susAnswers || [];
+  return store.state.tasks?.[props.taskIndex]?.susAnswers || [];
 });
 
 const localSusAnswers = computed({
-    get: () => props.susAnswers || [],
-    set: (val) => emit('update:susAnswers', val)
+  get: () => props.susAnswers || [],
+  set: (val) => emit('update:susAnswers', val)
 });
 
 
@@ -457,10 +330,10 @@ const normalizedLink = computed(() => {
 });
 
 const hasAnyRecording = computed(() => {
-  return props.task?.hasScreenRecord || 
-         props.task?.hasCamRecord || 
-         props.task?.hasAudioRecord || 
-         props.task?.hasEye;
+  return props.task?.hasScreenRecord ||
+    props.task?.hasCamRecord ||
+    props.task?.hasAudioRecord ||
+    props.task?.hasEye;
 });
 
 const stage = ref(1);
@@ -472,41 +345,42 @@ let taskStartTime = null;
 let timerInterval = null;
 
 function updateElapsedTime() {
-    if (!taskStartTime) return;
-    const elapsed = Math.floor((Date.now() - taskStartTime) / 1000);
-    const minutes = Math.floor(elapsed / 60);
-    const seconds = elapsed % 60;
-    elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  if (!taskStartTime) return;
+  const elapsed = Math.floor((Date.now() - taskStartTime) / 1000);
+  const minutes = Math.floor(elapsed / 60);
+  const seconds = elapsed % 60;
+  elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
 async function startTask() {
+
+  await startMediaRecorders();
+  stage.value = 2;
+  taskStartTime = Date.now();
+  timerInterval = setInterval(updateElapsedTime, 1000);
+  nextTick(() => {
     const link = props.task?.taskLink || props.taskLink;
     if (link) {
+      const url = link.startsWith('http://') || link.startsWith('https://')
+        ? link
+        : `https://${link}`;
+      window.open(url, '_blank');
+    }
+    setTimeout(() => {
+      const timer = document.querySelector('[ref=timerComponent]');
+      if (timer && timer.startTimer) timer.startTimer();
+    }, 100);
+  });
+}
+
+function reopenTool() {
+  const link = props.task?.taskLink || props.taskLink;
+  if (link) {
     const url = link.startsWith('http://') || link.startsWith('https://')
       ? link
       : `https://${link}`;
     window.open(url, '_blank');
-    }
-    await startMediaRecorders();
-    stage.value = 2;
-    taskStartTime = Date.now();
-    timerInterval = setInterval(updateElapsedTime, 1000);
-    nextTick(() => {
-        setTimeout(() => {
-            const timer = document.querySelector('[ref=timerComponent]');
-            if (timer && timer.startTimer) timer.startTimer();
-        }, 100);
-    });
-}
-
-function reopenTool() {
-    const link = props.task?.taskLink || props.taskLink;
-    if (link) {
-        const url = link.startsWith('http://') || link.startsWith('https://')
-            ? link
-            : `https://${link}`;
-        window.open(url, '_blank');
-    }
+  }
 }
 
 const showPostForm = ref({ userCompleted: undefined });
@@ -563,7 +437,7 @@ function handleShowPostForm(userCompleted) {
 function emitDoneOrCouldNotFinish(savedTime) {
   console.log('--------')
   console.log(showPostForm.value)
-    console.log('--------')
+  console.log('--------')
 
   if (showPostForm.value.userCompleted) {
     emit('done', savedTime, props.taskIndex);
@@ -575,7 +449,7 @@ function emitDoneOrCouldNotFinish(savedTime) {
   showPostForm.value = { userCompleted: undefined };
   taskStartTime = null;
   elapsedTimeDisplay.value = '0:00';
-  
+
   // Reset stage after a small delay to allow parent to handle the transition
   nextTick(() => {
     stage.value = 1;
@@ -593,25 +467,25 @@ watch(() => props.taskObservations, val => { localTaskObservations.value = val; 
 
 // Reset stage when taskIndex changes (new task loaded)
 watch(() => props.taskIndex, () => {
-    stage.value = 1;
-    taskStartTime = null;
-    elapsedTimeDisplay.value = '0:00';
-    showPostForm.value = { userCompleted: undefined };
+  stage.value = 1;
+  taskStartTime = null;
+  elapsedTimeDisplay.value = '0:00';
+  showPostForm.value = { userCompleted: undefined };
 });
 
 function onUpdateTaskAnswer(val) {
-    localTaskAnswer.value = val;
-    emit('update:taskAnswer', val);
+  localTaskAnswer.value = val;
+  emit('update:taskAnswer', val);
 }
 function onUpdateTaskObservations(val) {
-    localTaskObservations.value = val;
-    emit('update:taskObservations', val);
+  localTaskObservations.value = val;
+  emit('update:taskObservations', val);
 }
 function onUpdateNasaTlx(val) {
-    emit('update:nasaTlxAnswers', val);
+  emit('update:nasaTlxAnswers', val);
 }
 function onTimerStopped(elapsedTime) {
-    emit('timer-stopped', elapsedTime, props.taskIndex);
+  emit('timer-stopped', elapsedTime, props.taskIndex);
 }
 </script>
 
@@ -668,12 +542,12 @@ function onTimerStopped(elapsedTime) {
   .recording-features-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .recording-feature-card {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .feature-icon-container {
     align-self: center;
   }
