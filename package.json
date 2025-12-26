@@ -75,7 +75,7 @@
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.9.6",
     "vuex": "^4.0.2",
-    "wavesurfer.js": "^7.9.4",
+    "wavesurfer.js": "^7.12.1",
     "zod": "^4.0.5"
   },
   "devDependencies": {
