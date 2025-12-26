@@ -1,32 +1,15 @@
 <template>
   <div>
-    <v-row
-      class="start-screen pa-0 ma-0"
-      align="center"
-    >
-      <v-col
-        md="8"
-        class="ma-5 pa-5"
-      >
-        <img
-          src="@/assets/logo_full_white.png"
-          alt="RUXAILAB"
-          class="mb-10"
-          style="max-width: 300px;"
-        >
+    <v-row class="start-screen pa-0 ma-0" align="center">
+      <v-col md="8" class="ma-5 pa-5">
+        <img src="@/assets/logo_full_white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;">
         <h1 class="text-h2 font-weight-bold text-white">
           {{ test.testTitle }}
         </h1>
         <p class="text-body-1 mb-5 text-white text-justify">
           {{ test.testDescription }}
         </p>
-        <v-btn
-          color="white"
-          variant="outlined"
-          rounded
-          size="x-large"
-          @click="startTest"
-        >
+        <v-btn color="white" variant="outlined" rounded size="x-large" @click="startTest">
           Start Test
         </v-btn>
       </v-col>
