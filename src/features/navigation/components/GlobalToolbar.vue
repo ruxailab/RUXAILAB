@@ -5,22 +5,14 @@
     padding="10px !important"
   >
     <v-btn
-      v-if="user && isDashboard"
+      v-if="user"
       icon
       class="d-flex d-lg-none"
       @click="toggleDashboardDrawer"
     >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-    <v-btn
-      v-if="user && !isDashboard"
-      icon
-      class="d-flex d-lg-none"
-      @click="$emit('toggle-mobile-drawer')"
-    >
-      <v-icon>mdi-menu</v-icon>
-    </v-btn>
-
+    
     <!-- Logo y título -->
     <v-toolbar-title
       style="cursor: pointer"
@@ -130,14 +122,7 @@ const { t } = useI18n();
 // Computed
 const user = computed(() => store.getters.user);
 const iconSize = computed(() => smAndDown.value ? '18' : '20');
-const isDashboard = computed(() => {
-  return route.path === '/admin' || 
-         route.path.includes('manager') || 
-         route.path.includes('/userTest/') || 
-         route.path.includes('/heuristic/') || 
-         route.path.includes('/accessibility/');
-});
-
+const isDashboard = computed(() => route.path === '/admin');
 
 // Methods
 const goTo = (path) => {
