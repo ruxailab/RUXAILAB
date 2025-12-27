@@ -1,8 +1,5 @@
 <template>
-  <PageWrapper
-    :title="t('pages.editTest.title')"
-    :side-gap="true"
-  >
+  <PageWrapper :title="t('pages.editTest.title')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ t('pages.editTest.description') }}
@@ -10,17 +7,10 @@
     </template>
 
     <v-container>
-      <ButtonSave
-        :visible="true"
-        @click="save"
-      />
+      <ButtonSave :visible="true" @click="save" />
 
       <div>
-        <v-tabs
-          bg-color="transparent"
-          color="#FCA326"
-          class="pb-0 mb-0"
-        >
+        <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
           <v-tab @click="index = 0">
             {{ $t('UserTestTable.titles.testConfiguration') }}
           </v-tab>
@@ -36,6 +26,9 @@
           <v-tab @click="index = 4">
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
+          <v-tab v-if="hasEyeTracking" @click="index = 5">
+            Eye Tracking Configurations
+          </v-tab>
         </v-tabs>
 
         <v-col cols="12">
@@ -44,51 +37,34 @@
             <TestConfigForm
               :welcome="welcomeMessage"
               :final-message="finalMessage"
-              @update:welcome-message="welcomeMessage = $event"
-              @update:final-message="finalMessage = $event"
+              @update:welcome-message="welcomeMessage = $event; change = true"
+              @update:final-message="finalMessage = $event; change = true"
             />
           </div>
 
           <!-- CONSENT FORM -->
-          <div
-            v-if="index === 1"
-            rounded="xxl"
-          >
-            <TextareaForm
-              v-model="consent"
-              :title="$t('ModeratedTest.consentForm')"
-              :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-              @update:value="consent = $event"
-            />
+          <div v-if="index === 1" rounded="xxl">
+            <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+              :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="consent = $event" />
           </div>
 
           <!-- PRE-TEST -->
-          <div
-            v-if="index === 2"
-          >
-            <UserVariables
-              type="pre-test"
-              @change="change = true"
-              @update="store.dispatch('setPreTest', $event)"
-            />
+          <div v-if="index === 2">
+            <UserVariables type="pre-test" @change="change = true" @update="store.dispatch('setPreTest', $event)" />
           </div>
 
           <!-- TASKS -->
-          <div
-            v-if="index === 3"
-          >
+          <div v-if="index === 3">
             <ListTasks />
           </div>
           <!-- POST-TEST -->
-          <div
-            v-if="index === 4"
-          >
-            <UserVariables
-              type="post-test"
-              @change="change = true"
-              @update="store.dispatch('setPostTest', $event)"
-            />
+          <div v-if="index === 4">
+            <UserVariables type="post-test" @change="change = true" @update="store.dispatch('setPostTest', $event)" />
           </div>
+
+          <v-card v-if="index === 5 && hasEyeTracking" rounded="xxl">
+            <EyeTrackingConfig />
+          </v-card>
         </v-col>
       </div>
     </v-container>
@@ -96,17 +72,24 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref , onUnmounted} from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import StudyController from '@/controllers/StudyController' 
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
 import TestConfigForm from '@/shared/components/TestConfigForm.vue'
+import EyeTrackingConfig from '../components/EyeTrackingConfig.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
+
+
+// Controller
+const studyController = new StudyController()
 
 // Store
 const store = useStore()
@@ -119,7 +102,8 @@ const welcomeMessage = ref('')
 const finalMessage = ref('')
 const consent = ref('')
 const index = ref(0)
-
+const route = useRoute()
+let unsubscribe = null
 // Computed
 const test = computed(() => store.getters.test)
 
@@ -146,6 +130,11 @@ const getPreTest = () => {
 const getPostTest = () => {
   store.dispatch('setPostTest', test.value.testStructure.postTest || [])
 }
+
+const hasEyeTracking = computed(() => {
+  return (test.value.testStructure.userTasks || []).some(task => task.hasEye === true)
+})
+
 
 const save = async () => {
   try {
@@ -186,14 +175,30 @@ const save = async () => {
   }
 }
 
+// Subscribe to test (gets the Real-time updates, no conflicts)
+const subscribeToTest = () => {
+  const testId = route.params.id
+  if (testId) {
+    unsubscribe = studyController.subscribeToStudy(testId, (test) => {
+      store.commit("SET_TEST", test)
+      getWelcome()
+      getFinalMessage()
+      getConsent()
+      getPreTest()
+      getPostTest()
+      getTasks()
+    })
+  }
+}
 // Lifecycle
 onMounted(() => {
-  getWelcome()
-  getFinalMessage()
-  getConsent()
-  getPreTest()
-  getPostTest()
-  getTasks()
+  subscribeToTest();
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe();
+  }
 })
 </script>
 

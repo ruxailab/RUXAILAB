@@ -303,7 +303,12 @@ const filteredItems = computed(() => {
     filtered = filtered.filter((item) => item && item.category === selectedCategory.value);
   }
 
-  return filtered;
+  return filtered.sort((a, b) => {
+    const indexA = categories.value.findIndex(cat => cat.id === a.category);
+    const indexB = categories.value.findIndex(cat => cat.id === b.category);
+    
+    return indexA - indexB;
+  });
 });
 
 const pageCount = computed(() => {

@@ -35,6 +35,7 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 
 ### Support
 
+- [Contributing Guide 📝](https://github.com/ruxailab#contributing)
 - [Report a Bug 🐛](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Request a Feature 🚀](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)

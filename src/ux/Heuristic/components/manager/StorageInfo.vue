@@ -6,20 +6,20 @@
       <v-card-title 
         class="text-h6 text-primary clickable-title" 
       >
-        Storage
+        {{ $t('Dashboard.cards.storage') }}
       </v-card-title>
     </div>
     
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">Almacenamiento (actual)</div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.currentStorage') }}</div>
       <div class="metric-value text-h3 font-weight-bold">{{ storageUsed }}</div>
       <div class="metric-change text-caption" :class="storageGrowth >= 0 ? 'text-success' : 'text-error'">{{ storageGrowthFormatted }}</div>
     </div>
     
     <!-- Información adicional -->
     <div class="additional-info">
-      <div class="info-subtitle text-caption text-grey-darken-1">Límite disponible</div>
+      <div class="info-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.limitAvailable') }}</div>
       <div class="info-value text-body-2 font-weight-medium">{{ storageLimit }}</div>
     </div>
   </v-card>

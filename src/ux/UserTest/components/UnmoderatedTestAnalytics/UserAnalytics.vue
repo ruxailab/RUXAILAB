@@ -70,10 +70,10 @@
             <v-chip size="x-small" :color="item[`task_${i}`]?.completed ? 'success' : 'error'" variant="tonal"
               class="mb-2 text-uppercase font-weight-medium"
               :prepend-icon="item[`task_${i}`]?.completed ? 'mdi-check-circle' : 'mdi-close-circle'">
-              {{ item[`task_${i}`]?.completed ? 'Completed' : 'Not Completed' }}
+              {{ item[`task_${i}`]?.completed ? $t('analytics.completed') : $t('analytics.notCompleted') }}
             </v-chip>
             <span class="text-caption" :class="{ 'text-grey-500': !item[`task_${i}`]?.timeSeconds }">
-              Time taken: {{ item[`task_${i}`]?.timeSeconds ? formatTime(item[`task_${i}`].timeSeconds) : '-' }}
+              {{ $t('analytics.timeTaken') }}: {{ item[`task_${i}`]?.timeSeconds ? formatTime(item[`task_${i}`].timeSeconds) : '-' }}
             </span>
           </div>
         </template>
@@ -83,14 +83,14 @@
             <div class="d-flex flex-column">
               <div class="d-flex align-center mb-1">
                 <v-chip size="x-small" color="primary" variant="tonal" class="mr-2 font-weight-medium">
-                  Eficacia: {{ item.effectiveness }}%
+                  {{ $t('analytics.effectiveness') }}: {{ item.effectiveness }}%
                 </v-chip>
                 <v-chip size="x-small" color="secondary" variant="tonal" class="font-weight-medium">
-                  Eficiencia: {{ item.efficiency }} t/min
+                  {{ $t('analytics.efficiency') }}: {{ item.efficiency }} t/min
                 </v-chip>
               </div>
               <div class="text-caption text-grey-600">
-                ({{ item.completedCount }}/{{ item.totalTasks }} tareas · {{ formatTime(item.totalTimeSeconds) }} total)
+                ({{ item.completedCount }}/{{ item.totalTasks }} {{ $t('analytics.tasks') }} · {{ formatTime(item.totalTimeSeconds) }} {{ $t('analytics.total') }})
               </div>
 
             </div>
@@ -100,7 +100,7 @@
         <template #item.invited="{ item }">
           <v-chip :color="item.invited ? 'success' : 'grey'" :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
             size="small" variant="tonal">
-            {{ item.invited ? 'Yes' : 'No' }}
+            {{ item.invited ? $t('analytics.yes') : $t('analytics.no') }}
           </v-chip>
         </template>
 
@@ -146,7 +146,7 @@
                 <div class="d-flex align-center mb-4 user-header">
                   <v-avatar size="48" color="primary" class="mr-3">
                     <span class="text-white text-subtitle-1 font-weight-bold">{{ dialogItem.fullName?.[0]?.toUpperCase()
-                      }}</span>
+                    }}</span>
                   </v-avatar>
                   <div>
                     <div class="text-subtitle-1 font-weight-medium">{{ dialogItem.fullName }}</div>
@@ -228,6 +228,14 @@
 
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
+                      <v-expansion-panel readonly hide-actions @click.stop="openSessionAnalyticsDialog"
+                        v-if="dialogItem.tasks[taskSelect].webcamRecordURL || dialogItem.tasks[taskSelect].irisTrackingData > 0"
+                        class="cursor-pointer">
+                        <v-expansion-panel-title>
+                          Task Analytics
+                        </v-expansion-panel-title>
+                      </v-expansion-panel>
+
                       <v-expansion-panel v-if="dialogItem.tasks[taskSelect].webcamRecordURL">
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">Webcam
                           Recording</v-expansion-panel-title>
@@ -260,6 +268,13 @@
                         </v-expansion-panel-text>
                       </v-expansion-panel>
                     </v-expansion-panels>
+                    <!-- Diálogo que chama o componente em tela cheia -->
+                    <v-dialog v-model="showSessionAnalytics" fullscreen>
+                      <SessionAnalytics :tasks="dialogItem.tasks" :taskSelect="taskSelect"
+                        @close="showSessionAnalytics = false" />
+                    </v-dialog>
+                    <SessionAnalyticsDialog v-model="showSessionAnalyticsDialog" :userId="dialogItem.userDocId"
+                      :task-answer="dialogItem.tasks[taskSelect]" :fromEyeTracking="true" />
                   </div>
                 </div>
               </v-col>
@@ -280,6 +295,9 @@ import { useStore } from 'vuex';
 import TaskDetailsModal from './TaskDetailsModal.vue';
 import { useToast } from 'vue-toastification';
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const toast = useToast()
 
@@ -295,6 +313,8 @@ const testTasks = ref([]);
 const taskAnswers = ref([]);
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
+const showSessionAnalytics = ref(false)
+const showSessionAnalyticsDialog = ref(false)
 
 // Búsqueda por nombre / email
 const searchTerm = ref('');
@@ -400,11 +420,11 @@ const tableHeaders = computed(() => {
   }));
   return [
     { title: '#', key: 'identifier', sortable: false, width: 60 },
-    { title: 'Usuario', key: 'user', sortable: false },
-    { title: 'Resumen', key: 'tasks', sortable: false },
+    { title: t('analytics.user'), key: 'user', sortable: false },
+    { title: t('analytics.summary'), key: 'tasks', sortable: false },
     ...dynamicTaskHeaders,
-    { title: 'Invitado', key: 'invited', sortable: false, width: 90 },
-    { title: 'Acciones', key: 'actions', sortable: false, width: 150 }
+    { title: t('analytics.invite'), key: 'invited', sortable: false, width: 90 },
+    { title: t('analytics.actions'), key: 'actions', sortable: false, width: 150 }
   ];
 });
 
@@ -449,6 +469,10 @@ const tableData = computed(() => {
     };
   });
 });
+
+const openSessionAnalyticsDialog = () => {
+  showSessionAnalyticsDialog.value = true
+}
 
 const formatTime = (time) => {
   const minutes = Math.floor(time / 60);
