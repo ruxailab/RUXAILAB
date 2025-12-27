@@ -11,6 +11,19 @@
     "confirmPassword": "确认密码",
     "alreadyHaveAnAccount": "已有账户？登录"
   },
+  "auth": {
+    "FORGOT_PASSWORD": {
+      "reset_password": "重置密码",
+      "email": "邮箱",
+      "instructions": "输入您的邮箱，我们会发送一个重置密码的链接给您。",
+      "reset_button": "发送重置链接",
+      "back_to_signin": "返回登录",
+      "check_your_email": "检查您的邮箱",
+      "reset_link_sent": "我们已将重置链接发送至",
+      "no_email": "没有收到邮件？",
+      "try_again": "再试一次"
+    }   
+  },
   "common": {
     "loading": "加载测试",
     "continueAs": "继续作为",

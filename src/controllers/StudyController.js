@@ -1,11 +1,12 @@
 // imports
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import { doc, onSnapshot } from "firebase/firestore"
+import { db } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
-import UserStudy from '@/ux/UserTest/models/UserStudy'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -31,7 +32,8 @@ export default class StudyController extends Controller {
         new StudyAnswer({ type: payload.test.testType }),
       )
 
-      const duplicatedStudy = new UserStudy(payload.test)
+      // Use the correct study type from the payload (already instantiated correctly in SettingsView)
+      const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
       return await super.create(COLLECTION, duplicatedStudy.toFirestore())
@@ -146,5 +148,16 @@ export default class StudyController extends Controller {
     } catch (err) {
       throw err
     }
+  }
+
+  subscribeToStudy(studyId, callback) {
+    const docRef = doc(db, COLLECTION, studyId)
+    return onSnapshot(docRef, (doc) => {
+      if (doc.exists()) {
+        const rawData = Object.assign({ id: doc.id }, doc.data())
+        const study = instantiateStudyByType(rawData.testType, rawData)
+        callback(study)
+      }
+    })
   }
 }

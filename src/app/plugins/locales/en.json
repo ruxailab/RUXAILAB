@@ -29,10 +29,15 @@
       "email": "Email",
       "instructions": "Enter your email and we'll send you a link to reset your password.",
       "reset_button": "Send Reset Link",
-      "back_to_signin": "Back to Sign In"
+      "back_to_signin": "Back to Sign In",
+      "check_your_email": "Check your email",
+      "reset_link_sent": "We’ve sent a password reset link to",
+      "no_email": "Didn’t get the email?",
+      "try_again": "Try again"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -113,6 +118,11 @@
     "profileLoadFailed": "Failed to load profile",
     "profileUpdatedSuccess": "Profile updated successfully",
     "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "Password changed successfully",
     "passwordChangeFailed": "Failed to change password",
     "accountDeletionFailed": "Account deletion failed",
@@ -199,7 +209,64 @@
     "publicTests": "Public tests",
     "sessions": "Sessions",
     "personal": "Personal",
-    "explore": "Explore"
+    "explore": "Explore",
+    "cards": {
+      "recentActivity": "Recent Activity",
+      "activities7Days": "Activities (7 days total)",
+      "lastActivity": "Last activity",
+      "noActivity": "No activity",
+      "edit": "Edit",
+      "heuristics": "Heuristics",
+      "questions": "Questions",
+      "totalOptions": "Total Options",
+      "qualitative": "Qualitative",
+      "quantitative": "Quantitative",
+      "weights": "Weights",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "Cooperators",
+      "totalInvited": "Total invited",
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "storage": "Storage",
+      "currentStorage": "Storage (current)",
+      "limitAvailable": "Limit available",
+      "results": "Results",
+      "generalUsability": "General Usability",
+      "finalReport": "Final Report",
+      "generatePDF": "Generate PDF",
+      "download": "Download",
+      "generated": "Generated:",
+      "generateReport": "Generate Report",
+      "reportAvailable": "Report Available",
+      "noReport": "No Report Generated",
+      "readyForDownload": "Final report ready for download",
+      "waitingForParticipants": "Waiting for participants",
+      "evaluationsCompleted": "evaluations completed",
+      "readyToGenerate": "Ready to generate report",
+      "excellentUsability": "Excellent Usability",
+      "acceptableUsability": "Acceptable Usability",
+      "needsImprovement": "Needs Improvement",
+      "basedOn": "Based on",
+      "evaluations": "evaluations",
+      "evaluationUpdated": "Evaluation updated",
+      "updatedProgress": "updated their progress",
+      "invitationSentTitle": "Invitation sent",
+      "invitationPendingDesc": "Invitation pending for",
+      "pendingStatus": "Pending"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristic Study",
+      "freePlan": "Free Plan",
+      "generalStatistics": "General Statistics",
+      "modules": "Modules"
+    },
+    "stats": {
+      "participants": "Participants",
+      "completion": "Completion",
+      "daysActive": "Days active",
+      "heuristics": "Heuristics"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -844,7 +911,8 @@
     "postTestDescription": "Results from the post-test form",
     "all": "All",
     "question": "Question {number}",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "downloadResume": "Download Resume PDF"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",

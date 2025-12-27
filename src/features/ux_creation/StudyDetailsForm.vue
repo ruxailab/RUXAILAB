@@ -134,7 +134,6 @@
                           {{ test.isPublic ? $t('studyCreation.details.visibleToEveryone') : $t('studyCreation.details.onlyInvitedUsers') }}
                         </v-list-item-subtitle>
                       </v-list-item>
-                      
                       <!-- Switch on separate row -->
                       <div class="d-flex justify-center">
                         <v-switch
@@ -156,23 +155,28 @@
             <v-col cols="12">
               <v-card class="custom-card" elevation="4">
                 <v-card-text class="pa-6">
-                  <div class="d-flex justify-space-between align-center">
-                    <BackButton
-                      :label="$t('studyCreation.backToStudyType')"
-                      adjust="start"
-                      @back="goBack"
-                    />
-                    
-                    <v-btn
-                      color="success"
-                      size="large"
-                      :loading="isLoading"
-                      prepend-icon="mdi-plus"
-                      class="px-8"
-                      @click="validate"
-                    >
-                      {{ $t('studyCreation.createStudy') }}
-                    </v-btn>
+                  <div class="d-flex flex-column-reverse flex-sm-row justify-sm-space-between align-sm-center">
+                    <!-- Back button (goes below on mobile) -->
+                    <div class="w-100 w-sm-auto mt-3 mt-sm-0">
+                      <BackButton
+                        :label="$t('studyCreation.backToStudyType')"
+                        adjust="start"
+                        @back="goBack"
+                      />
+                    </div>
+
+                    <!-- Create button (goes above on mobile) -->
+                    <div class="w-100 w-sm-auto">
+                      <v-btn
+                        color="success"
+                        size="large"
+                        :loading="isLoading"
+                        prepend-icon="mdi-plus"
+                        block
+                        @click="validate">
+                        {{ $t('studyCreation.createStudy') }}
+                      </v-btn>
+                    </div>
                   </div>
                 </v-card-text>
               </v-card>
@@ -298,7 +302,7 @@ const submitAccessibility = async () => {
 
   isLoading.value = true;
   const user = store.getters.user;
-  
+
   const rawData = {
     id: null,
     title: test.value.title,
@@ -321,10 +325,10 @@ const submitAccessibility = async () => {
   try {
     const newTest = instantiateStudyByType(testType, rawData);
     const testId = await store.dispatch('createStudy', newTest);
-    
+
     isLoading.value = false;
     store.commit('RESET_STUDY_DETAILS');
-    
+
     if (selectedMethod === 'AUTOMATIC') {
       router.push(`/accessibility/automatic/${testId}`);
     } else {

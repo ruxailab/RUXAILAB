@@ -124,12 +124,22 @@
           >
             {{ test.testDescription }}
           </p>
+          <v-alert
+            v-if="heuristics.length === 0"
+            type="warning"
+            class="mb-6 text-left"
+            variant="tonal"
+            density="compact"
+            icon="mdi-alert"
+          >
+            Configuration Error: This test has no heuristics configured. Please add heuristics to proceed.
+          </v-alert>
           <v-btn
             color="white"
             variant="outlined"
             size="large"
             rounded
-            :disabled="!user"
+            :disabled="!user || heuristics.length === 0"
             @click="startTest()"
           >
             {{ $t('HeuristicsTestView.actions.startTest') }}
