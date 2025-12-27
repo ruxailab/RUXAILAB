@@ -29,7 +29,7 @@
           <v-col cols="12">
             <div class="d-flex align-center gap-3">
               <h1 class="text-h4">
-                {{ test.testTitle || 'Estudio Heurístico' }}
+                {{ test.testTitle || $t('Dashboard.managerView.heuristicStudy') }}
               </h1>
               <v-chip
                 class="ml-5"
@@ -43,7 +43,7 @@
                 >
                   mdi-crown-outline
                 </v-icon>
-                Plan Gratuito
+                {{ $t('Dashboard.managerView.freePlan') }}
               </v-chip>
             </div>
           </v-col>
@@ -56,7 +56,7 @@
         <v-row>
           <v-col cols="12">
             <h2 class="text-h5">
-              Estadísticas Generales
+              {{ $t('Dashboard.managerView.generalStatistics') }}
             </h2>
           </v-col>
         </v-row>
@@ -72,7 +72,7 @@
         <v-row>
           <v-col cols="12">
             <h2 class="text-h5">
-              Módulos
+              {{ $t('Dashboard.managerView.modules') }}
             </h2>
           </v-col>
         </v-row>
@@ -146,6 +146,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
 import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 // Componentes del manager
 import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue';
@@ -160,6 +161,7 @@ import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStat
 // Stores
 const store = useStore()
 const route = useRoute()
+const { t } = useI18n()
 
 // Computed
 const user = computed(() => store.getters.user)

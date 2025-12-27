@@ -12,7 +12,7 @@
 
       <!-- Options Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="option in options" :key="option.id" cols="12" md="6" lg="5">
+        <v-col v-for="option in options" :key="option.id" cols="12" sm="6" md="6" lg="5">
           <SelectableCard
             :selected="selectedOption === option.id"
             :icon="option.icon"

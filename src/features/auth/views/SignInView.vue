@@ -2,7 +2,7 @@
   <div class="signin-wrapper">
     <!-- LEFT: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/ruxailab.png" alt="RUXAILAB" class="logo-img" />
+      <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
     </div>
 
     <!-- RIGHT: FORM -->
@@ -137,26 +137,26 @@ const rules = {
   required: (v) => !!v || t('errors.passwordRequired'),
 }
 
-const checkForm = () => form.value?.validate()
-
 const onSignIn = async () => {
-  const isValid = await checkForm()
-  if (isValid) {
-    try {
-      store.commit('setLoading', true)
-      loadingType.value = 'signin'
-      await store.dispatch('signin', {
-        email: email.value,
-        password: password.value,
-        rememberMe: rememberMe.value,
-      })
-      await router.push('/admin')
-    } catch (error) {
-      console.error('Authentication error:', error)
-    } finally {
-      loadingType.value = ''
-      store.commit('setLoading', false)
-    }
+  if (!form.value) return
+  
+  const { valid } = await form.value.validate()
+  if (!valid) return
+  
+  try {
+    store.commit('setLoading', true)
+    loadingType.value = 'signin'
+    await store.dispatch('signin', {
+      email: email.value,
+      password: password.value,
+      rememberMe: rememberMe.value,
+    })
+    await router.push('/admin')
+  } catch (error) {
+    console.error('Authentication error:', error)
+  } finally {
+    loadingType.value = ''
+    store.commit('setLoading', false)
   }
 }
 
@@ -209,7 +209,7 @@ const onGoogleSignInError = (error) => {
 }
 
 .logo-img {
-  max-width: 400px;
+  max-width: 600px;
   width: 100%;
 }
 
