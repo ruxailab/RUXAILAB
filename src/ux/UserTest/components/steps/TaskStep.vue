@@ -152,47 +152,56 @@
             class="mb-4"
           >
             <v-card-text class="pa-3">
-           
-              
-              <!-- Two Column Layout -->
+              <!-- Main content layout -->
               <v-row>
-                <!-- Left Column: Task Description -->
-                <v-col cols="8">
-                     <div class="d-flex align-center mb-3">
-                <v-icon 
-                  color="primary" 
-                  size="20" 
-                  class="mr-2"
+                <!-- Task Description Column -->
+                <v-col 
+                  cols="12" 
+                  md="8"
+                  class="order-1 order-md-1"
                 >
-                  mdi-clipboard-text-outline
-                </v-icon>
-                <span class="text-subtitle-2 font-weight-bold text-primary">
-                  Task Description
-                </span>
-              </div>
+                  <div class="d-flex align-center mb-3">
+                    <v-icon 
+                      color="primary" 
+                      size="20" 
+                      class="mr-2"
+                    >
+                      mdi-clipboard-text-outline
+                    </v-icon>
+                    <span class="text-subtitle-2 font-weight-bold text-primary">
+                      Task Description
+                    </span>
+                  </div>
                   <div 
-                    class="rich-text text-body-1" 
+                    class="rich-text text-body-1 mb-3 mb-md-0" 
                     v-html="task?.taskDescription || taskDescription"
                   />
                 </v-col>
                 
-                <!-- Right Column: Help & Actions -->
-                <v-col cols="4">
+                <!-- Help & Actions Column -->
+                <v-col 
+                  cols="12" 
+                  md="4"
+                  class="order-3 order-md-2 mt-4 mt-md-0"
+                >
                   <v-row>
                     <!-- Help Section -->
                     <v-col 
                       v-if="task?.taskTip"
-                      cols="6"
+                      cols="12"
+                      sm="6"
+                      md="12"
+                      class="order-1 order-sm-1 order-md-1 mb-3 mb-sm-3 mb-md-3"
                     >
                       <div 
-                        class="help-section pa-2 text-center rounded h-100"
+                        class="help-section pa-3 text-center rounded h-100"
                         style="background-color: rgba(76, 175, 80, 0.05); border: 1px solid rgba(76, 175, 80, 0.2);"
                       >
-                        <div class="d-flex align-center mb-1">
+                        <div class="d-flex align-center mb-2 justify-center">
                           <v-icon 
                             color="success" 
-                            size="16" 
-                            class="mr-1"
+                            size="18" 
+                            class="mr-2 hide-below-340"
                           >
                             mdi-help-circle-outline
                           </v-icon>
@@ -200,7 +209,7 @@
                             Need Help?
                           </span>
                         </div>
-                        <p class="text-caption text-grey-darken-3 mb-2" style="font-size: 11px; line-height: 1.3;">
+                        <p class="text-caption text-grey-darken-3 mb-3" style="line-height: 1.4;">
                           Having trouble? Get helpful guidance to complete this task.
                         </p>
                         <TipButton :task="task" />
@@ -210,17 +219,20 @@
                     <!-- Reopen Tool Section -->
                     <v-col 
                       v-if="task?.taskLink || taskLink"
-                      :cols="task?.taskTip ? 6 : 12"
+                      cols="12"
+                      sm="6"
+                      md="12"
+                      class="order-2 order-sm-2 order-md-2"
                     >
                       <div 
-                        class="tool-section pa-2 rounded text-center h-100"
+                        class="tool-section pa-3 text-center rounded h-100"
                         style="background-color: rgba(121, 85, 72, 0.05); border: 1px solid rgba(121, 85, 72, 0.2);"
                       >
-                        <div class="d-flex align-center mb-1">
+                        <div class="d-flex align-center mb-2 justify-center">
                           <v-icon 
                             color="secondary" 
-                            size="16" 
-                            class="mr-1"
+                            size="18" 
+                            class="mr-2 hide-below-340"
                           >
                             mdi-open-in-new
                           </v-icon>
@@ -228,7 +240,7 @@
                             External Tool
                           </span>
                         </div>
-                        <p class="text-caption text-grey-darken-3 mb-2" style=" line-height: 1.3;">
+                        <p class="text-caption text-grey-darken-3 mb-3" style="line-height: 1.4;">
                           Accidentally closed the tool window? Reopen it here.
                         </p>
                         <v-btn
@@ -236,10 +248,10 @@
                           variant="outlined"
                           size="small"
                           block
-                          prepend-icon="mdi-open-in-new"
+                          :prepend-icon="isScreenBelow340 ? undefined : 'mdi-open-in-new'"
                           @click="reopenTool"
                         >
-                          Reopen Tool
+                          <span class="text-wrap">Reopen Tool</span>
                         </v-btn>
                       </div>
                     </v-col>
@@ -248,16 +260,19 @@
               </v-row>
             </v-card-text>
           </v-card>
-          
-          <v-row class="mb-4 d-flex align-center">
+
+          <!-- Timer and Audio Visualizer -->
+          <v-row class="mb-4 align-center">
             <v-col
               v-if="isVisualizerVisible"
-              cols="auto"
+              cols="12"
+              sm="auto"
+              class="mb-2 mb-sm-0 order-1"
             >
               <AudioVisualizer />
             </v-col>
-            <v-spacer />
-            <v-col cols="auto">
+            <v-spacer class="order-2" />
+            <v-col cols="12" sm="auto" class="text-center order-3 mt-2 mt-sm-0">
               <Timer
                 ref="timerComponent"
                 :task-index="taskIndex"
@@ -265,14 +280,17 @@
               />
             </v-col>
           </v-row>
+
+          <!-- Answer and Observation Inputs -->
           <div class="mt-4">
             <v-textarea
               v-if="task?.taskType === 'text-area' && !submitted"
               :id="'id-' + (task?.taskName || taskName)"
               v-model="localTaskAnswer"
               variant="outlined"
-              label="Answer"
+              label="Your Answer"
               rows="3"
+              class="mb-3"
               @update:model-value="onUpdateTaskAnswer"
             />
             <v-textarea
@@ -280,32 +298,54 @@
               :id="'id-' + (task?.taskName || taskName) + '-obs'"
               v-model="localTaskObservations"
               variant="outlined"
-              label="Observation (optional)"
+              label="Observations (optional)"
               rows="3"
               @update:model-value="onUpdateTaskObservations"
             />
           </div>
-          <v-row justify="space-between">
-            <v-col>
+
+          <!-- Action Buttons -->
+          <v-row class="mt-6">
+            <v-col cols="12" sm="6" class="mb-2 mb-sm-0">
               <v-btn
                 color="error"
                 block
                 variant="outlined"
-                class="mr-2"
+                size="large"
+                height="56"
+                class="text-center font-weight-medium"
                 @click="handleShowPostForm(false)"
               >
-                I can not finish the task
+                <div class="d-flex align-center justify-center">
+                  <span class="d-inline d-sm-none">
+                    <span class="d-block">I Cannot</span>
+                    <span class="d-block">Finish The Task</span>
+                  </span>
+                  <span class="d-none d-sm-inline">
+                    I Cannot Finish The Task
+                  </span>
+                </div>
               </v-btn>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="6">
               <v-btn
                 color="primary"
                 block
                 variant="flat"
-                class="ml-2"
+                size="large"
+                height="56"
+                class="text-center font-weight-medium"
                 @click="handleShowPostForm(true)"
               >
-              Task completed
+                <div class="d-flex align-center justify-center">
+                  <span class="d-inline d-sm-none">
+                    <span class="d-block">Task</span>
+                    <span class="d-block">Completed</span>
+                  </span>
+                  <span class="d-none d-sm-inline">
+                    Task Completed
+                  </span>
+                </div>
               </v-btn>
             </v-col>
           </v-row>
@@ -388,7 +428,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
+import { ref, watch, nextTick, computed, onBeforeUnmount, onUnmounted, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import TipButton from '@/ux/UserTest/components/TipButton.vue';
@@ -399,6 +439,21 @@ import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
 import Timer from '@/ux/UserTest/components/Timer.vue';
 import SusForm from '@/ux/UserTest/SusForm.vue';
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
+
+const isScreenBelow340 = ref(false)
+
+function checkScreenWidth() {
+  isScreenBelow340.value = window.innerWidth <= 340
+}
+
+onMounted(() => {
+  checkScreenWidth()
+  window.addEventListener('resize', checkScreenWidth)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenWidth)
+})
 
 const props = defineProps({
     task: Object,
@@ -678,6 +733,12 @@ function onTimerStopped(elapsedTime) {
   
   .feature-icon-container {
     align-self: center;
+  }
+}
+
+@media (max-width: 340px) {
+  .hide-below-340 {
+    display: none !important;
   }
 }
 </style>
