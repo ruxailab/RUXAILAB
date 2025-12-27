@@ -14,6 +14,11 @@ function resolveMessage(message) {
   return message
 }
 
+// Default
+export const showToast = (message, options = {}) => {
+  toast(resolveMessage(message), options)
+}
+
 export const showSuccess = (message, options = {}) => {
   toast.success(resolveMessage(message), options)
 }
