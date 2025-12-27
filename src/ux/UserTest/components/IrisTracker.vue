@@ -40,8 +40,6 @@ const recordingWebcamIndex = ref(null)
 onMounted(async () => {
     await tf.setBackend('webgl')
     await tf.ready()
-    await initWebcam()
-    await waitForVideoReady()
     await loadModel()
     if (props.isRunning) startTracking()
     if (props.recordScreen) {
@@ -65,8 +63,12 @@ onBeforeUnmount(() => {
 })
 
 const initWebcam = async () => {
+    if (mediaStream.value) return
     mediaStream.value = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false })
-    if (videoRef.value) videoRef.value.srcObject = mediaStream.value
+    if (videoRef.value) {
+        videoRef.value.srcObject = mediaStream.value
+        await waitForVideoReady()
+    }
 }
 
 const waitForVideoReady = () => new Promise(resolve => {
@@ -82,6 +84,7 @@ const loadModel = async () => {
 }
 
 const startTracking = async () => {
+    if (!mediaStream.value) await initWebcam()
     if (!model.value) return
     const loop = async () => {
         if (!props.isRunning) return
@@ -105,7 +108,16 @@ const startTracking = async () => {
     loop()
 }
 
-const stopTracking = () => { if (trackingLoop) { clearTimeout(trackingLoop); trackingLoop = null } }
+const stopTracking = () => {
+    if (trackingLoop) {
+        clearTimeout(trackingLoop)
+        trackingLoop = null
+    }
+    if (mediaStream.value) {
+        mediaStream.value.getTracks().forEach(track => track.stop())
+        mediaStream.value = null
+    }
+}
 
 // ---------- Screen Recording ----------
 const startScreenRecording = async () => {

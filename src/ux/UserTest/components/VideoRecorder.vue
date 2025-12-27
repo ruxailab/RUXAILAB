@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
@@ -144,7 +144,9 @@ const startRecording = async () => {
         console.error('Task not found at index:', correctTaskIndex, 'Available tasks:', currentUserTestAnswer.value.tasks?.length);
       }
 
-      videoStream.value.getTracks().forEach((track) => track.stop())
+      if (videoStream.value) {
+        videoStream.value.getTracks().forEach((track) => track.stop())
+      }
       recording.value = false
 
       emit('stopShowLoading')
@@ -162,6 +164,12 @@ const stopRecording = () => {
     mediaRecorder.value.stop()
   }
 }
+
+onBeforeUnmount(() => {
+  if (videoStream.value) {
+    videoStream.value.getTracks().forEach((track) => track.stop())
+  }
+})
 
 defineExpose({ startRecording, stopRecording })
 </script>

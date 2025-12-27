@@ -83,7 +83,7 @@ const props = defineProps({
 
 const emit = defineEmits(["done", "update:preTestAnswer"]);
 
-const localAnswers = ref([...props.preTestAnswer]);
+const localAnswers = ref(props.preTest.map((_, i) => props.preTestAnswer[i] || { answer: '' }));
 
 watch(
   () => props.preTestAnswer,
