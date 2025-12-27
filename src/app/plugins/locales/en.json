@@ -56,6 +56,7 @@
     "notifications": "Notifications",
     "unread": "unread",
     "inbox": "inbox",
+    "all": "All",
     "timeAgo": {
       "years": "{count} year | {count} years",
       "months": "{count} month | {count} months",
