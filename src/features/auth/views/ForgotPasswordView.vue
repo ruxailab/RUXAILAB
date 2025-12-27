@@ -66,23 +66,23 @@
             />
 
             <h2 class="text-h5 font-weight-bold mb-2">
-              {{ $t('FORGOT_PASSWORD.check_your_email') }}
+              {{ $t('auth.FORGOT_PASSWORD.check_your_email') }}
             </h2>
 
             <p class="text-body-1 mb-4">
-              {{ $t('FORGOT_PASSWORD.reset_link_sent') }}
+              {{ $t('auth.FORGOT_PASSWORD.reset_link_sent') }}
               <strong>{{ email }}</strong>.
             </p>
 
             <p class="text-body-2 text-medium-emphasis">
-              {{ $t('FORGOT_PASSWORD.no_email') }}
+              {{ $t('auth.FORGOT_PASSWORD.no_email') }}
               <v-btn
                 variant="text"
                 color="primary"
                 class="text-body-2 px-2"
                 @click="isSubmitted = false"
               >
-                {{ $t('FORGOT_PASSWORD.try_again') }}
+                {{ $t('auth.FORGOT_PASSWORD.try_again') }}
               </v-btn>
             </p>
           </v-card-text>

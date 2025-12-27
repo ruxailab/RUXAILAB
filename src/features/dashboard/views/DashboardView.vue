@@ -54,7 +54,7 @@
         cols="12"
         lg="4"
       >
-        <TopMethods />
+        <TopMethods :methodsData="topMethodsData" />
       </v-col>
       <v-col
         cols="12"
@@ -90,6 +90,7 @@ import BlogPosts from '@/features/dashboard/components/BlogPosts.vue'
 import UpcomingWebinar from '@/features/dashboard/components/UpcomingWebinar.vue'
 import TopMethods from '@/features/dashboard/components/TopMethods.vue'
 import NextSession from '@/features/dashboard/components/NextSession.vue'
+import { getMethodDefinition } from '@/shared/constants/methodDefinitions'
 
 const props = defineProps({
   items: {
@@ -106,9 +107,7 @@ const props = defineProps({
 
 const store = useStore()
 
-const totalStudies = ref(0);
 const usedStorage = ref(0);
-const totalParticipants = ref(0);
 const nextSession = ref(null);
 
 const userDisplayName = computed(() => {
@@ -121,6 +120,53 @@ const userStorageUsage = computed(() => {
   return user?.storageUsageMB || 0;
 });
 
+const userStudies = computed(() => {
+  const user = store.getters.user;
+  if (!user || !props.items) return [];
+  
+  return props.items.filter(
+    (study) => study?.testAdmin?.userDocId === user.id
+  );
+});
+
+const totalStudies = computed(() => userStudies.value.length);
+
+const totalParticipants = computed(() => {
+  return userStudies.value.flatMap((s) => s.cooperators || []).length;
+});
+
+const topMethodsData = computed(() => {
+  const methodCounts = {};
+
+  userStudies.value.forEach(study => {
+    const key = `${study.testType}|${study.subType || ''}`;
+    
+    if (!methodCounts[key]) {
+      const def = getMethodDefinition(study.testType, study.subType);
+      if (def) {
+        methodCounts[key] = {
+          id: key,
+          count: 0,
+          name: def.nameEn, 
+          type: def.name,  
+          icon: def.icon,
+          color: def.color,
+          bgColor: def.color
+        };
+      }
+    }
+    
+    if (methodCounts[key]) {
+      methodCounts[key].count++;
+    }
+  });
+  return Object.values(methodCounts)
+    .sort((a, b) => b.count - a.count)
+    .map(m => ({
+      ...m,
+      usage: m.count.toString()
+    }));
+});
 
 watch(
   () => props.sessions,
@@ -148,30 +194,6 @@ watch(
   () => userStorageUsage.value,
   (newVal) => {
     usedStorage.value = parseFloat(newVal);
-  },
-  { immediate: true }
-);
-
-watch(
-  () => props.items,
-  (newVal) => {
-    const user = store.getters.user;
-    if (!user || !newVal) {
-      totalStudies.value = 0;
-      totalParticipants.value = 0;
-      return;
-    }
-    // Filters only the studies created by the logged-in user
-    const userStudies = newVal.filter(
-      (study) => study?.testAdmin?.userDocId === user.id
-    );
-
-    // Updates total studies
-    totalStudies.value = userStudies.length;
-
-    // Counts the total unique participants (cooperators)
-    const participants = userStudies.flatMap((s) => s.cooperators || []);
-    totalParticipants.value = participants.length;
   },
   { immediate: true }
 );
