@@ -11,6 +11,19 @@
     "confirmPassword": "パスワードを確認",
     "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン"
   },
+  "auth": {
+    "FORGOT_PASSWORD": {
+      "reset_password": "パスワードをリセット",
+      "email": "メールアドレス",
+      "instructions": "メールアドレスを入力すると、パスワードをリセットするリンクを送信します。",
+      "reset_button": "リセットリンクを送信",
+      "back_to_signin": "ログイン画面に戻る",
+      "check_your_email": "メールを確認してください",
+      "reset_link_sent": "パスワードリセットリンクを送信しました：",
+      "no_email": "メールが届いていませんか？",
+      "try_again": "もう一度試す"
+    }
+  },
   "common": {
     "loading": "テストを読み込み中",
     "continueAs": "として続行",

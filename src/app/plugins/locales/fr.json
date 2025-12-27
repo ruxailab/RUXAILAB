@@ -15,6 +15,17 @@
       "contact": "Numéro de contact",
       "confirmPassword": "Confirmez votre mot de passe",
       "alreadyHaveAnAccount": "Vous avez déjà un compte ? Connectez-vous"
+    },
+    "FORGOT_PASSWORD": {
+      "reset_password": "Réinitialiser le mot de passe",
+      "email": "E-mail",
+      "instructions": "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "reset_button": "Envoyer le lien de réinitialisation",
+      "back_to_signin": "Retour à la connexion",
+      "check_your_email": "Vérifiez votre e-mail",
+      "reset_link_sent": "Nous avons envoyé un lien de réinitialisation à",
+      "no_email": "Vous n’avez pas reçu l’e-mail ?",
+      "try_again": "Réessayer"
     }
   },
   "language": "Langue",

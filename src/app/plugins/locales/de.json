@@ -4,7 +4,18 @@
     "logoutSuccess": "Abmeldung erfolgreich",
     "resetPasswordSuccess": "Passwort-Reset-E-Mail gesendet",
     "deleteSuccess": "Konto erfolgreich gelöscht",
-    "loginSuccess": "Anmeldung erfolgreich"
+    "loginSuccess": "Anmeldung erfolgreich",
+    "FORGOT_PASSWORD": {
+      "reset_password": "Passwort zurücksetzen",
+      "email": "E-Mail",
+      "instructions": "Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+      "reset_button": "Link zum Zurücksetzen senden",
+      "back_to_signin": "Zurück zur Anmeldung",
+      "check_your_email": "E-Mail überprüfen",
+      "reset_link_sent": "Wir haben einen Link zum Zurücksetzen des Passworts gesendet an",
+      "no_email": "E-Mail nicht erhalten?",
+      "try_again": "Erneut versuchen"
+    }
   },
   "language": "Sprache",
   "SIGNIN": {
