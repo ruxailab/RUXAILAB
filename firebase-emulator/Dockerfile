@@ -2,7 +2,7 @@
 # As from now node-16 is currently in beta for firebase functions
 # But if you want to run the beta you can change node:14-alpine to node:16-alpine
 # https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version
-FROM openjdk:11
+FROM eclipse-temurin:11-jdk
 
 # Instala Node.js
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \

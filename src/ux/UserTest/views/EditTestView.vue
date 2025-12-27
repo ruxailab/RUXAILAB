@@ -34,8 +34,12 @@
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
-              @update:welcome-message="welcomeMessage = $event" @update:final-message="finalMessage = $event" />
+            <TestConfigForm
+              :welcome="welcomeMessage"
+              :final-message="finalMessage"
+              @update:welcome-message="welcomeMessage = $event; change = true"
+              @update:final-message="finalMessage = $event; change = true"
+            />
           </div>
 
           <!-- CONSENT FORM -->
@@ -68,8 +72,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref , onUnmounted} from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import StudyController from '@/controllers/StudyController' 
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
@@ -80,6 +86,10 @@ import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
+
+
+// Controller
+const studyController = new StudyController()
 
 // Store
 const store = useStore()
@@ -92,7 +102,8 @@ const welcomeMessage = ref('')
 const finalMessage = ref('')
 const consent = ref('')
 const index = ref(0)
-
+const route = useRoute()
+let unsubscribe = null
 // Computed
 const test = computed(() => store.getters.test)
 
@@ -164,14 +175,30 @@ const save = async () => {
   }
 }
 
+// Subscribe to test (gets the Real-time updates, no conflicts)
+const subscribeToTest = () => {
+  const testId = route.params.id
+  if (testId) {
+    unsubscribe = studyController.subscribeToStudy(testId, (test) => {
+      store.commit("SET_TEST", test)
+      getWelcome()
+      getFinalMessage()
+      getConsent()
+      getPreTest()
+      getPostTest()
+      getTasks()
+    })
+  }
+}
 // Lifecycle
 onMounted(() => {
-  getWelcome()
-  getFinalMessage()
-  getConsent()
-  getPreTest()
-  getPostTest()
-  getTasks()
+  subscribeToTest();
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe();
+  }
 })
 </script>
 

@@ -67,6 +67,19 @@
           </div>
         </div>
       </div>
+      
+      <!-- Empty State -->
+      <div v-else class="d-flex flex-column align-center justify-center fill-height pa-4 text-center">
+        <v-icon
+          icon="mdi-chart-bar-off"
+          size="48"
+          color="grey-lighten-2"
+          class="mb-2"
+        />
+        <div class="text-body-1 text-grey-darken-1">No data available yet</div>
+        <div class="text-caption text-grey">Create your first study to see statistics here.</div>
+      </div>
+
     </v-card-text>
   </v-card>
 </template>
@@ -130,58 +143,7 @@ const formatUsage = (usage) => {
 }
 
 const topMethods = computed(() => {
-    if (props.methodsData.length > 0) {
-        return props.methodsData.slice(0, 5)
-    }
-
-    // Default top methods data
-    return [
-        {
-            id: 1,
-            name: 'Heuristic Evaluation',
-            type: 'Expert Review',
-            icon: 'mdi-eye-check',
-            color: 'purple',
-            bgColor: '#9c27b0',
-            usage: '2.3k'
-        },
-        {
-            id: 2,
-            name: 'User Interview',
-            type: 'Qualitative Research',
-            icon: 'mdi-account-voice',
-            color: 'cyan',
-            bgColor: '#00bcd4',
-            usage: '1.8k'
-        },
-        {
-            id: 3,
-            name: 'A/B Testing',
-            type: 'Quantitative Test',
-            icon: 'mdi-flask',
-            color: 'green',
-            bgColor: '#4caf50',
-            usage: '1.5k'
-        },
-        {
-            id: 4,
-            name: 'Card Sorting',
-            type: 'Information Architecture',
-            icon: 'mdi-card-multiple',
-            color: 'orange',
-            bgColor: '#ff9800',
-            usage: '1.2k'
-        },
-        {
-            id: 5,
-            name: 'Usability Testing',
-            type: 'User Testing',
-            icon: 'mdi-account-check',
-            color: 'pink',
-            bgColor: '#e91e63',
-            usage: '967'
-        }
-    ]
+    return props.methodsData.slice(0, 5)
 })
 </script>
 
