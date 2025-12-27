@@ -39,17 +39,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useGoBack } from '@/composables/useGoBack'
 
 const router = useRouter()
 const route = useRoute()
+const { goBackOrRedirect } = useGoBack()
 const prevRoute = ref(null)
 
 const sendHome = () => {
-  if (prevRoute.value !== null) {
-    router.push(prevRoute.value.path).catch(() => {})
-  } else {
-    router.push(1)
-  }
+  goBackOrRedirect('/')
 }
 
 defineOptions({

@@ -100,12 +100,14 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useGoBack } from '@/composables/useGoBack'
 import NotificationList from '@/features/notifications/components/NotificationList.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import StudyController from '@/controllers/StudyController'
 
 const store = useStore()
 const router = useRouter()
+const { goBackOrRedirect } = useGoBack()
 
 const activeTab = ref('unread')
 
@@ -220,6 +222,6 @@ const markAllAsRead = async () => {
 }
 
 const goBack = () => {
-  router.go(-1)
+  goBackOrRedirect('/')
 }
 </script>

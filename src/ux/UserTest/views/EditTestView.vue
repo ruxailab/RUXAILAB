@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref , onUnmounted} from 'vue'
 import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import { useToast } from 'vue-toastification'
@@ -188,14 +188,30 @@ const save = async () => {
   }
 }
 
+// Subscribe to test (gets the Real-time updates, no conflicts)
+const subscribeToTest = () => {
+  const testId = route.params.id
+  if (testId) {
+    unsubscribe = studyController.subscribeToStudy(testId, (test) => {
+      store.commit("SET_TEST", test)
+      getWelcome()
+      getFinalMessage()
+      getConsent()
+      getPreTest()
+      getPostTest()
+      getTasks()
+    })
+  }
+}
 // Lifecycle
 onMounted(() => {
-  getWelcome()
-  getFinalMessage()
-  getConsent()
-  getPreTest()
-  getPostTest()
-  getTasks()
+  subscribeToTest();
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe();
+  }
 })
 </script>
 
