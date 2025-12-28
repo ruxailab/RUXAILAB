@@ -1,10 +1,12 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
+import {
+  showError,
+} from '@/shared/utils/toast'
+
 
 export function useAccessibilityAccess() {
     const store = useStore()
-    const toast = useToast()
 
     const userRole = ref(null)
     const accessLevel = ref(null)
@@ -94,7 +96,7 @@ export function useAccessibilityAccess() {
             console.log('=== END FETCH DATA ===')
         } catch (error) {
             console.error('Error in fetchAccessData:', error)
-            toast.error(`Failed to load test data: ${error.message}`)
+            showError(`Failed to load test data: ${error.message}`)
         } finally {
             isLoading.value = false
         }

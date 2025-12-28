@@ -432,15 +432,15 @@ import TemplateAuthor from '@/shared/models/TemplateAuthor';
 import TemplateBody from '@/shared/models/TemplateBody';
 import Template from '@/shared/models/Template';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import { instantiateStudyByType } from '../constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
+import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+
 
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
-const toast = useToast();
 
 const props = defineProps({
   id: {
@@ -603,14 +603,14 @@ onMounted(async () => {
       const testData = store.getters.test;
       console.log('Fetched test data:', testData);
       if (!testData) {
-        toast.error(t('errors.globalError'));
+        showError('errors.globalError');
       }
     } catch (error) {
       console.error('Error fetching test data:', error);
-      toast.error(t('errors.globalError'));
+      showError('errors.globalError');
     }
   } else {
-    toast.error(t('errors.globalError'));
+    showError('errors.globalError');
   }
   
   loadingPage.value = false;
@@ -657,17 +657,17 @@ const submit = async () => {
       await store.dispatch('updateStudy', study);
       await store.dispatch('getStudy', { id: props.id });
       store.commit('SET_LOCAL_CHANGES', false);
-      toast.success(t('alerts.savedChanges'));
+      showSuccess('alerts.savedChanges');
     } catch (error) {
-      toast.error(t('errors.globalError'));
+      showError('errors.globalError');
       console.error('Error saving test:', error);
     } finally {
       loading.value = false;
     }
   } else if (title.length >= 200) {
-    toast.warning(t('studyCreation.details.validation.max200Characters'));
+    showWarning('studyCreation.details.validation.max200Characters');
   } else {
-    toast.warning(t('studyCreation.details.validation.enterTitle'));
+    showWarning('studyCreation.details.validation.enterTitle');
   }
 };
 
@@ -690,13 +690,13 @@ const fetchTestData = async () => {
     const testData = store.getters.test;
     
     if (testData) {
-      toast.success(t('alerts.genericSuccess'));
+      showSuccess('alerts.genericSuccess');
     } else {
-      toast.warning(t('errors.globalError'));
+      showWarning('errors.globalError');
     }
   } catch (error) {
     console.error('Error fetching test data:', error);
-    toast.error(t('errors.globalError'));
+    showError('errors.globalError');
   } finally {
     loading.value = false;
   }
@@ -713,10 +713,10 @@ const deleteStudy = async item => {
     delete auxUser.myTests[item.id];
     item.auxUser = auxUser;
     await store.dispatch('deleteStudy', item);
-    toast.success(t('alerts.genericSuccess'));
+    showSuccess('alerts.genericSuccess');
     router.push({ name: 'Admin' });
   } catch (error) {
-    toast.error(t('errors.globalError'));
+    showError('errors.globalError');
     console.error('Error deleting test:', error);
   } finally {
     loading.value = false;
@@ -727,7 +727,7 @@ const deleteStudy = async item => {
 const createTemplate = async () => {
   const { valid } = await tempform.value.validate();
   if (!valid) {
-    toast.warning(t('errors.fieldRequired'));
+    showWarning('errors.fieldRequired');
     return;
   }
 
@@ -756,10 +756,10 @@ const createTemplate = async () => {
     });
 
     await store.dispatch('createTemplate', templateObj);
-    toast.success(t('alerts.genericSuccess'));
+    showSuccess('alerts.genericSuccess');
     closeDialog();
   } catch (error) {
-    toast.error(t('errors.globalError'));
+    showError('errors.globalError');
     console.error('Error creating template:', error);
   } finally {
     loading.value = false;
@@ -822,10 +822,10 @@ const duplicateStudy = async () => {
       test: study,
       answer: testAnswerDocument.value,
     });
-    toast.success(t('alerts.genericSuccess'));
+    showSuccess('alerts.genericSuccess');
     router.push('/admin');
   } catch (error) {
-    toast.error(t('errors.globalError'));
+    showError('errors.globalError');
     console.error('Error duplicating test:', error);
   } finally {
     loading.value = false;

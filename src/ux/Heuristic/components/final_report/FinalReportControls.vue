@@ -63,14 +63,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
+import { showError, showInfo } from '@/shared/utils/toast'
 
 // Initialize i18n
 const { t } = useI18n()
 
 // Initialize toast
-const toast = useToast()
-
 // Reactive state
 const title = ref('Enter your text here:')
 const inputText = ref('')
@@ -96,9 +94,9 @@ const copyAll = () => {
     document.execCommand('selectAll', false, null)
     const success = document.execCommand('copy')
     // Output whether or not copy was successful
-    success ? toast.info(t('alerts.copy')) : toast.error(t('alerts.noCopy'))
+    success ? showInfo('alerts.copy') : showError('alerts.noCopy')
   } catch (e) {
-    toast.error(t('alerts.errorOccurred'))
+    showError('alerts.errorOccurred')
   }
 }
 
