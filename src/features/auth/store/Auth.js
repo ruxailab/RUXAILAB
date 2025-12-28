@@ -91,16 +91,43 @@ export default {
         )
 
         const dbUser = await userController.getById(user.uid)
-
         commit('SET_USER', dbUser)
 
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
+        toast.success(i18n.global.t('auth.loginSuccess'))
 
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        console.error('Sign in error:', err.code, err.message)
+        
+        // Handle specific Firebase auth errors
+        let errorMessage = i18n.global.t('errors.globalError')
+        
+        switch (err.code) {
+          case 'auth/invalid-email':
+            errorMessage = i18n.global.t('errors.invalidEmail')
+            break
+          case 'auth/user-disabled':
+            errorMessage = i18n.global.t('errors.userDisabled')
+            break
+          case 'auth/user-not-found':
+            errorMessage = i18n.global.t('errors.userNotFound')
+            break
+          case 'auth/wrong-password':
+            errorMessage = i18n.global.t('errors.wrongPassword')
+            break
+          case 'auth/invalid-credential':
+            errorMessage = i18n.global.t('errors.incorrectCredential')
+            break
+          case 'auth/too-many-requests':
+            errorMessage = i18n.global.t('errors.tooManyRequests')
+            break
+          case 'auth/operation-not-allowed':
+            errorMessage = 'Email/Password sign-in is not enabled. Please contact admin.'
+            break
+          default:
+            errorMessage = err.message || i18n.global.t('errors.incorrectCredential')
+        }
+        
+        toast.error(errorMessage)
       } finally {
         commit('setLoading', false)
       }
