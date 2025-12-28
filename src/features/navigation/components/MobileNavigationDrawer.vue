@@ -114,7 +114,6 @@
 
 <script setup>
 import { computed } from 'vue';
-import { globalNavigationItems, getFilteredTestItems } from '@/features/dashboard';
 
 // Props
 const props = defineProps({
