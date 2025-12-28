@@ -128,6 +128,7 @@ export default {
             id: user.uid,
             email: user.email,
             displayName: user.displayName || '',
+            profileImage: user.photoURL || '',
             createdAt: new Date().toISOString(),
             authProvider: 'google',
           })
