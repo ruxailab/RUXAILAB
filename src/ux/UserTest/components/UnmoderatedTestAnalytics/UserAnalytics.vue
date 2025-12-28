@@ -523,7 +523,7 @@ const toggleHideSession = async (item) => {
         tasks: { ...payload.tasks },
         hidden: !item.hidden,
       }),
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
     });
     toast.success("User made hidden successfull")
   } catch (error) {
