@@ -29,10 +29,10 @@ export default class TranscriptionController extends Controller {
 
     /**
      * Creates a new Transcription document in the Firestore collection.
-     * If a document with the same answerDocId and userDocId already exists, an error is thrown.
+     * If a document with the same answersDocId and userDocId already exists, an error is thrown.
      * 
      * @param {Object} payload - The payload for creating a new Transcription document.
-     * @param {string} payload.answerDocId - The Answer document ID.
+     * @param {string} payload.answersDocId - The Answer document ID.
      * @param {string} payload.userDocId - The User document ID.
      * @param {string} payload.taskId - The Task document ID.
      * @param {string} payload.provider - The Provider used for transcription.
@@ -56,12 +56,12 @@ export default class TranscriptionController extends Controller {
      * @param {string} payload.evaluator.segments[].text - The text of the segment.
      * 
      * @returns {Promise<Transcription>} - Returns a Promise that resolves to the newly created Transcription instance.
-     * @throws {Error} - Throws an error if a document with the same answerDocId and userDocId already exists or if there is an issue creating the document.
+     * @throws {Error} - Throws an error if a document with the same answersDocId and userDocId already exists or if there is an issue creating the document.
      */
 
     async create(transcriptionData) {
         const transcription = new Transcription({
-            answerDocId: transcriptionData.answerDocId,
+            answersDocId: transcriptionData.answersDocId,
             userDocId: transcriptionData.userDocId,
             taskId: transcriptionData.taskId,
             provider: transcriptionData.provider,
@@ -73,14 +73,14 @@ export default class TranscriptionController extends Controller {
         try {
             // Check if the document already exists
             const conditions = [
-                { field: 'answerDocId', condition: '==', value: transcriptionData.answerDocId },
+                { field: 'answersDocId', condition: '==', value: transcriptionData.answersDocId },
                 { field: 'userDocId', condition: '==', value: transcriptionData.userDocId },
                 { field: 'task Id', condition: '==', value: transcriptionData.taskId }
             ];
             const result = await super.queryWithMultipleConditions(COLLECTION, conditions);
             if (result.docs.length > 0) {
                 // Throw an error if the document already exists
-                throw new Error(`Document with answerDocId ${transcriptionData.answerDocId}, userDocId ${transcriptionData.userDocId}, and taskId ${transcriptionData.taskId} already exists.`);
+                throw new Error(`Document with answersDocId ${transcriptionData.answersDocId}, userDocId ${transcriptionData.userDocId}, and taskId ${transcriptionData.taskId} already exists.`);
             } else {
                 const now = serverTimestamp();
                 transcription.createdAt = now;
@@ -126,15 +126,15 @@ export default class TranscriptionController extends Controller {
     /**
      * Retrieves a Transcription document from Firestore based on the answer document ID and user document ID and task ID.
      * 
-     * @param {string} answerDocId - The Answer document ID.
+     * @param {string} answersDocId - The Answer document ID.
      * @param {string} userDocId - The User document ID.
      * @param {string} taskId - The Task document ID.
      * @returns {Promise<Transcription[]|null>} - Returns a Promise that resolves to an array of Transcription instances if documents exist, or null if none are found.
      * @throws {Error} - Throws an error if there is an issue retrieving the document from Firestore.
      */
-    async getByAnswerDocIdandUserDocIdandTaskId(answerDocId, userDocId, taskId) {
+    async getByAnswersDocIdandUserDocIdandTaskId(answersDocId, userDocId, taskId) {
         const conditions = [
-            { field: 'answerDocId', condition: '==', value: answerDocId },
+            { field: 'answersDocId', condition: '==', value: answersDocId },
             { field: 'userDocId', condition: '==', value: userDocId },
             { field: 'taskId', condition: '==', value: taskId }
         ];

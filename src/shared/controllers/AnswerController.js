@@ -43,7 +43,7 @@ export default class AnswerController extends Controller {
     return userController.update(userToUpdate.id, userToUpdate.toFirestore())
   }
 
-  async saveTestAnswer(payload, answerDocId, testType) {
+  async saveTestAnswer(payload, answersDocId, testType) {
     payload.lastUpdate = Date.now()
 
 
@@ -57,7 +57,7 @@ export default class AnswerController extends Controller {
     } else if (testType === STUDY_TYPES.USER) {
       if (!payload.userDocId) {
 
-        const taskAnswer = (await this.getAnswerById(answerDocId)).taskAnswers; // get taskAnswers
+        const taskAnswer = (await this.getAnswerById(answersDocId)).taskAnswers; // get taskAnswers
 
         const taskAnswerCount = Object.keys(taskAnswer || {}).length; // get number of taskAnswers 
 
@@ -69,28 +69,28 @@ export default class AnswerController extends Controller {
     }
     console.log("fieldToUpdate ->", fieldToUpdate);
 
-    await super.update(COLLECTION, answerDocId, fieldToUpdate)
+    await super.update(COLLECTION, answersDocId, fieldToUpdate)
   }
 
-  async updateTaskAnswer(payload, answerDocId) {
+  async updateTaskAnswer(payload, answersDocId) {
     const fieldPath = `taskAnswers.${payload.userDocId}`;
     const data = new UserStudyEvaluatorAnswer({
       ...payload,
       lastUpdate: Date.now(),
     });
     console.log("data:", data)
-    await super.update(COLLECTION, answerDocId, {
+    await super.update(COLLECTION, answersDocId, {
       [fieldPath]: data.toFirestore(),
     });
   }
 
-    async updateTaskTranscriptionMeta({ answerDocId, userDocId, taskId, latestId, inc = 1 }) {
+  async updateTaskTranscriptionMeta({ answersDocId, userDocId, taskId, latestId, inc = 1 }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
       [`${base}.latestTranscriptionDocId`]: latestId,
       [`${base}.transcriptionsCount`]: increment(inc)
     }
-    return super.update(COLLECTION, answerDocId, update)
+    return super.update(COLLECTION, answersDocId, update)
   }
 }

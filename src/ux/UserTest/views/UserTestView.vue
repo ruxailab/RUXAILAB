@@ -458,7 +458,7 @@ const saveAnswer = async () => {
     if (!user.value) {
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
-        answerDocId: test.value.answersDocId,
+        answersDocId: test.value.answersDocId,
         testType: test.value.testType,
       });
     } else {
@@ -478,7 +478,7 @@ const saveAnswer = async () => {
 
       await store.dispatch('saveTestAnswer', {
         data: currentUserTestAnswer.value,
-        answerDocId: test.value.answersDocId,
+        answersDocId: test.value.answersDocId,
         testType: test.value.testType,
       })
     }
