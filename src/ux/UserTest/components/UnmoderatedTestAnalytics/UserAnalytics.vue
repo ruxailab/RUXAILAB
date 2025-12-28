@@ -4,13 +4,14 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre" class="flex-grow-1" />
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
+          variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{
+          $t('analytics.search') }}</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
-          @click="resetFilters">Reset</v-btn>
+          @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
         <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
-          :title="showFilters ? 'Ocultar filtros' : 'Mostrar filtros'" @click="toggleFilters">
+          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
       </div>
@@ -73,7 +74,8 @@
               {{ item[`task_${i}`]?.completed ? $t('analytics.completed') : $t('analytics.notCompleted') }}
             </v-chip>
             <span class="text-caption" :class="{ 'text-grey-500': !item[`task_${i}`]?.timeSeconds }">
-              {{ $t('analytics.timeTaken') }}: {{ item[`task_${i}`]?.timeSeconds ? formatTime(item[`task_${i}`].timeSeconds) : '-' }}
+              {{ $t('analytics.timeTaken') }}: {{ item[`task_${i}`]?.timeSeconds ?
+                formatTime(item[`task_${i}`].timeSeconds) : '-' }}
             </span>
           </div>
         </template>
@@ -350,13 +352,13 @@ const filterDefinitions = computed(() => {
     if (isCategorical && baseItems.length) {
       // Insertar 'Todos' al inicio
       if (!baseItems.find(it => it.value === ALL_VALUE)) {
-        baseItems.unshift({ title: 'Todos', value: ALL_VALUE });
+        baseItems.unshift({ title: t('analytics.all'), value: ALL_VALUE });
       }
     }
 
     return {
       index: idx,
-      title: q.title || q.question || `Pregunta ${idx + 1}`,
+      title: q.title || q.question || t('analytics.question', { number: idx + 1 }),
       options,
       isCategorical,
       items: baseItems
