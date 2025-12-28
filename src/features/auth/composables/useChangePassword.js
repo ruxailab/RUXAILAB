@@ -1,5 +1,4 @@
 import { ref, computed } from 'vue';
-import { useToast } from 'vue-toastification';
 import {
     getAuth,
     updatePassword,
@@ -9,10 +8,9 @@ import {
     GoogleAuthProvider,
 } from 'firebase/auth';
 import i18n from '@/app/plugins/i18n';
+import { showError, showSuccess } from '../../../shared/utils/toast';
 
 export function useChangePassword() {
-    const toast = useToast();
-
     const currentPassword = ref('');
     const newPassword = ref('');
     const confirmPassword = ref('');
@@ -89,7 +87,7 @@ export function useChangePassword() {
 
             // Update password
             await updatePassword(user, newPassword.value);
-            toast.success(i18n.global.t('profile.passwordChangedSuccess'));
+            showSuccess('profile.passwordChangedSuccess');
             resetForm();
             return true;
         } catch (error) {
@@ -97,13 +95,13 @@ export function useChangePassword() {
 
             // Handle specific Firebase auth errors
             if (error.code === 'auth/wrong-password') {
-                toast.error(i18n.global.t('profile.wrongCurrentPassword'));
+                showError('profile.wrongCurrentPassword');
             } else if (error.code === 'auth/requires-recent-login') {
-                toast.error(i18n.global.t('profile.recentLoginRequired'));
+                showError('profile.recentLoginRequired');
             } else if (error.code === 'auth/weak-password') {
-                toast.error(i18n.global.t('profile.weakPassword'));
+                showError('profile.weakPassword');
             } else {
-                toast.error(i18n.global.t('profile.passwordChangeFailed'));
+                showError('profile.passwordChangeFailed');
             }
             return false;
         }

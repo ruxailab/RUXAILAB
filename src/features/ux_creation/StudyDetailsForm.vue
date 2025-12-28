@@ -191,7 +191,6 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
@@ -199,10 +198,10 @@ import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
 import { getMethodManagerView, instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
+import { showError, showWarning } from '@/shared/utils/toast'
 
 const router = useRouter();
 const store = useStore();
-const toast = useToast();
 const { t } = useI18n();
 
 const test = ref({
@@ -231,15 +230,15 @@ const steps = computed(() => [
 
 const validate = () => {
   if (!test.value.title) {
-    toast.warning(t('studyCreation.details.validation.enterTitle'));
+    showWarning('studyCreation.details.validation.enterTitle');
     return;
   }
   if (test.value.title.length > 200) {
-    toast.warning(t('studyCreation.details.validation.max200Characters'));
+    showWarning('studyCreation.details.validation.max200Characters');
     return;
   }
   if (test.value.description.length > 600) {
-    toast.warning(t('studyCreation.details.validation.max600Characters'));
+    showWarning('studyCreation.details.validation.max600Characters');
     return;
   }
   handleTestType();
@@ -336,7 +335,7 @@ const submitAccessibility = async () => {
     }
   } catch (error) {
     isLoading.value = false;
-    toast.error(error.message);
+    showError(error.message);
   }
 };
 
