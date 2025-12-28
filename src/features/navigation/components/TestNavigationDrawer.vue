@@ -78,7 +78,6 @@
 
 <script setup>
 import { computed } from 'vue';
-import { getFilteredTestItems } from '@/features/dashboard';
 
 // Props
 const props = defineProps({
