@@ -3,9 +3,10 @@
     <v-main class="ma-5">
       <Snackbar />
 
-      <LogoLoading
-        v-if="loading"
+      <Loading
+        :model-value="loading"
         :text="loadingText || $t('common.loading')"
+        type="logo"
         />
 
       <!-- Main Container -->
@@ -52,7 +53,7 @@
 
 <script setup>
 import Snackbar from '@/shared/components/Snackbar';
-import LogoLoading from '@/shared/components/LogoLoading.vue';
+import Loading from '@/shared/components/Loading.vue';
 
 defineProps({
   title: {

@@ -1,6 +1,8 @@
 <template>
   <PageWrapper
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
+    :loading="loading"
+    :loading-text="`Loading ${$t('HeuristicsCooperators.title.cooperators')}`"
   >
     <!-- Actions Slot -->
     <template

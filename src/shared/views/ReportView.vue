@@ -2,6 +2,8 @@
   <PageWrapper
     :title="showIntroView ? $t('HeuristicsReport.titles.reports_dashboard') : ''"
     :side-gap="true"
+    :loading="loading"
+    :loading-text="`Loading ${$t('HeuristicsReport.titles.reports_dashboard')}`"
   >
     <v-dialog
       v-model="dialog"
