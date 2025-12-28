@@ -10,6 +10,60 @@ import {
   getDownloadURL
 } from 'firebase/storage'
 
+// Helper function moved outside to avoid deep nesting
+async function compressImage(file, maxWidth, quality) {
+  const dataUrl = await fileToDataURL(file)
+  const img = await loadImage(dataUrl)
+  const blob = await drawImageToBlob(img, maxWidth, quality)
+  return new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() })
+}
+
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = (e) => resolve(e.target.result)
+    reader.onerror = () => reject(new Error('FileReader failed'))
+    reader.readAsDataURL(file)
+  })
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error('Image load failed'))
+    img.src = src
+  })
+}
+
+function drawImageToBlob(img, maxWidth, quality) {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas')
+    let { width, height } = img
+
+    if (width > maxWidth) {
+      height = (height * maxWidth) / width
+      width = maxWidth
+    }
+
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+    ctx.drawImage(img, 0, 0, width, height)
+
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob)
+        else reject(new Error('Canvas to Blob conversion failed'))
+      },
+      'image/jpeg',
+      quality
+    )
+  })
+}
+
 export function useProfile() {
   const { t } = useI18n()
   const toast = useToast()
@@ -58,13 +112,7 @@ export function useProfile() {
       const db = getFirestore()
       const userDocRef = doc(db, 'users', user.uid)
 
-      await updateDoc(userDocRef, {
-        username: profileData.username,
-        contactNo: profileData.contactNo,
-        country: profileData.country,
-        profileImage: profileData.profileImage
-      })
-
+      await updateDoc(userDocRef, { ...profileData })
       userprofile.value = { ...profileData }
 
       toast.success(t('profile.profileUpdatedSuccess'))
@@ -83,12 +131,8 @@ export function useProfile() {
       if (!user) throw new Error(t('profile.noUserSignedIn'))
 
       const compressedFile = await compressImage(file, 300, 0.6)
-
       const storage = getStorage()
-      const storageReference = storageRef(
-        storage,
-        `profileImages/${user.uid}`
-      )
+      const storageReference = storageRef(storage, `profileImages/${user.uid}`)
 
       await uploadBytes(storageReference, compressedFile)
       return await getDownloadURL(storageReference)
@@ -97,59 +141,6 @@ export function useProfile() {
       toast.error(t('profile.profileImageUploadFailed'))
       return null
     }
-  }
-
-  const compressImage = (file, maxWidth, quality) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-
-      reader.onload = (event) => {
-        const img = new Image()
-        img.src = event.target.result
-
-        img.onload = () => {
-          const canvas = document.createElement('canvas')
-          let width = img.width
-          let height = img.height
-
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width
-            width = maxWidth
-          }
-
-          canvas.width = width
-          canvas.height = height
-
-          const ctx = canvas.getContext('2d')
-          ctx.imageSmoothingEnabled = true
-          ctx.imageSmoothingQuality = 'high'
-          ctx.drawImage(img, 0, 0, width, height)
-
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) {
-                reject(new Error('Image compression failed'))
-                return
-              }
-
-              resolve(
-                new File([blob], file.name, {
-                  type: 'image/jpeg',
-                  lastModified: Date.now()
-                })
-              )
-            },
-            'image/jpeg',
-            quality
-          )
-        }
-
-        img.onerror = () => reject(new Error('Image load failed'))
-      }
-
-      reader.onerror = () => reject(new Error('FileReader failed'))
-    })
   }
 
   return {
