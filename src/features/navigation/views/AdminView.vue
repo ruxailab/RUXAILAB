@@ -45,6 +45,10 @@
           <TemplatesSection />
         </div>
 
+        <div v-if="activeSection === 'storage'">
+          <StorageSection />
+        </div>
+
         <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
           <CommunityStudies />
         </div>
@@ -87,6 +91,7 @@ import TemplatesSection from '../components/navbarSections/TemplatesSection.vue'
 import StudiesSection from '../components/navbarSections/StudiesSection.vue';
 import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue';
 import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue';
+import StorageSection from '../components/navbarSections/StorageSection.vue';
 
 // Utilities and constants
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
@@ -112,6 +117,7 @@ const currentPageTitle = computed(() => {
     case 'studies': return 'Studies';
     case 'sessions': return 'Sessions';
     case 'templates': return 'Templates';
+    case 'storage': return 'Storage';
     case 'notifications': return 'Notifications';
     case 'profile': return 'Profile';
     case 'community':
@@ -206,6 +212,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
     case 'studies': await getMyPersonalTests(); break;
     case 'sessions': filterModeratedSessions(); break;
     case 'templates': await getMyTemplates(); break;
+    case 'storage': await getMyPersonalTests(); break;
     case 'community':
       if (sub === 'community-studies') await getPublicStudies();
       else if (sub === 'community-templates') await getPublicTemplates();
