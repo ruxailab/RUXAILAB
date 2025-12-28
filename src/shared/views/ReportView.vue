@@ -339,7 +339,7 @@ const unhideReport = async (item) => {
         ...payload,
         hidden: !item.hidden,
       }),
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
     });
   } catch (error) {
     console.error('Error saving answer:', error.message);

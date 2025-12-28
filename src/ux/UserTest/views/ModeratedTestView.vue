@@ -511,12 +511,12 @@ const saveAnswer = async () => {
 
     console.log('ANSWER =>', {
       data: currentUserTestAnswer.value,
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     });
   } catch (error) {
