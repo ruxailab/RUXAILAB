@@ -75,7 +75,7 @@ export default class TranscriptionController extends Controller {
             const conditions = [
                 { field: 'answersDocId', condition: '==', value: transcriptionData.answersDocId },
                 { field: 'userDocId', condition: '==', value: transcriptionData.userDocId },
-                { field: 'task Id', condition: '==', value: transcriptionData.taskId }
+                { field: 'taskId', condition: '==', value: transcriptionData.taskId }
             ];
             const result = await super.queryWithMultipleConditions(COLLECTION, conditions);
             if (result.docs.length > 0) {
