@@ -181,7 +181,8 @@
 
           <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER"
             ref="taskStepComponent" :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex"
-            :test-id="testId" v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
+            :test-id="testId" :user-doc-id="user?.id || anonymousUserDocId"
+            v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
@@ -277,12 +278,12 @@ const noExistUser = ref(true);
 const taskIndex = ref(0);
 const preTestIndex = ref(null);
 const items = ref([]);
-const fab = ref(false);
 const dialog = ref(false);
 const allTasksCompleted = ref(false);
 const isLoading = ref(false);
 const isVisualizerVisible = ref(false);
 const doneTaskDisabled = ref(false);
+const anonymousUserDocId = ref(null);
 
 const rightView = ref(null);
 const videoRecorder = ref(null);
@@ -296,7 +297,6 @@ const timerComponent = computed(() => {
 
 const isTracking = ref(false)
 const isRecording = ref(false)
-const irisData = ref([])
 const eyeCalibrationStepDone = ref(false)
 const calibrationCompleted = ref(false)
 const calibrationInProgress = ref(false)
@@ -317,7 +317,6 @@ const user = computed(() => {
 });
 
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer || {});
-const showSaveBtn = computed(() => !localTestAnswer.submitted);
 
 const hasEyeTracking = computed(() =>
   test.value?.testStructure?.userTasks?.some(task => task.hasEye)
@@ -449,11 +448,11 @@ const saveAnswer = async () => {
     if (user.value && user.value?.email) {
       localTestAnswer.userDocId = user.value.id;
       localTestAnswer.invited = true;
+    } else if (!user.value && anonymousUserDocId.value) {
+      localTestAnswer.userDocId = anonymousUserDocId.value;
+      console.log('Using stored anonymousUserDocId:', anonymousUserDocId.value);
     }
-    if (!user.value) {
-      localTestAnswer.userDocId = nanoid(16);
-      console.log('Generated userDocId for anonymous user:', localTestAnswer.userDocId);
-    }
+
     console.log('Saving answer to Firestore...');
     if (!user.value) {
       await store.dispatch('saveTestAnswer', {
@@ -756,6 +755,13 @@ const calculateProgress = () => {
   }
 };
 
+const initializeAnonymousUser = () => {
+  if (!user.value && !anonymousUserDocId.value) {
+    anonymousUserDocId.value = nanoid(16);
+    console.log('Generated anonymousUserDocId:', anonymousUserDocId.value);
+  }
+};
+
 const setTest = async () => {
   try {
     logined.value = true;
@@ -789,6 +795,7 @@ const setTest = async () => {
     await mappingSteps();
     await autoComplete();
     localTestAnswer.progress = calculateProgress();
+    initializeAnonymousUser();
   } catch (error) {
     console.error('Error setting test:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to load test data. Please try again.' });
