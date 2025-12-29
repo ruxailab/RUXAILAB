@@ -20,24 +20,42 @@ export default {
       return state.mediaUrls
     },
     testAnswerDocument(state, rootState) {
-      if (rootState.test) {
+      if (!state.testAnswerDocument) {
+        return null
+      }
+
+      // Return a transformed copy to avoid mutating state inside getter
+      if (rootState.test && state.testAnswerDocument.heuristicAnswers) {
         const testOptions = rootState.test.testOptions
 
-        if (state.testAnswerDocument && state.testAnswerDocument.heuristicAnswers) {
-          for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
-            value.heuristicQuestions.forEach(heuristic => {
-              heuristic.heuristicQuestions.forEach(question => {
-                question.heuristicAnswer = question.heuristicAnswer?.text ? question.heuristicAnswer : {
-                  text: testOptions.find(op => op.value === question.heuristicAnswer)?.text ?? "", value: question.heuristicAnswer,
-                }
-              })
-            })
+        // Create a shallow copy with transformed heuristicAnswers
+        const transformedDoc = {
+          ...state.testAnswerDocument,
+          heuristicAnswers: {}
+        }
+
+        for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
+          transformedDoc.heuristicAnswers[key] = {
+            ...value,
+            heuristicQuestions: value.heuristicQuestions.map(heuristic => ({
+              ...heuristic,
+              heuristicQuestions: heuristic.heuristicQuestions.map(question => ({
+                ...question,
+                heuristicAnswer: question.heuristicAnswer?.text
+                  ? question.heuristicAnswer
+                  : {
+                    text: testOptions?.find(op => op.value === question.heuristicAnswer)?.text ?? "",
+                    value: question.heuristicAnswer,
+                  }
+              }))
+            }))
           }
         }
+
+        return transformedDoc
       }
 
       return state.testAnswerDocument
-      // return {}
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
@@ -163,11 +181,11 @@ export default {
       if (!currentTest || !currentTest.answersDocId) {
         return console.log('No current test or answersDocId')
       }
-      const currentAnswerDocId = currentTest.answersDocId
+      const currentAnswersDocId = currentTest.answersDocId
       commit('setLoading', true)
       try {
         const answerDoc = await answerController.getAnswerById(
-          currentAnswerDocId,
+          currentAnswersDocId,
         )
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
@@ -206,7 +224,7 @@ export default {
       try {
         await answerController.saveTestAnswer(
           payload.data,
-          payload.answerDocId,
+          payload.answersDocId,
           payload.testType,
         )
       } catch (e) {
@@ -216,10 +234,10 @@ export default {
         commit('setLoading', false)
       }
     },
-    async updateTaskAnswer({ commit }, { payload, answerDocId }) {
+    async updateTaskAnswer({ commit }, { payload, answersDocId }) {
       commit('setLoading', true)
       try {
-        await answerController.updateTaskAnswer(payload, answerDocId);
+        await answerController.updateTaskAnswer(payload, answersDocId);
       } catch (e) {
         console.error('Error in save test answer', e)
       } finally {

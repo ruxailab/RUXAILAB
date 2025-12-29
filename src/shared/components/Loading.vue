@@ -30,7 +30,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-import logo from '@/assets/ruxailab_logotip_Mesa_de_trabajo_1_copia_11.png' 
+import logo from '@/assets/logo_small_blue.png' 
 
 const props = defineProps({
   type: {

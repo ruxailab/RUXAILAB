@@ -182,12 +182,12 @@
 import { ref, computed, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
+import { showSuccess, showError } from '@/shared/utils/toast'
+
 
 const emit = defineEmits(['change']);
 const store = useStore();
 const { t } = useI18n();
-const toast = useToast();
 
 const tabs = ref(0);
 const group = ref({});
@@ -220,10 +220,10 @@ const updateDatas = () => {
   try {
     store.dispatch('setTestWeights', { ...group.value });
     emit('change');
-    toast.success(t('HeuristicsWeightsTable.messages.weightsSaved'));
+    showSuccess('HeuristicsWeightsTable.messages.weightsSaved');
   } catch (error) {
     console.error('Error saving weights:', error);
-    toast.error(t('HeuristicsWeightsTable.errors.failedToSaveWeights'));
+    showError('HeuristicsWeightsTable.errors.failedToSaveWeights');
   }
 };
 

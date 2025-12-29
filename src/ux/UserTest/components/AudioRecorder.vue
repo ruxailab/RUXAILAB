@@ -144,13 +144,15 @@ const startAudioRecording = async () => {
         url: recordedAudio.value
       });
 
-      audioStream.value.getTracks().forEach((track) => track.stop())
-      audioStream.value = null
+  if (audioStream.value) {
+    audioStream.value.getTracks().forEach((track) => track.stop())
+    audioStream.value = null
+  }
 
-      emit('recordingStarted', false)
-      emit('stopShowLoading')
-      recordingAudio.value = false
-    }
+  emit('recordingStarted', false)
+  emit('stopShowLoading')
+  recordingAudio.value = false
+}
 
     mediaRecorder.value.local.start()
 
@@ -197,9 +199,17 @@ const startAudioRecording = async () => {
 
 const stopAudioRecording = () => {
   if (!recordingAudio.value) return
-  mediaRecorder.value.local.stop()
-  mediaRecorder.value.remote?.stop()
+
+  if (mediaRecorder.value?.local && mediaRecorder.value.local.state !== "inactive") {
+    mediaRecorder.value.local.stop()
+  }
+
+  if (mediaRecorder.value?.remote && mediaRecorder.value.remote.state !== "inactive") {
+    mediaRecorder.value.remote.stop()
+  }
 }
+
+
 
 defineExpose({ startAudioRecording, stopAudioRecording })
 </script>

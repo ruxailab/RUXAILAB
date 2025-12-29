@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="dashboard-container"
-  >
+  <v-container fluid class="dashboard-container">
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
@@ -14,28 +11,16 @@
     </div>
 
     <!-- Stats Cards Row -->
-    <StatsCards
-      :total-studies="totalStudies"
-      :used-storage="usedStorage"
-      :total-participants="totalParticipants"
-    />
+    <StatsCards :total-studies="totalStudies" :used-storage="usedStorage" :total-participants="totalParticipants" />
 
     <!-- Second Row: Activity Timeline and Active Studies -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="8"
-      >
+      <v-col cols="12" lg="8">
         <div class="component-height">
-          <ActiveStudies 
-            :studies="items"
-          />
+          <ActiveStudies :studies="items" />
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
+      <v-col cols="12" lg="4">
         <div class="component-height">
           <ActivityTimeline />
         </div>
@@ -44,44 +29,29 @@
 
     <!-- Third Row: Upcoming Webinar and Top Methods -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <UpcomingWebinar />
+      <v-col cols="12" lg="4">
+        <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <TopMethods />
+      <v-col cols="12" lg="4">
+        <TopMethods :methodsData="topMethodsData" />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <NextSession  :next-session="nextSession" />
+      <v-col cols="12" lg="4">
+        <NextSession :next-session="nextSession" />
       </v-col>
     </v-row>
 
     <!-- Fourth Row: Blog Posts and Next Session -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <BlogPosts />
       </v-col>
-      <v-col
-        cols="12"
-        lg="6"
-      />
+      <v-col cols="12" lg="6" />
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -90,6 +60,7 @@ import BlogPosts from '@/features/dashboard/components/BlogPosts.vue'
 import UpcomingWebinar from '@/features/dashboard/components/UpcomingWebinar.vue'
 import TopMethods from '@/features/dashboard/components/TopMethods.vue'
 import NextSession from '@/features/dashboard/components/NextSession.vue'
+import { getMethodDefinition } from '@/shared/constants/methodDefinitions'
 
 const props = defineProps({
   items: {
@@ -106,9 +77,7 @@ const props = defineProps({
 
 const store = useStore()
 
-const totalStudies = ref(0);
 const usedStorage = ref(0);
-const totalParticipants = ref(0);
 const nextSession = ref(null);
 
 const userDisplayName = computed(() => {
@@ -119,6 +88,56 @@ const userDisplayName = computed(() => {
 const userStorageUsage = computed(() => {
   const user = store.getters.user;
   return user?.storageUsageMB || 0;
+});
+
+const userStudies = computed(() => {
+  const user = store.getters.user;
+  if (!user || !props.items) return [];
+
+  return props.items.filter(
+    (study) => study?.testAdmin?.userDocId === user.id
+  );
+});
+
+const totalStudies = computed(() => userStudies.value.length);
+
+const totalParticipants = computed(() => {
+  return userStudies.value.flatMap((s) => s.cooperators || []).length;
+});
+
+const upcomingWebinar = computed(() => store.getters['Dashboard/upcomingWebinar']);
+
+const topMethodsData = computed(() => {
+  const methodCounts = {};
+
+  userStudies.value.forEach(study => {
+    const key = `${study.testType}|${study.subType || ''}`;
+
+    if (!methodCounts[key]) {
+      const def = getMethodDefinition(study.testType, study.subType);
+      if (def) {
+        methodCounts[key] = {
+          id: key,
+          count: 0,
+          name: def.nameEn,
+          type: def.name,
+          icon: def.icon,
+          color: def.color,
+          bgColor: def.color
+        };
+      }
+    }
+
+    if (methodCounts[key]) {
+      methodCounts[key].count++;
+    }
+  });
+  return Object.values(methodCounts)
+    .sort((a, b) => b.count - a.count)
+    .map(m => ({
+      ...m,
+      usage: m.count.toString()
+    }));
 });
 
 
@@ -152,29 +171,9 @@ watch(
   { immediate: true }
 );
 
-watch(
-  () => props.items,
-  (newVal) => {
-    const user = store.getters.user;
-    if (!user || !newVal) {
-      totalStudies.value = 0;
-      totalParticipants.value = 0;
-      return;
-    }
-    // Filters only the studies created by the logged-in user
-    const userStudies = newVal.filter(
-      (study) => study?.testAdmin?.userDocId === user.id
-    );
-
-    // Updates total studies
-    totalStudies.value = userStudies.length;
-
-    // Counts the total unique participants (cooperators)
-    const participants = userStudies.flatMap((s) => s.cooperators || []);
-    totalParticipants.value = participants.length;
-  },
-  { immediate: true }
-);
+onMounted(() => {
+  store.dispatch('Dashboard/fetchUpcomingWebinar');
+});
 </script>
 
 <style scoped>
@@ -207,7 +206,7 @@ watch(
   .dashboard-container {
     padding: 16px;
   }
-  
+
   .component-height {
     height: auto;
     min-height: 400px;
