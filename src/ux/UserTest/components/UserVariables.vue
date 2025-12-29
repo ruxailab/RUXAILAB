@@ -157,15 +157,19 @@
                     </v-col>
                     <v-col
                       cols="12"
-                      sm="1"
-                      class="text-right"
+                      sm="auto"
+                      class="d-flex justify-end align-center"
                     >
                       <v-btn
                         icon
                         color="error"
+                        class="delete-btn"
+                        :disabled="isSaving"
                         @click="deleteItem(i)"
                       >
-                        <v-icon>mdi-trash-can-outline</v-icon>
+                        <v-icon size="20">
+                          mdi-trash-can-outline
+                        </v-icon>
                       </v-btn>
                     </v-col>
                   </v-row>
@@ -431,6 +435,15 @@ onMounted(() => {
   padding: 8px;
 }
 
+.delete-btn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 600px) {
   .checkbox-container {
     flex: 0 0 100%;
@@ -438,6 +451,10 @@ onMounted(() => {
 
   .v-row:not(.align-center) {
     flex-direction: column;
+  }
+
+  .delete-btn {
+    margin-top: 8px;
   }
 }
 </style>

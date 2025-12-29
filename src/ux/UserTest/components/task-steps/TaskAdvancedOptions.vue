@@ -20,7 +20,7 @@
             </v-icon>
           </div>
           <div class="flex-grow-1">
-            <div class="d-flex justify-space-between align-center">
+            <div class="option-content">
               <div class="flex-grow-1 mr-4">
                 <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.eyeTracker') }}</h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
@@ -52,7 +52,7 @@
             </v-icon>
           </div>
           <div class="flex-grow-1">
-            <div class="d-flex justify-space-between align-center">
+            <div class="option-content">
               <div class="flex-grow-1 mr-4">
                 <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.screenRecord') }}</h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
@@ -84,7 +84,7 @@
             </v-icon>
           </div>
           <div class="flex-grow-1">
-            <div class="d-flex justify-space-between align-center">
+            <div class="option-content">
               <div class="flex-grow-1 mr-4">
                 <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.camera') }}</h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
@@ -116,7 +116,7 @@
             </v-icon>
           </div>
           <div class="flex-grow-1">
-            <div class="d-flex justify-space-between align-center">
+            <div class="option-content">
               <div class="flex-grow-1 mr-4">
                 <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.audioRecord') }}</h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
@@ -255,7 +255,6 @@ watch(
   min-height: 60px;
   background: rgba(var(--v-theme-primary), 0.1);
   border-radius: 12px;
-  transition: background-color 0.2s ease;
   flex-shrink: 0;
 }
 
@@ -266,6 +265,19 @@ watch(
   min-height: 32px !important;
 }
 
+.option-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Allow text to shrink properly */
+.option-content > .flex-grow-1 {
+  min-width: 0;
+}
+
+/* Switch container */
 .switch-container {
   flex-shrink: 0;
   min-width: 60px;
@@ -274,36 +286,54 @@ watch(
   align-items: center;
 }
 
-.summary-card {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%);
-  border: 1px solid rgba(var(--v-theme-primary), 0.2);
+@media (max-width: 1024px) and (min-width: 600px) {
+  .option-content {
+    flex-wrap: wrap;          /* allow wrapping */
+    align-items: flex-start;
+  }
+
+  .switch-container {
+    width: 100%;              /* move switch to next line */
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
 }
 
-/* Responsive adjustments */
 @media (min-width: 768px) {
   .options-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (max-width: 768px) {
-  .step-header {
-    padding: 16px;
+@media (max-width: 600px) {
+  .option-content {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
+
+  .switch-container {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+
   .option-icon {
     width: 50px;
     height: 50px;
     min-width: 50px;
     min-height: 50px;
   }
-  
+
   .option-icon .v-icon {
     width: 24px !important;
     height: 24px !important;
     min-width: 24px !important;
     min-height: 24px !important;
     font-size: 24px !important;
+  }
+
+  .step-header {
+    padding: 16px;
   }
 }
 </style>
