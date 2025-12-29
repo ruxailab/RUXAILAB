@@ -1,5 +1,3 @@
-import AnswerController from '@/shared/controllers/AnswerController'
-
 jest.mock('firebase/firestore', () => ({
     doc: jest.fn(),
     updateDoc: jest.fn(),
@@ -36,6 +34,8 @@ jest.mock('@/ux/UserTest/models/UserStudyEvaluatorAnswer', () => {
         toFirestore: jest.fn().mockReturnValue(data)
     }))
 })
+
+const AnswerController = require('@/shared/controllers/AnswerController').default
 
 describe('AnswerController', () => {
     let answerController
@@ -112,7 +112,7 @@ describe('AnswerController', () => {
                 .mockResolvedValue()
 
             await answerController.updateTaskTranscriptionMeta({
-                answerDocId: 'answer-123',
+                answersDocId: 'answer-123',
                 userDocId: 'user-456',
                 taskId: 'task-1',
                 latestId: 'transcription-789',
