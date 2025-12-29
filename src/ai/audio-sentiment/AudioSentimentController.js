@@ -27,17 +27,17 @@ export default class AudioSentimentController extends Controller {
 
     /**
      * Creates a new AudioSentiment document in the Firestore collection.
-     * If a document with the same answerDocId and userDocId already exists, an error is thrown.
+     * If a document with the same answersDocId and userDocId already exists, an error is thrown.
      * 
      * @param {Object} payload - The payload for creating a new AudioSentiment document.
-     * @param {string} payload.answerDocId - The Answer document ID.
+     * @param {string} payload.answersDocId - The Answer document ID.
      * @param {string} payload.userDocId - The User document ID.
      * @returns {Promise<AudioSentiment>} - Returns a Promise that resolves to the newly created AudioSentiment instance.
-     * @throws {Error} - Throws an error if a document with the same answerDocId and userDocId already exists or if there is an issue creating the document.
+     * @throws {Error} - Throws an error if a document with the same answersDocId and userDocId already exists or if there is an issue creating the document.
      */
     async create(payload) {
         const audioSentiment = new AudioSentiment({
-            answerDocId: payload.answerDocId,
+            answersDocId: payload.answersDocId,
             userDocId: payload.userDocId,
             regionsCount: 0,
             regions: [],
@@ -46,13 +46,13 @@ export default class AudioSentimentController extends Controller {
         try {
             // Check if the document already exists
             const conditions = [
-                { field: 'answerDocId', condition: '==', value: payload.answerDocId },
+                { field: 'answersDocId', condition: '==', value: payload.answersDocId },
                 { field: 'userDocId', condition: '==', value: payload.userDocId }
             ];
             const result = await super.queryWithMultipleConditions(COLLECTION, conditions);
             if (result.docs.length > 0) {
                 // Throw an error if the document already exists
-                throw new Error(`Document with answerDocId ${payload.answerDocId} and userDocId ${payload.userDocId} already exists.`);
+                throw new Error(`Document with answersDocId ${payload.answersDocId} and userDocId ${payload.userDocId} already exists.`);
             } else {
                 // Document does not exist, create it
                 const docRef = await super.create(COLLECTION, audioSentiment);
@@ -98,14 +98,14 @@ export default class AudioSentimentController extends Controller {
     /**
      * Retrieves an AudioSentiment document from Firestore based on the answer document ID and user document ID.
      * 
-     * @param {string} answerDocId - The document ID related to the audio answer.
+     * @param {string} answersDocId - The document ID related to the audio answer.
      * @param {string} userDocId - The document ID of the user.
      * @returns {Promise<AudioSentiment|null>} - Returns a Promise that resolves to an instance of AudioSentiment if a matching document is found, or null if no matching document is found.
      * @throws {Error} - Throws an error if there is an issue querying Firestore.
      */
-    async getByAnswerDocIdandUserDocId(answerDocId, userDocId) {
+    async getByAnswersDocIdandUserDocId(answersDocId, userDocId) {
         const conditions = [
-            { field: 'answerDocId', condition: '==', value: answerDocId },
+            { field: 'answersDocId', condition: '==', value: answersDocId },
             { field: 'userDocId', condition: '==', value: userDocId }
         ];
         const result = await super.queryWithMultipleConditions(COLLECTION, conditions);
@@ -136,7 +136,7 @@ export default class AudioSentimentController extends Controller {
      */
     async addSentimentRegion(id, region) {
 
-        `Add a sentiment region to the audio sentiment document with the given answerDocId and userDocId.`
+        `Add a sentiment region to the audio sentiment document with the given answersDocId and userDocId.`
         const audioSentimentDocuemnt = await this.getById(id);
 
         if (audioSentimentDocuemnt == null) {

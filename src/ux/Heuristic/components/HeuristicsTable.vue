@@ -533,13 +533,13 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue';
+import { showError, showWarning } from '@/shared/utils/toast'
+
 
 const emit = defineEmits(['change'])
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
 
 const itemSelect = ref(null)
 const questionSelect = ref(null)
@@ -647,7 +647,7 @@ const moveItemUp = (index) => {
     itemAbove.id = index;
 
     store.dispatch('setHeuristics', newHeuristics);
-    toast.warning(t('HeuristicsTable.messages.changeWeights'));
+    showWarning('HeuristicsTable.messages.changeWeights');
     emit('change');
   }
 }
@@ -665,7 +665,7 @@ const moveItemDown = (index) => {
     itemBelow.id = index;
 
     store.dispatch('setHeuristics', newHeuristics);
-    toast.warning(t('HeuristicsTable.messages.changeWeights'));
+    showWarning('HeuristicsTable.messages.changeWeights');
     emit('change');
   }
 };
@@ -694,7 +694,7 @@ const deleteQuestion = (qIndex) => {
       emit('change');
     }
   } else {
-    toast.warning(t('HeuristicsTable.messages.cantDeleteAllQuestions'))
+    showWarning('HeuristicsTable.messages.cantDeleteAllQuestions')
   }
 }
 
@@ -702,7 +702,7 @@ const editHeuris = (item) => {
   const heuristicIndex = heuristics.value.findIndex(h => h.id === item.id)
   if (heuristicIndex === -1) {
     console.warn('Heuristic not found:', item);
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError(t('HeuristicsTable.errors.invalidHeuristic'));
     return
   }
   itemEdit.value = {
@@ -718,7 +718,7 @@ const editHeuris = (item) => {
 const editQuestions = (item) => {
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
     console.warn('Invalid heuristic for question edit, itemSelect:', itemSelect.value);
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError('HeuristicsTable.errors.invalidHeuristic');
     return;
   }
   itemEdit.value = {
@@ -742,7 +742,7 @@ const editDescription = (desc) => {
 
 const setupQuestion = (heuristicIndex) => {
   if (!heuristics.value[heuristicIndex]) {
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    showError('HeuristicsTable.errors.invalidHeuristic')
     return
   }
   questionHeuristicIndex.value = heuristicIndex  // remember index
@@ -800,7 +800,7 @@ const closeDialog = (dialogName) => {
 
 const addQuestion = () => {
   if (!newQuestion.value || questionHeuristicIndex.value === null) {
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    showError('HeuristicsTable.errors.invalidHeuristic')
     return
   }
   if (formQuestionRef.value.validate()) {
@@ -830,7 +830,7 @@ const validateEdit = () => {
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
     console.warn('Invalid itemSelect or heuristic not found:', itemSelect.value);
     dialogEdit.value = false;
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError('HeuristicsTable.errors.invalidHeuristic');
     return;
   }
   isProcessing.value = true;
@@ -847,7 +847,7 @@ const validateEdit = () => {
         newHeuristics[itemSelect.value].questions[questionIndex].title = itemEdit.value.titleEdit;
       } else {
         console.warn('Question not found for id:', itemEdit.value.id);
-        toast.error(t('HeuristicsTable.errors.invalidQuestion'));
+        showError('HeuristicsTable.errors.invalidQuestion')
       }
     }
     store.dispatch('setHeuristics', newHeuristics);

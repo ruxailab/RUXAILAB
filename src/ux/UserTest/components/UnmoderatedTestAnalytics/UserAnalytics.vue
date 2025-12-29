@@ -70,10 +70,10 @@
             <v-chip size="x-small" :color="item[`task_${i}`]?.completed ? 'success' : 'error'" variant="tonal"
               class="mb-2 text-uppercase font-weight-medium"
               :prepend-icon="item[`task_${i}`]?.completed ? 'mdi-check-circle' : 'mdi-close-circle'">
-              {{ item[`task_${i}`]?.completed ? 'Completed' : 'Not Completed' }}
+              {{ item[`task_${i}`]?.completed ? $t('analytics.completed') : $t('analytics.notCompleted') }}
             </v-chip>
             <span class="text-caption" :class="{ 'text-grey-500': !item[`task_${i}`]?.timeSeconds }">
-              Time taken: {{ item[`task_${i}`]?.timeSeconds ? formatTime(item[`task_${i}`].timeSeconds) : '-' }}
+              {{ $t('analytics.timeTaken') }}: {{ item[`task_${i}`]?.timeSeconds ? formatTime(item[`task_${i}`].timeSeconds) : '-' }}
             </span>
           </div>
         </template>
@@ -83,14 +83,14 @@
             <div class="d-flex flex-column">
               <div class="d-flex align-center mb-1">
                 <v-chip size="x-small" color="primary" variant="tonal" class="mr-2 font-weight-medium">
-                  Eficacia: {{ item.effectiveness }}%
+                  {{ $t('analytics.effectiveness') }}: {{ item.effectiveness }}%
                 </v-chip>
                 <v-chip size="x-small" color="secondary" variant="tonal" class="font-weight-medium">
-                  Eficiencia: {{ item.efficiency }} t/min
+                  {{ $t('analytics.efficiency') }}: {{ item.efficiency }} t/min
                 </v-chip>
               </div>
               <div class="text-caption text-grey-600">
-                ({{ item.completedCount }}/{{ item.totalTasks }} tareas · {{ formatTime(item.totalTimeSeconds) }} total)
+                ({{ item.completedCount }}/{{ item.totalTasks }} {{ $t('analytics.tasks') }} · {{ formatTime(item.totalTimeSeconds) }} {{ $t('analytics.total') }})
               </div>
 
             </div>
@@ -100,7 +100,7 @@
         <template #item.invited="{ item }">
           <v-chip :color="item.invited ? 'success' : 'grey'" :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
             size="small" variant="tonal">
-            {{ item.invited ? 'Yes' : 'No' }}
+            {{ item.invited ? $t('analytics.yes') : $t('analytics.no') }}
           </v-chip>
         </template>
 
@@ -293,12 +293,17 @@
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import TaskDetailsModal from './TaskDetailsModal.vue';
-import { useToast } from 'vue-toastification';
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
 import SessionAnalytics from '../SessionAnalytics.vue';
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue';
+import {
+  showSuccess,
+  showError
+} from '@/shared/utils/toast'
+import { useI18n } from 'vue-i18n';
 
-const toast = useToast()
+const { t } = useI18n();
+
 
 const store = useStore();
 const test = computed(() => store.getters.test);
@@ -419,11 +424,11 @@ const tableHeaders = computed(() => {
   }));
   return [
     { title: '#', key: 'identifier', sortable: false, width: 60 },
-    { title: 'Usuario', key: 'user', sortable: false },
-    { title: 'Resumen', key: 'tasks', sortable: false },
+    { title: t('analytics.user'), key: 'user', sortable: false },
+    { title: t('analytics.summary'), key: 'tasks', sortable: false },
     ...dynamicTaskHeaders,
-    { title: 'Invitado', key: 'invited', sortable: false, width: 90 },
-    { title: 'Acciones', key: 'actions', sortable: false, width: 150 }
+    { title: t('analytics.invite'), key: 'invited', sortable: false, width: 90 },
+    { title: t('analytics.actions'), key: 'actions', sortable: false, width: 150 }
   ];
 });
 
@@ -522,13 +527,13 @@ const toggleHideSession = async (item) => {
         tasks: { ...payload.tasks },
         hidden: !item.hidden,
       }),
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
     });
-    toast.success("User made hidden successfull")
+    showSuccess("User made hidden successfull")
   } catch (error) {
     console.error('Error saving answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
-    toast.error("Unable to hide user!!")
+    showError("Unable to hide user!!")
   }
 };
 

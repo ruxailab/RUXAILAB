@@ -1,13 +1,16 @@
 import { ref } from 'vue';
 import { useStore } from 'vuex';
-import { useToast } from 'vue-toastification';
+import {
+  showSuccess as toastSuccess,
+  showError as toastError,
+  showWarning as toastWarning
+} from '../utils/toast';
 
 /**
  * Composable for cooperator management operations
  */
 export function useCooperatorActions() {
     const store = useStore();
-    const toast = useToast();
 
     const loading = ref(false);
 
@@ -61,9 +64,9 @@ export function useCooperatorActions() {
             if (ok) {
                 try {
                     await onSuccess(item, newValue);
-                    toast.success('Role updated successfully!');
+                    toastSuccess('Role updated successfully!');
                 } catch (error) {
-                    toast.error('Failed to update role.');
+                    toastError('Failed to update role.');
                     throw error;
                 }
             }
@@ -78,9 +81,9 @@ export function useCooperatorActions() {
         if (ok) {
             try {
                 await onRemove(coop);
-                toast.success('Cooperator removed successfully!');
+                toastSuccess('Cooperator removed successfully!');
             } catch (error) {
-                toast.error('Failed to remove cooperator.');
+                toastError('Failed to remove cooperator.');
                 throw error;
             }
         }
@@ -94,9 +97,9 @@ export function useCooperatorActions() {
         if (ok) {
             try {
                 await onCancel(guest);
-                toast.success('Invitation cancelled successfully!');
+                toastSuccess('Invitation cancelled successfully!');
             } catch (error) {
-                toast.error('Failed to cancel invitation.');
+                toastError('Failed to cancel invitation.');
                 throw error;
             }
         }
@@ -106,21 +109,21 @@ export function useCooperatorActions() {
      * Show success message
      */
     const showSuccess = (message) => {
-        toast.success(message);
+        toastSuccess(message);
     };
 
     /**
      * Show error message
      */
     const showError = (message) => {
-        toast.error(message);
+        toastError(message);
     };
 
     /**
      * Show warning message
      */
     const showWarning = (message) => {
-        toast.warning(message);
+        toastWarning(message);
     };
 
     return {

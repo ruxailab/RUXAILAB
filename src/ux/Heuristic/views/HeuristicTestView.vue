@@ -124,12 +124,22 @@
           >
             {{ test.testDescription }}
           </p>
+          <v-alert
+            v-if="heuristics.length === 0"
+            type="warning"
+            class="mb-6 text-left"
+            variant="tonal"
+            density="compact"
+            icon="mdi-alert"
+          >
+            Configuration Error: This test has no heuristics configured. Please add heuristics to proceed.
+          </v-alert>
           <v-btn
             color="white"
             variant="outlined"
             size="large"
             rounded
-            :disabled="!user"
+            :disabled="!user || heuristics.length === 0"
             @click="startTest()"
           >
             {{ $t('HeuristicsTestView.actions.startTest') }}
@@ -562,7 +572,6 @@ import { ref, computed, watch, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
@@ -570,6 +579,11 @@ import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/shared/components/Snackbar';
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
+import {
+  showSuccess,
+  showError
+} from '@/shared/utils/toast'
+
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -580,8 +594,6 @@ const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
-const toast = useToast()
-
 const logined = ref(null)
 const selected = ref(true)
 const fromlink = ref(null)
@@ -745,7 +757,7 @@ const perHeuristicProgress = (item) => {
 
 const saveAnswer = async () => {
   if (!currentUserTestAnswer.value) {
-    toast.error(t('HeuristicsTestView.errors.noAnswerData'));
+    showError('HeuristicsTestView.errors.noAnswerData');
     return;
   }
   // Ensure all data is up to date before saving
@@ -756,29 +768,33 @@ const saveAnswer = async () => {
   try {
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     });
     toast.success(t('alerts.savedChanges'));
   } catch (error) {
     console.error('Error saving answer:', error);
     toast.error(t('Error saving progress'));
+    showSuccess('HeuristicsTestView.messages.answerSaved');
+  } catch (error) {
+    console.error('Error saving answer:', error);
+    showError('HeuristicsTestView.errors.failedToSaveAnswer');
   }
 };
 
 const submitAnswer = async () => {
   if (!currentUserTestAnswer.value) {
-    toast.error(t('HeuristicsTestView.errors.noAnswerData'));
+    showError('HeuristicsTestView.errors.noAnswerData');
     return;
   }
   currentUserTestAnswer.value.submitted = true;
   try {
     await saveAnswer();
-    toast.success(t('alerts.genericSuccess'));
+    showSuccess('alerts.genericSuccess');
     router.push('/admin');
   } catch (error) {
     console.error('Error submitting answer:', error);
-    toast.error(t('HeuristicsTestView.errors.failedToSubmitAnswer'));
+    showError('HeuristicsTestView.errors.failedToSubmitAnswer');
   }
 };
 
