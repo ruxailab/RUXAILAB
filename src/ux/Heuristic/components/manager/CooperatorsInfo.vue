@@ -3,12 +3,12 @@
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4 clickable-header" @click="navigateToCooperators">
       <v-icon size="24" color="primary" class="header-icon">mdi-account-group</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">Cooperators</v-card-title>
+      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.cooperators') }}</v-card-title>
     </div>
     
     <!-- Total cooperadores -->
     <div class="total-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">Total invited</div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.totalInvited') }}</div>
       <div class="metric-value text-h4 font-weight-bold">{{ totalInvited }}</div>
     </div>
     
@@ -18,7 +18,7 @@
       <div class="metric-item">
         <div class="d-flex align-center mb-2">
           <v-icon size="16" color="success" class="mr-2">mdi-check-circle</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">Accepted</span>
+          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.accepted') }}</span>
         </div>
         <div class="d-flex align-center justify-center">
           <span class="metric-value-secondary text-h5 font-weight-bold text-success mr-2">{{ acceptedCount }}</span>
@@ -30,7 +30,7 @@
       <div class="metric-item">
         <div class="d-flex align-center mb-2">
           <v-icon size="16" color="warning" class="mr-2">mdi-clock-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">Pending</span>
+          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.pending') }}</span>
         </div>
         <div class="d-flex align-center justify-center">
           <span class="metric-value-secondary text-h5 font-weight-bold text-warning mr-2">{{ pendingCount }}</span>

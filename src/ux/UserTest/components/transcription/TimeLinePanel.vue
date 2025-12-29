@@ -3,7 +3,7 @@
     <!---------------------------------------------------------->
     <!-------------------------- Debug ------------------------->
     <!---------------------------------------------------------->
-    <!-- <div>Answer Doc ID: {{ answerDocId }}</div>
+    <!-- <div>Answer Doc ID: {{ answersDocId }}</div>
     <div>User Doc ID: {{ userDocId }}</div>
     <div>Task ID: {{ taskId }}</div> -->
     <!-- <h3>Timeline</h3>
@@ -137,7 +137,7 @@ import { transcribe } from '@/app/services/transcription/TranscriptionService'
 
 // JS props (no types)
 const props = defineProps({
-  answerDocId: { type: String, default: null },
+  answersDocId: { type: String, default: null },
   userDocId: { type: String, default: null },
   taskId: { type: [String, Number], required: true },
   audioUrlEvaluator: { type: String, default: null },
@@ -447,7 +447,7 @@ async function transcribeSession() {
 
     // TODO: Save transcription to backend and get a transcription ID
     const result = await transcriptionController.create({
-      answerDocId: props.answerDocId,
+      answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: props.taskId,
       provider,
@@ -475,7 +475,7 @@ async function transcribeSession() {
 
     // result.id should be the new transcription id
     await answerController.updateTaskTranscriptionMeta({
-      answerDocId: props.answerDocId,
+      answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: props.taskId,
       latestId: result.id,

@@ -1,6 +1,5 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import {
     getAuth,
@@ -9,10 +8,10 @@ import {
     reauthenticateWithPopup,
     GoogleAuthProvider,
 } from 'firebase/auth';
+import { showError, showSuccess } from '../../../shared/utils/toast';
 
 export function useDeleteAccount() {
     const { t } = useI18n();
-    const toast = useToast();
     const store = useStore();
 
     const isDeleting = ref(false);
@@ -22,7 +21,7 @@ export function useDeleteAccount() {
 
     const deleteAccount = async (user) => {
         await store.dispatch('deleteAuth', user.uid);
-        toast.success(t('profile.accountDeletedSuccess'));
+        showSuccess('profile.accountDeletedSuccess');
         await signOut();
     };
 
@@ -55,7 +54,7 @@ export function useDeleteAccount() {
             await deleteAccount(user);
         } catch (error) {
             console.error('Error during account deletion:', error);
-            toast.error(t('profile.accountDeletionFailed'));
+            showError('profile.accountDeletionFailed');
         } finally {
             isDeleting.value = false;
         }
@@ -66,7 +65,7 @@ export function useDeleteAccount() {
         const user = auth.currentUser;
 
         if (!userPassword.value) {
-            toast.error(t('profile.passwordRequired'));
+            showError('profile.passwordRequired');
             return;
         }
 
@@ -77,7 +76,7 @@ export function useDeleteAccount() {
             await deleteAccount(user);
         } catch (error) {
             console.error('Error during account deletion:', error);
-            toast.error(t('profile.accountDeletionFailed'));
+            showError('profile.accountDeletionFailed');
         } finally {
             isDeleting.value = false;
         }

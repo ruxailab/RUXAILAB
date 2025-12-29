@@ -267,7 +267,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -297,12 +297,19 @@ const allItemsValid = computed(() => {
   return items.value.every(item => item.title && item.title.trim())
 })
 
+// to get the correct data source dynamically
+const currentVariables = computed(() => {
+  if (props.type === 'pre-test') {
+    return store.getters.preTest || []
+  } else {
+    return store.getters.postTest || []
+  }
+})
+
 const markDirty = () => {
   isDirty.value = true
   emit('change')
-  if (allItemsValid.value) {
-    emit('update', items.value)
-  }
+  emit('update', items.value)
 }
 
 const showModal = () => {
@@ -396,13 +403,17 @@ const saveState = async () => {
 };
 
 const getVariables = () => {
-  if (props.type === 'pre-test') {
-    items.value = test.value?.testStructure?.preTest ?? []
-  } else if (props.type === 'post-test') {
-    items.value = test.value?.testStructure?.postTest ?? []
-  }
+  items.value = currentVariables.value  ? JSON.parse(JSON.stringify(currentVariables.value)) : []
   emit('update', items.value)
 };
+
+watch(currentVariables, (newVal) => {
+  // Only update if the data is actually different
+  if (JSON.stringify(items.value) !== JSON.stringify(newVal)) {
+    items.value = newVal ? JSON.parse(JSON.stringify(newVal)) : []
+  }
+}, { deep: true })
+
 
 onMounted(() => {
   getVariables()

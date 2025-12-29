@@ -94,7 +94,7 @@
                 <TimelinePanel
                   v-if="tab === 'timeline'"
                   :key="`timeline-${selectedUserID}:${selectedTaskId}`"
-                  :answer-doc-id="testDocument?.answersDocId"
+                  :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
                   :audio-url-evaluator="selectedTask?.audioRecordURL"
@@ -104,7 +104,7 @@
                 <TranscriptionsPanel
                   v-else-if="tab === 'transcriptions'"
                   :key="`transcriptions-${selectedUserID}:${selectedTaskId}`"
-                  :answer-doc-id="testDocument?.answersDocId"
+                  :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
                   :latestTranscriptionId="
@@ -115,7 +115,7 @@
                 <ExportPanel
                   v-else
                   :key="`export-${selectedUserID}:${selectedTaskId}`"
-                  :answer-doc-id="testDocument?.answersDocId"
+                  :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
                 />
@@ -136,7 +136,7 @@
               <TimelinePanel
                 v-if="tab === 'timeline'"
                 :key="`${selectedUserID}:${selectedTaskId}`"
-                :answer-doc-id="testDocument?.answersDocId"
+                :answers-doc-id="testDocument?.answersDocId"
                 :user-doc-id="selectedUserID"
                 :task-id="selectedTaskId"
                 :audio-url-evaluator="selectedTask?.audioRecordURL"
@@ -145,7 +145,7 @@
               <TranscriptionsPanel
                 v-if="tab === 'transcriptions'"
                 :key="`${selectedUserID}:${selectedTaskId}`"
-                :answer-doc-id="testDocument?.answersDocId"
+                :answers-doc-id="testDocument?.answersDocId"
                 :user-doc-id="selectedUserID"
                 :task-id="selectedTaskId"
                 :latestTranscriptionId="selectedTask?.latestTranscriptionDocId"
@@ -153,7 +153,7 @@
               <ExportPanel
                 v-if="tab === 'export'"
                 :key="`${selectedUserID}:${selectedTaskId}`"
-                :answer-doc-id="testDocument?.answersDocId"
+                :answers-doc-id="testDocument?.answersDocId"
                 :user-doc-id="selectedUserID"
                 :task-id="selectedTaskId"
               />

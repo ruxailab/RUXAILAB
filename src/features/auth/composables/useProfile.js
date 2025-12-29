@@ -1,6 +1,5 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import {
     getAuth,
 } from 'firebase/auth';
@@ -11,10 +10,10 @@ import {
     updateDoc,
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { showError, showSuccess } from '../../../shared/utils/toast';
 
 export function useProfile() {
     const { t } = useI18n();
-    const toast = useToast();
 
     const userprofile = ref({
         profileImage: null,
@@ -46,7 +45,7 @@ export function useProfile() {
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
-            toast.error(t('profile.profileLoadFailed'));
+            showError(t('profile.profileLoadFailed'));
         } finally {
             loading.value = false;
         }
@@ -76,12 +75,12 @@ export function useProfile() {
                     profileImage: profileData.profileImage,
                 };
 
-                toast.success(t('profile.profileUpdatedSuccess'));
+                showSuccess('profile.profileUpdatedSuccess');
                 return true;
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            toast.error(t('profile.profileUpdateFailed'));
+            showError('profile.profileUpdateFailed');
             return false;
         }
     };
@@ -123,11 +122,11 @@ export function useProfile() {
             URL.revokeObjectURL(previewUrl);
             userprofile.value.profileImage = downloadURL;
 
-            toast.success(t('profile.profileImageUpdatedSuccess'));
+            showSuccess('profile.profileImageUpdatedSuccess');
             return downloadURL;
         } catch (error) {
             console.error('Error uploading image:', error);
-            toast.error(t('profile.profileImageUploadFailed'));
+            showError('profile.profileImageUploadFailed');
             return null;
         }
     };

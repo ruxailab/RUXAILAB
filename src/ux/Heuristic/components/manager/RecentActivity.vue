@@ -1,21 +1,21 @@
 <template>
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4">
+    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToActivity">
       <v-icon size="24" color="primary" class="header-icon">mdi-timeline-text-outline</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">Actividad Reciente</v-card-title>
+      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.recentActivity') }}</v-card-title>
     </div>
     
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">Actividades (7 días en total)</div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.activities7Days') }}</div>
       <div class="metric-value text-h3 font-weight-bold">{{ recentActivitiesCount }}</div>
       <div class="metric-change text-caption" :class="changeColor">{{ activityChange }}</div>
     </div>
     
     <!-- Información adicional -->
     <div class="additional-info">
-      <div class="info-subtitle text-caption text-grey-darken-1">Última actividad</div>
+      <div class="info-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.lastActivity') }}</div>
       <div class="info-value text-body-2 font-weight-medium">{{ lastActivityTime }}</div>
     </div>
   </v-card>
@@ -24,8 +24,9 @@
 <script setup>
 import { computed } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { es } from 'date-fns/locale' // TODO: Dynamic locale based on i18n
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   test: {
@@ -36,6 +37,7 @@ const props = defineProps({
 
 const emit = defineEmits(['view-all'])
 const router = useRouter()
+const { t } = useI18n()
 
 // Navigate to activity section
 const navigateToActivity = () => {
@@ -54,8 +56,8 @@ const activities = computed(() => {
       if (coop.updateDate) {
         activityList.push({
           id: `coop-${coop.userDocId}`,
-          title: 'Evaluación actualizada',
-          description: `${coop.email} actualizó su progreso`,
+          title: t('Dashboard.cards.evaluationUpdated'),
+          description: `${coop.email} ${t('Dashboard.cards.updatedProgress')}`,
           timeAgo: formatDistanceToNow(new Date(coop.updateDate), { 
             addSuffix: true, 
             locale: es 
@@ -68,9 +70,9 @@ const activities = computed(() => {
       if (coop.invited && !coop.accepted) {
         activityList.push({
           id: `invite-${coop.userDocId}`,
-          title: 'Invitación enviada',
-          description: `Invitación pendiente para ${coop.email}`,
-          timeAgo: 'Pendiente',
+          title: t('Dashboard.cards.invitationSentTitle'),
+          description: `${t('Dashboard.cards.invitationPendingDesc')} ${coop.email}`,
+          timeAgo: t('Dashboard.cards.pendingStatus'),
           color: 'info',
           timestamp: new Date(coop.updateDate || props.test.creationDate)
         })
@@ -97,7 +99,7 @@ const changeColor = computed(() => {
 })
 
 const lastActivityTime = computed(() => {
-  if (activities.value.length === 0) return 'Sin actividad'
+  if (activities.value.length === 0) return t('Dashboard.cards.noActivity')
   const lastActivity = activities.value[0]
   return lastActivity.timeAgo
 })
