@@ -30,7 +30,7 @@
     <!-- Third Row: Upcoming Webinar and Top Methods -->
     <v-row class="mb-6">
       <v-col cols="12" lg="4">
-        <UpcomingWebinar v-if="upcomingWebinarData" :webinar-data="upcomingWebinarData" />
+        <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
       </v-col>
       <v-col cols="12" lg="4">
         <TopMethods :methodsData="topMethodsData" />
@@ -52,7 +52,6 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -78,10 +77,8 @@ const props = defineProps({
 
 const store = useStore()
 
-const controller = new Controller()
 const usedStorage = ref(0);
 const nextSession = ref(null);
-const upcomingWebinarData = ref({});
 
 const userDisplayName = computed(() => {
   const user = store.getters.user;
@@ -107,6 +104,8 @@ const totalStudies = computed(() => userStudies.value.length);
 const totalParticipants = computed(() => {
   return userStudies.value.flatMap((s) => s.cooperators || []).length;
 });
+
+const upcomingWebinar = computed(() => store.getters['Dashboard/upcomingWebinar']);
 
 const topMethodsData = computed(() => {
   const methodCounts = {};
@@ -141,16 +140,6 @@ const topMethodsData = computed(() => {
     }));
 });
 
-const fetchWebinarData = async () => {
-  try {
-    const snap = await controller.readOne('settings', 'upcomingWebinar')
-    if (snap.exists()) {
-      upcomingWebinarData.value = snap.data()
-    }
-  } catch (e) {
-    console.error('Error fetching upcoming webinar data', e)
-  }
-}
 
 watch(
   () => props.sessions,
@@ -183,8 +172,8 @@ watch(
 );
 
 onMounted(() => {
-  fetchWebinarData()
-})
+  store.dispatch('Dashboard/fetchUpcomingWebinar');
+});
 </script>
 
 <style scoped>
