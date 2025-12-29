@@ -496,7 +496,6 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
-  fetchSignInMethodsForEmail,
   reauthenticateWithPopup,
   GoogleAuthProvider,
 } from 'firebase/auth';
@@ -729,9 +728,11 @@ const changePassword = async () => {
 
 const handlerDeleteConfirmText = async (value) => {
   const auth = getAuth();
-  const user = auth.currentUser
-  if (user.providerData.includes(a => a.providerId !== 'google.com')) return deleteStep.value = 2
-
+  const user = auth.currentUser;
+  if (user.providerData.includes(a => a.providerId !== 'google.com')) {
+    deleteStep.value = 2;
+    return;
+  }
   try {
     isDeleting.value = true
     await reauthenticateWithPopup(user, new GoogleAuthProvider())
@@ -780,7 +781,7 @@ const closeDeleteDialog = () => {
 const signOut = async () => {
   try {
     await store.dispatch('logout');
-    window.location.href = '/';
+    globalThis.location.href = '/';
   } catch (error) {
     console.log(error);
   }
