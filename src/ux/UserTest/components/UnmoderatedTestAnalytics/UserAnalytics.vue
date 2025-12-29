@@ -73,7 +73,8 @@
               {{ item[`task_${i}`]?.completed ? $t('analytics.completed') : $t('analytics.notCompleted') }}
             </v-chip>
             <span class="text-caption" :class="{ 'text-grey-500': !item[`task_${i}`]?.timeSeconds }">
-              {{ $t('analytics.timeTaken') }}: {{ item[`task_${i}`]?.timeSeconds ? formatTime(item[`task_${i}`].timeSeconds) : '-' }}
+              {{ $t('analytics.timeTaken') }}: {{ item[`task_${i}`]?.timeSeconds ?
+                formatTime(item[`task_${i}`].timeSeconds) : '-' }}
             </span>
           </div>
         </template>
@@ -90,7 +91,8 @@
                 </v-chip>
               </div>
               <div class="text-caption text-grey-600">
-                ({{ item.completedCount }}/{{ item.totalTasks }} {{ $t('analytics.tasks') }} · {{ formatTime(item.totalTimeSeconds) }} {{ $t('analytics.total') }})
+                ({{ item.completedCount }}/{{ item.totalTasks }} {{ $t('analytics.tasks') }} · {{
+                  formatTime(item.totalTimeSeconds) }} {{ $t('analytics.total') }})
               </div>
 
             </div>
@@ -296,6 +298,8 @@ import TaskDetailsModal from './TaskDetailsModal.vue';
 import { useToast } from 'vue-toastification';
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
 import { useI18n } from 'vue-i18n';
+import SessionAnalytics from '../SessionAnalytics.vue';
+import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue';
 
 const { t } = useI18n();
 
