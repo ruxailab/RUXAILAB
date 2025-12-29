@@ -5,7 +5,7 @@
         <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
         Active Studies Overview
       </div>
-      <v-btn variant="text" size="small" color="primary">
+      <v-btn variant="text" size="small" color="primary" @click="viewAllStudies">
         View All
       </v-btn>
     </v-card-title>
@@ -175,6 +175,10 @@ const finalFour = (studyArr) => {
 const goToStudy = async (study) => {
   const methodView = getMethodManagerView(study.testType, study.subType)
   router.push({ name: methodView, params: { id: study.id } })
+}
+
+const viewAllStudies = () => {
+  globalThis.dispatchEvent(new CustomEvent('change-section', { detail: 'studies' }))
 }
 
 // Default studies if none provided

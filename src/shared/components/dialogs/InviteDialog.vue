@@ -95,7 +95,7 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useToast } from 'vue-toastification';
+import { showError, showWarning } from '@/shared/utils/toast';
 
 const props = defineProps({
     show: {
@@ -129,8 +129,6 @@ const emit = defineEmits([
     'update:show',
     'send-invitations'
 ]);
-
-const toast = useToast();
 
 // Use composables
 const {
@@ -222,6 +220,17 @@ const addCoop = (item) => {
     selectedCoops.value.push(item);
     return true;
 };
+    // Handle string email input
+    if (isStringEmail(email)) {
+        if (!isValidEmail(email)) {
+            showError('Invalid email format');
+            return;
+        }
+
+        if (!isUserEmailValid(email)) {
+            showError(`${email} is not a valid email or does not exist`);
+            return;
+        }
 
 const handleEnterKey = async (event) => {
     // Prevent default to avoid form submission if inside a form
@@ -267,6 +276,12 @@ const onComboboxChange = (newValue) => {
         // Always clear the combobox model to show placeholder
         comboboxModel.value = [];
         comboboxKey.value++;
+    // Handle object email input
+    if (selectedCoops.value.includes(email)) return;
+
+    if (isCoopAlreadySelected(email.email)) {
+        showWarning(`${email.email} has already been selected`);
+        return;
     }
 };
 

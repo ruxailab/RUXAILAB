@@ -1,7 +1,6 @@
 <template>
   <div
     v-if="user"
-    class="d-none d-lg-flex"
   >
     <v-menu
       v-model="menu"
@@ -17,23 +16,25 @@
           class="pa-0 btn-fix"
           v-bind="props"
         >
-          <v-avatar
-            size="24"
-            class="mr-1"
-          >
-            <v-img
-              v-if="profileImage"
-              :src="profileImage"
-              alt="User Profile"
-            />
-            <v-icon
-              v-else
-              color="white"
+        <v-avatar size="24" class="mr-1">
+          <v-img
+            v-if="profileImage"
+            :src="profileImage"
+            alt="User Profile"
+          />
+        
+          <template v-else>
+            <v-avatar
               size="24"
+              class="bg-primary d-flex align-center justify-center"
             >
-              mdi-account-circle
-            </v-icon>
-          </v-avatar>
+              <span class="text-white text-body-2">
+                {{ userInitial }}
+              </span>
+            </v-avatar>
+          </template>
+        </v-avatar>
+
           <v-icon size="small">
             mdi-chevron-down
           </v-icon>
@@ -42,31 +43,45 @@
 
       <template #default>
         <div class="custom-dropdown bg-white rounded-lg">
-          <!-- User Info -->
-          <div class="pa-6 d-flex align-center">
+        <!-- User Info -->
+        <div class="pa-6 d-flex align-center">
+
+          <template v-if="profileImage">
             <v-avatar
               size="48"
-              color="primary"
               class="elevation-2"
             >
-              <span class="text-h5 font-weight-medium text-white">{{ userInitial }}</span>
+              <v-img :src="profileImage" alt="User Profile" />
             </v-avatar>
-            <div class="ml-4 flex-grow-1">
-              <div class="d-flex align-center">
-                <span class="text-h6 font-weight-bold text-grey-darken-4">
-                  {{ username || $t('buttons.username') }}
-                </span>
-                <v-icon
-                  color="primary"
-                  size="20"
-                  class="ml-2"
-                >
-                  mdi-check-decagram
-                </v-icon>
-              </div>
-              <span class="text-subtitle-2 text-grey-darken-1">{{ user?.email || '' }}</span>
+          </template>
+        
+          <template v-else>
+            <v-avatar
+              size="48"
+              class="elevation-2 bg-primary d-flex align-center justify-center"
+            >
+              <span class="text-h5 font-weight-medium text-white">
+                {{ userInitial }}
+              </span>
+            </v-avatar>
+          </template>
+        
+          <div class="ml-4 flex-grow-1">
+            <div class="d-flex align-center">
+              <span class="text-h6 font-weight-bold text-grey-darken-4">
+                {{ username || $t('buttons.username') }}
+              </span>
+            
+              <v-icon color="primary" size="20" class="ml-2">
+                mdi-check-decagram
+              </v-icon>
             </div>
+          
+            <span class="text-subtitle-2 text-grey-darken-1">
+              {{ user?.email || '' }}
+            </span>
           </div>
+        </div>
 
           <v-divider />
 
@@ -127,16 +142,15 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import { getAuth } from 'firebase/auth';
 import UserController from '@/features/auth/controllers/UserController';
+import { showError } from '@/shared/utils/toast'
 
 // Composables
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const { t } = useI18n();
-const toast = useToast();
 
 // State
 const menu = ref(false);
@@ -163,8 +177,8 @@ const fetchUsername = async () => {
             const userController = new UserController();
             const userDoc = await userController.getById(currentUser.uid);
             if (userDoc) {
-                username.value = userDoc.username || null;
-                profileImage.value = userDoc.profileImage || null;
+                username.value = userDoc.username || currentUser.displayName || null;
+                profileImage.value = userDoc.profileImage || currentUser.photoURL || null;
             } else {
                 console.warn('User document not found in Firestore');
                 username.value = user.value?.username || null;
@@ -179,16 +193,14 @@ const fetchUsername = async () => {
         username.value = user.value?.username || null;
         profileImage.value = user.value?.profileImage || null;
 
-        if (toast && typeof toast.error === 'function') {
-            toast.error(t('errors.globalError'));
-        }
+        showError('errors.globalError');
     }
 };
 
 const goToProfile = () => {
-    router.push({ 
-      path: '/admin', 
-      query: { section: 'profile' } 
+    router.push({
+      path: '/admin',
+      query: { section: 'profile' }
     }).catch(() => { });
 };
 

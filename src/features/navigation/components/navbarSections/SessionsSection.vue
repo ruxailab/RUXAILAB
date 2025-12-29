@@ -92,7 +92,7 @@
                   density="compact"
                   hide-details
                   :placeholder="selectedSessionDateRange.length > 1
-                    ? `${new Date(selectedSessionDateRange[0]).toLocaleDateString()} - ${new Date(selectedSessionDateRange[1]).toLocaleDateString()}`
+                    ? `${new Date(selectedSessionDateRange[0]).toLocaleDateString()} - ${new Date(selectedSessionDateRange[selectedSessionDateRange.length - 1]).toLocaleDateString()}`
                     : 'Select range'"
                   prepend-inner-icon="mdi-calendar"
                 />
@@ -240,7 +240,7 @@ const filteredSessions = computed(() => {
 
     // 📅 Date range filter
     let inDateRange = true;
-    if (selectedSessionDateRange.value.length > 2 && session.testDate) {
+    if (selectedSessionDateRange.value.length > 1 && session.testDate) {
       const date = new Date(session.testDate);
       const start = new Date(selectedSessionDateRange.value[0]);
       const end = new Date(selectedSessionDateRange.value[selectedSessionDateRange.value.length - 1]);

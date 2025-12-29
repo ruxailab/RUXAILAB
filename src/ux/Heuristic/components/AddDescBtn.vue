@@ -89,8 +89,8 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
 import TextareaForm from '@/shared/components/TextareaForm'
+import { showInfo } from '@/shared/utils/toast'
 
 const props = defineProps({
   questionIndex: {
@@ -109,7 +109,6 @@ const emit = defineEmits(['update-description'])
 
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
 
 const dialog = ref(false)
 const desc = ref({
@@ -148,7 +147,7 @@ const validate = async () => {
     emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
-    toast.info(t('alerts.addDescription'))
+    showInfo('alerts.addDescription')
   }
 }
 
@@ -185,7 +184,7 @@ const submitEdit = async () => {
     emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
-    toast.info(t('alerts.addDescription'))
+    showInfo('alerts.addDescription')
   }
 }
 

@@ -46,10 +46,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import {
+  showError,
+} from '@/shared/utils/toast'
+
 
 const props = defineProps({
   testId: {
@@ -64,8 +67,6 @@ const emit = defineEmits(['showLoading', 'stopShowLoading'])
 
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
-
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
 
 const recording = ref(false)
@@ -108,7 +109,7 @@ const startRecording = async () => {
   } catch (e) {
     recording.value = false
     console.error(e)
-    toast.error(t('errors.globalError'))
+    showError('errors.globalError')
   }
 
   try {
@@ -153,7 +154,7 @@ const startRecording = async () => {
     mediaRecorder.value.start()
   } catch (e) {
     console.error(e)
-    toast.error(t('errors.globalError'))
+    showError('errors.globalError')
   }
 }
 
