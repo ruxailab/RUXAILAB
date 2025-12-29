@@ -303,8 +303,6 @@ import {
   showError
 } from '@/shared/utils/toast'
 import { useI18n } from 'vue-i18n';
-import SessionAnalytics from '../SessionAnalytics.vue';
-import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue';
 
 const { t } = useI18n();
 
