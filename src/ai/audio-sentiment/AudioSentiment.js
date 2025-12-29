@@ -1,6 +1,6 @@
 /**
  * Create an Audio Sentiment Object for Unmoderated Test (Evaluator Side).
- * @param {string} answerDocId - The document ID related to the audio answer.
+ * @param {string} answersDocId - The document ID related to the audio answer.
  * @param {Object[]} regions - An array of sentiment regions in the audio.
  * @param {number} regions[].start - The start time of the sentiment region (in seconds).
  * @param {number} regions[].end - The end time of the sentiment region (in seconds).
@@ -14,7 +14,7 @@ export default class AudioSentiment {
      * Constructs an instance of AudioSentiment.
      * @param {Object} params - The parameters for the AudioSentiment instance.
      * @param {string} [params.id=null] - The unique ID of the document (optional).
-     * @param {string} params.answerDocId - The Answer document ID.
+     * @param {string} params.answersDocId - The Answer document ID.
      * @param {string} params.userDocId - The User document ID.
      * @param {number} regionsCount - The number of sentiment regions in the audio.
      * @param {Object[]} params.regions - An array of sentiment regions in the audio.
@@ -25,7 +25,7 @@ export default class AudioSentiment {
      * @param {string} params.regions[].sentiment - The sentiment expressed in this region.
      * @param {number} params.regions[].confidence - The sentiment confidence for the region.
      */
-    constructor({ id = null, answerDocId, userDocId, regionsCount, regions } = {}) {
+    constructor({ id = null, answersDocId, userDocId, regionsCount, regions } = {}) {
 
         /**
          * The unique ID of the document (optional)
@@ -37,7 +37,7 @@ export default class AudioSentiment {
          * The Answer document ID
          * @type {string}
          */
-        this.answerDocId = answerDocId;
+        this.answersDocId = answersDocId;
 
         /**
          * The User document ID
@@ -64,7 +64,7 @@ export default class AudioSentiment {
      * 
      * @param {Object} data - The raw data to convert into an AudioSentiment instance.
      * @param {string} data.id - The unique ID of the document.
-     * @param {string} data.answerDocId - The Answer document ID.
+     * @param {string} data.answersDocId - The Answer document ID.
      * @param {string} data.userDocId - The User document ID.
      * @param {Object[]} data.regions - An array of sentiment regions in the audio.
      * @param {number} data.regions[].start - The start time of the sentiment region (in seconds).
@@ -77,7 +77,7 @@ export default class AudioSentiment {
     static toAudioSentiment(data) {
         return new AudioSentiment({
             id: data.id, // Include the ID here
-            answerDocId: data.answerDocId,
+            answersDocId: data.answersDocId,
             userDocId: data.userDocId,
             regionsCount: data.regionsCount,
             regions: data.regions.map(region => ({
@@ -110,7 +110,7 @@ export default class AudioSentiment {
      */
     toFirestore() {
         return {
-            answerDocId: this.answerDocId,
+            answersDocId: this.answersDocId,
             userDocId: this.userDocId,
             regionsCount: this.regionsCount,
             regions: this.regions.map(region => ({

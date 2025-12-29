@@ -111,7 +111,7 @@ import TranscriptionList from './TranscriptionList.vue'
 
 // JS props (no types)
 const props = defineProps({
-  answerDocId: {
+  answersDocId: {
     type: String,
     required: true,
   },
@@ -150,7 +150,7 @@ const transcriptionController = new TranscriptionController()
 import AnswerController from '@/shared/controllers/AnswerController'
 const answerController = new AnswerController()
 watch(
-  () => [props.answerDocId, props.userDocId, props.taskId],
+  () => [props.answersDocId, props.userDocId, props.taskId],
   async () => {
     await fetchSelectedTaskTranscriptions()
   },
@@ -158,7 +158,7 @@ watch(
 )
 
 async function fetchSelectedTaskTranscriptions() {
-  if (!props.answerDocId || !props.userDocId || !props.taskId) {
+  if (!props.answersDocId || !props.userDocId || !props.taskId) {
     loading.value = false // don't leave the spinner on if we early-return
     return
   }
@@ -166,8 +166,8 @@ async function fetchSelectedTaskTranscriptions() {
   loading.value = true
   try {
     const transcriptions =
-      await transcriptionController.getByAnswerDocIdandUserDocIdandTaskId(
-        props.answerDocId,
+      await transcriptionController.getByAnswersDocIdandUserDocIdandTaskId(
+        props.answersDocId,
         props.userDocId,
         props.taskId,
       )
@@ -206,7 +206,7 @@ async function confirmDelete() {
 
     // // update task meta on the Answer doc
     // await answerController.setTaskTranscriptionMeta({
-    //   answerDocId: props.answerDocId,
+    //   answersDocId: props.answersDocId,
     //   userDocId: props.userDocId,
     //   taskId: String(props.taskId),
     //   latestTranscriptionDocId: newLatestId,
