@@ -109,7 +109,8 @@ const selectItems = [
 
   { label: 'Google Forms Link', value: 'post-form' },
   { label: 'NASA TLX', value: 'nasa-tlx' },
-  { label: 'System Usability Scale', value: 'sus' }
+  { label: 'System Usability Scale', value: 'sus' },
+  { label: 'Situation Awareness Rating Technique', value: 'sart' }
 ];
 
 const requiredRule = [(v) => !!v || 'Field Required'];

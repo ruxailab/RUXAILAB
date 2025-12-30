@@ -178,7 +178,8 @@ const getAnswerTypeIcon = (type) => {
     'post-test': 'mdi-comment-question-outline',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket-launch-outline',
-    'sus': 'mdi-chart-line'
+    'sus': 'mdi-chart-line',
+    'sart': 'mdi-eye-areaspline'
   };
   return icons[type] || 'mdi-help-circle-outline';
 };
@@ -191,7 +192,8 @@ const getAnswerTypeLabel = (type) => {
     'post-test': 'Post-Test Questions',
     'post-form': 'External Form',
     'nasa-tlx': 'NASA-TLX',
-    'sus': 'System Usability Scale'
+    'sus': 'System Usability Scale',
+    'sart': 'Situation Awareness Rating Technique'
   };
   return labels[type] || 'Unknown';
 };
@@ -199,7 +201,7 @@ const getAnswerTypeLabel = (type) => {
 const isSystemChoice = (type) => {
   if (!type) return false;
   // System choices are standardized questionnaires/scales
-  return ['nasa-tlx', 'sus'].includes(type);
+  return ['nasa-tlx', 'sus', 'sart'].includes(type);
 };
 
 // Always emit validation as true since this is just a preview

@@ -133,6 +133,56 @@
       </div>
     </div>
 
+    <!-- NEW: SART Preview -->
+    <div v-else-if="taskType === 'sart'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">Situation Awareness Rating Technique</div>
+        <div class="sart-item mb-3">
+          <div class="d-flex justify-space-between align-center mb-2">
+            <span class="text-body-2">Instability of Situation</span>
+            <span class="text-caption text-grey-darken-1">1 - 7</span>
+          </div>
+          <v-slider
+            readonly
+            :model-value="4"
+            :min="1"
+            :max="7"
+            color="primary"
+            track-color="grey-lighten-2"
+            thumb-size="12"
+            :ticks="[1,4,7]"
+            tick-size="3"
+          />
+          <div class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1">
+            <span>Very Stable</span>
+            <span>Very Unstable</span>
+          </div>
+        </div>
+        <div class="sart-item mb-3">
+          <div class="d-flex justify-space-between align-center mb-2">
+            <span class="text-body-2">Complexity of Situation</span>
+            <span class="text-caption text-grey-darken-1">1 - 7</span>
+          </div>
+          <v-slider
+            readonly
+            :model-value="3"
+            :min="1"
+            :max="7"
+            color="primary"
+            track-color="grey-lighten-2"
+            thumb-size="12"
+            :ticks="[1,4,7]"
+            tick-size="3"
+          />
+          <div class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1">
+            <span>Very Simple</span>
+            <span>Very Complex</span>
+          </div>
+        </div>
+        <div class="text-caption text-grey-darken-1 text-center">+ 8 more SART dimensions</div>
+      </div>
+    </div>
+
     <!-- Default/Unknown Type -->
     <div v-else class="preview-content">
       <div class="preview-mockup">
@@ -239,5 +289,12 @@ const mockRating = ref(4);
 
 :deep(.preview-mockup .v-radio-group) {
   pointer-events: none;
+}
+
+.sart-item {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.1);
 }
 </style>

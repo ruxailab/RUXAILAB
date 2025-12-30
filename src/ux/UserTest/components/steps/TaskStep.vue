@@ -124,8 +124,6 @@
           <!-- Task Description During Execution -->
           <v-card variant="outlined" color="primary" class="mb-4">
             <v-card-text class="pa-3">
-
-
               <!-- Two Column Layout -->
               <v-row>
                 <!-- Left Column: Task Description -->
@@ -222,13 +220,29 @@
         </template>
         <!-- STAGE 3:POST-TASK form -->
         <template v-else-if="stage === 3">
+          <!-- SUS Form -->
           <div v-if="task?.taskType === 'sus'">
             <SusForm v-model="localSusAnswers" :task-index="taskIndex"
               @update:model-value="val => emit('update:susAnswers', val)" />
           </div>
-          <div v-if="task?.taskType === 'nasa-tlx'">
+          
+          <!-- NASA-TLX Form -->
+          <div v-else-if="task?.taskType === 'nasa-tlx'">
             <nasaTlxForm :nasa-tlx="nasaTlxAnswers" @update:nasa-tlx="onUpdateNasaTlx" />
           </div>
+          
+          <!-- SART Form -->
+          <div v-else-if="task?.taskType === 'sart'">
+            <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
+          </div>
+          
+          <!-- Other task types -->
+          <div v-else>
+            <v-alert type="info" variant="tonal" class="mb-4">
+              No post-task questionnaire required for this task type.
+            </v-alert>
+          </div>
+          
           <v-row justify="end">
             <v-col cols="12">
               <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
@@ -270,6 +284,7 @@ import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
 import Timer from '@/ux/UserTest/components/Timer.vue';
 import SusForm from '@/ux/UserTest/SusForm.vue';
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
+import sartForm from '@/ux/UserTest/components/sartForm.vue';
 
 const props = defineProps({
   task: Object,
@@ -283,6 +298,7 @@ const props = defineProps({
   taskObservations: String,
   susAnswers: Array,
   nasaTlxAnswers: Object,
+  sartAnswers: Object,
   testId: String,
   userDocId: String,
   taskIndex: Number,
@@ -304,6 +320,7 @@ const emit = defineEmits([
   'timer-stopped',
   'update:susAnswers',
   'update:nasaTlxAnswers',
+  'update:sartAnswers'
 ]);
 
 onBeforeUnmount(() => {
@@ -323,6 +340,12 @@ const localSusAnswers = computed({
   set: (val) => emit('update:susAnswers', val)
 });
 
+const localSartAnswers = ref(props.sartAnswers || {});
+
+function onUpdateSart(val) {
+  localSartAnswers.value = val;
+  emit('update:sartAnswers', val);
+}
 
 const rawLink = computed(() => props.task?.taskLink || props.taskLink);
 const normalizedLink = computed(() => {
@@ -428,7 +451,8 @@ function handleShowPostForm(userCompleted) {
 
   showPostForm.value.userCompleted = userCompleted;
 
-  if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx') {
+  // Only show post-task form for specific task types
+  if (['sus', 'nasa-tlx', 'sart'].includes(props.task?.taskType)) {
     stage.value = 3;
   } else {
     emitDoneOrCouldNotFinish(finalTime);

@@ -209,6 +209,7 @@ const getTaskTypeColor = (type) => {
     'text-area': 'blue',
     'sus': 'green',
     'nasa-tlx': 'orange',
+    'sart': 'deep-blue',
     'post-test': 'purple',
     'post-form': 'teal',
     'no-answer': 'grey'
