@@ -132,8 +132,8 @@ export const SART_CONSTANTS = {
 // Validator class for SART data
 class SartValidator {
   static validateDimensionScore(score, dimension) {
-    if (typeof score !== 'number' || isNaN(score)) {
-      throw new Error(`Invalid score for ${dimension}: must be a number`);
+    if (typeof score !== 'number' || Number.isNaN(score)) {
+      throw new TypeError(`Invalid score for ${dimension}: must be a number`);
     }
     
     if (score < SART_CONSTANTS.SCORE_RANGE.MIN || score > SART_CONSTANTS.SCORE_RANGE.MAX) {
@@ -307,7 +307,7 @@ export default class SartAnswer {
     const score = this.saScore;
     const interpretation = SART_CONSTANTS.SA_LEVELS.find(
       level => score >= level.min && score <= level.max
-    ) || SART_CONSTANTS.SA_LEVELS[SART_CONSTANTS.SA_LEVELS.length - 1];
+    ) || SART_CONSTANTS.SA_LEVELS.at(-1);
     
     return {
       score,
@@ -334,7 +334,7 @@ export default class SartAnswer {
 
     const level = SART_CONSTANTS.DIMENSION_LEVELS.find(
       l => score >= l.min && score <= l.max
-    ) || SART_CONSTANTS.DIMENSION_LEVELS[SART_CONSTANTS.DIMENSION_LEVELS.length - 1];
+    ) || SART_CONSTANTS.DIMENSION_LEVELS.at(-1);
 
     return {
       dimension: dimension.label,
@@ -477,7 +477,7 @@ export default class SartAnswer {
     if (allSame) return 'suspicious_uniform';
     
     // Calculate variance
-    const mean = scores.reduce((a, b) => a + b) / scores.length;
+    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
     const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
     
     if (variance < 1) return 'low_variance';
@@ -524,7 +524,7 @@ export default class SartAnswer {
       if (dim.level === 'Very Low' || dim.level === 'Low') {
         recommendations.push({
           priority: 'low',
-          area: dim.dimension.toLowerCase().replace(/\s+/g, '_'),
+          area: dim.dimension.toLowerCase().replaceAll(/\s+/g, '_'),
           message: `Low score in ${dim.dimension} (${dim.score}). Consider improvements in this area.`,
           action: 'targeted_training'
         });
@@ -592,7 +592,7 @@ export const SartUtils = {
     
     dimensionKeys.forEach(key => {
       const scores = responses.map(r => r._rawScores[key] || SART_CONSTANTS.SCORE_RANGE.DEFAULT);
-      const mean = scores.reduce((a, b) => a + b) / scores.length;
+      const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
       const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
       deviations[key] = Math.sqrt(variance);
     });
