@@ -44,6 +44,7 @@
                   :key="column.key"
                   class="text-left font-weight-medium text-ternary pa-4"
                   :style="{ width: column.width }"
+                  scope="col"
                 >
                   {{ column.title }}
                 </th>
