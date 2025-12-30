@@ -47,6 +47,13 @@
           </v-avatar>
         </template>
 
+        <!-- Study Name (clickable for preview) -->
+        <template #[`item.studyName`]="{ item }">
+          <a href="#" @click.prevent="openPreview(item)" class="text-decoration-none text-high-emphasis font-weight-medium">
+            {{ item.studyName }}
+          </a>
+        </template>
+
         <!-- Size -->
         <template #[`item.size`]="{ item }">
           {{ formatBytes(item.size) }}
@@ -59,7 +66,7 @@
             variant="text"
             color="error"
             size="small"
-            @click="deleteFile(item)"
+            @click="confirmDelete(item)"
           >
             <v-icon>mdi-delete</v-icon>
             <v-tooltip activator="parent" location="top">Delete File</v-tooltip>
@@ -75,11 +82,60 @@
         </template>
       </v-data-table>
     </v-card>
+
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog v-model="deleteDialog" max-width="500">
+      <v-card class="rounded-lg">
+        <v-card-title class="bg-error text-white">
+          <v-icon color="white" class="mr-2">mdi-alert</v-icon>
+          Confirm Deletion
+        </v-card-title>
+        <v-card-text class="pt-4">
+          Are you sure you want to delete this <strong>{{ fileToDelete?.type }}</strong> file from 
+          "<strong>{{ fileToDelete?.studyName }}</strong>"?
+          <div class="text-caption text-medium-emphasis mt-2">
+            This action cannot be undone.
+          </div>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="outlined" class="rounded-lg" @click="deleteDialog = false">Cancel</v-btn>
+          <v-btn color="error" class="rounded-lg" @click="executeDelete">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Media Preview Dialog -->
+    <v-dialog v-model="previewDialog" max-width="900">
+      <v-card class="rounded-lg">
+        <v-card-title class="bg-primary text-white d-flex align-center">
+          <v-icon color="white" class="mr-2">{{ getFileIcon(previewFile?.type).icon }}</v-icon>
+          {{ previewFile?.studyName }} - {{ previewFile?.type }}
+        </v-card-title>
+        <v-card-text class="pa-4 bg-black d-flex justify-center align-center" style="min-height: 300px;">
+          <video v-if="['video', 'webcam', 'screen'].includes(previewFile?.type)" 
+                 :src="previewFile?.url" 
+                 controls 
+                 style="width: 100%; max-height: 600px;" />
+          <audio v-else-if="previewFile?.type === 'audio'" 
+                 :src="previewFile?.url" 
+                 controls 
+                 style="width: 100%;" />
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="primary" class="rounded-lg" @click="previewDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
@@ -88,6 +144,12 @@ const store = useStore()
 const search = ref('')
 const answerController = new AnswerController()
 const fetchedAnswers = ref({}) // Map<testId, answersList>
+
+// Dialog State
+const deleteDialog = ref(false)
+const fileToDelete = ref(null)
+const previewDialog = ref(false)
+const previewFile = ref(null)
 
 const headers = [
   { title: 'Type', key: 'type', align: 'center', sortable: false, width: '60px' },
@@ -105,8 +167,6 @@ const fetchAllAnswers = async () => {
     if (test.answersDocId && !fetchedAnswers.value[test.id]) {
       try {
         const answerDoc = await answerController.getAnswerById(test.answersDocId)
-        // Extract the actual task answers from user collection structure
-        // Usually answerDoc.taskAnswers is a map of userId -> answerData
         if (answerDoc && answerDoc.taskAnswers) {
            fetchedAnswers.value[test.id] = Object.values(answerDoc.taskAnswers)
         }
@@ -145,38 +205,28 @@ const files = computed(() => {
       tasks.forEach(task => {
         const date = formatDateLong(answer.date || test.creationDate, 'es') // Default to ES locale per usage
         
+        // Common file properties
+        const baseFile = {
+            id: task.id || Math.random().toString(36),
+            studyName: test.testTitle,
+            date: date
+        }
+
         // Check for Video
         if (task.videoRecordURL) {
-          allFiles.push({
-            id: task.id || Math.random().toString(36), // Fallback ID
-            type: 'video',
-            url: task.videoRecordURL,
-            studyName: test.testTitle,
-            date: date,
-            size: 50 * 1024 * 1024 // Mock: 50MB
-          })
+          allFiles.push({ ...baseFile, type: 'video', url: task.videoRecordURL, size: 50 * 1024 * 1024 })
         }
         // Check for Audio
         if (task.audioRecordURL) {
-          allFiles.push({
-            id: task.id || Math.random().toString(36),
-            type: 'audio',
-            url: task.audioRecordURL,
-            studyName: test.testTitle,
-            date: date,
-            size: 10 * 1024 * 1024 // Mock: 10MB
-          })
+          allFiles.push({ ...baseFile, type: 'audio', url: task.audioRecordURL, size: 10 * 1024 * 1024 })
         }
         // Check for Screen Recording
         if (task.screenRecordURL) {
-          allFiles.push({
-            id: task.id || Math.random().toString(36),
-            type: 'screen',
-            url: task.screenRecordURL,
-            studyName: test.testTitle,
-            date: date,
-            size: 100 * 1024 * 1024 // Mock: 100MB
-          })
+          allFiles.push({ ...baseFile, type: 'screen', url: task.screenRecordURL, size: 100 * 1024 * 1024 })
+        }
+        // Check for Webcam (Fix for missing icons)
+        if (task.webcamRecordURL) {
+          allFiles.push({ ...baseFile, type: 'webcam', url: task.webcamRecordURL, size: 50 * 1024 * 1024 })
         }
       })
     })
@@ -195,11 +245,12 @@ const getFileIcon = (type) => {
     case 'video': return { icon: 'mdi-video', color: 'primary' }
     case 'audio': return { icon: 'mdi-microphone', color: 'orange' }
     case 'screen': return { icon: 'mdi-monitor-screenshot', color: 'info' }
+    case 'webcam': return { icon: 'mdi-webcam', color: 'success' }
     default: return { icon: 'mdi-file', color: 'grey' }
   }
 }
 
-// Utility for bytes (Locally scoped to keep file count low)
+// Utility for bytes
 function formatBytes(bytes) {
   if (!bytes) return '0 B'
   const k = 1024
@@ -208,13 +259,22 @@ function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
 }
 
-const deleteFile = (item) => {
-  // TODO: connect to backend delete endpoint
-  if (confirm(`Are you sure you want to delete this ${item.type} file from "${item.studyName}"?`)) {
-    console.log('Deleting file:', item)
-    // For now we just alert, real implementation needs backend support
-    alert('File deletion request sent.')
-  }
+// Dialog Actions
+const confirmDelete = (item) => {
+  fileToDelete.value = item
+  deleteDialog.value = true
+}
+
+const executeDelete = () => {
+    // Mock delete for now (backend coming in PR #2)
+    console.log('Deleting file implementation pending backend:', fileToDelete.value)
+    deleteDialog.value = false
+    fileToDelete.value = null
+}
+
+const openPreview = (item) => {
+  previewFile.value = item
+  previewDialog.value = true
 }
 </script>
 
