@@ -20,8 +20,14 @@ export function getNASATLXData(nasaTlxData) {
   }, {})
 
   const dimensionEntries = Object.entries(dimensionAverages)
-  const mostStressful = dimensionEntries.reduce((max, current) => current[1] > max[1] ? current : max)
-  const leastStressful = dimensionEntries.reduce((min, current) => current[1] < min[1] ? current : min)
+  const mostStressful = dimensionEntries.reduce(
+    (max, current) => (current[1] > max[1] ? current : max),
+    dimensionEntries[0],
+  )
+  const leastStressful = dimensionEntries.reduce(
+    (min, current) => (current[1] < min[1] ? current : min),
+    dimensionEntries[0],
+  )
 
   const overallScores = nasaTlxData.map(r => r.overallScore)
 

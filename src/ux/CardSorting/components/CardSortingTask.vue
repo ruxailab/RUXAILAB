@@ -76,15 +76,19 @@ const localTestAnswer = ref({
 
 // Computed
 const pendingAllocationCount = computed(() => {
-  return props.test.testStructure.cardSorting.cards.length - cards.value.length
+  const totalCards = props.test?.testStructure?.cardSorting?.cards?.length ?? 0
+  return totalCards - cards.value.length
 })
 
 // Methods
 
 // Lifecycle Hooks
 onMounted(async () => {
-  categories.value = [...props.test.testStructure.cardSorting.categories] || []
-  cards.value = [...props.test.testStructure.cardSorting.cards] || []
+  const categorySource =
+    props.test?.testStructure?.cardSorting?.categories ?? []
+  const cardSource = props.test?.testStructure?.cardSorting?.cards ?? []
+  categories.value = [...categorySource]
+  cards.value = [...cardSource]
 
   localTestAnswer.value.tasks = categories.value.reduce((acc, card) => {
     acc[card.title] = []

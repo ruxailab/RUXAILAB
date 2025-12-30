@@ -617,7 +617,7 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true;
-      globalIndex.value = hasEyeTracking.value ? 3 : 3; // se tiver, vai pro PreCalibration
+      globalIndex.value = 3; // Calibration or PreTasks, depending on eye tracking
     }
 
     if (type === 'eyeCalibration') {

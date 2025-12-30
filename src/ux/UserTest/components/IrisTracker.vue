@@ -76,8 +76,13 @@ onMounted(async () => {
 watch(() => props.isRunning, (val) => val ? startTracking() : stopTracking())
 
 watch(() => props.recordScreen, (val) => {
-    val ? (startScreenRecording(), startWebcamRecording())
-        : (stopScreenRecording(), stopWebcamRecording())
+    if (val) {
+        startScreenRecording()
+        startWebcamRecording()
+        return
+    }
+    stopScreenRecording()
+    stopWebcamRecording()
 })
 
 onBeforeUnmount(() => {

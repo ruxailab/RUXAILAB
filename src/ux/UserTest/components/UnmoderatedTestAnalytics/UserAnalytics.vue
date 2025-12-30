@@ -375,9 +375,8 @@ const onFilterChange = (idx, val) => {
   if (val.includes(ALL_VALUE)) { selectedFilters.value[idx] = [ALL_VALUE]; } else { selectedFilters.value[idx] = val; }
 };
 
-const onFreeTextFilter = (idx) => {
-  // simple trigger (v-model already updates)
-  selectedFilters.value[idx] = selectedFilters.value[idx];
+const onFreeTextFilter = (_idx) => {
+  // v-model already updates; kept for parity with filter UI
 };
 
 const hasActiveFilters = computed(() => {

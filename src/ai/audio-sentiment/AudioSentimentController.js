@@ -135,8 +135,7 @@ export default class AudioSentimentController extends Controller {
      * @throws {Error} - Throws an error if there is an issue updating the document in Firestore.
      */
     async addSentimentRegion(id, region) {
-
-        `Add a sentiment region to the audio sentiment document with the given answersDocId and userDocId.`
+        // Add a sentiment region to the audio sentiment document.
         const audioSentimentDocuemnt = await this.getById(id);
 
         if (audioSentimentDocuemnt == null) {

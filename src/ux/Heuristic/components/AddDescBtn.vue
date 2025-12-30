@@ -210,7 +210,7 @@ defineExpose({
   padding-bottom: 2px;
 }
 .dataCard {
-  box-shadow: 0px 4px 4px_RGBA(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
 }
 </style>

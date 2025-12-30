@@ -136,11 +136,9 @@ const goToPreviousStep = () => {
 const valida = () => {
   const descOk = taskBasicInfoRef.value?.checkDescriptionValidation();
   const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation();
-
-  // trigger visual validator for task name
-  taskBasicInfoRef.value?.isValid?.value;
+  const isFormValid = taskBasicInfoRef.value?.isValid?.value ?? true;
   
-  if (nameOk && descOk) {
+  if (nameOk && descOk && isFormValid) {
     emit('validate', localTask.value);
     return true;
   }
