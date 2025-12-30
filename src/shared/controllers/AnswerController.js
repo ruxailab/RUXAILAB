@@ -22,11 +22,14 @@ export default class AnswerController extends Controller {
 
   async updateUserAnswer(payload) {
     const userToUpdate = await userController.getById(payload.cooperatorId)
+    const testKey = `${payload.testDocId}`
+    const existingAnswer = userToUpdate.myAnswers?.[testKey]
 
-    userToUpdate.myAnswers[`${payload.testDocId}`] = Object.assign(
-      userToUpdate.myAnswers[`${payload.testDocId}`],
-      payload.data,
-    )
+    if (!existingAnswer) {
+      return null
+    }
+
+    userToUpdate.myAnswers[testKey] = Object.assign(existingAnswer, payload.data)
     return userController.update(userToUpdate.id, userToUpdate.toFirestore())
   }
 
