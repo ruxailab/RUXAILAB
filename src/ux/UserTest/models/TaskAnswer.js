@@ -33,7 +33,14 @@ export default class TaskAnswer {
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
-    this.sartAnswers = sartAnswers ? (sartAnswers instanceof SartAnswer ? sartAnswers : new SartAnswer(sartAnswers)) : new SartAnswer()
+    
+    if (sartAnswers) {
+      this.sartAnswers = sartAnswers instanceof SartAnswer 
+        ? sartAnswers 
+        : new SartAnswer(sartAnswers)
+    } else {
+      this.sartAnswers = new SartAnswer()
+    }
   }
 
   static toModel(data) {
