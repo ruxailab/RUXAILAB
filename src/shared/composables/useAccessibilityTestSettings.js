@@ -1,7 +1,7 @@
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import { showSuccess, showError, showWarning } from '../utils/toast'
 
 /**
  * Composable for shared accessibility test settings functionality
@@ -18,7 +18,6 @@ export function useAccessibilityTestSettings(config) {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
-    const toast = useToast()
 
     // Reactive state
     const template = ref({
@@ -179,7 +178,7 @@ export function useAccessibilityTestSettings(config) {
                         isPublic: testData.isPublic || false,
                     }
                 } else {
-                    toast.error('Test not found')
+                    showError('Test not found')
                     object.value = {
                         ...config.defaultObject,
                         testType: config.testType,
@@ -188,7 +187,7 @@ export function useAccessibilityTestSettings(config) {
             }
         } catch (err) {
             console.error('Error fetching test:', err)
-            toast.error('Failed to load test information')
+            showError('Failed to load test information')
             object.value = {
                 ...config.defaultObject,
                 testType: config.testType,
@@ -210,7 +209,7 @@ export function useAccessibilityTestSettings(config) {
 
     const submit = async () => {
         if (!object.value) {
-            toast.error('No test data available')
+            showError('No test data available')
             return
         }
 
@@ -233,17 +232,17 @@ export function useAccessibilityTestSettings(config) {
 
                 await fetchTest() // Refresh the test data
                 store.commit('SET_LOCAL_CHANGES', false)
-                toast.success('Changes saved successfully')
+                showSuccess('Changes saved successfully')
             } catch (error) {
-                toast.error('Failed to save changes.')
+                showError('Failed to save changes.')
                 console.error('Error saving test:', error)
             } finally {
                 loading.value = false
             }
         } else if (title && title.length >= 200) {
-            toast.warning('Title must not exceed 200 characters.')
+            showWarning('Title must not exceed 200 characters.')
         } else {
-            toast.warning('Test must contain a title.')
+            showWarning('Test must contain a title.')
         }
     }
 
@@ -255,7 +254,7 @@ export function useAccessibilityTestSettings(config) {
 
     const deleteTest = async item => {
         if (!item?.id) {
-            toast.error('No test data available for deletion')
+            showError('No test data available for deletion')
             return
         }
 
@@ -267,10 +266,10 @@ export function useAccessibilityTestSettings(config) {
                 await store.dispatch(`${config.storeModule}/removeTest`, item.id)
             }
 
-            toast.success('Test deleted successfully!')
+            showSuccess('Test deleted successfully!')
             router.push({ name: config.testListRoute })
         } catch (error) {
-            toast.error('Failed to delete test.')
+            showError('Failed to delete test.')
             console.error('Error deleting test:', error)
         } finally {
             loading.value = false
@@ -281,17 +280,17 @@ export function useAccessibilityTestSettings(config) {
     const createTemplate = async () => {
         const { valid } = await tempform.value.validate()
         if (!valid) {
-            toast.warning('Please fill in the required fields.')
+            showWarning('Please fill in the required fields.')
             return
         }
 
         loading.value = true
         try {
             // Create template logic here (implement based on your template system)
-            toast.success('Template created successfully!')
+            showSuccess('Template created successfully!')
             closeDialog()
         } catch (error) {
-            toast.error('Failed to create template.')
+            showError('Failed to create template.')
             console.error('Error creating template:', error)
         } finally {
             loading.value = false
@@ -335,7 +334,7 @@ export function useAccessibilityTestSettings(config) {
 
     const duplicateTest = async () => {
         if (!object.value) {
-            toast.error('No test data available for duplication')
+            showError('No test data available for duplication')
             return
         }
 
@@ -360,10 +359,10 @@ export function useAccessibilityTestSettings(config) {
                 await store.dispatch(`${config.storeModule}/addTest`, testObj)
             }
 
-            toast.success('Test duplicated successfully!')
+            showSuccess('Test duplicated successfully!')
             router.push({ name: config.testListRoute })
         } catch (error) {
-            toast.error('Failed to duplicate test.')
+            showError('Failed to duplicate test.')
             console.error('Error duplicating test:', error)
         } finally {
             loading.value = false

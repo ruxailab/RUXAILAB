@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="dashboard-container"
-  >
+  <v-container fluid class="dashboard-container">
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-4 mb-md-6">
       <h1 class="text-h5 text-md-h4 font-weight-bold text-grey-darken-4 mb-1 mb-md-2">
@@ -14,11 +11,7 @@
     </div>
 
     <!-- Stats Cards Row -->
-    <StatsCards
-      :total-studies="totalStudies"
-      :used-storage="usedStorage"
-      :total-participants="totalParticipants"
-    />
+    <StatsCards :total-studies="totalStudies" :used-storage="usedStorage" :total-participants="totalParticipants" />
 
     <!-- Second Row: Activity Timeline and Active Studies -->
     <v-row class="mb-4 mb-md-6">
@@ -40,6 +33,14 @@
         lg="4"
       >
         <div class="responsive-component">
+    <v-row class="mb-6">
+      <v-col cols="12" lg="8">
+        <div class="component-height">
+          <ActiveStudies :studies="items" />
+        </div>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <div class="component-height">
           <ActivityTimeline />
         </div>
       </v-col>
@@ -68,6 +69,14 @@
         sm="12"
         md="4"
       >
+    <v-row class="mb-6">
+      <v-col cols="12" lg="4">
+        <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
+      </v-col>
+      <v-col cols="12" lg="4">
+        <TopMethods :methodsData="topMethodsData" />
+      </v-col>
+      <v-col cols="12" lg="4">
         <NextSession :next-session="nextSession" />
       </v-col>
     </v-row>
@@ -77,12 +86,17 @@
       <v-col cols="12" lg="6">
         <BlogPosts />
       </v-col>
+    <v-row class="mb-6">
+      <v-col cols="12" lg="6">
+        <BlogPosts />
+      </v-col>
+      <v-col cols="12" lg="6" />
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -121,6 +135,57 @@ const userStorageUsage = computed(() => {
   return user?.storageUsageMB || 0;
 });
 
+const userStudies = computed(() => {
+  const user = store.getters.user;
+  if (!user || !props.items) return [];
+
+  return props.items.filter(
+    (study) => study?.testAdmin?.userDocId === user.id
+  );
+});
+
+const totalStudies = computed(() => userStudies.value.length);
+
+const totalParticipants = computed(() => {
+  return userStudies.value.flatMap((s) => s.cooperators || []).length;
+});
+
+const upcomingWebinar = computed(() => store.getters['Dashboard/upcomingWebinar']);
+
+const topMethodsData = computed(() => {
+  const methodCounts = {};
+
+  userStudies.value.forEach(study => {
+    const key = `${study.testType}|${study.subType || ''}`;
+
+    if (!methodCounts[key]) {
+      const def = getMethodDefinition(study.testType, study.subType);
+      if (def) {
+        methodCounts[key] = {
+          id: key,
+          count: 0,
+          name: def.nameEn,
+          type: def.name,
+          icon: def.icon,
+          color: def.color,
+          bgColor: def.color
+        };
+      }
+    }
+
+    if (methodCounts[key]) {
+      methodCounts[key].count++;
+    }
+  });
+  return Object.values(methodCounts)
+    .sort((a, b) => b.count - a.count)
+    .map(m => ({
+      ...m,
+      usage: m.count.toString()
+    }));
+});
+
+
 watch(
   () => props.sessions,
   (sessions) => {
@@ -150,6 +215,10 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(() => {
+  store.dispatch('Dashboard/fetchUpcomingWebinar');
+});
 </script>
 
 <style scoped>
@@ -220,6 +289,10 @@ watch(
   :deep(.clickable-item) {
     min-height: 44px;
     min-width: 44px;
+
+  .component-height {
+    height: auto;
+    min-height: 400px;
   }
 }
 </style>

@@ -252,8 +252,8 @@
       <ScreenRecorder v-if="task?.hasScreenRecord" ref="screenRecorder" :test-id="testId" :task-index="taskIndex"
         @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
 
-      <VideoRecorder v-if="task?.hasCamRecord" ref="videoRecorder" :test-id="testId" :task-index="taskIndex"
-        @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
+      <VideoRecorder v-if="task?.hasCamRecord" ref="videoRecorder" :test-id="testId" :userDocId="userDocId"
+        :task-index="taskIndex" @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
     </template>
   </ShowInfo>
 </template>
@@ -284,6 +284,7 @@ const props = defineProps({
   susAnswers: Array,
   nasaTlxAnswers: Object,
   testId: String,
+  userDocId: String,
   taskIndex: Number,
   submitted: Boolean,
   doneTaskDisabled: Boolean,

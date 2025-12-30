@@ -69,6 +69,47 @@
                     {{ formatStatus(study.status) }}
                   </v-chip>
                   <v-icon :icon="getMethodIcon(study)" size="18" class="method-icon" color="primary" />
+      <v-row v-else>
+        <v-col v-for="study in studies.filter(s => s)" :key="study.id" cols="12" md="6">
+          <v-card variant="outlined" rounded="lg" class="study-card" @click="goToStudy(study)" hover>
+            <v-card-text class="pa-4">
+              <div class="d-flex align-center justify-space-between mb-3">
+                <v-chip
+                  :color="study.status === 'active' ? 'success' : study.status === 'finished' ? 'warning' : 'info'"
+                  variant="tonal" size="small">
+                  {{ study.status ? (study.status.charAt(0).toUpperCase() + study.status.slice(1)) : 'Unknown' }}
+                </v-chip>
+                <v-icon :icon="getMethodIcon(study)" size="20" color="primary" />
+              </div>
+
+              <h4 class="text-subtitle-1 font-weight-bold mb-2">
+                {{ study.title }}
+              </h4>
+              <div class="description-wrapper">
+                <p 
+                  class="text-body-2 text-medium-emphasis mb-3"
+                  :class="{ 'description-truncated': !expandedStudies[study.id] && study.isLongDescription }"
+                >
+                  {{ study.description }}
+                </p>
+                <v-btn
+                  v-if="study.isLongDescription"
+                  @click.stop="toggleExpand(study.id)"
+                  variant="text"
+                  size="small"
+                  color="primary"
+                  class="text-lowercase"
+                  :prepend-icon="expandedStudies[study.id] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                >
+                  {{ expandedStudies[study.id] ? 'Show less' : 'Show more' }}
+                </v-btn>
+              </div>
+
+              <!-- Progress -->
+              <div class="mb-3">
+                <div class="d-flex justify-space-between align-center mb-1">
+                  <span class="text-caption font-weight-medium">Progress</span>
+                  <span class="text-caption">{{ study.progress }}%</span>
                 </div>
 
                 <!-- Study Title -->
@@ -134,6 +175,11 @@ const answerController = new AnswerController()
 
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
+const expandedStudies = ref({});
+
+const isLongDescription = (description) => {
+  return description && description.length > 250;
+};
 
 const studies = computed(() => {
   return props.studies.length > 0  ? studiesWithAnswers.value : loading  ? [] : defaultStudies
@@ -205,6 +251,7 @@ const finalFour = (studyArr) => {
     id: study.id,
     title: study.testTitle,
     description: study.testDescription,
+    isLongDescription: isLongDescription(study.testDescription),
     status: study.status,
     progress: calculateProgress(study.answers),
     participants: study.answers?.length || 0,
@@ -224,6 +271,7 @@ const goToStudy = async (study) => {
 }
 
 const viewAllStudies = () => {
+  // Dispatch custom event to change section
   globalThis.dispatchEvent(new CustomEvent('change-section', { detail: 'studies' }))
 }
 
@@ -255,6 +303,8 @@ const formatDaysLeft = (days) => {
   if (days === 0) return 'Ends today';
   if (days === 1) return '1 day left';
   return `${days} days left`;
+const toggleExpand = (studyId) => {
+  expandedStudies.value[studyId] = !expandedStudies.value[studyId];
 }
 
 // Default studies if none provided
@@ -735,5 +785,30 @@ onUnmounted(() => {
   width: 100%;
   min-height: 140px;
   margin-top: 8px;
+}
+</style>
+.description-wrapper {
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.description-truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+/* Fallback for non-webkit browsers */
+@supports not (-webkit-line-clamp: 3) {
+  .description-truncated {
+    max-height: 4.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>

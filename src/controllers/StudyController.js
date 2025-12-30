@@ -84,7 +84,7 @@ export default class StudyController extends Controller {
   //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
     const userAnswer = new UserAnswer({
-      answerDocId: payload.test.answersDocId,
+      answersDocId: payload.test.answersDocId,
       accessLevel: payload.cooperator.accessLevel,
       progress: 0,
       testAuthorEmail: payload.test.testAdmin.email,
