@@ -1,3 +1,9 @@
+export const ACCESS_LEVELS = {
+  ADMIN: 1,
+  OBSERVATOR: 2,
+  GUEST: 3
+}
+
 /**
  * Represents the cooperators model.
  */
@@ -34,6 +40,8 @@ export default class Cooperators {
 
     /**
      * Defines the cooperator access level.
+     * 1: Admin/Moderator/Evaluator
+     * 2: Observator
      *
      * @type {number}
      */

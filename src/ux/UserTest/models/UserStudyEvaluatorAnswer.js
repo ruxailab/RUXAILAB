@@ -32,7 +32,9 @@ export default class UserStudyEvaluatorAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
+    this.invited = invited ?? false
     this.hidden = hidden ?? false
+    this.sessionNotes = [] // [{ text, timestamp, taskIndex, authorId }]
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
@@ -67,6 +69,7 @@ export default class UserStudyEvaluatorAnswer {
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
+      sessionNotes: this.sessionNotes
     }
   }
 }
