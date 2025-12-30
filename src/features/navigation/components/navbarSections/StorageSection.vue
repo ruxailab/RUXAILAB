@@ -39,6 +39,8 @@
         :items="files"
         :search="search"
         hover
+        :loading="loadingSizes"
+        loading-text="Fetching file sizes..."
       >
         <!-- File Type Icon -->
         <template #[`item.type`]="{ item }">
@@ -56,7 +58,10 @@
 
         <!-- Size -->
         <template #[`item.size`]="{ item }">
-          {{ formatBytes(item.size) }}
+          <span v-if="fileSizes[item.id] !== undefined">
+             {{ formatBytes(fileSizes[item.id]) }}
+          </span>
+          <v-progress-circular v-else indeterminate size="16" width="2" color="grey-lighten-1" />
         </template>
 
         <!-- Actions -->
@@ -66,6 +71,7 @@
             variant="text"
             color="error"
             size="small"
+            :loading="deletingId === item.id"
             @click="confirmDelete(item)"
           >
             <v-icon>mdi-delete</v-icon>
@@ -101,7 +107,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn variant="outlined" class="rounded-lg" @click="deleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" class="rounded-lg" @click="executeDelete">Delete</v-btn>
+          <v-btn color="error" class="rounded-lg" @click="executeDelete" :loading="isDeleting">Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -137,6 +143,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
 
@@ -144,6 +151,13 @@ const store = useStore()
 const search = ref('')
 const answerController = new AnswerController()
 const fetchedAnswers = ref({}) // Map<testId, answersList>
+
+// Backend State
+const functions = getFunctions()
+const fileSizes = ref({}) // Map<fileId, sizeBytes>
+const loadingSizes = ref(false)
+const deletingId = ref(null)
+const isDeleting = ref(false)
 
 // Dialog State
 const deleteDialog = ref(false)
@@ -175,6 +189,21 @@ const fetchAllAnswers = async () => {
       }
     }
   }
+}
+
+// Helper to extract path from URL for backend
+const extractStoragePath = (url) => {
+    try {
+        // Firebase Storage URL format: .../o/path%2Fto%2Ffile?alt=media...
+        const pathStart = url.indexOf('/o/') + 3
+        const pathEnd = url.indexOf('?alt=media')
+        if (pathStart > 2 && pathEnd > pathStart) {
+            return decodeURIComponent(url.substring(pathStart, pathEnd))
+        }
+        return null
+    } catch (e) {
+        return null
+    }
 }
 
 // Watch for tests change to trigger fetch
@@ -209,24 +238,25 @@ const files = computed(() => {
         const baseFile = {
             id: task.id || Math.random().toString(36),
             studyName: test.testTitle,
+            testId: test.id, // Needed for ownership check
             date: date
         }
 
         // Check for Video
         if (task.videoRecordURL) {
-          allFiles.push({ ...baseFile, type: 'video', url: task.videoRecordURL, size: 50 * 1024 * 1024 })
+          allFiles.push({ ...baseFile, type: 'video', url: task.videoRecordURL })
         }
         // Check for Audio
         if (task.audioRecordURL) {
-          allFiles.push({ ...baseFile, type: 'audio', url: task.audioRecordURL, size: 10 * 1024 * 1024 })
+          allFiles.push({ ...baseFile, type: 'audio', url: task.audioRecordURL })
         }
         // Check for Screen Recording
         if (task.screenRecordURL) {
-          allFiles.push({ ...baseFile, type: 'screen', url: task.screenRecordURL, size: 100 * 1024 * 1024 })
+          allFiles.push({ ...baseFile, type: 'screen', url: task.screenRecordURL })
         }
-        // Check for Webcam (Fix for missing icons)
+        // Check for Webcam
         if (task.webcamRecordURL) {
-          allFiles.push({ ...baseFile, type: 'webcam', url: task.webcamRecordURL, size: 50 * 1024 * 1024 })
+          allFiles.push({ ...baseFile, type: 'webcam', url: task.webcamRecordURL })
         }
       })
     })
@@ -235,8 +265,36 @@ const files = computed(() => {
   return allFiles
 })
 
+// Watch files to fetch real sizes
+watch(files, async (newFiles) => {
+    if (newFiles.length === 0) return
+    loadingSizes.value = true
+    
+    const getMetadata = httpsCallable(functions, 'getFileMetadata')
+
+    for (const file of newFiles) {
+        // Only fetch if we haven't already
+        if (fileSizes.value[file.id] === undefined) {
+             const path = extractStoragePath(file.url)
+             if (path) {
+                 try {
+                     const result = await getMetadata({ filePath: path })
+                     fileSizes.value[file.id] = result.data.size
+                 } catch (e) {
+                     console.error('Failed to fetch size', e)
+                     fileSizes.value[file.id] = 0
+                 }
+             } else {
+                 fileSizes.value[file.id] = 0
+             }
+        }
+    }
+    loadingSizes.value = false
+}, { deep: true })
+
+
 const totalFormatted = computed(() => {
-  const total = files.value.reduce((acc, file) => acc + file.size, 0)
+  const total = Object.values(fileSizes.value).reduce((acc, size) => acc + (size || 0), 0)
   return formatBytes(total)
 })
 
@@ -265,11 +323,41 @@ const confirmDelete = (item) => {
   deleteDialog.value = true
 }
 
-const executeDelete = () => {
-    // Mock delete for now (backend coming in PR #2)
-    console.log('Deleting file implementation pending backend:', fileToDelete.value)
-    deleteDialog.value = false
-    fileToDelete.value = null
+const executeDelete = async () => {
+    if (!fileToDelete.value) return
+
+    isDeleting.value = true
+    const path = extractStoragePath(fileToDelete.value.url)
+    
+    if (!path) {
+        store.commit('SET_TOAST', { message: 'Invalid file path. Cannot delete.', type: 'error' })
+        isDeleting.value = false
+        deleteDialog.value = false
+        return
+    }
+
+    const deleteFn = httpsCallable(functions, 'deleteMediaFile')
+    
+    try {
+        const result = await deleteFn({ 
+            filePath: path, 
+            testId: fileToDelete.value.testId 
+        })
+
+        if (result.data.success) {
+            store.commit('SET_TOAST', { message: 'File deleted successfully', type: 'success' })
+            // Refresh logic: For now we remove it locally from the UI list or trigger a re-fetch
+            // Since firestore isn't updated to nullify the URL yet (future PR), we just reload answers
+            fetchAllAnswers()
+        }
+    } catch (e) {
+        console.error('Delete failed', e)
+        store.commit('SET_TOAST', { message: 'Failed to delete file. ' + e.message, type: 'error' })
+    } finally {
+        isDeleting.value = false
+        deleteDialog.value = false
+        fileToDelete.value = null
+    }
 }
 
 const openPreview = (item) => {
