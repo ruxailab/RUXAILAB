@@ -13,10 +13,15 @@ jest.mock('@/app/plugins/firebase', () => ({
     db: {}
 }))
 
+const mockUserControllerInstance = {
+    getById: jest.fn(),
+    update: jest.fn()
+}
+
 jest.mock('../../src/features/auth/controllers/UserController', () => {
     return jest.fn().mockImplementation(() => ({
-        getById: jest.fn(),
-        update: jest.fn()
+        getById: mockUserControllerInstance.getById,
+        update: mockUserControllerInstance.update
     }))
 })
 
@@ -103,6 +108,52 @@ describe('AnswerController', () => {
             await expect(answerController.createAnswer(mockPayload)).rejects.toThrow(mockError)
 
             createSpy.mockRestore()
+        })
+    })
+
+    describe('updateUserAnswer', () => {
+        it('should return null when no answer entry exists', async () => {
+            const userToUpdate = {
+                id: 'user-1',
+                myAnswers: {},
+                toFirestore: jest.fn(() => ({ myAnswers: {} }))
+            }
+            mockUserControllerInstance.getById.mockResolvedValue(userToUpdate)
+
+            const result = await answerController.updateUserAnswer({
+                cooperatorId: 'user-1',
+                testDocId: 'test-1',
+                data: { accessLevel: 2 }
+            })
+
+            expect(result).toBeNull()
+            expect(mockUserControllerInstance.update).not.toHaveBeenCalled()
+        })
+
+        it('should merge data when answer entry exists', async () => {
+            const userToUpdate = {
+                id: 'user-2',
+                myAnswers: {
+                    'test-2': { accessLevel: 1, progress: 0 }
+                },
+                toFirestore: function () {
+                    return { myAnswers: this.myAnswers }
+                }
+            }
+            mockUserControllerInstance.getById.mockResolvedValue(userToUpdate)
+            mockUserControllerInstance.update.mockResolvedValue({ ok: true })
+
+            await answerController.updateUserAnswer({
+                cooperatorId: 'user-2',
+                testDocId: 'test-2',
+                data: { accessLevel: 3 }
+            })
+
+            expect(userToUpdate.myAnswers['test-2'].accessLevel).toBe(3)
+            expect(mockUserControllerInstance.update).toHaveBeenCalledWith(
+                'user-2',
+                { myAnswers: { 'test-2': { accessLevel: 3, progress: 0 } } }
+            )
         })
     })
 
