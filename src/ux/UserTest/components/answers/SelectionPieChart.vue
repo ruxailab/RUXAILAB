@@ -19,6 +19,12 @@
             </template>
             <v-list-item-title>Export as PNG</v-list-item-title>
           </v-list-item>
+          <v-list-item @click="downloadLatex" link>
+            <template v-slot:prepend>
+              <v-icon icon="mdi-code-braces" size="small" class="mr-2" />
+            </template>
+            <v-list-item-title>Export as LaTeX</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </div>
@@ -99,6 +105,33 @@ const downloadChart = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+};
+
+const downloadLatex = () => {
+    const lines = ['\\begin{tikzpicture}', '  \\pie{'];
+    const data = [];
+    
+    props.options.forEach(opt => {
+        const count = props.counts[opt] || 0;
+        if (count > 0) {
+            data.push(`${count}/${opt}`);
+        }
+    });
+
+    lines.push(`    ${data.join(',\n    ')}`);
+    lines.push('  }', '\\end{tikzpicture}');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const link = document.createElement('a');
+    const filename = (props.questionTitle || 'chart').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    link.download = `${filename}.tex`;
+    link.href = URL.createObjectURL(blob);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
 };
 
 watch(() => [props.options, props.counts], drawChart, { immediate: true, deep: true });
