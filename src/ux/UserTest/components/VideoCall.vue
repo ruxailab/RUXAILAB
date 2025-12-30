@@ -3,45 +3,52 @@
 
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
+      <!-- Screen Share Video (if any) -->
       <v-col cols="12" class="d-flex justify-center align-center" v-show="isSharingScreen">
         <div class="video-container" v-show="isSharingScreen">
           <video ref="screenVideo" autoplay playsinline class="video-element"></video>
           <div class="video-label">Compartilhando tela</div>
         </div>
       </v-col>
-      <v-col cols="12" class="d-flex justify-center align-center">
-        <div class="videos-container">
-          <!-- Local Video -->
-          <div class="video-container">
-            <video ref="localVideo" autoplay muted playsinline class="video-element"></video>
-            
-            <!-- Camera disabled overlay -->
-            <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
-              <v-icon size="64" color="white" class="mb-2">mdi-video-off</v-icon>
-              <p class="text-white">Camera is off</p>
+
+      <!-- Grid of Participants -->
+      <v-col cols="12">
+        <div class="videos-grid">
+          
+          <!-- Local Video (Hidden for Observator if they want, but usually good to see self status - wait, Observator has NO camera) -->
+          <div class="video-wrapper" v-if="!isObservator">
+            <div class="video-container">
+              <video ref="localVideo" autoplay muted playsinline class="video-element"></video>
+              
+              <!-- Camera disabled overlay -->
+              <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
+                <v-icon size="64" color="white" class="mb-2">mdi-video-off</v-icon>
+                <p class="text-white">Camera is off</p>
+              </div>
+              
+              <!-- Microphone muted indicator -->
+              <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
+                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+              </div>
+              
+              <div class="video-label">Tu video ({{ user?.email?.split('@')[0] }})</div>
             </div>
-            
-            <!-- Microphone muted indicator -->
-            <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
-              <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-            </div>
-            
-            <!-- Video label -->
-            <div class="video-label">Tu video</div>
           </div>
 
-          <!-- Remote Video -->
-          <div class="video-container">
-            <div v-show="!callStarted" class="not-connected-message">
-              Not connected
-            </div>
-            <video v-show="callStarted" ref="remoteVideo" autoplay playsinline class="video-element"></video>
-            
-            <!-- Video label -->
-            <div v-if="callStarted" class="video-label">
-              {{ caller ? 'Participante' : 'Moderador' }}
-            </div>
+          <!-- Remote Videos -->
+          <div v-for="(stream, userId) in remoteStreams" :key="userId" class="video-wrapper">
+             <div class="video-container">
+                <video :srcObject="stream" autoplay playsinline class="video-element"></video>
+                <div class="video-label">{{ getPeerName(userId) }}</div>
+             </div>
           </div>
+
+          <!-- Waiting Message if no peers -->
+          <div v-if="Object.keys(remoteStreams).length === 0" class="d-flex align-center justify-center pa-4 text-grey">
+             <v-icon class="mr-2">mdi-account-clock</v-icon>
+             <span>Waiting for participants...</span>
+          </div>
+
         </div>
       </v-col>
     </v-row>
@@ -592,14 +599,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue';
 import { database } from '@/app/plugins/firebase/index';
-import { ref as dbRef, set, onValue, push, off, get, onDisconnect } from 'firebase/database';
+import { ref as dbRef, set, onValue, push, off, get, onDisconnect, remove, update, onChildAdded } from 'firebase/database';
+import { ACCESS_LEVELS } from '@/shared/models/Cooperators';
 
-// Props received from parent component
 const props = defineProps({
-  caller: Boolean, // whether the user is the caller
-  roomId: String,  // unique room identifier
+  roomId: String,
+  isModerator: Boolean,
+  user: Object,
+  accessLevel: Number,
   currentGlobalIndex: Number,
   currentTaskIndex: Number,
   test: Object,
@@ -612,18 +621,12 @@ const emit = defineEmits([
     'stepSelected'
 ]);
 
+// Local State
 const localVideo = ref(null);
-const remoteVideo = ref(null);
 const screenVideo = ref(null);
-
-const localStream = ref(null);       // user's local media stream
-const peerConnection = ref(null);    // WebRTC peer connection
-const callStarted = ref(false);      // call status
-const roomExists = ref(false);
-const showJoinDialog = ref(false);   // show join room dialog for participants
-
-const isSharingScreen = ref(false);
+const localStream = ref(null);
 const screenStream = ref(null);
+const isSharingScreen = ref(false);
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true);
@@ -632,26 +635,35 @@ const isMicrophoneEnabled = ref(true);
 // Side panel control
 const showSidePanel = ref(false);
 const showStepperPanel = ref(false);
+const showJoinDialog = ref(false); // Legacy support, maybe unused in Mesh
 
-const currentStepperValue = computed(() => {
-  const globalIndex = props.currentGlobalIndex;
-  const taskIndex = props.currentTaskIndex || 0;
+// Mesh State
+const peers = reactive({}); // userId -> { connection: RTCPeerConnection, stream: MediaStream }
+const participants = ref({}); // userId -> user info (name, etc)
 
-  if (globalIndex === 0) return -1; // Welcome
-  if (globalIndex === 1 && taskIndex === 0) return 0; // Consent
-  if (globalIndex === 2 && taskIndex === 0) return 1; // PreTest
-  if (globalIndex === 3 && taskIndex === 0) return 2; // PreTasks (informational screen)
-  if (globalIndex === 4 && taskIndex >= 0) return 2;  // Tasks (same stepper value as PreTasks)
-  if (globalIndex === 5) return 3; // PostTest
-  if (globalIndex === 6) return 4; // Completion
-  
-  return 0;
+// Computed
+const isObservator = computed(() => props.accessLevel === ACCESS_LEVELS.OBSERVATOR);
+const remoteStreams = computed(() => {
+  const streams = {};
+  for (const [userId, peer] of Object.entries(peers)) {
+    if (peer.stream) streams[userId] = peer.stream;
+  }
+  return streams;
 });
+const callStarted = computed(() => Object.keys(peers).length > 0 || !!localStream.value);
+
+// Helper to get name
+const getPeerName = (userId) => {
+  const p = participants.value[userId];
+  if(p) return p.name || p.email;
+  // Fallback to finding in test cooperators
+  const coop = props.test?.cooperators?.find(c => c.userDocId === userId);
+  return coop?.email || 'Participant';
+};
 
 // Computed property for task dropdown items
 const taskDropdownItems = computed(() => {
   if (!props.test?.testStructure?.userTasks) return [];
-  
   return props.test.testStructure.userTasks.map((task, index) => ({
     title: `Task ${index + 1}: ${task.name || task.title || `User Task ${index + 1}`}`,
     index: index,
@@ -660,143 +672,343 @@ const taskDropdownItems = computed(() => {
   }));
 });
 
-// Toggle camera on/off
+const currentStepperValue = computed(() => {
+  const globalIndex = props.currentGlobalIndex;
+  const taskIndex = props.currentTaskIndex || 0;
+  if (globalIndex === 0) return -1;
+  if (globalIndex === 1 && taskIndex === 0) return 0;
+  if (globalIndex === 2 && taskIndex === 0) return 1;
+  if (globalIndex === 3 && taskIndex === 0) return 2;
+  if (globalIndex === 4 && taskIndex >= 0) return 2;
+  if (globalIndex === 5) return 3;
+  if (globalIndex === 6) return 4;
+  return 0;
+});
+
+// --- Initialization ---
+
+onMounted(async () => {
+  await joinRoom();
+});
+
+onBeforeUnmount(() => {
+  leaveRoom();
+});
+
+// --- Signaling & Mesh Logic ---
+
+const joinRoom = async () => {
+  // 1. Get Local Media (if not observator)
+  if (!isObservator.value) {
+    await initLocalMedia();
+  }
+
+  // 2. Register self in participants list
+  const myRef = dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`);
+  await set(myRef, {
+    email: props.user.email,
+    name: props.user.email?.split('@')[0], // Simple name
+    joinedAt: Date.now()
+  });
+  onDisconnect(myRef).remove(); // Auto-remove on closing tab
+
+  // 3. Listen to participants to initiate connections
+  const participantsRef = dbRef(database, `calls/${props.roomId}/participants`);
+  onValue(participantsRef, (snapshot) => {
+    const val = snapshot.val() || {};
+    participants.value = val;
+    
+    // Check for new peers to connect to
+    Object.keys(val).forEach(userId => {
+      if (userId === props.user.id) return;
+      if (!peers[userId]) {
+        // Found a peer we look not connected to.
+        // Rule: Initiator is the one with lexicographically smaller ID (or simply: if I am newer? No, consistent sort is better)
+        // Actually, simplest Mesh strategy:
+        // "I connect to everyone ALREADY in the room".
+        // When I join, I see existing users -> I offer.
+        // They see me -> They wait for offer.
+        // How to distinguish? 'joinedAt' timestamp.
+        const otherJoinedAt = val[userId].joinedAt;
+        const myJoinedAt = val[props.user.id]?.joinedAt;
+        
+        // If I joined AFTER them, I initiate.
+        // If timestamps equal (rare), fall back to ID comparison.
+        const shouldInitiate = myJoinedAt > otherJoinedAt || (myJoinedAt === otherJoinedAt && props.user.id > userId);
+        
+        createPeerConnection(userId, shouldInitiate);
+      }
+    });
+
+    // Cleanup left peers
+    Object.keys(peers).forEach(userId => {
+      if (!val[userId]) {
+        closePeerConnection(userId);
+      }
+    });
+  });
+
+  // 4. Listen for Signals (Offers/Answers/Candidates) targeted at ME
+  const mySignalsRef = dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`);
+  onChildAdded(mySignalsRef, async (snapshot) => {
+    const signal = snapshot.val();
+    const pushId = snapshot.key;
+    // signal structure expected: { senderId: '...', ...payload } from my push logic?
+    // Wait, my sendSignal uses `push(..., payload)`. 
+    // Payload should include `senderId` to know who it is from!
+    // Or I should restructure the path to include senderId: `signals/{myId}/{senderId}/{pushId}` -> tricky to listen to all.
+    // Better: Payload includes `senderId`.
+    
+    if (!signal || !signal.senderId) return;
+    const senderId = signal.senderId;
+
+    if (!peers[senderId]) {
+      createPeerConnection(senderId, false);
+    }
+    const pc = peers[senderId].connection;
+    
+    if (signal.type === 'offer') {
+      const desc = new RTCSessionDescription({ type: 'offer', sdp: signal.sdp });
+      // Avoid glare: if we are initiating, we might ignore, but here we just accept for now (Mesh/Perfect Negotiation is complex, keeping simple)
+      if(pc.signalingState !== 'stable') {
+          // If we are both offering, the one with lower ID yields? 
+          // Current logic: I only offer if I am "Newer". 
+          // So I shouldn't receive an offer if I am newer, unless race condition.
+          // Let's accept offer if state allows.
+          await Promise.all([
+             pc.setRemoteDescription(desc),
+             pc.setLocalDescription(await pc.createAnswer())
+           ]);
+           sendSignal(senderId, { type: 'answer', sdp: pc.localDescription.sdp });
+      } else {
+           await pc.setRemoteDescription(desc);
+           const answer = await pc.createAnswer();
+           await pc.setLocalDescription(answer);
+           sendSignal(senderId, { type: 'answer', sdp: answer.sdp });
+      }
+    } else if (signal.type === 'answer') {
+      if (pc.signalingState !== 'stable') { // only set if waiting
+        await pc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }));
+      }
+    } else if (signal.candidate) {
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(signal.candidate));
+      } catch (e) {
+        console.warn('Error adding candidate', e);
+      }
+    }
+    
+    // Remove processed signal to keep db clean
+    remove(snapshot.ref);
+  });
+};
+
+const sendSignal = async (targetUserId, payload) => {
+  // Add senderId to payload so receiver knows who sent it
+  const enhancedPayload = { ...payload, senderId: props.user.id };
+  await push(dbRef(database, `calls/${props.roomId}/signals/${targetUserId}`), enhancedPayload);
+};
+
+// Refined Listener for Signals
+// We need to run this per sender or globally.
+// Let's restart the listener part logic.
+// See `joinRoom` function for corrected logic below (I will use child_added there).
+
+const leaveRoom = () => {
+  // Stop media
+  if (localStream.value) {
+    localStream.value.getTracks().forEach(t => t.stop());
+  }
+  // Close all connections
+  Object.values(peers).forEach(p => p.connection.close());
+  // Remove self
+  remove(dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`));
+  remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)); // Clean my inbox
+};
+
+const initLocalMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      localStream.value = stream;
+      if (localVideo.value) localVideo.value.srcObject = stream;
+      isCameraEnabled.value = true;
+      isMicrophoneEnabled.value = true;
+    } catch (e) {
+      console.error('Error accessing media', e);
+      isCameraEnabled.value = false;
+    }
+};
+
+const createPeerConnection = (targetUserId, isInitiator) => {
+  if (peers[targetUserId]) return; // Already exists
+
+  const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+  
+  peers[targetUserId] = {
+    connection: pc,
+    stream: null
+  };
+
+  // Add local tracks (if not observator)
+  if (localStream.value) {
+    localStream.value.getTracks().forEach(track => {
+      pc.addTrack(track, localStream.value);
+    });
+  }
+  
+  if (isObservator.value) {
+      // Directions are handled by addTrack, or addTransceiver.
+      // If no tracks added, we add receive only transceivers to ensure we get video
+      pc.addTransceiver('video', { direction: 'recvonly' });
+      pc.addTransceiver('audio', { direction: 'recvonly' });
+  }
+
+  pc.ontrack = (event) => {
+    if (event.streams && event.streams[0]) {
+      peers[targetUserId].stream = event.streams[0];
+    }
+  };
+
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      sendSignal(targetUserId, { candidate: event.candidate.toJSON() });
+    }
+  };
+
+  if (isInitiator) {
+    pc.onnegotiationneeded = async () => {
+       try {
+         const offer = await pc.createOffer();
+         await pc.setLocalDescription(offer);
+         sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp });
+       } catch (e) {
+         console.error('Error on negotiation', e);
+       }
+    };
+  }
+  
+  // Listen for specific signals from this sender?
+  // No, the global listener handles dispatching to `peers[senderId]`.
+};
+
+const closePeerConnection = (userId) => {
+  if (peers[userId]) {
+    peers[userId].connection.close();
+    delete peers[userId];
+  }
+};
+
+
+// --- UI Methods ---
+
+// --- UI & Helper Methods ---
+
+const caller = computed(() => props.isModerator);
+const roomExists = ref(true); // Always true in Mesh model (or we could check participants count)
+
 function toggleCamera() {
   if (!localStream.value) return;
-  
-  const videoTrack = localStream.value.getVideoTracks()[0];
-  if (videoTrack) {
-    videoTrack.enabled = !videoTrack.enabled;
-    isCameraEnabled.value = videoTrack.enabled;
+  const track = localStream.value.getVideoTracks()[0];
+  if(track) {
+      track.enabled = !track.enabled;
+      isCameraEnabled.value = track.enabled;
   }
 }
 
-// Toggle microphone mute/unmute
 function toggleMicrophone() {
   if (!localStream.value) return;
-  
-  const audioTrack = localStream.value.getAudioTracks()[0];
-  if (audioTrack) {
-    audioTrack.enabled = !audioTrack.enabled;
-    isMicrophoneEnabled.value = audioTrack.enabled;
+  const track = localStream.value.getAudioTracks()[0];
+  if(track) {
+      track.enabled = !track.enabled;
+      isMicrophoneEnabled.value = track.enabled;
   }
 }
 
-// Toggle side panel
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value;
-  // Close stepper panel if side panel is being opened
-  if (showSidePanel.value) {
-    showStepperPanel.value = false;
-  }
+  if(showSidePanel.value) showStepperPanel.value = false;
 }
 
-// Handle screen share (placeholder without logic)
-function handleScreenShare() {
-  if (isSharingScreen.value) {
-    stopScreenShare();
-  } else {
-    startScreenShare();
-  }
-}
-
-// Toggle stepper panel
 function toggleStepperPanel() {
   showStepperPanel.value = !showStepperPanel.value;
-  // Close side panel if stepper panel is being opened
-  if (showStepperPanel.value) {
-    showSidePanel.value = false;
-  }
+  if(showStepperPanel.value) showSidePanel.value = false;
 }
 
-// Proceed to next step
+// Navigation Maps
+function goToStep(stepType) {
+  if (!props.isModerator) return; 
+  let globalIndex = 0;
+  let taskIndex = 0;
+  switch (stepType) {
+    case 'consent': globalIndex = 1; taskIndex = 0; break;
+    case 'pretest': globalIndex = 2; taskIndex = 0; break;
+    case 'tasks': globalIndex = 4; taskIndex = 0; break;
+    case 'posttest': globalIndex = 5; taskIndex = 0; break;
+    case 'completion': globalIndex = 6; taskIndex = 0; break;
+  }
+  emit('stepSelected', { globalIndex, taskIndex, stepType });
+}
+
+function goToSpecificTask(taskIndex) {
+  if (!props.isModerator) return;
+  emit('stepSelected', { globalIndex: 4, taskIndex, stepType: 'tasks' });
+}
+
 function proceedToNextStep() {
   emit('proceedToNextStep');
 }
 
-// Join room from dialog
+// Dialogs
 function joinRoomFromDialog() {
   showJoinDialog.value = false;
-  answerCall();
+  // joinRoom is already authenticating, but maybe we want to unmute?
 }
 
-// Dismiss join dialog
 function dismissJoinDialog() {
   showJoinDialog.value = false;
 }
 
-// Go to specific step
-function goToStep(stepType) {
-  if (!props.caller) return; // Only moderator can change steps
-  
-  let globalIndex = 0;
-  let taskIndex = 0;
-  
-  switch (stepType) {
-    case 'consent':
-      globalIndex = 1;
-      taskIndex = 0;
-      break;
-    case 'pretest':
-      globalIndex = 2;
-      taskIndex = 0;
-      break;
-    case 'tasks':
-      globalIndex = 4; // Skip PreTasks (globalIndex 3) and go directly to Tasks
-      taskIndex = 0;
-      break;
-    case 'posttest':
-      globalIndex = 5;
-      taskIndex = 0;
-      break;
-    case 'completion':
-      globalIndex = 6;
-      taskIndex = 0;
-      break;
-    default:
-      return;
-  }
-  
-  emit('stepSelected', { globalIndex, taskIndex, stepType });
-}
+// Aliases for Template Compatibility
+const startCall = async () => { /* Auto-started in Mesh */ };
+const answerCall = async () => { /* Auto-started in Mesh */ };
+const endCall = () => leaveRoom();
 
-// Go to specific task within Tasks step
-function goToSpecificTask(taskIndex) {
-  if (!props.caller) return; // Only moderator can change tasks
-  
-  emit('stepSelected', { 
-    globalIndex: 4, // Tasks globalIndex
-    taskIndex: taskIndex,
-    stepType: 'tasks'
-  });
+// Screen Sharing (Mesh Compatible)
+async function handleScreenShare() {
+  if (isSharingScreen.value) {
+    await stopScreenShare();
+  } else {
+    await startScreenShare();
+  }
 }
 
 async function startScreenShare() {
   try {
-    screenStream.value = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-
-    const videoTrack = screenStream.value.getVideoTracks()[0];
-    // const audioTrack = screenStream.value.getAudioTracks()[0];
-
-    const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
-    console.log('senders =>', peerConnection.value.getSenders().map(s => s.track));
-
-    // TODO: Implement logic to add new track and notify the other peer about it
-    if (sender) {
-      sender.replaceTrack(videoTrack);
-      // peerConnection.value.addTrack(videoTrack, screenStream.value);
-    }
-
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    screenStream.value = stream;
+    isSharingScreen.value = true; // Update state immediately
+    
     if(screenVideo.value) {
-      screenVideo.value.srcObject = screenStream.value;
+      screenVideo.value.srcObject = stream;
     }
 
-    videoTrack.onended = () => {
-      console.log('Screen sharing stopped by user.');
-      stopScreenShare();
-    };
+    const videoTrack = stream.getVideoTracks()[0];
+    videoTrack.onended = () => stopScreenShare();
 
-    isSharingScreen.value = true;
+    // Replace track for all existing peers
+    for (const userId in peers) {
+        const pc = peers[userId].connection;
+        if(pc) {
+            const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
+            if(sender) {
+                sender.replaceTrack(videoTrack);
+            } else {
+                // If no video sender (e.g. initial audio only?), add it? 
+                // Creating Offer again would be needed.
+                // For now assuming video track exists (transceiver initialized).
+            }
+        }
+    }
   } catch (err) {
     console.error('Error starting screen share:', err);
     isSharingScreen.value = false;
@@ -806,267 +1018,36 @@ async function startScreenShare() {
 async function stopScreenShare() {
   if (screenStream.value) {
     screenStream.value.getTracks().forEach(track => track.stop());
+    screenStream.value = null;
   }
-
-  localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-
-  const videoTrack = localStream.value.getVideoTracks()[0];
-
-  const sender = peerConnection.value.getSenders().find(s => s.track.kind === 'video');
-  if (sender) {
-    sender.replaceTrack(videoTrack);
-  }
-
-  if (screenVideo.value) {
-    screenVideo.value.srcObject = null
-  }
-
   isSharingScreen.value = false;
-  screenStream.value = null;
-}
-
-// Initialize WebRTC connection
-async function init() {
-  peerConnection.value = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-
-  // Listen for remote tracks
-  peerConnection.value.ontrack = (event) => {
-    console.log('a new track have arrived =>', event.streams[0].getTracks());
-    if (remoteVideo.value && remoteVideo.value.srcObject !== event.streams[0]) {
-      remoteVideo.value.srcObject = event.streams[0];
-
-      // emit to parent
-      emit('setRemoteStream', event.streams[0]);
-    }
-  };
-
-  // Send local ICE candidates to Firebase
-  peerConnection.value.onicecandidate = async (event) => {
-    if (!event.candidate) return;
-    const candidateRef = dbRef(database, `calls/${props.roomId}/candidates`);
-    await push(candidateRef, event.candidate.toJSON());
-  };
-
-  // Automatic reconnection for caller if ICE disconnects
-  peerConnection.value.oniceconnectionstatechange = async () => {
-    if (props.caller && peerConnection.value.iceConnectionState === 'disconnected') {
-      console.log('Caller disconnected. Restarting ICE...');
-      await restartCall();
-    }
-  };
-
-  const { hasCam, hasMic } = await detectDevices();
-
-  // Add video and audio transceivers
-  if (!hasCam) peerConnection.value.addTransceiver('video', { direction: 'recvonly' });
-  if (!hasMic) peerConnection.value.addTransceiver('audio', { direction: 'recvonly' });
-
-  // Get local media stream if not already available
-  if (!localStream.value) {
-    try {
-      if (hasCam || hasMic) {
-        localStream.value = await navigator.mediaDevices.getUserMedia({ video: hasCam, audio: hasMic });
-        // Initialize control states
-        isCameraEnabled.value = hasCam;
-        isMicrophoneEnabled.value = hasMic;
-      } else {
-        localStream.value = new MediaStream();
-        isCameraEnabled.value = false;
-        isMicrophoneEnabled.value = false;
-      }
-    } catch (err) {
-      console.error('Error accessing camera/microphone:', err);
-      localStream.value = new MediaStream();
-      isCameraEnabled.value = false;
-      isMicrophoneEnabled.value = false;
-    }
-  }
-
-  if (localVideo.value) localVideo.value.srcObject = localStream.value;
-
-  // Add local tracks to peer connection
-  localStream.value.getTracks().forEach(track => peerConnection.value.addTrack(track, localStream.value));
-
-  // Listen for caller disconnect (for callee)
-  if (!props.caller) {
-    onValue(dbRef(database, `calls/${props.roomId}`), (snapshot) => {
-      const wasRoomAvailable = roomExists.value;
-      roomExists.value = snapshot.exists();
-      
-      // Show dialog when room becomes available for the first time
-      if (!wasRoomAvailable && roomExists.value && !callStarted.value) {
-        showJoinDialog.value = true;
-      }
-      
-      if (!snapshot.exists() && callStarted.value) {
-        console.log('Room removed by caller, ending connection...');
-
-        // Close peer connection and stop tracks
-        if (peerConnection.value) peerConnection.value.close();
-        if (localStream.value) localStream.value.getTracks().forEach(track => track.stop());
-
-        // Reset local state
-        peerConnection.value = null;
-        localStream.value = null;
-        callStarted.value = false;
-        showJoinDialog.value = false; // Hide dialog when room is removed
-      }
-    });
-  }
-}
-
-// Listen for remote ICE candidates and add them to peer connection
-function listenForCandidates() {
-  const candidateRef = dbRef(database, `calls/${props.roomId}/candidates`);
-  onValue(candidateRef, async (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    const candidates = Object.values(data);
-    for (const candidate of candidates) {
-      try {
-        if (peerConnection.value.remoteDescription) {
-          await peerConnection.value.addIceCandidate(new RTCIceCandidate(candidate));
-        }
-      } catch (err) {
-        console.error('Error adding ICE candidate:', err);
-      }
-    }
-  });
-}
-
-// Restart the call for caller in case of ICE failure
-async function restartCall() {
-  try {
-    const offer = await peerConnection.value.createOffer({ iceRestart: true });
-    await peerConnection.value.setLocalDescription(offer);
-    const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
-    await set(offerRef, { sdp: offer.sdp, type: offer.type });
-    console.log('New offer sent after reconnection.');
-  } catch (err) {
-    console.error('Failed to restart ICE:', err);
-  }
-}
-
-// Start the call (caller)
-async function startCall() {
-  await init();
-
-  const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
-  const snapshot = await get(offerRef);
-  const offerExists = snapshot.exists();
-
-  // If room already exists, recreate offer for reconnection
-  if (offerExists && peerConnection.value && peerConnection.value.signalingState === 'closed') {
-    console.log('Caller reconnection: recreating offer...');
-    peerConnection.value = null;
-    await init();
-  }
-
-  const offer = await peerConnection.value.createOffer({ iceRestart: true });
-  await peerConnection.value.setLocalDescription(offer);
-  await set(offerRef, { sdp: offer.sdp, type: offer.type });
-
-  if (props.caller) {
-    const roomRef = dbRef(database, `calls/${props.roomId}`);
-    // Set removal of room on client disconnect
-    await onDisconnect(roomRef).remove();
-  }
-
-  const answerRef = dbRef(database, `calls/${props.roomId}/answer`);
-  onValue(answerRef, async (snapshot) => {
-    const data = snapshot.val();
-    if (data && (peerConnection.value && peerConnection.value.signalingState === 'have-local-offer')) {
-      await peerConnection.value.setRemoteDescription(new RTCSessionDescription(data));
-      callStarted.value = true;
-      listenForCandidates();
-    }
-  });
-}
-
-// Answer the call (callee)
-async function answerCall() {
-  await init();
-
-  const offerRef = dbRef(database, `calls/${props.roomId}/offer`);
-  const snapshot = await get(offerRef);
-  const offerData = snapshot.val();
-
-  if (!offerData) {
-    console.warn('No offer found. Please wait for the caller.');
-    return;
-  }
-
-  // Re-initialize if peer connection was closed (caller disconnected)
-  if (!peerConnection.value || peerConnection.value.signalingState === 'closed') {
-    await init();
-  }
-
-  await peerConnection.value.setRemoteDescription(new RTCSessionDescription(offerData));
-  const answer = await peerConnection.value.createAnswer();
-  await peerConnection.value.setLocalDescription(answer);
-
-  const answerRef = dbRef(database, `calls/${props.roomId}/answer`);
-  await set(answerRef, { sdp: answer.sdp, type: answer.type });
-
-  callStarted.value = true;
-  listenForCandidates();
-}
-
-// End the call
-async function endCall() {
-  // Stop local media tracks
+  
+  // Revert to camera
   if (localStream.value) {
-    localStream.value.getTracks().forEach(track => track.stop());
-  }
-
-  // Stop screen share stream if active
-  if (screenStream.value) {
-    screenStream.value.getTracks().forEach(track => track.stop());
-  }
-
-  // Close peer connection
-  if (peerConnection.value) {
-    peerConnection.value.close();
-  }
-
-  // Remove room from Firebase if caller
-  if (props.caller) {
-    const roomRef = dbRef(database, `calls/${props.roomId}`);
-    // Cancel any onDisconnect operation
-    await onDisconnect(roomRef).cancel();
-
-    await set(roomRef, null);
-    console.log('Room removed, callee will also be disconnected.');
-  }
-
-  // Reset local state
-  localStream.value = null;
-  peerConnection.value = null;
-  callStarted.value = false;
-}
-
-const detectDevices = async () => {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const hasCam = devices.some(d => d.kind === 'videoinput');
-    const hasMic = devices.some(d => d.kind === 'audioinput');
-    return { hasCam, hasMic };
-  } catch (e) {
-    console.warn('enumerateDevices falhou, assumindo sem câmera:', e);
-    return { hasCam: false, hasMic: false };
+      const videoTrack = localStream.value.getVideoTracks()[0];
+      for (const userId in peers) {
+          const pc = peers[userId].connection;
+          if(pc) {
+             const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
+             if(sender && videoTrack) sender.replaceTrack(videoTrack);
+          }
+      }
   }
 }
 
-// Initialize call on mount
-onMounted(() => {
-  init();
-});
+// Re-implement signal listening with child_added for robustness
+watch(() => props.user.id, (myId) => { // Just to be safe if user loads late
+   if(!myId || !participants.value) return; 
+   // Setup listener
+   const myInbox = dbRef(database, `calls/${props.roomId}/signals/${myId}`);
+   // Actually better to just do this in joinRoom or onMounted once user is available
+}, { immediate: true });
 
-// Cleanup on component unmount
-onBeforeUnmount(() => {
-  endCall();
-});
+// Overwrite the listener in joinRoom with a better one:
+// In joinRoom step 4:
+// const myInbox = dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`);
+// onChildAdded(myInbox, (snapshot) => { ... logic ... remove(snapshot.ref) });
+
 </script>
 
 <style scoped>

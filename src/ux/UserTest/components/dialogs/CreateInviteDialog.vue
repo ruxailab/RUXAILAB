@@ -24,6 +24,29 @@
           <v-row>
             <v-col cols="12" md="6" class="pr-md-8">
               <div class="form-section">
+                <!-- Role Selection -->
+                 <div class="field-group mb-6">
+                  <label class="field-label">
+                    <v-icon class="mr-2" size="20">mdi-account-cowboy-hat</v-icon>
+                    Role
+                  </label>
+                  <p class="field-description mb-3">Select the role for this participant.</p>
+                  <v-radio-group v-model="selectedRole" color="primary" hide-details>
+                    <v-radio
+                      v-for="role in roleOptions"
+                      :key="role.value"
+                      :value="role.value"
+                    >
+                      <template v-slot:label>
+                        <div>
+                          <div class="font-weight-medium">{{ role.label }}</div>
+                          <div class="text-caption text-grey">{{ role.description }}</div>
+                        </div>
+                      </template>
+                    </v-radio>
+                  </v-radio-group>
+                 </div>
+
                 <!-- Participant Selection -->
                 <div class="field-group mb-6">
                   <label class="field-label">
@@ -276,7 +299,7 @@
 </template>
 
 <script setup>
-import Cooperators from '@/shared/models/Cooperators';
+import Cooperators, { ACCESS_LEVELS } from '@/shared/models/Cooperators';
 import Notification from '@/shared/models/Notification';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
@@ -316,6 +339,12 @@ const valid = ref(false);
 const comboboxModel = ref({});
 const inviteMessage = ref('');
 const loading = ref(false);
+const selectedRole = ref(ACCESS_LEVELS.ADMIN);
+
+const roleOptions = [
+  { label: 'Evaluator', value: ACCESS_LEVELS.ADMIN, description: 'Participates in the test, shares screen/video.' },
+  { label: 'Observator', value: ACCESS_LEVELS.OBSERVATOR, description: 'Watches the session silently, takes notes.' }
+];
 
 // Computed
 const minTime = computed(() => {
@@ -446,7 +475,7 @@ const saveInvitation = async () => {
       email: cooperator.email,
       invited: true,
       accepted: false,
-      accessLevel: 1,
+      accessLevel: selectedRole.value,
       testDate: timestamp,
       inviteMessage: inviteMessage.value,
       updateDate: test.value.updateDate,
@@ -478,6 +507,7 @@ const submit = async () => {
   
   inviteMessage.value = '';
   comboboxModel.value = {};
+  selectedRole.value = ACCESS_LEVELS.ADMIN;
 
   emit('update:dialog', false);
 };

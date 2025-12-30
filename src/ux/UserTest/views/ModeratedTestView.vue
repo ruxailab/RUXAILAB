@@ -183,11 +183,32 @@
             </v-col>
           </v-row>
 
-          <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent">
-            <VideoCall 
-              :roomId="roomId" 
-              :caller="isUserTestAdmin"
+      <!-- Observator Notes Drawer -->
+      <v-navigation-drawer
+        v-if="isObservator"
+        location="right"
+        persistent
+        width="400"
+        elevation="3"
+        :model-value="true"
+        style="position: fixed; top: 0; right: 0; height: 100%; z-index: 1005;"
+      >
+        <ObservatorNotes
+          v-if="localTestAnswer"
+          v-model="localTestAnswer.sessionNotes"
+          :current-task-index="taskIndex"
+          :test="test"
+          @save="saveAnswer"
+        />
+      </v-navigation-drawer>
+
+      <!-- Video Call Component -->
+      <div v-show="displayVideoCallComponent">
+        <VideoCall 
+          :roomId="roomId" 
+              :is-moderator="isUserTestAdmin"
+              :user="user"
+              :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
               :current-task-index="taskIndex"
               :test="test"
@@ -319,6 +340,7 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
@@ -361,6 +383,14 @@ const user = computed(() => {
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
 });
+
+const currentUserAccessLevel = computed(() => {
+  if (isUserTestAdmin.value) return 1; // Admin implicit
+  const cooperator = test.value.cooperators?.find(c => c.userDocId === user.value?.id);
+  return cooperator?.accessLevel || 3; // Default to Guest/Participant (3) if not found, but typically should be found
+});
+
+const isObservator = computed(() => currentUserAccessLevel.value === 2);
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
