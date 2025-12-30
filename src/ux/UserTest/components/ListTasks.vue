@@ -213,7 +213,8 @@ const getTaskTypeColor = (taskType) => {
     'post-test': 'secondary',
     'post-form': 'success',
     'nasa-tlx': 'warning',
-    'sus': 'info'
+    'sus': 'info',
+    'sart': 'deep blue'
   };
   return colors[taskType] || 'grey';
 };
@@ -225,7 +226,8 @@ const getTaskTypeIcon = (taskType) => {
     'post-test': 'mdi-clipboard-check',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket',
-    'sus': 'mdi-account-check'
+    'sus': 'mdi-account-check',
+    'sart': 'mdi-chart-areaspline'
   };
   return icons[taskType] || 'mdi-help-circle';
 };
@@ -237,7 +239,8 @@ const getTaskTypeLabel = (taskType) => {
     'post-test': t('switches.postTest'),
     'post-form': t('switches.postForm'),
     'nasa-tlx': t('switches.nasa'),
-    'sus': t('switches.sus')
+    'sus': t('switches.sus'),
+    'sart': t('switches.sart')
   };
   return labels[taskType] || 'Unknown';
 };

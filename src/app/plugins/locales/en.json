@@ -742,7 +742,8 @@
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Consent Form",
@@ -912,7 +913,8 @@
     "all": "All",
     "question": "Question {number}",
     "comingSoon": "Coming Soon",
-    "downloadResume": "Download Resume PDF"
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",

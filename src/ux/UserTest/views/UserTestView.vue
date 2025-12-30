@@ -190,6 +190,7 @@
             :done-task-disabled="doneTaskDisabled"
             @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
             @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+            @update:sartAnswers="val => { localTestAnswer.tasks[taskIndex].sartAnswers = { ...val } }"
             @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
@@ -859,7 +860,8 @@ const mappingSteps = async () => {
             completed: false,
             attempted: false, // Track whether task has been attempted
             susAnswers: [],
-            nasaTlxAnswers: {}
+            nasaTlxAnswers: {},
+            sartAnswers: {},
           });
           console.log('Nueva tarea creada:', i, newTask);
           return newTask;
@@ -904,10 +906,25 @@ watchEffect(() => {
   const task = Array.isArray(taskList) ? taskList[index] : undefined;
 
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers;
+  const sartAnswers = localTestAnswer?.tasks?.[index]?.sartAnswers;
 
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
     doneTaskDisabled.value = validCount < 10;
+  } else if (task?.taskType === 'sart') {
+    // Check if all SART dimensions are filled (1-10 dimensions, all should have values 1-7)
+    if (sartAnswers && typeof sartAnswers === 'object') {
+      const requiredDimensions = ['instability', 'complexity', 'variability', 'arousal', 
+                                 'spareCapacity', 'concentration', 'division', 'information', 
+                                 'familiarity', 'understanding'];
+      const filledCount = requiredDimensions.filter(dim => 
+        sartAnswers[dim] !== undefined && sartAnswers[dim] !== null && 
+        sartAnswers[dim] >= 1 && sartAnswers[dim] <= 7
+      ).length;
+      doneTaskDisabled.value = filledCount < requiredDimensions.length;
+    } else {
+      doneTaskDisabled.value = true;
+    }
   } else {
     doneTaskDisabled.value = false;
   }

@@ -247,6 +247,7 @@
               :shouldRecordModerator="!isUserTestAdmin"
               @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
               @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+              @update:sartAnswers="val => { localTestAnswer.tasks[taskIndex].sartAnswers = { ...val } }"
               @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
               @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
@@ -411,6 +412,20 @@ watchEffect(() => {
     const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
     doneTaskDisabled.value = validCount < 10;
     console.log('SUS respostas válidas:', validCount);
+  } else if (task?.taskType === 'sart') {
+    // Check if all SART dimensions are filled
+    if (sartAnswers && typeof sartAnswers === 'object') {
+      const requiredDimensions = ['instability', 'complexity', 'variability', 'arousal', 
+                                 'spareCapacity', 'concentration', 'division', 'information', 
+                                 'familiarity', 'understanding'];
+      const filledCount = requiredDimensions.filter(dim => 
+        sartAnswers[dim] !== undefined && sartAnswers[dim] !== null && 
+        sartAnswers[dim] >= 1 && sartAnswers[dim] <= 7
+      ).length;
+      doneTaskDisabled.value = filledCount < requiredDimensions.length;
+    } else {
+      doneTaskDisabled.value = true;
+    }
   } else {
     doneTaskDisabled.value = false;
   }
