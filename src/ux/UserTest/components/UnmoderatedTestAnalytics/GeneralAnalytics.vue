@@ -57,9 +57,22 @@
           :progress="Math.min(calculateEfficiency().score * 10, 100)" />
       </v-col>
       <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')"
-          color="warning" icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
-          :progress="(calculateSatisfaction() / 5) * 100" :disabled="true" />
+        <UxMetricCard 
+          v-if="satisfactionInfo.mode !== 'none'"
+          :value="`${satisfactionScore.toFixed(1)}/5`" 
+          :label="$t('analytics.satisfaction')"
+          color="warning" 
+          icon="mdi-heart" 
+          :description="satisfactionInfo.description"
+          :progress="(satisfactionScore / 5) * 100" 
+          :disabled="false" />
+        <v-card v-else class="pa-6 elevation-3 rounded-xl h-100" style="display: flex; align-items: center; justify-content: center;">
+          <div class="text-center">
+            <v-icon size="48" color="warning" class="mb-3">mdi-heart-outline</v-icon>
+            <div class="text-h6 font-weight-bold mb-2">{{ $t('analytics.satisfaction') }}</div>
+            <div class="text-body-2 text-medium-emphasis">{{ satisfactionInfo.description }}</div>
+          </div>
+        </v-card>
       </v-col>
     </v-row>
 
@@ -352,6 +365,7 @@ import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
 import AnswersTimeline from '../answers/AnswersTimeline.vue';
 import axios from 'axios';
+import { calculateSUSScore } from '@/ux/UserTest/utils/susCalculator';
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([]);
@@ -797,29 +811,122 @@ const calculateEfficiency = () => {
 };
 
 const calculateSatisfaction = () => {
-  if (!filteredSessions.value.length) return 0;
+  return satisfactionScore.value;
+};
 
-  let totalSatisfaction = 0;
-  let ratingsCount = 0;
+// Calculate SUS satisfaction metrics from task answers
+const calculateSUSMetrics = () => {
+  const susScores = [];
 
   filteredSessions.value.forEach((answer) => {
-    if (answer.satisfaction && typeof answer.satisfaction === 'number') {
-      totalSatisfaction += answer.satisfaction;
-      ratingsCount++;
-    } else {
-      // If no satisfaction data, simulate based on completion rate
-      const userProgress = answer.progress;
-      const simulatedRating = userProgress >= 90 ? 4.5 :
-        userProgress >= 70 ? 4.0 :
-          userProgress >= 50 ? 3.5 :
-            userProgress >= 30 ? 3.0 : 2.5;
-      totalSatisfaction += simulatedRating;
-      ratingsCount++;
-    }
+    if (!answer.tasks) return;
+
+    Object.values(answer.tasks).forEach((task) => {
+      if (task.susAnswers && Array.isArray(task.susAnswers) && task.susAnswers.length === 10) {
+        try {
+          const score = calculateSUSScore(task.susAnswers);
+          susScores.push(score);
+        } catch (error) {
+          console.warn('Invalid SUS answers:', error);
+        }
+      }
+    });
   });
 
-  return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount;
+  if (susScores.length === 0) {
+    return { hasData: false, score: 0, count: 0 };
+  }
+
+  const avgScore = susScores.reduce((sum, score) => sum + score, 0) / susScores.length;
+  return { hasData: true, score: avgScore, count: susScores.length };
 };
+
+// Calculate NASA-TLX satisfaction metrics from task answers
+const calculateNASATLXMetrics = () => {
+  const nasaTlxScores = [];
+
+  filteredSessions.value.forEach((answer) => {
+    if (!answer.tasks) return;
+
+    Object.values(answer.tasks).forEach((task) => {
+      // Check if task has NASA-TLX answers and it's a valid object with dimensions
+      if (task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object') {
+        const nasaTlx = task.nasaTlxAnswers;
+        // Check if at least one dimension exists and has a numeric value
+        const dimensions = [
+          nasaTlx.mentalDemand,
+          nasaTlx.physicalDemand,
+          nasaTlx.temporalDemand,
+          nasaTlx.performance,
+          nasaTlx.effort,
+          nasaTlx.frustration
+        ].filter(val => typeof val === 'number');
+        
+        if (dimensions.length > 0) {
+          const avgScore = dimensions.reduce((sum, val) => sum + val, 0) / dimensions.length;
+          nasaTlxScores.push(avgScore);
+        }
+      }
+    });
+  });
+
+  if (nasaTlxScores.length === 0) {
+    return { hasData: false, score: 0, count: 0 };
+  }
+
+  const avgScore = nasaTlxScores.reduce((sum, score) => sum + score, 0) / nasaTlxScores.length;
+  return { hasData: true, score: avgScore, count: nasaTlxScores.length };
+};
+
+// Reactive computed metrics (calculated only once and cached)
+const susMetrics = computed(() => calculateSUSMetrics());
+const nasaTlxMetrics = computed(() => calculateNASATLXMetrics());
+
+// Reactive satisfaction score
+const satisfactionScore = computed(() => {
+  if (susMetrics.value.hasData) {
+    return Math.min(susMetrics.value.score / 20, 5);
+  }
+
+  if (nasaTlxMetrics.value.hasData) {
+    return Math.min(Math.max((100 - nasaTlxMetrics.value.score) / 20, 0), 5);
+  }
+
+  return 0;
+});
+
+// Get detailed satisfaction info for UI
+const satisfactionInfo = computed(() => {
+  if (susMetrics.value.hasData && nasaTlxMetrics.value.hasData) {
+    return {
+      mode: 'both',
+      sources: ['SUS', 'NASA-TLX'],
+      description: 'Based on SUS and NASA-TLX assessments'
+    };
+  }
+
+  if (susMetrics.value.hasData) {
+    return {
+      mode: 'sus',
+      sources: ['SUS'],
+      description: `Based on ${susMetrics.value.count} SUS assessment${susMetrics.value.count !== 1 ? 's' : ''}`
+    };
+  }
+
+  if (nasaTlxMetrics.value.hasData) {
+    return {
+      mode: 'nasa',
+      sources: ['NASA-TLX'],
+      description: `Based on ${nasaTlxMetrics.value.count} NASA-TLX assessment${nasaTlxMetrics.value.count !== 1 ? 's' : ''}`
+    };
+  }
+
+  return {
+    mode: 'none',
+    sources: [],
+    description: 'Satisfaction level cannot be calculated for this test.'
+  };
+});
 
 const getTasksPerformance = () => {
   // Recoger todos los taskId únicos presentes en filteredSessions
