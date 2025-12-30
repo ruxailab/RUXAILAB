@@ -68,7 +68,7 @@
                 <v-btn variant="text" class="text-capitalize" @click="handleCancel">
                     {{ $t('common.cancel') }}
                 </v-btn>
-                <v-btn color="primary" variant="flat" class="text-capitalize" :disabled="!isValid || isSaving"
+                <v-btn color="primary" variant="flat" class="text-capitalize" :disabled="!saveButtonEnabled"
                     :loading="isSaving" @click="handleSave">
                     <v-icon start>mdi-content-save</v-icon>
                     {{ $t('profile.saveChanges') }}
@@ -82,6 +82,7 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { countries } from '@/shared/constants/countries';
+import { showError, showSuccess } from '@/shared/utils/toast';
 
 const props = defineProps({
     modelValue: {
@@ -111,6 +112,9 @@ const formRef = ref(null);
 const isValid = ref(false);
 const isSaving = ref(false);
 const isUploadingImage = ref(false);
+const selectedImageFile = ref(null);
+const imagePreviewUrl = ref('');
+const hasImageChanges = ref(false);
 
 const localProfileData = ref({
     username: '',
@@ -166,48 +170,95 @@ const handleImageUpload = async (event) => {
     try {
         // Create instant preview
         const previewUrl = URL.createObjectURL(file);
+        // store the file for later upload
+        selectedImageFile.value = file;
+        imagePreviewUrl.value = previewUrl;
+
+        // Update local profile data immediately for instant UI feedback
         localProfileData.value.profileImage = previewUrl;
         
-        // Show uploading state but don't block UI
-        isUploadingImage.value = true;
-        
-        // Upload in background
-        const downloadURL = await props.onUploadImage(file, (preview) => {
-            // This callback is called immediately with preview
-            localProfileData.value.profileImage = preview;
-        });
-        
-        if (downloadURL) {
-            // Clean up preview URL
-            URL.revokeObjectURL(previewUrl);
-            localProfileData.value.profileImage = downloadURL;
-        }
+        // mark that we have image changes
+        hasImageChanges.value = true;
     } catch (error) {
         console.error('Error uploading image:', error);
+        showError(t('profile.imageUploadFailed'))
     } finally {
-        isUploadingImage.value = false;
         // Reset file input
         if (fileInput.value) {
             fileInput.value.value = '';
         }
     }
 };
-
+// handleSave function to include image upload
 const handleSave = async () => {
     if (!formRef.value.validate()) return;
 
     isSaving.value = true;
-    const success = await props.onSave(localProfileData.value);
-    isSaving.value = false;
+    try {
+        // upload image first if there is a new one selected
+        if(selectedImageFile.value){
+            const downloadURL = await props.onUploadImage(
+                selectedImageFile.value,
+                true,
+                (preview) => {
+                    localProfileData.value.profileImage = preview;
+                }
+            );
 
-    if (success) {
-        emit('update:modelValue', false);
+            if(downloadURL){
+                localProfileData.value.profileImage = downloadURL;
+            }
+
+            // clean up
+            if(imagePreviewUrl.value){
+                URL.revokeObjectURL(imagePreviewUrl.value);
+            }
+            selectedImageFile.value = null;
+            imagePreviewUrl.value = '';
+            hasImageChanges.value = false;
+            isUploadingImage.value = false;
+        };
+
+        // then save profile data
+        const success = await props.onSave(localProfileData.value);
+        if(success){
+            showSuccess(t('profile.profileUpdatedSuccess'));
+            emit('update:modelValue', false);
+        }
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        showError(t('profile.profileUpdateFailed'));
+    } finally {
+        isSaving.value = false;
+        isUploadingImage.value = false;
     }
 };
 
+// handleCancel to clean up image preview URL
 const handleCancel = () => {
+    if(imagePreviewUrl.value){
+        URL.revokeObjectURL(imagePreviewUrl.value);
+    }
+    // reset image states
+    selectedImageFile.value = null;
+    imagePreviewUrl.value = '';
+    hasImageChanges.value = false;
+
+    // reset local data to original
+    localProfileData.value = { ...props.profileData };
+
     emit('update:modelValue', false);
 };
+
+// update save button to check for changes
+const saveButtonEnabled = computed(() => {
+    const hasFormChanges = isValid.value && (
+        localProfileData.value.username !== props.profileData.username ||
+        localProfileData.value.contactNo !== props.profileData.contactNo ||
+        localProfileData.value.country !== props.profileData.country
+    );
+    return (hasFormChanges || hasImageChanges.value) && !isSaving.value;
+});
 
 const countryFilter = (item, queryText) => {
     if (!queryText) return true;

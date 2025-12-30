@@ -85,7 +85,7 @@ export function useProfile() {
         }
     };
 
-    const uploadProfileImage = async (file, onPreviewReady = null) => {
+    const uploadProfileImage = async (file, uploadImmediately = false, onPreviewReady = null) => {
         try {
             const auth = getAuth();
             const user = auth.currentUser;
@@ -98,9 +98,15 @@ export function useProfile() {
             if (onPreviewReady) {
                 onPreviewReady(previewUrl);
             }
+            if(!uploadImmediately) {
+                return {
+                    previewUrl,
+                    file,
+                    uploadLater: () => uploadImageFile(file, previewUrl),
+                }
+            }
 
-            // Update UI immediately with preview
-            userprofile.value.profileImage = previewUrl;
+            // Original upload logic (inly if uploadImmediately is true)
 
             // Compress image for upload (smaller size for faster upload)
             // Use more aggressive compression for faster upload
@@ -130,6 +136,39 @@ export function useProfile() {
             return null;
         }
     };
+
+    const uploadImageFile = async (file, previewUrl) => {
+        try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            if(!user) throw new Error(t('profile.noUserSignedIn'));
+
+            // Compress image for upload (smaller size for faster upload)
+            const compressedFile = await compressImage(file, 800, 0.6);
+            const storage = getStorage();
+            const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+
+            // Upload in background
+            const snapshot = await uploadBytes(storageReference, compressedFile);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            // Update database
+            const db = getFirestore();
+            const userDocRef = doc(db, 'users', user.uid);
+            await updateDoc(userDocRef, { profileImage: downloadURL });
+
+            // Clean up preview URL and update with final URL
+            URL.revokeObjectURL(previewUrl);
+            userprofile.value.profileImage = downloadURL;
+
+            showSuccess('profile.profileImageUpdatedSuccess');
+            return downloadURL;
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            showError('profile.profileImageUploadFailed');
+            return null;
+        }
+    }
 
     const compressImage = (file, maxWidth, quality) => {
         return new Promise((resolve, reject) => {
