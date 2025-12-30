@@ -209,7 +209,14 @@ const processDataForChart = () => {
   });
 
   const testsPerDay = {};
-  const iterator = new Date(oneMonthsAgo);
+  
+  let startDate = new Date(oneMonthsAgo);
+  if (validAnswers.length > 0) {
+    const timestamps = validAnswers.map(a => new Date(a.lastUpdate).getTime());
+    startDate = new Date(Math.min(...timestamps));
+  }
+
+  const iterator = new Date(startDate);
   while (iterator <= currentDate) {
     const dateStr = iterator.toISOString().split('T')[0];
     testsPerDay[dateStr] = 0;
