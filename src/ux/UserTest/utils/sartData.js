@@ -141,7 +141,7 @@ export function getSARTData(sartResponses) {
     averageSAScore,
     totalRespondents,
     highestSADimension: sortedDimensions[0]?.label || '',
-    lowestSADimension: sortedDimensions[sortedDimensions.length - 1]?.label || '',
+    lowestSADimension: sortedDimensions.at(-1)?.label || '',
     dimensionAverages,
     averageDemand,
     averageSupply,
