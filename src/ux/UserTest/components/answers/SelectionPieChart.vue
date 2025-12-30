@@ -1,9 +1,26 @@
-<template>
-  <v-card class="pa-6 elevation-3 rounded-xl chart-card">
-    <div class="mb-4">
+<template> <v-card class="pa-6 elevation-3 rounded-xl chart-card">
+    <div class="d-flex justify-space-between align-start mb-4">
       <h4 class="font-weight-bold mb-2">
         {{ questionTitle }}
       </h4>
+      <v-menu location="bottom end">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            icon="mdi-dots-vertical"
+            variant="text"
+            size="small"
+            v-bind="props"
+          />
+        </template>
+        <v-list density="compact">
+          <v-list-item @click="downloadChart" link>
+            <template v-slot:prepend>
+              <v-icon icon="mdi-download" size="small" class="mr-2" />
+            </template>
+            <v-list-item-title>Export as PNG</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </div>
     <div class="chart-container-small mb-4">
       <canvas
@@ -67,6 +84,21 @@ const drawChart = () => {
         ctx.fillStyle = '#fff';
         ctx.fill();
     });
+};
+
+const downloadChart = () => {
+    const canvas = document.getElementById(props.canvasId);
+    if (!canvas) return;
+
+    const link = document.createElement('a');
+    const filename = (props.questionTitle || 'chart').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    
+    link.download = `${filename}.png`;
+    link.href = canvas.toDataURL('image/png');
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 watch(() => [props.options, props.counts], drawChart, { immediate: true, deep: true });
