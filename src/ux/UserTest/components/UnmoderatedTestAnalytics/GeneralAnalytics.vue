@@ -909,7 +909,7 @@ const satisfactionInfo = computed(() => {
     return {
       mode: 'sus',
       sources: ['SUS'],
-      description: `Based on ${susMetrics.value.count} SUS assessment${susMetrics.value.count !== 1 ? 's' : ''}`
+       description: `Based on ${susMetrics.value.count} SUS assessments`
     };
   }
 
@@ -917,7 +917,7 @@ const satisfactionInfo = computed(() => {
     return {
       mode: 'nasa',
       sources: ['NASA-TLX'],
-      description: `Based on ${nasaTlxMetrics.value.count} NASA-TLX assessment${nasaTlxMetrics.value.count !== 1 ? 's' : ''}`
+      description: `Based on ${nasaTlxMetrics.value.count} NASA-TLX assessments`
     };
   }
 
