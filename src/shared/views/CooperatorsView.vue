@@ -213,14 +213,14 @@ const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false;
   if (user.userDocId && test.value) {
     const author = test.value.testAdmin.email;
-    await sendNotification(
-      user.userDocId,
+    await sendNotification({
+      userId: user.userDocId,
       title,
+      description: content,
+      redirectsTo: '/',
+      testId: test.value.id,
       author,
-      content,
-      '/',
-      test.value.id
-    );
+    });
   }
 };
 
@@ -349,14 +349,14 @@ const notifyCooperatorAccessibility = async (guest) => {
 
     if (guest.userDocId && path) {
       const author = test.value.testAdmin.email;
-      await sendNotification(
-        guest.userDocId,
+      await sendNotification({
+        userId: guest.userDocId,
         title,
         description,
-        path,
-        test.value.id,
+        redirectsTo: path,
+        testId: test.value.id,
         author,
-      );
+      });
     }
   }
 };
