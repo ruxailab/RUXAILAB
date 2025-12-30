@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { reactive, watch, ref, computed } from 'vue';
+import { reactive, watch, ref } from 'vue';
 
 const props = defineProps({
   sart: {
