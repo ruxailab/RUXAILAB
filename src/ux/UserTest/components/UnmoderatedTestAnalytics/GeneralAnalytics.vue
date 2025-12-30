@@ -282,7 +282,7 @@
       <v-col cols="12">
         <v-card flat class="pa-8 ">
           <div class="d-flex justify-space-between align-center mb-6">
-            <div>
+            <div class="flex-grow-1">
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
                 {{ $t('analytics.preTest') }}
               </h3>
@@ -290,6 +290,25 @@
                 {{ $t('analytics.preTestDescription') }}
               </p>
             </div>
+            <!-- Three Dots Menu for LaTeX Export -->
+            <v-menu>
+              <template #activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  icon="mdi-dots-vertical"
+                  variant="text"
+                  size="large"
+                />
+              </template>
+              <v-list>
+                <v-list-item @click="exportPreTestAsLatex">
+                  <template #prepend>
+                    <v-icon>mdi-file-export</v-icon>
+                  </template>
+                  <v-list-item-title>Export as LaTeX</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
           <v-row>
             <template v-for="(q, idx) in (testStructure?.preTest || [])">
@@ -733,6 +752,86 @@ const resetFilters = () => { selectedFilters.value = {}; searchTerm.value = ''; 
 const toggleFilters = () => { showFilters.value = !showFilters.value; };
 
 const triggerSearch = () => { /* no-op: computed already reacts; placeholder for future debounce */ };
+
+const exportPreTestAsLatex = () => {
+  const timestamp = new Date().toLocaleString('en-US', { 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit' 
+  });
+  
+  try {
+    let latexContent = '\\documentclass{article}\n';
+    latexContent += '\\usepackage{pgfplots}\n';
+    latexContent += '\\usepackage[utf8]{inputenc}\n';
+    latexContent += '\\usepackage{tikz}\n';
+    latexContent += '\\usepackage{booktabs}\n\n';
+    latexContent += '\\begin{document}\n\n';
+    latexContent += '\\section*{Pre Test Analysis}\n';
+    latexContent += '\\subsection*{Generated on: ' + timestamp + '}\n\n';
+    
+    // Get all pre-test data
+    const preTestQuestions = testStructure.value?.preTest || [];
+    
+    preTestQuestions.forEach((q, idx) => {
+      const title = q.title || q.question || 'Question ' + (idx + 1);
+      
+      if (Array.isArray(q.selectionFields) && q.selectionFields.length > 0) {
+        const counts = getPreSelectionCounts(idx);
+        
+        latexContent += '\\subsection*{' + title + '}\n\n';
+        
+        // Add table with data
+        latexContent += '\\begin{center}\n';
+        latexContent += '\\begin{tabular}{|l|c|}\n';
+        latexContent += '\\toprule\n';
+        latexContent += '\\textbf{Option} & \\textbf{Count} \\\\\n';
+        latexContent += '\\midrule\n';
+        
+        let totalCount = 0;
+        q.selectionFields.forEach((option) => {
+          const count = counts[option] || 0;
+          totalCount += count;
+          latexContent += option + ' & ' + count + ' \\\\\n';
+        });
+        
+        latexContent += '\\midrule\n';
+        latexContent += '\\textbf{Total} & \\textbf{' + totalCount + '} \\\\\n';
+        latexContent += '\\bottomrule\n';
+        latexContent += '\\end{tabular}\n';
+        latexContent += '\\end{center}\n\n';
+      } else {
+        // Text answer
+        const answers = getPreTextAnswers(idx);
+        latexContent += '\\subsection*{' + title + '}\n';
+        latexContent += '\\textit{Text Response}\n\n';
+        
+        if (Array.isArray(answers) && answers.length > 0) {
+          answers.forEach((answer, aIdx) => {
+            latexContent += '\\noindent\\textbf{Response ' + (aIdx + 1) + ':} ' + (answer || 'No response') + '\n\n';
+          });
+        }
+      }
+    });
+    
+    latexContent += '\\end{document}\n';
+    
+    // Download LaTeX file
+    const link = document.createElement('a');
+    const blob = new Blob([latexContent], { type: 'text/plain' });
+    link.href = URL.createObjectURL(blob);
+    link.download = `PreTest-Analysis-${timestamp}.tex`;
+    link.click();
+    
+    alert('LaTeX file exported successfully!');
+  } catch (error) {
+    console.error('Error exporting LaTeX:', error);
+    alert('Error exporting LaTeX. Please try again.');
+  }
+};
 
 // UX Metrics Functions
 const calculateEffectiveness = () => {
