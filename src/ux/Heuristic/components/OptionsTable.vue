@@ -1,224 +1,148 @@
 <template>
 
-    <v-card
-      elevation="2"
-      class="pa-6 pa-md-6 pa-lg-8"
-    >
-      <!-- Header Section - Made Responsive -->
-      <div class="d-flex align-center justify-space-between mb-8 mobile-header">
-        <div>
-          <h1 class="text-h4 font-weight-bold text-on-surface">
-            {{ $t('HeuristicsOptionsTable.titles.options') }}
-          </h1>
-        </div>
-
-        <v-btn
-          color="primary"
-          prepend-icon="mdi-plus"
-          variant="elevated"
-          size="large"
-          :disabled="testAnswerDocLength > 0"
-          class="text-none add-option-btn"
-          @click="dialog = true"
-        >
-          {{ $t('HeuristicsTable.titles.addOption') }}
-        </v-btn>
+  <v-card elevation="2" class="pa-6">
+    <!-- Header Section - Made Responsive -->
+    <div class="d-flex align-center justify-space-between mb-8 mobile-header">
+      <div>
+        <h1 class="text-h4 font-weight-bold text-on-surface">
+          {{ $t('HeuristicsOptionsTable.titles.options') }}
+        </h1>
       </div>
 
-      <!-- Options Table - Made Responsive -->
-      <div class="options-table-container">
-        <!-- Desktop Table View (only show when there are items) -->
-        <v-card v-if="optionsWithFormattedValue.length > 0" class="options-table-card desktop-table">
-          <v-data-table
-            :headers="headers"
-            :items="optionsWithFormattedValue"
-            :items-per-page="-1"
-            class="elevation-0 options-data-table"
-            hide-default-footer
-          >
-            <!-- Custom header styling -->
-            <template #headers="{ columns }">
-              <tr class="table-header">
-                <th
-                  v-for="column in columns"
-                  :key="column.key"
-                  class="text-left font-weight-medium text-ternary pa-4"
-                  :style="{ width: column.width }"
-                >
-                  {{ column.title }}
-                </th>
-              </tr>
-            </template>
+      <v-btn color="primary" prepend-icon="mdi-plus" variant="elevated" size="large" :disabled="testAnswerDocLength > 0"
+        class="text-none add-option-btn" @click="dialog = true">
+        {{ $t('HeuristicsTable.titles.addOption') }}
+      </v-btn>
+    </div>
+    <v-divider class="mb-6" />
 
-            <!-- Desktop view -->
-            <template #item="{ item }">
-              <tr class="table-row">
-                <td class="pa-4 title-cell">
-                  <div class="cell-content">
-                    <span class="text-body-1 text-on-surface option-text">{{ item.text }}</span>
-                  </div>
-                </td>
-                <td class="pa-4 description-cell">
-                  <div class="cell-content">
-                    <span class="text-body-2 text-on-surface option-description">{{ item.description || '-' }}</span>
-                  </div>
-                </td>
-                <td class="pa-4 value-cell">
-                  <div class="cell-content">
-                    <span class="text-body-1 text-on-surface font-weight-medium option-value">{{ item.value }}</span>
-                  </div>
-                </td>
-                <td class="pa-4 actions-cell">
-                  <div class="d-flex gap-2 option-actions">
-                    <v-btn
-                      icon="mdi-pencil"
-                      variant="text"
-                      size="small"
-                      color="primary"
-                      :disabled="testAnswerDocLength > 0"
-                      @click="editItem(item)"
-                      class="table-action-btn"
-                    />
-                    <v-btn
-                      icon="mdi-delete"
-                      variant="text"
-                      size="small"
-                      color="error"
-                      :disabled="testAnswerDocLength > 0"
-                      @click="deleteItem(item)"
-                      class="table-action-btn"
-                    />
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </v-data-table>
-        </v-card>
+    <!-- Options Table - Made Responsive -->
+    <div class="options-table-container">
+      <!-- Desktop Table View (only show when there are items) -->
+      <v-card v-if="optionsWithFormattedValue.length > 0" class="options-table-card desktop-table">
+        <v-data-table :headers="headers" :items="optionsWithFormattedValue" :items-per-page="-1"
+          class="elevation-0 options-data-table" hide-default-footer>
+          <!-- Custom header styling -->
+          <template #headers="{ columns }">
+            <tr class="table-header">
+              <th v-for="column in columns" :key="column.key" class="text-left font-weight-medium text-ternary pa-4"
+                :style="{ width: column.width }">
+                {{ column.title }}
+              </th>
+            </tr>
+          </template>
 
-        <!-- Desktop Empty State (outside the table) -->
-        <v-card v-if="optionsWithFormattedValue.length === 0" class="desktop-empty-state options-table-card">
-          <div class="text-center empty-options-card--desktop" variant="outlined">
-            <v-icon
-              icon="mdi-cog-outline"
-              class="empty-icon"
-              color="primary"
-            />
-            <h3 class="empty-title">
-              {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
-            </h3>
-            <p class="empty-text">
-              {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
-            </p>
-          </div>
-        </v-card>
-
-        <!-- Mobile List View (similar to heuristics) -->
-        <div class="mobile-options-list">
-          <div
-            v-for="(item, index) in optionsWithFormattedValue"
-            :key="item.timestamp"
-            class="option-item-mobile"
-          >
-            <v-card variant="outlined" class="mb-3 option-card-mobile">
-              <!-- Option Header - EXACTLY LIKE HEURISTIC HEADER -->
-              <div class="d-flex align-center pa-3 option-header-mobile">
-                <div class="d-flex align-center flex-grow-1 option-info-mobile">
-                  <v-chip
-                    color="primary"
-                    variant="tonal"
-                    size="small"
-                    class="me-3 option-chip-mobile"
-                  >
-                    {{ item.value }}
-                  </v-chip>
-                  <div class="option-content-mobile">
-                    <h5 class="text-subtitle-1 font-weight-medium text-on-surface option-title-mobile mb-0">
-                      {{ item.text }}
-                    </h5>
-                    <p v-if="item.description && item.description !== '-'" class="text-body-2 text-ternary ma-0 mt-1 option-desc-mobile">
-                      {{ item.description }}
-                    </p>
-                  </div>
+          <!-- Desktop view -->
+          <template #item="{ item }">
+            <tr class="table-row">
+              <td class="pa-4 title-cell">
+                <div class="cell-content">
+                  <span class="text-body-1 text-on-surface option-text">{{ item.text }}</span>
                 </div>
+              </td>
+              <td class="pa-4 description-cell">
+                <div class="cell-content">
+                  <span class="text-body-2 text-on-surface option-description">{{ item.description || '-' }}</span>
+                </div>
+              </td>
+              <td class="pa-4 value-cell">
+                <div class="cell-content">
+                  <span class="text-body-1 text-on-surface font-weight-medium option-value">{{ item.value }}</span>
+                </div>
+              </td>
+              <td class="pa-4 actions-cell">
+                <div class="d-flex gap-2 option-actions">
+                  <v-btn icon="mdi-pencil" variant="text" size="small" color="primary"
+                    :disabled="testAnswerDocLength > 0" @click="editItem(item)" class="table-action-btn" />
+                  <v-btn icon="mdi-delete" variant="text" size="small" color="error" :disabled="testAnswerDocLength > 0"
+                    @click="deleteItem(item)" class="table-action-btn" />
+                </div>
+              </td>
+            </tr>
+          </template>
+        </v-data-table>
+      </v-card>
 
-                <div class="d-flex gap-1 option-actions-mobile">
-                  <v-btn
-                    icon="mdi-pencil"
-                    variant="text"
-                    size="small"
-                    color="primary"
-                    :disabled="testAnswerDocLength > 0"
-                    @click.stop="editItem(item)"
-                    class="action-btn-mobile"
-                  />
-                  <v-btn
-                    icon="mdi-delete"
-                    variant="text"
-                    size="small"
-                    color="error"
-                    :disabled="testAnswerDocLength > 0"
-                    @click.stop="deleteItem(item)"
-                    class="action-btn-mobile"
-                  />
+      <!-- Desktop Empty State (outside the table) -->
+      <v-card v-if="optionsWithFormattedValue.length === 0" class="desktop-empty-state options-table-card">
+        <div class="text-center empty-options-card--desktop" variant="outlined">
+          <v-icon icon="mdi-cog-outline" class="empty-icon" color="primary" />
+          <h3 class="empty-title">
+            {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
+          </h3>
+          <p class="empty-text">
+            {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
+          </p>
+        </div>
+      </v-card>
+
+      <!-- Mobile List View (similar to heuristics) -->
+      <div class="mobile-options-list">
+        <div v-for="(item, index) in optionsWithFormattedValue" :key="item.timestamp" class="option-item-mobile">
+          <v-card variant="outlined" class="mb-3 option-card-mobile">
+            <!-- Option Header - EXACTLY LIKE HEURISTIC HEADER -->
+            <div class="d-flex align-center pa-3 option-header-mobile">
+              <div class="d-flex align-center flex-grow-1 option-info-mobile">
+                <v-chip color="primary" variant="tonal" size="small" class="me-3 option-chip-mobile">
+                  {{ item.value }}
+                </v-chip>
+                <div class="option-content-mobile">
+                  <h5 class="text-subtitle-1 font-weight-medium text-on-surface option-title-mobile mb-0">
+                    {{ item.text }}
+                  </h5>
+                  <p v-if="item.description && item.description !== '-'"
+                    class="text-body-2 text-ternary ma-0 mt-1 option-desc-mobile">
+                    {{ item.description }}
+                  </p>
                 </div>
               </div>
-            </v-card>
-          </div>
 
-          <!-- Empty state for mobile -->
-          <div v-if="optionsWithFormattedValue.length === 0" class="mobile-empty-state">
-            <v-card class="text-center pa-8 empty-options-card-mobile" variant="outlined">
-              <v-icon
-                icon="mdi-cog-outline"
-                size="64"
-                color="primary"
-                class="mb-4"
-              />
-              <h3 class="text-h6 text-ternary mb-2">
-                {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
-              </h3>
-              <p class="text-body-2 text-ternary empty-state-text-mobile">
-                {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
-              </p>
-            </v-card>
-          </div>
+              <div class="d-flex gap-1 option-actions-mobile">
+                <v-btn icon="mdi-pencil" variant="text" size="small" color="primary" :disabled="testAnswerDocLength > 0"
+                  @click.stop="editItem(item)" class="action-btn-mobile" />
+                <v-btn icon="mdi-delete" variant="text" size="small" color="error" :disabled="testAnswerDocLength > 0"
+                  @click.stop="deleteItem(item)" class="action-btn-mobile" />
+              </div>
+            </div>
+          </v-card>
         </div>
-        
-        <!-- Footer with count -->
-        <div v-if="optionsWithFormattedValue.length > 0" class="options-footer">
-          <div class="d-flex align-center justify-space-between flex-wrap gap-2 pa-3">
-            <div class="d-flex align-center items-count">
-              <span class="text-caption text-grey">
-                {{ optionsWithFormattedValue.length }} {{ optionsWithFormattedValue.length === 1 ? 'option' : 'options' }}
-              </span>
-            </div>
-            <div class="d-flex align-center gap-2">
-              <v-btn
-                v-if="testAnswerDocLength === 0"
-                color="primary"
-                variant="outlined"
-                size="small"
-                prepend-icon="mdi-plus"
-                @click="dialog = true"
-                class="mobile-add-btn"
-              >
-                Add Option
-              </v-btn>
-            </div>
-          </div>
+
+        <!-- Empty state for mobile -->
+        <div v-if="optionsWithFormattedValue.length === 0" class="mobile-empty-state">
+          <v-card class="text-center pa-8 empty-options-card-mobile" variant="outlined">
+            <v-icon icon="mdi-cog-outline" size="64" color="primary" class="mb-4" />
+            <h3 class="text-h6 text-ternary mb-2">
+              {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
+            </h3>
+            <p class="text-body-2 text-ternary empty-state-text-mobile">
+              {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
+            </p>
+          </v-card>
         </div>
       </div>
 
-      <!-- AddOptionBtn Component -->
-      <AddOptionBtn
-        v-model:dialog="dialog"
-        :option="option"
-        :has-value="hasValue"
-        @change-has-value="updateHasValue"
-        @add-option="updateOptions"
-        @change="emitChange"
-      />
-    </v-card>
+      <!-- Footer with count -->
+      <div v-if="optionsWithFormattedValue.length > 0" class="options-footer">
+        <div class="d-flex align-center justify-space-between flex-wrap gap-2 pa-3">
+          <div class="d-flex align-center items-count">
+            <span class="text-caption text-grey">
+              {{ optionsWithFormattedValue.length }} {{ optionsWithFormattedValue.length === 1 ? 'option' : 'options' }}
+            </span>
+          </div>
+          <div class="d-flex align-center gap-2">
+            <v-btn v-if="testAnswerDocLength === 0" color="primary" variant="outlined" size="small"
+              prepend-icon="mdi-plus" @click="dialog = true" class="mobile-add-btn">
+              Add Option
+            </v-btn>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AddOptionBtn Component -->
+    <AddOptionBtn v-model:dialog="dialog" :option="option" :has-value="hasValue" @change-has-value="updateHasValue"
+      @add-option="updateOptions" @change="emitChange" />
+  </v-card>
 </template>
 
 <script setup>
@@ -375,15 +299,15 @@ const resetForm = () => {
   .desktop-table {
     display: block !important;
   }
-  
+
   .mobile-options-list {
     display: none !important;
   }
-  
+
   .mobile-add-btn {
     display: none !important;
   }
-  
+
   .desktop-empty-state {
     display: block !important;
   }
@@ -403,6 +327,7 @@ const resetForm = () => {
 
 /* Responsive styles for mobile devices */
 @media (max-width: 768px) {
+
   /* Header section */
   .mobile-header {
     flex-direction: column;
@@ -649,6 +574,7 @@ const resetForm = () => {
 
 /* Very small mobile screens */
 @media (max-width: 480px) {
+
   /* Further reduce padding */
   .v-container.fluid.pa-6,
   .v-card.pa-6 {
