@@ -108,13 +108,8 @@ const chartOptions = ref({
       },
       callbacks: {
         title: (tooltipItems) => {
-          const timestamp = tooltipItems[0].parsed.x;
-          const date = new Date(timestamp);
-          return date.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })
+          const dateLabel = tooltipItems[0].label;
+          return dateLabel;
         },
       },
     },
@@ -170,7 +165,12 @@ const chartOptions = ref({
           size: 12,
           weight: '500',
         },
-        stepSize: 0.5,
+        stepSize: 1,
+        callback: function(value) {
+          if (Number.isInteger(value)) {
+            return value;
+          }
+        },
         padding: 10,
       },
     },
