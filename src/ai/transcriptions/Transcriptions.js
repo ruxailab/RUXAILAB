@@ -1,10 +1,10 @@
-/** @typedef {import('firebase/firestore').Timestamp} Timestamp */
+/** @typedef {Object} Timestamp - Firebase Timestamp object */
 
 /**
  * Create a transcription Object for Moderated Test Task
  * @param {string} [id=null] - The unique ID of the document (optional).
  * 
- * @param {string} answerDocId - The answer document ID related to the transcription.
+ * @param {string} answersDocId - The answer document ID related to the transcription.
  * @param {string} userDocId - The user document ID related to the transcription.
  * @param {string} taskId - The task ID related to the transcription.
  * 
@@ -36,7 +36,7 @@ export default class Transcription {
      * Constructs an instance of Transcription.
      * @param {Object} params - The parameters for the Transcription instance.
      * @param {string} [params.id=null] - The unique ID of the document (optional).
-     * @param {string} params.answerDocId - The Answer document ID.
+     * @param {string} params.answersDocId - The Answer document ID.
      * @param {string} params.userDocId - The User document ID.
      * @param {string} params.taskId - The Task document ID.
      * 
@@ -61,7 +61,7 @@ export default class Transcription {
      * @param {number} params.evaluator.segments[].end - The end time of the segment (in seconds).
      * @param {string} params.evaluator.segments[].text - The text of the segment.
      */
-    constructor({ id = null, answerDocId, userDocId, taskId, provider, model, createdAt, moderator, evaluator } = {}) {
+    constructor({ id = null, answersDocId, userDocId, taskId, provider, model, createdAt, moderator, evaluator } = {}) {
 
         /**
          * The unique ID of the document (optional)
@@ -74,7 +74,7 @@ export default class Transcription {
          * The Answer document ID
          * @type {string}
          */
-        this.answerDocId = answerDocId;
+        this.answersDocId = answersDocId;
 
         /**
          * The User document ID
@@ -126,7 +126,7 @@ export default class Transcription {
     *
     * @param {Object} data - The plain object to convert.
     * @param {string} data.id - The unique ID of the document.
-    * @param {string} data.answerDocId - The Answer document ID.
+    * @param {string} data.answersDocId - The Answer document ID.
     * @param {string} data.userDocId - The User document ID.
     * @param {string} data.taskId - The Task document ID.
     * 
@@ -155,7 +155,7 @@ export default class Transcription {
     static toTranscription(data) {
         return new Transcription({
             id: data.id,
-            answerDocId: data.answerDocId,
+            answersDocId: data.answersDocId,
             userDocId: data.userDocId,
             taskId: data.taskId,
             provider: data.provider,
@@ -212,7 +212,7 @@ export default class Transcription {
      */
     toFirestore() {
         return {
-            answerDocId: this.answerDocId,
+            answersDocId: this.answersDocId,
             userDocId: this.userDocId,
             taskId: this.taskId,
             provider: this.provider,

@@ -142,16 +142,15 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import { getAuth } from 'firebase/auth';
 import UserController from '@/features/auth/controllers/UserController';
+import { showError } from '@/shared/utils/toast'
 
 // Composables
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const { t } = useI18n();
-const toast = useToast();
 
 // State
 const menu = ref(false);
@@ -194,9 +193,7 @@ const fetchUsername = async () => {
         username.value = user.value?.username || null;
         profileImage.value = user.value?.profileImage || null;
 
-        if (toast && typeof toast.error === 'function') {
-            toast.error(t('errors.globalError'));
-        }
+        showError('errors.globalError');
     }
 };
 
