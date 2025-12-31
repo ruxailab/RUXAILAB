@@ -18,6 +18,7 @@
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
       </div>
+
       <v-expand-transition>
         <div v-show="showFilters">
           <v-row dense>
@@ -352,6 +353,7 @@ import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
 import AnswersTimeline from '../answers/AnswersTimeline.vue';
 import axios from 'axios';
+import { useFilterDefinitions } from './useFilterDefinitions';
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([]);
@@ -432,47 +434,7 @@ const answers = computed(() => {
 });
 
 // Filter definitions based on pre-test questions
-const filterDefinitions = computed(() => {
-  const pre = testStructure.value?.preTest || [];
-  return pre.map((q, idx) => {
-    // valores desde respuestas reales
-    const answerValueSet = new Set();
-    Object.values(answers.value).forEach(s => {
-      const a = s.preTestAnswer?.[idx]?.answer;
-      if (a !== undefined && a !== null && a !== '') answerValueSet.add(a);
-    });
-
-    // valores declarados en la estructura (selectionFields) si es tipo selección
-    if (q?.type === 'selection' && Array.isArray(q.selectionFields)) {
-      q.selectionFields.forEach(opt => {
-        if (opt !== undefined && opt !== null && opt !== '') answerValueSet.add(opt);
-      });
-    }
-
-    const options = Array.from(answerValueSet).sort();
-
-    // Forzar dropdown si es pregunta de selección aunque solo haya 1 opción todavía
-    const isSelection = q?.type === 'selection';
-    const isCategoricalByCount = options.length >= 2 && options.length <= 50;
-    const isCategorical = isSelection || isCategoricalByCount;
-
-    const baseItems = isCategorical ? options.map(o => ({ title: o, value: o })) : [];
-    if (isCategorical && baseItems.length) {
-      // Insert 'All' at the beginning
-      if (!baseItems.find(it => it.value === ALL_VALUE)) {
-        baseItems.unshift({ title: t('analytics.all'), value: ALL_VALUE });
-      }
-    }
-
-    return {
-      index: idx,
-      title: q.title || q.question || t('analytics.question', { number: idx + 1 }),
-      options,
-      isCategorical,
-      items: baseItems
-    };
-  });
-});
+const { filterDefinitions } = useFilterDefinitions({ testStructure, answers, ALL_VALUE });
 
 // Check if there are active filters
 const hasActiveFilters = computed(() => {
