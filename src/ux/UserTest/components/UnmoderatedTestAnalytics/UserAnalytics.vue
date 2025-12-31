@@ -4,13 +4,14 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre" class="flex-grow-1" />
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
+          variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{
+          $t('analytics.search') }}</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
-          @click="resetFilters">Reset</v-btn>
+          @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
         <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
-          :title="showFilters ? 'Ocultar filtros' : 'Mostrar filtros'" @click="toggleFilters">
+          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
       </div>

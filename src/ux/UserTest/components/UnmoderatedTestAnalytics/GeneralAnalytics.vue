@@ -52,8 +52,8 @@
           :progress="calculateEffectiveness()" />
       </v-col>
       <v-col cols="12" md="4">
-        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" :label="$t('analytics.efficiency')" color="info"
-          icon="mdi-speedometer"
+        <UxMetricCard :value="`${calculateEfficiency().tasksPerMinute} t/min`" :label="$t('analytics.efficiency')"
+          color="info" icon="mdi-speedometer"
           :description="$t('analytics.efficiencyDescription', { avgTime: calculateEfficiency().avgTime })"
           :progress="Math.min(calculateEfficiency().score * 10, 100)" />
       </v-col>
