@@ -33,7 +33,7 @@
     "@tiptap/extension-underline": "^3.14.0",
     "@tiptap/pm": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
-    "@tiptap/vue-3": "^2.11.5",
+    "@tiptap/vue-3": "^3.14.0",
     "@vue/babel-plugin-jsx": "^1.4.0",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.5.0",
