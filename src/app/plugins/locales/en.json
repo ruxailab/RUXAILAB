@@ -61,6 +61,7 @@
     "notifications": "Notifications",
     "unread": "unread",
     "inbox": "inbox",
+    "all": "All",
     "timeAgo": {
       "years": "{count} year | {count} years",
       "months": "{count} month | {count} months",
@@ -72,7 +73,8 @@
     "viewAll": "View all",
     "sentBy": "Sent by",
     "new": "NEW",
-    "test": "a Study"
+    "test": "a Study",
+    "actions": "Actions"
   },
   "profile": {
     "title": "Profile",
@@ -290,7 +292,9 @@
       "deleteQuestion": "Delete question",
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
-      "hasValue": "Has Value"
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -325,7 +329,9 @@
       "options": "Options",
       "noOptions": "No Options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Start adding options to your heuristic questions"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -559,6 +565,7 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
+
     "buttons": {
       "done": "Done"
     },
@@ -592,6 +599,16 @@
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
+  },
+  "eyeTracking": {
+    "title": "Eye Tracking Calibration",
+    "beforeStart": "Before starting calibration",
+    "description1": "We will prepare your device to record your eye movements.",
+    "description2": "Follow the points that appear on the screen.",
+    "start": "Start calibration",
+    "inProgress": "Calibration in progress...",
+    "completed": "Calibration completed!",
+    "continue": "Continue to the test"
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -930,6 +947,8 @@
     "tasks": "tasks",
     "total": "total",
     "yes": "Yes",
+    "invited": "Invited",
+    "answers": "Answers",
     "no": "No"
   },
   "studyCreation": {

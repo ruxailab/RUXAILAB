@@ -92,7 +92,8 @@
                 </v-chip>
               </div>
               <div class="text-caption text-grey-600">
-                ({{ item.completedCount }}/{{ item.totalTasks }} {{ $t('analytics.tasks') }} · {{ formatTime(item.totalTimeSeconds) }} {{ $t('analytics.total') }})
+                ({{ item.completedCount }}/{{ item.totalTasks }} {{ $t('analytics.tasks') }} · {{
+                  formatTime(item.totalTimeSeconds) }} {{ $t('analytics.total') }})
               </div>
 
             </div>
@@ -295,13 +296,17 @@
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import TaskDetailsModal from './TaskDetailsModal.vue';
-import { useToast } from 'vue-toastification';
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer';
+import SessionAnalytics from '../SessionAnalytics.vue';
+import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue';
+import {
+  showSuccess,
+  showError
+} from '@/shared/utils/toast'
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const toast = useToast()
 
 const store = useStore();
 const test = computed(() => store.getters.test);
@@ -525,13 +530,13 @@ const toggleHideSession = async (item) => {
         tasks: { ...payload.tasks },
         hidden: !item.hidden,
       }),
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
     });
-    toast.success("User made hidden successfull")
+    showSuccess("User made hidden successfull")
   } catch (error) {
     console.error('Error saving answer:', error.message);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
-    toast.error("Unable to hide user!!")
+    showError("Unable to hide user!!")
   }
 };
 

@@ -4,11 +4,31 @@
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount, toRaw, computed } from 'vue'
-import * as tf from '@tensorflow/tfjs'
-import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection'
-import '@tensorflow/tfjs-backend-webgl'
 import { useStore } from 'vuex'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+
+let tf
+let faceLandmarksDetection
+
+const loadDependencies = async (store) => {
+    try {
+        [tf, faceLandmarksDetection] = await Promise.all([
+            import('@tensorflow/tfjs-core'),
+            import('@tensorflow-models/face-landmarks-detection'),
+            import('@tensorflow/tfjs-backend-webgl')
+        ])
+
+        return true
+    } catch (error) {
+        console.error('Failed to load TensorFlow dependencies:', error)
+        store.commit('SET_TOAST', {
+            type: 'error',
+            message: 'Failed to load AI components. Eye tracking will be disabled.'
+        })
+
+        return false
+    }
+}
 
 const props = defineProps({
     msPerCapture: { type: Number, default: 100 },
@@ -38,6 +58,9 @@ const webcamChunks = ref([])
 const recordingWebcamIndex = ref(null)
 
 onMounted(async () => {
+    const loaded = await loadDependencies(store)
+    if (!loaded) return
+
     await tf.setBackend('webgl')
     await tf.ready()
     await initWebcam()

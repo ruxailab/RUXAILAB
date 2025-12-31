@@ -11,8 +11,8 @@ export default class UserController extends Controller {
   async create(payload) {
     const user = new User({
       email: payload.email,
-      username: payload.username || '',
-      contactNo: payload.contactNo || '',
+      username: payload.displayName || payload.username || '',
+      profileImage: payload.profileImage || '',
       country: payload.country || '',
       accessLevel: 1,
       myTests: {},

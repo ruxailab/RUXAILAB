@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="dashboard-container"
-  >
+  <v-container fluid class="dashboard-container">
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
@@ -14,28 +11,16 @@
     </div>
 
     <!-- Stats Cards Row -->
-    <StatsCards
-      :total-studies="totalStudies"
-      :used-storage="usedStorage"
-      :total-participants="totalParticipants"
-    />
+    <StatsCards :total-studies="totalStudies" :used-storage="usedStorage" :total-participants="totalParticipants" />
 
     <!-- Second Row: Activity Timeline and Active Studies -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="8"
-      >
+      <v-col cols="12" lg="8">
         <div class="component-height">
-          <ActiveStudies 
-            :studies="items"
-          />
+          <ActiveStudies :studies="items" />
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
+      <v-col cols="12" lg="4">
         <div class="component-height">
           <ActivityTimeline />
         </div>
@@ -44,44 +29,29 @@
 
     <!-- Third Row: Upcoming Webinar and Top Methods -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <UpcomingWebinar />
+      <v-col cols="12" lg="4">
+        <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
+      <v-col cols="12" lg="4">
         <TopMethods :methodsData="topMethodsData" />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <NextSession  :next-session="nextSession" />
+      <v-col cols="12" lg="4">
+        <NextSession :next-session="nextSession" />
       </v-col>
     </v-row>
 
     <!-- Fourth Row: Blog Posts and Next Session -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <BlogPosts />
       </v-col>
-      <v-col
-        cols="12"
-        lg="6"
-      />
+      <v-col cols="12" lg="6" />
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -123,7 +93,7 @@ const userStorageUsage = computed(() => {
 const userStudies = computed(() => {
   const user = store.getters.user;
   if (!user || !props.items) return [];
-  
+
   return props.items.filter(
     (study) => study?.testAdmin?.userDocId === user.id
   );
@@ -135,27 +105,29 @@ const totalParticipants = computed(() => {
   return userStudies.value.flatMap((s) => s.cooperators || []).length;
 });
 
+const upcomingWebinar = computed(() => store.getters['Dashboard/upcomingWebinar']);
+
 const topMethodsData = computed(() => {
   const methodCounts = {};
 
   userStudies.value.forEach(study => {
     const key = `${study.testType}|${study.subType || ''}`;
-    
+
     if (!methodCounts[key]) {
       const def = getMethodDefinition(study.testType, study.subType);
       if (def) {
         methodCounts[key] = {
           id: key,
           count: 0,
-          name: def.nameEn, 
-          type: def.name,  
+          name: def.nameEn,
+          type: def.name,
           icon: def.icon,
           color: def.color,
           bgColor: def.color
         };
       }
     }
-    
+
     if (methodCounts[key]) {
       methodCounts[key].count++;
     }
@@ -167,6 +139,7 @@ const topMethodsData = computed(() => {
       usage: m.count.toString()
     }));
 });
+
 
 watch(
   () => props.sessions,
@@ -197,6 +170,10 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(() => {
+  store.dispatch('Dashboard/fetchUpcomingWebinar');
+});
 </script>
 
 <style scoped>
@@ -229,7 +206,7 @@ watch(
   .dashboard-container {
     padding: 16px;
   }
-  
+
   .component-height {
     height: auto;
     min-height: 400px;

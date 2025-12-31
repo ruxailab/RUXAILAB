@@ -589,6 +589,16 @@
       "recordingNote": "Se te notificará antes de que comience cualquier grabación. Todos los datos se recopilan únicamente con fines de investigación y se manejan de acuerdo con las directrices de privacidad."
     }
   },
+  "eyeTracking": {
+    "title": "Calibración de Eye Tracking",
+    "beforeStart": "Antes de comenzar la calibración",
+    "description1": "Vamos a preparar tu dispositivo para registrar el movimiento de tus ojos.",
+    "description2": "Sigue los puntos que aparecerán en la pantalla.",
+    "start": "Comenzar calibración",
+    "inProgress": "Calibración en progreso...",
+    "completed": "¡Calibración completada!",
+    "continue": "Continuar al test"
+  },
   "AccessNotAllowed": {
     "notAllowed": "Acceso no permitido",
     "noAccess": "No tienes acceso a la página que intentas visitar.",
@@ -916,17 +926,19 @@
     "nasaTlxAnalytics": "Analíticas NASA-TLX",
     "eyeTrackingAnalytics": "Analíticas de Rastreo Ocular",
     "transcriptions": "Transcripciones",
-    "overallAnalyticsDescription": "Resumen de los resultados y métricas de la prueba.",
     "user": "Usuario",
     "summary": "Resumen",
     "invite": "Invitar",
     "actions": "Acciones",
     "completed": "Completado",
     "notCompleted": "Incompleto",
-    "timeTaken": "Tiempo Tomado",
     "tasks": "tareas",
     "total": "total",
+    "timeTaken": "Tiempo empleado",
     "yes": "Sí",
+    "invited": "Invitado",
+    "answers": "Respuestas",
+    "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
     "no": "No"
   },
   "studyCreation": {

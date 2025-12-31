@@ -17,13 +17,10 @@
               <v-icon>mdi-camera</v-icon>
             </v-btn>
           </template>
-          <span>Start Recording</span>
-        </v-tooltip>
-        <v-tooltip
-          v-if="recording"
-          location="bottom"
-        >
-          <template #activator="{ props }">
+<span>Start Recording</span>
+</v-tooltip>
+<v-tooltip v-if="recording" location="bottom">
+  <template #activator="{ props }">
             <v-btn
               class="ml-4 my-2 mr-auto"
               color="red"
@@ -36,23 +33,29 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Stop Recording</span>
-        </v-tooltip>
-      </v-row>
-    </v-col> -->
+  <span>Stop Recording</span>
+</v-tooltip>
+</v-row>
+</v-col> -->
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import {
+  showError,
+} from '@/shared/utils/toast'
+
 
 const props = defineProps({
   testId: {
+    type: String
+  },
+  userDocId: {
     type: String
   },
   taskIndex: {
@@ -64,8 +67,6 @@ const emit = defineEmits(['showLoading', 'stopShowLoading'])
 
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
-
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
 
 const recording = ref(false)
@@ -108,7 +109,7 @@ const startRecording = async () => {
   } catch (e) {
     recording.value = false
     console.error(e)
-    toast.error(t('errors.globalError'))
+    showError('errors.globalError')
   }
 
   try {
@@ -121,7 +122,7 @@ const startRecording = async () => {
       const correctTaskIndex = recordingTaskIndex.value;
       const storageReference = storageRef(
         storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
+        `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
       )
       await uploadBytes(storageReference, videoBlob)
 
@@ -130,7 +131,7 @@ const startRecording = async () => {
       console.log('Tasks array:', currentUserTestAnswer.value.tasks);
       console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length);
       console.log('Task at index:', currentUserTestAnswer.value.tasks?.[correctTaskIndex]);
-      
+
       await store.dispatch('updateTaskMediaUrl', {
         taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.webcam,
@@ -153,7 +154,7 @@ const startRecording = async () => {
     mediaRecorder.value.start()
   } catch (e) {
     console.error(e)
-    toast.error(t('errors.globalError'))
+    showError('errors.globalError')
   }
 }
 
