@@ -7,6 +7,18 @@ export const sendEmail = functions.onCall({
   handler: async (data) => {
     const content = data.data;
 
+    // Validate required environment variables
+    const requiredEnvVars = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'SITE_URL'];
+    const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+    
+    if (missingVars.length > 0) {
+      console.error('Missing required environment variables:', missingVars);
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        'Email service is not properly configured'
+      );
+    }
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT || 587),
