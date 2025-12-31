@@ -454,6 +454,17 @@ function getResponseLabel(score) {
     default: return 'Unknown'
   }
 }
+
+// Export function for GeneralAnalytics to use
+function getAverageSUSScore() {
+  const scores = tasksArray.value.map(r => r.susScore);
+  if (scores.length === 0) return 0;
+  return scores.reduce((a, b) => a + b, 0) / scores.length;
+}
+
+defineExpose({
+  getAverageSUSScore
+})
 </script>
 
 <style scoped>
