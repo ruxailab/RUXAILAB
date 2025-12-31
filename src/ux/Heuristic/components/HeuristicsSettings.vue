@@ -1,8 +1,4 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
-  >
     <v-card
       elevation="2"
       class="pa-6"
@@ -83,7 +79,6 @@
         </div>
       </div>
     </v-card>
-  </v-container>
 </template>
 
 <script setup>

@@ -59,7 +59,7 @@
             @change="change = true"
           />
           <WeightTable v-if="index == 2" />
-          <HeuristicsSenttings v-if="index == 3" />
+          <HeuristicsSettings v-if="index == 3" />
         </div>
       </div>
     </v-container>
@@ -73,7 +73,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import HeuristicsTable from '../components/HeuristicsTable.vue';
 import OptionsTable from '../components/OptionsTable.vue';
 import WeightTable from '../components/weights_evaluation/WeightTable.vue';
-import HeuristicsSenttings from '../components/HeuristicsSenttings.vue';
+import HeuristicsSettings from '../components/HeuristicsSettings.vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';

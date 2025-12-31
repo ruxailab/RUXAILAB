@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6 pa-md-6 pa-lg-8"
-  >
+
     <v-card
       elevation="2"
       class="pa-6 pa-md-6 pa-lg-8"
@@ -222,7 +219,6 @@
         @change="emitChange"
       />
     </v-card>
-  </v-container>
 </template>
 
 <script setup>
