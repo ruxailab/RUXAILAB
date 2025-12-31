@@ -1,11 +1,17 @@
+function normalizeLang(l) {
+  if (!l) return 'en';
+  return String(l).toLowerCase().replace('-', '_');
+}
+
 const state = {
-  lang: localStorage.getItem('lang') || 'en', 
+  lang: normalizeLang(localStorage.getItem('lang')) || 'en', 
 };
   
 const mutations = {
   SET_LANG(state, lang) {
-    state.lang = lang;
-    localStorage.setItem('lang', lang); // Persist language in localStorage
+    const normalized = normalizeLang(lang);
+    state.lang = normalized;
+    localStorage.setItem('lang', normalized); // Persist language in localStorage
   },
 };
   
