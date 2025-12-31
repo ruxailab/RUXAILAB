@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
-  >
+
     <v-card
       elevation="2"
       class="pa-6"
@@ -175,7 +172,6 @@
         </v-tabs-window>
       </v-card>
     </v-card>
-  </v-container>
 </template>
 
 <script setup>
