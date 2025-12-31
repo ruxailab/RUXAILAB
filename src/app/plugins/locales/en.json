@@ -73,7 +73,8 @@
     "viewAll": "View all",
     "sentBy": "Sent by",
     "new": "NEW",
-    "test": "a Study"
+    "test": "a Study",
+    "actions": "Actions"
   },
   "profile": {
     "title": "Profile",
@@ -291,7 +292,9 @@
       "deleteQuestion": "Delete question",
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
-      "hasValue": "Has Value"
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -326,7 +329,9 @@
       "options": "Options",
       "noOptions": "No Options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Start adding options to your heuristic questions"
+    },
     "placeHolders": {},
     "actions": {}
   },
