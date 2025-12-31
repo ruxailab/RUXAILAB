@@ -630,6 +630,15 @@ watchEffect(async () => {
   await nextTick()
   createRadarChart()
 })
+
+// Export function for GeneralAnalytics to use
+function getAveragaNASATLXScore() {
+  return analytics.value.averageOverallScore || 0;
+}
+
+defineExpose({
+  getAveragaNASATLXScore
+})
 </script>
 
 
