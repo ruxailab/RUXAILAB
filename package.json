@@ -50,7 +50,7 @@
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",
     "lodash": "^4.17.21",
-    "nanoid": "^5.1.5",
+    "nanoid": "^5.1.6",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "uid-generator": "^2.0.0",
