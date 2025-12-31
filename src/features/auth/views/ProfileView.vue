@@ -321,10 +321,13 @@
               class="input-field-transition"
             >
               <template #selection="{ item }">
-                {{ item.raw.emoji }} {{ item.raw.name }}
+                <span v-if="item.raw && item.raw.emoji">{{ item.raw.emoji }} {{ item.raw.name }}</span>
               </template>
               <template #item="{ item, props }">
-                <v-list-item v-bind="props">
+                <v-list-item 
+                  v-bind="{ ...props, title: undefined }" 
+                  v-if="item.raw && item.raw.emoji"
+                >
                   <v-list-item-title>
                     {{ item.raw.emoji }} {{ item.raw.name }}
                   </v-list-item-title>
@@ -789,10 +792,9 @@ const signOut = async () => {
 
 const countryFilter = (item, queryText) => {
   if (!queryText) return true;
-
-  const searchText = queryText.toLowerCase();
-  const countryName = item.name.toLowerCase();
-  return countryName.includes(searchText);
+  
+  const itemName = item?.name || item || '';
+  return String(itemName).toLowerCase().includes(queryText.toLowerCase());
 };
 
 onMounted(() => {
