@@ -206,6 +206,10 @@ updates:
       - dependency-name: '@tiptap/core'
         update-types: ['version-update:semver-major']
 
+      # Tiptap
+      - dependency-name: '@tiptap/*'
+        update-types: ['version-update:semver-major']
+
       - dependency-name: '@vueup/vue-quill'
         update-types: ['version-update:semver-major']
 
