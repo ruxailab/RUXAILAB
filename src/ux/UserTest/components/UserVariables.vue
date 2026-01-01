@@ -8,7 +8,7 @@
               :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
               {{ type === 'pre-test' ? $t('ModeratedTest.preTestVariables') : $t('ModeratedTest.postTestVariables') }}
             </v-card-title>
-            <p class="text-body-1 mb-sm-6" style="color: #4B5563;">
+            <p class="text-body-1 " style="color: #4B5563;">
               {{ $t('ModeratedTest.configureVariables', { type: type }) }}
             </p>
           </v-col>
