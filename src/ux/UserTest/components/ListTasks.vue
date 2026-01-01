@@ -126,7 +126,7 @@ const deleteItem = async (item) => {
   if (confirm('Are you sure you want to delete this task?')) {
     try {
       allTasks.value.splice(index, 1);
-      await store.dispatch('setTasks', allTasks.value);
+      await store.dispatch('UserStudy/setTasks', allTasks.value);
     } catch (error) {
       console.error('Error deleting task:', error.message);
     }
@@ -141,7 +141,7 @@ const addTask = async (newTask) => {
     } else {
       allTasks.value.push(newTask.toFirestore());
     }
-    await store.dispatch('setTasks', allTasks.value);
+    await store.dispatch('UserStudy/setTasks', allTasks.value);
     task.value = new Task();
     dialog.value = false;
   } catch (error) {
@@ -151,7 +151,7 @@ const addTask = async (newTask) => {
 
 const setAllTasks = () => {
   allTasks.value = Object.assign(
-    store.getters.tasks,
+    store.getters['UserStudy/tasks'],
     store.state.Tests.Test.testStructure.userTasks
   );
 };
