@@ -4,13 +4,14 @@
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" placeholder="Buscar por nombre" class="flex-grow-1" />
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">Buscar</v-btn>
+          variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
+        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{
+          $t('analytics.search') }}</v-btn>
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
-          @click="resetFilters">Reset</v-btn>
+          @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
         <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
-          :title="showFilters ? 'Ocultar filtros' : 'Mostrar filtros'" @click="toggleFilters">
+          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
       </div>
@@ -303,6 +304,7 @@ import {
   showError
 } from '@/shared/utils/toast'
 import { useI18n } from 'vue-i18n';
+import { useFilterDefinitions } from './useFilterDefinitions';
 
 const { t } = useI18n();
 
@@ -328,47 +330,7 @@ const searchTerm = ref('');
 // Filtros dinámicos (todas las preguntas)
 const selectedFilters = ref({});
 const ALL_VALUE = '__ALL__';
-const filterDefinitions = computed(() => {
-  const pre = testStructure.value?.preTest || [];
-  return pre.map((q, idx) => {
-    // valores desde respuestas reales
-    const answerValueSet = new Set();
-    Object.values(answers.value).forEach(s => {
-      const a = s.preTestAnswer?.[idx]?.answer;
-      if (a !== undefined && a !== null && a !== '') answerValueSet.add(a);
-    });
-
-    // valores declarados en la estructura (selectionFields) si es tipo selección
-    if (q?.type === 'selection' && Array.isArray(q.selectionFields)) {
-      q.selectionFields.forEach(opt => {
-        if (opt !== undefined && opt !== null && opt !== '') answerValueSet.add(opt);
-      });
-    }
-
-    const options = Array.from(answerValueSet).sort();
-
-    // Forzar dropdown si es pregunta de selección aunque solo haya 1 opción todavía
-    const isSelection = q?.type === 'selection';
-    const isCategoricalByCount = options.length >= 2 && options.length <= 50;
-    const isCategorical = isSelection || isCategoricalByCount;
-
-    const baseItems = isCategorical ? options.map(o => ({ title: o, value: o })) : [];
-    if (isCategorical && baseItems.length) {
-      // Insertar 'Todos' al inicio
-      if (!baseItems.find(it => it.value === ALL_VALUE)) {
-        baseItems.unshift({ title: 'Todos', value: ALL_VALUE });
-      }
-    }
-
-    return {
-      index: idx,
-      title: q.title || q.question || `Pregunta ${idx + 1}`,
-      options,
-      isCategorical,
-      items: baseItems
-    };
-  });
-});
+const { filterDefinitions } = useFilterDefinitions({ testStructure, answers, ALL_VALUE });
 
 const onFilterChange = (idx, val) => {
   if (!val || !val.length) { selectedFilters.value[idx] = []; return; }

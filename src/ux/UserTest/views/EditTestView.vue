@@ -6,7 +6,7 @@
       </p>
     </template>
 
-    <v-container>
+    <v-container class="pa-0">
       <ButtonSave :visible="true" @click="save" />
 
       <div>
@@ -34,12 +34,9 @@
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm
-              :welcome="welcomeMessage"
-              :final-message="finalMessage"
+            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
               @update:welcome-message="welcomeMessage = $event; change = true"
-              @update:final-message="finalMessage = $event; change = true"
-            />
+              @update:final-message="finalMessage = $event; change = true" />
           </div>
 
           <!-- CONSENT FORM -->
@@ -72,10 +69,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref , onUnmounted} from 'vue'
+import { computed, onMounted, ref, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import StudyController from '@/controllers/StudyController' 
+import StudyController from '@/controllers/StudyController'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
