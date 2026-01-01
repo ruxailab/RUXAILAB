@@ -637,18 +637,15 @@ const uploadProfileImage = async (event) => {
     // Show preview immediately
     editProfileData.value.profileImage = URL.createObjectURL(file);
 
-    // Upload to storage
     const storage = getStorage();
     const storageReference = storageRef(storage, `profileImages/${user.uid}`);
     const snapshot = await uploadBytes(storageReference, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
 
-    // Update Firestore
     const db = getFirestore();
     const userDocRef = doc(db, 'users', user.uid);
     await updateDoc(userDocRef, { profileImage: downloadURL });
 
-    // Update local state
     userprofile.value.profileImage = downloadURL;
     editProfileData.value.profileImage = downloadURL;
     toast.success(t('profile.profileImageUpdatedSuccess'));
