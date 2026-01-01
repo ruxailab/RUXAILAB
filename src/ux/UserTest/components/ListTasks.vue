@@ -198,10 +198,12 @@ const addTask = async (newTask) => {
   }
 };
 
+const setAllTasks = () => {
   allTasks.value = Object.assign(
     store.getters['UserStudy/tasks'],
     store.state.Tests.Test.testStructure.userTasks
   );
+};
 
 // Helper functions for task type chips
 const getTaskTypeColor = (taskType) => {
