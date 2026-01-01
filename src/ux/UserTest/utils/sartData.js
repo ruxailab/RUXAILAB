@@ -93,8 +93,11 @@ export function getSARTData(sartResponses) {
                    (answers.informationQuantity || 4) + (answers.informationQuality || 4) +
                    (answers.familiarity || 4);
     
+    // Get Understanding score
+    const understanding = answers.understanding || 4;
+    
     // SA Score = Understanding - Demand + Supply
-    const saScore = (answers.understanding || 4) - demand + supply;
+    const saScore = understanding - demand + supply;
     
     // Add to dimension sums
     sartDimensions.forEach(dim => {
@@ -105,6 +108,7 @@ export function getSARTData(sartResponses) {
       ...response,
       demand,
       supply,
+      understanding,
       saScore: Math.round(saScore * 10) / 10,
       originalSA: saScore
     };
@@ -137,14 +141,20 @@ export function getSARTData(sartResponses) {
     ? Math.round((processedResponses.reduce((sum, r) => sum + (r.supply || 0), 0) / totalRespondents) * 10) / 10
     : 28; // Default (7 dimensions × 4)
 
+  // Calculate average Understanding
+  const averageUnderstanding = totalRespondents > 0
+    ? Math.round((processedResponses.reduce((sum, r) => sum + (r.understanding || 0), 0) / totalRespondents) * 10) / 10
+    : 4; // Default
+
   return {
     averageSAScore,
+    averageDemand,
+    averageSupply,
+    averageUnderstanding,
     totalRespondents,
     highestSADimension: sortedDimensions[0]?.label || '',
     lowestSADimension: sortedDimensions.at(-1)?.label || '',
     dimensionAverages,
-    averageDemand,
-    averageSupply,
     responses: processedResponses
   };
 }
@@ -157,12 +167,13 @@ function getEmptyAnalytics() {
   
   return {
     averageSAScore: 0,
+    averageDemand: 0,
+    averageSupply: 0,
+    averageUnderstanding: 0,
     totalRespondents: 0,
     highestSADimension: '',
     lowestSADimension: '',
     dimensionAverages,
-    averageDemand: 0,
-    averageSupply: 0,
     responses: []
   };
 }
