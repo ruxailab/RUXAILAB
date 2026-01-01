@@ -16,7 +16,7 @@ function loadLocaleMessages() {
 }
 
 const i18n = createI18n({
-  legacy: true, // Use Composition API mode
+  legacy: false, // Use Composition API mode
   locale: process.env.VUE_APP_I18N_LOCALE || 'en',
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
   messages: loadLocaleMessages(),

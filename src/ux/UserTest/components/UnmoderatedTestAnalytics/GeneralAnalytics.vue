@@ -60,7 +60,7 @@
       <v-col cols="12" md="4">
         <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')"
           color="warning" icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
-          :progress="(calculateSatisfaction() / 5) * 100" :disabled="true" />
+          :progress="(calculateSatisfaction() / 5) * 100" disabled />
       </v-col>
     </v-row>
 
