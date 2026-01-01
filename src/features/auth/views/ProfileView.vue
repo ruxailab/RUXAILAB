@@ -265,14 +265,31 @@
                 alt="No Image"
               />
             </v-avatar>
-            <v-btn
-              icon
-              size="small"
-              class="ml-2"
-              @click="selectImage"
-            >
-              <v-icon>mdi-camera</v-icon>
-            </v-btn>
+            <div class="d-flex justify-center align-center gap-2 mt-3">
+              <v-btn
+                icon
+                size="small"
+                @click="selectImage"
+                color="primary"
+              >
+                <v-icon>mdi-camera</v-icon>
+                <v-tooltip activator="parent" location="bottom">
+                  {{ $t('profile.uploadProfilePicture') }}
+                </v-tooltip>
+              </v-btn>
+              <v-btn
+                v-if="editProfileData.profileImage"
+                icon
+                size="small"
+                @click="removeProfilePicture"
+                color="error"
+              >
+                <v-icon>mdi-delete</v-icon>
+                <v-tooltip activator="parent" location="bottom">
+                  {{ $t('profile.removeProfilePicture') }}
+                </v-tooltip>
+              </v-btn>
+            </div>
             <input
               ref="fileInput"
               type="file"
@@ -604,34 +621,43 @@ const hasSpecialChar = (str) => {
 };
 
 const selectImage = () => {
+  if (fileInput.value) fileInput.value.value = '';
   fileInput.value.click();
 };
 
 const uploadProfileImage = async (event) => {
-  const file = event.target.files[0];
+  const file = event?.target?.files?.[0];
   if (!file) return;
 
   try {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (!user) throw new Error(t('PROFILE.noUserSignedIn'));
+    if (!user) throw new Error('No user signed in');
 
+    // Show preview immediately
+    editProfileData.value.profileImage = URL.createObjectURL(file);
+
+    // Upload to storage
     const storage = getStorage();
     const storageReference = storageRef(storage, `profileImages/${user.uid}`);
-
     const snapshot = await uploadBytes(storageReference, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
 
+    // Update Firestore
     const db = getFirestore();
     const userDocRef = doc(db, 'users', user.uid);
     await updateDoc(userDocRef, { profileImage: downloadURL });
 
+    // Update local state
     userprofile.value.profileImage = downloadURL;
     editProfileData.value.profileImage = downloadURL;
-    toast.success(t('PROFILE.profileImageUpdatedSuccess'));
+    toast.success(t('profile.profileImageUpdatedSuccess'));
+    
+    if (fileInput.value) fileInput.value.value = '';
   } catch (error) {
     console.error('Error uploading image:', error);
-    toast.error(t('PROFILE.profileImageUploadFailed'));
+    toast.error(t('profile.profileImageUploadFailed'));
+    editProfileData.value.profileImage = userprofile.value.profileImage;
   }
 };
 
@@ -687,25 +713,36 @@ const saveProfile = async () => {
       const db = getFirestore();
       const userDocRef = doc(db, 'users', user.uid);
 
-      await updateDoc(userDocRef, {
+      const updateData = {
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
-      });
+      };
+
+      // If profile image was removed (empty string), update to empty
+      if (editProfileData.value.profileImage === '') {
+        updateData.profileImage = '';
+      } else if (editProfileData.value.profileImage && !editProfileData.value.profileImage.startsWith('blob:')) {
+        // Only update profile image if it's a valid URL (not a blob/preview)
+        updateData.profileImage = editProfileData.value.profileImage;
+      }
+
+      await updateDoc(userDocRef, updateData);
 
       userprofile.value = {
         ...userprofile.value,
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
+        profileImage: editProfileData.value.profileImage,
       };
 
-      toast.success(t('PROFILE.profileUpdatedSuccess'));
+      toast.success(t('profile.profileUpdatedSuccess'));
       editProfileDialog.value = false;
     }
   } catch (error) {
     console.error('Error updating profile:', error);
-    toast.error(t('PROFILE.profileUpdateFailed'));
+    toast.error(t('profile.profileUpdateFailed'));
   }
 };
 
@@ -795,6 +832,11 @@ const countryFilter = (item, queryText) => {
   
   const itemName = item?.name || item || '';
   return String(itemName).toLowerCase().includes(queryText.toLowerCase());
+};
+
+const removeProfilePicture = () => {
+  editProfileData.value.profileImage = '';
+  if (fileInput.value) fileInput.value.value = '';
 };
 
 onMounted(() => {
