@@ -42,7 +42,9 @@
           size="small"
           @click="dialog = false"
         >
-          <v-icon color="white">mdi-close</v-icon>
+          <v-icon color="white">
+            mdi-close
+          </v-icon>
         </v-btn>
       </v-card-title>
 

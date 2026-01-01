@@ -22,7 +22,9 @@
     >
       <!-- Session Header -->
       <div class="session-header mb-4 text-center">
-        <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
+        <h3 class="session-title mb-2">
+          {{ nextSession.testTitle }}
+        </h3>
         <p class="session-description text-body-2 text-grey-darken-1 mb-3">
           {{ nextSession.testDescription || 'No description available' }}
         </p>
@@ -39,37 +41,72 @@
       <!-- Info Items -->
       <div class="info-items">
         <div class="info-item">
-          <v-icon icon="mdi-microscope" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-microscope"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
-            <div class="info-value">{{ getStudyType(nextSession) }}</div>
+            <div class="info-value">
+              {{ getStudyType(nextSession) }}
+            </div>
             <div>Tipo de Estudio</div>
           </div>
         </div>
         <div class="info-item">
-          <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-account"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
-            <div class="info-value">{{ nextSession.testAdmin?.email || 'Unknown' }}</div>
+            <div class="info-value">
+              {{ nextSession.testAdmin?.email || 'Unknown' }}
+            </div>
             <div>Owner</div>
           </div>
         </div>
-         <div class="info-item">
-          <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
+        <div class="info-item">
+          <v-icon
+            icon="mdi-account"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
-            <div class="info-value">{{ nextSession.evaluator|| 'Unknown' }}</div>
+            <div class="info-value">
+              {{ nextSession.evaluator|| 'Unknown' }}
+            </div>
             <div>Evaluator</div>
           </div>
         </div>
         <div class="info-item">
-          <v-icon icon="mdi-calendar" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-calendar"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
-            <div class="info-value">{{ formatDate(nextSession.testDate) }}</div>
+            <div class="info-value">
+              {{ formatDate(nextSession.testDate) }}
+            </div>
             <div>Fecha</div>
           </div>
         </div>
         <div class="info-item">
-          <v-icon icon="mdi-clock-outline" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-clock-outline"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
-            <div class="info-value">{{ formatTime(nextSession.testDate) }}</div>
+            <div class="info-value">
+              {{ formatTime(nextSession.testDate) }}
+            </div>
             <div>Horario</div>
           </div>
         </div>
@@ -84,8 +121,8 @@
         rounded="lg"
         prepend-icon="mdi-play-circle"
         :disabled=" getStatus(nextSession) === SESSION_STATUSES.COMPLETED"
-        @click="goto(nextSession)"
         class="action-button mt-6"
+        @click="goto(nextSession)"
       >
         {{ getStatus(nextSession) !== SESSION_STATUSES.COMPLETED ? 'Join Now' : 'Completed' }}
       </v-btn>

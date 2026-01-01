@@ -4,7 +4,10 @@
     class="pa-4 mt-4 rounded-lg"
     color="#fffef5"
   >
-    <v-timeline side="end" density="comfortable">
+    <v-timeline
+      side="end"
+      density="comfortable"
+    >
       <v-timeline-item
         v-for="segment in transcriptSegments"
         :key="segment.id"
@@ -19,9 +22,7 @@
         size="small"
       >
         <div class="text-grey-darken-2 font-weight-medium">
-          <span class="font-weight-bold"
-            >{{ formatTime(segment.start) }}–{{ formatTime(segment.end) }}</span
-          >
+          <span class="font-weight-bold">{{ formatTime(segment.start) }}–{{ formatTime(segment.end) }}</span>
           &nbsp; {{ segment.text }}
         </div>
       </v-timeline-item>

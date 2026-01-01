@@ -37,7 +37,10 @@
       </v-list-item>
     </v-list>
 
-    <div v-if="mdAndUp" class="footer">
+    <div
+      v-if="mdAndUp"
+      class="footer"
+    >
       <v-btn
         icon
         size="small"

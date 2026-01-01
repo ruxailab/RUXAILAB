@@ -11,7 +11,10 @@
     </v-card-title>
 
     <v-card-text class="pa-4">
-      <div v-if="topMethods.length > 0" class="methods-list">
+      <div
+        v-if="topMethods.length > 0"
+        class="methods-list"
+      >
         <div
           v-for="method in topMethods"
           :key="method.id"
@@ -50,17 +53,23 @@
       </div>
       
       <!-- Empty State -->
-      <div v-else class="d-flex flex-column align-center justify-center fill-height pa-4 text-center">
+      <div
+        v-else
+        class="d-flex flex-column align-center justify-center fill-height pa-4 text-center"
+      >
         <v-icon
           icon="mdi-chart-bar-off"
           size="48"
           color="grey-lighten-2"
           class="mb-2"
         />
-        <div class="text-body-1 text-grey-darken-1">No data available yet</div>
-        <div class="text-caption text-grey">Create your first study to see statistics here.</div>
+        <div class="text-body-1 text-grey-darken-1">
+          No data available yet
+        </div>
+        <div class="text-caption text-grey">
+          Create your first study to see statistics here.
+        </div>
       </div>
-
     </v-card-text>
   </v-card>
 </template>

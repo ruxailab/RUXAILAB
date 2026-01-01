@@ -1,5 +1,10 @@
 <template>
-    <video ref="videoRef" autoplay playsinline style="display: none" />
+  <video
+    ref="videoRef"
+    autoplay
+    playsinline
+    style="display: none"
+  />
 </template>
 
 <script setup>

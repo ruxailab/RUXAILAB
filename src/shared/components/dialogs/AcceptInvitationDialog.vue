@@ -7,7 +7,9 @@
   >
     <v-card class="rounded-xl">
       <v-card-title class="bg-error text-white text-h6 align-center">
-        <v-icon start>mdi-alert-circle</v-icon>
+        <v-icon start>
+          mdi-alert-circle
+        </v-icon>
         {{ title }}
       </v-card-title>
       <v-card-text class="pa-6 text-body-1">
@@ -15,10 +17,17 @@
       </v-card-text>
       <v-card-actions class="pa-4 bg-grey-lighten-4">
         <v-spacer />
-        <v-btn variant="text" @click="$emit('cancel')">
+        <v-btn
+          variant="text"
+          @click="$emit('cancel')"
+        >
           {{ cancelLabel }}
         </v-btn>
-        <v-btn color="error" variant="flat" @click="$emit('submit')">
+        <v-btn
+          color="error"
+          variant="flat"
+          @click="$emit('submit')"
+        >
           {{ submitLabel }}
         </v-btn>
       </v-card-actions>

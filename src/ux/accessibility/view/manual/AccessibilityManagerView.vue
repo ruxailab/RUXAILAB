@@ -5,16 +5,31 @@
     :bottom-cards="bottomCards"
   >
     <!-- Loading overlay -->
-    <v-overlay v-model="isLoading" contained class="align-center justify-center">
+    <v-overlay
+      v-model="isLoading"
+      contained
+      class="align-center justify-center"
+    >
       <div class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-4 text-h6">Loading test data...</div>
-        <div class="text-caption">Checking access permissions</div>
+        <v-progress-circular
+          indeterminate
+          size="64"
+          color="primary"
+        />
+        <div class="mt-4 text-h6">
+          Loading test data...
+        </div>
+        <div class="text-caption">
+          Checking access permissions
+        </div>
       </div>
     </v-overlay>
     
     <!-- Access level indicator -->
-    <div v-if="!isLoading && userRole" class="ma-2 text-caption text-grey">
+    <div
+      v-if="!isLoading && userRole"
+      class="ma-2 text-caption text-grey"
+    >
       Access: {{ getAccessLevelText }}
     </div>
   </ManagerView>

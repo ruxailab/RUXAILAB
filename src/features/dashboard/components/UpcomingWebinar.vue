@@ -1,17 +1,38 @@
 <template>
-  <v-card elevation="2" rounded="lg" class="upcoming-webinar-card position-relative">
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="upcoming-webinar-card position-relative"
+  >
     <!-- Status Overlay -->
-    <div v-if="webinarStatus.show" class="coming-soon-overlay">
-      <v-chip :color="webinarStatus.color" variant="elevated" size="small" class="coming-soon-chip"
-        :class="{ 'pulse-animation': webinarStatus.text === 'Live' }">
-        <v-icon v-if="webinarStatus.icon" :icon="webinarStatus.icon" size="16" class="mr-1" />
+    <div
+      v-if="webinarStatus.show"
+      class="coming-soon-overlay"
+    >
+      <v-chip
+        :color="webinarStatus.color"
+        variant="elevated"
+        size="small"
+        class="coming-soon-chip"
+        :class="{ 'pulse-animation': webinarStatus.text === 'Live' }"
+      >
+        <v-icon
+          v-if="webinarStatus.icon"
+          :icon="webinarStatus.icon"
+          size="16"
+          class="mr-1"
+        />
         {{ webinarStatus.text }}
       </v-chip>
     </div>
 
     <!-- Hero Image Section -->
-    <v-img class="align-end text-white" height="200" :src="officeHoursImage" cover>
-    </v-img>
+    <v-img
+      class="align-end text-white"
+      height="200"
+      :src="officeHoursImage"
+      cover
+    />
 
 
     <v-card-text class="pa-6">
@@ -26,11 +47,21 @@
       </p>
 
       <!-- Date and Duration Info -->
-      <v-row class="info-row mb-4" no-gutters>
-        <v-col cols="6" class="pr-2">
+      <v-row
+        class="info-row mb-4"
+        no-gutters
+      >
+        <v-col
+          cols="6"
+          class="pr-2"
+        >
           <div class="info-item">
             <div class="info-icon-wrapper">
-              <v-icon icon="mdi-calendar" size="24" color="primary" />
+              <v-icon
+                icon="mdi-calendar"
+                size="24"
+                color="primary"
+              />
             </div>
             <div class="info-content">
               <div class="info-value">
@@ -40,10 +71,17 @@
             </div>
           </div>
         </v-col>
-        <v-col cols="6" class="">
+        <v-col
+          cols="6"
+          class=""
+        >
           <div class="info-item">
             <div class="info-icon-wrapper">
-              <v-icon icon="mdi-clock-outline" size="24" color="primary" />
+              <v-icon
+                icon="mdi-clock-outline"
+                size="24"
+                color="primary"
+              />
             </div>
             <div class="info-content">
               <div class="info-value">
@@ -56,8 +94,17 @@
       </v-row>
 
       <!-- Join Button -->
-      <v-btn :color="buttonConfig.color" variant="flat" size="large" block rounded="lg" class="join-button"
-        :prepend-icon="buttonConfig.icon" :disabled="buttonConfig.disabled" @click="buttonConfig.action">
+      <v-btn
+        :color="buttonConfig.color"
+        variant="flat"
+        size="large"
+        block
+        rounded="lg"
+        class="join-button"
+        :prepend-icon="buttonConfig.icon"
+        :disabled="buttonConfig.disabled"
+        @click="buttonConfig.action"
+      >
         {{ buttonConfig.text }}
       </v-btn>
     </v-card-text>

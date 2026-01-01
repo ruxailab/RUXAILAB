@@ -8,11 +8,20 @@
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center">
           <div class="icon-container mr-3">
-            <v-icon color="white" size="24">mdi-account-group</v-icon>
+            <v-icon
+              color="white"
+              size="24"
+            >
+              mdi-account-group
+            </v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">Participants</h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">Test participation overview</p>
+            <h3 class="text-h6 text-white mb-0">
+              Participants
+            </h3>
+            <p class="text-body-2 text-white opacity-90 mb-0">
+              Test participation overview
+            </p>
           </div>
         </div>
         <v-chip
@@ -21,7 +30,12 @@
           variant="outlined"
           class="border-white text-white"
         >
-          <v-icon start size="16">mdi-flask</v-icon>
+          <v-icon
+            start
+            size="16"
+          >
+            mdi-flask
+          </v-icon>
           Beta
         </v-chip>
       </div>
@@ -32,22 +46,34 @@
       <div class="stats-grid">
         <div class="stat-box stat-box-primary">
           <div class="stat-content">
-            <div class="stat-number">{{ completedParticipants }}</div>
-            <div class="stat-label">Completed</div>
+            <div class="stat-number">
+              {{ completedParticipants }}
+            </div>
+            <div class="stat-label">
+              Completed
+            </div>
           </div>
         </div>
         
         <div class="stat-box stat-box-primary">
           <div class="stat-content">
-            <div class="stat-number">{{ notStartedParticipants }}</div>
-            <div class="stat-label">Not Started</div>
+            <div class="stat-number">
+              {{ notStartedParticipants }}
+            </div>
+            <div class="stat-label">
+              Not Started
+            </div>
           </div>
         </div>
         
         <div class="stat-box stat-box-primary">
           <div class="stat-content">
-            <div class="stat-number">{{ pendingInvitations.length }}</div>
-            <div class="stat-label">Pending Invites</div>
+            <div class="stat-number">
+              {{ pendingInvitations.length }}
+            </div>
+            <div class="stat-label">
+              Pending Invites
+            </div>
           </div>
         </div>
       </div>
@@ -80,7 +106,12 @@
         class="view-all-btn"
         @click="viewParticipants"
       >
-        <v-icon start size="14">mdi-eye</v-icon>
+        <v-icon
+          start
+          size="14"
+        >
+          mdi-eye
+        </v-icon>
         Details
       </v-btn>
     </v-card-actions>

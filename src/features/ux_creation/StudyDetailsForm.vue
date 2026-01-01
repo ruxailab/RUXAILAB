@@ -1,8 +1,14 @@
 <template>
-  <v-container fluid class="create-study-view">
+  <v-container
+    fluid
+    class="create-study-view"
+  >
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="4" :steps="steps" />
+      <StepperHeader
+        :current-step="4"
+        :steps="steps"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -11,23 +17,43 @@
       />
 
       <!-- Main Content -->
-      <v-row justify="center" class="mb-6">
-        <v-col cols="12" lg="10" xl="8">
+      <v-row
+        justify="center"
+        class="mb-6"
+      >
+        <v-col
+          cols="12"
+          lg="10"
+          xl="8"
+        >
           <v-row>
             <!-- Basic Information Column -->
-            <v-col cols="12" md="8">
-              <v-card class="custom-card" elevation="4">
+            <v-col
+              cols="12"
+              md="8"
+            >
+              <v-card
+                class="custom-card"
+                elevation="4"
+              >
                 <v-card-text class="pa-8">
                   <!-- Basic Information -->
                   <div class="mb-0">
                     <div class="d-flex align-center mb-6">
-                      <v-icon icon="mdi-form-textbox" class="mr-3" color="primary" />
+                      <v-icon
+                        icon="mdi-form-textbox"
+                        class="mr-3"
+                        color="primary"
+                      />
                       <h3 class="text-h5 font-weight-medium">
                         {{ $t('studyCreation.details.basicInformation') }}
                       </h3>
                     </div>
 
-                    <v-form ref="form" @submit.prevent="validate">
+                    <v-form
+                      ref="form"
+                      @submit.prevent="validate"
+                    >
                       <v-text-field
                         v-model="test.title"
                         :rules="[
@@ -99,13 +125,23 @@
             </v-col>
 
             <!-- Privacy Settings Column -->
-            <v-col cols="12" md="4">
-              <v-card class="custom-card" elevation="4">
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <v-card
+                class="custom-card"
+                elevation="4"
+              >
                 <v-card-text class="pa-8">
                   <!-- Privacy Settings -->
                   <div class="mb-0">
                     <div class="d-flex align-center mb-6">
-                      <v-icon icon="mdi-shield-account" class="mr-2" color="primary" />
+                      <v-icon
+                        icon="mdi-shield-account"
+                        class="mr-2"
+                        color="primary"
+                      />
                       <div>
                         <h3 class="text-h5 font-weight-medium">
                           {{ $t('studyCreation.details.privacySettings') }}
@@ -153,7 +189,10 @@
           <!-- Action Buttons -->
           <v-row class="mt-4">
             <v-col cols="12">
-              <v-card class="custom-card" elevation="4">
+              <v-card
+                class="custom-card"
+                elevation="4"
+              >
                 <v-card-text class="pa-6">
                   <div class="d-flex flex-column-reverse flex-sm-row justify-sm-space-between align-sm-center">
                     <!-- Back button (goes below on mobile) -->
@@ -173,7 +212,8 @@
                         :loading="isLoading"
                         prepend-icon="mdi-plus"
                         block
-                        @click="validate">
+                        @click="validate"
+                      >
                         {{ $t('studyCreation.createStudy') }}
                       </v-btn>
                     </div>

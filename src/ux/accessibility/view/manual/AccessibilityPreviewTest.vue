@@ -5,7 +5,6 @@
     loading-text="Loading WCAG Data..."
     :side-gap="false"
   >
-
     <v-alert
       v-if="error"
       type="error"
@@ -36,7 +35,9 @@
       class="ma-2"
       variant="outlined"
     >
-      <div class="text-subtitle-2 font-weight-bold mb-2">Information</div>
+      <div class="text-subtitle-2 font-weight-bold mb-2">
+        Information
+      </div>
       <div class="text-caption">
         <div><strong>Viewing User ID:</strong> {{ viewingUserId }}</div>
         <div><strong>Viewing Mode:</strong> {{ viewingUserType }}</div>

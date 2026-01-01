@@ -1,16 +1,41 @@
 <template>
-  <v-card v-if="test" class="pa-4 mb-6" elevation="1">
+  <v-card
+    v-if="test"
+    class="pa-4 mb-6"
+    elevation="1"
+  >
     <div class="d-flex justify-space-between align-center mb-4">
-      <h3 class="text-h6">{{ $t('manager.progressCharts') }}</h3>
-      <v-btn-toggle v-model="selectedChart" mandatory density="compact">
-        <v-btn size="small" value="completion">{{ $t('manager.completion') }}</v-btn>
-        <v-btn size="small" value="heuristics">{{ $t('manager.heuristics') }}</v-btn>
+      <h3 class="text-h6">
+        {{ $t('manager.progressCharts') }}
+      </h3>
+      <v-btn-toggle
+        v-model="selectedChart"
+        mandatory
+        density="compact"
+      >
+        <v-btn
+          size="small"
+          value="completion"
+        >
+          {{ $t('manager.completion') }}
+        </v-btn>
+        <v-btn
+          size="small"
+          value="heuristics"
+        >
+          {{ $t('manager.heuristics') }}
+        </v-btn>
       </v-btn-toggle>
     </div>
     
     <!-- Gráfico de Completación -->
-    <div v-if="selectedChart === 'completion'" class="chart-container">
-      <h4 class="text-subtitle-1 mb-3">{{ $t('manager.completionProgress') }}</h4>
+    <div
+      v-if="selectedChart === 'completion'"
+      class="chart-container"
+    >
+      <h4 class="text-subtitle-1 mb-3">
+        {{ $t('manager.completionProgress') }}
+      </h4>
       <div class="progress-chart">
         <div 
           v-for="(segment, index) in completionSegments" 
@@ -22,7 +47,7 @@
             opacity: segment.opacity
           }"
           :title="segment.tooltip"
-        ></div>
+        />
       </div>
       <div class="chart-legend mt-3">
         <div 
@@ -33,15 +58,20 @@
           <div 
             class="legend-color" 
             :style="{ backgroundColor: legend.color }"
-          ></div>
+          />
           <span class="legend-text">{{ legend.label }} ({{ legend.count }})</span>
         </div>
       </div>
     </div>
     
     <!-- Gráfico de Heurísticas -->
-    <div v-if="selectedChart === 'heuristics'" class="chart-container">
-      <h4 class="text-subtitle-1 mb-3">{{ $t('manager.heuristicsProgress') }}</h4>
+    <div
+      v-if="selectedChart === 'heuristics'"
+      class="chart-container"
+    >
+      <h4 class="text-subtitle-1 mb-3">
+        {{ $t('manager.heuristicsProgress') }}
+      </h4>
       <div class="heuristics-chart">
         <div 
           v-for="heuristic in heuristicProgress" 
@@ -57,7 +87,7 @@
             :color="getHeuristicColor(heuristic.percentage)"
             height="8"
             rounded
-          ></v-progress-linear>
+          />
           <div class="heuristic-details mt-1">
             <small class="text-grey-darken-1">
               {{ heuristic.completed }} de {{ heuristic.total }} evaluados

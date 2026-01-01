@@ -1,20 +1,34 @@
 <template>
   <div>
     <!-- ManagerView genérica mantenida -->
-    <ManagerView :navigator="navigator" :top-cards="topCards" :bottom-cards="bottomCards">
-
+    <ManagerView
+      :navigator="navigator"
+      :top-cards="topCards"
+      :bottom-cards="bottomCards"
+    >
       <!-- Dashboard profesional con componentes específicos -->
-      <v-container v-if="test" class="dashboard-container">
+      <v-container
+        v-if="test"
+        class="dashboard-container"
+      >
         <!-- Main Dashboard Layout: Two Columns -->
         <v-row class="dashboard-main-row">
           <!-- Left Column: Dashboard Header -->
-          <v-col cols="12" lg="6">
+          <v-col
+            cols="12"
+            lg="6"
+          >
             <!-- Dashboard Header with Gradient -->
             <div class="dashboard-header gradient-header">
               <div class="header-content">
                 <div class="d-flex align-center mb-3">
                   <div class="header-icon-container mr-3">
-                    <v-icon color="white" size="28">mdi-chart-box-outline</v-icon>
+                    <v-icon
+                      color="white"
+                      size="28"
+                    >
+                      mdi-chart-box-outline
+                    </v-icon>
                   </div>
                   <div class="flex-grow-1">
                     <h1 class="dashboard-title text-white mb-0">
@@ -26,14 +40,32 @@
                   </div>
                 </div>
                 <div class="header-chips">
-                  <v-chip class="test-type-chip" color="rgba(255,255,255,0.2)" variant="outlined" size="small">
-                    <v-icon start size="16" color="white">
+                  <v-chip
+                    class="test-type-chip"
+                    color="rgba(255,255,255,0.2)"
+                    variant="outlined"
+                    size="small"
+                  >
+                    <v-icon
+                      start
+                      size="16"
+                      color="white"
+                    >
                       mdi-account-check-outline
                     </v-icon>
                     <span class="text-white">Unmoderated Study</span>
                   </v-chip>
-                  <v-chip class="status-chip" color="rgba(255,255,255,0.15)" variant="outlined" size="small">
-                    <v-icon start size="16" color="white">
+                  <v-chip
+                    class="status-chip"
+                    color="rgba(255,255,255,0.15)"
+                    variant="outlined"
+                    size="small"
+                  >
+                    <v-icon
+                      start
+                      size="16"
+                      color="white"
+                    >
                       {{ getStatusIcon(test.testStatus) }}
                     </v-icon>
                     <span class="text-white">{{ test.testStatus || 'Active' }}</span>
@@ -44,7 +76,11 @@
           </v-col>
 
           <!-- Right Column: Study Overview -->
-          <v-col cols="12" lg="6" class="study-overview-column">
+          <v-col
+            cols="12"
+            lg="6"
+            class="study-overview-column"
+          >
             <!-- Las 4 cards de métricas -->
             <div class="study-overview-wrapper">
               <StudyOverview :test="test" />
@@ -55,7 +91,9 @@
         <!-- Management Modules Section (Full Width) -->
         <div class="section-header">
           <h2 class="section-title">
-            <v-icon class="section-icon">mdi-view-dashboard</v-icon>
+            <v-icon class="section-icon">
+              mdi-view-dashboard
+            </v-icon>
             Management Modules
           </h2>
           <p class="section-description">
@@ -66,22 +104,41 @@
         <!-- Modules Grid: 3x2 layout -->
         <v-row class="modules-section">
           <!-- Row 1 -->
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <ParticipantsInfo :test="test" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <TasksInfo :test="test" />
           </v-col>
 
           <!-- Row 2 -->
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <StorageInfo :test="test" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <!-- Empty slot for future components -->
-            <v-card class="h-100 d-flex align-center justify-center" variant="outlined" style="min-height: 200px;">
+            <v-card
+              class="h-100 d-flex align-center justify-center"
+              variant="outlined"
+              style="min-height: 200px;"
+            >
               <div class="text-center text-grey-lighten-1">
-                <v-icon size="48" class="mb-2">
+                <v-icon
+                  size="48"
+                  class="mb-2"
+                >
                   mdi-plus-circle-outline
                 </v-icon>
                 <p class="text-body-2">

@@ -1,7 +1,9 @@
 <template>
   <div class="task-advanced-options">
     <div class="step-header mb-6">
-      <h3 class="text-h6 font-weight-bold mb-2">Step 3: Advanced Options</h3>
+      <h3 class="text-h6 font-weight-bold mb-2">
+        Step 3: Advanced Options
+      </h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
         Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.
       </p>
@@ -9,7 +11,10 @@
 
     <div class="options-grid">
       <!-- Eye Tracking -->
-      <v-card class="option-card" elevation="0">
+      <v-card
+        class="option-card"
+        elevation="0"
+      >
         <v-card-text class="d-flex align-center">
           <div class="option-icon mr-4">
             <v-icon 
@@ -22,7 +27,9 @@
           <div class="flex-grow-1">
             <div class="d-flex justify-space-between align-center">
               <div class="flex-grow-1 mr-4">
-                <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.eyeTracker') }}</h4>
+                <h4 class="text-subtitle-1 font-weight-medium">
+                  {{ $t('switches.eyeTracker') }}
+                </h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
                   Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.
                 </p>
@@ -32,7 +39,7 @@
                   v-model="localTask.hasEye"
                   color="primary"
                   hide-details
-                  @change="validateStep"
+                  @update:model-value="validateStep"
                 />
               </div>
             </div>
@@ -41,7 +48,10 @@
       </v-card>
 
       <!-- Screen Recording -->
-      <v-card class="option-card" elevation="0">
+      <v-card
+        class="option-card"
+        elevation="0"
+      >
         <v-card-text class="d-flex align-center">
           <div class="option-icon mr-4">
             <v-icon 
@@ -54,7 +64,9 @@
           <div class="flex-grow-1">
             <div class="d-flex justify-space-between align-center">
               <div class="flex-grow-1 mr-4">
-                <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.screenRecord') }}</h4>
+                <h4 class="text-subtitle-1 font-weight-medium">
+                  {{ $t('switches.screenRecord') }}
+                </h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
                   Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.
                 </p>
@@ -64,7 +76,7 @@
                   v-model="localTask.hasScreenRecord"
                   color="primary"
                   hide-details
-                  @change="validateStep"
+                  @update:model-value="validateStep"
                 />
               </div>
             </div>
@@ -73,7 +85,10 @@
       </v-card>
 
       <!-- Camera Recording -->
-      <v-card class="option-card" elevation="0">
+      <v-card
+        class="option-card"
+        elevation="0"
+      >
         <v-card-text class="d-flex align-center">
           <div class="option-icon mr-4">
             <v-icon 
@@ -86,7 +101,9 @@
           <div class="flex-grow-1">
             <div class="d-flex justify-space-between align-center">
               <div class="flex-grow-1 mr-4">
-                <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.camera') }}</h4>
+                <h4 class="text-subtitle-1 font-weight-medium">
+                  {{ $t('switches.camera') }}
+                </h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
                   Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.
                 </p>
@@ -96,7 +113,7 @@
                   v-model="localTask.hasCamRecord"
                   color="primary"
                   hide-details
-                  @change="validateStep"
+                  @update:model-value="validateStep"
                 />
               </div>
             </div>
@@ -105,7 +122,10 @@
       </v-card>
 
       <!-- Audio Recording -->
-      <v-card class="option-card" elevation="0">
+      <v-card
+        class="option-card"
+        elevation="0"
+      >
         <v-card-text class="d-flex align-center">
           <div class="option-icon mr-4">
             <v-icon 
@@ -118,7 +138,9 @@
           <div class="flex-grow-1">
             <div class="d-flex justify-space-between align-center">
               <div class="flex-grow-1 mr-4">
-                <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.audioRecord') }}</h4>
+                <h4 class="text-subtitle-1 font-weight-medium">
+                  {{ $t('switches.audioRecord') }}
+                </h4>
                 <p class="text-caption text-grey-darken-1 mt-1">
                   Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.
                 </p>
@@ -128,7 +150,7 @@
                   v-model="localTask.hasAudioRecord"
                   color="primary"
                   hide-details
-                  @change="validateStep"
+                  @update:model-value="validateStep"
                 />
               </div>
             </div>
@@ -156,8 +178,6 @@
         </ul>
       </div>
     </v-alert>
-
-    
   </div>
 </template>
 

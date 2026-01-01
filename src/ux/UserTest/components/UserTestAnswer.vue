@@ -23,7 +23,10 @@
             <v-tab @click="tab = 1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" @click="tab = 2">
+            <v-tab
+              v-if="showSentiment"
+              @click="tab = 2"
+            >
               Sentiment Analysis
             </v-tab>
             <v-tab
@@ -38,10 +41,16 @@
             >
               {{ $t('analytics.nasaTlxAnalytics') }}
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 4">
+            <v-tab
+              v-if="showEye"
+              @click="tab = 4"
+            >
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" @click="tab = 5">
+            <v-tab
+              v-if="showTranscription"
+              @click="tab = 5"
+            >
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>

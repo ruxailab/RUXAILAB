@@ -1,13 +1,15 @@
 <template>
   <v-container class="py-4">
-    <v-row justify="center" v-if="user">
+    <v-row
+      v-if="user"
+      justify="center"
+    >
       <v-col 
         cols="12" 
         md="10" 
         lg="8"
         xl="6"
       >
-
         <!-- HEADER -->
         <v-card 
           class="rounded-xl pa-4 pa-md-5 mb-4"
@@ -17,8 +19,16 @@
           <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3">
             <div class="flex-grow-1">
               <div class="d-flex align-center gap-2 mb-1">
-                <v-icon size="28" color="primary" class="d-none d-sm-flex">mdi-bell-ring-outline</v-icon>
-                <h2 class="text-h5 text-h6-sm">{{ $t('common.notifications') }}</h2>
+                <v-icon
+                  size="28"
+                  color="primary"
+                  class="d-none d-sm-flex"
+                >
+                  mdi-bell-ring-outline
+                </v-icon>
+                <h2 class="text-h5 text-h6-sm">
+                  {{ $t('common.notifications') }}
+                </h2>
               </div>
               <p class="text-caption text-grey-darken-1 mt-1">
                 Stay updated with your activities and collaborations
@@ -31,11 +41,11 @@
               size="small"
               variant="flat"
               color="primary"
-              @click="markAllAsRead"
               :loading="markingAllAsRead"
               prepend-icon="mdi-email-open-outline"
               class="elevation-0 text-capitalize"
               :class="{'flex-shrink-0': true}"
+              @click="markAllAsRead"
             >
               Mark all read
             </v-btn>
@@ -49,19 +59,39 @@
             class="mt-4"
             height="48"
           >
-            <v-tab value="all" class="text-capitalize">
+            <v-tab
+              value="all"
+              class="text-capitalize"
+            >
               <div class="d-flex align-center gap-2">
                 <span>{{ $t('common.all') }}</span>
-                <v-badge v-if="totalCount" :content="totalCount" inline size="small" />
+                <v-badge
+                  v-if="totalCount"
+                  :content="totalCount"
+                  inline
+                  size="small"
+                />
               </div>
             </v-tab>
-            <v-tab value="unread" class="text-capitalize">
+            <v-tab
+              value="unread"
+              class="text-capitalize"
+            >
               <div class="d-flex align-center gap-2">
                 <span>{{ $t('common.unread') }}</span>
-                <v-badge v-if="unreadCount" color="error" :content="unreadCount" inline size="small" />
+                <v-badge
+                  v-if="unreadCount"
+                  color="error"
+                  :content="unreadCount"
+                  inline
+                  size="small"
+                />
               </div>
             </v-tab>
-            <v-tab value="inbox" class="text-capitalize">
+            <v-tab
+              value="inbox"
+              class="text-capitalize"
+            >
               <div class="d-flex align-center gap-2">
                 <span>{{ $t('common.inbox') }}</span>
               </div>
@@ -127,7 +157,12 @@
               <template #title>
                 <div class="d-flex align-center gap-2">
                   <span>{{ emptyStateTitle }}</span>
-                  <v-icon v-if="search" color="info">mdi-magnify-remove</v-icon>
+                  <v-icon
+                    v-if="search"
+                    color="info"
+                  >
+                    mdi-magnify-remove
+                  </v-icon>
                 </div>
               </template>
               <template #text>
@@ -146,8 +181,8 @@
                   'active': activeIndex === index,
                   'border-start-4': !n.read
                 }"
-                @click="handleNotificationClick(n)"
                 :style="!n.read ? 'border-left-color: var(--v-primary-base) !important' : ''"
+                @click="handleNotificationClick(n)"
               >
                 <div class="d-flex align-start gap-3">
                   <!-- AVATAR/ICON -->
@@ -203,10 +238,13 @@
                           icon
                           size="x-small"
                           variant="text"
-                          @click.stop="toggleRead(n)"
                           :aria-label="n.read ? 'Mark unread' : 'Mark read'"
+                          @click.stop="toggleRead(n)"
                         >
-                          <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
+                          <v-icon
+                            size="18"
+                            :color="n.read ? 'grey' : 'primary'"
+                          >
                             {{ n.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
                           </v-icon>
                           <v-tooltip activator="parent">
@@ -218,8 +256,13 @@
                     <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
                       {{ n.message || 'You have a new notification.' }}
                     </p>
-                    <div v-if="n.senderName" class="text-caption text-grey-darken-2">
-                      <v-icon size="small">mdi-account-outline</v-icon>
+                    <div
+                      v-if="n.senderName"
+                      class="text-caption text-grey-darken-2"
+                    >
+                      <v-icon size="small">
+                        mdi-account-outline
+                      </v-icon>
                       {{ n.senderName }}
                     </div>
                   </div>
@@ -245,8 +288,8 @@
           <v-btn
             variant="text"
             prepend-icon="mdi-arrow-left"
-            @click="goBack"
             class="text-capitalize"
+            @click="goBack"
           >
             {{ $t('buttons.back') || 'Go Back' }}
           </v-btn>
@@ -256,9 +299,9 @@
             variant="tonal"
             size="small"
             prepend-icon="mdi-refresh"
-            @click="refreshNotifications"
             :loading="refreshing"
             class="text-capitalize"
+            @click="refreshNotifications"
           >
             Refresh
             <template #loader>
@@ -270,7 +313,6 @@
             </template>
           </v-btn>
         </div>
-
       </v-col>
     </v-row>
 

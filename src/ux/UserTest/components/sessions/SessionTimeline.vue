@@ -1,21 +1,36 @@
 <template>
-    <v-card class="timeline-wrapper rounded-t-xl border-t-lg">
-        <!-- Botão Play/Pause -->
-        <v-btn icon color="green" @click="$emit('togglePlay')">
-            <v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
-        </v-btn>
+  <v-card class="timeline-wrapper rounded-t-xl border-t-lg">
+    <!-- Botão Play/Pause -->
+    <v-btn
+      icon
+      color="green"
+      @click="$emit('togglePlay')"
+    >
+      <v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+    </v-btn>
 
-        <!-- Linha de progresso -->
-        <div class="timeline-bar" @click="seek($event)" @mousedown="startDrag" ref="bar">
-            <div class="timeline-track" :style="{ width: progress + '%' }"></div>
-            <div class="timeline-thumb" :style="{ left: progress + '%' }"></div>
-        </div>
+    <!-- Linha de progresso -->
+    <div
+      ref="bar"
+      class="timeline-bar"
+      @click="seek($event)"
+      @mousedown="startDrag"
+    >
+      <div
+        class="timeline-track"
+        :style="{ width: progress + '%' }"
+      />
+      <div
+        class="timeline-thumb"
+        :style="{ left: progress + '%' }"
+      />
+    </div>
 
-        <!-- Duração -->
-        <span style="width: 60px; text-align: right;">
-            {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
-        </span>
-    </v-card>
+    <!-- Duração -->
+    <span style="width: 60px; text-align: right;">
+      {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+    </span>
+  </v-card>
 </template>
 
 <script setup>

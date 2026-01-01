@@ -3,40 +3,111 @@
     <!-- Filtros dinámicos -->
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
-        <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
-          variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{
-          $t('analytics.search') }}</v-btn>
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
-          @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
+        <v-text-field
+          v-model="searchTerm"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          hide-details
+          variant="outlined"
+          :placeholder="$t('analytics.searchByName')"
+          class="flex-grow-1"
+        />
+        <v-btn
+          color="primary"
+          class="search-btn"
+          prepend-icon="mdi-magnify"
+          @click="triggerSearch"
+        >
+          {{
+            $t('analytics.search') }}
+        </v-btn>
+        <v-btn
+          color="primary"
+          class="search-btn"
+          prepend-icon="mdi-filter-remove"
+          :disabled="!hasActiveFilters"
+          @click="resetFilters"
+        >
+          {{ $t('analytics.reset') }}
+        </v-btn>
 
-        <v-btn color="info" class="search-btn" prepend-icon="mdi-download" @click="downloadPdfResume">{{
-          $t('analytics.downloadResume') }}</v-btn>
+        <v-btn
+          color="info"
+          class="search-btn"
+          prepend-icon="mdi-download"
+          @click="downloadPdfResume"
+        >
+          {{
+            $t('analytics.downloadResume') }}
+        </v-btn>
 
-        <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
-          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
+        <v-btn
+          :color="showFilters ? 'primary' : 'grey'"
+          variant="tonal"
+          icon
+          size="small"
+          :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')"
+          @click="toggleFilters"
+        >
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
       </div>
       <v-expand-transition>
         <div v-show="showFilters">
           <v-row dense>
-            <v-col v-for="def in filterDefinitions" :key="'filter-' + def.index" cols="12" sm="6" md="3">
+            <v-col
+              v-for="def in filterDefinitions"
+              :key="'filter-' + def.index"
+              cols="12"
+              sm="6"
+              md="3"
+            >
               <!-- Label / tooltip above field -->
-              <v-tooltip v-if="(def.title || '').length > 42" location="top">
+              <v-tooltip
+                v-if="(def.title || '').length > 42"
+                location="top"
+              >
                 <template #activator="{ props }">
-                  <div class="filter-label truncate-2" v-bind="props">{{ def.title }}</div>
+                  <div
+                    class="filter-label truncate-2"
+                    v-bind="props"
+                  >
+                    {{ def.title }}
+                  </div>
                 </template>
                 <span class="text-wrap">{{ def.title }}</span>
               </v-tooltip>
-              <div v-else class="filter-label truncate-2">{{ def.title }}</div>
+              <div
+                v-else
+                class="filter-label truncate-2"
+              >
+                {{ def.title }}
+              </div>
               <!-- Categórico (multi-select) -->
-              <v-select v-if="def.isCategorical && def.items.length" :items="def.items"
-                v-model="selectedFilters[def.index]" multiple chips clearable density="compact" variant="outlined"
-                hide-details class="filter-field" @update:model-value="val => onFilterChange(def.index, val)" />
+              <v-select
+                v-if="def.isCategorical && def.items.length"
+                v-model="selectedFilters[def.index]"
+                :items="def.items"
+                multiple
+                chips
+                clearable
+                density="compact"
+                variant="outlined"
+                hide-details
+                class="filter-field"
+                @update:model-value="val => onFilterChange(def.index, val)"
+              />
               <!-- Texto libre / numérico (match contiene) -->
-              <v-text-field v-else v-model="selectedFilters[def.index]" density="compact" variant="outlined"
-                hide-details clearable class="filter-field" @input="onFreeTextFilter(def.index)" />
+              <v-text-field
+                v-else
+                v-model="selectedFilters[def.index]"
+                density="compact"
+                variant="outlined"
+                hide-details
+                clearable
+                class="filter-field"
+                @update:model-value="onFreeTextFilter(def.index)"
+              />
             </v-col>
           </v-row>
         </div>
@@ -45,31 +116,62 @@
 
     <!-- UX Metrics Row (ahora primera fila) -->
     <v-row class="">
-      <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateEffectiveness().toFixed(1)}%`" :label="$t('analytics.effectiveness')"
-          color="success" icon="mdi-target-account" :description="$t('analytics.effectivenessDescription')"
-          :progress="calculateEffectiveness()" />
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="`${calculateEffectiveness().toFixed(1)}%`"
+          :label="$t('analytics.effectiveness')"
+          color="success"
+          icon="mdi-target-account"
+          :description="$t('analytics.effectivenessDescription')"
+          :progress="calculateEffectiveness()"
+        />
       </v-col>
-      <v-col cols="12" md="4">
-        <UxMetricCard :value="calculateEfficiency().score.toFixed(1)" :label="$t('analytics.efficiency')" color="info"
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="calculateEfficiency().score.toFixed(1)"
+          :label="$t('analytics.efficiency')"
+          color="info"
           icon="mdi-speedometer"
           :description="$t('analytics.efficiencyDescription', { avgTime: calculateEfficiency().avgTime })"
-          :progress="Math.min(calculateEfficiency().score * 10, 100)" />
+          :progress="Math.min(calculateEfficiency().score * 10, 100)"
+        />
       </v-col>
-      <v-col cols="12" md="4">
-        <UxMetricCard :value="`${calculateSatisfaction().toFixed(1)}/5`" :label="$t('analytics.satisfaction')"
-          color="warning" icon="mdi-heart" :description="$t('analytics.satisfactionDescription')"
-          :progress="(calculateSatisfaction() / 5) * 100" :disabled="true" />
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <UxMetricCard
+          :value="`${calculateSatisfaction().toFixed(1)}/5`"
+          :label="$t('analytics.satisfaction')"
+          color="warning"
+          icon="mdi-heart"
+          :description="$t('analytics.satisfactionDescription')"
+          :progress="(calculateSatisfaction() / 5) * 100"
+          :disabled="true"
+        />
       </v-col>
     </v-row>
 
     <v-row>
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
               <div class="d-flex align-center mb-3">
-                <v-icon color="primary" size="28" class="me-3">
+                <v-icon
+                  color="primary"
+                  size="28"
+                  class="me-3"
+                >
                   mdi-target
                 </v-icon>
                 <h3 class="text-h5 font-weight-medium text-on-surface">
@@ -84,15 +186,30 @@
               </p>
             </div>
             <div class="text-end">
-              <v-chip color="success" variant="flat" size="small" class="mb-2">
-                <v-icon start size="16">
+              <v-chip
+                color="success"
+                variant="flat"
+                size="small"
+                class="mb-2"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
                   mdi-trending-up
                 </v-icon>
                 Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
               </v-chip>
               <br>
-              <v-chip color="error" variant="flat" size="small">
-                <v-icon start size="16">
+              <v-chip
+                color="error"
+                variant="flat"
+                size="small"
+              >
+                <v-icon
+                  start
+                  size="16"
+                >
                   mdi-trending-down
                 </v-icon>
                 Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
@@ -100,8 +217,13 @@
             </div>
           </div>
 
-          <v-progress-linear :model-value="getConclusionAverage()" color="primary" height="12" rounded
-            class="mb-6 progress-glow" />
+          <v-progress-linear
+            :model-value="getConclusionAverage()"
+            color="primary"
+            height="12"
+            rounded
+            class="mb-6 progress-glow"
+          />
 
           <v-divider class="mb-6" />
 
@@ -114,7 +236,10 @@
                 {{ $t('analytics.testsInProgress') }}
               </p>
             </div>
-            <v-divider vertical class="mx-4" />
+            <v-divider
+              vertical
+              class="mx-4"
+            />
             <div class="text-center">
               <div class="text-h4 font-weight-bold text-accent mb-1">
                 16m
@@ -126,13 +251,23 @@
           </div>
         </v-card>
       </v-col>
-      <v-col cols="12" lg="6">
+      <v-col
+        cols="12"
+        lg="6"
+      >
         <v-row class="h-100">
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="primary" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="primary"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-clock-fast
                   </v-icon>
                 </v-avatar>
@@ -151,11 +286,20 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card v-if="testStructure?.userTasks && taskAnswers.length"
-              class="pa-6 elevation-3 rounded-xl h-100 stat-card">
+            <v-card
+              v-if="testStructure?.userTasks && taskAnswers.length"
+              class="pa-6 elevation-3 rounded-xl h-100 stat-card"
+            >
               <div class="d-flex align-center mb-4">
-                <v-avatar color="error" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="error"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-timer-alert
                   </v-icon>
                 </v-avatar>
@@ -176,8 +320,15 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="success" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="success"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-check-circle
                   </v-icon>
                 </v-avatar>
@@ -191,7 +342,11 @@
                 </div>
               </div>
               <div class="d-flex align-center">
-                <v-icon color="success" size="16" class="me-1">
+                <v-icon
+                  color="success"
+                  size="16"
+                  class="me-1"
+                >
                   mdi-trending-up
                 </v-icon>
                 <span class="text-caption text-success">+{{ getTasksTodayCount() }}/{{ $t('analytics.day') }}</span>
@@ -201,8 +356,15 @@
           <v-col cols="6">
             <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar color="accent" size="48" class="me-3">
-                  <v-icon color="white" size="24">
+                <v-avatar
+                  color="accent"
+                  size="48"
+                  class="me-3"
+                >
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
                     mdi-account-circle
                   </v-icon>
                 </v-avatar>
@@ -225,12 +387,19 @@
     </v-row>
 
     <!-- Chart Section -->
-    <AnswersTimeline :task-answers="filteredSessions" @refresh="onRefreshTimeline" @export="onExportTimeline" />
+    <AnswersTimeline
+      :task-answers="filteredSessions"
+      @refresh="onRefreshTimeline"
+      @export="onExportTimeline"
+    />
 
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card flat class="pa-8">
+        <v-card
+          flat
+          class="pa-8"
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -243,30 +412,46 @@
           </div>
 
           <v-row>
-            <v-col v-for="taskStat in getTasksPerformance()" :key="taskStat.taskId" cols="12" md="6" lg="4">
-              <v-card class="pa-4 elevation-2 rounded-lg task-chart-card" variant="outlined">
+            <v-col
+              v-for="taskStat in getTasksPerformance()"
+              :key="taskStat.taskId"
+              cols="12"
+              md="6"
+              lg="4"
+            >
+              <v-card
+                class="pa-4 elevation-2 rounded-lg task-chart-card"
+                variant="outlined"
+              >
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
                   </h4>
                   <v-chip
                     :color="taskStat.successRate >= 70 ? 'success' : taskStat.successRate >= 50 ? 'warning' : 'error'"
-                    variant="tonal" size="small">
+                    variant="tonal"
+                    size="small"
+                  >
                     {{ taskStat.successRate.toFixed(1) }}% {{ $t('analytics.success') }}
                   </v-chip>
                 </div>
 
                 <div class="chart-container-small mb-4">
-                  <canvas :id="'task-chart-' + taskStat.taskId" class="task-chart" width="120" height="120"></canvas>
+                  <canvas
+                    :id="'task-chart-' + taskStat.taskId"
+                    class="task-chart"
+                    width="120"
+                    height="120"
+                  />
                 </div>
 
                 <div class="d-flex justify-space-between text-body-2">
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-success mr-2"></div>
+                    <div class="legend-dot bg-success mr-2" />
                     <span>{{ $t('analytics.successCount') }}: {{ taskStat.success }}</span>
                   </div>
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-error mr-2"></div>
+                    <div class="legend-dot bg-error mr-2" />
                     <span>{{ $t('analytics.errors') }}: {{ taskStat.errors }}</span>
                   </div>
                 </div>
@@ -280,7 +465,10 @@
     <!-- Mostrar todas las preguntas del pre-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card flat class="pa-8 ">
+        <v-card
+          flat
+          class="pa-8 "
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -293,14 +481,30 @@
           </div>
           <v-row>
             <template v-for="(q, idx) in (testStructure?.preTest || [])">
-              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'pre-sel-' + (q.title || q.question || idx)" cols="12" md="6" lg="4">
-                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
-                  :counts="getPreSelectionCounts(idx)" :canvas-id="'pretest-selection-chart-' + idx"
-                  :chart-colors="chartColors" />
+              <v-col
+                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'pre-sel-' + (q.title || q.question || idx)"
+                cols="12"
+                md="6"
+                lg="4"
+              >
+                <SelectionPieChart
+                  :question-title="q.title || q.question"
+                  :options="q.selectionFields"
+                  :counts="getPreSelectionCounts(idx)"
+                  :canvas-id="'pretest-selection-chart-' + idx"
+                  :chart-colors="chartColors"
+                />
               </v-col>
-              <v-col v-else :key="'pre-com-' + (q.title || q.question || idx)" cols="12">
-                <CommentListCard :question-title="q.title || q.question" :answer="getPreTextAnswers(idx)" />
+              <v-col
+                v-else
+                :key="'pre-com-' + (q.title || q.question || idx)"
+                cols="12"
+              >
+                <CommentListCard
+                  :question-title="q.title || q.question"
+                  :answer="getPreTextAnswers(idx)"
+                />
               </v-col>
             </template>
           </v-row>
@@ -311,7 +515,10 @@
     <!-- Mostrar todas las preguntas del post-form -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card flat class="pa-8 ">
+        <v-card
+          flat
+          class="pa-8 "
+        >
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -324,14 +531,30 @@
           </div>
           <v-row>
             <template v-for="(q, idx) in filteredSessions[0]?.postTestAnswer || []">
-              <v-col v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
-                :key="'sel-' + (q.question || idx)" cols="12" md="6" lg="4">
-                <SelectionPieChart :question-title="q.title || q.question" :options="q.selectionFields"
-                  :counts="getSelectionCounts(idx)" :canvas-id="'posttest-selection-chart-' + idx"
-                  :chart-colors="chartColors" />
+              <v-col
+                v-if="Array.isArray(q.selectionFields) && q.selectionFields.length > 0"
+                :key="'sel-' + (q.question || idx)"
+                cols="12"
+                md="6"
+                lg="4"
+              >
+                <SelectionPieChart
+                  :question-title="q.title || q.question"
+                  :options="q.selectionFields"
+                  :counts="getSelectionCounts(idx)"
+                  :canvas-id="'posttest-selection-chart-' + idx"
+                  :chart-colors="chartColors"
+                />
               </v-col>
-              <v-col v-else :key="'com-' + (q.question || idx)" cols="12">
-                <CommentListCard :question-title="q.title || q.question" :answer="q.answer" />
+              <v-col
+                v-else
+                :key="'com-' + (q.question || idx)"
+                cols="12"
+              >
+                <CommentListCard
+                  :question-title="q.title || q.question"
+                  :answer="q.answer"
+                />
               </v-col>
             </template>
           </v-row>

@@ -1,33 +1,32 @@
 <template>
   <v-row justify="center">
-      <v-col
-        lg="12"
-        class="px-0 py-5"
-      >
-               <v-card
+    <v-col
+      lg="12"
+      class="px-0 py-5"
+    >
+      <v-card
         class="elevation-2 rounded-lg pa-6"
         width="100%"
       >
-            <v-row class="pa-4 pa-0">
-        <v-col>
-
-          <v-card-title
-            class="text-h5 font-weight-bold pa-0"
-            :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
-          >
-          {{ title }}
-        </v-card-title>
+        <v-row class="pa-4 pa-0">
+          <v-col>
+            <v-card-title
+              class="text-h5 font-weight-bold pa-0"
+              :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+            >
+              {{ title }}
+            </v-card-title>
        
-          <p
-            class="text-body-1"
-            style="color: #4B5563;"
-          >
-            {{ subtitle }}
-          </p>
-</v-col>
-         </v-row>
+            <p
+              class="text-body-1"
+              style="color: #4B5563;"
+            >
+              {{ subtitle }}
+            </p>
+          </v-col>
+        </v-row>
 
-           <v-card-text>
+        <v-card-text>
           <quill-editor
             v-model:value="value"
             :options="editorOptions"

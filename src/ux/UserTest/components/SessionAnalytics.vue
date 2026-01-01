@@ -1,66 +1,123 @@
 <template>
-    <v-container fluid class="py-6" style="height: 100%; background-color: white;">
-        <!-- Título -->
-        <v-row class="mb-6">
-            <v-col cols="12" class="text-center">
-                <h1 class="text-h4 font-weight-bold d-flex align-center justify-center">
-                    <v-icon class="mr-2" color="success">mdi-video-account</v-icon>
-                    Session Analytics
-                </h1>
-            </v-col>
-        </v-row>
+  <v-container
+    fluid
+    class="py-6"
+    style="height: 100%; background-color: white;"
+  >
+    <!-- Título -->
+    <v-row class="mb-6">
+      <v-col
+        cols="12"
+        class="text-center"
+      >
+        <h1 class="text-h4 font-weight-bold d-flex align-center justify-center">
+          <v-icon
+            class="mr-2"
+            color="success"
+          >
+            mdi-video-account
+          </v-icon>
+          Session Analytics
+        </h1>
+      </v-col>
+    </v-row>
 
-        <v-card flat>
-            <v-row class="ma-0 pa-0">
-                <!-- Lista de usuários -->
-                <v-col class="ma-0 pa-0 task-list" cols="3">
-                    <v-list density="compact" class="list-scroll">
-                        <v-list-subheader>Evaluators</v-list-subheader>
-                        <v-divider />
-                        <v-list dense nav>
-                            <v-list-item v-for="i in 2" :key="i" class="rounded" @click="selectedUserId = i">
-                                <v-list-item-title>
-                                    <v-skeleton-loader type="text" width="80%" />
-                                </v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-list>
-                </v-col>
+    <v-card flat>
+      <v-row class="ma-0 pa-0">
+        <!-- Lista de usuários -->
+        <v-col
+          class="ma-0 pa-0 task-list"
+          cols="3"
+        >
+          <v-list
+            density="compact"
+            class="list-scroll"
+          >
+            <v-list-subheader>Evaluators</v-list-subheader>
+            <v-divider />
+            <v-list
+              density="compact"
+              nav
+            >
+              <v-list-item
+                v-for="i in 2"
+                :key="i"
+                class="rounded"
+                @click="selectedUserId = i"
+              >
+                <v-list-item-title>
+                  <v-skeleton-loader
+                    type="text"
+                    width="80%"
+                  />
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-list>
+        </v-col>
 
-                <v-divider vertical inset />
+        <v-divider
+          vertical
+          inset
+        />
 
-                <!-- Lista de tarefas -->
-                <v-col class="ma-0 pa-1 answer-list" cols="9">
-                    <div v-if="selectedUserId">
-                        <h3 class="text-h6 font-weight-bold mb-4">Tasks for User {{ selectedUserId }}</h3>
-                        <v-list>
-                            <v-list-item v-for="task in mockTasks" :key="task.taskId" @click="openTaskDialog(task)">
-                                <v-list-item-title>{{ task.taskName }}</v-list-item-title>
-                                <v-list-item-subtitle>
-                                    <v-skeleton-loader type="text" width="40%" />
-                                </v-list-item-subtitle>
-                            </v-list-item>
-                        </v-list>
-                    </div>
-                    <div v-else>
-                        <p class="text-grey">Select a participant to view their tasks.</p>
-                    </div>
-                </v-col>
-            </v-row>
-        </v-card>
-    </v-container>
+        <!-- Lista de tarefas -->
+        <v-col
+          class="ma-0 pa-1 answer-list"
+          cols="9"
+        >
+          <div v-if="selectedUserId">
+            <h3 class="text-h6 font-weight-bold mb-4">
+              Tasks for User {{ selectedUserId }}
+            </h3>
+            <v-list>
+              <v-list-item
+                v-for="task in mockTasks"
+                :key="task.taskId"
+                @click="openTaskDialog(task)"
+              >
+                <v-list-item-title>{{ task.taskName }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  <v-skeleton-loader
+                    type="text"
+                    width="40%"
+                  />
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </div>
+          <div v-else>
+            <p class="text-grey">
+              Select a participant to view their tasks.
+            </p>
+          </div>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-container>
 
-    <!-- Diálogo da tarefa -->
-    <SessionAnalyticsDialog v-model="taskDialog" :task-answer="selectedTask" />
+  <!-- Diálogo da tarefa -->
+  <SessionAnalyticsDialog
+    v-model="taskDialog"
+    :task-answer="selectedTask"
+  />
 
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" :timeout="4000">
-        {{ snackbar.text }}
-        <template #actions>
-            <v-btn color="white" variant="text" @click="snackbar.visible = false">
-                Close
-            </v-btn>
-        </template>
-    </v-snackbar>
+  <v-snackbar
+    v-model="snackbar.visible"
+    :color="snackbar.color"
+    :timeout="4000"
+  >
+    {{ snackbar.text }}
+    <template #actions>
+      <v-btn
+        color="white"
+        variant="text"
+        @click="snackbar.visible = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 
@@ -101,6 +158,14 @@ export default {
             isPlaying: false,
             _timelineInterval: null
         };
+    },
+    mounted() {
+        this._timelineInterval = setInterval(() => {
+            this.updateTimeline();
+        }, 200);
+    },
+    beforeUnmount() {
+        clearInterval(this._timelineInterval);
     },
     methods: {
         emitTimelineUpdate() {
@@ -162,14 +227,6 @@ export default {
                 this.emitTimelineUpdate();
             }
         }
-    },
-    mounted() {
-        this._timelineInterval = setInterval(() => {
-            this.updateTimeline();
-        }, 200);
-    },
-    beforeUnmount() {
-        clearInterval(this._timelineInterval);
     }
 }
 

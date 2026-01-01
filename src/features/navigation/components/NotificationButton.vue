@@ -39,10 +39,13 @@
       </template>
 
       <!-- 📬 Dropdown -->
-      <v-card class="notification-dropdown" elevation="6">
+      <v-card
+        class="notification-dropdown"
+        elevation="6"
+      >
         <!-- Header -->
         <div class="dropdown-header">
-          <span class="title">{{ $t('common.notifications') }}</span>
+          <span class="text-h6">{{ $t('common.notifications') }}</span>
 
           <div class="actions">
             <v-btn
@@ -82,10 +85,22 @@
           </template>
 
           <!-- Empty -->
-          <div v-else class="empty-state">
-            <v-icon size="40" color="grey">mdi-bell-check</v-icon>
-            <div class="empty-title">You're all caught up</div>
-            <div class="empty-subtitle">No new notifications</div>
+          <div
+            v-else
+            class="empty-state"
+          >
+            <v-icon
+              size="40"
+              color="grey"
+            >
+              mdi-bell-check
+            </v-icon>
+            <div class="empty-title">
+              You're all caught up
+            </div>
+            <div class="empty-subtitle">
+              No new notifications
+            </div>
           </div>
         </div>
       </v-card>

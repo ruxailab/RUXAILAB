@@ -1,9 +1,25 @@
 <template>
-  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
+  <v-card
+    v-if="test"
+    class="pa-4 mb-0"
+    elevation="3"
+    rounded="lg"
+  >
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToReport">
-      <v-icon size="24" color="primary" class="header-icon">mdi-file-document</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.finalReport') }}</v-card-title>
+    <div
+      class="d-flex align-center mb-4 clickable-header"
+      @click="navigateToReport"
+    >
+      <v-icon
+        size="24"
+        color="primary"
+        class="header-icon"
+      >
+        mdi-file-document
+      </v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">
+        {{ $t('Dashboard.cards.finalReport') }}
+      </v-card-title>
     </div>
     
     <!-- Estado del informe -->
@@ -20,7 +36,10 @@
       
       <!-- Status principal -->
       <div class="text-center mb-3">
-        <div class="report-title text-h6 font-weight-bold" :class="reportStatusClass">
+        <div
+          class="report-title text-h6 font-weight-bold"
+          :class="reportStatusClass"
+        >
           {{ reportStatusText }}
         </div>
         <div class="text-caption text-grey-darken-1 mt-1">
@@ -30,12 +49,24 @@
       
       <!-- Información adicional -->
       <div class="report-info">
-        <div v-if="reportExists" class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="success" class="mr-2">mdi-calendar-check</v-icon>
+        <div
+          v-if="reportExists"
+          class="d-flex align-center justify-center mb-2"
+        >
+          <v-icon
+            size="16"
+            color="success"
+            class="mr-2"
+          >
+            mdi-calendar-check
+          </v-icon>
           <span class="text-caption text-grey-darken-1">{{ $t('Dashboard.cards.generated') }} {{ reportDate }}</span>
         </div>
         
-        <div v-if="reportExists" class="d-flex justify-center">
+        <div
+          v-if="reportExists"
+          class="d-flex justify-center"
+        >
           <v-btn
             size="small"
             color="primary"
@@ -46,7 +77,10 @@
           </v-btn>
         </div>
         
-        <div v-else class="d-flex justify-center">
+        <div
+          v-else
+          class="d-flex justify-center"
+        >
           <v-btn
             size="small"
             color="primary"

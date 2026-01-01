@@ -1,5 +1,10 @@
 <template>
-  <v-card elevation="2" class="pa-4 mb-4" :style="backgroundImage" rounded="xl">
+  <v-card
+    elevation="2"
+    class="pa-4 mb-4"
+    :style="backgroundImage"
+    rounded="xl"
+  >
     <div class="background-gradient">
       <v-row
         class="ml-0"
@@ -8,7 +13,9 @@
         style="height: 100%"
       >
         <div class="text-div">
-          <h1 class="title-firebase">{{ $t('titles.drawer.' + title) }}</h1>
+          <h1 class="title-firebase">
+            {{ $t('titles.drawer.' + title) }}
+          </h1>
           <div
             style="font-size: 20px"
             class="text-white mb-4 mobile-center"
@@ -20,7 +27,7 @@
             @click="emitClick"
           >
             {{ $t('pages.intros.click') }}
-        </v-btn>
+          </v-btn>
         </div>
 
         <v-img
@@ -33,60 +40,60 @@
     </div>
   </v-card>
 
-    <v-col>
-      <v-row
-        justify="center"
-        class="ml-0"
+  <v-col>
+    <v-row
+      justify="center"
+      class="ml-0"
+    >
+      <v-col
+        cols="12"
+        md="8"
       >
-        <v-col
-          cols="12"
-          md="8"
+        <div class="learn-text">
+          {{ $t('pages.intros.learnMore') }}
+        </div>
+        <v-card
+          elevation="4"
+          class="ma-0 pa-0"
+          style="border-radius: 10px !important"
         >
-          <div class="learn-text">
-            {{ $t('pages.intros.learnMore') }}
-          </div>
-          <v-card
-            elevation="4"
-            class="ma-0 pa-0"
-            style="border-radius: 10px !important"
-          >
-            <v-list class="ma-0 pa-0">
-              <div
-                v-for="(item, i) in items"
-                :key="i"
+          <v-list class="ma-0 pa-0">
+            <div
+              v-for="(item, i) in items"
+              :key="i"
+            >
+              <v-list-item
+                class="py-5"
+                :ripple="false"
+                style="border-radius: 10px !important"
+                @click="emitCallFunc(item.func)"
               >
-                <v-list-item
-                  class="py-5"
-                  :ripple="false"
-                  style="border-radius: 10px !important"
-                  @click="emitCallFunc(item.func)"
+                <v-avatar
+                  size="50"
+                  :color="item.iconColor"
                 >
-                  <v-avatar
-                    size="50"
-                    :color="item.iconColor"
+                  <v-icon
+                    size="35"
                   >
-                    <v-icon
-                      size="35"
-                    >
-                      {{ item.icon }}
-                    </v-icon>
-                  </v-avatar>
+                    {{ item.icon }}
+                  </v-icon>
+                </v-avatar>
 
-                  <v-list-item-title style="font-size: 25px">
-                    {{ item.title }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ item.subtitle }}
-                  </v-list-item-subtitle>
-                </v-list-item>
+                <v-list-item-title style="font-size: 25px">
+                  {{ item.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ item.subtitle }}
+                </v-list-item-subtitle>
+              </v-list-item>
 
-                <v-divider />
-              </div>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-col>
+              <v-divider />
+            </div>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-col>
 </template>
 
 <script setup>

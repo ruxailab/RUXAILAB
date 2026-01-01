@@ -5,12 +5,17 @@
     @click="onClick"
   >
     <div class="notification-inner">
-
       <!-- Unread Dot -->
-      <div v-if="!notification.read" class="unread-dot" />
+      <div
+        v-if="!notification.read"
+        class="unread-dot"
+      />
 
       <!-- Icon -->
-      <v-avatar size="40" class="icon">
+      <v-avatar
+        size="40"
+        class="icon"
+      >
         <v-icon :color="!notification.read ? 'primary' : 'grey'">
           {{ getTestIcon(notification.testType) }}
         </v-icon>
@@ -19,7 +24,7 @@
       <!-- Content -->
       <div class="content">
         <div class="title-row">
-          <div class="title">
+          <div class="text-h6">
             {{ notification.title || 'Notification' }}
             <span
               v-if="notification.type"
@@ -56,7 +61,6 @@
           {{ notification.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
         </v-icon>
       </v-btn>
-
     </div>
   </div>
 </template>

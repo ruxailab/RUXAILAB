@@ -1,6 +1,9 @@
 <template>
   <v-row :justify="adjust">
-    <v-col cols="12" sm="auto">
+    <v-col
+      cols="12"
+      sm="auto"
+    >
       <v-btn
         variant="outlined"
         :prepend-icon="icon"
