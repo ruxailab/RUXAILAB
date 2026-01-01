@@ -118,7 +118,6 @@ defineExpose({ valida, resetVal });
   min-height: 400px;
   padding: 16px;
 }
-</style>
 
 @media (max-width: 600px) {
   .stepper-content {
