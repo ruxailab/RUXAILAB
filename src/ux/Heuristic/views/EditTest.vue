@@ -19,10 +19,10 @@
         <!-- Desktop Tabs -->
         <v-tabs
           v-if="!isMobile"
+          v-model="index"
           bg-color="transparent"
           color="#FCA326"
           class="pb-0 mb-0"
-          v-model="index"
         >
           <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
           <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>

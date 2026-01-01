@@ -37,7 +37,8 @@ export default defineConfig({
     "vue/require-explicit-emits": "warn",            // Missing defineEmits
     "vue/no-reserved-keys": "warn",                  // Keys starting with '_'
     "vue/valid-template-root": "warn",               // Empty templates
-    "vue/no-side-effects-in-computed-properties": "warn"  // Computed properties modifying data
+    "vue/no-side-effects-in-computed-properties": "warn", // Computed properties modifying data
+    "vue/no-unused-vars": "warn"                     // Unused variables from merged code
     
     // "semi": "off",
     // "no-unused-vars": "warn",

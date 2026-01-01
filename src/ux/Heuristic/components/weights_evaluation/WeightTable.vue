@@ -1,177 +1,176 @@
 <template>
+  <v-card
+    elevation="2"
+    class="pa-6"
+  >
+    <!-- Header Section -->
+    <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
+      {{ $t('HeuristicsWeightsTable.titles.weights') }}
+    </h1>
+    <v-divider class="mb-6" />
 
+    <!-- Empty State for Insufficient Heuristics -->
     <v-card
-      elevation="2"
-      class="pa-6"
+      v-if="heuristics.length < 2"
+      class="text-center pa-8"
+      variant="outlined"
+      style="background-color: transparent;"
     >
-      <!-- Header Section -->
-      <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
-        {{ $t('HeuristicsWeightsTable.titles.weights') }}
-      </h1>
-      <v-divider class="mb-6" />
+      <v-icon
+        icon="mdi-information-outline"
+        size="64"
+        color="primary"
+        class="mb-4"
+      />
+      <h3 class="text-h6 text-ternary mb-2">
+        {{ $t('HeuristicsWeightsTable.messages.atLeast2HeuristicsForWeighting') }}
+      </h3>
+    </v-card>
 
-      <!-- Empty State for Insufficient Heuristics -->
-      <v-card
-        v-if="heuristics.length < 2"
-        class="text-center pa-8"
-        variant="outlined"
-        style="background-color: transparent;"
+    <!-- Weights Content -->
+    <v-card
+      v-else
+      elevation="0"
+      style="background-color: transparent;"
+    >
+      <!-- Weights Header Tabs -->
+      <v-tabs
+        v-model="tabs"
+        color="accent"
+        class="mb-6"
+        density="compact"
+        bg-color="#F5F7FF"
+        show-arrows
       >
-        <v-icon
-          icon="mdi-information-outline"
-          size="64"
-          color="primary"
-          class="mb-4"
-        />
-        <h3 class="text-h6 text-ternary mb-2">
-          {{ $t('HeuristicsWeightsTable.messages.atLeast2HeuristicsForWeighting') }}
-        </h3>
-      </v-card>
+        <v-tab
+          v-for="(heuri, index) in heuristics.length - 1"
+          :key="index"
+          class="text-none font-weight-medium"
+          :class="{ 'active-weight-tab': tabs === index }"
+        >
+          <v-tooltip location="top">
+            <template #activator="{ props }">
+              <span v-bind="props">H {{ index + 1 }}</span>
+            </template>
+            <span>{{ heuristics[index]?.title || 'Unknown Heuristic' }}</span>
+          </v-tooltip>
+        </v-tab>
+      </v-tabs>
 
       <!-- Weights Content -->
-      <v-card
-        v-else
-        elevation="0"
-        style="background-color: transparent;"
-      >
-        <!-- Weights Header Tabs -->
-        <v-tabs
-          v-model="tabs"
-          color="accent"
-          class="mb-6"
-          density="compact"
-          bg-color="#F5F7FF"
-          show-arrows
+      <v-tabs-window v-model="tabs">
+        <v-tabs-window-item
+          v-for="(n, pes) in heuristics.length - 1"
+          :key="pes"
+          :value="pes"
+          style="background-color: #F5F7FF;"
         >
-          <v-tab
-            v-for="(heuri, index) in heuristics.length - 1"
-            :key="index"
-            class="text-none font-weight-medium"
-            :class="{ 'active-weight-tab': tabs === index }"
+          <v-card
+            variant="outlined"
+            class="weights-table"
           >
-            <v-tooltip location="top">
-              <template #activator="{ props }">
-                <span v-bind="props">H {{ index + 1 }}</span>
-              </template>
-              <span>{{ heuristics[index]?.title || 'Unknown Heuristic' }}</span>
-            </v-tooltip>
-          </v-tab>
-        </v-tabs>
-
-        <!-- Weights Content -->
-        <v-tabs-window v-model="tabs">
-          <v-tabs-window-item
-            v-for="(n, pes) in heuristics.length - 1"
-            :key="pes"
-            :value="pes"
-            style="background-color: #F5F7FF;"
-          >
-            <v-card
-              variant="outlined"
-              class="weights-table"
-            >
-              <!-- Table Header -->
-              <div class="d-flex align-center pa-4 bg-grey-lighten-4">
-                <div class="weights-header-cell">
-                  <span class="text-body-1 font-weight-medium text-on-surface">
-                    {{ $t('HeuristicsWeightsTable.titles.heuristics') }}
-                  </span>
-                </div>
-                <div class="weights-header-cell text-center">
-                  <span class="text-body-1 font-weight-medium text-on-surface">
-                    {{ $t('HeuristicsWeightsTable.titles.weights') }}
-                  </span>
-                </div>
+            <!-- Table Header -->
+            <div class="d-flex align-center pa-4 bg-grey-lighten-4">
+              <div class="weights-header-cell">
+                <span class="text-body-1 font-weight-medium text-on-surface">
+                  {{ $t('HeuristicsWeightsTable.titles.heuristics') }}
+                </span>
               </div>
-
-              <v-divider />
-
-              <!-- Table Rows -->
-              <div
-                v-for="(f, tam) in heuristics.length - (tabs + 1)"
-                :key="tam"
-                class="d-flex align-center pa-4 weights-row"
-              >
-                <!-- Heuristic Name -->
-                <div class="weights-cell">
-                  <div class="d-flex align-center">
-                    <v-chip
-                      color="accent"
-                      variant="tonal"
-                      size="small"
-                      class="me-3"
-                    >
-                      H{{ f + (tabs + 1) }}
-                    </v-chip>
-                    <span class="text-body-1 text-on-surface">
-                      {{ heuristics[f + tabs]?.title || 'Unknown Heuristic' }}
-                    </span>
-                    <v-tooltip location="right">
-                      <template #activator="{ props }">
-                        <v-icon
-                          v-bind="props"
-                          color="#FCA326"
-                          size="small"
-                          class="ml-2"
-                        >
-                          mdi-help-circle
-                        </v-icon>
-                      </template>
-                      <span>{{ heuristics[f + tabs]?.title || 'Unknown Heuristic' }}</span>
-                    </v-tooltip>
-                  </div>
-                </div>
-
-                <!-- Weight Radio Buttons -->
-                <div class="weights-cell">
-                  <v-radio-group
-                    v-model="group[tabs][tam]"
-                    inline
-                    hide-details
-                    class="weight-radio-group"
-                    density="compact"
-                  >
-                    <v-tooltip
-                      v-for="(r, rad) in importance"
-                      :key="rad"
-                      location="bottom"
-                    >
-                      <template #activator="{ props }">
-                        <v-radio
-                          v-bind="props"
-                          :label="`${r}`"
-                          :value="r"
-                          color="#FCA326"
-                          class="weight-radio"
-                          true-icon="mdi-check-circle-outline"
-                          false-icon="mdi-checkbox-blank-circle-outline"
-                        />
-                      </template>
-                      <span>
-                        H{{ tabs + 1 }} has {{ importt[rad] }} than H{{ f + (tabs + 1) }}
-                      </span>
-                    </v-tooltip>
-                  </v-radio-group>
-                </div>
+              <div class="weights-header-cell text-center">
+                <span class="text-body-1 font-weight-medium text-on-surface">
+                  {{ $t('HeuristicsWeightsTable.titles.weights') }}
+                </span>
               </div>
-            </v-card>
-
-            <!-- Save Button -->
-            <div class="text-center mt-6">
-              <v-btn
-                color="accent"
-                variant="elevated"
-                size="large"
-                class="text-none px-8"
-                @click="updateDatas"
-              >
-                {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
-              </v-btn>
             </div>
-          </v-tabs-window-item>
-        </v-tabs-window>
-      </v-card>
+
+            <v-divider />
+
+            <!-- Table Rows -->
+            <div
+              v-for="(f, tam) in heuristics.length - (tabs + 1)"
+              :key="tam"
+              class="d-flex align-center pa-4 weights-row"
+            >
+              <!-- Heuristic Name -->
+              <div class="weights-cell">
+                <div class="d-flex align-center">
+                  <v-chip
+                    color="accent"
+                    variant="tonal"
+                    size="small"
+                    class="me-3"
+                  >
+                    H{{ f + (tabs + 1) }}
+                  </v-chip>
+                  <span class="text-body-1 text-on-surface">
+                    {{ heuristics[f + tabs]?.title || 'Unknown Heuristic' }}
+                  </span>
+                  <v-tooltip location="right">
+                    <template #activator="{ props }">
+                      <v-icon
+                        v-bind="props"
+                        color="#FCA326"
+                        size="small"
+                        class="ml-2"
+                      >
+                        mdi-help-circle
+                      </v-icon>
+                    </template>
+                    <span>{{ heuristics[f + tabs]?.title || 'Unknown Heuristic' }}</span>
+                  </v-tooltip>
+                </div>
+              </div>
+
+              <!-- Weight Radio Buttons -->
+              <div class="weights-cell">
+                <v-radio-group
+                  v-model="group[tabs][tam]"
+                  inline
+                  hide-details
+                  class="weight-radio-group"
+                  density="compact"
+                >
+                  <v-tooltip
+                    v-for="(r, rad) in importance"
+                    :key="rad"
+                    location="bottom"
+                  >
+                    <template #activator="{ props }">
+                      <v-radio
+                        v-bind="props"
+                        :label="`${r}`"
+                        :value="r"
+                        color="#FCA326"
+                        class="weight-radio"
+                        true-icon="mdi-check-circle-outline"
+                        false-icon="mdi-checkbox-blank-circle-outline"
+                      />
+                    </template>
+                    <span>
+                      H{{ tabs + 1 }} has {{ importt[rad] }} than H{{ f + (tabs + 1) }}
+                    </span>
+                  </v-tooltip>
+                </v-radio-group>
+              </div>
+            </div>
+          </v-card>
+
+          <!-- Save Button -->
+          <div class="text-center mt-6">
+            <v-btn
+              color="accent"
+              variant="elevated"
+              size="large"
+              class="text-none px-8"
+              @click="updateDatas"
+            >
+              {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
+            </v-btn>
+          </div>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-card>
+  </v-card>
 </template>
 
 <script setup>

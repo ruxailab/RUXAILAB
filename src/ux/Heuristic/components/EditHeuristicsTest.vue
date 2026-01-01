@@ -1,37 +1,68 @@
 <template>
   <div>
-    <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0 responsive-tabs">
-      <v-tab class="tab-content" @click="tabClicked(0)">
+    <v-tabs
+      bg-color="transparent"
+      color="#FCA326"
+      class="pb-0 mb-0 responsive-tabs"
+    >
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(0)"
+      >
         {{ $t('HeuristicsEditTest.titles.heuristics') }}
-        <v-icon v-if="index === 0" class="tab-icon">
+        <v-icon
+          v-if="index === 0"
+          class="tab-icon"
+        >
           mdi-chevron-down
         </v-icon>
       </v-tab>
 
-      <v-tab class="tab-content" @click="tabClicked(1)">
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(1)"
+      >
         {{ $t('HeuristicsEditTest.titles.options') }}
-        <v-icon v-if="index === 1" class="tab-icon">
+        <v-icon
+          v-if="index === 1"
+          class="tab-icon"
+        >
           mdi-chevron-down
         </v-icon>
       </v-tab>
 
-      <v-tab class="tab-content" @click="tabClicked(2)">
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(2)"
+      >
         {{ $t('HeuristicsEditTest.titles.weights') }}
-        <v-icon v-if="index === 2" class="tab-icon">
+        <v-icon
+          v-if="index === 2"
+          class="tab-icon"
+        >
           mdi-chevron-down
         </v-icon>
       </v-tab>
 
-      <v-tab class="tab-content" @click="tabClicked(3)">
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(3)"
+      >
         {{ $t('HeuristicsEditTest.titles.settings') }}
-        <v-icon v-if="index === 3" class="tab-icon">
+        <v-icon
+          v-if="index === 3"
+          class="tab-icon"
+        >
           mdi-chevron-down
         </v-icon>
       </v-tab>
     </v-tabs>
 
     <div class="mt-responsive">
-      <HeuristicsTable v-if="index == 0" @change="emit('change')" />
+      <HeuristicsTable
+        v-if="index == 0"
+        @change="emit('change')"
+      />
       <OptionsTable v-if="index == 1" />
       <WeightTable v-if="index == 2" />
       <HeuristicsSettings v-if="index == 3" />

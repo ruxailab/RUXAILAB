@@ -1,84 +1,83 @@
 <template>
-    <v-card
-      elevation="2"
-      class="pa-6"
-    >
-      <div>
-        <!-- Header Section -->
-        <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
-          {{ $t('HeuristicsSettings.titles.settings') }}
-        </h1>
-        <v-divider class="mb-6" />
+  <v-card
+    elevation="2"
+    class="pa-6"
+  >
+    <div>
+      <!-- Header Section -->
+      <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
+        {{ $t('HeuristicsSettings.titles.settings') }}
+      </h1>
+      <v-divider class="mb-6" />
 
-        <!-- Download CSV Template -->
-        <div class="mb-8">
-          <v-btn
-            color="accent"
-            variant="elevated"
-            size="large"
-            class="text-none"
-            @click="downloadTemplate"
-          >
-            {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
-          </v-btn>
-        </div>
-
-        <!-- File Upload Section -->
-        <div>
-          <div class="d-flex align-stretch mb-4 file-upload-container">
-            <!-- File Input -->
-            <div class="flex-grow-1 me-2">
-              <v-file-input
-                ref="myFile"
-                v-model="csvFile"
-                accept=".csv"
-                :label="$t('HeuristicsSettings.placeHolders.importCsv')"
-                variant="outlined"
-                density="comfortable"
-                prepend-icon=""
-                prepend-inner-icon="mdi-paperclip"
-                show-size
-                truncate-length="15"
-                :disabled="testAnswerDocLength > 0"
-                counter
-                class="file-input-field"
-                hide-details
-              >
-              </v-file-input>
-            </div>
-            
-            <!-- Update Button -->
-            <div class="d-flex align-center">
-              <v-btn
-                :loading="loadingUpdate"
-                :disabled="loadingUpdate || testAnswerDocLength > 0"
-                color="primary"
-                variant="elevated"
-                class="text-none update-button"
-                height="56"
-                @click="changeToJSON"
-              >
-                <v-icon start>
-                  mdi-cloud-upload
-                </v-icon>
-                {{ $t('HeuristicsSettings.actions.update') }}
-              </v-btn>
-            </div>
-          </div>
-          
-          <v-alert
-            v-if="errorMessage"
-            v-model="errorVisible"
-            type="error"
-            density="compact"
-            class="mt-2"
-            closable
-          >
-            {{ errorMessage }}
-          </v-alert>
-        </div>
+      <!-- Download CSV Template -->
+      <div class="mb-8">
+        <v-btn
+          color="accent"
+          variant="elevated"
+          size="large"
+          class="text-none"
+          @click="downloadTemplate"
+        >
+          {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
+        </v-btn>
       </div>
-    </v-card>
+
+      <!-- File Upload Section -->
+      <div>
+        <div class="d-flex align-stretch mb-4 file-upload-container">
+          <!-- File Input -->
+          <div class="flex-grow-1 me-2">
+            <v-file-input
+              ref="myFile"
+              v-model="csvFile"
+              accept=".csv"
+              :label="$t('HeuristicsSettings.placeHolders.importCsv')"
+              variant="outlined"
+              density="comfortable"
+              prepend-icon=""
+              prepend-inner-icon="mdi-paperclip"
+              show-size
+              truncate-length="15"
+              :disabled="testAnswerDocLength > 0"
+              counter
+              class="file-input-field"
+              hide-details
+            />
+          </div>
+            
+          <!-- Update Button -->
+          <div class="d-flex align-center">
+            <v-btn
+              :loading="loadingUpdate"
+              :disabled="loadingUpdate || testAnswerDocLength > 0"
+              color="primary"
+              variant="elevated"
+              class="text-none update-button"
+              height="56"
+              @click="changeToJSON"
+            >
+              <v-icon start>
+                mdi-cloud-upload
+              </v-icon>
+              {{ $t('HeuristicsSettings.actions.update') }}
+            </v-btn>
+          </div>
+        </div>
+          
+        <v-alert
+          v-if="errorMessage"
+          v-model="errorVisible"
+          type="error"
+          density="compact"
+          class="mt-2"
+          closable
+        >
+          {{ errorMessage }}
+        </v-alert>
+      </div>
+    </div>
+  </v-card>
 </template>
 
 <script setup>

@@ -1,7 +1,10 @@
 <template>
   <v-container class="pa-0">
     <v-row class="ma-0">
-      <v-col cols="12" :hidden="hideCol">
+      <v-col
+        cols="12"
+        :hidden="hideCol"
+      >
         <!-- <h1>{{ $t('titles.drawer.' + title) }}</h1> -->
         <h1>{{ title }}</h1>
         <v-divider v-if="title" />
@@ -9,9 +12,16 @@
       <slot name="top" />
     </v-row>
     <slot name="warning" />
-    <v-row justify="center" class="ma-0">
+    <v-row
+      justify="center"
+      class="ma-0"
+    >
       <v-col cols="12">
-        <v-card flat rounded="xl" class="dataCard ma-0 pa-0">
+        <v-card
+          flat
+          rounded="xl"
+          class="dataCard ma-0 pa-0"
+        >
           <slot name="content" />
         </v-card>
       </v-col>
