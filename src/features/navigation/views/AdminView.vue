@@ -180,8 +180,13 @@ const filterModeratedSessions = () => {
  */
 const selectNavigation = (navigationData) => {
   const { sectionId, childId } = navigationData;
-  activeSection.value = sectionId;
-  activeSubSection.value = sectionId === 'community' ? childId : null;
+  router.push({
+    query: {
+      ...route.query,
+      section: sectionId,
+      subsection: childId || undefined
+    }
+  });
 };
 
 /**
