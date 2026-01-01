@@ -193,7 +193,7 @@ const getAnswerTypeLabel = (type) => {
     'post-form': 'External Form',
     'nasa-tlx': 'NASA-TLX',
     'sus': 'System Usability Scale',
-    'sart': 'Situation Awareness Rating Technique'
+    'sart': 'SART'
   };
   return labels[type] || 'Unknown';
 };
