@@ -73,43 +73,6 @@
           </v-card>
         </v-col>
       </v-row>
-
-      <!-- Summary Section -->
-      <v-card
-        v-if="Object.keys(localSart).length > 0"
-        variant="outlined"
-        color="primary"
-        class="mt-6"
-      >
-        <v-card-title class="text-h6 font-weight-medium">
-          SART Summary
-        </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" md="4">
-              <div class="summary-item">
-                <div class="text-caption text-grey-darken-1">Demand Score</div>
-                <div class="text-h4 font-weight-bold">{{ calculateDemand() }}</div>
-                <div class="text-caption">(Instability + Complexity + Variability)</div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="4">
-              <div class="summary-item">
-                <div class="text-caption text-grey-darken-1">Supply Score</div>
-                <div class="text-h4 font-weight-bold">{{ calculateSupply() }}</div>
-                <div class="text-caption">(Arousal + Spare Capacity + Concentration + Division)</div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="4">
-              <div class="summary-item">
-                <div class="text-caption text-grey-darken-1">SA Score</div>
-                <div class="text-h4 font-weight-bold text-primary">{{ calculateSAScore() }}</div>
-                <div class="text-caption">Understanding - Demand + Supply</div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
     </v-container>
   </v-form>
 </template>
@@ -219,30 +182,8 @@ watch(localSart, () => {
     fullUpdate[key] = localSart[key] ?? 4;
   }
   
-  // Add calculated scores
-  fullUpdate.demand = calculateDemand();
-  fullUpdate.supply = calculateSupply();
-  fullUpdate.saScore = calculateSAScore();
-  
   emit('update:sart', fullUpdate);
 }, { deep: true });
-
-// Helper functions
-const calculateDemand = () => {
-  return (localSart.instability || 4) + (localSart.complexity || 4) + (localSart.variability || 4);
-};
-
-const calculateSupply = () => {
-  return (localSart.arousal || 4) + (localSart.spareCapacity || 4) + 
-         (localSart.concentration || 4) + (localSart.division || 4);
-};
-
-const calculateSAScore = () => {
-  const understanding = localSart.understanding || 4;
-  const demand = calculateDemand();
-  const supply = calculateSupply();
-  return understanding - demand + supply;
-};
 
 const getValueColor = (value) => {
   if (value <= 2) return 'error';
@@ -266,13 +207,5 @@ let valid = ref(false);
 .slider-label {
   min-width: 100px;
   text-align: center;
-}
-
-.summary-item {
-  text-align: center;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 </style>
