@@ -1,71 +1,40 @@
 <template>
   <div>
-    <v-tabs
-      bg-color="transparent"
-      color="#FCA326"
-      class="pb-0 mb-0 responsive-tabs"
-    >
-      <v-tab
-        class="tab-content"
-        @click="tabClicked(0)"
-      >
+    <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0 responsive-tabs">
+      <v-tab class="tab-content" @click="tabClicked(0)">
         {{ $t('HeuristicsEditTest.titles.heuristics') }}
-        <v-icon
-          v-if="index === 0"
-          class="tab-icon"
-        >
+        <v-icon v-if="index === 0" class="tab-icon">
           mdi-chevron-down
         </v-icon>
       </v-tab>
 
-      <v-tab
-        class="tab-content"
-        @click="tabClicked(1)"
-      >
+      <v-tab class="tab-content" @click="tabClicked(1)">
         {{ $t('HeuristicsEditTest.titles.options') }}
-        <v-icon
-          v-if="index === 1"
-          class="tab-icon"
-        >
+        <v-icon v-if="index === 1" class="tab-icon">
           mdi-chevron-down
         </v-icon>
       </v-tab>
 
-      <v-tab
-        class="tab-content"
-        @click="tabClicked(2)"
-      >
+      <v-tab class="tab-content" @click="tabClicked(2)">
         {{ $t('HeuristicsEditTest.titles.weights') }}
-        <v-icon
-          v-if="index === 2"
-          class="tab-icon"
-        >
+        <v-icon v-if="index === 2" class="tab-icon">
           mdi-chevron-down
         </v-icon>
       </v-tab>
 
-      <v-tab
-        class="tab-content"
-        @click="tabClicked(3)"
-      >
+      <v-tab class="tab-content" @click="tabClicked(3)">
         {{ $t('HeuristicsEditTest.titles.settings') }}
-        <v-icon
-          v-if="index === 3"
-          class="tab-icon"
-        >
+        <v-icon v-if="index === 3" class="tab-icon">
           mdi-chevron-down
         </v-icon>
       </v-tab>
     </v-tabs>
 
     <div class="mt-responsive">
-      <HeuristicsTable
-        v-if="index == 0"
-        @change="emit('change')"
-      />
+      <HeuristicsTable v-if="index == 0" @change="emit('change')" />
       <OptionsTable v-if="index == 1" />
       <WeightTable v-if="index == 2" />
-      <HeuristicsSenttings v-if="index == 3" />
+      <HeuristicsSettings v-if="index == 3" />
     </div>
   </div>
 </template>
@@ -74,7 +43,7 @@
 import { useStore } from 'vuex';
 import HeuristicsTable from '@/ux/Heuristic/components/HeuristicsTable.vue';
 import OptionsTable from '@/ux/Heuristic/components/OptionsTable.vue';
-import HeuristicsSenttings from '@/ux/Heuristic/components/HeuristicsSenttings.vue';
+import HeuristicsSettings from '@/ux/Heuristic/components/HeuristicsSettings.vue';
 import WeightTable from '@/ux/Heuristic/components/weights_evaluation/WeightTable.vue';
 
 defineProps({
@@ -108,10 +77,10 @@ const tabClicked = (index) => {
     margin-top: 16px;
     padding: 6px;
     height: auto;
-    border: 1px solid #9e9e9e; 
+    border: 1px solid #9e9e9e;
     border-radius: 4px;
   }
-  
+
   .responsive-tabs :deep(.v-tabs-slider) {
     display: none;
   }
@@ -137,12 +106,12 @@ const tabClicked = (index) => {
 
   .tab-content {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     width: 100%;
   }
 
   .tab-icon {
-    width: 20px; 
+    width: 20px;
     height: 20px;
     display: block;
   }
@@ -159,7 +128,8 @@ const tabClicked = (index) => {
 /* Desktop-responsive styles */
 @media (min-width: 960px) {
   .tab-icon {
-    display: none; /* Hide icon on larger screens */
+    display: none;
+    /* Hide icon on larger screens */
   }
 }
 </style>

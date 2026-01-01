@@ -1,10 +1,8 @@
 import Cooperators from './Cooperators'
-// import Cooperators from '@/models/Cooperators'
 
-/**
- * Represents the test model.
- */
-export default class Study { // mudar nome para Study e mover para Shared
+/** Class representing a Study. */
+
+export default class Study {
   /**
    * @param {Partial<Test>} partial
    */
@@ -79,7 +77,7 @@ export default class Study { // mudar nome para Study e mover para Shared
     /**
      * Defines the test options.
      *
-     * @type {[]}
+     * @type {Array}
      */
     this.testOptions = testOptions ?? []
 

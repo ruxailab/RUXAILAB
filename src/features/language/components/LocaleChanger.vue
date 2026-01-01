@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
@@ -80,14 +80,30 @@ const languages = ref([
 
 const lang = computed(() => store.getters['Language/lang']);
 
+function normalizeLocaleKey(l){
+  if (!l) return 'en';
+  return String(l).trim().toLowerCase().replace('-', '_');
+}
 const updateLang = (newLang) => {
-  store.dispatch('Language/setLang', newLang);
-  locale.value = newLang;
+  const normalized = normalizeLocaleKey(newLang) || 'en';
+  store.dispatch('Language/setLang', normalized);
+  locale.value = normalized;
 };
 
 onMounted(() => {
-  locale.value = lang.value;
+  const normalized = normalizeLocaleKey(lang.value) || 'en';
+  locale.value = normalized;
 });
+
+watch(
+  () => store.getters['Language/lang'],
+  (newLang) => {
+    const normalized = normalizeLocaleKey(newLang) || 'en';
+    if (locale.value !== normalized) {
+      locale.value = normalized;
+    }
+  }
+);
 </script>
 
 <style>

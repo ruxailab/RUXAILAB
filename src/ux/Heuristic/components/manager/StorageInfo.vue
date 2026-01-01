@@ -1,53 +1,25 @@
 <template>
-  <v-card
-    v-if="test"
-    class="pa-4 mb-0"
-    elevation="3"
-    rounded="lg"
-  >
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div
-      class="d-flex align-center mb-4 clickable-header"
-      @click="navigateToStorage"
-    >
-      <v-icon
-        size="24"
-        color="primary"
-        class="header-icon"
-      >
-        mdi-database
-      </v-icon>
-      <v-card-title 
-        class="text-h6 text-primary clickable-title" 
-      >
+    <div class="d-flex align-center mb-4 clickable-header" @click.stop.capture>
+      <v-icon size="24" color="primary" class="header-icon">mdi-database</v-icon>
+      <v-card-title class="text-h6 text-primary clickable-title">
         {{ $t('Dashboard.cards.storage') }}
       </v-card-title>
     </div>
-    
+
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">
-        {{ $t('Dashboard.cards.currentStorage') }}
-      </div>
-      <div class="metric-value text-h3 font-weight-bold">
-        {{ storageUsed }}
-      </div>
-      <div
-        class="metric-change text-caption"
-        :class="storageGrowth >= 0 ? 'text-success' : 'text-error'"
-      >
-        {{ storageGrowthFormatted }}
-      </div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.currentStorage') }}</div>
+      <div class="metric-value text-h3 font-weight-bold">{{ storageUsed }}</div>
+      <div class="metric-change text-caption" :class="storageGrowth >= 0 ? 'text-success' : 'text-error'">{{
+        storageGrowthFormatted }}</div>
     </div>
-    
+
     <!-- Información adicional -->
     <div class="additional-info">
-      <div class="info-subtitle text-caption text-grey-darken-1">
-        {{ $t('Dashboard.cards.limitAvailable') }}
-      </div>
-      <div class="info-value text-body-2 font-weight-medium">
-        {{ storageLimit }}
-      </div>
+      <div class="info-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.limitAvailable') }}</div>
+      <div class="info-value text-body-2 font-weight-medium">{{ storageLimit }}</div>
     </div>
   </v-card>
 </template>
@@ -95,7 +67,7 @@ const storageGrowth = computed(() => {
     weekAgo.setDate(weekAgo.getDate() - 7)
     return participationDate > weekAgo
   }).length || 0
-  
+
   // Crecimiento aproximado del 0.1% por participante reciente
   return recentParticipants * 0.1
 })
