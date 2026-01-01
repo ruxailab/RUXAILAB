@@ -61,6 +61,7 @@
     "notifications": "Notifications",
     "unread": "unread",
     "inbox": "inbox",
+    "all": "All",
     "timeAgo": {
       "years": "{count} year | {count} years",
       "months": "{count} month | {count} months",
@@ -72,7 +73,8 @@
     "viewAll": "View all",
     "sentBy": "Sent by",
     "new": "NEW",
-    "test": "a Study"
+    "test": "a Study",
+    "actions": "Actions"
   },
   "profile": {
     "title": "Profile",
@@ -209,7 +211,64 @@
     "publicTests": "Public tests",
     "sessions": "Sessions",
     "personal": "Personal",
-    "explore": "Explore"
+    "explore": "Explore",
+    "cards": {
+      "recentActivity": "Recent Activity",
+      "activities7Days": "Activities (7 days total)",
+      "lastActivity": "Last activity",
+      "noActivity": "No activity",
+      "edit": "Edit",
+      "heuristics": "Heuristics",
+      "questions": "Questions",
+      "totalOptions": "Total Options",
+      "qualitative": "Qualitative",
+      "quantitative": "Quantitative",
+      "weights": "Weights",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "Cooperators",
+      "totalInvited": "Total invited",
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "storage": "Storage",
+      "currentStorage": "Storage (current)",
+      "limitAvailable": "Limit available",
+      "results": "Results",
+      "generalUsability": "General Usability",
+      "finalReport": "Final Report",
+      "generatePDF": "Generate PDF",
+      "download": "Download",
+      "generated": "Generated:",
+      "generateReport": "Generate Report",
+      "reportAvailable": "Report Available",
+      "noReport": "No Report Generated",
+      "readyForDownload": "Final report ready for download",
+      "waitingForParticipants": "Waiting for participants",
+      "evaluationsCompleted": "evaluations completed",
+      "readyToGenerate": "Ready to generate report",
+      "excellentUsability": "Excellent Usability",
+      "acceptableUsability": "Acceptable Usability",
+      "needsImprovement": "Needs Improvement",
+      "basedOn": "Based on",
+      "evaluations": "evaluations",
+      "evaluationUpdated": "Evaluation updated",
+      "updatedProgress": "updated their progress",
+      "invitationSentTitle": "Invitation sent",
+      "invitationPendingDesc": "Invitation pending for",
+      "pendingStatus": "Pending"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristic Study",
+      "freePlan": "Free Plan",
+      "generalStatistics": "General Statistics",
+      "modules": "Modules"
+    },
+    "stats": {
+      "participants": "Participants",
+      "completion": "Completion",
+      "daysActive": "Days active",
+      "heuristics": "Heuristics"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -233,7 +292,9 @@
       "deleteQuestion": "Delete question",
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
-      "hasValue": "Has Value"
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -268,7 +329,9 @@
       "options": "Options",
       "noOptions": "No Options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Start adding options to your heuristic questions"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -502,6 +565,7 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
+
     "buttons": {
       "done": "Done"
     },
@@ -535,6 +599,16 @@
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
+  },
+  "eyeTracking": {
+    "title": "Eye Tracking Calibration",
+    "beforeStart": "Before starting calibration",
+    "description1": "We will prepare your device to record your eye movements.",
+    "description2": "Follow the points that appear on the screen.",
+    "start": "Start calibration",
+    "inProgress": "Calibration in progress...",
+    "completed": "Calibration completed!",
+    "continue": "Continue to the test"
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -855,7 +929,27 @@
     "all": "All",
     "question": "Question {number}",
     "comingSoon": "Coming Soon",
-    "downloadResume": "Download Resume PDF"
+    "downloadResume": "Download Resume PDF",
+    "generalAnalytics": "General Analytics",
+    "individualAnalytics": "Individual Analytics",
+    "susAnalytics": "SUS Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
+    "eyeTrackingAnalytics": "Eye Tracking Analytics",
+    "transcriptions": "Transcriptions",
+    "overallAnalyticsDescription": "Overview of the test results and metrics.",
+    "user": "User",
+    "summary": "Summary",
+    "invite": "Invite",
+    "actions": "Actions",
+    "completed": "Completed",
+    "notCompleted": "Incomplete",
+    "timeTaken": "Time Taken",
+    "tasks": "tasks",
+    "total": "total",
+    "yes": "Yes",
+    "invited": "Invited",
+    "answers": "Answers",
+    "no": "No"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",

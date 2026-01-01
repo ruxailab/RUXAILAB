@@ -32,9 +32,25 @@
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
                 {{ study.title }}
               </h4>
-              <p class="text-body-2 text-medium-emphasis mb-3">
-                {{ study.description }}
-              </p>
+              <div class="description-wrapper">
+                <p 
+                  class="text-body-2 text-medium-emphasis mb-3"
+                  :class="{ 'description-truncated': !expandedStudies[study.id] && study.isLongDescription }"
+                >
+                  {{ study.description }}
+                </p>
+                <v-btn
+                  v-if="study.isLongDescription"
+                  @click.stop="toggleExpand(study.id)"
+                  variant="text"
+                  size="small"
+                  color="primary"
+                  class="text-lowercase"
+                  :prepend-icon="expandedStudies[study.id] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                >
+                  {{ expandedStudies[study.id] ? 'Show less' : 'Show more' }}
+                </v-btn>
+              </div>
 
               <!-- Progress -->
               <div class="mb-3">
@@ -83,6 +99,11 @@ const answerController = new AnswerController()
 
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
+const expandedStudies = ref({});
+
+const isLongDescription = (description) => {
+  return description && description.length > 250;
+};
 
 const studies = computed(() => {
   return props.studies.length > 0 ? studiesWithAnswers.value : loading ? [] : defaultStudies
@@ -154,6 +175,7 @@ const finalFour = (studyArr) => {
     id: study.id,
     title: study.testTitle,
     description: study.testDescription,
+    isLongDescription: isLongDescription(study.testDescription),
     status: study.status,
     progress: calculateProgress(study.answers),
     participants: study.answers?.length || 0,
@@ -173,7 +195,12 @@ const goToStudy = async (study) => {
 }
 
 const viewAllStudies = () => {
+  // Dispatch custom event to change section
   globalThis.dispatchEvent(new CustomEvent('change-section', { detail: 'studies' }))
+}
+
+const toggleExpand = (studyId) => {
+  expandedStudies.value[studyId] = !expandedStudies.value[studyId];
 }
 
 // Default studies if none provided
@@ -238,5 +265,30 @@ watch(
 .study-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.description-wrapper {
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.description-truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+/* Fallback for non-webkit browsers */
+@supports not (-webkit-line-clamp: 3) {
+  .description-truncated {
+    max-height: 4.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>
