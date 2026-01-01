@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <!-- NEW: SART Preview -->
+    <!-- SART Preview -->
     <div v-else-if="taskType === 'sart'" class="preview-content">
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">Situation Awareness Rating Technique</div>
