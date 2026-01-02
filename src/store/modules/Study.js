@@ -14,6 +14,7 @@ export default {
   state: {
     Test: null,
     tests: [],
+    publicTests: [],
     testStructure: null,
     answersId: null,
     module: 'test',
@@ -24,6 +25,9 @@ export default {
   getters: {
     tests(state) {
       return state.tests
+    },
+    publicTests(state) {
+      return state.publicTests
     },
     test(state) {
       return state.Test
@@ -47,6 +51,9 @@ export default {
     },
     SET_TESTS(state, payload) {
       state.tests = payload
+    },
+    SET_PUBLIC_TESTS(state, payload) {
+      state.publicTests = payload
     },
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...payload };
@@ -205,7 +212,7 @@ export default {
       try {
         commit('setLoading', true)
         const res = await studyController.getPublicStudies()
-        commit('SET_TESTS', res)
+        commit('SET_PUBLIC_TESTS', res)
       } catch (e) {
         commit('setError', true)
       } finally {

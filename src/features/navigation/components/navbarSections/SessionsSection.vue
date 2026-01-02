@@ -159,7 +159,6 @@ const router = useRouter();
 
 const search = ref('');
 const activeSection = ref('dashboard');
-const filteredModeratedSessions = ref([]);
 
 // ===== Filter options =====
 
@@ -284,8 +283,9 @@ const goTo = (test) => {
 // ===== Data fetching & filtering =====
 
 // Build moderated session list (tests of type MODERATED)
-const filterModeratedSessions = () => {
+const filteredModeratedSessions = computed(() => {
   const cooperatorArray = [];
+  if (!tests.value) return [];
 
   tests.value.forEach((testObj) => {
     if (!testObj) return;
@@ -304,6 +304,7 @@ const filterModeratedSessions = () => {
         subType: testObj.subType,
         testDescription: testObj.testDescription,
         evaluator: cooperatorObj.email,
+        testDate: cooperatorObj.testDate
       });
     }
 
@@ -324,13 +325,11 @@ const filterModeratedSessions = () => {
     }
   });
 
-  filteredModeratedSessions.value = cooperatorArray;
-};
+  return cooperatorArray;
+});
 
 // ===== Lifecycle hooks =====
-onMounted(() => {
-  filterModeratedSessions();
-});
+
 </script>
 
 <style scoped>
