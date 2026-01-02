@@ -117,25 +117,92 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1" color="white"
-                    complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 1 }"
+                    @click="stepperValue >= 1 && navigateToStep(1)"
+                  >
+                    <v-stepper-item 
+                      value="1" 
+                      title="Consent" 
+                      :complete="stepperValue >= 1" 
+                      color="white"
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2" color="white"
-                    complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 2 }"
+                    @click="stepperValue >= 2 && navigateToStep(2)"
+                  >
+                    <v-stepper-item 
+                      value="2" 
+                      title="Pre-test" 
+                      :complete="stepperValue >= 2" 
+                      color="white"
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
 
-                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Calibration" :complete="stepperValue >= 3"
-                    color="white" complete-icon="mdi-check" />
+                  <div 
+                    v-if="hasEyeTracking"
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 3 }"
+                    @click="stepperValue >= 3 && navigateToStep(3)"
+                  >
+                    <v-stepper-item 
+                      value="3" 
+                      title="Calibration" 
+                      :complete="stepperValue >= 3"
+                      color="white" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider v-if="hasEyeTracking" />
 
-                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Tasks"
-                    :complete="stepperValue >= (hasEyeTracking ? 4 : 3)" color="white" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= (hasEyeTracking ? 4 : 3) }"
+                    @click="stepperValue >= (hasEyeTracking ? 4 : 3) && navigateToStep(hasEyeTracking ? 4 : 3)"
+                  >
+                    <v-stepper-item 
+                      :value="hasEyeTracking ? 4 : 3" 
+                      title="Tasks"
+                      :complete="stepperValue >= (hasEyeTracking ? 4 : 3)" 
+                      color="white" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Post-test"
-                    :complete="stepperValue >= (hasEyeTracking ? 5 : 4)" color="white" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= (hasEyeTracking ? 5 : 4) }"
+                    @click="stepperValue >= (hasEyeTracking ? 5 : 4) && navigateToStep(hasEyeTracking ? 5 : 4)"
+                  >
+                    <v-stepper-item 
+                      :value="hasEyeTracking ? 5 : 4" 
+                      title="Post-test"
+                      :complete="stepperValue >= (hasEyeTracking ? 5 : 4)" 
+                      color="white" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 6 : 5" title="Completion"
-                    :complete="stepperValue === (hasEyeTracking ? 6 : 5)" color="white" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= (hasEyeTracking ? 6 : 5) }"
+                    @click="stepperValue >= (hasEyeTracking ? 6 : 5) && navigateToStep(hasEyeTracking ? 6 : 5)"
+                  >
+                    <v-stepper-item 
+                      :value="hasEyeTracking ? 6 : 5" 
+                      title="Completion"
+                      :complete="stepperValue === (hasEyeTracking ? 6 : 5)" 
+                      color="white" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                 </v-stepper-header>
               </v-stepper>
             </v-col>
@@ -195,7 +262,7 @@
             @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 
           <PostTestStep
-            v-if="globalIndex === (hasEyeTracking ? 6 : 5) && (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)"
+            v-if="globalIndex === (hasEyeTracking ? 6 : 5)"
             :test-title="test.testTitle" :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer" :post-test-completed="localTestAnswer.postTestCompleted"
             @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }" />
@@ -650,13 +717,9 @@ const completeStep = (id, type, userCompleted = true) => {
         taskIndex.value = id + 1;
         startTimer();
       } else {
-        console.log('All tasks attempted:', allTasksCompleted.value);
         if (allTasksCompleted.value) {
-          console.log('All tasks completed, moving to post-test');
           taskIndex.value = id + 1; // to help saving methods
           globalIndex.value = hasEyeTracking.value ? 6 : 5; // PostTest
-        } else {
-          console.log('Última task finalizada, mas ainda há tasks incompletas.');
         }
       }
       //TODO: Show proper toast not the following one
@@ -682,6 +745,52 @@ const completeStep = (id, type, userCompleted = true) => {
   } catch (error) {
     console.error('Error in completeStep:', error);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
+  }
+};
+
+/**
+ * Navigate to a specific step in the progress bar
+ * Allows navigation to any completed step to review answers
+ * @param {number} stepValue - The step number to navigate to (1-6)
+ */
+const navigateToStep = (stepValue) => {
+  // Only allow navigation to completed steps (must be <= current step)
+  if (stepValue > stepperValue.value) {
+    store.commit('SET_TOAST', {
+      type: 'info',
+      message: 'You can only navigate to completed steps.',
+      timeout: 3000
+    });
+    return;
+  }
+
+  // Reset taskIndex when navigating back
+  taskIndex.value = 0;
+
+  // Navigate based on step value
+  switch (stepValue) {
+    case 1:
+      globalIndex.value = 1; // Consent
+      break;
+    case 2:
+      globalIndex.value = 2; // Pre-test
+      break;
+    case 3:
+      // Calibration (if eye tracking) or Tasks (if no eye tracking)
+      globalIndex.value = hasEyeTracking.value ? 3 : 4;
+      break;
+    case 4:
+      // Tasks (with eye tracking) or Post-test (without eye tracking)
+      globalIndex.value = hasEyeTracking.value ? 4 : 5;
+      break;
+    case 5:
+      globalIndex.value = 6; // Post-test (with eye tracking)
+      break;
+    case 6:
+      globalIndex.value = 7; // Completion
+      break;
+    default:
+      console.warn('Invalid step value:', stepValue);
   }
 };
 

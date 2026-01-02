@@ -131,20 +131,75 @@
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item :value="1" title="Consent" :complete="stepperValue > 1"
-                    :color="stepperValue == 1 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 1 }"
+                    @click="stepperValue >= 1 && navigateToStep(1)"
+                  >
+                    <v-stepper-item 
+                      :value="1" 
+                      title="Consent" 
+                      :complete="stepperValue > 1"
+                      :color="stepperValue == 1 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item :value="2" title="Pre-test" :complete="stepperValue > 2"
-                    :color="stepperValue == 2 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 2 }"
+                    @click="stepperValue >= 2 && navigateToStep(2)"
+                  >
+                    <v-stepper-item 
+                      :value="2" 
+                      title="Pre-test" 
+                      :complete="stepperValue > 2"
+                      :color="stepperValue == 2 ? 'warning' : stepperValue < 1 ? 'primary' : 'success'" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item :value="3" title="Tasks" :complete="stepperValue > 3"
-                    :color="stepperValue == 3 ? 'warning' : stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 3 }"
+                    @click="stepperValue >= 3 && navigateToStep(3)"
+                  >
+                    <v-stepper-item 
+                      :value="3" 
+                      title="Tasks" 
+                      :complete="stepperValue > 3"
+                      :color="stepperValue == 3 ? 'warning' : stepperValue < 3 ? 'primary' : 'success'" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item :value="4" title="Post-test" :complete="stepperValue > 4"
-                    :color="stepperValue == 4 ? 'warning' : stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 4 }"
+                    @click="stepperValue >= 4 && navigateToStep(4)"
+                  >
+                    <v-stepper-item 
+                      :value="4" 
+                      title="Post-test" 
+                      :complete="stepperValue > 4"
+                      :color="stepperValue == 4 ? 'warning' : stepperValue < 4 ? 'primary' : 'success'" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                   <v-divider />
-                  <v-stepper-item :value="5" title="Completion" :complete="stepperValue > 5"
-                    :color="stepperValue == 5 ? 'warning' : stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <div 
+                    class="stepper-item-wrapper"
+                    :class="{ 'clickable-step': stepperValue >= 5 }"
+                    @click="stepperValue >= 5 && navigateToStep(5)"
+                  >
+                    <v-stepper-item 
+                      :value="5" 
+                      title="Completion" 
+                      :complete="stepperValue > 5"
+                      :color="stepperValue == 5 ? 'warning' : stepperValue < 5 ? 'primary' : 'success'" 
+                      complete-icon="mdi-check"
+                    />
+                  </div>
                 </v-stepper-header>
               </v-stepper>
             </v-col>
@@ -727,6 +782,52 @@ const completeStep = async (id, type, userCompleted = true) => {
   } catch (error) {
     console.error('Error in completeStep:', error);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
+  }
+};
+
+/**
+ * Navigate to a specific step in the progress bar
+ * Allows navigation to any completed step to review answers
+ * @param {number} stepValue - The step number to navigate to (1-5)
+ */
+const navigateToStep = (stepValue) => {
+  // Only allow navigation to completed steps (must be <= current step)
+  if (stepValue > stepperValue.value) {
+    store.commit('SET_TOAST', {
+      type: 'info',
+      message: 'You can only navigate to completed steps.',
+      timeout: 3000
+    });
+    return;
+  }
+
+  // Reset taskIndex when navigating back
+  taskIndex.value = 0;
+
+  // Navigate based on step value
+  switch (stepValue) {
+    case 1:
+      // Navigate to Consent
+      globalIndex.value = 1;
+      break;
+    case 2:
+      // Navigate to Pre-test
+      globalIndex.value = 2;
+      break;
+    case 3:
+      // Navigate to Tasks
+      globalIndex.value = 3;
+      break;
+    case 4:
+      // Navigate to Post-test
+      globalIndex.value = 5;
+      break;
+    case 5:
+      // Navigate to Completion/Finish
+      globalIndex.value = 6;
+      break;
+    default:
+      console.warn('Invalid step value:', stepValue);
   }
 };
 
