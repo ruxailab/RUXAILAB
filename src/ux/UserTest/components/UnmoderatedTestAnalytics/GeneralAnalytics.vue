@@ -767,16 +767,15 @@ const calculateSatisfaction = () => {
 
   filteredSessions.value.forEach((answer) => {
     if (answer.satisfaction && typeof answer.satisfaction === 'number') {
-      // Convert 0-5 scale to 0-100
-      totalSatisfaction += (answer.satisfaction / 5) * 100;
+      totalSatisfaction += answer.satisfaction;
       ratingsCount++;
     } else {
       // If no satisfaction data, simulate based on completion rate
       const userProgress = answer.progress;
-      const simulatedRating = userProgress >= 90 ? 90 :
-        userProgress >= 70 ? 80 :
-          userProgress >= 50 ? 70 :
-            userProgress >= 30 ? 60 : 50;
+      const simulatedRating = userProgress >= 90 ? 4.5 :
+        userProgress >= 70 ? 4.0 :
+          userProgress >= 50 ? 3.5 :
+            userProgress >= 30 ? 3.0 : 2.5;
       totalSatisfaction += simulatedRating;
       ratingsCount++;
     }
