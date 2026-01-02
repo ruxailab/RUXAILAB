@@ -116,6 +116,8 @@
     "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
     "profileImageUpdatedSuccess": "Profile image updated successfully",
     "profileImageUploadFailed": "Failed to upload profile image",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "No user signed in",
     "profileLoadFailed": "Failed to load profile",
     "profileUpdatedSuccess": "Profile updated successfully",
