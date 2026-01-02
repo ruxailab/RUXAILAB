@@ -24,8 +24,16 @@
                     </v-chip>
                 </v-chip-group>
 
-                <v-select v-model="selectedRole" :items="roleOptions" :label="roleLabel || 'Role'" variant="outlined"
-                    density="comfortable" class="mt-4" />
+                <v-select 
+                  v-model="selectedRole" 
+                  :items="roleOptions" 
+                  item-value="value"
+                  item-title="title"
+                  return-object
+                  :label="roleLabel || 'Role'" 
+                  variant="outlined"
+                  density="comfortable" 
+                  class="mt-4" />
 
                 <!-- Date/Time Selection (only for accessibility tests) -->
                 <v-row v-if="showDateTimeSelection" class="mt-4">
@@ -123,7 +131,7 @@ const {
 const selectedCoops = ref([]);
 const comboboxModel = ref([]);
 const comboboxKey = ref(0);
-const selectedRole = ref(1);
+const selectedRole = ref({ title: 'Guest', value: 1 });  // Default to Guest object
 const inviteMessage = ref('');
 const combobox = ref(null);
 
@@ -236,7 +244,7 @@ const resetForm = () => {
     selectedCoops.value = [];
     comboboxModel.value = [];
     inviteMessage.value = '';
-    selectedRole.value = 1;
+    selectedRole.value = { title: 'Guest', value: 1 };  // ✅ Reset to object, not just number
     combobox.value?.blur();
 };
 

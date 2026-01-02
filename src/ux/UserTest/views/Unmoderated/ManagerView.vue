@@ -122,7 +122,6 @@ const test = computed(() => store.getters.test)
 const accessLevel = computed(() => {
   const currentUser = user.value
   const currentTest = test.value
-
   if (!currentUser) return ACCESS_LEVEL.GUEST
   if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
   if (currentTest?.testAdmin?.userDocId === currentUser.id) return ACCESS_LEVEL.ADMIN
@@ -134,8 +133,14 @@ const accessLevel = computed(() => {
 })
 
 watchEffect(() => {
-  if (user.value != null && test.value != null && accessLevel.value !== ACCESS_LEVEL.ADMIN) {
-    router.push('/');
+  if (user.value != null && test.value != null) {
+    // Now allow both ADMIN (0) and EVALUATOR (2)
+    const hasAccess = accessLevel.value === ACCESS_LEVEL.ADMIN || 
+                      accessLevel.value === ACCESS_LEVEL.EVALUATOR
+    
+    if (!hasAccess) {
+      router.push('/');
+    }
   }
 });
 
