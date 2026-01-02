@@ -27,7 +27,7 @@ WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 
 # Copy the built application from the build stage
-COPY --from=build-stage --chown=app:app /app/dist /app
+COPY --from=build-stage /app/dist /app
 
 # Expose the port that 'serve' will run on
 EXPOSE 5000

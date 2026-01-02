@@ -26,10 +26,11 @@ WORKDIR /firebase-emulator
 RUN useradd -m -u 1001 firebase
 
 # Copia los archivos de configuración de Firebase al contenedor
-COPY --chown=firebase:firebase firebase.json .
-COPY --chown=firebase:firebase firestore.rules .
-COPY --chown=firebase:firebase firestore.indexes.json .
-COPY --chown=firebase:firebase storage.rules .
+COPY firebase.json .
+COPY firestore.rules .
+COPY firestore.indexes.json .
+COPY storage.rules .
+RUN touch /firebase-emulator/firebase-debug.log && chown firebase:firebase /firebase-emulator/firebase-debug.log
 
 # Expose the emulator ports
 # If you use non standard ports change them to the ones in your firebase.json

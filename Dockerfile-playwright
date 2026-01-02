@@ -25,25 +25,29 @@ RUN npm install -g serve wait-on
 
 # Crear usuario no root para ejecución
 RUN useradd -m -u 1001 app
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/app/.cache/ms-playwright
+RUN mkdir -p /home/app/.cache/ms-playwright
 
 # Copiar la aplicación construida desde la etapa de construcción
-COPY --from=build-stage --chown=app:app /app/dist /app
+COPY --from=build-stage /app/dist /app
 
 # Copiar y instalar dependencias necesarias para Playwright
 COPY package*.json ./
 RUN npx playwright install --with-deps
 RUN npm install @playwright/test -D
+RUN chown -R app:app /home/app/.cache/ms-playwright
 
 # Copiar la configuración de Playwright y el resto de la aplicación
-COPY --chown=app:app playwright.config.js .
-COPY --chown=app:app playwright.config.ts .
-COPY --chown=app:app e2e ./e2e
-COPY --chown=app:app tests ./tests
-COPY --chown=app:app src ./src
-COPY --chown=app:app public ./public
-COPY --chown=app:app babel.config.js ./
-COPY --chown=app:app vue.config.js ./
-COPY --chown=app:app jsconfig.json ./
+COPY playwright.config.js .
+COPY playwright.config.ts .
+COPY e2e ./e2e
+COPY tests ./tests
+COPY src ./src
+COPY public ./public
+COPY babel.config.js ./
+COPY vue.config.js ./
+COPY jsconfig.json ./
+RUN mkdir -p /app/playwright/output /app/playwright-report && chown -R app:app /app/playwright /app/playwright-report
 
 # Exponer el puerto en el que se servirá la aplicación
 EXPOSE 5000
