@@ -1,11 +1,11 @@
 {
-  "name": "research-workflow",
+  "name": "ruxailab",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix",
+    "lint": "eslint src --ext .js,.vue",
+    "lint:fix": "eslint src --ext .js,.vue --fix",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "doc": "jsdoc -c conf.json",
     "test": "vue-cli-service test:unit",
@@ -87,6 +87,7 @@
     "babel-plugin-transform-require-context": "^0.1.1",
     "cypress": "^13.8.1",
     "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.6.2",
     "eslint-plugin-vuetify": "^2.5.2",
     "globals": "^16.5.0",

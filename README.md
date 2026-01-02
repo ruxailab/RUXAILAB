@@ -49,6 +49,7 @@ For commercial support, academic collaborations, and answers to common questions
 - Vue CLI version: 5.0.8
 - Vuetify version: 3.7.18
 - Python version: 3.11.8
+- Recommended formatter: Prettier - Code formatter
 
 ## Video Guide
 
