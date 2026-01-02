@@ -227,9 +227,17 @@ export default {
           payload.answersDocId,
           payload.testType,
         )
+        commit('SET_TOAST', {
+          type: 'success',
+          message: payload.successMessage || 'Progress saved successfully'
+        })
       } catch (e) {
         console.error('Error in save test answer', e)
         // commit("setError", true);
+        commit('SET-TOAST', {
+          type: 'error',
+          message: payload.errorMessage || 'Failed to save progress'
+        })
       } finally {
         commit('setLoading', false)
       }
