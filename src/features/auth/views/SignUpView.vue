@@ -109,6 +109,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar';
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import { createEmailRules } from '@/shared/utils/validators'
 
 const email = ref('')
 const password = ref('')
@@ -125,23 +126,7 @@ const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const isValidEmail = (value) => {
-  if (typeof value !== 'string') return false
-  const trimmed = value.trim()
-  if (!trimmed) return false
-  if (trimmed.includes(' ')) return false
-  const atIndex = trimmed.indexOf('@')
-  if (atIndex <= 0) return false
-  if (trimmed.indexOf('@', atIndex + 1) !== -1) return false
-  const dotIndex = trimmed.indexOf('.', atIndex + 2)
-  if (dotIndex === -1 || dotIndex >= trimmed.length - 1) return false
-  return true
-}
-
-const emailRules = [
-  v => !!v || t('errors.emailIsRequired'),
-  v => isValidEmail(v) || t('errors.invalidEmail'),
-]
+const emailRules = createEmailRules(t)
 
 const passwordRules = [
   v => !!v || t('errors.passwordRequired'),
