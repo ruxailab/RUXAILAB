@@ -45,7 +45,6 @@
             >
               {{ $t('analytics.sartAnalytics') }}
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 4">
             <v-tab v-if="showEye" value="4">
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
