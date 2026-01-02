@@ -274,7 +274,7 @@
               >
                 <v-icon>mdi-camera</v-icon>
                 <v-tooltip activator="parent" location="bottom">
-                  {{ $t('profile.uploadProfilePicture') }}
+                  {{ t('profile.uploadProfilePicture') }}
                 </v-tooltip>
               </v-btn>
               <v-btn
@@ -286,7 +286,7 @@
               >
                 <v-icon>mdi-delete</v-icon>
                 <v-tooltip activator="parent" location="bottom">
-                  {{ $t('profile.removeProfilePicture') }}
+                  {{ t('profile.removeProfilePicture') }}
                 </v-tooltip>
               </v-btn>
             </div>
