@@ -770,12 +770,9 @@ const saveAnswer = async () => {
       data: currentUserTestAnswer.value,
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
+      successMessage: t('alerts.savedChanges'),
+      errorMessage: t('Error saving progress')
     });
-    toast.success(t('alerts.savedChanges'));
-  } catch (error) {
-    console.error('Error saving answer:', error);
-    toast.error(t('Error saving progress'));
-    showSuccess('HeuristicsTestView.messages.answerSaved');
   } catch (error) {
     console.error('Error saving answer:', error);
     showError('HeuristicsTestView.errors.failedToSaveAnswer');
@@ -943,14 +940,11 @@ onBeforeMount(async () => {
   
   // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
-  console.log('Loaded currentUserTestAnswer:', JSON.stringify(currentUserTestAnswer.value, null, 2));
   
   // Now populate with questions (this will preserve existing data)
   populateWithHeuristicQuestions()
   // Check if we have any saved answers
   const hasSavedAnswers = checkForSavedAnswers();
-  
-  console.log('Has saved answers?', hasSavedAnswers);
   
   if (hasSavedAnswers) {
     // User has saved progress, skip the start screen
