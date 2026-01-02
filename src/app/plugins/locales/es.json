@@ -587,6 +587,15 @@
       "audioRecording": "Audio",
       "eyeTracking": "Seguimiento ocular",
       "recordingNote": "Se te notificará antes de que comience cualquier grabación. Todos los datos se recopilan únicamente con fines de investigación y se manejan de acuerdo con las directrices de privacidad."
+    },
+    "CalibrationStep": {
+      "title": "Calibración de Eye Tracking",
+      "heading": "Antes de comenzar la calibración",
+      "description": "Vamos a preparar tu dispositivo para <strong>registrar el movimiento de tus ojos</strong>. Esto nos permitirá entender cómo navegas por la pantalla durante el test.",
+      "process": "La calibración consiste en seguir con la mirada unos puntos que aparecerán en la pantalla. Es importante que te sitúes en un lugar bien iluminado, te sientes cómodamente y mantengas la cabeza estable.",
+      "instruction": "Cuando estés listo o lista, pulsa el botón para empezar la calibración.",
+      "startButton": "Comenzar calibración",
+      "inProgress": "En progreso..."
     }
   },
   "eyeTracking": {
