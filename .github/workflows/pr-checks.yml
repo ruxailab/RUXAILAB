@@ -24,21 +24,34 @@ jobs:
         run: npm ci
 
       - name: Get changed files
-        id: changed-files
-        run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
-          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD > files.txt
+        id: files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+              }
+            );
 
-      - name: Run ESLint on changed files
-        run: |
-          FILES=$(cat files.txt | grep -E '\.(js|vue)$' || true)
+            const changed = files
+              .map(f => f.filename)
+              .filter(f => f.endsWith('.js') || f.endsWith('.vue'));
 
-          if [ -z "$FILES" ]; then
+            core.setOutput('files', changed.join(' '));
+
+      - name: Run ESLint
+        run: |
+          if [ -z "${{ steps.files.outputs.files }}" ]; then
             echo "No JS/Vue files changed. Skipping lint."
             exit 0
           fi
 
-          echo "Linting files:"
-          echo "$FILES"
+          echo "Linting:"
+          echo "${{ steps.files.outputs.files }}"
 
-          npx eslint $FILES
+          npx eslint ${{ steps.files.outputs.files }}
