@@ -165,6 +165,9 @@
     "reports": "Take a look at how your evaluators are doing.",
     "answers": "See how your evaluators are evaluating your project.",
     "analytics": "Analyze comments and answers from your evaluators.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Add additional data to your test.",
     "intro": {
       "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
@@ -598,6 +601,15 @@
       "audioRecording": "Audio",
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {

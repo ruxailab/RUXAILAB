@@ -88,7 +88,15 @@ const props = defineProps({
     activities: {
         type: Array,
         default: () => []
-    }
+    },
+   title: {
+    type: String,
+    default: 'Recent Activity'
+  },
+  viewAllRoute: {
+    type: String,
+    default: ''
+  }
 })
 
 // Default activities if none provided

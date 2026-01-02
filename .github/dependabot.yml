@@ -49,7 +49,6 @@ updates:
         patterns:
           - '@testing-library/*'
           - '@playwright/*'
-          - 'cypress'
           - '@vue/test-utils'
           - '@vue/vue3-jest'
         update-types:
@@ -189,9 +188,6 @@ updates:
       - dependency-name: '@playwright/test'
         update-types: ['version-update:semver-major']
 
-      - dependency-name: 'cypress'
-        update-types: ['version-update:semver-major']
-
       - dependency-name: 'jest'
         update-types: ['version-update:semver-major']
 
@@ -204,6 +200,10 @@ updates:
 
       # Rich text editors - breaking changes in editor APIs
       - dependency-name: '@tiptap/core'
+        update-types: ['version-update:semver-major']
+
+      # Tiptap
+      - dependency-name: '@tiptap/*'
         update-types: ['version-update:semver-major']
 
       - dependency-name: '@vueup/vue-quill'
