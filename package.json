@@ -89,7 +89,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^10.6.2",
     "eslint-plugin-vuetify": "^2.5.2",
-    "globals": "^16.5.0",
+    "globals": "^17.0.0",
     "jsdoc": "^4.0.5",
     "sass": "~1.32.6",
     "sass-loader": "~8.0.0",
