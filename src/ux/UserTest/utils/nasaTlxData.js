@@ -1,4 +1,14 @@
 export function getNASATLXData(nasaTlxData) {
+    if (!nasaTlxData || nasaTlxData.length === 0) {
+    return {
+      averageOverallScore: NaN,
+      totalRespondents: 0,
+      mostStressfulDimension: NaN,
+      leastStressfulDimension: NaN,
+      dimensionAverages: { mentalDemand: NaN, physicalDemand: NaN, temporalDemand: NaN, performance: NaN, effort: NaN, frustration: NaN },
+      responses: []
+    }
+  }
   const dimensionTotals = {
     mentalDemand: 0,
     physicalDemand: 0,
