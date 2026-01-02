@@ -226,7 +226,7 @@ const methodOptions = computed(() => {
 });
 
 // ===== Data and filtering logic =====
-const tests = computed(() => store.getters.tests || []);
+const tests = computed(() => store.getters.publicTests || []);
 const user = computed(() => store.getters.user);
 
 // Apply filters to tests

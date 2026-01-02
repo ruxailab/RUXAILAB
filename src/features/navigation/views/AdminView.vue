@@ -102,7 +102,7 @@ const activeSection = ref('dashboard');
 const activeSubSection = ref(null);
 
 // 🔸 Data
-const filteredModeratedSessions = ref([]);
+
 let unsubscribeTests = null;// Unsub function for real-time tests
 
 // 🔹 Dynamic page title
@@ -131,8 +131,9 @@ const user = computed(() => store.getters.user);
  * Creates a list of sessions where the user is either the test admin
  * or a cooperator in a moderated session.
  */
-const filterModeratedSessions = () => {
+const filteredModeratedSessions = computed(() => {
   const cooperatorArray = [];
+  if (!tests.value) return [];
 
   tests.value.forEach((testObj) => {
     if (!testObj) return;
@@ -171,8 +172,8 @@ const filterModeratedSessions = () => {
     }
   });
 
-  filteredModeratedSessions.value = cooperatorArray;
-};
+  return cooperatorArray;
+});
 
 /**
  * 🧭 Navigation logic
@@ -209,7 +210,7 @@ const getPublicTemplates = () => store.dispatch('getPublicTemplates');
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
     case 'studies': await getMyPersonalTests(); break;
-    case 'sessions': filterModeratedSessions(); break;
+
     case 'templates': await getMyTemplates(); break;
     case 'community':
       if (sub === 'community-studies') await getPublicStudies();
@@ -224,7 +225,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
 onMounted(async () => {
   unsubscribeTests = await store.dispatch('bindMyTests');
   await getMyPersonalTests();
-  filterModeratedSessions();
+
 
   // Load navigation state from query params
   if (route.query.section) {
