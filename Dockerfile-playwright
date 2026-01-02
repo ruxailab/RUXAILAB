@@ -5,10 +5,14 @@ WORKDIR /app
 
 # Copiar y instalar dependencias
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copiar el resto de la aplicación y construir
-COPY . .
+COPY babel.config.js ./
+COPY vue.config.js ./
+COPY jsconfig.json ./
+COPY public ./public
+COPY src ./src
 RUN npm run build-dev
 
 # Etapa 2: Producción y Pruebas
@@ -19,8 +23,11 @@ WORKDIR /app
 # Instalar 'serve' y 'wait-on' para servir la aplicación y esperar a que esté lista
 RUN npm install -g serve wait-on
 
+# Crear usuario no root para ejecución
+RUN useradd -m -u 1001 app
+
 # Copiar la aplicación construida desde la etapa de construcción
-COPY --from=build-stage /app/dist /app
+COPY --from=build-stage --chown=app:app /app/dist /app
 
 # Copiar y instalar dependencias necesarias para Playwright
 COPY package*.json ./
@@ -28,11 +35,20 @@ RUN npx playwright install --with-deps
 RUN npm install @playwright/test -D
 
 # Copiar la configuración de Playwright y el resto de la aplicación
-COPY playwright.config.js .
-COPY . .
+COPY --chown=app:app playwright.config.js .
+COPY --chown=app:app playwright.config.ts .
+COPY --chown=app:app e2e ./e2e
+COPY --chown=app:app tests ./tests
+COPY --chown=app:app src ./src
+COPY --chown=app:app public ./public
+COPY --chown=app:app babel.config.js ./
+COPY --chown=app:app vue.config.js ./
+COPY --chown=app:app jsconfig.json ./
 
 # Exponer el puerto en el que se servirá la aplicación
 EXPOSE 5000
+
+USER app
 
 # Ejecutar la aplicación y esperar a que esté disponible antes de ejecutar las pruebas
 CMD ["sh", "-c", "serve -s . -l 5000 & wait-on http://localhost:5000 && npx playwright test"]
