@@ -1,10 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="pa-0">
     <v-row class="ma-0">
-      <v-col
-        cols="12"
-        :hidden="hideCol"
-      >
+      <v-col cols="12" :hidden="hideCol">
         <!-- <h1>{{ $t('titles.drawer.' + title) }}</h1> -->
         <h1>{{ title }}</h1>
         <v-divider v-if="title" />
@@ -32,6 +29,7 @@ defineProps({
     type: Boolean,
     default: false,
   }
+  },
 })
 </script>
 

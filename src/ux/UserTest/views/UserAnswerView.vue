@@ -1,6 +1,6 @@
 <template>
   <PageWrapper
-    :title="hasAnswers ? 'Answers' : ''"
+    :title="hasAnswers ? $t('titles.answers') : ''"
     :side-gap="true"
   >
     <!-- Subtitle Slot -->

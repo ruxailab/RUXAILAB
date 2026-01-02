@@ -1,7 +1,7 @@
 <template>
   <div v-if="test">
     <div>
-      <IrisTracker v-if="test.hasEye" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+      <IrisTracker v-if="hasEyeTracking" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
         @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
     </div>
 
