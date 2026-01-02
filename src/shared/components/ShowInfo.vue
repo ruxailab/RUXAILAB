@@ -25,6 +25,10 @@ defineProps({
     type: String,
     default: '',
   },
+  hideCol: {
+    type: Boolean,
+    default: false,
+  },
 })
 </script>
 
