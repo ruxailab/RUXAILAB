@@ -8,16 +8,18 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository }}
     name: Playwright Tests
     runs-on: ubuntu-22.04
     environment: production
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -25,20 +27,32 @@ jobs:
           node-version: '20.18.x'
 
       - name: Create .env file
+        env:
+          VUE_APP_FIREBASE_API_KEY: ${{ secrets.VUE_APP_FIREBASE_API_KEY }}
+          VUE_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
+          VUE_APP_FIREBASE_PROJECT_ID: ${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
+          VUE_APP_FIREBASE_STORAGE_BUCKET: ${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
+          VUE_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
+          VUE_APP_FIREBASE_APP_ID: ${{ secrets.VUE_APP_FIREBASE_APP_ID }}
+          VUE_APP_FIREBASE_DB_URL: ${{ secrets.VUE_APP_FIREBASE_DB_URL }}
         run: |
           echo "Creating .env file..."
-          cat > .env <<EOF
-          VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
-          VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
-          VUE_APP_FIREBASE_PROJECT_ID=${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
-          VUE_APP_FIREBASE_STORAGE_BUCKET=${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
-          VUE_APP_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
-          VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
-          VUE_APP_FIREBASE_DB_URL=${{ secrets.VUE_APP_FIREBASE_DB_URL }}
-          EOF
+          {
+            echo "VUE_APP_FIREBASE_API_KEY=$VUE_APP_FIREBASE_API_KEY"
+            echo "VUE_APP_FIREBASE_AUTH_DOMAIN=$VUE_APP_FIREBASE_AUTH_DOMAIN"
+            echo "VUE_APP_FIREBASE_PROJECT_ID=$VUE_APP_FIREBASE_PROJECT_ID"
+            echo "VUE_APP_FIREBASE_STORAGE_BUCKET=$VUE_APP_FIREBASE_STORAGE_BUCKET"
+            echo "VUE_APP_FIREBASE_MESSAGING_SENDER_ID=$VUE_APP_FIREBASE_MESSAGING_SENDER_ID"
+            echo "VUE_APP_FIREBASE_APP_ID=$VUE_APP_FIREBASE_APP_ID"
+            echo "VUE_APP_FIREBASE_DB_URL=$VUE_APP_FIREBASE_DB_URL"
+          } > .env
 
       - name: Debug .env file
-        run: cat .env
+        env:
+          VUE_APP_FIREBASE_PROJECT_ID: ${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
+        run: |
+          echo "VUE_APP_FIREBASE_PROJECT_ID=$VUE_APP_FIREBASE_PROJECT_ID"
+          echo ".env file created successfully"
 
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
