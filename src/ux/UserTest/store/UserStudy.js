@@ -4,6 +4,7 @@
 //  */
 
 export default {
+    namespaced: true,
     state: {
         tasks: [],
         landingPage: '',
@@ -102,5 +103,12 @@ export default {
                 commit('setError', true)
             }
         },
+        setLandingPage({ commit }, payload) {
+            try {
+                commit('SET_LANDING', payload)
+            } catch (e) {
+                commit('setError', true)
+            }
+        }
     }
 }

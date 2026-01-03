@@ -1,7 +1,8 @@
 <template>
   <v-overlay
-    :model-value="modelValue"
-    class="d-flex flex-column justify-center align-center text-center loader-overlay"
+    v-if="$route.path.includes('manager')"
+    :model-value="loading"
+    class="d-flex flex-column justify-center align-center text-center"
   >
     <div class="loader-content">
       <template v-if="type === 'logo'">

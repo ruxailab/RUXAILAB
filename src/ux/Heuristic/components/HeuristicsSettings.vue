@@ -1,8 +1,4 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
-  >
     <v-card
       elevation="2"
       class="pa-6"
@@ -29,11 +25,9 @@
 
         <!-- File Upload Section -->
         <div>
-          <v-row
-            align="center"
-            class="mb-4"
-          >
-            <v-col cols="10">
+          <div class="d-flex align-stretch mb-4 file-upload-container">
+            <!-- File Input -->
+            <div class="flex-grow-1 me-2">
               <v-file-input
                 ref="myFile"
                 v-model="csvFile"
@@ -47,37 +41,21 @@
                 truncate-length="15"
                 :disabled="testAnswerDocLength > 0"
                 counter
-                multiple
+                class="file-input-field"
+                hide-details
               >
-                <template v-slot:selection="{ fileNames }">
-                  <template v-for="(fileName, index) in fileNames" :key="fileName">
-                    <v-chip
-                      v-if="index < 2"
-                      class="me-2"
-                      color="deep-purple-accent-4"
-                      size="small"
-                      label
-                    >
-                      {{ fileName }}
-                    </v-chip>
-
-                    <span
-                      v-else-if="index === 2"
-                      class="text-overline text-grey-darken-3 mx-2"
-                    >
-                      +{{ files.length - 2 }} File(s)
-                    </span>
-                  </template>
-                </template>
               </v-file-input>
-            </v-col>
-            <v-col cols="2" class="pb-8">
+            </div>
+            
+            <!-- Update Button -->
+            <div class="d-flex align-center">
               <v-btn
                 :loading="loadingUpdate"
                 :disabled="loadingUpdate || testAnswerDocLength > 0"
                 color="primary"
                 variant="elevated"
-                class="text-none"
+                class="text-none update-button"
+                height="56"
                 @click="changeToJSON"
               >
                 <v-icon start>
@@ -85,31 +63,35 @@
                 </v-icon>
                 {{ $t('HeuristicsSettings.actions.update') }}
               </v-btn>
-            </v-col>
-          </v-row>
+            </div>
+          </div>
+          
           <v-alert
             v-if="errorMessage"
+            v-model="errorVisible"
             type="error"
             density="compact"
             class="mt-2"
+            closable
           >
             {{ errorMessage }}
           </v-alert>
         </div>
       </div>
     </v-card>
-  </v-container>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
+import {
+  showWarning
+} from '@/shared/utils/toast'
+
 
 const store = useStore();
-const toast = useToast();
 const { t } = useI18n();
 
 const loading = ref(false);
@@ -118,6 +100,7 @@ const csvFile = ref(null);
 const myFile = ref(null);
 const loadingUpdate = ref(false);
 const errorMessage = ref('');
+const errorVisible = ref(false);
 
 const test = computed(() => store.getters.test);
 
@@ -139,92 +122,130 @@ watch(loader, (newLoader) => {
       setTimeout(() => {
         loading.value = false;
       }, 3000);
-      toast.warning(t('HeuristicsSettings.messages.noCsvFileSelected'));
+      showWarning('HeuristicsSettings.messages.noCsvFileSelected');
       loader.value = null;
     }
   }
 });
 
+watch(csvFile, () => {
+  if (errorMessage.value) {
+    errorMessage.value = '';
+    errorVisible.value = false;
+  }
+});
+
 const changeToJSON = async () => {
   if (!csvFile.value) {
-    errorMessage.value = t('HeuristicsSettings.messages.noCsvFileSelected');
+    toast.warning(t('HeuristicsSettings.messages.noCsvFileSelected'));
     return;
   }
 
   if (!csvFile.value.name.toLowerCase().endsWith('.csv')) {
     errorMessage.value = t('HeuristicsSettings.messages.invalidFileType');
+    errorVisible.value = true;
     return;
   }
 
+  const confirmationText = t('HeuristicsSettings.messages.acceptCsv');
+  if (!confirm(confirmationText)) return;
+
   loadingUpdate.value = true;
   errorMessage.value = '';
+  errorVisible.value = false;
 
   try {
-    const confirmationText = t('HeuristicsSettings.messages.acceptCsv');
-    if (confirm(confirmationText)) {
-      const reader = new FileReader();
-      reader.readAsText(csvFile.value, 'UTF-8');
-      reader.onload = async () => {
-        const csv = reader.result.trim();
+    const reader = new FileReader();
+    reader.readAsText(csvFile.value, 'UTF-8');
 
+    reader.onload = async () => {
+      try {
+        const csv = reader.result?.trim();
         if (!csv) {
           errorMessage.value = t('HeuristicsSettings.messages.emptyCsvFile');
-          loadingUpdate.value = false;
+          errorVisible.value = true;
           return;
         }
 
-        const lines = csv.split('\r\n');
-        const headers = lines[0].split(';').map((header) => header.trim());
+        const lines = csv.split(/\r?\n/).filter(l => l.trim() !== '');
+
+        // ---- delimiter detection (SAFE) ----
+        const firstLine = lines[0];
+        let delimiter = ';';
+        if (firstLine.includes(',')) delimiter = ',';
+        if (firstLine.includes('\t')) delimiter = '\t';
+
         const heuristicMap = new Map();
 
-        for (let i = 1; i < lines.length; i++) {
-          const currentLine = lines[i];
-          if (!currentLine) continue;
+        // ---- detect if first row is header ----
+        const firstCols = firstLine.split(delimiter).map(c => c.trim().toLowerCase());
+        const hasHeader =
+          firstCols.some(c => c.includes('heuristic')) &&
+          firstCols.some(c => c.includes('question'));
 
-          const currentFields = currentLine.split(';');
+        const startIndex = hasHeader ? 1 : 0;
 
-          const heuristicId = currentFields[0];
-          const heuristicTitle = currentFields[1];
-          const questionId = currentFields[2];
-          const questionText = currentFields[3];
+        for (let i = startIndex; i < lines.length; i++) {
+          const cols = lines[i].split(delimiter).map(c => c.trim());
+          if (cols.length < 4) continue;
 
-          if (!heuristicMap.has(heuristicId)) {
-            heuristicMap.set(heuristicId, {
-              id: parseInt(heuristicId) - 1,
+          const heuristicIdRaw = cols[0];
+          const heuristicTitle = cols[1];
+          const questionIdRaw = cols[2];
+          const questionText = cols[3];
+
+          if (!heuristicTitle || !questionText) continue;
+
+          const heuristicKey = heuristicIdRaw || heuristicTitle;
+
+          if (!heuristicMap.has(heuristicKey)) {
+            heuristicMap.set(heuristicKey, {
+              id: heuristicMap.size,
               title: heuristicTitle,
               questions: [],
               total: 0,
             });
           }
 
-          const heuristicEntry = heuristicMap.get(heuristicId);
-          heuristicEntry.questions.push({
-            id: parseInt(questionId) - 1,
+          const heuristic = heuristicMap.get(heuristicKey);
+
+          heuristic.questions.push({
+            id: questionIdRaw ? Number(questionIdRaw) - 1 : heuristic.questions.length,
             title: questionText,
-            descriptions: questionText,
+            descriptions: [],
+            comparison: [],
             text: questionText,
             answerImageUrl: '',
           });
 
-          heuristicEntry.total = Math.max(
-            heuristicEntry.total,
-            parseInt(questionId)
-          );
+          heuristic.total = heuristic.questions.length;
         }
 
         const heuristicTest = Array.from(heuristicMap.values());
 
+        if (!heuristicTest.length) {
+          errorMessage.value = 'No valid data found in CSV file';
+          errorVisible.value = true;
+          return;
+        }
+
         store.state.Tests.Test.testStructure = heuristicTest;
         await store.dispatch('updateStudy', test.value);
-      };
-    }
+
+        toast.success(`${csvFile.value.name} uploaded`);
+        csvFile.value = null;
+      } finally {
+        loadingUpdate.value = false;
+      }
+    };
   } catch (error) {
     console.error('Update action failed:', error);
     errorMessage.value = t('HeuristicsSettings.messages.updateFailed');
-  } finally {
+    errorVisible.value = true;
     loadingUpdate.value = false;
   }
 };
+
 
 const downloadTemplate = async () => {
   const storage = getStorage();
@@ -248,12 +269,12 @@ const downloadTemplate = async () => {
         errorMessage.value = t('HeuristicsSettings.messages.unknownError');
         break;
     }
+    errorVisible.value = true;
   }
 };
 </script>
 
 <style scoped>
-
 :deep(.v-file-input .v-field) {
   background-color: #F8FAFC;
 }
@@ -264,5 +285,91 @@ const downloadTemplate = async () => {
 
 :deep(.v-btn--variant-elevated:hover) {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Perfect side-by-side alignment */
+.file-upload-container {
+  align-items: stretch;
+  gap: 8px;
+}
+
+.file-input-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.update-button {
+  height: 56px !important;
+  width: 150px;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* Make file input field match button height */
+.file-input-field :deep(.v-field) {
+  height: 56px !important;
+  min-height: 56px !important;
+}
+
+/* Ensure perfect vertical alignment */
+.file-input-field :deep(.v-field__field) {
+  height: 100%;
+}
+
+/* Remove any gaps */
+.file-input-field :deep(.v-input__details) {
+  display: none !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .file-upload-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .update-button {
+    width: 100%;
+    height: 48px !important;
+  }
+  
+  .file-input-field :deep(.v-field) {
+    height: 52px !important;
+    min-height: 52px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .v-container.fluid.pa-6,
+  .v-card.pa-6 {
+    padding: 16px !important;
+  }
+  
+  .text-h4.font-weight-bold.text-on-surface {
+    font-size: 1.5rem !important;
+  }
+  
+  .update-button {
+    height: 44px !important;
+  }
+  
+  .file-input-field :deep(.v-field) {
+    height: 48px !important;
+    min-height: 48px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .v-container.fluid.pa-6,
+  .v-card.pa-6 {
+    padding: 12px !important;
+  }
+  
+  .text-h4.font-weight-bold.text-on-surface {
+    font-size: 1.25rem !important;
+  }
 }
 </style>

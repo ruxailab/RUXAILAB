@@ -1,24 +1,14 @@
 <template>
   <div>
     <!-- ManagerView genérica mantenida -->
-    <ManagerView
-      :navigator="navigator"
-      :top-cards="topCards"
-      :bottom-cards="bottomCards"
-    >
+    <ManagerView :navigator="navigator" :top-cards="topCards" :bottom-cards="bottomCards">
 
       <!-- Dashboard profesional con componentes específicos -->
-      <v-container
-        v-if="test"
-        class="dashboard-container"
-      >
+      <v-container v-if="test" class="dashboard-container">
         <!-- Main Dashboard Layout: Two Columns -->
         <v-row class="dashboard-main-row">
           <!-- Left Column: Dashboard Header -->
-          <v-col
-            cols="12"
-            lg="6"
-          >
+          <v-col cols="12" lg="6">
             <!-- Dashboard Header with Gradient -->
             <div class="dashboard-header gradient-header">
               <div class="header-content">
@@ -36,32 +26,14 @@
                   </div>
                 </div>
                 <div class="header-chips">
-                  <v-chip
-                    class="test-type-chip"
-                    color="rgba(255,255,255,0.2)"
-                    variant="outlined"
-                    size="small"
-                  >
-                    <v-icon
-                      start
-                      size="16"
-                      color="white"
-                    >
+                  <v-chip class="test-type-chip" color="rgba(255,255,255,0.2)" variant="outlined" size="small">
+                    <v-icon start size="16" color="white">
                       mdi-account-check-outline
                     </v-icon>
                     <span class="text-white">Unmoderated Study</span>
                   </v-chip>
-                  <v-chip
-                    class="status-chip"
-                    color="rgba(255,255,255,0.15)"
-                    variant="outlined"
-                    size="small"
-                  >
-                    <v-icon
-                      start
-                      size="16"
-                      color="white"
-                    >
+                  <v-chip class="status-chip" color="rgba(255,255,255,0.15)" variant="outlined" size="small">
+                    <v-icon start size="16" color="white">
                       {{ getStatusIcon(test.testStatus) }}
                     </v-icon>
                     <span class="text-white">{{ test.testStatus || 'Active' }}</span>
@@ -72,11 +44,7 @@
           </v-col>
 
           <!-- Right Column: Study Overview -->
-          <v-col
-            cols="12"
-            lg="6"
-            class="study-overview-column"
-          >
+          <v-col cols="12" lg="6" class="study-overview-column">
             <!-- Las 4 cards de métricas -->
             <div class="study-overview-wrapper">
               <StudyOverview :test="test" />
@@ -98,41 +66,22 @@
         <!-- Modules Grid: 3x2 layout -->
         <v-row class="modules-section">
           <!-- Row 1 -->
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <ParticipantsInfo :test="test" />
           </v-col>
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <TasksInfo :test="test" />
           </v-col>
 
           <!-- Row 2 -->
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <StorageInfo :test="test" />
           </v-col>
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <!-- Empty slot for future components -->
-            <v-card
-              class="h-100 d-flex align-center justify-center"
-              variant="outlined"
-              style="min-height: 200px;"
-            >
+            <v-card class="h-100 d-flex align-center justify-center" variant="outlined" style="min-height: 200px;">
               <div class="text-center text-grey-lighten-1">
-                <v-icon
-                  size="48"
-                  class="mb-2"
-                >
+                <v-icon size="48" class="mb-2">
                   mdi-plus-circle-outline
                 </v-icon>
                 <p class="text-body-2">
@@ -150,8 +99,8 @@
 <script setup>
 import ManagerView from '@/shared/views/template/ManagerView.vue';
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
-import { computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onMounted, watchEffect } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { getBottomCardsDefualt, getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
 
@@ -164,6 +113,7 @@ import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue';
 // Stores
 const store = useStore()
 const route = useRoute()
+const router = useRouter();
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -182,6 +132,12 @@ const accessLevel = computed(() => {
 
   return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
 })
+
+watchEffect(() => {
+  if (user.value != null && test.value != null && accessLevel.value !== ACCESS_LEVEL.ADMIN) {
+    router.push('/');
+  }
+});
 
 const topCards = computed(() => {
   if (!test.value) return []
@@ -208,7 +164,7 @@ const navigator = computed(() => {
 const getStatusColor = (status) => {
   const statusMap = {
     'Active': 'success',
-    'Draft': 'warning', 
+    'Draft': 'warning',
     'Completed': 'info',
     'Archived': 'error'
   }
@@ -375,7 +331,7 @@ onMounted(async () => {
 }
 
 
-.dashboard-main-row > .v-col {
+.dashboard-main-row>.v-col {
   padding: 0 12px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -462,11 +418,11 @@ onMounted(async () => {
     width: 95% !important;
     padding: 24px 16px !important;
   }
-  
+
   .dashboard-header {
     padding: 32px 24px;
   }
-  
+
   .dashboard-title {
     font-size: 2rem !important;
   }
@@ -476,39 +432,39 @@ onMounted(async () => {
   .dashboard-container {
     width: 98% !important;
   }
-  
+
   .dashboard-main-row {
     min-height: 280px !important;
   }
-  
-  .dashboard-main-row > .v-col {
+
+  .dashboard-main-row>.v-col {
     min-height: 280px !important;
   }
-  
+
   .dashboard-header {
     min-height: 200px !important;
   }
-  
+
   .study-overview-column {
     min-height: 280px !important;
   }
-  
+
   .header-content {
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 24px;
   }
-  
+
   .header-chips {
     flex-direction: row;
     justify-content: center;
   }
-  
+
   .section-title {
     font-size: 1.75rem !important;
   }
-  
+
   .modules-section :deep(.v-card) {
     height: auto !important;
     min-height: 280px !important;
@@ -519,43 +475,41 @@ onMounted(async () => {
   .dashboard-container {
     padding: 16px 8px !important;
   }
-  
+
   .dashboard-main-row {
     min-height: 240px !important;
   }
-  
-  .dashboard-main-row > .v-col {
+
+  .dashboard-main-row>.v-col {
     min-height: 240px !important;
   }
-  
+
   .dashboard-header {
     padding: 24px 20px;
     min-height: 180px !important;
   }
-  
+
   .study-overview-column {
     min-height: 240px !important;
   }
-  
+
   .dashboard-title {
     font-size: 1.75rem !important;
   }
-  
+
   .dashboard-subtitle {
     font-size: 1rem !important;
   }
-  
+
   .header-chips {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .test-type-chip,
   .status-chip {
     width: 100%;
     justify-content: center;
   }
 }
-
-
 </style>

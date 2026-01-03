@@ -6,12 +6,10 @@
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
-import { useToast } from 'vue-toastification'
+import { showError } from '@/shared/utils/toast'
 
 const authController = new AuthController()
 const userController = new UserController()
-
-const toast = useToast()
 
 export default {
   state: {
@@ -82,10 +80,27 @@ export default {
 
     async signin({ commit }, payload) {
       commit('setLoading', true)
+
       try {
-        await authController.signIn(payload.email, payload.password, payload.rememberMe)
+        const { user } = await authController.signIn(
+          payload.email,
+          payload.password,
+          payload.rememberMe
+        )
+
+        const dbUser = await userController.getById(user.uid)
+
+        commit('SET_USER', dbUser)
+
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.loginSuccess'),
+          type: 'success',
+        })
+
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        showError('errors.incorrectCredential')
+      } finally {
+        commit('setLoading', false)
       }
     },
 
@@ -113,6 +128,7 @@ export default {
             id: user.uid,
             email: user.email,
             displayName: user.displayName || '',
+            profileImage: user.photoURL || '',
             createdAt: new Date().toISOString(),
             authProvider: 'google',
           })
@@ -159,10 +175,6 @@ export default {
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
       } catch (e) {
         console.error(e)
         commit('SET_TOAST', {

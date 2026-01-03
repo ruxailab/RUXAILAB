@@ -118,8 +118,12 @@ import { getMethodManagerView } from '../constants/methodDefinitions';
 import { useRouter ,useRoute} from 'vue-router';
 import Notification from '@/shared/models/Notification';
 import EmailController from '../controllers/EmailController';
-import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
+import {
+  showSuccess,
+  showError,
+} from '@/shared/utils/toast'
+
 
 const uidgen = new UIDGenerator();
 const router = useRouter();
@@ -148,7 +152,6 @@ const emit = defineEmits(['open-invite-dialog'])
 const store = useStore();
 const route = useRoute();
 const slots = useSlots();
-const toast = useToast();
 const { t } = useI18n();
 
 const {
@@ -323,10 +326,10 @@ const sendMenssages = async (guest) => {
   try {
     notifyCooperator(guest);
     await handleSendEmail(guest);
-    toast.success(t('pages.cooperators.invitationSent'));
+    showSuccess('pages.cooperators.invitationSent');
   } catch (error) {
     console.error('Error sending messages:', error);
-    toast.error(t('errors.sendError'));
+    showError('errors.sendError');
   }
 }
 

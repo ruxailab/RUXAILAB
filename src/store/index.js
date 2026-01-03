@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import Auth from '@/features/auth/store/Auth'
+import Dashboard from '@/features/dashboard/store'
 import Templates from '@/features/templates/Template'
 import Tests from '@/store/modules/Study'
 import Users from '@/features/super/store/User'
@@ -77,6 +78,7 @@ export default createStore({
   modules: {
     Assessment,
     Auth,
+    Dashboard,
     Templates,
     Tests,
     Users,
