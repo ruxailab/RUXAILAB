@@ -620,7 +620,6 @@ const profileItems = computed(() => [
   },
 ]);
 
-// FIX: SIMPLE SAVE BUTTON LOGIC
 const saveButtonEnabled = computed(() => {
   return editProfileValid.value || hasImageChanges.value;
 });
@@ -635,7 +634,6 @@ const selectImage = () => {
   fileInput.value.click();
 };
 
-// FIX: REPLACE THIS FUNCTION COMPLETELY
 const uploadProfileImage = async (event) => {
   const file = event?.target?.files?.[0];
   if (!file) return;
@@ -697,7 +695,6 @@ const fetchUserProfile = async () => {
   }
 };
 
-// FIX: UPDATE THIS FUNCTION
 const openEditProfileDialog = () => {
   editProfileData.value = {
     username: userprofile.value.username,
@@ -714,7 +711,6 @@ const openEditProfileDialog = () => {
   editProfileDialog.value = true;
 };
 
-// FIX: ADD CANCEL HANDLER
 const handleCancelEdit = () => {
   // Clean up preview URL if exists
   if (imagePreviewUrl.value) {
@@ -729,7 +725,6 @@ const handleCancelEdit = () => {
   editProfileDialog.value = false;
 };
 
-// FIX: REPLACE THIS FUNCTION COMPLETELY
 const saveProfile = async () => {
   // First validate the form
   if (editProfileForm.value) {
@@ -816,7 +811,6 @@ const changePassword = async () => {
   }
 };
 
-// FIX: UPDATE REMOVE PROFILE PICTURE FUNCTION
 const removeProfilePicture = () => {
   // Set to empty string for removal
   editProfileData.value.profileImage = '';
