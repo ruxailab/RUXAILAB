@@ -116,7 +116,7 @@
                   {{ analytics.averageSupply.toFixed(1) }}
                 </div>
                 <div class="text-caption text-grey">
-                  Arousal + Spare Capacity + Concentration + Division + Info Quantity + Info Quality + Familiarity
+                  Arousal + Concentration + Division + Spare Capacity
                 </div>
               </div>
               <div
@@ -154,7 +154,7 @@
                   {{ analytics.averageUnderstanding.toFixed(1) }}
                 </div>
                 <div class="text-caption text-grey">
-                  Understanding of Situation
+                  Information Quantity + Information Quality + Familiarity
                 </div>
               </div>
               <div
@@ -298,7 +298,7 @@
                           <v-icon start size="small">mdi-arrow-down-bold</v-icon>
                           Supply
                         </v-chip>
-                        <span class="text-caption text-grey">(7 dimensions)</span>
+                        <span class="text-caption text-grey">(4 dimensions)</span>
                       </div>
                       <div class="dimension-bars">
                         <div
@@ -373,7 +373,7 @@
                           <v-icon start size="small">mdi-brain</v-icon>
                           Understanding
                         </v-chip>
-                        <span class="text-caption text-grey">(1 dimension)</span>
+                        <span class="text-caption text-grey">(3 dimensions)</span>
                       </div>
                       <div class="dimension-bars">
                         <div
@@ -609,7 +609,7 @@
                     {{ selectedResponse.supply.toFixed(1) }}
                   </div>
                   <div class="text-caption text-grey">
-                    7 capability dimensions
+                    Arousal + Concentration + Division + Spare Capacity
                   </div>
                 </div>
               </v-col>
@@ -622,7 +622,7 @@
                     {{ selectedResponse.understanding.toFixed(1) }}
                   </div>
                   <div class="text-caption text-grey">
-                    Understanding of Situation
+                    Information Quantity + Information Quality + Familiarity
                   </div>
                 </div>
               </v-col>
@@ -743,11 +743,11 @@ const sartData = computed(() => Object.values(testAnswerDocument.value || {}).fl
       // Calculate scores for each response
       const answers = task.sartAnswers || {}
       const demand = (answers.instability || 0) + (answers.complexity || 0) + (answers.variability || 0)
-      const supply = (answers.arousal || 0) + (answers.spareCapacity || 0) + 
-                     (answers.concentration || 0) + (answers.division || 0) +
-                     (answers.informationQuantity || 0) + (answers.informationQuality || 0) +
-                     (answers.familiarity || 0)
-      const understanding = answers.understanding || 0
+      const supply = (answers.arousal || 0) + (answers.concentration || 0) + 
+                     (answers.division || 0) + (answers.spareCapacity || 0)
+      const understanding = (answers.informationQuantity || 0) + 
+                           (answers.informationQuality || 0) + 
+                           (answers.familiarity || 0)
       const saScore = understanding - demand + supply
       
       return {
@@ -772,7 +772,7 @@ const supplyDimensions = computed(() => {
 })
 
 const understandingDimensions = computed(() => {
-  return sartDimensions.filter(dim => dim.category === 'sa')
+  return sartDimensions.filter(dim => dim.category === 'understanding')
 })
 
 const radarData = computed(() => {
@@ -824,25 +824,30 @@ function openDetailsModal(response) {
   detailsModal.value = true
 }
 
+// FIXED: Correct demand score ranges (3-21: 3 dimensions × 1-7)
 function getDemandColor(score) {
-  if (score >= 18) return 'error'
-  if (score >= 15) return 'warning'
-  if (score >= 12) return 'info'
-  return 'success'
+  if (score >= 18) return 'error'      // 18-21: Very high demand (bad)
+  if (score >= 15) return 'warning'    // 15-17.9: High demand
+  if (score >= 9) return 'info'        // 9-14.9: Moderate demand
+  return 'success'                     // 3-8.9: Low demand (good)
 }
 
+// FIXED: Correct supply score ranges (4-28: 4 dimensions × 1-7)
 function getSupplyColor(score) {
-  if (score >= 42) return 'success'
-  if (score >= 35) return 'info'
-  if (score >= 28) return 'warning'
-  return 'error'
+  // Score range: 4-28 (4 dimensions × 1-7)
+  if (score >= 22) return 'success'    // 22-28: High supply (good)
+  if (score >= 16) return 'info'       // 16-21.9: Moderate supply
+  if (score >= 10) return 'warning'    // 10-15.9: Low supply
+  return 'error'                       // 4-9.9: Very low supply (bad)
 }
 
+// FIXED: Already correct, but adding comment for clarity
 function getUnderstandingColor(score) {
-  if (score >= 6) return 'purple-darken-2'
-  if (score >= 4) return 'purple'
-  if (score >= 2) return 'purple-lighten-2'
-  return 'purple-lighten-4'
+  // Score range: 3-21 (3 dimensions × 1-7)
+  if (score >= 18) return 'purple-darken-2'  // 18-21: High understanding
+  if (score >= 12) return 'purple'           // 12-17.9: Moderate understanding
+  if (score >= 6) return 'purple-lighten-2'  // 6-11.9: Low understanding
+  return 'purple-lighten-4'                  // 3-5.9: Very low understanding
 }
 
 function getDimensionLevel(score) {
@@ -862,8 +867,8 @@ function getGroupColor(category) {
 
 function getDimensionCategory(dimensionKey) {
   if (['instability', 'complexity', 'variability'].includes(dimensionKey)) return 'demand'
-  if (['arousal', 'spareCapacity', 'concentration', 'division', 'informationQuantity', 'informationQuality', 'familiarity'].includes(dimensionKey)) return 'supply'
-  if (dimensionKey === 'understanding') return 'understanding'
+  if (['arousal', 'concentration', 'division', 'spareCapacity'].includes(dimensionKey)) return 'supply'
+  if (['informationQuantity', 'informationQuality', 'familiarity'].includes(dimensionKey)) return 'understanding'
   return ''
 }
 
