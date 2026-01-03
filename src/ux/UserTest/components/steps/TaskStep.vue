@@ -246,9 +246,10 @@
           <v-row justify="end">
             <v-col cols="12">
               <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
-                Por favor, responde a todas las preguntas antes de continuar.
+                Please answer all questions before continuing.
               </p>
-              <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
+              <v-btn color="primary" block variant="flat" class="ml-2" 
+                :disabled="shouldDisableFinishButton"
                 @click="emitDoneOrCouldNotFinish()">
                 Finish task
               </v-btn>
@@ -338,6 +339,20 @@ const susAnswersFromStore = computed(() => {
 const localSusAnswers = computed({
   get: () => props.susAnswers || [],
   set: (val) => emit('update:susAnswers', val)
+});
+
+const VALIDATION_REQUIRED_TYPES = ['sus']; // Only SUS requires validation for now
+
+const shouldDisableFinishButton = computed(() => {
+  const taskType = props.task?.taskType;
+  
+  // If this task type requires validation, use doneTaskDisabled
+  if (VALIDATION_REQUIRED_TYPES.includes(taskType)) {
+    return props.doneTaskDisabled;
+  }
+  
+  // For all other task types, no validation needed
+  return false;
 });
 
 const localSartAnswers = ref(props.sartAnswers || {});
