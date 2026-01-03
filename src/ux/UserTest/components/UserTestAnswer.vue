@@ -41,14 +41,14 @@
             </v-tab>
             <v-tab
               v-if="showSart"
-              @click="tab = 5"
+              value="5"
             >
               {{ $t('analytics.sartAnalytics') }}
             </v-tab>
-            <v-tab v-if="showEye" value="4">
+            <v-tab v-if="showEye" value="6">
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" value="5">
+            <v-tab v-if="showTranscription" value="6">
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>
@@ -58,19 +58,13 @@
           <div
             class="ma-0 pa-0"
           >
-            <GeneralAnalytics v-if="tab === 0" />
-            <UserAnalytics v-if="tab === 1" />
-            <SentimentAnalysisView v-if="tab === 2" />
-            <SusAnalytics v-if="tab === 3" />
-            <NasaTlxAnalytics v-if="tab === 4" />
-            <SartAnalytics v-if="tab === 5" />
-            <TranscriptionTool v-if="tab === 5" />
             <GeneralAnalytics v-if="tab === '0'" />
             <UserAnalytics v-if="tab === '1'" />
             <SentimentAnalysisView v-if="tab === '2'" />
             <SusAnalytics v-if="tab === '3'" />
             <NasaTlxAnalytics v-if="tab === '4'" />
-            <TranscriptionTool v-if="tab === '5'" />
+            <SartAnalytics v-if="tab === '5'" />
+            <TranscriptionTool v-if="tab === '6'" />
           </div>
         </template>
       </ShowInfo>
