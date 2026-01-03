@@ -117,7 +117,7 @@ jobs:
             }
 
             // Check for issue reference
-            const hasIssueRef = /(?:fixes|closes|resolves|close|fix|resolve)\s+#\d+/i.test(prBody);
+            const hasIssueRef = /(?:fixes|closes|resolves|close|fix|resolve|fixed|closed|resolved)[\s\w:]*#\d+/i.test(prBody);
             if (!hasIssueRef) {
               descriptionIssues.push("- Missing issue reference (e.g., 'Fixes #123')");
             }
