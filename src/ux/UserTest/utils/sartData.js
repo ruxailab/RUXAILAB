@@ -25,14 +25,8 @@ export const sartDimensions = [
     category: 'supply'
   },
   { 
-    key: 'spareCapacity', 
-    label: 'Spare Capacity', 
-    description: 'Available mental capacity',
-    category: 'supply'
-  },
-  { 
     key: 'concentration', 
-    label: 'Concentration', 
+    label: 'Concentration of Attention', 
     description: 'Ability to concentrate',
     category: 'supply'
   },
@@ -43,28 +37,28 @@ export const sartDimensions = [
     category: 'supply'
   },
   { 
+    key: 'spareCapacity', 
+    label: 'Spare Mental Capacity', 
+    description: 'Available mental capacity',
+    category: 'supply'
+  },
+  { 
     key: 'informationQuantity', 
     label: 'Information Quantity', 
     description: 'Quantity of information available',
-    category: 'supply'
+    category: 'understanding'
   },
   { 
     key: 'informationQuality', 
     label: 'Information Quality', 
     description: 'Quality of information available',
-    category: 'supply'
+    category: 'understanding'
   },
   { 
     key: 'familiarity', 
     label: 'Familiarity', 
     description: 'Familiarity with situation',
-    category: 'supply'
-  },
-  { 
-    key: 'understanding', 
-    label: 'Understanding', 
-    description: 'Understanding of situation',
-    category: 'sa'
+    category: 'understanding'
   }
 ];
 
@@ -87,14 +81,14 @@ export function getSARTData(sartResponses) {
     // Demand = Sum of 3 dimensions (instability, complexity, variability)
     const demand = (answers.instability || 4) + (answers.complexity || 4) + (answers.variability || 4);
     
-    // Supply = Sum of 7 dimensions (arousal, spareCapacity, concentration, division, informationQuantity, informationQuality, familiarity)
-    const supply = (answers.arousal || 4) + (answers.spareCapacity || 4) + 
-                   (answers.concentration || 4) + (answers.division || 4) +
-                   (answers.informationQuantity || 4) + (answers.informationQuality || 4) +
-                   (answers.familiarity || 4);
+    // Supply = Sum of 4 dimensions (arousal, concentration, division, spareCapacity)
+    const supply = (answers.arousal || 4) + (answers.concentration || 4) + 
+                   (answers.division || 4) + (answers.spareCapacity || 4);
     
-    // Get Understanding score
-    const understanding = answers.understanding || 4;
+    // Understanding = Sum of 3 dimensions (informationQuantity, informationQuality, familiarity)
+    const understanding = (answers.informationQuantity || 4) + 
+                         (answers.informationQuality || 4) + 
+                         (answers.familiarity || 4);
     
     // SA Score = Understanding - Demand + Supply
     const saScore = understanding - demand + supply;
@@ -132,19 +126,18 @@ export function getSARTData(sartResponses) {
     ? Math.round((processedResponses.reduce((sum, r) => sum + (r.saScore || 0), 0) / totalRespondents) * 10) / 10
     : 0;
 
-  // Calculate average demand and supply (averages of sums, not sums of averages)
+  // Calculate average demand, supply, and understanding
   const averageDemand = totalRespondents > 0
     ? Math.round((processedResponses.reduce((sum, r) => sum + (r.demand || 0), 0) / totalRespondents) * 10) / 10
     : 12; // Default (3 dimensions × 4)
 
   const averageSupply = totalRespondents > 0
     ? Math.round((processedResponses.reduce((sum, r) => sum + (r.supply || 0), 0) / totalRespondents) * 10) / 10
-    : 28; // Default (7 dimensions × 4)
+    : 16; // Default (4 dimensions × 4)
 
-  // Calculate average Understanding
   const averageUnderstanding = totalRespondents > 0
     ? Math.round((processedResponses.reduce((sum, r) => sum + (r.understanding || 0), 0) / totalRespondents) * 10) / 10
-    : 4; // Default
+    : 12; // Default (3 dimensions × 4)
 
   return {
     averageSAScore,
