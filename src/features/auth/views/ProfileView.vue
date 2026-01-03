@@ -358,7 +358,7 @@
           <v-btn
             variant="text"
             class="text-capitalize"
-            @click="editProfileDialog = false"
+            @click="handleCancelEdit"
           >
             {{ $t('common.cancel') }}
           </v-btn>
@@ -366,7 +366,7 @@
             color="primary"
             variant="flat"
             class="text-capitalize"
-            :disabled="!editProfileValid"
+            :disabled="!saveButtonEnabled"
             @click="saveProfile"
           >
             <v-icon start>
@@ -507,7 +507,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
@@ -560,6 +560,11 @@ const deleteStep = ref(1);
 const deleteConfirmText = ref('');
 const isSmallScreen = ref(false);
 const editProfileValid = ref(false);
+
+// FIX: ADD THESE VARIABLES
+const selectedImageFile = ref(null);
+const imagePreviewUrl = ref('');
+const hasImageChanges = ref(false);
 
 const passwordForm = ref(null);
 const editProfileForm = ref(null);
@@ -615,6 +620,11 @@ const profileItems = computed(() => [
   },
 ]);
 
+// FIX: SIMPLE SAVE BUTTON LOGIC
+const saveButtonEnabled = computed(() => {
+  return editProfileValid.value || hasImageChanges.value;
+});
+
 const hasSpecialChar = (str) => {
   const specialChars = /[!@#$%^&*(),.{}|<>]/;
   return specialChars.test(str);
@@ -625,35 +635,33 @@ const selectImage = () => {
   fileInput.value.click();
 };
 
+// FIX: REPLACE THIS FUNCTION COMPLETELY
 const uploadProfileImage = async (event) => {
   const file = event?.target?.files?.[0];
   if (!file) return;
 
   try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (!user) throw new Error('No user signed in');
-
-    // Show preview immediately
-    editProfileData.value.profileImage = URL.createObjectURL(file);
-
-    const storage = getStorage();
-    const storageReference = storageRef(storage, `profileImages/${user.uid}`);
-    const snapshot = await uploadBytes(storageReference, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
-
-    const db = getFirestore();
-    const userDocRef = doc(db, 'users', user.uid);
-    await updateDoc(userDocRef, { profileImage: downloadURL });
-
-    userprofile.value.profileImage = downloadURL;
-    editProfileData.value.profileImage = downloadURL;
-    toast.success(t('profile.profileImageUpdatedSuccess'));
+    // Create preview only - NO UPLOAD!
+    const previewUrl = URL.createObjectURL(file);
     
+    // Store file for later upload
+    selectedImageFile.value = file;
+    imagePreviewUrl.value = previewUrl;
+    
+    // Update preview in dialog
+    editProfileData.value.profileImage = previewUrl;
+    
+    // Mark that we have image changes
+    hasImageChanges.value = true;
+    
+    // Reset file input
     if (fileInput.value) fileInput.value.value = '';
+    
+    console.log('Image selected. hasImageChanges:', true);
+    
   } catch (error) {
-    console.error('Error uploading image:', error);
-    toast.error(t('profile.profileImageUploadFailed'));
+    console.error('Error creating image preview:', error);
+    toast.error(t('profile.imagePreviewFailed'));
     editProfileData.value.profileImage = userprofile.value.profileImage;
   }
 };
@@ -689,6 +697,7 @@ const fetchUserProfile = async () => {
   }
 };
 
+// FIX: UPDATE THIS FUNCTION
 const openEditProfileDialog = () => {
   editProfileData.value = {
     username: userprofile.value.username,
@@ -696,11 +705,37 @@ const openEditProfileDialog = () => {
     country: userprofile.value.country,
     profileImage: userprofile.value.profileImage,
   };
+  
+  // Reset image states when opening dialog
+  selectedImageFile.value = null;
+  imagePreviewUrl.value = '';
+  hasImageChanges.value = false;
+  
   editProfileDialog.value = true;
 };
 
+// FIX: ADD CANCEL HANDLER
+const handleCancelEdit = () => {
+  // Clean up preview URL if exists
+  if (imagePreviewUrl.value) {
+    URL.revokeObjectURL(imagePreviewUrl.value);
+  }
+  
+  // Reset image states
+  selectedImageFile.value = null;
+  imagePreviewUrl.value = '';
+  hasImageChanges.value = false;
+  
+  editProfileDialog.value = false;
+};
+
+// FIX: REPLACE THIS FUNCTION COMPLETELY
 const saveProfile = async () => {
-  if (!editProfileForm.value.validate()) return;
+  // First validate the form
+  if (editProfileForm.value) {
+    const { valid } = await editProfileForm.value.validate();
+    if (!valid) return;
+  }
 
   try {
     const auth = getAuth();
@@ -710,29 +745,47 @@ const saveProfile = async () => {
       const db = getFirestore();
       const userDocRef = doc(db, 'users', user.uid);
 
+      // Upload image first if there's a new one
+      let finalProfileImage = editProfileData.value.profileImage;
+      
+      if (selectedImageFile.value) {
+        // Actually upload the image now (only when saving!)
+        const storage = getStorage();
+        const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+        const snapshot = await uploadBytes(storageReference, selectedImageFile.value);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        
+        // Update with final URL
+        finalProfileImage = downloadURL;
+        
+        // Clean up preview URL
+        if (imagePreviewUrl.value) {
+          URL.revokeObjectURL(imagePreviewUrl.value);
+        }
+      }
+
       const updateData = {
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
+        profileImage: finalProfileImage,
       };
-
-      // If profile image was removed (empty string), update to empty
-      if (editProfileData.value.profileImage === '') {
-        updateData.profileImage = '';
-      } else if (editProfileData.value.profileImage && !editProfileData.value.profileImage.startsWith('blob:')) {
-        // Only update profile image if it's a valid URL (not a blob/preview)
-        updateData.profileImage = editProfileData.value.profileImage;
-      }
 
       await updateDoc(userDocRef, updateData);
 
+      // Update local state
       userprofile.value = {
         ...userprofile.value,
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
-        profileImage: editProfileData.value.profileImage,
+        profileImage: finalProfileImage,
       };
+
+      // Reset image states
+      selectedImageFile.value = null;
+      imagePreviewUrl.value = '';
+      hasImageChanges.value = false;
 
       toast.success(t('profile.profileUpdatedSuccess'));
       editProfileDialog.value = false;
@@ -761,6 +814,24 @@ const changePassword = async () => {
       toast.error(t('PROFILE.passwordChangeFailed'));
     }
   }
+};
+
+// FIX: UPDATE REMOVE PROFILE PICTURE FUNCTION
+const removeProfilePicture = () => {
+  // Set to empty string for removal
+  editProfileData.value.profileImage = '';
+  
+  // Clear any selected file
+  selectedImageFile.value = null;
+  if (imagePreviewUrl.value) {
+    URL.revokeObjectURL(imagePreviewUrl.value);
+    imagePreviewUrl.value = '';
+  }
+  
+  // Mark as changed
+  hasImageChanges.value = true;
+  
+  if (fileInput.value) fileInput.value.value = '';
 };
 
 const handlerDeleteConfirmText = async (value) => {
@@ -829,11 +900,6 @@ const countryFilter = (item, queryText) => {
   
   const itemName = item?.name || item || '';
   return String(itemName).toLowerCase().includes(queryText.toLowerCase());
-};
-
-const removeProfilePicture = () => {
-  editProfileData.value.profileImage = '';
-  if (fileInput.value) fileInput.value.value = '';
 };
 
 onMounted(() => {
