@@ -12,22 +12,42 @@
 
       <!-- Options Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="option in options" :key="option.id" cols="12" sm="6" md="6" lg="5">
+        <v-col
+          v-for="option in options"
+          :key="option.id"
+          cols="12"
+          sm="6"
+          md="6"
+          lg="5"
+        >
           <SelectableCard
             :selected="selectedOption === option.id"
             :icon="option.icon"
             :title="option.title"
             :description="option.description"
             :color="option.color"
-            :badge="option.recommended ? { text: $t('studyCreation.comingSoon'), color: 'warning' } : null"
+            :badge="
+              option.recommended
+                ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
+                : null
+            "
             @click="() => selectOption(option.id)"
             :disabled="option.disabled"
           >
             <template #extra>
               <v-list class="bg-transparent pl-8 text-start" density="compact">
-                <v-list-item v-for="feature in option.features" :key="feature" class="pa-0 mb-1">
+                <v-list-item
+                  v-for="feature in option.features"
+                  :key="feature"
+                  class="pa-0 mb-1"
+                >
                   <template #prepend>
-                    <v-icon icon="mdi-check" color="success" size="16" class="mr-2" />
+                    <v-icon
+                      icon="mdi-check"
+                      color="success"
+                      size="16"
+                      class="mr-2"
+                    />
                   </template>
                   <v-list-item-title class="text-body-2">
                     {{ feature }}
@@ -79,8 +99,8 @@ const options = computed(() => [
     features: [
       'Complete customization',
       'Build from ground up',
-      'Full control over settings'
-    ]
+      'Full control over settings',
+    ],
   },
   {
     id: 'template',
@@ -93,9 +113,9 @@ const options = computed(() => [
     features: [
       'Quick setup',
       'Pre-configured settings',
-      'Best practices included'
-    ]
-  }
+      'Best practices included',
+    ],
+  },
 ])
 
 const selectOption = (optionId) => {
@@ -117,7 +137,6 @@ const goBack = () => {
 <style scoped>
 .create-study-view {
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 :deep(.v-stepper-header) {

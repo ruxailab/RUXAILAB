@@ -1,14 +1,8 @@
 <template>
-  <v-container
-    fluid
-    class="create-study-view"
-  >
+  <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader
-        :current-step="1"
-        :steps="steps"
-      />
+      <StepperHeader :current-step="1" :steps="steps" />
 
       <!-- Page Header -->
       <SectionHeader
@@ -33,9 +27,11 @@
             :description="category.description"
             :color="category.color"
             :disabled="category.comingSoon"
-            :badge="category.comingSoon
-              ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
-              : null"
+            :badge="
+              category.comingSoon
+                ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
+                : null
+            "
             @click="() => handleCategoryClick(category.id)"
           >
             <template #extra>
@@ -53,10 +49,7 @@
       </v-row>
 
       <!-- Back Button -->
-      <BackButton
-        :label="$t('studyCreation.backToDashboard')"
-        @back="goBack"
-      />
+      <BackButton :label="$t('studyCreation.backToDashboard')" @back="goBack" />
     </v-container>
   </v-container>
 </template>
@@ -66,7 +59,10 @@ import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
-import { STUDY_CATEGORIES, getCategoryById } from '@/shared/constants/studyCategories.js'
+import {
+  STUDY_CATEGORIES,
+  getCategoryById,
+} from '@/shared/constants/studyCategories.js'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -84,11 +80,13 @@ const steps = computed(() => [
   { value: 4, title: t('studyCreation.steps.details'), complete: false },
 ])
 
-const categories = computed(() => STUDY_CATEGORIES.map(category => ({
-  ...category,
-  title: t(`studyCreation.categories.${category.id}.title`),
-  description: t(`studyCreation.categories.${category.id}.description`),
-})))
+const categories = computed(() =>
+  STUDY_CATEGORIES.map((category) => ({
+    ...category,
+    title: t(`studyCreation.categories.${category.id}.title`),
+    description: t(`studyCreation.categories.${category.id}.description`),
+  })),
+)
 
 const handleCategoryClick = (categoryId) => {
   const category = getCategoryById(categoryId)
@@ -109,7 +107,6 @@ const goBack = () => {
 <style scoped>
 .create-study-view {
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 .cursor-pointer {
