@@ -2,6 +2,7 @@
  * Professional SART (Situation Awareness Rating Technique) Answer Model
  * Implements the full 10-dimension SART with proper validation and calculations
  * Based on: Endsley, M. R. (1995). Measurement of situation awareness in dynamic systems.
+ * SART 10D model with 3 categories: Demand, Supply, Understanding
  */
 
 // Constants for SART dimensions and scoring
@@ -34,7 +35,7 @@ export const SART_CONSTANTS = {
       category: 'demand'
     },
     
-    // SUPPLY DIMENSIONS (7) - Internal operator factors
+    // SUPPLY DIMENSIONS (4) - Internal operator factors
     AROUSAL: {
       key: 'arousal',
       label: 'Arousal',
@@ -43,17 +44,9 @@ export const SART_CONSTANTS = {
       description: 'Rate your level of mental alertness and readiness during the task',
       category: 'supply'
     },
-    SPARE_CAPACITY: {
-      key: 'spareCapacity',
-      label: 'Spare Mental Capacity',
-      minLabel: 'Very Little',
-      maxLabel: 'Very Much',
-      description: 'Rate how much spare mental capacity you had available beyond task requirements',
-      category: 'supply'
-    },
     CONCENTRATION: {
       key: 'concentration',
-      label: 'Concentration',
+      label: 'Concentration of Attention',
       minLabel: 'Very Difficult',
       maxLabel: 'Very Easy',
       description: 'Rate how difficult or easy it was to maintain concentration on the task',
@@ -67,13 +60,23 @@ export const SART_CONSTANTS = {
       description: 'Rate how focused or divided your attention was across multiple task elements',
       category: 'supply'
     },
+    SPARE_CAPACITY: {
+      key: 'spareCapacity',
+      label: 'Spare Mental Capacity',
+      minLabel: 'Very Little',
+      maxLabel: 'Very Much',
+      description: 'Rate how much spare mental capacity you had available beyond task requirements',
+      category: 'supply'
+    },
+    
+    // UNDERSTANDING DIMENSIONS (3)
     INFORMATION_QUANTITY: {
       key: 'informationQuantity',
       label: 'Information Quantity',
       minLabel: 'Very Little',
       maxLabel: 'Very Much',
       description: 'Rate the amount of information available for making decisions',
-      category: 'supply'
+      category: 'understanding'
     },
     INFORMATION_QUALITY: {
       key: 'informationQuality',
@@ -81,7 +84,7 @@ export const SART_CONSTANTS = {
       minLabel: 'Very Poor',
       maxLabel: 'Very Good',
       description: 'Rate the quality, relevance, and usefulness of available information',
-      category: 'supply'
+      category: 'understanding'
     },
     FAMILIARITY: {
       key: 'familiarity',
@@ -89,17 +92,7 @@ export const SART_CONSTANTS = {
       minLabel: 'Very Unfamiliar',
       maxLabel: 'Very Familiar',
       description: 'Rate how familiar you were with the operational situation and procedures',
-      category: 'supply'
-    },
-    
-    // SITUATION AWARENESS COMPONENT
-    UNDERSTANDING: {
-      key: 'understanding',
-      label: 'Understanding of Situation',
-      minLabel: 'Very Poor',
-      maxLabel: 'Very Good',
-      description: 'Rate your overall understanding and comprehension of the operational situation',
-      category: 'sa'
+      category: 'understanding'
     }
   },
   
@@ -111,12 +104,12 @@ export const SART_CONSTANTS = {
     STEP: 1
   },
   
-  // SA Score interpretation levels
+  // SA Score interpretation levels (based on SART 10D formula)
   SA_LEVELS: [
-    { min: 30, max: 49, level: 'Exceptional', color: 'success', description: 'Superior situation awareness' },
-    { min: 20, max: 29, level: 'Good', color: 'info', description: 'Adequate situation awareness' },
-    { min: 10, max: 19, level: 'Moderate', color: 'warning', description: 'Marginal situation awareness' },
-    { min: -10, max: 9, level: 'Poor', color: 'error', description: 'Inadequate situation awareness' },
+    { min: 25, max: 49, level: 'Excellent', color: 'success', description: 'Superior situation awareness' },
+    { min: 15, max: 24, level: 'Good', color: 'info', description: 'Adequate situation awareness' },
+    { min: 5, max: 14, level: 'Moderate', color: 'warning', description: 'Marginal situation awareness' },
+    { min: -10, max: 4, level: 'Poor', color: 'error', description: 'Inadequate situation awareness' },
     { min: -30, max: -11, level: 'Critical', color: 'error-dark', description: 'Critical situation awareness failure' }
   ],
   
@@ -126,7 +119,14 @@ export const SART_CONSTANTS = {
     { min: 4, max: 5.9, level: 'Moderate', color: 'info' },
     { min: 2, max: 3.9, level: 'Low', color: 'warning' },
     { min: 1, max: 1.9, level: 'Very Low', color: 'error' }
-  ]
+  ],
+  
+  // Category ranges
+  CATEGORY_RANGES: {
+    demand: { min: 3, max: 21 },   // 3 dimensions × 1-7
+    supply: { min: 4, max: 28 },   // 4 dimensions × 1-7
+    understanding: { min: 3, max: 21 } // 3 dimensions × 1-7
+  }
 };
 
 // Validator class for SART data
@@ -148,8 +148,12 @@ class SartValidator {
 
   static validateAllDimensions(dimensions) {
     const validated = {};
+    const dimensionKeys = Object.keys(SART_CONSTANTS.DIMENSIONS).map(k => 
+      SART_CONSTANTS.DIMENSIONS[k].key
+    );
+    
     for (const [key, value] of Object.entries(dimensions)) {
-      if (SART_CONSTANTS.DIMENSIONS[key.toUpperCase()]) {
+      if (dimensionKeys.includes(key)) {
         validated[key] = this.validateDimensionScore(value, key);
       }
     }
@@ -169,15 +173,15 @@ export default class SartAnswer {
     complexity = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     variability = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     arousal = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
-    spareCapacity = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     concentration = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     division = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
+    spareCapacity = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     informationQuantity = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     informationQuality = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     familiarity = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
-    understanding = SART_CONSTANTS.SCORE_RANGE.DEFAULT,
     demand = null,
     supply = null,
+    understanding = null,
     saScore = null,
     timestamp = null,
     metadata = {}
@@ -188,19 +192,19 @@ export default class SartAnswer {
       complexity: SartValidator.validateDimensionScore(complexity, 'complexity'),
       variability: SartValidator.validateDimensionScore(variability, 'variability'),
       arousal: SartValidator.validateDimensionScore(arousal, 'arousal'),
-      spareCapacity: SartValidator.validateDimensionScore(spareCapacity, 'spareCapacity'),
       concentration: SartValidator.validateDimensionScore(concentration, 'concentration'),
       division: SartValidator.validateDimensionScore(division, 'division'),
+      spareCapacity: SartValidator.validateDimensionScore(spareCapacity, 'spareCapacity'),
       informationQuantity: SartValidator.validateDimensionScore(informationQuantity, 'informationQuantity'),
       informationQuality: SartValidator.validateDimensionScore(informationQuality, 'informationQuality'),
-      familiarity: SartValidator.validateDimensionScore(familiarity, 'familiarity'),
-      understanding: SartValidator.validateDimensionScore(understanding, 'understanding')
+      familiarity: SartValidator.validateDimensionScore(familiarity, 'familiarity')
     };
 
     // Derived scores (calculated unless explicitly provided)
     this._derivedScores = {
       demand: demand,
       supply: supply,
+      understanding: understanding,
       saScore: saScore
     };
 
@@ -208,12 +212,12 @@ export default class SartAnswer {
     this.timestamp = timestamp || new Date().toISOString();
     this.metadata = {
       version: '2.0',
-      calculationMethod: 'professional-sart',
+      calculationMethod: 'sart-10d',
       ...metadata
     };
 
     // Calculate derived scores if not provided or auto-calc is enabled
-    if (autoCalculate || demand === null || supply === null || saScore === null) {
+    if (autoCalculate || demand === null || supply === null || understanding === null || saScore === null) {
       this.calculateDerivedScores();
     }
 
@@ -226,24 +230,26 @@ export default class SartAnswer {
   get complexity() { return this._rawScores.complexity; }
   get variability() { return this._rawScores.variability; }
   get arousal() { return this._rawScores.arousal; }
-  get spareCapacity() { return this._rawScores.spareCapacity; }
   get concentration() { return this._rawScores.concentration; }
   get division() { return this._rawScores.division; }
+  get spareCapacity() { return this._rawScores.spareCapacity; }
   get informationQuantity() { return this._rawScores.informationQuantity; }
   get informationQuality() { return this._rawScores.informationQuality; }
   get familiarity() { return this._rawScores.familiarity; }
-  get understanding() { return this._rawScores.understanding; }
 
   // Getters for derived scores
   get demand() { return this._derivedScores.demand; }
   get supply() { return this._derivedScores.supply; }
+  get understanding() { return this._derivedScores.understanding; }
   get saScore() { return this._derivedScores.saScore; }
 
   /**
-   * Calculate all derived scores based on SART formula
-   * Formula: SA = Understanding - (Instability + Complexity + Variability) + 
-   *                (Arousal + SpareCapacity + Concentration + Division + 
-   *                 InformationQuantity + InformationQuality + Familiarity)
+   * Calculate all derived scores based on SART 10D formula
+   * Formula: SA = Understanding - Demand + Supply
+   * Where:
+   *   Demand = Instability + Complexity + Variability (3 dimensions)
+   *   Supply = Arousal + Concentration + Division + SpareCapacity (4 dimensions)
+   *   Understanding = InformationQuantity + InformationQuality + Familiarity (3 dimensions)
    * @returns {SartAnswer} This instance for chaining
    */
   calculateDerivedScores() {
@@ -251,15 +257,17 @@ export default class SartAnswer {
     this._derivedScores.demand = 
       this.instability + this.complexity + this.variability;
 
-    // Calculate Supply (sum of 7 supply dimensions)
+    // Calculate Supply (sum of 4 supply dimensions)
     this._derivedScores.supply = 
-      this.arousal + this.spareCapacity + this.concentration + this.division +
+      this.arousal + this.concentration + this.division + this.spareCapacity;
+
+    // Calculate Understanding (sum of 3 understanding dimensions)
+    this._derivedScores.understanding = 
       this.informationQuantity + this.informationQuality + this.familiarity;
 
-    // Calculate Situation Awareness Score
-    // Professional formula: SA = Understanding - Demand + Supply
+    // Calculate Situation Awareness Score using SART 10D formula
     this._derivedScores.saScore = 
-      this.understanding - this._derivedScores.demand + this._derivedScores.supply;
+      this._derivedScores.understanding - this._derivedScores.demand + this._derivedScores.supply;
 
     return this;
   }
@@ -273,8 +281,8 @@ export default class SartAnswer {
   }
 
   /**
-   * Get scores by category (demand, supply, sa)
-   * @param {string} category - 'demand', 'supply', or 'sa'
+   * Get scores by category
+   * @param {string} category - 'demand', 'supply', or 'understanding'
    * @returns {Object} Scores in the specified category
    */
   getScoresByCategory(category) {
@@ -289,14 +297,15 @@ export default class SartAnswer {
 
   /**
    * Get the average score for a specific category
-   * @param {string} category - 'demand', 'supply', or 'sa'
+   * @param {string} category - 'demand', 'supply', or 'understanding'
    * @returns {number} Average score
    */
   getCategoryAverage(category) {
     const categoryScores = this.getScoresByCategory(category);
     const values = Object.values(categoryScores);
     if (values.length === 0) return 0;
-    return values.reduce((sum, score) => sum + score, 0) / values.length;
+    const sum = values.reduce((total, score) => total + score, 0);
+    return Math.round((sum / values.length) * 10) / 10; // Round to 1 decimal
   }
 
   /**
@@ -311,11 +320,15 @@ export default class SartAnswer {
     
     return {
       score,
-      ...interpretation,
+      level: interpretation.level,
+      color: interpretation.color,
+      description: interpretation.description,
       demandScore: this.demand,
       supplyScore: this.supply,
+      understandingScore: this.understanding,
       demandDimensions: this.getScoresByCategory('demand'),
-      supplyDimensions: this.getScoresByCategory('supply')
+      supplyDimensions: this.getScoresByCategory('supply'),
+      understandingDimensions: this.getScoresByCategory('understanding')
     };
   }
 
@@ -326,7 +339,9 @@ export default class SartAnswer {
    */
   getDimensionInterpretation(dimensionKey) {
     const score = this._rawScores[dimensionKey];
-    const dimension = SART_CONSTANTS.DIMENSIONS[dimensionKey.toUpperCase()];
+    const dimension = Object.values(SART_CONSTANTS.DIMENSIONS).find(
+      d => d.key === dimensionKey
+    );
     
     if (!dimension) {
       throw new Error(`Unknown dimension: ${dimensionKey}`);
@@ -338,8 +353,10 @@ export default class SartAnswer {
 
     return {
       dimension: dimension.label,
+      category: dimension.category,
       score,
-      ...level,
+      level: level.level,
+      color: level.color,
       minLabel: dimension.minLabel,
       maxLabel: dimension.maxLabel,
       description: dimension.description
@@ -356,6 +373,7 @@ export default class SartAnswer {
         saScore: this.saScore,
         demandScore: this.demand,
         supplyScore: this.supply,
+        understandingScore: this.understanding,
         saInterpretation: this.getSAInterpretation()
       },
       dimensions: Object.keys(this._rawScores).map(key => 
@@ -364,11 +382,18 @@ export default class SartAnswer {
       categories: {
         demand: {
           scores: this.getScoresByCategory('demand'),
-          average: this.getCategoryAverage('demand')
+          average: this.getCategoryAverage('demand'),
+          range: SART_CONSTANTS.CATEGORY_RANGES.demand
         },
         supply: {
           scores: this.getScoresByCategory('supply'),
-          average: this.getCategoryAverage('supply')
+          average: this.getCategoryAverage('supply'),
+          range: SART_CONSTANTS.CATEGORY_RANGES.supply
+        },
+        understanding: {
+          scores: this.getScoresByCategory('understanding'),
+          average: this.getCategoryAverage('understanding'),
+          range: SART_CONSTANTS.CATEGORY_RANGES.understanding
         }
       },
       metadata: {
@@ -388,21 +413,48 @@ export default class SartAnswer {
   }
 
   /**
-   * Create instance from Firestore document
+   * Create instance from Firestore document with legacy field handling
    * @param {Object} firestoreData - Data from Firestore
    * @returns {SartAnswer} New SART answer instance
    */
   static fromFirestore(firestoreData) {
-    // Handle legacy field names (backward compatibility)
-    const normalizedData = { ...firestoreData };
-    
-    // Legacy field mapping
-    if (normalizedData.information && !normalizedData.informationQuantity) {
-      normalizedData.informationQuantity = normalizedData.information;
-      normalizedData.informationQuality = normalizedData.information;
+    if (!firestoreData) {
+      return new SartAnswer({});
     }
     
-    return new SartAnswer(normalizedData, false); // Don't auto-calc if scores already exist
+    // Start with normalized data
+    const normalizedData = { ...firestoreData };
+    
+    // Handle legacy field mapping for backward compatibility
+    // Map 'information' to both informationQuantity and informationQuality
+    if (normalizedData.information !== undefined && 
+        (normalizedData.informationQuantity === undefined || normalizedData.informationQuality === undefined)) {
+      if (normalizedData.informationQuantity === undefined) {
+        normalizedData.informationQuantity = normalizedData.information;
+      }
+      if (normalizedData.informationQuality === undefined) {
+        normalizedData.informationQuality = normalizedData.information;
+      }
+      // Remove legacy field after mapping
+      delete normalizedData.information;
+    }
+    
+    // Map 'understanding' to 'familiarity' if needed
+    if (normalizedData.understanding !== undefined && normalizedData.familiarity === undefined) {
+      normalizedData.familiarity = normalizedData.understanding;
+      // Remove legacy field after mapping
+      delete normalizedData.understanding;
+    }
+    
+    // Ensure all required fields have default values
+    const requiredFields = Object.values(SART_CONSTANTS.DIMENSIONS).map(d => d.key);
+    requiredFields.forEach(field => {
+      if (normalizedData[field] === undefined) {
+        normalizedData[field] = SART_CONSTANTS.SCORE_RANGE.DEFAULT;
+      }
+    });
+    
+    return new SartAnswer(normalizedData, false);
   }
 
   /**
@@ -417,6 +469,7 @@ export default class SartAnswer {
       // Derived scores
       demand: this.demand,
       supply: this.supply,
+      understanding: this.understanding,
       saScore: this.saScore,
       
       // Metadata
@@ -449,11 +502,12 @@ export default class SartAnswer {
    * @returns {boolean} True if complete
    */
   isComplete() {
-    const expectedKeys = Object.keys(SART_CONSTANTS.DIMENSIONS).map(k => 
-      SART_CONSTANTS.DIMENSIONS[k].key
-    );
+    const expectedKeys = Object.values(SART_CONSTANTS.DIMENSIONS).map(d => d.key);
     return expectedKeys.every(key => 
-      this._rawScores[key] !== undefined && this._rawScores[key] !== null
+      this._rawScores[key] !== undefined && 
+      this._rawScores[key] !== null &&
+      this._rawScores[key] >= SART_CONSTANTS.SCORE_RANGE.MIN &&
+      this._rawScores[key] <= SART_CONSTANTS.SCORE_RANGE.MAX
     );
   }
 
@@ -466,21 +520,29 @@ export default class SartAnswer {
       return 'incomplete';
     }
     
-    // Check for response bias (all same score)
     const scores = Object.values(this._rawScores);
-    const allSame = scores.every(score => score === scores[0]);
     
     // Check for extreme response bias (all 1s or all 7s)
-    const allExtreme = scores.every(score => score === 1) || scores.every(score => score === 7);
+    const allOnes = scores.every(score => score === 1);
+    const allSevens = scores.every(score => score === 7);
     
-    if (allExtreme) return 'suspicious_extreme';
+    if (allOnes || allSevens) return 'suspicious_extreme';
+    
+    // Check for uniform responses (all same score)
+    const allSame = scores.every(score => score === scores[0]);
     if (allSame) return 'suspicious_uniform';
+    
+    // Check for straight-lining (alternating pattern)
+    const hasPattern = scores.every((score, index) => 
+      index % 2 === 0 ? score === scores[0] : score === scores[1]
+    );
+    if (hasPattern && scores.length > 2) return 'suspicious_pattern';
     
     // Calculate variance
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
     const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
     
-    if (variance < 1) return 'low_variance';
+    if (variance < 0.5) return 'low_variance';
     if (variance > 6) return 'high_variance';
     
     return 'good';
@@ -495,43 +557,58 @@ export default class SartAnswer {
     const recommendations = [];
     
     // SA Score recommendations
-    const saLevel = report.summary.saInterpretation.level;
-    if (saLevel === 'Critical' || saLevel === 'Poor') {
+    const saInterpretation = report.summary.saInterpretation;
+    if (saInterpretation.level === 'Critical' || saInterpretation.level === 'Poor') {
       recommendations.push({
         priority: 'high',
         area: 'situation_awareness',
         message: `Low SA score detected (${this.saScore}). Consider additional training on situation monitoring and information processing.`,
-        action: 'review_training'
+        action: 'review_training',
+        details: `Demand: ${this.demand}, Supply: ${this.supply}, Understanding: ${this.understanding}`
       });
     }
     
-    // Demand vs Supply imbalance
+    // Check category imbalances
     const demandAvg = report.categories.demand.average;
     const supplyAvg = report.categories.supply.average;
-    const imbalance = Math.abs(demandAvg - supplyAvg);
+    const understandingAvg = report.categories.understanding.average;
     
-    if (imbalance > 2) {
+    // Demand vs Supply imbalance
+    if (demandAvg > supplyAvg + 1) {
       recommendations.push({
         priority: 'medium',
         area: 'workload_balance',
-        message: `Significant imbalance between task demand (${demandAvg}) and operator supply (${supplyAvg}).`,
-        action: demandAvg > supplyAvg ? 'reduce_workload' : 'enhance_capabilities'
+        message: `Task demand (${demandAvg}) exceeds operator supply (${supplyAvg}). Consider workload reduction or enhanced support.`,
+        action: 'reduce_workload'
       });
     }
     
-    // Individual dimension recommendations
+    // Low understanding
+    if (understandingAvg < 4) {
+      recommendations.push({
+        priority: 'medium',
+        area: 'information_processing',
+        message: `Low understanding score (${understandingAvg}). Consider improving information availability and quality.`,
+        action: 'enhance_information'
+      });
+    }
+    
+    // Individual low-scoring dimensions
     report.dimensions.forEach(dim => {
-      if (dim.level === 'Very Low' || dim.level === 'Low') {
+      if (dim.score <= 2) {
         recommendations.push({
           priority: 'low',
-          area: dim.dimension.toLowerCase().replaceAll(/\s+/g, '_'),
-          message: `Low score in ${dim.dimension} (${dim.score}). Consider improvements in this area.`,
-          action: 'targeted_training'
+          area: dim.dimension.toLowerCase().replace(/\s+/g, '_'),
+          message: `Very low score in ${dim.dimension} (${dim.score}).`,
+          action: 'targeted_improvement',
+          category: dim.category
         });
       }
     });
     
-    return recommendations;
+    // Sort by priority
+    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    return recommendations.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
   }
 }
 
@@ -547,10 +624,8 @@ export const SartUtils = {
       throw new Error('Invalid responses array');
     }
     
+    const dimensionKeys = Object.values(SART_CONSTANTS.DIMENSIONS).map(d => d.key);
     const dimensionSums = {};
-    const dimensionKeys = Object.keys(SART_CONSTANTS.DIMENSIONS).map(k => 
-      SART_CONSTANTS.DIMENSIONS[k].key
-    );
     
     // Initialize sums
     dimensionKeys.forEach(key => {
@@ -564,12 +639,10 @@ export const SartUtils = {
       });
     });
     
-    // Calculate averages
+    // Calculate averages (rounded to 1 decimal)
     const averageData = {};
     dimensionKeys.forEach(key => {
-      averageData[key] = Math.round(
-        dimensionSums[key] / responses.length * 10
-      ) / 10; // Round to 1 decimal
+      averageData[key] = Math.round((dimensionSums[key] / responses.length) * 10) / 10;
     });
     
     return new SartAnswer(averageData);
@@ -586,15 +659,13 @@ export const SartUtils = {
     }
     
     const deviations = {};
-    const dimensionKeys = Object.keys(SART_CONSTANTS.DIMENSIONS).map(k => 
-      SART_CONSTANTS.DIMENSIONS[k].key
-    );
+    const dimensionKeys = Object.values(SART_CONSTANTS.DIMENSIONS).map(d => d.key);
     
     dimensionKeys.forEach(key => {
       const scores = responses.map(r => r._rawScores[key] || SART_CONSTANTS.SCORE_RANGE.DEFAULT);
       const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
       const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
-      deviations[key] = Math.sqrt(variance);
+      deviations[key] = Math.round(Math.sqrt(variance) * 10) / 10; // Round to 1 decimal
     });
     
     return deviations;
@@ -620,6 +691,43 @@ export const SartUtils = {
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(33, 150, 243, 1)'
+      }]
+    };
+  },
+
+  /**
+   * Generate category comparison data for bar chart
+   * @param {SartAnswer} sartAnswer - SART answer instance
+   * @returns {Object} Chart.js compatible data
+   */
+  generateCategoryChartData(sartAnswer) {
+    const categories = ['demand', 'supply', 'understanding'];
+    const colors = {
+      demand: 'rgba(255, 152, 0, 0.7)',    // Orange
+      supply: 'rgba(76, 175, 80, 0.7)',    // Green
+      understanding: 'rgba(156, 39, 176, 0.7)' // Purple
+    };
+    
+    return {
+      labels: ['Demand', 'Supply', 'Understanding'],
+      datasets: [{
+        label: 'Category Scores',
+        data: [
+          sartAnswer.demand,
+          sartAnswer.supply,
+          sartAnswer.understanding
+        ],
+        backgroundColor: [
+          colors.demand,
+          colors.supply,
+          colors.understanding
+        ],
+        borderColor: [
+          colors.demand.replace('0.7', '1'),
+          colors.supply.replace('0.7', '1'),
+          colors.understanding.replace('0.7', '1')
+        ],
+        borderWidth: 1
       }]
     };
   }
