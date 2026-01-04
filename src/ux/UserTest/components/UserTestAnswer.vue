@@ -39,10 +39,16 @@
             >
               {{ $t('analytics.nasaTlxAnalytics') }}
             </v-tab>
-            <v-tab v-if="showEye" value="4">
+            <v-tab
+              v-if="showTAM"
+              value="5"
+            >
+              TAM Analytics
+            </v-tab>
+            <v-tab v-if="showEye" value="6">
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" value="5">
+            <v-tab v-if="showTranscription" value="7">
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>
@@ -57,7 +63,11 @@
             <SentimentAnalysisView v-if="tab === '2'" />
             <SusAnalytics v-if="tab === '3'" />
             <NasaTlxAnalytics v-if="tab === '4'" />
-            <TranscriptionTool v-if="tab === '5'" />
+            <TamAnalytics v-if="tab === '5'" />
+            <div v-if="tab === '6'" style="height: 100%; overflow-y: auto;">
+              <!-- Eye Tracking content would go here -->
+            </div>
+            <TranscriptionTool v-if="tab === '7'" />
           </div>
         </template>
       </ShowInfo>
@@ -80,6 +90,7 @@ import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
+import TamAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TamAnalytics.vue';
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
 import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import { useI18n } from 'vue-i18n';
@@ -123,6 +134,13 @@ const showNasa = computed(() => {
   if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'nasa-tlx'
+  );
+});
+
+const showTAM = computed(() => {
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
+  return Object.values(testStructure.value.userTasks).some(
+    (task) => ['tam-1', 'tam-2', 'tam-3'].includes(task.taskType)
   );
 });
 

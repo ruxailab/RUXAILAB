@@ -244,7 +244,10 @@ const getAnswerTypeIcon = (type) => {
     'post-test': 'mdi-comment-question-outline',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket-launch-outline',
-    'sus': 'mdi-chart-line'
+    'sus': 'mdi-chart-line',
+    'tam-1': 'mdi-chart-box',
+    'tam-2': 'mdi-chart-box-multiple-outline',
+    'tam-3': 'mdi-chart-donut'
   };
   return icons[type] || 'mdi-help-circle-outline';
 };
@@ -256,7 +259,10 @@ const getAnswerTypeDescription = (type) => {
     'post-test': 'Participants answer specific questions after the task',
     'post-form': 'Participants fill out an external form after the task',
     'nasa-tlx': 'NASA Task Load Index - measures workload',
-    'sus': 'System Usability Scale - measures usability'
+    'sus': 'System Usability Scale - measures usability',
+    'tam-1': 'TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use',
+    'tam-2': 'TAM-2 (Extended) - adds external influences and results demonstrability',
+    'tam-3': 'TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability'
   };
   return descriptions[type] || '';
 };

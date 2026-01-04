@@ -229,9 +229,21 @@
           <div v-if="task?.taskType === 'nasa-tlx'">
             <nasaTlxForm :nasa-tlx="nasaTlxAnswers" @update:nasa-tlx="onUpdateNasaTlx" />
           </div>
+          <div v-if="task?.taskType === 'tam-1'">
+            <TamForm1 v-model="localTamAnswers" :task-index="taskIndex"
+              @update:model-value="val => emit('update:tamAnswers', val)" />
+          </div>
+          <div v-if="task?.taskType === 'tam-2'">
+            <TamForm2 v-model="localTamAnswers" :task-index="taskIndex"
+              @update:model-value="val => emit('update:tamAnswers', val)" />
+          </div>
+          <div v-if="task?.taskType === 'tam-3'">
+            <TamForm3 v-model="localTamAnswers" :task-index="taskIndex"
+              @update:model-value="val => emit('update:tamAnswers', val)" />
+          </div>
           <v-row justify="end">
             <v-col cols="12">
-              <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
+              <p v-if="(task?.taskType === 'sus' || task?.taskType === 'tam-1' || task?.taskType === 'tam-2' || task?.taskType === 'tam-3') && doneTaskDisabled" class="text-error mb-4">
                 Por favor, responde a todas las preguntas antes de continuar.
               </p>
               <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
@@ -270,6 +282,9 @@ import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
 import Timer from '@/ux/UserTest/components/Timer.vue';
 import SusForm from '@/ux/UserTest/SusForm.vue';
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
+import TamForm1 from '@/ux/UserTest/components/TamForm1.vue';
+import TamForm2 from '@/ux/UserTest/components/TamForm2.vue';
+import TamForm3 from '@/ux/UserTest/components/TamForm3.vue';
 
 const props = defineProps({
   task: Object,
@@ -283,6 +298,7 @@ const props = defineProps({
   taskObservations: String,
   susAnswers: Array,
   nasaTlxAnswers: Object,
+  tamAnswers: Object,
   testId: String,
   userDocId: String,
   taskIndex: Number,
@@ -304,6 +320,7 @@ const emit = defineEmits([
   'timer-stopped',
   'update:susAnswers',
   'update:nasaTlxAnswers',
+  'update:tamAnswers',
 ]);
 
 onBeforeUnmount(() => {
@@ -323,6 +340,48 @@ const localSusAnswers = computed({
   set: (val) => emit('update:susAnswers', val)
 });
 
+const getTamInitialStructure = () => {
+  const taskType = props.task?.taskType;
+  
+  if (taskType === 'tam-1') {
+    return {
+      perceivedUsefulness: Array(5).fill(undefined),
+      perceivedEaseOfUse: Array(5).fill(undefined)
+    };
+  } else if (taskType === 'tam-2') {
+    return {
+      perceivedUsefulness: Array(5).fill(undefined),
+      perceivedEaseOfUse: Array(5).fill(undefined),
+      subjectiveNorm: Array(3).fill(undefined),
+      image: Array(2).fill(undefined),
+      jobRelevance: Array(3).fill(undefined),
+      outputQuality: Array(3).fill(undefined),
+      resultDemonstrability: Array(2).fill(undefined)
+    };
+  } else if (taskType === 'tam-3') {
+    return {
+      perceivedUsefulness: Array(5).fill(undefined),
+      perceivedEaseOfUse: Array(5).fill(undefined),
+      subjectiveNorm: Array(3).fill(undefined),
+      image: Array(2).fill(undefined),
+      jobRelevance: Array(3).fill(undefined),
+      outputQuality: Array(3).fill(undefined),
+      resultDemonstrability: Array(2).fill(undefined),
+      computerSelfEfficacy: Array(3).fill(undefined),
+      perceptionsOfExternalControl: Array(3).fill(undefined),
+      computerAnxiety: Array(3).fill(undefined),
+      computerPlayfulness: Array(2).fill(undefined),
+      perceivedEnjoyment: Array(3).fill(undefined),
+      objectiveUsability: Array(2).fill(undefined)
+    };
+  }
+  return {};
+};
+
+const localTamAnswers = computed({
+  get: () => props.tamAnswers || getTamInitialStructure(),
+  set: (val) => emit('update:tamAnswers', val)
+});
 
 const rawLink = computed(() => props.task?.taskLink || props.taskLink);
 const normalizedLink = computed(() => {
@@ -428,7 +487,8 @@ function handleShowPostForm(userCompleted) {
 
   showPostForm.value.userCompleted = userCompleted;
 
-  if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx') {
+  if (props.task?.taskType === 'sus' || props.task?.taskType === 'nasa-tlx' || 
+      props.task?.taskType === 'tam-1' || props.task?.taskType === 'tam-2' || props.task?.taskType === 'tam-3') {
     stage.value = 3;
   } else {
     emitDoneOrCouldNotFinish(finalTime);
