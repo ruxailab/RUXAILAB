@@ -257,7 +257,6 @@ import Snackbar from '@/shared/components/Snackbar';
 import { nanoid } from 'nanoid';
 // import { validateStepNavigation, handleStepNavigation } from '@/ux/UserTest/utils/stepNavigation';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
-import StepperHeader from '@/ux/UserTest/components/StepperHeader.vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
@@ -686,14 +685,6 @@ const completeStep = (id, type, userCompleted = true) => {
     console.error('Error in completeStep:', error);
     store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
   }
-};
-
-/**
- * Navigate to a specific step in the progress bar
- * @param {number} stepValue - The step number to navigate to
- */
-const navigateToStep = (stepValue) => {
-  // Navigation removed
 };
 
 const autoComplete = async () => {
