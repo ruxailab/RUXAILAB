@@ -1,15 +1,13 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    getAuth,
-} from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import {
     getFirestore,
     doc,
     getDoc,
     updateDoc,
 } from 'firebase/firestore';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { showError, showSuccess } from '../../../shared/utils/toast';
 
 export function useProfile() {
@@ -45,7 +43,7 @@ export function useProfile() {
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
-            showError(t('profile.profileLoadFailed'));
+            showError('profile.profileLoadFailed');
         } finally {
             loading.value = false;
         }
@@ -56,28 +54,46 @@ export function useProfile() {
             const auth = getAuth();
             const user = auth.currentUser;
 
-            if (user) {
-                const db = getFirestore();
-                const userDocRef = doc(db, 'users', user.uid);
-
-                await updateDoc(userDocRef, {
-                    username: profileData.username,
-                    contactNo: profileData.contactNo,
-                    country: profileData.country,
-                    profileImage: profileData.profileImage,
-                });
-
-                userprofile.value = {
-                    ...userprofile.value,
-                    username: profileData.username,
-                    contactNo: profileData.contactNo,
-                    country: profileData.country,
-                    profileImage: profileData.profileImage,
-                };
-
-                showSuccess('profile.profileUpdatedSuccess');
-                return true;
+            if (!user) {
+                throw new Error(t('profile.noUserSignedIn'));
             }
+
+            const db = getFirestore();
+            const userDocRef = doc(db, 'users', user.uid);
+
+            let finalProfileImage = profileData.profileImage;
+
+            // Handle image upload if there's a pending file
+            if (profileData.pendingImageFile) {
+                finalProfileImage = await uploadProfileImage(profileData.pendingImageFile);
+                if (!finalProfileImage) {
+                    throw new Error(t('profile.profileImageUploadFailed'));
+                }
+            } else if (profileData.profileImage === '' && userprofile.value.profileImage) {
+                // User wants to remove the image
+                await removeProfileImage();
+                finalProfileImage = '';
+            }
+
+            // Update Firestore with all profile data
+            await updateDoc(userDocRef, {
+                username: profileData.username,
+                contactNo: profileData.contactNo,
+                country: profileData.country,
+                profileImage: finalProfileImage,
+            });
+
+            // Update local state
+            userprofile.value = {
+                ...userprofile.value,
+                username: profileData.username,
+                contactNo: profileData.contactNo,
+                country: profileData.country,
+                profileImage: finalProfileImage,
+            };
+
+            showSuccess('profile.profileUpdatedSuccess');
+            return true;
         } catch (error) {
             console.error('Error updating profile:', error);
             showError('profile.profileUpdateFailed');
@@ -85,49 +101,52 @@ export function useProfile() {
         }
     };
 
-    const uploadProfileImage = async (file, onPreviewReady = null) => {
+    const uploadProfileImage = async (file) => {
         try {
             const auth = getAuth();
             const user = auth.currentUser;
             if (!user) throw new Error(t('profile.noUserSignedIn'));
 
-            // Create immediate preview URL
-            const previewUrl = URL.createObjectURL(file);
-
-            // Call preview callback immediately if provided
-            if (onPreviewReady) {
-                onPreviewReady(previewUrl);
-            }
-
-            // Update UI immediately with preview
-            userprofile.value.profileImage = previewUrl;
-
-            // Compress image for upload (smaller size for faster upload)
-            // Use more aggressive compression for faster upload
+            // Compress and upload
             const compressedFile = await compressImage(file, 300, 0.6);
-
             const storage = getStorage();
             const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+            
+            await uploadBytes(storageReference, compressedFile);
+            const downloadURL = await getDownloadURL(storageReference);
 
-            // Upload in background
-            const snapshot = await uploadBytes(storageReference, compressedFile);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-
-            // Update database
-            const db = getFirestore();
-            const userDocRef = doc(db, 'users', user.uid);
-            await updateDoc(userDocRef, { profileImage: downloadURL });
-
-            // Clean up preview URL and update with final URL
-            URL.revokeObjectURL(previewUrl);
-            userprofile.value.profileImage = downloadURL;
-
-            showSuccess('profile.profileImageUpdatedSuccess');
             return downloadURL;
         } catch (error) {
             console.error('Error uploading image:', error);
-            showError('profile.profileImageUploadFailed');
-            return null;
+            throw error;
+        }
+    };
+
+    const removeProfileImage = async () => {
+        try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            if (!user) throw new Error(t('profile.noUserSignedIn'));
+
+            // Only try to delete if there's an existing image
+            if (userprofile.value.profileImage) {
+                const storage = getStorage();
+                const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+                
+                try {
+                    await deleteObject(storageReference);
+                } catch (error) {
+                    // Ignore error if file doesn't exist
+                    if (error.code !== 'storage/object-not-found') {
+                        throw error;
+                    }
+                }
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error removing profile image:', error);
+            throw error;
         }
     };
 
@@ -188,6 +207,5 @@ export function useProfile() {
         loading,
         fetchUserProfile,
         updateProfile,
-        uploadProfileImage,
     };
 }
