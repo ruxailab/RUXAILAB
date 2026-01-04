@@ -5,7 +5,9 @@
       <div class="preview-mockup">
         <div class="mockup-message">
           <v-icon color="success" class="mr-2">mdi-check-circle</v-icon>
-          <span class="text-body-2">Task completed! No additional feedback required.</span>
+          <span class="text-body-2"
+            >Task completed! No additional feedback required.</span
+          >
         </div>
       </div>
     </div>
@@ -31,11 +33,13 @@
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">Post-Task Questions</div>
         <div class="question-item mb-3">
-          <div class="text-body-2 mb-2">1. How would you rate the difficulty of this task?</div>
-          <v-rating 
-            v-model="mockRating" 
-            readonly 
-            size="small" 
+          <div class="text-body-2 mb-2">
+            1. How would you rate the difficulty of this task?
+          </div>
+          <v-rating
+            v-model="mockRating"
+            readonly
+            size="small"
             color="amber"
             class="mb-2"
           />
@@ -59,7 +63,8 @@
           <v-icon color="info" size="32" class="mb-2">mdi-open-in-new</v-icon>
           <div class="text-subtitle-2 mb-2">External Form</div>
           <div class="text-body-2 text-grey-darken-1 mb-3">
-            Participants will be redirected to complete an external form after the task.
+            Participants will be redirected to complete an external form after
+            the task.
           </div>
           <v-btn color="info" variant="outlined" size="small" disabled>
             Open External Form
@@ -98,7 +103,9 @@
             thumb-size="12"
           />
         </div>
-        <div class="text-caption text-grey-darken-1 text-center">+ 4 more dimensions</div>
+        <div class="text-caption text-grey-darken-1 text-center">
+          + 4 more dimensions
+        </div>
       </div>
     </div>
 
@@ -110,9 +117,9 @@
           <div class="text-body-2 mb-2">
             1. I think that I would like to use this system frequently.
           </div>
-          <v-radio-group 
-            readonly 
-            inline 
+          <v-radio-group
+            readonly
+            inline
             density="compact"
             class="sus-radio-group"
           >
@@ -124,12 +131,166 @@
               density="compact"
             />
           </v-radio-group>
-          <div class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1">
+          <div
+            class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+          >
             <span>Strongly Disagree</span>
             <span>Strongly Agree</span>
           </div>
         </div>
-        <div class="text-caption text-grey-darken-1 text-center">+ 9 more statements</div>
+        <div class="text-caption text-grey-darken-1 text-center">
+          + 9 more statements
+        </div>
+      </div>
+    </div>
+
+    <!-- TAM-1 Preview -->
+    <div v-else-if="taskType === 'tam-1'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">
+          Technology Acceptance Model (TAM-1)
+        </div>
+        <div class="tam-section mb-3">
+          <div class="text-body-2 font-weight-medium mb-2 text-primary">
+            Perceived Usefulness
+          </div>
+          <div class="tam-item mb-2">
+            <div class="text-body-2 mb-2">
+              Using this system would improve my job performance.
+            </div>
+            <v-radio-group
+              readonly
+              inline
+              density="compact"
+              class="tam-radio-group"
+            >
+              <v-radio
+                v-for="n in 7"
+                :key="n"
+                :value="n"
+                :label="`${n}`"
+                density="compact"
+              />
+            </v-radio-group>
+            <div
+              class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+            >
+              <span>Strongly Disagree</span>
+              <span>Strongly Agree</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-caption text-grey-darken-1 text-center">
+          + 11 more questions (Perceived Usefulness & Ease of Use)
+        </div>
+      </div>
+    </div>
+
+    <!-- TAM-2 Preview -->
+    <div v-else-if="taskType === 'tam-2'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">
+          Technology Acceptance Model (TAM-2)
+        </div>
+        <div class="tam-section mb-3">
+          <div class="text-body-2 font-weight-medium mb-2 text-primary">
+            Perceived Usefulness
+          </div>
+          <div class="tam-item mb-2">
+            <div class="text-body-2 mb-2">
+              Using this system would improve my job performance.
+            </div>
+            <v-radio-group
+              readonly
+              inline
+              density="compact"
+              class="tam-radio-group"
+            >
+              <v-radio
+                v-for="n in 7"
+                :key="n"
+                :value="n"
+                :label="`${n}`"
+                density="compact"
+              />
+            </v-radio-group>
+            <div
+              class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+            >
+              <span>Strongly Disagree</span>
+              <span>Strongly Agree</span>
+            </div>
+          </div>
+        </div>
+        <div class="tam-section mb-3">
+          <div class="text-body-2 font-weight-medium mb-2 text-secondary">
+            Social Influence
+          </div>
+          <div class="text-caption text-grey-darken-1">
+            Subjective Norm, Image factors
+          </div>
+        </div>
+        <div class="text-caption text-grey-darken-1 text-center">
+          Extended TAM with social influence & cognitive processes
+        </div>
+      </div>
+    </div>
+
+    <!-- TAM-3 Preview -->
+    <div v-else-if="taskType === 'tam-3'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">
+          Technology Acceptance Model (TAM-3)
+        </div>
+        <div class="tam-section mb-3">
+          <div class="text-body-2 font-weight-medium mb-2 text-primary">
+            Core Constructs
+          </div>
+          <div class="tam-item mb-2">
+            <div class="text-body-2 mb-2">
+              Using this system would improve my job performance.
+            </div>
+            <v-radio-group
+              readonly
+              inline
+              density="compact"
+              class="tam-radio-group"
+            >
+              <v-radio
+                v-for="n in 7"
+                :key="n"
+                :value="n"
+                :label="`${n}`"
+                density="compact"
+              />
+            </v-radio-group>
+            <div
+              class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+            >
+              <span>Strongly Disagree</span>
+              <span>Strongly Agree</span>
+            </div>
+          </div>
+        </div>
+        <div class="tam-section mb-2">
+          <div class="text-body-2 font-weight-medium mb-1 text-secondary">
+            Individual Differences
+          </div>
+          <div class="text-caption text-grey-darken-1">
+            Computer Self-Efficacy, Anxiety, Playfulness
+          </div>
+        </div>
+        <div class="tam-section mb-3">
+          <div class="text-body-2 font-weight-medium mb-1 text-accent">
+            System Characteristics
+          </div>
+          <div class="text-caption text-grey-darken-1">
+            Perceived Enjoyment, Objective Usability
+          </div>
+        </div>
+        <div class="text-caption text-grey-darken-1 text-center">
+          Comprehensive TAM with individual differences & system characteristics
+        </div>
       </div>
     </div>
 
@@ -146,17 +307,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 defineProps({
   taskType: {
     type: String,
-    default: ''
-  }
-});
+    default: '',
+  },
+})
 
 // Mock data for previews
-const mockRating = ref(4);
+const mockRating = ref(4)
 </script>
 
 <style scoped>
@@ -224,7 +385,30 @@ const mockRating = ref(4);
   margin: 8px 0 4px 0;
 }
 
+.tam-section {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.1);
+  margin-bottom: 8px;
+}
+
+.tam-item {
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.05);
+}
+
+.tam-radio-group {
+  margin: 8px 0 4px 0;
+}
+
 :deep(.sus-radio-group .v-selection-control-group) {
+  justify-content: space-between;
+}
+
+:deep(.tam-radio-group .v-selection-control-group) {
   justify-content: space-between;
 }
 

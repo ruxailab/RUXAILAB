@@ -1,4 +1,5 @@
-import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
+import { NasaTlxAnswer } from '@/ux/UserTest/models/NasaTlxAnswer'
+import { TAMAnswer } from '@/ux/UserTest/models/TAMAnswer'
 
 export default class TaskAnswer {
   constructor({
@@ -15,7 +16,8 @@ export default class TaskAnswer {
     irisTrackingData,
     postAnswer,
     susAnswers,
-    nasaTlxAnswers
+    nasaTlxAnswers,
+    tamAnswers,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -31,6 +33,7 @@ export default class TaskAnswer {
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
+    this.tamAnswers = tamAnswers ?? null
   }
 
   static toModel(data) {
@@ -52,7 +55,20 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
+      nasaTlxAnswers:
+        this.nasaTlxAnswers != null
+          ? (this.nasaTlxAnswers instanceof NasaTlxAnswer
+              ? this.nasaTlxAnswers
+              : new NasaTlxAnswer(this.nasaTlxAnswers)
+            ).toFirestore()
+          : null,
+      tamAnswers:
+        this.tamAnswers != null
+          ? (this.tamAnswers instanceof TAMAnswer
+              ? this.tamAnswers
+              : new TAMAnswer(this.tamAnswers)
+            ).toFirestore()
+          : null,
     }
   }
 }
