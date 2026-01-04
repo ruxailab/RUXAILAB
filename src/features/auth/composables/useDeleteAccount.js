@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import {
     getAuth,
@@ -7,11 +6,32 @@ import {
     EmailAuthProvider,
     reauthenticateWithPopup,
     GoogleAuthProvider,
+    deleteUser,
 } from 'firebase/auth';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/app/plugins/firebase';
 import { showError, showSuccess } from '../../../shared/utils/toast';
 
+const SHARED_ERRORS = {
+    'auth/network-request-failed': 'errors.networkError',
+    'auth/requires-recent-login': 'profile.recentLoginRequired',
+};
+
+const GOOGLE_ERRORS = {
+    ...SHARED_ERRORS,
+    'auth/popup-closed-by-user': 'errors.authenticationCancelled',
+    'auth/cancelled-popup-request': 'errors.authenticationCancelled',
+    'auth/popup-blocked': 'errors.popupBlocked',
+};
+
+const EMAIL_ERRORS = {
+    ...SHARED_ERRORS,
+    'auth/wrong-password': 'errors.incorrectPassword',
+    'auth/invalid-credential': 'errors.incorrectPassword',
+    'auth/too-many-requests': 'errors.tooManyAttempts',
+};
+
 export function useDeleteAccount() {
-    const { t } = useI18n();
     const store = useStore();
 
     const isDeleting = ref(false);
@@ -19,18 +39,58 @@ export function useDeleteAccount() {
     const deleteConfirmText = ref('');
     const userPassword = ref('');
 
+    const handleAuthError = (error, errorMap) => {
+        console.error('Account Deletion Error:', error);
+        const messageKey = errorMap[error.code] || 'profile.accountDeletionFailed';
+        showError(messageKey);
+    };
+
     const deleteAccount = async (user) => {
-        await store.dispatch('deleteAuth', user.uid);
-        showSuccess('profile.accountDeletedSuccess');
-        await signOut();
+        try {
+            const userDocRef = doc(db, 'users', user.uid); 
+            await deleteDoc(userDocRef);
+            console.log('Firestore user document deleted');
+
+            await store.dispatch('deleteAuth', user.uid);
+            console.log('Vuex store cleanup completed');
+
+            await deleteUser(user);
+            console.log('Firebase Auth user deleted');
+
+            showSuccess('profile.accountDeletedSuccess');
+            
+            await signOut();
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            
+            if (error.code === 'permission-denied') {
+                showError('profile.permissionDenied');
+            } else if (error.code === 'not-found') {
+                console.warn('Firestore document not found, continuing...');
+                try {
+                    await deleteUser(user);
+                    showSuccess('profile.accountDeletedSuccess');
+                    await signOut();
+                } catch (authError) {
+                    showError('profile.accountDeletionFailed');
+                    throw authError;
+                }
+            } else {
+                showError('profile.accountDeletionFailed');
+                throw error;
+            }
+        }
     };
 
     const signOut = async () => {
         try {
-            await store.dispatch('logout');
-            globalThis.location.href = '/';
+            await store.dispatch('logout', { silent: true })
+            setTimeout(() => {
+                globalThis.location.href = '/';
+            }, 500);
         } catch (error) {
-            console.log(error);
+            console.error('Error signing out:', error);
+            globalThis.location.href = '/';
         }
     };
 
@@ -38,7 +98,11 @@ export function useDeleteAccount() {
         const auth = getAuth();
         const user = auth.currentUser;
 
-        // Check if user uses Google provider
+        if (!user) {
+            showError('profile.userNotFound');
+            return;
+        }
+
         const hasGoogleProvider = user.providerData.some(
             (provider) => provider.providerId === 'google.com'
         );
@@ -51,10 +115,11 @@ export function useDeleteAccount() {
         try {
             isDeleting.value = true;
             await reauthenticateWithPopup(user, new GoogleAuthProvider());
+            console.log('Google reauthentication successful');
             await deleteAccount(user);
         } catch (error) {
-            console.error('Error during account deletion:', error);
-            showError('profile.accountDeletionFailed');
+            console.error('Error during Google account deletion:', error);
+            handleAuthError(error, GOOGLE_ERRORS);
         } finally {
             isDeleting.value = false;
         }
@@ -64,6 +129,11 @@ export function useDeleteAccount() {
         const auth = getAuth();
         const user = auth.currentUser;
 
+        if (!user) {
+            showError('profile.userNotFound');
+            return;
+        }
+
         if (!userPassword.value) {
             showError('profile.passwordRequired');
             return;
@@ -71,12 +141,15 @@ export function useDeleteAccount() {
 
         try {
             isDeleting.value = true;
+            
             const cred = EmailAuthProvider.credential(user.email, userPassword.value);
             await reauthenticateWithCredential(user, cred);
+            console.log('Email reauthentication successful');
+            
             await deleteAccount(user);
         } catch (error) {
-            console.error('Error during account deletion:', error);
-            showError('profile.accountDeletionFailed');
+            console.error('Error during email account deletion:', error);
+            handleAuthError(error, EMAIL_ERRORS);
         } finally {
             isDeleting.value = false;
         }
