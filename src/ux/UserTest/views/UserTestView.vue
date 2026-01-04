@@ -136,7 +136,7 @@
                   <v-divider />
                   <v-stepper-item :value="hasEyeTracking ? 6 : 5" title="Completion"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)" color="white" complete-icon="mdi-check" />
-                </v-stepper-header>
+                </v-stepper-header>              
               </v-stepper>
             </v-col>
           </v-row>
@@ -186,10 +186,11 @@
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
-            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
+            :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers" :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
             @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
             @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+            @update:tamAnswers="val => { localTestAnswer.tasks[taskIndex].tamAnswers = { ...val } }"
             @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
@@ -254,7 +255,9 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
 import Snackbar from '@/shared/components/Snackbar';
 import { nanoid } from 'nanoid';
+// import { validateStepNavigation, handleStepNavigation } from '@/ux/UserTest/utils/stepNavigation';
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
+import StepperHeader from '@/ux/UserTest/components/StepperHeader.vue';
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
@@ -685,6 +688,14 @@ const completeStep = (id, type, userCompleted = true) => {
   }
 };
 
+/**
+ * Navigate to a specific step in the progress bar
+ * @param {number} stepValue - The step number to navigate to
+ */
+const navigateToStep = (stepValue) => {
+  // Navigation removed
+};
+
 const autoComplete = async () => {
   if (!localTestAnswer || !items.value || !Array.isArray(items.value) || items.value.length < 3) return;
 
@@ -848,8 +859,45 @@ const mappingSteps = async () => {
         })),
         id: 1,
       });
-      if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
-        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
+      if ((!localTestAnswer.tasks || Object.keys(localTestAnswer.tasks).length === 0) && Array.isArray(test.value.testStructure.userTasks)) {
+        localTestAnswer.tasks = {};
+        test.value.testStructure.userTasks.forEach((task, i) => {
+          const getTamStructure = () => {
+            if (task.taskType === 'tam-1') {
+              return {
+                perceivedUsefulness: Array(5).fill(undefined),
+                perceivedEaseOfUse: Array(5).fill(undefined)
+              };
+            } else if (task.taskType === 'tam-2') {
+              return {
+                perceivedUsefulness: Array(5).fill(undefined),
+                perceivedEaseOfUse: Array(5).fill(undefined),
+                subjectiveNorm: Array(3).fill(undefined),
+                image: Array(2).fill(undefined),
+                jobRelevance: Array(3).fill(undefined),
+                outputQuality: Array(3).fill(undefined),
+                resultDemonstrability: Array(2).fill(undefined)
+              };
+            } else if (task.taskType === 'tam-3') {
+              return {
+                perceivedUsefulness: Array(5).fill(undefined),
+                perceivedEaseOfUse: Array(5).fill(undefined),
+                subjectiveNorm: Array(3).fill(undefined),
+                image: Array(2).fill(undefined),
+                jobRelevance: Array(3).fill(undefined),
+                outputQuality: Array(3).fill(undefined),
+                resultDemonstrability: Array(2).fill(undefined),
+                computerSelfEfficacy: Array(3).fill(undefined),
+                perceptionsOfExternalControl: Array(3).fill(undefined),
+                computerAnxiety: Array(3).fill(undefined),
+                computerPlayfulness: Array(2).fill(undefined),
+                perceivedEnjoyment: Array(3).fill(undefined),
+                objectiveUsability: Array(2).fill(undefined)
+              };
+            }
+            return {};
+          };
+
           const newTask = new TaskAnswer({
             taskId: task.id || i,
             taskAnswer: '',
@@ -859,10 +907,11 @@ const mappingSteps = async () => {
             completed: false,
             attempted: false, // Track whether task has been attempted
             susAnswers: [],
-            nasaTlxAnswers: {}
+            nasaTlxAnswers: {},
+            tamAnswers: getTamStructure()
           });
           console.log('Nueva tarea creada:', i, newTask);
-          return newTask;
+          localTestAnswer.tasks[i] = newTask;
         });
       }
     }
