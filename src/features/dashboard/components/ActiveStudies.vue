@@ -114,7 +114,7 @@ const isLongDescription = (description) => {
 };
 
 const studies = computed(() => {
-  return props.studies.length > 0  ? studiesWithAnswers.value : loading  ? [] : defaultStudies
+  return props.studies.length > 0 ? studiesWithAnswers.value : loading.value ? [] : defaultStudies
 })
 
 const lastFourStudies = computed(() => {
