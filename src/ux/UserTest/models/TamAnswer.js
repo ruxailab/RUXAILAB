@@ -43,21 +43,27 @@ export class TamAnswer {
   }
 
   toFirestore() {
+    // Helper function to filter out undefined values from arrays
+    const filterUndefined = (arr) => {
+      if (!arr || !Array.isArray(arr)) return [];
+      return arr.filter(val => val !== undefined && val !== null);
+    };
+
     return {
       tamVersion: this.tamVersion,
-      perceivedUsefulness: this.perceivedUsefulness,
-      perceivedEaseOfUse: this.perceivedEaseOfUse,
-      subjectiveNorm: this.subjectiveNorm,
-      image: this.image,
-      jobRelevance: this.jobRelevance,
-      outputQuality: this.outputQuality,
-      resultDemonstrability: this.resultDemonstrability,
-      computerSelfEfficacy: this.computerSelfEfficacy,
-      perceptionsOfExternalControl: this.perceptionsOfExternalControl,
-      computerAnxiety: this.computerAnxiety,
-      computerPlayfulness: this.computerPlayfulness,
-      perceivedEnjoyment: this.perceivedEnjoyment,
-      objectiveUsability: this.objectiveUsability
+      perceivedUsefulness: filterUndefined(this.perceivedUsefulness),
+      perceivedEaseOfUse: filterUndefined(this.perceivedEaseOfUse),
+      subjectiveNorm: filterUndefined(this.subjectiveNorm),
+      image: filterUndefined(this.image),
+      jobRelevance: filterUndefined(this.jobRelevance),
+      outputQuality: filterUndefined(this.outputQuality),
+      resultDemonstrability: filterUndefined(this.resultDemonstrability),
+      computerSelfEfficacy: filterUndefined(this.computerSelfEfficacy),
+      perceptionsOfExternalControl: filterUndefined(this.perceptionsOfExternalControl),
+      computerAnxiety: filterUndefined(this.computerAnxiety),
+      computerPlayfulness: filterUndefined(this.computerPlayfulness),
+      perceivedEnjoyment: filterUndefined(this.perceivedEnjoyment),
+      objectiveUsability: filterUndefined(this.objectiveUsability)
     };
   }
 
