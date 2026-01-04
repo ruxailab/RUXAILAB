@@ -146,12 +146,19 @@
 
 <script setup>
 // ===== Imports =====
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
-import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
+
+const props = defineProps({
+  sessions: {
+    type: Array,
+    default: () => [],
+  },
+});
 
 // ===== State and setup =====
 const store = useStore();
@@ -183,8 +190,11 @@ const searchSessions = ref('');
 // Dynamically build evaluator dropdown based on sessions
 const evaluatorOptions = computed(() => {
   const evaluatorsSet = new Set();
-  filteredModeratedSessions.value.forEach(s => evaluatorsSet.add(s.evaluator));
-  return [{ text: 'All', value: 'all' }, ...Array.from(evaluatorsSet).map(ev => ({ text: ev, value: ev }))];
+  props.sessions.forEach((s) => evaluatorsSet.add(s.evaluator));
+  return [
+    { text: 'All', value: 'all' },
+    ...Array.from(evaluatorsSet).map((ev) => ({ text: ev, value: ev })),
+  ];
 });
 
 // Session status options
@@ -207,11 +217,10 @@ const hasActiveSessionFilters = computed(() => {
 });
 
 // ===== Main session filtering logic =====
-const tests = computed(() => store.getters.tests || []);
 const user = computed(() => store.getters.user);
 
 const filteredSessions = computed(() => {
-  return filteredModeratedSessions.value.filter(session => {
+  return props.sessions.filter((session) => {
     // 🔍 Search filter
     const matchesSearch =
       !searchSessions.value ||
@@ -279,57 +288,6 @@ const goTo = (test) => {
     router.push(`testview/${test.id}/${user.value.id}`);
   }
 };
-
-// ===== Data fetching & filtering =====
-
-// Build moderated session list (tests of type MODERATED)
-const filteredModeratedSessions = computed(() => {
-  const cooperatorArray = [];
-  if (!tests.value) return [];
-
-  tests.value.forEach((testObj) => {
-    if (!testObj) return;
-
-    // If user is a cooperator
-    const cooperatorObj = testObj.cooperators?.find(
-      (coop) => coop.userDocId === user.value?.id
-    );
-    if (cooperatorObj && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
-      cooperatorArray.push({
-        ...cooperatorObj,
-        testTitle: testObj.testTitle,
-        testAdmin: testObj.testAdmin,
-        id: testObj.id,
-        testType: testObj.testType,
-        subType: testObj.subType,
-        testDescription: testObj.testDescription,
-        evaluator: cooperatorObj.email,
-        testDate: cooperatorObj.testDate
-      });
-    }
-
-    // If user is test admin, include all cooperators
-    if (testObj.testAdmin?.userDocId === user.value?.id && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
-      testObj.cooperators?.forEach((coop) => {
-        cooperatorArray.push({
-          ...coop,
-          testTitle: testObj.testTitle,
-          testAdmin: testObj.testAdmin,
-          id: testObj.id,
-          testType: testObj.testType,
-          subType: testObj.subType,
-          evaluator: coop.email,
-          testDescription: testObj.testDescription,
-        });
-      });
-    }
-  });
-
-  return cooperatorArray;
-});
-
-// ===== Lifecycle hooks =====
-
 </script>
 
 <style scoped>
