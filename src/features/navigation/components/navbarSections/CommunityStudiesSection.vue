@@ -44,7 +44,7 @@
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
+              location="bottom"
               max-width="290px"
               min-width="290px"
             >
@@ -140,19 +140,17 @@
 
 <script setup>
 // 🔧 Imports and setup
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import {
-  getMethodManagerView,
   getMethodOptions,
   METHOD_DEFINITIONS,
   METHOD_STATUSES,
   STUDY_TYPES,
   USER_STUDY_SUBTYPES
 } from '@/shared/constants/methodDefinitions';
-import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
 
 const store = useStore();
 const router = useRouter();
