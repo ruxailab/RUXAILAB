@@ -38,7 +38,7 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <SessionsSection />
+          <SessionsSection :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'templates'">
