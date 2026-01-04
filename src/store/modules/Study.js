@@ -95,7 +95,8 @@ export default {
 
       try {
         const res = await studyController.createStudy(payload)
-        commit('SET_TEST', res.id)
+        payload.id = res.id
+        commit('SET_TEST', payload)
         return res.id
       } catch (err) {
         commit('setError', true)
