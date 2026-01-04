@@ -114,6 +114,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { dashboardNavigationItems } from '@/features/dashboard';
 
 // Props
 const props = defineProps({
@@ -148,6 +149,10 @@ const props = defineProps({
   testTitle: {
     type: String,
     default: 'Test'
+  },
+  testItems: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -182,7 +187,11 @@ const testIcon = computed(() => {
 
 const filteredTestItems = computed(() => {
   if (!props.isInTest || !props.testType) return [];
-  return getFilteredTestItems(props.testType, props.userAccessLevel);
+  return props.testItems;
+});
+
+const globalNavigationItems = computed(() => {
+  return dashboardNavigationItems;
 });
 
 // Methods
@@ -216,6 +225,28 @@ const exitTest = () => {
 const signOut = () => {
   emit('sign-out');
   closeDrawer();
+};
+
+const getUserInitials = (user) => {
+  if (!user) return 'U';
+  
+  if (user.displayName) {
+    const names = user.displayName.trim().split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
+    return names[0][0].toUpperCase();
+  }
+  
+  if (user.username) {
+    return user.username[0].toUpperCase();
+  }
+  
+  if (user.email) {
+    return user.email[0].toUpperCase();
+  }
+  
+  return 'U';
 };
 
 const getAccessLevelText = (level) => {
