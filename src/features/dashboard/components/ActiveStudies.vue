@@ -91,6 +91,7 @@ import AnswerController from '@/shared/controllers/AnswerController';
 import { getMethodIcon, getMethodManagerView, STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 const props = defineProps({
   studies: {
@@ -100,11 +101,13 @@ const props = defineProps({
 })
 
 const router = useRouter();
+const store = useStore();
 const answerController = new AnswerController()
 
 const loading = ref(false);
 const studiesWithAnswers = ref([]);
 const expandedStudies = ref({});
+const user = computed(() => store.getters.user);
 
 const isLongDescription = (description) => {
   return description && description.length > 250;
@@ -177,7 +180,7 @@ const finalFour = (studyArr) => {
     return
   }
   studiesWithAnswers.value = studyArr.map(study => ({
-    id: study.id,
+    id: study.testDocId || study.id,
     title: study.testTitle,
     description: study.testDescription,
     isLongDescription: isLongDescription(study.testDescription),
@@ -188,15 +191,47 @@ const finalFour = (studyArr) => {
     typeIcon: 'mdi-sort-variant',
     testType: study.testType,
     subType: study.subType,
+    testAdmin: study.testAdmin,
+    cooperators: study.cooperators,
+    isPublic: study.isPublic,
   }))
   .filter((study, index, self) =>
     index === self.findIndex(m => m.id === study.id)
   );
 }
 
+const canManageStudy = (study) => {
+  const currentUser = user.value;
+  if (!currentUser || !study) return false;
+  if (currentUser.accessLevel === 0) return true;
+  if (study.testAdmin?.userDocId === currentUser.id) return true;
+  const coop = study.cooperators?.find(c => c.userDocId === currentUser.id);
+  return coop?.accessLevel === 0;
+};
+
 const goToStudy = async (study) => {
-  const methodView = getMethodManagerView(study.testType, study.subType)
-  router.push({ name: methodView, params: { id: study.id } })
+  if (canManageStudy(study)) {
+    const methodView = getMethodManagerView(study.testType, study.subType)
+    router.push({ name: methodView, params: { id: study.id } })
+    return;
+  }
+
+  if (study.testType === STUDY_TYPES.CARD_SORTING) {
+    router.push({ name: 'CardSortingTestView', params: { id: study.id } })
+    return;
+  }
+
+  if (study.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
+    router.push({ name: 'AccessibilityPreviewTest', params: { id: study.id } })
+    return;
+  }
+
+  if (study.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
+    router.push({ name: 'AccessibilityReport', params: { id: study.id } })
+    return;
+  }
+
+  router.push({ name: 'TestView', params: { id: study.id } })
 }
 
 const viewAllStudies = () => {
