@@ -6,7 +6,9 @@ function loadLocaleMessages() {
   locales.keys().forEach((key) => {
     const filename = key.split('/').pop() || ''
     if (!filename.toLowerCase().endsWith('.json')) return
-    const locale = filename.slice(0, -'.json'.length)
+    const match = filename.match(/^([A-Za-z0-9-_]+)\.json$/i)
+    if (!match) return
+    const locale = match[1]
     if (locale) messages[locale] = locales(key)
   })
   console.info('Loaded locale messages:', Object.keys(messages))
