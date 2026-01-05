@@ -34,7 +34,8 @@
             style="color: #f9a826"
             variant="outlined"
             rounded
-            @click="goBack"
+            :aria-label="$t('AccessNotAllowed.goHome')"
+            @click="goToAdmin"
           >
             {{ $t('AccessNotAllowed.goHome') }}
           </v-btn>
@@ -50,9 +51,9 @@ import { useRouter } from 'vue-router';
 // Initialize router
 const router = useRouter();
 
-// Define goBack function
-const goBack = () => {
-  router.push('/admin');
+// Define goToAdmin function
+const goToAdmin = () => {
+  router.push('/admin').catch(() => {});
 };
 </script>
 
