@@ -30,7 +30,9 @@ COPY firebase.json .
 COPY firestore.rules .
 COPY firestore.indexes.json .
 COPY storage.rules .
-RUN touch /firebase-emulator/firebase-debug.log && chown firebase:firebase /firebase-emulator/firebase-debug.log
+RUN chown -R firebase:firebase /firebase-emulator && \
+    touch /firebase-emulator/firebase-debug.log && \
+    chown firebase:firebase /firebase-emulator/firebase-debug.log
 
 # Expose the emulator ports
 # If you use non standard ports change them to the ones in your firebase.json
