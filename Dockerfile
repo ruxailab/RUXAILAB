@@ -26,11 +26,11 @@ WORKDIR /app
 # Run as a non-root user in production
 RUN addgroup -S app && adduser -S app -G app
 
-# Copy the built application from the build stage with correct ownership
-COPY --chown=app:app --from=build-stage /app/dist /app
+# Copy WITHOUT --chown first
+COPY --from=build-stage /app/dist /app
 
-# Make application files read-only for security (SonarCloud requirement)
-RUN chmod -R 555 /app
+# Then chown AND chmod in same layer
+RUN chown -R app:app /app && chmod -R 555 /app
 
 # Expose the port that 'serve' will run on
 EXPOSE 5000
