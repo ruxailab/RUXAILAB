@@ -1,7 +1,7 @@
 <template>
   <v-overlay
     v-if="$route.path.includes('manager')"
-    v-model="loading"
+    :model-value="loading"
     class="d-flex flex-column justify-center align-center text-center"
   >
     <template v-if="type === 'logo'">

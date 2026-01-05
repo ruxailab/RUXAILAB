@@ -1,74 +1,61 @@
 <template>
   <div class="task-basic-info">
     <v-form ref="basicInfoForm">
-    <div class="step-header mb-6">
-      <h3 class="text-h6 font-weight-bold mb-2">Step 1: Task Basic Information</h3>
-      <p class="text-body-2 text-grey-darken-1 mb-0">
-        Define what participants will do in this task. This is the foundation of your user test - be clear and specific about the goals and expectations.
-      </p>
-    </div>
+      <div class="step-header mb-6">
+        <h3 class="text-h6 font-weight-bold mb-2">Step 1: Task Basic Information</h3>
+        <p class="text-body-2 text-grey-darken-1 mb-0">
+          Define what participants will do in this task. This is the foundation of your user test - be clear and
+          specific about the goals and expectations.
+        </p>
+      </div>
 
-    <v-row>
-      <v-col cols="12" class="pb-0 mb-0">
-        <p class="text-subtitle-2 font-weight-medium">
-          Task title <span class="text-error">*</span>
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-2">
-          <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
-          Give your task a clear, concise name that describes what participants need to accomplish
-        </p>
-        <v-text-field
-          v-model="localTask.taskName"
-          :rules="validationRules"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-format-title"
-          placeholder="e.g., 'Find product information', 'Complete checkout process'"
-          @input="validateStep"
-        />
-      </v-col>
+      <v-row>
+        <v-col cols="12" class="pb-0 mb-0">
+          <p class="text-subtitle-2 font-weight-medium">
+            Task title <span class="text-error">*</span>
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-2">
+            <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
+            Give your task a clear, concise name that describes what participants need to accomplish
+          </p>
+          <v-text-field v-model="localTask.taskName" :rules="validationRules" variant="outlined" density="comfortable"
+            prepend-inner-icon="mdi-format-title"
+            placeholder="e.g., 'Find product information', 'Complete checkout process'" @input="validateStep" />
+        </v-col>
 
-      <v-col cols="12">
-        <p class="text-subtitle-2 font-weight-medium d-block">
-          Task Description <span class="text-error">*</span>
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-2">
-          <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
-          Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow.
-        </p>
-        <div class="description-editor" :class="{ 'editor-error': showDescriptionError && !localTask.taskDescription?.trim() }">
-          <quill-editor
-            v-model:value="localTask.taskDescription"
-            :options="editorOptions"
-            class="custom-editor"
-            @change="onChangeEditor"
-            @blur="checkDescriptionValidation"
-          />
-        </div>
+        <v-col cols="12">
+          <p class="text-subtitle-2 font-weight-medium d-block">
+            Task Description <span class="text-error">*</span>
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-2">
+            <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
+            Provide detailed instructions for participants. Include the goal, context, and any specific steps they
+            should follow.
+          </p>
+          <div class="description-editor"
+            :class="{ 'editor-error': showDescriptionError && !localTask.taskDescription?.trim() }">
+            <quill-editor v-model:value="localTask.taskDescription" :options="editorOptions" class="custom-editor"
+              @change="onChangeEditor" @blur="checkDescriptionValidation" />
+          </div>
           <span v-if="showDescriptionError && !localTask.taskDescription?.trim()" class="error-text ml-4">
             {{ t('Field Required') }}
           </span>
-      </v-col>
+        </v-col>
 
-      <v-col cols="12">
-        <p class="text-subtitle-2 font-weight-medium">
-          {{ $t('buttons.tip') }}
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-2">
-          <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
-          Optional guidance or hints to help participants during the task
-        </p>
-        <v-text-field
-          v-model="localTask.taskTip"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-lightbulb-outline"
-          placeholder="e.g., 'Focus on the main navigation', 'Take your time to explore'"
-          @input="validateStep"
-        />
-      </v-col>
-    </v-row>
-   </v-form>
+        <v-col cols="12">
+          <p class="text-subtitle-2 font-weight-medium">
+            {{ $t('buttons.tip') }}
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-2">
+            <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
+            Optional guidance or hints to help participants during the task
+          </p>
+          <v-text-field v-model="localTask.taskTip" variant="outlined" density="comfortable"
+            prepend-inner-icon="mdi-lightbulb-outline"
+            placeholder="e.g., 'Focus on the main navigation', 'Take your time to explore'" @input="validateStep" />
+        </v-col>
+      </v-row>
+    </v-form>
   </div>
 </template>
 
@@ -100,7 +87,7 @@ const editorOptions = {
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
       ['link'],
       ['clean']
     ]
@@ -110,11 +97,11 @@ const editorOptions = {
 const completionPercentage = computed(() => {
   let completed = 0;
   const total = 3;
-  
+
   if (localTask.value.taskName?.trim()) completed++;
   if (localTask.value.taskDescription?.trim()) completed++;
   if (localTask.value.taskTip?.trim()) completed++;
-  
+
   return Math.round((completed / total) * 100);
 });
 
@@ -138,7 +125,7 @@ const checkTaskNameValidation = () => {
 
 const checkDescriptionValidation = () => {
   const descOk = !!localTask.value.taskDescription?.trim();
-  if(!descOk) showDescriptionError.value = true;
+  if (!descOk) showDescriptionError.value = true;
   else showDescriptionError.value = false;
   return descOk;
 };
@@ -219,7 +206,7 @@ watch(
   .step-header {
     padding: 16px;
   }
-  
+
   :deep(.custom-editor .ql-editor) {
     min-height: 100px;
   }
