@@ -33,6 +33,7 @@
     }
   },
   "common": {
+    "user": "User",
     "loading": "Test laden",
     "continueAs": "Fortfahren als",
     "notUser": "Nicht {userEmail}?",
@@ -1034,5 +1035,9 @@
         "upcoming": "Bevorstehend"
       }
     }
+  },
+  "dashboard": {
+    "welcome_back": "Welcome back, {name}!",
+    "subtitle": "Here's what's happening with your research projects today"
   }
 }

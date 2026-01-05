@@ -3,10 +3,10 @@
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
-        Welcome back, {{ userDisplayName }}! 👋
+        {{ t('dashboard.welcome_back', { name: userDisplayName }) }} 👋
       </h1>
       <p class="text-subtitle-1 text-grey-darken-1">
-        Here's what's happening with your research projects today
+        {{ t('dashboard.subtitle') }}
       </p>
     </div>
 
@@ -53,6 +53,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
 import ActiveStudies from '@/features/dashboard/components/ActiveStudies.vue'
@@ -75,6 +76,7 @@ const props = defineProps({
   },
 })
 
+const { t } = useI18n()
 const store = useStore()
 
 const usedStorage = ref(0);
@@ -82,7 +84,7 @@ const nextSession = ref(null);
 
 const userDisplayName = computed(() => {
   const user = store.getters.user;
-  return user?.username?.split(' ')[0] || 'User';
+  return user?.username?.split(' ')[0] || t('common.user');
 });
 
 const userStorageUsage = computed(() => {
@@ -119,7 +121,7 @@ const topMethodsData = computed(() => {
         methodCounts[key] = {
           id: key,
           count: 0,
-          name: def.nameEn,
+          name: t(def.i18nKey),
           type: def.name,
           icon: def.icon,
           color: def.color,
