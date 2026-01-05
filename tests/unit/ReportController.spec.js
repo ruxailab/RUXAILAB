@@ -1,4 +1,5 @@
 import ReportController from '@/shared/controllers/ReportController'
+import { createControllerSpies, createMockDoc } from './helpers/testUtils'
 
 jest.mock('firebase/firestore', () => ({
     doc: jest.fn(),
@@ -22,10 +23,20 @@ jest.mock('@/shared/constants/methodDefinitions', () => ({
 
 describe('ReportController', () => {
     let reportController
+    let spies
+
+    const mockReport = { userDocId: 'user-123' }
+    const mockTestHeuristic = { id: 'test-456', answersDocId: 'answer-789', testType: 'HEURISTIC' }
+    const mockTestUser = { id: 'test-456', answersDocId: 'answer-789', testType: 'USER' }
 
     beforeEach(() => {
         jest.clearAllMocks()
         reportController = new ReportController()
+        spies = createControllerSpies(reportController)
+    })
+
+    afterEach(() => {
+        spies.restore()
     })
 
     describe('Structure', () => {
@@ -35,190 +46,59 @@ describe('ReportController', () => {
     })
 
     describe('removeReport', () => {
-        const mockReport = {
-            userDocId: 'user-123'
-        }
-
-        const mockTestHeuristic = {
-            id: 'test-456',
-            answersDocId: 'answer-789',
-            testType: 'HEURISTIC'
-        }
-
-        const mockTestUser = {
-            id: 'test-456',
-            answersDocId: 'answer-789',
-            testType: 'USER'
+        const setupMocks = (userExists = true, answerExists = true) => {
+            spies.mockReadOne(createMockDoc(userExists))
+            spies.mockReadOne(createMockDoc(answerExists))
+            spies.mockUpdate()
+            spies.mockDeleteField()
         }
 
         it('should use heuristicAnswers for HEURISTIC test type', async () => {
-            const mockUserDoc = { exists: () => true }
-            const mockAnswerDoc = { exists: () => true }
+            setupMocks()
+            const result = await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
 
-            const readOneSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'readOne')
-                .mockResolvedValueOnce(mockUserDoc)
-                .mockResolvedValueOnce(mockAnswerDoc)
-
-            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'update')
-                .mockResolvedValue()
-
-            jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'getDeleteField')
-                .mockReturnValue('DELETE_FIELD_SENTINEL')
-
-            const result = await reportController.removeReport({
-                report: mockReport,
-                test: mockTestHeuristic
-            })
-
-            expect(updateSpy).toHaveBeenCalledWith(
-                'answers',
-                'answer-789',
-                { 'heuristicAnswers.user-123': 'DELETE_FIELD_SENTINEL' }
-            )
+            expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', { 'heuristicAnswers.user-123': 'DELETE_FIELD_SENTINEL' })
             expect(result).toEqual({ success: true })
-
-            readOneSpy.mockRestore()
-            updateSpy.mockRestore()
         })
 
         it('should use taskAnswers for USER test type', async () => {
-            const mockUserDoc = { exists: () => true }
-            const mockAnswerDoc = { exists: () => true }
+            setupMocks()
+            const result = await reportController.removeReport({ report: mockReport, test: mockTestUser })
 
-            const readOneSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'readOne')
-                .mockResolvedValueOnce(mockUserDoc)
-                .mockResolvedValueOnce(mockAnswerDoc)
-
-            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'update')
-                .mockResolvedValue()
-
-            jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'getDeleteField')
-                .mockReturnValue('DELETE_FIELD_SENTINEL')
-
-            const result = await reportController.removeReport({
-                report: mockReport,
-                test: mockTestUser
-            })
-
-            expect(updateSpy).toHaveBeenCalledWith(
-                'answers',
-                'answer-789',
-                { 'taskAnswers.user-123': 'DELETE_FIELD_SENTINEL' }
-            )
+            expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', { 'taskAnswers.user-123': 'DELETE_FIELD_SENTINEL' })
             expect(result).toEqual({ success: true })
-
-            readOneSpy.mockRestore()
-            updateSpy.mockRestore()
         })
 
         it('should remove user reference when user document exists', async () => {
-            const mockUserDoc = { exists: () => true }
-            const mockAnswerDoc = { exists: () => true }
+            setupMocks()
+            await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
 
-            const readOneSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'readOne')
-                .mockResolvedValueOnce(mockUserDoc)
-                .mockResolvedValueOnce(mockAnswerDoc)
-
-            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'update')
-                .mockResolvedValue()
-
-            jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'getDeleteField')
-                .mockReturnValue('DELETE_FIELD_SENTINEL')
-
-            await reportController.removeReport({
-                report: mockReport,
-                test: mockTestHeuristic
-            })
-
-            expect(updateSpy).toHaveBeenCalledWith(
-                'users',
-                'user-123',
-                { 'myAnswers.test-456': 'DELETE_FIELD_SENTINEL' }
-            )
-
-            readOneSpy.mockRestore()
-            updateSpy.mockRestore()
+            expect(spies.update).toHaveBeenCalledWith('users', 'user-123', { 'myAnswers.test-456': 'DELETE_FIELD_SENTINEL' })
         })
 
         it('should not update user when user document does not exist', async () => {
-            const mockUserDoc = { exists: () => false }
-            const mockAnswerDoc = { exists: () => true }
+            setupMocks(false, true)
+            await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
 
-            const readOneSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'readOne')
-                .mockResolvedValueOnce(mockUserDoc)
-                .mockResolvedValueOnce(mockAnswerDoc)
-
-            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'update')
-                .mockResolvedValue()
-
-            jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'getDeleteField')
-                .mockReturnValue('DELETE_FIELD_SENTINEL')
-
-            await reportController.removeReport({
-                report: mockReport,
-                test: mockTestHeuristic
-            })
-
-            // Should only be called once for answers, not for users
-            expect(updateSpy).toHaveBeenCalledTimes(1)
-            expect(updateSpy).toHaveBeenCalledWith(
-                'answers',
-                'answer-789',
-                expect.anything()
-            )
-
-            readOneSpy.mockRestore()
-            updateSpy.mockRestore()
+            expect(spies.update).toHaveBeenCalledTimes(1)
+            expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', expect.anything())
         })
 
         it('should not update answer when answer document does not exist', async () => {
-            const mockUserDoc = { exists: () => true }
-            const mockAnswerDoc = { exists: () => false }
+            setupMocks(true, false)
+            await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
 
-            const readOneSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'readOne')
-                .mockResolvedValueOnce(mockUserDoc)
-                .mockResolvedValueOnce(mockAnswerDoc)
-
-            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'update')
-                .mockResolvedValue()
-
-            jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'getDeleteField')
-                .mockReturnValue('DELETE_FIELD_SENTINEL')
-
-            await reportController.removeReport({
-                report: mockReport,
-                test: mockTestHeuristic
-            })
-
-            // Should only be called once for users, not for answers
-            expect(updateSpy).toHaveBeenCalledTimes(1)
-            expect(updateSpy).toHaveBeenCalledWith(
-                'users',
-                'user-123',
-                expect.anything()
-            )
-
-            readOneSpy.mockRestore()
-            updateSpy.mockRestore()
+            expect(spies.update).toHaveBeenCalledTimes(1)
+            expect(spies.update).toHaveBeenCalledWith('users', 'user-123', expect.anything())
         })
 
         it('should return error when operation fails', async () => {
             const mockError = new Error('Firestore error')
+            spies.readOne.mockRejectedValue(mockError)
 
-            const readOneSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(reportController)), 'readOne')
-                .mockRejectedValue(mockError)
+            const result = await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
 
-            const result = await reportController.removeReport({
-                report: mockReport,
-                test: mockTestHeuristic
-            })
-
-            expect(result).toEqual({
-                success: false,
-                error: mockError
-            })
-
-            readOneSpy.mockRestore()
+            expect(result).toEqual({ success: false, error: mockError })
         })
     })
 })
