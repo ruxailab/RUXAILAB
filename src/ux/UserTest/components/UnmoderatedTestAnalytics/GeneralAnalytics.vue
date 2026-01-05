@@ -353,7 +353,8 @@ import CommentListCard from '../answers/CommentListCard.vue';
 import SelectionPieChart from '../answers/SelectionPieChart.vue';
 import AnswersTimeline from '../answers/AnswersTimeline.vue';
 import axios from 'axios';
-import { getAverageSatisfaction as calculateAverageSatisfaction } from '../../utils/satisfactionCalculator';
+import { calculateSUSScore } from '../../utils/susCalculator';
+import { getNASATLXData } from '../../utils/nasaTlxData';
 import { useFilterDefinitions } from './useFilterDefinitions';
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
@@ -784,9 +785,53 @@ const calculateSatisfaction = () => {
   return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount;
 };
 
+const getAverageSUSSatisfaction = (answersData) => {
+  let totalSUS = 0;
+  let susCount = 0
+
+  Object.values(answersData).forEach(item => {
+    if (!item.tasks) return
+    Object.values(item.tasks).forEach(task => {
+      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) {
+        const susScore = calculateSUSScore(task.susAnswers)
+        totalSUS += susScore
+        susCount++
+      }
+    })
+  })
+
+  return susCount === 0 ? 0 : totalSUS / susCount
+}
+
 const getAverageSatisfaction = () => {
-  return calculateAverageSatisfaction(answers.value);
-};
+  let hasSUS = false
+  let hasNASATLX = false
+  let nasaTlxResponses = []
+
+  Object.values(answers.value).forEach(item => {
+    if (!item.tasks) return
+    Object.values(item.tasks).forEach(task => {
+      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) hasSUS = true
+      if (task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object') {
+        hasNASATLX = true
+        nasaTlxResponses.push({
+          nasaTlxAnswers: task.nasaTlxAnswers
+        })
+      }
+    })
+  })
+
+  if (hasSUS && !hasNASATLX) {
+    return getAverageSUSSatisfaction(answers.value)
+  }
+
+  if (hasNASATLX && nasaTlxResponses.length > 0) {
+    const tlxData = getNASATLXData(nasaTlxResponses)
+    return tlxData.averageOverallScore
+  }
+
+  return 0
+}
 
 const getTasksPerformance = () => {
   // Recoger todos los taskId únicos presentes en filteredSessions
