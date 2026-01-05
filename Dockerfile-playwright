@@ -48,6 +48,7 @@ COPY babel.config.js ./
 COPY vue.config.js ./
 COPY jsconfig.json ./
 RUN mkdir -p /app/playwright/output /app/playwright-report && chown -R app:app /app/playwright /app/playwright-report
+RUN chown -R app:app /app
 
 # Exponer el puerto en el que se servirá la aplicación
 EXPOSE 5000
