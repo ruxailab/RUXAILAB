@@ -811,12 +811,31 @@ const getAverageSatisfaction = () => {
   Object.values(answers.value).forEach(item => {
     if (!item.tasks) return
     Object.values(item.tasks).forEach(task => {
-      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) hasSUS = true
-      if (task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object') {
-        hasNASATLX = true
-        nasaTlxResponses.push({
-          nasaTlxAnswers: task.nasaTlxAnswers
-        })
+      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) {
+        hasSUS = true
+      }
+      
+      // Check if task is NASA-TLX type and has valid data
+      if (testStructure.value?.userTasks?.[task.taskId]?.taskType === "nasa-tlx" &&
+          task.nasaTlxAnswers && 
+          typeof task.nasaTlxAnswers === 'object') {
+        // Check if nasaTlxAnswers has actual data (not empty object/array)
+        const hasData = Array.isArray(task.nasaTlxAnswers)
+          ? task.nasaTlxAnswers.length > 0
+          : Object.keys(task.nasaTlxAnswers).length > 0
+        
+        if (hasData) {
+          hasNASATLX = true
+          const scores = Object.values(task.nasaTlxAnswers)
+          nasaTlxResponses.push({
+            ...task,
+            overallScore: scores.length > 0
+              ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10
+              : 0,
+            name: item.fullName,
+            nasaTlxAnswers: task.nasaTlxAnswers
+          })
+        }
       }
     })
   })
