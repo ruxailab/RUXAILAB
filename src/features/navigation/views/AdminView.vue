@@ -223,7 +223,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
  * 🧩 Lifecycle hooks
  */
 onMounted(async () => {
-  unsubscribeTests = await store.dispatch('bindMyTests');
+  // unsubscribeTests = await store.dispatch('bindMyTests');
   await getMyPersonalTests();
 
 
