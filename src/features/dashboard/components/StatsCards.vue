@@ -186,4 +186,99 @@ defineProps({
     font-size: 16px;
     font-weight: 400;
 }
+
+/* Extra small screens (around 433px) */
+@media (max-width: 500px) {
+    .stats-card {
+        height: auto;
+        min-height: 90px;
+    }
+    
+    .icon-wrapper {
+        min-width: 32px;
+        height: 32px;
+        padding: 4px;
+    }
+    
+    .stats-value {
+        font-size: 13px;
+        font-weight: 700;
+    }
+    
+    .stats-label {
+        font-size: 10px;
+        font-weight: 400;
+    }
+}
+
+/* Mobile responsive (cols="6" - 2 cards per row) */
+@media (max-width: 599px) {
+    .stats-card {
+        height: auto;
+        min-height: 110px;
+    }
+    
+    .icon-wrapper {
+        min-width: 40px;
+        height: 40px;
+        padding: 6px;
+    }
+    
+    .stats-value {
+        font-size: 16px;
+        font-weight: 700;
+    }
+    
+    .stats-label {
+        font-size: 12px;
+        font-weight: 400;
+    }
+}
+
+/* Tablet responsive (sm="6" - 2 cards per row) */
+@media (min-width: 600px) and (max-width: 959px) {
+    .stats-card {
+        height: auto;
+        min-height: 115px;
+    }
+    
+    .icon-wrapper {
+        min-width: 44px;
+        height: 44px;
+        padding: 7px;
+    }
+    
+    .stats-value {
+        font-size: 18px;
+        font-weight: 700;
+    }
+    
+    .stats-label {
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
+
+/* Desktop responsive (md="3" - 4 cards per row) */
+@media (min-width: 960px) {
+    .stats-card {
+        height: 120px;
+    }
+    
+    .icon-wrapper {
+        min-width: 48px;
+        height: 48px;
+        padding: 8px;
+    }
+    
+    .stats-value {
+        font-size: 20px;
+        font-weight: 700;
+    }
+    
+    .stats-label {
+        font-size: 16px;
+        font-weight: 400;
+    }
+}
 </style>

@@ -15,13 +15,14 @@
       Coming Soon
     </v-chip>
     
-    <v-card-title class="d-flex align-center py-4">
+    <v-card-title class="d-flex align-center py-4 activity-title">
       <v-icon
         icon="mdi-clock-time-eight"
         class="me-2"
         color="primary"
+        size="20"
       />
-      Recent Activity
+      <span class="title-text">Recent Activity</span>
       <v-spacer />
       <v-btn
         v-if="viewAllRoute"
@@ -88,7 +89,7 @@ const props = defineProps({
     activities: {
         type: Array,
         default: () => []
-    },
+        },
    title: {
     type: String,
     default: 'Recent Activity'
@@ -96,7 +97,7 @@ const props = defineProps({
   viewAllRoute: {
     type: String,
     default: ''
-  }
+    }
 })
 
 // Default activities if none provided
@@ -182,12 +183,28 @@ const activities = computed(() => {
     max-width: 200px;
 }
 
+/* Activity Title */
+.activity-title {
+    padding: 12px 16px !important;
+}
+
+.title-text {
+    font-size: 14px;
+    font-weight: 600;
+}
+
 /* Coming Soon Chip */
 .coming-soon-chip {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 12px;
+    right: 12px;
     z-index: 10;
+    height: 24px;
+    font-size: 11px;
+}
+
+.coming-soon-chip :deep(.v-chip__content) {
+    padding: 0 8px;
 }
 
 /* Overlay for content */

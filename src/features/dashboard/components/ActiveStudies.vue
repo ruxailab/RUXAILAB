@@ -3,11 +3,9 @@
     <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
         <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
-        Active Studies Overview
+        <span class="title-text">Active Studies Overview</span>
       </div>
-      <v-btn variant="text" size="small" color="primary" @click="viewAllStudies">
-        View All
-      </v-btn>
+      <v-btn variant="text" size="small" color="primary" class="view-all-btn"> View All </v-btn>
     </v-card-title>
 
     <v-card-text class="pa-4">
@@ -286,6 +284,53 @@ watch(
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.5;
+}
+/* All screen sizes - keep aligned */
+:deep(.v-card-title) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: nowrap;
+  padding: 16px !important;
+}
+
+.title-text {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.view-all-btn {
+  width: auto !important;
+  min-width: auto !important;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Mobile responsive for 500px screens */
+@media (max-width: 500px) {
+  :deep(.v-card-title) {
+    padding: 12px 16px !important;
+  }
+
+  .title-text {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .view-all-btn :deep(.v-btn__content) {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+
+/* Tablet and above */
+@media (min-width: 501px) {
+  .title-text {
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
 /* Fallback for non-webkit browsers */
