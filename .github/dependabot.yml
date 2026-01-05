@@ -1,0 +1,230 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'UTC'
+    target-branch: 'develop'
+    commit-message:
+      prefix: 'chore(deps):'
+
+    # GROUPING STRATEGY: Update related packages together to prevent conflicts
+    groups:
+      # Vue ecosystem - must update together for compatibility
+      vue-ecosystem:
+        patterns:
+          - 'vue'
+          - 'vue-*'
+          - '@vue/*'
+          - 'vuex'
+          - 'vuetify'
+          - 'vuedraggable'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # TensorFlow packages - tightly coupled, update together
+      tensorflow:
+        patterns:
+          - '@tensorflow/*'
+          - '@tensorflow-models/*'
+          - '@mediapipe/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # Tiptap editor - all extensions must match core version
+      tiptap:
+        patterns:
+          - '@tiptap/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # Testing tools - can break test suite if mismatched
+      testing:
+        patterns:
+          - '@testing-library/*'
+          - '@playwright/*'
+          - '@vue/test-utils'
+          - '@vue/vue3-jest'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # Firebase - backend services must stay compatible
+      firebase:
+        patterns:
+          - 'firebase'
+          - 'firebase-*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # Babel toolchain - compiler plugins must match
+      babel:
+        patterns:
+          - '@babel/*'
+          - 'babel-*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # ESLint ecosystem - rules and parser versions matter
+      eslint:
+        patterns:
+          - 'eslint'
+          - 'eslint-*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # Chart.js - core and adapters must be compatible
+      chartjs:
+        patterns:
+          - 'chart.js'
+          - 'chartjs-*'
+          - 'vue-chartjs'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      # Dev dependencies - safe minor/patch updates only
+      dev-dependencies-safe:
+        dependency-type: 'development'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+    # PR MANAGEMENT: Limit open PRs to prevent overwhelming reviewers
+    open-pull-requests-limit: 5
+
+    # REVIEWERS: Uncomment and add team members for auto-assignment
+    # reviewers:
+    #   - "maintainer-username"
+    # assignees:
+    #   - "team-lead-username"
+
+    # Labels for easy filtering
+    labels:
+      - 'dependencies'
+
+    # Use increase strategy for clear version bumps
+    versioning-strategy: increase
+
+    # IGNORE RULES: Prevent breaking changes and respect version constraints
+    ignore:
+      # PINNED VERSIONS: These use ~ or specific versions for compatibility
+      - dependency-name: 'sass'
+        # Pinned at ~1.32.6 - newer versions may break stylus-loader
+
+      - dependency-name: 'sass-loader'
+        # Pinned at ~8.0.0 - must match sass version compatibility
+
+      - dependency-name: 'stylus-loader'
+        # Using 3.x - version 4+ has breaking changes
+
+      - dependency-name: '@testing-library/user-event'
+        # Pinned at version 12 - version 13+ has breaking API changes
+
+      - dependency-name: 'email-templates'
+        # Version 7.x - newer versions may have template engine changes
+
+      # MAJOR VERSION BLOCKS: Critical packages need manual major version updates
+
+      # Vue ecosystem - major updates need thorough testing
+      - dependency-name: 'vue'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'vuex'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'vue-router'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'vuetify'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: '@vue/cli-service'
+        update-types: ['version-update:semver-major']
+
+      # Firebase - breaking changes in auth, storage, functions APIs
+      - dependency-name: 'firebase'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'firebase-admin'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'firebase-functions'
+        update-types: ['version-update:semver-major']
+
+      # TensorFlow - model compatibility and API changes
+      - dependency-name: '@tensorflow/tfjs'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: '@tensorflow/tfjs-core'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: '@tensorflow-models/face-landmarks-detection'
+        update-types: ['version-update:semver-major']
+
+      # Build tools - can break entire build process
+      - dependency-name: 'core-js'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'axios'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'vite'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'webpack'
+        update-types: ['version-update:semver-major']
+
+      # Testing frameworks - test suite compatibility
+      - dependency-name: '@playwright/test'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'jest'
+        update-types: ['version-update:semver-major']
+
+      # Chart libraries - API changes affect visualizations
+      - dependency-name: 'chart.js'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: 'vue-chartjs'
+        update-types: ['version-update:semver-major']
+
+      # Rich text editors - breaking changes in editor APIs
+      - dependency-name: '@tiptap/core'
+        update-types: ['version-update:semver-major']
+
+      # Tiptap
+      - dependency-name: '@tiptap/*'
+        update-types: ['version-update:semver-major']
+
+      - dependency-name: '@vueup/vue-quill'
+        update-types: ['version-update:semver-major']
+
+      # Date handling - format and API changes
+      - dependency-name: 'date-fns'
+        update-types: ['version-update:semver-major']
+
+      # PDF generation - template and API changes
+      - dependency-name: 'jspdf'
+        update-types: ['version-update:semver-major']
+
+      # Audio visualization - API compatibility
+      - dependency-name: 'wavesurfer.js'
+        update-types: ['version-update:semver-major']
+
+      # ESLint - rule changes can fail builds
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+
+      # Babel - compiler compatibility critical
+      - dependency-name: '@babel/core'
+        update-types: ['version-update:semver-major']

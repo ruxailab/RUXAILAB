@@ -220,15 +220,14 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/introduction_cards/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import { showSuccess } from '../utils/toast';
 
 const store = useStore();
 const { t } = useI18n();
-const toast = useToast();
 
 const props = defineProps({ id: { type: String, default: '' } });
 const emit = defineEmits(['goToCoops']);
@@ -339,7 +338,7 @@ const unhideReport = async (item) => {
         ...payload,
         hidden: !item.hidden,
       }),
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
     });
   } catch (error) {
     console.error('Error saving answer:', error.message);
@@ -367,7 +366,7 @@ const removeReport = async (report) => {
   await store.dispatch("Reports/removeReport", { report, test: test.value });
 
   await getCurrentAnswer();
-  toast?.success(t("alerts.genericSuccess"));
+  showSuccess("alerts.genericSuccess");
 
   loadingBtn.value = false;
   dialog.value = false;

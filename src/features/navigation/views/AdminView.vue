@@ -103,6 +103,7 @@ const activeSubSection = ref(null);
 
 // 🔸 Data
 const filteredModeratedSessions = ref([]);
+let unsubscribeTests = null;// Unsub function for real-time tests
 
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
@@ -216,6 +217,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
  * 🧩 Lifecycle hooks
  */
 onMounted(async () => {
+  // unsubscribeTests = await store.dispatch('bindMyTests');
   await getMyPersonalTests();
   filterModeratedSessions();
 
@@ -229,9 +231,15 @@ onMounted(async () => {
 
   // Drawer toggle event listener (triggered from toolbar)
   window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer);
+      
+  // Change section event listener
+  globalThis.addEventListener('change-section', (event) => {
+    activeSection.value = event.detail;
+  });
 });
 
 onUnmounted(() => {
+  if (unsubscribeTests) unsubscribeTests();
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer);
 });
 

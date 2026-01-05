@@ -21,18 +21,13 @@ jest.mock('firebase/firestore', () => {
 })
 
 // Mock the firebase db instance
-jest.mock('@/firebase', () => {
+jest.mock('@/app/plugins/firebase', () => {
   return {
     db: {}
   }
 })
 
-// Mock Test model
-jest.mock('@/models/Test', () => {
-  return {
-    toTest: jest.fn(data => data)
-  }
-})
+
 
 describe('Controller Error Handling', () => {
   let baseController
@@ -60,7 +55,7 @@ describe('Controller Error Handling', () => {
   })
 
   describe('TestController', () => {
-    it('should rethrow errors in updateTest method', async () => {
+    it('should rethrow errors in updateStudy method', async () => {
       const mockError = new Error('Update test failed')
       doc.mockReturnValue('doc-ref')
       updateDoc.mockRejectedValue(mockError)
@@ -70,16 +65,16 @@ describe('Controller Error Handling', () => {
         toFirestore: jest.fn().mockReturnValue({})
       }
 
-      await expect(testController.updateTest(payload))
+      await expect(testController.updateStudy(payload))
         .rejects.toThrow(mockError)
     })
 
-    it('should rethrow errors in getAllTests method', async () => {
+    it('should rethrow errors in getAllStudies method', async () => {
       const mockError = new Error('getAllTests failed')
 
       jest.spyOn(Controller.prototype, 'readAll').mockRejectedValue(mockError)
 
-      await expect(testController.getAllTests())
+      await expect(testController.getAllStudies())
         .rejects.toThrow(mockError)
     })
   })
