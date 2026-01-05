@@ -243,13 +243,18 @@ const handleToggleDrawer = () => {
 };
 
 // Reacts to route query changes for section/subsection
-watch(() => route.query.section, (newSection) => {
-  if (newSection) activeSection.value = newSection;
-}, { immediate: true });
-
-watch(() => route.query.subsection, (newSubSection) => {
-  if (newSubSection) activeSubSection.value = newSubSection;
-}, { immediate: true });
+// Watch the full query object to detect any changes (including _t timestamp)
+watch(() => route.query, (query) => {
+  if (query.section === 'dashboard') {
+    activeSection.value = 'dashboard';
+    activeSubSection.value = null;
+  } else if (query.section) {
+    activeSection.value = query.section;
+  }
+  if (query.subsection) {
+    activeSubSection.value = query.subsection;
+  }
+}, { immediate: true, deep: true });
 </script>
 
 <style scoped>

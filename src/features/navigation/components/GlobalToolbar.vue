@@ -22,10 +22,12 @@
     </v-btn>
 
     <!-- Logo y título -->
-    <v-toolbar-title
-      style="cursor: pointer"
+    <div
       class="d-flex align-center"
-      @click="goTo('/admin')"
+      style="cursor: pointer"
+      role="link"
+      aria-label="Go to Dashboard"
+      @click="goToDashboard"
     >
       <img
         :src="xs ? logoSmall : logoFull"
@@ -34,7 +36,7 @@
         :class="xs ? 'mr-1 align-self-center' : 'mr-3 align-self-center'"
         style="vertical-align: middle;"
       >
-    </v-toolbar-title>
+    </div>
 
     <v-spacer />
 
@@ -147,6 +149,14 @@ const toggleDashboardDrawer = () => {
     // Emitir evento para que lo capture el layout o componente padre
     const event = new CustomEvent('toggle-dashboard-drawer');
     window.dispatchEvent(event);
+};
+
+const goToDashboard = () => {
+    // Use timestamp to force route change detection even when already on /admin
+    router.push({
+        path: '/admin',
+        query: { section: 'dashboard', _t: Date.now() }
+    }).catch(() => { });
 };
 </script>
 
