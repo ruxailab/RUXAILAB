@@ -271,10 +271,10 @@ const formattedUsers = computed(() => {
 
 // Table headers
 const usersHeaders = computed(() => [
-  { title: t('titles.name'), align: 'start', value: 'username' },
-  { title: t('SIGNIN.email'), value: 'email', align: 'center' },
-  { title: t('titles.studiesCount'), value: 'studiesCount', align: 'center' },
-  { title: t('titles.mediaSize'), value: 'mediaSize', align: 'center' },
+  { title: t('titles.drawer.name'), align: 'start', value: 'username' },
+  { title: t('auth.SIGNIN.email'), value: 'email', align: 'center' },
+  { title: t('titles.drawer.studiesCount'), value: 'studiesCount', align: 'center' },
+  { title: t('titles.drawer.mediaSize'), value: 'mediaSize', align: 'center' },
   { title: t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
   { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
@@ -287,9 +287,10 @@ const testsHeaders = computed(() => [
 ])
 
 const accessLevels = computed(() => [
-  { title: t('profile.superAdmin'), level: 0 },
-  { title: t('profile.admin'), level: 1 },
-  { title: t('common.user'), level: 2 },
+  { title: t('profile.superAdmin'), level: -1 },
+  { title: t('profile.admin'), level: 0 },
+  { title: t('profile.guest'), level: 1 },
+  { title: t('profile.evaluator'), level: 2 },
 ])
 
 const dialogText = computed(() =>
@@ -309,6 +310,8 @@ const formatMediaSize = (mb) => {
 // Helper function to get access level color
 const getAccessLevelColor = (level) => {
   switch (level) {
+    case -1:
+      return 'deep-purple darken-3'
     case 0:
       return 'red darken-2'
     case 1:
@@ -322,7 +325,8 @@ const getAccessLevelColor = (level) => {
 
 // Helper function to get access level text
 const level = (lv) => {
-  return accessLevels.value.find((item) => item.level === lv)?.text
+  const found = accessLevels.value.find((item) => item.level === lv);
+  return found ? found.title : 'Unknown';
 }
 
 // Edit user - need to find original user from formattedUsers
