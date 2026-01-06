@@ -7,6 +7,7 @@ jest.mock('axios', () => ({
 
 describe('EmailController', () => {
     let emailController
+    let consoleErrorSpy
     const originalEnv = process.env
 
     beforeEach(() => {
@@ -16,10 +17,12 @@ describe('EmailController', () => {
             ...originalEnv,
             VUE_APP_CLOUD_FUNCTIONS_URL: 'https://cloud-functions.example.com'
         }
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     })
 
     afterEach(() => {
         process.env = originalEnv
+        consoleErrorSpy.mockRestore()
     })
 
     describe('Structure', () => {
