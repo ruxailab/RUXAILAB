@@ -24,6 +24,7 @@ jest.mock('@/shared/constants/methodDefinitions', () => ({
 describe('ReportController', () => {
     let reportController
     let spies
+    let consoleErrorSpy
 
     const mockReport = { userDocId: 'user-123' }
     const mockTestHeuristic = { id: 'test-456', answersDocId: 'answer-789', testType: 'HEURISTIC' }
@@ -33,10 +34,12 @@ describe('ReportController', () => {
         jest.clearAllMocks()
         reportController = new ReportController()
         spies = createControllerSpies(reportController)
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     })
 
     afterEach(() => {
         spies.restore()
+        consoleErrorSpy.mockRestore()
     })
 
     describe('Structure', () => {
