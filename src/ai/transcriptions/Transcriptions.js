@@ -1,4 +1,4 @@
-/** @typedef {import('firebase/firestore').Timestamp} Timestamp */
+/** @typedef {Object} Timestamp - Firebase Timestamp object */
 
 /**
  * Create a transcription Object for Moderated Test Task

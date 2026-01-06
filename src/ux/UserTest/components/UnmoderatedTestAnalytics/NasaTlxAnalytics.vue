@@ -1,13 +1,6 @@
 <template>
-  <v-card
-    class="fill-height"
-    style="border-radius: 0;"
-  >
-    <v-container
-      fluid
-      class="pa-6 fill-height"
-      style="overflow-y: auto;"
-    >
+  <v-card class="fill-height">
+    <v-container fluid class="pa-0 fill-height" style="overflow-y: auto">
       <!-- Header Section -->
       <div class="mb-8">
         <h1 class="text-h3 font-weight-bold text-primary">
@@ -20,15 +13,11 @@
 
       <!-- Overview Cards -->
       <v-row class="mb-0">
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex"
-        >
+        <v-col cols="12" md="4" class="d-flex">
           <v-card
             class="pa-6 text-left"
             elevation="2"
-            style="border-radius: 12px; width: 100%;"
+            style="border-radius: 12px; width: 100%"
           >
             <div class="d-flex justify-space-between align-center">
               <div>
@@ -36,36 +25,22 @@
                   Average Overall Workload
                 </div>
                 <div class="text-h2 font-weight-bold text-warning mb-1">
-                  {{ analytics.averageOverallScore }}
+                  {{ analytics.averageOverallScore || 0 }}
                 </div>
-                <div class="text-caption text-grey">
-                  out of 100
-                </div>
+                <div class="text-caption text-grey">out of 100</div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #fff3e0; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="warning"
-                >
-                  mdi-brain
-                </v-icon>
+              <div class="pa-3" style="background: #fff3e0; border-radius: 8px">
+                <v-icon size="24" color="warning"> mdi-brain </v-icon>
               </div>
             </div>
           </v-card>
         </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex"
-        >
+        <v-col cols="12" md="4" class="d-flex">
           <v-card
             class="pa-6 text-left"
             elevation="2"
-            style="border-radius: 12px; width: 100%;"
+            style="border-radius: 12px; width: 100%"
           >
             <div class="d-flex justify-space-between align-center">
               <div>
@@ -73,36 +48,22 @@
                   Most Stressful Dimension
                 </div>
                 <div class="text-h5 font-weight-bold text-error mb-1">
-                  {{ analytics.mostStressfulDimension }}
+                  {{ analytics.mostStressfulDimension || 'N/A' }}
                 </div>
-                <div class="text-caption text-grey">
-                  highest average score
-                </div>
+                <div class="text-caption text-grey">highest average score</div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #ffebee; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="error"
-                >
-                  mdi-alert-circle
-                </v-icon>
+              <div class="pa-3" style="background: #ffebee; border-radius: 8px">
+                <v-icon size="24" color="error"> mdi-alert-circle </v-icon>
               </div>
             </div>
           </v-card>
         </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex"
-        >
+        <v-col cols="12" md="4" class="d-flex">
           <v-card
             class="pa-6 text-left"
             elevation="2"
-            style="border-radius: 12px; width: 100%;"
+            style="border-radius: 12px; width: 100%"
           >
             <div class="d-flex justify-space-between align-center">
               <div>
@@ -110,22 +71,12 @@
                   Least Stressful Dimension
                 </div>
                 <div class="text-h5 font-weight-bold text-success mb-1">
-                  {{ analytics.leastStressfulDimension }}
+                  {{ analytics.leastStressfulDimension || 'N/A' }}
                 </div>
-                <div class="text-caption text-grey">
-                  lowest average score
-                </div>
+                <div class="text-caption text-grey">lowest average score</div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #e8f5e8; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="success"
-                >
-                  mdi-check-circle
-                </v-icon>
+              <div class="pa-3" style="background: #e8f5e8; border-radius: 8px">
+                <v-icon size="24" color="success"> mdi-check-circle </v-icon>
               </div>
             </div>
           </v-card>
@@ -135,60 +86,50 @@
       <!-- Dimension Breakdown Charts -->
       <v-row class="mb-8">
         <v-col cols="12">
-          <v-card
-            elevation="2"
-            style="border-radius: 12px;"
-          >
+          <v-card elevation="2" style="border-radius: 12px">
             <v-card-title class="text-h5 pa-5">
               Workload Dimension Breakdown
             </v-card-title>
             <v-card-text class="pa-6">
               <v-row>
                 <!-- Radar Chart -->
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <div class="chart-container">
-                    <h3 class="text-h6 mb-4">
-                      Average Scores by Dimension
-                    </h3>
-                    <canvas
-                      ref="radarCanvas"
-                      style="max-height: 400px;"
-                    />
+                    <h3 class="text-h6 mb-4">Average Scores by Dimension</h3>
+                    <canvas ref="radarCanvas" style="max-height: 400px" />
                   </div>
                 </v-col>
 
                 <!-- Horizontal Bar Chart -->
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <div class="dimension-bars-container">
-                    <h3 class="text-h6 mb-4">
-                      Dimension Comparison
-                    </h3>
+                    <h3 class="text-h6 mb-4">Dimension Comparison</h3>
                     <div
                       class="dimension-bars"
-                      style="height: 400px; display: flex; flex-direction: column; justify-content: space-around;"
+                      style="
+                        height: 400px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-around;
+                      "
                     >
                       <div
                         v-for="dimension in tlxDimensions"
                         :key="dimension.key"
                         class="dimension-row"
-                        style="margin-bottom: 16px;"
+                        style="margin-bottom: 16px"
                       >
                         <div class="d-flex align-center">
-                          <div
-                            class="dimension-label"
-                            style="width: 120px;"
-                          >
+                          <div class="dimension-label" style="width: 120px">
                             <div class="font-weight-medium">
                               {{ dimension.label }}
                             </div>
                             <div class="text-caption text-grey">
-                              {{ getWorkloadLevel(analytics.dimensionAverages[dimension.key]) }}
+                              {{
+                                getWorkloadLevel(
+                                  analytics.dimensionAverages[dimension.key],
+                                )
+                              }}
                             </div>
                           </div>
                           <div class="flex-grow-1 mx-4">
@@ -196,12 +137,14 @@
                               <div
                                 class="progress-bar"
                                 :style="{
-                                  width: `${analytics.dimensionAverages[dimension.key]}%`,
+                                  width: `${
+                                    analytics.dimensionAverages[dimension.key]
+                                  }%`,
                                   backgroundColor: dimension.color,
                                   borderRadius: '20px',
                                   height: '32px',
                                   position: 'relative',
-                                  minWidth: '40px'
+                                  minWidth: '40px',
                                 }"
                               >
                                 <span
@@ -216,14 +159,16 @@
                                     font-size: 12px;
                                   "
                                 >
-                                  {{ analytics.dimensionAverages[dimension.key] }}
+                                  {{
+                                    analytics.dimensionAverages[dimension.key]
+                                  }}
                                 </span>
                               </div>
                             </div>
                           </div>
                           <div
                             class="score-display text-h6 font-weight-bold"
-                            style="width: 60px; text-align: right;"
+                            style="width: 60px; text-align: right"
                           >
                             {{ analytics.dimensionAverages[dimension.key] }}
                           </div>
@@ -241,17 +186,9 @@
       <!-- Individual TLX Table -->
       <v-row>
         <v-col cols="12">
-          <v-card
-            elevation="2"
-            style="border-radius: 12px;"
-          >
+          <v-card elevation="2" style="border-radius: 12px">
             <v-card-title class="text-h5 pa-5">
-              <v-icon
-                start
-                color="primary"
-              >
-                mdi-table
-              </v-icon>
+              <v-icon start color="primary"> mdi-table </v-icon>
               Individual TLX Scores
             </v-card-title>
 
@@ -348,9 +285,7 @@
                   size="small"
                   @click="openDetailsModal(item)"
                 >
-                  <v-icon start>
-                    mdi-eye
-                  </v-icon>
+                  <v-icon start> mdi-eye </v-icon>
                   View Details
                 </v-btn>
               </template>
@@ -360,15 +295,11 @@
       </v-row>
 
       <!-- Details Modal -->
-      <v-dialog
-        v-model="detailsModal"
-        max-width="800px"
-      >
-        <v-card
-          v-if="selectedResponse"
-          style="border-radius: 12px;"
-        >
-          <v-card-title class="d-flex justify-space-between align-center pa-6 pb-4">
+      <v-dialog v-model="detailsModal" max-width="800px">
+        <v-card v-if="selectedResponse" style="border-radius: 12px">
+          <v-card-title
+            class="d-flex justify-space-between align-center pa-6 pb-4"
+          >
             <div>
               <div class="text-h5 font-weight-bold mb-1">
                 NASA TLX Response Details
@@ -377,11 +308,7 @@
                 {{ selectedResponse.name }}
               </div>
             </div>
-            <v-btn
-              icon
-              variant="text"
-              @click="detailsModal = false"
-            >
+            <v-btn icon variant="text" @click="detailsModal = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
@@ -415,9 +342,7 @@
 
             <!-- Individual Dimension Scores -->
             <div class="mb-6">
-              <h3 class="text-h6 mb-4">
-                Dimension Breakdown
-              </h3>
+              <h3 class="text-h6 mb-4">Dimension Breakdown</h3>
               <v-row>
                 <v-col
                   v-for="dimension in tlxDimensions"
@@ -427,14 +352,26 @@
                 >
                   <div
                     class="dimension-detail pa-4"
-                    style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;"
+                    style="
+                      border: 1px solid #e0e0e0;
+                      border-radius: 8px;
+                      background: #fafafa;
+                    "
                   >
                     <div class="d-flex justify-space-between align-center mb-2">
                       <div class="font-weight-medium">
                         {{ dimension.label }}
                       </div>
                       <v-chip
-                        :color="dimension.key === 'performance' ? getPerformanceColor(selectedResponse.nasaTlxAnswers[dimension.key]) : getWorkloadColor(selectedResponse.nasaTlxAnswers[dimension.key])"
+                        :color="
+                          dimension.key === 'performance'
+                            ? getPerformanceColor(
+                                selectedResponse.nasaTlxAnswers[dimension.key],
+                              )
+                            : getWorkloadColor(
+                                selectedResponse.nasaTlxAnswers[dimension.key],
+                              )
+                        "
                         size="small"
                       >
                         {{ selectedResponse.nasaTlxAnswers[dimension.key] }}
@@ -444,7 +381,9 @@
                       {{ dimension.description }}
                     </div>
                     <v-progress-linear
-                      :model-value="selectedResponse.nasaTlxAnswers[dimension.key]"
+                      :model-value="
+                        selectedResponse.nasaTlxAnswers[dimension.key]
+                      "
                       :color="dimension.color"
                       height="8"
                       rounded
@@ -472,7 +411,7 @@ import {
   Filler,
   Tooltip,
   Legend,
-  RadarController
+  RadarController,
 } from 'chart.js'
 
 ChartJS.register(
@@ -482,7 +421,7 @@ ChartJS.register(
   Filler,
   Tooltip,
   Legend,
-  RadarController
+  RadarController,
 )
 
 const store = useStore()
@@ -498,9 +437,9 @@ const analytics = ref({
     temporalDemand: 0,
     performance: 0,
     effort: 0,
-    frustration: 0
+    frustration: 0,
   },
-  responses: []
+  responses: [],
 })
 
 const detailsModal = ref(false)
@@ -517,44 +456,62 @@ const tableHeaders = [
   { title: 'Effort', key: 'effort', sortable: true },
   { title: 'Frustration', key: 'frustration', sortable: true },
   { title: 'Overall', key: 'overallScore', sortable: true },
-  { title: 'Actions', key: 'actions', sortable: false }
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
 const test = computed(() => store.getters.test.testStructure)
-const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {});
-const nasaTlxData = computed(() => Object.values(testAnswerDocument.value || {}).flatMap((item, index) => {
-  return Object.values(item.tasks || {})
-    .filter(task => test.value?.userTasks[task.taskId]?.taskType === "nasa-tlx")
-    .filter(task => task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object')
-    .map((task) => {
-      const scores = Object.values(task.nasaTlxAnswers)
-      return {
-        ...task,
-        overallScore: scores.length > 0
-          ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10
-          : 0,
-        name: item.fullName
-      }
-    })
-}))
+const testAnswerDocument = computed(
+  () => store.getters.visibleUserAnswers || {},
+)
+const nasaTlxData = computed(() =>
+  Object.values(testAnswerDocument.value || {}).flatMap((item) => {
+    return Object.values(item.tasks || {})
+      .filter(
+        (task) => test.value?.userTasks[task.taskId]?.taskType === 'nasa-tlx',
+      )
+      .filter(
+        (task) =>
+          task.nasaTlxAnswers && typeof task.nasaTlxAnswers === 'object',
+      )
+      .map((task) => {
+        const scores = Object.values(task.nasaTlxAnswers)
+        return {
+          ...task,
+          overallScore:
+            scores.length > 0
+              ? Math.round(
+                  (scores.reduce((sum, score) => sum + score, 0) /
+                    scores.length) *
+                    10,
+                ) / 10
+              : 0,
+          name: item.fullName,
+        }
+      })
+  }),
+)
 
 const radarData = computed(() => {
   return {
-    labels: tlxDimensions.map(d => d.label),
-    datasets: [{
-      label: 'Average Workload',
-      data: tlxDimensions.map(d => analytics.value.dimensionAverages[d.key]),
-      backgroundColor: 'rgba(33, 150, 243, 0.2)',
-      borderColor: 'rgba(33, 150, 243, 1)',
-      borderWidth: 2,
-      pointBackgroundColor: 'rgba(33, 150, 243, 1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(33, 150, 243, 1)',
-      pointRadius: 6,
-      pointBorderWidth: 2,
-      pointHoverRadius: 8
-    }]
+    labels: tlxDimensions.map((d) => d.label),
+    datasets: [
+      {
+        label: 'Average Workload',
+        data: tlxDimensions.map(
+          (d) => analytics.value.dimensionAverages[d.key],
+        ),
+        backgroundColor: 'rgba(33, 150, 243, 0.2)',
+        borderColor: 'rgba(33, 150, 243, 1)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(33, 150, 243, 1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(33, 150, 243, 1)',
+        pointRadius: 6,
+        pointBorderWidth: 2,
+        pointHoverRadius: 8,
+      },
+    ],
   }
 })
 
@@ -567,9 +524,9 @@ const radarOptions = {
       callbacks: {
         label: function (context) {
           return `${context.label}: ${context.parsed.r}/100`
-        }
-      }
-    }
+        },
+      },
+    },
   },
   scales: {
     r: {
@@ -578,8 +535,8 @@ const radarOptions = {
       ticks: { stepSize: 20 },
       grid: { color: 'rgba(0, 0, 0, 0.1)' },
       angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
-    }
-  }
+    },
+  },
 }
 
 function openDetailsModal(response) {
@@ -619,7 +576,7 @@ function createRadarChart() {
       radarChart = new ChartJS(ctx, {
         type: 'radar',
         data: radarData.value,
-        options: radarOptions
+        options: radarOptions,
       })
     }
   }
@@ -632,17 +589,7 @@ watchEffect(async () => {
 })
 </script>
 
-
 <style scoped>
-.v-card {
-  transition: all 0.3s ease;
-}
-
-.v-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
 .v-chip {
   font-weight: 600;
 }
