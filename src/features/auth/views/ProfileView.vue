@@ -115,9 +115,9 @@
                     <v-icon
                       size="small"
                       class="mr-2"
-                      :color="newPassword.length >= 8 ? 'success' : 'grey-darken-1'"
+                      :color="(newPassword?.length || 0) >= 8 ? 'success' : 'grey-darken-1'"
                     >
-                      {{ newPassword.length >= 8 ? 'mdi-check-circle' : 'mdi-circle-outline' }}
+                      {{ (newPassword?.length ||0)>= 8 ? 'mdi-check-circle' : 'mdi-circle-outline' }}
                     </v-icon>
                     <span>{{ $t('profile.passwordMinLength') }}</span>
                   </div>
@@ -125,9 +125,9 @@
                     <v-icon
                       size="small"
                       class="mr-2"
-                      :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey-darken-1'"
+                      :color="/[A-Z]/.test(newPassword || '') ? 'success' : 'grey-darken-1'"
                     >
-                      {{ /[A-Z]/.test(newPassword) ? 'mdi-check-circle' : 'mdi-circle-outline' }}
+                      {{ /[A-Z]/.test(newPassword || '' ) ? 'mdi-check-circle' : 'mdi-circle-outline' }}
                     </v-icon>
                     <span>{{ $t('profile.passwordUppercase') }}</span>
                   </div>
@@ -318,7 +318,7 @@
               density="compact"
               prepend-inner-icon="mdi-phone"
               :rules="contactRules"
-              :hint="$t('Enter a valid No.')"
+              :hint="$t('profile.enterValidPhoneNumber')"
               persistent-hint
               class="mb-4 input-field-transition"
             />
@@ -446,7 +446,7 @@
               :disabled="deleteConfirmText !== 'DELETE'"
               @click="handlerDeleteConfirmText"
             >
-              {{ $t('Proceed') }}
+              {{ $t('common.proceed') }}
             </v-btn>
           </v-card-actions>
         </div>
@@ -567,30 +567,30 @@ const fileInput = ref(null);
 
 // Validation rules
 const usernameRules = [
-  (v) => !!v || t('PROFILE.usernameRequired'),
-  (v) => (v && v.length >= 3) || t('PROFILE.usernameMinLength'),
+  (v) => !!v || t('profile.usernameRequired'),
+  (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
 ];
-const countryRules = [(v) => !!v || t('PROFILE.countryRequired')];
+const countryRules = [(v) => !!v || t('profile.countryRequired')];
 const contactRules = [
-  (v) => !!v || t('PROFILE.contactNumberRequired'),
-  (v) => /^\d{9,15}$/.test(v) || t('PROFILE.enterValidPhoneNumber'),
+  (v) => !!v || t('profile.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
 ];
 const passwordRules = [
-  (v) => !!v || t('PROFILE.passwordRequired'),
-  (v) => v.length >= 8 || t('PROFILE.passwordMinLength'),
-  (v) => /[A-Z]/.test(v) || t('PROFILE.passwordUppercase'),
-  (v) => hasSpecialChar(v) || t('PROFILE.passwordSymbol'),
+  (v) => !!v || t('profile.passwordRequired'),
+  (v) => (v?.length || 0) >= 8 || t('profile.passwordMinLength'),
+  (v) => /[A-Z]/.test(v || '') || t('profile.passwordUppercase'),
+  (v) => hasSpecialChar(v || '') || t('profile.passwordSymbol'),
 ];
 const confirmPasswordRules = [
-  (v) => !!v || t('PROFILE.confirmPasswordRequired'),
-  (v) => v === newPassword.value || t('PROFILE.passwordsMatch'),
+  (v) => !!v || t('profile.confirmPasswordRequired'),
+  (v) => v === newPassword.value || t('profile.passwordsMatch'),
 ];
 
 const specialCharColor = computed(() =>
-  hasSpecialChar(newPassword.value) ? 'success' : 'grey'
+  hasSpecialChar(newPassword.value || '') ? 'success' : 'grey'
 );
 const specialCharIcon = computed(() =>
-  hasSpecialChar(newPassword.value) ? 'mdi-check-circle' : 'mdi-circle-outline'
+  hasSpecialChar(newPassword.value || '') ? 'mdi-check-circle' : 'mdi-circle-outline'
 );
 const profileItems = computed(() => [
   {
@@ -683,7 +683,7 @@ const fetchUserProfile = async () => {
     }
   } catch (error) {
     console.error('Error fetching profile:', error);
-    toast.error(t('PROFILE.profileLoadFailed'));
+    toast.error(t('profile.profileLoadFailed'));
   } finally {
     loading.value = false;
   }
@@ -744,21 +744,22 @@ const saveProfile = async () => {
 };
 
 const changePassword = async () => {
-  if (passwordForm.value.validate()) {
+  const { valid } = await passwordForm.value.validate();
+   if (valid) {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
 
       if (user) {
         await updatePassword(user, newPassword.value);
-        toast.success(t('PROFILE.passwordChangedSuccess'));
+        toast.success(t('profile.passwordChangedSuccess'));
         newPassword.value = '';
         confirmPassword.value = '';
         passwordForm.value.reset();
       }
     } catch (error) {
       console.error('Error changing password:', error);
-      toast.error(t('PROFILE.passwordChangeFailed'));
+      toast.error(t('profile.passwordChangeFailed'));
     }
   }
 };
@@ -776,7 +777,7 @@ const handlerDeleteConfirmText = async (value) => {
     return await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('PROFILE.accountDeletionFailed'))
+    toast.error(t('profile.accountDeletionFailed'))
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
@@ -785,14 +786,14 @@ const handlerDeleteConfirmText = async (value) => {
 
 const deleteAccount = async (user) => {
   await store.dispatch('deleteAuth', user.uid)
-  toast.success(t('PROFILE.accountDeletedSuccess'))
+  toast.success(t('profile.accountDeletedSuccess'))
   signOut()
 };
 
 const handlerDeleteAccount = async () => {
   const auth = getAuth()
   const user = auth.currentUser
-  if (!userPassword.value) return toast.error(t('PROFILE.passwordRequired'))
+  if (!userPassword.value) return toast.error(t('profile.passwordRequired'))
 
   try {
     isDeleting.value = true
@@ -801,7 +802,7 @@ const handlerDeleteAccount = async () => {
     await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('PROFILE.accountDeletionFailed'))
+    toast.error(t('profile.accountDeletionFailed'))
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
