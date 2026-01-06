@@ -988,6 +988,10 @@
       "lessThan10": "< 10 participantes",
       "between10And50": "10 – 50 participantes",
       "moreThan50": "> 50 participantes"
+    },
+    "blogPosts": {
+      "title": "Últimos posts do blog",
+      "viewBlog": "Ver Blog"
     }
   }
 }

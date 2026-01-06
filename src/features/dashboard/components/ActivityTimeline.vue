@@ -26,7 +26,7 @@
         class="chip-responsive"
       >
         {{ $t('adminDashboard.activityTimeline.viewAll') }}
-      </v-btn>
+      </v-chip>
     </v-card-title>
     <v-card-text class="pa-0 coming-soon-overlay">
       <v-timeline direction="vertical" density="comfortable" class="pa-4">

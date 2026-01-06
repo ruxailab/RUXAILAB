@@ -880,6 +880,10 @@
       "lessThan10": "< 10 Teilnehmer",
       "between10And50": "10 – 50 Teilnehmer",
       "moreThan50": "> 50 Teilnehmer"
+    },
+    "blogPosts": {
+      "title": "Neueste Blog-Beiträge",
+      "viewBlog": "Blog ansehen"
     }
   }
 }

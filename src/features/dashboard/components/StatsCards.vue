@@ -18,8 +18,8 @@
               <div class="stats-label">
                 {{ $t('adminDashboard.stats.studies') }}
               </div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-col>
@@ -42,8 +42,8 @@
               <div class="stats-label">
                 {{ $t('adminDashboard.stats.storage') }}
               </div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-col>
@@ -82,11 +82,16 @@
               <div class="icon-wrapper">
                 <v-icon icon="mdi-account-group" size="32" color="secondary" />
               </div>
+            </v-col>
+            <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
+              <div class="stats-value">
+                {{ totalParticipants }}
+              </div>
               <div class="stats-label">
                 {{ $t('adminDashboard.stats.participants') }}
               </div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-col>

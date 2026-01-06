@@ -1,38 +1,6 @@
 {
   "language": "Язык",
   "auth": {
-    "signupSuccess": "Регистрация успешна",
-    "logoutSuccess": "Выход успешен",
-    "resetPasswordSuccess": "Письмо для сброса пароля отправлено",
-    "deleteSuccess": "Аккаунт успешно удален",
-    "loginSuccess": "Вход выполнен успешно",
-    "SIGNIN": {
-      "sign-in": "Войти",
-      "sign-in-title": "С возвращением",
-      "sign-in-subtitle": "Войдите в свой аккаунт, чтобы продолжить",
-      "email": "Электронная почта",
-      "username": "Имя пользователя",
-      "password": "Пароль",
-      "signupSubtitle": "Заполните свои данные, чтобы начать",
-      "dont-have-account": "Нет аккаунта?",
-      "forgot-password": "Забыли пароль?",
-      "sign-up": "Создать аккаунт",
-      "contact": "Контактный номер",
-      "confirmPassword": "Подтвердите пароль",
-      "alreadyHaveAnAccount": "Уже есть аккаунт?",
-      "continueWithGoogle": "Продолжить с Google",
-      "rememberMe": "Запомнить меня",
-      "or": "или продолжить с"
-    },
-    "FORGOT_PASSWORD": {
-      "reset_password": "Сбросить пароль",
-      "email": "Электронная почта",
-      "instructions": "Введите свой адрес электронной почты, и мы отправим вам ссылку для сброса пароля.",
-      "reset_button": "Отправить ссылку сброса",
-      "back_to_signin": "Вернуться ко входу"
-    }
-  },
-  "auth": {
     "FORGOT_PASSWORD": {
       "reset_password": "Сбросить пароль",
       "email": "Электронная почта",
@@ -893,6 +861,10 @@
       "lessThan10": "< 10 участников",
       "between10And50": "10 – 50 участников",
       "moreThan50": "> 50 участников"
+    },
+    "blogPosts": {
+      "title": "Последние записи в блоге",
+      "viewBlog": "Смотреть блог"
     }
   }
 }

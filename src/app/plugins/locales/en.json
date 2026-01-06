@@ -572,7 +572,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },
@@ -1212,6 +1211,10 @@
       "lessThan10": "< 10 participants",
       "between10And50": "10 – 50 participants",
       "moreThan50": "> 50 participants"
+    },
+    "blogPosts": {
+      "title": "Latest Blog Posts",
+      "viewBlog": "View Blog"
     }
   }
 }
