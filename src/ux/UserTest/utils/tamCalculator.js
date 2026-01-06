@@ -14,54 +14,105 @@ export function calculateTAMScore(answers, version = 'tam-1') {
 
   const dimensions = {};
   
-  // TAM-1 dimensions
-  if (version === 'tam-1' || version === 'tam-2' || version === 'tam-3') {
+  // TAM-1 uses 7-point scale (Davis 1985), TAM-2 uses 7-point scale (Venkatesh & Davis 2000), TAM-3 uses 5-point scale
+  const tam1Scale = 7;
+  const tam2Scale = 7;
+  const tam3Scale = 5;
+  
+  // TAM-1 dimensions (7-point Likert scale per Davis 1985)
+  if (version === 'tam-1') {
     if (answers.perceivedUsefulness) {
-      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness');
+      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness', tam1Scale);
     }
     if (answers.perceivedEaseOfUse) {
-      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use');
+      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use', tam1Scale);
     }
-  }
-
-  // TAM-2 additional dimensions
-  if (version === 'tam-2' || version === 'tam-3') {
+    if (answers.attitudeTowardUsing) {
+      dimensions.attitudeTowardUsing = calculateDimensionScore(answers.attitudeTowardUsing, 'Attitude Toward Using', tam1Scale);
+    }
+    if (answers.actualSystemUse) {
+      dimensions.actualSystemUse = calculateUsageScore(answers.actualSystemUse, 'Actual System Use');
+    }
+  } else if (version === 'tam-2') {
+    // TAM-2 dimensions (7-point scale per Venkatesh & Davis 2000)
+    if (answers.intentionToUse) {
+      dimensions.intentionToUse = calculateDimensionScore(answers.intentionToUse, 'Intention to Use', tam2Scale);
+    }
+    if (answers.perceivedUsefulness) {
+      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness', tam2Scale);
+    }
+    if (answers.perceivedEaseOfUse) {
+      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use', tam2Scale);
+    }
     if (answers.subjectiveNorm) {
-      dimensions.subjectiveNorm = calculateDimensionScore(answers.subjectiveNorm, 'Subjective Norm');
+      dimensions.subjectiveNorm = calculateDimensionScore(answers.subjectiveNorm, 'Subjective Norm', tam2Scale);
+    }
+    if (answers.voluntariness) {
+      dimensions.voluntariness = calculateDimensionScore(answers.voluntariness, 'Voluntariness', tam2Scale);
     }
     if (answers.image) {
-      dimensions.image = calculateDimensionScore(answers.image, 'Image');
+      dimensions.image = calculateDimensionScore(answers.image, 'Image', tam2Scale);
     }
     if (answers.jobRelevance) {
-      dimensions.jobRelevance = calculateDimensionScore(answers.jobRelevance, 'Job Relevance');
+      dimensions.jobRelevance = calculateDimensionScore(answers.jobRelevance, 'Job Relevance', tam2Scale);
     }
     if (answers.outputQuality) {
-      dimensions.outputQuality = calculateDimensionScore(answers.outputQuality, 'Output Quality');
+      dimensions.outputQuality = calculateDimensionScore(answers.outputQuality, 'Output Quality', tam2Scale);
     }
     if (answers.resultDemonstrability) {
-      dimensions.resultDemonstrability = calculateDimensionScore(answers.resultDemonstrability, 'Result Demonstrability');
+      dimensions.resultDemonstrability = calculateDimensionScore(answers.resultDemonstrability, 'Result Demonstrability', tam2Scale);
     }
-  }
-
-  // TAM-3 additional dimensions
-  if (version === 'tam-3') {
+  } else if (version === 'tam-3') {
+    if (answers.perceivedUsefulness) {
+      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness', tam3Scale);
+    }
+    if (answers.perceivedEaseOfUse) {
+      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use', tam3Scale);
+    }
+    if (answers.behavioralIntention) {
+      dimensions.behavioralIntention = calculateDimensionScore(answers.behavioralIntention, 'Behavioral Intention', tam3Scale);
+    }
+    if (answers.usePatterns) {
+      dimensions.usePatterns = calculateDimensionScore(answers.usePatterns, 'Use Behavior', tam3Scale);
+    }
+    if (answers.subjectiveNorm) {
+      dimensions.subjectiveNorm = calculateDimensionScore(answers.subjectiveNorm, 'Subjective Norm', tam3Scale);
+    }
+    if (answers.image) {
+      dimensions.image = calculateDimensionScore(answers.image, 'Image', tam3Scale);
+    }
+    if (answers.jobRelevance) {
+      dimensions.jobRelevance = calculateDimensionScore(answers.jobRelevance, 'Job Relevance', tam3Scale);
+    }
+    if (answers.outputQuality) {
+      dimensions.outputQuality = calculateDimensionScore(answers.outputQuality, 'Output Quality', tam3Scale);
+    }
+    if (answers.resultDemonstrability) {
+      dimensions.resultDemonstrability = calculateDimensionScore(answers.resultDemonstrability, 'Result Demonstrability', tam3Scale);
+    }
     if (answers.computerSelfEfficacy) {
-      dimensions.computerSelfEfficacy = calculateDimensionScore(answers.computerSelfEfficacy, 'Computer Self-Efficacy');
+      dimensions.computerSelfEfficacy = calculateDimensionScore(answers.computerSelfEfficacy, 'Computer Self-Efficacy', tam3Scale);
     }
     if (answers.perceptionsOfExternalControl) {
-      dimensions.perceptionsOfExternalControl = calculateDimensionScore(answers.perceptionsOfExternalControl, 'Perceptions of External Control');
+      dimensions.perceptionsOfExternalControl = calculateDimensionScore(answers.perceptionsOfExternalControl, 'Perceptions of External Control', tam3Scale);
     }
     if (answers.computerAnxiety) {
-      dimensions.computerAnxiety = calculateDimensionScore(answers.computerAnxiety, 'Computer Anxiety');
+      dimensions.computerAnxiety = calculateDimensionScore(answers.computerAnxiety, 'Computer Anxiety', tam3Scale);
     }
     if (answers.computerPlayfulness) {
-      dimensions.computerPlayfulness = calculateDimensionScore(answers.computerPlayfulness, 'Computer Playfulness');
+      dimensions.computerPlayfulness = calculateDimensionScore(answers.computerPlayfulness, 'Computer Playfulness', tam3Scale);
     }
     if (answers.perceivedEnjoyment) {
-      dimensions.perceivedEnjoyment = calculateDimensionScore(answers.perceivedEnjoyment, 'Perceived Enjoyment');
+      dimensions.perceivedEnjoyment = calculateDimensionScore(answers.perceivedEnjoyment, 'Perceived Enjoyment', tam3Scale);
     }
     if (answers.objectiveUsability) {
-      dimensions.objectiveUsability = calculateDimensionScore(answers.objectiveUsability, 'Objective Usability');
+      dimensions.objectiveUsability = calculateDimensionScore(answers.objectiveUsability, 'Objective Usability', tam3Scale);
+    }
+    if (answers.experience) {
+      dimensions.experience = calculateDimensionScore(answers.experience, 'Experience', tam3Scale);
+    }
+    if (answers.voluntariness) {
+      dimensions.voluntariness = calculateDimensionScore(answers.voluntariness, 'Voluntariness', tam3Scale);
     }
   }
 
@@ -80,10 +131,13 @@ export function calculateTAMScore(answers, version = 'tam-1') {
 
 /**
  * Calculate score for a single dimension
- * Dimensions use 5-point Likert scale (1-5)
+ * Supports both 5-point and 7-point Likert scales
  * Score is normalized to 0-100
+ * @param {Array} responses - Array of responses
+ * @param {String} dimensionName - Name of the dimension
+ * @param {Number} scale - Likert scale max value (5 or 7, default 5)
  */
-export function calculateDimensionScore(responses, dimensionName) {
+export function calculateDimensionScore(responses, dimensionName, scale = 5) {
   if (!Array.isArray(responses) || responses.length === 0) {
     return {
       name: dimensionName,
@@ -108,8 +162,11 @@ export function calculateDimensionScore(responses, dimensionName) {
   const sum = validResponses.reduce((a, b) => a + b, 0);
   const average = sum / validResponses.length;
   
-  // Normalize to 0-100 scale (Likert scale is 1-5)
-  const normalizedScore = ((average - 1) / 4) * 100;
+  // Normalize to 0-100 scale based on the Likert scale used
+  // For 5-point: (average - 1) / 4 * 100
+  // For 7-point: (average - 1) / 6 * 100
+  const denominator = scale - 1;
+  const normalizedScore = ((average - 1) / denominator) * 100;
 
   return {
     name: dimensionName,
@@ -120,8 +177,53 @@ export function calculateDimensionScore(responses, dimensionName) {
 }
 
 /**
- * Get acceptance level based on TAM score
+ * Calculate usage score for Actual System Use construct
+ * Usage data contains: [frequency (0-5), hours per week (string/number)]
+ * Score is based on usage frequency (0-5 scale normalized to 0-100)
  */
+export function calculateUsageScore(usageData, dimensionName) {
+  if (!Array.isArray(usageData) || usageData.length === 0) {
+    return {
+      name: dimensionName,
+      score: 0,
+      count: 0,
+      frequency: 0,
+      hoursPerWeek: 0
+    };
+  }
+
+  // Extract frequency (first element, should be 0-5)
+  const frequency = usageData[0];
+  const hoursPerWeek = usageData[1];
+
+  // Validate frequency is a number
+  if (typeof frequency !== 'number' || isNaN(frequency)) {
+    return {
+      name: dimensionName,
+      score: 0,
+      count: 0,
+      frequency: 0,
+      hoursPerWeek: parseFloat(hoursPerWeek) || 0
+    };
+  }
+
+  // Normalize frequency (0-5) to 0-100 scale
+  // frequency 0-5 maps to 0-100
+  const normalizedScore = (frequency / 5) * 100;
+
+  // Parse hours per week
+  const hours = parseFloat(hoursPerWeek) || 0;
+
+  return {
+    name: dimensionName,
+    score: Math.round(normalizedScore * 10) / 10, // Round to 1 decimal
+    count: 1,
+    frequency: frequency,
+    hoursPerWeek: Math.round(hours * 10) / 10 // Round to 1 decimal
+  };
+}
+
+/**
 export function getTAMAcceptanceLevel(score) {
   if (score >= 80) return 'Very High';
   if (score >= 60) return 'High';

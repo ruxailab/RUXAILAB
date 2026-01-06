@@ -467,6 +467,7 @@ const saveAnswer = async () => {
         ...currentUserTestAnswer.value,
         fullName: localTestAnswer.fullName,
         progress: localTestAnswer.progress,
+        submitted: localTestAnswer.submitted,
         preTestAnswer: localTestAnswer.preTestAnswer,
         postTestAnswer: localTestAnswer.postTestAnswer,
         tasks: {
@@ -856,18 +857,22 @@ const mappingSteps = async () => {
           const getTamStructure = () => {
             if (task.taskType === 'tam-1') {
               return {
-                perceivedUsefulness: Array(5).fill(undefined),
-                perceivedEaseOfUse: Array(5).fill(undefined)
+                perceivedUsefulness: Array(10).fill(undefined),
+                perceivedEaseOfUse: Array(10).fill(undefined),
+                attitudeTowardUsing: Array(5).fill(undefined),
+                actualSystemUse: Array(2).fill(undefined)
               };
             } else if (task.taskType === 'tam-2') {
               return {
-                perceivedUsefulness: Array(5).fill(undefined),
-                perceivedEaseOfUse: Array(5).fill(undefined),
-                subjectiveNorm: Array(3).fill(undefined),
-                image: Array(2).fill(undefined),
-                jobRelevance: Array(3).fill(undefined),
-                outputQuality: Array(3).fill(undefined),
-                resultDemonstrability: Array(2).fill(undefined)
+                intentionToUse: Array(2).fill(undefined),
+                perceivedUsefulness: Array(4).fill(undefined),
+                perceivedEaseOfUse: Array(4).fill(undefined),
+                subjectiveNorm: Array(2).fill(undefined),
+                voluntariness: Array(3).fill(undefined),
+                image: Array(3).fill(undefined),
+                jobRelevance: Array(2).fill(undefined),
+                outputQuality: Array(2).fill(undefined),
+                resultDemonstrability: Array(4).fill(undefined)
               };
             } else if (task.taskType === 'tam-3') {
               return {

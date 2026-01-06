@@ -8,10 +8,10 @@
           Technology Acceptance Model - TAM-3
         </h3>
         <p class="text-body-2 text-grey-darken-3 mb-2">
-          Comprehensive technology acceptance assessment. Rate each statement on a scale from <strong>Strongly Disagree</strong> to <strong>Strongly Agree</strong>.
+          Comprehensive technology acceptance assessment based on TAM-3 (Venkatesh & Bala 2008). Rate each statement on a scale from <strong>Strongly Disagree</strong> to <strong>Strongly Agree</strong>.
         </p>
         <p class="text-body-2 text-grey-darken-3">
-          This advanced assessment measures {{ completedCount }}/39 dimensions of technology acceptance and use.
+          This advanced assessment measures {{ completedCount }}/38 items across the integrated TAM-3 model.
         </p>
       </v-card-text>
     </v-card>
@@ -26,11 +26,11 @@
     <div v-show="activeTab === 'form'">
       <!-- Progress indicator -->
       <div class="d-flex align-center mb-4">
-        <span class="text-subtitle-1">Progress: {{ completedCount }}/39</span>
+        <span class="text-subtitle-1">Progress: {{ completedCount }}/38</span>
         <v-progress-linear
           class="ml-4"
-          :model-value="(completedCount / 39) * 100"
-          :color="completedCount === 39 ? 'success' : 'primary'"
+          :model-value="(completedCount / 38) * 100"
+          :color="completedCount === 38 ? 'success' : 'primary'"
         />
       </div>
 
@@ -38,7 +38,7 @@
     <v-card variant="outlined" class="mb-6 pa-4" color="blue-lighten-5">
       <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-blue-darken-4">
         <v-icon size="24" color="blue-darken-4" class="mr-2">mdi-target-variant</v-icon>
-        Perceived Usefulness (5 items)
+        Perceived Usefulness (3 items)
       </v-card-title>
       <v-card v-for="(question, i) in puQuestions" :key="`pu-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.perceivedUsefulness[i] }">
         <v-card-text>
@@ -55,7 +55,7 @@
     <v-card variant="outlined" class="mb-6 pa-4" color="green-lighten-5">
       <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-green-darken-4">
         <v-icon size="24" color="green-darken-4" class="mr-2">mdi-lightning-bolt</v-icon>
-        Perceived Ease of Use (5 items)
+        Perceived Ease of Use (3 items)
       </v-card-title>
       <v-card v-for="(question, i) in peuQuestions" :key="`peu-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.perceivedEaseOfUse[i] }">
         <v-card-text>
@@ -64,6 +64,23 @@
           <v-radio-group :model-value="answers.perceivedEaseOfUse[i]" @update:model-value="updateDimensionAnswer('perceivedEaseOfUse', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
             <!-- </v-radio> -->
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Subjective Norm -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="pink-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-pink-darken-4">
+        <v-icon size="24" color="pink-darken-4" class="mr-2">mdi-people</v-icon>
+        Subjective Norm (3 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in snQuestions" :key="`sn-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.subjectiveNorm[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.subjectiveNorm[i]" @update:model-value="updateDimensionAnswer('subjectiveNorm', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -87,6 +104,23 @@
       </v-card>
     </v-card>
 
+    <!-- Job Relevance -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="cyan-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-cyan-darken-4">
+        <v-icon size="24" color="cyan-darken-4" class="mr-2">mdi-briefcase</v-icon>
+        Job Relevance (3 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in jrQuestions" :key="`jr-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.jobRelevance[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.jobRelevance[i]" @update:model-value="updateDimensionAnswer('jobRelevance', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
     <!-- Output Quality -->
     <v-card variant="outlined" class="mb-6 pa-4" color="teal-lighten-5">
       <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-teal-darken-4">
@@ -100,6 +134,23 @@
           <v-radio-group :model-value="answers.outputQuality[i]" @update:model-value="updateDimensionAnswer('outputQuality', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
             <!-- </v-radio> -->
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Result Demonstrability -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="deep-orange-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-deep-orange-darken-4">
+        <v-icon size="24" color="deep-orange-darken-4" class="mr-2">mdi-lightbulb-on</v-icon>
+        Result Demonstrability (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in rdQuestions" :key="`rd-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.resultDemonstrability[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.resultDemonstrability[i]" @update:model-value="updateDimensionAnswer('resultDemonstrability', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -123,11 +174,28 @@
       </v-card>
     </v-card>
 
+    <!-- Perceptions of External Control -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="teal-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-teal-darken-4">
+        <v-icon size="24" color="teal-darken-4" class="mr-2">mdi-lock-open</v-icon>
+        Perceptions of External Control (3 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in pecQuestions" :key="`pec-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.perceptionsOfExternalControl[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.perceptionsOfExternalControl[i]" @update:model-value="updateDimensionAnswer('perceptionsOfExternalControl', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
     <!-- Computer Anxiety -->
     <v-card variant="outlined" class="mb-6 pa-4" color="red-lighten-5">
       <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-red-darken-4">
         <v-icon size="24" color="red-darken-4" class="mr-2">mdi-alert-circle</v-icon>
-        Computer Anxiety (3 items)
+        Computer Anxiety (2 items)
       </v-card-title>
       <v-card v-for="(question, i) in caQuestions" :key="`ca-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.computerAnxiety[i] }">
         <v-card-text>
@@ -136,6 +204,23 @@
           <v-radio-group :model-value="answers.computerAnxiety[i]" @update:model-value="updateDimensionAnswer('computerAnxiety', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
             <!-- </v-radio> -->
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Computer Playfulness -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="amber-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-amber-darken-4">
+        <v-icon size="24" color="amber-darken-4" class="mr-2">mdi-gamepad-variant</v-icon>
+        Computer Playfulness (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in cpQuestions" :key="`cp-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.computerPlayfulness[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.computerPlayfulness[i]" @update:model-value="updateDimensionAnswer('computerPlayfulness', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -154,6 +239,91 @@
           <v-radio-group :model-value="answers.perceivedEnjoyment[i]" @update:model-value="updateDimensionAnswer('perceivedEnjoyment', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
             <!-- </v-radio> -->
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Objective Usability -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="green-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-green-darken-4">
+        <v-icon size="24" color="green-darken-4" class="mr-2">mdi-check-circle</v-icon>
+        Objective Usability (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in ouQuestions" :key="`ou-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.objectiveUsability[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.objectiveUsability[i]" @update:model-value="updateDimensionAnswer('objectiveUsability', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Behavioral Intention -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="purple-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-purple-darken-4">
+        <v-icon size="24" color="purple-darken-4" class="mr-2">mdi-target-check</v-icon>
+        Behavioral Intention (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in biQuestions" :key="`bi-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.behavioralIntention[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.behavioralIntention[i]" @update:model-value="updateDimensionAnswer('behavioralIntention', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Use Behavior -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="orange-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-orange-darken-4">
+        <v-icon size="24" color="orange-darken-4" class="mr-2">mdi-pulse</v-icon>
+        Use Behavior (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in useQuestions" :key="`use-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.usePatterns[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.usePatterns[i]" @update:model-value="updateDimensionAnswer('usePatterns', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Experience -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="teal-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-teal-darken-4">
+        <v-icon size="24" color="teal-darken-4" class="mr-2">mdi-history</v-icon>
+        Experience (Moderator) (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in expQuestions" :key="`exp-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.experience[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.experience[i]" @update:model-value="updateDimensionAnswer('experience', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+    </v-card>
+
+    <!-- Voluntariness -->
+    <v-card variant="outlined" class="mb-6 pa-4" color="blue-grey-lighten-5">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4 text-blue-grey-darken-4">
+        <v-icon size="24" color="blue-grey-darken-4" class="mr-2">mdi-hand-okay</v-icon>
+        Voluntariness (Moderator) (2 items)
+      </v-card-title>
+      <v-card v-for="(question, i) in volQuestions" :key="`vol-${i}`" variant="outlined" :class="{ 'my-2': true, 'border-error': !answers.voluntariness[i] }">
+        <v-card-text>
+          <span class="text-error font-weight-bold">{{ question }} *</span>
+          <v-divider class="my-2" />
+          <v-radio-group :model-value="answers.voluntariness[i]" @update:model-value="updateDimensionAnswer('voluntariness', i, $event)" inline>
+            <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -180,15 +350,15 @@
           <v-col cols="12" md="6" lg="3">
             <v-card variant="outlined" class="pa-6" style="border-left: 4px solid #2196F3;">
               <div class="text-caption font-weight-bold text-blue">TOTAL RESPONSES</div>
-              <div class="text-h4 font-weight-bold my-2">{{ completedCount }}/39</div>
-              <v-progress-linear :model-value="(completedCount / 39) * 100" color="blue" class="mt-2"></v-progress-linear>
+              <div class="text-h4 font-weight-bold my-2">{{ completedCount }}/38</div>
+              <v-progress-linear :model-value="(completedCount / 38) * 100" color="blue" class="mt-2"></v-progress-linear>
             </v-card>
           </v-col>
           <v-col cols="12" md="6" lg="3">
             <v-card variant="outlined" class="pa-6" style="border-left: 4px solid #4CAF50;">
-              <div class="text-caption font-weight-bold text-success">DIMENSIONS COMPLETE</div>
-              <div class="text-h4 font-weight-bold my-2">{{ completeDimensions }}/13</div>
-              <v-progress-linear :model-value="(completeDimensions / 13) * 100" color="success" class="mt-2"></v-progress-linear>
+              <div class="text-caption font-weight-bold text-success">CONSTRUCTS COMPLETE</div>
+              <div class="text-h4 font-weight-bold my-2">{{ completeDimensions }}/17</div>
+              <v-progress-linear :model-value="(completeDimensions / 17) * 100" color="success" class="mt-2"></v-progress-linear>
             </v-card>
           </v-col>
           <v-col cols="12" md="6" lg="3">
@@ -200,8 +370,8 @@
           <v-col cols="12" md="6" lg="3">
             <v-card variant="outlined" class="pa-6" style="border-left: 4px solid #2196F3;">
               <div class="text-caption font-weight-bold text-primary">STATUS</div>
-              <div class="text-h6 font-weight-bold my-2" :style="{ color: completedCount === 39 ? '#4CAF50' : '#FF9800' }">
-                {{ completedCount === 39 ? 'COMPLETE' : 'IN PROGRESS' }}
+              <div class="text-h6 font-weight-bold my-2" :style="{ color: completedCount === 38 ? '#4CAF50' : '#FF9800' }">
+                {{ completedCount === 38 ? 'COMPLETE' : 'IN PROGRESS' }}
               </div>
             </v-card>
           </v-col>
@@ -280,8 +450,10 @@ const props = defineProps({
   modelValue: {
     type: Object,
     default: () => ({
-      perceivedUsefulness: Array(5).fill(undefined),
-      perceivedEaseOfUse: Array(5).fill(undefined),
+      perceivedUsefulness: Array(3).fill(undefined),
+      perceivedEaseOfUse: Array(3).fill(undefined),
+      behavioralIntention: Array(2).fill(undefined),
+      usePatterns: Array(2).fill(undefined),
       subjectiveNorm: Array(3).fill(undefined),
       image: Array(2).fill(undefined),
       jobRelevance: Array(3).fill(undefined),
@@ -289,10 +461,12 @@ const props = defineProps({
       resultDemonstrability: Array(2).fill(undefined),
       computerSelfEfficacy: Array(3).fill(undefined),
       perceptionsOfExternalControl: Array(3).fill(undefined),
-      computerAnxiety: Array(3).fill(undefined),
+      computerAnxiety: Array(2).fill(undefined),
       computerPlayfulness: Array(2).fill(undefined),
       perceivedEnjoyment: Array(3).fill(undefined),
-      objectiveUsability: Array(2).fill(undefined)
+      objectiveUsability: Array(2).fill(undefined),
+      experience: Array(2).fill(undefined),
+      voluntariness: Array(2).fill(undefined)
     })
   }
 });
@@ -304,19 +478,15 @@ const valid = ref(false);
 const likertLabels = ref(["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]);
 
 const puQuestions = ref([
-  "Using the technology improves my performance in my job.",
+  "Using the technology improves my job performance.",
   "Using the technology increases my productivity.",
-  "Using the technology enhances my effectiveness in my job.",
-  "Using the technology makes it easier to do my job.",
   "I find the technology to be useful in my job."
 ]);
 
 const peuQuestions = ref([
   "My interaction with the technology is clear and understandable.",
-  "It would be easy for me to become skillful at using the technology.",
   "I find the technology easy to use.",
-  "Learning to operate the technology is easy for me.",
-  "It is easy for me to remember how to perform tasks using the technology."
+  "Learning to operate the technology is easy for me."
 ]);
 
 const snQuestions = ref([
@@ -359,10 +529,29 @@ const pecQuestions = ref([
   "The technology is compatible with other systems I use."
 ]);
 
+const biQuestions = ref([
+  "Assuming I have access to the technology, I intend to use it.",
+  "I will strongly recommend this technology to my colleagues."
+]);
+
+const useQuestions = ref([
+  "How frequently do you use the technology? (1=rarely, 5=constantly)",
+  "Approximately how many hours per week do you use the technology?"
+]);
+
+const expQuestions = ref([
+  "I have prior experience with similar technologies.",
+  "I am an experienced computer user."
+]);
+
+const volQuestions = ref([
+  "My use of the technology is voluntary.",
+  "Using the technology is not mandatory in my job."
+]);
+
 const caQuestions = ref([
   "Using the technology makes me nervous.",
-  "I am apprehensive about using the technology.",
-  "Using the technology is frustrating."
+  "I am apprehensive about using the technology."
 ]);
 
 const cpQuestions = ref([
@@ -382,8 +571,14 @@ const ouQuestions = ref([
 ]);
 
 const completedCount = computed(() => {
-  const dims = ['perceivedUsefulness', 'perceivedEaseOfUse', 'subjectiveNorm', 'image', 'jobRelevance', 'outputQuality', 'resultDemonstrability', 'computerSelfEfficacy', 'perceptionsOfExternalControl', 'computerAnxiety', 'computerPlayfulness', 'perceivedEnjoyment', 'objectiveUsability'];
-  return dims.reduce((sum, dim) => sum + answers.value[dim].filter(a => typeof a === 'number').length, 0);
+  let count = 0;
+  Object.entries(dimSizes).forEach(([dim, size]) => {
+    const arr = answers.value[dim] || [];
+    for (let i = 0; i < size; i++) {
+      if (typeof arr[i] === 'number') count++;
+    }
+  });
+  return count;
 });
 
 const answers = computed({
@@ -400,27 +595,65 @@ const updateDimensionAnswer = (dimension, index, value) => {
   emit('update:modelValue', newAnswers);
 };
 
+// Dimension sizes mapping
+const dimSizes = {
+  perceivedUsefulness: 3,
+  perceivedEaseOfUse: 3,
+  behavioralIntention: 2,
+  usePatterns: 2,
+  subjectiveNorm: 3,
+  image: 2,
+  jobRelevance: 3,
+  outputQuality: 3,
+  resultDemonstrability: 2,
+  computerSelfEfficacy: 3,
+  perceptionsOfExternalControl: 3,
+  computerAnxiety: 2,
+  computerPlayfulness: 2,
+  perceivedEnjoyment: 2,
+  objectiveUsability: 2,
+  experience: 2,
+  voluntariness: 2
+};
+
 // Summary computed properties
 const dimensionConfig = ref([
-  { key: 'perceivedUsefulness', label: 'Perceived Usefulness', questions: puQuestions.value, color: '#2196F3' },
-  { key: 'perceivedEaseOfUse', label: 'Perceived Ease of Use', questions: peuQuestions.value, color: '#4CAF50' },
-  { key: 'subjectiveNorm', label: 'Subjective Norm', questions: snQuestions.value, color: '#FF9800' },
-  { key: 'image', label: 'Image', questions: imgQuestions.value, color: '#E91E63' },
-  { key: 'jobRelevance', label: 'Job Relevance', questions: jrQuestions.value, color: '#9C27B0' },
-  { key: 'outputQuality', label: 'Output Quality', questions: oqQuestions.value, color: '#00BCD4' },
-  { key: 'resultDemonstrability', label: 'Result Demonstrability', questions: rdQuestions.value, color: '#8BC34A' },
-  { key: 'computerSelfEfficacy', label: 'Computer Self-Efficacy', questions: cseQuestions.value, color: '#03A9F4' },
-  { key: 'computerAnxiety', label: 'Computer Anxiety', questions: caQuestions.value, color: '#F44336' },
-  { key: 'computerPlayfulness', label: 'Computer Playfulness', questions: cpQuestions.value, color: '#FF5722' },
-  { key: 'perceivedEnjoyment', label: 'Perceived Enjoyment', questions: peQuestions.value, color: '#FFEB3B' },
-  { key: 'objectiveUsability', label: 'Objective Usability', questions: ouQuestions.value, color: '#4CAF50' }
+  // Core TAM constructs
+  { key: 'perceivedUsefulness', label: 'Perceived Usefulness (PU)', questions: puQuestions.value, color: '#2196F3', section: 'core' },
+  { key: 'perceivedEaseOfUse', label: 'Perceived Ease of Use (PEOU)', questions: peuQuestions.value, color: '#4CAF50', section: 'core' },
+  { key: 'behavioralIntention', label: 'Behavioral Intention (BI)', questions: biQuestions.value, color: '#673AB7', section: 'core' },
+  { key: 'usePatterns', label: 'Use Behavior (USE)', questions: useQuestions.value, color: '#FF9800', section: 'core' },
+  // Determinants of PU
+  { key: 'subjectiveNorm', label: 'Subjective Norm (SN)', questions: snQuestions.value, color: '#E91E63', section: 'puDeterminants' },
+  { key: 'image', label: 'Image (IMG)', questions: imgQuestions.value, color: '#9C27B0', section: 'puDeterminants' },
+  { key: 'jobRelevance', label: 'Job Relevance (REL)', questions: jrQuestions.value, color: '#00BCD4', section: 'puDeterminants' },
+  { key: 'outputQuality', label: 'Output Quality (OUT)', questions: oqQuestions.value, color: '#8BC34A', section: 'puDeterminants' },
+  { key: 'resultDemonstrability', label: 'Result Demonstrability (RES)', questions: rdQuestions.value, color: '#FF5722', section: 'puDeterminants' },
+  // Determinants of PEOU - Anchors
+  { key: 'computerSelfEfficacy', label: 'Computer Self-Efficacy (CSE)', questions: cseQuestions.value, color: '#03A9F4', section: 'peuAnchors' },
+  { key: 'perceptionsOfExternalControl', label: 'Perceptions of External Control (PEC)', questions: pecQuestions.value, color: '#009688', section: 'peuAnchors' },
+  { key: 'computerAnxiety', label: 'Computer Anxiety (CANX)', questions: caQuestions.value, color: '#F44336', section: 'peuAnchors' },
+  { key: 'computerPlayfulness', label: 'Computer Playfulness (CPLAY)', questions: cpQuestions.value, color: '#FF5722', section: 'peuAnchors' },
+  // Determinants of PEOU - Adjustments
+  { key: 'perceivedEnjoyment', label: 'Perceived Enjoyment (ENJ)', questions: peQuestions.value, color: '#FFEB3B', section: 'peuAdjustments' },
+  { key: 'objectiveUsability', label: 'Objective Usability (OU)', questions: ouQuestions.value, color: '#4CAF50', section: 'peuAdjustments' },
+  // Moderators
+  { key: 'experience', label: 'Experience (EXP)', questions: expQuestions.value, color: '#2E7D32', section: 'moderators' },
+  { key: 'voluntariness', label: 'Voluntariness (VOL)', questions: volQuestions.value, color: '#455A64', section: 'moderators' }
 ]);
 
 const summaryDimensions = computed(() => {
   return dimensionConfig.value.map(dim => {
     const responses = answers.value[dim.key] || [];
-    const answered = responses.filter(a => typeof a === 'number').length;
-    const sum = responses.reduce((acc, val) => acc + (typeof val === 'number' ? val : 0), 0);
+    const validSize = dimSizes[dim.key] || responses.length;
+    let answered = 0;
+    let sum = 0;
+    for (let i = 0; i < validSize; i++) {
+      if (typeof responses[i] === 'number') {
+        answered++;
+        sum += responses[i];
+      }
+    }
     const average = answered > 0 ? sum / answered : 0;
     return {
       key: dim.key,
@@ -428,7 +661,7 @@ const summaryDimensions = computed(() => {
       color: dim.color,
       average,
       answered,
-      total: responses.length
+      total: validSize
     };
   });
 });
@@ -451,7 +684,11 @@ const detailedResponses = computed(() => {
 const completeDimensions = computed(() => {
   return dimensionConfig.value.filter(dim => {
     const responses = answers.value[dim.key] || [];
-    return responses.every(a => typeof a === 'number');
+    const validSize = dimSizes[dim.key] || responses.length;
+    for (let i = 0; i < validSize; i++) {
+      if (typeof responses[i] !== 'number') return false;
+    }
+    return true;
   }).length;
 });
 
@@ -461,12 +698,13 @@ const overallAverage = computed(() => {
   
   dimensionConfig.value.forEach(dim => {
     const responses = answers.value[dim.key] || [];
-    responses.forEach(response => {
-      if (typeof response === 'number') {
-        totalScore += response;
+    const validSize = dimSizes[dim.key] || responses.length;
+    for (let i = 0; i < validSize; i++) {
+      if (typeof responses[i] === 'number') {
+        totalScore += responses[i];
         totalAnswers++;
       }
-    });
+    }
   });
   
   return totalAnswers > 0 ? totalScore / totalAnswers : 0;
