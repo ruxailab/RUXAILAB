@@ -207,7 +207,7 @@ const files = computed(() => {
         
         // Common file properties
         const baseFile = {
-            id: task.id || Math.random().toString(36),
+            id: task.id || self.crypto.randomUUID(),
             studyName: test.testTitle,
             date: date
         }
