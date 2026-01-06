@@ -82,6 +82,8 @@
     "account": "Account",
     "admin": "Admin",
     "superAdmin": "Super Admin",
+    "guest": "Guest",
+    "evaluator":"Evaluator",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -133,7 +135,7 @@
   },
   "titles": {
     "manager": "Manager",
-    "test": "Test",
+    "tests": "Test",
     "preview": "Preview",
     "reports": "Reports",
     "answers": "Answers",
@@ -142,6 +144,10 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
+    "users": "Users",
+    "studies": "Studies",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -153,7 +159,10 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "name": "Name",
+      "studiesCount": "Studies Created", 
+      "mediaSize": "Media Size"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
