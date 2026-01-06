@@ -12,12 +12,6 @@
             </v-col>
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <!--STUDIES WHERE USER IS TESTADMIN -->
-<<<<<<< HEAD
-              <div class="stats-value">{{ totalStudies }}/50</div>
-              <div class="stats-label">Studies</div>
-            </v-col>
-          </v-row>
-=======
               <div class="stats-value">
                 {{ totalStudies }}/50
               </div>
@@ -26,7 +20,6 @@
               </div>
             </div>
           </div>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
         </v-card-text>
       </v-card>
     </v-col>
@@ -46,17 +39,11 @@
               <div class="stats-value">
                 {{ formattedStorage }}
               </div>
-<<<<<<< HEAD
-              <div class="stats-label">Storage</div>
-            </v-col>
-          </v-row>
-=======
               <div class="stats-label">
                 {{ $t('adminDashboard.stats.storage') }}
               </div>
             </div>
           </div>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
         </v-card-text>
       </v-card>
     </v-col>
@@ -65,19 +52,6 @@
     <v-col cols="6" sm="6" md="3">
       <v-card elevation="2" rounded="lg" class="stats-card">
         <v-card-text class="pa-4">
-<<<<<<< HEAD
-          <v-row>
-            <v-col cols="12" sm="auto">
-              <div class="icon-wrapper">
-                <v-icon icon="mdi-crown" size="32" color="secondary" />
-              </div>
-            </v-col>
-            <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
-              <div class="stats-value">Free</div>
-              <div class="stats-label">Plan</div>
-            </v-col>
-          </v-row>
-=======
           <div class="d-flex justify-space-between align-start">
             <div class="icon-wrapper">
               <v-icon
@@ -95,7 +69,6 @@
               </div>
             </div>
           </div>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
         </v-card-text>
       </v-card>
     </v-col>
@@ -109,21 +82,11 @@
               <div class="icon-wrapper">
                 <v-icon icon="mdi-account-group" size="32" color="secondary" />
               </div>
-<<<<<<< HEAD
-            </v-col>
-            <!-- COOPERATORS FROM STUDIES WHERE USER IS TESTADMIN -->
-            <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
-              <div class="stats-value">{{ totalParticipants }}/5</div>
-              <div class="stats-label">Participants</div>
-            </v-col>
-          </v-row>
-=======
               <div class="stats-label">
                 {{ $t('adminDashboard.stats.participants') }}
               </div>
             </div>
           </div>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
         </v-card-text>
       </v-card>
     </v-col>

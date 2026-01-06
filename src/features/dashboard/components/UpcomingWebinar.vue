@@ -1,13 +1,4 @@
 <template>
-<<<<<<< HEAD
-  <v-card elevation="2" rounded="lg" class="upcoming-webinar-card position-relative">
-    <!-- Status Overlay -->
-    <div v-if="webinarStatus.show" class="coming-soon-overlay">
-      <v-chip :color="webinarStatus.color" variant="elevated" size="small" class="coming-soon-chip"
-        :class="{ 'pulse-animation': webinarStatus.text === 'Live' }">
-        <v-icon v-if="webinarStatus.icon" :icon="webinarStatus.icon" size="16" class="mr-1" />
-        {{ webinarStatus.text }}
-=======
   <v-card
     elevation="2"
     rounded="lg"
@@ -22,14 +13,10 @@
         class="coming-soon-chip"
       >
         {{ $t('adminDashboard.upcomingWebinar.comingSoon') }}
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
       </v-chip>
     </div>
 
     <!-- Hero Image Section -->
-<<<<<<< HEAD
-    <v-img class="align-end text-white" height="200" :src="officeHoursImage" cover>
-=======
     <v-img
       class="align-end text-white"
       height="200"
@@ -37,7 +24,6 @@
       cover
     >
       <v-card-title>{{ $t('adminDashboard.upcomingWebinar.title') }}</v-card-title>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     </v-img>
 
 
@@ -63,11 +49,7 @@
               <div class="info-value">
                 {{ webinar.date }}
               </div>
-<<<<<<< HEAD
-              <div>Date</div>
-=======
               <div>{{ $t('adminDashboard.upcomingWebinar.date') }}</div>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
             </div>
           </div>
         </v-col>
@@ -80,22 +62,13 @@
               <div class="info-value">
                 {{ webinar.duration }}
               </div>
-<<<<<<< HEAD
-              <div>Time</div>
-=======
               <div>{{ $t('adminDashboard.upcomingWebinar.time') }}</div>
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
             </div>
           </div>
         </v-col>
       </v-row>
 
       <!-- Join Button -->
-<<<<<<< HEAD
-      <v-btn :color="buttonConfig.color" variant="flat" size="large" block rounded="lg" class="join-button"
-        :prepend-icon="buttonConfig.icon" :disabled="buttonConfig.disabled" @click="buttonConfig.action">
-        {{ buttonConfig.text }}
-=======
       <v-btn
         color="primary"
         variant="flat"
@@ -107,7 +80,6 @@
         disabled
       >
         {{ $t('adminDashboard.upcomingWebinar.comingInNovember') }}
->>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
       </v-btn>
     </v-card-text>
   </v-card>
