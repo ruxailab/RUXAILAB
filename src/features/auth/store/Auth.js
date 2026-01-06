@@ -217,16 +217,9 @@ export default {
       try {
         await authController.deleteAuth(payload)
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.deleteSuccess'),
-          type: 'success',
-        })
       } catch (err) {
         console.error('Error deleting user:', err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        throw err
       } finally {
         commit('setLoading', false)
       }
