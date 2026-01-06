@@ -67,6 +67,8 @@ const initWebcam = async () => {
     mediaStream.value = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false })
     if (videoRef.value) {
         videoRef.value.srcObject = mediaStream.value
+        // Kick the video to play even if hidden (for tracking-only mode)
+        try { await videoRef.value.play() } catch (e) { /* ignore play/autoplay errors */ }
         await waitForVideoReady()
     }
 }
@@ -84,7 +86,10 @@ const loadModel = async () => {
 }
 
 const startTracking = async () => {
+    // Ensure webcam is initialized (critical for tracking-only mode)
     if (!mediaStream.value) await initWebcam()
+    // Ensure model is loaded before starting tracking loop
+    if (!model.value) await loadModel()
     if (!model.value) return
     const loop = async () => {
         if (!props.isRunning) return

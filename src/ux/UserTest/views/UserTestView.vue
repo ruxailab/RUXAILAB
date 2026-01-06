@@ -416,11 +416,11 @@ const closeCalibration = () => {
   completeStep(taskIndex.value, 'eyeCalibration');
 }
 
-function toggleTracking(value) {
-  console.log('toggleTracking', value);
+function toggleTracking(trackingValue, recordingValue) {
+  console.log('toggleTracking', { trackingValue, recordingValue });
 
-  isTracking.value = value;
-  isRecording.value = value;
+  isTracking.value = trackingValue;
+  isRecording.value = recordingValue !== undefined ? recordingValue : trackingValue;
 }
 
 function saveIrisDataIntoTask() {
@@ -433,9 +433,10 @@ function saveIrisDataIntoTask() {
   const task = test.value.testStructure.userTasks[taskIndex.value]
 
   if (task?.hasEye === true && globalIndex.value >= 5) {
-    toggleTracking(true);
+    const shouldRecord = task.recordScreen !== false; 
+    toggleTracking(true, shouldRecord);
   } else {
-    toggleTracking(false);
+    toggleTracking(false, false);
   }
 }
 
