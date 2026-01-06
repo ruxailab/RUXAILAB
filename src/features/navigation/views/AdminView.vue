@@ -49,11 +49,21 @@
           <StorageSection />
         </div>
 
-        <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
+        <div
+          v-if="
+            activeSection === 'community' &&
+            activeSubSection === 'community-studies'
+          "
+        >
           <CommunityStudies />
         </div>
 
-        <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
+        <div
+          v-if="
+            activeSection === 'community' &&
+            activeSubSection === 'community-templates'
+          "
+        >
           <CommunityTemplatesSection />
         </div>
 
