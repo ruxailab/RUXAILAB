@@ -16,7 +16,7 @@
       <!-- Overview Cards - 4 Column Grid -->
       <v-row class="mb-8">
         <!-- Average Acceptance Score -->
-        <v-col cols="12" sm="6" md="3" class="d-flex">
+        <v-col cols="12" sm="6" md="4" class="d-flex">
           <v-card class="pa-6 text-center flex-grow-1" elevation="2" style="border-radius: 12px;">
             <div class="mb-2">
               <div class="text-caption text-grey-darken-1 mb-2">
@@ -38,7 +38,7 @@
         </v-col>
 
         <!-- Total Respondents -->
-        <v-col cols="12" sm="6" md="3" class="d-flex">
+        <v-col cols="12" sm="6" md="4" class="d-flex">
           <v-card class="pa-6 text-center flex-grow-1" elevation="2" style="border-radius: 12px;">
             <div class="mb-2">
               <div class="text-caption text-grey-darken-1 mb-2">
@@ -59,30 +59,8 @@
           </v-card>
         </v-col>
 
-        <!-- TAM Versions Used -->
-        <v-col cols="12" sm="6" md="3" class="d-flex">
-          <v-card class="pa-6 text-center flex-grow-1" elevation="2" style="border-radius: 12px;">
-            <div class="mb-2">
-              <div class="text-caption text-grey-darken-1 mb-2">
-                TAM Versions Used
-              </div>
-              <div class="text-h2 font-weight-bold" style="color: #9c27b0;">
-                {{ getUsedVersionsCount() }}
-              </div>
-              <div class="text-caption text-grey">
-                version(s)
-              </div>
-            </div>
-            <div class="d-flex justify-center">
-              <v-icon size="32" style="color: #9c27b0;">
-                mdi-format-list-checks
-              </v-icon>
-            </div>
-          </v-card>
-        </v-col>
-
         <!-- Highest Construct -->
-        <v-col cols="12" sm="6" md="3" class="d-flex">
+        <v-col cols="12" sm="6" md="4" class="d-flex">
           <v-card class="pa-6 text-center flex-grow-1" elevation="2" style="border-radius: 12px;">
             <div class="mb-2">
               <div class="text-caption text-grey-darken-1 mb-2">
@@ -281,8 +259,8 @@
                   </div>
                   <v-range-slider
                     v-model="acceptanceRange"
-                    :min="1"
-                    :max="7"
+                    :min="0"
+                    :max="100"
                     :step="0.1"
                     color="primary"
                   />
@@ -327,7 +305,7 @@
   <!-- Details Modal -->
   <v-dialog
     v-model="detailsModal"
-    max-width="700px"
+    max-width="900px"
   >
     <v-card v-if="selectedResponse">
       <v-card-title class="text-h5 pa-6">
@@ -335,6 +313,7 @@
       </v-card-title>
       <v-divider />
       <v-card-text class="pa-6">
+        <!-- Dimension Scores with Clickable Cards -->
         <v-row>
           <v-col cols="12">
             <h3 class="text-h6 font-weight-bold mb-4">
@@ -347,26 +326,65 @@
             cols="12"
             sm="6"
           >
-            <div class="mb-3">
+            <v-card
+              :ripple="true"
+              @click="() => { console.log('🖱️ Clicked dimension:', dimension); selectedConstructForDetails = dimension; }"
+              :class="{ 'border-2 border-primary': selectedConstructForDetails === dimension }"
+              class="cursor-pointer mb-3"
+            >
+              <v-card-text>
+                <div class="text-body-2 font-weight-medium mb-2">
+                  {{ getDimensionLabel(dimension) }}
+                </div>
+                <div class="text-h6 font-weight-bold mb-2">
+                  {{ score }}
+                </div>
+                <v-progress-linear
+                  :model-value="score"
+                  :color="getDimensionColor(dimension)"
+                  height="6"
+                  rounded
+                />
+                <div class="text-caption text-grey mt-2">
+                  Click to view answers
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Answers for Selected Construct -->
+        <v-row v-if="selectedConstructForDetails && getConstructAnswers(selectedConstructForDetails).length > 0" class="mt-4">
+          <v-col cols="12">
+            <v-divider class="mb-4" />
+            <h3 class="text-h6 font-weight-bold mb-4">
+              Answers for: {{ selectedConstructForDetails }}
+            </h3>
+          </v-col>
+          <v-col cols="12">
+            <v-card
+              v-for="(answer, index) in getConstructAnswers(selectedConstructForDetails)"
+              :key="index"
+              variant="outlined"
+              class="mb-3 pa-4"
+            >
               <div class="text-body-2 font-weight-medium mb-2">
-                {{ dimension }}
+                <span class="text-primary font-weight-bold">{{ index + 1 }}.</span>
+                {{ answer.question }}
               </div>
-              <div class="text-h6 font-weight-bold mb-2">
-                {{ score }}
+              <div class="text-h6 font-weight-bold text-success">
+                {{ answer.answer }}
               </div>
-              <v-progress-linear
-                :model-value="score"
-                :color="getDimensionColor(dimension)"
-                height="6"
-                rounded
-              />
-            </div>
+            </v-card>
           </v-col>
         </v-row>
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-spacer />
+        <v-btn color="secondary" variant="text" @click="selectedConstructForDetails = null" v-if="selectedConstructForDetails">
+          Clear Selection
+        </v-btn>
         <v-btn color="primary" variant="text" @click="detailsModal = false">
           Close
         </v-btn>
@@ -390,28 +408,39 @@ const TAM_DIMENSIONS = {
     { key: 'tam1_eu', label: 'Perceived Ease of Use', description: 'The system is easy to interact with', color: '#4CAF50' }
   ],
   tam2: [
-    { key: 'tam1_pu', label: 'Perceived Usefulness', description: 'The system improves job performance', color: '#2196F3' },
-    { key: 'tam1_eu', label: 'Perceived Ease of Use', description: 'The system is easy to interact with', color: '#4CAF50' },
+    { key: 'tam2_int', label: 'Intention to Use', description: 'Intent to use the system', color: '#673AB7' },
+    { key: 'tam2_pu', label: 'Perceived Usefulness', description: 'The system improves job performance', color: '#2196F3' },
+    { key: 'tam2_eu', label: 'Perceived Ease of Use', description: 'The system is easy to interact with', color: '#4CAF50' },
     { key: 'tam2_sn', label: 'Subjective Norm', description: 'Others influence usage', color: '#FF9800' },
-    { key: 'tam2_img', label: 'Image', description: 'Status and prestige impact', color: '#E91E63' },
-    { key: 'tam2_jr', label: 'Job Relevance', description: 'Relevance to job tasks', color: '#9C27B0' },
-    { key: 'tam2_oq', label: 'Output Quality', description: 'Quality of results', color: '#00BCD4' },
-    { key: 'tam2_rd', label: 'Result Demonstrability', description: 'Observable results', color: '#8BC34A' }
+    { key: 'tam2_vol', label: 'Voluntariness', description: 'Voluntary vs mandatory use', color: '#E91E63' },
+    { key: 'tam2_img', label: 'Image', description: 'Status and prestige impact', color: '#9C27B0' },
+    { key: 'tam2_jr', label: 'Job Relevance', description: 'Relevance to job tasks', color: '#00BCD4' },
+    { key: 'tam2_oq', label: 'Output Quality', description: 'Quality of results', color: '#8BC34A' },
+    { key: 'tam2_rd', label: 'Result Demonstrability', description: 'Observable results', color: '#FF5722' }
   ],
   tam3: [
-    { key: 'tam1_pu', label: 'Perceived Usefulness', description: 'The system improves job performance', color: '#2196F3' },
-    { key: 'tam1_eu', label: 'Perceived Ease of Use', description: 'The system is easy to interact with', color: '#4CAF50' },
-    { key: 'tam2_sn', label: 'Subjective Norm', description: 'Others influence usage', color: '#FF9800' },
-    { key: 'tam2_img', label: 'Image', description: 'Status and prestige impact', color: '#E91E63' },
-    { key: 'tam2_jr', label: 'Job Relevance', description: 'Relevance to job tasks', color: '#9C27B0' },
-    { key: 'tam2_oq', label: 'Output Quality', description: 'Quality of results', color: '#00BCD4' },
-    { key: 'tam2_rd', label: 'Result Demonstrability', description: 'Observable results', color: '#8BC34A' },
-    { key: 'tam3_cse', label: 'Computer Self-Efficacy', description: 'Confidence in using systems', color: '#03A9F4' },
-    { key: 'tam3_ec', label: 'External Control', description: 'External support availability', color: '#009688' },
-    { key: 'tam3_anx', label: 'Anxiety', description: 'Apprehension about use', color: '#F44336' },
-    { key: 'tam3_pf', label: 'Playfulness', description: 'Enjoyment of system use', color: '#FF5722' },
-    { key: 'tam3_enj', label: 'Enjoyment', description: 'Intrinsic motivation', color: '#FFEB3B' },
-    { key: 'tam3_ou', label: 'Objective Usability', description: 'Actual system ease of use', color: '#4CAF50' }
+    // Core TAM constructs
+    { key: 'tam3_pu', label: 'Perceived Usefulness (PU)', description: 'Job performance enhancement', color: '#2196F3' },
+    { key: 'tam3_eu', label: 'Perceived Ease of Use (PEOU)', description: 'Effort to use the system', color: '#4CAF50' },
+    { key: 'tam3_bi', label: 'Behavioral Intention (BI)', description: 'Intent to use the system', color: '#673AB7' },
+    { key: 'tam3_use', label: 'Use Behavior (USE)', description: 'Actual usage frequency and time', color: '#FF9800' },
+    // Determinants of PU
+    { key: 'tam3_sn', label: 'Subjective Norm (SN)', description: 'Others influence usage', color: '#E91E63' },
+    { key: 'tam3_img', label: 'Image (IMG)', description: 'Status and prestige impact', color: '#9C27B0' },
+    { key: 'tam3_jr', label: 'Job Relevance (REL)', description: 'Relevance to job tasks', color: '#00BCD4' },
+    { key: 'tam3_oq', label: 'Output Quality (OUT)', description: 'Quality of results', color: '#8BC34A' },
+    { key: 'tam3_rd', label: 'Result Demonstrability (RES)', description: 'Observable results', color: '#FF5722' },
+    // Determinants of PEOU - Anchors
+    { key: 'tam3_cse', label: 'Computer Self-Efficacy (CSE)', description: 'Confidence in using systems', color: '#03A9F4' },
+    { key: 'tam3_ec', label: 'External Control (PEC)', description: 'External support availability', color: '#009688' },
+    { key: 'tam3_anx', label: 'Computer Anxiety (CANX)', description: 'Apprehension about use', color: '#F44336' },
+    { key: 'tam3_pf', label: 'Computer Playfulness (CPLAY)', description: 'Enjoyment of system use', color: '#FF5722' },
+    // Determinants of PEOU - Adjustments
+    { key: 'tam3_enj', label: 'Perceived Enjoyment (ENJ)', description: 'Intrinsic motivation', color: '#FFEB3B' },
+    { key: 'tam3_ou', label: 'Objective Usability (OU)', description: 'Actual system ease of use', color: '#4CAF50' },
+    // Moderators
+    { key: 'tam3_exp', label: 'Experience (EXP)', description: 'Prior system experience', color: '#2E7D32' },
+    { key: 'tam3_vol', label: 'Voluntariness (VOL)', description: 'Voluntary vs mandatory use', color: '#455A64' }
   ]
 }
 
@@ -422,7 +451,7 @@ const analytics = ref({
   responses: []
 })
 
-const selectedVersion = ref('tam1')
+const selectedVersion = ref('')
 
 const availableVersions = computed(() => {
   // First, check test structure for all created TAM tasks
@@ -451,6 +480,11 @@ const availableVersions = computed(() => {
   const result = Array.from(allVersions).sort();
   
   console.log('Final availableVersions:', result);
+  
+  // Set initial selectedVersion if not already set
+  if (!selectedVersion.value && result.length > 0) {
+    selectedVersion.value = result[result.length - 1]; // Select highest version (tam3 > tam2 > tam1)
+  }
   
   return result.length > 0 ? result : [];
 })
@@ -502,6 +536,7 @@ const scatterPlotData = computed(() => {
 
 const detailsModal = ref(false)
 const selectedResponse = ref(null)
+const selectedConstructForDetails = ref(null)
 
 const test = computed(() => store.getters.test.testStructure)
 const testAnswerDocument = computed(() => store.getters.visibleUserAnswers || {})
@@ -565,11 +600,20 @@ function getActiveDimensions(version) {
 
 function getTableHeaders(version) {
   const activeDimensions = getActiveDimensions(version)
-  const dimensionHeaders = activeDimensions.map(dim => ({
-    title: dim.label.split(' ')[0],
-    key: dim.key,
-    sortable: true
-  }))
+  const dimensionHeaders = activeDimensions.map(dim => {
+    // Create shorter but clearer headers
+    let shortLabel = dim.label
+    if (dim.label === 'Perceived Usefulness') shortLabel = 'PU'
+    if (dim.label === 'Perceived Ease of Use') shortLabel = 'PEOU'
+    if (dim.label === 'Attitude Toward Using') shortLabel = 'ATT'
+    if (dim.label === 'Actual System Use') shortLabel = 'USE'
+    
+    return {
+      title: shortLabel,
+      key: dim.key,
+      sortable: true
+    }
+  })
 
   return [
     { title: 'Participant', key: 'name', sortable: true },
@@ -604,9 +648,351 @@ function getInterpretation(score) {
   return 'Very Poor'
 }
 
+function getDimensionLabel(dimensionKey) {
+  const version = selectedVersion.value.includes('-') ? selectedVersion.value.split('-')[1] : selectedVersion.value.slice(-1)
+  const versionKey = `tam${version}`
+  const dimensions = TAM_DIMENSIONS[versionKey] || []
+  const found = dimensions.find(d => d.key === dimensionKey)
+  return found ? found.label : dimensionKey
+}
+
 function openDetails(response) {
+  console.log('📋 openDetails called with response:', response);
+  console.log('  - tamAnswers exists?', !!response.tamAnswers);
+  console.log('  - tamAnswers properties:', response.tamAnswers ? Object.keys(response.tamAnswers) : 'N/A');
   selectedResponse.value = response
   detailsModal.value = true
+}
+
+function getConstructAnswers(constructKey) {
+  console.log('🔍 getConstructAnswers called with constructKey:', constructKey);
+  
+  if (!selectedResponse.value) {
+    console.log('❌ No selectedResponse');
+    return []
+  }
+  
+  if (!selectedResponse.value.tamAnswers) {
+    console.log('❌ No selectedResponse.tamAnswers');
+    console.log('Available properties in selectedResponse:', Object.keys(selectedResponse.value));
+    return []
+  }
+  
+  console.log('✅ Found tamAnswers, available properties:', Object.keys(selectedResponse.value.tamAnswers));
+
+  // Define question templates for each construct
+  const questions = {
+    'tam1_pu': [
+      'Using the system has a positive effect on my job effectiveness',
+      'Using the system has a positive effect on my job productivity',
+      'Using the system has a positive effect on my job performance',
+      'Using the system has a positive effect on my ability to accomplish job tasks',
+      'Using the system has a positive effect on my ability to control my work',
+      'Using the system has a positive effect on my work quality',
+      'Using the system has a positive effect on my work efficiency',
+      'Using the system enables me to accomplish more',
+      'Using the system improves my ability to do my job',
+      'Using the system makes it easier to do my job'
+    ],
+    'tam1_eu': [
+      'Overall, I find the system easy to use',
+      'Overall, I find the system convenient to use',
+      'Overall, I find the system intuitive to use',
+      'Overall, I find the system user-friendly to use',
+      'Overall, I find the system clear to use',
+      'Overall, I find the system simple to use',
+      'Overall, I find the system straightforward to use',
+      'Overall, I find interaction with the system easy',
+      'Overall, I find the system flexible to use',
+      'Overall, I find learning to use the system easy'
+    ],
+    'tam1_att': [
+      'Good - Bad',
+      'Wise - Foolish',
+      'Positive - Negative',
+      'Favorable - Unfavorable',
+      'Beneficial - Harmful'
+    ],
+    'tam1_use': [
+      'Frequency of use',
+      'Hours per week'
+    ],
+    // TAM-2 questions
+    'tam2_int': [
+      'Assuming I have access to the system, I intend to use it',
+      'Given that I have access to the system, I predict that I would use it'
+    ],
+    'tam2_pu': [
+      'Using the system improves my performance in my job',
+      'Using the system in my job increases my productivity',
+      'Using the system enhances my effectiveness in my job',
+      'I find the system to be useful in my job'
+    ],
+    'tam2_eu': [
+      'My interaction with the system is clear and understandable',
+      'Interacting with the system does not require a lot of my mental effort',
+      'I find the system to be easy to use',
+      'I find it easy to get the system to do what I want it to do'
+    ],
+    'tam2_sn': [
+      'People who influence my behavior think that I should use the system',
+      'People who are important to me think that I should use the system'
+    ],
+    'tam2_vol': [
+      'My use of the system is voluntary',
+      'My supervisor does not require me to use the system',
+      'Although it might be helpful, using the system is certainly not compulsory in my job'
+    ],
+    'tam2_img': [
+      'People in my organization who use the system have more prestige than those who do not',
+      'People in my organization who use the system have a high profile',
+      'Having the system is a status symbol in my organization'
+    ],
+    'tam2_jr': [
+      'In my job, usage of the system is important',
+      'In my job, usage of the system is relevant'
+    ],
+    'tam2_oq': [
+      'The quality of the output I get from the system is high',
+      'I have no problem with the quality of the system\'s output'
+    ],
+    'tam2_rd': [
+      'I have no difficulty telling others about the results of using the system',
+      'I believe I could communicate to others the consequences of using the system',
+      'The results of using the system are apparent to me',
+      'I would have difficulty explaining why using the system may or may not be beneficial'
+    ]
+  }
+
+  const answers = selectedResponse.value.tamAnswers
+  const constructAnswers = []
+  
+  // TAM-2 constructs
+  if (constructKey === 'tam2_int' && answers.intentionToUse) {
+    console.log('✓ Matching tam2_int, found intentionToUse:', answers.intentionToUse);
+    answers.intentionToUse.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_int'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_pu' && answers.perceivedUsefulness) {
+    console.log('✓ Matching tam2_pu, found perceivedUsefulness:', answers.perceivedUsefulness);
+    answers.perceivedUsefulness.forEach((answer, index) => {
+      if (answer !== undefined && index < 4) {
+        constructAnswers.push({
+          question: questions['tam2_pu'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_eu' && answers.perceivedEaseOfUse) {
+    console.log('✓ Matching tam2_eu, found perceivedEaseOfUse:', answers.perceivedEaseOfUse);
+    answers.perceivedEaseOfUse.forEach((answer, index) => {
+      if (answer !== undefined && index < 4) {
+        constructAnswers.push({
+          question: questions['tam2_eu'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_sn' && answers.subjectiveNorm) {
+    console.log('✓ Matching tam2_sn, found subjectiveNorm:', answers.subjectiveNorm);
+    answers.subjectiveNorm.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_sn'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_vol' && answers.voluntariness) {
+    console.log('✓ Matching tam2_vol, found voluntariness:', answers.voluntariness);
+    answers.voluntariness.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_vol'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_img' && answers.image) {
+    console.log('✓ Matching tam2_img, found image:', answers.image);
+    answers.image.forEach((answer, index) => {
+      if (answer !== undefined && index < 3) {
+        constructAnswers.push({
+          question: questions['tam2_img'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_jr' && answers.jobRelevance) {
+    console.log('✓ Matching tam2_jr, found jobRelevance:', answers.jobRelevance);
+    answers.jobRelevance.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_jr'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_oq' && answers.outputQuality) {
+    console.log('✓ Matching tam2_oq, found outputQuality:', answers.outputQuality);
+    answers.outputQuality.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_oq'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_rd' && answers.resultDemonstrability) {
+    console.log('✓ Matching tam2_rd, found resultDemonstrability:', answers.resultDemonstrability);
+    answers.resultDemonstrability.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_rd'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam1_pu' && answers.perceivedUsefulness) {
+    answers.perceivedUsefulness.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam1_pu'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam1_eu' && answers.perceivedEaseOfUse) {
+    answers.perceivedEaseOfUse.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam1_eu'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam1_att' && answers.attitudeTowardUsing) {
+    answers.attitudeTowardUsing.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam1_att'][index] || `Item ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam1_use' && answers.actualSystemUse) {
+    const useFrequencyOptions = [
+      'Less than once a month',
+      '1 - 2 times a month',
+      '1 - 2 times a week',
+      'About once a day',
+      'Several times a day',
+      'Constantly throughout the day'
+    ]
+    if (answers.actualSystemUse[0] !== undefined) {
+      constructAnswers.push({
+        question: questions['tam1_use'][0],
+        answer: useFrequencyOptions[answers.actualSystemUse[0]] || `Option ${answers.actualSystemUse[0]}`
+      })
+    }
+    if (answers.actualSystemUse[1] !== undefined) {
+      constructAnswers.push({
+        question: questions['tam1_use'][1],
+        answer: `${answers.actualSystemUse[1]} hours`
+      })
+    }
+  }
+  // TAM-2 constructs
+  else if (constructKey === 'tam2_int' && answers.intentionToUse) {
+    answers.intentionToUse.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_int'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_pu' && answers.perceivedUsefulness) {
+    answers.perceivedUsefulness.forEach((answer, index) => {
+      if (answer !== undefined && index < 4) {
+        constructAnswers.push({
+          question: questions['tam2_pu'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_eu' && answers.perceivedEaseOfUse) {
+    answers.perceivedEaseOfUse.forEach((answer, index) => {
+      if (answer !== undefined && index < 4) {
+        constructAnswers.push({
+          question: questions['tam2_eu'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_sn' && answers.subjectiveNorm) {
+    answers.subjectiveNorm.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_sn'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_vol' && answers.voluntariness) {
+    answers.voluntariness.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_vol'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_img' && answers.image) {
+    answers.image.forEach((answer, index) => {
+      if (answer !== undefined && index < 3) {
+        constructAnswers.push({
+          question: questions['tam2_img'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_jr' && answers.jobRelevance) {
+    answers.jobRelevance.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_jr'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_oq' && answers.outputQuality) {
+    answers.outputQuality.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_oq'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  } else if (constructKey === 'tam2_rd' && answers.resultDemonstrability) {
+    answers.resultDemonstrability.forEach((answer, index) => {
+      if (answer !== undefined) {
+        constructAnswers.push({
+          question: questions['tam2_rd'][index] || `Question ${index + 1}`,
+          answer: answer
+        })
+      }
+    })
+  }
+  
+  console.log('🎯 Returning constructAnswers for key', constructKey, ':', constructAnswers);
+  return constructAnswers
 }
 
 function calculateAnalytics() {
@@ -639,17 +1025,34 @@ function calculateAnalytics() {
     const dimensionMap = {
       'tam1_pu': 'perceivedUsefulness',
       'tam1_eu': 'perceivedEaseOfUse',
+      'tam1_att': 'attitudeTowardUsing',
+      'tam1_use': 'actualSystemUse',
+      'tam2_int': 'intentionToUse',
+      'tam2_pu': 'perceivedUsefulness',
+      'tam2_eu': 'perceivedEaseOfUse',
       'tam2_sn': 'subjectiveNorm',
+      'tam2_vol': 'voluntariness',
       'tam2_img': 'image',
       'tam2_jr': 'jobRelevance',
       'tam2_oq': 'outputQuality',
       'tam2_rd': 'resultDemonstrability',
+      'tam3_pu': 'perceivedUsefulness',
+      'tam3_eu': 'perceivedEaseOfUse',
+      'tam3_bi': 'behavioralIntention',
+      'tam3_use': 'usePatterns',
+      'tam3_sn': 'subjectiveNorm',
+      'tam3_img': 'image',
+      'tam3_jr': 'jobRelevance',
+      'tam3_oq': 'outputQuality',
+      'tam3_rd': 'resultDemonstrability',
       'tam3_cse': 'computerSelfEfficacy',
       'tam3_ec': 'perceptionsOfExternalControl',
       'tam3_anx': 'computerAnxiety',
       'tam3_pf': 'computerPlayfulness',
       'tam3_enj': 'perceivedEnjoyment',
-      'tam3_ou': 'objectiveUsability'
+      'tam3_ou': 'objectiveUsability',
+      'tam3_exp': 'experience',
+      'tam3_vol': 'voluntariness'
     }
     
     activeDimensions.forEach(dim => {
@@ -704,7 +1107,7 @@ watchEffect(() => {
 // Filter states
 const filterVersion = ref('All Versions')
 const filterLevel = ref('All Levels')
-const acceptanceRange = ref([1, 7])
+const acceptanceRange = ref([0, 100])
 
 // Computed property for filtered responses
 const filteredResponses = computed(() => {
@@ -778,10 +1181,18 @@ function getHighestConstruct() {
   const sorted = entries.sort((a, b) => (b[1] || 0) - (a[1] || 0))
   const topKey = sorted[0][0]
   
-  // Find the dimension label for this key
-  const activeDims = getActiveDimensions(selectedVersion.value)
-  const dimension = activeDims.find(d => d.key === topKey)
-  return dimension ? dimension.label.split(' ')[0] : topKey
+  // Find the dimension label for this key - directly from TAM_DIMENSIONS
+  const versionNum = selectedVersion.value.includes('tam') ? selectedVersion.value.replace(/[^0-9]/g, '') : selectedVersion.value
+  const versionKey = `tam${versionNum}`
+  const dimensions = TAM_DIMENSIONS[versionKey] || []
+  const dimension = dimensions.find(d => d.key === topKey)
+  
+  if (dimension) {
+    // Return the label with abbreviation in parentheses
+    return dimension.label
+  }
+  
+  return topKey
 }
 
 // Get the score of the highest construct

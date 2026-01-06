@@ -8,7 +8,13 @@ export class TamAnswer {
     tamVersion = 1,
     perceivedUsefulness = [],
     perceivedEaseOfUse = [],
+    attitudeTowardUsing = [],
+    actualSystemUse = [],
+    intentionToUse = [],
+    behavioralIntention = [],
+    usePatterns = [],
     subjectiveNorm = [],
+    voluntariness = [],
     image = [],
     jobRelevance = [],
     outputQuality = [],
@@ -18,20 +24,30 @@ export class TamAnswer {
     computerAnxiety = [],
     computerPlayfulness = [],
     perceivedEnjoyment = [],
-    objectiveUsability = []
+    objectiveUsability = [],
+    experience = []
   } = {}) {
     this.tamVersion = tamVersion;
     
     // TAM-1 dimensions
     this.perceivedUsefulness = perceivedUsefulness || [];
     this.perceivedEaseOfUse = perceivedEaseOfUse || [];
+    this.attitudeTowardUsing = attitudeTowardUsing || [];
+    this.actualSystemUse = actualSystemUse || [];
     
-    // TAM-2 additional dimensions
+    // TAM-2 dimensions
+    this.intentionToUse = intentionToUse || [];
     this.subjectiveNorm = subjectiveNorm || [];
+    this.voluntariness = voluntariness || [];
     this.image = image || [];
     this.jobRelevance = jobRelevance || [];
     this.outputQuality = outputQuality || [];
     this.resultDemonstrability = resultDemonstrability || [];
+    
+    // TAM-3 core and new dimensions
+    this.behavioralIntention = behavioralIntention || [];
+    this.usePatterns = usePatterns || [];
+    this.experience = experience || [];
     
     // TAM-3 additional dimensions
     this.computerSelfEfficacy = computerSelfEfficacy || [];
@@ -53,7 +69,13 @@ export class TamAnswer {
       tamVersion: this.tamVersion,
       perceivedUsefulness: filterUndefined(this.perceivedUsefulness),
       perceivedEaseOfUse: filterUndefined(this.perceivedEaseOfUse),
+      attitudeTowardUsing: filterUndefined(this.attitudeTowardUsing),
+      actualSystemUse: filterUndefined(this.actualSystemUse),
+      intentionToUse: filterUndefined(this.intentionToUse),
+      behavioralIntention: filterUndefined(this.behavioralIntention),
+      usePatterns: filterUndefined(this.usePatterns),
       subjectiveNorm: filterUndefined(this.subjectiveNorm),
+      voluntariness: filterUndefined(this.voluntariness),
       image: filterUndefined(this.image),
       jobRelevance: filterUndefined(this.jobRelevance),
       outputQuality: filterUndefined(this.outputQuality),
@@ -63,7 +85,8 @@ export class TamAnswer {
       computerAnxiety: filterUndefined(this.computerAnxiety),
       computerPlayfulness: filterUndefined(this.computerPlayfulness),
       perceivedEnjoyment: filterUndefined(this.perceivedEnjoyment),
-      objectiveUsability: filterUndefined(this.objectiveUsability)
+      objectiveUsability: filterUndefined(this.objectiveUsability),
+      experience: filterUndefined(this.experience)
     };
   }
 
