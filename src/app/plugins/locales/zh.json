@@ -866,5 +866,110 @@
       "title": "最新博客文章",
       "viewBlog": "查看博客"
     }
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "选择评估类别",
+    "selectEvaluationType": "选择您想要进行的评估类型",
+    "backToDashboard": "返回仪表板",
+    "chooseMethod": "选择{category}方法",
+    "selectMethod": "为您的研究选择具体方法",
+    "backToCategories": "返回类别",
+    "chooseStudyType": "选择研究类型",
+    "selectStudyType": "选择如何创建您的研究",
+    "backToMethods": "返回方法",
+    "studyDetails": "研究详情",
+    "provideStudyInfo": "提供有关您研究的基本信息",
+    "backToStudyType": "返回研究类型",
+    "createStudy": "创建研究",
+    "multipleMethods": "多种方法",
+    "comingSoon": "即将推出",
+    "steps": {
+      "category": "类别",
+      "methods": "方法",
+      "studyType": "研究类型",
+      "details": "详情"
+    },
+    "categories": {
+      "test": {
+        "title": "测试",
+        "description": "与真实用户进行受控测试，以衡量可用性和性能。"
+      },
+      "inquiry": {
+        "title": "调查",
+        "description": "通过调查、访谈和其他研究方法收集见解。"
+      },
+      "inspection": {
+        "title": "检查",
+        "description": "使用既定的可用性原则和指南进行专家评估。"
+      },
+      "accessibility": {
+        "title": "无障碍",
+        "description": "评估您的产品是否符合无障碍要求和最佳实践。"
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "可用性测试（无主持人）",
+          "description": "参与者独立完成任务，同时记录他们的交互"
+        },
+        "usability_moderated": {
+          "name": "可用性测试（有主持人）",
+          "description": "在主持人指导下进行实时会话并提供即时反馈"
+        },
+        "card_sorting_unmoderated": {
+          "name": "卡片分类（无主持人）",
+          "description": "参与者在没有主持人的情况下独立组织卡片"
+        },
+        "ab_testing": {
+          "name": "A/B测试",
+          "description": "比较两个版本以确定哪个表现更好"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "启发式评估",
+          "description": "使用既定的可用性原则和指南进行专家评审"
+        },
+        "cognitive_walkthrough": {
+          "name": "认知走查",
+          "description": "对用户任务完成过程进行逐步评估"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "手动测试",
+          "description": "人工评估者使用辅助技术评估无障碍性"
+        },
+        "automatic_testing": {
+          "name": "自动测试",
+          "description": "自动化工具识别常见的无障碍问题"
+        },
+        "ai_assisted_testing": {
+          "name": "AI辅助测试",
+          "description": "AI驱动的工具，用于识别和建议修复无障碍问题"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "从空白研究开始",
+        "description": "从零开始创建完全自定义的研究",
+        "features": [
+          "完全自定义",
+          "从头构建",
+          "完全控制设置"
+        ]
+      },
+      "template": {
+        "title": "从模板创建",
+        "description": "使用预构建的模板快速开始",
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
+      }
+    }
   }
 }

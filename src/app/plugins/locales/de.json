@@ -885,5 +885,110 @@
       "title": "Neueste Blog-Beiträge",
       "viewBlog": "Blog ansehen"
     }
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Bewertungskategorie wählen",
+    "selectEvaluationType": "Wählen Sie die Art der Bewertung für Ihre Studie",
+    "backToDashboard": "Zurück zum Dashboard",
+    "chooseMethod": "{category} Methode wählen",
+    "selectMethod": "Wählen Sie die spezifische Methode für Ihre Studie",
+    "backToCategories": "Zurück zu Kategorien",
+    "chooseStudyType": "Studientyp wählen",
+    "selectStudyType": "Wählen Sie, wie Sie Ihre Studie erstellen möchten",
+    "backToMethods": "Zurück zu Methoden",
+    "studyDetails": "Studiendetails",
+    "provideStudyInfo": "Geben Sie grundlegende Informationen zu Ihrer Studie an",
+    "backToStudyType": "Zurück zum Studientyp",
+    "createStudy": "Studie erstellen",
+    "multipleMethods": "Mehrere Methoden",
+    "comingSoon": "Demnächst verfügbar",
+    "steps": {
+      "category": "Kategorie",
+      "methods": "Methoden",
+      "studyType": "Studientyp",
+      "details": "Details"
+    },
+    "categories": {
+      "test": {
+        "title": "Test",
+        "description": "Führen Sie kontrollierte Tests mit echten Benutzern durch, um Benutzerfreundlichkeit und Leistung zu messen."
+      },
+      "inquiry": {
+        "title": "Befragung",
+        "description": "Sammeln Sie Erkenntnisse durch Umfragen, Interviews und andere Forschungsmethoden."
+      },
+      "inspection": {
+        "title": "Inspektion",
+        "description": "Expertenbewertung unter Verwendung etablierter Usability-Prinzipien und Richtlinien."
+      },
+      "accessibility": {
+        "title": "Barrierefreiheit",
+        "description": "Bewerten Sie Ihr Produkt auf Barrierefreiheit und Best Practices."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Usability-Test (Unmoderiert)",
+          "description": "Teilnehmer erledigen Aufgaben selbstständig, während ihre Interaktionen aufgezeichnet werden"
+        },
+        "usability_moderated": {
+          "name": "Usability-Test (Moderiert)",
+          "description": "Echtzeit-Sitzungen mit Moderator-Anleitung und sofortigem Feedback"
+        },
+        "card_sorting_unmoderated": {
+          "name": "Card Sorting (Unmoderiert)",
+          "description": "Teilnehmer ordnen Karten selbstständig ohne Moderator"
+        },
+        "ab_testing": {
+          "name": "A/B-Test",
+          "description": "Vergleichen Sie zwei Versionen, um festzustellen, welche besser abschneidet"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Heuristische Evaluation",
+          "description": "Expertenanalyse mit etablierten Usability-Prinzipien und Richtlinien"
+        },
+        "cognitive_walkthrough": {
+          "name": "Kognitiver Walkthrough",
+          "description": "Schrittweise Bewertung der Aufgabenausführung durch Benutzer"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Manuelles Testen",
+          "description": "Menschliche Evaluatoren bewerten Barrierefreiheit mit assistiven Technologien"
+        },
+        "automatic_testing": {
+          "name": "Automatisches Testen",
+          "description": "Automatisierte Tools zur Identifizierung häufiger Barrierefreiheitsprobleme"
+        },
+        "ai_assisted_testing": {
+          "name": "KI-unterstütztes Testen",
+          "description": "KI-gestützte Tools zur Identifizierung und Behebung von Barrierefreiheitsproblemen"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Mit leerer Studie beginnen",
+        "description": "Erstellen Sie eine Studie von Grund auf mit vollständiger Anpassung",
+        "features": [
+          "Vollständige Anpassung",
+          "Von Grund auf aufbauen",
+          "Volle Kontrolle über Einstellungen"
+        ]
+      },
+      "template": {
+        "title": "Aus Vorlage erstellen",
+        "description": "Verwenden Sie vorgefertigte Vorlagen für einen schnellen Start",
+        "features": [
+          "Schnelle Einrichtung",
+          "Vorkonfigurierte Einstellungen",
+          "Best Practices enthalten"
+        ]
+      }
+    }
   }
 }

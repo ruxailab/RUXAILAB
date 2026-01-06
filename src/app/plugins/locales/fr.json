@@ -891,5 +891,110 @@
       "title": "Derniers articles de blog",
       "viewBlog": "Voir le blog"
     }
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Choisir la catégorie d'évaluation",
+    "selectEvaluationType": "Sélectionnez le type d'évaluation pour votre étude",
+    "backToDashboard": "Retour au tableau de bord",
+    "chooseMethod": "Choisir la méthode {category}",
+    "selectMethod": "Sélectionnez la méthode spécifique pour votre étude",
+    "backToCategories": "Retour aux catégories",
+    "chooseStudyType": "Choisir le type d'étude",
+    "selectStudyType": "Sélectionnez comment vous souhaitez créer votre étude",
+    "backToMethods": "Retour aux méthodes",
+    "studyDetails": "Détails de l'étude",
+    "provideStudyInfo": "Fournissez des informations de base sur votre étude",
+    "backToStudyType": "Retour au type d'étude",
+    "createStudy": "Créer une étude",
+    "multipleMethods": "Méthodes multiples",
+    "comingSoon": "Bientôt disponible",
+    "steps": {
+      "category": "Catégorie",
+      "methods": "Méthodes",
+      "studyType": "Type d'étude",
+      "details": "Détails"
+    },
+    "categories": {
+      "test": {
+        "title": "Test",
+        "description": "Effectuez des tests contrôlés avec de vrais utilisateurs pour mesurer l'utilisabilité et les performances."
+      },
+      "inquiry": {
+        "title": "Enquête",
+        "description": "Recueillez des informations via des sondages, des entretiens et d'autres méthodes de recherche."
+      },
+      "inspection": {
+        "title": "Inspection",
+        "description": "Évaluation par des experts utilisant des principes et directives d'utilisabilité établis."
+      },
+      "accessibility": {
+        "title": "Accessibilité",
+        "description": "Évaluez votre produit pour la conformité à l'accessibilité et les meilleures pratiques."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Test d'utilisabilité (Non modéré)",
+          "description": "Les participants accomplissent des tâches de manière indépendante pendant que leurs interactions sont enregistrées"
+        },
+        "usability_moderated": {
+          "name": "Test d'utilisabilité (Modéré)",
+          "description": "Sessions en temps réel avec guidance du facilitateur et feedback immédiat"
+        },
+        "card_sorting_unmoderated": {
+          "name": "Tri de cartes (Non modéré)",
+          "description": "Les participants organisent les cartes de manière indépendante, sans modérateur"
+        },
+        "ab_testing": {
+          "name": "Test A/B",
+          "description": "Comparez deux versions pour déterminer laquelle est la plus performante"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Évaluation heuristique",
+          "description": "Évaluation par des experts utilisant des principes et directives d'utilisabilité établis"
+        },
+        "cognitive_walkthrough": {
+          "name": "Parcours cognitif",
+          "description": "Évaluation étape par étape des processus de réalisation des tâches par l'utilisateur"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Test manuel",
+          "description": "Les évaluateurs humains évaluent l'accessibilité à l'aide de technologies d'assistance"
+        },
+        "automatic_testing": {
+          "name": "Test automatique",
+          "description": "Outils automatisés pour identifier les problèmes d'accessibilité courants"
+        },
+        "ai_assisted_testing": {
+          "name": "Test assisté par IA",
+          "description": "Outils pilotés par IA pour identifier et corriger les problèmes d'accessibilité"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Commencer avec une étude vierge",
+        "description": "Créez une étude à partir de zéro avec une personnalisation complète",
+        "features": [
+          "Personnalisation complète",
+          "Construire à partir de zéro",
+          "Contrôle total des paramètres"
+        ]
+      },
+      "template": {
+        "title": "Créer à partir d'un modèle",
+        "description": "Utilisez des modèles prédéfinis pour démarrer rapidement",
+        "features": [
+          "Configuration rapide",
+          "Paramètres préconfigurés",
+          "Meilleures pratiques incluses"
+        ]
+      }
+    }
   }
 }

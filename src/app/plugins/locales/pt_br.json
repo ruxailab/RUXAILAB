@@ -993,5 +993,110 @@
       "title": "Últimos posts do blog",
       "viewBlog": "Ver Blog"
     }
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Escolha a Categoria de Avaliação",
+    "selectEvaluationType": "Selecione o tipo de avaliação que deseja realizar para seu estudo",
+    "backToDashboard": "Voltar ao Painel",
+    "chooseMethod": "Escolha o Método de {category}",
+    "selectMethod": "Selecione o método específico para seu estudo",
+    "backToCategories": "Voltar às Categorias",
+    "chooseStudyType": "Escolha o Tipo de Estudo",
+    "selectStudyType": "Selecione como deseja criar seu estudo",
+    "backToMethods": "Voltar aos Métodos",
+    "studyDetails": "Detalhes do Estudo",
+    "provideStudyInfo": "Forneça informações básicas sobre seu estudo",
+    "backToStudyType": "Voltar ao Tipo de Estudo",
+    "createStudy": "Criar Estudo",
+    "multipleMethods": "Múltiplos Métodos",
+    "comingSoon": "Em Breve",
+    "steps": {
+      "category": "Categoria",
+      "methods": "Métodos",
+      "studyType": "Tipo de Estudo",
+      "details": "Detalhes"
+    },
+    "categories": {
+      "test": {
+        "title": "Teste",
+        "description": "Realize testes controlados com usuários reais para medir usabilidade e desempenho."
+      },
+      "inquiry": {
+        "title": "Pesquisa",
+        "description": "Colete insights através de questionários, entrevistas e outros métodos de pesquisa."
+      },
+      "inspection": {
+        "title": "Inspeção",
+        "description": "Avaliação por especialistas usando princípios e diretrizes de usabilidade estabelecidos."
+      },
+      "accessibility": {
+        "title": "Acessibilidade",
+        "description": "Avalie seu produto para conformidade com acessibilidade e melhores práticas."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Teste de Usabilidade (Não Moderado)",
+          "description": "Os participantes completam tarefas de forma independente enquanto suas interações são gravadas"
+        },
+        "usability_moderated": {
+          "name": "Teste de Usabilidade (Moderado)",
+          "description": "Sessões em tempo real com orientação do facilitador e feedback imediato"
+        },
+        "card_sorting_unmoderated": {
+          "name": "Card Sorting (Não Moderado)",
+          "description": "Os participantes organizam cartões de forma independente, sem a presença de um moderador"
+        },
+        "ab_testing": {
+          "name": "Teste A/B",
+          "description": "Compare duas versões para determinar qual tem melhor desempenho"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Avaliação Heurística",
+          "description": "Revisão de especialistas usando princípios e diretrizes de usabilidade estabelecidos"
+        },
+        "cognitive_walkthrough": {
+          "name": "Percurso Cognitivo",
+          "description": "Avaliação passo a passo dos processos de conclusão de tarefas do usuário"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Teste Manual",
+          "description": "Avaliadores humanos avaliam a acessibilidade usando tecnologias assistivas"
+        },
+        "automatic_testing": {
+          "name": "Teste Automático",
+          "description": "Ferramentas automatizadas para identificar problemas comuns de acessibilidade"
+        },
+        "ai_assisted_testing": {
+          "name": "Teste Assistido por IA",
+          "description": "Ferramentas baseadas em IA para identificar e sugerir correções para problemas de acessibilidade"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Começar com Estudo em Branco",
+        "description": "Crie um estudo do zero com personalização completa",
+        "features": [
+          "Personalização completa",
+          "Construir do zero",
+          "Controle total das configurações"
+        ]
+      },
+      "template": {
+        "title": "Criar a partir de Modelo",
+        "description": "Use modelos pré-construídos para começar rapidamente",
+        "features": [
+          "Configuração rápida",
+          "Configurações pré-definidas",
+          "Melhores práticas incluídas"
+        ]
+      }
+    }
   }
 }

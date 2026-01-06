@@ -77,9 +77,9 @@ const options = computed(() => [
     recommended: false,
     disabled: false,
     features: [
-      'Complete customization',
-      'Build from ground up',
-      'Full control over settings'
+      t('studyCreation.studyTypes.blank.features.0'),
+      t('studyCreation.studyTypes.blank.features.1'),
+      t('studyCreation.studyTypes.blank.features.2')
     ]
   },
   {
@@ -91,9 +91,9 @@ const options = computed(() => [
     recommended: true,
     disabled: true,
     features: [
-      'Quick setup',
-      'Pre-configured settings',
-      'Best practices included'
+      t('studyCreation.studyTypes.template.features.0'),
+      t('studyCreation.studyTypes.template.features.1'),
+      t('studyCreation.studyTypes.template.features.2')
     ]
   }
 ])

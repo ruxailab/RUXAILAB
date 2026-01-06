@@ -843,5 +843,110 @@
       "title": "最新のブログ投稿",
       "viewBlog": "ブログを見る"
     }
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "評価カテゴリを選択",
+    "selectEvaluationType": "研究に実施する評価の種類を選択してください",
+    "backToDashboard": "ダッシュボードに戻る",
+    "chooseMethod": "{category}メソッドを選択",
+    "selectMethod": "研究の具体的な方法を選択してください",
+    "backToCategories": "カテゴリに戻る",
+    "chooseStudyType": "研究タイプを選択",
+    "selectStudyType": "研究の作成方法を選択してください",
+    "backToMethods": "メソッドに戻る",
+    "studyDetails": "研究の詳細",
+    "provideStudyInfo": "研究に関する基本情報を入力してください",
+    "backToStudyType": "研究タイプに戻る",
+    "createStudy": "研究を作成",
+    "multipleMethods": "複数のメソッド",
+    "comingSoon": "近日公開",
+    "steps": {
+      "category": "カテゴリ",
+      "methods": "メソッド",
+      "studyType": "研究タイプ",
+      "details": "詳細"
+    },
+    "categories": {
+      "test": {
+        "title": "テスト",
+        "description": "実際のユーザーと制御されたテストを実施し、ユーザビリティとパフォーマンスを測定します。"
+      },
+      "inquiry": {
+        "title": "調査",
+        "description": "アンケート、インタビュー、その他の調査方法を通じて洞察を収集します。"
+      },
+      "inspection": {
+        "title": "検査",
+        "description": "確立されたユーザビリティの原則とガイドラインを使用した専門家による評価。"
+      },
+      "accessibility": {
+        "title": "アクセシビリティ",
+        "description": "アクセシビリティの準拠とベストプラクティスについて製品を評価します。"
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "ユーザビリティテスト（非モデレート）",
+          "description": "参加者は独立してタスクを完了し、そのインタラクションが記録されます"
+        },
+        "usability_moderated": {
+          "name": "ユーザビリティテスト（モデレート）",
+          "description": "ファシリテーターのガイダンスと即時フィードバックによるリアルタイムセッション"
+        },
+        "card_sorting_unmoderated": {
+          "name": "カードソーティング（非モデレート）",
+          "description": "参加者はモデレーターなしで独立してカードを整理します"
+        },
+        "ab_testing": {
+          "name": "A/Bテスト",
+          "description": "2つのバージョンを比較してどちらがより優れているかを判断します"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "ヒューリスティック評価",
+          "description": "確立されたユーザビリティの原則とガイドラインを使用した専門家レビュー"
+        },
+        "cognitive_walkthrough": {
+          "name": "認知的ウォークスルー",
+          "description": "ユーザータスク完了プロセスの段階的評価"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "手動テスト",
+          "description": "人間の評価者が支援技術を使用してアクセシビリティを評価"
+        },
+        "automatic_testing": {
+          "name": "自動テスト",
+          "description": "一般的なアクセシビリティの問題を特定する自動化ツール"
+        },
+        "ai_assisted_testing": {
+          "name": "AI支援テスト",
+          "description": "アクセシビリティの問題を特定し修正するAI駆動ツール"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "空の研究から始める",
+        "description": "完全なカスタマイズで一から研究を作成",
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定の完全な制御"
+        ]
+      },
+      "template": {
+        "title": "テンプレートから作成",
+        "description": "事前に構築されたテンプレートを使用して迅速に開始",
+        "features": [
+          "迅速なセットアップ",
+          "事前設定済み",
+          "ベストプラクティス含む"
+        ]
+      }
+    }
   }
 }

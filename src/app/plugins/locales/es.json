@@ -1036,20 +1036,20 @@
     },
     "studyTypes": {
       "blank": {
-        "title": "Comenzar con un Estudio en Blanco",
+        "title": "Comenzar con Estudio en Blanco",
         "description": "Crea un estudio desde cero con personalización completa",
         "features": [
           "Personalización completa",
           "Construir desde cero",
-          "Control total sobre las configuraciones"
+          "Control total sobre la configuración"
         ]
       },
       "template": {
-        "title": "Crear desde una Plantilla",
-        "description": "Usa plantillas predefinidas para comenzar rápidamente",
+        "title": "Crear desde Plantilla",
+        "description": "Usa plantillas prediseñadas para empezar rápidamente",
         "features": [
           "Configuración rápida",
-          "Configuraciones predefinidas",
+          "Ajustes preconfigurados",
           "Mejores prácticas incluidas"
         ]
       }
