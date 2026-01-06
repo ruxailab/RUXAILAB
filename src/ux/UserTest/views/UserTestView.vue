@@ -1,8 +1,9 @@
 <template>
   <div v-if="test">
     <div>
-      <IrisTracker v-if="hasEyeTracking" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
-        @faceData="handleIrisData" :test-id="testId" :task-index="taskIndex" />
+      <IrisTracker
+v-if="hasEyeTracking" :is-running="isTracking" :ms-per-capture="300" :record-screen="isRecording"
+        :test-id="testId" :task-index="taskIndex" @face-data="handleIrisData" />
     </div>
 
     <!-- <v-overlay v-model="isLoading" class="text-center">
@@ -14,7 +15,8 @@
 
     <Snackbar />
 
-    <SubmitDialog :model-value="dialog" :title="$t('HeuristicsTestView.messages.submitTest')"
+    <SubmitDialog
+:model-value="dialog" :title="$t('HeuristicsTestView.messages.submitTest')"
       :message="$t('HeuristicsTestView.messages.submitOnce')" :cancel-label="$t('buttons.cancel')"
       :submit-label="$t('buttons.submit')" @cancel="dialog = false" @submit="handleSubmit" />
 
@@ -57,13 +59,15 @@
           <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded @click="startTest" class="mt-4"
-            :disabled="isStartTestDisabled">
+          <v-btn
+color="white" variant="outlined" rounded class="mt-4" :disabled="isStartTestDisabled"
+            @click="startTest">
             Start Test
           </v-btn>
 
           <!-- Messages when test is disabled -->
-          <v-alert v-if="testDisabledReason === 'already-completed'" type="info" variant="outlined" class="mt-4"
+          <v-alert
+v-if="testDisabledReason === 'already-completed'" type="info" variant="outlined" class="mt-4"
             color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-check-circle</v-icon>
@@ -74,7 +78,8 @@
             </span>
           </v-alert>
 
-          <v-alert v-else-if="testDisabledReason === 'Test has expired'" type="warning" variant="outlined" class="mt-4"
+          <v-alert
+v-else-if="testDisabledReason === 'Test has expired'" type="warning" variant="outlined" class="mt-4"
             color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-clock-alert</v-icon>
@@ -85,7 +90,8 @@
             </span>
           </v-alert>
 
-          <v-alert v-else-if="testDisabledReason === 'Test is not active'" type="warning" variant="outlined"
+          <v-alert
+v-else-if="testDisabledReason === 'Test is not active'" type="warning" variant="outlined"
             class="mt-4" color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-pause-circle</v-icon>
@@ -96,7 +102,8 @@
             </span>
           </v-alert>
 
-          <v-alert v-else-if="testDisabledReason === 'Test has no tasks configured'" type="error" variant="outlined"
+          <v-alert
+v-else-if="testDisabledReason === 'Test has no tasks configured'" type="error" variant="outlined"
             class="mt-4" color="white" style="background-color: rgba(255, 255, 255, 0.1); border-color: white;">
             <template #prepend>
               <v-icon color="white">mdi-alert-circle</v-icon>
@@ -113,42 +120,52 @@
         <v-col ref="rightView" class="right-view pa-6">
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
-              <v-stepper :model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
+              <v-stepper
+:model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
                 :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
                 style="visibility:visible">
                 <v-stepper-header>
-                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1" color="white"
+                  <v-stepper-item
+value="1" title="Consent" :complete="stepperValue >= 1" color="white"
                     complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2" color="white"
+                  <v-stepper-item
+value="2" title="Pre-test" :complete="stepperValue >= 2" color="white"
                     complete-icon="mdi-check" />
                   <v-divider />
 
-                  <v-stepper-item v-if="hasEyeTracking" value="3" title="Calibration" :complete="stepperValue >= 3"
+                  <v-stepper-item
+v-if="hasEyeTracking" value="3" title="Calibration" :complete="stepperValue >= 3"
                     color="white" complete-icon="mdi-check" />
                   <v-divider v-if="hasEyeTracking" />
 
-                  <v-stepper-item :value="hasEyeTracking ? 4 : 3" title="Tasks"
+                  <v-stepper-item
+:value="hasEyeTracking ? 4 : 3" title="Tasks"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 5 : 4" title="Post-test"
+                  <v-stepper-item
+:value="hasEyeTracking ? 5 : 4" title="Post-test"
                     :complete="stepperValue >= (hasEyeTracking ? 5 : 4)" color="white" complete-icon="mdi-check" />
                   <v-divider />
-                  <v-stepper-item :value="hasEyeTracking ? 6 : 5" title="Completion"
+                  <v-stepper-item
+:value="hasEyeTracking ? 6 : 5" title="Completion"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)" color="white" complete-icon="mdi-check" />
                 </v-stepper-header>
               </v-stepper>
             </v-col>
           </v-row>
           <!-- Stepper secundario para tareas -->
-          <v-row v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
+          <v-row
+v-if="globalIndex == (hasEyeTracking ? 5 : 4) && test?.testStructure?.userTasks?.length > 1"
             class="task-stepper-row" justify="center">
             <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
-              <v-stepper :model-value="taskIndex + 1" class="task-stepper rounded-xl elevation-1 w-100"
+              <v-stepper
+:model-value="taskIndex + 1" class="task-stepper rounded-xl elevation-1 w-100"
                 style="max-width: 100%;">
                 <v-stepper-header>
                   <template v-for="(task, idx) in test.testStructure.userTasks" :key="idx">
-                    <v-stepper-item :value="idx + 1" :title="`Task ${idx + 1}`" :complete="taskIndex > idx"
+                    <v-stepper-item
+:value="idx + 1" :title="`Task ${idx + 1}`" :complete="taskIndex > idx"
                       :color="taskIndex > idx ? 'success' : (taskIndex === idx ? 'primary' : 'grey')"
                       complete-icon="mdi-check" />
                     <v-divider v-if="idx < test.testStructure.userTasks.length - 1" />
@@ -158,39 +175,45 @@
             </v-col>
           </v-row>
 
-          <WelcomeStep v-if="globalIndex === 0" :stepper-value="stepperValue"
+          <WelcomeStep
+v-if="globalIndex === 0" :stepper-value="stepperValue"
             :welcome-message="test?.testStructure?.welcomeMessage" @start="globalIndex = 1" />
 
-          <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
+          <ConsentStep
+v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
             :consent-text="test.testStructure.consent" :full-name-model="fullName"
-            :consent-completed-model="localTestAnswer.consentCompleted" @update:fullNameModel="val => fullName = val"
-            @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
-            @continue="completeStep(taskIndex, 'consent')" @declineConsent="handleConsentDecline" />
+            :consent-completed-model="localTestAnswer.consentCompleted" @update:full-name-model="val => fullName = val"
+            @update:consent-completed-model="val => localTestAnswer.consentCompleted = val"
+            @continue="completeStep(taskIndex, 'consent')" @decline-consent="handleConsentDecline" />
 
-          <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
+          <PreTestStep
+v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest" :pre-test-answer="localTestAnswer.preTestAnswer"
             :pre-test-completed="localTestAnswer.preTestCompleted" @done="completeStep(taskIndex, 'preTest')" />
 
-          <EyeTrackingCalibrationStep v-if="globalIndex === 3 && hasEyeTracking" @done="globalIndex = 4"
-            @closeCalibration="closeCalibration()" @openCalibration="openCalibration()"
-            :calibrationInProgress="calibrationInProgress" :calibrationCompleted="calibrationCompleted" />
+          <EyeTrackingCalibrationStep
+v-if="globalIndex === 3 && hasEyeTracking" :calibration-in-progress="calibrationInProgress"
+            :calibration-completed="calibrationCompleted" @done="globalIndex = 4"
+            @close-calibration="closeCalibration()" @open-calibration="openCalibration()" />
 
-          <PreTasksStep v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
+          <PreTasksStep
+v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @startTasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
+            @start-tasks="() => { taskIndex = 0; globalIndex = hasEyeTracking ? 5 : 4; saveIrisDataIntoTask(); }" />
 
-          <TaskStep v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER"
-            ref="taskStepComponent" :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex"
-            :test-id="testId" :user-doc-id="user?.id || anonymousUserDocId"
-            v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
-            v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
-            v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
+          <TaskStep
+v-if="globalIndex === (hasEyeTracking ? 5 : 4) && test.testType === STUDY_TYPES.USER"
+            ref="taskStepComponent" v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer" v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
+            v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations" :task="test.testStructure.userTasks[taskIndex]"
+            :task-index="taskIndex"
+            :test-id="testId"
+            :user-doc-id="user?.id || anonymousUserDocId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
-            @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
-            @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
-            @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
+            @update:sus-answers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
+            @update:nasa-tlx-answers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
+            @done="() => handleTaskFinish(true)" @could-not-finish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
 

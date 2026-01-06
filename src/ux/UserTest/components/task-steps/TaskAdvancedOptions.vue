@@ -34,7 +34,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-sm-0">
-              <v-switch v-model="localTask.hasEye" color="primary" hide-details @change="validateStep" />
+              <v-switch v-model="localTask.hasEye" color="primary" hide-details @update:model-value="validateStep" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -66,7 +66,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-0">
-              <v-switch v-model="localTask.hasScreenRecord" color="primary" hide-details @change="validateStep" />
+              <v-switch v-model="localTask.hasScreenRecord" color="primary" hide-details @update:model-value="validateStep" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -98,7 +98,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-0">
-              <v-switch v-model="localTask.hasCamRecord" color="primary" hide-details @change="validateStep" />
+              <v-switch v-model="localTask.hasCamRecord" color="primary" hide-details @update:model-value="validateStep" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -129,7 +129,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-0">
-              <v-switch v-model="localTask.hasAudioRecord" color="primary" hide-details @change="validateStep" />
+              <v-switch v-model="localTask.hasAudioRecord" color="primary" hide-details @update:model-value="validateStep" />
             </v-col>
           </v-row>
         </v-card-text>

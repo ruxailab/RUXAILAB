@@ -246,11 +246,10 @@
                     v-model="dateMenu"
                     :close-on-content-click="false"
                     transition="scale-transition"
-                    offset-y
                     max-width="290px"
                     min-width="auto"
                   >
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-text-field
                         :model-value="formattedEndDate"
                         :label="$t('pages.settings.select_end_date')"

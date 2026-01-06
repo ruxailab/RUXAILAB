@@ -146,7 +146,8 @@
                   <v-row>
                     <!-- Help Section -->
                     <v-col v-if="task?.taskTip" cols="6">
-                      <div class="help-section pa-2 text-center rounded h-100"
+                      <div
+class="help-section pa-2 text-center rounded h-100"
                         style="background-color: rgba(76, 175, 80, 0.05); border: 1px solid rgba(76, 175, 80, 0.2);">
                         <div class="d-flex align-center mb-1">
                           <v-icon color="success" size="16" class="mr-1">
@@ -165,7 +166,8 @@
 
                     <!-- Reopen Tool Section -->
                     <v-col v-if="task?.taskLink || taskLink" :cols="task?.taskTip ? 6 : 12">
-                      <div class="tool-section pa-2 rounded text-center h-100"
+                      <div
+class="tool-section pa-2 rounded text-center h-100"
                         style="background-color: rgba(121, 85, 72, 0.05); border: 1px solid rgba(121, 85, 72, 0.2);">
                         <div class="d-flex align-center mb-1">
                           <v-icon color="secondary" size="16" class="mr-1">
@@ -178,7 +180,8 @@
                         <p class="text-caption text-grey-darken-3 mb-2" style=" line-height: 1.3;">
                           Accidentally closed the tool window? Reopen it here.
                         </p>
-                        <v-btn color="secondary" variant="outlined" size="small" block prepend-icon="mdi-open-in-new"
+                        <v-btn
+color="secondary" variant="outlined" size="small" block prepend-icon="mdi-open-in-new"
                           @click="reopenTool">
                           Reopen Tool
                         </v-btn>
@@ -200,10 +203,12 @@
             </v-col>
           </v-row>
           <div class="mt-4">
-            <v-textarea v-if="task?.taskType === 'text-area' && !submitted" :id="'id-' + (task?.taskName || taskName)"
+            <v-textarea
+v-if="task?.taskType === 'text-area' && !submitted" :id="'id-' + (task?.taskName || taskName)"
               v-model="localTaskAnswer" variant="outlined" label="Answer" rows="3"
               @update:model-value="onUpdateTaskAnswer" />
-            <v-textarea v-if="!submitted" :id="'id-' + (task?.taskName || taskName) + '-obs'"
+            <v-textarea
+v-if="!submitted" :id="'id-' + (task?.taskName || taskName) + '-obs'"
               v-model="localTaskObservations" variant="outlined" label="Observation (optional)" rows="3"
               @update:model-value="onUpdateTaskObservations" />
           </div>
@@ -223,7 +228,8 @@
         <!-- STAGE 3:POST-TASK form -->
         <template v-else-if="stage === 3">
           <div v-if="task?.taskType === 'sus'">
-            <SusForm v-model="localSusAnswers" :task-index="taskIndex"
+            <SusForm
+v-model="localSusAnswers" :task-index="taskIndex"
               @update:model-value="val => emit('update:susAnswers', val)" />
           </div>
           <div v-if="task?.taskType === 'nasa-tlx'">
@@ -234,7 +240,8 @@
               <p v-if="task?.taskType === 'sus' && doneTaskDisabled" class="text-error mb-4">
                 Por favor, responde a todas las preguntas antes de continuar.
               </p>
-              <v-btn color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
+              <v-btn
+color="primary" block variant="flat" class="ml-2" :disabled="doneTaskDisabled"
                 @click="emitDoneOrCouldNotFinish()">
                 Finish task
               </v-btn>
@@ -244,15 +251,18 @@
         <video v-if="videoUrl === ''" id="vpreview" class="d-none" autoplay />
       </div>
 
-      <AudioRecorder v-if="task?.hasAudioRecord" ref="audioRecorder" :test-id="testId" :task-index="taskIndex"
+      <AudioRecorder
+v-if="task?.hasAudioRecord" ref="audioRecorder" :test-id="testId" :task-index="taskIndex"
         :remote-stream="remoteStream" :should-record-moderator="shouldRecordModerator"
         @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')"
         @recording-started="$emit('recording-started', $event)" />
 
-      <ScreenRecorder v-if="task?.hasScreenRecord" ref="screenRecorder" :test-id="testId" :task-index="taskIndex"
+      <ScreenRecorder
+v-if="task?.hasScreenRecord" ref="screenRecorder" :test-id="testId" :task-index="taskIndex"
         @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
 
-      <VideoRecorder v-if="task?.hasCamRecord" ref="videoRecorder" :test-id="testId" :userDocId="userDocId"
+      <VideoRecorder
+v-if="task?.hasCamRecord" ref="videoRecorder" :test-id="testId" :user-doc-id="userDocId"
         :task-index="taskIndex" @show-loading="$emit('show-loading')" @stop-show-loading="$emit('stop-show-loading')" />
     </template>
   </ShowInfo>

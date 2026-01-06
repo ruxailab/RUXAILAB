@@ -17,7 +17,7 @@
                     <v-list density="compact" class="list-scroll">
                         <v-list-subheader>Evaluators</v-list-subheader>
                         <v-divider />
-                        <v-list dense nav>
+                        <v-list density="compact" nav>
                             <v-list-item v-for="i in 2" :key="i" class="rounded" @click="selectedUserId = i">
                                 <v-list-item-title>
                                     <v-skeleton-loader type="text" width="80%" />
@@ -99,8 +99,16 @@ export default {
             currentTime: 0,
             videoDuration: 100,
             isPlaying: false,
-            _timelineInterval: null
+            timelineInterval: null
         };
+    },
+    mounted() {
+        this.timelineInterval = setInterval(() => {
+            this.updateTimeline();
+        }, 200);
+    },
+    beforeUnmount() {
+        clearInterval(this.timelineInterval);
     },
     methods: {
         emitTimelineUpdate() {
@@ -162,14 +170,6 @@ export default {
                 this.emitTimelineUpdate();
             }
         }
-    },
-    mounted() {
-        this._timelineInterval = setInterval(() => {
-            this.updateTimeline();
-        }, 200);
-    },
-    beforeUnmount() {
-        clearInterval(this._timelineInterval);
     }
 }
 

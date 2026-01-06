@@ -106,8 +106,8 @@
         variant="text" 
         size="small" 
         color="primary"
-        @click="manageStorage"
         disabled
+        @click="manageStorage"
       >
         Manage Storage
       </v-btn>

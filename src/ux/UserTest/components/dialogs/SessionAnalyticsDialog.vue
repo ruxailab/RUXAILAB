@@ -13,34 +13,39 @@
             <v-card-text class="dialog-body">
                 <v-row class="mb-4">
                     <v-col cols="12" md="6" class="mt-16">
-                        <div class="video-box mb-2 video-rect-box" v-if="rightTab !== 'eye'">
-                            <video ref="mainVideo1" class="video-rect-skeleton" controls @timeupdate="onTimeUpdate"
-                                @loadedmetadata="onMetadataLoaded"
-                                :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator">
-                                <source :src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
+                        <div v-if="rightTab !== 'eye'" class="video-box mb-2 video-rect-box">
+                            <video
+ref="mainVideo1" class="video-rect-skeleton" controls :poster="taskAnswer?.evaluatorPoster ?? defaultPosters.evaluator"
+                                @timeupdate="onTimeUpdate"
+                                @loadedmetadata="onMetadataLoaded">
+                                <source
+:src="taskAnswer?.webcamRecordURL ?? defaultVideos.evaluator"
                                     type="video/mp4" />
                             </video>
                         </div>
 
-                        <div class="video-box screen-video-box video-rect-box" style="position: relative;"
-                            v-if="rightTab !== 'sentimental'">
-                            <video ref="mainVideo2" class="video-rect-skeleton" @timeupdate="onTimeUpdate"
-                                @loadedmetadata="onMetadataLoaded"
-                                :poster="taskAnswer?.screenPoster ?? defaultPosters.screen">
+                        <div
+v-if="rightTab !== 'sentimental'" class="video-box screen-video-box video-rect-box"
+                            style="position: relative;">
+                            <video
+ref="mainVideo2" class="video-rect-skeleton" :poster="taskAnswer?.screenPoster ?? defaultPosters.screen"
+                                @timeupdate="onTimeUpdate"
+                                @loadedmetadata="onMetadataLoaded">
                                 <source :src="taskAnswer?.screenRecordURL ?? defaultVideos.screen" type="video/mp4" />
                             </video>
 
-                            <EyeTrackingOverlay v-show="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
-                                :predictedData="predictedData" :current-time="videoCurrentTime" :is-playing="isPlaying"
+                            <EyeTrackingOverlay
+v-show="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
+                                :predicted-data="predictedData" :current-time="videoCurrentTime" :is-playing="isPlaying"
                                 :view-mode="selectedView" />
                         </div>
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
+                        <v-tabs v-model="rightTab" bg-color="grey-lighten-4" grow>
                             <!-- <v-tab value="general">General</v-tab> -->
-                            <v-tab value="eye" v-if="taskAnswer?.irisTrackingData.length > 0">Eye Tracker</v-tab>
-                            <v-tab value="sentimental" v-if="taskAnswer?.webcamRecordURL">Sentimental</v-tab>
+                            <v-tab v-if="taskAnswer?.irisTrackingData.length > 0" value="eye">Eye Tracker</v-tab>
+                            <v-tab v-if="taskAnswer?.webcamRecordURL" value="sentimental">Sentimental</v-tab>
                             <!-- <v-tab value="transcript">Transcripción</v-tab>
                             <v-tab value="notes">Notas</v-tab> -->
                         </v-tabs>
@@ -53,16 +58,18 @@
                                 <NotesStats :totalNotes="taskAnswer?.notesCount ?? mockNotesCount" class="mb-4" />
                             </v-window-item> -->
 
-                            <v-window-item value="eye" v-if="taskAnswer?.irisTrackingData.length > 0">
-                                <EyeTrackingStats :iris-data="taskAnswer?.irisTrackingData" :userId="userId"
+                            <v-window-item v-if="taskAnswer?.irisTrackingData.length > 0" value="eye">
+                                <EyeTrackingStats
+:iris-data="taskAnswer?.irisTrackingData" :user-id="userId"
                                     :accuracy="taskAnswer?.eyeTracking?.accuracy ?? mockEyeTracking.accuracy"
                                     :fixations="taskAnswer?.eyeTracking?.fixations ?? mockEyeTracking.fixations"
-                                    @predictions-ready="predictedData = $event" @view-changed="selectedView = $event"
-                                    class="mb-4" />
+                                    class="mb-4" @predictions-ready="predictedData = $event"
+                                    @view-changed="selectedView = $event" />
                             </v-window-item>
 
-                            <v-window-item value="sentimental" v-if="taskAnswer?.webcamRecordURL">
-                                <FacialSentimentPanel :video-element="mainVideo1"
+                            <v-window-item v-if="taskAnswer?.webcamRecordURL" value="sentimental">
+                                <FacialSentimentPanel
+:video-element="mainVideo1"
                                     :webcam-video-url="taskAnswer?.webcamRecordURL" />
                             </v-window-item>
 
@@ -83,8 +90,9 @@
                     </v-col>
                 </v-row>
 
-                <SessionTimeline :duration="videoDuration" :currentTime="videoCurrentTime" :isPlaying="isPlaying"
-                    @seek="onSeek" @togglePlay="togglePlay" />
+                <SessionTimeline
+:duration="videoDuration" :current-time="videoCurrentTime" :is-playing="isPlaying"
+                    @seek="onSeek" @toggle-play="togglePlay" />
             </v-card-text>
         </v-card>
     </v-dialog>

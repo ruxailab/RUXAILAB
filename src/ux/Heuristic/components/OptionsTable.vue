@@ -9,7 +9,8 @@
         </h1>
       </div>
 
-      <v-btn color="primary" prepend-icon="mdi-plus" variant="elevated" size="large" :disabled="testAnswerDocLength > 0"
+      <v-btn
+color="primary" prepend-icon="mdi-plus" variant="elevated" size="large" :disabled="testAnswerDocLength > 0"
         class="text-none add-option-btn" @click="dialog = true">
         {{ $t('HeuristicsTable.titles.addOption') }}
       </v-btn>
@@ -20,12 +21,14 @@
     <div class="options-table-container">
       <!-- Desktop Table View (only show when there are items) -->
       <v-card v-if="optionsWithFormattedValue.length > 0" class="options-table-card desktop-table">
-        <v-data-table :headers="headers" :items="optionsWithFormattedValue" :items-per-page="-1"
+        <v-data-table
+:headers="headers" :items="optionsWithFormattedValue" :items-per-page="-1"
           class="elevation-0 options-data-table" hide-default-footer>
           <!-- Custom header styling -->
           <template #headers="{ columns }">
             <tr class="table-header">
-              <th v-for="column in columns" :key="column.key" class="text-left font-weight-medium text-ternary pa-4"
+              <th
+v-for="column in columns" :key="column.key" class="text-left font-weight-medium text-ternary pa-4"
                 :style="{ width: column.width }">
                 {{ column.title }}
               </th>
@@ -52,10 +55,12 @@
               </td>
               <td class="pa-4 actions-cell">
                 <div class="d-flex gap-2 option-actions">
-                  <v-btn icon="mdi-pencil" variant="text" size="small" color="primary"
-                    :disabled="testAnswerDocLength > 0" @click="editItem(item)" class="table-action-btn" />
-                  <v-btn icon="mdi-delete" variant="text" size="small" color="error" :disabled="testAnswerDocLength > 0"
-                    @click="deleteItem(item)" class="table-action-btn" />
+                  <v-btn
+icon="mdi-pencil" variant="text" size="small" color="primary"
+                    :disabled="testAnswerDocLength > 0" class="table-action-btn" @click="editItem(item)" />
+                  <v-btn
+icon="mdi-delete" variant="text" size="small" color="error" :disabled="testAnswerDocLength > 0"
+                    class="table-action-btn" @click="deleteItem(item)" />
                 </div>
               </td>
             </tr>
@@ -78,7 +83,7 @@
 
       <!-- Mobile List View (similar to heuristics) -->
       <div class="mobile-options-list">
-        <div v-for="(item, index) in optionsWithFormattedValue" :key="item.timestamp" class="option-item-mobile">
+        <div v-for="item in optionsWithFormattedValue" :key="item.timestamp" class="option-item-mobile">
           <v-card variant="outlined" class="mb-3 option-card-mobile">
             <!-- Option Header - EXACTLY LIKE HEURISTIC HEADER -->
             <div class="d-flex align-center pa-3 option-header-mobile">
@@ -90,7 +95,8 @@
                   <h5 class="text-subtitle-1 font-weight-medium text-on-surface option-title-mobile mb-0">
                     {{ item.text }}
                   </h5>
-                  <p v-if="item.description && item.description !== '-'"
+                  <p
+v-if="item.description && item.description !== '-'"
                     class="text-body-2 text-ternary ma-0 mt-1 option-desc-mobile">
                     {{ item.description }}
                   </p>
@@ -98,10 +104,12 @@
               </div>
 
               <div class="d-flex gap-1 option-actions-mobile">
-                <v-btn icon="mdi-pencil" variant="text" size="small" color="primary" :disabled="testAnswerDocLength > 0"
-                  @click.stop="editItem(item)" class="action-btn-mobile" />
-                <v-btn icon="mdi-delete" variant="text" size="small" color="error" :disabled="testAnswerDocLength > 0"
-                  @click.stop="deleteItem(item)" class="action-btn-mobile" />
+                <v-btn
+icon="mdi-pencil" variant="text" size="small" color="primary" :disabled="testAnswerDocLength > 0"
+                  class="action-btn-mobile" @click.stop="editItem(item)" />
+                <v-btn
+icon="mdi-delete" variant="text" size="small" color="error" :disabled="testAnswerDocLength > 0"
+                  class="action-btn-mobile" @click.stop="deleteItem(item)" />
               </div>
             </div>
           </v-card>
@@ -130,8 +138,9 @@
             </span>
           </div>
           <div class="d-flex align-center gap-2">
-            <v-btn v-if="testAnswerDocLength === 0" color="primary" variant="outlined" size="small"
-              prepend-icon="mdi-plus" @click="dialog = true" class="mobile-add-btn">
+            <v-btn
+v-if="testAnswerDocLength === 0" color="primary" variant="outlined" size="small"
+              prepend-icon="mdi-plus" class="mobile-add-btn" @click="dialog = true">
               Add Option
             </v-btn>
           </div>
@@ -140,7 +149,8 @@
     </div>
 
     <!-- AddOptionBtn Component -->
-    <AddOptionBtn v-model:dialog="dialog" :option="option" :has-value="hasValue" @change-has-value="updateHasValue"
+    <AddOptionBtn
+v-model:dialog="dialog" :option="option" :has-value="hasValue" @change-has-value="updateHasValue"
       @add-option="updateOptions" @change="emitChange" />
   </v-card>
 </template>

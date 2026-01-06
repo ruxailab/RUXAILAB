@@ -13,12 +13,14 @@
     <!-- Content Area with v-if for forced re-rendering -->
     <div class="stepper-content">
       <v-card-text v-show="step === '1'">
-        <TaskBasicInfo ref="taskBasicInfoRef" :model-value="localTask" :validation-rules="requiredRule"
+        <TaskBasicInfo
+ref="taskBasicInfoRef" :model-value="localTask" :validation-rules="requiredRule"
           @update:model-value="handleTaskUpdate" />
       </v-card-text>
 
       <v-card-text v-if="step === '2'">
-        <TaskConfiguration :model-value="localTask" :select-items="selectItems" :validation-rules="requiredRule"
+        <TaskConfiguration
+:model-value="localTask" :select-items="selectItems" :validation-rules="requiredRule"
           @update:model-value="handleTaskUpdate" />
       </v-card-text>
 

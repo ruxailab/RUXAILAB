@@ -84,8 +84,8 @@
         rounded="lg"
         prepend-icon="mdi-play-circle"
         :disabled=" getStatus(nextSession) === SESSION_STATUSES.COMPLETED"
-        @click="goto(nextSession)"
         class="action-button mt-6"
+        @click="goto(nextSession)"
       >
         {{ getStatus(nextSession) !== SESSION_STATUSES.COMPLETED ? $t('adminDashboard.nextSession.joinNow') : $t('adminDashboard.nextSession.completed') }}
       </v-btn>

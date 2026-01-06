@@ -1,5 +1,6 @@
 <template>
-    <v-dialog :model-value="modelValue" max-width="600px" transition="dialog-bottom-transition"
+    <v-dialog
+:model-value="modelValue" max-width="600px" transition="dialog-bottom-transition"
         @update:model-value="$emit('update:modelValue', $event)">
         <v-card class="rounded-xl pa-6" elevation="6">
             <v-card-title class="text-h6 font-weight-bold">
@@ -33,20 +34,24 @@
                             class="upload-indicator"
                         />
                     </v-avatar>
-                    <v-btn icon size="small" class="ml-2" @click="selectImage" :disabled="isUploadingImage">
+                    <v-btn icon size="small" class="ml-2" :disabled="isUploadingImage" @click="selectImage">
                         <v-icon>mdi-camera</v-icon>
                     </v-btn>
-                    <input ref="fileInput" type="file" accept="image/*" style="display: none"
+                    <input
+ref="fileInput" type="file" accept="image/*" style="display: none"
                         @change="handleImageUpload">
                 </div>
                 <v-form ref="formRef" v-model="isValid">
-                    <v-text-field v-model="localProfileData.username" :label="$t('profile.username')" variant="outlined"
+                    <v-text-field
+v-model="localProfileData.username" :label="$t('profile.username')" variant="outlined"
                         density="compact" prepend-inner-icon="mdi-account" :rules="usernameRules"
                         class="mb-4 input-field-transition" />
-                    <v-text-field v-model="localProfileData.contactNo" :label="$t('profile.contact')" variant="outlined"
+                    <v-text-field
+v-model="localProfileData.contactNo" :label="$t('profile.contact')" variant="outlined"
                         density="compact" prepend-inner-icon="mdi-phone" :rules="contactRules"
                         :hint="$t('profile.enterValidPhoneNumber')" persistent-hint class="mb-4 input-field-transition" />
-                    <v-autocomplete v-model="localProfileData.country" :label="$t('profile.country')" variant="outlined"
+                    <v-autocomplete
+v-model="localProfileData.country" :label="$t('profile.country')" variant="outlined"
                         density="compact" prepend-inner-icon="mdi-map-marker" :rules="countryRules" :items="countries"
                         item-title="name" item-value="name" :custom-filter="countryFilter" clearable
                         :menu-props="{ maxHeight: '400px' }" class="input-field-transition">
@@ -68,7 +73,8 @@
                 <v-btn variant="text" class="text-capitalize" @click="handleCancel">
                     {{ $t('common.cancel') }}
                 </v-btn>
-                <v-btn color="primary" variant="flat" class="text-capitalize" :disabled="!isValid || isSaving"
+                <v-btn
+color="primary" variant="flat" class="text-capitalize" :disabled="!isValid || isSaving"
                     :loading="isSaving" @click="handleSave">
                     <v-icon start>mdi-content-save</v-icon>
                     {{ $t('profile.saveChanges') }}

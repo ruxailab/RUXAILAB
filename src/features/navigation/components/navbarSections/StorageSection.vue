@@ -49,7 +49,7 @@
 
         <!-- Study Name (clickable for preview) -->
         <template #[`item.studyName`]="{ item }">
-          <a href="#" @click.prevent="openPreview(item)" class="text-decoration-none text-high-emphasis font-weight-medium">
+          <a href="#" class="text-decoration-none text-high-emphasis font-weight-medium" @click.prevent="openPreview(item)">
             {{ item.studyName }}
           </a>
         </template>
@@ -114,11 +114,13 @@
           {{ previewFile?.studyName }} - {{ previewFile?.type }}
         </v-card-title>
         <v-card-text class="pa-4 bg-black d-flex justify-center align-center" style="min-height: 300px;">
-          <video v-if="['video', 'webcam', 'screen'].includes(previewFile?.type)" 
+          <video
+v-if="['video', 'webcam', 'screen'].includes(previewFile?.type)" 
                  :src="previewFile?.url" 
                  controls 
                  style="width: 100%; max-height: 600px;" />
-          <audio v-else-if="previewFile?.type === 'audio'" 
+          <audio
+v-else-if="previewFile?.type === 'audio'" 
                  :src="previewFile?.url" 
                  controls 
                  style="width: 100%;" />

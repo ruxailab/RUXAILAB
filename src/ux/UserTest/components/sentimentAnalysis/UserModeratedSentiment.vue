@@ -12,7 +12,8 @@
               <v-divider />
 
               <v-list v-model:selected="selectedUserID" selection-mode="single">
-                <v-list-item v-for="(item, i) in usersID" :key="i" :value="item" :active="selectedUserID === item"
+                <v-list-item
+v-for="(item, i) in usersID" :key="i" :value="item" :active="selectedUserID === item"
                   @click="selectedUserID = item">
                   <v-list-item-title>
                     {{ getCooperatorEmail(item) }}
@@ -34,15 +35,17 @@
           <!------------------------------------------------------------------------------------------------------------------------->
           <v-col v-if="selectedAnswerDocument" class="ma-0 pa-1 answer-list" cols="9">
             <!-- Co-operators -->
-            <ModeratedTestCard :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
+            <ModeratedTestCard
+:moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
               :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }" />
 
             <h2>Tasks</h2>
-            <div class="mt-6" v-for="(task, index) in selectedAnswerDocument.tasks" :key="index">
+            <div v-for="(task, index) in selectedAnswerDocument.tasks" :key="index" class="mt-6">
               <h3>Task {{ Number(index + 1) }}</h3>
 
               <!-- Audio Wave -->
-              <AudioWave :ref="i => audioWaveRefs[index] = i" v-model:active-region="activeRegion"
+              <AudioWave
+:ref="i => audioWaveRefs[index] = i" v-model:active-region="activeRegion"
                 :file="task.audioRecordURL"
                 :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []" />
 
@@ -66,7 +69,8 @@
             </div>
 
             <!-- Segments Transcripts Sentiment -->
-            <SentimentTranscriptsList :play-segment="(start, end) => playSegmentInAudioWave(index, start, end)"
+            <SentimentTranscriptsList
+:play-segment="(start, end) => playSegmentInAudioWave(index, start, end)"
               :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []"
               :delete-region="deleteRegion" />
           </v-col>

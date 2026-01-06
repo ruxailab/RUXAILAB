@@ -3,14 +3,17 @@
     <!-- Filtros dinámicos Pre-Test -->
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
-        <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
+        <v-text-field
+v-model="searchTerm" prepend-inner-icon="mdi-magnify" density="compact" hide-details
           variant="outlined" :placeholder="$t('analytics.searchByName')" class="flex-grow-1" />
         <v-btn color="primary" class="search-btn" prepend-icon="mdi-magnify" @click="triggerSearch">{{
           $t('analytics.search') }}</v-btn>
-        <v-btn color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
+        <v-btn
+color="primary" class="search-btn" prepend-icon="mdi-filter-remove" :disabled="!hasActiveFilters"
           @click="resetFilters">{{ $t('analytics.reset') }}</v-btn>
 
-        <v-btn :color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
+        <v-btn
+:color="showFilters ? 'primary' : 'grey'" variant="tonal" icon size="small"
           :title="showFilters ? $t('analytics.hideFilters') : $t('analytics.showFilters')" @click="toggleFilters">
           <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
         </v-btn>
@@ -28,12 +31,14 @@
               </v-tooltip>
               <div v-else class="filter-label truncate-2">{{ def.title }}</div>
               <!-- Categórico (multi-select) -->
-              <v-select v-if="def.isCategorical && def.items.length" :items="def.items"
-                v-model="selectedFilters[def.index]" multiple chips clearable density="compact" variant="outlined"
+              <v-select
+v-if="def.isCategorical && def.items.length" v-model="selectedFilters[def.index]"
+                :items="def.items" multiple chips clearable density="compact" variant="outlined"
                 hide-details class="filter-field" @update:model-value="val => onFilterChange(def.index, val)" />
               <!-- Texto libre / numérico (match contiene) -->
-              <v-text-field v-else v-model="selectedFilters[def.index]" density="compact" variant="outlined"
-                hide-details clearable class="filter-field" @input="onFreeTextFilter(def.index)" />
+              <v-text-field
+v-else v-model="selectedFilters[def.index]" density="compact" variant="outlined"
+                hide-details clearable class="filter-field" @update:model-value="onFreeTextFilter(def.index)" />
             </v-col>
           </v-row>
         </div>
@@ -66,9 +71,10 @@
         </template>
 
         <!-- Dynamic Task Columns -->
-        <template v-for="(t, i) in taskColumns" :key="'col-task-' + i" v-slot:[`item.task_${i}`]="{ item }">
+        <template v-for="(t, i) in taskColumns" :key="'col-task-' + i" #[`item.task_${i}`]="{ item }">
           <div class="d-flex flex-column align-center py-2">
-            <v-chip size="x-small" :color="item[`task_${i}`]?.completed ? 'success' : 'error'" variant="tonal"
+            <v-chip
+size="x-small" :color="item[`task_${i}`]?.completed ? 'success' : 'error'" variant="tonal"
               class="mb-2 text-uppercase font-weight-medium"
               :prepend-icon="item[`task_${i}`]?.completed ? 'mdi-check-circle' : 'mdi-close-circle'">
               {{ item[`task_${i}`]?.completed ? $t('analytics.completed') : $t('analytics.notCompleted') }}
@@ -101,7 +107,8 @@
         </template>
 
         <template #item.invited="{ item }">
-          <v-chip :color="item.invited ? 'success' : 'grey'" :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
+          <v-chip
+:color="item.invited ? 'success' : 'grey'" :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
             size="small" variant="tonal">
             {{ item.invited ? $t('analytics.yes') : $t('analytics.no') }}
           </v-chip>
@@ -110,16 +117,17 @@
         <template #item.actions="{ item }">
           <v-menu location="bottom end" transition="fade-transition">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small"
+              <v-btn
+v-bind="props" icon variant="text" size="small"
                 :aria-label="'Acciones para ' + (item.fullName || 'usuario')">
                 <v-icon>mdi-dots-vertical</v-icon>
               </v-btn>
             </template>
             <v-list density="compact" class="py-0">
-              <v-list-item @click="viewAnswers(item)" prepend-icon="mdi-eye">
+              <v-list-item prepend-icon="mdi-eye" @click="viewAnswers(item)">
                 <v-list-item-title>Test detail</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="showTaskDetails(item)" prepend-icon="mdi-clipboard-list">
+              <v-list-item prepend-icon="mdi-clipboard-list" @click="showTaskDetails(item)">
                 <v-list-item-title>Task Details</v-list-item-title>
               </v-list-item>
               <!--
@@ -159,7 +167,7 @@
               </v-col>
 
               <!-- Pre-Test Answers -->
-              <v-col cols="12" md="6" v-if="dialogItem?.preTestAnswer?.length" class="section-col">
+              <v-col v-if="dialogItem?.preTestAnswer?.length" cols="12" md="6" class="section-col">
                 <div class="section-card">
                   <div class="section-title">Pre-Test</div>
                   <v-divider class="my-2" />
@@ -177,7 +185,7 @@
               </v-col>
 
               <!-- Post-Test Answers -->
-              <v-col cols="12" md="6" v-if="dialogItem?.postTestAnswer?.length" class="section-col">
+              <v-col v-if="dialogItem?.postTestAnswer?.length" cols="12" md="6" class="section-col">
                 <div class="section-card">
                   <div class="section-title">Post-Test</div>
                   <v-divider class="my-2" />
@@ -195,14 +203,15 @@
               </v-col>
 
               <!-- Task Selector -->
-              <v-col cols="12" v-if="testStructure?.userTasks?.length" class="section-col">
+              <v-col v-if="testStructure?.userTasks?.length" cols="12" class="section-col">
                 <div class="section-card">
                   <div class="section-title d-flex align-center">Tasks
                     <span class="text-caption font-weight-regular ml-2">({{ testStructure.userTasks.length }})</span>
                   </div>
                   <v-divider class="my-2" />
                   <div class="d-flex flex-wrap gap-2 mb-3">
-                    <v-chip v-for="(t, i) in testStructure.userTasks" :key="'task-chip-' + i"
+                    <v-chip
+v-for="(t, i) in testStructure.userTasks" :key="'task-chip-' + i"
                       :color="taskSelect === i ? 'primary' : 'grey'" variant="tonal" size="small" class="cursor-pointer"
                       @click="taskSelect = i">
                       {{ i + 1 }}. {{ t.taskName }}
@@ -211,14 +220,15 @@
 
                   <div v-if="dialogItem.tasks?.[taskSelect]" class="task-detail">
                     <div class="mb-2 d-flex flex-wrap gap-2">
-                      <v-chip size="x-small" color="success" variant="tonal"
-                        v-if="dialogItem.tasks[taskSelect].completed">
+                      <v-chip
+v-if="dialogItem.tasks[taskSelect].completed" size="x-small" color="success"
+                        variant="tonal">
                         <v-icon size="14" start>mdi-check-circle</v-icon> Completed
                       </v-chip>
-                      <v-chip size="x-small" color="error" variant="tonal" v-else>
+                      <v-chip v-else size="x-small" color="error" variant="tonal">
                         <v-icon size="14" start>mdi-close-circle</v-icon> Not Completed
                       </v-chip>
-                      <v-chip size="x-small" color="info" variant="tonal" v-if="dialogItem.tasks[taskSelect].taskTime">
+                      <v-chip v-if="dialogItem.tasks[taskSelect].taskTime" size="x-small" color="info" variant="tonal">
                         <v-icon size="14" start>mdi-timer-outline</v-icon>
                         {{ formatTime(Math.floor((dialogItem.tasks[taskSelect].taskTime || 0) / 1000)) }}
                       </v-chip>
@@ -231,9 +241,10 @@
 
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
-                      <v-expansion-panel readonly hide-actions @click.stop="openSessionAnalyticsDialog"
-                        v-if="dialogItem.tasks[taskSelect].webcamRecordURL || dialogItem.tasks[taskSelect].irisTrackingData > 0"
-                        class="cursor-pointer">
+                      <v-expansion-panel
+v-if="dialogItem.tasks[taskSelect].webcamRecordURL || dialogItem.tasks[taskSelect].irisTrackingData > 0" readonly hide-actions
+                        class="cursor-pointer"
+                        @click.stop="openSessionAnalyticsDialog">
                         <v-expansion-panel-title>
                           Task Analytics
                         </v-expansion-panel-title>
@@ -243,10 +254,12 @@
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">Webcam
                           Recording</v-expansion-panel-title>
                         <v-expansion-panel-text>
-                          <video :src="dialogItem.tasks[taskSelect].webcamRecordURL" controls class="media-video"
+                          <video
+:src="dialogItem.tasks[taskSelect].webcamRecordURL" controls class="media-video"
                             aria-label="Webcam recording">
-                            <track kind="captions" srclang="en" label="English"
-                              v-if="dialogItem.tasks[taskSelect].webcamCaptionsURL"
+                            <track
+v-if="dialogItem.tasks[taskSelect].webcamCaptionsURL" kind="captions" srclang="en"
+                              label="English"
                               :src="dialogItem.tasks[taskSelect].webcamCaptionsURL" />
                           </video>
                         </v-expansion-panel-text>
@@ -255,10 +268,12 @@
                         <v-expansion-panel-title expand-icon="mdi-chevron-down">Screen
                           Recording</v-expansion-panel-title>
                         <v-expansion-panel-text>
-                          <video :src="dialogItem.tasks[taskSelect].screenRecordURL" controls class="media-video"
+                          <video
+:src="dialogItem.tasks[taskSelect].screenRecordURL" controls class="media-video"
                             aria-label="Screen recording">
-                            <track kind="captions" srclang="en" label="English"
-                              v-if="dialogItem.tasks[taskSelect].screenCaptionsURL"
+                            <track
+v-if="dialogItem.tasks[taskSelect].screenCaptionsURL" kind="captions" srclang="en"
+                              label="English"
                               :src="dialogItem.tasks[taskSelect].screenCaptionsURL" />
                           </video>
                         </v-expansion-panel-text>
@@ -273,11 +288,13 @@
                     </v-expansion-panels>
                     <!-- Diálogo que chama o componente em tela cheia -->
                     <v-dialog v-model="showSessionAnalytics" fullscreen>
-                      <SessionAnalytics :tasks="dialogItem.tasks" :taskSelect="taskSelect"
+                      <SessionAnalytics
+:tasks="dialogItem.tasks" :task-select="taskSelect"
                         @close="showSessionAnalytics = false" />
                     </v-dialog>
-                    <SessionAnalyticsDialog v-model="showSessionAnalyticsDialog" :userId="dialogItem.userDocId"
-                      :task-answer="dialogItem.tasks[taskSelect]" :fromEyeTracking="true" />
+                    <SessionAnalyticsDialog
+v-model="showSessionAnalyticsDialog" :user-id="dialogItem.userDocId"
+                      :task-answer="dialogItem.tasks[taskSelect]" :from-eye-tracking="true" />
                   </div>
                 </div>
               </v-col>
@@ -287,7 +304,8 @@
       </v-card>
     </v-dialog>
 
-    <TaskDetailsModal v-model="showTaskDetailsModal" :user-session="selectedUserSession"
+    <TaskDetailsModal
+v-model="showTaskDetailsModal" :user-session="selectedUserSession"
       @close="closeTaskDetailsModal" />
   </div>
 </template>

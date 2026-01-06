@@ -41,17 +41,17 @@
         <!-- Provider -->
         <v-col cols="12" md="4" lg="4">
           <v-select
+            v-model="selectedProvider"
             label="Provider"
             :items="providers"
             item-title="label"
             item-value="value"
-            v-model="selectedProvider"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-robot-outline"
             hide-details
             :menu-props="{ maxHeight: 260 }"
-            @update:modelValue="
+            @update:model-value="
               (val) => {
                 selectedProvider = val
                 selectedModel = modelsByProvider[val]?.[0] || ''
@@ -63,11 +63,11 @@
         <!-- Model -->
         <v-col cols="12" md="4" lg="4">
           <v-select
+            v-model="selectedModel"
             label="Model"
             :items="modelOptions"
             item-title="label"
             item-value="value"
-            v-model="selectedModel"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-cube-outline"
@@ -100,7 +100,7 @@
     <!-- Runs list -->
     <TranscriptionList
       v-if="transcriptSegments.length"
-      :transcriptSegments="transcriptSegments"
+      :transcript-segments="transcriptSegments"
     />
 
     <!-- Empty state -->

@@ -29,11 +29,13 @@
         <v-card class="form-card mb-6" elevation="8" rounded="xl">
           <v-card-text class="pa-8">
             <v-form @submit.prevent="runTest">
-              <v-text-field v-model="url" label="Website URL" placeholder="https://example.com" type="url" required
+              <v-text-field
+v-model="url" label="Website URL" placeholder="https://example.com" type="url" required
                 :disabled="isLoading" prepend-inner-icon="mdi-web" append-inner-icon="mdi-link" variant="outlined"
                 color="primary" class="mb-4" :rules="[rules.required, rules.url]" />
 
-              <v-btn type="submit" :disabled="isLoading || !url.trim()" :loading="isLoading" color="primary"
+              <v-btn
+type="submit" :disabled="isLoading || !url.trim()" :loading="isLoading" color="primary"
                 size="large" block rounded="lg" class="text-none">
                 <template #prepend>
                   <v-icon v-if="!isLoading">
@@ -60,10 +62,12 @@
 
             <div class="loading-steps">
               <v-list class="bg-transparent">
-                <v-list-item v-for="(step, index) in steps" :key="index"
+                <v-list-item
+v-for="(step, index) in steps" :key="index"
                   :class="{ 'step-active': currentStep >= index + 1 }" class="step-item">
                   <template #prepend>
-                    <v-icon :color="currentStep >= index + 1 ? 'success' : 'grey-lighten-1'
+                    <v-icon
+:color="currentStep >= index + 1 ? 'success' : 'grey-lighten-1'
                       " size="20">
                       mdi-check-circle
                     </v-icon>
@@ -159,10 +163,10 @@ import axios from 'axios'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
+  name: 'Home',
   components: {
     PageWrapper
   },
-  name: 'Home',
   data() {
     return {
       url: '',
