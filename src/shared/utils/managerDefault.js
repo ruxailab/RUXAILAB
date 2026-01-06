@@ -8,7 +8,7 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
     { title: 'Manager', icon: ICONS.MANAGER, path: `/${type}/manager/${route.params.id}` }
   ]
 
-  if (accessLevel === ACCESS_LEVEL.ADMIN) {
+  if (accessLevel === ACCESS_LEVEL.ADMIN || accessLevel === ACCESS_LEVEL.SUPER_ADMIN) {
     items.push(
       { title: 'Test', icon: ICONS.DOCUMENT_EDIT, path: `/${type}/edit/${test.id}` },
       { title: 'Preview', icon: ICONS.PREVIEW, path: `/testview/${test.id}` },

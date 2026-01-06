@@ -47,7 +47,7 @@
       <v-col cols="10">
         <v-tabs v-model="tab">
           <v-tab>{{ $t('titles.users') }}</v-tab>
-          <v-tab>{{ $t('titles.tests') }}</v-tab>
+          <v-tab>{{ $t('titles.studies') }}</v-tab>
         </v-tabs>
         <v-divider />
       </v-col>
@@ -191,7 +191,7 @@
             <v-data-table
               :search="search"
               :headers="testsHeaders"
-              :items="formattedTests"
+              :items="tests"
               class="elevation-1"
               :loading="loading"
             >
@@ -208,44 +208,9 @@
                   prepend-inner-icon="mdi-magnify"
                   class="mx-3"
                   density="compact"
-                  :label="$t('Dashboard.search')"
+                  label="Search"
                 />
               </template>
-              
-              <!-- Study Type Column -->
-              <template #[`item.studyType`]="{ item }">
-                <v-chip 
-                  size="small" 
-                  :color="getMethodColor(item)" 
-                  class="text-white"
-                >
-                  {{ item.studyType }}
-                </v-chip>
-              </template>
-              
-              <!-- Creation Date Column -->
-              <template #[`item.creationDateFormatted`]="{ item }">
-                <span>{{ item.creationDateFormatted }}</span>
-              </template>
-              
-              <!-- Collaborators Column -->
-              <template #[`item.collaboratorsCount`]="{ item }">
-                <span>{{ item.collaboratorsCount }}</span>
-              </template>
-              
-              <!-- Media Size Column -->
-              <template #[`item.mediaSize`]="{ item }">
-                <v-tooltip bottom>
-                  <template #activator="{ props }">
-                    <span v-bind="props" class="text-grey">
-                      {{ item.mediaSize }}
-                    </span>
-                  </template>
-                  <span>{{ $t('tooltips.storagePerUser') }}</span>
-                </v-tooltip>
-              </template>
-              
-              <!-- Actions Column -->
               <template #[`item.actions`]="{ item }">
                 <v-icon
                   size="small"
@@ -254,6 +219,9 @@
                 >
                   mdi-eye
                 </v-icon>
+              </template>
+              <template #[`item.creationDate`]="{ item }">
+                {{ new Date(item.creationDate).toLocaleString() }}
               </template>
             </v-data-table>
           </v-window-item>
@@ -270,7 +238,6 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import Snackbar from '@/shared/components/Snackbar';
 import { useI18n } from 'vue-i18n'
-import { getMethodName, getMethodColor } from '@/shared/constants/methodDefinitions'
 
 const { t } = useI18n()
 const store = useStore()
@@ -302,44 +269,28 @@ const formattedUsers = computed(() => {
   }));
 });
 
-// Format tests data with calculated fields
-const formattedTests = computed(() => {
-  return tests.value.map(test => ({
-    ...test,
-    // Format study type
-    studyType: getMethodName(test, i18n.locale.value),
-    // Format creation date
-    creationDateFormatted: test.creationDate ? new Date(test.creationDate).toLocaleDateString() : 'N/A',
-    // Count collaborators
-    collaboratorsCount: test.cooperators ? test.cooperators.length : 0,
-    // Media size - not directly available at study level
-    mediaSize: 'N/A',
-  }));
-});
-
 // Table headers
 const usersHeaders = computed(() => [
-  { title: t('titles.name'), align: 'start', value: 'username' },
-  { title: t('SIGNIN.email'), value: 'email', align: 'center' },
-  { title: t('titles.studiesCount'), value: 'studiesCount', align: 'center' },
-  { title: t('titles.mediaSize'), value: 'mediaSize', align: 'center' },
+  { title: t('titles.drawer.name'), align: 'start', value: 'username' },
+  { title: t('auth.SIGNIN.email'), value: 'email', align: 'center' },
+  { title: t('titles.drawer.studiesCount'), value: 'studiesCount', align: 'center' },
+  { title: t('titles.drawer.mediaSize'), value: 'mediaSize', align: 'center' },
   { title: t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
   { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
 const testsHeaders = computed(() => [
-  { title: t('titles.studyName'), align: 'start', value: 'testTitle' },
-  { title: t('titles.studyType'), value: 'studyType', align: 'center' },
-  { title: t('titles.creationDate'), value: 'creationDateFormatted', align: 'center', sortable: true },
-  { title: t('titles.collaborators'), value: 'collaboratorsCount', align: 'center' },
-  { title: t('titles.mediaSize'), value: 'mediaSize', align: 'center' },
+  { title: t('common.title'), align: 'start', value: 'testTitle' },
+  { title: t('pages.listTests.createdBy'), value: 'testAdmin.email' },
+  { title: t('pages.listTests.updated'), value: 'creationDate', sortable: true },
   { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
 const accessLevels = computed(() => [
-  { title: t('profile.superAdmin'), level: 0 },
-  { title: t('profile.admin'), level: 1 },
-  { title: t('common.user'), level: 2 },
+  { title: t('profile.superAdmin'), level: -1 },
+  { title: t('profile.admin'), level: 0 },
+  { title: t('profile.guest'), level: 1 },
+  { title: t('profile.evaluator'), level: 2 },
 ])
 
 const dialogText = computed(() =>
@@ -359,6 +310,8 @@ const formatMediaSize = (mb) => {
 // Helper function to get access level color
 const getAccessLevelColor = (level) => {
   switch (level) {
+    case -1:
+      return 'deep-purple darken-3'
     case 0:
       return 'red darken-2'
     case 1:
@@ -372,7 +325,8 @@ const getAccessLevelColor = (level) => {
 
 // Helper function to get access level text
 const level = (lv) => {
-  return accessLevels.value.find((item) => item.level === lv)?.text
+  const found = accessLevels.value.find((item) => item.level === lv);
+  return found ? found.title : 'Unknown';
 }
 
 // Edit user - need to find original user from formattedUsers
