@@ -33,15 +33,15 @@ const createModeratedTest = async (page, testName) => {
     });
 };
 
-test.describe('VideoCall Component Safety Net', () => {
+// Grant permissions to avoid browser prompts
+test.use({
+    permissions: ['camera', 'microphone'],
+    launchOptions: {
+        args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+    },
+});
 
-    // Grant permissions to avoid browser prompts
-    test.use({
-        permissions: ['camera', 'microphone'],
-        launchOptions: {
-            args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
-        },
-    });
+test.describe('VideoCall Component Safety Net', () => {
 
     test.beforeEach(async ({ page }) => {
         await logIn(page);
