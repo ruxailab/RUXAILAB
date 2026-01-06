@@ -1,4 +1,23 @@
 export function getNASATLXData(nasaTlxData) {
+  // Return empty state if no data provided
+  if (!nasaTlxData || nasaTlxData.length === 0) {
+    return {
+      averageOverallScore: 0,
+      totalRespondents: 0,
+      mostStressfulDimension: 'N/A',
+      leastStressfulDimension: 'N/A',
+      dimensionAverages: {
+        mentalDemand: 0,
+        physicalDemand: 0,
+        temporalDemand: 0,
+        performance: 0,
+        effort: 0,
+        frustration: 0
+      },
+      responses: []
+    }
+  }
+
   const dimensionTotals = {
     mentalDemand: 0,
     physicalDemand: 0,
@@ -10,7 +29,7 @@ export function getNASATLXData(nasaTlxData) {
 
   nasaTlxData.forEach(response => {
     Object.keys(dimensionTotals).forEach(key => {
-      dimensionTotals[key] += response.nasaTlxAnswers[key]
+      dimensionTotals[key] += response.nasaTlxAnswers[key] || 0
     })
   })
 
