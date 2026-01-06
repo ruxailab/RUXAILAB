@@ -45,6 +45,10 @@
           <TemplatesSection />
         </div>
 
+        <div v-if="activeSection === 'storage'">
+          <StorageSection />
+        </div>
+
         <div
           v-if="
             activeSection === 'community' &&
@@ -91,12 +95,13 @@ import NotificationPage from '@/features/notifications/views/NotificationPage.vu
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 // Navigation and sections
-import { DashboardSidebar } from '@/features/navigation/utils'
-import SessionsSection from '../components/navbarSections/SessionsSection.vue'
-import TemplatesSection from '../components/navbarSections/TemplatesSection.vue'
-import StudiesSection from '../components/navbarSections/StudiesSection.vue'
-import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue'
-import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
+import { DashboardSidebar } from '@/features/navigation/utils';
+import SessionsSection from '../components/navbarSections/SessionsSection.vue';
+import TemplatesSection from '../components/navbarSections/TemplatesSection.vue';
+import StudiesSection from '../components/navbarSections/StudiesSection.vue';
+import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue';
+import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue';
+import StorageSection from '../components/navbarSections/StorageSection.vue';
 
 // Utilities and constants
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
@@ -118,18 +123,13 @@ let unsubscribeTests = null // Unsub function for real-time tests
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
-    case 'dashboard':
-      return 'Dashboard'
-    case 'studies':
-      return 'Studies'
-    case 'sessions':
-      return 'Sessions'
-    case 'templates':
-      return 'Templates'
-    case 'notifications':
-      return 'Notifications'
-    case 'profile':
-      return 'Profile'
+    case 'dashboard': return 'Dashboard';
+    case 'studies': return 'Studies';
+    case 'sessions': return 'Sessions';
+    case 'templates': return 'Templates';
+    case 'storage': return 'Storage';
+    case 'notifications': return 'Notifications';
+    case 'profile': return 'Profile';
     case 'community':
       return activeSubSection.value === 'community-templates'
         ? 'Community Templates'
@@ -223,15 +223,10 @@ const getPublicTemplates = () => store.dispatch('getPublicTemplates')
  */
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
-    case 'studies':
-      await getMyPersonalTests()
-      break
-    case 'sessions':
-      filterModeratedSessions()
-      break
-    case 'templates':
-      await getMyTemplates()
-      break
+    case 'studies': await getMyPersonalTests(); break;
+    case 'sessions': filterModeratedSessions(); break;
+    case 'templates': await getMyTemplates(); break;
+    case 'storage': await getMyPersonalTests(); break;
     case 'community':
       if (sub === 'community-studies') await getPublicStudies()
       else if (sub === 'community-templates') await getPublicTemplates()
