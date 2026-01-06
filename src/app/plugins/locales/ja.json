@@ -766,6 +766,7 @@
     "cooperators": "協力者",
     "analytics": "分析",
     "help_center": "ヘルプセンター",
+<<<<<<< HEAD
     "howCanWeHelp": "どのようにお手伝いできますか？",
     "categories": "カテゴリ",
     "viewAll": "すべて表示",
@@ -1023,6 +1024,112 @@
         "finished": "完了",
         "upcoming": "近日公開"
       }
+=======
+    "howCanWeHelp": "どのようにお手伝いできますか？"
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "ダッシュボード",
+      "studies": "研究",
+      "sessions": "セッション",
+      "templates": "テンプレート",
+      "notifications": "通知",
+      "profile": "プロフィール",
+      "community": "コミュニティ"
+    },
+    "pageTitles": {
+      "dashboard": "ダッシュボード",
+      "studies": "研究",
+      "sessions": "セッション",
+      "templates": "テンプレート",
+      "notifications": "通知",
+      "profile": "プロフィール",
+      "communityStudies": "コミュニティ研究",
+      "communityTemplates": "コミュニティテンプレート",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "研究プロジェクトを管理する",
+      "templates": "保存したテンプレートにアクセス"
+    },
+    "welcome": {
+      "greeting": "おかえりなさい、{name}！👋",
+      "subtitle": "今日の研究プロジェクトの状況です"
+    },
+    "stats": {
+      "studies": "研究",
+      "storage": "ストレージ",
+      "plan": "プラン",
+      "free": "無料",
+      "participants": "参加者"
+    },
+    "activeStudies": {
+      "title": "アクティブな研究の概要",
+      "viewAll": "すべて表示",
+      "progress": "進捗",
+      "unknown": "不明",
+      "participants": "参加者",
+      "daysLeft": "残り {count} 日"
+    },
+    "activityTimeline": {
+      "title": "最近のアクティビティ",
+      "viewAll": "すべて表示",
+      "comingSoon": "近日公開",
+      "teamMembers": "チームメンバー"
+    },
+    "nextSession": {
+      "title": "次のセッション",
+      "studyType": "研究タイプ",
+      "owner": "オーナー",
+      "evaluator": "評価者",
+      "date": "日付",
+      "time": "時間",
+      "joinNow": "今すぐ参加",
+      "completed": "完了",
+      "noSessions": "予定されているセッションはありません",
+      "noSessionsHint": "次のセッションがここに表示されます",
+      "noDescription": "説明がありません"
+    },
+    "topMethods": {
+      "title": "最も使用されている方法",
+      "comingSoon": "近日公開",
+      "uses": "使用回数"
+    },
+    "upcomingWebinar": {
+      "title": "テキスト",
+      "comingSoon": "近日公開",
+      "date": "日付",
+      "time": "時間",
+      "comingInNovember": "11月公開予定"
+    },
+    "filters": {
+      "searchStudies": "研究を検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "期間を選択",
+      "status": "ステータス",
+      "visibility": "可視性",
+      "method": "方法",
+      "ownership": "所有権",
+      "participantsFilter": "参加者",
+      "allStatuses": "すべてのステータス",
+      "active": "アクティブ",
+      "draft": "下書き",
+      "completed": "完了",
+      "allVisibility": "すべての可視性",
+      "public": "公開",
+      "private": "非公開",
+      "allStudies": "すべての研究",
+      "myStudies": "自分の研究",
+      "whereICollaborate": "参加中の研究",
+      "all": "すべて",
+      "allMethods": "すべての方法",
+      "lessThan10": "< 10 参加者",
+      "between10And50": "10 – 50 参加者",
+      "moreThan50": "> 50 参加者"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

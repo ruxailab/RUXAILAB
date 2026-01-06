@@ -1,10 +1,30 @@
 <template>
   <v-card elevation="2" rounded="lg" class="mb-6 position-relative">
     <!-- Coming Soon Chip -->
+<<<<<<< HEAD
 
     <v-card-title class="d-flex align-center py-4 no-whitespace">
       <v-icon icon="mdi-clock-time-eight" class="me-2" color="primary" />
       Recent Activity
+=======
+    <v-chip
+      class="coming-soon-chip"
+      color="primary"
+      variant="outlined"
+      size="small"
+      prepend-icon="mdi-clock-outline"
+    >
+      {{ $t('adminDashboard.activityTimeline.comingSoon') }}
+    </v-chip>
+    
+    <v-card-title class="d-flex align-center py-4">
+      <v-icon
+        icon="mdi-clock-time-eight"
+        class="me-2"
+        color="primary"
+      />
+      {{ $t('adminDashboard.activityTimeline.title') }}
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
       <v-spacer />
       <v-chip
         color="primary"
@@ -12,6 +32,7 @@
         size="small"
         class="chip-responsive"
       >
+<<<<<<< HEAD
         <v-icon
           icon="mdi-clock-outline"
           size="small"
@@ -19,6 +40,10 @@
         />
         Coming Soon
       </v-chip>
+=======
+        {{ $t('adminDashboard.activityTimeline.viewAll') }}
+      </v-btn>
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     </v-card-title>
     <v-card-text class="pa-0 coming-soon-overlay">
       <v-timeline direction="vertical" density="comfortable" class="pa-4">

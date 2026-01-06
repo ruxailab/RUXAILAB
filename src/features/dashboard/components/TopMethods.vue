@@ -4,9 +4,28 @@
     rounded="lg"
     class="top-methods-card position-relative"
   >
+<<<<<<< HEAD
     <v-card-title class="d-flex align-center py-4">
       <div class="d-flex align-center justify-space-between w-100">
         <span class="text-h6 font-weight-bold">Most used methods</span>
+=======
+    <!-- Coming Soon Chip -->
+    <v-chip
+      class="coming-soon-chip"
+      color="primary"
+      variant="outlined"
+      size="small"
+      prepend-icon="mdi-clock-outline"
+    >
+      {{ $t('adminDashboard.topMethods.comingSoon') }}
+    </v-chip>
+
+    <v-card-title class="d-flex align-center py-4">
+
+      <div class="d-flex align-center justify-space-between">
+        <span class="text-h6 font-weight-bold">{{ $t('adminDashboard.topMethods.title') }}</span>
+      
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
       </div>
     </v-card-title>
 
@@ -42,7 +61,11 @@
                 size="small"
                 class="usage-chip"
               >
+<<<<<<< HEAD
                 {{ method.usage }} {{ method.usage == 1 ? 'Use' : 'Uses' }}
+=======
+                {{ method.usage }} {{ $t('adminDashboard.topMethods.uses') }}
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
               </v-chip>
             </div>
           </div>

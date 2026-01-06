@@ -1088,5 +1088,109 @@
         "upcoming": "Próximo"
       }
     }
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "Panel",
+      "studies": "Estudios",
+      "sessions": "Sesiones",
+      "templates": "Plantillas",
+      "notifications": "Notificaciones",
+      "profile": "Perfil",
+      "community": "Comunidad"
+    },
+    "pageTitles": {
+      "dashboard": "Panel",
+      "studies": "Estudios",
+      "sessions": "Sesiones",
+      "templates": "Plantillas",
+      "notifications": "Notificaciones",
+      "profile": "Perfil",
+      "communityStudies": "Estudios de la Comunidad",
+      "communityTemplates": "Plantillas de la Comunidad",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "Gestiona tus estudios de investigación",
+      "templates": "Accede a tus plantillas guardadas"
+    },
+    "welcome": {
+      "greeting": "¡Bienvenido de nuevo, {name}! 👋",
+      "subtitle": "Esto es lo que está pasando con tus proyectos de investigación hoy"
+    },
+    "stats": {
+      "studies": "Estudios",
+      "storage": "Almacenamiento",
+      "plan": "Plan",
+      "free": "Gratis",
+      "participants": "Participantes"
+    },
+    "activeStudies": {
+      "title": "Resumen de Estudios Activos",
+      "viewAll": "Ver Todo",
+      "progress": "Progreso",
+      "unknown": "Desconocido",
+      "participants": "participantes",
+      "daysLeft": "{count} días restantes | {count} día restante"
+    },
+    "activityTimeline": {
+      "title": "Actividad Reciente",
+      "viewAll": "Ver Todo",
+      "comingSoon": "Próximamente",
+      "teamMembers": "miembros del equipo"
+    },
+    "nextSession": {
+      "title": "Próxima Sesión",
+      "studyType": "Tipo de Estudio",
+      "owner": "Propietario",
+      "evaluator": "Evaluador",
+      "date": "Fecha",
+      "time": "Hora",
+      "joinNow": "Unirse Ahora",
+      "completed": "Completado",
+      "noSessions": "No hay sesiones programadas",
+      "noSessionsHint": "Tu próxima sesión aparecerá aquí",
+      "noDescription": "Sin descripción disponible"
+    },
+    "topMethods": {
+      "title": "Métodos más utilizados",
+      "comingSoon": "Próximamente",
+      "uses": "Usos"
+    },
+    "upcomingWebinar": {
+      "title": "Algún Texto",
+      "comingSoon": "Próximamente",
+      "date": "Fecha",
+      "time": "Hora",
+      "comingInNovember": "Disponible en Noviembre"
+    },
+    "filters": {
+      "searchStudies": "Buscar estudios...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "status": "Estado",
+      "visibility": "Visibilidad",
+      "method": "Método",
+      "ownership": "Propiedad",
+      "participantsFilter": "Participantes",
+      "allStatuses": "Todos los Estados",
+      "active": "Activo",
+      "draft": "Borrador",
+      "completed": "Completado",
+      "allVisibility": "Toda Visibilidad",
+      "public": "Público",
+      "private": "Privado",
+      "allStudies": "Todos los Estudios",
+      "myStudies": "Mis Estudios",
+      "whereICollaborate": "Donde Colaboro",
+      "all": "Todos",
+      "allMethods": "Todos los Métodos",
+      "lessThan10": "< 10 participantes",
+      "between10And50": "10 – 50 participantes",
+      "moreThan50": "> 50 participantes"
+    }
   }
 }

@@ -789,6 +789,7 @@
     "cooperators": "Сотрудники",
     "analytics": "Аналитика",
     "help_center": "Центр помощи",
+<<<<<<< HEAD
     "howCanWeHelp": "Как мы можем помочь?",
     "categories": "КАТЕГОРИИ",
     "viewAll": "Посмотреть все",
@@ -1046,6 +1047,112 @@
         "finished": "Завершено",
         "upcoming": "Предстоящее"
       }
+=======
+    "howCanWeHelp": "Как мы можем помочь?"
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "Панель управления",
+      "studies": "Исследования",
+      "sessions": "Сессии",
+      "templates": "Шаблоны",
+      "notifications": "Уведомления",
+      "profile": "Профиль",
+      "community": "Сообщество"
+    },
+    "pageTitles": {
+      "dashboard": "Панель управления",
+      "studies": "Исследования",
+      "sessions": "Сессии",
+      "templates": "Шаблоны",
+      "notifications": "Уведомления",
+      "profile": "Профиль",
+      "communityStudies": "Исследования сообщества",
+      "communityTemplates": "Шаблоны сообщества",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "Управляйте своими исследованиями",
+      "templates": "Доступ к сохраненным шаблонам"
+    },
+    "welcome": {
+      "greeting": "С возвращением, {name}! 👋",
+      "subtitle": "Вот что происходит с вашими исследовательскими проектами сегодня"
+    },
+    "stats": {
+      "studies": "Исследования",
+      "storage": "Хранилище",
+      "plan": "План",
+      "free": "Бесплатно",
+      "participants": "Участники"
+    },
+    "activeStudies": {
+      "title": "Обзор активных исследований",
+      "viewAll": "Посмотреть все",
+      "progress": "Прогресс",
+      "unknown": "Неизвестно",
+      "participants": "участников",
+      "daysLeft": "{count} дней осталось | {count} день остался"
+    },
+    "activityTimeline": {
+      "title": "Последняя активность",
+      "viewAll": "Посмотреть все",
+      "comingSoon": "Скоро",
+      "teamMembers": "членов команды"
+    },
+    "nextSession": {
+      "title": "Следующая сессия",
+      "studyType": "Тип исследования",
+      "owner": "Владелец",
+      "evaluator": "Оценщик",
+      "date": "Дата",
+      "time": "Время",
+      "joinNow": "Присоединиться",
+      "completed": "Завершено",
+      "noSessions": "Нет запланированных сессий",
+      "noSessionsHint": "Ваша следующая сессия появится здесь",
+      "noDescription": "Описание отсутствует"
+    },
+    "topMethods": {
+      "title": "Наиболее используемые методы",
+      "comingSoon": "Скоро",
+      "uses": "Использований"
+    },
+    "upcomingWebinar": {
+      "title": "Какой-то текст",
+      "comingSoon": "Скоро",
+      "date": "Дата",
+      "time": "Время",
+      "comingInNovember": "Выходит в ноябре"
+    },
+    "filters": {
+      "searchStudies": "Поиск исследований...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать период",
+      "status": "Статус",
+      "visibility": "Видимость",
+      "method": "Метод",
+      "ownership": "Владение",
+      "participantsFilter": "Участники",
+      "allStatuses": "Все статусы",
+      "active": "Активно",
+      "draft": "Черновик",
+      "completed": "Завершено",
+      "allVisibility": "Вся видимость",
+      "public": "Публичный",
+      "private": "Приватный",
+      "allStudies": "Все исследования",
+      "myStudies": "Мои исследования",
+      "whereICollaborate": "Где я участвую",
+      "all": "Все",
+      "allMethods": "Все методы",
+      "lessThan10": "< 10 участников",
+      "between10And50": "10 – 50 участников",
+      "moreThan50": "> 50 участников"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

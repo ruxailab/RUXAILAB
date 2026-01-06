@@ -43,7 +43,7 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    }   
+    }
   },
   "common": {
     "loading": "加载测试",
@@ -789,6 +789,7 @@
     "cooperators": "合作者",
     "analytics": "分析",
     "help_center": "帮助中心",
+<<<<<<< HEAD
     "howCanWeHelp": "我们如何帮助您？",
     "categories": "类别",
     "viewAll": "查看全部",
@@ -1046,6 +1047,112 @@
         "finished": "已完成",
         "upcoming": "即将开始"
       }
+=======
+    "howCanWeHelp": "我们如何帮助您？"
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "仪表盘",
+      "studies": "研究",
+      "sessions": "会话",
+      "templates": "模板",
+      "notifications": "通知",
+      "profile": "个人资料",
+      "community": "社区"
+    },
+    "pageTitles": {
+      "dashboard": "仪表盘",
+      "studies": "研究",
+      "sessions": "会话",
+      "templates": "模板",
+      "notifications": "通知",
+      "profile": "个人资料",
+      "communityStudies": "社区研究",
+      "communityTemplates": "社区模板",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "管理您的研究项目",
+      "templates": "访问您保存的模板"
+    },
+    "welcome": {
+      "greeting": "欢迎回来，{name}！👋",
+      "subtitle": "这是您今天研究项目的最新动态"
+    },
+    "stats": {
+      "studies": "研究",
+      "storage": "存储",
+      "plan": "计划",
+      "free": "免费",
+      "participants": "参与者"
+    },
+    "activeStudies": {
+      "title": "活跃研究概览",
+      "viewAll": "查看全部",
+      "progress": "进度",
+      "unknown": "未知",
+      "participants": "参与者",
+      "daysLeft": "剩余 {count} 天"
+    },
+    "activityTimeline": {
+      "title": "最近活动",
+      "viewAll": "查看全部",
+      "comingSoon": "即将推出",
+      "teamMembers": "团队成员"
+    },
+    "nextSession": {
+      "title": "下一个会话",
+      "studyType": "研究类型",
+      "owner": "所有者",
+      "evaluator": "评估者",
+      "date": "日期",
+      "time": "时间",
+      "joinNow": "立即加入",
+      "completed": "已完成",
+      "noSessions": "暂无计划的会话",
+      "noSessionsHint": "您的下一个会话将显示在这里",
+      "noDescription": "暂无描述"
+    },
+    "topMethods": {
+      "title": "最常用的方法",
+      "comingSoon": "即将推出",
+      "uses": "使用次数"
+    },
+    "upcomingWebinar": {
+      "title": "一些文字",
+      "comingSoon": "即将推出",
+      "date": "日期",
+      "time": "时间",
+      "comingInNovember": "11月推出"
+    },
+    "filters": {
+      "searchStudies": "搜索研究...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择时间范围",
+      "status": "状态",
+      "visibility": "可见性",
+      "method": "方法",
+      "ownership": "所有权",
+      "participantsFilter": "参与者",
+      "allStatuses": "所有状态",
+      "active": "活跃",
+      "draft": "草稿",
+      "completed": "已完成",
+      "allVisibility": "所有可见性",
+      "public": "公开",
+      "private": "私有",
+      "allStudies": "所有研究",
+      "myStudies": "我的研究",
+      "whereICollaborate": "我参与的研究",
+      "all": "全部",
+      "allMethods": "所有方法",
+      "lessThan10": "< 10 参与者",
+      "between10And50": "10 – 50 参与者",
+      "moreThan50": "> 50 参与者"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

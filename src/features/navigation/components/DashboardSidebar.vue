@@ -24,7 +24,7 @@
             <v-list-item
               v-bind="props"
               :prepend-icon="item.icon"
-              :title="item.title"
+              :title="$t(item.titleKey)"
               class="section-header mb-2"
               rounded="lg"
             />
@@ -32,7 +32,7 @@
           <v-list-item
             v-for="child in item.children"
             :key="child.id"
-            :title="child.title"
+            :title="$t(child.titleKey)"
             :prepend-icon="child.icon"
             :active="activeSection === item.id && activeSubSection === child.id"
             class="subsection-item ml-4 mb-1"
@@ -43,7 +43,7 @@
 
         <v-list-item
           v-else
-          :title="item.title"
+          :title="$t(item.titleKey)"
           :prepend-icon="item.icon"
           :active="activeSection === item.id"
           class="section-header mb-2"

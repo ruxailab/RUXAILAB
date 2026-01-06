@@ -782,6 +782,7 @@
     "noArticlesFound": "Aucun article trouvé",
     "browseAllCategories": "Parcourez toutes les catégories pour trouver l'aide dont vous avez besoin",
     "viewAllArticles": "Voir tous les articles",
+<<<<<<< HEAD
     "videoAltText": "Vidéo de démonstration FAQ montrant les étapes visuelles pour résoudre la question fréquemment posée. Aucun contenu audio n'est présent dans cette vidéo pédagogique."
   },
   "PROFILE": {
@@ -1033,6 +1034,112 @@
         "finished": "Terminé",
         "upcoming": "À venir"
       }
+=======
+    "videoAltText": "Vidéo de démonstration"
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "Tableau de bord",
+      "studies": "Études",
+      "sessions": "Sessions",
+      "templates": "Modèles",
+      "notifications": "Notifications",
+      "profile": "Profil",
+      "community": "Communauté"
+    },
+    "pageTitles": {
+      "dashboard": "Tableau de bord",
+      "studies": "Études",
+      "sessions": "Sessions",
+      "templates": "Modèles",
+      "notifications": "Notifications",
+      "profile": "Profil",
+      "communityStudies": "Études de la communauté",
+      "communityTemplates": "Modèles de la communauté",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "Gérez vos études de recherche",
+      "templates": "Accédez à vos modèles sauvegardés"
+    },
+    "welcome": {
+      "greeting": "Bon retour, {name} ! 👋",
+      "subtitle": "Voici ce qui se passe avec vos projets de recherche aujourd'hui"
+    },
+    "stats": {
+      "studies": "Études",
+      "storage": "Stockage",
+      "plan": "Plan",
+      "free": "Gratuit",
+      "participants": "Participants"
+    },
+    "activeStudies": {
+      "title": "Aperçu des études actives",
+      "viewAll": "Voir tout",
+      "progress": "Progression",
+      "unknown": "Inconnu",
+      "participants": "participants",
+      "daysLeft": "{count} jours restants | {count} jour restant"
+    },
+    "activityTimeline": {
+      "title": "Activité récente",
+      "viewAll": "Voir tout",
+      "comingSoon": "Bientôt disponible",
+      "teamMembers": "membres de l'équipe"
+    },
+    "nextSession": {
+      "title": "Prochaine session",
+      "studyType": "Type d'étude",
+      "owner": "Propriétaire",
+      "evaluator": "Évaluateur",
+      "date": "Date",
+      "time": "Heure",
+      "joinNow": "Rejoindre maintenant",
+      "completed": "Terminé",
+      "noSessions": "Aucune session planifiée",
+      "noSessionsHint": "Votre prochaine session apparaîtra ici",
+      "noDescription": "Aucune description disponible"
+    },
+    "topMethods": {
+      "title": "Méthodes les plus utilisées",
+      "comingSoon": "Bientôt disponible",
+      "uses": "Utilisations"
+    },
+    "upcomingWebinar": {
+      "title": "Du texte",
+      "comingSoon": "Bientôt disponible",
+      "date": "Date",
+      "time": "Heure",
+      "comingInNovember": "Disponible en novembre"
+    },
+    "filters": {
+      "searchStudies": "Rechercher des études...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "creationDate": "Date de création",
+      "selectRange": "Sélectionner une période",
+      "status": "Statut",
+      "visibility": "Visibilité",
+      "method": "Méthode",
+      "ownership": "Propriété",
+      "participantsFilter": "Participants",
+      "allStatuses": "Tous les statuts",
+      "active": "Actif",
+      "draft": "Brouillon",
+      "completed": "Terminé",
+      "allVisibility": "Toutes les visibilités",
+      "public": "Public",
+      "private": "Privé",
+      "allStudies": "Toutes les études",
+      "myStudies": "Mes études",
+      "whereICollaborate": "Où je collabore",
+      "all": "Tous",
+      "allMethods": "Toutes les méthodes",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

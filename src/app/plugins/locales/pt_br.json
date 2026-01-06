@@ -882,6 +882,7 @@
     "actions": "Ações",
     "no": "Não"
   },
+<<<<<<< HEAD
   "studyCreation": {
     "chooseEvaluationCategory": "Escolha a Categoria de Avaliação",
     "selectEvaluationType": "Selecione o tipo de avaliação que deseja realizar para seu estudo",
@@ -1019,6 +1020,114 @@
         "finished": "Concluído",
         "upcoming": "Próximo"
       }
+=======
+  "taskCreation": {
+    "taskDescription": "Descrição da Tarefa",
+    "taskDescriptionHelper": "Forneça instruções detalhadas para os participantes. Inclua o objetivo, contexto e quaisquer etapas específicas que devem seguir."
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "Painel",
+      "studies": "Estudos",
+      "sessions": "Sessões",
+      "templates": "Modelos",
+      "notifications": "Notificações",
+      "profile": "Perfil",
+      "community": "Comunidade"
+    },
+    "pageTitles": {
+      "dashboard": "Painel",
+      "studies": "Estudos",
+      "sessions": "Sessões",
+      "templates": "Modelos",
+      "notifications": "Notificações",
+      "profile": "Perfil",
+      "communityStudies": "Estudos da Comunidade",
+      "communityTemplates": "Modelos da Comunidade",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "Gerencie seus estudos de pesquisa",
+      "templates": "Acesse seus modelos salvos"
+    },
+    "welcome": {
+      "greeting": "Bem-vindo de volta, {name}! 👋",
+      "subtitle": "Veja o que está acontecendo com seus projetos de pesquisa hoje"
+    },
+    "stats": {
+      "studies": "Estudos",
+      "storage": "Armazenamento",
+      "plan": "Plano",
+      "free": "Grátis",
+      "participants": "Participantes"
+    },
+    "activeStudies": {
+      "title": "Visão Geral dos Estudos Ativos",
+      "viewAll": "Ver Tudo",
+      "progress": "Progresso",
+      "unknown": "Desconhecido",
+      "participants": "participantes",
+      "daysLeft": "{count} dias restantes | {count} dia restante"
+    },
+    "activityTimeline": {
+      "title": "Atividade Recente",
+      "viewAll": "Ver Tudo",
+      "comingSoon": "Em Breve",
+      "teamMembers": "membros da equipe"
+    },
+    "nextSession": {
+      "title": "Próxima Sessão",
+      "studyType": "Tipo de Estudo",
+      "owner": "Proprietário",
+      "evaluator": "Avaliador",
+      "date": "Data",
+      "time": "Hora",
+      "joinNow": "Entrar Agora",
+      "completed": "Concluído",
+      "noSessions": "Nenhuma sessão agendada",
+      "noSessionsHint": "Sua próxima sessão aparecerá aqui",
+      "noDescription": "Sem descrição disponível"
+    },
+    "topMethods": {
+      "title": "Métodos mais utilizados",
+      "comingSoon": "Em Breve",
+      "uses": "Usos"
+    },
+    "upcomingWebinar": {
+      "title": "Algum Texto",
+      "comingSoon": "Em Breve",
+      "date": "Data",
+      "time": "Hora",
+      "comingInNovember": "Disponível em Novembro"
+    },
+    "filters": {
+      "searchStudies": "Buscar estudos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Data de criação",
+      "selectRange": "Selecionar período",
+      "status": "Status",
+      "visibility": "Visibilidade",
+      "method": "Método",
+      "ownership": "Propriedade",
+      "participantsFilter": "Participantes",
+      "allStatuses": "Todos os Status",
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "completed": "Concluído",
+      "allVisibility": "Toda Visibilidade",
+      "public": "Público",
+      "private": "Privado",
+      "allStudies": "Todos os Estudos",
+      "myStudies": "Meus Estudos",
+      "whereICollaborate": "Onde Colaboro",
+      "all": "Todos",
+      "allMethods": "Todos os Métodos",
+      "lessThan10": "< 10 participantes",
+      "between10And50": "10 – 50 participantes",
+      "moreThan50": "> 50 participantes"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

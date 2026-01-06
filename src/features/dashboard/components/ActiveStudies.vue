@@ -5,8 +5,9 @@
     >
       <div class="d-flex align-center">
         <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
-        Active Studies Overview
+        {{ $t('adminDashboard.activeStudies.title') }}
       </div>
+<<<<<<< HEAD
       <v-btn
         variant="text"
         size="small"
@@ -14,6 +15,10 @@
         @click="viewAllStudies"
       >
         View All
+=======
+      <v-btn variant="text" size="small" color="primary">
+        {{ $t('adminDashboard.activeStudies.viewAll') }}
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
       </v-btn>
     </v-card-title>
 
@@ -45,6 +50,7 @@
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
                 <v-chip
+<<<<<<< HEAD
                   :color="
                     study.status === 'active'
                       ? 'success'
@@ -61,6 +67,11 @@
                         study.status.slice(1)
                       : 'Unknown'
                   }}
+=======
+                  :color="study.status === 'active' ? 'success' : study.status === 'finished' ? 'warning' : 'info'"
+                  variant="tonal" size="small">
+                  {{ study.status ? (study.status.charAt(0).toUpperCase() + study.status.slice(1)) : $t('adminDashboard.activeStudies.unknown') }}
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
                 </v-chip>
                 <v-icon
                   :icon="getMethodIcon(study)"
@@ -102,7 +113,7 @@
               <!-- Progress -->
               <div class="mb-3">
                 <div class="d-flex justify-space-between align-center mb-1">
-                  <span class="text-caption font-weight-medium">Progress</span>
+                  <span class="text-caption font-weight-medium">{{ $t('adminDashboard.activeStudies.progress') }}</span>
                   <span class="text-caption">{{ study.progress }}%</span>
                 </div>
                 <v-progress-linear
@@ -116,6 +127,7 @@
               <!-- Metrics -->
               <div class="d-flex justify-space-between text-caption">
                 <div class="d-flex align-center">
+<<<<<<< HEAD
                   <v-icon
                     icon="mdi-account-group"
                     size="16"
@@ -136,6 +148,14 @@
                       study.daysLeft > 1 ? 'days left' : 'day left'
                     }`
                   }}</span>
+=======
+                  <v-icon icon="mdi-account-group" size="16" class="me-1" color="info" />
+                  <span>{{ study.participants }} {{ $t('adminDashboard.activeStudies.participants') }}</span>
+                </div>
+                <div v-if="study.daysLeft !== null" class="d-flex align-center">
+                  <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning" />
+                  <span>{{ $tc('adminDashboard.activeStudies.daysLeft', study.daysLeft, { count: study.daysLeft }) }}</span>
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
                 </div>
               </div>
             </v-card-text>

@@ -1109,5 +1109,109 @@
   "taskCreation": {
     "taskDescription": "Task Description",
     "taskDescriptionHelper": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow."
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "community": "Community"
+    },
+    "pageTitles": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "communityStudies": "Community Studies",
+      "communityTemplates": "Community Templates",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "Manage your research studies",
+      "templates": "Access your saved templates"
+    },
+    "welcome": {
+      "greeting": "Welcome back, {name}! 👋",
+      "subtitle": "Here's what's happening with your research projects today"
+    },
+    "stats": {
+      "studies": "Studies",
+      "storage": "Storage",
+      "plan": "Plan",
+      "free": "Free",
+      "participants": "Participants"
+    },
+    "activeStudies": {
+      "title": "Active Studies Overview",
+      "viewAll": "View All",
+      "progress": "Progress",
+      "unknown": "Unknown",
+      "participants": "participants",
+      "daysLeft": "{count} days left | {count} day left"
+    },
+    "activityTimeline": {
+      "title": "Recent Activity",
+      "viewAll": "View All",
+      "comingSoon": "Coming Soon",
+      "teamMembers": "team members"
+    },
+    "nextSession": {
+      "title": "Next Session",
+      "studyType": "Study Type",
+      "owner": "Owner",
+      "evaluator": "Evaluator",
+      "date": "Date",
+      "time": "Time",
+      "joinNow": "Join Now",
+      "completed": "Completed",
+      "noSessions": "No sessions scheduled",
+      "noSessionsHint": "Your next session will appear here",
+      "noDescription": "No description available"
+    },
+    "topMethods": {
+      "title": "Most used methods",
+      "comingSoon": "Coming Soon",
+      "uses": "Uses"
+    },
+    "upcomingWebinar": {
+      "title": "Some Text",
+      "comingSoon": "Coming Soon",
+      "date": "Date",
+      "time": "Time",
+      "comingInNovember": "Coming in November"
+    },
+    "filters": {
+      "searchStudies": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "status": "Status",
+      "visibility": "Visibility",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participantsFilter": "Participants",
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed",
+      "allVisibility": "All Visibility",
+      "public": "Public",
+      "private": "Private",
+      "allStudies": "All Studies",
+      "myStudies": "My Studies",
+      "whereICollaborate": "Where I Collaborate",
+      "all": "All",
+      "allMethods": "All Methods",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+    }
   }
 }

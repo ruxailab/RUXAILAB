@@ -840,6 +840,7 @@
     "postTestDescription": "पोस्ट-टेस्ट फॉर्म के परिणाम",
     "all": "सभी",
     "question": "प्रश्न {number}",
+<<<<<<< HEAD
     "comingSoon": "जल्द ही आ रहा है",
     "generalAnalytics": "सामान्य विश्लेषण",
     "individualAnalytics": "व्यक्तिगत विश्लेषण",
@@ -999,6 +1000,112 @@
         "finished": "समाप्त",
         "upcoming": "आगामी"
       }
+=======
+    "comingSoon": "जल्द ही आ रहा है"
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "डैशबोर्ड",
+      "studies": "अध्ययन",
+      "sessions": "सत्र",
+      "templates": "टेम्पलेट",
+      "notifications": "सूचनाएं",
+      "profile": "प्रोफ़ाइल",
+      "community": "समुदाय"
+    },
+    "pageTitles": {
+      "dashboard": "डैशबोर्ड",
+      "studies": "अध्ययन",
+      "sessions": "सत्र",
+      "templates": "टेम्पलेट",
+      "notifications": "सूचनाएं",
+      "profile": "प्रोफ़ाइल",
+      "communityStudies": "समुदाय अध्ययन",
+      "communityTemplates": "समुदाय टेम्पलेट",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "अपने शोध अध्ययनों का प्रबंधन करें",
+      "templates": "अपने सहेजे गए टेम्पलेट्स तक पहुंचें"
+    },
+    "welcome": {
+      "greeting": "वापस स्वागत है, {name}! 👋",
+      "subtitle": "आज आपके शोध प्रोजेक्ट्स में क्या हो रहा है"
+    },
+    "stats": {
+      "studies": "अध्ययन",
+      "storage": "स्टोरेज",
+      "plan": "योजना",
+      "free": "मुफ्त",
+      "participants": "प्रतिभागी"
+    },
+    "activeStudies": {
+      "title": "सक्रिय अध्ययनों का अवलोकन",
+      "viewAll": "सभी देखें",
+      "progress": "प्रगति",
+      "unknown": "अज्ञात",
+      "participants": "प्रतिभागी",
+      "daysLeft": "{count} दिन शेष"
+    },
+    "activityTimeline": {
+      "title": "हालिया गतिविधि",
+      "viewAll": "सभी देखें",
+      "comingSoon": "जल्द आ रहा है",
+      "teamMembers": "टीम के सदस्य"
+    },
+    "nextSession": {
+      "title": "अगला सत्र",
+      "studyType": "अध्ययन का प्रकार",
+      "owner": "मालिक",
+      "evaluator": "मूल्यांकक",
+      "date": "तारीख",
+      "time": "समय",
+      "joinNow": "अभी शामिल हों",
+      "completed": "पूर्ण",
+      "noSessions": "कोई सत्र निर्धारित नहीं",
+      "noSessionsHint": "आपका अगला सत्र यहां दिखाई देगा",
+      "noDescription": "कोई विवरण उपलब्ध नहीं"
+    },
+    "topMethods": {
+      "title": "सबसे अधिक उपयोग की जाने वाली विधियां",
+      "comingSoon": "जल्द आ रहा है",
+      "uses": "उपयोग"
+    },
+    "upcomingWebinar": {
+      "title": "कुछ टेक्स्ट",
+      "comingSoon": "जल्द आ रहा है",
+      "date": "तारीख",
+      "time": "समय",
+      "comingInNovember": "नवंबर में आ रहा है"
+    },
+    "filters": {
+      "searchStudies": "अध्ययन खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छुपाएं",
+      "creationDate": "निर्माण तिथि",
+      "selectRange": "अवधि चुनें",
+      "status": "स्थिति",
+      "visibility": "दृश्यता",
+      "method": "विधि",
+      "ownership": "स्वामित्व",
+      "participantsFilter": "प्रतिभागी",
+      "allStatuses": "सभी स्थितियां",
+      "active": "सक्रिय",
+      "draft": "ड्राफ्ट",
+      "completed": "पूर्ण",
+      "allVisibility": "सभी दृश्यता",
+      "public": "सार्वजनिक",
+      "private": "निजी",
+      "allStudies": "सभी अध्ययन",
+      "myStudies": "मेरे अध्ययन",
+      "whereICollaborate": "जहां मैं सहयोग करता हूं",
+      "all": "सभी",
+      "allMethods": "सभी विधियां",
+      "lessThan10": "< 10 प्रतिभागी",
+      "between10And50": "10 – 50 प्रतिभागी",
+      "moreThan50": "> 50 प्रतिभागी"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

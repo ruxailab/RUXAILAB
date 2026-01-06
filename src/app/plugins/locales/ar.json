@@ -776,262 +776,110 @@
     "cooperators": "المتعاونون",
     "analytics": "تحليلات",
     "help_center": "مركز المساعدة",
-    "howCanWeHelp": "كيف يمكننا مساعدتك؟",
-    "categories": "الفئات",
-    "viewAll": "عرض الكل",
-    "noArticlesFound": "لم يتم العثور على مقالات",
-    "browseAllCategories": "تصفح جميع الفئات للعثور على المساعدة التي تحتاجها",
-    "viewAllArticles": "عرض جميع المقالات",
-    "videoAltText": "فيديو توضيحي للأسئلة الشائعة يوضح الخطوات المرئية لحل السؤال المتكرر. لا يوجد محتوى صوتي في هذا الفيديو التعليمي."
+    "howCanWeHelp": "كيف يمكننا مساعدتك؟"
   },
-  "PROFILE": {
-    "user": "المستخدم",
-    "account": "الحساب",
-    "security": "الأمان",
-    "personalInfo": "المعلومات الشخصية",
-    "contact": "الاتصال",
-    "country": "البلد",
-    "editDetails": "تحرير التفاصيل",
-    "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
-    "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
-    "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
-    "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
-    "yourPassword": "كلمة المرور الخاصة بك",
-    "usernameRequired": "اسم المستخدم مطلوب",
-    "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
-    "countryRequired": "البلد مطلوب",
-    "contactNumberRequired": "رقم الاتصال مطلوب",
-    "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
-    "email": "البريد الإلكتروني",
-    "username": "اسم المستخدم"
-  },
-  "ModeratedTest": {
-    "preTest": "ما قبل الاختبار",
-    "tasks": "المهام",
-    "postTest": "ما بعد الاختبار",
-    "consentForm": "نموذج الموافقة",
-    "consentFormSubtitle": "تحرير نص الموافقة للاختبار. يتم حفظ التغييرات عند النقر على زر الحفظ.",
-    "consentDescription": "هذا صندوق اختيار الموافقة مع نص لتأكيد الموافقة.",
-    "welcomeMessage": "رسالة الترحيب",
-    "welcomeMessageDescription": "ستكون هذه الرسالة أول ما يراه المشاركون قبل بدء الجلسة.",
-    "landingPage": "صفحة الهبوط",
-    "landingPageDescription": "سيتم تحميل هذا الرابط تلقائيًا عندما يبدأ المشارك الجلسة.",
-    "url": "رابط صفحة الهبوط الخاصة بك",
-    "participantCamera": "كاميرا المشارك",
-    "cameraOptions": {
-      "optional": "اختياري",
-      "required": "مطلوب",
-      "disabled": "معطل"
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "لوحة التحكم",
+      "studies": "الدراسات",
+      "sessions": "الجلسات",
+      "templates": "القوالب",
+      "notifications": "الإشعارات",
+      "profile": "الملف الشخصي",
+      "community": "المجتمع"
     },
-    "preForm": "نموذج ما قبل الاختبار",
-    "preFormDescription": "هذا استبيان أولي لجمع بيانات المشارك.",
-    "postForm": "نموذج ما بعد الاختبار",
-    "postFormDescription": "هذا استبيان نهائي لجمع بيانات المشارك.",
-    "finalMessage": "الرسالة النهائية",
-    "finalMessageDescription": "هذه رسالة نهائية تتركها للمشارك في نهاية الاختبار.",
-    "finalMessagePlaceholder": "أدخل الرسالة النهائية",
-    "preTestVariables": "متغيرات ما قبل الاختبار",
-    "postTestVariables": "متغيرات ما بعد الاختبار",
-    "configureVariables": "تكوين المتغيرات لقسم {type}. أضف أو حرر أو أزل المتغيرات حسب الحاجة.",
-    "createNewVariableTitle": "إنشاء متغير جديد"
-  },
-  "CardSorting": {
-    "noCategory": "لا توجد فئة",
-    "noCards": "لم يتم العثور على بطاقات"
-  },
-  "analytics": {
-    "searchByName": "البحث بالاسم",
-    "search": "بحث",
-    "reset": "إعادة تعيين",
-    "showFilters": "إظهار الفلاتر",
-    "hideFilters": "إخفاء الفلاتر",
-    "effectiveness": "الفعالية",
-    "effectivenessDescription": "نسبة المهام المكتملة بنجاح",
-    "efficiency": "الكفاءة",
-    "efficiencyDescription": "متوسط الوقت: {avgTime}",
-    "satisfaction": "الرضا",
-    "satisfactionDescription": "متوسط درجة رضا المستخدم",
-    "conclusionRate": "معدل الإكمال",
-    "perfectCompletionRate": "تم تحقيق معدل إكمال مثالي",
-    "testsInProgress": "الاختبارات قيد التقدم",
-    "totalDuration": "المدة الإجمالية",
-    "avgTimePerTask": "متوسط الوقت/المهمة",
-    "efficientTaskCompletion": "معدل إكمال المهمة بكفاءة",
-    "longestTask": "أطول مهمة",
-    "taskLabel": "المهمة",
-    "totalAnswers": "إجمالي الإجابات",
-    "day": "يوم",
-    "evaluator": "المقيم",
-    "latestUser": "أحدث مستخدم",
-    "taskPerformance": "أداء المهمة",
-    "taskPerformanceDescription": "معدلات النجاح والخطأ لكل مهمة اختبار",
-    "success": "نجاح",
-    "successCount": "نجاح",
-    "errors": "أخطاء",
-    "preTest": "ما قبل الاختبار",
-    "preTestDescription": "نتائج من نموذج ما قبل الاختبار",
-    "postTest": "ما بعد الاختبار",
-    "postTestDescription": "نتائج من نموذج ما بعد الاختبار",
-    "all": "الكل",
-    "question": "سؤال {number}",
-    "comingSoon": "قريبًا",
-    "generalAnalytics": "التحليلات العامة",
-    "individualAnalytics": "التحليلات الفردية",
-    "summary": "ملخص",
-    "completed": "مكتمل",
-    "timeTaken": "الوقت المستغرق",
-    "yes": "نعم",
-    "invited": "مدعو",
-    "answers": "الإجابات",
-    "overallAnalyticsDescription": "عرض التحليلات العامة لدراستك",
-    "susAnalytics": "تحليلات SUS",
-    "nasaTlxAnalytics": "تحليلات NASA-TLX",
-    "eyeTrackingAnalytics": "تحليلات تتبع العين",
-    "transcriptions": "التفريغات النصية",
-    "notCompleted": "غير مكتمل",
-    "tasks": "المهام",
-    "total": "الإجمالي",
-    "user": "المستخدم",
-    "invite": "دعوة",
-    "actions": "إجراءات",
-    "no": "لا"
-  },
-  "studyCreation": {
-    "chooseEvaluationCategory": "اختر فئة التقييم",
-    "selectEvaluationType": "اختر نوع التقييم الذي تريد إجرائه لدراستك",
-    "backToDashboard": "العودة إلى لوحة التحكم",
-    "chooseMethod": "اختر طريقة {category}",
-    "selectMethod": "اختر الطريقة المحددة لدراستك",
-    "backToCategories": "العودة إلى الفئات",
-    "chooseStudyType": "اختر نوع الدراسة",
-    "selectStudyType": "اختر كيفية إنشاء دراستك",
-    "backToStudyType": "العودة إلى نوع الدراسة",
-    "studyDetails": "تفاصيل الدراسة",
-    "provideStudyInfo": "قدم معلومات أساسية عن دراستك",
-    "createStudy": "إنشاء الدراسة",
-    "multipleMethods": "طرق متعددة",
-    "comingSoon": "قريبًا",
-    "steps": {
-      "category": "الفئة",
-      "methods": "الطرق",
+    "pageTitles": {
+      "dashboard": "لوحة التحكم",
+      "studies": "الدراسات",
+      "sessions": "الجلسات",
+      "templates": "القوالب",
+      "notifications": "الإشعارات",
+      "profile": "الملف الشخصي",
+      "communityStudies": "دراسات المجتمع",
+      "communityTemplates": "قوالب المجتمع",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "إدارة دراساتك البحثية",
+      "templates": "الوصول إلى القوالب المحفوظة"
+    },
+    "welcome": {
+      "greeting": "مرحبًا بعودتك، {name}! 👋",
+      "subtitle": "إليك ما يحدث مع مشاريعك البحثية اليوم"
+    },
+    "stats": {
+      "studies": "الدراسات",
+      "storage": "التخزين",
+      "plan": "الخطة",
+      "free": "مجاني",
+      "participants": "المشاركون"
+    },
+    "activeStudies": {
+      "title": "نظرة عامة على الدراسات النشطة",
+      "viewAll": "عرض الكل",
+      "progress": "التقدم",
+      "unknown": "غير معروف",
+      "participants": "مشاركون",
+      "daysLeft": "{count} أيام متبقية | {count} يوم متبقي"
+    },
+    "activityTimeline": {
+      "title": "النشاط الأخير",
+      "viewAll": "عرض الكل",
+      "comingSoon": "قريبًا",
+      "teamMembers": "أعضاء الفريق"
+    },
+    "nextSession": {
+      "title": "الجلسة التالية",
       "studyType": "نوع الدراسة",
-      "details": "التفاصيل"
+      "owner": "المالك",
+      "evaluator": "المقيم",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "joinNow": "انضم الآن",
+      "completed": "مكتمل",
+      "noSessions": "لا توجد جلسات مجدولة",
+      "noSessionsHint": "ستظهر جلستك التالية هنا",
+      "noDescription": "لا يوجد وصف متاح"
     },
-    "categories": {
-      "test": {
-        "title": "اختبار",
-        "description": "إجراء اختبارات منظمة مع مستخدمين حقيقيين لقياس قابلية الاستخدام والأداء."
-      },
-      "inquiry": {
-        "title": "استفسار",
-        "description": "جمع رؤى من خلال استطلاعات الرأي والمقابلات وطرق بحث أخرى."
-      },
-      "inspection": {
-        "title": "فحص",
-        "description": "تقييم الخبراء باستخدام مبادئ وإرشادات قابلية الاستخدام المعتمدة."
-      },
-      "accessibility": {
-        "title": "إمكانية الوصول",
-        "description": "تقييم منتجك للامتثال لإمكانية الوصول وأفضل الممارسات."
-      }
+    "topMethods": {
+      "title": "الطرق الأكثر استخدامًا",
+      "comingSoon": "قريبًا",
+      "uses": "الاستخدامات"
     },
-    "methods": {
-      "test": {
-        "usability_unmoderated": {
-          "name": "اختبار قابلية الاستخدام (غير مشرف عليه)",
-          "description": "يكمل المشاركون المهام بشكل مستقل أثناء تسجيل تفاعلاتهم"
-        },
-        "usability_moderated": {
-          "name": "اختبار قابلية الاستخدام (مشرف عليه)",
-          "description": "جلسات فورية مع توجيه من الميسر وملاحظات فورية"
-        },
-        "card_sorting_unmoderated": {
-          "name": "فرز البطاقات (غير مشرف عليه)",
-          "description": "ينظم المشاركون البطاقات بشكل مستقل، دون وجود ميسر، مما يسمح بجمع بيانات حول كيفية تجميعهم وتصنيفهم للمعلومات وفقًا لمنطقهم الخاص."
-        },
-        "ab_testing": {
-          "name": "اختبار A/B",
-          "description": "مقارنة نسختين لتحديد أيهما يعمل بشكل أفضل"
-        }
-      },
-      "inspection": {
-        "heuristic_evaluation": {
-          "name": "تقييم الاستدلال",
-          "description": "مراجعة الخبراء باستخدام مبادئ وإرشادات قابلية الاستخدام المعتمدة"
-        },
-        "cognitive_walkthrough": {
-          "name": "الجولة المعرفية",
-          "description": "تقييم خطوة بخطوة لعمليات إكمال مهمة المستخدم"
-        }
-      },
-      "accessibility": {
-        "manual_testing": {
-          "name": "اختبار يدوي",
-          "description": "يقيم المقيّمون البشريون إمكانية الوصول باستخدام تقنيات المساعدة"
-        },
-        "automatic_testing": {
-          "name": "اختبار تلقائي",
-          "description": "أدوات آلية لتحديد مشكلات إمكانية الوصول الشائعة"
-        },
-        "ai_assisted_testing": {
-          "name": "اختبار بمساعدة الذكاء الاصطناعي",
-          "description": "أدوات مدعومة بالذكاء الاصطناعي لتحديد واقتراح إصلاحات لمشكلات إمكانية الوصول"
-        }
-      }
+    "upcomingWebinar": {
+      "title": "بعض النص",
+      "comingSoon": "قريبًا",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "comingInNovember": "قادم في نوفمبر"
     },
-    "studyTypes": {
-      "blank": {
-        "title": "ابدأ بدراسة فارغة",
-        "description": "إنشاء دراسة من الصفر مع تخصيص كامل",
-        "features": [
-          "تخصيص كامل",
-          "البناء من البداية",
-          "تحكم كامل في الإعدادات"
-        ]
-      },
-      "template": {
-        "title": "إنشاء من نموذج",
-        "description": "استخدم قوالب مسبقة الصنع للبدء بسرعة",
-        "features": [
-          "إعداد سريع",
-          "إعدادات مسبقة التكوين",
-          "تشمل أفضل الممارسات"
-        ]
-      }
-    },
-    "details": {
-      "basicInformation": "المعلومات الأساسية",
-      "studyTitle": "عنوان الدراسة",
-      "enterTitle": "أدخل عنوانًا وصفيًا لدراستك",
-      "studyDescription": "وصف الدراسة",
-      "enterDescription": "صف الغرض والأهداف من دراستك",
-      "websiteName": "اسم الموقع",
-      "enterWebsiteName": "أدخل اسم الموقع",
-      "websiteUrl": "رابط الموقع (اختياري)",
-      "enterWebsiteUrl": "أدخل رابط الموقع",
-      "privacySettings": "إعدادات الخصوصية",
-      "controlVisibility": "تحكم في من يمكنه رؤية دراستك",
-      "publicStudy": "دراسة عامة",
-      "privateStudy": "دراسة خاصة",
-      "visibleToEveryone": "مرئي للجميع",
-      "onlyInvitedUsers": "المستخدمون المدعوون فقط",
+    "filters": {
+      "searchStudies": "البحث عن الدراسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "إظهار التصفيات",
+      "hideFilters": "إخفاء التصفيات",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر الفترة",
+      "status": "الحالة",
+      "visibility": "الرؤية",
+      "method": "الطريقة",
+      "ownership": "الملكية",
+      "participantsFilter": "المشاركون",
+      "allStatuses": "جميع الحالات",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل",
+      "allVisibility": "جميع الرؤى",
       "public": "عام",
       "private": "خاص",
-      "validation": {
-        "enterTitle": "أدخل عنوانًا",
-        "max200Characters": "الحد الأقصى 200 حرف",
-        "max600Characters": "الحد الأقصى 600 حرف",
-        "enterWebsiteName": "أدخل اسم الموقع",
-        "enterWebsiteUrl": "أدخل رابط الموقع",
-        "urlProtocol": "يجب أن يبدأ الرابط بـ http:// أو https://",
-        "validUrl": "أدخل رابطًا صالحًا (مثال: https://example.com)"
-      },
-      "status": {
-        "active": "نشط",
-        "pending": "قيد الانتظار",
-        "finished": "منتهي",
-        "upcoming": "قادم"
-      }
+      "allStudies": "جميع الدراسات",
+      "myStudies": "دراساتي",
+      "whereICollaborate": "حيث أتعاون",
+      "all": "الكل",
+      "allMethods": "جميع الطرق",
+      "lessThan10": "< 10 مشاركين",
+      "between10And50": "10 – 50 مشاركًا",
+      "moreThan50": "> 50 مشاركًا"
     }
   }
 }

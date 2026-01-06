@@ -776,6 +776,7 @@
     "cooperators": "Mitarbeiter",
     "analytics": "Analysen",
     "help_center": "Hilfezentrum",
+<<<<<<< HEAD
     "howCanWeHelp": "Wie können wir Ihnen helfen?",
     "categories": "KATEGORIEN",
     "viewAll": "Alle anzeigen",
@@ -1033,6 +1034,112 @@
         "finished": "Beendet",
         "upcoming": "Bevorstehend"
       }
+=======
+    "howCanWeHelp": "Wie können wir Ihnen helfen?"
+  },
+  "adminDashboard": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "studies": "Studien",
+      "sessions": "Sitzungen",
+      "templates": "Vorlagen",
+      "notifications": "Benachrichtigungen",
+      "profile": "Profil",
+      "community": "Community"
+    },
+    "pageTitles": {
+      "dashboard": "Dashboard",
+      "studies": "Studien",
+      "sessions": "Sitzungen",
+      "templates": "Vorlagen",
+      "notifications": "Benachrichtigungen",
+      "profile": "Profil",
+      "communityStudies": "Community-Studien",
+      "communityTemplates": "Community-Vorlagen",
+      "default": "RUXAI Lab"
+    },
+    "pageSubtitles": {
+      "studies": "Verwalten Sie Ihre Forschungsstudien",
+      "templates": "Greifen Sie auf Ihre gespeicherten Vorlagen zu"
+    },
+    "welcome": {
+      "greeting": "Willkommen zurück, {name}! 👋",
+      "subtitle": "Hier ist, was heute mit Ihren Forschungsprojekten passiert"
+    },
+    "stats": {
+      "studies": "Studien",
+      "storage": "Speicher",
+      "plan": "Plan",
+      "free": "Kostenlos",
+      "participants": "Teilnehmer"
+    },
+    "activeStudies": {
+      "title": "Übersicht aktiver Studien",
+      "viewAll": "Alle anzeigen",
+      "progress": "Fortschritt",
+      "unknown": "Unbekannt",
+      "participants": "Teilnehmer",
+      "daysLeft": "{count} Tage verbleibend | {count} Tag verbleibend"
+    },
+    "activityTimeline": {
+      "title": "Letzte Aktivität",
+      "viewAll": "Alle anzeigen",
+      "comingSoon": "Demnächst",
+      "teamMembers": "Teammitglieder"
+    },
+    "nextSession": {
+      "title": "Nächste Sitzung",
+      "studyType": "Studientyp",
+      "owner": "Eigentümer",
+      "evaluator": "Bewerter",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "joinNow": "Jetzt beitreten",
+      "completed": "Abgeschlossen",
+      "noSessions": "Keine Sitzungen geplant",
+      "noSessionsHint": "Ihre nächste Sitzung wird hier erscheinen",
+      "noDescription": "Keine Beschreibung verfügbar"
+    },
+    "topMethods": {
+      "title": "Am häufigsten verwendete Methoden",
+      "comingSoon": "Demnächst",
+      "uses": "Verwendungen"
+    },
+    "upcomingWebinar": {
+      "title": "Etwas Text",
+      "comingSoon": "Demnächst",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "comingInNovember": "Kommt im November"
+    },
+    "filters": {
+      "searchStudies": "Studien suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "creationDate": "Erstellungsdatum",
+      "selectRange": "Zeitraum auswählen",
+      "status": "Status",
+      "visibility": "Sichtbarkeit",
+      "method": "Methode",
+      "ownership": "Eigentum",
+      "participantsFilter": "Teilnehmer",
+      "allStatuses": "Alle Status",
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen",
+      "allVisibility": "Alle Sichtbarkeiten",
+      "public": "Öffentlich",
+      "private": "Privat",
+      "allStudies": "Alle Studien",
+      "myStudies": "Meine Studien",
+      "whereICollaborate": "Wo ich mitwirke",
+      "all": "Alle",
+      "allMethods": "Alle Methoden",
+      "lessThan10": "< 10 Teilnehmer",
+      "between10And50": "10 – 50 Teilnehmer",
+      "moreThan50": "> 50 Teilnehmer"
+>>>>>>> 666da93e8 (fix(i18n): ensure complete UI localization across all languages)
     }
   }
 }

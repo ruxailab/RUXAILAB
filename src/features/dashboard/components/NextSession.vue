@@ -12,7 +12,7 @@
           color="primary"
           style="padding:1.5rem"
         />
-        <span class="text-h6 font-weight-bold">Next Session</span>
+        <span class="text-h6 font-weight-bold">{{ $t('adminDashboard.nextSession.title') }}</span>
       </div>
     </v-card-title>
 
@@ -24,7 +24,7 @@
       <div class="session-header mb-4 text-center">
         <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
         <p class="session-description text-body-2 text-grey-darken-1 mb-3">
-          {{ nextSession.testDescription || 'No description available' }}
+          {{ nextSession.testDescription || $t('adminDashboard.nextSession.noDescription') }}
         </p>
         <v-chip
           :color="getStatus(nextSession).variant"
@@ -42,35 +42,35 @@
           <v-icon icon="mdi-microscope" size="24" color="primary" class="info-icon" />
           <div class="info-content">
             <div class="info-value">{{ getStudyType(nextSession) }}</div>
-            <div>Tipo de Estudio</div>
+            <div>{{ $t('adminDashboard.nextSession.studyType') }}</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
           <div class="info-content">
             <div class="info-value">{{ nextSession.testAdmin?.email || 'Unknown' }}</div>
-            <div>Owner</div>
+            <div>{{ $t('adminDashboard.nextSession.owner') }}</div>
           </div>
         </div>
          <div class="info-item">
           <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
           <div class="info-content">
             <div class="info-value">{{ nextSession.evaluator|| 'Unknown' }}</div>
-            <div>Evaluator</div>
+            <div>{{ $t('adminDashboard.nextSession.evaluator') }}</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-calendar" size="24" color="primary" class="info-icon" />
           <div class="info-content">
             <div class="info-value">{{ formatDate(nextSession.testDate) }}</div>
-            <div>Fecha</div>
+            <div>{{ $t('adminDashboard.nextSession.date') }}</div>
           </div>
         </div>
         <div class="info-item">
           <v-icon icon="mdi-clock-outline" size="24" color="primary" class="info-icon" />
           <div class="info-content">
             <div class="info-value">{{ formatTime(nextSession.testDate) }}</div>
-            <div>Horario</div>
+            <div>{{ $t('adminDashboard.nextSession.time') }}</div>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@
         @click="goto(nextSession)"
         class="action-button mt-6"
       >
-        {{ getStatus(nextSession) !== SESSION_STATUSES.COMPLETED ? 'Join Now' : 'Completed' }}
+        {{ getStatus(nextSession) !== SESSION_STATUSES.COMPLETED ? $t('adminDashboard.nextSession.joinNow') : $t('adminDashboard.nextSession.completed') }}
       </v-btn>
     </v-card-text>
 
@@ -104,10 +104,10 @@
           class="mb-4"
         />
         <h4 class="text-h6 mb-2">
-          No sessions scheduled
+          {{ $t('adminDashboard.nextSession.noSessions') }}
         </h4>
         <p class="text-body-2 text-grey">
-          Your next session will appear here
+          {{ $t('adminDashboard.nextSession.noSessionsHint') }}
         </p>
       </div>
     </v-card-text>
