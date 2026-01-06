@@ -68,7 +68,11 @@ const initWebcam = async () => {
     if (videoRef.value) {
         videoRef.value.srcObject = mediaStream.value
         // Kick the video to play even if hidden (for tracking-only mode)
-        try { await videoRef.value.play() } catch (e) { /* ignore play/autoplay errors */ }
+        try { await videoRef.value.play() } catch (e) {
+            // Kick failed, likely due to browser autoplay policies.
+            // This is expected behavior for hidden videos in some contexts.
+            console.warn('Silent video play failed:', e)
+        }
         await waitForVideoReady()
     }
 }

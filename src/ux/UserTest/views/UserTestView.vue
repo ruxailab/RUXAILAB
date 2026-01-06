@@ -420,7 +420,7 @@ function toggleTracking(trackingValue, recordingValue) {
   console.log('toggleTracking', { trackingValue, recordingValue });
 
   isTracking.value = trackingValue;
-  isRecording.value = recordingValue !== undefined ? recordingValue : trackingValue;
+  isRecording.value = recordingValue === undefined ? trackingValue : recordingValue;
 }
 
 function saveIrisDataIntoTask() {
@@ -433,7 +433,7 @@ function saveIrisDataIntoTask() {
   const task = test.value.testStructure.userTasks[taskIndex.value]
 
   if (task?.hasEye === true && globalIndex.value >= 5) {
-    const shouldRecord = task.recordScreen !== false; 
+    const shouldRecord = task.recordScreen === undefined || task.recordScreen; 
     toggleTracking(true, shouldRecord);
   } else {
     toggleTracking(false, false);
