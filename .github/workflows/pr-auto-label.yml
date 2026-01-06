@@ -112,8 +112,8 @@ jobs:
             const descriptionIssues = [];
 
             // Detect bot PRs
-            const botLogins = ['dependabot[bot]', 'github-actions[bot]'];
-            const isBot = botLogins.includes(pr.user.login) || pr.user.type === 'Bot';
+            const BOT_LOGINS = new Set(['dependabot[bot]', 'github-actions[bot]']);
+            const isBot = BOT_LOGINS.has(pr.user.login) || pr.user.type === 'Bot';
 
             // Skip validation for bot PRs
             if (!isBot) {
