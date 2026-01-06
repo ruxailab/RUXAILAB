@@ -826,7 +826,7 @@
       "progress": "Progression",
       "unknown": "Inconnu",
       "participants": "participants",
-      "daysLeft": "{count} jours restants | {count} jour restant"
+      "daysLeftLabel": "jours restants"
     },
     "activityTimeline": {
       "title": "Activité récente",

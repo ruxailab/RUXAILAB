@@ -801,7 +801,7 @@
       "progress": "进度",
       "unknown": "未知",
       "participants": "参与者",
-      "daysLeft": "剩余 {count} 天"
+      "daysLeftLabel": "天剩余"
     },
     "activityTimeline": {
       "title": "最近活动",

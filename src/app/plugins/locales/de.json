@@ -820,7 +820,7 @@
       "progress": "Fortschritt",
       "unknown": "Unbekannt",
       "participants": "Teilnehmer",
-      "daysLeft": "{count} Tage verbleibend | {count} Tag verbleibend"
+      "daysLeftLabel": "Tage übrig"
     },
     "activityTimeline": {
       "title": "Letzte Aktivität",

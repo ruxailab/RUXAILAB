@@ -884,7 +884,7 @@
       "progress": "प्रगति",
       "unknown": "अज्ञात",
       "participants": "प्रतिभागी",
-      "daysLeft": "{count} दिन शेष"
+      "daysLeftLabel": "दिन शेष"
     },
     "activityTimeline": {
       "title": "हालिया गतिविधि",

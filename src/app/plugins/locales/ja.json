@@ -778,7 +778,7 @@
       "progress": "進捗",
       "unknown": "不明",
       "participants": "参加者",
-      "daysLeft": "残り {count} 日"
+      "daysLeftLabel": "日残り"
     },
     "activityTimeline": {
       "title": "最近のアクティビティ",

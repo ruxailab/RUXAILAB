@@ -103,7 +103,7 @@
                 </div>
                 <div v-if="study.daysLeft !== null" class="d-flex align-center">
                   <v-icon icon="mdi-calendar-clock" size="16" class="me-1" color="warning" />
-                  <span>{{ $tc('adminDashboard.activeStudies.daysLeft', study.daysLeft, { count: study.daysLeft }) }}</span>
+                  <span>{{ study.daysLeft }} {{ $t('adminDashboard.activeStudies.daysLeftLabel') }}</span>
                 </div>
               </div>
             </v-card-text>

@@ -801,7 +801,7 @@
       "progress": "Прогресс",
       "unknown": "Неизвестно",
       "participants": "участников",
-      "daysLeft": "{count} дней осталось | {count} день остался"
+      "daysLeftLabel": "дней осталось"
     },
     "activityTimeline": {
       "title": "Последняя активность",

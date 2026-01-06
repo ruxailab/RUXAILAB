@@ -1151,7 +1151,7 @@
       "progress": "Progress",
       "unknown": "Unknown",
       "participants": "participants",
-      "daysLeft": "{count} days left | {count} day left"
+      "daysLeftLabel": "days left"
     },
     "activityTimeline": {
       "title": "Recent Activity",

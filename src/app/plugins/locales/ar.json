@@ -820,7 +820,7 @@
       "progress": "التقدم",
       "unknown": "غير معروف",
       "participants": "مشاركون",
-      "daysLeft": "{count} أيام متبقية | {count} يوم متبقي"
+      "daysLeftLabel": "أيام متبقية"
     },
     "activityTimeline": {
       "title": "النشاط الأخير",
