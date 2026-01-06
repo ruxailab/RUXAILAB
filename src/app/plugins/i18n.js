@@ -5,16 +5,18 @@ function loadLocaleMessages() {
   const messages = {}
   locales.keys().forEach((key) => {
     const matched = key.match(/([A-Za-z0-9-_]+)\./i)
-    if (matched && matched.length > 1) {
+    if(matched && matched.length > 1) {
       const locale = matched[1]
       messages[locale] = locales(key)
     }
+
   })
+  console.info('Loaded locale messages:', Object.keys(messages))
   return messages
 }
 
 const i18n = createI18n({
-  legacy: true, // Use Composition API mode
+  legacy: false, // Use Composition API mode
   locale: process.env.VUE_APP_I18N_LOCALE || 'en',
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
   messages: loadLocaleMessages(),

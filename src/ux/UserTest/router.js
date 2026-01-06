@@ -19,7 +19,7 @@ export default [
         path: '/userTest/unmoderated/report/:id/:token?',
         name: 'UserUnmoderatedReportView',
         props: true,
-        meta: { authorize: [0] },
+        meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {

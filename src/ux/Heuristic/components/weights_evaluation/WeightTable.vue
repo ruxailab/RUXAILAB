@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="pa-6"
-  >
+
     <v-card
       elevation="2"
       class="pa-6"
@@ -175,19 +172,18 @@
         </v-tabs-window>
       </v-card>
     </v-card>
-  </v-container>
 </template>
 
 <script setup>
 import { ref, computed, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
+import { showSuccess, showError } from '@/shared/utils/toast'
+
 
 const emit = defineEmits(['change']);
 const store = useStore();
 const { t } = useI18n();
-const toast = useToast();
 
 const tabs = ref(0);
 const group = ref({});
@@ -220,10 +216,10 @@ const updateDatas = () => {
   try {
     store.dispatch('setTestWeights', { ...group.value });
     emit('change');
-    toast.success(t('HeuristicsWeightsTable.messages.weightsSaved'));
+    showSuccess('HeuristicsWeightsTable.messages.weightsSaved');
   } catch (error) {
     console.error('Error saving weights:', error);
-    toast.error(t('HeuristicsWeightsTable.errors.failedToSaveWeights'));
+    showError('HeuristicsWeightsTable.errors.failedToSaveWeights');
   }
 };
 
@@ -246,11 +242,13 @@ onBeforeMount(() => {
 <style scoped>
 .weights-table {
   border: 1px solid rgba(0, 0, 0, 0.08);
+  overflow-x: auto; /* ADDED: Allows horizontal scrolling */
 }
 
 .weights-row {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   transition: background-color 0.2s ease;
+  min-width: 700px; /* ADDED: Prevents rows from shrinking too much */
 }
 
 .weights-row:hover {
@@ -263,20 +261,32 @@ onBeforeMount(() => {
 
 .weights-header-cell {
   flex: 1;
+  min-width: 200px; /* ADDED: Prevents header from shrinking */
 }
 
 .weights-cell {
   flex: 1;
+  min-width: 0; /* ADDED: Allows flex item to shrink */
 }
 
 .weights-cell:first-child {
-  flex: 0 0 300px;
+  flex: 0 0 250px; /* Reduced from 300px */
+  min-width: 250px; /* ADDED: Prevents it from shrinking too much */
 }
 
 .weight-radio-group {
   display: flex;
-  gap: 24px;
+  gap: 16px; /* Reduced from 24px */
   justify-content: center;
+  min-width: 650px; /* ADDED: Ensures radio group has enough space */
+}
+
+/* ADDED: Truncate long heuristic names */
+.weights-cell:first-child .text-body-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
 }
 
 :deep(.weight-radio .v-selection-control) {

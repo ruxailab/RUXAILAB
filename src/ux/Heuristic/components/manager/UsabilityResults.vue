@@ -6,36 +6,31 @@
       <v-card-title 
         class="text-h6 text-primary clickable-title" 
       >
-        Resultados
+        {{ $t('Dashboard.cards.results') }}
       </v-card-title>
     </div>
-    
+
     <!-- Indicador de usabilidad -->
     <div class="usability-metric">
       <div class="d-flex align-center justify-center mb-3">
         <v-icon size="20" color="primary" class="mr-2">mdi-speedometer</v-icon>
-        <span class="metric-label text-caption text-grey-darken-1">Usabilidad General</span>
+        <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.generalUsability') }}</span>
       </div>
-      
+
       <!-- Circular progress indicator -->
       <div class="d-flex justify-center mb-3">
-        <v-progress-circular
-          :model-value="usabilityPercentage"
-          size="80"
-          width="8"
-          :color="usabilityColor"
-        >
+        <v-progress-circular :model-value="usabilityPercentage" size="80" width="8" :color="usabilityColor">
           <span class="text-h5 font-weight-bold">{{ usabilityPercentage }}%</span>
         </v-progress-circular>
       </div>
-      
+
       <!-- Status text -->
       <div class="text-center">
         <div class="usability-status text-body-2 font-weight-medium" :class="usabilityStatusClass">
           {{ usabilityStatusText }}
         </div>
         <div class="text-caption text-grey-darken-1 mt-1">
-          Basado en {{ participantsCount }} evaluaciones
+          {{ $t('Dashboard.cards.basedOn') }} {{ participantsCount }} {{ $t('Dashboard.cards.evaluations') }}
         </div>
       </div>
     </div>
@@ -45,6 +40,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   test: {
@@ -54,6 +50,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const { t } = useI18n()
 
 // Navigate to answers section
 const navigateToAnswers = () => {
@@ -70,7 +67,7 @@ const usabilityPercentage = computed(() => {
 })
 
 const participantsCount = computed(() => {
-  return props.test?.participants?.length || 0
+  return props.test?.cooperators?.length || 0
 })
 
 const usabilityColor = computed(() => {
@@ -82,9 +79,9 @@ const usabilityColor = computed(() => {
 
 const usabilityStatusText = computed(() => {
   const percentage = usabilityPercentage.value
-  if (percentage >= 80) return 'Excelente Usabilidad'
-  if (percentage >= 60) return 'Usabilidad Aceptable'
-  return 'Necesita Mejoras'
+  if (percentage >= 80) return t('Dashboard.cards.excellentUsability')
+  if (percentage >= 60) return t('Dashboard.cards.acceptableUsability')
+  return t('Dashboard.cards.needsImprovement')
 })
 
 const usabilityStatusClass = computed(() => {

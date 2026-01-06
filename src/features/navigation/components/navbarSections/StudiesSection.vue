@@ -56,10 +56,10 @@
                   density="compact"
                   hide-details
                   :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[1]).toLocaleDateString()}`
+                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : 'Select range'"
-                  :model-value="creationDateRange[0] && creationDateRange[1]
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[1]).toLocaleDateString()}`
+                  :model-value="creationDateRange.length > 1
+                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : ''"
                   prepend-inner-icon="mdi-calendar"
                 />
@@ -305,11 +305,10 @@ const filteredTests = computed(() => {
 
     // 📅 Creation date
     let inCreationRange = true
-    if (creationDateRange.value?.length > 2 && test.creationDate) {
-      const creation = new Date(test.creationDate)
+    if (creationDateRange.value?.length > 1 && test.creationDate) {
       const start = new Date(creationDateRange.value[0])
       const end = new Date(creationDateRange.value[creationDateRange.value.length - 1])
-      inCreationRange = creation >= start && creation <= end
+      inCreationRange = new Date(test.creationDate) >= start && new Date(test.creationDate) <= end
     }
 
     return (

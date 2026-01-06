@@ -63,307 +63,175 @@
             </v-list>
           </v-card-text>
         </v-card>
+
+        <!-- Edit Details Button below Profile Card -->
+        <v-btn
+          color="primary"
+          variant="flat"
+          class="w-100 mt-3 text-capitalize"
+          @click="openEditProfileDialog"
+        >
+          <v-icon start>
+            mdi-pencil
+          </v-icon>
+          {{ $t('profile.editDetails') }}
+        </v-btn>
       </v-col>
 
-      <!-- Right Section: Tabs and Content -->
+      <!-- Right Section: Security and Delete Account -->
       <v-col
         cols="12"
         md="8"
         lg="9"
       >
+        <!-- Security Section -->
         <v-card
-          flat
-          class="rounded-xl"
+          class="rounded-xl pa-6"
+          elevation="2"
         >
-          <!-- Tabs Section -->
-          <v-tabs
-            v-model="activeTab"
-            color="primary"
-            slider-color="primary"
-            class="mb-4"
-            :grow="!isSmallScreen"
-            :stacked="isSmallScreen"
-            align-tabs="center"
-          >
-            <v-tab
-              value="0"
-              class="text-body-1 font-weight-medium"
-            >
+            <v-card-title class="text-h6 font-weight-bold mb-4">
               <v-icon
-                size="small"
                 start
+                color="primary"
               >
-                mdi-account
+                mdi-lock
               </v-icon>
-              {{ $t('profile.account') }}
-            </v-tab>
-            <v-tab
-              value="1"
-              class="text-body-1 font-weight-medium"
-            >
-              <v-icon
-                size="small"
-                start
+              {{ $t('profile.changePassword') }}
+            </v-card-title>
+            <v-card-text>
+              <v-alert
+                type="warning"
+                variant="outlined"
+                class="mb-6"
               >
-                mdi-shield-lock
-              </v-icon>
-              {{ $t('profile.security') }}
-            </v-tab>
-          </v-tabs>
-
-          <v-window
-            v-model="activeTab"
-            class="pa-4"
-          >
-            <!-- Account Tab Content -->
-            <v-window-item
-              value="0"
-              transition="fade-transition"
-            >
-              <v-card
-                class="rounded-xl pa-6"
-                elevation="2"
-              >
-                <v-card-title class="text-h6 font-weight-bold mb-4">
-                  <v-icon
-                    start
-                    color="primary"
-                  >
-                    mdi-account-details
-                  </v-icon>
-                  {{ $t('profile.personalInfo') }}
-                </v-card-title>
-                <v-card-text>
-                  <v-form>
-                    <v-row dense>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
-                        <v-text-field
-                          v-model="userprofile.username"
-                          :label="$t('profile.username')"
-                          variant="outlined"
-                          density="compact"
-                          prepend-inner-icon="mdi-account"
-                          readonly
-                          class="input-field-transition"
-                        />
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
-                        <v-text-field
-                          v-model="user.email"
-                          :label="$t('profile.email')"
-                          variant="outlined"
-                          density="compact"
-                          prepend-inner-icon="mdi-email"
-                          readonly
-                          class="input-field-transition"
-                        />
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
-                        <v-text-field
-                          v-model="userprofile.contactNo"
-                          :label="$t('profile.contact')"
-                          variant="outlined"
-                          density="compact"
-                          prepend-inner-icon="mdi-phone"
-                          readonly
-                          class="input-field-transition"
-                        />
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
-                        <v-text-field
-                          v-model="userprofile.country"
-                          :label="$t('profile.country')"
-                          variant="outlined"
-                          density="compact"
-                          prepend-inner-icon="mdi-map-marker"
-                          readonly
-                          class="input-field-transition"
-                        />
-                      </v-col>
-                    </v-row>
-                  </v-form>
-                  <v-btn
-                    color="primary"
-                    variant="flat"
-                    class="mt-4 text-capitalize"
-                    @click="openEditProfileDialog"
-                  >
-                    <v-icon start>
-                      mdi-pencil
+                <div class="text-subtitle-1 font-weight-medium mb-2">
+                  {{ $t('profile.passwordRequirements') }}
+                </div>
+                <div class="text-body-2 mb-3">
+                  {{ $t('profile.passwordMinimumRequirements') }}
+                </div>
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon
+                      size="small"
+                      class="mr-2"
+                      :color="newPassword.length >= 8 ? 'success' : 'grey-darken-1'"
+                    >
+                      {{ newPassword.length >= 8 ? 'mdi-check-circle' : 'mdi-circle-outline' }}
                     </v-icon>
-                    {{ $t('profile.editDetails') }}
-                  </v-btn>
-                </v-card-text>
-              </v-card>
-            </v-window-item>
+                    <span>{{ $t('profile.passwordMinLength') }}</span>
+                  </div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon
+                      size="small"
+                      class="mr-2"
+                      :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey-darken-1'"
+                    >
+                      {{ /[A-Z]/.test(newPassword) ? 'mdi-check-circle' : 'mdi-circle-outline' }}
+                    </v-icon>
+                    <span>{{ $t('profile.passwordUppercase') }}</span>
+                  </div>
+                  <div class="d-flex align-center">
+                    <v-icon
+                      size="small"
+                      class="mr-2"
+                      :color="specialCharColor"
+                    >
+                      {{ specialCharIcon }}
+                    </v-icon>
+                    <span>{{ $t('profile.passwordSymbol') }}</span>
+                  </div>
+                </div>
+              </v-alert>
 
-            <!-- Security Tab Content -->
-            <v-window-item
-              value="1"
-              transition="fade-transition"
-            >
-              <v-card
-                class="rounded-xl pa-6"
-                elevation="2"
+              <v-form
+                ref="passwordForm"
+                v-model="valid"
               >
-                <v-card-title class="text-h6 font-weight-bold mb-4">
-                  <v-icon
-                    start
-                    color="primary"
+                <v-row dense>
+                  <v-col
+                    cols="12"
+                    sm="6"
                   >
-                    mdi-lock
+                    <v-text-field
+                      v-model="newPassword"
+                      :rules="passwordRules"
+                      :label="$t('profile.newPassword')"
+                      :type="showPassword ? 'text' : 'password'"
+                      variant="outlined"
+                      density="compact"
+                      prepend-inner-icon="mdi-lock"
+                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      class="input-field-transition"
+                      @click:append="showPassword = !showPassword"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                  >
+                    <v-text-field
+                      v-model="confirmPassword"
+                      :rules="confirmPasswordRules"
+                      :label="$t('profile.confirmNewPassword')"
+                      :type="showConfirmPassword ? 'text' : 'password'"
+                      variant="outlined"
+                      density="compact"
+                      prepend-inner-icon="mdi-lock-check"
+                      :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      class="input-field-transition"
+                      @click:append="showConfirmPassword = !showConfirmPassword"
+                    />
+                  </v-col>
+                </v-row>
+                <v-btn
+                  :disabled="!valid"
+                  color="primary"
+                  variant="flat"
+                  class="mt-4 text-capitalize"
+                  @click="changePassword"
+                >
+                  <v-icon start>
+                    mdi-key
                   </v-icon>
                   {{ $t('profile.changePassword') }}
-                </v-card-title>
-                <v-card-text>
-                  <v-alert
-                    type="warning"
-                    variant="outlined"
-                    class="mb-6"
-                  >
-                    <div class="text-subtitle-1 font-weight-medium mb-2">
-                      {{ $t('profile.passwordRequirements') }}
-                    </div>
-                    <div class="text-body-2 mb-3">
-                      {{ $t('profile.passwordMinimumRequirements') }}
-                    </div>
-                    <div>
-                      <div class="d-flex align-center mb-2">
-                        <v-icon
-                          size="small"
-                          class="mr-2"
-                          :color="newPassword.length >= 8 ? 'success' : 'grey-darken-1'"
-                        >
-                          {{ newPassword.length >= 8 ? 'mdi-check-circle' : 'mdi-circle-outline' }}
-                        </v-icon>
-                        <span>{{ $t('profile.passwordMinLength') }}</span>
-                      </div>
-                      <div class="d-flex align-center mb-2">
-                        <v-icon
-                          size="small"
-                          class="mr-2"
-                          :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey-darken-1'"
-                        >
-                          {{ /[A-Z]/.test(newPassword) ? 'mdi-check-circle' : 'mdi-circle-outline' }}
-                        </v-icon>
-                        <span>{{ $t('profile.passwordUppercase') }}</span>
-                      </div>
-                      <div class="d-flex align-center">
-                        <v-icon
-                          size="small"
-                          class="mr-2"
-                          :color="specialCharColor"
-                        >
-                          {{ specialCharIcon }}
-                        </v-icon>
-                        <span>{{ $t('profile.passwordSymbol') }}</span>
-                      </div>
-                    </div>
-                  </v-alert>
+                </v-btn>
+              </v-form>
+            </v-card-text>
+          </v-card>
 
-                  <v-form
-                    ref="passwordForm"
-                    v-model="valid"
-                  >
-                    <v-row dense>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
-                        <v-text-field
-                          v-model="newPassword"
-                          :rules="passwordRules"
-                          :label="$t('profile.newPassword')"
-                          :type="showPassword ? 'text' : 'password'"
-                          variant="outlined"
-                          density="compact"
-                          prepend-inner-icon="mdi-lock"
-                          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                          class="input-field-transition"
-                          @click:append="showPassword = !showPassword"
-                        />
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                      >
-                        <v-text-field
-                          v-model="confirmPassword"
-                          :rules="confirmPasswordRules"
-                          :label="$t('profile.confirmNewPassword')"
-                          :type="showConfirmPassword ? 'text' : 'password'"
-                          variant="outlined"
-                          density="compact"
-                          prepend-inner-icon="mdi-lock-check"
-                          :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                          class="input-field-transition"
-                          @click:append="showConfirmPassword = !showConfirmPassword"
-                        />
-                      </v-col>
-                    </v-row>
-                    <v-btn
-                      :disabled="!valid"
-                      color="primary"
-                      variant="flat"
-                      class="mt-4 text-capitalize"
-                      @click="changePassword"
-                    >
-                      <v-icon start>
-                        mdi-key
-                      </v-icon>
-                      {{ $t('profile.changePassword') }}
-                    </v-btn>
-                  </v-form>
-                </v-card-text>
-              </v-card>
-
-              <!-- Delete Account Section -->
-              <v-card
-                class="rounded-xl pa-6 mt-6"
-                elevation="2"
+          <!-- Delete Account Section -->
+          <v-card
+            class="rounded-xl pa-6 mt-6"
+            elevation="2"
+          >
+            <v-card-title class="text-h6 font-weight-bold">
+              <v-icon
+                start
+                color="error"
               >
-                <v-card-title class="text-h6 font-weight-bold">
-                  <v-icon
-                    start
-                    color="error"
-                  >
-                    mdi-alert-circle
-                  </v-icon>
-                  {{ $t('profile.deleteAccountTitle') }}
-                </v-card-title>
-                <v-card-text>
-                  <p class="text-body-1 mb-4">
-                    {{ $t('profile.deleteAccountWarning') }}
-                  </p>
-                  <v-btn
-                    color="error"
-                    variant="flat"
-                    class="text-capitalize"
-                    :block="isSmallScreen"
-                    @click="deleteAccountDialog = true"
-                  >
-                    <v-icon start>
-                      mdi-delete
-                    </v-icon>
-                    {{ $t('profile.deleteAccountTitle') }}
-                  </v-btn>
-                </v-card-text>
-              </v-card>
-            </v-window-item>
-          </v-window>
-        </v-card>
+                mdi-alert-circle
+              </v-icon>
+              {{ $t('profile.deleteAccountTitle') }}
+            </v-card-title>
+            <v-card-text>
+              <p class="text-body-1 mb-4">
+                {{ $t('profile.deleteAccountWarning') }}
+              </p>
+              <v-btn
+                color="error"
+                variant="flat"
+                class="text-capitalize"
+                :block="isSmallScreen"
+                @click="deleteAccountDialog = true"
+              >
+                <v-icon start>
+                  mdi-delete
+                </v-icon>
+                {{ $t('profile.deleteAccountTitle') }}
+              </v-btn>
+            </v-card-text>
+          </v-card>
       </v-col>
     </v-row>
 
@@ -453,10 +321,13 @@
               class="input-field-transition"
             >
               <template #selection="{ item }">
-                {{ item.raw.emoji }} {{ item.raw.name }}
+                <span v-if="item.raw && item.raw.emoji">{{ item.raw.emoji }} {{ item.raw.name }}</span>
               </template>
               <template #item="{ item, props }">
-                <v-list-item v-bind="props">
+                <v-list-item 
+                  v-bind="{ ...props, title: undefined }" 
+                  v-if="item.raw && item.raw.emoji"
+                >
                   <v-list-item-title>
                     {{ item.raw.emoji }} {{ item.raw.name }}
                   </v-list-item-title>
@@ -628,7 +499,6 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
-  fetchSignInMethodsForEmail,
   reauthenticateWithPopup,
   GoogleAuthProvider,
 } from 'firebase/auth';
@@ -667,7 +537,6 @@ const newPassword = ref('');
 const confirmPassword = ref('');
 const editProfileDialog = ref(false);
 const deleteAccountDialog = ref(false);
-const activeTab = ref(0);
 const userPassword = ref('');
 const isDeleting = ref(false);
 const deleteStep = ref(1);
@@ -862,9 +731,11 @@ const changePassword = async () => {
 
 const handlerDeleteConfirmText = async (value) => {
   const auth = getAuth();
-  const user = auth.currentUser
-  if (user.providerData.includes(a => a.providerId !== 'google.com')) return deleteStep.value = 2
-
+  const user = auth.currentUser;
+  if (user.providerData.includes(a => a.providerId !== 'google.com')) {
+    deleteStep.value = 2;
+    return;
+  }
   try {
     isDeleting.value = true
     await reauthenticateWithPopup(user, new GoogleAuthProvider())
@@ -913,7 +784,7 @@ const closeDeleteDialog = () => {
 const signOut = async () => {
   try {
     await store.dispatch('logout');
-    window.location.href = '/';
+    globalThis.location.href = '/';
   } catch (error) {
     console.log(error);
   }
@@ -921,10 +792,9 @@ const signOut = async () => {
 
 const countryFilter = (item, queryText) => {
   if (!queryText) return true;
-
-  const searchText = queryText.toLowerCase();
-  const countryName = item.name.toLowerCase();
-  return countryName.includes(searchText);
+  
+  const itemName = item?.name || item || '';
+  return String(itemName).toLowerCase().includes(queryText.toLowerCase());
 };
 
 onMounted(() => {

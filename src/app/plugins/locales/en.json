@@ -29,10 +29,15 @@
       "email": "Email",
       "instructions": "Enter your email and we'll send you a link to reset your password.",
       "reset_button": "Send Reset Link",
-      "back_to_signin": "Back to Sign In"
+      "back_to_signin": "Back to Sign In",
+      "check_your_email": "Check your email",
+      "reset_link_sent": "We’ve sent a password reset link to",
+      "no_email": "Didn’t get the email?",
+      "try_again": "Try again"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -56,6 +61,7 @@
     "notifications": "Notifications",
     "unread": "unread",
     "inbox": "inbox",
+    "all": "All",
     "timeAgo": {
       "years": "{count} year | {count} years",
       "months": "{count} month | {count} months",
@@ -67,7 +73,8 @@
     "viewAll": "View all",
     "sentBy": "Sent by",
     "new": "NEW",
-    "test": "a Study"
+    "test": "a Study",
+    "actions": "Actions"
   },
   "profile": {
     "title": "Profile",
@@ -76,6 +83,7 @@
     "editProfile": "Edit Profile",
     "account": "Account",
     "admin": "Admin",
+    "superAdmin": "Super Admin",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -100,7 +108,30 @@
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "confirmPasswordRequired": "Confirm password is required",
-    "passwordsMatch": "Passwords must match"
+    "passwordsMatch": "Passwords must match",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "countryRequired": "Country is required",
+    "contactNumberRequired": "Contact number is required",
+    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+    "profileImageUpdatedSuccess": "Profile image updated successfully",
+    "profileImageUploadFailed": "Failed to upload profile image",
+    "noUserSignedIn": "No user signed in",
+    "profileLoadFailed": "Failed to load profile",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
+    "passwordChangedSuccess": "Password changed successfully",
+    "passwordChangeFailed": "Failed to change password",
+    "accountDeletionFailed": "Account deletion failed",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "yourPassword": "Your Password",
+    "back": "Back",
+    "deleteForever": "Delete Forever"
   },
   "titles": {
     "manager": "Manager",
@@ -134,6 +165,9 @@
     "reports": "Take a look at how your evaluators are doing.",
     "answers": "See how your evaluators are evaluating your project.",
     "analytics": "Analyze comments and answers from your evaluators.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Add additional data to your test.",
     "intro": {
       "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
@@ -180,7 +214,64 @@
     "publicTests": "Public tests",
     "sessions": "Sessions",
     "personal": "Personal",
-    "explore": "Explore"
+    "explore": "Explore",
+    "cards": {
+      "recentActivity": "Recent Activity",
+      "activities7Days": "Activities (7 days total)",
+      "lastActivity": "Last activity",
+      "noActivity": "No activity",
+      "edit": "Edit",
+      "heuristics": "Heuristics",
+      "questions": "Questions",
+      "totalOptions": "Total Options",
+      "qualitative": "Qualitative",
+      "quantitative": "Quantitative",
+      "weights": "Weights",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "Cooperators",
+      "totalInvited": "Total invited",
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "storage": "Storage",
+      "currentStorage": "Storage (current)",
+      "limitAvailable": "Limit available",
+      "results": "Results",
+      "generalUsability": "General Usability",
+      "finalReport": "Final Report",
+      "generatePDF": "Generate PDF",
+      "download": "Download",
+      "generated": "Generated:",
+      "generateReport": "Generate Report",
+      "reportAvailable": "Report Available",
+      "noReport": "No Report Generated",
+      "readyForDownload": "Final report ready for download",
+      "waitingForParticipants": "Waiting for participants",
+      "evaluationsCompleted": "evaluations completed",
+      "readyToGenerate": "Ready to generate report",
+      "excellentUsability": "Excellent Usability",
+      "acceptableUsability": "Acceptable Usability",
+      "needsImprovement": "Needs Improvement",
+      "basedOn": "Based on",
+      "evaluations": "evaluations",
+      "evaluationUpdated": "Evaluation updated",
+      "updatedProgress": "updated their progress",
+      "invitationSentTitle": "Invitation sent",
+      "invitationPendingDesc": "Invitation pending for",
+      "pendingStatus": "Pending"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristic Study",
+      "freePlan": "Free Plan",
+      "generalStatistics": "General Statistics",
+      "modules": "Modules"
+    },
+    "stats": {
+      "participants": "Participants",
+      "completion": "Completion",
+      "daysActive": "Days active",
+      "heuristics": "Heuristics"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -204,7 +295,9 @@
       "deleteQuestion": "Delete question",
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
-      "hasValue": "Has Value"
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -239,7 +332,9 @@
       "options": "Options",
       "noOptions": "No Options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Start adding options to your heuristic questions"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -473,6 +568,7 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
+
     "buttons": {
       "done": "Done"
     },
@@ -506,6 +602,16 @@
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
     }
+  },
+  "eyeTracking": {
+    "title": "Eye Tracking Calibration",
+    "beforeStart": "Before starting calibration",
+    "description1": "We will prepare your device to record your eye movements.",
+    "description2": "Follow the points that appear on the screen.",
+    "start": "Start calibration",
+    "inProgress": "Calibration in progress...",
+    "completed": "Calibration completed!",
+    "continue": "Continue to the test"
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -756,27 +862,6 @@
     "viewAllArticles": "View All Articles",
     "videoAltText": "FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
   },
-  "PROFILE": {
-    "user": "USER",
-    "account": "Account",
-    "security": "Security",
-    "personalInfo": "Personal Info",
-    "contact": "Contact",
-    "country": "Country",
-    "editDetails": "Edit Details",
-    "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
-    "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
-    "finalStepVerifyIdentity": "Final step: Verify your identity",
-    "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
-    "yourPassword": "Your Password",
-    "usernameRequired": "Username is required",
-    "usernameMinLength": "Username must be at least 3 characters",
-    "countryRequired": "Country is required",
-    "contactNumberRequired": "Contact number is required",
-    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
-    "email": "Email",
-    "username": "Username"
-  },
   "ModeratedTest": {
     "preTest": "PRE-TEST",
     "tasks": "TASKS",
@@ -846,7 +931,28 @@
     "postTestDescription": "Results from the post-test form",
     "all": "All",
     "question": "Question {number}",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "downloadResume": "Download Resume PDF",
+    "generalAnalytics": "General Analytics",
+    "individualAnalytics": "Individual Analytics",
+    "susAnalytics": "SUS Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
+    "eyeTrackingAnalytics": "Eye Tracking Analytics",
+    "transcriptions": "Transcriptions",
+    "overallAnalyticsDescription": "Overview of the test results and metrics.",
+    "user": "User",
+    "summary": "Summary",
+    "invite": "Invite",
+    "actions": "Actions",
+    "completed": "Completed",
+    "notCompleted": "Incomplete",
+    "timeTaken": "Time Taken",
+    "tasks": "tasks",
+    "total": "total",
+    "yes": "Yes",
+    "invited": "Invited",
+    "answers": "Answers",
+    "no": "No"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",

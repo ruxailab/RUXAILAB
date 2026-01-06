@@ -358,7 +358,7 @@ import TranscriptionController from '@/ai/transcriptions/TranscriptionController
 
 /* ---------------------- Props ---------------------- */
 const props = defineProps({
-  answerDocId: { type: String, required: true },
+  answersDocId: { type: String, required: true },
   userDocId: { type: String, required: true },
   taskId: { type: [String, Number], required: true },
 })
@@ -406,17 +406,17 @@ const selectionSummary = computed(() => {
 
 /* --------------------- Fetching -------------------- */
 watch(
-  () => [props.answerDocId, props.userDocId, props.taskId],
+  () => [props.answersDocId, props.userDocId, props.taskId],
   () => refetch(),
   { immediate: true },
 )
 
 async function refetch() {
-  if (!props.answerDocId || !props.userDocId || props.taskId == null) return
+  if (!props.answersDocId || !props.userDocId || props.taskId == null) return
   loading.value = true
   try {
-    const arr = await controller.getByAnswerDocIdandUserDocIdandTaskId(
-      props.answerDocId,
+    const arr = await controller.getByAnswersDocIdandUserDocIdandTaskId(
+      props.answersDocId,
       props.userDocId,
       String(props.taskId),
     )
@@ -483,7 +483,7 @@ function flattenRunsToRows(selectedRuns) {
       const start = num(s.start)
       const end = num(s.end)
       rows.push({
-        answerDocId: props.answerDocId,
+        answersDocId: props.answersDocId,
         userDocId: props.userDocId,
         taskId: String(props.taskId),
         runId,
@@ -507,7 +507,7 @@ function flattenRunsToRows(selectedRuns) {
       const start = num(s.start)
       const end = num(s.end)
       rows.push({
-        answerDocId: props.answerDocId,
+        answersDocId: props.answersDocId,
         userDocId: props.userDocId,
         taskId: String(props.taskId),
         runId,
@@ -535,7 +535,7 @@ function flattenRunsToRows(selectedRuns) {
 /* --------------------- CSV utils ------------------- */
 function rowsToCsv(rows) {
   const headers = [
-    'answerDocId',
+    'answersDocId',
     'userDocId',
     'taskId',
     'runId',
@@ -569,7 +569,7 @@ function csvEscape(v) {
 function cleanRunForJson(run) {
   return {
     id: run.id,
-    answerDocId: run.answerDocId,
+    answersDocId: run.answersDocId,
     userDocId: run.userDocId,
     taskId: String(run.taskId),
     provider: run.provider || '',
