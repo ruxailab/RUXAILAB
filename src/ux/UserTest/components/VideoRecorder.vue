@@ -17,13 +17,10 @@
               <v-icon>mdi-camera</v-icon>
             </v-btn>
           </template>
-          <span>Start Recording</span>
-        </v-tooltip>
-        <v-tooltip
-          v-if="recording"
-          location="bottom"
-        >
-          <template #activator="{ props }">
+<span>Start Recording</span>
+</v-tooltip>
+<v-tooltip v-if="recording" location="bottom">
+  <template #activator="{ props }">
             <v-btn
               class="ml-4 my-2 mr-auto"
               color="red"
@@ -36,10 +33,10 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Stop Recording</span>
-        </v-tooltip>
-      </v-row>
-    </v-col> -->
+  <span>Stop Recording</span>
+</v-tooltip>
+</v-row>
+</v-col> -->
   </div>
 </template>
 
@@ -56,6 +53,9 @@ import {
 
 const props = defineProps({
   testId: {
+    type: String
+  },
+  userDocId: {
     type: String
   },
   taskIndex: {
@@ -122,7 +122,7 @@ const startRecording = async () => {
       const correctTaskIndex = recordingTaskIndex.value;
       const storageReference = storageRef(
         storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
+        `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
       )
       await uploadBytes(storageReference, videoBlob)
 
@@ -131,7 +131,7 @@ const startRecording = async () => {
       console.log('Tasks array:', currentUserTestAnswer.value.tasks);
       console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length);
       console.log('Task at index:', currentUserTestAnswer.value.tasks?.[correctTaskIndex]);
-      
+
       await store.dispatch('updateTaskMediaUrl', {
         taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.webcam,
