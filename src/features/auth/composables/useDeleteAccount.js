@@ -51,8 +51,12 @@ export function useDeleteAccount() {
             await deleteDoc(userDocRef);
             console.log('Firestore user document deleted');
 
-            await store.dispatch('deleteAuth', user.uid);
-            console.log('Vuex store cleanup completed');
+            try {
+                await store.dispatch('deleteAuth', user.uid);
+                console.log('Vuex store cleanup completed');
+            } catch (storeError) {
+                console.warn('Store cleanup failed (non-critical):', storeError);
+            }
 
             await deleteUser(user);
             console.log('Firebase Auth user deleted');
