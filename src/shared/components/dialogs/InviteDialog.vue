@@ -78,7 +78,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useToast } from 'vue-toastification';
+import { showError, showWarning } from '@/shared/utils/toast';
 
 const props = defineProps({
     show: {
@@ -112,8 +112,6 @@ const emit = defineEmits([
     'update:show',
     'send-invitations'
 ]);
-
-const toast = useToast();
 
 // Use composables
 const {
@@ -187,12 +185,12 @@ const validateEmail = () => {
     // Handle string email input
     if (isStringEmail(email)) {
         if (!isValidEmail(email)) {
-            toast.error('Invalid email format');
+            showError('Invalid email format');
             return;
         }
 
         if (!isUserEmailValid(email)) {
-            toast.error(`${email} is not a valid email or does not exist`);
+            showError(`${email} is not a valid email or does not exist`);
             return;
         }
 
@@ -206,7 +204,7 @@ const validateEmail = () => {
     if (selectedCoops.value.includes(email)) return;
 
     if (isCoopAlreadySelected(email.email)) {
-        toast.warning(`${email.email} has already been selected`);
+        showWarning(`${email.email} has already been selected`);
         return;
     }
 

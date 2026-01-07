@@ -6,12 +6,10 @@
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
-import { useToast } from 'vue-toastification'
+import { showError } from '@/shared/utils/toast'
 
 const authController = new AuthController()
 const userController = new UserController()
-
-const toast = useToast()
 
 export default {
   state: {
@@ -100,7 +98,7 @@ export default {
         })
 
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        showError('errors.incorrectCredential')
       } finally {
         commit('setLoading', false)
       }
@@ -130,6 +128,7 @@ export default {
             id: user.uid,
             email: user.email,
             displayName: user.displayName || '',
+            profileImage: user.photoURL || '',
             createdAt: new Date().toISOString(),
             authProvider: 'google',
           })

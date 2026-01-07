@@ -5,22 +5,14 @@
     padding="10px !important"
   >
     <v-btn
-      v-if="user && isDashboard"
+      v-if="user"
       icon
       class="d-flex d-lg-none"
       @click="toggleDashboardDrawer"
     >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-    <v-btn
-      v-if="user && !isDashboard"
-      icon
-      class="d-flex d-lg-none"
-      @click="$emit('toggle-mobile-drawer')"
-    >
-      <v-icon>mdi-menu</v-icon>
-    </v-btn>
-
+    
     <!-- Logo y título -->
     <div
       class="d-flex align-center"

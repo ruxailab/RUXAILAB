@@ -178,15 +178,15 @@ export default {
     },
     async fetchSelectedAnswerSentiment() {
       console.log('Fetching Sentiment Document..............................');
-      const answerDocId = this.testDocument.answersDocId;
+      const answersDocId = this.testDocument.answersDocId;
       const userDocId = this.selectedUserID;
 
       try {
-        let result = await audioSentimentController.getByAnswerDocIdandUserDocId(answerDocId, userDocId);
+        let result = await audioSentimentController.getByAnswersDocIdandUserDocId(answersDocId, userDocId);
         if (!result) {
-          console.warn(`Sentiment document for answerDocId ${answerDocId} and userDocId ${userDocId} does not exist. Creating new document.`);
+          console.warn(`Sentiment document for answersDocId ${answersDocId} and userDocId ${userDocId} does not exist. Creating new document.`);
           const payload = {
-            answerDocId: answerDocId,
+            answersDocId: answersDocId,
             userDocId: userDocId,
           };
           result = await audioSentimentController.create(payload);

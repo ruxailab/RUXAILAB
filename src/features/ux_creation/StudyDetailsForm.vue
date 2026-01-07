@@ -134,7 +134,6 @@
                           {{ test.isPublic ? $t('studyCreation.details.visibleToEveryone') : $t('studyCreation.details.onlyInvitedUsers') }}
                         </v-list-item-subtitle>
                       </v-list-item>
-                      
                       <!-- Switch on separate row -->
                       <div class="d-flex justify-center">
                         <v-switch
@@ -156,23 +155,28 @@
             <v-col cols="12">
               <v-card class="custom-card" elevation="4">
                 <v-card-text class="pa-6">
-                  <div class="d-flex justify-space-between align-center">
-                    <BackButton
-                      :label="$t('studyCreation.backToStudyType')"
-                      adjust="start"
-                      @back="goBack"
-                    />
-                    
-                    <v-btn
-                      color="success"
-                      size="large"
-                      :loading="isLoading"
-                      prepend-icon="mdi-plus"
-                      class="px-8"
-                      @click="validate"
-                    >
-                      {{ $t('studyCreation.createStudy') }}
-                    </v-btn>
+                  <div class="d-flex flex-column-reverse flex-sm-row justify-sm-space-between align-sm-center">
+                    <!-- Back button (goes below on mobile) -->
+                    <div class="w-100 w-sm-auto mt-3 mt-sm-0">
+                      <BackButton
+                        :label="$t('studyCreation.backToStudyType')"
+                        adjust="start"
+                        @back="goBack"
+                      />
+                    </div>
+
+                    <!-- Create button (goes above on mobile) -->
+                    <div class="w-100 w-sm-auto">
+                      <v-btn
+                        color="success"
+                        size="large"
+                        :loading="isLoading"
+                        prepend-icon="mdi-plus"
+                        block
+                        @click="validate">
+                        {{ $t('studyCreation.createStudy') }}
+                      </v-btn>
+                    </div>
                   </div>
                 </v-card-text>
               </v-card>
@@ -187,7 +191,6 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue';
@@ -195,10 +198,10 @@ import SectionHeader from '@/features/ux_creation/SectionHeader.vue';
 import BackButton from '@/features/ux_creation/components/BackButton.vue';
 import { getMethodManagerView, instantiateStudyByType, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import StudyAdmin from '@/shared/models/StudyAdmin';
+import { showError, showWarning } from '@/shared/utils/toast'
 
 const router = useRouter();
 const store = useStore();
-const toast = useToast();
 const { t } = useI18n();
 
 const test = ref({
@@ -227,15 +230,15 @@ const steps = computed(() => [
 
 const validate = () => {
   if (!test.value.title) {
-    toast.warning(t('studyCreation.details.validation.enterTitle'));
+    showWarning('studyCreation.details.validation.enterTitle');
     return;
   }
   if (test.value.title.length > 200) {
-    toast.warning(t('studyCreation.details.validation.max200Characters'));
+    showWarning('studyCreation.details.validation.max200Characters');
     return;
   }
   if (test.value.description.length > 600) {
-    toast.warning(t('studyCreation.details.validation.max600Characters'));
+    showWarning('studyCreation.details.validation.max600Characters');
     return;
   }
   handleTestType();
@@ -298,7 +301,7 @@ const submitAccessibility = async () => {
 
   isLoading.value = true;
   const user = store.getters.user;
-  
+
   const rawData = {
     id: null,
     title: test.value.title,
@@ -321,10 +324,10 @@ const submitAccessibility = async () => {
   try {
     const newTest = instantiateStudyByType(testType, rawData);
     const testId = await store.dispatch('createStudy', newTest);
-    
+
     isLoading.value = false;
     store.commit('RESET_STUDY_DETAILS');
-    
+
     if (selectedMethod === 'AUTOMATIC') {
       router.push(`/accessibility/automatic/${testId}`);
     } else {
@@ -332,7 +335,7 @@ const submitAccessibility = async () => {
     }
   } catch (error) {
     isLoading.value = false;
-    toast.error(error.message);
+    showError(error.message);
   }
 };
 

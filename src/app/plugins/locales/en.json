@@ -37,6 +37,7 @@
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -49,6 +50,7 @@
     "title": "Title",
     "description": "Description",
     "cancel": "Cancel",
+    "proceed": "proceed",
     "confirm": "Confirm",
     "add": "Add",
     "text": "Text",
@@ -60,6 +62,7 @@
     "notifications": "Notifications",
     "unread": "unread",
     "inbox": "inbox",
+    "all": "All",
     "timeAgo": {
       "years": "{count} year | {count} years",
       "months": "{count} month | {count} months",
@@ -71,7 +74,8 @@
     "viewAll": "View all",
     "sentBy": "Sent by",
     "new": "NEW",
-    "test": "a Study"
+    "test": "a Study",
+    "actions": "Actions"
   },
   "profile": {
     "title": "Profile",
@@ -113,10 +117,17 @@
     "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
     "profileImageUpdatedSuccess": "Profile image updated successfully",
     "profileImageUploadFailed": "Failed to upload profile image",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "No user signed in",
     "profileLoadFailed": "Failed to load profile",
     "profileUpdatedSuccess": "Profile updated successfully",
     "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "Password changed successfully",
     "passwordChangeFailed": "Failed to change password",
     "accountDeletionFailed": "Account deletion failed",
@@ -157,6 +168,9 @@
     "reports": "Take a look at how your evaluators are doing.",
     "answers": "See how your evaluators are evaluating your project.",
     "analytics": "Analyze comments and answers from your evaluators.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Add additional data to your test.",
     "intro": {
       "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
@@ -203,7 +217,64 @@
     "publicTests": "Public tests",
     "sessions": "Sessions",
     "personal": "Personal",
-    "explore": "Explore"
+    "explore": "Explore",
+    "cards": {
+      "recentActivity": "Recent Activity",
+      "activities7Days": "Activities (7 days total)",
+      "lastActivity": "Last activity",
+      "noActivity": "No activity",
+      "edit": "Edit",
+      "heuristics": "Heuristics",
+      "questions": "Questions",
+      "totalOptions": "Total Options",
+      "qualitative": "Qualitative",
+      "quantitative": "Quantitative",
+      "weights": "Weights",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "Cooperators",
+      "totalInvited": "Total invited",
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "storage": "Storage",
+      "currentStorage": "Storage (current)",
+      "limitAvailable": "Limit available",
+      "results": "Results",
+      "generalUsability": "General Usability",
+      "finalReport": "Final Report",
+      "generatePDF": "Generate PDF",
+      "download": "Download",
+      "generated": "Generated:",
+      "generateReport": "Generate Report",
+      "reportAvailable": "Report Available",
+      "noReport": "No Report Generated",
+      "readyForDownload": "Final report ready for download",
+      "waitingForParticipants": "Waiting for participants",
+      "evaluationsCompleted": "evaluations completed",
+      "readyToGenerate": "Ready to generate report",
+      "excellentUsability": "Excellent Usability",
+      "acceptableUsability": "Acceptable Usability",
+      "needsImprovement": "Needs Improvement",
+      "basedOn": "Based on",
+      "evaluations": "evaluations",
+      "evaluationUpdated": "Evaluation updated",
+      "updatedProgress": "updated their progress",
+      "invitationSentTitle": "Invitation sent",
+      "invitationPendingDesc": "Invitation pending for",
+      "pendingStatus": "Pending"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristic Study",
+      "freePlan": "Free Plan",
+      "generalStatistics": "General Statistics",
+      "modules": "Modules"
+    },
+    "stats": {
+      "participants": "Participants",
+      "completion": "Completion",
+      "daysActive": "Days active",
+      "heuristics": "Heuristics"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -227,7 +298,9 @@
       "deleteQuestion": "Delete question",
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
-      "hasValue": "Has Value"
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -262,7 +335,9 @@
       "options": "Options",
       "noOptions": "No Options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Start adding options to your heuristic questions"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -280,7 +355,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Settings"
+      "settings": "Settings",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
@@ -496,6 +572,7 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
+
     "buttons": {
       "done": "Done"
     },
@@ -528,7 +605,26 @@
       "audioRecording": "Audio",
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
+  },
+  "eyeTracking": {
+    "title": "Eye Tracking Calibration",
+    "beforeStart": "Before starting calibration",
+    "description1": "We will prepare your device to record your eye movements.",
+    "description2": "Follow the points that appear on the screen.",
+    "start": "Start calibration",
+    "inProgress": "Calibration in progress...",
+    "completed": "Calibration completed!",
+    "continue": "Continue to the test"
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -848,7 +944,28 @@
     "postTestDescription": "Results from the post-test form",
     "all": "All",
     "question": "Question {number}",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "downloadResume": "Download Resume PDF",
+    "generalAnalytics": "General Analytics",
+    "individualAnalytics": "Individual Analytics",
+    "susAnalytics": "SUS Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
+    "eyeTrackingAnalytics": "Eye Tracking Analytics",
+    "transcriptions": "Transcriptions",
+    "overallAnalyticsDescription": "Overview of the test results and metrics.",
+    "user": "User",
+    "summary": "Summary",
+    "invite": "Invite",
+    "actions": "Actions",
+    "completed": "Completed",
+    "notCompleted": "Incomplete",
+    "timeTaken": "Time Taken",
+    "tasks": "tasks",
+    "total": "total",
+    "yes": "Yes",
+    "invited": "Invited",
+    "answers": "Answers",
+    "no": "No"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",

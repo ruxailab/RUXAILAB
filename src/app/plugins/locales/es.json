@@ -33,10 +33,11 @@
       "check_your_email": "Revisa tu correo electrónico",
       "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
       "no_email": "¿No recibiste el correo?",
-      "try_again": "Inténtalo de nuevo" 
+      "try_again": "Inténtalo de nuevo"
     }
   },
   "common": {
+    "hidden": "Oculto",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
@@ -117,6 +118,7 @@
     "profileLoadFailed": "Error al cargar el perfil",
     "profileUpdatedSuccess": "Perfil actualizado con éxito",
     "profileUpdateFailed": "Error al actualizar el perfil",
+    "googleUserPasswordInfo": "Iniciaste sesión con Google. Haz clic en el botón a continuación para verificar con Google y establecer una contraseña para tu cuenta.",
     "passwordChangedSuccess": "Contraseña cambiada con éxito",
     "passwordChangeFailed": "Error al cambiar la contraseña",
     "accountDeletionFailed": "Error al eliminar la cuenta",
@@ -203,7 +205,64 @@
     "publicTests": "Pruebas públicas",
     "sessions": "Sesiones",
     "personal": "Personal",
-    "explore": "Explorar"
+    "explore": "Explorar",
+    "cards": {
+      "recentActivity": "Actividad Reciente",
+      "activities7Days": "Actividades (7 días en total)",
+      "lastActivity": "Última actividad",
+      "noActivity": "Sin actividad",
+      "edit": "Editar",
+      "heuristics": "Heurísticas",
+      "questions": "Preguntas",
+      "totalOptions": "Opciones totales",
+      "qualitative": "Cualitativo",
+      "quantitative": "Cuantitativo",
+      "weights": "Pesos",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "Colaboradores",
+      "totalInvited": "Total invitados",
+      "accepted": "Aceptados",
+      "pending": "Pendientes",
+      "storage": "Almacenamiento",
+      "currentStorage": "Almacenamiento (actual)",
+      "limitAvailable": "Límite disponible",
+      "results": "Resultados",
+      "generalUsability": "Usabilidad General",
+      "finalReport": "Informe Final",
+      "generatePDF": "Generar PDF",
+      "download": "Descargar",
+      "generated": "Generado:",
+      "generateReport": "Generar Informe",
+      "reportAvailable": "Informe disponible",
+      "noReport": "No se ha generado informe",
+      "readyForDownload": "Informe final listo para descargar",
+      "waitingForParticipants": "Esperando participantes",
+      "evaluationsCompleted": "evaluaciones completadas",
+      "readyToGenerate": "Listo para generar informe",
+      "excellentUsability": "Excelente Usabilidad",
+      "acceptableUsability": "Usabilidad Aceptable",
+      "needsImprovement": "Necesita Mejoras",
+      "basedOn": "Basado en",
+      "evaluations": "evaluaciones",
+      "evaluationUpdated": "Evaluación actualizada",
+      "updatedProgress": "actualizó su progreso",
+      "invitationSentTitle": "Invitación enviada",
+      "invitationPendingDesc": "Invitación pendiente para",
+      "pendingStatus": "Pendiente"
+    },
+    "managerView": {
+      "heuristicStudy": "Estudio Heurístico",
+      "freePlan": "Plan Gratuito",
+      "generalStatistics": "Estadísticas Generales",
+      "modules": "Módulos"
+    },
+    "stats": {
+      "participants": "Participantes",
+      "completion": "Completación",
+      "daysActive": "Días activo",
+      "heuristics": "Heurísticas"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -528,7 +587,26 @@
       "audioRecording": "Audio",
       "eyeTracking": "Seguimiento ocular",
       "recordingNote": "Se te notificará antes de que comience cualquier grabación. Todos los datos se recopilan únicamente con fines de investigación y se manejan de acuerdo con las directrices de privacidad."
+    },
+    "CalibrationStep": {
+      "title": "Calibración de Eye Tracking",
+      "heading": "Antes de comenzar la calibración",
+      "description": "Vamos a preparar tu dispositivo para <strong>registrar el movimiento de tus ojos</strong>. Esto nos permitirá entender cómo navegas por la pantalla durante el test.",
+      "process": "La calibración consiste en seguir con la mirada unos puntos que aparecerán en la pantalla. Es importante que te sitúes en un lugar bien iluminado, te sientes cómodamente y mantengas la cabeza estable.",
+      "instruction": "Cuando estés listo o lista, pulsa el botón para empezar la calibración.",
+      "startButton": "Comenzar calibración",
+      "inProgress": "En progreso..."
     }
+  },
+  "eyeTracking": {
+    "title": "Calibración de Eye Tracking",
+    "beforeStart": "Antes de comenzar la calibración",
+    "description1": "Vamos a preparar tu dispositivo para registrar el movimiento de tus ojos.",
+    "description2": "Sigue los puntos que aparecerán en la pantalla.",
+    "start": "Comenzar calibración",
+    "inProgress": "Calibración en progreso...",
+    "completed": "¡Calibración completada!",
+    "continue": "Continuar al test"
   },
   "AccessNotAllowed": {
     "notAllowed": "Acceso no permitido",
@@ -849,7 +927,28 @@
     "postTestDescription": "Resultados del formulario posterior a la prueba",
     "all": "Todos",
     "question": "Pregunta {number}",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "downloadResume": "Descargar resumen PDF",
+    "generalAnalytics": "Analíticas Generales",
+    "individualAnalytics": "Analíticas Individuales",
+    "susAnalytics": "Analíticas SUS",
+    "nasaTlxAnalytics": "Analíticas NASA-TLX",
+    "eyeTrackingAnalytics": "Analíticas de Rastreo Ocular",
+    "transcriptions": "Transcripciones",
+    "user": "Usuario",
+    "summary": "Resumen",
+    "invite": "Invitar",
+    "actions": "Acciones",
+    "completed": "Completado",
+    "notCompleted": "Incompleto",
+    "tasks": "tareas",
+    "total": "total",
+    "timeTaken": "Tiempo empleado",
+    "yes": "Sí",
+    "invited": "Invitado",
+    "answers": "Respuestas",
+    "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
+    "no": "No"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
