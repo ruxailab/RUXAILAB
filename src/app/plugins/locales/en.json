@@ -50,6 +50,7 @@
     "title": "Title",
     "description": "Description",
     "cancel": "Cancel",
+    "proceed": "proceed",
     "confirm": "Confirm",
     "add": "Add",
     "text": "Text",
@@ -354,7 +355,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Settings"
+      "settings": "Settings",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",

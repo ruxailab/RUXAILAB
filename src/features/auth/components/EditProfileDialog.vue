@@ -45,7 +45,7 @@
                         class="mb-4 input-field-transition" />
                     <v-text-field v-model="localProfileData.contactNo" :label="$t('profile.contact')" variant="outlined"
                         density="compact" prepend-inner-icon="mdi-phone" :rules="contactRules"
-                        :hint="$t('Enter a valid No.')" persistent-hint class="mb-4 input-field-transition" />
+                        :hint="$t('profile.enterValidPhoneNumber')" persistent-hint class="mb-4 input-field-transition" />
                     <v-autocomplete v-model="localProfileData.country" :label="$t('profile.country')" variant="outlined"
                         density="compact" prepend-inner-icon="mdi-map-marker" :rules="countryRules" :items="countries"
                         item-title="name" item-value="name" :custom-filter="countryFilter" clearable
