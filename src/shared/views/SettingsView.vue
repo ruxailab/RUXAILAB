@@ -1,6 +1,4 @@
 <template>
-  <LoadingOverlay :is-visible="loadingPage" :message="$t('pages.settings.loading_settings')" />
-  
   <PageWrapper
     :title="$t('pages.settings.study_configuration')"
     :loading="false"
@@ -429,7 +427,6 @@ import Snackbar from '@/shared/components/Snackbar';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import LoadingOverlay from '@/shared/components/LoadingOverlay.vue';
 import TemplateHeader from '@/shared/models/TemplateHeader';
 import TemplateAuthor from '@/shared/models/TemplateAuthor';
 import TemplateBody from '@/shared/models/TemplateBody';

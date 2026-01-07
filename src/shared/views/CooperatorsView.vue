@@ -1,6 +1,4 @@
 <template>
-  <LoadingOverlay :is-visible="loading" message="Loading cooperators..." />
-  
   <PageWrapper
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
@@ -107,7 +105,6 @@ import Intro from '@/shared/components/introduction_cards/IntroCoops.vue';
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import LoadingOverlay from '@/shared/components/LoadingOverlay.vue';
 import CooperatorTable from '@/shared/components/CooperatorTable.vue';
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
