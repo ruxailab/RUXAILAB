@@ -9,7 +9,7 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">Total Participants</h3>
+              <h3 class="card-title-small mb-1 text-white">{{ $t('studyManager.overview.totalParticipants') }}</h3>
               <div class="metric-value-small text-white">{{ totalUsers }}</div>
             </div>
             <div class="icon-container-small">
@@ -29,9 +29,9 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">Completed</h3>
+              <h3 class="card-title-small mb-1 text-white">{{ $t('studyManager.overview.completed') }}</h3>
               <div class="metric-value-small text-white">{{ completedTests }}</div>
-              <span class="progress-text-small text-white opacity-90">{{ completionPercentage }}% rate</span>
+              <span class="progress-text-small text-white opacity-90">{{ completionPercentage }}% {{ $t('studyManager.overview.rate') }}</span>
             </div>
             <div class="icon-container-small">
               <v-icon size="20" color="white">mdi-check-circle</v-icon>
@@ -50,9 +50,9 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">In Progress</h3>
+              <h3 class="card-title-small mb-1 text-white">{{ $t('studyManager.overview.inProgress') }}</h3>
               <div class="metric-value-small text-white">{{ inProgressTests }}</div>
-              <span class="progress-text-small text-white opacity-90">{{ inProgressPercentage }}% active</span>
+              <span class="progress-text-small text-white opacity-90">{{ inProgressPercentage }}% {{ $t('studyManager.overview.active') }}</span>
             </div>
             <div class="icon-container-small">
               <v-icon size="20" color="white">mdi-clock-outline</v-icon>
@@ -71,9 +71,9 @@
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">Average Time</h3>
+              <h3 class="card-title-small mb-1 text-white">{{ $t('studyManager.overview.averageTime') }}</h3>
               <div class="metric-value-small text-white">{{ averageCompletionTime }}</div>
-              <span class="progress-text-small text-white opacity-90">Completion time</span>
+              <span class="progress-text-small text-white opacity-90">{{ $t('studyManager.overview.completionTime') }}</span>
             </div>
             <div class="icon-container-small">
               <v-icon size="20" color="white">mdi-timer-outline</v-icon>

@@ -1053,6 +1053,84 @@
           "सर्वोत्तम प्रथाएं शामिल"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "बुनियादी जानकारी",
+      "studyTitle": "अध्ययन शीर्षक",
+      "enterTitle": "अपने अध्ययन के लिए एक वर्णनात्मक शीर्षक दर्ज करें",
+      "studyDescription": "अध्ययन विवरण",
+      "enterDescription": "अपने अध्ययन का उद्देश्य और लक्ष्य बताएं",
+      "websiteName": "वेबसाइट का नाम",
+      "enterWebsiteName": "वेबसाइट का नाम दर्ज करें",
+      "websiteUrl": "वेबसाइट URL (वैकल्पिक)",
+      "enterWebsiteUrl": "वेबसाइट URL दर्ज करें",
+      "privacySettings": "गोपनीयता सेटिंग्स",
+      "controlVisibility": "नियंत्रित करें कि आपका अध्ययन कौन देख सकता है",
+      "publicStudy": "सार्वजनिक अध्ययन",
+      "privateStudy": "निजी अध्ययन",
+      "visibleToEveryone": "सभी को दिखाई देता है",
+      "onlyInvitedUsers": "केवल आमंत्रित उपयोगकर्ता",
+      "public": "सार्वजनिक",
+      "private": "निजी",
+      "validation": {
+        "enterTitle": "शीर्षक दर्ज करें",
+        "max200Characters": "अधिकतम 200 अक्षर",
+        "max600Characters": "अधिकतम 600 अक्षर",
+        "enterWebsiteName": "वेबसाइट का नाम दर्ज करें",
+        "enterWebsiteUrl": "वेबसाइट URL दर्ज करें",
+        "urlProtocol": "URL http:// या https:// से शुरू होना चाहिए",
+        "validUrl": "एक वैध URL दर्ज करें (जैसे, https://example.com)",
+        "createFailed": "अध्ययन बनाने में विफल। कृपया पुनः प्रयास करें।",
+        "viewNotFound": "अध्ययन दृश्य नहीं मिला। डैशबोर्ड पर पुनर्निर्देशित किया जा रहा है।"
+      },
+      "status": {
+        "active": "सक्रिय",
+        "pending": "लंबित",
+        "finished": "समाप्त",
+        "upcoming": "आगामी"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "बिना मॉडरेटर अध्ययन",
+    "moderatedStudy": "मॉडरेटेड अध्ययन",
+    "active": "सक्रिय",
+    "draft": "ड्राफ्ट",
+    "completed": "पूर्ण",
+    "archived": "संग्रहीत",
+    "managementModules": "प्रबंधन मॉड्यूल",
+    "managementModulesDescription": "प्रतिभागियों, कार्यों, सेटिंग्स को प्रबंधित करने और अपने अध्ययन डेटा का विश्लेषण करने के लिए व्यापक उपकरण",
+    "spaceForAdditionalModules": "अतिरिक्त मॉड्यूल के लिए स्थान",
+    "overview": {
+      "totalParticipants": "कुल प्रतिभागी",
+      "completed": "पूर्ण",
+      "inProgress": "प्रगति में",
+      "averageTime": "औसत समय",
+      "completionTime": "पूर्णता समय",
+      "rate": "दर",
+      "active": "सक्रिय"
+    },
+    "participants": {
+      "title": "प्रतिभागी",
+      "subtitle": "परीक्षण भागीदारी सारांश",
+      "beta": "बीटा",
+      "completed": "पूर्ण",
+      "notStarted": "शुरू नहीं हुआ",
+      "pendingInvites": "लंबित आमंत्रण",
+      "overallProgress": "समग्र प्रगति",
+      "participantsCompleted": "{total} में से {completed} प्रतिभागियों ने पूरा किया",
+      "details": "विवरण"
+    },
+    "tasks": {
+      "title": "कार्य सारांश",
+      "subtitle": "कार्य संरचना और पूर्णता",
+      "noTasksConfigured": "कोई कार्य कॉन्फ़िगर नहीं",
+      "taskCompletionRate": "कार्य पूर्णता दर",
+      "totalTasks": "कुल कार्य",
+      "avgTaskDuration": "औसत कार्य अवधि",
+      "successRate": "सफलता दर",
+      "taskTypes": "कार्य प्रकार",
+      "viewTasks": "कार्य देखें"
     }
   }
 }

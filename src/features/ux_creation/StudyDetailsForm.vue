@@ -264,34 +264,54 @@ const submit = async () => {
   if (method.value === STUDY_TYPES.CARD_SORTING) testType = STUDY_TYPES.CARD_SORTING;
 
   isLoading.value = true;
-  const user = store.getters.user;
-  const rawData = {
-    id: null,
-    testTitle: test.value.title,
-    testDescription: test.value.description,
-    testType: testType,
-    isPublic: test.value.isPublic,
-    subType: test.value.subType,
-    testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
-    }),
-    creationDate: Date.now(),
-    updateDate: Date.now(),
-    status: 'active',
-  };
-  const newTest = instantiateStudyByType(testType, rawData);
+  
+  try {
+    const user = store.getters.user;
+    const rawData = {
+      id: null,
+      testTitle: test.value.title,
+      testDescription: test.value.description,
+      testType: testType,
+      isPublic: test.value.isPublic,
+      subType: test.value.subType,
+      testAdmin: new StudyAdmin({
+        userDocId: user.id,
+        email: user.email,
+      }),
+      creationDate: Date.now(),
+      updateDate: Date.now(),
+      status: 'active',
+    };
+    const newTest = instantiateStudyByType(testType, rawData);
 
-  await store.dispatch('createStudy', newTest);
-  isLoading.value = false;
+    // Get the study ID directly from the createStudy action return value
+    const studyId = await store.dispatch('createStudy', newTest);
+    
+    if (!studyId) {
+      showError('studyCreation.details.validation.createFailed');
+      isLoading.value = false;
+      return;
+    }
 
-  const testStore = store.getters.test;
-  store.commit('RESET_STUDY_DETAILS');
+    store.commit('RESET_STUDY_DETAILS');
 
-  if (studyType.value === 'Accessibility') router.push('/sample');
-  else {
-    const methodView = getMethodManagerView(testType, newTest.subType);
-    router.push({ name: methodView, params: { id: testStore } });
+    if (studyType.value === 'Accessibility') {
+      router.push('/sample');
+    } else {
+      const methodView = getMethodManagerView(testType, newTest.subType);
+      if (methodView) {
+        router.push({ name: methodView, params: { id: studyId } });
+      } else {
+        // Fallback: navigate to dashboard if view not found
+        showWarning('studyCreation.details.validation.viewNotFound');
+        router.push({ name: 'admin-dashboard' });
+      }
+    }
+  } catch (error) {
+    console.error('Error creating study:', error);
+    showError('studyCreation.details.validation.createFailed');
+  } finally {
+    isLoading.value = false;
   }
 };
 

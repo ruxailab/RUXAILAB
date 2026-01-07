@@ -947,6 +947,84 @@
           "ベストプラクティス含む"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "基本情報",
+      "studyTitle": "研究タイトル",
+      "enterTitle": "研究の説明的なタイトルを入力してください",
+      "studyDescription": "研究の説明",
+      "enterDescription": "研究の目的と目標を説明してください",
+      "websiteName": "ウェブサイト名",
+      "enterWebsiteName": "ウェブサイト名を入力",
+      "websiteUrl": "ウェブサイトURL（任意）",
+      "enterWebsiteUrl": "ウェブサイトURLを入力",
+      "privacySettings": "プライバシー設定",
+      "controlVisibility": "研究を見ることができる人を制御",
+      "publicStudy": "公開研究",
+      "privateStudy": "非公開研究",
+      "visibleToEveryone": "全員に表示",
+      "onlyInvitedUsers": "招待されたユーザーのみ",
+      "public": "公開",
+      "private": "非公開",
+      "validation": {
+        "enterTitle": "タイトルを入力",
+        "max200Characters": "最大200文字",
+        "max600Characters": "最大600文字",
+        "enterWebsiteName": "ウェブサイト名を入力",
+        "enterWebsiteUrl": "ウェブサイトURLを入力",
+        "urlProtocol": "URLはhttp://またはhttps://で始まる必要があります",
+        "validUrl": "有効なURLを入力してください（例：https://example.com）",
+        "createFailed": "研究の作成に失敗しました。もう一度お試しください。",
+        "viewNotFound": "研究ビューが見つかりません。ダッシュボードにリダイレクトします。"
+      },
+      "status": {
+        "active": "アクティブ",
+        "pending": "保留中",
+        "finished": "完了",
+        "upcoming": "予定"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "非モデレート研究",
+    "moderatedStudy": "モデレート研究",
+    "active": "アクティブ",
+    "draft": "下書き",
+    "completed": "完了",
+    "archived": "アーカイブ済み",
+    "managementModules": "管理モジュール",
+    "managementModulesDescription": "参加者、タスク、設定を管理し、研究データを分析するための包括的なツール",
+    "spaceForAdditionalModules": "追加モジュール用スペース",
+    "overview": {
+      "totalParticipants": "参加者総数",
+      "completed": "完了",
+      "inProgress": "進行中",
+      "averageTime": "平均時間",
+      "completionTime": "完了時間",
+      "rate": "率",
+      "active": "アクティブ"
+    },
+    "participants": {
+      "title": "参加者",
+      "subtitle": "テスト参加概要",
+      "beta": "ベータ",
+      "completed": "完了",
+      "notStarted": "未開始",
+      "pendingInvites": "保留中の招待",
+      "overallProgress": "全体の進捗",
+      "participantsCompleted": "{total}人中{completed}人が完了",
+      "details": "詳細"
+    },
+    "tasks": {
+      "title": "タスク概要",
+      "subtitle": "タスク構造と完了状況",
+      "noTasksConfigured": "タスクが構成されていません",
+      "taskCompletionRate": "タスク完了率",
+      "totalTasks": "総タスク数",
+      "avgTaskDuration": "平均タスク所要時間",
+      "successRate": "成功率",
+      "taskTypes": "タスクタイプ",
+      "viewTasks": "タスクを表示"
     }
   }
 }

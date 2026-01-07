@@ -30,13 +30,13 @@
                     <v-icon start size="16" color="white">
                       mdi-account-check-outline
                     </v-icon>
-                    <span class="text-white">Unmoderated Study</span>
+                    <span class="text-white">{{ $t('studyManager.unmoderatedStudy') }}</span>
                   </v-chip>
                   <v-chip class="status-chip" color="rgba(255,255,255,0.15)" variant="outlined" size="small">
                     <v-icon start size="16" color="white">
                       {{ getStatusIcon(test.testStatus) }}
                     </v-icon>
-                    <span class="text-white">{{ test.testStatus || 'Active' }}</span>
+                    <span class="text-white">{{ test.testStatus || $t('studyManager.active') }}</span>
                   </v-chip>
                 </div>
               </div>
@@ -56,10 +56,10 @@
         <div class="section-header">
           <h2 class="section-title">
             <v-icon class="section-icon">mdi-view-dashboard</v-icon>
-            Management Modules
+            {{ $t('studyManager.managementModules') }}
           </h2>
           <p class="section-description">
-            Comprehensive tools to manage participants, tasks, settings, and analyze your study data
+            {{ $t('studyManager.managementModulesDescription') }}
           </p>
         </div>
 
@@ -85,7 +85,7 @@
                   mdi-plus-circle-outline
                 </v-icon>
                 <p class="text-body-2">
-                  Space for additional modules
+                  {{ $t('studyManager.spaceForAdditionalModules') }}
                 </p>
               </div>
             </v-card>
@@ -134,7 +134,12 @@ const accessLevel = computed(() => {
 })
 
 watchEffect(() => {
-  if (user.value != null && test.value != null && accessLevel.value !== ACCESS_LEVEL.ADMIN) {
+  // Only check access after the study object is fully loaded (not just the ID)
+  // The test.value should be an object with testAdmin property, not just a string ID
+  const currentTest = test.value;
+  const isTestFullyLoaded = currentTest && typeof currentTest === 'object' && currentTest.id;
+  
+  if (user.value != null && isTestFullyLoaded && accessLevel.value !== ACCESS_LEVEL.ADMIN) {
     router.push('/');
   }
 });

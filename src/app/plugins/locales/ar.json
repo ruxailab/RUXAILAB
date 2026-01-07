@@ -989,6 +989,84 @@
           "أفضل الممارسات مضمنة"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "المعلومات الأساسية",
+      "studyTitle": "عنوان الدراسة",
+      "enterTitle": "أدخل عنوانًا وصفيًا لدراستك",
+      "studyDescription": "وصف الدراسة",
+      "enterDescription": "صف الغرض والأهداف من دراستك",
+      "websiteName": "اسم الموقع",
+      "enterWebsiteName": "أدخل اسم الموقع",
+      "websiteUrl": "رابط الموقع (اختياري)",
+      "enterWebsiteUrl": "أدخل رابط الموقع",
+      "privacySettings": "إعدادات الخصوصية",
+      "controlVisibility": "تحكم في من يمكنه رؤية دراستك",
+      "publicStudy": "دراسة عامة",
+      "privateStudy": "دراسة خاصة",
+      "visibleToEveryone": "مرئي للجميع",
+      "onlyInvitedUsers": "المستخدمون المدعوون فقط",
+      "public": "عام",
+      "private": "خاص",
+      "validation": {
+        "enterTitle": "أدخل عنوانًا",
+        "max200Characters": "الحد الأقصى 200 حرف",
+        "max600Characters": "الحد الأقصى 600 حرف",
+        "enterWebsiteName": "أدخل اسم الموقع",
+        "enterWebsiteUrl": "أدخل رابط الموقع",
+        "urlProtocol": "يجب أن يبدأ الرابط بـ http:// أو https://",
+        "validUrl": "أدخل رابطًا صالحًا (مثال: https://example.com)",
+        "createFailed": "فشل إنشاء الدراسة. يرجى المحاولة مرة أخرى.",
+        "viewNotFound": "لم يتم العثور على عرض الدراسة. جاري إعادة التوجيه إلى لوحة التحكم."
+      },
+      "status": {
+        "active": "نشط",
+        "pending": "قيد الانتظار",
+        "finished": "منتهي",
+        "upcoming": "قادم"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "دراسة غير خاضعة للإشراف",
+    "moderatedStudy": "دراسة خاضعة للإشراف",
+    "active": "نشط",
+    "draft": "مسودة",
+    "completed": "مكتمل",
+    "archived": "مؤرشف",
+    "managementModules": "وحدات الإدارة",
+    "managementModulesDescription": "أدوات شاملة لإدارة المشاركين والمهام والإعدادات وتحليل بيانات دراستك",
+    "spaceForAdditionalModules": "مساحة لوحدات إضافية",
+    "overview": {
+      "totalParticipants": "إجمالي المشاركين",
+      "completed": "مكتمل",
+      "inProgress": "قيد التنفيذ",
+      "averageTime": "متوسط الوقت",
+      "completionTime": "وقت الإكمال",
+      "rate": "معدل",
+      "active": "نشط"
+    },
+    "participants": {
+      "title": "المشاركون",
+      "subtitle": "نظرة عامة على المشاركة في الاختبار",
+      "beta": "بيتا",
+      "completed": "مكتمل",
+      "notStarted": "لم يبدأ",
+      "pendingInvites": "دعوات معلقة",
+      "overallProgress": "التقدم العام",
+      "participantsCompleted": "{completed} من {total} مشاركًا أكملوا",
+      "details": "التفاصيل"
+    },
+    "tasks": {
+      "title": "نظرة عامة على المهام",
+      "subtitle": "هيكل المهام والإكمال",
+      "noTasksConfigured": "لا توجد مهام مكونة",
+      "taskCompletionRate": "معدل إكمال المهام",
+      "totalTasks": "إجمالي المهام",
+      "avgTaskDuration": "متوسط مدة المهمة",
+      "successRate": "معدل النجاح",
+      "taskTypes": "أنواع المهام",
+      "viewTasks": "عرض المهام"
     }
   }
 }

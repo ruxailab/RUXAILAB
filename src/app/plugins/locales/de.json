@@ -989,6 +989,84 @@
           "Best Practices enthalten"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "Grundlegende Informationen",
+      "studyTitle": "Studientitel",
+      "enterTitle": "Geben Sie einen beschreibenden Titel für Ihre Studie ein",
+      "studyDescription": "Studienbeschreibung",
+      "enterDescription": "Beschreiben Sie den Zweck und die Ziele Ihrer Studie",
+      "websiteName": "Website-Name",
+      "enterWebsiteName": "Website-Namen eingeben",
+      "websiteUrl": "Website-URL (optional)",
+      "enterWebsiteUrl": "Website-URL eingeben",
+      "privacySettings": "Datenschutzeinstellungen",
+      "controlVisibility": "Legen Sie fest, wer Ihre Studie sehen kann",
+      "publicStudy": "Öffentliche Studie",
+      "privateStudy": "Private Studie",
+      "visibleToEveryone": "Für alle sichtbar",
+      "onlyInvitedUsers": "Nur eingeladene Benutzer",
+      "public": "Öffentlich",
+      "private": "Privat",
+      "validation": {
+        "enterTitle": "Titel eingeben",
+        "max200Characters": "Maximal 200 Zeichen",
+        "max600Characters": "Maximal 600 Zeichen",
+        "enterWebsiteName": "Website-Namen eingeben",
+        "enterWebsiteUrl": "Website-URL eingeben",
+        "urlProtocol": "URL muss mit http:// oder https:// beginnen",
+        "validUrl": "Geben Sie eine gültige URL ein (z.B. https://example.com)",
+        "createFailed": "Studie konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+        "viewNotFound": "Studienansicht nicht gefunden. Weiterleitung zum Dashboard."
+      },
+      "status": {
+        "active": "Aktiv",
+        "pending": "Ausstehend",
+        "finished": "Beendet",
+        "upcoming": "Bevorstehend"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "Unmoderierte Studie",
+    "moderatedStudy": "Moderierte Studie",
+    "active": "Aktiv",
+    "draft": "Entwurf",
+    "completed": "Abgeschlossen",
+    "archived": "Archiviert",
+    "managementModules": "Verwaltungsmodule",
+    "managementModulesDescription": "Umfassende Tools zur Verwaltung von Teilnehmern, Aufgaben, Einstellungen und zur Analyse Ihrer Studiendaten",
+    "spaceForAdditionalModules": "Platz für zusätzliche Module",
+    "overview": {
+      "totalParticipants": "Gesamtteilnehmer",
+      "completed": "Abgeschlossen",
+      "inProgress": "In Bearbeitung",
+      "averageTime": "Durchschnittszeit",
+      "completionTime": "Abschlusszeit",
+      "rate": "Rate",
+      "active": "aktiv"
+    },
+    "participants": {
+      "title": "Teilnehmer",
+      "subtitle": "Testbeteiligung Übersicht",
+      "beta": "Beta",
+      "completed": "Abgeschlossen",
+      "notStarted": "Nicht gestartet",
+      "pendingInvites": "Ausstehende Einladungen",
+      "overallProgress": "Gesamtfortschritt",
+      "participantsCompleted": "{completed} von {total} Teilnehmern abgeschlossen",
+      "details": "Details"
+    },
+    "tasks": {
+      "title": "Aufgabenübersicht",
+      "subtitle": "Aufgabenstruktur und Abschluss",
+      "noTasksConfigured": "Keine Aufgaben konfiguriert",
+      "taskCompletionRate": "Aufgabenabschlussrate",
+      "totalTasks": "Gesamtaufgaben",
+      "avgTaskDuration": "Durchschnittliche Aufgabendauer",
+      "successRate": "Erfolgsrate",
+      "taskTypes": "Aufgabentypen",
+      "viewTasks": "Aufgaben anzeigen"
     }
   }
 }

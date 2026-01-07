@@ -1057,15 +1057,15 @@
     "details": {
       "basicInformation": "Información Básica",
       "studyTitle": "Título del Estudio",
-      "enterTitle": "Ingresa un título descriptivo para tu estudio",
+      "enterTitle": "Ingrese un título descriptivo para su estudio",
       "studyDescription": "Descripción del Estudio",
-      "enterDescription": "Describe el propósito y los objetivos de tu estudio",
+      "enterDescription": "Describa el propósito y los objetivos de su estudio",
       "websiteName": "Nombre del Sitio Web",
-      "enterWebsiteName": "Ingresa el nombre del sitio web",
+      "enterWebsiteName": "Ingrese el nombre del sitio web",
       "websiteUrl": "URL del Sitio Web (opcional)",
-      "enterWebsiteUrl": "Ingresa la URL del sitio web",
-      "privacySettings": "Configuraciones de Privacidad",
-      "controlVisibility": "Controla quién puede ver tu estudio",
+      "enterWebsiteUrl": "Ingrese la URL del sitio web",
+      "privacySettings": "Configuración de Privacidad",
+      "controlVisibility": "Controle quién puede ver su estudio",
       "publicStudy": "Estudio Público",
       "privateStudy": "Estudio Privado",
       "visibleToEveryone": "Visible para todos",
@@ -1073,13 +1073,15 @@
       "public": "Público",
       "private": "Privado",
       "validation": {
-        "enterTitle": "Ingresa un título",
+        "enterTitle": "Ingrese un título",
         "max200Characters": "Máximo 200 caracteres",
         "max600Characters": "Máximo 600 caracteres",
-        "enterWebsiteName": "Ingresa el nombre del sitio web",
-        "enterWebsiteUrl": "Ingresa la URL del sitio web",
+        "enterWebsiteName": "Ingrese el nombre del sitio web",
+        "enterWebsiteUrl": "Ingrese la URL del sitio web",
         "urlProtocol": "La URL debe comenzar con http:// o https://",
-        "validUrl": "Ingresa una URL válida (por ejemplo, https://ejemplo.com)"
+        "validUrl": "Ingrese una URL válida (ej: https://example.com)",
+        "createFailed": "Error al crear el estudio. Por favor, inténtelo de nuevo.",
+        "viewNotFound": "No se encontró la vista del estudio. Redirigiendo al panel de control."
       },
       "status": {
         "active": "Activo",
@@ -1195,6 +1197,48 @@
     "blogPosts": {
       "title": "Últimas publicaciones del blog",
       "viewBlog": "Ver Blog"
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "Estudio no moderado",
+    "moderatedStudy": "Estudio moderado",
+    "active": "Activo",
+    "draft": "Borrador",
+    "completed": "Completado",
+    "archived": "Archivado",
+    "managementModules": "Módulos de gestión",
+    "managementModulesDescription": "Herramientas completas para gestionar participantes, tareas, configuraciones y analizar los datos de su estudio",
+    "spaceForAdditionalModules": "Espacio para módulos adicionales",
+    "overview": {
+      "totalParticipants": "Total de participantes",
+      "completed": "Completado",
+      "inProgress": "En progreso",
+      "averageTime": "Tiempo promedio",
+      "completionTime": "Tiempo de finalización",
+      "rate": "tasa",
+      "active": "activo"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Resumen de participación en pruebas",
+      "beta": "Beta",
+      "completed": "Completado",
+      "notStarted": "No iniciado",
+      "pendingInvites": "Invitaciones pendientes",
+      "overallProgress": "Progreso general",
+      "participantsCompleted": "{completed} de {total} participantes completados",
+      "details": "Detalles"
+    },
+    "tasks": {
+      "title": "Resumen de tareas",
+      "subtitle": "Estructura y finalización de tareas",
+      "noTasksConfigured": "No hay tareas configuradas",
+      "taskCompletionRate": "Tasa de finalización de tareas",
+      "totalTasks": "Total de tareas",
+      "avgTaskDuration": "Duración promedio de tareas",
+      "successRate": "Tasa de éxito",
+      "taskTypes": "Tipos de tareas",
+      "viewTasks": "Ver tareas"
     }
   }
 }

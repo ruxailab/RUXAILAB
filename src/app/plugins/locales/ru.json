@@ -970,6 +970,84 @@
           "Лучшие практики включены"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "Основная информация",
+      "studyTitle": "Название исследования",
+      "enterTitle": "Введите описательное название для вашего исследования",
+      "studyDescription": "Описание исследования",
+      "enterDescription": "Опишите цель и задачи вашего исследования",
+      "websiteName": "Название сайта",
+      "enterWebsiteName": "Введите название сайта",
+      "websiteUrl": "URL сайта (необязательно)",
+      "enterWebsiteUrl": "Введите URL сайта",
+      "privacySettings": "Настройки конфиденциальности",
+      "controlVisibility": "Контролируйте, кто может видеть ваше исследование",
+      "publicStudy": "Публичное исследование",
+      "privateStudy": "Частное исследование",
+      "visibleToEveryone": "Видно всем",
+      "onlyInvitedUsers": "Только приглашённые пользователи",
+      "public": "Публичное",
+      "private": "Частное",
+      "validation": {
+        "enterTitle": "Введите название",
+        "max200Characters": "Максимум 200 символов",
+        "max600Characters": "Максимум 600 символов",
+        "enterWebsiteName": "Введите название сайта",
+        "enterWebsiteUrl": "Введите URL сайта",
+        "urlProtocol": "URL должен начинаться с http:// или https://",
+        "validUrl": "Введите корректный URL (например, https://example.com)",
+        "createFailed": "Не удалось создать исследование. Пожалуйста, попробуйте снова.",
+        "viewNotFound": "Представление исследования не найдено. Перенаправление на панель управления."
+      },
+      "status": {
+        "active": "Активно",
+        "pending": "Ожидание",
+        "finished": "Завершено",
+        "upcoming": "Предстоящее"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "Немодерируемое исследование",
+    "moderatedStudy": "Модерируемое исследование",
+    "active": "Активно",
+    "draft": "Черновик",
+    "completed": "Завершено",
+    "archived": "В архиве",
+    "managementModules": "Модули управления",
+    "managementModulesDescription": "Комплексные инструменты для управления участниками, задачами, настройками и анализа данных вашего исследования",
+    "spaceForAdditionalModules": "Место для дополнительных модулей",
+    "overview": {
+      "totalParticipants": "Всего участников",
+      "completed": "Завершено",
+      "inProgress": "В процессе",
+      "averageTime": "Среднее время",
+      "completionTime": "Время завершения",
+      "rate": "показатель",
+      "active": "активно"
+    },
+    "participants": {
+      "title": "Участники",
+      "subtitle": "Обзор участия в тесте",
+      "beta": "Бета",
+      "completed": "Завершено",
+      "notStarted": "Не начато",
+      "pendingInvites": "Ожидающие приглашения",
+      "overallProgress": "Общий прогресс",
+      "participantsCompleted": "{completed} из {total} участников завершили",
+      "details": "Подробности"
+    },
+    "tasks": {
+      "title": "Обзор задач",
+      "subtitle": "Структура и выполнение задач",
+      "noTasksConfigured": "Задачи не настроены",
+      "taskCompletionRate": "Процент выполнения задач",
+      "totalTasks": "Всего задач",
+      "avgTaskDuration": "Средняя продолжительность задачи",
+      "successRate": "Показатель успеха",
+      "taskTypes": "Типы задач",
+      "viewTasks": "Просмотреть задачи"
     }
   }
 }

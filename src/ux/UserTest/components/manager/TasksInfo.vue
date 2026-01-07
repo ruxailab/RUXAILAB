@@ -11,8 +11,8 @@
             <v-icon color="white" size="24">mdi-format-list-checks</v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">Tasks Overview</h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">Task structure and completion</p>
+            <h3 class="text-h6 text-white mb-0">{{ $t('studyManager.tasks.title') }}</h3>
+            <p class="text-body-2 text-white opacity-90 mb-0">{{ $t('studyManager.tasks.subtitle') }}</p>
           </div>
         </div>
         <v-chip
@@ -22,7 +22,7 @@
           class="border-white text-white"
         >
           <v-icon start size="16">mdi-flask</v-icon>
-          Beta
+          {{ $t('studyManager.participants.beta') }}
         </v-chip>
       </div>
     </div>
@@ -30,13 +30,13 @@
     <v-card-text class="pa-4">
       <div v-if="!hasUserTasks" class="text-center text-medium-emphasis py-8">
         <v-icon size="48" color="grey-lighten-1">mdi-clipboard-text-outline</v-icon>
-        <div class="text-body-2 mt-2">No tasks configured</div>
+        <div class="text-body-2 mt-2">{{ $t('studyManager.tasks.noTasksConfigured') }}</div>
       </div>
       
       <div v-else>
         <div class="mb-4">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-body-2">Task Completion Rate</span>
+            <span class="text-body-2">{{ $t('studyManager.tasks.taskCompletionRate') }}</span>
             <span class="text-body-2 font-weight-bold">{{ overallCompletionRate }}%</span>
           </div>
           <v-progress-linear 
@@ -49,7 +49,7 @@
         
         <div class="mb-3">
           <div class="d-flex justify-space-between align-center">
-            <span class="text-body-2">Total Tasks</span>
+            <span class="text-body-2">{{ $t('studyManager.tasks.totalTasks') }}</span>
             <v-chip size="small" color="primary" variant="outlined">
               {{ totalTasks }}
             </v-chip>
@@ -58,7 +58,7 @@
         
         <div class="mb-3">
           <div class="d-flex justify-space-between align-center">
-            <span class="text-body-2">Avg. Task Duration</span>
+            <span class="text-body-2">{{ $t('studyManager.tasks.avgTaskDuration') }}</span>
             <v-chip size="small" color="info" variant="outlined">
               {{ averageTaskDuration }}
             </v-chip>
@@ -67,7 +67,7 @@
         
         <div class="mb-3">
           <div class="d-flex justify-space-between align-center">
-            <span class="text-body-2">Success Rate</span>
+            <span class="text-body-2">{{ $t('studyManager.tasks.successRate') }}</span>
             <v-chip size="small" color="success" variant="outlined">
               {{ taskSuccessRate }}%
             </v-chip>
@@ -76,7 +76,7 @@
         
         <!-- Task Types Summary -->
         <div v-if="taskTypes.length > 0" class="mt-4">
-          <div class="text-caption text-medium-emphasis mb-2">Task Types</div>
+          <div class="text-caption text-medium-emphasis mb-2">{{ $t('studyManager.tasks.taskTypes') }}</div>
           <div class="d-flex flex-wrap gap-1">
             <v-chip
               v-for="type in taskTypes"
@@ -100,7 +100,7 @@
         color="primary"
         @click="viewTasks"
       >
-        View Tasks
+        {{ $t('studyManager.tasks.viewTasks') }}
       </v-btn>
     </v-card-actions>
   </v-card>

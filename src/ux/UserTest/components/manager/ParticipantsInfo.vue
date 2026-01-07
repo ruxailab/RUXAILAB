@@ -11,8 +11,8 @@
             <v-icon color="white" size="24">mdi-account-group</v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">Participants</h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">Test participation overview</p>
+            <h3 class="text-h6 text-white mb-0">{{ $t('studyManager.participants.title') }}</h3>
+            <p class="text-body-2 text-white opacity-90 mb-0">{{ $t('studyManager.participants.subtitle') }}</p>
           </div>
         </div>
         <v-chip
@@ -22,7 +22,7 @@
           class="border-white text-white"
         >
           <v-icon start size="16">mdi-flask</v-icon>
-          Beta
+          {{ $t('studyManager.participants.beta') }}
         </v-chip>
       </div>
     </div>
@@ -33,21 +33,21 @@
         <div class="stat-box stat-box-primary">
           <div class="stat-content">
             <div class="stat-number">{{ completedParticipants }}</div>
-            <div class="stat-label">Completed</div>
+            <div class="stat-label">{{ $t('studyManager.participants.completed') }}</div>
           </div>
         </div>
         
         <div class="stat-box stat-box-primary">
           <div class="stat-content">
             <div class="stat-number">{{ notStartedParticipants }}</div>
-            <div class="stat-label">Not Started</div>
+            <div class="stat-label">{{ $t('studyManager.participants.notStarted') }}</div>
           </div>
         </div>
         
         <div class="stat-box stat-box-primary">
           <div class="stat-content">
             <div class="stat-number">{{ pendingInvitations.length }}</div>
-            <div class="stat-label">Pending Invites</div>
+            <div class="stat-label">{{ $t('studyManager.participants.pendingInvites') }}</div>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
       <!-- Simple Progress Bar -->
       <div class="mt-4">
         <div class="d-flex justify-space-between align-center mb-2">
-          <span class="text-body-2">Overall Progress</span>
+          <span class="text-body-2">{{ $t('studyManager.participants.overallProgress') }}</span>
           <span class="text-body-2 font-weight-bold">{{ completionPercentage }}%</span>
         </div>
         <v-progress-linear 
@@ -66,7 +66,7 @@
           class="mb-2"
         />
         <div class="text-caption text-medium-emphasis text-center">
-          {{ completedParticipants }} of {{ totalParticipants }} participants completed
+          {{ completedParticipants }} / {{ totalParticipants }}
         </div>
       </div>
     </v-card-text>
@@ -81,7 +81,7 @@
         @click="viewParticipants"
       >
         <v-icon start size="14">mdi-eye</v-icon>
-        Details
+        {{ $t('studyManager.participants.details') }}
       </v-btn>
     </v-card-actions>
   </v-card>

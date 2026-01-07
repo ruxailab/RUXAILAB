@@ -970,6 +970,84 @@
           "包含最佳实践"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "基本信息",
+      "studyTitle": "研究标题",
+      "enterTitle": "为您的研究输入一个描述性标题",
+      "studyDescription": "研究描述",
+      "enterDescription": "描述您研究的目的和目标",
+      "websiteName": "网站名称",
+      "enterWebsiteName": "输入网站名称",
+      "websiteUrl": "网站URL（可选）",
+      "enterWebsiteUrl": "输入网站URL",
+      "privacySettings": "隐私设置",
+      "controlVisibility": "控制谁可以查看您的研究",
+      "publicStudy": "公开研究",
+      "privateStudy": "私人研究",
+      "visibleToEveryone": "对所有人可见",
+      "onlyInvitedUsers": "仅限受邀用户",
+      "public": "公开",
+      "private": "私人",
+      "validation": {
+        "enterTitle": "输入标题",
+        "max200Characters": "最多200个字符",
+        "max600Characters": "最多600个字符",
+        "enterWebsiteName": "输入网站名称",
+        "enterWebsiteUrl": "输入网站URL",
+        "urlProtocol": "URL必须以http://或https://开头",
+        "validUrl": "输入有效的URL（例如：https://example.com）",
+        "createFailed": "创建研究失败。请重试。",
+        "viewNotFound": "找不到研究视图。正在重定向到仪表板。"
+      },
+      "status": {
+        "active": "活跃",
+        "pending": "待处理",
+        "finished": "已完成",
+        "upcoming": "即将到来"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "无主持人研究",
+    "moderatedStudy": "有主持人研究",
+    "active": "活跃",
+    "draft": "草稿",
+    "completed": "已完成",
+    "archived": "已归档",
+    "managementModules": "管理模块",
+    "managementModulesDescription": "全面的工具，用于管理参与者、任务、设置并分析您的研究数据",
+    "spaceForAdditionalModules": "额外模块空间",
+    "overview": {
+      "totalParticipants": "参与者总数",
+      "completed": "已完成",
+      "inProgress": "进行中",
+      "averageTime": "平均时间",
+      "completionTime": "完成时间",
+      "rate": "率",
+      "active": "活跃"
+    },
+    "participants": {
+      "title": "参与者",
+      "subtitle": "测试参与概览",
+      "beta": "测试版",
+      "completed": "已完成",
+      "notStarted": "未开始",
+      "pendingInvites": "待处理邀请",
+      "overallProgress": "总体进度",
+      "participantsCompleted": "{total}名参与者中{completed}名已完成",
+      "details": "详情"
+    },
+    "tasks": {
+      "title": "任务概览",
+      "subtitle": "任务结构和完成情况",
+      "noTasksConfigured": "未配置任务",
+      "taskCompletionRate": "任务完成率",
+      "totalTasks": "总任务数",
+      "avgTaskDuration": "平均任务时长",
+      "successRate": "成功率",
+      "taskTypes": "任务类型",
+      "viewTasks": "查看任务"
     }
   }
 }

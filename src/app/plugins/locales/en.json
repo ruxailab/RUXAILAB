@@ -1095,7 +1095,9 @@
         "enterWebsiteName": "Enter website name",
         "enterWebsiteUrl": "Enter website URL",
         "urlProtocol": "URL must start with http:// or https://",
-        "validUrl": "Enter a valid URL (e.g., https://example.com)"
+        "validUrl": "Enter a valid URL (e.g., https://example.com)",
+        "createFailed": "Failed to create study. Please try again.",
+        "viewNotFound": "Could not find study view. Redirecting to dashboard."
       },
       "status": {
         "active": "Active",
@@ -1215,6 +1217,48 @@
     "blogPosts": {
       "title": "Latest Blog Posts",
       "viewBlog": "View Blog"
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "Unmoderated Study",
+    "moderatedStudy": "Moderated Study",
+    "active": "Active",
+    "draft": "Draft",
+    "completed": "Completed",
+    "archived": "Archived",
+    "managementModules": "Management Modules",
+    "managementModulesDescription": "Comprehensive tools to manage participants, tasks, settings, and analyze your study data",
+    "spaceForAdditionalModules": "Space for additional modules",
+    "overview": {
+      "totalParticipants": "Total Participants",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "averageTime": "Average Time",
+      "completionTime": "Completion time",
+      "rate": "rate",
+      "active": "active"
+    },
+    "participants": {
+      "title": "Participants",
+      "subtitle": "Test participation overview",
+      "beta": "Beta",
+      "completed": "Completed",
+      "notStarted": "Not Started",
+      "pendingInvites": "Pending Invites",
+      "overallProgress": "Overall Progress",
+      "participantsCompleted": "{completed} of {total} participants completed",
+      "details": "Details"
+    },
+    "tasks": {
+      "title": "Tasks Overview",
+      "subtitle": "Task structure and completion",
+      "noTasksConfigured": "No tasks configured",
+      "taskCompletionRate": "Task Completion Rate",
+      "totalTasks": "Total Tasks",
+      "avgTaskDuration": "Avg. Task Duration",
+      "successRate": "Success Rate",
+      "taskTypes": "Task Types",
+      "viewTasks": "View Tasks"
     }
   }
 }

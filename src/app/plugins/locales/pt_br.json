@@ -1097,6 +1097,84 @@
           "Melhores práticas incluídas"
         ]
       }
+    },
+    "details": {
+      "basicInformation": "Informações Básicas",
+      "studyTitle": "Título do Estudo",
+      "enterTitle": "Digite um título descritivo para seu estudo",
+      "studyDescription": "Descrição do Estudo",
+      "enterDescription": "Descreva o propósito e os objetivos do seu estudo",
+      "websiteName": "Nome do Site",
+      "enterWebsiteName": "Digite o nome do site",
+      "websiteUrl": "URL do Site (opcional)",
+      "enterWebsiteUrl": "Digite a URL do site",
+      "privacySettings": "Configurações de Privacidade",
+      "controlVisibility": "Controle quem pode ver seu estudo",
+      "publicStudy": "Estudo Público",
+      "privateStudy": "Estudo Privado",
+      "visibleToEveryone": "Visível para todos",
+      "onlyInvitedUsers": "Apenas usuários convidados",
+      "public": "Público",
+      "private": "Privado",
+      "validation": {
+        "enterTitle": "Digite um título",
+        "max200Characters": "Máximo 200 caracteres",
+        "max600Characters": "Máximo 600 caracteres",
+        "enterWebsiteName": "Digite o nome do site",
+        "enterWebsiteUrl": "Digite a URL do site",
+        "urlProtocol": "A URL deve começar com http:// ou https://",
+        "validUrl": "Digite uma URL válida (ex: https://example.com)",
+        "createFailed": "Falha ao criar estudo. Por favor, tente novamente.",
+        "viewNotFound": "Visualização do estudo não encontrada. Redirecionando para o painel."
+      },
+      "status": {
+        "active": "Ativo",
+        "pending": "Pendente",
+        "finished": "Concluído",
+        "upcoming": "Próximo"
+      }
+    }
+  },
+  "studyManager": {
+    "unmoderatedStudy": "Estudo não moderado",
+    "moderatedStudy": "Estudo moderado",
+    "active": "Ativo",
+    "draft": "Rascunho",
+    "completed": "Concluído",
+    "archived": "Arquivado",
+    "managementModules": "Módulos de Gerenciamento",
+    "managementModulesDescription": "Ferramentas abrangentes para gerenciar participantes, tarefas, configurações e analisar os dados do seu estudo",
+    "spaceForAdditionalModules": "Espaço para módulos adicionais",
+    "overview": {
+      "totalParticipants": "Total de Participantes",
+      "completed": "Concluído",
+      "inProgress": "Em Andamento",
+      "averageTime": "Tempo Médio",
+      "completionTime": "Tempo de conclusão",
+      "rate": "taxa",
+      "active": "ativo"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Visão geral da participação no teste",
+      "beta": "Beta",
+      "completed": "Concluído",
+      "notStarted": "Não Iniciado",
+      "pendingInvites": "Convites Pendentes",
+      "overallProgress": "Progresso Geral",
+      "participantsCompleted": "{completed} de {total} participantes concluídos",
+      "details": "Detalhes"
+    },
+    "tasks": {
+      "title": "Visão Geral das Tarefas",
+      "subtitle": "Estrutura e conclusão de tarefas",
+      "noTasksConfigured": "Nenhuma tarefa configurada",
+      "taskCompletionRate": "Taxa de Conclusão de Tarefas",
+      "totalTasks": "Total de Tarefas",
+      "avgTaskDuration": "Duração Média da Tarefa",
+      "successRate": "Taxa de Sucesso",
+      "taskTypes": "Tipos de Tarefas",
+      "viewTasks": "Ver Tarefas"
     }
   }
 }
