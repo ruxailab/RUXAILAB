@@ -9,7 +9,8 @@ export function useCooperatorUtils() {
     const roleOptions = computed(() => [
         { title: 'Administrator', value: 0 },
         { title: 'Evaluator', value: 1 },
-        { title: 'Guest', value: 2 }
+        { title: 'Observator', value: 2 },
+        { title: 'Guest', value: 3 }
     ]);
 
     // Status filter options
@@ -28,6 +29,7 @@ export function useCooperatorUtils() {
         switch (role.toLowerCase()) {
             case 'administrator': return 'primary';
             case 'evaluator': return 'success';
+            case 'observator': return 'info';
             case 'guest': return 'warning';
             default: return 'grey';
         }
@@ -37,6 +39,7 @@ export function useCooperatorUtils() {
         switch (role.toLowerCase()) {
             case 'administrator': return 'mdi-crown';
             case 'evaluator': return 'mdi-account-check';
+            case 'observator': return 'mdi-eye';
             case 'guest': return 'mdi-account';
             default: return 'mdi-account';
         }
