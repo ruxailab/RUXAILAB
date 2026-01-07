@@ -1,6 +1,4 @@
 <template>
-  <LoadingOverlay :is-visible="loading" message="Loading reports..." />
-  
   <PageWrapper
     :title="showIntroView ? $t('HeuristicsReport.titles.reports_dashboard') : ''"
     :side-gap="true"
@@ -224,7 +222,6 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import Intro from '@/shared/components/introduction_cards/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import LoadingOverlay from '@/shared/components/LoadingOverlay.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
 import { showSuccess } from '../utils/toast';
