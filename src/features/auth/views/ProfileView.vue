@@ -462,9 +462,11 @@
               {{ $t('profile.finalStepVerifyIdentity') }}
             </v-alert>
             <p class="text-center font-weight-bold mb-4">
-              {{ $t('profile.enterPasswordForAccountDeletion') }}
+              {{ hasEmailPasswordProvider ? $t('profile.enterPasswordForAccountDeletion') : 'Please verify with Google to confirm account deletion' }}
             </p>
+            <!-- Only show password field for email/password users -->
             <v-text-field
+              v-if="hasEmailPasswordProvider"
               v-model="userPassword"
               :label="$t('profile.yourPassword')"
               type="password"
@@ -491,7 +493,7 @@
               variant="flat"
               class="text-capitalize"
               :loading="isDeleting"
-              :disabled="!userPassword || isDeleting"
+              :disabled="(hasEmailPasswordProvider && !userPassword) || isDeleting"
               min-width="120"
               @click="handlerDeleteAccount"
             >
@@ -513,11 +515,7 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from 'vue-toastification';
 import {
   getAuth,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
   updatePassword,
-  reauthenticateWithPopup,
-  GoogleAuthProvider,
 } from 'firebase/auth';
 import {
   getFirestore,
@@ -527,12 +525,17 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { countries } from '@/shared/constants/countries';
+import AuthController from '@/features/auth/controllers/AuthController';
 
 const store = useStore();
 const user = computed(() => store.getters.user || { email: '' });
 
 const { t } = useI18n();
 const toast = useToast();
+const authController = new AuthController();
+
+// Track if user has email/password provider
+const hasEmailPasswordProvider = ref(false);
 
 const userprofile = ref({
   profileImage: null,
@@ -763,48 +766,76 @@ const changePassword = async () => {
   }
 };
 
-const handlerDeleteConfirmText = async (value) => {
+// Function to check if user has email/password provider
+const checkUserProvider = () => {
   const auth = getAuth();
-  const user = auth.currentUser;
-  if (user.providerData.includes(a => a.providerId !== 'google.com')) {
-    deleteStep.value = 2;
+  const firebaseUser = auth.currentUser;
+  if (!firebaseUser) {
+    hasEmailPasswordProvider.value = false;
     return;
   }
-  try {
-    isDeleting.value = true
-    await reauthenticateWithPopup(user, new GoogleAuthProvider())
-    return await deleteAccount(user)
-  } catch (error) {
-    console.error('Error during account deletion:', error)
-    toast.error(t('profile.accountDeletionFailed'))
-  } finally {
-    isDeleting.value = false
-    deleteAccountDialog.value = false
-  }
+  hasEmailPasswordProvider.value = firebaseUser.providerData.some(
+    provider => provider.providerId !== 'google.com'
+  );
+  console.log('User has email/password provider:', hasEmailPasswordProvider.value);
 };
 
-const deleteAccount = async (user) => {
-  await store.dispatch('deleteAuth', user.uid)
-  toast.success(t('profile.accountDeletedSuccess'))
-  signOut()
+const handlerDeleteConfirmText = async () => {
+  const auth = getAuth();
+  const firebaseUser = auth.currentUser;
+  
+  if (!firebaseUser) {
+    toast.error('User session expired. Please login again.');
+    signOut();
+    return;
+  }
+
+  try {
+    isDeleting.value = true;
+    // Check provider type before moving to password step
+    checkUserProvider();
+    deleteStep.value = 2;
+  } catch (error) {
+    console.error('Error in delete confirmation:', error);
+    toast.error(error.message || 'An error occurred');
+  } finally {
+    isDeleting.value = false;
+  }
 };
 
 const handlerDeleteAccount = async () => {
-  const auth = getAuth()
-  const user = auth.currentUser
-  if (!userPassword.value) return toast.error(t('profile.passwordRequired'))
+  const auth = getAuth();
+  const firebaseUser = auth.currentUser;
+  
+  if (!firebaseUser) {
+    toast.error('User session expired. Please login again.');
+    signOut();
+    return;
+  }
+
+  // Only require password for email/password users
+  if (hasEmailPasswordProvider.value && !userPassword.value) {
+    return toast.error(t('profile.passwordRequired'));
+  }
 
   try {
-    isDeleting.value = true
-    const cred = EmailAuthProvider.credential(user.email, userPassword.value)
-    await reauthenticateWithCredential(user, cred)
-    await deleteAccount(user)
+    isDeleting.value = true;
+    // Call AuthController to handle ALL deletion logic
+    // Pass password only if user has email/password provider
+    const password = hasEmailPasswordProvider.value ? userPassword.value : null;
+    await authController.deleteUserAccount(firebaseUser, password);
+    toast.success('Account deleted successfully');
+    signOut();
   } catch (error) {
-    console.error('Error during account deletion:', error)
-    toast.error(t('profile.accountDeletionFailed'))
+    console.error('Error deleting account:', error);
+    if (error.code === 'auth/wrong-password') {
+      toast.error('Incorrect password. Please try again.');
+    } else {
+      toast.error(error.message || 'Failed to delete account. Please try again.');
+    }
   } finally {
-    isDeleting.value = false
-    deleteAccountDialog.value = false
+    isDeleting.value = false;
+    deleteAccountDialog.value = false;
   }
 };
 

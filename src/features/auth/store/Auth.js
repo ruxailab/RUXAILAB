@@ -88,7 +88,20 @@ export default {
           payload.rememberMe
         )
 
-        const dbUser = await userController.getById(user.uid)
+        // Try to get user from database
+        let dbUser = null
+        try {
+          dbUser = await userController.getById(user.uid)
+        } catch (error) {
+          // User doesn't exist in DB, create one
+          console.log('User not found in database, creating new profile')
+          await userController.create({
+            id: user.uid,
+            email: user.email,
+            createdAt: new Date().toISOString(),
+          })
+          dbUser = await userController.getById(user.uid)
+        }
 
         commit('SET_USER', dbUser)
 
@@ -98,7 +111,11 @@ export default {
         })
 
       } catch (err) {
-        showError('errors.incorrectCredential')
+        // Show error message from AuthController if available
+        commit('SET_TOAST', {
+          message: err.message || i18n.global.t('errors.incorrectCredential'),
+          type: 'error',
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -173,7 +190,21 @@ export default {
         const user = await authController.autoSignIn()
         if (!user) return
 
-        const dbUser = await userController.getById(user.uid)
+        // Try to get user from database
+        let dbUser = null
+        try {
+          dbUser = await userController.getById(user.uid)
+        } catch (error) {
+          // User doesn't exist in DB, create one
+          console.log('User not found in database during autoSignIn, creating new profile')
+          await userController.create({
+            id: user.uid,
+            email: user.email,
+            createdAt: new Date().toISOString(),
+          })
+          dbUser = await userController.getById(user.uid)
+        }
+
         commit('SET_USER', dbUser)
       } catch (e) {
         console.error(e)
