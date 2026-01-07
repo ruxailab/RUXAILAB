@@ -67,7 +67,53 @@
     "viewAll": "Alle anzeigen",
     "sentBy": "Gesendet von",
     "new": "NEU",
-    "test": "eine Studie"
+    "test": "eine Studie",
+    "search": {
+      "searchSessions": "Sitzungen suchen...",
+      "searchStudies": "Studien suchen...",
+      "searchTemplates": "Vorlagen suchen...",
+      "selectRange": "Bereich auswählen"
+    },
+    "buttons": {
+      "reset": "Zurücksetzen"
+    },
+    "filters": {
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "sessionDate": "Sitzungsdatum",
+      "status": "Status",
+      "creationDate": "Erstellungsdatum",
+      "visibility": "Sichtbarkeit",
+      "method": "Methode"
+    },
+    "filterOptions": {
+      "allStudies": "Alle Studien",
+      "myStudies": "Meine Studien",
+      "whereICollaborate": "Wo ich mitarbeite",
+      "all": "Alle",
+      "allStatuses": "Alle Status",
+      "today": "Heute",
+      "upcoming": "Bevorstehend",
+      "completed": "Abgeschlossen",
+      "allMethods": "Alle Methoden",
+      "public": "Öffentlich",
+      "private": "Privat",
+      "allVisibility": "Alle"
+    },
+    "emptyStates": {
+      "noActiveSessions": "Sie haben keine aktiven Sitzungen",
+      "noStudiesFound": "Keine Studien gefunden",
+      "noTemplatesFound": "Keine Vorlagen gefunden"
+    },
+    "table": {
+      "type": "Typ",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Besitzer",
+      "participants": "Teilnehmer",
+      "created": "Erstellt",
+      "itemsPerPage": "Elemente pro Seite:"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -1067,6 +1113,69 @@
       "successRate": "Erfolgsrate",
       "taskTypes": "Aufgabentypen",
       "viewTasks": "Aufgaben anzeigen"
+    },
+    "storage": {
+      "title": "Speichernutzung",
+      "subtitle": "Mediendateien und Speichermetriken",
+      "storageUsed": "Speicher verwendet",
+      "ofUsed": "{used} von {quota} verwendet",
+      "mediaFiles": "Mediendateien",
+      "videoRecordings": "Videoaufnahmen",
+      "audioRecordings": "Audioaufnahmen",
+      "screenRecordings": "Bildschirmaufnahmen",
+      "storageBreakdown": "Speicheraufschlüsselung",
+      "responsesData": "Antwortdaten",
+      "analyticsData": "Analysedaten",
+      "manageStorage": "Speicher verwalten"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "Testtitel",
+      "testTitlePlaceholder": "Geben Sie einen beschreibenden Titel für Ihren Test ein",
+      "testCategory": "Testkategorie",
+      "testCategoryPlaceholder": "Wählen Sie die Art des Tests, den Sie durchführen",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Geben Sie detaillierte Informationen zu Ihren Testzielen, der Methodik und den erwarteten Ergebnissen an",
+      "usabilityUserTest": "Usability-Benutzertest",
+      "manualAccessibilityTest": "Manueller Barrierefreiheitstest",
+      "automaticAccessibilityTest": "Automatischer Barrierefreiheitstest",
+      "max200Characters": "Maximal 200 Zeichen"
+    }
+  },
+  "lists": {
+    "searchSessions": "Sitzungen suchen...",
+    "searchStudies": "Studien suchen...",
+    "searchTemplates": "Vorlagen suchen...",
+    "reset": "Zurücksetzen",
+    "selectRange": "Bereich auswählen",
+    "ownership": "Eigentum",
+    "evaluator": "Bewerter",
+    "sessionDate": "Sitzungsdatum",
+    "status": "Status",
+    "creationDate": "Erstellungsdatum",
+    "visibility": "Sichtbarkeit",
+    "method": "Methode",
+    "allStudies": "Alle Studien",
+    "myStudies": "Meine Studien",
+    "whereICollaborate": "Wo ich mitarbeite",
+    "all": "Alle",
+    "allStatuses": "Alle Status",
+    "today": "Heute",
+    "upcoming": "Bevorstehend",
+    "completed": "Abgeschlossen",
+    "allMethods": "Alle Methoden",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "noActiveSessions": "Sie haben keine aktiven Sitzungen",
+    "noStudiesFound": "Keine Studien gefunden",
+    "noTemplatesFound": "Keine Vorlagen gefunden",
+    "type": "Typ",
+    "name": "Name",
+    "tags": "Tags",
+    "owner": "Besitzer",
+    "participants": "Teilnehmer",
+    "created": "Erstellt",
+    "itemsPerPage": "Elemente pro Seite:"
   }
 }

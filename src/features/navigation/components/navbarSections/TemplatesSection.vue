@@ -8,7 +8,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search templates..."
+        :placeholder="$t('lists.searchTemplates')"
         class="flex-grow-1"
       />
       <v-btn
@@ -18,7 +18,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('lists.reset') }}
       </v-btn>
 
       <v-btn
@@ -38,7 +38,7 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">{{ $t('lists.creationDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -55,7 +55,7 @@
                   hide-details
                   :placeholder="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
+                    : $t('lists.selectRange')"
                   :model-value="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : ''"
@@ -68,7 +68,7 @@
 
           <!-- 🧭 Method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('lists.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -103,25 +103,27 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
 
 const store = useStore()
+const { t } = useI18n()
 
 const tempDialog = ref(false)
 const temp = ref({})
 const templates = computed(() => store.state.Templates.templates || [])
 
 // ===== Filters =====
-const methodOptions = [
-  { title: 'All', value: 'all' },
-  { title: 'Heuristic Evaluation', value: METHOD_DEFINITIONS.HEURISTICS.id },
-  { title: 'User Study (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
-  { title: 'User Study (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
-  { title: 'Manual Accessibility', value: 'MANUAL' },
-  { title: 'Automatic Accessibility', value: 'AUTOMATIC' }
-]
+const methodOptions = computed(() => [
+  { title: t('lists.all'), value: 'all' },
+  { title: t('titles.heuristic'), value: METHOD_DEFINITIONS.HEURISTICS.id },
+  { title: t('studySettings.form.usabilityUserTest') + ' (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
+  { title: t('studySettings.form.usabilityUserTest') + ' (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
+  { title: t('studySettings.form.manualAccessibilityTest'), value: 'MANUAL' },
+  { title: t('studySettings.form.automaticAccessibilityTest'), value: 'AUTOMATIC' }
+])
 
 const search = ref('')
 const showFilters = ref(false)

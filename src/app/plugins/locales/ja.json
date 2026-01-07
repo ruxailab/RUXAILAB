@@ -48,7 +48,53 @@
     "viewAll": "すべて表示",
     "sentBy": "送信者",
     "new": "新着",
-    "test": "テスト"
+    "test": "テスト",
+    "search": {
+      "searchSessions": "セッションを検索...",
+      "searchStudies": "研究を検索...",
+      "searchTemplates": "テンプレートを検索...",
+      "selectRange": "範囲を選択"
+    },
+    "buttons": {
+      "reset": "リセット"
+    },
+    "filters": {
+      "ownership": "所有権",
+      "evaluator": "評価者",
+      "sessionDate": "セッション日",
+      "status": "ステータス",
+      "creationDate": "作成日",
+      "visibility": "可視性",
+      "method": "メソッド"
+    },
+    "filterOptions": {
+      "allStudies": "すべての研究",
+      "myStudies": "私の研究",
+      "whereICollaborate": "コラボレーション中",
+      "all": "すべて",
+      "allStatuses": "すべてのステータス",
+      "today": "今日",
+      "upcoming": "今後",
+      "completed": "完了",
+      "allMethods": "すべてのメソッド",
+      "public": "公開",
+      "private": "非公開",
+      "allVisibility": "すべて"
+    },
+    "emptyStates": {
+      "noActiveSessions": "アクティブなセッションがありません",
+      "noStudiesFound": "研究が見つかりません",
+      "noTemplatesFound": "テンプレートが見つかりません"
+    },
+    "table": {
+      "type": "タイプ",
+      "name": "名前",
+      "tags": "タグ",
+      "owner": "所有者",
+      "participants": "参加者",
+      "created": "作成日",
+      "itemsPerPage": "ページあたりのアイテム:"
+    }
   },
   "profile": {
     "title": "プロフィール",
@@ -1025,6 +1071,69 @@
       "successRate": "成功率",
       "taskTypes": "タスクタイプ",
       "viewTasks": "タスクを表示"
+    },
+    "storage": {
+      "title": "ストレージ使用量",
+      "subtitle": "メディアファイルとストレージメトリクス",
+      "storageUsed": "使用中のストレージ",
+      "ofUsed": "{quota}中{used}を使用",
+      "mediaFiles": "メディアファイル",
+      "videoRecordings": "ビデオ録画",
+      "audioRecordings": "オーディオ録音",
+      "screenRecordings": "画面録画",
+      "storageBreakdown": "ストレージ内訳",
+      "responsesData": "回答データ",
+      "analyticsData": "分析データ",
+      "manageStorage": "ストレージを管理"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "テストタイトル",
+      "testTitlePlaceholder": "テストの説明的なタイトルを入力してください",
+      "testCategory": "テストカテゴリ",
+      "testCategoryPlaceholder": "実施するテストの種類を選択してください",
+      "description": "説明",
+      "descriptionPlaceholder": "テストの目的、方法論、期待される結果について詳細な情報を提供してください",
+      "usabilityUserTest": "ユーザビリティユーザーテスト",
+      "manualAccessibilityTest": "手動アクセシビリティテスト",
+      "automaticAccessibilityTest": "自動アクセシビリティテスト",
+      "max200Characters": "最大200文字"
+    }
+  },
+  "lists": {
+    "searchSessions": "セッションを検索...",
+    "searchStudies": "研究を検索...",
+    "searchTemplates": "テンプレートを検索...",
+    "reset": "リセット",
+    "selectRange": "範囲を選択",
+    "ownership": "所有権",
+    "evaluator": "評価者",
+    "sessionDate": "セッション日",
+    "status": "ステータス",
+    "creationDate": "作成日",
+    "visibility": "可視性",
+    "method": "メソッド",
+    "allStudies": "すべての研究",
+    "myStudies": "私の研究",
+    "whereICollaborate": "コラボレーション中",
+    "all": "すべて",
+    "allStatuses": "すべてのステータス",
+    "today": "今日",
+    "upcoming": "今後",
+    "completed": "完了",
+    "allMethods": "すべてのメソッド",
+    "public": "公開",
+    "private": "非公開",
+    "noActiveSessions": "アクティブなセッションがありません",
+    "noStudiesFound": "研究が見つかりません",
+    "noTemplatesFound": "テンプレートが見つかりません",
+    "type": "タイプ",
+    "name": "名前",
+    "tags": "タグ",
+    "owner": "所有者",
+    "participants": "参加者",
+    "created": "作成日",
+    "itemsPerPage": "ページあたりのアイテム:"
   }
 }

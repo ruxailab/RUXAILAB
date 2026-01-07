@@ -71,7 +71,53 @@
     "viewAll": "सभी देखें",
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
-    "test": "एक अध्ययन"
+    "test": "एक अध्ययन",
+    "search": {
+      "searchSessions": "सत्र खोजें...",
+      "searchStudies": "अध्ययन खोजें...",
+      "searchTemplates": "टेम्पलेट खोजें...",
+      "selectRange": "सीमा चुनें"
+    },
+    "buttons": {
+      "reset": "रीसेट"
+    },
+    "filters": {
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "sessionDate": "सत्र की तारीख",
+      "status": "स्थिति",
+      "creationDate": "निर्माण तिथि",
+      "visibility": "दृश्यता",
+      "method": "विधि"
+    },
+    "filterOptions": {
+      "allStudies": "सभी अध्ययन",
+      "myStudies": "मेरे अध्ययन",
+      "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+      "all": "सभी",
+      "allStatuses": "सभी स्थितियाँ",
+      "today": "आज",
+      "upcoming": "आगामी",
+      "completed": "पूर्ण",
+      "allMethods": "सभी विधियाँ",
+      "public": "सार्वजनिक",
+      "private": "निजी",
+      "allVisibility": "सभी"
+    },
+    "emptyStates": {
+      "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
+      "noStudiesFound": "कोई अध्ययन नहीं मिला",
+      "noTemplatesFound": "कोई टेम्पलेट नहीं मिला"
+    },
+    "table": {
+      "type": "प्रकार",
+      "name": "नाम",
+      "tags": "टैग",
+      "owner": "मालिक",
+      "participants": "प्रतिभागी",
+      "created": "निर्मित",
+      "itemsPerPage": "प्रति पृष्ठ आइटम:"
+    }
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -1131,6 +1177,69 @@
       "successRate": "सफलता दर",
       "taskTypes": "कार्य प्रकार",
       "viewTasks": "कार्य देखें"
+    },
+    "storage": {
+      "title": "संग्रहण उपयोग",
+      "subtitle": "मीडिया फ़ाइलें और संग्रहण मेट्रिक्स",
+      "storageUsed": "उपयोग किया गया संग्रहण",
+      "ofUsed": "{quota} में से {used} उपयोग किया गया",
+      "mediaFiles": "मीडिया फ़ाइलें",
+      "videoRecordings": "वीडियो रिकॉर्डिंग",
+      "audioRecordings": "ऑडियो रिकॉर्डिंग",
+      "screenRecordings": "स्क्रीन रिकॉर्डिंग",
+      "storageBreakdown": "संग्रहण विवरण",
+      "responsesData": "प्रतिक्रिया डेटा",
+      "analyticsData": "एनालिटिक्स डेटा",
+      "manageStorage": "संग्रहण प्रबंधित करें"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "परीक्षण शीर्षक",
+      "testTitlePlaceholder": "अपने परीक्षण के लिए एक वर्णनात्मक शीर्षक दर्ज करें",
+      "testCategory": "परीक्षण श्रेणी",
+      "testCategoryPlaceholder": "आप जो परीक्षण कर रहे हैं उसका प्रकार चुनें",
+      "description": "विवरण",
+      "descriptionPlaceholder": "अपने परीक्षण उद्देश्यों, कार्यप्रणाली और अपेक्षित परिणामों के बारे में विस्तृत जानकारी प्रदान करें",
+      "usabilityUserTest": "उपयोगिता उपयोगकर्ता परीक्षण",
+      "manualAccessibilityTest": "मैनुअल एक्सेसिबिलिटी परीक्षण",
+      "automaticAccessibilityTest": "स्वचालित एक्सेसिबिलिटी परीक्षण",
+      "max200Characters": "अधिकतम 200 अक्षर"
+    }
+  },
+  "lists": {
+    "searchSessions": "सत्र खोजें...",
+    "searchStudies": "अध्ययन खोजें...",
+    "searchTemplates": "टेम्पलेट खोजें...",
+    "reset": "रीसेट",
+    "selectRange": "सीमा चुनें",
+    "ownership": "स्वामित्व",
+    "evaluator": "मूल्यांकनकर्ता",
+    "sessionDate": "सत्र की तारीख",
+    "status": "स्थिति",
+    "creationDate": "निर्माण तिथि",
+    "visibility": "दृश्यता",
+    "method": "विधि",
+    "allStudies": "सभी अध्ययन",
+    "myStudies": "मेरे अध्ययन",
+    "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+    "all": "सभी",
+    "allStatuses": "सभी स्थितियाँ",
+    "today": "आज",
+    "upcoming": "आगामी",
+    "completed": "पूर्ण",
+    "allMethods": "सभी विधियाँ",
+    "public": "सार्वजनिक",
+    "private": "निजी",
+    "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
+    "noStudiesFound": "कोई अध्ययन नहीं मिला",
+    "noTemplatesFound": "कोई टेम्पलेट नहीं मिला",
+    "type": "प्रकार",
+    "name": "नाम",
+    "tags": "टैग",
+    "owner": "मालिक",
+    "participants": "प्रतिभागी",
+    "created": "निर्मित",
+    "itemsPerPage": "प्रति पृष्ठ आइटम:"
   }
 }

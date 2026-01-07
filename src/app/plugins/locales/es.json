@@ -72,7 +72,53 @@
     "viewAll": "Ver todo",
     "sentBy": "Enviado por",
     "new": "NUEVO",
-    "test": "un estudio"
+    "test": "un estudio",
+    "search": {
+      "searchSessions": "Buscar sesiones...",
+      "searchStudies": "Buscar estudios...",
+      "searchTemplates": "Buscar plantillas...",
+      "selectRange": "Seleccionar rango"
+    },
+    "buttons": {
+      "reset": "Restablecer"
+    },
+    "filters": {
+      "ownership": "Propiedad",
+      "evaluator": "Evaluador",
+      "sessionDate": "Fecha de sesión",
+      "status": "Estado",
+      "creationDate": "Fecha de creación",
+      "visibility": "Visibilidad",
+      "method": "Método"
+    },
+    "filterOptions": {
+      "allStudies": "Todos los estudios",
+      "myStudies": "Mis estudios",
+      "whereICollaborate": "Donde colaboro",
+      "all": "Todo",
+      "allStatuses": "Todos los estados",
+      "today": "Hoy",
+      "upcoming": "Próximo",
+      "completed": "Completado",
+      "allMethods": "Todos los métodos",
+      "public": "Público",
+      "private": "Privado",
+      "allVisibility": "Todo"
+    },
+    "emptyStates": {
+      "noActiveSessions": "No tienes sesiones activas",
+      "noStudiesFound": "No se encontraron estudios",
+      "noTemplatesFound": "No se encontraron plantillas"
+    },
+    "table": {
+      "type": "Tipo",
+      "name": "Nombre",
+      "tags": "Etiquetas",
+      "owner": "Propietario",
+      "participants": "Participantes",
+      "created": "Creado",
+      "itemsPerPage": "Elementos por página:"
+    }
   },
   "profile": {
     "superAdmin": "Súper Administrador",
@@ -1239,6 +1285,69 @@
       "successRate": "Tasa de éxito",
       "taskTypes": "Tipos de tareas",
       "viewTasks": "Ver tareas"
+    },
+    "storage": {
+      "title": "Uso de almacenamiento",
+      "subtitle": "Archivos multimedia y métricas de almacenamiento",
+      "storageUsed": "Almacenamiento usado",
+      "ofUsed": "{used} de {quota} usado",
+      "mediaFiles": "Archivos multimedia",
+      "videoRecordings": "Grabaciones de video",
+      "audioRecordings": "Grabaciones de audio",
+      "screenRecordings": "Grabaciones de pantalla",
+      "storageBreakdown": "Desglose de almacenamiento",
+      "responsesData": "Datos de respuestas",
+      "analyticsData": "Datos de análisis",
+      "manageStorage": "Administrar almacenamiento"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "Título de la prueba",
+      "testTitlePlaceholder": "Ingrese un título descriptivo para su prueba",
+      "testCategory": "Categoría de prueba",
+      "testCategoryPlaceholder": "Elija el tipo de prueba que está realizando",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Proporcione información detallada sobre los objetivos de su prueba, la metodología y los resultados esperados",
+      "usabilityUserTest": "Prueba de usabilidad de usuario",
+      "manualAccessibilityTest": "Prueba de accesibilidad manual",
+      "automaticAccessibilityTest": "Prueba de accesibilidad automática",
+      "max200Characters": "Máximo 200 caracteres"
+    }
+  },
+  "lists": {
+    "searchSessions": "Buscar sesiones...",
+    "searchStudies": "Buscar estudios...",
+    "searchTemplates": "Buscar plantillas...",
+    "reset": "Restablecer",
+    "selectRange": "Seleccionar rango",
+    "ownership": "Propiedad",
+    "evaluator": "Evaluador",
+    "sessionDate": "Fecha de sesión",
+    "status": "Estado",
+    "creationDate": "Fecha de creación",
+    "visibility": "Visibilidad",
+    "method": "Método",
+    "allStudies": "Todos los estudios",
+    "myStudies": "Mis estudios",
+    "whereICollaborate": "Donde colaboro",
+    "all": "Todo",
+    "allStatuses": "Todos los estados",
+    "today": "Hoy",
+    "upcoming": "Próximo",
+    "completed": "Completado",
+    "allMethods": "Todos los métodos",
+    "public": "Público",
+    "private": "Privado",
+    "noActiveSessions": "No tienes sesiones activas",
+    "noStudiesFound": "No se encontraron estudios",
+    "noTemplatesFound": "No se encontraron plantillas",
+    "type": "Tipo",
+    "name": "Nombre",
+    "tags": "Etiquetas",
+    "owner": "Propietario",
+    "participants": "Participantes",
+    "created": "Creado",
+    "itemsPerPage": "Elementos por página:"
   }
 }

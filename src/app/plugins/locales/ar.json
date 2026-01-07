@@ -67,7 +67,53 @@
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
     "new": "جديد",
-    "test": "دراسة"
+    "test": "دراسة",
+    "search": {
+      "searchSessions": "البحث عن الجلسات...",
+      "searchStudies": "البحث عن الدراسات...",
+      "searchTemplates": "البحث عن القوالب...",
+      "selectRange": "حدد النطاق"
+    },
+    "buttons": {
+      "reset": "إعادة تعيين"
+    },
+    "filters": {
+      "ownership": "الملكية",
+      "evaluator": "المقيّم",
+      "sessionDate": "تاريخ الجلسة",
+      "status": "الحالة",
+      "creationDate": "تاريخ الإنشاء",
+      "visibility": "الرؤية",
+      "method": "الطريقة"
+    },
+    "filterOptions": {
+      "allStudies": "جميع الدراسات",
+      "myStudies": "دراساتي",
+      "whereICollaborate": "حيث أتعاون",
+      "all": "الكل",
+      "allStatuses": "جميع الحالات",
+      "today": "اليوم",
+      "upcoming": "قادم",
+      "completed": "مكتمل",
+      "allMethods": "جميع الطرق",
+      "public": "عام",
+      "private": "خاص",
+      "allVisibility": "الكل"
+    },
+    "emptyStates": {
+      "noActiveSessions": "ليس لديك جلسات نشطة",
+      "noStudiesFound": "لم يتم العثور على دراسات",
+      "noTemplatesFound": "لم يتم العثور على قوالب"
+    },
+    "table": {
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء",
+      "itemsPerPage": "عناصر لكل صفحة:"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -1067,6 +1113,69 @@
       "successRate": "معدل النجاح",
       "taskTypes": "أنواع المهام",
       "viewTasks": "عرض المهام"
+    },
+    "storage": {
+      "title": "استخدام التخزين",
+      "subtitle": "ملفات الوسائط ومقاييس التخزين",
+      "storageUsed": "التخزين المستخدم",
+      "ofUsed": "{used} من {quota} مستخدم",
+      "mediaFiles": "ملفات الوسائط",
+      "videoRecordings": "تسجيلات الفيديو",
+      "audioRecordings": "تسجيلات الصوت",
+      "screenRecordings": "تسجيلات الشاشة",
+      "storageBreakdown": "تفصيل التخزين",
+      "responsesData": "بيانات الردود",
+      "analyticsData": "بيانات التحليلات",
+      "manageStorage": "إدارة التخزين"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "عنوان الاختبار",
+      "testTitlePlaceholder": "أدخل عنوانًا وصفيًا لاختبارك",
+      "testCategory": "فئة الاختبار",
+      "testCategoryPlaceholder": "اختر نوع الاختبار الذي تجريه",
+      "description": "الوصف",
+      "descriptionPlaceholder": "قدم معلومات تفصيلية حول أهداف اختبارك والمنهجية والنتائج المتوقعة",
+      "usabilityUserTest": "اختبار قابلية الاستخدام للمستخدم",
+      "manualAccessibilityTest": "اختبار إمكانية الوصول اليدوي",
+      "automaticAccessibilityTest": "اختبار إمكانية الوصول التلقائي",
+      "max200Characters": "بحد أقصى 200 حرف"
+    }
+  },
+  "lists": {
+    "searchSessions": "البحث عن الجلسات...",
+    "searchStudies": "البحث عن الدراسات...",
+    "searchTemplates": "البحث عن القوالب...",
+    "reset": "إعادة تعيين",
+    "selectRange": "حدد النطاق",
+    "ownership": "الملكية",
+    "evaluator": "المقيّم",
+    "sessionDate": "تاريخ الجلسة",
+    "status": "الحالة",
+    "creationDate": "تاريخ الإنشاء",
+    "visibility": "الرؤية",
+    "method": "الطريقة",
+    "allStudies": "جميع الدراسات",
+    "myStudies": "دراساتي",
+    "whereICollaborate": "حيث أتعاون",
+    "all": "الكل",
+    "allStatuses": "جميع الحالات",
+    "today": "اليوم",
+    "upcoming": "قادم",
+    "completed": "مكتمل",
+    "allMethods": "جميع الطرق",
+    "public": "عام",
+    "private": "خاص",
+    "noActiveSessions": "ليس لديك جلسات نشطة",
+    "noStudiesFound": "لم يتم العثور على دراسات",
+    "noTemplatesFound": "لم يتم العثور على قوالب",
+    "type": "النوع",
+    "name": "الاسم",
+    "tags": "العلامات",
+    "owner": "المالك",
+    "participants": "المشاركون",
+    "created": "تم الإنشاء",
+    "itemsPerPage": "عناصر لكل صفحة:"
   }
 }

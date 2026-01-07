@@ -67,7 +67,53 @@
     "viewAll": "Voir tout",
     "sentBy": "Envoyé par",
     "new": "NOUVEAU",
-    "test": "une Étude"
+    "test": "une Étude",
+    "search": {
+      "searchSessions": "Rechercher des sessions...",
+      "searchStudies": "Rechercher des études...",
+      "searchTemplates": "Rechercher des modèles...",
+      "selectRange": "Sélectionner une plage"
+    },
+    "buttons": {
+      "reset": "Réinitialiser"
+    },
+    "filters": {
+      "ownership": "Propriété",
+      "evaluator": "Évaluateur",
+      "sessionDate": "Date de session",
+      "status": "Statut",
+      "creationDate": "Date de création",
+      "visibility": "Visibilité",
+      "method": "Méthode"
+    },
+    "filterOptions": {
+      "allStudies": "Toutes les études",
+      "myStudies": "Mes études",
+      "whereICollaborate": "Où je collabore",
+      "all": "Tout",
+      "allStatuses": "Tous les statuts",
+      "today": "Aujourd'hui",
+      "upcoming": "À venir",
+      "completed": "Terminé",
+      "allMethods": "Toutes les méthodes",
+      "public": "Public",
+      "private": "Privé",
+      "allVisibility": "Tout"
+    },
+    "emptyStates": {
+      "noActiveSessions": "Vous n'avez pas de sessions actives",
+      "noStudiesFound": "Aucune étude trouvée",
+      "noTemplatesFound": "Aucun modèle trouvé"
+    },
+    "table": {
+      "type": "Type",
+      "name": "Nom",
+      "tags": "Tags",
+      "owner": "Propriétaire",
+      "participants": "Participants",
+      "created": "Créé",
+      "itemsPerPage": "Éléments par page :"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -1073,6 +1119,69 @@
       "successRate": "Taux de réussite",
       "taskTypes": "Types de tâches",
       "viewTasks": "Voir les tâches"
+    },
+    "storage": {
+      "title": "Utilisation du stockage",
+      "subtitle": "Fichiers multimédias et métriques de stockage",
+      "storageUsed": "Stockage utilisé",
+      "ofUsed": "{used} sur {quota} utilisé",
+      "mediaFiles": "Fichiers multimédias",
+      "videoRecordings": "Enregistrements vidéo",
+      "audioRecordings": "Enregistrements audio",
+      "screenRecordings": "Enregistrements d'écran",
+      "storageBreakdown": "Répartition du stockage",
+      "responsesData": "Données de réponses",
+      "analyticsData": "Données d'analyse",
+      "manageStorage": "Gérer le stockage"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "Titre du test",
+      "testTitlePlaceholder": "Entrez un titre descriptif pour votre test",
+      "testCategory": "Catégorie de test",
+      "testCategoryPlaceholder": "Choisissez le type de test que vous effectuez",
+      "description": "Description",
+      "descriptionPlaceholder": "Fournissez des informations détaillées sur les objectifs de votre test, la méthodologie et les résultats attendus",
+      "usabilityUserTest": "Test d'utilisabilité utilisateur",
+      "manualAccessibilityTest": "Test d'accessibilité manuel",
+      "automaticAccessibilityTest": "Test d'accessibilité automatique",
+      "max200Characters": "Max 200 caractères"
+    }
+  },
+  "lists": {
+    "searchSessions": "Rechercher des sessions...",
+    "searchStudies": "Rechercher des études...",
+    "searchTemplates": "Rechercher des modèles...",
+    "reset": "Réinitialiser",
+    "selectRange": "Sélectionner une plage",
+    "ownership": "Propriété",
+    "evaluator": "Évaluateur",
+    "sessionDate": "Date de session",
+    "status": "Statut",
+    "creationDate": "Date de création",
+    "visibility": "Visibilité",
+    "method": "Méthode",
+    "allStudies": "Toutes les études",
+    "myStudies": "Mes études",
+    "whereICollaborate": "Où je collabore",
+    "all": "Tout",
+    "allStatuses": "Tous les statuts",
+    "today": "Aujourd'hui",
+    "upcoming": "À venir",
+    "completed": "Terminé",
+    "allMethods": "Toutes les méthodes",
+    "public": "Public",
+    "private": "Privé",
+    "noActiveSessions": "Vous n'avez pas de sessions actives",
+    "noStudiesFound": "Aucune étude trouvée",
+    "noTemplatesFound": "Aucun modèle trouvé",
+    "type": "Type",
+    "name": "Nom",
+    "tags": "Tags",
+    "owner": "Propriétaire",
+    "participants": "Participants",
+    "created": "Créé",
+    "itemsPerPage": "Éléments par page :"
   }
 }

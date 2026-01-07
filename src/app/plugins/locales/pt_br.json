@@ -72,7 +72,53 @@
     "viewAll": "Ver tudo",
     "sentBy": "Enviado por",
     "new": "NOVO",
-    "test": "um Estudo"
+    "test": "um Estudo",
+    "search": {
+      "searchSessions": "Pesquisar sessões...",
+      "searchStudies": "Pesquisar estudos...",
+      "searchTemplates": "Pesquisar modelos...",
+      "selectRange": "Selecionar intervalo"
+    },
+    "buttons": {
+      "reset": "Redefinir"
+    },
+    "filters": {
+      "ownership": "Propriedade",
+      "evaluator": "Avaliador",
+      "sessionDate": "Data da sessão",
+      "status": "Status",
+      "creationDate": "Data de criação",
+      "visibility": "Visibilidade",
+      "method": "Método"
+    },
+    "filterOptions": {
+      "allStudies": "Todos os estudos",
+      "myStudies": "Meus estudos",
+      "whereICollaborate": "Onde colaboro",
+      "all": "Todos",
+      "allStatuses": "Todos os status",
+      "today": "Hoje",
+      "upcoming": "Próximo",
+      "completed": "Concluído",
+      "allMethods": "Todos os métodos",
+      "public": "Público",
+      "private": "Privado",
+      "allVisibility": "Todos"
+    },
+    "emptyStates": {
+      "noActiveSessions": "Você não tem sessões ativas",
+      "noStudiesFound": "Nenhum estudo encontrado",
+      "noTemplatesFound": "Nenhum modelo encontrado"
+    },
+    "table": {
+      "type": "Tipo",
+      "name": "Nome",
+      "tags": "Tags",
+      "owner": "Proprietário",
+      "participants": "Participantes",
+      "created": "Criado",
+      "itemsPerPage": "Itens por página:"
+    }
   },
   "profile": {
     "title": "Perfil",
@@ -1175,6 +1221,69 @@
       "successRate": "Taxa de Sucesso",
       "taskTypes": "Tipos de Tarefas",
       "viewTasks": "Ver Tarefas"
+    },
+    "storage": {
+      "title": "Uso de Armazenamento",
+      "subtitle": "Arquivos de mídia e métricas de armazenamento",
+      "storageUsed": "Armazenamento Usado",
+      "ofUsed": "{used} de {quota} usado",
+      "mediaFiles": "Arquivos de Mídia",
+      "videoRecordings": "Gravações de Vídeo",
+      "audioRecordings": "Gravações de Áudio",
+      "screenRecordings": "Gravações de Tela",
+      "storageBreakdown": "Detalhamento do Armazenamento",
+      "responsesData": "Dados de Respostas",
+      "analyticsData": "Dados de Análise",
+      "manageStorage": "Gerenciar Armazenamento"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "Título do Teste",
+      "testTitlePlaceholder": "Digite um título descritivo para o seu teste",
+      "testCategory": "Categoria do Teste",
+      "testCategoryPlaceholder": "Escolha o tipo de teste que você está realizando",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Forneça informações detalhadas sobre os objetivos do seu teste, metodologia e resultados esperados",
+      "usabilityUserTest": "Teste de Usabilidade do Usuário",
+      "manualAccessibilityTest": "Teste de Acessibilidade Manual",
+      "automaticAccessibilityTest": "Teste de Acessibilidade Automático",
+      "max200Characters": "Máximo de 200 caracteres"
+    }
+  },
+  "lists": {
+    "searchSessions": "Pesquisar sessões...",
+    "searchStudies": "Pesquisar estudos...",
+    "searchTemplates": "Pesquisar modelos...",
+    "reset": "Redefinir",
+    "selectRange": "Selecionar intervalo",
+    "ownership": "Propriedade",
+    "evaluator": "Avaliador",
+    "sessionDate": "Data da sessão",
+    "status": "Status",
+    "creationDate": "Data de criação",
+    "visibility": "Visibilidade",
+    "method": "Método",
+    "allStudies": "Todos os estudos",
+    "myStudies": "Meus estudos",
+    "whereICollaborate": "Onde colaboro",
+    "all": "Todos",
+    "allStatuses": "Todos os status",
+    "today": "Hoje",
+    "upcoming": "Próximo",
+    "completed": "Concluído",
+    "allMethods": "Todos os métodos",
+    "public": "Público",
+    "private": "Privado",
+    "noActiveSessions": "Você não tem sessões ativas",
+    "noStudiesFound": "Nenhum estudo encontrado",
+    "noTemplatesFound": "Nenhum modelo encontrado",
+    "type": "Tipo",
+    "name": "Nome",
+    "tags": "Tags",
+    "owner": "Proprietário",
+    "participants": "Participantes",
+    "created": "Criado",
+    "itemsPerPage": "Itens por página:"
   }
 }

@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search sessions..."
+        :placeholder="$t('lists.searchSessions')"
         class="flex-grow-1"
       />
 
@@ -27,7 +27,7 @@
           selectedSessionDateRange=[];
         }"
       >
-        Reset
+        {{ $t('lists.reset') }}
       </v-btn>
 
       <!-- Toggle filters visibility -->
@@ -48,7 +48,7 @@
         <v-row dense>
           <!-- 👤 Ownership filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">{{ $t('lists.ownership') }}</div>
             <v-select
               v-model="selectedSessionOwnershipFilter"
               :items="ownershipOptions"
@@ -62,7 +62,7 @@
 
           <!-- 👥 Evaluator filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Evaluator</div>
+            <div class="filter-label">{{ $t('lists.evaluator') }}</div>
             <v-select
               v-model="selectedSessionEvaluatorFilter"
               :items="evaluatorOptions"
@@ -76,7 +76,7 @@
 
           <!-- 📅 Session date range filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Session date</div>
+            <div class="filter-label">{{ $t('lists.sessionDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -93,7 +93,7 @@
                   hide-details
                   :placeholder="selectedSessionDateRange.length > 1
                     ? `${new Date(selectedSessionDateRange[0]).toLocaleDateString()} - ${new Date(selectedSessionDateRange[selectedSessionDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
+                    : $t('lists.selectRange')"
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -104,7 +104,7 @@
 
           <!-- ⚙️ Status filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">{{ $t('lists.status') }}</div>
             <v-select
               v-model="selectedSessionStatusFilter"
               :items="sessionStatusOptions"
@@ -139,7 +139,7 @@
       color="grey-lighten-1"
       class="mb-2"
     />
-    <p class="text-h6">You don't have active sessions</p>
+    <p class="text-h6">{{ $t('lists.noActiveSessions') }}</p>
   </div>
 </template>
 
@@ -149,6 +149,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import List from '@/shared/components/tables/ListComponent.vue';
 import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
@@ -156,6 +157,7 @@ import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils
 // ===== State and setup =====
 const store = useStore();
 const router = useRouter();
+const { t } = useI18n();
 
 const search = ref('');
 const activeSection = ref('dashboard');
@@ -164,11 +166,11 @@ const filteredModeratedSessions = ref([]);
 // ===== Filter options =====
 
 // Ownership dropdown options
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-];
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('lists.allStudies') },
+  { value: 'mine', text: t('lists.myStudies') },
+  { value: 'cooperator', text: t('lists.whereICollaborate') },
+]);
 
 // Filter visibility toggle
 const showFilters = ref(false);
@@ -185,16 +187,16 @@ const searchSessions = ref('');
 const evaluatorOptions = computed(() => {
   const evaluatorsSet = new Set();
   filteredModeratedSessions.value.forEach(s => evaluatorsSet.add(s.evaluator));
-  return [{ text: 'All', value: 'all' }, ...Array.from(evaluatorsSet).map(ev => ({ text: ev, value: ev }))];
+  return [{ text: t('lists.all'), value: 'all' }, ...Array.from(evaluatorsSet).map(ev => ({ text: ev, value: ev }))];
 });
 
 // Session status options
-const sessionStatusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'today', text: 'Today' },
-  { value: 'upcoming', text: 'Upcoming' },
-  { value: 'completed', text: 'Completed' },
-];
+const sessionStatusOptions = computed(() => [
+  { value: 'all', text: t('lists.allStatuses') },
+  { value: 'today', text: t('lists.today') },
+  { value: 'upcoming', text: t('lists.upcoming') },
+  { value: 'completed', text: t('lists.completed') },
+]);
 
 // Whether filters are currently active (to enable/disable reset button)
 const hasActiveSessionFilters = computed(() => {

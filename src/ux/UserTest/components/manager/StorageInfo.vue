@@ -11,8 +11,8 @@
             <v-icon color="white" size="24">mdi-database</v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">Storage Usage</h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">Media files and storage metrics</p>
+            <h3 class="text-h6 text-white mb-0">{{ $t('studyManager.storage.title') }}</h3>
+            <p class="text-body-2 text-white opacity-90 mb-0">{{ $t('studyManager.storage.subtitle') }}</p>
           </div>
         </div>
         <v-chip
@@ -22,7 +22,7 @@
           class="border-white text-white"
         >
           <v-icon start size="16">mdi-flask</v-icon>
-          Beta
+          {{ $t('studyManager.participants.beta') }}
         </v-chip>
       </div>
     </div>
@@ -30,7 +30,7 @@
     <v-card-text class="pa-4">
       <div class="mb-4">
         <div class="d-flex justify-space-between align-center mb-2">
-          <span class="text-body-2">Storage Used</span>
+          <span class="text-body-2">{{ $t('studyManager.storage.storageUsed') }}</span>
           <span class="text-body-2 font-weight-bold">{{ storageUsedFormatted }}</span>
         </div>
         <v-progress-linear 
@@ -40,13 +40,13 @@
           rounded
         />
         <div class="text-caption text-medium-emphasis mt-1">
-          {{ storageUsedFormatted }} of {{ storageQuotaFormatted }} used
+          {{ storageUsedFormatted }} / {{ storageQuotaFormatted }}
         </div>
       </div>
       
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Media Files</span>
+          <span class="text-body-2">{{ $t('studyManager.storage.mediaFiles') }}</span>
           <v-chip size="small" color="primary" variant="outlined">
             {{ totalMediaFiles }}
           </v-chip>
@@ -55,7 +55,7 @@
       
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Video Recordings</span>
+          <span class="text-body-2">{{ $t('studyManager.storage.videoRecordings') }}</span>
           <v-chip size="small" color="success" variant="outlined">
             {{ videoCount }} ({{ videoSizeFormatted }})
           </v-chip>
@@ -64,7 +64,7 @@
       
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Audio Recordings</span>
+          <span class="text-body-2">{{ $t('studyManager.storage.audioRecordings') }}</span>
           <v-chip size="small" color="warning" variant="outlined">
             {{ audioCount }} ({{ audioSizeFormatted }})
           </v-chip>
@@ -73,7 +73,7 @@
       
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Screen Recordings</span>
+          <span class="text-body-2">{{ $t('studyManager.storage.screenRecordings') }}</span>
           <v-chip size="small" color="info" variant="outlined">
             {{ screenCount }} ({{ screenSizeFormatted }})
           </v-chip>
@@ -82,18 +82,18 @@
       
       <!-- Storage breakdown -->
       <div class="mt-4">
-        <div class="text-caption text-medium-emphasis mb-2">Storage Breakdown</div>
+        <div class="text-caption text-medium-emphasis mb-2">{{ $t('studyManager.storage.storageBreakdown') }}</div>
         <div class="d-flex flex-column gap-1">
           <div class="d-flex justify-space-between text-caption">
-            <span>Responses Data</span>
+            <span>{{ $t('studyManager.storage.responsesData') }}</span>
             <span>{{ responseDataSize }}</span>
           </div>
           <div class="d-flex justify-space-between text-caption">
-            <span>Media Files</span>
+            <span>{{ $t('studyManager.storage.mediaFiles') }}</span>
             <span>{{ mediaDataSize }}</span>
           </div>
           <div class="d-flex justify-space-between text-caption">
-            <span>Analytics Data</span>
+            <span>{{ $t('studyManager.storage.analyticsData') }}</span>
             <span>{{ analyticsDataSize }}</span>
           </div>
         </div>
@@ -109,7 +109,7 @@
         disabled
         @click="manageStorage"
       >
-        Manage Storage
+        {{ $t('studyManager.storage.manageStorage') }}
       </v-btn>
     </v-card-actions>
   </v-card>

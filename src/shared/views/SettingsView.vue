@@ -475,12 +475,12 @@ const dateMenu = ref(false);
 const form1 = ref(null);
 const tempform = ref(null);
 
-const statusOptions = [
+const statusOptions = computed(() => [
   { title: t('studyCreation.details.status.active'), value: 'active' },
   { title: t('studyCreation.details.status.pending'), value: 'pending' },
   { title: t('studyCreation.details.status.finished'), value: 'finished' },
   { title: t('studyCreation.details.status.upcoming'), value: 'upcoming' },
-];
+]);
 
 const titleRequired = [
   v => !!v.trim() || t('errors.fieldRequired'),

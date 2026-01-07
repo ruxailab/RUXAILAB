@@ -48,7 +48,53 @@
     "viewAll": "Посмотреть все",
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
-    "test": "исследование"
+    "test": "исследование",
+    "search": {
+      "searchSessions": "Поиск сессий...",
+      "searchStudies": "Поиск исследований...",
+      "searchTemplates": "Поиск шаблонов...",
+      "selectRange": "Выбрать диапазон"
+    },
+    "buttons": {
+      "reset": "Сброс"
+    },
+    "filters": {
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "sessionDate": "Дата сессии",
+      "status": "Статус",
+      "creationDate": "Дата создания",
+      "visibility": "Видимость",
+      "method": "Метод"
+    },
+    "filterOptions": {
+      "allStudies": "Все исследования",
+      "myStudies": "Мои исследования",
+      "whereICollaborate": "Где я сотрудничаю",
+      "all": "Все",
+      "allStatuses": "Все статусы",
+      "today": "Сегодня",
+      "upcoming": "Предстоящие",
+      "completed": "Завершено",
+      "allMethods": "Все методы",
+      "public": "Публичный",
+      "private": "Приватный",
+      "allVisibility": "Все"
+    },
+    "emptyStates": {
+      "noActiveSessions": "У вас нет активных сессий",
+      "noStudiesFound": "Исследования не найдены",
+      "noTemplatesFound": "Шаблоны не найдены"
+    },
+    "table": {
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "participants": "Участники",
+      "created": "Создано",
+      "itemsPerPage": "Элементов на странице:"
+    }
   },
   "profile": {
     "title": "Профиль",
@@ -1048,6 +1094,69 @@
       "successRate": "Показатель успеха",
       "taskTypes": "Типы задач",
       "viewTasks": "Просмотреть задачи"
+    },
+    "storage": {
+      "title": "Использование хранилища",
+      "subtitle": "Медиафайлы и метрики хранилища",
+      "storageUsed": "Использовано хранилища",
+      "ofUsed": "{used} из {quota} использовано",
+      "mediaFiles": "Медиафайлы",
+      "videoRecordings": "Видеозаписи",
+      "audioRecordings": "Аудиозаписи",
+      "screenRecordings": "Записи экрана",
+      "storageBreakdown": "Разбивка хранилища",
+      "responsesData": "Данные ответов",
+      "analyticsData": "Данные аналитики",
+      "manageStorage": "Управление хранилищем"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "Название теста",
+      "testTitlePlaceholder": "Введите описательное название для вашего теста",
+      "testCategory": "Категория теста",
+      "testCategoryPlaceholder": "Выберите тип теста, который вы проводите",
+      "description": "Описание",
+      "descriptionPlaceholder": "Предоставьте подробную информацию о целях вашего теста, методологии и ожидаемых результатах",
+      "usabilityUserTest": "Тест удобства использования",
+      "manualAccessibilityTest": "Ручной тест доступности",
+      "automaticAccessibilityTest": "Автоматический тест доступности",
+      "max200Characters": "Максимум 200 символов"
+    }
+  },
+  "lists": {
+    "searchSessions": "Поиск сессий...",
+    "searchStudies": "Поиск исследований...",
+    "searchTemplates": "Поиск шаблонов...",
+    "reset": "Сброс",
+    "selectRange": "Выбрать диапазон",
+    "ownership": "Владение",
+    "evaluator": "Оценщик",
+    "sessionDate": "Дата сессии",
+    "status": "Статус",
+    "creationDate": "Дата создания",
+    "visibility": "Видимость",
+    "method": "Метод",
+    "allStudies": "Все исследования",
+    "myStudies": "Мои исследования",
+    "whereICollaborate": "Где я сотрудничаю",
+    "all": "Все",
+    "allStatuses": "Все статусы",
+    "today": "Сегодня",
+    "upcoming": "Предстоящие",
+    "completed": "Завершено",
+    "allMethods": "Все методы",
+    "public": "Публичный",
+    "private": "Приватный",
+    "noActiveSessions": "У вас нет активных сессий",
+    "noStudiesFound": "Исследования не найдены",
+    "noTemplatesFound": "Шаблоны не найдены",
+    "type": "Тип",
+    "name": "Название",
+    "tags": "Теги",
+    "owner": "Владелец",
+    "participants": "Участники",
+    "created": "Создано",
+    "itemsPerPage": "Элементов на странице:"
   }
 }

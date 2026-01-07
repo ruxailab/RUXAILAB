@@ -6,7 +6,7 @@
     >
       <v-col cols="12">
         <div class="input-group mb-6">
-          <label class="input-label">Test Title</label>
+          <label class="input-label">{{ $t('studySettings.form.testTitle') }}</label>
           <v-text-field
             :model-value="test.testTitle"
             :autofocus="lock ? false : true"
@@ -15,7 +15,7 @@
             counter="200"
             variant="outlined"
             density="comfortable"
-            placeholder="Enter a descriptive title for your test"
+            :placeholder="$t('studySettings.form.testTitlePlaceholder')"
             hide-details="auto"
             class="modern-input"
             @update:model-value="updateTestTitle($event)"
@@ -23,7 +23,7 @@
         </div>
 
         <div class="input-group mb-6">
-          <label class="input-label">Test Category</label>
+          <label class="input-label">{{ $t('studySettings.form.testCategory') }}</label>
           <v-select
             :model-value="test.testType"
             :disabled="lock || disableType"
@@ -32,7 +32,7 @@
             :rules="typeRequired"
             density="comfortable"
             variant="outlined"
-            placeholder="Choose the type of test you're conducting"
+            :placeholder="$t('studySettings.form.testCategoryPlaceholder')"
             hide-details="auto"
             class="modern-input"
             @update:model-value="$emit('update:test', { ...test, testType: $event })"
@@ -49,14 +49,14 @@
         </div>
 
         <div class="input-group mb-6">
-          <label class="input-label">Description</label>
+          <label class="input-label">{{ $t('studySettings.form.description') }}</label>
           <v-textarea
             :model-value="test.testDescription"
             :label="$t('common.description')"
             variant="outlined"
             rows="4"
             density="comfortable"
-            placeholder="Provide detailed information about your test objectives, methodology, and expected outcomes"
+            :placeholder="$t('studySettings.form.descriptionPlaceholder')"
             hide-details="auto"
             class="modern-input"
             @update:model-value="updateTestDescription($event)"
@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { STUDY_TYPES } from '../constants/methodDefinitions';
@@ -97,16 +97,16 @@ const form = ref(null);
 
 const titleRequired = [
   v => !!v || t('errors.fieldRequired'),
-  v => (v && v.length <= 200) || 'Max 200 characters',
+  v => (v && v.length <= 200) || t('studySettings.form.max200Characters'),
 ];
 const typeRequired = [v => !!v || t('errors.fieldRequired')];
 
-const types = [
-  { title: 'Usability User Test', value: STUDY_TYPES.USER },
+const types = computed(() => [
+  { title: t('studySettings.form.usabilityUserTest'), value: STUDY_TYPES.USER },
   { title: t('titles.heuristic'), value: STUDY_TYPES.HEURISTIC },
-  { title: 'Manual Accessibility Test', value: STUDY_TYPES.MANUAL_ACCESSIBILITY },
-  { title: 'Automatic Accessibility Test', value: STUDY_TYPES.AUTOMATIC_ACCESSIBILITY },
-];
+  { title: t('studySettings.form.manualAccessibilityTest'), value: STUDY_TYPES.MANUAL_ACCESSIBILITY },
+  { title: t('studySettings.form.automaticAccessibilityTest'), value: STUDY_TYPES.AUTOMATIC_ACCESSIBILITY },
+]);
 
 const validate = async () => {
   const { valid } = await form.value.validate();

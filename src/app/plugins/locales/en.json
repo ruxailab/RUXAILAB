@@ -75,7 +75,53 @@
     "sentBy": "Sent by",
     "new": "NEW",
     "test": "a Study",
-    "actions": "Actions"
+    "actions": "Actions",
+    "search": {
+      "searchSessions": "Search sessions...",
+      "searchStudies": "Search studies...",
+      "searchTemplates": "Search templates...",
+      "selectRange": "Select range"
+    },
+    "buttons": {
+      "reset": "Reset"
+    },
+    "filters": {
+      "ownership": "Ownership",
+      "evaluator": "Evaluator",
+      "sessionDate": "Session date",
+      "status": "Status",
+      "creationDate": "Creation date",
+      "visibility": "Visibility",
+      "method": "Method"
+    },
+    "filterOptions": {
+      "allStudies": "All Studies",
+      "myStudies": "My Studies",
+      "whereICollaborate": "Where I Collaborate",
+      "all": "All",
+      "allStatuses": "All Statuses",
+      "today": "Today",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "allMethods": "All Methods",
+      "public": "Public",
+      "private": "Private",
+      "allVisibility": "All"
+    },
+    "emptyStates": {
+      "noActiveSessions": "You don't have active sessions",
+      "noStudiesFound": "No studies found",
+      "noTemplatesFound": "No templates found"
+    },
+    "table": {
+      "type": "Type",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "participants": "Participants",
+      "created": "Created",
+      "itemsPerPage": "Items per page:"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -1259,6 +1305,69 @@
       "successRate": "Success Rate",
       "taskTypes": "Task Types",
       "viewTasks": "View Tasks"
+    },
+    "storage": {
+      "title": "Storage Usage",
+      "subtitle": "Media files and storage metrics",
+      "storageUsed": "Storage Used",
+      "ofUsed": "{used} of {quota} used",
+      "mediaFiles": "Media Files",
+      "videoRecordings": "Video Recordings",
+      "audioRecordings": "Audio Recordings",
+      "screenRecordings": "Screen Recordings",
+      "storageBreakdown": "Storage Breakdown",
+      "responsesData": "Responses Data",
+      "analyticsData": "Analytics Data",
+      "manageStorage": "Manage Storage"
     }
+  },
+  "studySettings": {
+    "form": {
+      "testTitle": "Test Title",
+      "testTitlePlaceholder": "Enter a descriptive title for your test",
+      "testCategory": "Test Category",
+      "testCategoryPlaceholder": "Choose the type of test you're conducting",
+      "description": "Description",
+      "descriptionPlaceholder": "Provide detailed information about your test objectives, methodology, and expected outcomes",
+      "usabilityUserTest": "Usability User Test",
+      "manualAccessibilityTest": "Manual Accessibility Test",
+      "automaticAccessibilityTest": "Automatic Accessibility Test",
+      "max200Characters": "Max 200 characters"
+    }
+  },
+  "lists": {
+    "searchSessions": "Search sessions...",
+    "searchStudies": "Search studies...",
+    "searchTemplates": "Search templates...",
+    "reset": "Reset",
+    "selectRange": "Select range",
+    "ownership": "Ownership",
+    "evaluator": "Evaluator",
+    "sessionDate": "Session date",
+    "status": "Status",
+    "creationDate": "Creation date",
+    "visibility": "Visibility",
+    "method": "Method",
+    "allStudies": "All Studies",
+    "myStudies": "My Studies",
+    "whereICollaborate": "Where I Collaborate",
+    "all": "All",
+    "allStatuses": "All Statuses",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "allMethods": "All Methods",
+    "public": "Public",
+    "private": "Private",
+    "noActiveSessions": "You don't have active sessions",
+    "noStudiesFound": "No studies found",
+    "noTemplatesFound": "No templates found",
+    "type": "Type",
+    "name": "Name",
+    "tags": "Tags",
+    "owner": "Owner",
+    "participants": "Participants",
+    "created": "Created",
+    "itemsPerPage": "Items per page:"
   }
 }
