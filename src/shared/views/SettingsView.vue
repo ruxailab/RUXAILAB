@@ -1,7 +1,7 @@
 <template>
   <PageWrapper
     :title="$t('pages.settings.study_configuration')"
-    :loading="false"
+    :loading="loading"
     :loading-text="$t('pages.settings.loading_settings')"
   >
     <!-- Actions Slot for Save Button -->
