@@ -10,7 +10,6 @@ function loadLocaleMessages() {
     const locale = match[1]
     if (locale) messages[locale] = locales(key)
   })
-  console.info('Loaded locale messages:', Object.keys(messages))
   return messages
 }
 
