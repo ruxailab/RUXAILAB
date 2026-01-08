@@ -102,13 +102,15 @@ export default {
   actions: {
     async createStudy({ commit }, payload) {
       commit('setLoading', true)
-
       try {
         const res = await studyController.createStudy(payload)
         commit('SET_TEST', res.id)
         return res.id
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
         return null
       } finally {
         commit('setLoading', false)
@@ -117,49 +119,44 @@ export default {
 
     async duplicateStudy({ commit }, payload) {
       commit('setLoading', true)
-
       try {
         await studyController.duplicateStudy(payload)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
         return null
       } finally {
         commit('setLoading', false)
       }
     },
 
-    /**
-     * This action deletes a Test,using the generic action "deleteObject",
-     * passing the Test data.
-     *
-     * @param {Partial<Test>} payload the test data
-     */
-
     async deleteStudy({ commit }, payload) {
+      commit('setLoading', true)
       try {
         const res = await studyController.deleteStudy(payload)
         commit('SET_TESTS', res)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
     },
-
-    /**
-     * This action updates the Test, using a the generic action "updateObject"
-     * sending the update data.
-     *
-     * @param {Partial<Test>} payload
-     */
 
     async updateStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
         await studyController.updateStudy(payload)
         commit('SET_TEST', payload)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -169,62 +166,64 @@ export default {
       commit('setLoading', true)
       try {
         await studyController.acceptStudyCollaboration(payload)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
     },
 
-    /**
-     *This action gets a Test by id, using the generic action "getObject"
-     *
-     * @action getTest=SET_TEST
-     * @param {object} payload - Test's data
-     * @param {string} [payload.collection = Test] -  local in database
-     * @param {string} payload.id - Test's identification code
-     * @returns {void}
-     */
     async getStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
     },
 
     async getAllStudies({ commit }) {
+      commit('setLoading', true)
       try {
-        commit('setLoading', true)
         const res = await studyController.getAllStudies()
         commit('SET_TESTS', res)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
     },
 
     async getPublicStudies({ commit }) {
+      commit('setLoading', true)
       try {
-        commit('setLoading', true)
         const res = await studyController.getPublicStudies()
         commit('SET_PUBLIC_TESTS', res)
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
     },
 
-    async getTestsAdminByUser({ commit, rootState }) {
+    async getTestsAdminByUser({ commit }) {
+      commit('setLoading', true)
       try {
-        commit('setLoading', true)
-
         const auth = getAuth()
         const user = auth.currentUser
 
@@ -237,12 +236,14 @@ export default {
               ...Object.values(userDoc.myTests || {}),
               ...Object.values(userDoc.myAnswers || {}),
             ]
-
             commit('SET_TESTS', tests)
           }
         }
-      } catch (_) {
-        commit('setError', true)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'studyError',
+          message: err,
+        })
       } finally {
         commit('setLoading', false)
       }
