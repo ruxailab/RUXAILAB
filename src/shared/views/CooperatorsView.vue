@@ -258,7 +258,7 @@ const handleSendInvitations = async (invitationData) => {
         email: coop,
         invited: true,
         accepted: false,
-        accessLevel: roleOptions.value[selectedRole].value,
+        accessLevel: selectedRole.value,  // Use selectedRole directly, not as index
         token,
         progress: 0,
         updateDate: test.value?.updateDate || new Date().toISOString(),
@@ -270,7 +270,7 @@ const handleSendInvitations = async (invitationData) => {
         email: coop.email,
         invited: true,
         accepted: false,
-        accessLevel: roleOptions.value[selectedRole].value,
+        accessLevel: selectedRole.value,  // Use selectedRole directly, not as index
         token,
         progress: 0,
         updateDate: test.value?.updateDate || new Date().toISOString(),
