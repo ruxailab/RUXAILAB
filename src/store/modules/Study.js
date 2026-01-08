@@ -107,7 +107,7 @@ export default {
         const res = await studyController.createStudy(payload)
         commit('SET_TEST', res.id)
         return res.id
-      } catch (err) {
+      } catch (_) {
         commit('setError', true)
         return null
       } finally {
@@ -120,7 +120,7 @@ export default {
 
       try {
         await studyController.duplicateStudy(payload)
-      } catch (err) {
+      } catch (_) {
         commit('setError', true)
         return null
       } finally {
@@ -139,7 +139,7 @@ export default {
       try {
         const res = await studyController.deleteStudy(payload)
         commit('SET_TESTS', res)
-      } catch (e) {
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -158,8 +158,7 @@ export default {
       try {
         await studyController.updateStudy(payload)
         commit('SET_TEST', payload)
-      } catch (e) {
-        console.error('Error in', e)
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -170,8 +169,7 @@ export default {
       commit('setLoading', true)
       try {
         await studyController.acceptStudyCollaboration(payload)
-      } catch (e) {
-        console.error('Error accept test collaboration', e)
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -192,7 +190,7 @@ export default {
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
-      } catch (e) {
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -204,7 +202,7 @@ export default {
         commit('setLoading', true)
         const res = await studyController.getAllStudies()
         commit('SET_TESTS', res)
-      } catch (e) {
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -216,7 +214,7 @@ export default {
         commit('setLoading', true)
         const res = await studyController.getPublicStudies()
         commit('SET_PUBLIC_TESTS', res)
-      } catch (e) {
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -241,16 +239,9 @@ export default {
             ]
 
             commit('SET_TESTS', tests)
-          } else {
-            console.error(
-              'User document or myTests field not found in Firestore',
-            )
           }
-        } else {
-          console.error('No user is currently signed in')
         }
-      } catch (e) {
-        console.error('Error in get tests by admin', e)
+      } catch (_) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
