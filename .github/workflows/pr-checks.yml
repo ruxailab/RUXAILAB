@@ -16,7 +16,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout PR code
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -31,6 +31,12 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
+            if (!pr) {
+              console.log("No pull request found. Skipping changed files check.");
+              core.setOutput('files', '');
+              return;
+            }
+
             const files = await github.paginate(
               github.rest.pulls.listFiles,
               {
@@ -48,12 +54,13 @@ jobs:
 
       - name: Run ESLint
         run: |
-          if [ -z "${{ steps.files.outputs.files }}" ]; then
-            echo "No JS/Vue files changed. Skipping lint."
-            exit 0
+          if [ -n "${{ steps.files.outputs.files }}" ]; then
+            echo "Linting changed files:"
+            echo "${{ steps.files.outputs.files }}"
+            npx eslint ${{ steps.files.outputs.files }}
+          elif [ "${{ github.event_name }}" == "push" ]; then
+            echo "Push event detected. Linting all files."
+            npm run lint
+          else
+            echo "No JS/Vue files changed or not a push/PR event. Skipping lint."
           fi
-
-          echo "Linting:"
-          echo "${{ steps.files.outputs.files }}"
-
-          npx eslint ${{ steps.files.outputs.files }}
