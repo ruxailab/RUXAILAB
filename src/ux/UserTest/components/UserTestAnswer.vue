@@ -24,7 +24,10 @@
             <v-tab value="1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" value="2">
+            <v-tab
+              v-if="showSentiment"
+              value="2"
+            >
               Sentiment Analysis
             </v-tab>
             <v-tab
@@ -45,10 +48,16 @@
             >
               {{ $t('analytics.sartAnalytics') }}
             </v-tab>
-            <v-tab v-if="showEye" value="6">
+            <v-tab
+              v-if="showEye"
+              value="6"
+            >
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" value="6">
+            <v-tab
+              v-if="showTranscription"
+              value="6"
+            >
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>

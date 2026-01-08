@@ -5,7 +5,9 @@
   >
     <v-container>
       <div class="sart-header mb-6">
-        <h3 class="text-h5 font-weight-bold mb-2">Situation Awareness Rating Technique (SART 10D)</h3>
+        <h3 class="text-h5 font-weight-bold mb-2">
+          Situation Awareness Rating Technique (SART 10D)
+        </h3>
         <p class="text-body-1 mb-4">
           For each of the 10 contributing factors, please select one of the seven boxes that best represents your experience.
           Rate each dimension on a 7-point scale (1 = Low, 7 = High).
@@ -24,7 +26,12 @@
             size="small"
             class="mr-2"
           >
-            <v-icon start size="small">mdi-arrow-up-bold</v-icon>
+            <v-icon
+              start
+              size="small"
+            >
+              mdi-arrow-up-bold
+            </v-icon>
             Demand
           </v-chip>
           <span class="text-caption text-grey">(3 dimensions)</span>
@@ -103,7 +110,12 @@
             size="small"
             class="mr-2"
           >
-            <v-icon start size="small">mdi-arrow-down-bold</v-icon>
+            <v-icon
+              start
+              size="small"
+            >
+              mdi-arrow-down-bold
+            </v-icon>
             Supply
           </v-chip>
           <span class="text-caption text-grey">(4 dimensions)</span>
@@ -182,7 +194,12 @@
             size="small"
             class="mr-2"
           >
-            <v-icon start size="small">mdi-brain</v-icon>
+            <v-icon
+              start
+              size="small"
+            >
+              mdi-brain
+            </v-icon>
             Understanding
           </v-chip>
           <span class="text-caption text-grey">(3 dimensions)</span>
