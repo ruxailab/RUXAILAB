@@ -999,65 +999,68 @@ const calculateProgress = () => {
     return 0;
   }
 };
+// Computed - pure function, only returns boolean
 const isStartTestDisabled = computed(() => {
-  if (!test.value) {
-    testDisabledReason.value = 'test-no-data';
-    return true;
-  }
-
+  if (!test.value) return true;
+  
   const now = new Date();
   const cooperator = test.value.cooperators.find(
-        (u) => u.userDocId === route.params.token,
-      );
-  const sessionDate = cooperator.testDate ? new Date(cooperator.testDate) : null;
+    (u) => u.userDocId === route.params.token,
+  );
+  const sessionDate = cooperator?.testDate ? new Date(cooperator.testDate) : null;
 
-  // 🧩 Test already completed
-  if (localTestAnswer.submitted) {
-    testDisabledReason.value = 'test-already-completed';
-    return true;
-  }
-
-  // 🧩 Test is not active
-  if (test.value.status !== 'active') {
-    testDisabledReason.value = 'test-not-active';
-    return true;
-  }
-
-  // 🧩 Test structure missing
-  if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
-    testDisabledReason.value = 'test-no-tasks-configured';
-    return true;
-  }
-
-  // 🧩 Check session date
+  // Check conditions
+  if (localTestAnswer.submitted) return true;
+  if (test.value.status !== 'active') return true;
+  if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) return true;
+  
   if (sessionDate) {
     const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-
-    if (diffHours < 0) {
-      testDisabledReason.value = 'test-expired';
-      return true;
-    }
-
-    if (diffHours > 24) {
-      testDisabledReason.value = 'test-session-too-far';
-      return true;
-    }
+    if (diffHours < 0 || diffHours > 24) return true;
   }
-
-  // 🧩 Test expired (fallback endDate)
+  
   if (test.value.endDate) {
     const endDate = new Date(test.value.endDate);
-    if (now > endDate) {
-      testDisabledReason.value = 'test-expired';
-      return true;
-    }
+    if (now > endDate) return true;
   }
-
-  // ✅ All good
-  testDisabledReason.value = null;
+  
   return false;
 });
 
+// Watcher - handles side effects
+watch(isStartTestDisabled, (disabled) => {
+  if (disabled) {
+    // Set reason based on conditions
+    if (!test.value) {
+      testDisabledReason.value = 'test-no-data';
+    } else if (localTestAnswer.submitted) {
+      testDisabledReason.value = 'test-already-completed';
+    } else if (test.value.status !== 'active') {
+      testDisabledReason.value = 'test-not-active';
+    } else if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
+      testDisabledReason.value = 'test-no-tasks-configured';
+    } else {
+      const now = new Date();
+      const cooperator = test.value.cooperators.find(
+        (u) => u.userDocId === route.params.token,
+      );
+      const sessionDate = cooperator?.testDate ? new Date(cooperator.testDate) : null;
+      
+      if (sessionDate) {
+        const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+        if (diffHours < 0) {
+          testDisabledReason.value = 'test-expired';
+        } else if (diffHours > 24) {
+          testDisabledReason.value = 'test-session-too-far';
+        }
+      } else if (test.value.endDate && new Date(test.value.endDate) < now) {
+        testDisabledReason.value = 'test-expired';
+      }
+    }
+  } else {
+    testDisabledReason.value = null;
+  }
+}, { immediate: true });
 
 // Lifecycle hooks
 onMounted(async () => {
