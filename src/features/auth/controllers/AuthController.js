@@ -8,7 +8,10 @@ import {
   sendPasswordResetEmail,
   setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+  EmailAuthProvider
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios';
@@ -93,6 +96,31 @@ export default class AuthController {
       subject: 'Password Reset',
       template: 'passwordReset',
     })
+  }
+
+  /**
+   * Delete user account
+   * @param {Object} user - Firebase auth user
+   * @param {string} password - User password for reauthentication (optional)
+   * @returns {Promise}
+   */
+  async deleteUserAccount(user, password) {
+    if (!user) throw new Error('No user provided')
+
+    const hasGoogle = user.providerData.some(p => p.providerId === 'google.com')
+
+    // Reauthenticate based on provider
+    if (hasGoogle) {
+      await reauthenticateWithPopup(user, new GoogleAuthProvider())
+    } else {
+      if (!password) throw new Error('Password required')
+      const cred = EmailAuthProvider.credential(user.email, password)
+      await reauthenticateWithCredential(user, cred)
+    }
+
+    // Delete user
+    await user.delete()
+    await this.signOut()
   }
 
   async deleteAuth(userId) {
