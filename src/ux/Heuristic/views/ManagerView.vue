@@ -111,8 +111,8 @@ import {
 } from '@/shared/utils/managerDefault'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { computed, onMounted, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -129,7 +129,6 @@ import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStat
 // Stores
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
 const { t } = useI18n()
 
 // Computed
@@ -150,27 +149,7 @@ const accessLevel = computed(() => {
   )
   if (coop) return coop.accessLevel
 
-  // Fixed logic: Public studies allow guest access, private studies block non-collaborators
-  if (currentTest?.isPublic) {
-    return ACCESS_LEVEL.GUEST // Public studies: allow as guest
-  } else {
-    return null // Private studies: no access for non-collaborators
-  }
-})
-
-// Add access control check (was missing in Heuristic ManagerView)
-watchEffect(() => {
-  if (user.value != null && test.value != null) {
-    // Allow ADMIN, EVALUATOR, and GUEST (for public studies)
-    const hasAccess =
-      accessLevel.value === ACCESS_LEVEL.ADMIN ||
-      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
-      accessLevel.value === ACCESS_LEVEL.GUEST
-
-    if (!hasAccess || accessLevel.value === null) {
-      router.push('/')
-    }
-  }
+  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
 })
 
 const topCards = computed(() => {
