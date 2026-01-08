@@ -8,6 +8,7 @@ export const dashboardNavigationItems = [
     { id: 'studies', title: 'Studies', icon: 'mdi-flask' },
     { id: 'sessions', title: 'Sessions', icon: 'mdi-calendar-clock' },
     { id: 'templates', title: 'Templates', icon: 'mdi-clipboard-text' },
+    { id: 'storage', title: 'Storage', icon: 'mdi-database' },
     { id: 'notifications', title: 'Notifications', icon: 'mdi-bell' },
     { id: 'profile', title: 'Profile', icon: 'mdi-account-circle' },
     {

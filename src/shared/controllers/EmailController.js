@@ -3,13 +3,14 @@ import axios from 'axios';
 export default class EmailController {
   /**
    *
-   * @param to Recipient email address
-   * @param subject Email subject
-   * @param template Email type (e.g., 'invitation')
-   * @param attachments Optional attachments
-   * @param data Additional data for the email template
+   * @param {Object} payload - Email payload object
+   * @param {string} payload.to - Recipient email address
+   * @param {string} payload.subject - Email subject
+   * @param {string} payload.template - Email type (e.g., 'invitation')
+   * @param {Array} payload.attachments - Optional attachments
+   * @param {Object} payload.data - Additional data for the email template
    *
-   * @returns
+   * @returns {Promise<{success: boolean, message: string}>} Result of email send operation
    */
   async send(payload) {
     try {
