@@ -220,7 +220,12 @@
                           size="small"
                           class="mr-2"
                         >
-                          <v-icon start size="small">mdi-arrow-up-bold</v-icon>
+                          <v-icon
+                            start
+                            size="small"
+                          >
+                            mdi-arrow-up-bold
+                          </v-icon>
                           Demand
                         </v-chip>
                         <span class="text-caption text-grey">(3 dimensions)</span>
@@ -236,7 +241,10 @@
                               class="dimension-label"
                               style="min-width: 180px; max-width: 180px;"
                             >
-                              <div class="font-weight-medium text-truncate" :title="dimension.label">
+                              <div
+                                class="font-weight-medium text-truncate"
+                                :title="dimension.label"
+                              >
                                 {{ dimension.label }}
                               </div>
                               <div class="text-caption text-grey text-truncate">
@@ -295,7 +303,12 @@
                           size="small"
                           class="mr-2"
                         >
-                          <v-icon start size="small">mdi-arrow-down-bold</v-icon>
+                          <v-icon
+                            start
+                            size="small"
+                          >
+                            mdi-arrow-down-bold
+                          </v-icon>
                           Supply
                         </v-chip>
                         <span class="text-caption text-grey">(4 dimensions)</span>
@@ -311,7 +324,10 @@
                               class="dimension-label"
                               style="min-width: 180px; max-width: 180px;"
                             >
-                              <div class="font-weight-medium text-truncate" :title="dimension.label">
+                              <div
+                                class="font-weight-medium text-truncate"
+                                :title="dimension.label"
+                              >
                                 {{ dimension.label }}
                               </div>
                               <div class="text-caption text-grey text-truncate">
@@ -370,7 +386,12 @@
                           size="small"
                           class="mr-2"
                         >
-                          <v-icon start size="small">mdi-brain</v-icon>
+                          <v-icon
+                            start
+                            size="small"
+                          >
+                            mdi-brain
+                          </v-icon>
                           Understanding
                         </v-chip>
                         <span class="text-caption text-grey">(3 dimensions)</span>
@@ -386,7 +407,10 @@
                               class="dimension-label"
                               style="min-width: 180px; max-width: 180px;"
                             >
-                              <div class="font-weight-medium text-truncate" :title="dimension.label">
+                              <div
+                                class="font-weight-medium text-truncate"
+                                :title="dimension.label"
+                              >
                                 {{ dimension.label }}
                               </div>
                               <div class="text-caption text-grey text-truncate">
@@ -588,7 +612,10 @@
             <!-- Demand, Supply, and Understanding Summary -->
             <v-row class="mb-6">
               <v-col cols="4">
-                <div class="summary-card pa-4" style="background: #fff3e0; border-radius: 8px;">
+                <div
+                  class="summary-card pa-4"
+                  style="background: #fff3e0; border-radius: 8px;"
+                >
                   <div class="text-caption text-grey-darken-1 mb-1">
                     Demand Score
                   </div>
@@ -601,7 +628,10 @@
                 </div>
               </v-col>
               <v-col cols="4">
-                <div class="summary-card pa-4" style="background: #e8f5e8; border-radius: 8px;">
+                <div
+                  class="summary-card pa-4"
+                  style="background: #e8f5e8; border-radius: 8px;"
+                >
                   <div class="text-caption text-grey-darken-1 mb-1">
                     Supply Score
                   </div>
@@ -614,7 +644,10 @@
                 </div>
               </v-col>
               <v-col cols="4">
-                <div class="summary-card pa-4" style="background: #f3e5f5; border-radius: 8px;">
+                <div
+                  class="summary-card pa-4"
+                  style="background: #f3e5f5; border-radius: 8px;"
+                >
                   <div class="text-caption text-grey-darken-1 mb-1">
                     Understanding Score
                   </div>
