@@ -48,7 +48,7 @@
     "firebase-functions": "^6.6.0",
     "jsdoc-vuex-plugin": "^1.0.0",
     "jspdf": "^3.0.3",
-    "jspdf-autotable": "^5.0.2",
+    "jspdf-autotable": "^5.0.7",
     "lodash": "^4.17.21",
     "nanoid": "^5.1.6",
     "process": "^0.11.10",
