@@ -40,12 +40,8 @@ export default {
       )
       if (coopsInfo) return coopsInfo.accessLevel
 
-      // Fixed logic: Public studies allow guest access, private studies block non-collaborators
-      if (test.isPublic) {
-        return 1 // Public studies: allow as guest
-      } else {
-        return null // Private studies: no access for non-collaborators
-      }
+      // Check if the test is public
+      return test.isPublic ? 1 : 2
     },
   },
 
