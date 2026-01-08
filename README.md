@@ -44,11 +44,12 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 22.15.1
-- Vue.js version: 3.5.13
+- Node.js version: ≤ 24.12.0
+- Vue.js version: 3.5.26
 - Vue CLI version: 5.0.8
-- Vuetify version: 3.7.18
+- Vuetify version: 3.11.6
 - Python version: 3.11.8
+- Recommended formatter: Prettier - Code formatter
 
 ## Video Guide
 
