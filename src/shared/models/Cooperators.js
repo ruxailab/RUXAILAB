@@ -34,8 +34,6 @@ export default class Cooperators {
 
     /**
      * Defines the cooperator access level.
-     * 1: Admin/Moderator/Evaluator
-     * 2: Observator
      *
      * @type {number}
      */
