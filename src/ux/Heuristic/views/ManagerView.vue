@@ -10,39 +10,24 @@
       <div
         v-if="!test"
         class="d-flex justify-center align-center"
-        style="min-height: 400px;"
+        style="min-height: 400px"
       >
-        <v-progress-circular
-          indeterminate
-          color="primary"
-          size="64"
-        />
+        <v-progress-circular indeterminate color="primary" size="64" />
       </div>
 
       <!-- Dashboard profesional con componentes específicos -->
-      <v-container
-        v-else
-        class="large-margins"
-      >
+      <v-container v-else class="large-margins">
         <!-- Primera fila: Título del proyecto con chip al lado -->
         <v-row>
           <v-col cols="12">
             <div class="d-flex align-center gap-3">
               <h1 class="text-h4">
-                {{ test.testTitle || $t('Dashboard.managerView.heuristicStudy') }}
+                {{
+                  test.testTitle || $t('Dashboard.managerView.heuristicStudy')
+                }}
               </h1>
-              <v-chip
-                class="ml-5"
-                color="info"
-                variant="outlined"
-                size="small"
-              >
-                <v-icon
-                  start
-                  size="small"
-                >
-                  mdi-crown-outline
-                </v-icon>
+              <v-chip class="ml-5" color="info" variant="outlined" size="small">
+                <v-icon start size="small"> mdi-crown-outline </v-icon>
                 {{ $t('Dashboard.managerView.freePlan') }}
               </v-chip>
             </div>
@@ -81,29 +66,17 @@
         <!-- Fila con 3 módulos -->
         <v-row class="modules-section">
           <!-- Módulo 1: Actividad reciente -->
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <RecentActivity
-              :test="test"
-              @view-all="viewAllActivity"
-            />
+          <v-col cols="12" md="4">
+            <RecentActivity :test="test" @view-all="viewAllActivity" />
           </v-col>
 
           <!-- Módulo 2: Cooperadores -->
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <CooperatorsInfo :test="test" />
           </v-col>
 
           <!-- Módulo 3: Información de heurísticas -->
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <HeuristicsInfo :test="test" />
           </v-col>
         </v-row>
@@ -111,26 +84,17 @@
         <!-- Segunda fila con 3 módulos -->
         <v-row class="mb-2 modules-section">
           <!-- Módulo 4: Storage -->
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <StorageInfo :test="test" />
           </v-col>
 
           <!-- Módulo 5: Resultados de Usabilidad -->
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <UsabilityResults :test="test" />
           </v-col>
 
           <!-- Módulo 6: Estado del Informe Final -->
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <FinalReportStatus :test="test" />
           </v-col>
         </v-row>
@@ -140,27 +104,32 @@
 </template>
 
 <script setup>
-import { getBottomCardsDefualt, getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
-import ManagerView from '@/shared/views/template/ManagerView.vue';
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
-import { computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
+import {
+  getBottomCardsDefualt,
+  getNavigatorDefault,
+  getTopCardsDefualt,
+} from '@/shared/utils/managerDefault'
+import ManagerView from '@/shared/views/template/ManagerView.vue'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { computed, onMounted, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 // Componentes del manager
-import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue';
-import RecentActivity from '@/ux/Heuristic/components/manager/RecentActivity.vue';
+import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue'
+import RecentActivity from '@/ux/Heuristic/components/manager/RecentActivity.vue'
 
-import CooperatorsInfo from '@/ux/Heuristic/components/manager/CooperatorsInfo.vue';
-import HeuristicsInfo from '@/ux/Heuristic/components/manager/HeuristicsInfo.vue';
-import StorageInfo from '@/ux/Heuristic/components/manager/StorageInfo.vue';
-import UsabilityResults from '@/ux/Heuristic/components/manager/UsabilityResults.vue';
-import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStatus.vue';
+import CooperatorsInfo from '@/ux/Heuristic/components/manager/CooperatorsInfo.vue'
+import HeuristicsInfo from '@/ux/Heuristic/components/manager/HeuristicsInfo.vue'
+import StorageInfo from '@/ux/Heuristic/components/manager/StorageInfo.vue'
+import UsabilityResults from '@/ux/Heuristic/components/manager/UsabilityResults.vue'
+import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStatus.vue'
 
 // Stores
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 
 // Computed
@@ -173,15 +142,36 @@ const accessLevel = computed(() => {
 
   if (!currentUser) return ACCESS_LEVEL.GUEST
   if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id) return ACCESS_LEVEL.ADMIN
+  if (currentTest?.testAdmin?.userDocId === currentUser.id)
+    return ACCESS_LEVEL.ADMIN
 
-  const coop = currentTest?.cooperators?.find(c => c.userDocId === currentUser.id)
+  const coop = currentTest?.cooperators?.find(
+    (c) => c.userDocId === currentUser.id,
+  )
   if (coop) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
+  // Fixed logic: Public studies allow guest access, private studies block non-collaborators
+  if (currentTest?.isPublic) {
+    return ACCESS_LEVEL.GUEST // Public studies: allow as guest
+  } else {
+    return null // Private studies: no access for non-collaborators
+  }
 })
 
+// Add access control check (was missing in Heuristic ManagerView)
+watchEffect(() => {
+  if (user.value != null && test.value != null) {
+    // Allow ADMIN, EVALUATOR, and GUEST (for public studies)
+    const hasAccess =
+      accessLevel.value === ACCESS_LEVEL.ADMIN ||
+      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
+      accessLevel.value === ACCESS_LEVEL.GUEST
 
+    if (!hasAccess || accessLevel.value === null) {
+      router.push('/')
+    }
+  }
+})
 
 const topCards = computed(() => {
   if (!test.value) return []
@@ -214,7 +204,6 @@ const navigator = computed(() => {
 const viewAllActivity = () => {
   console.log('View all activity')
 }
-
 
 // Lifecycle
 onMounted(async () => {

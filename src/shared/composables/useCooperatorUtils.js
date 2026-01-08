@@ -7,9 +7,9 @@ export function useCooperatorUtils() {
 
     // Role options definition
     const roleOptions = computed(() => [
-        { title: 'Administrator', value: 0 },
-        { title: 'Evaluator', value: 1 },
-        { title: 'Guest', value: 2 }
+        { title: 'Admin', value: 0 },
+        { title: 'Guest', value: 1 },      // ✅ Guest = 1
+        { title: 'Evaluator', value: 2 }   // ✅ Evaluator = 2
     ]);
 
     // Status filter options
