@@ -1,9 +1,3 @@
-export const ACCESS_LEVELS = {
-  ADMIN: 1,
-  OBSERVATOR: 2,
-  GUEST: 3
-}
-
 /**
  * Represents the cooperators model.
  */
@@ -22,7 +16,7 @@ export default class Cooperators {
     testAuthorEmail,
     token,
     testDate,
-    inviteMessage
+    inviteMessage,
   } = {}) {
     /**
      * Defines the user document id.
@@ -130,7 +124,7 @@ export default class Cooperators {
       testAuthorEmail: this.testAuthorEmail ?? null,
       token: this.token ?? null,
       testDate: this.testDate ?? null,
-      inviteMessage: this.inviteMessage ?? null
+      inviteMessage: this.inviteMessage ?? null,
     }
   }
 }
