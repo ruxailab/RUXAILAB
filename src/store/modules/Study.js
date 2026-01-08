@@ -41,12 +41,15 @@ export default {
   },
   mutations: {
     SET_TEST(state, payload) {
-      state.Test = payload;
-      if (payload?.testStructure && payload.testType === STUDY_TYPES.HEURISTIC) {
+      state.Test = payload
+      if (
+        payload?.testStructure &&
+        payload.testType === STUDY_TYPES.HEURISTIC
+      ) {
         state.heuristics = Object.entries(payload.testStructure)
           .filter(([key]) => !isNaN(key))
-          .map(([_, value]) => ({ ...value }));
-        state.testWeights = payload.testWeights || {};
+          .map(([_, value]) => ({ ...value }))
+        state.testWeights = payload.testWeights || {}
       }
     },
     SET_TESTS(state, payload) {
@@ -56,7 +59,7 @@ export default {
       state.publicTests = payload
     },
     SET_TEST_STRUCTURE(state, payload) {
-      state.testStructure = { ...payload };
+      state.testStructure = { ...payload }
     },
     SET_CARDSORTING_OPTIONS_TEST_STRUCTURE(state, payload) {
       state.testStructure.cardSorting = state.testStructure.cardSorting || {}
@@ -80,9 +83,9 @@ export default {
       state.studyType = payload
     },
     RESET_STUDY_DETAILS(state) {
-      state.studyCategory = null,
-        state.studyMethod = null,
-        state.studyType = null
+      ;(state.studyCategory = null),
+        (state.studyMethod = null),
+        (state.studyType = null)
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {
@@ -94,7 +97,7 @@ export default {
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
-    }
+    },
   },
   actions: {
     async createStudy({ commit }, payload) {
@@ -154,7 +157,7 @@ export default {
       commit('setLoading', true)
       try {
         await studyController.updateStudy(payload)
-        commit('SET_TEST', payload);
+        commit('SET_TEST', payload)
       } catch (e) {
         console.error('Error in', e)
         commit('setError', true)
@@ -222,10 +225,10 @@ export default {
 
     async getTestsAdminByUser({ commit, rootState }) {
       try {
-        commit('setLoading', true);
+        commit('setLoading', true)
 
-        const auth = getAuth();
-        const user = auth.currentUser;
+        const auth = getAuth()
+        const user = auth.currentUser
 
         if (user) {
           const userController = new UserController()
@@ -235,11 +238,13 @@ export default {
             const tests = [
               ...Object.values(userDoc.myTests || {}),
               ...Object.values(userDoc.myAnswers || {}),
-            ];
+            ]
 
             commit('SET_TESTS', tests)
           } else {
-            console.error('User document or myTests field not found in Firestore')
+            console.error(
+              'User document or myTests field not found in Firestore',
+            )
           }
         } else {
           console.error('No user is currently signed in')
@@ -251,5 +256,5 @@ export default {
         commit('setLoading', false)
       }
     },
-  }
+  },
 }
