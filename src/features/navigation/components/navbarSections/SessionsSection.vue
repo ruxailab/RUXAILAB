@@ -84,7 +84,6 @@
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
               max-width="290px"
               min-width="290px"
             >
@@ -180,8 +179,6 @@ const props = defineProps({
 // ===== State and setup =====
 const store = useStore()
 const router = useRouter()
-
-const search = ref('')
 const activeSection = ref('dashboard')
 
 // ===== Filter options =====
