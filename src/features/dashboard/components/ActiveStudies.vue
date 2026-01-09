@@ -175,11 +175,7 @@ const isLongDescription = (description) => {
 }
 
 const studies = computed(() => {
-  return props.studies.length > 0
-    ? studiesWithAnswers.value
-    : loading
-    ? []
-    : defaultStudies
+  return props.studies.length > 0 ? studiesWithAnswers.value : loading.value ? [] : defaultStudies
 })
 
 const lastFourStudies = computed(() => {
@@ -198,11 +194,14 @@ async function loadAnswers() {
   loading.value = true
   const last4 = []
   try {
-    for (const study in lastFourStudies.value) {
-      const testDoc = lastFourStudies.value[study]
-      const answerDoc = await answerController.getAnswerById(
-        testDoc.answersDocId,
-      )
+    for (const testDoc of lastFourStudies.value) {
+      if (!testDoc?.answersDocId) {
+        continue;
+      }
+      const answerDoc = await answerController.getAnswerById(testDoc.answersDocId);
+      if (!answerDoc) {
+        continue;
+      }
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({
           ...testDoc,
