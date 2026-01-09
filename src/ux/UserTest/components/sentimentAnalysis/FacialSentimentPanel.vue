@@ -224,7 +224,6 @@ const analyzeVideo = async (videoPath) => {
         video_name: videoPath,
       },
     )
-    console.log('[✅ Facial Sentiment API]', res.data)
 
     const data = res.data.emotions
     updateUI(data)
@@ -235,14 +234,6 @@ const analyzeVideo = async (videoPath) => {
     clonedTestAnswer.tasks[props.selectedTask] =
       clonedTestAnswer.tasks[props.selectedTask] || {}
     clonedTestAnswer.tasks[props.selectedTask].facialSentimentResults = data
-
-    console.log(
-      '[💾 Saving Facial Sentiment Data to Test Answer]',
-      clonedTestAnswer,
-    )
-
-    console.log('answersDocId: ', test.value.answersDocId)
-    console.log('testType: ', test.value.testType)
 
     await store.dispatch('saveTestAnswer', {
       data: new UserStudyEvaluatorAnswer(clonedTestAnswer),

@@ -316,8 +316,6 @@ import { saveConfigData } from '../controllers/assessmentController';
 const actions = {
   // Update configuration (local and Firestore)
   async updateConfiguration({ commit, dispatch, rootState }, { configData, testId }) {
-    console.log('Received configData:', configData); // Log the received configData
-    console.log('Received testId:', testId); // Log the received testId
 
     commit('SET_CONFIGURATION', configData);
 
@@ -333,12 +331,9 @@ const actions = {
     // Save configuration to Firestore
     try {
       const userId = rootState.Auth.user?.id; // Corrected casing for Auth module
-      console.log('Saving configuration to Firestore:', configData);
-      console.log('User ID:', userId, 'Test ID:', testId);
       if (!userId || !testId) throw new Error('User or Test not authenticated');
 
       await saveConfigData(userId, testId, configData);
-      console.log('Configuration saved to Firestore');
     } catch (error) {
       console.error('Failed to save configuration to Firestore:', error);
     }
@@ -367,11 +362,9 @@ const actions = {
   async initializeAssessment({ commit, state, dispatch }) {
     try {
       commit('setLoading', true, { root: true })
-      console.log('Initializing assessment...')
 
       // Import the WCAG data
       const wcagData = await import('@/assets/WacgAxe.json')
-      console.log('Raw WCAG data:', wcagData)
 
       // Transform the data to match our expected format
       const transformedData = {
@@ -424,7 +417,6 @@ const actions = {
         })
       }
 
-      console.log('Transformed data:', transformedData)
       commit('SET_WCAG_DATA', transformedData)
       // Filter by config
       await dispatch('filterByComplianceLevel', state.configuration.complianceLevel)
@@ -623,7 +615,6 @@ const actions = {
 
   // Update a single rule assessment
   async updateRuleAssessment({ commit, state }, { userId, testId, ruleId, assessment }) {
-    console.log("this goes here")
     try {
       if (!userId) throw new Error('User ID is required');
 
@@ -658,7 +649,6 @@ const actions = {
     try {
       // Check if configData is already available in the store
       if (state.configuration && state.configuration.testId === testId) {
-        console.log('ConfigData already available in the store');
         return state.configuration;
       }
 
@@ -666,7 +656,6 @@ const actions = {
       const userId = rootState.Auth.user?.id;
       if (!userId) throw new Error('User not authenticated');
 
-      console.log('Fetching configData from Firestore for testId:', testId);
 
       // Fetch configData from Firestore (replace with actual Firestore fetch logic)
       const configData = await assessmentController.getConfigData(userId, testId);
