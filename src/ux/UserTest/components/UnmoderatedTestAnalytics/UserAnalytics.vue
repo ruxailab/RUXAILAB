@@ -530,6 +530,8 @@
                       v-model="showSessionAnalyticsDialog"
                       :userId="dialogItem.userDocId"
                       :task-answer="dialogItem.tasks[taskSelect]"
+                      :selectedTask="taskSelect"
+                      :test-answer="answers[dialogItem.userDocId]"
                       :fromEyeTracking="true"
                     />
                   </div>

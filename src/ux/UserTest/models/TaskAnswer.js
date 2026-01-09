@@ -1,4 +1,4 @@
-import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
+import { NasaTlxAnswer } from '@/ux/UserTest/models/NasaTlxAnswer'
 
 export default class TaskAnswer {
   constructor({
@@ -15,7 +15,8 @@ export default class TaskAnswer {
     irisTrackingData,
     postAnswer,
     susAnswers,
-    nasaTlxAnswers
+    nasaTlxAnswers,
+    facialSentimentResults,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -31,6 +32,7 @@ export default class TaskAnswer {
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
+    this.facialSentimentResults = facialSentimentResults ?? null
   }
 
   static toModel(data) {
@@ -52,7 +54,14 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
+      nasaTlxAnswers:
+        this.nasaTlxAnswers != null
+          ? (this.nasaTlxAnswers instanceof NasaTlxAnswer
+              ? this.nasaTlxAnswers
+              : new NasaTlxAnswer(this.nasaTlxAnswers)
+            ).toFirestore()
+          : null,
+      facialSentimentResults: this.facialSentimentResults,
     }
   }
 }
