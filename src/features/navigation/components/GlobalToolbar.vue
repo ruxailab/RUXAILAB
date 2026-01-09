@@ -17,8 +17,7 @@
     <v-toolbar-title
       style="cursor: pointer"
       class="d-flex align-center"
-      @click="goTo('/admin')"
-    >
+@click="goTo('/')"    >
       <img
         :src="xs ? logoSmall : logoFull"
         alt="RUXAILAB Logo"
