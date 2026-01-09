@@ -1,38 +1,17 @@
 <template>
   <v-row justify="center">
-    <v-col
-      lg="12"
-      class="px-0 py-5"
-    >
-      <v-card class="elevation-2 rounded-lg pa-6">
-        <v-row
-          align="center"
-          class="pa-4"
-        >
-          <v-col
-            cols="12"
-            sm="6"
-          >
-            <v-card-title
-              class="text-h5 font-weight-bold pa-0"
-              :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
-            >
+    <v-col lg="12" class="px-0 py-5">
+      <v-card class="elevation-2 rounded-lg pa-md-6">
+        <v-row align="center" class="pa-4">
+          <v-col cols="12" sm="6">
+            <v-card-title class="text-h5 font-weight-bold pa-0"
+              :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
               {{ $t('UserTestTable.titles.currentTasks') }}
             </v-card-title>
           </v-col>
-          <v-col
-            cols="12"
-            sm="6"
-            class="text-right"
-          >
-            <v-btn
-              color="primary"
-              variant="flat"
-              size="large"
-              class="px-6 text-capitalize"
-              rounded="lg"
-              @click="() => {dialog = true; task = new Task();}"
-            >
+          <v-col cols="12" sm="6" class="text-sm-right">
+            <v-btn color="primary" variant="flat" size="large" class="text-capitalize w-100 w-md-auto" rounded="lg"
+              @click="() => { dialog = true; task = new Task(); }">
               <v-icon start>
                 mdi-plus-circle
               </v-icon>
@@ -41,26 +20,13 @@
           </v-col>
         </v-row>
         <v-card-text>
-          <v-data-table
-            :headers="headers"
-            :items="allTasks"
-            :items-per-page="5"
-            class="elevation-0 rounded-lg"
+          <v-data-table :headers="headers" :items="allTasks" :items-per-page="5" class="elevation-0 rounded-lg"
             style="background: #FFFFFF; border: 1px solid #E5E7EB;"
-            :no-data-text="$t('UserTestTable.messages.noTasks')"
-          >
+            :no-data-text="$t('UserTestTable.messages.noTasks')">
             <!-- Custom Column Templates -->
             <template #item.taskType="{ item }">
-              <v-chip
-                v-if="item.taskType"
-                :color="getTaskTypeColor(item.taskType)"
-                size="small"
-                variant="flat"
-              >
-                <v-icon
-                  start
-                  size="small"
-                >
+              <v-chip v-if="item.taskType" :color="getTaskTypeColor(item.taskType)" size="small" variant="flat">
+                <v-icon start size="small">
                   {{ getTaskTypeIcon(item.taskType) }}
                 </v-icon>
                 {{ getTaskTypeLabel(item.taskType) }}
@@ -106,31 +72,16 @@
 
             <!-- Actions Column -->
             <template #item.actions="{ item }">
-              <v-btn
-                icon
-                variant="text"
-                color="accent"
-                class="mr-2"
-                @click="editItem(item)"
-              >
+              <v-btn icon variant="text" color="accent" class="mr-2" @click="editItem(item)">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn
-                icon
-                variant="text"
-                color="error"
-                @click="deleteItem(item)"
-              >
+              <v-btn icon variant="text" color="error" @click="deleteItem(item)">
                 <v-icon>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
           </v-data-table>
         </v-card-text>
-        <FormDialog
-          v-model:dialog="dialog"
-          v-model:task="task"
-          @add-task="addTask"
-        />
+        <FormDialog v-model:dialog="dialog" v-model:task="task" @add-task="addTask" />
       </v-card>
     </v-col>
   </v-row>
@@ -175,7 +126,7 @@ const deleteItem = async (item) => {
   if (confirm('Are you sure you want to delete this task?')) {
     try {
       allTasks.value.splice(index, 1);
-      await store.dispatch('setTasks', allTasks.value);
+      await store.dispatch('UserStudy/setTasks', allTasks.value);
     } catch (error) {
       console.error('Error deleting task:', error.message);
     }
@@ -190,7 +141,7 @@ const addTask = async (newTask) => {
     } else {
       allTasks.value.push(newTask.toFirestore());
     }
-    await store.dispatch('setTasks', allTasks.value);
+    await store.dispatch('UserStudy/setTasks', allTasks.value);
     task.value = new Task();
     dialog.value = false;
   } catch (error) {
@@ -200,7 +151,7 @@ const addTask = async (newTask) => {
 
 const setAllTasks = () => {
   allTasks.value = Object.assign(
-    store.getters.tasks,
+    store.getters['UserStudy/tasks'],
     store.state.Tests.Test.testStructure.userTasks
   );
 };
