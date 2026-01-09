@@ -1,6 +1,5 @@
-export const ACCESS_LEVEL =
-{
+export const ACCESS_LEVEL = {
   ADMIN: 0,
-  GUEST: 1,
-  EVALUATOR: 2,
+  EVALUATOR: 1,
+  GUEST: 2,
 }
