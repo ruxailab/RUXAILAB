@@ -50,8 +50,7 @@ router.beforeEach(async (to, from, next) => {
 function redirect() {
   if (!store.state.Auth.user) return '/signin'
   const level = store.state.Auth.user.accessLevel
-  if (level === -1) return '/superadmin'
-  if (level === 0) return '/admin'
+  if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
   return '/signin'
 }

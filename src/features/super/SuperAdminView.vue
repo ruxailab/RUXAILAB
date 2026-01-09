@@ -224,10 +224,8 @@ const usersHeaders = computed(() => [
 ])
 
 const accessLevels = computed(() => [
-  { title: t('profile.superAdmin'), level: -1 },
-  { title: t('profile.admin'), level: 0 },
-  { title: t('profile.guest'), level: 1 },
-  { title: t('profile.evaluator'), level: 2 },
+  { title: t('profile.superAdmin'), level: 0 },
+  { title: t('common.user'), level: 1 },
 ])
 
 const dialogText = computed(() =>
@@ -247,16 +245,12 @@ const formatMediaSize = (mb) => {
 // Helper function to get access level color
 const getAccessLevelColor = (level) => {
   switch (level) {
-    case -1:
-      return 'deep-purple darken-3'
     case 0:
-      return 'red darken-2'
+      return 'red darken-2'          // Super Admin
     case 1:
-      return 'blue darken-2'
-    case 2:
-      return 'green darken-1'
+      return 'blue darken-2'         // Regular User
     default:
-      return 'grey'
+      return 'grey'                  // Study levels 
   }
 }
 
