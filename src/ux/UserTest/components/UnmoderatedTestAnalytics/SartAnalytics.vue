@@ -1,13 +1,6 @@
 <template>
-  <v-card
-    class="fill-height"
-    style="border-radius: 0;"
-  >
-    <v-container
-      fluid
-      class="pa-6 fill-height"
-      style="overflow-y: auto;"
-    >
+  <v-card class="fill-height" style="border-radius: 0;">
+    <v-container fluid class="pa-6 fill-height" style="overflow-y: auto;">
       <!-- Header Section -->
       <div class="mb-8">
         <h1 class="text-h3 font-weight-bold text-primary">
@@ -21,16 +14,8 @@
       <!-- Overview Cards -->
       <v-row class="mb-0">
         <!-- Average SA Score -->
-        <v-col
-          cols="12"
-          md="3"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+        <v-col cols="12" md="3" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -43,14 +28,8 @@
                   {{ getSALevel(analytics.averageSAScore) }}
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #e3f2fd; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="info"
-                >
+              <div class="pa-3" style="background: #e3f2fd; border-radius: 8px;">
+                <v-icon size="24" color="info">
                   mdi-chart-areaspline
                 </v-icon>
               </div>
@@ -59,16 +38,8 @@
         </v-col>
 
         <!-- Average Demand -->
-        <v-col
-          cols="12"
-          md="3"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+        <v-col cols="12" md="3" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -81,14 +52,8 @@
                   Instability + Complexity + Variability
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #fff3e0; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="warning"
-                >
+              <div class="pa-3" style="background: #fff3e0; border-radius: 8px;">
+                <v-icon size="24" color="warning">
                   mdi-arrow-up-bold
                 </v-icon>
               </div>
@@ -97,16 +62,8 @@
         </v-col>
 
         <!-- Average Supply -->
-        <v-col
-          cols="12"
-          md="3"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+        <v-col cols="12" md="3" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -119,14 +76,8 @@
                   Arousal + Concentration + Division + Spare Capacity
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #e8f5e8; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="success"
-                >
+              <div class="pa-3" style="background: #e8f5e8; border-radius: 8px;">
+                <v-icon size="24" color="success">
                   mdi-arrow-down-bold
                 </v-icon>
               </div>
@@ -135,16 +86,8 @@
         </v-col>
 
         <!-- Average Understanding -->
-        <v-col
-          cols="12"
-          md="3"
-          class="d-flex"
-        >
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%;"
-          >
+        <v-col cols="12" md="3" class="d-flex">
+          <v-card class="pa-6 text-left" elevation="2" style="border-radius: 12px; width: 100%;">
             <div class="d-flex justify-space-between align-center">
               <div>
                 <div class="text-caption text-grey-darken-1 mb-1">
@@ -157,14 +100,8 @@
                   Information Quantity + Information Quality + Familiarity
                 </div>
               </div>
-              <div
-                class="pa-3"
-                style="background: #f3e5f5; border-radius: 8px;"
-              >
-                <v-icon
-                  size="24"
-                  color="purple"
-                >
+              <div class="pa-3" style="background: #f3e5f5; border-radius: 8px;">
+                <v-icon size="24" color="purple">
                   mdi-brain
                 </v-icon>
               </div>
@@ -174,291 +111,231 @@
       </v-row>
 
       <!-- Dimension Breakdown Charts -->
-      <v-row class="mb-8">
+      <v-row class="mb-2">
         <v-col cols="12">
-          <v-card
-            elevation="2"
-            style="border-radius: 12px;"
-          >
+          <v-card elevation="2" style="border-radius: 12px;">
             <v-card-title class="text-h5 pa-5">
               SART Dimension Breakdown
             </v-card-title>
             <v-card-text class="pa-6">
               <v-row>
                 <!-- Radar Chart -->
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <div class="chart-container">
                     <h3 class="text-h6 mb-4">
                       Average Scores by Dimension (1-7 scale)
                     </h3>
-                    <canvas
-                      ref="radarCanvas"
-                      style="max-height: 400px;"
-                    />
+                    <canvas ref="radarCanvas" style="max-height: 400px;" />
                   </div>
                 </v-col>
 
                 <!-- Grouped Horizontal Bar Chart -->
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <div class="dimension-bars-container">
                     <h3 class="text-h6 mb-4">
                       Dimension Comparison by Category
                     </h3>
-                    
-                    <!-- Demand Dimensions Group -->
-                    <div class="dimension-group mb-6">
-                      <div class="group-header d-flex align-center mb-3">
-                        <v-chip
-                          color="warning"
-                          variant="tonal"
-                          size="small"
-                          class="mr-2"
-                        >
-                          <v-icon
-                            start
-                            size="small"
-                          >
-                            mdi-arrow-up-bold
-                          </v-icon>
-                          Demand
-                        </v-chip>
-                        <span class="text-caption text-grey">(3 dimensions)</span>
-                      </div>
-                      <div class="dimension-bars">
-                        <div
-                          v-for="dimension in demandDimensions"
-                          :key="dimension.key"
-                          class="dimension-row mb-3"
-                        >
-                          <div class="d-flex align-center">
-                            <div
-                              class="dimension-label"
-                              style="min-width: 180px; max-width: 180px;"
-                            >
-                              <div
-                                class="font-weight-medium text-truncate"
-                                :title="dimension.label"
-                              >
-                                {{ dimension.label }}
-                              </div>
-                              <div class="text-caption text-grey text-truncate">
-                                {{ getDimensionLevel(analytics.dimensionAverages[dimension.key]) }}
-                              </div>
-                            </div>
-                            <div class="flex-grow-1 mx-4">
-                              <div class="progress-container">
-                                <div
-                                  class="progress-bar"
-                                  :style="{
-                                    width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
-                                    backgroundColor: getGroupColor('demand'),
-                                    borderRadius: '20px',
-                                    height: '24px',
-                                    position: 'relative',
-                                    minWidth: '40px'
-                                  }"
-                                >
-                                  <span
-                                    class="progress-text"
-                                    style="
-                                      position: absolute;
-                                      left: 50%;
-                                      top: 50%;
-                                      transform: translate(-50%, -50%);
-                                      color: white;
-                                      font-weight: bold;
-                                      font-size: 11px;
-                                      padding: 0 6px;
-                                      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-                                    "
-                                  >
-                                    {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              class="score-display text-body-1 font-weight-bold text-right"
-                              style="min-width: 50px;"
-                            >
-                              {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
-                    <!-- Supply Dimensions Group -->
-                    <div class="dimension-group mb-6">
-                      <div class="group-header d-flex align-center mb-3">
-                        <v-chip
-                          color="success"
-                          variant="tonal"
-                          size="small"
-                          class="mr-2"
-                        >
-                          <v-icon
-                            start
-                            size="small"
-                          >
-                            mdi-arrow-down-bold
-                          </v-icon>
-                          Supply
-                        </v-chip>
-                        <span class="text-caption text-grey">(4 dimensions)</span>
-                      </div>
-                      <div class="dimension-bars">
-                        <div
-                          v-for="dimension in supplyDimensions"
-                          :key="dimension.key"
-                          class="dimension-row mb-3"
-                        >
-                          <div class="d-flex align-center">
-                            <div
-                              class="dimension-label"
-                              style="min-width: 180px; max-width: 180px;"
-                            >
-                              <div
-                                class="font-weight-medium text-truncate"
-                                :title="dimension.label"
-                              >
-                                {{ dimension.label }}
-                              </div>
-                              <div class="text-caption text-grey text-truncate">
-                                {{ getDimensionLevel(analytics.dimensionAverages[dimension.key]) }}
-                              </div>
+                    <v-expansion-panels variant="accordion">
+                      <!-- Demand Dimensions Group -->
+                      <v-expansion-panel class="mb-2" elevation="1">
+                        <v-expansion-panel-title>
+                          <div class="d-flex align-center justify-space-between" style="width: 100%;">
+                            <div class="d-flex align-center">
+                              <v-chip color="warning" variant="tonal" size="small" class="mr-2">
+                                <v-icon start size="small">
+                                  mdi-arrow-up-bold
+                                </v-icon>
+                                Demand
+                              </v-chip>
+                              <span class="text-caption text-grey">(3 dimensions)</span>
                             </div>
-                            <div class="flex-grow-1 mx-4">
-                              <div class="progress-container">
-                                <div
-                                  class="progress-bar"
-                                  :style="{
-                                    width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
-                                    backgroundColor: getGroupColor('supply'),
-                                    borderRadius: '20px',
-                                    height: '24px',
-                                    position: 'relative',
-                                    minWidth: '40px'
-                                  }"
-                                >
-                                  <span
-                                    class="progress-text"
-                                    style="
-                                      position: absolute;
-                                      left: 50%;
-                                      top: 50%;
-                                      transform: translate(-50%, -50%);
-                                      color: white;
-                                      font-weight: bold;
-                                      font-size: 11px;
-                                      padding: 0 6px;
-                                      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-                                    "
-                                  >
-                                    {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
-                                  </span>
+                            <v-chip color="warning" variant="flat" size="small" class="mr-8">
+                              Avg: {{ analytics.averageDemand.toFixed(1) }}
+                            </v-chip>
+                          </div>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
+                          <div class="dimension-bars pt-3">
+                            <div v-for="dimension in demandDimensions" :key="dimension.key" class="dimension-row mb-3">
+                              <div class="d-flex align-center">
+                                <div class="dimension-label" style="min-width: 180px; max-width: 180px;">
+                                  <div class="font-weight-medium text-truncate" :title="dimension.label">
+                                    {{ dimension.label }}
+                                  </div>
+                                  <div class="text-caption text-grey text-truncate">
+                                    {{ getDimensionLevel(analytics.dimensionAverages[dimension.key]) }}
+                                  </div>
+                                </div>
+                                <div class="flex-grow-1 mx-4">
+                                  <div class="progress-container">
+                                    <div class="progress-bar" :style="{
+                                      width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
+                                      backgroundColor: getGroupColor('demand'),
+                                      borderRadius: '20px',
+                                      height: '24px',
+                                      position: 'relative',
+                                      minWidth: '40px'
+                                    }">
+                                      <span class="progress-text" style="
+                                          position: absolute;
+                                          left: 50%;
+                                          top: 50%;
+                                          transform: translate(-50%, -50%);
+                                          color: white;
+                                          font-weight: bold;
+                                          font-size: 11px;
+                                          padding: 0 6px;
+                                          text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                                        ">
+                                        {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="score-display text-body-1 font-weight-bold text-right"
+                                  style="min-width: 50px;">
+                                  {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
                                 </div>
                               </div>
                             </div>
-                            <div
-                              class="score-display text-body-1 font-weight-bold text-right"
-                              style="min-width: 50px;"
-                            >
-                              {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
-                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
 
-                    <!-- Understanding Dimension Group -->
-                    <div class="dimension-group">
-                      <div class="group-header d-flex align-center mb-3">
-                        <v-chip
-                          color="purple"
-                          variant="tonal"
-                          size="small"
-                          class="mr-2"
-                        >
-                          <v-icon
-                            start
-                            size="small"
-                          >
-                            mdi-brain
-                          </v-icon>
-                          Understanding
-                        </v-chip>
-                        <span class="text-caption text-grey">(3 dimensions)</span>
-                      </div>
-                      <div class="dimension-bars">
-                        <div
-                          v-for="dimension in understandingDimensions"
-                          :key="dimension.key"
-                          class="dimension-row mb-3"
-                        >
-                          <div class="d-flex align-center">
-                            <div
-                              class="dimension-label"
-                              style="min-width: 180px; max-width: 180px;"
-                            >
-                              <div
-                                class="font-weight-medium text-truncate"
-                                :title="dimension.label"
-                              >
-                                {{ dimension.label }}
-                              </div>
-                              <div class="text-caption text-grey text-truncate">
-                                {{ getDimensionLevel(analytics.dimensionAverages[dimension.key]) }}
-                              </div>
+                      <!-- Supply Dimensions Group -->
+                      <v-expansion-panel class="mb-2" elevation="1">
+                        <v-expansion-panel-title>
+                          <div class="d-flex align-center justify-space-between" style="width: 100%;">
+                            <div class="d-flex align-center">
+                              <v-chip color="success" variant="tonal" size="small" class="mr-2">
+                                <v-icon start size="small">
+                                  mdi-arrow-down-bold
+                                </v-icon>
+                                Supply
+                              </v-chip>
+                              <span class="text-caption text-grey">(4 dimensions)</span>
                             </div>
-                            <div class="flex-grow-1 mx-4">
-                              <div class="progress-container">
-                                <div
-                                  class="progress-bar"
-                                  :style="{
-                                    width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
-                                    backgroundColor: getGroupColor('understanding'),
-                                    borderRadius: '20px',
-                                    height: '24px',
-                                    position: 'relative',
-                                    minWidth: '40px'
-                                  }"
-                                >
-                                  <span
-                                    class="progress-text"
-                                    style="
-                                      position: absolute;
-                                      left: 50%;
-                                      top: 50%;
-                                      transform: translate(-50%, -50%);
-                                      color: white;
-                                      font-weight: bold;
-                                      font-size: 11px;
-                                      padding: 0 6px;
-                                      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-                                    "
-                                  >
-                                    {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
-                                  </span>
+                            <v-chip color="success" variant="flat" size="small" class="mr-8 font-weight-bold">
+                              Avg: {{ analytics.averageSupply.toFixed(1) }}
+                            </v-chip>
+                          </div>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
+                          <div class="dimension-bars pt-3">
+                            <div v-for="dimension in supplyDimensions" :key="dimension.key" class="dimension-row mb-3">
+                              <div class="d-flex align-center">
+                                <div class="dimension-label" style="min-width: 180px; max-width: 180px;">
+                                  <div class="font-weight-medium text-truncate" :title="dimension.label">
+                                    {{ dimension.label }}
+                                  </div>
+                                  <div class="text-caption text-grey text-truncate">
+                                    {{ getDimensionLevel(analytics.dimensionAverages[dimension.key]) }}
+                                  </div>
+                                </div>
+                                <div class="flex-grow-1 mx-4">
+                                  <div class="progress-container">
+                                    <div class="progress-bar" :style="{
+                                      width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
+                                      backgroundColor: getGroupColor('supply'),
+                                      borderRadius: '20px',
+                                      height: '24px',
+                                      position: 'relative',
+                                      minWidth: '40px'
+                                    }">
+                                      <span class="progress-text" style="
+                                          position: absolute;
+                                          left: 50%;
+                                          top: 50%;
+                                          transform: translate(-50%, -50%);
+                                          color: white;
+                                          font-weight: bold;
+                                          font-size: 11px;
+                                          padding: 0 6px;
+                                          text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                                        ">
+                                        {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="score-display text-body-1 font-weight-bold text-right"
+                                  style="min-width: 50px;">
+                                  {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
                                 </div>
                               </div>
                             </div>
-                            <div
-                              class="score-display text-body-1 font-weight-bold text-right"
-                              style="min-width: 50px;"
-                            >
-                              {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
+                          </div>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+
+                      <!-- Understanding Dimension Group -->
+                      <v-expansion-panel elevation="1">
+                        <v-expansion-panel-title>
+                          <div class="d-flex align-center justify-space-between" style="width: 100%;">
+                            <div class="d-flex align-center">
+                              <v-chip color="purple" variant="tonal" size="small" class="mr-2">
+                                <v-icon start size="small">
+                                  mdi-brain
+                                </v-icon>
+                                Understanding
+                              </v-chip>
+                              <span class="text-caption text-grey">(3 dimensions)</span>
+                            </div>
+                            <v-chip color="purple" variant="flat" size="small" class="mr-8 font-weight-bold">
+                              Avg: {{ analytics.averageUnderstanding.toFixed(1) }}
+                            </v-chip>
+                          </div>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
+                          <div class="dimension-bars pt-3">
+                            <div v-for="dimension in understandingDimensions" :key="dimension.key"
+                              class="dimension-row mb-3">
+                              <div class="d-flex align-center">
+                                <div class="dimension-label" style="min-width: 180px; max-width: 180px;">
+                                  <div class="font-weight-medium text-truncate" :title="dimension.label">
+                                    {{ dimension.label }}
+                                  </div>
+                                  <div class="text-caption text-grey text-truncate">
+                                    {{ getDimensionLevel(analytics.dimensionAverages[dimension.key]) }}
+                                  </div>
+                                </div>
+                                <div class="flex-grow-1 mx-4">
+                                  <div class="progress-container">
+                                    <div class="progress-bar" :style="{
+                                      width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
+                                      backgroundColor: getGroupColor('understanding'),
+                                      borderRadius: '20px',
+                                      height: '24px',
+                                      position: 'relative',
+                                      minWidth: '40px'
+                                    }">
+                                      <span class="progress-text" style="
+                                          position: absolute;
+                                          left: 50%;
+                                          top: 50%;
+                                          transform: translate(-50%, -50%);
+                                          color: white;
+                                          font-weight: bold;
+                                          font-size: 11px;
+                                          padding: 0 6px;
+                                          text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                                        ">
+                                        {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="score-display text-body-1 font-weight-bold text-right"
+                                  style="min-width: 50px;">
+                                  {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
                   </div>
                 </v-col>
               </v-row>
@@ -470,27 +347,16 @@
       <!-- Individual SART Table -->
       <v-row>
         <v-col cols="12">
-          <v-card
-            elevation="2"
-            style="border-radius: 12px;"
-          >
+          <v-card elevation="2" style="border-radius: 12px;">
             <v-card-title class="text-h5 pa-5">
-              <v-icon
-                start
-                color="primary"
-              >
+              <v-icon start color="primary">
                 mdi-table
               </v-icon>
               Individual SART Scores
             </v-card-title>
 
             <!-- Data Table -->
-            <v-data-table
-              :headers="tableHeaders"
-              :items="analytics.responses"
-              :items-per-page="10"
-              class="elevation-0"
-            >
+            <v-data-table :headers="tableHeaders" :items="analytics.responses" :items-per-page="10" class="elevation-0">
               <template #item.user="{ item }">
                 <div>
                   <div class="font-weight-medium">
@@ -500,53 +366,31 @@
               </template>
 
               <template #item.demand="{ item }">
-                <v-chip
-                  :color="getDemandColor(item.demand)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getDemandColor(item.demand)" size="small" class="font-weight-bold">
                   {{ item.demand.toFixed(1) }}
                 </v-chip>
               </template>
 
               <template #item.supply="{ item }">
-                <v-chip
-                  :color="getSupplyColor(item.supply)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getSupplyColor(item.supply)" size="small" class="font-weight-bold">
                   {{ item.supply.toFixed(1) }}
                 </v-chip>
               </template>
 
               <template #item.understanding="{ item }">
-                <v-chip
-                  :color="getUnderstandingColor(item.understanding)"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip :color="getUnderstandingColor(item.understanding)" size="small" class="font-weight-bold">
                   {{ item.understanding.toFixed(1) }}
                 </v-chip>
               </template>
 
               <template #item.saScore="{ item }">
-                <v-chip
-                  :color="getSAColor(item.saScore)"
-                  variant="tonal"
-                  size="small"
-                  class="font-weight-bold"
-                >
+                <v-chip color="getSAColor(item.saScore)" variant="tonal" size="small" class="font-weight-bold">
                   {{ item.saScore.toFixed(1) }}
                 </v-chip>
               </template>
 
               <template #item.actions="{ item }">
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  size="small"
-                  @click="openDetailsModal(item)"
-                >
+                <v-btn color="primary" variant="outlined" size="small" @click="openDetailsModal(item)">
                   <v-icon start>
                     mdi-eye
                   </v-icon>
@@ -559,14 +403,8 @@
       </v-row>
 
       <!-- Details Modal -->
-      <v-dialog
-        v-model="detailsModal"
-        max-width="800px"
-      >
-        <v-card
-          v-if="selectedResponse"
-          style="border-radius: 12px;"
-        >
+      <v-dialog v-model="detailsModal" max-width="800px">
+        <v-card v-if="selectedResponse" style="border-radius: 12px;">
           <v-card-title class="d-flex justify-space-between align-center pa-6 pb-4">
             <div>
               <div class="text-h5 font-weight-bold mb-1">
@@ -576,11 +414,7 @@
                 {{ selectedResponse.name }}
               </div>
             </div>
-            <v-btn
-              icon
-              variant="text"
-              @click="detailsModal = false"
-            >
+            <v-btn icon variant="text" @click="detailsModal = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
@@ -598,11 +432,7 @@
                   <span class="text-h4 font-weight-bold text-primary mr-2">
                     {{ selectedResponse.saScore.toFixed(1) }}
                   </span>
-                  <v-chip
-                    :color="getSAColor(selectedResponse.saScore)"
-                    size="small"
-                    class="ml-3"
-                  >
+                  <v-chip :color="getSAColor(selectedResponse.saScore)" size="small" class="ml-3">
                     {{ getSALevel(selectedResponse.saScore) }}
                   </v-chip>
                 </div>
@@ -612,10 +442,7 @@
             <!-- Demand, Supply, and Understanding Summary -->
             <v-row class="mb-6">
               <v-col cols="4">
-                <div
-                  class="summary-card pa-4"
-                  style="background: #fff3e0; border-radius: 8px;"
-                >
+                <div class="summary-card pa-4" style="background: #fff3e0; border-radius: 8px;">
                   <div class="text-caption text-grey-darken-1 mb-1">
                     Demand Score
                   </div>
@@ -628,10 +455,7 @@
                 </div>
               </v-col>
               <v-col cols="4">
-                <div
-                  class="summary-card pa-4"
-                  style="background: #e8f5e8; border-radius: 8px;"
-                >
+                <div class="summary-card pa-4" style="background: #e8f5e8; border-radius: 8px;">
                   <div class="text-caption text-grey-darken-1 mb-1">
                     Supply Score
                   </div>
@@ -644,10 +468,7 @@
                 </div>
               </v-col>
               <v-col cols="4">
-                <div
-                  class="summary-card pa-4"
-                  style="background: #f3e5f5; border-radius: 8px;"
-                >
+                <div class="summary-card pa-4" style="background: #f3e5f5; border-radius: 8px;">
                   <div class="text-caption text-grey-darken-1 mb-1">
                     Understanding Score
                   </div>
@@ -669,36 +490,22 @@
                 Dimension Breakdown (1-7 scale)
               </h3>
               <v-row>
-                <v-col
-                  v-for="dimension in sartDimensions"
-                  :key="dimension.key"
-                  cols="12"
-                  md="6"
-                >
-                  <div
-                    class="dimension-detail pa-4"
-                    style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;"
-                  >
+                <v-col v-for="dimension in sartDimensions" :key="dimension.key" cols="12" md="6">
+                  <div class="dimension-detail pa-4"
+                    style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;">
                     <div class="d-flex justify-space-between align-center mb-2">
                       <div class="font-weight-medium">
                         {{ dimension.label }}
                       </div>
-                      <v-chip
-                        :color="getDimensionColor(selectedResponse.sartAnswers[dimension.key])"
-                        size="small"
-                      >
+                      <v-chip :color="getDimensionColor(selectedResponse.sartAnswers[dimension.key])" size="small">
                         {{ selectedResponse.sartAnswers[dimension.key] }}
                       </v-chip>
                     </div>
                     <div class="text-caption text-grey mb-2">
                       {{ dimension.description }}
                     </div>
-                    <v-progress-linear
-                      :model-value="(selectedResponse.sartAnswers[dimension.key] / 7) * 100"
-                      :color="getGroupColor(getDimensionCategory(dimension.key))"
-                      height="8"
-                      rounded
-                    />
+                    <v-progress-linear :model-value="(selectedResponse.sartAnswers[dimension.key] / 7) * 100"
+                      :color="getGroupColor(getDimensionCategory(dimension.key))" height="8" rounded />
                   </div>
                 </v-col>
               </v-row>
@@ -776,13 +583,13 @@ const sartData = computed(() => Object.values(testAnswerDocument.value || {}).fl
       // Calculate scores for each response
       const answers = task.sartAnswers || {}
       const demand = (answers.instability || 0) + (answers.complexity || 0) + (answers.variability || 0)
-      const supply = (answers.arousal || 0) + (answers.concentration || 0) + 
-                     (answers.division || 0) + (answers.spareCapacity || 0)
-      const understanding = (answers.informationQuantity || 0) + 
-                           (answers.informationQuality || 0) + 
-                           (answers.familiarity || 0)
+      const supply = (answers.arousal || 0) + (answers.concentration || 0) +
+        (answers.division || 0) + (answers.spareCapacity || 0)
+      const understanding = (answers.informationQuantity || 0) +
+        (answers.informationQuality || 0) +
+        (answers.familiarity || 0)
       const saScore = understanding - demand + supply
-      
+
       return {
         ...task,
         name: item.fullName || `Participant ${index + 1}`,
@@ -859,28 +666,28 @@ function openDetailsModal(response) {
 
 // FIXED: Correct demand score ranges (3-21: 3 dimensions × 1-7)
 function getDemandColor(score) {
-  if (score >= 18) return 'error'      // 18-21: Very high demand (bad)
-  if (score >= 15) return 'warning'    // 15-17.9: High demand
-  if (score >= 9) return 'info'        // 9-14.9: Moderate demand
-  return 'success'                     // 3-8.9: Low demand (good)
+  if (score >= 18) return 'warning-darken-3'      // 18-21: Very high demand (bad)
+  if (score >= 15) return 'warning-darken-2'   // 15-17.9: High demand
+  if (score >= 9) return 'warning-darken-1'        // 9-14.9: Moderate demand
+  return 'warning'                     // 3-8.9: Low demand (good)
 }
 
 // FIXED: Correct supply score ranges (4-28: 4 dimensions × 1-7)
 function getSupplyColor(score) {
   // Score range: 4-28 (4 dimensions × 1-7)
-  if (score >= 22) return 'success'    // 22-28: High supply (good)
-  if (score >= 16) return 'info'       // 16-21.9: Moderate supply
-  if (score >= 10) return 'warning'    // 10-15.9: Low supply
-  return 'error'                       // 4-9.9: Very low supply (bad)
+  if (score >= 22) return 'green-lighten-3'    // 22-28: High supply (good)
+  if (score >= 16) return 'green'       // 16-21.9: Moderate supply
+  if (score >= 10) return 'green-darken-1'    // 10-15.9: Low supply
+  return 'green-darken-2'                       // 4-9.9: Very low supply (bad)
 }
 
 // FIXED: Already correct, but adding comment for clarity
 function getUnderstandingColor(score) {
   // Score range: 3-21 (3 dimensions × 1-7)
-  if (score >= 18) return 'purple-darken-2'  // 18-21: High understanding
+  if (score >= 18) return 'purple-lighten-1'  // 18-21: High understanding
   if (score >= 12) return 'purple'           // 12-17.9: Moderate understanding
-  if (score >= 6) return 'purple-lighten-2'  // 6-11.9: Low understanding
-  return 'purple-lighten-4'                  // 3-5.9: Very low understanding
+  if (score >= 6) return 'purple-darken-2'  // 6-11.9: Low understanding
+  return 'purple-darken-4'                  // 3-5.9: Very low understanding
 }
 
 function getDimensionLevel(score) {
@@ -890,7 +697,7 @@ function getDimensionLevel(score) {
 }
 
 function getGroupColor(category) {
-  switch(category) {
+  switch (category) {
     case 'demand': return '#ff9800' // Orange
     case 'supply': return '#4caf50' // Green
     case 'understanding': return '#9c27b0' // Purple
@@ -929,15 +736,6 @@ watchEffect(async () => {
 </script>
 
 <style scoped>
-.v-card {
-  transition: all 0.3s ease;
-}
-
-.v-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
 .v-chip {
   font-weight: 600;
 }
