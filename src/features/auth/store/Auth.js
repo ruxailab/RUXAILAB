@@ -35,7 +35,9 @@ export default {
       if (isTestOwner) return 0
 
       // Check if the user is a cooperator and get their access level
-      const coopsInfo = test.cooperators?.find((coops) => coops.userDocId === user.id)
+      const coopsInfo = test.cooperators?.find(
+        (coops) => coops.userDocId === user.id,
+      )
       if (coopsInfo) return coopsInfo.accessLevel
 
       // Check if the test is public
@@ -61,7 +63,10 @@ export default {
      */
     async signup({ commit }, payload) {
       try {
-        const { user } = await authController.signUp(payload.email, payload.password)
+        const { user } = await authController.signUp(
+          payload.email,
+          payload.password,
+        )
         await userController.create({ id: user.uid, email: user.email })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
@@ -85,7 +90,7 @@ export default {
         const { user } = await authController.signIn(
           payload.email,
           payload.password,
-          payload.rememberMe
+          payload.rememberMe,
         )
 
         const dbUser = await userController.getById(user.uid)
@@ -96,7 +101,6 @@ export default {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
-
       } catch (err) {
         showError('errors.incorrectCredential')
       } finally {
@@ -105,13 +109,15 @@ export default {
     },
 
     /**
- * Handle Google Authentication
- * @action signInWithGoogle
- * @returns {void}
- */
+     * Handle Google Authentication
+     * @action signInWithGoogle
+     * @returns {void}
+     */
     async signInWithGoogle({ commit }, payload) {
       try {
-        const { user } = await authController.signInWithGoogle(payload.rememberMe)
+        const { user } = await authController.signInWithGoogle(
+          payload.rememberMe,
+        )
 
         // Check if user already exists in database
         let dbUser = null
@@ -199,9 +205,9 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        let errorMsg = i18n.global.t('errors.globalError');
+        let errorMsg = i18n.global.t('errors.globalError')
         if (err.code === 'auth/invalid-email') {
-          errorMsg = i18n.global.t('errors.invalidEmail');
+          errorMsg = i18n.global.t('errors.invalidEmail')
         }
         commit('SET_TOAST', {
           message: errorMsg,
@@ -223,6 +229,6 @@ export default {
       } finally {
         commit('setLoading', false)
       }
-    }
+    },
   },
 }
