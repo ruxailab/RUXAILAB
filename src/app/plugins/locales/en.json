@@ -775,7 +775,8 @@
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Consent Form",
@@ -946,6 +947,7 @@
     "question": "Question {number}",
     "comingSoon": "Coming Soon",
     "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "General Analytics",
     "individualAnalytics": "Individual Analytics",
     "susAnalytics": "SUS Analytics",
