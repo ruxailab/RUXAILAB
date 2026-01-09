@@ -54,8 +54,8 @@ const editProfileDialog = ref(false);
 const isSmallScreen = ref(false);
 
 const checkScreenSize = () => {
-  isSmallScreen.value = window.innerWidth < 960;
-};
+  isSmallScreen.value = window.innerWidth < 960
+}
 
 // Refetch profile when dialog closes
 watch(editProfileDialog, (newVal, oldVal) => {

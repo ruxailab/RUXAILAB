@@ -244,7 +244,8 @@ const getAnswerTypeIcon = (type) => {
     'post-test': 'mdi-comment-question-outline',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket-launch-outline',
-    'sus': 'mdi-chart-line'
+    'sus': 'mdi-chart-line',
+    'sart': 'mdi-chart-areaspline'
   };
   return icons[type] || 'mdi-help-circle-outline';
 };
@@ -256,7 +257,8 @@ const getAnswerTypeDescription = (type) => {
     'post-test': 'Participants answer specific questions after the task',
     'post-form': 'Participants fill out an external form after the task',
     'nasa-tlx': 'NASA Task Load Index - measures workload',
-    'sus': 'System Usability Scale - measures usability'
+    'sus': 'System Usability Scale - measures usability',
+    'sart': 'Situation Awareness Rating Technique - measures situational awareness'
   };
   return descriptions[type] || '';
 };

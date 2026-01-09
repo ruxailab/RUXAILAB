@@ -34,6 +34,15 @@
       "reset_link_sent": "We’ve sent a password reset link to",
       "no_email": "Didn’t get the email?",
       "try_again": "Try again"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
@@ -359,7 +368,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Settings"
+      "settings": "Settings",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
@@ -778,7 +788,8 @@
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Consent Form",
@@ -949,6 +960,7 @@
     "question": "Question {number}",
     "comingSoon": "Coming Soon",
     "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "General Analytics",
     "individualAnalytics": "Individual Analytics",
     "susAnalytics": "SUS Analytics",
