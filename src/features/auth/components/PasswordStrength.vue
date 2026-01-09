@@ -12,8 +12,8 @@
       class="strength-bar"
     ></v-progress-linear>
     
-    <div class="d-flex flex-wrap gap-2 mt-2">
-      <div v-for="(req, index) in requirements" :key="index" class="d-flex align-center mr-3">
+    <div class="d-flex flex-column gap-2 mt-2">
+      <div v-for="(req, index) in requirements" :key="index" class="d-flex align-center">
         <v-icon :color="req.met ? 'success' : 'grey-darken-1'" size="small" class="mr-1">
           {{ req.met ? 'mdi-check-circle' : 'mdi-circle-outline' }}
         </v-icon>
