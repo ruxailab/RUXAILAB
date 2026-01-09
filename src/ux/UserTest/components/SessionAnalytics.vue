@@ -50,9 +50,6 @@
         </v-card>
     </v-container>
 
-    <!-- Diálogo da tarefa -->
-    <SessionAnalyticsDialog v-model="taskDialog" :task-answer="selectedTask" />
-
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" :timeout="4000">
         {{ snackbar.text }}
         <template #actions>
@@ -110,7 +107,6 @@ export default {
             this.currentTime = v1.currentTime;
         },
         openTaskDialog(task) {
-            console.log('openTaskDialog', task);
 
             this.selectedTask = task;
             this.taskDialog = true;
@@ -144,7 +140,6 @@ export default {
             }
         },
         handleTimelineSeek(time) {
-            console.log('[SessionAnalytics] handleTimelineSeek recibido:', time);
             const v1 = this.$refs.mainVideo1;
             const v2 = this.$refs.mainVideo2;
             if (!v1 || !v2) return;
@@ -154,7 +149,6 @@ export default {
         },
         watch: {
             currentTime(newVal) {
-                console.log('[SessionAnalytics] watcher currentTime:', newVal);
             }
         },
         updateTimeline() {
