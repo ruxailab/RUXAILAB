@@ -231,26 +231,15 @@ onMounted(() => {
   })
 
   video.addEventListener('play', () => {
-    console.log('video PLAY')
     isPlaying.value = true
     updateLoop()
   })
 
   video.addEventListener('pause', () => {
-    console.log('video PAUSE')
     isPlaying.value = false
     cancelAnimationFrame(rafId)
   })
 })
-
-watch(predictedData, (v) => {
-  console.log('[Pai] predictedData mudou para', v)
-})
-
-watch(isPlaying, (v) => {
-  console.log('[Pai] isPlaying mudou para', v)
-})
-
 onBeforeUnmount(() => cancelAnimationFrame(rafId))
 </script>
 
