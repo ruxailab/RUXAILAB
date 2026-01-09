@@ -17,7 +17,7 @@
           <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3">
             <div class="flex-grow-1">
               <div class="d-flex align-center gap-2 mb-1">
-                <v-icon size="28" color="primary" class="d-none d-sm-flex">mdi-bell-ring-outline</v-icon>
+                <v-icon size="28" color="primary" class="d-none d-sm-flex me-2">mdi-bell-ring-outline</v-icon>
                 <h2 class="text-h5 text-h6-sm">{{ $t('common.notifications') }}</h2>
               </div>
               <p class="text-caption text-grey-darken-1 mt-1">
@@ -557,7 +557,7 @@ const markAllAsRead = async () => {
 const refreshNotifications = async () => {
   refreshing.value = true
   try {
-    globalThis.location.reload()
+    await store.dispatch('fetchNotifications')
   } catch (error) {
     // Error handling without console.error for SonarCloud
   } finally {
