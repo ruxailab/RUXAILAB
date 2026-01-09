@@ -17,7 +17,8 @@ export default class TaskAnswer {
     postAnswer,
     susAnswers,
     nasaTlxAnswers,
-    sartAnswers
+    sartAnswers,
+    facialSentimentResults,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -41,6 +42,7 @@ export default class TaskAnswer {
     } else {
       this.sartAnswers = new SartAnswer()
     }
+    this.facialSentimentResults = facialSentimentResults ?? null
   }
 
   static toModel(data) {
@@ -62,8 +64,15 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
-      sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers
+      sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers,
+      nasaTlxAnswers:
+        this.nasaTlxAnswers != null
+          ? (this.nasaTlxAnswers instanceof NasaTlxAnswer
+              ? this.nasaTlxAnswers
+              : new NasaTlxAnswer(this.nasaTlxAnswers)
+            ).toFirestore()
+          : null,
+      facialSentimentResults: this.facialSentimentResults,
     }
   }
 }

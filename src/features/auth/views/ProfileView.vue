@@ -265,14 +265,31 @@
                 alt="No Image"
               />
             </v-avatar>
-            <v-btn
-              icon
-              size="small"
-              class="ml-2"
-              @click="selectImage"
-            >
-              <v-icon>mdi-camera</v-icon>
-            </v-btn>
+            <div class="d-flex justify-center align-center gap-2 mt-3">
+              <v-btn
+                icon
+                size="small"
+                @click="selectImage"
+                color="primary"
+              >
+                <v-icon>mdi-camera</v-icon>
+                <v-tooltip activator="parent" location="bottom">
+                  {{ t('profile.uploadProfilePicture') }}
+                </v-tooltip>
+              </v-btn>
+              <v-btn
+                v-if="editProfileData.profileImage"
+                icon
+                size="small"
+                @click="removeProfilePicture"
+                color="error"
+              >
+                <v-icon>mdi-delete</v-icon>
+                <v-tooltip activator="parent" location="bottom">
+                  {{ t('profile.removeProfilePicture') }}
+                </v-tooltip>
+              </v-btn>
+            </div>
             <input
               ref="fileInput"
               type="file"
@@ -301,7 +318,7 @@
               density="compact"
               prepend-inner-icon="mdi-phone"
               :rules="contactRules"
-              :hint="$t('Enter a valid No.')"
+              :hint="$t('profile.enterValidPhoneNumber')"
               persistent-hint
               class="mb-4 input-field-transition"
             />
@@ -429,7 +446,7 @@
               :disabled="deleteConfirmText !== 'DELETE'"
               @click="handlerDeleteConfirmText"
             >
-              {{ $t('Proceed') }}
+              {{ $t('common.proceed') }}
             </v-btn>
           </v-card-actions>
         </div>
@@ -550,23 +567,23 @@ const fileInput = ref(null);
 
 // Validation rules
 const usernameRules = [
-  (v) => !!v || t('PROFILE.usernameRequired'),
-  (v) => (v && v.length >= 3) || t('PROFILE.usernameMinLength'),
+  (v) => !!v || t('profile.usernameRequired'),
+  (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
 ];
-const countryRules = [(v) => !!v || t('PROFILE.countryRequired')];
+const countryRules = [(v) => !!v || t('profile.countryRequired')];
 const contactRules = [
-  (v) => !!v || t('PROFILE.contactNumberRequired'),
-  (v) => /^\d{9,15}$/.test(v) || t('PROFILE.enterValidPhoneNumber'),
+  (v) => !!v || t('profile.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
 ];
 const passwordRules = [
-  (v) => !!v || t('PROFILE.passwordRequired'),
-  (v) => v.length >= 8 || t('PROFILE.passwordMinLength'),
-  (v) => /[A-Z]/.test(v) || t('PROFILE.passwordUppercase'),
-  (v) => hasSpecialChar(v) || t('PROFILE.passwordSymbol'),
+  (v) => !!v || t('profile.passwordRequired'),
+  (v) => v.length >= 8 || t('profile.passwordMinLength'),
+  (v) => /[A-Z]/.test(v) || t('profile.passwordUppercase'),
+  (v) => hasSpecialChar(v) || t('profile.passwordSymbol'),
 ];
 const confirmPasswordRules = [
-  (v) => !!v || t('PROFILE.confirmPasswordRequired'),
-  (v) => v === newPassword.value || t('PROFILE.passwordsMatch'),
+  (v) => !!v || t('profile.confirmPasswordRequired'),
+  (v) => v === newPassword.value || t('profile.passwordsMatch'),
 ];
 
 const specialCharColor = computed(() =>
@@ -604,21 +621,24 @@ const hasSpecialChar = (str) => {
 };
 
 const selectImage = () => {
+  if (fileInput.value) fileInput.value.value = '';
   fileInput.value.click();
 };
 
 const uploadProfileImage = async (event) => {
-  const file = event.target.files[0];
+  const file = event?.target?.files?.[0];
   if (!file) return;
 
   try {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (!user) throw new Error(t('PROFILE.noUserSignedIn'));
+    if (!user) throw new Error('No user signed in');
+
+    // Show preview immediately
+    editProfileData.value.profileImage = URL.createObjectURL(file);
 
     const storage = getStorage();
     const storageReference = storageRef(storage, `profileImages/${user.uid}`);
-
     const snapshot = await uploadBytes(storageReference, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
 
@@ -628,10 +648,13 @@ const uploadProfileImage = async (event) => {
 
     userprofile.value.profileImage = downloadURL;
     editProfileData.value.profileImage = downloadURL;
-    toast.success(t('PROFILE.profileImageUpdatedSuccess'));
+    toast.success(t('profile.profileImageUpdatedSuccess'));
+    
+    if (fileInput.value) fileInput.value.value = '';
   } catch (error) {
     console.error('Error uploading image:', error);
-    toast.error(t('PROFILE.profileImageUploadFailed'));
+    toast.error(t('profile.profileImageUploadFailed'));
+    editProfileData.value.profileImage = userprofile.value.profileImage;
   }
 };
 
@@ -660,7 +683,7 @@ const fetchUserProfile = async () => {
     }
   } catch (error) {
     console.error('Error fetching profile:', error);
-    toast.error(t('PROFILE.profileLoadFailed'));
+    toast.error(t('profile.profileLoadFailed'));
   } finally {
     loading.value = false;
   }
@@ -687,25 +710,36 @@ const saveProfile = async () => {
       const db = getFirestore();
       const userDocRef = doc(db, 'users', user.uid);
 
-      await updateDoc(userDocRef, {
+      const updateData = {
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
-      });
+      };
+
+      // If profile image was removed (empty string), update to empty
+      if (editProfileData.value.profileImage === '') {
+        updateData.profileImage = '';
+      } else if (editProfileData.value.profileImage && !editProfileData.value.profileImage.startsWith('blob:')) {
+        // Only update profile image if it's a valid URL (not a blob/preview)
+        updateData.profileImage = editProfileData.value.profileImage;
+      }
+
+      await updateDoc(userDocRef, updateData);
 
       userprofile.value = {
         ...userprofile.value,
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
+        profileImage: editProfileData.value.profileImage,
       };
 
-      toast.success(t('PROFILE.profileUpdatedSuccess'));
+      toast.success(t('profile.profileUpdatedSuccess'));
       editProfileDialog.value = false;
     }
   } catch (error) {
     console.error('Error updating profile:', error);
-    toast.error(t('PROFILE.profileUpdateFailed'));
+    toast.error(t('profile.profileUpdateFailed'));
   }
 };
 
@@ -717,14 +751,14 @@ const changePassword = async () => {
 
       if (user) {
         await updatePassword(user, newPassword.value);
-        toast.success(t('PROFILE.passwordChangedSuccess'));
+        toast.success(t('profile.passwordChangedSuccess'));
         newPassword.value = '';
         confirmPassword.value = '';
         passwordForm.value.reset();
       }
     } catch (error) {
       console.error('Error changing password:', error);
-      toast.error(t('PROFILE.passwordChangeFailed'));
+      toast.error(t('profile.passwordChangeFailed'));
     }
   }
 };
@@ -742,7 +776,7 @@ const handlerDeleteConfirmText = async (value) => {
     return await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('PROFILE.accountDeletionFailed'))
+    toast.error(t('profile.accountDeletionFailed'))
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
@@ -751,14 +785,14 @@ const handlerDeleteConfirmText = async (value) => {
 
 const deleteAccount = async (user) => {
   await store.dispatch('deleteAuth', user.uid)
-  toast.success(t('PROFILE.accountDeletedSuccess'))
+  toast.success(t('profile.accountDeletedSuccess'))
   signOut()
 };
 
 const handlerDeleteAccount = async () => {
   const auth = getAuth()
   const user = auth.currentUser
-  if (!userPassword.value) return toast.error(t('PROFILE.passwordRequired'))
+  if (!userPassword.value) return toast.error(t('profile.passwordRequired'))
 
   try {
     isDeleting.value = true
@@ -767,7 +801,7 @@ const handlerDeleteAccount = async () => {
     await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('PROFILE.accountDeletionFailed'))
+    toast.error(t('profile.accountDeletionFailed'))
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
@@ -795,6 +829,11 @@ const countryFilter = (item, queryText) => {
   
   const itemName = item?.name || item || '';
   return String(itemName).toLowerCase().includes(queryText.toLowerCase());
+};
+
+const removeProfilePicture = () => {
+  editProfileData.value.profileImage = '';
+  if (fileInput.value) fileInput.value.value = '';
 };
 
 onMounted(() => {

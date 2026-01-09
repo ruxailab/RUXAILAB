@@ -134,9 +134,15 @@ const testAnswerDocLength = computed(() => {
   return Object.keys(doc.heuristicAnswers).length
 })
 
+const stripHtml = (value) => {
+  const el = document.createElement('div')
+  el.innerHTML = value || ''
+  return (el.textContent || '').trim()
+}
+
 const validate = async () => {
   const { valid } = await form.value.validate()
-  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
     store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
@@ -173,7 +179,7 @@ const editSetup = (i) => {
 
 const submitEdit = async () => {
   const { valid } = await form.value.validate()
-  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
     store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
