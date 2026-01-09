@@ -46,6 +46,8 @@
             @click:append-inner="showPassword = !showPassword"
           />
 
+          <PasswordStrength :password="password" />
+
           <v-text-field
             v-model="confirmpassword"
             :rules="comparePassword"
@@ -109,6 +111,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar';
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import PasswordStrength from '@/features/auth/components/PasswordStrength.vue'
 
 const email = ref('')
 const password = ref('')
