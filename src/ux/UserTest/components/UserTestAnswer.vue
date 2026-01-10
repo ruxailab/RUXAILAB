@@ -24,7 +24,10 @@
             <v-tab value="1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" value="2">
+            <v-tab
+              v-if="showSentiment"
+              value="2"
+            >
               Sentiment Analysis
             </v-tab>
             <v-tab
@@ -45,10 +48,22 @@
             >
               TAM Analytics
             </v-tab>
-            <v-tab v-if="showEye" value="6">
+            <v-tab
+              v-if="showSart"
+              value="6"
+            >
+              {{ $t('analytics.sartAnalytics') }}
+            </v-tab>
+            <v-tab
+              v-if="showEye"
+              value="7"
+            >
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" value="7">
+            <v-tab
+              v-if="showTranscription"
+              value="8"
+            >
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>
@@ -64,10 +79,11 @@
             <SusAnalytics v-if="tab === '3'" />
             <NasaTlxAnalytics v-if="tab === '4'" />
             <TamAnalytics v-if="tab === '5'" />
-            <div v-if="tab === '6'" style="height: 100%; overflow-y: auto;">
+            <SartAnalytics v-if="tab === '6'" />
+            <div v-if="tab === '7'" style="height: 100%; overflow-y: auto;">
               <!-- Eye Tracking content would go here -->
             </div>
-            <TranscriptionTool v-if="tab === '7'" />
+            <TranscriptionTool v-if="tab === '8'" />
           </div>
         </template>
       </ShowInfo>
@@ -91,6 +107,7 @@ import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisV
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
 import TamAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TamAnalytics.vue';
+import SartAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SartAnalytics.vue';
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
 import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import { useI18n } from 'vue-i18n';
@@ -144,6 +161,13 @@ const showTAM = computed(() => {
   );
 });
 
+const showSart = computed(() => {
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
+  return Object.values(testStructure.value.userTasks).some(
+    (task) => task.taskType === 'sart'
+  );
+});
+
 const showSentiment = computed(() => {
    if(study.value.testType == STUDY_TYPES.USER && study.value.subType == USER_STUDY_SUBTYPES.MODERATED) {
     return true
@@ -176,7 +200,7 @@ const allIrisTrackingData = computed(() => {
     .filter(task => task.irisTrackingData && task.irisTrackingData.length > 0)
     .flatMap(task => task.irisTrackingData);
 
-  return tasks;
+  return tasks; 
 });
 
 const goToCoops = () => {

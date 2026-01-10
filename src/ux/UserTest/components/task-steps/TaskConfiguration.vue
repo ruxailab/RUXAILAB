@@ -247,7 +247,8 @@ const getAnswerTypeIcon = (type) => {
     'sus': 'mdi-chart-line',
     'tam-1': 'mdi-chart-box',
     'tam-2': 'mdi-chart-box-multiple-outline',
-    'tam-3': 'mdi-chart-donut'
+    'tam-3': 'mdi-chart-donut',
+    'sart': 'mdi-chart-areaspline'
   };
   return icons[type] || 'mdi-help-circle-outline';
 };
@@ -262,7 +263,8 @@ const getAnswerTypeDescription = (type) => {
     'sus': 'System Usability Scale - measures usability',
     'tam-1': 'TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use',
     'tam-2': 'TAM-2 (Extended) - adds external influences and results demonstrability',
-    'tam-3': 'TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability'
+    'tam-3': 'TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability',
+    'sart': 'Situation Awareness Rating Technique - measures situational awareness'
   };
   return descriptions[type] || '';
 };

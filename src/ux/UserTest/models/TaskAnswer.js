@@ -1,5 +1,6 @@
 import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
 import { TamAnswer } from "@/ux/UserTest/models/TamAnswer"
+import SartAnswer from "@/ux/UserTest/models/SartAnswer"
 
 export default class TaskAnswer {
   constructor({
@@ -17,7 +18,9 @@ export default class TaskAnswer {
     postAnswer,
     susAnswers,
     nasaTlxAnswers,
-    tamAnswers
+    tamAnswers,
+    sartAnswers,
+    facialSentimentResults,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -34,6 +37,15 @@ export default class TaskAnswer {
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
     this.tamAnswers = tamAnswers ?? null
+    
+    if (sartAnswers) {
+      this.sartAnswers = sartAnswers instanceof SartAnswer 
+        ? sartAnswers 
+        : new SartAnswer(sartAnswers)
+    } else {
+      this.sartAnswers = new SartAnswer()
+    }
+    this.facialSentimentResults = facialSentimentResults ?? null
   }
 
   static toModel(data) {
@@ -57,6 +69,8 @@ export default class TaskAnswer {
       susAnswers: this.susAnswers,
       nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
       tamAnswers: this.tamAnswers != null ? (this.tamAnswers instanceof TamAnswer ? this.tamAnswers : new TamAnswer(this.tamAnswers)).toFirestore() : null,
+      sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers,
+      facialSentimentResults: this.facialSentimentResults,
     }
   }
 }

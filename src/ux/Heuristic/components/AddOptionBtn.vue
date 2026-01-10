@@ -155,13 +155,10 @@ const validate = async () => {
   if (valid) {
     const optionToSave = { ...localOption.value };
     if (!localHasValue.value) optionToSave.value = null;
-    console.log('Emitting addOption:', optionToSave);
     emit('addOption', optionToSave);
     emit('change');
     emit('update:dialog', false);
     resetVal();
-  } else {
-    console.log('Form validation failed');
   }
 };
 
