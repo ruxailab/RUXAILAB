@@ -85,189 +85,186 @@ v-if="showInviteMessage" v-model="inviteMessage" color="primary"
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { showError, showWarning } from '@/shared/utils/toast';
+import { ref, computed, watch } from 'vue'
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import { showError, showWarning } from '@/shared/utils/toast'
 
 const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false
-    },
-    users: {
-        type: Array,
-        default: () => []
-    },
-    showDateTimeSelection: {
-        type: Boolean,
-        default: false
-    },
-    showInviteMessage: {
-        type: Boolean,
-        default: true
-    },
-    // Text customization props
-    title: String,
-    selectLabel: String,
-    noDataText: String,
-    roleLabel: String,
-    messageLabel: String,
-    messagePlaceholder: String,
-    cancelText: String,
-    sendText: String
-});
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  users: {
+    type: Array,
+    default: () => [],
+  },
+  showDateTimeSelection: {
+    type: Boolean,
+    default: false,
+  },
+  showInviteMessage: {
+    type: Boolean,
+    default: true,
+  },
+  // Text customization props
+  title: String,
+  selectLabel: String,
+  noDataText: String,
+  roleLabel: String,
+  messageLabel: String,
+  messagePlaceholder: String,
+  cancelText: String,
+  sendText: String,
+})
 
-const emit = defineEmits([
-    'update:show',
-    'send-invitations'
-]);
+const emit = defineEmits(['update:show', 'send-invitations'])
 
 // Use composables
-const {
-    roleOptions,
-    validateEmail: isValidEmail
-} = useCooperatorUtils();
+const { roleOptions, validateEmail: isValidEmail } = useCooperatorUtils()
 
 // Local state
-const selectedCoops = ref([]);
-const comboboxModel = ref([]);
-const comboboxKey = ref(0);
-const selectedRole = ref(1);
-const inviteMessage = ref('');
-const combobox = ref(null);
+const selectedCoops = ref([])
+const comboboxModel = ref([])
+const comboboxKey = ref(0)
+const selectedRole = ref(1)
+const inviteMessage = ref('')
+const combobox = ref(null)
 
 // Date and time for scheduling (accessibility tests)
 const date = ref(
-    new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10)
-);
+  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .substr(0, 10),
+)
 const hour = ref(
-    new Date().toLocaleTimeString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    })
-);
+  new Date().toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }),
+)
 
 const minTime = computed(() => {
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() - 1);
-    const selectedDate = new Date(date.value);
+  const currentDate = new Date()
+  currentDate.setDate(currentDate.getDate() - 1)
+  const selectedDate = new Date(date.value)
 
-    if (
-        selectedDate.toLocaleDateString() === currentDate.toLocaleDateString() &&
-        selectedDate.getMonth() === currentDate.getMonth() &&
-        selectedDate.getFullYear() === currentDate.getFullYear()
-    ) {
-        return `${currentDate.getHours()}:${currentDate.getMinutes()}`;
-    } else {
-        return '00:00';
-    }
-});
+  if (
+    selectedDate.toLocaleDateString() === currentDate.toLocaleDateString() &&
+    selectedDate.getMonth() === currentDate.getMonth() &&
+    selectedDate.getFullYear() === currentDate.getFullYear()
+  ) {
+    return `${currentDate.getHours()}:${currentDate.getMinutes()}`
+  } else {
+    return '00:00'
+  }
+})
 
 // Methods
 const removeSelectedCoop = (index) => {
-    selectedCoops.value.splice(index, 1);
-};
+  selectedCoops.value.splice(index, 1)
+}
 
 const isStringEmail = (email) => {
-    return typeof email !== 'object' && email !== undefined && email.length > 0;
-};
+  return typeof email !== 'object' && email !== undefined && email.length > 0
+}
 
 const isUserEmailValid = (email) => {
-    return props.users.find(user => user.email === email);
-};
+  return props.users.find((user) => user.email === email)
+}
 
 const isCoopAlreadySelected = (emailToCheck) => {
-    return selectedCoops.value.find(
-        coop => (typeof coop === 'object' ? coop.email : coop) === emailToCheck
-    );
-};
+  return selectedCoops.value.find(
+    (coop) => (typeof coop === 'object' ? coop.email : coop) === emailToCheck,
+  )
+}
 
 const validateEmail = () => {
-    const email = comboboxModel.value.pop();
-    comboboxKey.value++;
+  const email = comboboxModel.value.pop()
+  comboboxKey.value++
 
-    if (!email) return;
+  if (!email) return
 
-    // Handle string email input
-    if (isStringEmail(email)) {
-        if (!isValidEmail(email)) {
-            showError('Invalid email format');
-            return;
-        }
-
-        if (!isUserEmailValid(email)) {
-            showError(`${email} is not a valid email or does not exist`);
-            return;
-        }
-
-        if (!selectedCoops.value.includes(email)) {
-            selectedCoops.value.push(email);
-        }
-        return;
+  // Handle string email input
+  if (isStringEmail(email)) {
+    if (!isValidEmail(email)) {
+      showError('Invalid email format')
+      return
     }
 
-    // Handle object email input
-    if (selectedCoops.value.includes(email)) return;
-
-    if (isCoopAlreadySelected(email.email)) {
-        showWarning(`${email.email} has already been selected`);
-        return;
+    if (!isUserEmailValid(email)) {
+      showError(`${email} is not a valid email or does not exist`)
+      return
     }
 
-    selectedCoops.value.push(email);
-};
+    if (!selectedCoops.value.includes(email)) {
+      selectedCoops.value.push(email)
+    }
+    return
+  }
+
+  // Handle object email input
+  if (selectedCoops.value.includes(email)) return
+
+  if (isCoopAlreadySelected(email.email)) {
+    showWarning(`${email.email} has already been selected`)
+    return
+  }
+
+  selectedCoops.value.push(email)
+}
 
 const onCancel = () => {
-    emit('update:show', false);
-    resetForm();
-};
+  emit('update:show', false)
+  resetForm()
+}
 
 const onSend = () => {
-    const invitationData = {
-        selectedCoops: selectedCoops.value,
-        selectedRole: selectedRole.value,
-        inviteMessage: inviteMessage.value
-    };
+  const invitationData = {
+    selectedCoops: selectedCoops.value,
+    selectedRole: selectedRole.value,
+    inviteMessage: inviteMessage.value,
+  }
 
-    if (props.showDateTimeSelection) {
-        invitationData.date = date.value;
-        invitationData.hour = hour.value;
-    }
+  if (props.showDateTimeSelection) {
+    invitationData.date = date.value
+    invitationData.hour = hour.value
+  }
 
-    emit('send-invitations', invitationData);
-    resetForm();
-};
+  emit('send-invitations', invitationData)
+  resetForm()
+}
 
 const resetForm = () => {
-    selectedCoops.value = [];
-    comboboxModel.value = [];
-    inviteMessage.value = '';
-    selectedRole.value = 1;
-    combobox.value?.blur();
-};
+  selectedCoops.value = []
+  comboboxModel.value = []
+  inviteMessage.value = ''
+  selectedRole.value = 1
+  combobox.value?.blur()
+}
 
 // Watch for dialog visibility to reset form
-watch(() => props.show, (newVal) => {
+watch(
+  () => props.show,
+  (newVal) => {
     if (!newVal) {
-        resetForm();
+      resetForm()
     }
-});
+  },
+)
 </script>
 
 <style scoped>
 .v-card {
-    border-radius: 20px !important;
+  border-radius: 20px !important;
 }
 
 .v-combobox {
-    border-radius: 10px !important;
+  border-radius: 10px !important;
 }
 
 .v-btn {
-    font-weight: 600;
-    text-transform: unset !important;
+  font-weight: 600;
+  text-transform: unset !important;
 }
 </style>

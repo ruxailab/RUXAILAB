@@ -48,10 +48,10 @@ v-show="rightTab === 'eye' && predictedData" :video-ref="mainVideo2"
                             <v-tab v-if="taskAnswer?.webcamRecordURL" value="sentimental">Sentimental</v-tab>
                             <!-- <v-tab value="transcript">Transcripción</v-tab>
                             <v-tab value="notes">Notas</v-tab> -->
-                        </v-tabs>
+            </v-tabs>
 
-                        <v-window v-model="rightTab" class="mt-4">
-                            <!-- <v-window-item value="general">
+            <v-window v-model="rightTab" class="mt-4">
+              <!-- <v-window-item value="general">
                                 <h4 class="text-subtitle-1 mb-1">General Analytics</h4>
                                 <TranscriptWordCloud :transcript="taskAnswer?.transcript ?? mockTranscript" />
                                 <SentimentSummary :sentiments="taskAnswer?.sentiments ?? mockSentiments" class="mb-4" />
@@ -108,16 +108,21 @@ import SentimentSummary from '../sessions/SentimentSummary.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 
 const props = defineProps({
-    modelValue: { type: Boolean, required: true },
-    taskAnswer: { type: Object, default: null },
-    fromEyeTracking: { type: Boolean, default: false },
-    userId: { type: String, default: '' }
+  modelValue: { type: Boolean, required: true },
+  taskAnswer: { type: Object, default: null },
+  fromEyeTracking: { type: Boolean, default: false },
+  userId: { type: String, default: '' },
+  selectedTask: { type: Number, default: 0 },
+  testAnswer: { type: Object, default: null },
 })
 const emit = defineEmits(['update:modelValue'])
 
 const open = ref(props.modelValue)
-watch(() => props.modelValue, val => open.value = val)
-watch(open, val => emit('update:modelValue', val))
+watch(
+  () => props.modelValue,
+  (val) => (open.value = val),
+)
+watch(open, (val) => emit('update:modelValue', val))
 
 const rightTab = ref('eye')
 const mainVideo1 = ref(null)
@@ -129,116 +134,91 @@ let rafId = null
 const predictedData = ref(null)
 const selectedView = ref('precision')
 
-const defaultVideos = {
-    evaluator: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
-    screen: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'
-}
-const defaultPosters = {
-    evaluator: 'https://dummyimage.com/800x450/eeeeee/000000&text=Evaluator+Video',
-    screen: 'https://dummyimage.com/800x450/eeeeee/000000&text=Screen+Recording'
-}
-const mockTranscript = 'Usuario realizó la tarea correctamente...'
-const mockEyeTracking = { accuracy: 92, fixations: 34 }
-const mockSentiments = ['positivo', 'neutral', 'negativo']
-const mockNotesCount = 5
-
 function updateLoop() {
-    if (!isPlaying.value) return
-    const video = mainVideo2.value
-    if (video) {
-        videoCurrentTime.value = video.currentTime
-        rafId = requestAnimationFrame(updateLoop)
-    }
+  if (!isPlaying.value) return
+  const video = mainVideo2.value
+  if (video) {
+    videoCurrentTime.value = video.currentTime
+    rafId = requestAnimationFrame(updateLoop)
+  }
 }
 
 function onMetadataLoaded(event) {
-    const video = event.target
-    videoDuration.value = video.duration
+  const video = event.target
+  videoDuration.value = video.duration
 }
 
 function onTimeUpdate(event) {
-    const video = event.target
-    videoCurrentTime.value = video.currentTime
+  const video = event.target
+  videoCurrentTime.value = video.currentTime
 }
 
 const togglePlay = () => {
-    const video = mainVideo2.value
-    if (!video) return
+  const video = mainVideo2.value
+  if (!video) return
 
-    if (isPlaying.value) {
-        video.pause()
-        cancelAnimationFrame(rafId)
-        isPlaying.value = false
-    } else {
-        video.play()
-        isPlaying.value = true
-        updateLoop()
-    }
+  if (isPlaying.value) {
+    video.pause()
+    cancelAnimationFrame(rafId)
+    isPlaying.value = false
+  } else {
+    video.play()
+    isPlaying.value = true
+    updateLoop()
+  }
 }
 
 const onSeek = (time) => {
-    const video = mainVideo2.value
-    if (!video) return
-    cancelAnimationFrame(rafId)
-    video.currentTime = time
-    videoCurrentTime.value = time
-    if (isPlaying.value) updateLoop()
+  const video = mainVideo2.value
+  if (!video) return
+  cancelAnimationFrame(rafId)
+  video.currentTime = time
+  videoCurrentTime.value = time
+  if (isPlaying.value) updateLoop()
 }
 
-const close = () => open.value = false
+const close = () => (open.value = false)
 
 onMounted(() => {
-    const video = mainVideo2.value
-    if (!video) return
+  const video = mainVideo2.value
+  if (!video) return
 
-    video.addEventListener('loadedmetadata', () => {
-        videoDuration.value = video.duration
-    })
+  video.addEventListener('loadedmetadata', () => {
+    videoDuration.value = video.duration
+  })
 
-    video.addEventListener('play', () => {
-        console.log('video PLAY')
-        isPlaying.value = true
-        updateLoop()
-    })
+  video.addEventListener('play', () => {
+    isPlaying.value = true
+    updateLoop()
+  })
 
-    video.addEventListener('pause', () => {
-        console.log('video PAUSE')
-        isPlaying.value = false
-        cancelAnimationFrame(rafId)
-    })
+  video.addEventListener('pause', () => {
+    isPlaying.value = false
+    cancelAnimationFrame(rafId)
+  })
 })
-
-watch(predictedData, (v) => {
-    console.log('[Pai] predictedData mudou para', v)
-})
-
-watch(isPlaying, (v) => {
-    console.log('[Pai] isPlaying mudou para', v)
-})
-
 onBeforeUnmount(() => cancelAnimationFrame(rafId))
 </script>
 
-
 <style scoped>
 .video-rect-skeleton {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 8px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
 }
 
 .video-rect-box {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    overflow: hidden;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .dialog-body {
-    margin-bottom: 20vh;
+  margin-bottom: 20vh;
 }
 
 .video-rect-box,
 .video-box {
-    flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 </style>
