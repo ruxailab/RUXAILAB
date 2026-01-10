@@ -2,20 +2,10 @@
   <div class="container px-4 py-8">
     <v-row>
       <!-- Left Section: Profile Details -->
-      <v-col
-        cols="12"
-        md="4"
-        lg="3"
-      >
-        <v-card
-          class="rounded-xl pa-6"
-          elevation="4"
-        >
+      <v-col cols="12" md="4" lg="3">
+        <v-card class="rounded-xl pa-6" elevation="4">
           <v-card-text class="text-center">
-            <v-avatar
-              size="120"
-              class="mb-4"
-            >
+            <v-avatar size="120" class="mb-4">
               <v-img
                 :src="userprofile.profileImage"
                 alt="No Image"
@@ -25,11 +15,7 @@
             <h2 class="text-h6 font-weight-bold mb-2">
               {{ userprofile.username || $t('profile.title') }}
             </h2>
-            <v-chip
-              size="small"
-              color="primary"
-              class="mb-6"
-            >
+            <v-chip size="small" color="primary" class="mb-6">
               {{ $t('profile.admin') }}
             </v-chip>
 
@@ -41,11 +27,10 @@
                 :key="index"
                 class="rounded-lg pa-2 list-item-transition"
               >
-                <v-list-item-subtitle class="text-caption text-uppercase text-grey-darken-1">
-                  <v-icon
-                    size="small"
-                    color="grey-darken-1"
-                  >
+                <v-list-item-subtitle
+                  class="text-caption text-uppercase text-grey-darken-1"
+                >
+                  <v-icon size="small" color="grey-darken-1">
                     {{ item.icon }}
                   </v-icon>
                   {{ item.label }}:
@@ -71,167 +56,142 @@
           class="w-100 mt-3 text-capitalize"
           @click="openEditProfileDialog"
         >
-          <v-icon start>
-            mdi-pencil
-          </v-icon>
+          <v-icon start> mdi-pencil </v-icon>
           {{ $t('profile.editDetails') }}
         </v-btn>
       </v-col>
 
       <!-- Right Section: Security and Delete Account -->
-      <v-col
-        cols="12"
-        md="8"
-        lg="9"
-      >
+      <v-col cols="12" md="8" lg="9">
         <!-- Security Section -->
-        <v-card
-          class="rounded-xl pa-6"
-          elevation="2"
-        >
-            <v-card-title class="text-h6 font-weight-bold mb-4">
-              <v-icon
-                start
-                color="primary"
-              >
-                mdi-lock
-              </v-icon>
-              {{ $t('profile.changePassword') }}
-            </v-card-title>
-            <v-card-text>
-              <v-alert
-                type="warning"
-                variant="outlined"
-                class="mb-6"
-              >
-                <div class="text-subtitle-1 font-weight-medium mb-2">
-                  {{ $t('profile.passwordRequirements') }}
-                </div>
-                <div class="text-body-2 mb-3">
-                  {{ $t('profile.passwordMinimumRequirements') }}
-                </div>
-                <div>
-                  <div class="d-flex align-center mb-2">
-                    <v-icon
-                      size="small"
-                      class="mr-2"
-                      :color="newPassword.length >= 8 ? 'success' : 'grey-darken-1'"
-                    >
-                      {{ newPassword.length >= 8 ? 'mdi-check-circle' : 'mdi-circle-outline' }}
-                    </v-icon>
-                    <span>{{ $t('profile.passwordMinLength') }}</span>
-                  </div>
-                  <div class="d-flex align-center mb-2">
-                    <v-icon
-                      size="small"
-                      class="mr-2"
-                      :color="/[A-Z]/.test(newPassword) ? 'success' : 'grey-darken-1'"
-                    >
-                      {{ /[A-Z]/.test(newPassword) ? 'mdi-check-circle' : 'mdi-circle-outline' }}
-                    </v-icon>
-                    <span>{{ $t('profile.passwordUppercase') }}</span>
-                  </div>
-                  <div class="d-flex align-center">
-                    <v-icon
-                      size="small"
-                      class="mr-2"
-                      :color="specialCharColor"
-                    >
-                      {{ specialCharIcon }}
-                    </v-icon>
-                    <span>{{ $t('profile.passwordSymbol') }}</span>
-                  </div>
-                </div>
-              </v-alert>
-
-              <v-form
-                ref="passwordForm"
-                v-model="valid"
-              >
-                <v-row dense>
-                  <v-col
-                    cols="12"
-                    sm="6"
+        <v-card class="rounded-xl pa-6" elevation="2">
+          <v-card-title class="text-h6 font-weight-bold mb-4">
+            <v-icon start color="primary"> mdi-lock </v-icon>
+            {{ $t('profile.changePassword') }}
+          </v-card-title>
+          <v-card-text>
+            <v-alert type="warning" variant="outlined" class="mb-6">
+              <div class="text-subtitle-1 font-weight-medium mb-2">
+                {{ $t('profile.passwordRequirements') }}
+              </div>
+              <div class="text-body-2 mb-3">
+                {{ $t('profile.passwordMinimumRequirements') }}
+              </div>
+              <div>
+                <div class="d-flex align-center mb-2">
+                  <v-icon
+                    size="small"
+                    class="mr-2"
+                    :color="
+                      newPassword && newPassword.length >= 8
+                        ? 'success'
+                        : 'grey-darken-1'
+                    "
                   >
-                    <v-text-field
-                      v-model="newPassword"
-                      :rules="passwordRules"
-                      :label="$t('profile.newPassword')"
-                      :type="showPassword ? 'text' : 'password'"
-                      variant="outlined"
-                      density="compact"
-                      prepend-inner-icon="mdi-lock"
-                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                      class="input-field-transition"
-                      @click:append="showPassword = !showPassword"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="confirmPassword"
-                      :rules="confirmPasswordRules"
-                      :label="$t('profile.confirmNewPassword')"
-                      :type="showConfirmPassword ? 'text' : 'password'"
-                      variant="outlined"
-                      density="compact"
-                      prepend-inner-icon="mdi-lock-check"
-                      :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                      class="input-field-transition"
-                      @click:append="showConfirmPassword = !showConfirmPassword"
-                    />
-                  </v-col>
-                </v-row>
-                <v-btn
-                  :disabled="!valid"
-                  color="primary"
-                  variant="flat"
-                  class="mt-4 text-capitalize"
-                  @click="changePassword"
-                >
-                  <v-icon start>
-                    mdi-key
+                    {{
+                      newPassword && newPassword.length >= 8
+                        ? 'mdi-check-circle'
+                        : 'mdi-circle-outline'
+                    }}
                   </v-icon>
-                  {{ $t('profile.changePassword') }}
-                </v-btn>
-              </v-form>
-            </v-card-text>
-          </v-card>
+                  <span>{{ $t('profile.passwordMinLength') }}</span>
+                </div>
+                <div class="d-flex align-center mb-2">
+                  <v-icon
+                    size="small"
+                    class="mr-2"
+                    :color="
+                      newPassword && /[A-Z]/.test(newPassword)
+                        ? 'success'
+                        : 'grey-darken-1'
+                    "
+                  >
+                    {{
+                      newPassword && /[A-Z]/.test(newPassword)
+                        ? 'mdi-check-circle'
+                        : 'mdi-circle-outline'
+                    }}
+                  </v-icon>
+                  <span>{{ $t('profile.passwordUppercase') }}</span>
+                </div>
+                <div class="d-flex align-center">
+                  <v-icon size="small" class="mr-2" :color="specialCharColor">
+                    {{ specialCharIcon }}
+                  </v-icon>
+                  <span>{{ $t('profile.passwordSymbol') }}</span>
+                </div>
+              </div>
+            </v-alert>
 
-          <!-- Delete Account Section -->
-          <v-card
-            class="rounded-xl pa-6 mt-6"
-            elevation="2"
-          >
-            <v-card-title class="text-h6 font-weight-bold">
-              <v-icon
-                start
-                color="error"
-              >
-                mdi-alert-circle
-              </v-icon>
-              {{ $t('profile.deleteAccountTitle') }}
-            </v-card-title>
-            <v-card-text>
-              <p class="text-body-1 mb-4">
-                {{ $t('profile.deleteAccountWarning') }}
-              </p>
+            <v-form ref="passwordForm" v-model="valid">
+              <v-row dense>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="newPassword"
+                    :rules="passwordRules"
+                    :label="$t('profile.newPassword')"
+                    :type="showPassword ? 'text' : 'password'"
+                    variant="outlined"
+                    density="compact"
+                    prepend-inner-icon="mdi-lock"
+                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    class="input-field-transition"
+                    @click:append="showPassword = !showPassword"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="confirmPassword"
+                    :rules="confirmPasswordRules"
+                    :label="$t('profile.confirmNewPassword')"
+                    :type="showConfirmPassword ? 'text' : 'password'"
+                    variant="outlined"
+                    density="compact"
+                    prepend-inner-icon="mdi-lock-check"
+                    :append-icon="
+                      showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'
+                    "
+                    class="input-field-transition"
+                    @click:append="showConfirmPassword = !showConfirmPassword"
+                  />
+                </v-col>
+              </v-row>
               <v-btn
-                color="error"
+                :disabled="!valid"
+                color="primary"
                 variant="flat"
-                class="text-capitalize"
-                :block="isSmallScreen"
-                @click="deleteAccountDialog = true"
+                class="mt-4 text-capitalize"
+                @click="changePassword"
               >
-                <v-icon start>
-                  mdi-delete
-                </v-icon>
-                {{ $t('profile.deleteAccountTitle') }}
+                <v-icon start> mdi-key </v-icon>
+                {{ $t('profile.changePassword') }}
               </v-btn>
-            </v-card-text>
-          </v-card>
+            </v-form>
+          </v-card-text>
+        </v-card>
+
+        <!-- Delete Account Section -->
+        <v-card class="rounded-xl pa-6 mt-6" elevation="2">
+          <v-card-title class="text-h6 font-weight-bold">
+            <v-icon start color="error"> mdi-alert-circle </v-icon>
+            {{ $t('profile.deleteAccountTitle') }}
+          </v-card-title>
+          <v-card-text>
+            <p class="text-body-1 mb-4">
+              {{ $t('profile.deleteAccountWarning') }}
+            </p>
+            <v-btn
+              color="error"
+              variant="flat"
+              class="text-capitalize"
+              :block="isSmallScreen"
+              @click="deleteAccountDialog = true"
+            >
+              <v-icon start> mdi-delete </v-icon>
+              {{ $t('profile.deleteAccountTitle') }}
+            </v-btn>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 
@@ -241,37 +201,18 @@
       max-width="600px"
       transition="dialog-bottom-transition"
     >
-      <v-card
-        class="rounded-xl pa-6"
-        elevation="6"
-      >
+      <v-card class="rounded-xl pa-6" elevation="6">
         <v-card-title class="text-h6 font-weight-bold">
-          <v-icon
-            start
-            color="primary"
-          >
-            mdi-account-edit
-          </v-icon>
+          <v-icon start color="primary"> mdi-account-edit </v-icon>
           {{ $t('profile.editProfile') }}
         </v-card-title>
         <v-card-text>
           <div class="text-center mb-6">
-            <v-avatar
-              size="100"
-              class="avatar-transition bg-ternary"
-            >
-              <v-img
-                :src="editProfileData.profileImage"
-                alt="No Image"
-              />
+            <v-avatar size="100" class="avatar-transition bg-ternary">
+              <v-img :src="editProfileData.profileImage" alt="No Image" />
             </v-avatar>
             <div class="d-flex justify-center align-center gap-2 mt-3">
-              <v-btn
-                icon
-                size="small"
-                @click="selectImage"
-                color="primary"
-              >
+              <v-btn icon size="small" @click="selectImage" color="primary">
                 <v-icon>mdi-camera</v-icon>
                 <v-tooltip activator="parent" location="bottom">
                   {{ t('profile.uploadProfilePicture') }}
@@ -296,12 +237,9 @@
               accept="image/*"
               style="display: none"
               @change="uploadProfileImage"
-            >
+            />
           </div>
-          <v-form
-            ref="editProfileForm"
-            v-model="editProfileValid"
-          >
+          <v-form ref="editProfileForm" v-model="editProfileValid">
             <v-text-field
               v-model="editProfileData.username"
               :label="$t('profile.username')"
@@ -318,7 +256,7 @@
               density="compact"
               prepend-inner-icon="mdi-phone"
               :rules="contactRules"
-              :hint="$t('Enter a valid No.')"
+              :hint="$t('profile.enterValidPhoneNumber')"
               persistent-hint
               class="mb-4 input-field-transition"
             />
@@ -338,11 +276,13 @@
               class="input-field-transition"
             >
               <template #selection="{ item }">
-                <span v-if="item.raw && item.raw.emoji">{{ item.raw.emoji }} {{ item.raw.name }}</span>
+                <span v-if="item.raw && item.raw.emoji"
+                  >{{ item.raw.emoji }} {{ item.raw.name }}</span
+                >
               </template>
               <template #item="{ item, props }">
-                <v-list-item 
-                  v-bind="{ ...props, title: undefined }" 
+                <v-list-item
+                  v-bind="{ ...props, title: undefined }"
                   v-if="item.raw && item.raw.emoji"
                 >
                   <v-list-item-title>
@@ -369,9 +309,7 @@
             :disabled="!saveButtonEnabled"
             @click="saveProfile"
           >
-            <v-icon start>
-              mdi-content-save
-            </v-icon>
+            <v-icon start> mdi-content-save </v-icon>
             {{ $t('profile.saveChanges') }}
           </v-btn>
         </v-card-actions>
@@ -385,17 +323,9 @@
       persistent
       transition="dialog-bottom-transition"
     >
-      <v-card
-        class="rounded-xl pa-6"
-        elevation="6"
-      >
+      <v-card class="rounded-xl pa-6" elevation="6">
         <v-card-title class="text-h6 font-weight-bold">
-          <v-icon
-            start
-            color="error"
-          >
-            mdi-alert-circle
-          </v-icon>
+          <v-icon start color="error"> mdi-alert-circle </v-icon>
           {{ $t('profile.deleteAccountTitle') }}
           <v-spacer />
         </v-card-title>
@@ -403,11 +333,7 @@
         <!-- Step 1: Initial Confirmation -->
         <div v-if="deleteStep === 1">
           <v-card-text>
-            <v-alert
-              type="error"
-              variant="outlined"
-              class="mb-4"
-            >
+            <v-alert type="error" variant="outlined" class="mb-4">
               {{ $t('profile.deleteAccountConfirm') }}
             </v-alert>
             <p class="text-body-1 mb-4">
@@ -423,7 +349,10 @@
                 density="compact"
                 hide-details
                 class="input-field-transition"
-                :rules="[(v) => v === 'DELETE' || $t('profile.pleaseTypeDeleteToConfirm')]"
+                :rules="[
+                  (v) =>
+                    v === 'DELETE' || $t('profile.pleaseTypeDeleteToConfirm'),
+                ]"
               />
             </div>
           </v-card-text>
@@ -446,7 +375,7 @@
               :disabled="deleteConfirmText !== 'DELETE'"
               @click="handlerDeleteConfirmText"
             >
-              {{ $t('Proceed') }}
+              {{ $t('common.proceed') }}
             </v-btn>
           </v-card-actions>
         </div>
@@ -454,11 +383,7 @@
         <!-- Step 2: Enter Password -->
         <div v-else>
           <v-card-text>
-            <v-alert
-              type="error"
-              variant="outlined"
-              class="mb-4"
-            >
+            <v-alert type="error" variant="outlined" class="mb-4">
               {{ $t('profile.finalStepVerifyIdentity') }}
             </v-alert>
             <p class="text-center font-weight-bold mb-4">
@@ -495,9 +420,7 @@
               min-width="120"
               @click="handlerDeleteAccount"
             >
-              <v-icon start>
-                mdi-delete
-              </v-icon>
+              <v-icon start> mdi-delete </v-icon>
               {{ $t('profile.deleteForever') }}
             </v-btn>
           </v-card-actions>
@@ -518,28 +441,28 @@ import {
   updatePassword,
   reauthenticateWithPopup,
   GoogleAuthProvider,
-} from 'firebase/auth';
+} from 'firebase/auth'
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
 import {
-  getFirestore,
-  doc,
-  getDoc,
-  updateDoc,
-} from 'firebase/firestore';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { countries } from '@/shared/constants/countries';
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
+import { countries } from '@/shared/constants/countries'
 
-const store = useStore();
-const user = computed(() => store.getters.user || { email: '' });
+const store = useStore()
+const user = computed(() => store.getters.user || { email: '' })
 
-const { t } = useI18n();
-const toast = useToast();
+const { t } = useI18n()
+const toast = useToast()
 
 const userprofile = ref({
   profileImage: null,
   username: null,
   contactNo: null,
   country: null,
-});
+})
 const editProfileData = ref({
   username: null,
   contactNo: null,
@@ -572,31 +495,31 @@ const fileInput = ref(null);
 
 // Validation rules
 const usernameRules = [
-  (v) => !!v || t('PROFILE.usernameRequired'),
-  (v) => (v && v.length >= 3) || t('PROFILE.usernameMinLength'),
-];
-const countryRules = [(v) => !!v || t('PROFILE.countryRequired')];
+  (v) => !!v || t('profile.usernameRequired'),
+  (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
+]
+const countryRules = [(v) => !!v || t('profile.countryRequired')]
 const contactRules = [
-  (v) => !!v || t('PROFILE.contactNumberRequired'),
-  (v) => /^\d{9,15}$/.test(v) || t('PROFILE.enterValidPhoneNumber'),
-];
+  (v) => !!v || t('profile.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
+]
 const passwordRules = [
-  (v) => !!v || t('PROFILE.passwordRequired'),
-  (v) => v.length >= 8 || t('PROFILE.passwordMinLength'),
-  (v) => /[A-Z]/.test(v) || t('PROFILE.passwordUppercase'),
-  (v) => hasSpecialChar(v) || t('PROFILE.passwordSymbol'),
-];
+  (v) => !!v || t('profile.passwordRequired'),
+  (v) => (v && v.length >= 8) || t('profile.passwordMinLength'),
+  (v) => (v && /[A-Z]/.test(v)) || t('profile.passwordUppercase'),
+  (v) => (v && hasSpecialChar(v)) || t('profile.passwordSymbol'),
+]
 const confirmPasswordRules = [
-  (v) => !!v || t('PROFILE.confirmPasswordRequired'),
-  (v) => v === newPassword.value || t('PROFILE.passwordsMatch'),
-];
+  (v) => !!v || t('profile.confirmPasswordRequired'),
+  (v) => v === (newPassword.value || '') || t('profile.passwordsMatch'),
+]
 
 const specialCharColor = computed(() =>
-  hasSpecialChar(newPassword.value) ? 'success' : 'grey'
-);
+  hasSpecialChar(newPassword.value) ? 'success' : 'grey',
+)
 const specialCharIcon = computed(() =>
-  hasSpecialChar(newPassword.value) ? 'mdi-check-circle' : 'mdi-circle-outline'
-);
+  hasSpecialChar(newPassword.value) ? 'mdi-check-circle' : 'mdi-circle-outline',
+)
 const profileItems = computed(() => [
   {
     label: t('profile.username'),
@@ -618,25 +541,26 @@ const profileItems = computed(() => [
     value: userprofile.value.country,
     icon: 'mdi-map-marker',
   },
-]);
+])
 
 const saveButtonEnabled = computed(() => {
   return editProfileValid.value || hasImageChanges.value;
 });
 
 const hasSpecialChar = (str) => {
-  const specialChars = /[!@#$%^&*(),.{}|<>]/;
-  return specialChars.test(str);
-};
+  if (!str) return false
+  const specialChars = /[!@#$%^&*(),.{}|<>]/
+  return specialChars.test(str)
+}
 
 const selectImage = () => {
-  if (fileInput.value) fileInput.value.value = '';
-  fileInput.value.click();
-};
+  if (fileInput.value) fileInput.value.value = ''
+  fileInput.value.click()
+}
 
 const uploadProfileImage = async (event) => {
-  const file = event?.target?.files?.[0];
-  if (!file) return;
+  const file = event?.target?.files?.[0]
+  if (!file) return
 
   try {
     // Create preview only - NO UPLOAD!
@@ -662,38 +586,38 @@ const uploadProfileImage = async (event) => {
     toast.error(t('profile.imagePreviewFailed'));
     editProfileData.value.profileImage = userprofile.value.profileImage;
   }
-};
+}
 
 const checkScreenSize = () => {
-  isSmallScreen.value = window.innerWidth < 960;
-};
+  isSmallScreen.value = window.innerWidth < 960
+}
 
 const fetchUserProfile = async () => {
   try {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const auth = getAuth()
+    const user = auth.currentUser
 
     if (user) {
-      const db = getFirestore();
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const db = getFirestore()
+      const userDoc = await getDoc(doc(db, 'users', user.uid))
 
       if (userDoc.exists()) {
-        const data = userDoc.data();
+        const data = userDoc.data()
         userprofile.value = {
           profileImage: data.profileImage || '',
           username: data.username || null,
           contactNo: data.contactNo || null,
           country: data.country || null,
-        };
+        }
       }
     }
   } catch (error) {
-    console.error('Error fetching profile:', error);
-    toast.error(t('PROFILE.profileLoadFailed'));
+    console.error('Error fetching profile:', error)
+    toast.error(t('profile.profileLoadFailed'))
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const openEditProfileDialog = () => {
   editProfileData.value = {
@@ -733,12 +657,12 @@ const saveProfile = async () => {
   }
 
   try {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const auth = getAuth()
+    const user = auth.currentUser
 
     if (user) {
-      const db = getFirestore();
-      const userDocRef = doc(db, 'users', user.uid);
+      const db = getFirestore()
+      const userDocRef = doc(db, 'users', user.uid)
 
       // Upload image first if there's a new one
       let finalProfileImage = editProfileData.value.profileImage;
@@ -786,30 +710,30 @@ const saveProfile = async () => {
       editProfileDialog.value = false;
     }
   } catch (error) {
-    console.error('Error updating profile:', error);
-    toast.error(t('profile.profileUpdateFailed'));
+    console.error('Error updating profile:', error)
+    toast.error(t('profile.profileUpdateFailed'))
   }
-};
+}
 
 const changePassword = async () => {
   if (passwordForm.value.validate()) {
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
+      const auth = getAuth()
+      const user = auth.currentUser
 
       if (user) {
-        await updatePassword(user, newPassword.value);
-        toast.success(t('PROFILE.passwordChangedSuccess'));
-        newPassword.value = '';
-        confirmPassword.value = '';
-        passwordForm.value.reset();
+        await updatePassword(user, newPassword.value)
+        toast.success(t('profile.passwordChangedSuccess'))
+        newPassword.value = ''
+        confirmPassword.value = ''
+        passwordForm.value.reset()
       }
     } catch (error) {
-      console.error('Error changing password:', error);
-      toast.error(t('PROFILE.passwordChangeFailed'));
+      console.error('Error changing password:', error)
+      toast.error(t('profile.passwordChangeFailed'))
     }
   }
-};
+}
 
 const removeProfilePicture = () => {
   // Set to empty string for removal
@@ -829,11 +753,11 @@ const removeProfilePicture = () => {
 };
 
 const handlerDeleteConfirmText = async (value) => {
-  const auth = getAuth();
-  const user = auth.currentUser;
-  if (user.providerData.includes(a => a.providerId !== 'google.com')) {
-    deleteStep.value = 2;
-    return;
+  const auth = getAuth()
+  const user = auth.currentUser
+  if (user.providerData.includes((a) => a.providerId !== 'google.com')) {
+    deleteStep.value = 2
+    return
   }
   try {
     isDeleting.value = true
@@ -841,23 +765,23 @@ const handlerDeleteConfirmText = async (value) => {
     return await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('PROFILE.accountDeletionFailed'))
+    toast.error(t('profile.accountDeletionFailed'))
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
   }
-};
+}
 
 const deleteAccount = async (user) => {
   await store.dispatch('deleteAuth', user.uid)
-  toast.success(t('PROFILE.accountDeletedSuccess'))
+  toast.success(t('profile.accountDeletedSuccess'))
   signOut()
-};
+}
 
 const handlerDeleteAccount = async () => {
   const auth = getAuth()
   const user = auth.currentUser
-  if (!userPassword.value) return toast.error(t('PROFILE.passwordRequired'))
+  if (!userPassword.value) return toast.error(t('profile.passwordRequired'))
 
   try {
     isDeleting.value = true
@@ -866,41 +790,41 @@ const handlerDeleteAccount = async () => {
     await deleteAccount(user)
   } catch (error) {
     console.error('Error during account deletion:', error)
-    toast.error(t('PROFILE.accountDeletionFailed'))
+    toast.error(t('profile.accountDeletionFailed'))
   } finally {
     isDeleting.value = false
     deleteAccountDialog.value = false
   }
-};
+}
 
 const closeDeleteDialog = () => {
-  deleteAccountDialog.value = false;
-  userPassword.value = '';
-  deleteConfirmText.value = '';
-  deleteStep.value = 1;
-};
+  deleteAccountDialog.value = false
+  userPassword.value = ''
+  deleteConfirmText.value = ''
+  deleteStep.value = 1
+}
 
 const signOut = async () => {
   try {
-    await store.dispatch('logout');
-    globalThis.location.href = '/';
+    await store.dispatch('logout')
+    globalThis.location.href = '/'
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-};
+}
 
 const countryFilter = (item, queryText) => {
-  if (!queryText) return true;
-  
-  const itemName = item?.name || item || '';
-  return String(itemName).toLowerCase().includes(queryText.toLowerCase());
-};
+  if (!queryText) return true
+
+  const itemName = item?.name || item || ''
+  return String(itemName).toLowerCase().includes(queryText.toLowerCase())
+}
 
 onMounted(() => {
-  fetchUserProfile();
-  checkScreenSize();
-  window.addEventListener('resize', checkScreenSize);
-});
+  fetchUserProfile()
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+})
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize);
