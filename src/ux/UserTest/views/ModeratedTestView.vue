@@ -600,7 +600,7 @@ const currentUserAccessLevel = computed(() => {
   const cooperator = test.value.cooperators?.find(
     (c) => c.userDocId === user.value?.id,
   )
-  return cooperator?.accessLevel || 3 // Default to Guest/Participant (3) if not found, but typically should be found
+  return cooperator?.accessLevel || 2 // Default to Guest/Participant (2) if not found, but typically should be found
 })
 
 const isObservator = computed(() => currentUserAccessLevel.value === 3)
@@ -1157,7 +1157,7 @@ const isStartTestDisabled = computed(() => {
   const cooperator = test.value.cooperators.find(
     (u) => u.userDocId === route.params.token,
   )
-  const sessionDate = cooperator.testDate ? new Date(cooperator.testDate) : null
+  const sessionDate = cooperator?.testDate ? new Date(cooperator.testDate) : null
 
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
@@ -1238,13 +1238,11 @@ onMounted(async () => {
         testDate.value = sessionCooperator.value.testDate
       } else {
         showWarning("Your session doesn't have a scheduled date")
-        router.push('/managerview/' + test.value.id)
         return
       }
     }
   } else {
     showInfo('Use a session link to access the test')
-    router.push('/managerview/' + test.value.id)
     return
   }
 
