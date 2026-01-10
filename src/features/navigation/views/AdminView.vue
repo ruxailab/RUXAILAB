@@ -20,10 +20,10 @@
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
-                ? 'Manage your research studies'
+                ? $t('adminDashboard.pageSubtitles.studies')
                 : activeSection === 'templates'
-                ? 'Access your saved templates'
-                : ''
+                  ? $t('adminDashboard.pageSubtitles.templates')
+                  : ''
             }}
           </p>
         </div>
@@ -85,9 +85,10 @@
  * This view manages the entire dashboard layout, handling the sidebar navigation
  * and rendering the correct section based on the active selection.
  */
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 // Feature views
 import ProfileView from '@/features/auth/views/ProfileView.vue'
@@ -121,21 +122,20 @@ const filteredModeratedSessions = ref([])
 let unsubscribeTests = null // Unsub function for real-time tests
 
 // 🔹 Dynamic page title
+const { t } = useI18n();
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
-    case 'dashboard': return 'Dashboard';
-    case 'studies': return 'Studies';
-    case 'sessions': return 'Sessions';
-    case 'templates': return 'Templates';
-    case 'storage': return 'Storage';
-    case 'notifications': return 'Notifications';
-    case 'profile': return 'Profile';
+    case 'dashboard': return t('adminDashboard.pageTitles.dashboard');
+    case 'studies': return t('adminDashboard.pageTitles.studies');
+    case 'sessions': return t('adminDashboard.pageTitles.sessions');
+    case 'templates': return t('adminDashboard.pageTitles.templates');
+    case 'notifications': return t('adminDashboard.pageTitles.notifications');
+    case 'profile': return t('adminDashboard.pageTitles.profile');
     case 'community':
       return activeSubSection.value === 'community-templates'
-        ? 'Community Templates'
-        : 'Community Studies'
-    default:
-      return 'RUXAI Lab'
+        ? t('adminDashboard.pageTitles.communityTemplates')
+        : t('adminDashboard.pageTitles.communityStudies');
+    default: return t('adminDashboard.pageTitles.default');
   }
 })
 

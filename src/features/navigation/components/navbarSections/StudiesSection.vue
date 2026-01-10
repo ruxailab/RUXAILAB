@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search studies..."
+        :placeholder="$t('lists.searchStudies')"
         class="flex-grow-1"
       />
       <v-btn
@@ -19,7 +19,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('lists.reset') }}
       </v-btn>
 
       <v-btn
@@ -40,11 +40,10 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">{{ $t('lists.creationDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
               max-width="290px"
               min-width="290px"
             >
@@ -70,7 +69,7 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">{{ $t('lists.status') }}</div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -86,7 +85,7 @@
 
           <!-- 🔓 Visibility -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Visibility</div>
+            <div class="filter-label">{{ $t('lists.visibility') }}</div>
             <v-select
               v-model="selectedVisibilityFilter"
               :items="visibilityOptions"
@@ -100,7 +99,7 @@
 
           <!-- 🧭 Method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('lists.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -114,7 +113,7 @@
 
           <!-- 👥 Ownership -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">{{ $t('lists.ownership') }}</div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -128,7 +127,7 @@
 
           <!-- 👤 Participants -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Participants</div>
+            <div class="filter-label">{{ $t('lists.participants') }}</div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -153,6 +152,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
   getMethodManagerView,
@@ -166,6 +166,7 @@ import {
 // ===== Setup =====
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 const search = ref('')
 
 // ===== Filter state =====
@@ -180,31 +181,31 @@ const showFilters = ref(false)
 const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 // ===== Filter options =====
-const statusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'active', text: 'Active' },
-  { value: 'draft', text: 'Draft' },
-  { value: 'completed', text: 'Completed' }
-]
+const statusOptions = computed(() => [
+  { value: 'all', text: t('lists.allStatuses') },
+  { value: 'active', text: t('studyCreation.details.status.active') },
+  { value: 'draft', text: t('studyCreation.details.status.pending') },
+  { value: 'completed', text: t('lists.completed') }
+])
 
-const visibilityOptions = [
-  { value: 'all', text: 'All Visibility' },
-  { value: 'public', text: 'Public' },
-  { value: 'private', text: 'Private' }
-]
+const visibilityOptions = computed(() => [
+  { value: 'all', text: t('lists.all') },
+  { value: 'public', text: t('lists.public') },
+  { value: 'private', text: t('lists.private') }
+])
 
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' }
-]
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('lists.allStudies') },
+  { value: 'mine', text: t('lists.myStudies') },
+  { value: 'cooperator', text: t('lists.whereICollaborate') }
+])
 
-const participantsOptions = [
-  { text: 'All', value: 'all' },
-  { text: '< 10 participants', value: 'lt10' },
-  { text: '10 – 50 participants', value: 'btw10_50' },
-  { text: '> 50 participants', value: 'gt50' }
-]
+const participantsOptions = computed(() => [
+  { text: t('lists.all'), value: 'all' },
+  { text: '< 10', value: 'lt10' },
+  { text: '10 – 50', value: 'btw10_50' },
+  { text: '> 50', value: 'gt50' }
+])
 
 // ===== Helpers =====
 const clearFilters = () => {
