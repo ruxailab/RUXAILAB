@@ -111,40 +111,47 @@ jobs:
             // 5. PR Description Validation
             const descriptionIssues = [];
 
-            // Check minimum description length (at least 20 characters)
-            if (prBody.trim().length < 20) {
-              descriptionIssues.push("- Description is too short (minimum 20 characters)");
-            }
+            // Detect bot PRs
+            const BOT_LOGINS = new Set(['dependabot[bot]', 'github-actions[bot]']);
+            const isBot = BOT_LOGINS.has(pr.user.login) || pr.user.type === 'Bot';
 
-            // Check for issue reference
-            const hasIssueRef = /(?:fixes|closes|resolves|close|fix|resolve)\s+#\d+/i.test(prBody);
-            if (!hasIssueRef) {
-              descriptionIssues.push("- Missing issue reference (e.g., 'Fixes #123')");
-            }
+            // Skip validation for bot PRs
+            if (!isBot) {
+              // Check minimum description length (at least 20 characters)
+              if (prBody.trim().length < 20) {
+                descriptionIssues.push("- Description is too short (minimum 20 characters)");
+              }
 
-            // If there are validation issues, comment and add label
-            if (descriptionIssues.length > 0) {
-              labelsToAdd.push("needs-description");
-              
-              const warningComment = `⚠️ **PR Description Issues Detected**\n\n${descriptionIssues.join("\n")}\n\nPlease update the PR description to address these issues.`;
-              
-              // Check if we already commented
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-              });
-              
-              const alreadyCommented = comments.some(c => c.body.includes("PR Description Issues Detected"));
-              
-              if (!alreadyCommented) {
-                await github.rest.issues.createComment({
+              // Check for issue reference
+              const hasIssueRef = /(?:fixes|closes|resolves|close|fix|resolve|fixed|closed|resolved)[\s\w:]*#\d+/i.test(prBody);
+              if (!hasIssueRef) {
+                descriptionIssues.push("- Missing issue reference (e.g., 'Fixes #123')");
+              }
+
+              // If there are validation issues, comment and add label
+              if (descriptionIssues.length > 0) {
+                labelsToAdd.push("needs-description");
+                
+                const warningComment = `⚠️ **PR Description Issues Detected**\n\n${descriptionIssues.join("\n")}\n\nPlease update the PR description to address these issues.`;
+                
+                // Check if we already commented
+                const { data: comments } = await github.rest.issues.listComments({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: prNumber,
-                  body: warningComment,
                 });
-                console.log("Posted description validation comment");
+                
+                const alreadyCommented = comments.some(c => c.body.includes("PR Description Issues Detected"));
+                
+                if (!alreadyCommented) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: warningComment,
+                  });
+                  console.log("Posted description validation comment");
+                }
               }
             }
 
