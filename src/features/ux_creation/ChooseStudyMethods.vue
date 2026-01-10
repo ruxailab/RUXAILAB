@@ -6,13 +6,24 @@
 
       <!-- Page Header -->
       <SectionHeader
-        :title="$t('studyCreation.chooseMethod', { category: $t(`studyCreation.categories.${currentCategory}.title`) })"
+        :title="
+          $t('studyCreation.chooseMethod', {
+            category: $t(`studyCreation.categories.${currentCategory}.title`),
+          })
+        "
         :subtitle="$t('studyCreation.selectMethod')"
       />
 
       <!-- Methods Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="method in availableMethods" :key="method.id" cols="12" sm="6" md="6" lg="5">
+        <v-col
+          v-for="method in availableMethods"
+          :key="method.id"
+          cols="12"
+          sm="6"
+          md="6"
+          lg="5"
+        >
           <SelectableCard
             :selected="selectedMethod === method.id"
             :icon="method.icon"
@@ -21,14 +32,21 @@
             :description="method.description"
             :color="method.color"
             :disabled="!method.available"
-            :badge="method.comingSoon ? { text: $t('studyCreation.comingSoon'), color: 'warning' } : null"
+            :badge="
+              method.comingSoon
+                ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
+                : null
+            "
             @click="() => selectMethod(method.id, method.available)"
           />
         </v-col>
       </v-row>
 
       <!-- Back Button -->
-      <BackButton :label="$t('studyCreation.backToCategories')" @back="goBack" />
+      <BackButton
+        :label="$t('studyCreation.backToCategories')"
+        @back="goBack"
+      />
     </v-container>
   </v-container>
 </template>
@@ -72,13 +90,14 @@ const methodsByCategory = {
       descKey: 'studyCreation.methods.test.usability_moderated.description',
       icon: 'mdi-account-voice',
       color: 'success',
-      available: false,
-      comingSoon: true,
+      available: true,
+      comingSoon: false,
     },
     {
       id: METHOD_DEFINITIONS.CARD_SORTING.id,
       nameKey: 'studyCreation.methods.test.card_sorting_unmoderated.name',
-      descKey: 'studyCreation.methods.test.card_sorting_unmoderated.description',
+      descKey:
+        'studyCreation.methods.test.card_sorting_unmoderated.description',
       icon: 'mdi-card-multiple',
       color: 'error',
       available: false,
@@ -98,7 +117,8 @@ const methodsByCategory = {
     {
       id: METHOD_DEFINITIONS.HEURISTICS.id,
       nameKey: 'studyCreation.methods.inspection.heuristic_evaluation.name',
-      descKey: 'studyCreation.methods.inspection.heuristic_evaluation.description',
+      descKey:
+        'studyCreation.methods.inspection.heuristic_evaluation.description',
       icon: 'mdi-clipboard-check',
       color: 'secondary',
       available: true,
@@ -106,7 +126,8 @@ const methodsByCategory = {
     {
       id: METHOD_DEFINITIONS.COGNITIVE_WALKTHROUGH.id,
       nameKey: 'studyCreation.methods.inspection.cognitive_walkthrough.name',
-      descKey: 'studyCreation.methods.inspection.cognitive_walkthrough.description',
+      descKey:
+        'studyCreation.methods.inspection.cognitive_walkthrough.description',
       icon: 'mdi-walk',
       color: 'info',
       available: false,
@@ -125,7 +146,8 @@ const methodsByCategory = {
     {
       id: 'AUTOMATIC',
       nameKey: 'studyCreation.methods.accessibility.automatic_testing.name',
-      descKey: 'studyCreation.methods.accessibility.automatic_testing.description',
+      descKey:
+        'studyCreation.methods.accessibility.automatic_testing.description',
       icon: 'mdi-robot',
       color: 'teal darken-3',
       available: true,
@@ -133,7 +155,8 @@ const methodsByCategory = {
     {
       id: 'AI_ASSISTED',
       nameKey: 'studyCreation.methods.accessibility.ai_assisted_testing.name',
-      descKey: 'studyCreation.methods.accessibility.ai_assisted_testing.description',
+      descKey:
+        'studyCreation.methods.accessibility.ai_assisted_testing.description',
       icon: 'mdi-brain',
       color: 'purple darken-3',
       available: false,
@@ -143,7 +166,7 @@ const methodsByCategory = {
 
 const currentCategory = computed(() => store.state.Tests.studyCategory)
 const availableMethods = computed(() => {
-  return (methodsByCategory[currentCategory.value] || []).map(m => ({
+  return (methodsByCategory[currentCategory.value] || []).map((m) => ({
     ...m,
     name: t(m.nameKey),
     description: t(m.descKey),
