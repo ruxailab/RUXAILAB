@@ -4,34 +4,44 @@
     class="rounded-lg"
     max-width="950"
     @click:outside="$emit('update:dialog', false)"
-  @update:model-value="$emit('update:dialog', $event)"
+    @update:model-value="$emit('update:dialog', $event)"
   >
     <v-card class="rounded-xxl elevation-8">
-      <v-card-title class="bg-gradient-primary text-white pa-6 rounded-top-lg d-flex align-center">
+      <v-card-title
+        class="bg-gradient-primary text-white pa-6 rounded-top-lg d-flex align-center"
+      >
         <v-icon class="mr-3" size="28">mdi-account-plus-outline</v-icon>
         <div>
-          <h2 class="text-h5 font-weight-bold mb-1">{{ $t('UsabilityCooperators.inviteEvaluator') }}</h2>
-          <p class="text-body-2 mb-0 opacity-90">Send evaluation invitations to participants</p>
+          <h2 class="text-h5 font-weight-bold mb-1">
+            {{ $t('UsabilityCooperators.inviteEvaluator') }}
+          </h2>
+          <p class="text-body-2 mb-0 opacity-90">
+            Send evaluation invitations to participants
+          </p>
         </div>
       </v-card-title>
 
       <v-card-text class="pa-8">
-        <v-form
-          ref="inviteForm"
-          v-model="valid"
-          validate-on="input"
-        >
+        <v-form ref="inviteForm" v-model="valid" validate-on="input">
           <v-row>
             <v-col cols="12" md="6" class="pr-md-8">
               <div class="form-section">
                 <!-- Role Selection -->
-                 <div class="field-group mb-6">
+                <div class="field-group mb-6">
                   <label class="field-label">
-                    <v-icon class="mr-2" size="20">mdi-account-cowboy-hat</v-icon>
+                    <v-icon class="mr-2" size="20"
+                      >mdi-account-cowboy-hat</v-icon
+                    >
                     Role
                   </label>
-                  <p class="field-description mb-3">Select the role for this participant.</p>
-                  <v-radio-group v-model="selectedRole" color="primary" hide-details>
+                  <p class="field-description mb-3">
+                    Select the role for this participant.
+                  </p>
+                  <v-radio-group
+                    v-model="selectedRole"
+                    color="primary"
+                    hide-details
+                  >
                     <v-radio
                       v-for="role in roleOptions"
                       :key="role.value"
@@ -40,12 +50,14 @@
                       <template v-slot:label>
                         <div>
                           <div class="font-weight-medium">{{ role.label }}</div>
-                          <div class="text-caption text-grey">{{ role.description }}</div>
+                          <div class="text-caption text-grey">
+                            {{ role.description }}
+                          </div>
                         </div>
                       </template>
                     </v-radio>
                   </v-radio-group>
-                 </div>
+                </div>
 
                 <!-- Participant Selection -->
                 <div class="field-group mb-6">
@@ -53,7 +65,10 @@
                     <v-icon class="mr-2" size="20">mdi-account-outline</v-icon>
                     {{ $t('UsabilityCooperators.email') }}
                   </label>
-                  <p class="field-description mb-3">Select the participant you want to invite to this evaluation session.</p>
+                  <p class="field-description mb-3">
+                    Select the participant you want to invite to this evaluation
+                    session.
+                  </p>
                   <v-autocomplete
                     v-model="comboboxModel.userId"
                     :items="filteredUsers"
@@ -73,15 +88,23 @@
                     <template #selection="{ item }">
                       <div class="d-flex align-center">
                         <v-avatar size="24" color="primary" class="mr-2">
-                          <span class="text-white text-caption">{{ item.raw.email.charAt(0).toUpperCase() }}</span>
+                          <span class="text-white text-caption">{{
+                            item.raw.email.charAt(0).toUpperCase()
+                          }}</span>
                         </v-avatar>
                         <div class="text-truncate">
-                          <span class="text-body-2 font-weight-medium">{{ item.raw.email }}</span>
-                          <span v-if="item.raw.name" class="text-caption text-grey-darken-1 ml-1">({{ item.raw.name }})</span>
+                          <span class="text-body-2 font-weight-medium">{{
+                            item.raw.email
+                          }}</span>
+                          <span
+                            v-if="item.raw.name"
+                            class="text-caption text-grey-darken-1 ml-1"
+                            >({{ item.raw.name }})</span
+                          >
                         </div>
                       </div>
                     </template>
-                    
+
                     <template #item="{ props, item }">
                       <v-list-item
                         v-bind="props"
@@ -91,10 +114,12 @@
                       >
                         <template #prepend>
                           <v-avatar size="40" color="primary" class="mr-3">
-                            <span class="text-white font-weight-bold">{{ item.raw.email.charAt(0).toUpperCase() }}</span>
+                            <span class="text-white font-weight-bold">{{
+                              item.raw.email.charAt(0).toUpperCase()
+                            }}</span>
                           </v-avatar>
                         </template>
-                        
+
                         <template #append>
                           <v-chip
                             v-if="isParticipantAlreadyInvited(item.raw.id)"
@@ -107,12 +132,18 @@
                         </template>
                       </v-list-item>
                     </template>
-                    
+
                     <template #no-data>
                       <div class="pa-4 text-center">
-                        <v-icon size="48" color="grey-lighten-1" class="mb-2">mdi-account-search</v-icon>
-                        <p class="text-body-2 text-grey-darken-1">No participants found</p>
-                        <p class="text-caption text-grey-darken-2">Try adjusting your search terms</p>
+                        <v-icon size="48" color="grey-lighten-1" class="mb-2"
+                          >mdi-account-search</v-icon
+                        >
+                        <p class="text-body-2 text-grey-darken-1">
+                          No participants found
+                        </p>
+                        <p class="text-caption text-grey-darken-2">
+                          Try adjusting your search terms
+                        </p>
                       </div>
                     </template>
                   </v-autocomplete>
@@ -124,8 +155,10 @@
                     <v-icon class="mr-2" size="20">mdi-calendar-clock</v-icon>
                     {{ $t('UsabilityCooperators.scheduledAt') }}
                   </div>
-                  <p class="field-description mb-3">Choose the date and time for the evaluation session.</p>
-                  
+                  <p class="field-description mb-3">
+                    Choose the date and time for the evaluation session.
+                  </p>
+
                   <v-row class="mt-2">
                     <v-col cols="7">
                       <v-menu
@@ -150,11 +183,13 @@
                         </template>
                         <v-date-picker
                           v-model="date"
-                          :min="new Date(
-                            Date.now() - new Date().getTimezoneOffset() * 60000,
-                          )
-                            .toISOString()
-                            .substring(0, 10)
+                          :min="
+                            new Date(
+                              Date.now() -
+                                new Date().getTimezoneOffset() * 60000,
+                            )
+                              .toISOString()
+                              .substring(0, 10)
                           "
                           show-adjacent-months
                           color="primary"
@@ -197,10 +232,14 @@
                 <!-- Invitation Message -->
                 <div class="field-group mb-6">
                   <div class="field-label">
-                    <v-icon class="mr-2" size="20">mdi-message-text-outline</v-icon>
+                    <v-icon class="mr-2" size="20"
+                      >mdi-message-text-outline</v-icon
+                    >
                     {{ $t('UsabilityCooperators.inviteMessage') }}
                   </div>
-                  <p class="field-description mb-3">Write a personalized message to include with the invitation.</p>
+                  <p class="field-description mb-3">
+                    Write a personalized message to include with the invitation.
+                  </p>
                   <v-textarea
                     v-model="inviteMessage"
                     color="primary"
@@ -213,7 +252,9 @@
                     maxlength="500"
                     :rules="[
                       (v) => !!v || 'Message is required',
-                      (v) => (v && v.length <= 500) || 'Message must be less than 500 characters'
+                      (v) =>
+                        (v && v.length <= 500) ||
+                        'Message must be less than 500 characters',
                     ]"
                     required
                   />
@@ -225,23 +266,29 @@
               <!-- Preview Section -->
               <div class="preview-section">
                 <div class="preview-header mb-4">
-                  <v-icon class="mr-2" size="24" color="primary">mdi-eye-outline</v-icon>
+                  <v-icon class="mr-2" size="24" color="primary"
+                    >mdi-eye-outline</v-icon
+                  >
                   <h3 class="text-h6 font-weight-bold">Invitation Preview</h3>
                 </div>
-                
+
                 <v-card class="invitation-preview elevation-2" outlined>
                   <v-card-title class="bg-grey-lighten-4 py-3">
-                    <v-icon class="mr-2" color="primary">mdi-email-outline</v-icon>
+                    <v-icon class="mr-2" color="primary"
+                      >mdi-email-outline</v-icon
+                    >
                     <span class="text-subtitle-1">Evaluation Invitation</span>
                   </v-card-title>
-                  
+
                   <v-card-text class="pa-4">
                     <div class="preview-content">
                       <p class="text-body-2 mb-3">
-                        <strong>To:</strong> {{ selectedUserEmail || 'No participant selected' }}
+                        <strong>To:</strong>
+                        {{ selectedUserEmail || 'No participant selected' }}
                       </p>
                       <p class="text-body-2 mb-3">
-                        <strong>Scheduled:</strong> {{ formattedDateTime || 'No date/time selected' }}
+                        <strong>Scheduled:</strong>
+                        {{ formattedDateTime || 'No date/time selected' }}
                       </p>
                       <div class="mb-3">
                         <strong class="text-body-2">Message:</strong>
@@ -260,9 +307,12 @@
                     class="mb-4"
                     icon="mdi-information-outline"
                   >
-                    <v-alert-title>{{ $t('UsabilityCooperators.inviteInfo') }}</v-alert-title>
+                    <v-alert-title>{{
+                      $t('UsabilityCooperators.inviteInfo')
+                    }}</v-alert-title>
                     <div class="text-body-2 mt-2">
-                      The participant will receive an email notification and can accept or decline the invitation.
+                      The participant will receive an email notification and can
+                      accept or decline the invitation.
                     </div>
                   </v-alert>
                 </div>
@@ -270,7 +320,7 @@
             </v-col>
           </v-row>
         </v-form>
-        
+
         <!-- Action Buttons -->
         <v-divider class="my-6" />
         <div class="d-flex justify-end gap-3">
@@ -299,223 +349,238 @@
 </template>
 
 <script setup>
-import Cooperators, { ACCESS_LEVELS } from '@/shared/models/Cooperators';
-import Notification from '@/shared/models/Notification';
-import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
+import Cooperators from '@/shared/models/Cooperators'
+import Notification from '@/shared/models/Notification'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
+import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
 
 // Props
 const props = defineProps({
   dialog: Boolean,
-});
+})
 
 // Emits
-const emit = defineEmits(['update:dialog']);
+const emit = defineEmits(['update:dialog'])
 
 // Store
-const store = useStore();
+const store = useStore()
 
 // Helper functions
 const getDefaultTime = () => {
   return new Date().toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
-  });
-};
+    hour12: false,
+  })
+}
 
 const getDefaultDate = () => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
-    .substr(0, 10);
-};
+    .substr(0, 10)
+}
 
 // Variables
-const date = ref(getDefaultDate());
-const hour = ref(getDefaultTime());
+const date = ref(getDefaultDate())
+const hour = ref(getDefaultTime())
 
-const inviteForm = ref(null);
-const valid = ref(false);
-const comboboxModel = ref({});
-const inviteMessage = ref('');
-const loading = ref(false);
-const selectedRole = ref(ACCESS_LEVELS.ADMIN);
+const inviteForm = ref(null)
+const valid = ref(false)
+const comboboxModel = ref({})
+const inviteMessage = ref('')
+const loading = ref(false)
+const selectedRole = ref(ACCESS_LEVEL.ADMIN)
 
 const roleOptions = [
-  { label: 'Evaluator', value: ACCESS_LEVELS.ADMIN, description: 'Participates in the test, shares screen/video.' },
-  { label: 'Observator', value: ACCESS_LEVELS.OBSERVATOR, description: 'Watches the session silently, takes notes.' }
-];
+  {
+    label: 'Evaluator',
+    value: ACCESS_LEVEL.ADMIN,
+    description: 'Participates in the test, shares screen/video.',
+  },
+  {
+    label: 'Observator',
+    value: ACCESS_LEVEL.OBSERVATOR,
+    description: 'Watches the session silently, takes notes.',
+  },
+]
 
 // Computed
 const minTime = computed(() => {
-  const currentDate = new Date();
-  currentDate.setDate(currentDate.getDate() - 1);
-  const selectedDate = new Date(date.value);
+  const currentDate = new Date()
+  currentDate.setDate(currentDate.getDate() - 1)
+  const selectedDate = new Date(date.value)
 
   if (
     selectedDate.toLocaleDateString() === currentDate.toLocaleDateString() &&
     selectedDate.getMonth() === currentDate.getMonth() &&
     selectedDate.getFullYear() === currentDate.getFullYear()
   ) {
-    return `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+    return `${currentDate.getHours()}:${currentDate.getMinutes()}`
   } else {
-    return '00:00';
+    return '00:00'
   }
-});
+})
 
 const cooperatorsEdit = computed(() =>
-  test.value?.cooperators ? [...test.value.cooperators] : []
-);
+  test.value?.cooperators ? [...test.value.cooperators] : [],
+)
 
-const test = computed(() => store.getters.test);
-const users = computed(() => store.state.Users?.users || []);
+const test = computed(() => store.getters.test)
+const users = computed(() => store.state.Users?.users || [])
 
 const filteredUsers = computed(() => {
-  if (!users.value || users.value.length === 0) return [];
-  
+  if (!users.value || users.value.length === 0) return []
+
   return users.value
-    .filter(user => user && user.email) // Filter out invalid users
-    .map(user => ({
+    .filter((user) => user && user.email) // Filter out invalid users
+    .map((user) => ({
       ...user,
-      displayText: user.name ? `${user.email} (${user.name})` : user.email
+      displayText: user.name ? `${user.email} (${user.name})` : user.email,
     }))
     .sort((a, b) => {
       // Sort by email alphabetically with null checks
-      const emailA = a.email || '';
-      const emailB = b.email || '';
-      return emailA.localeCompare(emailB);
-    });
-});
+      const emailA = a.email || ''
+      const emailB = b.email || ''
+      return emailA.localeCompare(emailB)
+    })
+})
 
 const selectedUserEmail = computed(() => {
-  if (!comboboxModel.value?.userId || !users.value) return '';
-  const user = users.value.find(u => u && u.id === comboboxModel.value.userId);
-  return user?.email || '';
-});
+  if (!comboboxModel.value?.userId || !users.value) return ''
+  const user = users.value.find((u) => u && u.id === comboboxModel.value.userId)
+  return user?.email || ''
+})
 
 const formattedDateTime = computed(() => {
-  if (!date.value || !hour.value) return '';
-  
+  if (!date.value || !hour.value) return ''
+
   // Handle date conversion properly
-  let dateValue = date.value;
+  let dateValue = date.value
   if (dateValue instanceof Date) {
-    dateValue = dateValue.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+    dateValue = dateValue.toISOString().split('T')[0] // Convert to YYYY-MM-DD
   }
-  
-  const dateTime = new Date(`${dateValue}T${hour.value}`);
-  
+
+  const dateTime = new Date(`${dateValue}T${hour.value}`)
+
   // Check if the date is valid before formatting
-  if (isNaN(dateTime.getTime())) return 'Invalid date/time';
-  
+  if (isNaN(dateTime.getTime())) return 'Invalid date/time'
+
   return dateTime.toLocaleString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
-  });
-});
+    minute: '2-digit',
+  })
+})
 
 // Methods
 const isParticipantAlreadyInvited = (userId) => {
-  if (!userId || !cooperatorsEdit.value) return false;
-  return cooperatorsEdit.value.some(cooperator => cooperator && cooperator.userDocId === userId);
-};
+  if (!userId || !cooperatorsEdit.value) return false
+  return cooperatorsEdit.value.some(
+    (cooperator) => cooperator && cooperator.userDocId === userId,
+  )
+}
 
 const saveInvitation = async () => {
   try {
-    loading.value = true;
-    const isValid = await inviteForm.value.validate();
-    if (!isValid) return;
+    loading.value = true
+    const isValid = await inviteForm.value.validate()
+    if (!isValid) return
 
-    const cooperator = users.value.find(user => user.id === comboboxModel.value.userId);
+    const cooperator = users.value.find(
+      (user) => user.id === comboboxModel.value.userId,
+    )
     if (!cooperator) {
-      throw new Error('Selected user not found');
+      throw new Error('Selected user not found')
     }
 
     // Validate date and time values
     if (!date.value || !hour.value) {
-      throw new Error('Date and time are required');
+      throw new Error('Date and time are required')
     }
 
     // Ensure proper time format (HH:MM)
-    let timeValue = hour.value;
+    let timeValue = hour.value
     if (timeValue && !timeValue.includes(':')) {
       // If time doesn't include colon, it might be in wrong format
-      throw new Error('Invalid time format');
+      throw new Error('Invalid time format')
     }
 
     // Convert date to proper string format if it's a Date object
-    let dateValue = date.value;
+    let dateValue = date.value
     if (dateValue instanceof Date) {
-      dateValue = dateValue.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+      dateValue = dateValue.toISOString().split('T')[0] // Convert to YYYY-MM-DD
     }
 
     // Construct datetime string with proper validation
-    const dateTimeString = `${dateValue}T${timeValue}:00`;
-    console.log('Constructing datetime from:', { 
-      originalDate: date.value, 
-      formattedDate: dateValue, 
-      hour: hour.value, 
-      dateTimeString 
-    });
-    
-    const dateTime = new Date(dateTimeString);
-    
+    const dateTimeString = `${dateValue}T${timeValue}:00`
+    console.log('Constructing datetime from:', {
+      originalDate: date.value,
+      formattedDate: dateValue,
+      hour: hour.value,
+      dateTimeString,
+    })
+
+    const dateTime = new Date(dateTimeString)
+
     // Check if the constructed date is valid
     if (isNaN(dateTime.getTime())) {
-      throw new Error(`Invalid date/time combination: ${dateTimeString}`);
+      throw new Error(`Invalid date/time combination: ${dateTimeString}`)
     }
-    
-    const timestamp = dateTime.toISOString();
 
-    cooperatorsEdit.value.push(new Cooperators({
-      userDocId: cooperator.id,
-      email: cooperator.email,
-      invited: true,
-      accepted: false,
-      accessLevel: selectedRole.value,
-      testDate: timestamp,
-      inviteMessage: inviteMessage.value,
-      updateDate: test.value.updateDate,
-      testAuthorEmail: test.value.testAdmin.email,
-    }));
+    const timestamp = dateTime.toISOString()
 
-    await submit();
+    cooperatorsEdit.value.push(
+      new Cooperators({
+        userDocId: cooperator.id,
+        email: cooperator.email,
+        invited: true,
+        accepted: false,
+        accessLevel: selectedRole.value,
+        testDate: timestamp,
+        inviteMessage: inviteMessage.value,
+        updateDate: test.value.updateDate,
+        testAuthorEmail: test.value.testAdmin.email,
+      }),
+    )
+
+    await submit()
   } catch (error) {
-    console.error('Error saving invitation:', error);
+    console.error('Error saving invitation:', error)
     // You might want to show a toast notification here
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const submit = async () => {
-  test.value.cooperators = [...cooperatorsEdit.value];
-  await store.dispatch('updateStudy', test.value);
+  test.value.cooperators = [...cooperatorsEdit.value]
+  await store.dispatch('updateStudy', test.value)
   cooperatorsEdit.value.forEach((guest) => {
     if (!guest.accepted) {
-      notifyCooperator(guest);
+      notifyCooperator(guest)
     }
-  });
-  inviteForm.value.resetValidation();
-  
-  // Reset to default values instead of null
-  hour.value = getDefaultTime();
-  date.value = getDefaultDate();
-  
-  inviteMessage.value = '';
-  comboboxModel.value = {};
-  selectedRole.value = ACCESS_LEVELS.ADMIN;
+  })
+  inviteForm.value.resetValidation()
 
-  emit('update:dialog', false);
-};
+  // Reset to default values instead of null
+  hour.value = getDefaultTime()
+  date.value = getDefaultDate()
+
+  inviteMessage.value = ''
+  comboboxModel.value = {}
+  selectedRole.value = ACCESS_LEVEL.ADMIN
+
+  emit('update:dialog', false)
+}
 
 const notifyCooperator = (guest) => {
-  console.log('Notifying cooperator', guest);
+  console.log('Notifying cooperator', guest)
   if (guest.userDocId) {
-    const path = 'testview';
+    const path = 'testview'
     store.dispatch('addNotification', {
       userId: guest.userDocId,
       notification: new Notification({
@@ -527,9 +592,9 @@ const notifyCooperator = (guest) => {
         read: false,
         testId: test.value.id,
       }),
-    });
+    })
   }
-};
+}
 </script>
 
 <style scoped>
@@ -598,7 +663,7 @@ const notifyCooperator = (guest) => {
   .preview-section {
     margin-top: 32px;
   }
-  
+
   .field-group {
     margin-bottom: 20px;
   }
