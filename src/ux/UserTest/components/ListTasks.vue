@@ -1,17 +1,38 @@
 <template>
   <v-row justify="center">
-    <v-col lg="12" class="px-0 py-5">
+    <v-col
+      lg="12"
+      class="px-0 py-5"
+    >
       <v-card class="elevation-2 rounded-lg pa-md-6">
-        <v-row align="center" class="pa-4">
-          <v-col cols="12" sm="6">
-            <v-card-title class="text-h5 font-weight-bold pa-0" 
-            :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
+        <v-row
+          align="center"
+          class="pa-4"
+        >
+          <v-col
+            cols="12"
+            sm="6"
+          >
+            <v-card-title
+              class="text-h5 font-weight-bold pa-0"
+              :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+            >
               {{ $t('UserTestTable.titles.currentTasks') }}
             </v-card-title>
           </v-col>
-          <v-col cols="12" sm="6" class="text-sm-right">
-            <v-btn color="primary" variant="flat" size="large" class="text-capitalize w-100 w-md-auto" rounded="lg" 
-            @click="() => { dialog = true; task = new Task(); }">
+          <v-col
+            cols="12"
+            sm="6"
+            class="text-sm-right"
+          >
+            <v-btn
+              color="primary"
+              variant="flat"
+              size="large"
+              class="text-capitalize w-100 w-md-auto"
+              rounded="lg"
+              @click="() => { dialog = true; task = new Task(); }"
+            >
               <v-icon start>
                 mdi-plus-circle
               </v-icon>
@@ -20,18 +41,34 @@
           </v-col>
         </v-row>
         <v-card-text>
-          <v-data-table :headers="headers" :items="allTasks" :items-per-page="5" class="elevation-0 rounded-lg"
+          <v-data-table
+            :headers="headers"
+            :items="allTasks"
+            :items-per-page="5"
+            class="elevation-0 rounded-lg"
             style="background: #FFFFFF; border: 1px solid #E5E7EB;"
-            :no-data-text="$t('UserTestTable.messages.noTasks')">
+            :no-data-text="$t('UserTestTable.messages.noTasks')"
+          >
             <!-- Custom Column Templates -->
             <template #item.taskType="{ item }">
-              <v-chip v-if="item.taskType" :color="getTaskTypeColor(item.taskType)" size="small" variant="flat">
-                <v-icon start size="small">
+              <v-chip
+                v-if="item.taskType"
+                :color="getTaskTypeColor(item.taskType)"
+                size="small"
+                variant="flat"
+              >
+                <v-icon
+                  start
+                  size="small"
+                >
                   {{ getTaskTypeIcon(item.taskType) }}
                 </v-icon>
                 {{ getTaskTypeLabel(item.taskType) }}
               </v-chip>
-              <span v-else class="text-grey-400">{{ $t('UserTestTable.headers.na') }}</span>
+              <span
+                v-else
+                class="text-grey-400"
+              >{{ $t('UserTestTable.headers.na') }}</span>
             </template>
 
             <template #item.taskDescription="{ item }">
@@ -72,16 +109,31 @@
 
             <!-- Actions Column -->
             <template #item.actions="{ item }">
-              <v-btn icon variant="text" color="accent" class="mr-2" @click="editItem(item)">
+              <v-btn
+                icon
+                variant="text"
+                color="accent"
+                class="mr-2"
+                @click="editItem(item)"
+              >
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon variant="text" color="error" @click="deleteItem(item)">
+              <v-btn
+                icon
+                variant="text"
+                color="error"
+                @click="deleteItem(item)"
+              >
                 <v-icon>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
           </v-data-table>
         </v-card-text>
-        <FormDialog v-model:dialog="dialog" v-model:task="task" @add-task="addTask" />
+        <FormDialog
+          v-model:dialog="dialog"
+          v-model:task="task"
+          @add-task="addTask"
+        />
       </v-card>
     </v-col>
   </v-row>
@@ -167,7 +219,8 @@ const getTaskTypeColor = (taskType) => {
     'sus': 'info',
     'tam-1': 'deep-blue',
     'tam-2': 'cyan',
-    'tam-3': 'teal'
+    'tam-3': 'teal',
+    'sart': 'deep blue'
   };
   return colors[taskType] || 'grey';
 };
@@ -182,7 +235,8 @@ const getTaskTypeIcon = (taskType) => {
     'sus': 'mdi-account-check',
     'tam-1': 'mdi-chart-line',
     'tam-2': 'mdi-chart-box',
-    'tam-3': 'mdi-chart-donut'
+    'tam-3': 'mdi-chart-donut',
+    'sart': 'mdi-chart-areaspline'
   };
   return icons[taskType] || 'mdi-help-circle';
 };
@@ -197,7 +251,8 @@ const getTaskTypeLabel = (taskType) => {
     'sus': t('switches.sus'),
     'tam-1': 'TAM-1',
     'tam-2': 'TAM-2',
-    'tam-3': 'TAM-3'
+    'tam-3': 'TAM-3',
+    'sart': t('switches.sart')
   };
   return labels[taskType] || 'Unknown';
 };

@@ -1,30 +1,45 @@
 <template>
   <div class="task-preview">
- 
-
     <!-- Task Summary Card -->
-    <v-card class="task-summary-card mb-6" elevation="2">
+    <v-card
+      class="task-summary-card mb-6"
+      elevation="2"
+    >
       <v-card-title class="d-flex align-center bg-primary text-white">
-        <v-icon class="mr-2">mdi-clipboard-check-outline</v-icon>
+        <v-icon class="mr-2">
+          mdi-clipboard-check-outline
+        </v-icon>
         Task Summary
       </v-card-title>
       
       <v-card-text class="pa-6">
         <v-row>
-          <v-col cols="12" md="8">
+          <v-col
+            cols="12"
+            md="8"
+          >
             <div class="task-details">
-              <h4 class="text-h6 font-weight-bold mb-3">{{ (task && task.taskName) || 'Untitled Task' }}</h4>
+              <h4 class="text-h6 font-weight-bold mb-3">
+                {{ (task && task.taskName) || 'Untitled Task' }}
+              </h4>
               
               <div class="task-description mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Description:</div>
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Description:
+                </div>
                 <div 
                   class="description-content"
                   v-html="(task && task.taskDescription) || 'No description provided'"
                 />
               </div>
 
-              <div v-if="task && task.taskTip" class="task-tip mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Participant Tip:</div>
+              <div
+                v-if="task && task.taskTip"
+                class="task-tip mb-4"
+              >
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Participant Tip:
+                </div>
                 <v-alert
                   type="info"
                   variant="tonal"
@@ -35,8 +50,13 @@
                 </v-alert>
               </div>
 
-              <div v-if="task && task.taskLink" class="task-link mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Task URL:</div>
+              <div
+                v-if="task && task.taskLink"
+                class="task-link mb-4"
+              >
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Task URL:
+                </div>
                 <v-chip
                   :href="task.taskLink"
                   target="_blank"
@@ -51,11 +71,16 @@
             </div>
           </v-col>
 
-          <v-col cols="12" md="4">
+          <v-col
+            cols="12"
+            md="4"
+          >
             <div class="task-config">
               <!-- Answer Type -->
               <div class="config-section mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Answer Type:</div>
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Answer Type:
+                </div>
                 <v-chip
                   :prepend-icon="getAnswerTypeIcon(task && task.taskType)"
                   :color="isSystemChoice(task && task.taskType) ? 'secondary' : 'grey-lighten-1'"
@@ -66,8 +91,13 @@
               </div>
 
               <!-- Recording Features -->
-              <div v-if="recordingFeatures.length > 0" class="config-section mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Recording Features:</div>
+              <div
+                v-if="recordingFeatures.length > 0"
+                class="config-section mb-4"
+              >
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Recording Features:
+                </div>
                 <div class="feature-chips">
                   <v-chip
                     v-for="feature in recordingFeatures"
@@ -84,13 +114,25 @@
               </div>
 
               <!-- Additional Fields -->
-              <div v-if="task && task.postQuestion" class="config-section mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Post-Task Question:</div>
-                <div class="text-body-2">{{ task.postQuestion }}</div>
+              <div
+                v-if="task && task.postQuestion"
+                class="config-section mb-4"
+              >
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Post-Task Question:
+                </div>
+                <div class="text-body-2">
+                  {{ task.postQuestion }}
+                </div>
               </div>
 
-              <div v-if="task && task.postForm" class="config-section mb-4">
-                <div class="text-body-2 text-grey-darken-1 mb-2">Post-Task Form:</div>
+              <div
+                v-if="task && task.postForm"
+                class="config-section mb-4"
+              >
+                <div class="text-body-2 text-grey-darken-1 mb-2">
+                  Post-Task Form:
+                </div>
                 <v-chip
                   :href="task.postForm"
                   target="_blank"
@@ -181,7 +223,8 @@ const getAnswerTypeIcon = (type) => {
     'sus': 'mdi-chart-line',
     'tam-1': 'mdi-chart-line',
     'tam-2': 'mdi-chart-box',
-    'tam-3': 'mdi-chart-donut'
+    'tam-3': 'mdi-chart-donut',
+    'sart': 'mdi-eye-areaspline'
   };
   return icons[type] || 'mdi-help-circle-outline';
 };
@@ -197,7 +240,8 @@ const getAnswerTypeLabel = (type) => {
     'sus': 'System Usability Scale',
     'tam-1': 'TAM-1 (Basic)',
     'tam-2': 'TAM-2 (Extended)',
-    'tam-3': 'TAM-3 (Comprehensive)'
+    'tam-3': 'TAM-3 (Comprehensive)',
+    'sart': 'SART'
   };
   return labels[type] || 'Unknown';
 };
@@ -205,7 +249,7 @@ const getAnswerTypeLabel = (type) => {
 const isSystemChoice = (type) => {
   if (!type) return false;
   // System choices are standardized questionnaires/scales
-  return ['nasa-tlx', 'sus', 'tam-1', 'tam-2', 'tam-3'].includes(type);
+  return ['nasa-tlx', 'sus', 'tam-1', 'tam-2', 'tam-3', 'sart'].includes(type);
 };
 
 // Always emit validation as true since this is just a preview
