@@ -5,7 +5,7 @@
         <h2 class="text-h5 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.WelcomeStep.welcome') }}
         </h2>
-        <div v-if="welcomeMessage" v-html="welcomeMessage" class="text-body-1 mb-4 text-grey-darken-3"></div>
+        <div v-if="welcomeMessage" class="text-body-1 mb-4 text-grey-darken-3" v-html="welcomeMessage"></div>
         <p v-else class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.description') }}
         </p>
@@ -32,7 +32,7 @@
             <v-divider />
             <v-stepper-item
               value="2"
-              class="red"
+              class="bg-red"
               :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
             />
             <v-divider />

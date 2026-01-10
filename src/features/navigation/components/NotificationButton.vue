@@ -42,7 +42,7 @@
       <v-card class="notification-dropdown" elevation="6">
         <!-- Header -->
         <div class="dropdown-header">
-          <span class="title">{{ $t('common.notifications') }}</span>
+          <span class="text-h6">{{ $t('common.notifications') }}</span>
 
           <div class="actions">
             <v-btn

@@ -180,6 +180,7 @@
     "overallAnalyticsDescription": "View the aggregated analytics for your test.",
     "individualAnalytics": "Individual Analytics",
     "nasaTlxAnalytics": "NASA-TLX Analytics",
+    "sartAnalytics": "SART Analytics",
     "finalReport": "Add additional data to your test.",
     "intro": {
       "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
@@ -785,7 +786,12 @@
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
     "nasa": "NASA-TLX",
-    "sart": "SART"
+    "sart": "SART",
+    "sartLong": "Situational Awareness Rating Technique",
+    "sartDemand": "Demand on Attentional Resources",
+    "sartSupply": "Supply of Attentional Resources",
+    "sartUnderstanding": "Understanding of the Situation",
+    "sartCalculationExplanation": "Score = Understanding - (Demand - Supply)"
   },
   "inputs": {
     "consentForm": "Consent Form",

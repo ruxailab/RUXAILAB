@@ -39,8 +39,8 @@
             variant="outlined"
             rounded="lg"
             class="study-card"
-            @click="goToStudy(study)"
             hover
+            @click="goToStudy(study)"
           >
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
@@ -84,7 +84,6 @@
                 </p>
                 <v-btn
                   v-if="study.isLongDescription"
-                  @click.stop="toggleExpand(study.id)"
                   variant="text"
                   size="small"
                   color="primary"
@@ -94,6 +93,7 @@
                       ? 'mdi-chevron-up'
                       : 'mdi-chevron-down'
                   "
+                  @click.stop="toggleExpand(study.id)"
                 >
                   {{ expandedStudies[study.id] ? 'Show less' : 'Show more' }}
                 </v-btn>

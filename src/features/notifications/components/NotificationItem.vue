@@ -19,7 +19,7 @@
       <!-- Content -->
       <div class="content">
         <div class="title-row">
-          <div class="title">
+          <div class="text-h6">
             {{ notification.title || 'Notification' }}
             <span
               v-if="notification.type"

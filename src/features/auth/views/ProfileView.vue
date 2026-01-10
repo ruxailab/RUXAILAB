@@ -212,7 +212,7 @@
               <v-img :src="editProfileData.profileImage" alt="No Image" />
             </v-avatar>
             <div class="d-flex justify-center align-center gap-2 mt-3">
-              <v-btn icon size="small" @click="selectImage" color="primary">
+              <v-btn icon size="small" color="primary" @click="selectImage">
                 <v-icon>mdi-camera</v-icon>
                 <v-tooltip activator="parent" location="bottom">
                   {{ t('profile.uploadProfilePicture') }}
@@ -222,8 +222,8 @@
                 v-if="editProfileData.profileImage"
                 icon
                 size="small"
-                @click="removeProfilePicture"
                 color="error"
+                @click="removeProfilePicture"
               >
                 <v-icon>mdi-delete</v-icon>
                 <v-tooltip activator="parent" location="bottom">
@@ -282,8 +282,8 @@
               </template>
               <template #item="{ item, props }">
                 <v-list-item
-                  v-bind="{ ...props, title: undefined }"
                   v-if="item.raw && item.raw.emoji"
+                  v-bind="{ ...props, title: undefined }"
                 >
                   <v-list-item-title>
                     {{ item.raw.emoji }} {{ item.raw.name }}

@@ -10,7 +10,8 @@
                 <p class="text-body-1 mb-4">
                     {{ $t('profile.deleteAccountWarning') }}
                 </p>
-                <v-btn color="error" variant="flat" class="text-capitalize" :block="isSmallScreen"
+                <v-btn
+color="error" variant="flat" class="text-capitalize" :block="isSmallScreen"
                     @click="showDialog = true">
                     <v-icon start>mdi-delete</v-icon>
                     {{ $t('profile.deleteAccountTitle') }}
@@ -40,18 +41,21 @@
                             <p class="font-weight-bold mb-2">
                                 {{ $t('profile.typeDeleteToConfirm') }}
                             </p>
-                            <v-text-field v-model="deleteAccount.deleteConfirmText" variant="outlined" density="compact"
+                            <v-text-field
+v-model="deleteAccount.deleteConfirmText" variant="outlined" density="compact"
                                 hide-details class="input-field-transition" :rules="[
                                     (v) => v === 'DELETE' || $t('profile.pleaseTypeDeleteToConfirm'),
                                 ]" />
                         </div>
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <v-btn variant="outlined" class="text-capitalize" min-width="120"
+                        <v-btn
+variant="outlined" class="text-capitalize" min-width="120"
                             :disabled="deleteAccount.isDeleting" @click="handleClose">
                             {{ $t('common.cancel') }}
                         </v-btn>
-                        <v-btn color="error" variant="flat" class="text-capitalize" min-width="120"
+                        <v-btn
+color="error" variant="flat" class="text-capitalize" min-width="120"
                             :loading="deleteAccount.isDeleting" :disabled="deleteAccount.deleteConfirmText !== 'DELETE'"
                             @click="deleteAccount.handleDeleteConfirmText">
                             {{ $t('Proceed') }}
@@ -68,17 +72,20 @@
                         <p class="text-center font-weight-bold mb-4">
                             {{ $t('profile.enterPasswordForAccountDeletion') }}
                         </p>
-                        <v-text-field v-model="deleteAccount.userPassword" :label="$t('profile.yourPassword')"
+                        <v-text-field
+v-model="deleteAccount.userPassword" :label="$t('profile.yourPassword')"
                             type="password" variant="outlined" density="compact" prepend-inner-icon="mdi-lock"
                             :disabled="deleteAccount.isDeleting" :rules="[(v) => !!v || $t('profile.passwordRequired')]"
                             class="input-field-transition" />
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <v-btn variant="outlined" class="text-capitalize" :disabled="deleteAccount.isDeleting"
+                        <v-btn
+variant="outlined" class="text-capitalize" :disabled="deleteAccount.isDeleting"
                             min-width="120" @click="deleteAccount.deleteStep = 1">
                             {{ $t('profile.back') }}
                         </v-btn>
-                        <v-btn color="error" variant="flat" class="text-capitalize" :loading="deleteAccount.isDeleting"
+                        <v-btn
+color="error" variant="flat" class="text-capitalize" :loading="deleteAccount.isDeleting"
                             :disabled="!deleteAccount.userPassword || deleteAccount.isDeleting" min-width="120"
                             @click="handleDelete">
                             <v-icon start>mdi-delete</v-icon>

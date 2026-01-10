@@ -8,8 +8,8 @@
     class="rounded-lg"
     elevation="2"
     hover
-    @click:row="emitClick"
     :loading="loadingStudy"
+    @click:row="emitClick"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">

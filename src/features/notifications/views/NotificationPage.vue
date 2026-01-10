@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-4">
-    <v-row justify="center" v-if="user">
+    <v-row v-if="user" justify="center">
       <v-col 
         cols="12" 
         md="10" 
@@ -31,11 +31,11 @@
               size="small"
               variant="flat"
               color="primary"
-              @click="markAllAsRead"
               :loading="markingAllAsRead"
               prepend-icon="mdi-email-open-outline"
               class="elevation-0 text-capitalize"
               :class="{'flex-shrink-0': true}"
+              @click="markAllAsRead"
             >
               Mark all read
             </v-btn>
@@ -146,8 +146,8 @@
                   'active': activeIndex === index,
                   'border-start-4': !n.read
                 }"
-                @click="handleNotificationClick(n)"
                 :style="!n.read ? 'border-left-color: var(--v-primary-base) !important' : ''"
+                @click="handleNotificationClick(n)"
               >
                 <div class="d-flex align-start gap-3">
                   <!-- AVATAR/ICON -->
@@ -203,8 +203,8 @@
                           icon
                           size="x-small"
                           variant="text"
-                          @click.stop="toggleRead(n)"
                           :aria-label="n.read ? 'Mark unread' : 'Mark read'"
+                          @click.stop="toggleRead(n)"
                         >
                           <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
                             {{ n.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
@@ -245,8 +245,8 @@
           <v-btn
             variant="text"
             prepend-icon="mdi-arrow-left"
-            @click="goBack"
             class="text-capitalize"
+            @click="goBack"
           >
             {{ $t('buttons.back') || 'Go Back' }}
           </v-btn>
@@ -256,9 +256,9 @@
             variant="tonal"
             size="small"
             prepend-icon="mdi-refresh"
-            @click="refreshNotifications"
             :loading="refreshing"
             class="text-capitalize"
+            @click="refreshNotifications"
           >
             Refresh
             <template #loader>

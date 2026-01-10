@@ -67,16 +67,16 @@
           clearable
           clear-icon="mdi-close"
           :label="$t('common.comment')"
-          @update:model-value="updateComment"
           :disabled="disable"
+          @update:model-value="updateComment"
         />
         <ImageImport
           v-if="show"
           :heuristic-id="test.testStructure[heurisIndex]"
           :question-id="answerHeu.heuristicId"
           :test-id="store.getters.test.id"
-          @image-uploaded="handleImageUploaded"
           :disable="disable"
+          @image-uploaded="handleImageUploaded"
         />
       </v-col>
     </v-row>
