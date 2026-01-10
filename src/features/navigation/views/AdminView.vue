@@ -38,7 +38,7 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <SessionsSection />
+          <SessionsSection :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'templates'">
@@ -96,13 +96,13 @@ import NotificationPage from '@/features/notifications/views/NotificationPage.vu
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 // Navigation and sections
-import { DashboardSidebar } from '@/features/navigation/utils';
-import SessionsSection from '../components/navbarSections/SessionsSection.vue';
-import TemplatesSection from '../components/navbarSections/TemplatesSection.vue';
-import StudiesSection from '../components/navbarSections/StudiesSection.vue';
-import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue';
-import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue';
-import StorageSection from '../components/navbarSections/StorageSection.vue';
+import { DashboardSidebar } from '@/features/navigation/utils'
+import SessionsSection from '../components/navbarSections/SessionsSection.vue'
+import TemplatesSection from '../components/navbarSections/TemplatesSection.vue'
+import StudiesSection from '../components/navbarSections/StudiesSection.vue'
+import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue'
+import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
+import StorageSection from '../components/navbarSections/StorageSection.vue'
 
 // Utilities and constants
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
@@ -118,7 +118,7 @@ const activeSection = ref('dashboard')
 const activeSubSection = ref(null)
 
 // 🔸 Data
-const filteredModeratedSessions = ref([])
+
 let unsubscribeTests = null // Unsub function for real-time tests
 
 // 🔹 Dynamic page title
@@ -148,8 +148,9 @@ const user = computed(() => store.getters.user)
  * Creates a list of sessions where the user is either the test admin
  * or a cooperator in a moderated session.
  */
-const filterModeratedSessions = () => {
+const filteredModeratedSessions = computed(() => {
   const cooperatorArray = []
+  if (!tests.value) return []
 
   tests.value.forEach((testObj) => {
     if (!testObj) return
@@ -191,8 +192,8 @@ const filterModeratedSessions = () => {
     }
   })
 
-  filteredModeratedSessions.value = cooperatorArray
-}
+  return cooperatorArray
+})
 
 /**
  * 🧭 Navigation logic
@@ -200,8 +201,13 @@ const filterModeratedSessions = () => {
  */
 const selectNavigation = (navigationData) => {
   const { sectionId, childId } = navigationData
-  activeSection.value = sectionId
-  activeSubSection.value = sectionId === 'community' ? childId : null
+  router.push({
+    query: {
+      ...route.query,
+      section: sectionId,
+      subsection: childId || undefined,
+    },
+  })
 }
 
 /**
@@ -223,10 +229,18 @@ const getPublicTemplates = () => store.dispatch('getPublicTemplates')
  */
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
-    case 'studies': await getMyPersonalTests(); break;
-    case 'sessions': filterModeratedSessions(); break;
-    case 'templates': await getMyTemplates(); break;
-    case 'storage': await getMyPersonalTests(); break;
+    case 'studies':
+      await getMyPersonalTests()
+      break
+    case 'sessions':
+      // filterModeratedSessions()
+      break
+    case 'templates':
+      await getMyTemplates()
+      break
+    case 'storage':
+      await getMyPersonalTests()
+      break
     case 'community':
       if (sub === 'community-studies') await getPublicStudies()
       else if (sub === 'community-templates') await getPublicTemplates()
@@ -240,7 +254,6 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
 onMounted(async () => {
   // unsubscribeTests = await store.dispatch('bindMyTests');
   await getMyPersonalTests()
-  filterModeratedSessions()
 
   // Load navigation state from query params
   if (route.query.section) {

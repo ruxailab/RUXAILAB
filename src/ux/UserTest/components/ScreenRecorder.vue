@@ -74,7 +74,6 @@ const recordingTaskIndex = ref(null); // Store the task index when recording sta
 const captureScreen = async () => {
   try {
     recordingTaskIndex.value = props.taskIndex; // Store the current task index when recording starts
-    console.log('ScreenRecorder: Recording started for task index:', props.taskIndex);
     videoStream.value = await navigator.mediaDevices.getDisplayMedia({
       cursor: true,
     });
@@ -107,9 +106,6 @@ const recordScreen = async () => {
 
       // Use the task index from when recording started, not the current one
       const correctTaskIndex = recordingTaskIndex.value;
-      console.log('screen record =>', correctTaskIndex, videoUrl.value);
-      console.log('Tasks array:', currentUserTestAnswer.value.tasks);
-      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length);
       
       await store.dispatch('updateTaskMediaUrl', {
         taskIndex: correctTaskIndex,

@@ -1,29 +1,72 @@
 <template>
-  <v-stepper v-model="step" class="pa-sm-6" non-linear>
+  <v-stepper
+    v-model="step"
+    class="pa-sm-6"
+    non-linear
+  >
     <v-stepper-header>
-      <v-stepper-item :complete="step > 1" :step="1" value="1" editable title="Basic Info" @click="step = '1'" />
+      <v-stepper-item
+        :complete="step > 1"
+        :step="1"
+        value="1"
+        editable
+        title="Basic Info"
+        @click="step = '1'"
+      />
       <v-divider />
-      <v-stepper-item :complete="step > 2" :step="2" value="2" editable title="Configuration" @click="step = '2'" />
+      <v-stepper-item
+        :complete="step > 2"
+        :step="2"
+        value="2"
+        editable
+        title="Configuration"
+        @click="step = '2'"
+      />
       <v-divider />
-      <v-stepper-item :complete="step > 3" :step="3" value="3" editable title="Advanced" @click="step = '3'" />
+      <v-stepper-item
+        :complete="step > 3"
+        :step="3"
+        value="3"
+        editable
+        title="Advanced"
+        @click="step = '3'"
+      />
       <v-divider />
-      <v-stepper-item :complete="step > 4" :step="4" value="4" editable title="Preview" @click="step = '4'" />
+      <v-stepper-item
+        :complete="step > 4"
+        :step="4"
+        value="4"
+        editable
+        title="Preview"
+        @click="step = '4'"
+      />
     </v-stepper-header>
 
     <!-- Content Area with v-if for forced re-rendering -->
     <div class="stepper-content">
       <v-card-text v-show="step === '1'">
-        <TaskBasicInfo ref="taskBasicInfoRef" :model-value="localTask" :validation-rules="requiredRule"
-          @update:model-value="handleTaskUpdate" />
+        <TaskBasicInfo
+          ref="taskBasicInfoRef"
+          :model-value="localTask"
+          :validation-rules="requiredRule"
+          @update:model-value="handleTaskUpdate"
+        />
       </v-card-text>
 
       <v-card-text v-if="step === '2'">
-        <TaskConfiguration :model-value="localTask" :select-items="selectItems" :validation-rules="requiredRule"
-          @update:model-value="handleTaskUpdate" />
+        <TaskConfiguration
+          :model-value="localTask"
+          :select-items="selectItems"
+          :validation-rules="requiredRule"
+          @update:model-value="handleTaskUpdate"
+        />
       </v-card-text>
 
       <v-card-text v-if="step === '3'">
-        <TaskAdvancedOptions :model-value="localTask" @update:model-value="handleTaskUpdate" />
+        <TaskAdvancedOptions
+          :model-value="localTask"
+          @update:model-value="handleTaskUpdate"
+        />
       </v-card-text>
 
       <v-card-text v-if="step === '4'">
@@ -31,7 +74,10 @@
       </v-card-text>
     </div>
 
-    <v-stepper-actions @click:prev="goToPreviousStep" @click:next="goToNextStep" />
+    <v-stepper-actions
+      @click:prev="goToPreviousStep"
+      @click:next="goToNextStep"
+    />
   </v-stepper>
 </template>
 
@@ -65,7 +111,8 @@ const selectItems = [
 
   { label: 'Google Forms Link', value: 'post-form' },
   { label: 'NASA TLX', value: 'nasa-tlx' },
-  { label: 'System Usability Scale', value: 'sus' }
+  { label: 'System Usability Scale', value: 'sus' },
+  { label: 'Situation Awareness Rating Technique', value: 'sart' }
 ];
 
 const requiredRule = [(v) => !!v || 'Field Required'];
