@@ -493,6 +493,7 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { formatTimeDetailedFromMs } from '@/shared/utils/timeUtils'
 import UxMetricCard from '../answers/UxMetricCard.vue'
 import CommentListCard from '../answers/CommentListCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
@@ -696,23 +697,9 @@ const downloadPdfResume = async () => {
   }
 }
 
-const formatTime = (time) => {
-  const seconds = Math.floor(time / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-
-  return {
-    formatedTime: `${minutes} min ${
-      remainingSeconds < 10 ? '0' : ''
-    }${remainingSeconds} s`,
-    seconds: remainingSeconds,
-    minutes: minutes,
-  }
-}
-
 const findLongestTask = () => {
   if (!filteredSessions.value.length) {
-    return { taskName: 'Task', averageTime: formatTime(0) }
+    return { taskName: 'Task', averageTime: formatTimeDetailedFromMs(0) }
   }
 
   const taskAverages = {}
@@ -755,12 +742,12 @@ const findLongestTask = () => {
 
   return {
     taskName: taskMap[longestTask]?.taskName || 'Task',
-    averageTime: formatTime(longestAverageTime),
+    averageTime: formatTimeDetailedFromMs(longestAverageTime),
   }
 }
 
 const calculateAverageTime = () => {
-  return formatTime(averageTimePerTask.value)
+  return formatTimeDetailedFromMs(averageTimePerTask.value)
 }
 
 const getConclusionAverage = () => {
@@ -930,7 +917,7 @@ const calculateEfficiency = () => {
     })
   })
 
-  const avgTimeFormatted = formatTime(
+  const avgTimeFormatted = formatTimeDetailedFromMs(
     totalSuccessfulTaskTime / Math.max(1, totalSuccessfulTasks),
   )
 
@@ -956,8 +943,9 @@ const calculateEfficiency = () => {
     avgTime: avgTimeFormatted.formatedTime,
     tasksPerMinute: efficiencyRatio.toFixed(2),
     totalTasks: totalSuccessfulTasks,
-    totalSuccessfulTime: formatTime(totalSuccessfulTaskTime).formatedTime,
-    totalTime: formatTime(totalTimeSpent).formatedTime,
+    totalSuccessfulTime: formatTimeDetailedFromMs(totalSuccessfulTaskTime)
+      .formatedTime,
+    totalTime: formatTimeDetailedFromMs(totalTimeSpent).formatedTime,
   }
 }
 

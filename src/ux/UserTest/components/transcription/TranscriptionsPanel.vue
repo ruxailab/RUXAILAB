@@ -106,6 +106,7 @@
 
 <script setup>
 import { watch, ref, computed } from 'vue'
+import { useLoading } from '@/shared/composables/useLoading'
 
 import TranscriptionList from './TranscriptionList.vue'
 
@@ -130,7 +131,7 @@ const props = defineProps({
   },
 })
 
-const loading = ref(true)
+const { isLoading: loading, withLoading } = useLoading()
 const transcriptionsArray = ref([])
 
 const confirmOpen = ref(false)
@@ -159,12 +160,10 @@ watch(
 
 async function fetchSelectedTaskTranscriptions() {
   if (!props.answersDocId || !props.userDocId || !props.taskId) {
-    loading.value = false // don't leave the spinner on if we early-return
     return
   }
 
-  loading.value = true
-  try {
+  await withLoading(async () => {
     const transcriptions =
       await transcriptionController.getByAnswersDocIdandUserDocIdandTaskId(
         props.answersDocId,
@@ -175,12 +174,7 @@ async function fetchSelectedTaskTranscriptions() {
     transcriptionsArray.value = Array.isArray(transcriptions)
       ? transcriptions
       : []
-  } catch (error) {
-    console.error('Error fetching transcriptions:', error)
-    transcriptionsArray.value = [] // ✅ fallback
-  } finally {
-    loading.value = false
-  }
+  })
 }
 
 /** UI → click delete */

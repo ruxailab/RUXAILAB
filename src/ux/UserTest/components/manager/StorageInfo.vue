@@ -1,8 +1,5 @@
 <template>
-  <v-card 
-    class="h-100 storage-card"
-    elevation="2"
-  >
+  <v-card class="h-100 storage-card" elevation="2">
     <!-- Header with gradient background -->
     <div class="storage-header pa-4">
       <div class="d-flex align-center justify-space-between">
@@ -12,7 +9,9 @@
           </div>
           <div>
             <h3 class="text-h6 text-white mb-0">Storage Usage</h3>
-            <p class="text-body-2 text-white opacity-90 mb-0">Media files and storage metrics</p>
+            <p class="text-body-2 text-white opacity-90 mb-0">
+              Media files and storage metrics
+            </p>
           </div>
         </div>
         <v-chip
@@ -26,16 +25,18 @@
         </v-chip>
       </div>
     </div>
-    
+
     <v-card-text class="pa-4">
       <div class="mb-4">
         <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">Storage Used</span>
-          <span class="text-body-2 font-weight-bold">{{ storageUsedFormatted }}</span>
+          <span class="text-body-2 font-weight-bold">{{
+            storageUsedFormatted
+          }}</span>
         </div>
-        <v-progress-linear 
-          :model-value="storagePercentage" 
-          :color="storageColor" 
+        <v-progress-linear
+          :model-value="storagePercentage"
+          :color="storageColor"
           height="8"
           rounded
         />
@@ -43,7 +44,7 @@
           {{ storageUsedFormatted }} of {{ storageQuotaFormatted }} used
         </div>
       </div>
-      
+
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Media Files</span>
@@ -52,7 +53,7 @@
           </v-chip>
         </div>
       </div>
-      
+
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Video Recordings</span>
@@ -61,7 +62,7 @@
           </v-chip>
         </div>
       </div>
-      
+
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Audio Recordings</span>
@@ -70,7 +71,7 @@
           </v-chip>
         </div>
       </div>
-      
+
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
           <span class="text-body-2">Screen Recordings</span>
@@ -79,10 +80,12 @@
           </v-chip>
         </div>
       </div>
-      
+
       <!-- Storage breakdown -->
       <div class="mt-4">
-        <div class="text-caption text-medium-emphasis mb-2">Storage Breakdown</div>
+        <div class="text-caption text-medium-emphasis mb-2">
+          Storage Breakdown
+        </div>
         <div class="d-flex flex-column gap-1">
           <div class="d-flex justify-space-between text-caption">
             <span>Responses Data</span>
@@ -99,12 +102,12 @@
         </div>
       </div>
     </v-card-text>
-    
+
     <v-card-actions>
       <v-spacer />
-      <v-btn 
-        variant="text" 
-        size="small" 
+      <v-btn
+        variant="text"
+        size="small"
         color="primary"
         @click="manageStorage"
         disabled
@@ -118,12 +121,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { formatBytes } from '@/shared/utils/formatUtils'
 
 const props = defineProps({
   test: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 })
 
 const router = useRouter()
@@ -138,9 +142,11 @@ const answers = computed(() => {
 
 const totalMediaFiles = computed(() => {
   let count = 0
-  answers.value.forEach(answer => {
-    const tasks = Array.isArray(answer.tasks) ? answer.tasks : Object.values(answer.tasks || {})
-    tasks.forEach(task => {
+  answers.value.forEach((answer) => {
+    const tasks = Array.isArray(answer.tasks)
+      ? answer.tasks
+      : Object.values(answer.tasks || {})
+    tasks.forEach((task) => {
       if (task.audioRecordURL) count++
       if (task.webcamRecordURL) count++
       if (task.screenRecordURL) count++
@@ -151,9 +157,11 @@ const totalMediaFiles = computed(() => {
 
 const videoCount = computed(() => {
   let count = 0
-  answers.value.forEach(answer => {
-    const tasks = Array.isArray(answer.tasks) ? answer.tasks : Object.values(answer.tasks || {})
-    tasks.forEach(task => {
+  answers.value.forEach((answer) => {
+    const tasks = Array.isArray(answer.tasks)
+      ? answer.tasks
+      : Object.values(answer.tasks || {})
+    tasks.forEach((task) => {
       if (task.webcamRecordURL) count++
     })
   })
@@ -162,9 +170,11 @@ const videoCount = computed(() => {
 
 const audioCount = computed(() => {
   let count = 0
-  answers.value.forEach(answer => {
-    const tasks = Array.isArray(answer.tasks) ? answer.tasks : Object.values(answer.tasks || {})
-    tasks.forEach(task => {
+  answers.value.forEach((answer) => {
+    const tasks = Array.isArray(answer.tasks)
+      ? answer.tasks
+      : Object.values(answer.tasks || {})
+    tasks.forEach((task) => {
       if (task.audioRecordURL) count++
     })
   })
@@ -173,9 +183,11 @@ const audioCount = computed(() => {
 
 const screenCount = computed(() => {
   let count = 0
-  answers.value.forEach(answer => {
-    const tasks = Array.isArray(answer.tasks) ? answer.tasks : Object.values(answer.tasks || {})
-    tasks.forEach(task => {
+  answers.value.forEach((answer) => {
+    const tasks = Array.isArray(answer.tasks)
+      ? answer.tasks
+      : Object.values(answer.tasks || {})
+    tasks.forEach((task) => {
       if (task.screenRecordURL) count++
     })
   })
@@ -189,12 +201,12 @@ const estimatedStorageUsed = computed(() => {
   const avgAudioSize = 10 * 1024 * 1024 // 10MB per audio
   const avgScreenSize = 100 * 1024 * 1024 // 100MB per screen recording
   const avgResponseSize = 10 * 1024 // 10KB per response
-  
+
   const videoStorage = videoCount.value * avgVideoSize
   const audioStorage = audioCount.value * avgAudioSize
   const screenStorage = screenCount.value * avgScreenSize
   const responseStorage = answers.value.length * avgResponseSize
-  
+
   return videoStorage + audioStorage + screenStorage + responseStorage
 })
 
@@ -208,7 +220,9 @@ const storageColor = computed(() => {
   return 'success'
 })
 
-const storageUsedFormatted = computed(() => formatBytes(estimatedStorageUsed.value))
+const storageUsedFormatted = computed(() =>
+  formatBytes(estimatedStorageUsed.value),
+)
 const storageQuotaFormatted = computed(() => formatBytes(STORAGE_QUOTA))
 
 const videoSizeFormatted = computed(() => {
@@ -235,10 +249,11 @@ const mediaDataSize = computed(() => {
   const avgVideoSize = 50 * 1024 * 1024
   const avgAudioSize = 10 * 1024 * 1024
   const avgScreenSize = 100 * 1024 * 1024
-  
-  const total = (videoCount.value * avgVideoSize) + 
-                (audioCount.value * avgAudioSize) + 
-                (screenCount.value * avgScreenSize)
+
+  const total =
+    videoCount.value * avgVideoSize +
+    audioCount.value * avgAudioSize +
+    screenCount.value * avgScreenSize
   return formatBytes(total)
 })
 
@@ -248,19 +263,10 @@ const analyticsDataSize = computed(() => {
   return formatBytes(estimatedAnalyticsSize)
 })
 
-function formatBytes(bytes) {
-  if (bytes === 0) return '0 B'
-  
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
-}
-
 const manageStorage = () => {
   // Navigate to storage management or show storage details
-  const testType = props.test?.testType === 'USER_MODERATED' ? 'moderated' : 'unmoderated'
+  const testType =
+    props.test?.testType === 'USER_MODERATED' ? 'moderated' : 'unmoderated'
   router.push(`/userTest/${testType}/storage/${props.test.id}`)
 }
 </script>
@@ -277,7 +283,11 @@ const manageStorage = () => {
 }
 
 .storage-header {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-secondary)) 100%);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-primary)) 0%,
+    rgb(var(--v-theme-secondary)) 100%
+  );
   position: relative;
   overflow: hidden;
 }
@@ -289,7 +299,8 @@ const manageStorage = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+    repeat;
   opacity: 0.1;
 }
 
