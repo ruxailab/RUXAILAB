@@ -94,6 +94,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+const loading = ref(false)
+const error = ref(null)
+
 const blogUrl = "https://blog-ruxailab.web.app";
 
 const openBlog = () => {

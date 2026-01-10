@@ -1,17 +1,8 @@
 <template>
-  <v-dialog
-    :model-value="dialog"
-    width="70%"
-    persistent
-    @update:model-value="$emit('update:dialog', $event)"
-  >
-    <v-card class="dataCard pa-6">
+  <v-dialog :model-value="dialog" width="80%" persistent @update:model-value="$emit('update:dialog', $event)">
+    <v-card class="dataCard pa-sm-6">
       <v-card-title class="form-header d-flex align-center">
-        <v-icon
-          color="primary"
-          size="28"
-          class="mr-3"
-        >
+        <v-icon color="primary" size="28" class="mr-3">
           mdi-clipboard-text-outline
         </v-icon>
         <div>
@@ -24,27 +15,15 @@
         </div>
       </v-card-title>
       <v-card-text>
-        <FormTask
-          ref="form"
-          :task="localTask"
-          @update:task="Object.assign(localTask, $event)"
-          @validate="submit"
-        />
+        <FormTask ref="form" :task="localTask" @update:task="Object.assign(localTask, $event)" @validate="submit" />
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="red-lighten-1"
-          variant="text"
-          @click="$emit('update:dialog', false); reset()"
-        >
+        <v-btn color="red-lighten-1" variant="text" @click="$emit('update:dialog', false); reset()">
           {{ $t('buttons.cancel') }}
         </v-btn>
-        <v-btn
-          class="text-white bg-orange"
-          @click="validate"
-        >
+        <v-btn class="text-white bg-orange" @click="validate">
           {{ $t('common.save') }}
         </v-btn>
       </v-card-actions>
@@ -90,5 +69,3 @@ const reset = () => {
   form.value?.resetVal();
 };
 </script>
-
-
