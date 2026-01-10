@@ -6,7 +6,7 @@
       </p>
     </template>
 
-    <v-container>
+    <v-container class="pa-0">
       <ButtonSave :visible="true" @click="save" />
 
       <div>
@@ -34,12 +34,9 @@
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm
-              :welcome="welcomeMessage"
-              :final-message="finalMessage"
+            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
               @update:welcome-message="welcomeMessage = $event; change = true"
-              @update:final-message="finalMessage = $event; change = true"
-            />
+              @update:final-message="finalMessage = $event; change = true" />
           </div>
 
           <!-- CONSENT FORM -->
@@ -72,10 +69,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref , onUnmounted} from 'vue'
+import { computed, onMounted, ref, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import StudyController from '@/controllers/StudyController' 
+import StudyController from '@/controllers/StudyController'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
@@ -120,15 +117,15 @@ const getConsent = () => {
 }
 
 const getTasks = () => {
-  store.dispatch('setTasks', test.value.testStructure.userTasks || [])
+  store.dispatch('UserStudy/setTasks', test.value.testStructure.userTasks || [])
 }
 
 const getPreTest = () => {
-  store.dispatch('setPreTest', test.value.testStructure.preTest || [])
+  store.dispatch('UserStudy/setPreTest', test.value.testStructure.preTest || [])
 }
 
 const getPostTest = () => {
-  store.dispatch('setPostTest', test.value.testStructure.postTest || [])
+  store.dispatch('UserStudy/setPostTest', test.value.testStructure.postTest || [])
 }
 
 const hasEyeTracking = computed(() => {
@@ -139,7 +136,7 @@ const hasEyeTracking = computed(() => {
 const save = async () => {
   try {
     // Validate pre-test variables
-    const preTestVariables = store.getters.preTest || []
+    const preTestVariables = store.getters['UserStudy/preTest'] || []
     const invalidPreTest = preTestVariables.filter(item => !item.title || !item.title.trim())
     if (invalidPreTest.length > 0) {
       showError('Cannot save: Some pre-test variables are missing titles')
@@ -147,7 +144,7 @@ const save = async () => {
     }
 
     // Validate post-test variables
-    const postTestVariables = store.getters.postTest || []
+    const postTestVariables = store.getters['UserStudy/postTest'] || []
     const invalidPostTest = postTestVariables.filter(item => !item.title || !item.title.trim())
     if (invalidPostTest.length > 0) {
       showError('Cannot save: Some post-test variables are missing titles')
@@ -159,9 +156,9 @@ const save = async () => {
     const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: store.getters.preTest,
-      userTasks: store.getters.tasks,
-      postTest: store.getters.postTest,
+      preTest: store.getters['UserStudy/preTest'],
+      userTasks: store.getters['UserStudy/tasks'],
+      postTest: store.getters['UserStudy/postTest'],
       consent: consent.value,
     }
 
