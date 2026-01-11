@@ -11,21 +11,36 @@
       "
       @change="uploadFile"
       :disabled="disable"
+      :clearable="false"
     />
     <!-- Add the image field to display the inputted image -->
-    <v-row justify="center">
+    <v-row
+      v-if="hasSavedImage || imageUploaded"
+      justify="center"
+      class="mt-2"
+    >
       <v-img
-        v-if="imageUploaded"
+        :src="displayedImageUrl"
         max-height="225"
-        :src="url"
-        cover
+        max-width="225"
+        contain
+        class="mb-2"
       />
+      <v-chip
+        v-if="hasSavedImage"
+        color="primary"
+        size="small"
+        class="ma-2"
+      >
+        <v-icon start size="small">mdi-image</v-icon>
+        {{ $t('HeuristicsSettings.actions.update') }}
+      </v-chip>
     </v-row>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
@@ -62,35 +77,90 @@ const imageUploaded = ref(false)
 
 const test = computed(() => store.state.Tests.Test)
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
-const hasExistingImage = computed(() => 
-  currentUserTestAnswer.value?.heuristicQuestions?.[props.heuristicId]?.heuristicQuestions?.[props.questionId]?.answerImageUrl
-)
+
+const findImageUrl = () => {
+  if (!currentUserTestAnswer.value?.heuristicQuestions?.length) {
+    return null;
+  }
+  
+  // Convert heuristicId to number for comparison
+  const targetHeuristicId = parseInt(props.heuristicId);
+  const targetQuestionId = props.questionId;
+  
+  // Search through all heuristics
+  for (const heuristic of currentUserTestAnswer.value.heuristicQuestions) {
+    if (heuristic?.heuristicQuestions && Array.isArray(heuristic.heuristicQuestions)) {
+      // Check if this heuristic matches
+      if (heuristic.heuristicId === targetHeuristicId) {
+        // Search through all questions in this heuristic
+        for (const question of heuristic.heuristicQuestions) {
+          // Check if this question matches our questionId
+          if (question.heuristicId === targetQuestionId) {
+            return question.answerImageUrl || null;
+          }
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+const hasSavedImage = computed(() => {
+  const imageUrl = findImageUrl();
+  return imageUrl && imageUrl !== '';
+});
+
+const displayedImageUrl = computed(()=> {
+  if(url.value) return url.value;
+  return findImageUrl() || '';
+})
+
+watch(()=> currentUserTestAnswer.value, ()=> {
+  const imageUrl = findImageUrl();
+  if(imageUrl){
+    url.value = imageUrl;
+    imageUploaded.value = true;
+  }
+}, {deep: true});
 
 onMounted(() => {
-  if (hasExistingImage.value) {
-    url.value = hasExistingImage.value
-    imageUploaded.value = true
+  const imageUrl = findImageUrl();
+  if (imageUrl) {
+    url.value = imageUrl;
+    imageUploaded.value = true;
   }
 })
 
 const uploadFile = async () => {
-  const fileInput = document.getElementById(
-    `${props.heuristicId}${props.questionId}`
-  )
-
-  const storage = getStorage()
-  const file = fileInput.files[0]
-
-  const storageReference = storageRef(
-    storage,
-    `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
-  )
-  await uploadBytes(storageReference, file)
-  url.value = await getDownloadURL(storageReference)
-  
-  store.dispatch('setCurrentImageUrl', url.value)
-  imageUploaded.value = true
-  emit('imageUploaded', url.value)
+  try {
+    const fileInput = document.getElementById(
+      `${props.heuristicId}${props.questionId}`
+    )
+    
+    if (!fileInput) {
+      console.error('File input element not found');
+      return;
+    }
+    const file = fileInput.files?.[0];
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
+    const storage = getStorage();
+    const storageReference = storageRef(
+      storage,
+      `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
+    );
+    await uploadBytes(storageReference, file);
+    url.value = await getDownloadURL(storageReference);
+    store.dispatch('setCurrentImageUrl', url.value);
+    imageUploaded.value = true;
+    emit('imageUploaded', url.value);
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    emit('imageUploaded', null, error);
+  }
 };
 </script>
 
