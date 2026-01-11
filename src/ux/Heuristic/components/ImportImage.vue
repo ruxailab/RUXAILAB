@@ -9,9 +9,9 @@
         ? $t('common.inputImage')
         : url
       "
-      @change="uploadFile"
       :disabled="disable"
       :clearable="false"
+      @change="uploadFile"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row
@@ -23,7 +23,7 @@
         :src="displayedImageUrl"
         max-height="225"
         max-width="225"
-        contain
+        cover
         class="mb-2"
       />
       <v-chip
@@ -72,10 +72,8 @@ const emit = defineEmits(['imageUploaded'])
 const store = useStore()
 
 const url = ref('')
-const object = ref({})
 const imageUploaded = ref(false)
 
-const test = computed(() => store.state.Tests.Test)
 const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
 
 const findImageUrl = () => {
@@ -139,12 +137,10 @@ const uploadFile = async () => {
     )
     
     if (!fileInput) {
-      console.error('File input element not found');
       return;
     }
     const file = fileInput.files?.[0];
     if (!file) {
-      console.error('No file selected');
       return;
     }
     const storage = getStorage();
@@ -158,7 +154,6 @@ const uploadFile = async () => {
     imageUploaded.value = true;
     emit('imageUploaded', url.value);
   } catch (error) {
-    console.error('Error uploading file:', error);
     emit('imageUploaded', null, error);
   }
 };

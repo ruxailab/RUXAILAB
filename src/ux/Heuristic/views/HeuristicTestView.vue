@@ -441,13 +441,13 @@
                         currentUserTestAnswer.heuristicQuestions[heurisIndex]
                           ?.heuristicQuestions[i] || {}
                       "
+                      :disable="currentUserTestAnswer?.submitted"
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
                       @update-image="
                         (imageUrl) => updateImageUrl(imageUrl, heurisIndex, i)
                       "
-                      :disable="currentUserTestAnswer?.submitted"
                     >
                       <template #answer>
                         <v-select
@@ -460,8 +460,8 @@
                           item-value="value"
                           variant="outlined"
                           density="compact"
-                          @update:model-value="handleAnswerChange(heurisIndex, i)"
                           :disabled="currentUserTestAnswer?.submitted"
+                          @update:model-value="handleAnswerChange(heurisIndex, i)"
                         />
                         <v-alert v-else type="error" class="mt-4">
                           {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
@@ -526,8 +526,8 @@
                           <v-btn
                             color="testPrimary"
                             variant="flat"
-                            @click="dialog = true"
                             :disabled="currentUserTestAnswer?.submitted"
+                            @click="dialog = true"
                           >
                             <v-icon start>
                               mdi-send
@@ -641,7 +641,6 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const logined = ref(null)
-const selected = ref(true)
 const fromlink = ref(null)
 const drawer = ref(true)
 const start = ref(true)
@@ -651,9 +650,7 @@ const noExistUser = ref(true)
 const heurisIndex = ref(0)
 const preTestIndex = ref(null)
 const items = ref([])
-const idx = ref(0)
 const fab = ref(false)
-const res = ref(0)
 const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
@@ -776,31 +773,31 @@ const startTest = async () => {
   }
 };
 
-const updateComment = (comment, heurisIndex, answerIndex) => {
-  if (!currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[answerIndex]) {
+const updateComment = (_comment, _heurisIndex, _answerIndex) => {
+  if (!currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]?.heuristicQuestions?.[_answerIndex]) {
     return;
   }
-  const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
-  question.heuristicComment = comment || '';
+  const question = currentUserTestAnswer.value.heuristicQuestions[_heurisIndex].heuristicQuestions[_answerIndex];
+  question.heuristicComment = _comment || '';
   // Show saving status immediately
   updateSaveStatus('Saving changes...', 'saving');
   // Trigger auto-save on comment change
   debouncedAutoSave();
 };
 
-const updateImageUrl = (imageUrl, heurisIndex, answerIndex) => {
-  if (!currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[answerIndex]) {
+const updateImageUrl = (_imageUrl, _heurisIndex, _answerIndex) => {
+  if (!currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]?.heuristicQuestions?.[_answerIndex]) {
     return;
   }
-  const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
-  question.answerImageUrl = imageUrl || '';
+  const question = currentUserTestAnswer.value.heuristicQuestions[_heurisIndex].heuristicQuestions[_answerIndex];
+  question.answerImageUrl = _imageUrl || '';
   // Show saving status immediately
   updateSaveStatus('Saving changes...', 'saving');
   // Trigger auto-save on image upload
   debouncedAutoSave();
 };
 
-const handleAnswerChange = (heurisIndex, answerIndex) => {
+const handleAnswerChange = (_heurisIndex, _answerIndex) => {
   calculateProgress();
   // Show saving status immediately
   updateSaveStatus('Saving changes...', 'saving');
@@ -898,7 +895,6 @@ const autoSaveAnswer = async () => {
     lastSaveTime.value = new Date();
     updateSaveStatus('All changes saved', 'success');
   } catch (error) {
-    console.error('Error auto-saving answer:', error);
     updateSaveStatus('Failed to save', 'error');
     // Revert to default after 5 seconds
     setTimeout(() => {
@@ -944,7 +940,6 @@ const manualSaveAnswer = async () => {
     // Show manual save success toast
     showSuccess('Progress saved successfully');
   } catch (error) {
-    console.error('Error saving answer:', error);
     updateSaveStatus('Save failed', 'error');
     showError('Failed to save progress');
   } finally {
@@ -966,7 +961,6 @@ const submitAnswer = async () => {
     showSuccess('Test submitted successfully');
     router.push('/admin');
   } catch (error) {
-    console.error('Error submitting answer:', error);
     showError('HeuristicsTestView.errors.failedToSubmitAnswer');
   }
 };
@@ -1132,12 +1126,12 @@ const handleHeurisClick = (i) => {
 
 // Setup auto-save on page unload
 const setupAutoSaveOnUnload = () => {
-  window.addEventListener('beforeunload', (event) => {
+  window.addEventListener('beforeunload', (_event) => {
     if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
       // Update status before unload
       updateSaveStatus('Saving before exit...', 'saving');
       // Save synchronously before page unload
-      autoSaveAnswer().catch(console.error);
+      autoSaveAnswer().catch(() => {});
     }
   });
 };
@@ -1197,7 +1191,7 @@ onBeforeMount(async () => {
 onUnmounted(() => {
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
-    autoSaveAnswer().catch(console.error);
+    autoSaveAnswer().catch(() => {});
   }
 });
 </script>
