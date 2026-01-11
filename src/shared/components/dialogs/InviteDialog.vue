@@ -1,84 +1,170 @@
 <template>
     <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" max-width="500">
-        <v-card class="rounded-lg">
-            <v-card-title style="color: white;" class="bg-primary rounded-top-lg">
-                <v-icon color="white" class="mr-2">
-                    mdi-account-plus
-                </v-icon>
-                {{ title || 'Send Invitation' }}
-            </v-card-title>
-            <v-card-text class="pt-4">
-                <v-combobox :key="comboboxKey" ref="combobox" v-model="comboboxModel" :items="users.filter(user => user?.email != null)" item-title="email"
-                    :label="selectLabel || 'Select cooperator'" multiple variant="outlined" density="comfortable"
-                    @update:model-value="validateEmail">
-                    <template #no-data>
-                        {{ noDataText || 'There are no users registered with that email, press enter to select anyways.'
-                        }}
+            <v-card class="rounded-lg">
+                <v-card-title style="color: white;" class="bg-primary rounded-top-lg">
+                    <v-icon color="white" class="mr-2">
+                        mdi-account-plus
+                    </v-icon>
+                    {{ title || 'Send Invitation' }}
+                </v-card-title>
+                <v-card-text class="pt-4">
+                    <!-- SIMPLE TOGGLE - NO v-btn-toggle -->
+                    <div class="d-flex mb-4">
+                        <v-btn 
+                            :color="invitationType === 'existing' ? 'primary' : 'outlined'"
+                            variant="outlined"
+                            class="flex-grow-1"
+                            @click="invitationType = 'existing'"
+                            type="button" 
+                        >
+                            <v-icon start>mdi-account</v-icon>
+                            Existing User
+                        </v-btn>
+                        <v-btn 
+                            :color="invitationType === 'new' ? 'primary' : 'outlined'"
+                            variant="outlined"
+                            class="flex-grow-1 ml-2"
+                            @click="invitationType = 'new'"
+                            type="button" 
+                        >
+                            <v-icon start>mdi-email</v-icon>
+                            Email Invite
+                        </v-btn>
+                    </div>
+
+                    <!-- EXISTING USER SELECTION -->
+                    <template v-if="invitationType === 'existing'">
+                        <v-combobox 
+                            :key="comboboxKey" 
+                            ref="combobox" 
+                            v-model="comboboxModel" 
+                            :items="users.filter(user => user?.email != null)" 
+                            item-title="email"
+                            :label="selectLabel || 'Select cooperator'" 
+                            multiple 
+                            variant="outlined" 
+                            density="comfortable"
+                            @update:model-value="validateEmail">
+                            <template #no-data>
+                                {{ noDataText || 'There are no users registered with that email, press enter to select anyways.' }}
+                            </template>
+                        </v-combobox>
                     </template>
-                </v-combobox>
 
-                <v-chip-group>
-                    <v-chip v-for="(coop, i) in selectedCoops" :key="i" closable @click:close="removeSelectedCoop(i)"
-                        class="ml-2 mt-2">
-                        {{ typeof coop == 'object' ? coop.email : coop }}
-                    </v-chip>
-                </v-chip-group>
+                    <!-- NEW USER EMAIL INPUT -->
+                    <template v-else>
+                        <v-text-field
+                            v-model="emailInput"
+                            :label="'Enter email address(es)'"
+                            variant="outlined"
+                            density="comfortable"
+                            placeholder="john@example.com, jane@example.com"
+                            hint="Enter multiple emails separated by commas"
+                            persistent-hint
+                            @keyup.enter="handleEmailInput"
+                            @blur="handleEmailInput"
+                        />
+                        <v-alert type="info" variant="tonal" density="compact" class="mt-2">
+                            <small>Users will receive an email to create an account and join the study</small>
+                        </v-alert>
+                    </template>
 
-                <v-select v-model="selectedRole" :items="roleOptions" :label="roleLabel || 'Role'" variant="outlined"
-                    density="comfortable" class="mt-4" />
+                    <!-- SELECTED COOPERATORS DISPLAY -->
+                    <v-chip-group class="mt-4">
+                        <v-chip 
+                            v-for="(coop, i) in selectedCoops" 
+                            :key="i" 
+                            closable 
+                            @click:close="removeSelectedCoop(i)"
+                            class="ml-2 mt-2"
+                            :color="coop.isUnregistered ? 'orange' : 'primary'"
+                            variant="flat"
+                            :prepend-icon="coop.isUnregistered ? 'mdi-email' : 'mdi-account'"
+                        >
+                            {{ coop.email }}
+                            <v-tooltip v-if="coop.isUnregistered" activator="parent" location="top">
+                                Unregistered user - will receive invitation email
+                            </v-tooltip>
+                        </v-chip>
+                    </v-chip-group>
 
-                <!-- Date/Time Selection (only for accessibility tests) -->
-                <v-row v-if="showDateTimeSelection" class="mt-4">
-                    <v-col cols="6">
-                        <v-menu offset="26" :close-on-content-click="false" transition="scale-transition"
-                            min-width="auto">
-                            <template #activator="{ props }">
-                                <v-text-field v-model="date" readonly color="primary" v-bind="props" variant="outlined"
-                                    density="compact" label="Date" prepend-inner-icon="mdi-calendar" />
-                            </template>
-                            <v-date-picker v-model="date"
-                                :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 10)"
-                                show-adjacent-months color="primary" />
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-menu :close-on-content-click="false" offset="40" transition="scale-transition"
-                            min-width="auto">
-                            <template #activator="{ props }">
-                                <v-text-field v-model="hour" prepend-inner-icon="mdi-clock-time-four-outline"
-                                    density="compact" color="primary" variant="outlined" label="Time" readonly
-                                    v-bind="props" />
-                            </template>
-                            <v-time-picker v-model="hour" :min="minTime" format="24hr" color="primary" scrollable />
-                        </v-menu>
-                    </v-col>
-                </v-row>
+                    <!-- ROLE SELECTION -->
+                    <v-select 
+                        v-model="selectedRole" 
+                        :items="roleOptions" 
+                        :label="roleLabel || 'Role'" 
+                        variant="outlined"
+                        density="comfortable" 
+                        class="mt-4" 
+                    />
 
-                <v-textarea v-if="showInviteMessage" v-model="inviteMessage" color="primary"
-                    :label="messageLabel || 'Invitation Message'"
-                    :placeholder="messagePlaceholder || 'Enter your invitation message'" variant="outlined"
-                    class="mt-4" />
-            </v-card-text>
+                    <!-- Date/Time Selection (only for accessibility tests) -->
+                    <v-row v-if="showDateTimeSelection" class="mt-4">
+                        <v-col cols="6">
+                            <v-menu offset="26" :close-on-content-click="false" transition="scale-transition"
+                                min-width="auto">
+                                <template #activator="{ props }">
+                                    <v-text-field v-model="date" readonly color="primary" v-bind="props" variant="outlined"
+                                        density="compact" label="Date" prepend-inner-icon="mdi-calendar" />
+                                </template>
+                                <v-date-picker v-model="date"
+                                    :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 10)"
+                                    show-adjacent-months color="primary" />
+                            </v-menu>
+                        </v-col>
+                        <v-col cols="6">
+                            <v-menu :close-on-content-click="false" offset="40" transition="scale-transition"
+                                min-width="auto">
+                                <template #activator="{ props }">
+                                    <v-text-field v-model="hour" prepend-inner-icon="mdi-clock-time-four-outline"
+                                        density="compact" color="primary" variant="outlined" label="Time" readonly
+                                        v-bind="props" />
+                                </template>
+                                <v-time-picker v-model="hour" :min="minTime" format="24hr" color="primary" scrollable />
+                            </v-menu>
+                        </v-col>
+                    </v-row>
 
-            <v-divider />
+                    <v-textarea v-if="showInviteMessage" v-model="inviteMessage" color="primary"
+                        :label="messageLabel || 'Invitation Message'"
+                        :placeholder="messagePlaceholder || 'Enter your invitation message'" variant="outlined"
+                        class="mt-4" />
+                </v-card-text>
 
-            <v-card-actions>
-                <v-spacer />
-                <v-btn color="red" variant="outlined" class="rounded-lg" @click="onCancel">
-                    {{ cancelText || 'Cancel' }}
-                </v-btn>
-                <v-btn color="primary" class="rounded-lg" :disabled="selectedCoops.length === 0" @click="onSend">
-                    {{ sendText || 'Send' }}
-                </v-btn>
-            </v-card-actions>
-        </v-card>
+                <v-divider />
+
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn 
+                        color="red" 
+                        variant="outlined" 
+                        class="rounded-lg" 
+                        @click="onCancel"
+                        type="button" 
+                    >
+                        {{ cancelText || 'Cancel' }}
+                    </v-btn>
+                    <v-btn 
+                        color="primary" 
+                        class="rounded-lg" 
+                        :disabled="selectedCoops.length === 0" 
+                        @click="onSend"
+                        type="button"
+                    >
+                        {{ sendText || 'Send' }}
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
     </v-dialog>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { showError, showWarning } from '@/shared/utils/toast';
+import { showError, showWarning, showSuccess } from '@/shared/utils/toast';
+import UIDGenerator from 'uid-generator';
+
+const uidgen = new UIDGenerator();
 
 const props = defineProps({
     show: {
@@ -119,6 +205,9 @@ const {
     validateEmail: isValidEmail
 } = useCooperatorUtils();
 
+const invitationType = ref('existing');
+const emailInput = ref('');
+
 // Local state
 const selectedCoops = ref([]);
 const comboboxModel = ref([]);
@@ -157,6 +246,42 @@ const minTime = computed(() => {
     }
 });
 
+const handleEmailInput = () => {
+  if(!emailInput.value.trim()) return;
+
+  const emails = emailInput.value
+    .split(',')
+    .map(email => email.trim())
+    .filter(email => email && isValidEmail(email));
+  
+  emails.forEach(email => {
+    if(!isCoopAlreadySelected(email)){
+      const existingUser = props.users.find(user => user.email === email);
+      if(existingUser){
+        if(!selectedCoops.value.some(coop => coop.email === email)){
+          selectedCoops.value.push({
+            id: existingUser.id,
+            email: existingUser.email,
+            isUnregistered: false,
+            userDocId: existingUser.id
+          });
+        }
+      } else {
+        if(!selectedCoops.value.some(coop => coop.email === email)){
+          selectedCoops.value.push({
+            email: email,
+            isUnregistered: true,
+            invitationToken: uidgen.generateSync(),
+            invitationSentAt: Date.now(),
+            invitationExpires: Date.now() + (7*24*60*60*1000)
+          });
+        }
+      }
+    }
+  });
+  emailInput.value = '';
+}
+
 // Methods
 const removeSelectedCoop = (index) => {
     selectedCoops.value.splice(index, 1);
@@ -182,7 +307,6 @@ const validateEmail = () => {
 
     if (!email) return;
 
-    // Handle string email input
     if (isStringEmail(email)) {
         if (!isValidEmail(email)) {
             showError('Invalid email format');
@@ -200,7 +324,6 @@ const validateEmail = () => {
         return;
     }
 
-    // Handle object email input
     if (selectedCoops.value.includes(email)) return;
 
     if (isCoopAlreadySelected(email.email)) {
@@ -220,7 +343,8 @@ const onSend = () => {
     const invitationData = {
         selectedCoops: selectedCoops.value,
         selectedRole: selectedRole.value,
-        inviteMessage: inviteMessage.value
+        inviteMessage: inviteMessage.value,
+        invitationType: invitationType.value
     };
 
     if (props.showDateTimeSelection) {
@@ -235,6 +359,8 @@ const onSend = () => {
 const resetForm = () => {
     selectedCoops.value = [];
     comboboxModel.value = [];
+    emailInput.value = '';
+    invitationType.value = 'existing';
     inviteMessage.value = '';
     selectedRole.value = 1;
     combobox.value?.blur();

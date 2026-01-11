@@ -7,6 +7,7 @@ import Help from '@/shared/views/public/Help.vue'
 import TermsOfService from '@/features/legal/TermsOfService.vue'
 import PrivacyPolicy from '@/features/legal/PrivacyPolicy.vue'
 import FAQ from '@/shared/views/public/FAQ.vue'
+import AcceptInvitation from '../../views/public/AcceptInvitation.vue'
 
 export default [
   {
@@ -77,4 +78,10 @@ export default [
     meta: { authorize: [] },
     component: FAQ,
   },
+  {
+    path: '/accept-invitation',
+    name: 'AcceptInvitation',
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: AcceptInvitation
+  }
 ]

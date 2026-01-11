@@ -247,39 +247,72 @@ const handleSendInvitations = async (invitationData) => {
   const { selectedCoops, selectedRole, inviteMessage } = invitationData;
   const tokens = {};
 
-  inviteMessages.value = inviteMessage
+  inviteMessages.value = inviteMessage;
   cooperatorsUpdate.value = [...cooperatorsEdit.value];
 
   selectedCoops.forEach((coop) => {
     const token = uidgen.generateSync();
-    if (!coop.id) {
-      cooperatorsEdit.value.push({
+    
+    // if coop is unregistered user
+    if (coop.isUnregistered) {
+      // Unregistered user - create cooperator with invitation details
+      const newCooperator = new Cooperators({
         userDocId: null,
-        email: coop,
+        email: coop.email,
         invited: true,
         accepted: false,
         accessLevel: roleOptions.value[selectedRole].value,
-        token,
+        token: coop.invitationToken,
         progress: 0,
         updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || ''
+        testAuthorEmail: test.value?.testAdmin?.email || '',
+        isUnregistered: true,
+        invitationToken: coop.invitationToken,
+        invitationSentAt: coop.invitationSentAt,
+        invitationExpires: coop.invitationExpires,
+        tempUserId: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       });
+      cooperatorsEdit.value.push(newCooperator);
+      
+      tokens[coop.email] = coop.invitationToken;
+    } else if (typeof coop === 'string' || !coop.id) {
+      const existingUser = users.value.find(user => user.email === (typeof coop === 'string' ? coop : coop.email));
+      const userId = existingUser ? existingUser.id : null;
+      
+      cooperatorsEdit.value.push({
+        userDocId: userId,
+        email: typeof coop === 'string' ? coop : coop.email,
+        invited: true,
+        accepted: false,
+        accessLevel: roleOptions.value[selectedRole].value,
+        token: token,
+        progress: 0,
+        updateDate: test.value?.updateDate || new Date().toISOString(),
+        testAuthorEmail: test.value?.testAdmin?.email || '',
+        isUnregistered: false
+      });
+
+      if (existingUser) {
+        tokens[existingUser.id] = '';
+      }
     } else {
+      // User object with id
       cooperatorsEdit.value.push({
         userDocId: coop.id,
         email: coop.email,
         invited: true,
         accepted: false,
         accessLevel: roleOptions.value[selectedRole].value,
-        token,
+        token: token,
         progress: 0,
         updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || ''
+        testAuthorEmail: test.value?.testAdmin?.email || '',
+        isUnregistered: false
       });
     }
-    tokens[coop.id || coop] = token;
+    tokens[coop.id || coop.email || coop] = token;
   });
-
+  
   await submit();
   showInviteDialog.value = false;
 };
@@ -298,36 +331,117 @@ const changeRole = async (item, newValue) => {
   });
 };
 
+// Update the submit function - Add SUCCESS tracking:
 const submit = async () => {
   if (!test.value) return;
-
-  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}))
-  test.value.cooperators = [...coops]
-
-  const newCooperators = cooperatorsEdit.value.filter(
-    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
-  );
-
   try {
-    await store.dispatch('updateStudy', test.value);
+    // Create Cooperators objects from cooperatorsEdit (matching develop branch pattern)
+    const coops = cooperatorsEdit.value.map(coop => {
+      if (coop instanceof Cooperators) {
+        return coop;
+      }
+      return new Cooperators({ ...coop, userDocId: coop.userDocId || coop.id });
+    });
+    
+    // Assign to test.value (only here, not in handleSendInvitations)
+    test.value.cooperators = [...coops];
 
-    await Promise.all([
-      store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map(guest => sendMenssages(guest))
-    ]);
+    const updateData = {
+      id: test.value.id,
+      cooperators: coops.map(coop => coop.toFirestore()),
+      updateDate: new Date().toISOString()
+    };
+    await store.dispatch('updateStudy', updateData);
+    // Refresh the test data
+    await store.dispatch('getStudy', { id: test.value.id });
+    
+    // Send emails to new cooperators
+    const newCooperators = cooperatorsEdit.value.filter(
+      (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
+    );
+
+    let allEmailsSent = true;
+    let emailErrors = [];
+
+    if (newCooperators.length > 0) {
+      // Track email sending results
+      const emailResults = await Promise.allSettled(newCooperators.map(guest => sendMenssages(guest)));
+      
+      // Check if all emails were sent successfully
+      emailResults.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          allEmailsSent = false;
+          emailErrors.push(`Failed to send to ${newCooperators[index].email}`);
+        }
+      });
+      
+      // Send notifications for registered users
+      await Promise.all(newCooperators.map(guest => {
+        if(guest.userDocId && !guest.isUnregistered){
+          return notifyCooperator(guest);
+        }
+        return Promise.resolve();
+      }));
+    }
+
+    if (allEmailsSent && newCooperators.length > 0) {
+      showSuccess(`Invitations sent successfully to ${newCooperators.length} cooperator(s)`);
+    } else if (emailErrors.length > 0) {
+      showError(`Some invitations failed: ${emailErrors.join(', ')}`);
+    }
+    
   } catch (error) {
-    console.error('Error updating study:', error);
+    showError('Failed to save invitation: ' + error.message);
   }
 };
 
 const sendMenssages = async (guest) => {
   try {
-    notifyCooperator(guest);
-    await handleSendEmail(guest);
-    showSuccess('pages.cooperators.invitationSent');
+    const emailController = new EmailController();
+    
+    const payload = {
+      to: guest.email,
+      subject: t('HeuristicsCooperators.actions.send_invitation') || 'Invitation to join a study',
+      attachments: [],
+      template: 'invite',
+      data: {
+        message: inviteMessages.value || `You've been invited to participate in "${test.value.testTitle}"`,
+        testTitle: test.value.testTitle,
+        testDescription: test.value.testDescription || '',
+        adminEmail: test.value.testAdmin.email,
+        adminName: userAuth.value.name || userAuth.value.email,
+        email: guest.email,
+        isUnregisteredUser: guest.isUnregistered || false
+      }
+    };
+
+    if (guest.isUnregistered) {
+      payload.isUnregisteredUser = true;
+      payload.data.token = guest.invitationToken;
+      
+      if (!guest.invitationToken) {
+        throw new Error(`No invitation token for unregistered user: ${guest.email}`);
+      }
+    }
+
+    const result = await emailController.send(payload);
+    
+    if (result.success) {
+      // Update cooperator invitation sent time
+      if (guest.isUnregistered) {
+        const index = cooperatorsEdit.value.findIndex(c => c.email === guest.email);
+        if (index !== -1) {
+          cooperatorsEdit.value[index].invitationSentAt = Date.now();
+        }
+      }
+      
+      return { success: true, email: guest.email };
+    } else {
+      throw new Error(`Failed to send email to ${guest.email}: ${result.message}`);
+    }
   } catch (error) {
-    console.error('Error sending messages:', error);
-    showError('errors.sendError');
+    console.error('Error sending invitation email to', guest.email, error);
+    throw error;
   }
 }
 
@@ -361,15 +475,12 @@ const notifyCooperatorAccessibility = async (guest) => {
   }
 };
 
-const notifyCooperator = (guest) => {
-  if (guest.userDocId) {
-    // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-    //  notifyCooperatorAccessibility(guest);
-    //  return;
-    //}
+const notifyCooperator = async (guest) => {
+  if (!guest.userDocId) {
+    return;
+  }
 
-    // admin - 0, evaluator -1, guest - 2
+  try {
     const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
     const managerRoute = router.resolve({
       name: managerViewByMethod,
@@ -378,20 +489,38 @@ const notifyCooperator = (guest) => {
 
     const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
 
-    sendNotification({
+    // Send the in-app notification
+    await sendNotification({
       userId: guest.userDocId,
       title: t('HeuristicsCooperators.actions.send_invitation'),
-      description: inviteMessages.value || t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') }),
+      description: inviteMessages.value || t('HeuristicsCooperators.messages.invite_message', { 
+        testTitle: test.value.testTitle || t('common.test') 
+      }),
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
       accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
     });
+  } catch (error) {
+    console.error('Error sending notification to:', guest.email, error);
   }
 };
 
 const reinvite = async (guest) => {
-  await sendMenssages(guest)
+  try {
+    // Send email invitation
+    await sendMenssages(guest);
+    
+    if (guest.userDocId && !guest.isUnregistered) {
+      await notifyCooperator(guest);
+    }
+    
+    // Show success toast
+    showSuccess(`Invitation resent to ${guest.email}`);
+  } catch (error) {
+    console.error('Error resending invitation:', error);
+    showError(`Failed to resend invitation to ${guest.email}: ${error.message}`);
+  }
 };
 
 const removeCoop = async (coop) => {

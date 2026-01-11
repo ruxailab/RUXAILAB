@@ -74,12 +74,47 @@ export default class StudyController extends Controller {
   }
 
   async updateStudy(payload) {
-    try {
-      return await super.update(COLLECTION, payload.id, payload.toFirestore())
-    } catch (e) {
-      throw e
+  try {    
+    // Check if payload has toFirestore method
+    let dataToUpdate;
+    if (payload && typeof payload.toFirestore === 'function') {
+      dataToUpdate = payload.toFirestore();
+    } else {
+      dataToUpdate = { ...payload };
+      
+      const { id, ...restData } = dataToUpdate;
+      dataToUpdate = restData;
+      
+      // Convert StudyAdmin object to plain object if it exists
+      if (dataToUpdate.testAdmin) {
+        if (typeof dataToUpdate.testAdmin.toFirestore === 'function') {
+          dataToUpdate.testAdmin = dataToUpdate.testAdmin.toFirestore();
+        } else {
+          // Otherwise create a plain object
+          dataToUpdate.testAdmin = {
+            email: dataToUpdate.testAdmin.email || '',
+            userDocId: dataToUpdate.testAdmin.userDocId || '',
+            name: dataToUpdate.testAdmin.name || ''
+          };
+        }
+      }
+      
+      // check cooperators array for any objects that need conversion
+      if (Array.isArray(dataToUpdate.cooperators)) {
+        dataToUpdate.cooperators = dataToUpdate.cooperators.map(coop => {
+          if (coop && typeof coop.toFirestore === 'function') {
+            return coop.toFirestore();
+          }
+          return coop;
+        });
+      }
     }
+    return await super.update(COLLECTION, payload.id, dataToUpdate);
+  } catch (e) {
+    console.error("Error in updateStudy:", e);
+    throw e;
   }
+}
 
   //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
