@@ -3,8 +3,9 @@
     <div class="step-header mb-6">
       <h3 class="text-h6 font-weight-bold mb-2">Step 3: Advanced Options</h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
-        Enable additional data collection methods to gather deeper insights. All options are optional but can provide
-        valuable behavioral data and user feedback.
+        Enable additional data collection methods to gather deeper insights. All
+        options are optional but can provide valuable behavioral data and user
+        feedback.
       </p>
     </div>
 
@@ -15,7 +16,10 @@
           <v-row align="center">
             <v-col cols="12" md="auto">
               <div class="option-icon">
-                <v-icon :color="localTask.hasEye ? 'primary' : 'grey-lighten-1'" size="32">
+                <v-icon
+                  :color="localTask.hasEye ? 'primary' : 'grey-lighten-1'"
+                  size="32"
+                >
                   mdi-eye-outline
                 </v-icon>
               </div>
@@ -23,18 +27,26 @@
             <v-col cols="12" md class="py-0 py-md-3">
               <v-row dense>
                 <v-col cols="12">
-                  <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.eyeTracker') }}</h4>
+                  <h4 class="text-subtitle-1 font-weight-medium">
+                    {{ $t('switches.eyeTracker') }}
+                  </h4>
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Track where participants look during the task. Provides heatmaps and gaze patterns to understand
-                    visual attention and navigation behavior.
+                    Track where participants look during the task. Provides
+                    heatmaps and gaze patterns to understand visual attention
+                    and navigation behavior.
                   </p>
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-sm-0">
-              <v-switch v-model="localTask.hasEye" color="primary" hide-details @change="validateStep" />
+              <v-switch
+                v-model="localTask.hasEye"
+                color="primary"
+                hide-details
+                @change="validateStep"
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -46,7 +58,12 @@
           <v-row align="center">
             <v-col cols="12" md="auto">
               <div class="option-icon">
-                <v-icon :color="localTask.hasScreenRecord ? 'primary' : 'grey-lighten-1'" size="32">
+                <v-icon
+                  :color="
+                    localTask.hasScreenRecord ? 'primary' : 'grey-lighten-1'
+                  "
+                  size="32"
+                >
                   mdi-monitor-screenshot
                 </v-icon>
               </div>
@@ -54,19 +71,26 @@
             <v-col cols="12" md class="py-0 py-md-3">
               <v-row dense>
                 <v-col cols="12">
-                  <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.screenRecord') }}</h4>
+                  <h4 class="text-subtitle-1 font-weight-medium">
+                    {{ $t('switches.screenRecord') }}
+                  </h4>
                 </v-col>
                 <v-col cols="12">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze
-                    user
-                    behavior and identify pain points.
+                    Record the participant's screen activity. Captures clicks,
+                    scrolling, and interactions to analyze user behavior and
+                    identify pain points.
                   </p>
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-0">
-              <v-switch v-model="localTask.hasScreenRecord" color="primary" hide-details @change="validateStep" />
+              <v-switch
+                v-model="localTask.hasScreenRecord"
+                color="primary"
+                hide-details
+                @change="validateStep"
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -78,7 +102,10 @@
           <v-row align="center">
             <v-col cols="12" md="auto">
               <div class="option-icon">
-                <v-icon :color="localTask.hasCamRecord ? 'primary' : 'grey-lighten-1'" size="32">
+                <v-icon
+                  :color="localTask.hasCamRecord ? 'primary' : 'grey-lighten-1'"
+                  size="32"
+                >
                   mdi-video-outline
                 </v-icon>
               </div>
@@ -86,19 +113,26 @@
             <v-col cols="12" md class="py-0 py-md-3">
               <v-row dense>
                 <v-col cols="12">
-                  <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.camera') }}</h4>
+                  <h4 class="text-subtitle-1 font-weight-medium">
+                    {{ $t('switches.camera') }}
+                  </h4>
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record participant's facial expressions and reactions. Captures emotions, confusion, and
-                    satisfaction
-                    to understand user experience beyond interactions.
+                    Record participant's facial expressions and reactions.
+                    Captures emotions, confusion, and satisfaction to understand
+                    user experience beyond interactions.
                   </p>
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-0">
-              <v-switch v-model="localTask.hasCamRecord" color="primary" hide-details @change="validateStep" />
+              <v-switch
+                v-model="localTask.hasCamRecord"
+                color="primary"
+                hide-details
+                @change="validateStep"
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -110,7 +144,12 @@
           <v-row align="center">
             <v-col cols="12" md="auto">
               <div class="option-icon">
-                <v-icon :color="localTask.hasAudioRecord ? 'primary' : 'grey-lighten-1'" size="32">
+                <v-icon
+                  :color="
+                    localTask.hasAudioRecord ? 'primary' : 'grey-lighten-1'
+                  "
+                  size="32"
+                >
                   mdi-microphone-outline
                 </v-icon>
               </div>
@@ -118,18 +157,26 @@
             <v-col cols="12" md class="py-0 py-md-3">
               <v-row dense>
                 <v-col cols="12">
-                  <h4 class="text-subtitle-1 font-weight-medium">{{ $t('switches.audioRecord') }}</h4>
+                  <h4 class="text-subtitle-1 font-weight-medium">
+                    {{ $t('switches.audioRecord') }}
+                  </h4>
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and
-                    insights that reveal thought processes.
+                    Record participant's verbal feedback and comments. Captures
+                    think-aloud protocols, frustrations, and insights that
+                    reveal thought processes.
                   </p>
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="12" md="auto" class="py-0">
-              <v-switch v-model="localTask.hasAudioRecord" color="primary" hide-details @change="validateStep" />
+              <v-switch
+                v-model="localTask.hasAudioRecord"
+                color="primary"
+                hide-details
+                @change="validateStep"
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -137,10 +184,17 @@
     </div>
 
     <!-- Privacy Notice -->
-    <v-alert v-if="hasAnyRecording" type="info" variant="tonal" class="mt-6" icon="mdi-shield-account-outline">
+    <v-alert
+      v-if="hasAnyRecording"
+      type="info"
+      variant="tonal"
+      class="mt-6"
+      icon="mdi-shield-account-outline"
+    >
       <v-alert-title>Privacy Notice</v-alert-title>
       <div class="text-body-2 mt-2">
-        Recording features require explicit consent from participants. Make sure to:
+        Recording features require explicit consent from participants. Make sure
+        to:
         <ul class="mt-2">
           <li>Clearly inform participants about data collection</li>
           <li>Obtain proper consent before starting the test</li>
@@ -149,67 +203,110 @@
         </ul>
       </div>
     </v-alert>
-
-
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   modelValue: {
     type: Object,
-    required: true
-  }
-});
+    required: true,
+  },
+})
 
-const emit = defineEmits(['update:modelValue', 'validate']);
-const { t } = useI18n();
+const emit = defineEmits(['update:modelValue', 'validate'])
+const { t } = useI18n()
 
-const localTask = ref({ ...props.modelValue });
+const localTask = ref({ ...props.modelValue })
 
 const hasAnyRecording = computed(() => {
-  return localTask.value.hasEye ||
+  return (
+    localTask.value.hasEye ||
     localTask.value.hasScreenRecord ||
     localTask.value.hasCamRecord ||
-    localTask.value.hasAudioRecord;
-});
+    localTask.value.hasAudioRecord
+  )
+})
 
 const enabledFeatures = computed(() => {
-  const features = [];
+  const features = []
 
   if (localTask.value.hasEye) {
-    features.push({ key: 'eye', label: 'Eye Tracking', icon: 'mdi-eye-outline' });
+    features.push({
+      key: 'eye',
+      label: 'Eye Tracking',
+      icon: 'mdi-eye-outline',
+    })
   }
   if (localTask.value.hasScreenRecord) {
-    features.push({ key: 'screen', label: 'Screen Recording', icon: 'mdi-monitor-screenshot' });
+    features.push({
+      key: 'screen',
+      label: 'Screen Recording',
+      icon: 'mdi-monitor-screenshot',
+    })
   }
   if (localTask.value.hasCamRecord) {
-    features.push({ key: 'camera', label: 'Camera Recording', icon: 'mdi-video-outline' });
+    features.push({
+      key: 'camera',
+      label: 'Camera Recording',
+      icon: 'mdi-video-outline',
+    })
   }
   if (localTask.value.hasAudioRecord) {
-    features.push({ key: 'audio', label: 'Audio Recording', icon: 'mdi-microphone-outline' });
+    features.push({
+      key: 'audio',
+      label: 'Audio Recording',
+      icon: 'mdi-microphone-outline',
+    })
   }
 
-  return features;
-});
+  return features
+})
 
 const validateStep = () => {
   // Advanced options are always valid (they're optional)
-  emit('validate', true);
-};
+  emit('validate', true)
+}
+
+watch(
+  () => localTask.value.hasEye,
+  (newValue) => {
+    if (newValue) {
+      localTask.value.hasScreenRecord = true
+      localTask.value.hasCamRecord = true
+    }
+  },
+)
+
+watch(
+  () => localTask.value.hasScreenRecord,
+  (newValue) => {
+    if (!newValue && localTask.value.hasEye) {
+      localTask.value.hasEye = false
+    }
+  },
+)
+watch(
+  () => localTask.value.hasCamRecord,
+  (newValue) => {
+    if (!newValue && localTask.value.hasEye) {
+      localTask.value.hasEye = false
+    }
+  },
+)
 
 // Watch for local changes and emit
 watch(
   localTask,
   (newValue) => {
-    emit('update:modelValue', { ...newValue });
-    validateStep();
+    emit('update:modelValue', { ...newValue })
+    validateStep()
   },
-  { deep: true, immediate: true }
-);
+  { deep: true, immediate: true },
+)
 </script>
 
 <style scoped>
