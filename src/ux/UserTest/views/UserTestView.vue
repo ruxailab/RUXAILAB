@@ -844,10 +844,16 @@ const handleTimerStopped = (elapsedTime, idx) => {
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      //TODO: Add error snackbar
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: 'Invalid time value recorded. Please try again.',
+      })
     }
   } else {
-    //TODO: Add error snackbar
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Task not found. Unable to save time.',
+    })
   }
 }
 
@@ -905,16 +911,21 @@ const completeStep = (id, type, userCompleted = true) => {
           console.log('Última task finalizada, mas ainda há tasks incompletas.')
         }
       }
-      //TODO: Show proper toast not the following one
-      /*
+
+      // Show success toast for task completion
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
           message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
           timeout: 3000,
-        });
+        })
+      } else {
+        store.commit('SET_TOAST', {
+          type: 'info',
+          message: `Task "${test.value.testStructure.userTasks[id].taskName}" marked as unable to complete.`,
+          timeout: 3000,
+        })
       }
-        */
     }
 
     if (type === 'postTest') {

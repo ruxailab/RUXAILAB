@@ -445,7 +445,6 @@ async function transcribeSession() {
       color: 'green',
     }
 
-    // TODO: Save transcription to backend and get a transcription ID
     const result = await transcriptionController.create({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
@@ -487,8 +486,6 @@ async function transcribeSession() {
       text: 'Transcription saved successfully!',
       color: 'green',
     }
-
-    // TODO: Add Snackbar or notification to inform user of success
   } catch (error) {
     snackbar.value = {
       visible: true,
