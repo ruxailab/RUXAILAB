@@ -2,7 +2,11 @@
   <div v-if="test">
     <div>
       <IrisTracker
-        v-if="hasEyeTracking"
+        v-if="
+          hasEyeTracking &&
+          globalIndex === (hasEyeTracking ? 5 : 4) &&
+          test.testStructure.userTasks[taskIndex]?.hasEye
+        "
         :is-running="isTracking"
         :ms-per-capture="300"
         :record-screen="isRecording"
