@@ -182,7 +182,12 @@ const navigator = computed(() => {
       'userTest/moderated',
     ),
   ]
-
+  
+  for (const item of items) {
+    if (item.title === 'Preview') {
+      item.path = `/testview/${test.value.id}/${user.value.id}`
+    }
+  }
   return items
 })
 

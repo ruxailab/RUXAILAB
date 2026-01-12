@@ -580,7 +580,7 @@ const submit = async () => {
 const notifyCooperator = (guest) => {
   console.log('Notifying cooperator', guest)
   if (guest.userDocId) {
-    const path = 'testview'
+    const path = '/testview'
     store.dispatch('addNotification', {
       userId: guest.userDocId,
       notification: new Notification({
