@@ -803,7 +803,7 @@ const signOut = async () => {
 
 const startTest = async () => {
   // Check if the test has no tasks
-  if (!test.value.testStructure || test.value.testStructure.length === 0) {
+  if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
     store.commit('SET_TOAST', {
       type: 'info',
       message: "This test doesn't have any tasks.",
@@ -1152,11 +1152,34 @@ const isStartTestDisabled = computed(() => {
     testDisabledReason.value = 'test-no-data'
     return true
   }
-
+  if (isUserTestAdmin.value) {
+    if (localTestAnswer.submitted) {
+      testDisabledReason.value = 'test-already-completed'
+      return true
+    }
+    if (test.value.status !== 'active') {
+      testDisabledReason.value = 'test-not-active'
+      return true
+    }
+    if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
+      testDisabledReason.value = 'test-no-tasks-configured'
+      return true
+    }
+    testDisabledReason.value = null
+    return false  // Admin can proceed
+  }
   const now = new Date()
-  const cooperator = test.value.cooperators.find(
-    (u) => u.userDocId === route.params.token,
+  const userSessions = test.value.cooperators.filter(
+    (u) => u.userDocId === route.params.token
   )
+
+  const cooperator = userSessions.filter((s) => {
+    const sessionDate = new Date(s.testDate)
+    const diffHours = (sessionDate - now) / (1000 * 60 * 60)
+    return diffHours >= 0 && diffHours <= 24
+  })
+  .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
+  
   const sessionDate = cooperator?.testDate ? new Date(cooperator.testDate) : null
 
   // 🧩 Test already completed
@@ -1193,6 +1216,8 @@ const isStartTestDisabled = computed(() => {
       testDisabledReason.value = 'test-session-too-far'
       return true
     }
+    testDisabledReason.value = null
+    return false
   }
 
   // 🧩 Test expired (fallback endDate)
@@ -1203,9 +1228,6 @@ const isStartTestDisabled = computed(() => {
       return true
     }
   }
-
-  // ✅ All good
-  testDisabledReason.value = null
   return false
 })
 

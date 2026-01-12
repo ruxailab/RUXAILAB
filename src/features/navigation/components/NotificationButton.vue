@@ -166,7 +166,13 @@ const goToNotificationRedirect = async (notification) => {
   await store.dispatch('markNotificationAsRead', { notification, user: user.value })
 
   if (notification.redirectsTo) {
-    globalThis.open(globalThis.location.origin + notification.redirectsTo, '_blank')
+    let url = notification.redirectsTo
+    if (!url.startsWith('http')) {
+      const baseUrl = globalThis.location.origin
+      const path = url.startsWith('/') ? url : '/' + url
+      url = baseUrl + path
+    }
+    globalThis.open(url, '_blank')
   } else {
     goToNotificationPage()
   }
