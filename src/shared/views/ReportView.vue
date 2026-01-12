@@ -38,21 +38,21 @@
       </v-card>
     </v-dialog>
     <template #subtitle v-if="showIntroView">
-      <div class="d-flex align-center">
+      <div class="d-flex align-center mb-4">
         <v-icon
           icon="mdi-update"
           size="small"
           class="mr-2 text-medium-emphasis"
         />
         <span class="text-body-2 text-medium-emphasis">
-          {{ $t('common.timeAgo.now') }}: {{ formatDate(lastUpdated) }}
+          {{ $t('Dashboard.cards.lastActivity') }}: {{ formatDate(lastUpdated) }}
         </span>
       </div>
     </template>
 
     <template #filters v-if="showIntroView">
-      <div class="d-flex align-center justify-space-between mb-6">
-        <div class="d-flex align-center gap-4">
+      <div class="d-flex align-center justify-space-between mb-6 flex-wrap gap-4">
+        <div class="d-flex align-center gap-4 flex-wrap w-100">
           <v-text-field
             v-model="searchQuery"
             prepend-inner-icon="mdi-magnify"
@@ -60,7 +60,8 @@
             variant="outlined"
             density="compact"
             hide-details
-            style="max-width: 500px; min-width: 400px;"
+            class="flex-grow-1"
+            style="min-width: 250px; max-width: 500px;"
           />
           <v-select
             v-model="statusFilter"
