@@ -6,37 +6,37 @@
   - Dynamically checks missing keys in all other locales
 **/
 
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
 const BASE_LOCALE = 'en'
 const ALL_LOCALES = ['en', 'es', 'pt_br', 'hi', 'de', 'fr', 'zh', 'ar', 'ru', 'ja']
 const LOCALES_DIR = 'src/app/plugins/locales'
+const GIT_BIN = '/usr/bin/git'
+
+function gitDiff(args) {
+  try {
+    return execFileSync(GIT_BIN, args, { encoding: 'utf8' })
+  } catch {
+    return ''
+  }
+}
 
 function getDiff() {
   if (process.env.GITHUB_BASE_REF) {
-    try {
-      return execSync(
-        `git diff origin/${process.env.GITHUB_BASE_REF}...HEAD`,
-        { encoding: 'utf8' }
-      )
-    } catch {}
+    return gitDiff([
+      'diff',
+      `origin/${process.env.GITHUB_BASE_REF}...HEAD`
+    ])
   }
 
-  try {
-    return execSync(`git diff HEAD~1...HEAD`, { encoding: 'utf8' })
-  } catch {}
-
-  try {
-    return execSync(`git diff --cached`, { encoding: 'utf8' })
-  } catch {}
-
-  try {
-    return execSync(`git diff`, { encoding: 'utf8' })
-  } catch {}
-
-  return ''
+  return (
+    gitDiff(['diff', 'HEAD~1...HEAD']) ||
+    gitDiff(['diff', '--cached']) ||
+    gitDiff(['diff']) ||
+    ''
+  )
 }
 
 const diff = getDiff()
