@@ -27,15 +27,6 @@
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
-      "instructions": "メールアドレスを入力してください。パスワードリセット用のリンクをお送りします。",
-      "reset_button": "リセットリンクを送信",
-      "back_to_signin": "サインインに戻る"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "パスワードをリセット",
-      "email": "メールアドレス",
       "instructions": "メールアドレスを入力すると、パスワードをリセットするリンクを送信します。",
       "reset_button": "リセットリンクを送信",
       "back_to_signin": "ログイン画面に戻る",
@@ -43,6 +34,15 @@
       "reset_link_sent": "パスワードリセットリンクを送信しました：",
       "no_email": "メールが届いていませんか？",
       "try_again": "もう一度試す"
+    },
+    "passwordStrength": "パスワードの強度",
+    "number": "数字",
+    "strength": {
+      "veryWeak": "非常に弱い",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い"
     }
   },
   "common": {
