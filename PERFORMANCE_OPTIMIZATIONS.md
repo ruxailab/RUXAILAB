@@ -49,7 +49,7 @@ await store.dispatch('loadUserStudies')
 ## Testing
 
 1. Clear browser cache and local storage
-2. Sign in with Google: `itx.ankit.kr@gmail.com`
+2. Sign in with Google: `admin123@gmail.com`
 3. Observe faster sign-in and navigation
 4. Check browser DevTools Network tab for reduced requests
 
