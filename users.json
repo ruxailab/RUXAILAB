@@ -1,9 +1,9 @@
 {"users": [
 {
   "localId": "fhsBSqWSfdRDSNSNs77r1c6zL182",
-  "email": "itx.ankit.kr@gmail.com",
+  "email": "admin123@gmail.com",
   "emailVerified": true,
-  "displayName": "Ankit Kumar",
+  "displayName": "NA",
   "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIGTdf5_aHhIoRQ8z5rFd6oDR3Og2UMm-ybKWjAdZ_C9bVpFPTT=s96-c",
   "lastSignedInAt": "1768326892783",
   "createdAt": "1768326210447",
@@ -12,8 +12,8 @@
     {
       "providerId": "google.com",
       "rawId": "114656384116311652287",
-      "email": "itx.ankit.kr@gmail.com",
-      "displayName": "Ankit Kumar",
+      "email": "admin123@gmail.com",
+      "displayName": "NA",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIGTdf5_aHhIoRQ8z5rFd6oDR3Og2UMm-ybKWjAdZ_C9bVpFPTT=s96-c"
     }
   ]
