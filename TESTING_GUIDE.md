@@ -14,7 +14,7 @@
 
 3. **Sign In with Google**
    - Click "Continue with Google" button
-   - Use account: `itx.ankit.kr@gmail.com`
+   - Use account: `admin123@gmail.com`
    - Observe the sign-in speed
 
 4. **Monitor Performance**
