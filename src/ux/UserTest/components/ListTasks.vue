@@ -45,8 +45,7 @@
             :headers="headers"
             :items="allTasks"
             :items-per-page="5"
-            class="elevation-0 rounded-lg"
-            style="background: #FFFFFF; border: 1px solid #E5E7EB;"
+            class="elevation-0"
             :no-data-text="$t('UserTestTable.messages.noTasks')"
           >
             <!-- Custom Column Templates -->
@@ -256,15 +255,104 @@ onMounted(() => {
 <style scoped>
 .v-data-table {
   transition: all 0.3s ease;
+  background: rgb(var(--v-theme-surface)) !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12) !important;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .v-data-table :deep(.v-data-table__td) {
   padding: 12px;
+  color: rgb(var(--v-theme-on-surface));
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
 .v-data-table :deep(.v-data-table-header__content) {
   font-weight: 600;
-  color: #1F2937;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.v-data-table :deep(.v-data-table__th) {
+  background-color: rgba(var(--v-theme-on-surface), 0.04);
+  color: rgb(var(--v-theme-on-surface));
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.v-data-table :deep(.v-data-table__tr:hover) {
+  background-color: rgba(var(--v-theme-on-surface), 0.04);
+}
+
+.v-data-table :deep(.v-data-table__tr:nth-child(even)) {
+  background-color: rgba(var(--v-theme-on-surface), 0.02);
+}
+
+:global(.v-theme--dark) .v-data-table :deep(.v-data-table__tr:nth-child(even)) {
+  background-color: rgba(var(--v-theme-on-surface), 0.03);
+}
+
+.v-data-table :deep(.v-data-table__tr:nth-child(even):hover) {
+  background-color: rgba(var(--v-theme-on-surface), 0.06);
+}
+
+.v-data-table :deep(.v-data-table__no-data) {
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  padding: 48px 16px;
+}
+
+.v-card {
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.v-chip {
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.v-data-table :deep(.v-icon) {
+  transition: color 0.2s ease;
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  .v-data-table {
+    border-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  
+  .v-data-table :deep(.v-data-table__th) {
+    background-color: rgba(var(--v-theme-on-surface), 0.08);
+    border-bottom-color: rgba(var(--v-theme-on-surface), 0.24);
+  }
+  
+  .v-data-table :deep(.v-data-table__tr:hover) {
+    background-color: rgba(var(--v-theme-on-surface), 0.06);
+  }
+  
+  .v-data-table :deep(.v-data-table__tr:nth-child(even)) {
+    background-color: rgba(var(--v-theme-on-surface), 0.03);
+  }
+}
+
+:global(.v-theme--dark) {
+  .v-data-table {
+    border-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  
+  .v-data-table :deep(.v-data-table__th) {
+    background-color: rgba(var(--v-theme-on-surface), 0.08);
+    border-bottom-color: rgba(var(--v-theme-on-surface), 0.24);
+  }
+  
+  .v-data-table :deep(.v-data-table__tr:hover) {
+    background-color: rgba(var(--v-theme-on-surface), 0.06);
+  }
+  
+  .v-data-table :deep(.v-data-table__tr:nth-child(even)) {
+    background-color: rgba(var(--v-theme-on-surface), 0.03);
+  }
 }
 
 .v-btn {
@@ -272,7 +360,45 @@ onMounted(() => {
   letter-spacing: 0;
 }
 
-.v-data-table :deep(.v-data-table__tr:hover) {
-  background-color: #F8FAFC;
+.v-card:hover {
+  border-color: rgba(var(--v-theme-primary), 0.3);
+}
+
+.v-data-table :deep(.v-data-table-footer) {
+  background-color: rgba(var(--v-theme-on-surface), 0.04);
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.v-data-table :deep(.v-data-table__tr--selected) {
+  background-color: rgba(var(--v-theme-primary), 0.08) !important;
+}
+
+.v-data-table :deep(.v-data-table__tr--selected:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.12) !important;
+}
+
+.v-data-table :deep(.v-data-table__loading) {
+  background-color: rgba(var(--v-theme-surface), 0.8);
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.v-data-table :deep(.v-data-table-header__sort-badge) {
+  background-color: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+}
+
+@media (max-width: 768px) {
+  .v-data-table {
+    border: none !important;
+  }
+  
+  .v-data-table :deep(.v-data-table__wrapper) {
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    border-radius: 8px;
+  }
+  
+  .v-data-table :deep(.v-data-table__td) {
+    padding: 8px 12px;
+  }
 }
 </style>

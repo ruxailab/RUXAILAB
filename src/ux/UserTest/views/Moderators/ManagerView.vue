@@ -246,7 +246,6 @@ onMounted(async () => {
     rgb(var(--v-theme-secondary)) 100%
   );
 }
-
 .gradient-header::before {
   content: '';
   position: absolute;
@@ -337,7 +336,7 @@ onMounted(async () => {
 .section-title {
   font-size: 2rem !important;
   font-weight: 600 !important;
-  color: #2c3e50 !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
   margin-bottom: 8px !important;
   display: flex;
   align-items: center;
@@ -346,13 +345,13 @@ onMounted(async () => {
 }
 
 .section-icon {
-  color: var(--v-theme-primary) !important;
+  color: rgb(var(--v-theme-primary)) !important;
   font-size: 2rem !important;
 }
 
 .section-description {
   font-size: 1.1rem !important;
-  color: #64748b !important;
+  color: rgba(var(--v-theme-on-surface), 0.7) !important;
   margin: 0 !important;
   font-weight: 400;
 }
@@ -404,7 +403,7 @@ onMounted(async () => {
   height: 320px !important;
   border-radius: 16px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.06) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   overflow: hidden;
 }
@@ -417,10 +416,10 @@ onMounted(async () => {
 .modules-section :deep(.v-card-title) {
   font-size: 1.2rem !important;
   font-weight: 600 !important;
-  color: #2c3e50 !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
   padding: 20px 20px 12px 20px !important;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: rgba(var(--v-theme-surface-variant), 0.5) !important;
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.06) !important;
 }
 
 .modules-section :deep(.v-card-text) {
@@ -431,8 +430,8 @@ onMounted(async () => {
 
 .modules-section :deep(.v-card-actions) {
   padding: 16px 20px !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
-  background: #fafbfc !important;
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.06) !important;
+  background: rgba(var(--v-theme-surface-variant), 0.3) !important;
 }
 
 /* Progress bars and chips styling */

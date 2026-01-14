@@ -25,6 +25,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useTheme } from 'vuetify';
 
 const props = defineProps({
   cards: {
@@ -46,9 +47,22 @@ const props = defineProps({
   },
 });
 
-const backgroundImage = computed(() => {
-  // Softer gradient: blend colors more gradually
-  return `background-image: radial-gradient(circle at top left, #00213f 60%, #FF3F59 160%)`;
+const theme = useTheme();
+const isDark = computed(() => theme.global.name.value === 'myCustomDarkTheme');
+
+const backgroundStyle = computed(() => {
+  if (isDark.value) {
+    // Dark mode gradient: use theme colors
+    return `background-image: radial-gradient(circle at top left, 
+      rgb(var(--v-theme-primary)) 60%, 
+      rgb(var(--v-theme-secondary)) 160%
+    )`;
+  } else {
+    // Light mode: use original brand gradient
+    return `background-image: radial-gradient(circle at top left, 
+      #00213f 60%, 
+      #FF3F59 160%
+    )`;
+  }
 });
 </script>
-

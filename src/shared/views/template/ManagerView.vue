@@ -101,7 +101,7 @@ const go = (item) => {
 
 <style scoped>
 .background {
-  background-color: #e8eaf2;
+  background-color: rgb(var(--v-theme-background));
   height: 100%;
   overflow: scroll;
 }
@@ -118,13 +118,14 @@ const go = (item) => {
   align-items: center;
   text-align: center;
   text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
-  color: #ffffff;
+  color: rgb(var(--v-theme-on-background));
 }
 
 .presentation-text {
-  color: rgb(87, 84, 100);
+  color: rgb(var(--v-theme-on-surface));
   font-weight: 700;
   font-size: 22px;
+  opacity: 0.8;
 }
 
 .back-gradient {
@@ -132,5 +133,8 @@ const go = (item) => {
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
+/* You might also want to add this for better dark mode */
+.card-container {
+  background-color: transparent;
+}
 </style>
-

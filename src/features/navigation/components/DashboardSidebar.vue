@@ -130,13 +130,8 @@ const selectNavigation = (sectionId, childId = null) => {
 </script>
 
 <style scoped>
-.sidebar {
-    background-color: white !important;
-    border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
-}
-
 .sidebar-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -182,7 +177,7 @@ const selectNavigation = (sectionId, childId = null) => {
 }
 
 .v-list-group__items .v-list-item:hover:not(.v-list-item--active) {
-    background-color: rgba(0, 0, 0, 0.03) !important;
+    background-color: rgba(var(--v-theme-on-surface), 0.03) !important;
     transform: translateX(4px);
 }
 

@@ -11,7 +11,7 @@
           <h1 class="title-firebase">{{ $t('titles.drawer.' + title) }}</h1>
           <div
             style="font-size: 20px"
-            class="text-white mb-4 mobile-center"
+            class="mb-4 mobile-center"
           >
             {{ main }}
           </div>
@@ -175,6 +175,7 @@ const emitCallFunc = (func) => {
     text-align: center;
     justify-content: center;
     margin: 0px 20px;
+    color: rgba(var(--v-theme-on-surface), 1);
   }
 
   .page-title {
@@ -196,6 +197,6 @@ const emitCallFunc = (func) => {
     line-height: 44px;
     margin: 0;
     margin-right: 28px;
-    color:aliceblue
+    color:rgba(var(--v-theme-on-surface), 1)
 }
 </style>

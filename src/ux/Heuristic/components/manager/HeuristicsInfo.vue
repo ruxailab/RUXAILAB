@@ -12,7 +12,7 @@
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="primary" class="mr-2">mdi-list-box-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.heuristics') }}</span>
+          <span class="metric-label text-caption text-medium-emphasis">{{ $t('Dashboard.cards.heuristics') }}</span>
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-primary">{{ heuristicsCount }}</div>
       </div>
@@ -21,7 +21,7 @@
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="info" class="mr-2">mdi-help-circle-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.questions') }}</span>
+          <span class="metric-label text-caption text-medium-emphasis">{{ $t('Dashboard.cards.questions') }}</span>
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-info">{{ questionsCount }}</div>
       </div>
@@ -32,7 +32,7 @@
       <div class="metric-item-bottom">
         <div class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="success" class="mr-2">mdi-checkbox-multiple-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.totalOptions') }}</span>
+          <span class="metric-label text-caption text-medium-emphasis">{{ $t('Dashboard.cards.totalOptions') }}</span>
         </div>
         <div class="metric-value-main text-h5 font-weight-bold text-success">{{ optionsCount }}</div>
       </div>
@@ -110,106 +110,47 @@ const optionsCount = computed(() => {
 
 // Computed properties para los chips
 const isQualitative = computed(() => {
-  // Verificamos si el test tiene opciones de texto libre o tipo cualitativo
-  // Asumimos que si hay preguntas sin opciones predefinidas es cualitativo
   if (!props.test?.testStructure) return false
   if (!props.test.testStructure.length) return false
 
-  // Si tiene alguna pregunta abierta o tipo text, es cualitativo
   const hasOpenQuestions = props.test.testStructure.some(heuristic =>
     heuristic.questions?.some(question =>
       question.type === 'text' || question.type === 'textarea' || !question.options?.length
     )
   )
 
-  // Si no hay opciones predefinidas en general, también podría ser cualitativo
   return hasOpenQuestions || optionsCount.value === 0
 })
 
 const hasWeights = computed(() => {
-  // Verificamos si el test tiene el sistema de pesos activado
   return props.test?.hasWeights || props.test?.weightsEnabled || false
 })
 </script>
 
 <style scoped>
-.metrics-grid-top {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.metrics-grid-bottom {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 16px;
+.v-card {
+  background: rgb(var(--v-theme-surface)) !important;
 }
 
 .metric-item {
-  text-align: center;
-  padding: 12px 8px;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: rgba(var(--v-theme-on-surface), 0.04) !important;
 }
 
 .metric-item-bottom {
-  text-align: center;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.02);
-  min-width: 140px;
+  background-color: rgba(var(--v-theme-on-surface), 0.04) !important;
 }
 
-.chips-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
+.text-medium-emphasis {
+  color: rgba(var(--v-theme-on-surface), 0.7) !important;
 }
 
-.metric-label {
-  font-weight: 500;
-}
-
-.metric-value-main {
-  line-height: 1;
-  margin-top: 4px;
-}
-
-/* Responsive: En pantallas pequeñas, cambiar a una columna */
-@media (max-width: 600px) {
-  .metrics-grid-top {
-    grid-template-columns: 1fr;
-    gap: 8px;
+:global(.v-theme--dark) {
+  .metric-item {
+    background-color: rgba(var(--v-theme-on-surface), 0.08) !important;
   }
-
-  .metrics-grid-bottom {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+  
+  .metric-item-bottom {
+    background-color: rgba(var(--v-theme-on-surface), 0.08) !important;
   }
-}
-
-.clickable-header {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.clickable-header:hover .header-icon {
-  color: rgb(var(--v-theme-secondary)) !important;
-}
-
-.clickable-header:hover .clickable-title {
-  color: rgb(var(--v-theme-secondary)) !important;
-}
-
-.header-icon {
-  transition: color 0.2s ease;
-}
-
-.clickable-title {
-  transition: color 0.2s ease;
 }
 </style>

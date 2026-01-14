@@ -27,7 +27,7 @@
 
     <!-- Subtitle Slot -->
     <template #subtitle>
-      <p class="text-body-1 text-grey-darken-1">
+      <p class="text-body-1 text-medium-emphasis">
         {{ $t('pages.settings.manage_test_settings') }}
       </p>
     </template>
@@ -49,14 +49,14 @@
           >
             mdi-file-document-plus-outline
           </v-icon>
-          <h3 class="text-h5 font-weight-bold text-grey-darken-4">
+          <h3 class="text-h5 font-weight-bold text-high-emphasis">
             {{ $t('pages.settings.createTemplate') }}
           </h3>
           <v-spacer />
           <v-btn
             icon
             variant="flat"
-            class="text-grey-darken-1"
+            class="text-medium-emphasis"
             @click="closeDialog"
           >
             <v-icon>mdi-close</v-icon>
@@ -143,10 +143,10 @@
                 </v-icon>
               </div>
               <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+                <h3 class="text-h6 font-weight-bold text-high-emphasis mb-1">
                   {{ $t('pages.settings.basic_information') }}
                 </h3>
-                <p class="text-caption text-grey-darken-1">
+                <p class="text-caption text-medium-emphasis">
                   {{ $t('pages.settings.configure_test_details') }}
                 </p>
               </div>
@@ -179,17 +179,17 @@
                 </v-icon>
               </div>
               <div>
-                <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+                <h3 class="text-h6 font-weight-bold text-high-emphasis mb-1">
                   {{ $t('pages.settings.advanced_settings') }}
                 </h3>
-                <p class="text-caption text-grey-darken-1">
+                <p class="text-caption text-medium-emphasis">
                   {{ $t('pages.settings.fine_tune_configuration') }}
                 </p>
               </div>
             </div>
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-5">
-                <div class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative">
+                <div lass="pa-5 border rounded-lg position-relative" :class="[$vuetify.theme.current.dark ? 'bg-darken-1' : 'bg-grey-lighten-5']">
                   <div class="d-flex align-center ga-2 mb-2">
                     <v-icon
                       color="primary"
@@ -197,9 +197,9 @@
                     >
                       mdi-earth
                     </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.public_access') }}</span>
+                    <span class="font-weight-semibold text-subtitle-2 text-high-emphasis">{{ $t('pages.settings.public_access') }}</span>
                   </div>
-                  <p class="text-caption text-grey-darken-1 mb-4">
+                  <p class="text-caption text-medium-emphasis mb-4">
                     {{ $t('pages.settings.allow_users_view') }}
                   </p>
                   <v-switch
@@ -212,7 +212,7 @@
                     @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
                   />
                 </div>
-                <div class="pa-5 border rounded-lg bg-grey-lighten-5">
+                <div class="pa-5 border rounded-lg" :class="[$vuetify.theme.current.dark ? 'bg-darken-1' : 'bg-grey-lighten-5']">
                   <div class="d-flex align-center ga-2 mb-3">
                     <v-icon
                       color="primary"
@@ -220,7 +220,7 @@
                     >
                       mdi-list-status
                     </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.test_status') }}</span>
+                    <span class="font-weight-semibold text-subtitle-2 text-high-emphasis">{{ $t('pages.settings.test_status') }}</span>
                   </div>
                   <v-select
                     v-model="object.status"
@@ -232,7 +232,7 @@
                     @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
                   />
                 </div>
-                <div class="pa-5 border rounded-lg bg-grey-lighten-5">
+                <div class="pa-5 border rounded-lg" :class="[$vuetify.theme.current.dark ? 'bg-darken-1' : 'bg-grey-lighten-5']">
                   <div class="d-flex align-center ga-2 mb-3">
                     <v-icon
                       color="primary"
@@ -240,7 +240,7 @@
                     >
                       mdi-calendar
                     </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.end_date') }}</span>
+                    <span class="font-weight-semibold text-subtitle-2 text-high-emphasis">{{ $t('pages.settings.end_date') }}</span>
                   </div>
                   <v-menu
                     v-model="dateMenu"
@@ -291,10 +291,10 @@
             </v-icon>
           </div>
           <div>
-            <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
+            <h3 class="text-h6 font-weight-bold text-high-emphasis mb-1">
               {{ $t('pages.settings.quick_actions') }}
             </h3>
-            <p class="text-caption text-grey-darken-1">
+            <p class="text-caption text-medium-emphasis">
               {{ $t('pages.settings.perform_common_tasks') }}
             </p>
           </div>
@@ -370,16 +370,16 @@
             </v-icon>
           </div>
           <div>
-            <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
+            <h3 class="text-h5 font-weight-bold text-high-emphasis mb-1">
               {{ $t('pages.settings.confirm_deletion') }}
             </h3>
-            <p class="text-subtitle-2 text-grey-darken-1">
+            <p class="text-subtitle-2 text-medium-emphasis">
               {{ $t('pages.settings.action_cannot_be_undone') }}
             </p>
           </div>
         </v-card-title>
         <v-card-text class="py-4 px-6">
-          <p class="text-body-2 text-grey-darken-1">
+          <p class="text-body-2 text-medium-emphasis">
             {{ dialogText }} {{ $t('pages.settings.delete_warning') }}
           </p>
         </v-card-text>
@@ -869,8 +869,8 @@ const duplicateStudy = async () => {
 .advanced-card,
 .actions-card {
   border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  background: rgb(var(--v-theme-surface));
   overflow: hidden;
   transition: all 0.2s ease;
 }
@@ -878,8 +878,8 @@ const duplicateStudy = async () => {
 .info-card:hover,
 .advanced-card:hover,
 .actions-card:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: rgba(var(--v-theme-on-surface), 0.24);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
 }
 
 .header-icon {

@@ -348,7 +348,6 @@ const goBack = () => {
 <style scoped>
 .create-study-view {
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 .custom-card {

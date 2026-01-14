@@ -10,7 +10,7 @@
               {{ title }}
             </v-card-title>
 
-            <p class="text-body-1" style="color: #4B5563;">
+            <p class="text-body-1 text-medium-emphasis">
               {{ subtitle }}
             </p>
           </v-col>
@@ -61,9 +61,23 @@ const editorOptions = {
 
 <style scoped>
 .editor-container {
-  background-color: #FFFFFF;
+  background-color: rgb(var(--v-theme-surface));
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .editor-container {
+    background-color: rgb(var(--v-theme-surface));
+    border-color: rgba(var(--v-theme-on-surface), 0.24);
+  }
+}
+
+/* using Vuetify theme classes */
+:global(.v-theme--dark) .editor-container {
+  background-color: rgb(var(--v-theme-surface));
+  border-color: rgba(var(--v-theme-on-surface), 0.24);
 }
 
 :deep(.ql-container) {
@@ -72,17 +86,103 @@ const editorOptions = {
   overflow-y: auto;
   font-size: 16px;
   line-height: 1.5;
-  color: #1F2937;
+  color: rgb(var(--v-theme-on-surface));
   border-radius: 0 0 8px 8px;
+  border: none;
+  font-family: inherit;
 }
 
 :deep(.ql-toolbar) {
   border-radius: 8px 8px 0 0;
-  border: 1px solid #E5E7EB;
-  background-color: #F8FAFC;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  background-color: rgba(var(--v-theme-on-surface), 0.04);
+  border-bottom: none;
 }
 
 :deep(.ql-editor) {
   padding: 16px;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+:deep(.ql-editor.ql-blank::before) {
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-style: normal;
+}
+
+/* Quill tool buttons styling */
+:deep(.ql-toolbar button),
+:deep(.ql-toolbar .ql-picker-label),
+:deep(.ql-toolbar .ql-picker-item) {
+  color: rgb(var(--v-theme-on-surface));
+}
+
+:deep(.ql-toolbar button:hover),
+:deep(.ql-toolbar .ql-picker-label:hover),
+:deep(.ql-toolbar .ql-picker-item:hover) {
+  color: rgb(var(--v-theme-primary));
+}
+
+:deep(.ql-toolbar button.ql-active) {
+  color: rgb(var(--v-theme-primary));
+  background-color: rgba(var(--v-theme-primary), 0.1);
+}
+
+:deep(.ql-toolbar .ql-picker.ql-expanded .ql-picker-label) {
+  color: rgb(var(--v-theme-on-surface));
+}
+
+:deep(.ql-toolbar .ql-picker-options) {
+  background-color: rgb(var(--v-theme-surface));
+  border-color: rgba(var(--v-theme-on-surface), 0.12);
+}
+
+/* Dark mode specific adjustments for Quill */
+@media (prefers-color-scheme: dark) {
+  :deep(.ql-snow .ql-stroke) {
+    stroke: rgb(var(--v-theme-on-surface));
+  }
+  
+  :deep(.ql-snow .ql-fill) {
+    fill: rgb(var(--v-theme-on-surface));
+  }
+  
+  :deep(.ql-snow .ql-picker) {
+    color: rgb(var(--v-theme-on-surface));
+  }
+  
+  :deep(.ql-toolbar) {
+    background-color: rgba(var(--v-theme-on-surface), 0.08);
+  }
+}
+
+:global(.v-theme--dark) {
+  :deep(.ql-snow .ql-stroke) {
+    stroke: rgb(var(--v-theme-on-surface));
+  }
+  
+  :deep(.ql-snow .ql-fill) {
+    fill: rgb(var(--v-theme-on-surface));
+  }
+  
+  :deep(.ql-snow .ql-picker) {
+    color: rgb(var(--v-theme-on-surface));
+  }
+  
+  :deep(.ql-toolbar) {
+    background-color: rgba(var(--v-theme-on-surface), 0.08);
+  }
+}
+
+.text-body-1 {
+  color: rgba(var(--v-theme-on-surface), 0.7) !important;
+}
+
+.editor-container:hover {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+}
+
+:deep(.ql-container:focus-within) {
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 1px rgba(var(--v-theme-primary), 0.2);
 }
 </style>

@@ -171,7 +171,6 @@ onMounted(() => {
 <style scoped>
 .create-study-view {
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 :deep(.v-stepper-header) {

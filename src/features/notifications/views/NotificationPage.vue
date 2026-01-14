@@ -20,7 +20,7 @@
                 <v-icon size="28" color="primary" class="d-none d-sm-flex">mdi-bell-ring-outline</v-icon>
                 <h2 class="text-h5 text-h6-sm">{{ $t('common.notifications') }}</h2>
               </div>
-              <p class="text-caption text-grey-darken-1 mt-1">
+              <p class="text-caption text-medium-emphasis mt-1">
                 Stay updated with your activities and collaborations
               </p>
             </div>
@@ -196,7 +196,7 @@
                         </v-chip>
                       </div>
                       <div class="d-flex align-center gap-2">
-                        <span class="text-caption text-grey-darken-2">
+                        <span class="text-caption text-medium-emphasis">
                           {{ relativeTime(n.createdDate) }}
                         </span>
                         <v-btn
@@ -215,10 +215,10 @@
                         </v-btn>
                       </div>
                     </div>
-                    <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
+                    <p class="text-body-2 text-medium-emphasis mb-2 line-clamp-2">
                       {{ n.message || 'You have a new notification.' }}
                     </p>
-                    <div v-if="n.senderName" class="text-caption text-grey-darken-2">
+                    <div v-if="n.senderName" class="text-caption text-medium-emphasis">
                       <v-icon size="small">mdi-account-outline</v-icon>
                       {{ n.senderName }}
                     </div>
@@ -644,8 +644,7 @@ onUnmounted(() => {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: white;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
 .notification-item:hover {
@@ -655,7 +654,7 @@ onUnmounted(() => {
 }
 
 .notification-item.unread {
-  background: linear-gradient(90deg, rgba(var(--v-theme-primary), 0.03) 0%, white 3%);
+  background: linear-gradient(90deg, rgba(var(--v-theme-primary), 0.05) 0%, rgb(var(--v-theme-surface)) 3%);
   border-left-width: 4px;
 }
 
@@ -673,7 +672,7 @@ onUnmounted(() => {
   height: 10px;
   background: #1976d2;
   border-radius: 50%;
-  border: 2px solid white;
+  border: 2px solid rgb(var(--v-theme-surface));
   animation: pulse 2s infinite;
 }
 

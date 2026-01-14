@@ -143,31 +143,37 @@ defineExpose({
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #374151;
+  color: rgb(var(--v-theme-on-surface));
   margin-bottom: 8px;
+  opacity: 0.9;
 }
 
 .modern-input :deep(.v-field) {
   border-radius: 12px;
-  background: #f9fafb;
+  background: rgba(var(--v-theme-surface-variant), 0.5);
   transition: all 0.2s ease;
 }
 
 .modern-input :deep(.v-field__outline) {
-  border-color: #e5e7eb;
+  border-color: rgba(var(--v-theme-on-surface), 0.12);
 }
 
 .modern-input :deep(.v-field--focused .v-field__outline) {
-  border-color: #3b82f6;
+  border-color: rgb(var(--v-theme-primary));
   border-width: 2px;
 }
 
 .modern-input :deep(.v-field:hover .v-field__outline) {
-  border-color: #d1d5db;
+  border-color: rgba(var(--v-theme-on-surface), 0.24);
 }
 
 .modern-input :deep(.v-field__input) {
   font-size: 0.875rem;
   padding: 16px;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.modern-input :deep(.v-field__input::placeholder) {
+  color: rgba(var(--v-theme-on-surface), 0.5);
 }
 </style>

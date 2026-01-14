@@ -355,16 +355,49 @@ const downloadTemplate = async () => {
 </script>
 
 <style scoped>
-:deep(.v-file-input .v-field) {
-  background-color: #f8fafc;
+/* Dark mode support for the entire card */
+.v-card {
+  background: rgb(var(--v-theme-surface)) !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12) !important;
 }
 
+/* Text color fix for headings */
+.text-on-surface {
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+/* File input field styling - theme aware */
+:deep(.v-file-input .v-field) {
+  background-color: rgba(var(--v-theme-on-surface), 0.04) !important;
+  border-color: rgba(var(--v-theme-on-surface), 0.12) !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+:deep(.v-file-input .v-field__input) {
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+:deep(.v-file-input .v-field__prepend-inner .v-icon) {
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+/* Button shadow fixes for dark mode */
 :deep(.v-btn--variant-elevated) {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(var(--v-theme-on-surface), 0.15) !important;
 }
 
 :deep(.v-btn--variant-elevated:hover) {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(var(--v-theme-on-surface), 0.2) !important;
+}
+
+/* Dialog styling for dark mode */
+:deep(.v-dialog .v-card) {
+  background: rgb(var(--v-theme-surface)) !important;
+}
+
+:deep(.v-dialog .v-card-title),
+:deep(.v-dialog .v-card-text) {
+  color: rgb(var(--v-theme-on-surface)) !important;
 }
 
 /* Perfect side-by-side alignment */
@@ -402,6 +435,30 @@ const downloadTemplate = async () => {
   min-height: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
+}
+
+/* Dark mode specific adjustments */
+:global(.v-theme--dark) {
+  /* File input field in dark mode */
+  :deep(.v-file-input .v-field) {
+    background-color: rgba(var(--v-theme-on-surface), 0.08) !important;
+    border-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  
+  /* Alert styling for dark mode */
+  :deep(.v-alert) {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.2) !important;
+  }
+  
+  :deep(.v-alert .v-alert__content) {
+    color: rgba(var(--v-theme-on-surface), 0.9) !important;
+  }
+  
+  /* Button hover states in dark mode */
+  :deep(.v-btn--variant-elevated:hover) {
+    box-shadow: 0 4px 16px rgba(var(--v-theme-primary), 0.3) !important;
+  }
 }
 
 /* Responsive adjustments */

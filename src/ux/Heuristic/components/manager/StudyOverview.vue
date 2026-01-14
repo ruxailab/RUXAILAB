@@ -70,7 +70,7 @@ const heuristicsCount = computed(() => props.test?.testStructure?.length || 0)
 <style scoped>
 .metric-value {
   font-weight: 700;
-  color: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .metric-label {

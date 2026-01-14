@@ -30,6 +30,11 @@
 
     <v-spacer />
 
+    <!-- Theme Toggle Button -->
+    <v-btn icon class="mx-1" @click="toggleTheme" :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+      <v-icon>{{ isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+    </v-btn>
+
     <locale-changer />
 
     <v-btn
@@ -99,10 +104,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
-import { useDisplay } from 'vuetify';
+import { useDisplay, useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import LocaleChanger from '@/features/language/components/LocaleChanger.vue';
 import HelpButton from '@/features/navigation/components/HelpButton.vue';
@@ -118,13 +123,15 @@ defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer']);
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
-const { smAndDown , xs } = useDisplay();
+const { smAndDown, xs } = useDisplay();
 const { t } = useI18n();
+const theme = useTheme();
 
 // Computed
 const user = computed(() => store.getters.user);
 const iconSize = computed(() => smAndDown.value ? '18' : '20');
 const isDashboard = computed(() => route.path === '/admin');
+const isDark = computed(() => theme.global.name.value === 'myCustomDarkTheme');
 
 // Methods
 const goTo = (path) => {
@@ -136,10 +143,25 @@ const goTo = (path) => {
 };
 
 const toggleDashboardDrawer = () => {
-    // Emitir evento para que lo capture el layout o componente padre
     const event = new CustomEvent('toggle-dashboard-drawer');
     window.dispatchEvent(event);
 };
+
+const toggleTheme = () => {
+  const newTheme = isDark.value ? 'myCustomLightTheme' : 'myCustomDarkTheme';
+  // Use the new Vuetify 3 API
+  theme.change(newTheme);
+  localStorage.setItem('user-theme', newTheme);
+};
+
+// Initialize theme from localStorage
+onMounted(() => {
+  const savedTheme = localStorage.getItem('user-theme');
+  if (savedTheme === 'myCustomDarkTheme') {
+    // Use the new Vuetify 3 API
+    theme.change('myCustomDarkTheme');
+  }
+});
 </script>
 
 <style scoped>

@@ -1,10 +1,9 @@
 <template>
-
-  <v-card elevation="2" class="pa-6">
+  <v-card elevation="2" class="pa-6" :style="{ background: 'rgb(var(--v-theme-surface))' }">
     <!-- Header Section - Made Responsive -->
     <div class="d-flex align-center justify-space-between mb-8 mobile-header">
       <div>
-        <h1 class="text-h4 font-weight-bold text-on-surface">
+        <h1 class="text-h4 font-weight-bold text-high-emphasis">
           {{ $t('HeuristicsOptionsTable.titles.options') }}
         </h1>
       </div>
@@ -19,14 +18,13 @@
     <!-- Options Table - Made Responsive -->
     <div class="options-table-container">
       <!-- Desktop Table View (only show when there are items) -->
-      <v-card v-if="optionsWithFormattedValue.length > 0" class="options-table-card desktop-table">
+      <v-card v-if="optionsWithFormattedValue.length > 0" class="options-table-card desktop-table" :style="{ background: 'rgb(var(--v-theme-surface))' }">
         <v-data-table :headers="headers" :items="optionsWithFormattedValue" :items-per-page="-1"
           class="elevation-0 options-data-table" hide-default-footer>
           <!-- Custom header styling -->
           <template #headers="{ columns }">
             <tr class="table-header">
-              <th v-for="column in columns" :key="column.key" class="text-left font-weight-medium text-ternary pa-4"
-                :style="{ width: column.width }">
+              <th v-for="column in columns" :key="column.key" class="text-left font-weight-medium pa-4" :style="{ width: column.width }">
                 {{ column.title }}
               </th>
             </tr>
@@ -37,17 +35,17 @@
             <tr class="table-row">
               <td class="pa-4 title-cell">
                 <div class="cell-content">
-                  <span class="text-body-1 text-on-surface option-text">{{ item.text }}</span>
+                  <span class="text-body-1 text-high-emphasis option-text">{{ item.text }}</span>
                 </div>
               </td>
               <td class="pa-4 description-cell">
                 <div class="cell-content">
-                  <span class="text-body-2 text-on-surface option-description">{{ item.description || '-' }}</span>
+                  <span class="text-body-2 text-medium-emphasis option-description">{{ item.description || '-' }}</span>
                 </div>
               </td>
               <td class="pa-4 value-cell">
                 <div class="cell-content">
-                  <span class="text-body-1 text-on-surface font-weight-medium option-value">{{ item.value }}</span>
+                  <span class="text-body-1 text-high-emphasis font-weight-medium option-value">{{ item.value }}</span>
                 </div>
               </td>
               <td class="pa-4 actions-cell">
@@ -64,7 +62,7 @@
       </v-card>
 
       <!-- Desktop Empty State (outside the table) -->
-      <v-card v-if="optionsWithFormattedValue.length === 0" class="desktop-empty-state options-table-card">
+      <v-card v-if="optionsWithFormattedValue.length === 0" class="desktop-empty-state options-table-card" :style="{ background: 'rgb(var(--v-theme-surface))' }">
         <div class="text-center empty-options-card--desktop" variant="outlined">
           <v-icon icon="mdi-cog-outline" class="empty-icon" color="primary" />
           <h3 class="empty-title">
@@ -79,7 +77,7 @@
       <!-- Mobile List View (similar to heuristics) -->
       <div class="mobile-options-list">
         <div v-for="(item, index) in optionsWithFormattedValue" :key="item.timestamp" class="option-item-mobile">
-          <v-card variant="outlined" class="mb-3 option-card-mobile">
+          <v-card variant="outlined" class="mb-3 option-card-mobile" :style="{ background: 'rgb(var(--v-theme-surface))' }">
             <!-- Option Header - EXACTLY LIKE HEURISTIC HEADER -->
             <div class="d-flex align-center pa-3 option-header-mobile">
               <div class="d-flex align-center flex-grow-1 option-info-mobile">
@@ -87,11 +85,11 @@
                   {{ item.value }}
                 </v-chip>
                 <div class="option-content-mobile">
-                  <h5 class="text-subtitle-1 font-weight-medium text-on-surface option-title-mobile mb-0">
+                  <h5 class="text-subtitle-1 font-weight-medium text-high-emphasis option-title-mobile mb-0">
                     {{ item.text }}
                   </h5>
                   <p v-if="item.description && item.description !== '-'"
-                    class="text-body-2 text-ternary ma-0 mt-1 option-desc-mobile">
+                    class="text-body-2 text-medium-emphasis ma-0 mt-1 option-desc-mobile">
                     {{ item.description }}
                   </p>
                 </div>
@@ -109,12 +107,12 @@
 
         <!-- Empty state for mobile -->
         <div v-if="optionsWithFormattedValue.length === 0" class="mobile-empty-state">
-          <v-card class="text-center pa-8 empty-options-card-mobile" variant="outlined">
+          <v-card class="text-center pa-8 empty-options-card-mobile" variant="outlined" :style="{ background: 'rgb(var(--v-theme-surface))' }">
             <v-icon icon="mdi-cog-outline" size="64" color="primary" class="mb-4" />
-            <h3 class="text-h6 text-ternary mb-2">
+            <h3 class="text-h6 text-medium-emphasis mb-2">
               {{ $t('HeuristicsOptionsTable.titles.noOptions') }}
             </h3>
-            <p class="text-body-2 text-ternary empty-state-text-mobile">
+            <p class="text-body-2 text-medium-emphasis empty-state-text-mobile">
               {{ $t('HeuristicsOptionsTable.messages.startAddingOptions') }}
             </p>
           </v-card>
@@ -125,7 +123,7 @@
       <div v-if="optionsWithFormattedValue.length > 0" class="options-footer">
         <div class="d-flex align-center justify-space-between flex-wrap gap-2 pa-3">
           <div class="d-flex align-center items-count">
-            <span class="text-caption text-grey">
+            <span class="text-caption text-medium-emphasis">
               {{ optionsWithFormattedValue.length }} {{ optionsWithFormattedValue.length === 1 ? 'option' : 'options' }}
             </span>
           </div>
@@ -263,27 +261,29 @@ const resetForm = () => {
 </script>
 
 <style scoped>
-/* Base styles */
+/* Base styles - updated with theme variables */
 .table-header {
-  background-color: #F8FAFC;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: rgba(var(--v-theme-on-surface), 0.04);
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.12);
 }
 
 .table-row {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
   transition: background-color 0.2s ease;
 }
 
 .table-row:hover {
-  background-color: rgba(59, 130, 246, 0.02);
+  background-color: rgba(var(--v-theme-primary), 0.02);
 }
 
 :deep(.v-data-table) {
   border-radius: 8px;
+  background: rgb(var(--v-theme-surface)) !important;
 }
 
 :deep(.v-data-table__wrapper) {
   border-radius: 8px 8px 0 0;
+  background: rgb(var(--v-theme-surface)) !important;
 }
 
 :deep(.v-btn--variant-elevated) {
@@ -341,7 +341,7 @@ const resetForm = () => {
   }
 
   /* Title size on mobile */
-  .text-h4.font-weight-bold.text-on-surface {
+  .text-h4.font-weight-bold.text-high-emphasis {
     font-size: 1.75rem !important;
     line-height: 1.2;
   }
@@ -360,6 +360,7 @@ const resetForm = () => {
   /* Mobile option item - EXACTLY LIKE HEURISTIC */
   .option-card-mobile {
     border-radius: 8px !important;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.12) !important;
   }
 
   .option-header-mobile {
@@ -389,6 +390,7 @@ const resetForm = () => {
     justify-content: center;
     height: 32px !important;
     margin-top: 2px;
+    border: 1px solid rgba(var(--v-theme-primary), 0.3) !important;
   }
 
   .option-content-mobile {
@@ -408,7 +410,7 @@ const resetForm = () => {
   .option-desc-mobile {
     font-size: 0.875rem !important;
     line-height: 1.4;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(var(--v-theme-on-surface), 0.7);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -436,6 +438,7 @@ const resetForm = () => {
   .empty-options-card-mobile {
     padding: 24px 16px !important;
     margin: 16px 0 !important;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.12) !important;
   }
 
   .empty-options-card-mobile .v-icon {
@@ -457,8 +460,8 @@ const resetForm = () => {
 
   /* Options footer */
   .options-footer {
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
-    background-color: rgba(0, 0, 0, 0.02);
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    background-color: rgba(var(--v-theme-on-surface), 0.02);
     margin-top: 8px;
     border-radius: 0 0 8px 8px;
   }
@@ -472,6 +475,7 @@ const resetForm = () => {
     font-size: 0.875rem !important;
     padding: 6px 12px !important;
     min-height: 36px !important;
+    border: 1px solid rgba(var(--v-theme-primary), 0.5) !important;
   }
 
   /* Adjust padding for mobile */
@@ -488,7 +492,7 @@ const resetForm = () => {
   justify-content: center;
   align-items: center;
   min-height: 300px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
   border-radius: 8px;
 }
 
@@ -515,14 +519,14 @@ const resetForm = () => {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 8px;
-  color: rgba(0, 0, 0, 0.7);
+  color: rgba(var(--v-theme-on-surface), 0.7);
   text-align: center;
 }
 
 .empty-text {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(var(--v-theme-on-surface), 0.6);
   max-width: 480px;
   margin: 0 auto;
   text-align: center;
@@ -582,7 +586,7 @@ const resetForm = () => {
   }
 
   /* Adjust title size */
-  .text-h4.font-weight-bold.text-on-surface {
+  .text-h4.font-weight-bold.text-high-emphasis {
     font-size: 1.5rem !important;
   }
 
@@ -602,6 +606,7 @@ const resetForm = () => {
   .option-desc-mobile {
     font-size: 0.8125rem !important;
     -webkit-line-clamp: 1;
+    color: rgba(var(--v-theme-on-surface), 0.7);
   }
 
   .option-chip-mobile {
@@ -651,7 +656,7 @@ const resetForm = () => {
     gap: 12px;
   }
 
-  .text-h4.font-weight-bold.text-on-surface {
+  .text-h4.font-weight-bold.text-high-emphasis {
     font-size: 1.25rem !important;
   }
 
@@ -682,6 +687,7 @@ const resetForm = () => {
   .option-desc-mobile {
     font-size: 0.75rem !important;
     margin-top: 2px !important;
+    color: rgba(var(--v-theme-on-surface), 0.7);
   }
 
   .option-chip-mobile {
@@ -719,11 +725,14 @@ const resetForm = () => {
   .empty-state-text-mobile {
     font-size: 0.75rem !important;
     line-height: 1.4;
+    color: rgba(var(--v-theme-on-surface), 0.7);
   }
 
   /* Ultra compact footer */
   .options-footer {
     padding: 8px !important;
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    background-color: rgba(var(--v-theme-on-surface), 0.02);
   }
 
   .items-count {
@@ -752,5 +761,43 @@ const resetForm = () => {
 
 :deep(.v-data-table__wrapper) {
   width: 100%;
+}
+
+/* Dark mode specific adjustments */
+:global(.v-theme--dark) {
+  .table-header {
+    background-color: rgba(var(--v-theme-on-surface), 0.08) !important;
+    border-bottom-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  
+  .table-row {
+    border-bottom-color: rgba(var(--v-theme-on-surface), 0.16) !important;
+  }
+  
+  .table-row:hover {
+    background-color: rgba(var(--v-theme-primary), 0.08) !important;
+  }
+  
+  .option-card-mobile {
+    border-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  
+  .option-chip-mobile {
+    background-color: rgba(var(--v-theme-primary), 0.2) !important;
+    border-color: rgba(var(--v-theme-primary), 0.4) !important;
+  }
+  
+  .options-footer {
+    background-color: rgba(var(--v-theme-on-surface), 0.06) !important;
+    border-top-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  
+  .empty-title {
+    color: rgba(var(--v-theme-on-surface), 0.9) !important;
+  }
+  
+  .empty-text {
+    color: rgba(var(--v-theme-on-surface), 0.8) !important;
+  }
 }
 </style>

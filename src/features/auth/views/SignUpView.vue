@@ -184,14 +184,14 @@ const onGoogleSignInError = (error) => {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: rgb(var(--v-theme-background));
   flex-wrap: wrap;
 }
 
 .logo-side {
   width: 50%;
   min-height: 100%;
-  background-color: #ffffff;
+  background-color: rgb(var(--v-theme-surface));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,6 +208,7 @@ const onGoogleSignInError = (error) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgb(var(--v-theme-background));
 }
 
 .signup-box {
@@ -215,13 +216,13 @@ const onGoogleSignInError = (error) => {
   max-width: 450px;
   padding: 30px 32px 32px 32px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgb(var(--v-theme-surface));
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .subtitle {
   font-size: 0.95rem;
-  color: #555;
+  color: rgba(var(--v-theme-on-surface), 0.7);
   margin-bottom: 1.5rem;
 }
 
@@ -251,5 +252,10 @@ const onGoogleSignInError = (error) => {
     font-size: 0.9rem;
     margin-bottom: 1rem;
   }
+}
+
+/* Dark mode specific adjustments */
+:deep(.v-theme--dark) .signup-box {
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.3);
 }
 </style>

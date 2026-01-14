@@ -21,7 +21,7 @@
         <v-row>
           <v-col cols="12">
             <div class="d-flex align-center gap-3">
-              <h1 class="text-h4">
+              <h1 class="text-h4 text-high-emphasis">
                 {{
                   test.testTitle || $t('Dashboard.managerView.heuristicStudy')
                 }}
@@ -40,7 +40,7 @@
         <!-- Título de estadísticas -->
         <v-row>
           <v-col cols="12">
-            <h2 class="text-h5">
+            <h2 class="text-h5 text-high-emphasis">
               {{ $t('Dashboard.managerView.generalStatistics') }}
             </h2>
           </v-col>
@@ -56,7 +56,7 @@
 
         <v-row>
           <v-col cols="12">
-            <h2 class="text-h5">
+            <h2 class="text-h5 text-high-emphasis">
               {{ $t('Dashboard.managerView.modules') }}
             </h2>
           </v-col>
@@ -199,6 +199,55 @@ onMounted(async () => {
   max-width: none !important;
 }
 
+/* Primary to Surface color fixes */
+:deep(.v-card) {
+  background: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+:deep(.v-card-title),
+:deep(.v-card-text) {
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+:deep(.v-chip) {
+  background: rgba(var(--v-theme-on-surface), 0.08) !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+:deep(.v-chip--variant-outlined) {
+  border-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+}
+
+:deep(.v-divider) {
+  border-color: rgba(var(--v-theme-on-surface), 0.12) !important;
+}
+
+/* Fix for ManagerView background */
+:deep(.manager-view-container) {
+  background: rgb(var(--v-theme-background)) !important;
+}
+
+/* Fix for progress circular in loading state */
+.v-progress-circular {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* Dark mode adjustments */
+:global(.v-theme--dark) {
+  :deep(.v-chip) {
+    background: rgba(var(--v-theme-on-surface), 0.12) !important;
+  }
+  
+  :deep(.v-chip--variant-outlined) {
+    border-color: rgba(var(--v-theme-on-surface), 0.36) !important;
+  }
+  
+  :deep(.v-divider) {
+    border-color: rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+}
+
 @media (max-width: 1200px) {
   .large-margins {
     width: 80% !important;
@@ -226,5 +275,11 @@ onMounted(async () => {
 /* Solo igualar alturas de los módulos, no las cards de estadísticas */
 .modules-section :deep(.v-card) {
   height: 300px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.modules-section :deep(.v-card:hover) {
+  border-color: rgba(var(--v-theme-primary), 0.3);
+  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.1);
 }
 </style>

@@ -180,7 +180,7 @@ const activities = computed(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(248, 249, 250, 0.8);
+  background: rgba(var(--v-theme-surface), 0.8);
   backdrop-filter: blur(0.5px);
   border-radius: 0 0 12px 12px;
   z-index: 1;

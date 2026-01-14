@@ -42,7 +42,8 @@
       </template>
 
       <template #default>
-        <div class="custom-dropdown bg-white rounded-lg">
+        <!-- Remove hardcoded bg-white class -->
+        <div class="custom-dropdown rounded-lg">
         <!-- User Info -->
         <div class="pa-6 d-flex align-center">
 
@@ -68,7 +69,8 @@
         
           <div class="ml-4 flex-grow-1">
             <div class="d-flex align-center">
-              <span class="text-h6 font-weight-bold text-grey-darken-4">
+              <!-- Change hardcoded text color to theme-aware -->
+              <span class="text-h6 font-weight-bold text-high-emphasis">
                 {{ username || $t('buttons.username') }}
               </span>
             
@@ -77,7 +79,8 @@
               </v-icon>
             </div>
           
-            <span class="text-subtitle-2 text-grey-darken-1">
+            <!-- Change hardcoded text color to theme-aware -->
+            <span class="text-subtitle-2 text-medium-emphasis">
               {{ user?.email || '' }}
             </span>
           </div>
@@ -239,5 +242,11 @@ onMounted(() => {
 .custom-dropdown {
     border-radius: 12px;
     overflow: hidden;
+    background-color: rgb(var(--v-theme-surface));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.v-menu__content) {
+    background-color: rgb(var(--v-theme-surface));
 }
 </style>

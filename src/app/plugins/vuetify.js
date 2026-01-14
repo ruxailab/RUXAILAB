@@ -20,6 +20,30 @@ const myCustomLightTheme = {
     ternary: '#546e7a',
     forth: '#f5f7fa',
     testPrimary: '#3f51b5',
+    background: '#EDEDED', // White from brand colors
+    surface: '#FFFFFF',
+  },
+}
+
+const myCustomDarkTheme = {
+  dark: true,
+  colors: {
+    primary: '#00213F', // Lighter blue for better contrast in dark mode
+    secondary: '#FF425A',
+    accent: '#F97316',
+    error: '#EF4444',
+    warning: '#F59E0B',
+    success: '#22C55E',
+    'on-surface': '#E0E0E0',
+    excellent: '#4caf50',
+    good: '#2196f3',
+    ok: '#ff9800',
+    poor: '#f44336',
+    ternary: '#546e7a',
+    forth: '#1E1E1E',
+    testPrimary: '#7986CB',
+    background: '#1D1D1B', // Black from brand colors
+    surface: '#252525',
   },
 }
 
@@ -32,6 +56,7 @@ export default createVuetify({
     defaultTheme: 'myCustomLightTheme',
     themes: {
       myCustomLightTheme,
+      myCustomDarkTheme,
     },
   }
 })

@@ -14,10 +14,10 @@
       <v-container fluid class="pa-6">
         <!-- 🔹 Page header (dynamic title + subtitle) -->
         <div class="content-header">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4">
+          <h1 class="text-h4 font-weight-bold" :style="{ color: 'rgb(var(--v-theme-on-surface))' }">
             {{ currentPageTitle }}
           </h1>
-          <p class="text-h6 text-grey-darken-1">
+          <p class="text-h6" :style="{ color: 'rgba(var(--v-theme-on-surface), 0.7)' }">
             {{
               activeSection === 'studies'
                 ? 'Manage your research studies'
@@ -313,13 +313,11 @@ watch(
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #f5f6fa;
 }
 
 .main-content {
   padding: 0;
   flex: 1;
-  background-color: #fff;
 }
 
 .content-header {

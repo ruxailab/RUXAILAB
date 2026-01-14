@@ -320,7 +320,6 @@ const goTo = (test) => {
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  background-color: white;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
