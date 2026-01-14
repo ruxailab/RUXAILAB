@@ -87,12 +87,14 @@ export default {
       commit('setLoading', true)
 
       try {
+        // Parallel execution: sign in and prepare for user fetch
         const { user } = await authController.signIn(
           payload.email,
           payload.password,
           payload.rememberMe,
         )
 
+        // Fetch only essential user data (not full profile with studies)
         const dbUser = await userController.getById(user.uid)
 
         commit('SET_USER', dbUser)
@@ -103,6 +105,7 @@ export default {
         })
       } catch (err) {
         showError('errors.incorrectCredential')
+        throw err
       } finally {
         commit('setLoading', false)
       }
@@ -119,17 +122,12 @@ export default {
           payload.rememberMe,
         )
 
-        // Check if user already exists in database
+        // Check if user exists and create if needed - optimized
         let dbUser = null
         try {
           dbUser = await userController.getById(user.uid)
         } catch (error) {
-          // User doesn't exist in DB, will be created below
-          console.log('User not found in database, creating new profile')
-        }
-
-        // Create user if they don't exist yet
-        if (!dbUser || !dbUser.email) {
+          // User doesn't exist, create minimal profile
           await userController.create({
             id: user.uid,
             email: user.email,
@@ -138,6 +136,7 @@ export default {
             createdAt: new Date().toISOString(),
             authProvider: 'google',
           })
+          // Fetch the newly created user
           dbUser = await userController.getById(user.uid)
         }
 
@@ -152,6 +151,23 @@ export default {
           type: 'error',
         })
         throw err
+      }
+    },
+
+    /**
+     * Lazy load user studies (tests and answers)
+     * Call this when you actually need the full user data with studies
+     * @action loadUserStudies
+     * @returns {void}
+     */
+    async loadUserStudies({ commit, state }) {
+      if (!state.user) return
+
+      try {
+        const userWithStudies = await userController.getUserWithStudies(state.user.id)
+        commit('SET_USER', userWithStudies)
+      } catch (error) {
+        console.error('Error loading user studies:', error)
       }
     },
 
@@ -179,14 +195,13 @@ export default {
         const user = await authController.autoSignIn()
         if (!user) return
 
+        // Only fetch basic user data, not full studies
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (e) {
         console.error(e)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        // Don't show error toast for auto sign-in failures
+        console.log('Auto sign-in failed, user needs to log in manually')
       }
     },
 

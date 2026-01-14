@@ -33,8 +33,13 @@ export default class UserController extends Controller {
   }
 
   async getById(docId) {
-    const res = await super.readOne(COLLECTION, docId);
-    return new User(Object.assign({ id: res.id }, res.data()));
+    try {
+      const res = await super.readOne(COLLECTION, docId);
+      return new User(Object.assign({ id: res.id }, res.data()));
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw error;
+    }
   }
 
   async getUserWithStudies(docId) {

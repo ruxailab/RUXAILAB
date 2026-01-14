@@ -144,14 +144,18 @@ const onSignIn = async () => {
   if (!valid) return
   
   try {
-    store.commit('setLoading', true)
     loadingType.value = 'signin'
+    store.commit('setLoading', true)
+    
+    // Sign in and navigate immediately after auth success
     await store.dispatch('signin', {
       email: email.value,
       password: password.value,
       rememberMe: rememberMe.value,
     })
-    await router.push('/admin')
+    
+    // Navigate immediately - don't wait for additional data loading
+    router.push('/admin')
   } catch (error) {
     console.error('Authentication error:', error)
   } finally {

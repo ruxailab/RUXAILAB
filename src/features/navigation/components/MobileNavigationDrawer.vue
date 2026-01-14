@@ -289,14 +289,17 @@ const getStatusColor = (status) => {
   transition: all 0.2s ease-in-out;
   margin-bottom: 4px;
   color: var(--v-primary-base, #00213F) !important;
+  font-size: 1.1rem !important;
 }
 
 .nav-item .v-list-item__prepend .v-icon {
   color: var(--v-primary-base, #00213F) !important;
+  font-size: 22px !important;
 }
 
 .nav-item .v-list-item-title {
   color: var(--v-primary-base, #00213F) !important;
+  font-size: 1.1rem !important;
 }
 
 .nav-item.v-list-item--active {
@@ -327,11 +330,13 @@ const getStatusColor = (status) => {
   text-transform: none !important;
   letter-spacing: normal !important;
   font-weight: 600 !important;
+  font-size: 1.1rem !important;
 }
 
 .action-section .v-btn {
   text-transform: none !important;
   letter-spacing: normal !important;
   font-weight: 500 !important;
+  font-size: 1rem !important;
 }
 </style>

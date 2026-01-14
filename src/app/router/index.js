@@ -15,6 +15,9 @@ const router = createRouter({
   routes,
 })
 
+// Track if autoSignIn has been attempted to avoid redundant calls
+let autoSignInAttempted = false
+
 router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
   let user = store.state.Auth.user
@@ -27,7 +30,9 @@ router.beforeEach(async (to, from, next) => {
     return next() // Allow immediate access without any checks
   }
 
-  if (!user) {
+  // Only attempt autoSignIn once per session and only if no user exists
+  if (!user && !autoSignInAttempted) {
+    autoSignInAttempted = true
     await store.dispatch('autoSignIn')
     user = store.state.Auth.user
   }

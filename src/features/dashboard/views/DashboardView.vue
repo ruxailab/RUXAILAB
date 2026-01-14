@@ -2,10 +2,10 @@
   <v-container fluid class="pa-0">
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
-      <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
+      <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2 text-center">
         Welcome back, {{ userDisplayName }}! 👋
       </h1>
-      <p class="text-subtitle-1 text-grey-darken-1">
+      <p class="text-subtitle-1 text-grey-darken-1 text-center">
         Here's what's happening with your research projects today
       </p>
     </div>
@@ -186,7 +186,7 @@ onMounted(() => {
 }
 
 .dashboard-header {
-  text-align: left;
+  text-align: center;
 }
 
 .component-height {

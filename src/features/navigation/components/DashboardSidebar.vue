@@ -154,6 +154,7 @@ const selectNavigation = (sectionId, childId = null) => {
     text-transform: none !important;
     letter-spacing: normal !important;
     font-weight: 600 !important;
+    font-size: 1.2rem !important;
     transition: transform 0.2s ease-in-out !important;
 }
 
@@ -186,34 +187,52 @@ const selectNavigation = (sectionId, childId = null) => {
     transform: translateX(4px);
 }
 
+/* Section Headers - Main Navigation Items */
 .section-header {
     font-weight: 600 !important;
     border-radius: 8px;
     margin-bottom: 4px;
 }
 
-.section-header .v-list-item__prepend .v-icon {
+.section-header :deep(.v-list-item-title) {
+    font-size: 1.3rem !important;
+    line-height: 1.5 !important;
+}
+
+.section-header :deep(.v-list-item__prepend) {
     margin-right: 12px;
+}
+
+.section-header :deep(.v-list-item__prepend .v-icon) {
+    font-size: 30px !important;
     transition: transform 0.2s ease-in-out;
 }
 
-.section-header:hover .v-list-item__prepend .v-icon {
+.section-header:hover :deep(.v-list-item__prepend .v-icon) {
     transform: scale(1.1);
 }
 
+/* Subsection Items */
 .subsection-item {
-    font-size: 0.9rem;
     padding: 0;
     opacity: 0.85;
     transition: opacity 0.2s ease-in-out;
+}
+
+.subsection-item :deep(.v-list-item-title) {
+    font-size: 1.2rem !important;
+    line-height: 1.5 !important;
 }
 
 .subsection-item:hover {
     opacity: 1;
 }
 
-.subsection-item .v-list-item__prepend .v-icon {
-    font-size: 18px;
+.subsection-item :deep(.v-list-item__prepend) {
     margin-right: 12px;
+}
+
+.subsection-item :deep(.v-list-item__prepend .v-icon) {
+    font-size: 26px !important;
 }
 </style>
