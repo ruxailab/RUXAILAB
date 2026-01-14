@@ -76,7 +76,7 @@
 
       <!-- Mobile List View (similar to heuristics) -->
       <div class="mobile-options-list">
-        <div v-for="(item, index) in optionsWithFormattedValue" :key="item.timestamp" class="option-item-mobile">
+        <div v-for="item in optionsWithFormattedValue" :key="item.timestamp" class="option-item-mobile">
           <v-card variant="outlined" class="mb-3 option-card-mobile" :style="{ background: 'rgb(var(--v-theme-surface))' }">
             <!-- Option Header - EXACTLY LIKE HEURISTIC HEADER -->
             <div class="d-flex align-center pa-3 option-header-mobile">
