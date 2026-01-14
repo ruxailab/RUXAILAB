@@ -24,7 +24,7 @@
           <!-- Custom header styling -->
           <template #headers="{ columns }">
             <tr class="table-header">
-              <th v-for="column in columns" :key="column.key" class="text-left font-weight-medium pa-4" :style="{ width: column.width }">
+              <th v-for="column in columns" :key="column.key" class="text-left font-weight-medium pa-4" scope="col" :style="{ width: column.width }">
                 {{ column.title }}
               </th>
             </tr>
