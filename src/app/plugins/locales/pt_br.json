@@ -195,6 +195,8 @@
     "cta": "Começar"
   },
   "Dashboard": {
+    "welcomeBack": "Bem-vindo de volta, {name}!",
+    "subtitle": "Veja o que está acontecendo com seus projetos de pesquisa hoje",
     "createNewTest": "Criar novo estudo",
     "tests": "Testes",
     "templates": "Modelos",
@@ -204,7 +206,49 @@
     "publicTests": "Testes públicos",
     "sessions": "Sessões",
     "personal": "Pessoais",
-    "explore": "Explorar"
+    "explore": "Explorar",
+    "activeStudiesOverview": "Visão geral dos estudos ativos",
+    "viewAll": "Ver tudo",
+    "showMore": "Ver mais",
+    "showLess": "Ver menos",
+    "progress": "Progresso",
+    "participants": "Participantes",
+    "participantsLabel": "Participantes",
+    "daysLeft": "dias restantes",
+    "dayLeft": "dia restante",
+    "studies": "Estudos",
+    "storage": "Armazenamento",
+    "free": "Grátis",
+    "plan": "Plano",
+    "recentActivity": "Atividade recente",
+    "comingSoon": "Em breve",
+    "mostUsedMethods": "Métodos mais usados",
+    "use": "uso",
+    "uses": "usos",
+    "noDataAvailable": "Nenhum dado disponível ainda",
+    "createFirstStudy": "Crie seu primeiro estudo para ver estatísticas aqui.",
+    "nextSession": "Próxima sessão",
+    "noSessionsScheduled": "Nenhuma sessão agendada",
+    "nextSessionWillAppear": "Sua próxima sessão aparecerá aqui",
+    "latestBlogPosts": "Últimos posts do blog",
+    "viewBlog": "Ver blog",
+    "date": "Data",
+    "time": "Hora",
+    "status": {
+      "active": "Ativo",
+      "recruiting": "Recrutando",
+      "paused": "Pausado",
+      "finished": "Finalizado",
+      "unknown": "Desconhecido"
+    },
+    "webinar": {
+      "ended": "Encerrado",
+      "live": "Ao vivo",
+      "today": "Hoje",
+      "joinNow": "Entrar agora",
+      "webinarEnded": "Webinar encerrado",
+      "startingToday": "Começa hoje"
+    }
   },
   "HeuristicsTable": {
     "titles": {

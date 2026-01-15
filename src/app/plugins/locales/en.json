@@ -217,6 +217,8 @@
     "cta": "Get started"
   },
   "Dashboard": {
+    "welcomeBack": "Welcome back, {name}!",
+    "subtitle": "Here's what's happening with your research projects today",
     "createNewTest": "Create new study",
     "tests": "Tests",
     "templates": "Templates",
@@ -227,6 +229,48 @@
     "sessions": "Sessions",
     "personal": "Personal",
     "explore": "Explore",
+    "activeStudiesOverview": "Active Studies Overview",
+    "viewAll": "View All",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "progress": "Progress",
+    "participants": "participants",
+    "participantsLabel": "Participants",
+    "daysLeft": "days left",
+    "dayLeft": "day left",
+    "studies": "Studies",
+    "storage": "Storage",
+    "free": "Free",
+    "plan": "Plan",
+    "recentActivity": "Recent Activity",
+    "comingSoon": "Coming Soon",
+    "mostUsedMethods": "Most used methods",
+    "use": "Use",
+    "uses": "Uses",
+    "noDataAvailable": "No data available yet",
+    "createFirstStudy": "Create your first study to see statistics here.",
+    "nextSession": "Next Session",
+    "noSessionsScheduled": "No sessions scheduled",
+    "nextSessionWillAppear": "Your next session will appear here",
+    "latestBlogPosts": "Latest Blog Posts",
+    "viewBlog": "View Blog",
+    "date": "Date",
+    "time": "Time",
+    "status": {
+      "active": "Active",
+      "recruiting": "Recruiting",
+      "paused": "Paused",
+      "finished": "Finished",
+      "unknown": "Unknown"
+    },
+    "webinar": {
+      "ended": "Ended",
+      "live": "Live",
+      "today": "Today",
+      "joinNow": "Join Now",
+      "webinarEnded": "Webinar Ended",
+      "startingToday": "Starting Today"
+    },
     "cards": {
       "recentActivity": "Recent Activity",
       "activities7Days": "Activities (7 days total)",
@@ -581,7 +625,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },
