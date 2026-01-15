@@ -202,6 +202,8 @@
     "cta": "Начать"
   },
   "Dashboard": {
+    "welcomeBack": "С возвращением, {name}!",
+    "subtitle": "Вот что происходит с вашими исследовательскими проектами сегодня",
     "createNewTest": "Создать новое исследование",
     "tests": "Тесты",
     "templates": "Шаблоны",
@@ -211,7 +213,49 @@
     "publicTests": "Публичные тесты",
     "sessions": "Сессии",
     "personal": "Личное",
-    "explore": "Исследовать"
+    "explore": "Исследовать",
+    "activeStudiesOverview": "Обзор активных исследований",
+    "viewAll": "Посмотреть все",
+    "showMore": "Показать больше",
+    "showLess": "Показать меньше",
+    "progress": "Прогресс",
+    "participants": "Участников",
+    "participantsLabel": "Участники",
+    "daysLeft": "дней осталось",
+    "dayLeft": "день остался",
+    "studies": "Исследования",
+    "storage": "Хранилище",
+    "free": "Бесплатно",
+    "plan": "План",
+    "recentActivity": "Недавняя активность",
+    "comingSoon": "Скоро",
+    "mostUsedMethods": "Наиболее используемые методы",
+    "use": "использование",
+    "uses": "использований",
+    "noDataAvailable": "Данных пока нет",
+    "createFirstStudy": "Создайте свое первое исследование, чтобы увидеть статистику здесь.",
+    "nextSession": "Следующая сессия",
+    "noSessionsScheduled": "Сессии не запланированы",
+    "nextSessionWillAppear": "Ваша следующая сессия появится здесь",
+    "latestBlogPosts": "Последние статьи в блоге",
+    "viewBlog": "Смотреть блог",
+    "date": "Дата",
+    "time": "Время",
+    "status": {
+      "active": "Активный",
+      "recruiting": "Набор",
+      "paused": "Приостановлен",
+      "finished": "Завершен",
+      "unknown": "Неизвестно"
+    },
+    "webinar": {
+      "ended": "Завершен",
+      "live": "В эфире",
+      "today": "Сегодня",
+      "joinNow": "Присоединиться",
+      "webinarEnded": "Вебинар завершен",
+      "startingToday": "Начинается сегодня"
+    }
   },
   "HeuristicsTable": {
     "titles": {

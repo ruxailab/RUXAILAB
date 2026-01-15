@@ -189,6 +189,8 @@
     "cta": "ابدأ"
   },
   "Dashboard": {
+    "welcomeBack": "مرحباً بعودتك، {name}!",
+    "subtitle": "إليك ما يحدث في مشاريعك البحثية اليوم",
     "createNewTest": "إنشاء دراسة جديدة",
     "tests": "الاختبارات",
     "templates": "القوالب",
@@ -198,7 +200,49 @@
     "publicTests": "الاختبارات العامة",
     "sessions": "الجلسات",
     "personal": "شخصي",
-    "explore": "استكشف"
+    "explore": "استكشف",
+    "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "progress": "التقدم",
+    "participants": "المشاركون",
+    "participantsLabel": "المشاركون",
+    "daysLeft": "أيام متبقية",
+    "dayLeft": "يوم متبقي",
+    "studies": "الدراسات",
+    "storage": "التخزين",
+    "free": "مجاني",
+    "plan": "الخطة",
+    "recentActivity": "النشاط الأخير",
+    "comingSoon": "قريباً",
+    "mostUsedMethods": "الطرق الأكثر استخداماً",
+    "use": "استخدام",
+    "uses": "استخدامات",
+    "noDataAvailable": "لا توجد بيانات متاحة حتى الآن",
+    "createFirstStudy": "أنشئ دراستك الأولى لرؤية الإحصائيات هنا.",
+    "nextSession": "الجلسة التالية",
+    "noSessionsScheduled": "لا توجد جلسات مجدولة",
+    "nextSessionWillAppear": "ستظهر جلستك التالية هنا",
+    "latestBlogPosts": "أحدث منشورات المدونة",
+    "viewBlog": "عرض المدونة",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "status": {
+      "active": "نشط",
+      "recruiting": "توظيف",
+      "paused": "متوقف",
+      "finished": "منتهي",
+      "unknown": "غير معروف"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الندوة",
+      "startingToday": "يبدأ اليوم"
+    }
   },
   "HeuristicsTable": {
     "titles": {
