@@ -397,7 +397,7 @@
 // Force cache bust: v2
 import { ref, computed, watchEffect } from 'vue'
 import { useStore } from 'vuex'
-import { calculateTAMScore, getTAMAcceptanceLevel, getAcceptanceColor, formatDimensionName, calculateDimensionScore } from '../../utils/tamCalculator'
+import { calculateTAMScore} from '../../utils/tamCalculator'
 
 const store = useStore()
 
