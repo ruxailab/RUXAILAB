@@ -34,17 +34,18 @@
               :title="$t('UserTestView.WelcomeStep.steps.consent')"
             />
             <v-divider />
+
             <v-stepper-item
-              v-if="hasEyeTracking"
               value="2"
-              title="Calibration"
-            />
-            <v-divider v-if="hasEyeTracking" />
-            <v-stepper-item
-              :value="hasEyeTracking ? '3' : '2'"
               :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
             />
             <v-divider />
+            <v-stepper-item
+              v-if="hasEyeTracking"
+              value="3"
+              title="Calibration"
+            />
+            <v-divider v-if="hasEyeTracking" />
             <v-stepper-item
               :value="hasEyeTracking ? '4' : '3'"
               :title="$t('UserTestView.WelcomeStep.steps.tasks')"
