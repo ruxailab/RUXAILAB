@@ -581,7 +581,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },
@@ -1120,5 +1119,52 @@
   "taskCreation": {
     "taskDescription": "Task Description",
     "taskDescriptionHelper": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow."
+  },
+  "adminDashboard": {
+    "pageTitles": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "communityTemplates": "Community Templates",
+      "communityStudies": "Community Studies",
+      "default": "Admin"
+    },
+    "pageSubtitles": {
+      "studies": "Manage your research studies",
+      "templates": "Browse and manage templates",
+      "sessions": "View and manage test sessions",
+      "notifications": "Stay updated with your notifications",
+      "profile": "Manage your account settings",
+      "dashboard": "Overview of your research activities"
+    }
+  },
+  "lists": {
+    "searchStudies": "Search studies...",
+    "searchTemplates": "Search templates...",
+    "searchSessions": "Search sessions...",
+    "reset": "Reset",
+    "creationDate": "Creation Date",
+    "selectRange": "Select range",
+    "method": "Method",
+    "status": "Status",
+    "visibility": "Visibility",
+    "ownership": "Ownership",
+    "participants": "Participants",
+    "evaluator": "Evaluator",
+    "sessionDate": "Session Date",
+    "all": "All",
+    "allStudies": "All Studies",
+    "allStatuses": "All Statuses",
+    "myStudies": "My Studies",
+    "whereICollaborate": "Where I Collaborate",
+    "public": "Public",
+    "private": "Private",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "noActiveSessions": "No active sessions found"
   }
 }

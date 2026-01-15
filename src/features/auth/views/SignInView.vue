@@ -185,7 +185,7 @@ const onGoogleSignInSuccess = async () => {
 const onGoogleSignInError = (error) => {
   console.error('Google sign-in error:', error)
   loadingType.value = ''
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
 }
 </script>
 

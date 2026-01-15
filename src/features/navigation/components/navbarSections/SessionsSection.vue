@@ -164,6 +164,14 @@ const store = useStore();
 const router = useRouter();
 const { t } = useI18n();
 
+// ===== Props =====
+const props = defineProps({
+  sessions: {
+    type: Array,
+    default: () => [],
+  },
+});
+
 const search = ref('');
 const activeSection = ref('dashboard');
 const filteredModeratedSessions = ref([]);
