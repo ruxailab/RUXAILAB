@@ -306,7 +306,7 @@
             color="primary"
             variant="flat"
             class="text-capitalize"
-            :disabled="!editProfileValid"
+            :disabled="!hasProfileChanges || !editProfileValid"
             @click="saveProfile"
           >
             <v-icon start> mdi-content-save </v-icon>
@@ -484,19 +484,26 @@ const deleteConfirmText = ref('')
 const isSmallScreen = ref(false)
 const editProfileValid = ref(false)
 
+const hasProfileChanges = computed(() => {
+  return (
+    editProfileData.value.username !== userprofile.value.username ||
+    editProfileData.value.contactNo !== userprofile.value.contactNo ||
+    editProfileData.value.country !== userprofile.value.country ||
+    editProfileData.value.profileImage !== userprofile.value.profileImage
+  )
+})
+
 const passwordForm = ref(null)
 const editProfileForm = ref(null)
 const fileInput = ref(null)
 
-// Validation rules
+// Validation rules - fields are optional but validate format if provided
 const usernameRules = [
-  (v) => !!v || t('profile.usernameRequired'),
-  (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
+  (v) => !v || v.length >= 3 || t('profile.usernameMinLength'),
 ]
-const countryRules = [(v) => !!v || t('profile.countryRequired')]
+const countryRules = []
 const contactRules = [
-  (v) => !!v || t('profile.contactNumberRequired'),
-  (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
+  (v) => !v || /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
 ]
 const passwordRules = [
   (v) => !!v || t('profile.passwordRequired'),
