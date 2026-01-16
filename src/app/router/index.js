@@ -32,7 +32,6 @@ router.beforeEach(async (to, from, next) => {
     to.path.includes('/accessibility/') && to.path.includes('/preview/')
 
   if (isAccessibilityPreview) {
-    console.log('Accessibility preview route detected - allowing public access')
     return next() // Allow immediate access without any checks
   }
 
