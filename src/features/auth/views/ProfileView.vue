@@ -207,38 +207,15 @@
           {{ $t('profile.editProfile') }}
         </v-card-title>
         <v-card-text>
-          <div class="text-center mb-6">
-            <v-avatar size="100" class="avatar-transition bg-ternary">
-              <v-img :src="editProfileData.profileImage" alt="No Image" />
-            </v-avatar>
-            <div class="d-flex justify-center align-center gap-2 mt-3">
-              <v-btn icon size="small" @click="selectImage" color="primary">
-                <v-icon>mdi-camera</v-icon>
-                <v-tooltip activator="parent" location="bottom">
-                  {{ t('profile.uploadProfilePicture') }}
-                </v-tooltip>
-              </v-btn>
-              <v-btn
-                v-if="editProfileData.profileImage"
-                icon
-                size="small"
-                @click="removeProfilePicture"
-                color="error"
-              >
-                <v-icon>mdi-delete</v-icon>
-                <v-tooltip activator="parent" location="bottom">
-                  {{ t('profile.removeProfilePicture') }}
-                </v-tooltip>
-              </v-btn>
-            </div>
-            <input
-              ref="fileInput"
-              type="file"
-              accept="image/*"
-              style="display: none"
-              @change="uploadProfileImage"
-            />
-          </div>
+          <!-- Profile Image Upload Component -->
+          <ProfileImageUpload
+            ref="profileImageUpload"
+            :current-image="editProfileData.profileImage"
+            :size="100"
+            @image-selected="handleImageSelected"
+            @image-removed="handleImageRemoved"
+          />
+          
           <v-form ref="editProfileForm" v-model="editProfileValid">
             <v-text-field
               v-model="editProfileData.username"
@@ -298,7 +275,7 @@
           <v-btn
             variant="text"
             class="text-capitalize"
-            @click="editProfileDialog = false"
+            @click="handleCancelEdit"
           >
             {{ $t('common.cancel') }}
           </v-btn>
@@ -306,7 +283,7 @@
             color="primary"
             variant="flat"
             class="text-capitalize"
-            :disabled="!editProfileValid"
+            :disabled="!saveButtonEnabled"
             @click="saveProfile"
           >
             <v-icon start> mdi-content-save </v-icon>
@@ -429,8 +406,9 @@
     </v-dialog>
   </div>
 </template>
+
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
@@ -450,6 +428,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage'
 import { countries } from '@/shared/constants/countries'
+import ProfileImageUpload from '@/features/auth/components/ProfileImageUpload.vue'
 
 const store = useStore()
 const user = computed(() => store.getters.user || { email: '' })
@@ -483,10 +462,13 @@ const deleteStep = ref(1)
 const deleteConfirmText = ref('')
 const isSmallScreen = ref(false)
 const editProfileValid = ref(false)
+const hasImageChanges = ref(false)
 
 const passwordForm = ref(null)
 const editProfileForm = ref(null)
-const fileInput = ref(null)
+const profileImageUpload = ref(null)
+
+const selectedFileForUpload = ref(null)
 
 // Validation rules
 const usernameRules = [
@@ -538,48 +520,29 @@ const profileItems = computed(() => [
   },
 ])
 
+const saveButtonEnabled = computed(() => {
+  return editProfileValid.value || hasImageChanges.value
+})
+
 const hasSpecialChar = (str) => {
   if (!str) return false
   const specialChars = /[!@#$%^&*(),.{}|<>]/
   return specialChars.test(str)
 }
 
-const selectImage = () => {
-  if (fileInput.value) fileInput.value.value = ''
-  fileInput.value.click()
+// Profile Image Handlers
+const handleImageSelected = (imageData) => {
+  if (imageData.file) {
+    selectedFileForUpload.value = imageData.file
+    editProfileData.value.profileImage = imageData.previewUrl
+    hasImageChanges.value = true;
+  }
 }
 
-const uploadProfileImage = async (event) => {
-  const file = event?.target?.files?.[0]
-  if (!file) return
-
-  try {
-    const auth = getAuth()
-    const user = auth.currentUser
-    if (!user) throw new Error('No user signed in')
-
-    // Show preview immediately
-    editProfileData.value.profileImage = URL.createObjectURL(file)
-
-    const storage = getStorage()
-    const storageReference = storageRef(storage, `profileImages/${user.uid}`)
-    const snapshot = await uploadBytes(storageReference, file)
-    const downloadURL = await getDownloadURL(snapshot.ref)
-
-    const db = getFirestore()
-    const userDocRef = doc(db, 'users', user.uid)
-    await updateDoc(userDocRef, { profileImage: downloadURL })
-
-    userprofile.value.profileImage = downloadURL
-    editProfileData.value.profileImage = downloadURL
-    toast.success(t('profile.profileImageUpdatedSuccess'))
-
-    if (fileInput.value) fileInput.value.value = ''
-  } catch (error) {
-    console.error('Error uploading image:', error)
-    toast.error(t('profile.profileImageUploadFailed'))
-    editProfileData.value.profileImage = userprofile.value.profileImage
-  }
+const handleImageRemoved = () => {
+  selectedFileForUpload.value = null;
+  editProfileData.value.profileImage = '';
+  hasImageChanges.value = true;
 }
 
 const checkScreenSize = () => {
@@ -620,11 +583,21 @@ const openEditProfileDialog = () => {
     country: userprofile.value.country,
     profileImage: userprofile.value.profileImage,
   }
+  selectedFileForUpload.value = null
+  hasImageChanges.value = false
   editProfileDialog.value = true
 }
 
+const handleCancelEdit = () => {
+  editProfileDialog.value = false
+}
+
 const saveProfile = async () => {
-  if (!editProfileForm.value.validate()) return
+  // First validate the form
+  if (editProfileForm.value) {
+    const { valid } = await editProfileForm.value.validate()
+    if (!valid) return
+  }
 
   try {
     const auth = getAuth()
@@ -634,32 +607,47 @@ const saveProfile = async () => {
       const db = getFirestore()
       const userDocRef = doc(db, 'users', user.uid)
 
+      let finalProfileImage = editProfileData.value.profileImage
+      
+      // Upload new image if selected
+      if (selectedFileForUpload.value) {
+        try {
+          const storage = getStorage()
+          const storageReference = storageRef(storage, `profileImages/${user.uid}`)
+          const snapshot = await uploadBytes(storageReference, selectedFileForUpload.value)
+          finalProfileImage = await getDownloadURL(snapshot.ref)
+        } catch (uploadError) {
+          console.error('Error uploading image:', uploadError)
+          toast.error(t('profile.imageUploadFailed'))
+          return
+        }
+      }
+      // Handle image removal (when profileImage is empty string)
+      else if (editProfileData.value.profileImage === '' && userprofile.value.profileImage) {
+        finalProfileImage = ''
+      }
+
       const updateData = {
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
-      }
-
-      // If profile image was removed (empty string), update to empty
-      if (editProfileData.value.profileImage === '') {
-        updateData.profileImage = ''
-      } else if (
-        editProfileData.value.profileImage &&
-        !editProfileData.value.profileImage.startsWith('blob:')
-      ) {
-        // Only update profile image if it's a valid URL (not a blob/preview)
-        updateData.profileImage = editProfileData.value.profileImage
+        profileImage: finalProfileImage,
       }
 
       await updateDoc(userDocRef, updateData)
 
+      // Update local state
       userprofile.value = {
         ...userprofile.value,
         username: editProfileData.value.username,
         contactNo: editProfileData.value.contactNo,
         country: editProfileData.value.country,
-        profileImage: editProfileData.value.profileImage,
+        profileImage: finalProfileImage,
       }
+
+      // Reset image states
+      selectedFileForUpload.value = null
+      hasImageChanges.value = false
 
       toast.success(t('profile.profileUpdatedSuccess'))
       editProfileDialog.value = false
@@ -756,11 +744,6 @@ const countryFilter = (item, queryText) => {
 
   const itemName = item?.name || item || ''
   return String(itemName).toLowerCase().includes(queryText.toLowerCase())
-}
-
-const removeProfilePicture = () => {
-  editProfileData.value.profileImage = ''
-  if (fileInput.value) fileInput.value.value = ''
 }
 
 onMounted(() => {

@@ -145,7 +145,6 @@ const answerController = new AnswerController()
 
 const loading = ref(false)
 const studiesWithAnswers = ref([])
-const expandedStudies = ref({})
 const user = computed(() => store.getters.user)
 
 const isLongDescription = (description) => {
@@ -229,7 +228,6 @@ const finalFour = (studyArr) => {
       id: study.testDocId || study.id,
       title: study.testTitle,
       description: study.testDescription,
-      isLongDescription: isLongDescription(study.testDescription),
       status: study.status,
       progress: calculateProgress(study.answers),
       participants: study.answers?.length || 0,
