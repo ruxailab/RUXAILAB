@@ -9,7 +9,6 @@
         "
         :is-running="isTracking"
         :ms-per-capture="300"
-        :record-screen="isRecording"
         @faceData="handleIrisData"
         :test-id="testId"
         :task-index="taskIndex"
