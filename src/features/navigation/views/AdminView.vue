@@ -20,9 +20,9 @@
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
-                ? 'Manage your research studies'
+                ? $t('pages.navigation.studiesSubtitle')
                 : activeSection === 'templates'
-                ? 'Access your saved templates'
+                ? $t('pages.navigation.templatesSubtitle')
                 : ''
             }}
           </p>
@@ -88,6 +88,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 // Feature views
 import ProfileView from '@/features/auth/views/ProfileView.vue'
@@ -110,6 +111,7 @@ import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 // 🔸 UI and navigation state
 const drawerOpen = ref(false)
@@ -124,23 +126,23 @@ let unsubscribeTests = null // Unsub function for real-time tests
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
     case 'dashboard':
-      return 'Dashboard'
+      return t('pages.navigation.dashboard')
     case 'studies':
-      return 'Studies'
+      return t('pages.navigation.studies')
     case 'sessions':
-      return 'Sessions'
+      return t('pages.navigation.sessions')
     case 'templates':
-      return 'Templates'
+      return t('pages.navigation.templates')
     case 'storage':
-      return 'Storage'
+      return t('pages.navigation.storage')
     case 'notifications':
-      return 'Notifications'
+      return t('pages.navigation.notifications')
     case 'profile':
-      return 'Profile'
+      return t('pages.navigation.profile')
     case 'community':
       return activeSubSection.value === 'community-templates'
-        ? 'Community Templates'
-        : 'Community Studies'
+        ? t('pages.navigation.communityTemplates')
+        : t('pages.navigation.communityStudies')
     default:
       return 'RUXAI Lab'
   }

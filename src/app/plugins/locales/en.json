@@ -581,7 +581,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },
@@ -685,7 +684,61 @@
       "updated": "Last Updated on",
       "version": "Version:",
       "noTests": "No tests found",
-      "noTemplates": "No templates found"
+      "noTemplates": "No templates found",
+      "noSessions": "No sessions found"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "storage": "Storage",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "communityStudies": "Community Studies",
+      "communityTemplates": "Community Templates",
+      "studiesSubtitle": "Manage your research studies",
+      "templatesSubtitle": "Access your saved templates"
+    },
+    "studies": {
+      "searchPlaceholder": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "statusLabel": "Status",
+      "visibility": "Visibility",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participants": "Participants",
+      "filters": {
+        "allStatuses": "All Statuses",
+        "active": "Active",
+        "draft": "Draft",
+        "completed": "Completed",
+        "allVisibility": "All Visibility",
+        "public": "Public",
+        "private": "Private",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate",
+        "lessThan10": "< 10 participants",
+        "between10And50": "10 – 50 participants",
+        "moreThan50": "> 50 participants"
+      },
+      "table": {
+        "type": "Type",
+        "name": "Name",
+        "tags": "Tags",
+        "owner": "Owner",
+        "evaluator": "Evaluator",
+        "status": "Status",
+        "sessionDate": "Session Date",
+        "participants": "Participants",
+        "created": "Created",
+        "itemsPerPage": "Items per page:"
+      }
     },
     "createTest": {
       "title": "Create a new test",

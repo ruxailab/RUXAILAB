@@ -1,29 +1,29 @@
 import { computed, toRef } from 'vue'
 
-export function useDataTableConfig(type) {
+export function useDataTableConfig(type, t) {
     const typeRef = toRef(type)
 
     const headers = computed(() => [
         {
-            title: 'Type',
+            title: t ? t('pages.studies.table.type') : 'Type',
             key: 'type',
             sortable: false,
             align: 'center'
         },
         {
-            title: 'Name',
+            title: t ? t('pages.studies.table.name') : 'Name',
             key: 'name',
             sortable: true,
             value: item => item.header?.templateTitle ?? item.testTitle ?? item.email
         },
         {
-            title: 'Tags',
+            title: t ? t('pages.studies.table.tags') : 'Tags',
             key: 'tags',
             align: 'start',
             sortable: false,
         },
         {
-            title: 'Owner',
+            title: t ? t('pages.studies.table.owner') : 'Owner',
             key: 'owner',
             sortable: true,
         },
@@ -31,17 +31,17 @@ export function useDataTableConfig(type) {
 
     if (typeRef.value === 'sessions') {
         headers.value.push({
-            title: 'Evaluator',
+            title: t ? t('pages.studies.table.evaluator') : 'Evaluator',
             key: 'evaluator',
             sortable: true,
         })
         headers.value.push({
-            title: 'Status',
+            title: t ? t('pages.studies.table.status') : 'Status',
             key: 'status',
             sortable: true,
         })
         headers.value.push({
-            title: 'Session Date',
+            title: t ? t('pages.studies.table.sessionDate') : 'Session Date',
             key: 'testDate',
             sortable: true,
         },)
@@ -49,7 +49,7 @@ export function useDataTableConfig(type) {
 
     if (typeRef.value !== 'sessions' && typeRef.value !== 'myTemplates' && typeRef.value !== 'publicTemplates') {
         headers.value.push({
-            title: 'Participants',
+            title: t ? t('pages.studies.table.participants') : 'Participants',
             key: 'participants',
             sortable: true,
             align: 'center',
@@ -59,7 +59,7 @@ export function useDataTableConfig(type) {
 
     headers.value.push(
         {
-            title: 'Created',
+            title: t ? t('pages.studies.table.created') : 'Created',
             key: 'creationDate',
             sortable: true,
         })
@@ -83,3 +83,4 @@ export function useDataTableConfig(type) {
         getEmptyStateMessage
     }
 }
+
