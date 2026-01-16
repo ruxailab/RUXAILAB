@@ -179,7 +179,6 @@ const startAudioRecording = async () => {
         await uploadBytes(storageReference, blob)
         const downloadURL = await getDownloadURL(storageReference)
 
-        console.log('moderator audio =>', downloadURL)
         await store.dispatch('updateTaskMediaUrl', {
           taskIndex: correctTaskIndex,
           mediaType: MEDIA_FIELD_MAP.moderator,

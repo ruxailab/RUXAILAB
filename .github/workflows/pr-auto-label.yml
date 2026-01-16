@@ -1,0 +1,194 @@
+name: PR Auto Labeler
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Auto-label PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const prNumber = pr.number;
+            const prTitle = pr.title.toLowerCase();
+            const prBody = pr.body || "";
+            const labelsToAdd = [];
+
+            // Get files changed in PR
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const fileCount = files.length;
+            console.log(`PR has ${fileCount} files changed`);
+
+            // Calculate total lines changed
+            let totalAdditions = 0;
+            let totalDeletions = 0;
+            const changedPaths = files.map(f => f.filename);
+
+            for (const file of files) {
+              totalAdditions += file.additions;
+              totalDeletions += file.deletions;
+            }
+
+            const totalChanges = totalAdditions + totalDeletions;
+            console.log(`PR has ${totalChanges} lines changed (${totalAdditions} additions, ${totalDeletions} deletions)`);
+
+            // 1. Size labels based on lines changed
+            if (totalChanges < 10) {
+              labelsToAdd.push("size/XS");
+            } else if (totalChanges < 100) {
+              labelsToAdd.push("size/S");
+            } else if (totalChanges < 500) {
+              labelsToAdd.push("size/M");
+            } else if (totalChanges < 1000) {
+              labelsToAdd.push("size/L");
+            } else {
+              labelsToAdd.push("size/XL");
+            }
+
+            // Complexity labels based on file count
+            if (fileCount < 5) {
+              labelsToAdd.push("low-complexity");
+            } else if (fileCount >= 5 && fileCount <= 10) {
+              labelsToAdd.push("medium-complexity");
+            } else {
+              labelsToAdd.push("high-complexity");
+            }
+
+            // Type labels based on PR title
+            if (prTitle.startsWith("fix:") || prTitle.includes("fix(")) {
+              labelsToAdd.push("fix");
+            } else if (prTitle.startsWith("feat:") || prTitle.includes("feat(")) {
+              labelsToAdd.push("new-feature");
+            }
+
+            // 2. Component-specific labels based on changed files
+            const hasVueComponents = changedPaths.some(p => p.includes("src/") && (p.endsWith(".vue") || p.includes("/components/")));
+            const hasFunctions = changedPaths.some(p => p.startsWith("functions/"));
+            const hasTests = changedPaths.some(p => p.includes("test") || p.includes("spec") || p.includes("cypress/") || p.includes("playwright/"));
+            const hasDocs = changedPaths.some(p => p.includes("README") || p.includes("docs/") || p.endsWith(".md"));
+            const hasWorkflows = changedPaths.some(p => p.includes(".github/workflows/"));
+            const hasAssets = changedPaths.some(p => p.includes("/assets/") || p.match(/\.(png|jpg|jpeg|svg|gif|ico)$/));
+
+            // Feature-specific labels based on UX folders
+            const hasAccessibility = changedPaths.some(p => p.includes("ux/accessibility") || p.includes("ux/Accessibility"));
+            const hasCardSorting = changedPaths.some(p => p.includes("ux/CardSorting"));
+            const hasHeuristic = changedPaths.some(p => p.includes("ux/Heuristic"));
+            const hasUserTest = changedPaths.some(p => p.includes("ux/UserTest"));
+
+            if (hasVueComponents) labelsToAdd.push("ui/ux");
+            if (hasFunctions) labelsToAdd.push("backend");
+            if (hasTests) labelsToAdd.push("testing");
+            if (hasDocs) labelsToAdd.push("documentation");
+            if (hasWorkflows) labelsToAdd.push("ci/cd");
+            if (hasAssets) labelsToAdd.push("assets");
+            if (hasAccessibility) labelsToAdd.push("accessibility");
+            if (hasCardSorting) labelsToAdd.push("card-sorting");
+            if (hasHeuristic) labelsToAdd.push("heuristic");
+            if (hasUserTest) labelsToAdd.push("user-test");
+
+            // 5. PR Description Validation
+            const descriptionIssues = [];
+
+            // Detect bot PRs
+            const BOT_LOGINS = new Set(['dependabot[bot]', 'github-actions[bot]']);
+            const isBot = BOT_LOGINS.has(pr.user.login) || pr.user.type === 'Bot';
+
+            // Skip validation for bot PRs
+            if (!isBot) {
+              // Check minimum description length (at least 20 characters)
+              if (prBody.trim().length < 20) {
+                descriptionIssues.push("- Description is too short (minimum 20 characters)");
+              }
+
+              // Check for issue reference
+              const hasIssueRef = /(?:fixes|closes|resolves|close|fix|resolve|fixed|closed|resolved)[\s\w:]*#\d+/i.test(prBody);
+              if (!hasIssueRef) {
+                descriptionIssues.push("- Missing issue reference (e.g., 'Fixes #123')");
+              }
+
+              // If there are validation issues, comment and add label
+              if (descriptionIssues.length > 0) {
+                labelsToAdd.push("needs-description");
+                
+                const warningComment = `⚠️ **PR Description Issues Detected**\n\n${descriptionIssues.join("\n")}\n\nPlease update the PR description to address these issues.`;
+                
+                // Check if we already commented
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                });
+                
+                const alreadyCommented = comments.some(c => c.body.includes("PR Description Issues Detected"));
+                
+                if (!alreadyCommented) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: warningComment,
+                  });
+                  console.log("Posted description validation comment");
+                }
+              }
+            }
+
+            // Get existing labels
+            const existingLabels = pr.labels.map(l => l.name);
+
+            // Remove old size and complexity labels if they exist
+            const sizeLabels = ["size/XS", "size/S", "size/M", "size/L", "size/XL"];
+            const complexityLabels = ["low-complexity", "medium-complexity", "high-complexity"];
+            const labelsToRemove = [...sizeLabels, ...complexityLabels];
+
+            for (const label of labelsToRemove) {
+              if (existingLabels.includes(label) && !labelsToAdd.includes(label)) {
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    name: label,
+                  });
+                  console.log(`Removed label: ${label}`);
+                } catch (error) {
+                  console.log(`Could not remove label ${label}: ${error.message}`);
+                }
+              }
+            }
+
+            // Add new labels (only if not already present)
+            const newLabels = labelsToAdd.filter(l => !existingLabels.includes(l));
+            if (newLabels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: newLabels,
+              });
+              console.log(`Added labels: ${newLabels.join(", ")}`);
+            } else {
+              console.log("No new labels to add");
+            }
