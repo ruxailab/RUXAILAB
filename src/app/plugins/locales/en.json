@@ -95,7 +95,7 @@
     "admin": "Admin",
     "superAdmin": "Super Admin",
     "guest": "Guest",
-    "evaluator":"Evaluator",
+    "evaluator": "Evaluator",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -161,6 +161,7 @@
     "accessLevel": "Access Level",
     "actions": "Actions",
     "users": "Users",
+    "studies": "Studies",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -174,7 +175,7 @@
       "Answer Test": "Answer Test",
       "Settings": "Settings",
       "name": "Name",
-      "studiesCount": "Studies Created", 
+      "studiesCount": "Studies Created",
       "mediaSize": "Media Size"
     },
     "heuristic": "Usability Heuristic Evaluation"
