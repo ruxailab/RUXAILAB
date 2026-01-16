@@ -155,20 +155,26 @@ export default {
       }
     },
 
-    async logout({ commit }) {
+    async logout({ commit }, { silent = false } = {}) {
       try {
         await authController.signOut()
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.logoutSuccess'),
-          type: 'success',
-        })
+      
+        if (!silent) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('auth.logoutSuccess'),
+            type: 'success',
+          })
+        }
       } catch (err) {
         console.error(err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+      
+        if (!silent) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('errors.globalError'),
+            type: 'error',
+          })
+        }
       } finally {
         commit('setLoading', false)
       }
@@ -219,16 +225,8 @@ export default {
         // Store handles state management
         await authController.signOut()
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.deleteSuccess'),
-          type: 'success',
-        })
       } catch (err) {
         console.error('Error deleting user:', err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
         throw err
       } finally {
         commit('setLoading', false)
