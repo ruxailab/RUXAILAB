@@ -431,6 +431,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage'
 import { countries } from '@/shared/constants/countries'
+import ProfileImageUpload from '@/features/auth/components/ProfileImageUpload.vue'
 
 const store = useStore()
 const user = computed(() => store.getters.user || { email: '' })
