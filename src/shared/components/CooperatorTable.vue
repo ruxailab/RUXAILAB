@@ -409,7 +409,6 @@ watch(selectedCooperators, (newVal) => {
 
 // Methods
 const goToSession = (coopId) => {
-  console.log(study)
   router.push(`/testview/${study.value.id}/${coopId}`);
 };
 
