@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="2" rounded="lg" class="mb-6" min-height="480px">
-    <v-card-title
-      class="d-flex align-center justify-space-between py-4 no-whitespace"
-    >
+    <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
         <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
         Active Studies Overview
@@ -72,32 +70,9 @@
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
                 {{ study.title }}
               </h4>
-              <div class="description-wrapper">
-                <p
-                  class="text-body-2 text-medium-emphasis mb-3"
-                  :class="{
-                    'description-truncated':
-                      !expandedStudies[study.id] && study.isLongDescription,
-                  }"
-                >
-                  {{ study.description }}
-                </p>
-                <v-btn
-                  v-if="study.isLongDescription"
-                  @click.stop="toggleExpand(study.id)"
-                  variant="text"
-                  size="small"
-                  color="primary"
-                  class="text-lowercase"
-                  :prepend-icon="
-                    expandedStudies[study.id]
-                      ? 'mdi-chevron-up'
-                      : 'mdi-chevron-down'
-                  "
-                >
-                  {{ expandedStudies[study.id] ? 'Show less' : 'Show more' }}
-                </v-btn>
-              </div>
+              <p class="text-body-2 text-medium-emphasis mb-3">
+                {{ study.description }}
+              </p>
 
               <!-- Progress -->
               <div class="mb-3">
@@ -155,6 +130,7 @@ import {
 } from '@/shared/constants/methodDefinitions'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   studies: {
@@ -164,11 +140,12 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const store = useStore()
 const answerController = new AnswerController()
 
 const loading = ref(false)
 const studiesWithAnswers = ref([])
-const expandedStudies = ref({})
+const user = computed(() => store.getters.user)
 
 const isLongDescription = (description) => {
   return description && description.length > 250
@@ -177,7 +154,7 @@ const isLongDescription = (description) => {
 const studies = computed(() => {
   return props.studies.length > 0
     ? studiesWithAnswers.value
-    : loading
+    : loading.value
     ? []
     : defaultStudies
 })
@@ -248,10 +225,9 @@ const finalFour = (studyArr) => {
   }
   studiesWithAnswers.value = studyArr
     .map((study) => ({
-      id: study.id,
+      id: study.testDocId || study.id,
       title: study.testTitle,
       description: study.testDescription,
-      isLongDescription: isLongDescription(study.testDescription),
       status: study.status,
       progress: calculateProgress(study.answers),
       participants: study.answers?.length || 0,
@@ -259,6 +235,9 @@ const finalFour = (studyArr) => {
       typeIcon: 'mdi-sort-variant',
       testType: study.testType,
       subType: study.subType,
+      testAdmin: study.testAdmin,
+      cooperators: study.cooperators,
+      isPublic: study.isPublic,
     }))
     .filter(
       (study, index, self) =>
@@ -266,20 +245,44 @@ const finalFour = (studyArr) => {
     )
 }
 
+const canManageStudy = (study) => {
+  const currentUser = user.value
+  if (!currentUser || !study) return false
+  if (currentUser.accessLevel === 0) return true
+  if (study.testAdmin?.userDocId === currentUser.id) return true
+  const coop = study.cooperators?.find((c) => c.userDocId === currentUser.id)
+  return coop?.accessLevel === 0 || coop?.accessLevel === 1
+}
+
 const goToStudy = async (study) => {
-  const methodView = getMethodManagerView(study.testType, study.subType)
-  router.push({ name: methodView, params: { id: study.id } })
+  if (canManageStudy(study)) {
+    const methodView = getMethodManagerView(study.testType, study.subType)
+    router.push({ name: methodView, params: { id: study.id } })
+    return
+  }
+
+  if (study.testType === STUDY_TYPES.CARD_SORTING) {
+    router.push({ name: 'CardSortingTestView', params: { id: study.id } })
+    return
+  }
+
+  if (study.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
+    router.push({ name: 'AccessibilityPreviewTest', params: { id: study.id } })
+    return
+  }
+
+  if (study.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
+    router.push({ name: 'AccessibilityReport', params: { id: study.id } })
+    return
+  }
+
+  router.push({ name: 'TestView', params: { id: study.id } })
 }
 
 const viewAllStudies = () => {
-  // Dispatch custom event to change section
   globalThis.dispatchEvent(
     new CustomEvent('change-section', { detail: 'studies' }),
   )
-}
-
-const toggleExpand = (studyId) => {
-  expandedStudies.value[studyId] = !expandedStudies.value[studyId]
 }
 
 // Default studies if none provided
@@ -345,33 +348,5 @@ watch(
 .study-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.description-wrapper {
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
-}
-
-.description-truncated {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.5;
-}
-.no-whitespace {
-  white-space: normal;
-}
-
-/* Fallback for non-webkit browsers */
-@supports not (-webkit-line-clamp: 3) {
-  .description-truncated {
-    max-height: 4.5em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 }
 </style>
