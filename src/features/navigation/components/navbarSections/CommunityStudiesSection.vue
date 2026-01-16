@@ -46,6 +46,7 @@
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
+              location="bottom"
               max-width="290px"
               min-width="290px"
             >
@@ -149,17 +150,17 @@
 
 <script setup>
 // 🔧 Imports and setup
-import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import List from '@/shared/components/tables/ListComponent.vue'
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import List from '@/shared/components/tables/ListComponent.vue';
 import {
   getMethodOptions,
   METHOD_DEFINITIONS,
   METHOD_STATUSES,
   STUDY_TYPES,
-  USER_STUDY_SUBTYPES,
-} from '@/shared/constants/methodDefinitions'
+  USER_STUDY_SUBTYPES
+} from '@/shared/constants/methodDefinitions';
 
 const store = useStore()
 const router = useRouter()
@@ -317,40 +318,71 @@ const filteredTests = computed(() => {
 })
 
 // ===== Navigation =====
+const getTestId = (test) => test.testDocId || test.id;
+const canManageStudy = (test) => {
+  const currentUser = user.value;
+  if (!currentUser || !test) return false;
+  if (currentUser.accessLevel === 0) return true;
+  if (test.testAdmin?.userDocId === currentUser.id) return true;
+  const coop = test.cooperators?.find(c => c.userDocId === currentUser.id);
+  return coop?.accessLevel === 0;
+};
+
 const goTo = (test) => {
-  // Redirect depending on study type
+  const testId = getTestId(test);
+  if (!testId) return;
+
+  if (canManageStudy(test)) {
+    navigateToManagerStudy(test, testId);
+    return;
+  }
+
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
-    router.push(`/accessibility/manual/${test.testDocId || test.id}`)
-    return
+    router.push({ name: 'AccessibilityPreviewTest', params: { id: testId } });
+    return;
   }
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
-    router.push(`/accessibility/automatic/${test.testDocId || test.id}`)
-    return
+    router.push({ name: 'AccessibilityReport', params: { id: testId } });
+    return;
   }
-  navigateToCommunityStudy(test)
-}
+  navigateToCommunityStudy(test, testId);
+};
 
-// Helper to navigate to community views
-const navigateToCommunityStudy = (test) => {
+const navigateToManagerStudy = (test, testId) => {
   switch (test.testType) {
     case STUDY_TYPES.HEURISTIC:
-      router.push({ name: 'HeuristicManagerView', params: { id: test.id } })
-      break
+      router.push({ name: 'HeuristicManagerView', params: { id: testId } });
+      break;
     case STUDY_TYPES.CARD_SORTING:
-      router.push({ name: 'CardSortingManagerView', params: { id: test.id } })
-      break
+      router.push({ name: 'CardSortingManagerView', params: { id: testId } });
+      break;
     case STUDY_TYPES.USER:
-      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED)
-        router.push({
-          name: 'UserUnmoderatedManagerView',
-          params: { id: test.id },
-        })
-      else if (test.subType === USER_STUDY_SUBTYPES.MODERATED)
-        router.push({
-          name: 'UserModeratedManagerView',
-          params: { id: test.id },
-        })
-      break
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: testId } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
+        router.push({ name: 'UserModeratedManagerView', params: { id: testId } });
+      }
+      break;
+    default:
+      router.push({ name: 'HeuristicManagerView', params: { id: testId } });
+      break;
+  }
+};
+
+const navigateToCommunityStudy = (test, testId) => {
+  switch (test.testType) {
+    case STUDY_TYPES.HEURISTIC:
+      router.push({ name: 'TestView', params: { id: testId } });
+      break;
+    case STUDY_TYPES.CARD_SORTING:
+      router.push({ name: 'CardSortingTestView', params: { id: testId } });
+      break;
+    case STUDY_TYPES.USER:
+      router.push({ name: 'TestView', params: { id: testId } });
+      break;
+    default:
+      router.push({ name: 'TestView', params: { id: testId } });
+      break;
   }
 }
 </script>
