@@ -96,93 +96,22 @@
             <v-card-title class="text-h6 pa-4">
               Perceived Usefulness vs Ease of Use
             </v-card-title>
-            <v-card-text class="pa-4">
-              <svg width="100%" height="300" viewBox="0 0 500 300" style="border: 1px solid #e0e0e0; border-radius: 8px;">
-                <!-- Grid background -->
-                <defs>
-                  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#f0f0f0" stroke-width="0.5"/>
-                  </pattern>
-                </defs>
-                <rect width="500" height="300" fill="url(#grid)" />
-                
-                <!-- Y Axis -->
-                <line x1="50" y1="20" x2="50" y2="270" stroke="#333" stroke-width="2"/>
-                <!-- X Axis -->
-                <line x1="50" y1="270" x2="480" y2="270" stroke="#333" stroke-width="2"/>
-                
-                <!-- Y Axis Labels -->
-                <text x="35" y="275" text-anchor="end" font-size="12" fill="#666">0</text>
-                <text x="35" y="220" text-anchor="end" font-size="12" fill="#666">25</text>
-                <text x="35" y="165" text-anchor="end" font-size="12" fill="#666">50</text>
-                <text x="35" y="110" text-anchor="end" font-size="12" fill="#666">75</text>
-                <text x="35" y="55" text-anchor="end" font-size="12" fill="#666">100</text>
-                
-                <!-- X Axis Labels -->
-                <text x="55" y="290" font-size="12" fill="#666">0</text>
-                <text x="160" y="290" font-size="12" fill="#666">25</text>
-                <text x="265" y="290" font-size="12" fill="#666">50</text>
-                <text x="370" y="290" font-size="12" fill="#666">75</text>
-                <text x="465" y="290" font-size="12" fill="#666">100</text>
-                
-                <!-- Axis Labels -->
-                <text x="250" y="315" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">
-                  Perceived Ease of Use
-                </text>
-                <text x="15" y="150" text-anchor="middle" font-size="13" fill="#333" font-weight="bold" transform="rotate(-90 15 150)">
-                  Perceived Usefulness
-                </text>
-                
-                <!-- Data points (scatter plot) -->
-                <g>
-                  <circle v-for="(point, idx) in scatterPlotData" :key="idx" 
-                    :cx="50 + (point.easeOfUse / 100) * 430"
-                    :cy="270 - (point.usefulness / 100) * 250"
-                    r="5" 
-                    :fill="point.color" 
-                    opacity="0.7" 
-                    style="cursor: pointer; transition: r 0.2s;"
-                    @mouseenter="point.hovered = true"
-                    @mouseleave="point.hovered = false"
-                  />
-                </g>
-                
-                <!-- Tooltip -->
-                <g v-for="(point, idx) in scatterPlotData.filter(p => p.hovered)" :key="'tooltip-' + idx">
-                  <rect 
-                    :x="50 + (point.easeOfUse / 100) * 430 + 10"
-                    :y="270 - (point.usefulness / 100) * 250 - 30"
-                    width="80" height="30" 
-                    fill="white" 
-                    stroke="#999" 
-                    stroke-width="1" 
-                    rx="4"
-                  />
-                  <text 
-                    :x="50 + (point.easeOfUse / 100) * 430 + 50"
-                    :y="270 - (point.usefulness / 100) * 250 - 15"
-                    text-anchor="middle" 
-                    font-size="11" 
-                    fill="#333" 
-                    font-weight="bold"
-                  >
-                    U: {{ point.usefulness }}
-                  </text>
-                  <text 
-                    :x="50 + (point.easeOfUse / 100) * 430 + 50"
-                    :y="270 - (point.usefulness / 100) * 250 - 3"
-                    text-anchor="middle" 
-                    font-size="11" 
-                    fill="#666"
-                  >
-                    E: {{ point.easeOfUse }}
-                  </text>
-                </g>
-              </svg>
-              <div class="d-flex justify-center gap-2 mt-2">
+            <v-card-text class="pa-6">
+              <div style="position: relative; height: 300px; width: 100%;">
+                <Scatter 
+                  v-if="scatterChartData.datasets[0].data.length > 0"
+                  :data="scatterChartData" 
+                  :options="scatterChartOptions"
+                  style="height: 100%;"
+                />
+                <div v-else class="d-flex align-center justify-center" style="height: 100%; color: #999;">
+                  <p>No data available yet</p>
+                </div>
+              </div>
+              <div class="d-flex justify-center gap-2 mt-4">
                 <div class="d-flex align-center gap-1">
                   <div style="width: 10px; height: 10px; border-radius: 50%; background: #2196F3;"></div>
-                  <span class="text-caption">Respondents</span>
+                  <span class="text-caption">{{ scatterChartData.datasets[0].data.length }} Respondents</span>
                 </div>
               </div>
             </v-card-text>
@@ -195,27 +124,25 @@
               Average Construct Scores
             </v-card-title>
             <v-card-text class="pa-6">
-              <div v-for="(score, dimension) in getCoreDimensions()" :key="dimension" class="mb-5">
-                <!-- Dimension Name -->
-                <div class="text-body-2 font-weight-medium mb-2" :style="{ color: getDimensionColorByLabel(dimension) }">
-                  {{ dimension }}
-                </div>
-                
-                <!-- Progress Bar with Value Inside -->
-                <div style="position: relative; height: 28px; display: flex; align-items: center;">
-                  <v-progress-linear
-                    :model-value="score"
-                    :color="getDimensionColorByLabel(dimension)"
-                    height="28"
-                    rounded
-                    style="position: absolute; width: 100%;"
-                  />
-                  <div style="position: relative; z-index: 1; width: 100%; text-align: center;">
-                    <span class="font-weight-bold text-white" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3); font-size: 13px;">
-                      {{ score }}
-                    </span>
+              <!-- Construct Bars with Values -->
+              <div v-for="(score, dimension) in getCoreDimensions()" :key="dimension" class="mb-4">
+                <!-- Dimension Name and Score -->
+                <div class="d-flex justify-space-between align-center mb-2">
+                  <div class="text-body-2 font-weight-medium text-grey-darken-1">
+                    {{ dimension }}
+                  </div>
+                  <div class="text-h6 font-weight-bold" :style="{ color: getDimensionColorByLabel(dimension) }">
+                    {{ score.toFixed(1) }}
                   </div>
                 </div>
+                
+                <!-- Progress Bar -->
+                <v-progress-linear
+                  :model-value="score"
+                  :color="getDimensionColorByLabel(dimension)"
+                  height="24"
+                  rounded
+                />
               </div>
             </v-card-text>
           </v-card>
@@ -240,8 +167,8 @@
                     v-model="filterVersion"
                     :items="['All Versions', ...availableVersions]"
                     label="Filter by TAM Version"
-                    outlined
-                    dense
+                    variant="outlined"
+                    density="compact"
                   />
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
@@ -249,8 +176,8 @@
                     v-model="filterLevel"
                     :items="['All Levels', 'High', 'Medium', 'Low']"
                     label="Filter by Acceptance Level"
-                    outlined
-                    dense
+                    variant="outlined"
+                    density="compact"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
@@ -276,6 +203,17 @@
               class="elevation-0"
               @click:row="(_, { item }) => openDetails(item)"
             >
+              <!-- Dynamic dimension score templates -->
+              <template
+                v-for="dim in getActiveDimensions(selectedVersion)"
+                :key="`item-${dim.key}`"
+                #[`item.${dim.key}`]="{ item }"
+              >
+                <div class="text-body-2 font-weight-medium" :style="{ color: dim.color }">
+                  {{ item.dimensionScores?.[dim.key]?.toFixed(1) || '-' }}
+                </div>
+              </template>
+
               <template #item.overallScore="{ item }">
                 <v-chip
                   :color="getScoreColor(item.overallScore)"
@@ -328,9 +266,9 @@
           >
             <v-card
               :ripple="true"
-              @click="() => { console.log('🖱️ Clicked dimension:', dimension); selectedConstructForDetails = dimension; }"
               :class="{ 'border-2 border-primary': selectedConstructForDetails === dimension }"
               class="cursor-pointer mb-3"
+              @click="() => { console.log('🖱️ Clicked dimension:', dimension); selectedConstructForDetails = dimension; }"
             >
               <v-card-text>
                 <div class="text-body-2 font-weight-medium mb-2">
@@ -382,7 +320,7 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn color="secondary" variant="text" @click="selectedConstructForDetails = null" v-if="selectedConstructForDetails">
+        <v-btn v-if="selectedConstructForDetails" color="secondary" variant="text" @click="selectedConstructForDetails = null">
           Clear Selection
         </v-btn>
         <v-btn color="primary" variant="text" @click="detailsModal = false">
@@ -395,9 +333,13 @@
 
 <script setup>
 // Force cache bust: v2
-import { ref, computed, watchEffect } from 'vue'
+import { ref, computed, watchEffect, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { calculateTAMScore} from '../../utils/tamCalculator'
+import { Scatter, Bar } from 'vue-chartjs'
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Legend, Tooltip, Title } from 'chart.js'
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Legend, Tooltip, Title)
 
 const store = useStore()
 
@@ -493,34 +435,117 @@ const availableVersions = computed(() => {
 const scatterPlotData = computed(() => {
   const points = [];
   
-  // Get all TAM responses
-  tamData.value.forEach((item, idx) => {
-    if (!item.tamAnswers) return;
+  // Only use data for the selected TAM version
+  const selectedVersionFull = selectedVersion.value.includes('-') ? selectedVersion.value : `tam-${selectedVersion.value.slice(-1)}`;
+  console.log('Generating scatter plot for version:', selectedVersionFull);
+  
+  // Get TAM responses matching the selected version
+  const versionData = tamData.value.filter(item => item.taskType === selectedVersionFull);
+  console.log('Filtered data for version:', versionData.length, 'responses');
+  
+  versionData.forEach((item, idx) => {
+    if (!item.tamAnswers) {
+      console.log('No tamAnswers for item:', idx);
+      return;
+    }
     
     const answers = item.tamAnswers;
+    console.log('Processing item', idx, 'with answers:', Object.keys(answers));
     
-    // Calculate Perceived Usefulness (tam1_pu)
-    const puAnswers = [];
-    const euAnswers = [];
+    let puValues = [];
+    let euValues = [];
     
-    Object.entries(answers).forEach(([key, value]) => {
-      if (key.includes('pu') || key.includes('usefulness')) {
-        puAnswers.push(Number(value) || 0);
+    // Determine which version we're looking at
+    const itemVersion = item.taskType; // 'tam-1', 'tam-2', 'tam-3'
+    
+    // Handle TAM-2 structure (arrays of answers with full names)
+    if (itemVersion === 'tam-2') {
+      if (answers.perceivedUsefulness && Array.isArray(answers.perceivedUsefulness)) {
+        puValues = answers.perceivedUsefulness.filter(v => typeof v === 'number');
       }
-      if (key.includes('eu') || key.includes('ease')) {
-        euAnswers.push(Number(value) || 0);
+      if (answers.perceivedEaseOfUse && Array.isArray(answers.perceivedEaseOfUse)) {
+        euValues = answers.perceivedEaseOfUse.filter(v => typeof v === 'number');
       }
-    });
+    }
+    // Handle TAM-3 structure (abbreviated keys)
+    else if (itemVersion === 'tam-3') {
+      // Look for tam3_pu or pu data
+      if (answers.tam3_pu !== undefined) {
+        if (Array.isArray(answers.tam3_pu)) {
+          puValues = answers.tam3_pu.filter(v => typeof v === 'number');
+        } else if (typeof answers.tam3_pu === 'number') {
+          puValues = [answers.tam3_pu];
+        }
+      } else if (answers.perceivedUsefulness) {
+        if (Array.isArray(answers.perceivedUsefulness)) {
+          puValues = answers.perceivedUsefulness.filter(v => typeof v === 'number');
+        } else if (typeof answers.perceivedUsefulness === 'number') {
+          puValues = [answers.perceivedUsefulness];
+        }
+      }
+      
+      if (answers.tam3_eu !== undefined) {
+        if (Array.isArray(answers.tam3_eu)) {
+          euValues = answers.tam3_eu.filter(v => typeof v === 'number');
+        } else if (typeof answers.tam3_eu === 'number') {
+          euValues = [answers.tam3_eu];
+        }
+      } else if (answers.perceivedEaseOfUse) {
+        if (Array.isArray(answers.perceivedEaseOfUse)) {
+          euValues = answers.perceivedEaseOfUse.filter(v => typeof v === 'number');
+        } else if (typeof answers.perceivedEaseOfUse === 'number') {
+          euValues = [answers.perceivedEaseOfUse];
+        }
+      }
+    }
+    // Handle TAM-1 structure (abbreviated keys)
+    else if (itemVersion === 'tam-1') {
+      if (answers.tam1_pu !== undefined) {
+        if (Array.isArray(answers.tam1_pu)) {
+          puValues = answers.tam1_pu.filter(v => typeof v === 'number');
+        } else if (typeof answers.tam1_pu === 'number') {
+          puValues = [answers.tam1_pu];
+        }
+      } else if (answers.perceivedUsefulness) {
+        if (Array.isArray(answers.perceivedUsefulness)) {
+          puValues = answers.perceivedUsefulness.filter(v => typeof v === 'number');
+        } else if (typeof answers.perceivedUsefulness === 'number') {
+          puValues = [answers.perceivedUsefulness];
+        }
+      }
+      
+      if (answers.tam1_eu !== undefined) {
+        if (Array.isArray(answers.tam1_eu)) {
+          euValues = answers.tam1_eu.filter(v => typeof v === 'number');
+        } else if (typeof answers.tam1_eu === 'number') {
+          euValues = [answers.tam1_eu];
+        }
+      } else if (answers.perceivedEaseOfUse) {
+        if (Array.isArray(answers.perceivedEaseOfUse)) {
+          euValues = answers.perceivedEaseOfUse.filter(v => typeof v === 'number');
+        } else if (typeof answers.perceivedEaseOfUse === 'number') {
+          euValues = [answers.perceivedEaseOfUse];
+        }
+      }
+    }
     
-    // Calculate averages (convert from 1-5 scale to 0-100)
-    const puAvg = puAnswers.length > 0 
-      ? ((puAnswers.reduce((a, b) => a + b, 0) / puAnswers.length - 1) / 4 * 100) 
+    // Calculate averages (convert from scale to 0-100)
+    // TAM-1 and TAM-2 use 7-point scale: (average - 1) / 6 * 100
+    // TAM-3 uses 5-point scale: (average - 1) / 4 * 100
+    const scaleMax = selectedVersionFull === 'tam-3' ? 5 : 7;
+    const denominator = scaleMax - 1;
+    
+    const puAvg = puValues.length > 0 
+      ? ((puValues.reduce((a, b) => a + b, 0) / puValues.length - 1) / denominator * 100) 
       : 0;
-    const euAvg = euAnswers.length > 0 
-      ? ((euAnswers.reduce((a, b) => a + b, 0) / euAnswers.length - 1) / 4 * 100) 
+    const euAvg = euValues.length > 0 
+      ? ((euValues.reduce((a, b) => a + b, 0) / euValues.length - 1) / denominator * 100) 
       : 0;
     
-    if (puAvg > 0 || euAvg > 0) {
+    console.log(`Item ${idx} (${itemVersion}): scaleMax=${scaleMax}, denominator=${denominator}, PU avg=${puAvg}, EU avg=${euAvg}, PU values=${puValues}, EU values=${euValues}`);
+    
+    // Add point if we have at least some data
+    if (puValues.length > 0 || euValues.length > 0) {
       points.push({
         usefulness: Math.round(puAvg),
         easeOfUse: Math.round(euAvg),
@@ -528,11 +553,141 @@ const scatterPlotData = computed(() => {
         hovered: false,
         respondent: item.fullName || `User ${idx + 1}`
       });
+      console.log(`✓ Added point for ${item.fullName || `User ${idx + 1}`}: U=${Math.round(puAvg)}, E=${Math.round(euAvg)}`);
     }
   });
   
+  console.log('Total scatter plot points:', points.length);
   return points;
 })
+
+// Compute chart data for vue-chartjs
+const scatterChartData = computed(() => {
+  const chartDataPoints = scatterPlotData.value.map(point => ({
+    x: point.easeOfUse,
+    y: point.usefulness,
+    label: point.respondent
+  }));
+
+  return {
+    datasets: [{
+      label: 'Respondents',
+      data: chartDataPoints,
+      backgroundColor: '#2196F3',
+      borderColor: '#1976D2',
+      borderWidth: 1,
+      pointRadius: 6,
+      pointHoverRadius: 8,
+      pointBorderColor: '#1976D2',
+      pointBorderWidth: 2
+    }]
+  };
+})
+
+// Scatter chart options
+const scatterChartOptions = {
+  responsive: true,
+  maintainAspectRatio: true,
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top'
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      padding: 12,
+      titleFont: { size: 13 },
+      bodyFont: { size: 12 },
+      callbacks: {
+        label: function(context) {
+          const label = context.raw.label || '';
+          return `${label}: U=${context.raw.y}, E=${context.raw.x}`;
+        },
+        afterLabel: function(context) {
+          return '';
+        }
+      }
+    }
+  },
+  scales: {
+    x: {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'Perceived Ease of Use',
+        font: { size: 13, weight: 'bold' }
+      },
+      min: 0,
+      max: 100,
+      ticks: {
+        stepSize: 25
+      }
+    },
+    y: {
+      title: {
+        display: true,
+        text: 'Perceived Usefulness',
+        font: { size: 13, weight: 'bold' }
+      },
+      min: 0,
+      max: 100,
+      ticks: {
+        stepSize: 25
+      }
+    }
+  }
+}
+
+// Compute bar chart data for construct scores
+const constructScoresChartData = computed(() => {
+  const coreDimensions = getCoreDimensions();
+  const labels = Object.keys(coreDimensions);
+  const scores = Object.values(coreDimensions);
+  const colors = labels.map(label => getDimensionColorByLabel(label));
+  
+  return {
+    labels,
+    datasets: [{
+      label: 'Average Score',
+      data: scores,
+      backgroundColor: colors,
+      borderColor: colors,
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  };
+});
+
+// Bar chart options
+const constructScoresChartOptions = {
+  indexAxis: 'y',
+  responsive: true,
+  maintainAspectRatio: true,
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      padding: 8,
+      callbacks: {
+        label: function(context) {
+          return `${context.parsed.x.toFixed(1)}`;
+        }
+      }
+    }
+  },
+  scales: {
+    x: {
+      beginAtZero: true,
+      max: 100,
+      ticks: {
+        stepSize: 20
+      }
+    }
+  }
+}
 
 const detailsModal = ref(false)
 const selectedResponse = ref(null)
@@ -551,8 +706,15 @@ const totalAnswerCount = computed(() => {
 const tamData = computed(() => {
   const allData = [];
   
+  console.log('🔍 tamData computation started, testAnswerDocument entries:', Object.keys(testAnswerDocument.value).length);
+  
   Object.entries(testAnswerDocument.value || {}).forEach(([userId, answerItem]) => {
-    if (!answerItem || !answerItem.tasks) return;
+    if (!answerItem || !answerItem.tasks) {
+      console.log(`⚠️ Skipping user ${userId}: no tasks`);
+      return;
+    }
+    
+    console.log(`👤 Processing user ${userId}:`, Object.keys(answerItem.tasks || {}).length, 'tasks');
     
     // Handle both array and object formats for tasks
     const taskEntries = Array.isArray(answerItem.tasks) 
@@ -568,11 +730,15 @@ const tamData = computed(() => {
       // Get task type from test structure
       const taskType = test.value?.userTasks?.[taskId]?.taskType;
       
+      console.log(`  📋 Task ${taskId}: type=${taskType}, hasTamAnswers=${!!task.tamAnswers}, answersCount=${task.tamAnswers ? Object.keys(task.tamAnswers).length : 0}`);
+      
       // Check if this is a TAM task with answers
       if (['tam-1', 'tam-2', 'tam-3'].includes(taskType) && 
           task.tamAnswers && 
           typeof task.tamAnswers === 'object' && 
           Object.keys(task.tamAnswers).length > 0) {
+        
+        console.log(`  ✅ Added TAM task for user ${userId}`);
         
         allData.push({
           ...task,
@@ -585,6 +751,7 @@ const tamData = computed(() => {
     });
   });
   
+  console.log('✅ tamData computed: found', allData.length, 'TAM responses');
   return allData;
 })
 

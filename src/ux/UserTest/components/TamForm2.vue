@@ -28,7 +28,7 @@
 
     <!-- Intention to Use Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="indigo-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="indigo" class="mr-2">mdi-check-circle</v-icon>
         Intention to Use (2 items)
       </v-card-title>
@@ -36,7 +36,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <div class="d-flex justify-space-between text-caption text-grey-darken-2 mb-3 px-2">
             <span class="font-weight-bold">{{ likertLabels[0] }}</span>
@@ -51,7 +51,7 @@
 
     <!-- Perceived Usefulness Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="blue-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="blue" class="mr-2">mdi-target-variant</v-icon>
         Perceived Usefulness (4 items)
       </v-card-title>
@@ -63,7 +63,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.perceivedUsefulness[i]" inline @update:model-value="updateDimensionAnswer('perceivedUsefulness', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -74,7 +74,7 @@
 
     <!-- Perceived Ease of Use Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="green-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="green" class="mr-2">mdi-lightning-bolt</v-icon>
         Perceived Ease of Use (4 items)
       </v-card-title>
@@ -86,7 +86,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.perceivedEaseOfUse[i]" inline @update:model-value="updateDimensionAnswer('perceivedEaseOfUse', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -97,7 +97,7 @@
 
     <!-- Subjective Norm Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="purple-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="purple" class="mr-2">mdi-account-multiple</v-icon>
         Subjective Norm (2 items)
       </v-card-title>
@@ -109,7 +109,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.subjectiveNorm[i]" inline @update:model-value="updateDimensionAnswer('subjectiveNorm', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -120,7 +120,7 @@
 
     <!-- Voluntariness Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="pink-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="pink" class="mr-2">mdi-hand-open-variant</v-icon>
         Voluntariness (3 items)
       </v-card-title>
@@ -132,7 +132,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.voluntariness[i]" inline @update:model-value="updateDimensionAnswer('voluntariness', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -143,7 +143,7 @@
 
     <!-- Image Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="orange-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="orange" class="mr-2">mdi-image</v-icon>
         Image (3 items)
       </v-card-title>
@@ -155,7 +155,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.image[i]" inline @update:model-value="updateDimensionAnswer('image', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -166,7 +166,7 @@
 
     <!-- Job Relevance Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="red-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="red" class="mr-2">mdi-briefcase</v-icon>
         Job Relevance (2 items)
       </v-card-title>
@@ -178,7 +178,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.jobRelevance[i]" inline @update:model-value="updateDimensionAnswer('jobRelevance', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -189,7 +189,7 @@
 
     <!-- Output Quality Section -->
     <v-card variant="outlined" class="mb-6 pa-4" color="teal-lighten-5">
-      <v-card-title class="text-subtitle-1 font-weight-bold mb-4">
+      <v-card-title class="text-subtitle-1 font-weight-bold mb-4" style="color: #1e293b;">
         <v-icon size="24" color="teal" class="mr-2">mdi-check-all</v-icon>
         Output Quality (2 items)
       </v-card-title>
@@ -201,7 +201,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.outputQuality[i]" inline @update:model-value="updateDimensionAnswer('outputQuality', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
@@ -224,7 +224,7 @@
         <v-card-text>
           <div class="text-body-2 mb-2">
             <span class="text-error font-weight-bold">{{ i + 1 }}.</span>
-            <span class="font-weight-medium">{{ question }} *</span>
+            <span class="font-weight-medium" style="color: #1e293b; font-weight: 600;">{{ question }} *</span>
           </div>
           <v-radio-group :model-value="answers.resultDemonstrability[i]" inline @update:model-value="updateDimensionAnswer('resultDemonstrability', i, $event)">
             <v-radio v-for="n in 7" :key="n" :value="n" :label="`${n}`" class="mx-1" />
