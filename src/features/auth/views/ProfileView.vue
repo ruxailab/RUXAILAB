@@ -215,7 +215,7 @@
             @image-selected="handleImageSelected"
             @image-removed="handleImageRemoved"
           />
-          
+
           <v-form ref="editProfileForm" v-model="editProfileValid">
             <v-text-field
               v-model="editProfileData.username"
@@ -364,7 +364,11 @@
               {{ $t('profile.finalStepVerifyIdentity') }}
             </v-alert>
             <p class="text-center font-weight-bold mb-4">
-              {{ hasEmailPasswordProvider ? $t('profile.enterPasswordForAccountDeletion') : 'Please verify with Google to confirm account deletion' }}
+              {{
+                hasEmailPasswordProvider
+                  ? $t('profile.enterPasswordForAccountDeletion')
+                  : 'Please verify with Google to confirm account deletion'
+              }}
             </p>
             <!-- Only show password field for email/password users -->
             <v-text-field
@@ -395,7 +399,9 @@
               variant="flat"
               class="text-capitalize"
               :loading="isDeleting"
-              :disabled="(hasEmailPasswordProvider && !userPassword) || isDeleting"
+              :disabled="
+                (hasEmailPasswordProvider && !userPassword) || isDeleting
+              "
               min-width="120"
               @click="handlerDeleteAccount"
             >
@@ -414,16 +420,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
-import {
-  getAuth,
-  updatePassword,
-} from 'firebase/auth'
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  updateDoc,
-} from 'firebase/firestore'
+import { getAuth, updatePassword } from 'firebase/auth'
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
 import {
   getStorage,
   ref as storageRef,
@@ -436,12 +434,11 @@ import ProfileImageUpload from '@/features/auth/components/ProfileImageUpload.vu
 const store = useStore()
 const user = computed(() => store.getters.user || { email: '' })
 
-const { t } = useI18n();
-const toast = useToast();
-const authController = new AuthController();
+const { t } = useI18n()
+const toast = useToast()
 
 // Track if user has email/password provider
-const hasEmailPasswordProvider = ref(false);
+const hasEmailPasswordProvider = ref(false)
 
 const userprofile = ref({
   profileImage: null,
@@ -542,14 +539,14 @@ const handleImageSelected = (imageData) => {
   if (imageData.file) {
     selectedFileForUpload.value = imageData.file
     editProfileData.value.profileImage = imageData.previewUrl
-    hasImageChanges.value = true;
+    hasImageChanges.value = true
   }
 }
 
 const handleImageRemoved = () => {
-  selectedFileForUpload.value = null;
-  editProfileData.value.profileImage = '';
-  hasImageChanges.value = true;
+  selectedFileForUpload.value = null
+  editProfileData.value.profileImage = ''
+  hasImageChanges.value = true
 }
 
 const checkScreenSize = () => {
@@ -615,13 +612,19 @@ const saveProfile = async () => {
       const userDocRef = doc(db, 'users', user.uid)
 
       let finalProfileImage = editProfileData.value.profileImage
-      
+
       // Upload new image if selected
       if (selectedFileForUpload.value) {
         try {
           const storage = getStorage()
-          const storageReference = storageRef(storage, `profileImages/${user.uid}`)
-          const snapshot = await uploadBytes(storageReference, selectedFileForUpload.value)
+          const storageReference = storageRef(
+            storage,
+            `profileImages/${user.uid}`,
+          )
+          const snapshot = await uploadBytes(
+            storageReference,
+            selectedFileForUpload.value,
+          )
           finalProfileImage = await getDownloadURL(snapshot.ref)
         } catch (uploadError) {
           console.error('Error uploading image:', uploadError)
@@ -630,7 +633,10 @@ const saveProfile = async () => {
         }
       }
       // Handle image removal (when profileImage is empty string)
-      else if (editProfileData.value.profileImage === '' && userprofile.value.profileImage) {
+      else if (
+        editProfileData.value.profileImage === '' &&
+        userprofile.value.profileImage
+      ) {
         finalProfileImage = ''
       }
 
@@ -687,16 +693,16 @@ const changePassword = async () => {
 
 const handlerDeleteConfirmText = async () => {
   const firebaseUser = getAuth().currentUser
-  
+
   if (!firebaseUser) {
     toast.error('User session expired. Please login again.')
     return
   }
 
   hasEmailPasswordProvider.value = firebaseUser.providerData.some(
-    provider => provider.providerId !== 'google.com'
+    (provider) => provider.providerId !== 'google.com',
   )
-  
+
   deleteStep.value = 2
 }
 
