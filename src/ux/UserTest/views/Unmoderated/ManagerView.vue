@@ -15,47 +15,95 @@
             <!-- Dashboard Header with Gradient -->
             <div class="dashboard-header gradient-header">
               <div class="header-content">
-                <div class="d-flex align-center mb-3">
-                  <div class="header-icon-container mr-3">
-                    <v-icon color="white" size="28"
-                      >mdi-chart-box-outline</v-icon
-                    >
-                  </div>
-                  <div class="flex-grow-1">
-                    <h1 class="dashboard-title text-white mb-0">
-                      {{ test.testTitle || 'User Test Study' }}
-                    </h1>
-                    <p class="dashboard-subtitle text-white opacity-90 mb-0">
-                      {{ test.testDescription || 'User Test Study' }}
-                    </p>
-                  </div>
-                </div>
-                <div class="header-chips">
-                  <v-chip
-                    class="test-type-chip"
-                    color="rgba(255,255,255,0.2)"
-                    variant="outlined"
-                    size="small"
-                  >
-                    <v-icon start size="16" color="white">
-                      mdi-account-check-outline
-                    </v-icon>
-                    <span class="text-white">Unmoderated Study</span>
-                  </v-chip>
-                  <v-chip
-                    class="status-chip"
-                    color="rgba(255,255,255,0.15)"
-                    variant="outlined"
-                    size="small"
-                  >
-                    <v-icon start size="16" color="white">
-                      {{ getStatusIcon(test.testStatus) }}
-                    </v-icon>
-                    <span class="text-white">{{
-                      test.testStatus || 'Active'
-                    }}</span>
-                  </v-chip>
-                </div>
+              <div class="header-content d-flex align-start">
+  
+  <div class="header-icon-container mr-4">
+    <v-icon color="white" size="28">
+      mdi-chart-box-outline
+    </v-icon>
+  </div>
+
+
+  <div class="flex-grow-1">
+    <!-- BADGES ROW -->
+    <div class="d-flex align-center gap-2 mb-3">
+      <!-- Methodology Badge -->
+      <v-chip
+        v-if="methodology"
+        class="test-type-chip"
+        :color="methodology.color || 'primary'"
+        variant="tonal"
+        size="small"
+      >
+        <v-icon
+          v-if="methodology.icon"
+          start
+          size="16"
+          :icon="methodology.icon"
+        />
+        {{ methodology.nameEn }}
+      </v-chip>
+
+    
+      <v-chip
+        class="status-chip"
+        color="rgba(255,255,255,0.25)"
+        variant="outlined"
+        size="small"
+      >
+        <v-icon start size="16" color="white">
+          {{ getStatusIcon(test.testStatus) }}
+        </v-icon>
+        {{ test.testStatus || 'Active' }}
+      </v-chip>
+    </div>
+
+    <
+    <h1 class="dashboard-title text-white mb-1">
+      {{ test.testTitle }}
+    </h1>
+
+  
+    <p class="dashboard-subtitle text-white opacity-90">
+      {{ test.testDescription }}
+    </p>
+
+
+<div class="d-flex align-center gap-4 mt-4 header-meta">
+
+
+ 
+  <div class="meta-item">
+    <v-icon size="18" color="white" class="me-1">
+      mdi-progress-check
+    </v-icon>
+    <span>{{ test.progress || 0 }}%</span>
+  </div>
+
+
+  
+  <div class="meta-item">
+    <v-icon size="18" color="white" class="me-1">
+      mdi-account-group
+    </v-icon>
+    <span>{{ test.answers?.length || 0 }} Participants</span>
+  </div>
+
+  <div class="meta-item">
+    <v-icon size="18" color="white" class="me-1">
+      mdi-clock-outline
+    </v-icon>
+    <span>{{ test.duration || 0 }} min</span>
+  </div>
+
+ 
+
+</div>
+
+
+  </div>
+</div>
+
               </div>
             </div>
           </v-col>
@@ -118,6 +166,9 @@
 
 <script setup>
 import ManagerView from '@/shared/views/template/ManagerView.vue'
+
+import { getMethodDefinition } from '@/shared/constants/methodDefinitions'
+
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -142,6 +193,12 @@ const router = useRouter()
 // Computed
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+const methodology = computed(() => {
+  if (!test.value) return null
+  return getMethodDefinition(test.value.testType, test.value.subType)
+})
+
 
 const accessLevel = computed(() => {
   const currentUser = user.value
@@ -239,6 +296,9 @@ onMounted(async () => {
   max-width: 1400px !important;
   padding: 32px 24px !important;
 }
+
+
+
 
 /* Header Styling */
 .dashboard-header {
@@ -501,6 +561,7 @@ onMounted(async () => {
     gap: 24px;
   }
 
+
   .header-chips {
     flex-direction: row;
     justify-content: center;
@@ -556,5 +617,27 @@ onMounted(async () => {
     width: 100%;
     justify-content: center;
   }
+
 }
+
+.gap-2 {
+  gap: 8px;
+}
+
+.header-meta {
+  color: white;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+.gap-4 {
+  gap: 16px;
+}
+
+
 </style>
