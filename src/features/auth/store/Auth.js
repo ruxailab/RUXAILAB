@@ -216,6 +216,8 @@ export default {
       commit('setLoading', true)
       try {
         await authController.deleteAuth(payload)
+        // Store handles state management
+        await authController.signOut()
         commit('SET_USER', null)
         commit('SET_TOAST', {
           message: i18n.global.t('auth.deleteSuccess'),
@@ -227,6 +229,7 @@ export default {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
         })
+        throw err
       } finally {
         commit('setLoading', false)
       }
