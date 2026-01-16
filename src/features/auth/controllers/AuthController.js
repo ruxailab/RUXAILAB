@@ -99,12 +99,15 @@ export default class AuthController {
   }
 
   /**
-   * Delete user account
-   * @param {Object} user - Firebase auth user
-   * @param {string} password - User password for reauthentication (optional)
+   * Delete user account - consolidated method
+   * @param {Object} payload - Deletion payload
+   * @param {Object} payload.user - Firebase auth user
+   * @param {string} payload.password - User password for reauthentication (optional)
    * @returns {Promise}
    */
-  async deleteUserAccount(user, password) {
+  async deleteAuth(payload) {
+    const { user, password } = payload
+    
     if (!user) throw new Error('No user provided')
 
     const hasGoogle = user.providerData.some(p => p.providerId === 'google.com')
@@ -118,16 +121,24 @@ export default class AuthController {
       await reauthenticateWithCredential(user, cred)
     }
 
-    // Delete user
+    // Delete user from Firebase Auth
     await user.delete()
-    await this.signOut()
+    
+    // Call backend to clean up (non-blocking - don't fail if this errors)
+    // User is already deleted from Firebase, so this is best-effort cleanup
+    try {
+      await this.deleteUserData(user.uid)
+    } catch (err) {
+      console.warn('Backend cleanup failed but user already deleted:', err)
+      // Don't throw - user deletion succeeded
+    }
   }
 
-  async deleteAuth(userId) {
+  async deleteUserData(userId) {
     try {
       await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth', { data: { userId } })
     } catch (err) {
-      console.error('Error deleting user:', err)
+      console.error('Error deleting user data:', err)
       throw err
     }
   }

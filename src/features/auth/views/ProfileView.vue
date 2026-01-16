@@ -713,7 +713,6 @@ const deleteAccount = async (user) => {
   toast.success(t('profile.accountDeletedSuccess'))
   signOut()
 }
-
 const handlerDeleteAccount = async () => {
   const auth = getAuth()
   const user = auth.currentUser
@@ -721,7 +720,8 @@ const handlerDeleteAccount = async () => {
   try {
     isDeleting.value = true
     const password = hasEmailPasswordProvider.value ? userPassword.value : null
-    await authController.deleteUserAccount(user, password)
+    // Use store action instead of calling controller directly
+    await store.dispatch('deleteAuth', { user, password })
     globalThis.location.href = '/'
   } catch (error) {
     console.error('Error during account deletion:', error)
