@@ -1,5 +1,9 @@
 <template>
-  <v-stepper v-model="step" class="pa-6" non-linear>
+  <v-stepper
+    v-model="step"
+    class="pa-sm-6"
+    non-linear
+  >
     <v-stepper-header>
       <v-stepper-item
         :complete="step > 1"
@@ -66,9 +70,7 @@
       </v-card-text>
 
       <v-card-text v-if="step === '4'">
-        <TaskPreview
-          :task="localTask"
-        />
+        <TaskPreview :task="localTask" />
       </v-card-text>
     </div>
 
@@ -105,11 +107,12 @@ const localTask = ref({ ...props.task });
 const selectItems = [
   { label: 'No Answer', value: 'no-answer' },
   { label: 'Short Answer', value: 'post-test' },
-    { label: 'Paragraph Answer', value: 'text-area' },
+  { label: 'Paragraph Answer', value: 'text-area' },
 
   { label: 'Google Forms Link', value: 'post-form' },
   { label: 'NASA TLX', value: 'nasa-tlx' },
-  { label: 'System Usability Scale', value: 'sus' }
+  { label: 'System Usability Scale', value: 'sus' },
+  { label: 'Situation Awareness Rating Technique', value: 'sart' }
 ];
 
 const requiredRule = [(v) => !!v || 'Field Required'];
@@ -139,7 +142,7 @@ const valida = () => {
 
   // trigger visual validator for task name
   taskBasicInfoRef.value?.isValid?.value;
-  
+
   if (nameOk && descOk) {
     emit('validate', localTask.value);
     return true;
@@ -160,5 +163,11 @@ defineExpose({ valida, resetVal });
 .stepper-content {
   min-height: 400px;
   padding: 16px;
+}
+
+@media (max-width: 600px) {
+  .stepper-content {
+    padding: 0;
+  }
 }
 </style>

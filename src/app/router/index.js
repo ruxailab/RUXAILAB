@@ -3,12 +3,20 @@ import Public from '@/router/modules/public.js'
 import Admin from '@/router/modules/admin.js'
 import SuperAdmin from '@/router/modules/superAdmin.js'
 import CardSorting from '@/ux/CardSorting/router.js'
-import HeuristicRoutes from '@/ux/Heuristic/router.js';
-import accessibilityRoutes from '@/ux/accessibility/router.js';
-import UserTestRoutes from '@/ux/UserTest/router.js';
+import HeuristicRoutes from '@/ux/Heuristic/router.js'
+import accessibilityRoutes from '@/ux/accessibility/router.js'
+import UserTestRoutes from '@/ux/UserTest/router.js'
 import store from '@/store'
 
-const routes = [...Public, ...Admin, ...SuperAdmin, ...CardSorting, ...accessibilityRoutes, ...HeuristicRoutes, ...UserTestRoutes]
+const routes = [
+  ...Public,
+  ...Admin,
+  ...SuperAdmin,
+  ...CardSorting,
+  ...accessibilityRoutes,
+  ...HeuristicRoutes,
+  ...UserTestRoutes,
+]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -20,7 +28,8 @@ router.beforeEach(async (to, from, next) => {
   let user = store.state.Auth.user
 
   // Special handling for accessibility preview routes - allow complete public access
-  const isAccessibilityPreview = to.path.includes('/accessibility/') && to.path.includes('/preview/')
+  const isAccessibilityPreview =
+    to.path.includes('/accessibility/') && to.path.includes('/preview/')
 
   if (isAccessibilityPreview) {
     console.log('Accessibility preview route detected - allowing public access')
@@ -50,8 +59,7 @@ router.beforeEach(async (to, from, next) => {
 function redirect() {
   if (!store.state.Auth.user) return '/signin'
   const level = store.state.Auth.user.accessLevel
-  if (level === -1) return '/superadmin'
-  if (level === 0) return '/admin'
+  if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
   return '/signin'
 }
