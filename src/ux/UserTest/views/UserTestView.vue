@@ -2,7 +2,11 @@
   <div v-if="test">
     <div>
       <IrisTracker
-        v-if="hasEyeTracking"
+        v-if="
+          hasEyeTracking &&
+          globalIndex === (hasEyeTracking ? 5 : 4) &&
+          test.testStructure.userTasks[taskIndex]?.hasEye
+        "
         :is-running="isTracking"
         :ms-per-capture="300"
         :record-screen="isRecording"
@@ -303,6 +307,7 @@
           <WelcomeStep
             v-if="globalIndex === 0"
             :stepper-value="stepperValue"
+            :hasEyeTracking="hasEyeTracking"
             :welcome-message="test?.testStructure?.welcomeMessage"
             @start="globalIndex = 1"
           />
@@ -507,6 +512,7 @@ const isLoading = ref(false)
 const isVisualizerVisible = ref(false)
 const doneTaskDisabled = ref(false)
 const anonymousUserDocId = ref(null)
+const calibrationPopup = ref(null)
 
 const rightView = ref(null)
 const videoRecorder = ref(null)
@@ -633,7 +639,7 @@ function handleIrisData(data) {
 }
 
 const openCalibration = () => {
-  window.open(
+  calibrationPopup.value = window.open(
     `${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`,
     '_blank',
   )
@@ -1263,6 +1269,7 @@ onMounted(async () => {
 
     if (data.calibrationId) {
       calibrationCompleted.value = true
+      calibrationPopup.value.close()
     }
   })
 })
