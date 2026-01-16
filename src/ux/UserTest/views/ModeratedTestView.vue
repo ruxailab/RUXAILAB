@@ -302,7 +302,7 @@
             persistent
             width="400"
             elevation="3"
-            :model-value="true"
+            v-model="notesDrawerOpen"
             style="
               position: fixed;
               top: 0;
@@ -319,6 +319,35 @@
               @save="saveAnswer"
             />
           </v-navigation-drawer>
+          
+          <!-- Notes Toggle Button (for Observators) -->
+          <v-btn
+            v-if="isObservator"
+            icon
+            size="large"
+            color="primary"
+            elevation="4"
+            class="notes-toggle-btn"
+            @click="notesDrawerOpen = !notesDrawerOpen"
+            :style="{
+              position: 'fixed',
+              top: '80px',
+              right: notesDrawerOpen ? '420px' : '20px',
+              zIndex: 1006,
+              transition: 'right 0.3s ease',
+            }"
+          >
+            <v-badge
+              :content="localTestAnswer.sessionNotes?.length || 0"
+              :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
+              color="error"
+              overlap
+            >
+              <v-icon>
+                {{ notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline' }}
+              </v-icon>
+            </v-badge>
+          </v-btn>
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
@@ -580,6 +609,7 @@ const preTestIndex = ref(null)
 const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
+const notesDrawerOpen = ref(true)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -596,11 +626,11 @@ const isUserTestAdmin = computed(() => {
 })
 
 const currentUserAccessLevel = computed(() => {
-  if (isUserTestAdmin.value) return 1 // Admin implicit
+  if (isUserTestAdmin.value) return 0 // Admin implicit
   const cooperator = test.value.cooperators?.find(
-    (c) => c.userDocId === user.value?.id,
+    (c) => c.userDocId === user.value?.id
   )
-  return cooperator?.accessLevel || 2 // Default to Guest/Participant (2) if not found, but typically should be found
+  return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
 })
 
 const isObservator = computed(() => currentUserAccessLevel.value === 3)
