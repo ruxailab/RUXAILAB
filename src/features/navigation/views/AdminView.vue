@@ -12,11 +12,14 @@
     <!-- 📄 Main content area -->
     <v-main class="main-content">
       <v-container fluid class="pa-6">
-        <!-- 🔹 Page header (dynamic title + subtitle) -->
+        <!-- 🔹 Page header (dynamic title + subtitle with icon) -->
         <div class="content-header">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4">
-            {{ currentPageTitle }}
-          </h1>
+          <div class="d-flex align-center ga-3 mb-2">
+            <v-icon :icon="currentPageIcon" size="32" color="primary"></v-icon>
+            <h1 class="text-h4 font-weight-bold text-grey-darken-4">
+              {{ currentPageTitle }}
+            </h1>
+          </div>
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
@@ -145,6 +148,32 @@ const currentPageTitle = computed(() => {
         : t('pages.navigation.communityStudies')
     default:
       return 'RUXAI Lab'
+  }
+})
+
+// 🔹 Dynamic page icon
+const currentPageIcon = computed(() => {
+  switch (activeSection.value) {
+    case 'dashboard':
+      return 'mdi-view-dashboard'
+    case 'studies':
+      return 'mdi-flask'
+    case 'sessions':
+      return 'mdi-calendar-clock'
+    case 'templates':
+      return 'mdi-clipboard-text'
+    case 'storage':
+      return 'mdi-database'
+    case 'notifications':
+      return 'mdi-bell'
+    case 'profile':
+      return 'mdi-account-circle'
+    case 'community':
+      return activeSubSection.value === 'community-templates'
+        ? 'mdi-file-document'
+        : 'mdi-flask-outline'
+    default:
+      return 'mdi-view-dashboard'
   }
 })
 
