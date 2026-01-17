@@ -582,6 +582,27 @@
       "noTests": "テストが見つかりません",
       "noTemplates": "テンプレートが見つかりません"
     },
+    "sessions": {
+      "searchPlaceholder": "セッションを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "sessionDate": "セッション日",
+      "selectRange": "範囲を選択",
+      "statusLabel": "ステータス",
+      "ownership": "所有権",
+      "evaluator": "評価者",
+      "noActiveSessions": "アクティブなセッションがありません",
+      "filters": {
+        "allStatuses": "すべてのステータス",
+        "today": "今日",
+        "upcoming": "今後",
+        "completed": "完了",
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中"
+      }
+    },
     "createTest": {
       "title": "新しいテストを作成",
       "blankTitle": "空白のテストを作成",

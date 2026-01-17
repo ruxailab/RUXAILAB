@@ -600,6 +600,27 @@
       "noTests": "未找到测试",
       "noTemplates": "未找到模板"
     },
+    "sessions": {
+      "searchPlaceholder": "搜索会话...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "sessionDate": "会话日期",
+      "selectRange": "选择范围",
+      "statusLabel": "状态",
+      "ownership": "所有权",
+      "evaluator": "评估者",
+      "noActiveSessions": "您没有活跃的会话",
+      "filters": {
+        "allStatuses": "所有状态",
+        "today": "今天",
+        "upcoming": "即将到来",
+        "completed": "已完成",
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的"
+      }
+    },
     "createTest": {
       "title": "创建新测试",
       "blankTitle": "创建空白测试",

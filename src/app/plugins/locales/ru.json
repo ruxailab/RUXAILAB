@@ -600,6 +600,27 @@
       "noTests": "Тесты не найдены",
       "noTemplates": "Шаблоны не найдены"
     },
+    "sessions": {
+      "searchPlaceholder": "Поиск сессий...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "sessionDate": "Дата сессии",
+      "selectRange": "Выбрать диапазон",
+      "statusLabel": "Статус",
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "noActiveSessions": "У вас нет активных сессий",
+      "filters": {
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершенный",
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю"
+      }
+    },
     "createTest": {
       "title": "Создать новый тест",
       "blankTitle": "Создать пустой тест",
