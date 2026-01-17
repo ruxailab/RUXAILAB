@@ -296,29 +296,22 @@ const isCoopAlreadySelected = (emailToCheck) => {
 }
 
 const validateEmail = () => {
-    const email = comboboxModel.value.pop();
-    comboboxKey.value++;
+  const email = comboboxModel.value.pop()
+  comboboxKey.value++
 
-    if (!email) return;
+  if (!email) return
 
-    if (isStringEmail(email)) {
-        if (!isValidEmail(email)) {
-            showError('Invalid email format');
-            return;
-        }
-
-        if (!isUserEmailValid(email)) {
-            showError(`${email} is not a valid email or does not exist`);
-            return;
-        }
-
-        if (!selectedCoops.value.includes(email)) {
-            selectedCoops.value.push(email);
-        }
-        return;
+  // Handle string email input
+  if (isStringEmail(email)) {
+    if (!isValidEmail(email)) {
+      showError('Invalid email format')
+      return
     }
 
-    if (selectedCoops.value.includes(email)) return;
+    if (!isUserEmailValid(email)) {
+      showError(`${email} is not a valid email or does not exist`)
+      return
+    }
 
     if (!selectedCoops.value.includes(email)) {
       selectedCoops.value.push(email)
