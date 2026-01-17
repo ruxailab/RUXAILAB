@@ -574,6 +574,27 @@
       "noTests": "कोई परीक्षण नहीं मिला",
       "noTemplates": "कोई टेम्पलेट नहीं मिला"
     },
+    "sessions": {
+      "searchPlaceholder": "सत्र खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "sessionDate": "सत्र तिथि",
+      "selectRange": "सीमा चुनें",
+      "statusLabel": "स्थिति",
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
+      "filters": {
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आगामी",
+        "completed": "पूर्ण",
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+      }
+    },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",
       "blankTitle": "खाली परीक्षण बनाएँ",

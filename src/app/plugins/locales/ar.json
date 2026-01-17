@@ -587,6 +587,27 @@
       "noTests": "لم يتم العثور على اختبارات",
       "noTemplates": "لم يتم العثور على قوالب"
     },
+    "sessions": {
+      "searchPlaceholder": "البحث في الجلسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "sessionDate": "تاريخ الجلسة",
+      "selectRange": "اختر النطاق",
+      "statusLabel": "الحالة",
+      "ownership": "الملكية",
+      "evaluator": "المقيم",
+      "noActiveSessions": "ليس لديك جلسات نشطة",
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "القادمة",
+        "completed": "مكتمل",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون"
+      }
+    },
     "createTest": {
       "title": "إنشاء اختبار جديد",
       "blankTitle": "إنشاء اختبار فارغ",

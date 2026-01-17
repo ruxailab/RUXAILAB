@@ -587,6 +587,27 @@
       "noTests": "Keine Tests gefunden",
       "noTemplates": "Keine Vorlagen gefunden"
     },
+    "sessions": {
+      "searchPlaceholder": "Sitzungen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "sessionDate": "Sitzungsdatum",
+      "selectRange": "Bereich auswählen",
+      "statusLabel": "Status",
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "noActiveSessions": "Sie haben keine aktiven Sitzungen",
+      "filters": {
+        "allStatuses": "Alle Status",
+        "today": "Heute",
+        "upcoming": "Bevorstehend",
+        "completed": "Abgeschlossen",
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich mitarbeite"
+      }
+    },
     "createTest": {
       "title": "Neuen Test erstellen",
       "blankTitle": "Leeren Test erstellen",
