@@ -44,7 +44,7 @@
             "
           >
             <template #prepend>
-              <v-icon color="white">mdi-check-circle</v-icon>
+              <v-icon color="white"> mdi-check-circle </v-icon>
             </template>
             <span class="text-white">
               <strong>Test Already Completed</strong><br />
@@ -65,7 +65,7 @@
             "
           >
             <template #prepend>
-              <v-icon color="white">mdi-clock-alert</v-icon>
+              <v-icon color="white"> mdi-clock-alert </v-icon>
             </template>
             <span class="text-white">
               <strong>Test Expired</strong><br />
@@ -85,7 +85,7 @@
             "
           >
             <template #prepend>
-              <v-icon color="white">mdi-pause-circle</v-icon>
+              <v-icon color="white"> mdi-pause-circle </v-icon>
             </template>
             <span class="text-white">
               <strong>Test Not Active</strong><br />
@@ -106,7 +106,7 @@
             "
           >
             <template #prepend>
-              <v-icon color="white">mdi-alert-circle</v-icon>
+              <v-icon color="white"> mdi-alert-circle </v-icon>
             </template>
             <span class="text-white">
               <strong>Test Configuration Error</strong><br />
@@ -127,7 +127,7 @@
             "
           >
             <template #prepend>
-              <v-icon color="white">mdi-calendar-clock</v-icon>
+              <v-icon color="white"> mdi-calendar-clock </v-icon>
             </template>
             <span class="text-white">
               <strong>Session Too Far</strong><br />
@@ -148,7 +148,7 @@
             "
           >
             <template #prepend>
-              <v-icon color="white">mdi-alert-circle</v-icon>
+              <v-icon color="white"> mdi-alert-circle </v-icon>
             </template>
             <span class="text-white">
               <strong>No Test Data</strong><br />
@@ -360,9 +360,9 @@
               :current-task-index="taskIndex"
               :test="test"
               :local-test-answer="localTestAnswer"
-              @setRemoteStream="remoteStream = $event"
-              @proceedToNextStep="proceedToNextStep"
-              @stepSelected="handleStepSelected"
+              @set-remote-stream="remoteStream = $event"
+              @proceed-to-next-step="proceedToNextStep"
+              @step-selected="handleStepSelected"
             />
           </div>
 
@@ -519,7 +519,7 @@
       <v-card v-if="user" class="rounded-xl pa-6">
         <v-row class="ma-0 pa-0" justify="center">
           <v-avatar color="primary-lighten-4" size="120">
-            <v-icon size="80">mdi-account-circle</v-icon>
+            <v-icon size="80"> mdi-account-circle </v-icon>
           </v-avatar>
         </v-row>
         <v-card-title class="text-center text-h6 font-weight-bold mt-4">
@@ -787,11 +787,6 @@ const saveAnswer = async () => {
 
     Object.assign(currentUserTestAnswer.value, localTestAnswer)
 
-    console.log('ANSWER =>', {
-      data: currentUserTestAnswer.value,
-      answersDocId: test.value.answersDocId,
-      testType: test.value.testType,
-    })
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
       answersDocId: test.value.answersDocId,
@@ -1258,6 +1253,8 @@ const isStartTestDisabled = computed(() => {
       return true
     }
   }
+
+  testDisabledReason.value = null
   return false
 })
 
