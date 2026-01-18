@@ -282,16 +282,17 @@ const submit = async () => {
   };
   const newTest = instantiateStudyByType(testType, rawData);
 
-  await store.dispatch('createStudy', newTest);
+  const testId = await store.dispatch('createStudy', newTest);
   isLoading.value = false;
 
-  const testStore = store.getters.test;
   store.commit('RESET_STUDY_DETAILS');
 
   if (studyType.value === 'Accessibility') router.push('/sample');
   else {
     const methodView = getMethodManagerView(testType, newTest.subType);
-    router.push({ name: methodView, params: { id: testStore } });
+    if (testId) {
+      router.push({ name: methodView, params: { id: testId } });
+    }
   }
 };
 

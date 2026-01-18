@@ -30,7 +30,9 @@
         :title="showFilters ? 'Hide filters' : 'Show filters'"
         @click="toggleFilters"
       >
-        <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        <v-icon>{{
+          showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
+        }}</v-icon>
       </v-btn>
     </div>
 
@@ -44,7 +46,7 @@
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
+              location="bottom"
               max-width="290px"
               min-width="290px"
             >
@@ -55,12 +57,24 @@
                   variant="outlined"
                   density="compact"
                   hide-details
-                  :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
-                  :model-value="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : ''"
+                  :placeholder="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : 'Select range'
+                  "
+                  :model-value="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : ''
+                  "
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -131,43 +145,37 @@
   </v-card>
 
   <!-- 📋 List of filtered studies -->
-  <List
-    :items="filteredTests"
-    type="publicTests"
-    @clicked="goTo"
-  />
+  <List :items="filteredTests" type="publicTests" @clicked="goTo" />
 </template>
 
 <script setup>
 // 🔧 Imports and setup
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import List from '@/shared/components/tables/ListComponent.vue';
 import {
-  getMethodManagerView,
   getMethodOptions,
   METHOD_DEFINITIONS,
   METHOD_STATUSES,
   STUDY_TYPES,
   USER_STUDY_SUBTYPES
 } from '@/shared/constants/methodDefinitions';
-import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
 
-const store = useStore();
-const router = useRouter();
+const store = useStore()
+const router = useRouter()
 
 // ===== Reactive state =====
-const search = ref('');
-const showFilters = ref(false);
+const search = ref('')
+const showFilters = ref(false)
 
 // ===== Filter controls =====
-const creationDateRange = ref([]);
-const selectedMethodFilter = ref('all');
-const selectedStatusFilter = ref(['all']);
-const selectedVisibilityFilter = ref('all');
-const selectedOwnershipFilter = ref('all');
-const selectedParticipantsFilter = ref(['all']);
+const creationDateRange = ref([])
+const selectedMethodFilter = ref('all')
+const selectedStatusFilter = ref(['all'])
+const selectedVisibilityFilter = ref('all')
+const selectedOwnershipFilter = ref('all')
+const selectedParticipantsFilter = ref(['all'])
 
 // ===== Filter options =====
 const statusOptions = [
@@ -175,34 +183,34 @@ const statusOptions = [
   { value: 'active', text: 'Active' },
   { value: 'draft', text: 'Draft' },
   { value: 'completed', text: 'Completed' },
-];
+]
 
 const ownershipOptions = [
   { value: 'all', text: 'All Studies' },
   { value: 'mine', text: 'My Studies' },
   { value: 'cooperator', text: 'Where I Collaborate' },
-];
+]
 
 const participantsOptions = [
   { text: 'All', value: 'all' },
   { text: '< 10 participants', value: 'lt10' },
   { text: '10 – 50 participants', value: 'btw10_50' },
   { text: '> 50 participants', value: 'gt50' },
-];
+]
 
 // ===== UI actions =====
-const toggleFilters = () => (showFilters.value = !showFilters.value);
+const toggleFilters = () => (showFilters.value = !showFilters.value)
 const clearFilters = () => {
   // Reset all filters
-  search.value = '';
-  creationDateRange.value = [];
-  selectedMethodFilter.value = 'all';
-  selectedStatusFilter.value = ['all'];
-  selectedVisibilityFilter.value = 'all';
-  selectedOwnershipFilter.value = 'all';
-  selectedParticipantsFilter.value = 'all';
-  showFilters.value = false;
-};
+  search.value = ''
+  creationDateRange.value = []
+  selectedMethodFilter.value = 'all'
+  selectedStatusFilter.value = ['all']
+  selectedVisibilityFilter.value = 'all'
+  selectedOwnershipFilter.value = 'all'
+  selectedParticipantsFilter.value = 'all'
+  showFilters.value = false
+}
 
 // Check if any filter is active
 const hasActiveFilters = computed(() => {
@@ -213,74 +221,89 @@ const hasActiveFilters = computed(() => {
     selectedOwnershipFilter.value != 'all' ||
     selectedParticipantsFilter.value != 'all' ||
     selectedMethodFilter.value != 'all'
-  );
-});
+  )
+})
 
 // ===== Method options =====
 const methodOptions = computed(() => {
-  const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id);
+  const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id)
   return [
     { value: 'all', text: 'All Methods' },
-    ...options.map(option => ({ value: option.value, text: option.text }))
-  ];
-});
+    ...options.map((option) => ({ value: option.value, text: option.text })),
+  ]
+})
 
 // ===== Data and filtering logic =====
-const tests = computed(() => store.getters.tests || []);
-const user = computed(() => store.getters.user);
+const tests = computed(() => store.getters.publicTests || [])
+const user = computed(() => store.getters.user)
 
 // Apply filters to tests
 const filteredTests = computed(() => {
-  if (!tests.value) return [];
-  return tests.value.filter(test => {
-    const title = (test.testTitle || test.title || '').toLowerCase();
-    const query = (search.value || '').toLowerCase();
-    const matchesSearch = !query || title.includes(query);
+  if (!tests.value) return []
+  return tests.value.filter((test) => {
+    const title = (test.testTitle || test.title || '').toLowerCase()
+    const query = (search.value || '').toLowerCase()
+    const matchesSearch = !query || title.includes(query)
 
     // Filter by method
-    let matchesMethod = true;
+    let matchesMethod = true
     if (test.testType) {
-      const method = selectedMethodFilter.value;
-      const testType = test.testType;
-      const subType = test.subType;
+      const method = selectedMethodFilter.value
+      const testType = test.testType
+      const subType = test.subType
 
       matchesMethod =
         method === 'all' ||
-        (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
-        (method === METHOD_DEFINITIONS.USER_UNMODERATED.id && testType === STUDY_TYPES.USER && subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
-        (method === METHOD_DEFINITIONS.USER_MODERATED.id && testType === STUDY_TYPES.USER && subType === USER_STUDY_SUBTYPES.MODERATED);
+        (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+          testType === STUDY_TYPES.HEURISTIC) ||
+        (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
+          testType === STUDY_TYPES.USER &&
+          subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
+        (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
+          testType === STUDY_TYPES.USER &&
+          subType === USER_STUDY_SUBTYPES.MODERATED)
     }
 
     // Filter by status
     const matchesStatus =
       !selectedStatusFilter.value?.length ||
       selectedStatusFilter.value.includes('all') ||
-      selectedStatusFilter.value.includes(test.status);
+      selectedStatusFilter.value.includes(test.status)
 
     // Filter by ownership
-    const isMine = test.testAdmin?.userDocId === user.value?.id;
-    const isCooperator = test.cooperators?.some(c => c.userDocId === user.value?.id);
-    const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other';
+    const isMine = test.testAdmin?.userDocId === user.value?.id
+    const isCooperator = test.cooperators?.some(
+      (c) => c.userDocId === user.value?.id,
+    )
+    const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other'
     const matchesOwnership =
       selectedOwnershipFilter.value === 'all' ||
-      selectedOwnershipFilter.value === ownership;
+      selectedOwnershipFilter.value === ownership
 
     // Filter by participants
-    const participants = test.cooperators?.length || 0;
-    let matchesParticipants = true;
+    const participants = test.cooperators?.length || 0
+    let matchesParticipants = true
     switch (selectedParticipantsFilter.value) {
-      case 'lt10': matchesParticipants = participants < 10; break;
-      case 'btw10_50': matchesParticipants = participants >= 10 && participants <= 50; break;
-      case 'gt50': matchesParticipants = participants > 50; break;
+      case 'lt10':
+        matchesParticipants = participants < 10
+        break
+      case 'btw10_50':
+        matchesParticipants = participants >= 10 && participants <= 50
+        break
+      case 'gt50':
+        matchesParticipants = participants > 50
+        break
     }
 
     // Filter by creation date range
-    let inCreationRange = true;
+    let inCreationRange = true
     if (creationDateRange.value?.length > 1 && test.creationDate) {
-      const creation = new Date(test.creationDate);
-      const start = new Date(creationDateRange.value[0]);
-      const end = new Date(creationDateRange.value[creationDateRange.value.length - 1]);
-      inCreationRange = creation >= start && creation <= end;
+      const creation = new Date(test.creationDate)
+      const start = new Date(creationDateRange.value[0])
+      const end = new Date(
+        creationDateRange.value[creationDateRange.value.length - 1],
+      )
+      inCreationRange = creation >= start && creation <= end
     }
 
     return (
@@ -290,42 +313,78 @@ const filteredTests = computed(() => {
       matchesOwnership &&
       matchesParticipants &&
       inCreationRange
-    );
-  });
-});
+    )
+  })
+})
 
 // ===== Navigation =====
+const getTestId = (test) => test.testDocId || test.id;
+const canManageStudy = (test) => {
+  const currentUser = user.value;
+  if (!currentUser || !test) return false;
+  if (currentUser.accessLevel === 0) return true;
+  if (test.testAdmin?.userDocId === currentUser.id) return true;
+  const coop = test.cooperators?.find(c => c.userDocId === currentUser.id);
+  return coop?.accessLevel === 0;
+};
+
 const goTo = (test) => {
-  // Redirect depending on study type
+  const testId = getTestId(test);
+  if (!testId) return;
+
+  if (canManageStudy(test)) {
+    navigateToManagerStudy(test, testId);
+    return;
+  }
+
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
-    router.push(`/accessibility/manual/${test.testDocId || test.id}`);
+    router.push({ name: 'AccessibilityPreviewTest', params: { id: testId } });
     return;
   }
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
-    router.push(`/accessibility/automatic/${test.testDocId || test.id}`);
+    router.push({ name: 'AccessibilityReport', params: { id: testId } });
     return;
   }
-  navigateToCommunityStudy(test);
+  navigateToCommunityStudy(test, testId);
 };
 
-// Helper to navigate to community views
-const navigateToCommunityStudy = (test) => {
+const navigateToManagerStudy = (test, testId) => {
   switch (test.testType) {
     case STUDY_TYPES.HEURISTIC:
-      router.push({ name: 'HeuristicManagerView', params: { id: test.id } });
+      router.push({ name: 'HeuristicManagerView', params: { id: testId } });
       break;
     case STUDY_TYPES.CARD_SORTING:
-      router.push({ name: 'CardSortingManagerView', params: { id: test.id } });
+      router.push({ name: 'CardSortingManagerView', params: { id: testId } });
       break;
     case STUDY_TYPES.USER:
-      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED)
-        router.push({ name: 'UserUnmoderatedManagerView', params: { id: test.id } });
-      else if (test.subType === USER_STUDY_SUBTYPES.MODERATED)
-        router.push({ name: 'UserModeratedManagerView', params: { id: test.id } });
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
+        router.push({ name: 'UserUnmoderatedManagerView', params: { id: testId } });
+      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
+        router.push({ name: 'UserModeratedManagerView', params: { id: testId } });
+      }
+      break;
+    default:
+      router.push({ name: 'HeuristicManagerView', params: { id: testId } });
       break;
   }
 };
 
+const navigateToCommunityStudy = (test, testId) => {
+  switch (test.testType) {
+    case STUDY_TYPES.HEURISTIC:
+      router.push({ name: 'TestView', params: { id: testId } });
+      break;
+    case STUDY_TYPES.CARD_SORTING:
+      router.push({ name: 'CardSortingTestView', params: { id: testId } });
+      break;
+    case STUDY_TYPES.USER:
+      router.push({ name: 'TestView', params: { id: testId } });
+      break;
+    default:
+      router.push({ name: 'TestView', params: { id: testId } });
+      break;
+  }
+}
 </script>
 
 <style scoped>
@@ -346,14 +405,14 @@ const navigateToCommunityStudy = (test) => {
   min-width: 140px;
   height: 40px;
   font-weight: 600;
-  letter-spacing: .3px;
+  letter-spacing: 0.3px;
 }
 
 .filter-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   margin-bottom: 4px;
   line-height: 1.15;
   color: #475569;
