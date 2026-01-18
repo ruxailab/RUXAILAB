@@ -43,39 +43,44 @@
       >
         {{ error }}
       </v-alert>
-      <v-list
+      <div
         v-if="!loading"
-        class="py-0"
+        class="blog-posts-scroll-container"
       >
-        <v-list-item
-          v-for="(post, index) in blogPosts"
-          :key="post.id || index"
-          :href="post.url"
-          target="_blank"
-          :class="{ 'border-bottom': index < blogPosts.length - 1 }"
-        >
-          <div class="d-flex align-center justify-space-between py-3 px-1">
-            <div>
-              <v-list-item-title class="text-body-1 font-weight-medium mb-1">
-                {{ post.title }}
-              </v-list-item-title>
-              <v-list-item-subtitle
-                v-if="post.excerpt"
-                class="excerpt text-body-2 text-medium-emphasis mb-2"
-                :title="post.excerpt"
-              >
-                {{ post.excerpt }}
-              </v-list-item-subtitle>
+        <v-list class="py-0">
+          <v-list-item
+            v-for="(post, index) in blogPosts"
+            :key="post.id || index"
+            :href="post.url"
+            target="_blank"
+            :class="{ 'border-bottom': index < blogPosts.length - 1 }"
+          >
+            <div class="d-flex align-center justify-space-between py-3 px-1">
+              <div class="flex-grow-1">
+                <div class="d-flex align-center justify-space-between">
+                  <v-list-item-title class="text-body-1 font-weight-medium mb-1">
+                    {{ post.title }}
+                  </v-list-item-title>
+                  <span class="text-caption text-medium-emphasis ml-2 text-no-wrap">{{ post.date }}</span>
+                </div>
+                <v-list-item-subtitle
+                  v-if="post.excerpt"
+                  class="excerpt text-body-2 text-medium-emphasis mb-2"
+                  :title="post.excerpt"
+                >
+                  {{ post.excerpt }}
+                </v-list-item-subtitle>
+              </div>
+              <v-icon
+                icon="mdi-open-in-new"
+                size="16"
+                color="primary"
+                class="ml-2"
+              />
             </div>
-            <span class="text-caption text-medium-emphasis">{{ post.displayDate }}</span>
-            <v-icon
-              icon="mdi-open-in-new"
-              size="16"
-              color="primary"
-            />
-          </div>
-        </v-list-item>
-      </v-list>
+          </v-list-item>
+        </v-list>
+      </div>
       <div
         v-else
         class="px-2 py-4"
@@ -117,26 +122,66 @@ const defaultPosts = [
     {
         id: 1,
         title: "GSoC 2025 Journey (Tianqin's project) - Bridging GitHub and Discord",
-        excerpt: "Exploring how Tianqin's project designed and implemented the first version of Disgitbot...",
+        excerpt: "Over the summer, Tianqin designed and implemented the first version of Disgitbot, turning Discord into a live dashboard for GitHub activity...",
         url: 'https://blog-ruxailab.web.app/posts/disgitbot-gsoc-2025.html',
-        category: 'Research',
-        date: '2 days ago'
+        category: 'GSoC',
+        date: 'June 9, 2025'
     },
     {
         id: 2,
         title: 'Introducing the RUXAILAB Blog',
-        excerpt: 'We’re excited to launch the RUXAILAB Blog, a space to share insights, tutorials, and...',
+        excerpt: "We're excited to launch the RUXAILAB Blog, a space to share insights, tutorials, and updates from our work...",
         url: 'https://blog-ruxailab.web.app/posts/ruxailab-blog.html',
-        category: 'Accessibility',
-        date: '1 week ago'
+        category: 'Announcements',
+        date: 'April 1, 2025'
     },
     {
         id: 3,
         title: 'RUXAILAB Selected for Google Summer of Code 2025',
-        excerpt: 'We are proud to announce that RUXAILAB has been officially selected as a mentoring...',
+        excerpt: 'We are proud to announce that RUXAILAB has been officially selected as a mentoring organization for Google Summer of Code 2025!',
         url: 'https://blog-ruxailab.web.app/posts/ruxailab-gsoc.html',
-        category: 'Methods',
-        date: '2 weeks ago'
+        category: 'Announcements',
+        date: 'December 20, 2024'
+    },
+    {
+        id: 4,
+        title: 'RUXAILAB Awarded for Accessibility Innovation from AccesCat',
+        excerpt: 'We are thrilled to announce that RUXAILAB has received the top award in the II Convocatoria de Solucions Disruptives 2025...',
+        url: 'https://blog-ruxailab.web.app/posts/ruxailab-accesscat.html',
+        category: 'Awards',
+        date: 'July 1, 2024'
+    },
+    {
+        id: 5,
+        title: "GSoC 2024 Journey (Basma's project) - Sentiment Analysis for Usability Testing",
+        excerpt: "Developing a sentiment analysis solution for usability testing data extraction with RUXAILAB using AI...",
+        url: 'https://blog-ruxailab.web.app/posts/gsoc-2024-sentiment-analysis-basma.html',
+        category: 'GSoC',
+        date: 'June 15, 2024'
+    },
+    {
+        id: 6,
+        title: "GSoC 2024 Journey (Julio's project) - Implementing Card Sorting Method",
+        excerpt: "Implementing the Card Sorting method in RUXAILAB, expanding our UX evaluation toolkit with a powerful new methodology...",
+        url: 'https://blog-ruxailab.web.app/posts/gsoc-2024-card-sorting-julio.html',
+        category: 'GSoC',
+        date: 'June 1, 2024'
+    },
+    {
+        id: 7,
+        title: "GSoC 2024 Journey (Sitam's project) - Eye Tracking Algorithm Optimization",
+        excerpt: "Working on Eye Tracking Algorithm Optimization Based on Low-Resolution Cameras as part of GSoC 2024...",
+        url: 'https://blog-ruxailab.web.app/posts/gsoc-2024-eye-tracking-sitam.html',
+        category: 'GSoC',
+        date: 'April 15, 2024'
+    },
+    {
+        id: 8,
+        title: "RUXAILAB's First Google Summer of Code 2024 - A Milestone Achievement",
+        excerpt: "2024 marked a historic milestone for RUXAILAB - our first-ever participation as a mentoring organization in GSoC!",
+        url: 'https://blog-ruxailab.web.app/posts/ruxailab-gsoc-2024.html',
+        category: 'Announcements',
+        date: 'August 18, 2025'
     }
 ]
 
@@ -147,6 +192,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.blog-posts-scroll-container {
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--v-theme-primary)) transparent;
+}
+
+.blog-posts-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.blog-posts-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+}
+
+.blog-posts-scroll-container::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--v-theme-primary));
+    border-radius: 3px;
+}
+
+.blog-posts-scroll-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--v-theme-primary), 0.8);
+}
+
 .border-bottom {
     border-bottom: 1px solid rgb(var(--v-theme-outline-variant));
 }
