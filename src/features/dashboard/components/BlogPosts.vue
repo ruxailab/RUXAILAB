@@ -181,7 +181,7 @@ const defaultPosts = [
         excerpt: "2024 marked a historic milestone for RUXAILAB - our first-ever participation as a mentoring organization in GSoC!",
         url: 'https://blog-ruxailab.web.app/posts/ruxailab-gsoc-2024.html',
         category: 'Announcements',
-        date: 'August 18, 2025'
+        date: 'August 18, 2024'
     }
 ]
 
@@ -214,7 +214,7 @@ onMounted(() => {
 }
 
 .blog-posts-scroll-container::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(var(--v-theme-primary), 0.8);
+    background-color: rgba(var(--v-theme-primary), 0.8);
 }
 
 .border-bottom {
