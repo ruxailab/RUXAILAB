@@ -34,6 +34,15 @@
       "reset_link_sent": "We’ve sent a password reset link to",
       "no_email": "Didn’t get the email?",
       "try_again": "Try again"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
@@ -50,6 +59,7 @@
     "title": "Title",
     "description": "Description",
     "cancel": "Cancel",
+    "proceed": "proceed",
     "confirm": "Confirm",
     "add": "Add",
     "text": "Text",
@@ -84,6 +94,8 @@
     "account": "Account",
     "admin": "Admin",
     "superAdmin": "Super Admin",
+    "guest": "Guest",
+    "evaluator": "Evaluator",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -116,6 +128,8 @@
     "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
     "profileImageUpdatedSuccess": "Profile image updated successfully",
     "profileImageUploadFailed": "Failed to upload profile image",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "No user signed in",
     "profileLoadFailed": "Failed to load profile",
     "profileUpdatedSuccess": "Profile updated successfully",
@@ -135,7 +149,7 @@
   },
   "titles": {
     "manager": "Manager",
-    "test": "Test",
+    "tests": "Test",
     "preview": "Preview",
     "reports": "Reports",
     "answers": "Answers",
@@ -144,6 +158,10 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
+    "users": "Users",
+    "studies": "Studies",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -155,7 +173,10 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "name": "Name",
+      "studiesCount": "Studies Created",
+      "mediaSize": "Media Size"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -196,7 +217,11 @@
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
     "sendError": "Failed to send invitation. Please try again",
-    "missingVariableTitles": "Cannot save: Some variables are missing titles"
+    "missingVariableTitles": "Cannot save: Some variables are missing titles",
+    "authenticationCancelled": "Sign-in was cancelled. Please try again.",
+    "networkError": "Network error. Please check your internet connection and try again.",
+    "popupBlocked": "Your browser blocked the sign-in popup. Please allow popups for this site and try again.",
+    "tooManyAttempts": "Too many attempts. Please try again later."
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -352,7 +377,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Settings"
+      "settings": "Settings",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
@@ -601,6 +627,15 @@
       "audioRecording": "Audio",
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -762,7 +797,8 @@
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Consent Form",
@@ -933,6 +969,7 @@
     "question": "Question {number}",
     "comingSoon": "Coming Soon",
     "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "General Analytics",
     "individualAnalytics": "Individual Analytics",
     "susAnalytics": "SUS Analytics",

@@ -2,20 +2,20 @@
 jest.mock('@/controllers/StudyController', () => {
   return jest.fn().mockImplementation(() => ({
     updateStudy: jest.fn(),
-    acceptStudyCollaboration: jest.fn()
+    acceptStudyCollaboration: jest.fn(),
   }))
 })
 
 jest.mock('@/features/auth/controllers/AuthController', () => {
   return jest.fn().mockImplementation(() => ({
     signOut: jest.fn(),
-    autoSignIn: jest.fn()
+    autoSignIn: jest.fn(),
   }))
 })
 
 jest.mock('@/features/auth/controllers/UserController', () => {
   return jest.fn().mockImplementation(() => ({
-    getById: jest.fn()
+    getById: jest.fn(),
   }))
 })
 
@@ -39,20 +39,22 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch')
       expect(actionStr).toContain('finally')
 
-      expect(actionStr).toContain('catch (e)')
+      expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('setError')
       expect(actionStr).toContain('setLoading')
     })
 
     it('has error handling in acceptStudyCollaboration action', () => {
-      expect(typeof TestModule.actions.acceptStudyCollaboration).toBe('function')
+      expect(typeof TestModule.actions.acceptStudyCollaboration).toBe(
+        'function',
+      )
 
       const actionStr = TestModule.actions.acceptStudyCollaboration.toString()
       expect(actionStr).toContain('try')
       expect(actionStr).toContain('catch')
       expect(actionStr).toContain('finally')
 
-      expect(actionStr).toContain('catch (e)')
+      expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('setError')
       expect(actionStr).toContain('setLoading')
     })
@@ -83,4 +85,4 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('SET_TOAST')
     })
   })
-}) 
+})

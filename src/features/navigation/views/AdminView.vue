@@ -11,19 +11,36 @@
 
     <!-- 📄 Main content area -->
     <v-main class="main-content">
-      <v-container fluid class="pa-8">
-        <!-- 🔹 Page header (dynamic title + subtitle) -->
+      <v-container fluid class="pa-6">
+        <!-- 🔹 Page header (dynamic title + subtitle with icon) -->
         <div class="content-header">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4">
-            {{ currentPageTitle }}
-          </h1>
+          <div class="d-flex align-center ga-3 mb-2">
+            <v-icon :icon="currentPageIcon" size="32" color="primary"></v-icon>
+            <h1 class="text-h4 font-weight-bold text-grey-darken-4">
+              {{ currentPageTitle }}
+            </h1>
+          </div>
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
                 ? 'Manage your research studies'
                 : activeSection === 'templates'
-                  ? 'Access your saved templates'
-                  : ''
+                ? 'Access your saved templates'
+                : activeSection === 'notifications'
+                ? 'Stay updated with your activities and collaborations'
+                : activeSection === 'sessions'
+                ? 'Overview of your sessions'
+                : activeSection === 'storage'
+                ? 'Manage your stored media files'
+                : activeSection === 'profile'
+                ? 'View and edit your profile information'
+                : activeSection === 'community' &&
+                  activeSubSection === 'community-studies'
+                ? 'Explore studies shared by the RUXAI community'
+                : activeSection === 'community' &&
+                  activeSubSection === 'community-templates'
+                ? 'Browse templates contributed by the RUXAI community'
+                : ''
             }}
           </p>
         </div>
@@ -38,18 +55,32 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <SessionsSection />
+          <SessionsSection :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'templates'">
           <TemplatesSection />
         </div>
 
-        <div v-if="activeSection === 'community' && activeSubSection === 'community-studies'">
+        <div v-if="activeSection === 'storage'">
+          <StorageSection />
+        </div>
+
+        <div
+          v-if="
+            activeSection === 'community' &&
+            activeSubSection === 'community-studies'
+          "
+        >
           <CommunityStudies />
         </div>
 
-        <div v-if="activeSection === 'community' && activeSubSection === 'community-templates'">
+        <div
+          v-if="
+            activeSection === 'community' &&
+            activeSubSection === 'community-templates'
+          "
+        >
           <CommunityTemplatesSection />
         </div>
 
@@ -71,76 +102,113 @@
  * This view manages the entire dashboard layout, handling the sidebar navigation
  * and rendering the correct section based on the active selection.
  */
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
 
 // Feature views
-import ProfileView from '@/features/auth/views/ProfileView.vue';
-import NotificationPage from '@/features/notifications/views/NotificationPage.vue';
-import DashboardView from '@/features/dashboard/views/DashboardView.vue';
+import ProfileView from '@/features/auth/views/ProfileView.vue'
+import NotificationPage from '@/features/notifications/views/NotificationPage.vue'
+import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 // Navigation and sections
-import { DashboardSidebar } from '@/features/navigation/utils';
-import SessionsSection from '../components/navbarSections/SessionsSection.vue';
-import TemplatesSection from '../components/navbarSections/TemplatesSection.vue';
-import StudiesSection from '../components/navbarSections/StudiesSection.vue';
-import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue';
-import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue';
+import { DashboardSidebar } from '@/features/navigation/utils'
+import SessionsSection from '../components/navbarSections/SessionsSection.vue'
+import TemplatesSection from '../components/navbarSections/TemplatesSection.vue'
+import StudiesSection from '../components/navbarSections/StudiesSection.vue'
+import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue'
+import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
+import StorageSection from '../components/navbarSections/StorageSection.vue'
 
 // Utilities and constants
-import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 
 // 🔹 State management
-const store = useStore();
-const router = useRouter();
-const route = useRoute();
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
 
 // 🔸 UI and navigation state
-const drawerOpen = ref(false);
-const activeSection = ref('dashboard');
-const activeSubSection = ref(null);
+const drawerOpen = ref(false)
+const activeSection = ref('dashboard')
+const activeSubSection = ref(null)
 
 // 🔸 Data
-const filteredModeratedSessions = ref([]);
-let unsubscribeTests = null;// Unsub function for real-time tests
+
+let unsubscribeTests = null // Unsub function for real-time tests
 
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
-    case 'dashboard': return 'Dashboard';
-    case 'studies': return 'Studies';
-    case 'sessions': return 'Sessions';
-    case 'templates': return 'Templates';
-    case 'notifications': return 'Notifications';
-    case 'profile': return 'Profile';
+    case 'dashboard':
+      return 'Dashboard'
+    case 'studies':
+      return 'Studies'
+    case 'sessions':
+      return 'Sessions'
+    case 'templates':
+      return 'Templates'
+    case 'storage':
+      return 'Storage'
+    case 'notifications':
+      return 'Notifications'
+    case 'profile':
+      return 'Profile'
     case 'community':
       return activeSubSection.value === 'community-templates'
         ? 'Community Templates'
-        : 'Community Studies';
-    default: return 'RUXAI Lab';
+        : 'Community Studies'
+    default:
+      return 'RUXAI Lab'
   }
-});
+})
+
+// 🔹 Dynamic page icon
+const currentPageIcon = computed(() => {
+  switch (activeSection.value) {
+    case 'dashboard':
+      return 'mdi-view-dashboard'
+    case 'studies':
+      return 'mdi-flask'
+    case 'sessions':
+      return 'mdi-calendar-clock'
+    case 'templates':
+      return 'mdi-clipboard-text'
+    case 'storage':
+      return 'mdi-database'
+    case 'notifications':
+      return 'mdi-bell'
+    case 'profile':
+      return 'mdi-account-circle'
+    case 'community':
+      return activeSubSection.value === 'community-templates'
+        ? 'mdi-file-document'
+        : 'mdi-flask-outline'
+    default:
+      return 'mdi-view-dashboard'
+  }
+})
 
 // 🔸 Vuex getters
-const tests = computed(() => store.getters.tests || []);
-const user = computed(() => store.getters.user);
+const tests = computed(() => store.getters.tests || [])
+const user = computed(() => store.getters.user)
 
 /**
  * 🧮 Filters moderated sessions
  * Creates a list of sessions where the user is either the test admin
  * or a cooperator in a moderated session.
  */
-const filterModeratedSessions = () => {
-  const cooperatorArray = [];
+const filteredModeratedSessions = computed(() => {
+  const cooperatorArray = []
+  if (!tests.value) return []
 
   tests.value.forEach((testObj) => {
-    if (!testObj) return;
+    if (!testObj) return
 
     // User as cooperator
     const cooperatorObj = testObj.cooperators?.find(
-      (coop) => coop.userDocId === user.value?.id
-    );
+      (coop) => coop.userDocId === user.value?.id,
+    )
     if (cooperatorObj && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
       cooperatorArray.push({
         ...cooperatorObj,
@@ -151,11 +219,14 @@ const filterModeratedSessions = () => {
         subType: testObj.subType,
         testDescription: testObj.testDescription,
         evaluator: cooperatorObj.email,
-      });
+      })
     }
 
     // User as test admin
-    if (testObj.testAdmin?.userDocId === user.value?.id && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
+    if (
+      testObj.testAdmin?.userDocId === user.value?.id &&
+      testObj.subType === USER_STUDY_SUBTYPES.MODERATED
+    ) {
       testObj.cooperators?.forEach((coop) => {
         cooperatorArray.push({
           ...coop,
@@ -166,36 +237,41 @@ const filterModeratedSessions = () => {
           subType: testObj.subType,
           evaluator: coop.email,
           testDescription: testObj.testDescription,
-        });
-      });
+        })
+      })
     }
-  });
+  })
 
-  filteredModeratedSessions.value = cooperatorArray;
-};
+  return cooperatorArray
+})
 
 /**
  * 🧭 Navigation logic
  * Handles sidebar section changes.
  */
 const selectNavigation = (navigationData) => {
-  const { sectionId, childId } = navigationData;
-  activeSection.value = sectionId;
-  activeSubSection.value = sectionId === 'community' ? childId : null;
-};
+  const { sectionId, childId } = navigationData
+  router.push({
+    query: {
+      ...route.query,
+      section: sectionId,
+      subsection: childId || undefined,
+    },
+  })
+}
 
 /**
  * 🚀 Navigation helpers
  */
-const goToCreateTestRoute = () => router.push('/choose');
+const goToCreateTestRoute = () => router.push('/choose')
 
 /**
  * 🔄 Data fetching
  */
-const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser');
-const getPublicStudies = () => store.dispatch('getPublicStudies');
-const getMyTemplates = () => store.dispatch('getTemplatesOfUser');
-const getPublicTemplates = () => store.dispatch('getPublicTemplates');
+const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser')
+const getPublicStudies = () => store.dispatch('getPublicStudies')
+const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
+const getPublicTemplates = () => store.dispatch('getPublicTemplates')
 
 /**
  * 🧭 Route watcher
@@ -203,61 +279,77 @@ const getPublicTemplates = () => store.dispatch('getPublicTemplates');
  */
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
-    case 'studies': await getMyPersonalTests(); break;
-    case 'sessions': filterModeratedSessions(); break;
-    case 'templates': await getMyTemplates(); break;
+    case 'studies':
+      await getMyPersonalTests()
+      break
+    case 'sessions':
+      // filterModeratedSessions()
+      break
+    case 'templates':
+      await getMyTemplates()
+      break
+    case 'storage':
+      await getMyPersonalTests()
+      break
     case 'community':
-      if (sub === 'community-studies') await getPublicStudies();
-      else if (sub === 'community-templates') await getPublicTemplates();
-      break;
+      if (sub === 'community-studies') await getPublicStudies()
+      else if (sub === 'community-templates') await getPublicTemplates()
+      break
   }
-});
+})
 
 /**
  * 🧩 Lifecycle hooks
  */
 onMounted(async () => {
   // unsubscribeTests = await store.dispatch('bindMyTests');
-  await getMyPersonalTests();
-  filterModeratedSessions();
+  await getMyPersonalTests()
 
   // Load navigation state from query params
   if (route.query.section) {
-    activeSection.value = route.query.section;
+    activeSection.value = route.query.section
     if (route.query.subsection) {
-      activeSubSection.value = route.query.subsection;
+      activeSubSection.value = route.query.subsection
     }
   }
 
   // Drawer toggle event listener (triggered from toolbar)
-  window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer);
-      
+  window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer)
+
   // Change section event listener
   globalThis.addEventListener('change-section', (event) => {
-    activeSection.value = event.detail;
-  });
-});
+    activeSection.value = event.detail
+  })
+})
 
 onUnmounted(() => {
-  if (unsubscribeTests) unsubscribeTests();
-  window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer);
-});
+  if (unsubscribeTests) unsubscribeTests()
+  window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer)
+})
 
 /**
  * 🎛️ Event handler to toggle sidebar drawer
  */
 const handleToggleDrawer = () => {
-  drawerOpen.value = !drawerOpen.value;
-};
+  drawerOpen.value = !drawerOpen.value
+}
 
 // Reacts to route query changes for section/subsection
-watch(() => route.query.section, (newSection) => {
-  if (newSection) activeSection.value = newSection;
-}, { immediate: true });
+watch(
+  () => route.query.section,
+  (newSection) => {
+    if (newSection) activeSection.value = newSection
+  },
+  { immediate: true },
+)
 
-watch(() => route.query.subsection, (newSubSection) => {
-  if (newSubSection) activeSubSection.value = newSubSection;
-}, { immediate: true });
+watch(
+  () => route.query.subsection,
+  (newSubSection) => {
+    if (newSubSection) activeSubSection.value = newSubSection
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>
@@ -278,5 +370,4 @@ watch(() => route.query.subsection, (newSubSection) => {
   border-radius: 16px;
   padding: 1rem 0;
 }
-
 </style>

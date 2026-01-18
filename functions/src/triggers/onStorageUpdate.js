@@ -11,7 +11,6 @@ export const onStorageUpdate = functions.onStorageTrigger({
       const filePath = object.name;
       const match = filePath.match(/^tests\/([^\/]+)/);
       if (!match) {
-        console.log("File path does not match expected pattern:", filePath);
         return null;
       }
       const testId = match[1];
@@ -23,7 +22,6 @@ export const onStorageUpdate = functions.onStorageTrigger({
         .get();
 
       if (querySnapshot.empty) {
-        console.log(`No users found with testId: ${testId}`);
         return null;
       }
 
@@ -34,9 +32,14 @@ export const onStorageUpdate = functions.onStorageTrigger({
         const userData = doc.data();
         const userTestIds = Object.keys(userData.myTests || {});
 
+        // Parallelize file fetching for all test IDs
+        const filePromises = userTestIds.map(tid =>
+          bucket.getFiles({ prefix: `tests/${tid}` })
+        );
+        const fileResults = await Promise.all(filePromises);
+
         let totalBytes = 0;
-        for (const tid of userTestIds) {
-          const [testFiles] = await bucket.getFiles({ prefix: `tests/${tid}` });
+        for (const [testFiles] of fileResults) {
           for (const file of testFiles) {
             totalBytes += Number(file.metadata.size || 0);
           }
@@ -47,7 +50,6 @@ export const onStorageUpdate = functions.onStorageTrigger({
       }
 
       await batch.commit();
-      console.log(`Updated storage usage for testId: ${testId}`);
     } catch (error) {
       console.error("Error updating storage usage:", error);
     }
@@ -84,8 +86,6 @@ export const calculateStorageUsage = functions.https.onCall(async (data) => {
 
       totalBytes += testBytes;
     }
-
-    console.log("results", results);
 
     return {
       totalSizeMB: (totalBytes / (1024 * 1024)).toFixed(2),
