@@ -71,7 +71,19 @@
     "viewAll": "सभी देखें",
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
-    "test": "एक अध्ययन"
+    "test": "एक अध्ययन",
+    "table": {
+      "itemsPerPage": "प्रति पृष्ठ आइटम:",
+      "type": "प्रकार",
+      "name": "नाम",
+      "tags": "टैग",
+      "owner": "मालिक",
+      "evaluator": "मूल्यांकनकर्ता",
+      "status": "स्थिति",
+      "sessionDate": "सत्र तिथि",
+      "participants": "प्रतिभागी",
+      "created": "बनाया गया"
+    }
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -573,6 +585,37 @@
       "version": "संस्करण:",
       "noTests": "कोई परीक्षण नहीं मिला",
       "noTemplates": "कोई टेम्पलेट नहीं मिला"
+    },
+    "navigation": {
+      "dashboard": "डैशबोर्ड",
+      "studies": "अध्ययन",
+      "sessions": "सत्र",
+      "templates": "टेम्पलेट",
+      "storage": "भंडारण",
+      "notifications": "सूचनाएं",
+      "profile": "प्रोफ़ाइल",
+      "communityStudies": "समुदाय अध्ययन",
+      "communityTemplates": "समुदाय टेम्पलेट",
+      "studiesSubtitle": "अपने शोध अध्ययनों का प्रबंधन करें",
+      "templatesSubtitle": "अपने सहेजे गए टेम्पलेट एक्सेस करें"
+    },
+    "templates": {
+      "searchPlaceholder": "टेम्पलेट खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "creationDate": "निर्माण तिथि",
+      "selectRange": "सीमा चुनें",
+      "method": "विधि",
+      "noTemplatesFound": "कोई टेम्पलेट नहीं मिला",
+      "filters": {
+        "allMethods": "सभी",
+        "heuristicEvaluation": "ह्युरिस्टिक मूल्यांकन",
+        "userUnmoderated": "उपयोगकर्ता अध्ययन (बिना मॉडरेशन)",
+        "userModerated": "उपयोगकर्ता अध्ययन (मॉडरेशन के साथ)",
+        "manualAccessibility": "मैनुअल एक्सेसिबिलिटी",
+        "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+      }
     },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",

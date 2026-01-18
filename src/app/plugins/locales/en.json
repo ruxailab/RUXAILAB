@@ -84,7 +84,19 @@
     "sentBy": "Sent by",
     "new": "NEW",
     "test": "a Study",
-    "actions": "Actions"
+    "actions": "Actions",
+    "table": {
+      "itemsPerPage": "Items per page:",
+      "type": "Type",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "evaluator": "Evaluator",
+      "status": "Status",
+      "sessionDate": "Session Date",
+      "participants": "Participants",
+      "created": "Created"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -581,7 +593,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },
@@ -686,6 +697,37 @@
       "version": "Version:",
       "noTests": "No tests found",
       "noTemplates": "No templates found"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "storage": "Storage",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "communityStudies": "Community Studies",
+      "communityTemplates": "Community Templates",
+      "studiesSubtitle": "Manage your research studies",
+      "templatesSubtitle": "Access your saved templates"
+    },
+    "templates": {
+      "searchPlaceholder": "Search templates...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "method": "Method",
+      "noTemplatesFound": "No templates found",
+      "filters": {
+        "allMethods": "All",
+        "heuristicEvaluation": "Heuristic Evaluation",
+        "userUnmoderated": "User Study (Unmoderated)",
+        "userModerated": "User Study (Moderated)",
+        "manualAccessibility": "Manual Accessibility",
+        "automaticAccessibility": "Automatic Accessibility"
+      }
     },
     "createTest": {
       "title": "Create a new test",

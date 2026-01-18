@@ -80,7 +80,19 @@
     "viewAll": "すべて表示",
     "sentBy": "送信者",
     "new": "新着",
-    "test": "テスト"
+    "test": "テスト",
+    "table": {
+      "itemsPerPage": "ページあたりのアイテム数:",
+      "type": "タイプ",
+      "name": "名前",
+      "tags": "タグ",
+      "owner": "オーナー",
+      "evaluator": "評価者",
+      "status": "ステータス",
+      "sessionDate": "セッション日",
+      "participants": "参加者",
+      "created": "作成日"
+    }
   },
   "profile": {
     "title": "プロフィール",
@@ -581,6 +593,37 @@
       "version": "バージョン：",
       "noTests": "テストが見つかりません",
       "noTemplates": "テンプレートが見つかりません"
+    },
+    "navigation": {
+      "dashboard": "ダッシュボード",
+      "studies": "研究",
+      "sessions": "セッション",
+      "templates": "テンプレート",
+      "storage": "ストレージ",
+      "notifications": "通知",
+      "profile": "プロフィール",
+      "communityStudies": "コミュニティ研究",
+      "communityTemplates": "コミュニティテンプレート",
+      "studiesSubtitle": "研究を管理する",
+      "templatesSubtitle": "保存したテンプレートにアクセス"
+    },
+    "templates": {
+      "searchPlaceholder": "テンプレートを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "範囲を選択",
+      "method": "方法",
+      "noTemplatesFound": "テンプレートが見つかりません",
+      "filters": {
+        "allMethods": "すべて",
+        "heuristicEvaluation": "ヒューリスティック評価",
+        "userUnmoderated": "ユーザースタディ（モデレートなし）",
+        "userModerated": "ユーザースタディ（モデレートあり）",
+        "manualAccessibility": "手動アクセシビリティ",
+        "automaticAccessibility": "自動アクセシビリティ"
+      }
     },
     "createTest": {
       "title": "新しいテストを作成",

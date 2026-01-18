@@ -72,7 +72,19 @@
     "viewAll": "Ver todo",
     "sentBy": "Enviado por",
     "new": "NUEVO",
-    "test": "un estudio"
+    "test": "un estudio",
+    "table": {
+      "itemsPerPage": "Elementos por página:",
+      "type": "Tipo",
+      "name": "Nombre",
+      "tags": "Etiquetas",
+      "owner": "Propietario",
+      "evaluator": "Evaluador",
+      "status": "Estado",
+      "sessionDate": "Fecha de sesión",
+      "participants": "Participantes",
+      "created": "Creado"
+    }
   },
   "profile": {
     "superAdmin": "Súper Administrador",
@@ -659,6 +671,37 @@
       "version": "Versión:",
       "noTests": "No se encontraron pruebas",
       "noTemplates": "No se encontraron plantillas"
+    },
+    "navigation": {
+      "dashboard": "Panel",
+      "studies": "Estudios",
+      "sessions": "Sesiones",
+      "templates": "Plantillas",
+      "storage": "Almacenamiento",
+      "notifications": "Notificaciones",
+      "profile": "Perfil",
+      "communityStudies": "Estudios comunitarios",
+      "communityTemplates": "Plantillas comunitarias",
+      "studiesSubtitle": "Administra tus estudios de investigación",
+      "templatesSubtitle": "Accede a tus plantillas guardadas"
+    },
+    "templates": {
+      "searchPlaceholder": "Buscar plantillas...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "method": "Método",
+      "noTemplatesFound": "No se encontraron plantillas",
+      "filters": {
+        "allMethods": "Todos",
+        "heuristicEvaluation": "Evaluación heurística",
+        "userUnmoderated": "Estudio de usuario (no moderado)",
+        "userModerated": "Estudio de usuario (moderado)",
+        "manualAccessibility": "Accesibilidad manual",
+        "automaticAccessibility": "Accesibilidad automática"
+      }
     },
     "createTest": {
       "title": "Crear una nueva prueba",

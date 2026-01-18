@@ -67,7 +67,19 @@
     "viewAll": "Alle anzeigen",
     "sentBy": "Gesendet von",
     "new": "NEU",
-    "test": "eine Studie"
+    "test": "eine Studie",
+    "table": {
+      "itemsPerPage": "Einträge pro Seite:",
+      "type": "Typ",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Besitzer",
+      "evaluator": "Bewerter",
+      "status": "Status",
+      "sessionDate": "Sitzungsdatum",
+      "participants": "Teilnehmer",
+      "created": "Erstellt"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -586,6 +598,37 @@
       "version": "Version:",
       "noTests": "Keine Tests gefunden",
       "noTemplates": "Keine Vorlagen gefunden"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "studies": "Studien",
+      "sessions": "Sitzungen",
+      "templates": "Vorlagen",
+      "storage": "Speicher",
+      "notifications": "Benachrichtigungen",
+      "profile": "Profil",
+      "communityStudies": "Community-Studien",
+      "communityTemplates": "Community-Vorlagen",
+      "studiesSubtitle": "Verwalten Sie Ihre Forschungsstudien",
+      "templatesSubtitle": "Zugriff auf Ihre gespeicherten Vorlagen"
+    },
+    "templates": {
+      "searchPlaceholder": "Vorlagen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "creationDate": "Erstellungsdatum",
+      "selectRange": "Bereich auswählen",
+      "method": "Methode",
+      "noTemplatesFound": "Keine Vorlagen gefunden",
+      "filters": {
+        "allMethods": "Alle",
+        "heuristicEvaluation": "Heuristische Bewertung",
+        "userUnmoderated": "Benutzerstudie (unmoderiert)",
+        "userModerated": "Benutzerstudie (moderiert)",
+        "manualAccessibility": "Manuelle Barrierefreiheit",
+        "automaticAccessibility": "Automatische Barrierefreiheit"
+      }
     },
     "createTest": {
       "title": "Neuen Test erstellen",

@@ -67,7 +67,19 @@
     "viewAll": "Voir tout",
     "sentBy": "Envoyé par",
     "new": "NOUVEAU",
-    "test": "une Étude"
+    "test": "une Étude",
+    "table": {
+      "itemsPerPage": "Éléments par page :",
+      "type": "Type",
+      "name": "Nom",
+      "tags": "Tags",
+      "owner": "Propriétaire",
+      "evaluator": "Évaluateur",
+      "status": "Statut",
+      "sessionDate": "Date de session",
+      "participants": "Participants",
+      "created": "Créé"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -586,6 +598,37 @@
       "version": "Version :",
       "noTests": "Aucun test trouvé",
       "noTemplates": "Aucun modèle trouvé"
+    },
+    "navigation": {
+      "dashboard": "Tableau de bord",
+      "studies": "Études",
+      "sessions": "Sessions",
+      "templates": "Modèles",
+      "storage": "Stockage",
+      "notifications": "Notifications",
+      "profile": "Profil",
+      "communityStudies": "Études communautaires",
+      "communityTemplates": "Modèles communautaires",
+      "studiesSubtitle": "Gérez vos études de recherche",
+      "templatesSubtitle": "Accédez à vos modèles enregistrés"
+    },
+    "templates": {
+      "searchPlaceholder": "Rechercher des modèles...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "creationDate": "Date de création",
+      "selectRange": "Sélectionner une plage",
+      "method": "Méthode",
+      "noTemplatesFound": "Aucun modèle trouvé",
+      "filters": {
+        "allMethods": "Tous",
+        "heuristicEvaluation": "Évaluation heuristique",
+        "userUnmoderated": "Étude utilisateur (non modérée)",
+        "userModerated": "Étude utilisateur (modérée)",
+        "manualAccessibility": "Accessibilité manuelle",
+        "automaticAccessibility": "Accessibilité automatique"
+      }
     },
     "createTest": {
       "title": "Créer un nouveau test",

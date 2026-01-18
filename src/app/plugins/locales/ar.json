@@ -67,7 +67,19 @@
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
     "new": "جديد",
-    "test": "دراسة"
+    "test": "دراسة",
+    "table": {
+      "itemsPerPage": "العناصر لكل صفحة:",
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "evaluator": "المقيم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -586,6 +598,37 @@
       "version": "الإصدار:",
       "noTests": "لم يتم العثور على اختبارات",
       "noTemplates": "لم يتم العثور على قوالب"
+    },
+    "navigation": {
+      "dashboard": "لوحة التحكم",
+      "studies": "الدراسات",
+      "sessions": "الجلسات",
+      "templates": "القوالب",
+      "storage": "التخزين",
+      "notifications": "الإشعارات",
+      "profile": "الملف الشخصي",
+      "communityStudies": "دراسات المجتمع",
+      "communityTemplates": "قوالب المجتمع",
+      "studiesSubtitle": "إدارة دراساتك البحثية",
+      "templatesSubtitle": "الوصول إلى قوالبك المحفوظة"
+    },
+    "templates": {
+      "searchPlaceholder": "البحث في القوالب...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "method": "الطريقة",
+      "noTemplatesFound": "لم يتم العثور على قوالب",
+      "filters": {
+        "allMethods": "الكل",
+        "heuristicEvaluation": "التقييم الاستدلالي",
+        "userUnmoderated": "دراسة المستخدم (غير مُعدَّلة)",
+        "userModerated": "دراسة المستخدم (مُعدَّلة)",
+        "manualAccessibility": "إمكانية الوصول اليدوية",
+        "automaticAccessibility": "إمكانية الوصول التلقائية"
+      }
     },
     "createTest": {
       "title": "إنشاء اختبار جديد",

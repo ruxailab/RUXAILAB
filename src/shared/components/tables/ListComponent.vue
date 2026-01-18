@@ -10,6 +10,7 @@
     hover
     @click:row="emitClick"
     :loading="loadingStudy"
+    :items-per-page-text="t('common.table.itemsPerPage')"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">
@@ -157,7 +158,7 @@ const { t } = useI18n()
 
 // Composables
 const typeRef = toRef(props, 'type')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t)
 const { getItemTitle, getOwnerName, getTags, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
 
