@@ -43,7 +43,7 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    }   
+    }
   },
   "common": {
     "loading": "加载测试",
@@ -80,7 +80,19 @@
     "viewAll": "查看全部",
     "sentBy": "发送者",
     "new": "新",
-    "test": "一项研究"
+    "test": "一项研究",
+    "table": {
+      "itemsPerPage": "每页项目数:",
+      "type": "类型",
+      "name": "名称",
+      "tags": "标签",
+      "owner": "所有者",
+      "evaluator": "评估者",
+      "status": "状态",
+      "sessionDate": "会话日期",
+      "participants": "参与者",
+      "created": "创建时间"
+    }
   },
   "profile": {
     "title": "个人资料",
@@ -599,6 +611,37 @@
       "version": "版本：",
       "noTests": "未找到测试",
       "noTemplates": "未找到模板"
+    },
+    "navigation": {
+      "dashboard": "仪表板",
+      "studies": "研究",
+      "sessions": "会话",
+      "templates": "模板",
+      "storage": "存储",
+      "notifications": "通知",
+      "profile": "个人资料",
+      "communityStudies": "社区研究",
+      "communityTemplates": "社区模板",
+      "studiesSubtitle": "管理您的研究项目",
+      "templatesSubtitle": "访问您保存的模板"
+    },
+    "templates": {
+      "searchPlaceholder": "搜索模板...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择范围",
+      "method": "方法",
+      "noTemplatesFound": "未找到模板",
+      "filters": {
+        "allMethods": "全部",
+        "heuristicEvaluation": "启发式评估",
+        "userUnmoderated": "用户研究（无主持）",
+        "userModerated": "用户研究（有主持）",
+        "manualAccessibility": "手动无障碍",
+        "automaticAccessibility": "自动无障碍"
+      }
     },
     "createTest": {
       "title": "创建新测试",

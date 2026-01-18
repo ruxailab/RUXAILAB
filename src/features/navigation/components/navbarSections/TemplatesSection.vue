@@ -8,7 +8,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search templates..."
+        :placeholder="t('pages.templates.searchPlaceholder')"
         class="flex-grow-1"
       />
       <v-btn
@@ -18,7 +18,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ t('pages.templates.reset') }}
       </v-btn>
 
       <v-btn
@@ -26,7 +26,7 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="showFilters ? t('pages.templates.hideFilters') : t('pages.templates.showFilters')"
         @click="toggleFilters"
       >
         <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
@@ -38,7 +38,7 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">{{ t('pages.templates.creationDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -55,7 +55,7 @@
                   hide-details
                   :placeholder="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
+                    : t('pages.templates.selectRange')"
                   :model-value="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : ''"
@@ -68,7 +68,7 @@
 
           <!-- 🧭 Method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ t('pages.templates.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -102,26 +102,28 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import List from '@/shared/components/tables/ListComponent.vue'
 import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
 
 const store = useStore()
+const { t } = useI18n()
 
 const tempDialog = ref(false)
 const temp = ref({})
 const templates = computed(() => store.state.Templates.templates || [])
 
 // ===== Filters =====
-const methodOptions = [
-  { title: 'All', value: 'all' },
-  { title: 'Heuristic Evaluation', value: METHOD_DEFINITIONS.HEURISTICS.id },
-  { title: 'User Study (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
-  { title: 'User Study (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
-  { title: 'Manual Accessibility', value: 'MANUAL' },
-  { title: 'Automatic Accessibility', value: 'AUTOMATIC' }
-]
+const methodOptions = computed(() => [
+  { title: t('pages.templates.filters.allMethods'), value: 'all' },
+  { title: t('pages.templates.filters.heuristicEvaluation'), value: METHOD_DEFINITIONS.HEURISTICS.id },
+  { title: t('pages.templates.filters.userUnmoderated'), value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
+  { title: t('pages.templates.filters.userModerated'), value: METHOD_DEFINITIONS.USER_MODERATED.id },
+  { title: t('pages.templates.filters.manualAccessibility'), value: 'MANUAL' },
+  { title: t('pages.templates.filters.automaticAccessibility'), value: 'AUTOMATIC' }
+])
 
 const search = ref('')
 const showFilters = ref(false)

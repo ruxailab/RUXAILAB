@@ -80,7 +80,19 @@
     "viewAll": "Посмотреть все",
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
-    "test": "исследование"
+    "test": "исследование",
+    "table": {
+      "itemsPerPage": "Элементов на странице:",
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "participants": "Участники",
+      "created": "Создано"
+    }
   },
   "profile": {
     "title": "Профиль",
@@ -599,6 +611,37 @@
       "version": "Версия:",
       "noTests": "Тесты не найдены",
       "noTemplates": "Шаблоны не найдены"
+    },
+    "navigation": {
+      "dashboard": "Панель управления",
+      "studies": "Исследования",
+      "sessions": "Сессии",
+      "templates": "Шаблоны",
+      "storage": "Хранилище",
+      "notifications": "Уведомления",
+      "profile": "Профиль",
+      "communityStudies": "Исследования сообщества",
+      "communityTemplates": "Шаблоны сообщества",
+      "studiesSubtitle": "Управляйте своими исследованиями",
+      "templatesSubtitle": "Доступ к сохраненным шаблонам"
+    },
+    "templates": {
+      "searchPlaceholder": "Поиск шаблонов...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать диапазон",
+      "method": "Метод",
+      "noTemplatesFound": "Шаблоны не найдены",
+      "filters": {
+        "allMethods": "Все",
+        "heuristicEvaluation": "Эвристическая оценка",
+        "userUnmoderated": "Пользовательское исследование (без модератора)",
+        "userModerated": "Пользовательское исследование (с модератором)",
+        "manualAccessibility": "Ручная доступность",
+        "automaticAccessibility": "Автоматическая доступность"
+      }
     },
     "createTest": {
       "title": "Создать новый тест",
