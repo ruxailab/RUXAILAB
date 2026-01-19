@@ -44,12 +44,11 @@
       </v-col>
     </v-row>
 
-    <!-- Fourth Row: Blog Posts and Next Session -->
+    <!-- Fourth Row: Blog Posts -->
     <v-row class="mb-6">
-      <v-col cols="12" lg="6">
+      <v-col cols="12">
         <BlogPosts />
       </v-col>
-      <v-col cols="12" lg="6" />
     </v-row>
   </v-container>
 </template>
