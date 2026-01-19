@@ -55,28 +55,27 @@
             target="_blank"
             :class="{ 'border-bottom': index < blogPosts.length - 1 }"
           >
-            <div class="d-flex align-center justify-space-between py-3 px-1">
-              <div class="flex-grow-1">
-                <div class="d-flex align-center justify-space-between">
-                  <v-list-item-title class="text-body-1 font-weight-medium mb-1">
-                    {{ post.title }}
-                  </v-list-item-title>
-                  <span class="text-caption text-medium-emphasis ml-2 text-no-wrap">{{ post.date }}</span>
-                </div>
+            <div class="d-flex align-start py-3 px-1">
+              <div class="flex-grow-1 mr-4">
+                <v-list-item-title class="text-body-1 font-weight-medium mb-1">
+                  {{ post.title }}
+                </v-list-item-title>
                 <v-list-item-subtitle
                   v-if="post.excerpt"
-                  class="excerpt text-body-2 text-medium-emphasis mb-2"
+                  class="excerpt text-body-2 text-medium-emphasis"
                   :title="post.excerpt"
                 >
                   {{ post.excerpt }}
                 </v-list-item-subtitle>
               </div>
-              <v-icon
-                icon="mdi-open-in-new"
-                size="16"
-                color="primary"
-                class="ml-2"
-              />
+              <div class="d-flex align-center flex-shrink-0 ga-2">
+                <span class="text-caption text-medium-emphasis text-no-wrap">{{ post.date }}</span>
+                <v-icon
+                  icon="mdi-open-in-new"
+                  size="16"
+                  color="primary"
+                />
+              </div>
             </div>
           </v-list-item>
         </v-list>
