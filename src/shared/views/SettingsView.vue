@@ -75,6 +75,7 @@
                 :label="$t('common.title')"
                 :rules="titleRequired"
                 counter="200"
+                maxlength="200"
                 variant="outlined"
                 density="comfortable"
                 :placeholder="$t('TestDialog.template.title')"

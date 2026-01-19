@@ -13,6 +13,7 @@
             :label="$t('common.title')"
             :rules="titleRequired"
             counter="200"
+            maxlength="200"
             variant="outlined"
             density="comfortable"
             placeholder="Enter a descriptive title for your test"

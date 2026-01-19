@@ -24,7 +24,7 @@
                 <v-col cols="6">
                   <v-text-field
                     v-model="localOption.text"
-                    max-length="100"
+                    maxlength="100"
                     counter="100"
                     :label="$t('common.text')"
                     variant="outlined"
@@ -54,7 +54,7 @@
                   <v-text-field
                     v-model="localOption.description"
                     variant="outlined"
-                    max-length="250"
+                    maxlength="250"
                     counter="250"
                     :label="$t('HeuristicsTable.placeholders.optionDescription')"
                   />
