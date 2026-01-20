@@ -657,9 +657,13 @@ const notifyCooperator = async (guest) => {
       data: {
         message: inviteMessage.value,
         testTitle: test.value.testTitle,
+        testDescription: test.value.testDescription,
         adminEmail: test.value.testAdmin?.email,
+        adminName: store.getters.user?.name || test.value.testAdmin?.email,
         testId: test.value.id,
         scheduledAt: guest.testDate,
+        accessLevel: guest.accessLevel,
+        token: guest.token || null,
       },
     })
   } catch (err) {
