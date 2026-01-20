@@ -69,60 +69,64 @@
                     Select the participant you want to invite to this evaluation
                     session.
                   </p>
-                  <v-autocomplete
-                    v-model="comboboxModel.userId"
+                  <v-combobox
+                    ref="comboboxRef"
+                    v-model="comboboxModel"
                     :items="filteredUsers"
-                    item-title="displayText"
+                    item-title="email"
                     item-value="id"
+                    multiple
+                    chips
                     variant="outlined"
                     density="comfortable"
-                    placeholder="Type to search participants..."
-                    prepend-inner-icon="mdi-account-search"
+                    placeholder="Type email address or select from list..."
+                    prepend-inner-icon="mdi-account-multiple-plus"
                     color="primary"
-                    :rules="[(v) => !!v || 'Please select a participant']"
-                    required
                     clearable
-                    :no-data-text="'No participants found'"
                     :menu-props="{ maxHeight: 300 }"
+                    @update:model-value="validateEmailInput"
                   >
-                    <template #selection="{ item }">
-                      <div class="d-flex align-center">
-                        <v-avatar size="24" color="primary" class="mr-2">
-                          <span class="text-white text-caption">{{
-                            item.raw.email.charAt(0).toUpperCase()
-                          }}</span>
+                    <template #chip="{ props, item }">
+                      <v-chip
+                        v-bind="props"
+                        closable
+                        color="primary"
+                        variant="tonal"
+                        size="small"
+                      >
+                        <v-avatar start>
+                          <span class="text-caption">
+                            {{ (typeof item.raw === 'object' ? item.raw.email : item.raw).charAt(0).toUpperCase() }}
+                          </span>
                         </v-avatar>
-                        <div class="text-truncate">
-                          <span class="text-body-2 font-weight-medium">{{
-                            item.raw.email
-                          }}</span>
-                          <span
-                            v-if="item.raw.name"
-                            class="text-caption text-grey-darken-1 ml-1"
-                            >({{ item.raw.name }})</span
-                          >
-                        </div>
-                      </div>
+                        {{ typeof item.raw === 'object' ? item.raw.email : item.raw }}
+                      </v-chip>
                     </template>
-
                     <template #item="{ props, item }">
                       <v-list-item
                         v-bind="props"
                         :title="item.raw.email"
-                        :subtitle="item.raw.name || 'No name provided'"
+                        :subtitle="item.raw.name || 'Registered user'"
                         class="participant-item"
                       >
                         <template #prepend>
                           <v-avatar size="40" color="primary" class="mr-3">
-                            <span class="text-white font-weight-bold">{{
-                              item.raw.email.charAt(0).toUpperCase()
-                            }}</span>
+                            <span class="text-white font-weight-bold">
+                              {{ item.raw.email.charAt(0).toUpperCase() }}
+                            </span>
                           </v-avatar>
                         </template>
-
                         <template #append>
                           <v-chip
-                            v-if="isParticipantAlreadyInvited(item.raw.id)"
+                            v-if="isEmailAlreadySelected(item.raw.email)"
+                            size="small"
+                            color="success"
+                            variant="tonal"
+                          >
+                            Selected
+                          </v-chip>
+                          <v-chip
+                            v-else-if="isParticipantAlreadyInvited(item.raw.id)"
                             size="small"
                             color="warning"
                             variant="tonal"
@@ -132,21 +136,20 @@
                         </template>
                       </v-list-item>
                     </template>
-
                     <template #no-data>
                       <div class="pa-4 text-center">
-                        <v-icon size="48" color="grey-lighten-1" class="mb-2"
-                          >mdi-account-search</v-icon
-                        >
-                        <p class="text-body-2 text-grey-darken-1">
-                          No participants found
+                        <v-icon size="48" color="primary" class="mb-2">
+                          mdi-email-plus-outline
+                        </v-icon>
+                        <p class="text-body-2 text-grey-darken-1 mb-1">
+                          Type any email address and press Enter
                         </p>
-                        <p class="text-caption text-grey-darken-2">
-                          Try adjusting your search terms
+                        <p class="text-caption text-grey">
+                          You can invite anyone, not just registered users
                         </p>
                       </div>
                     </template>
-                  </v-autocomplete>
+                  </v-combobox>
                 </div>
 
                 <!-- Schedule Section -->
@@ -284,7 +287,18 @@
                     <div class="preview-content">
                       <p class="text-body-2 mb-3">
                         <strong>To:</strong>
-                        {{ selectedUserEmail || 'No participant selected' }}
+                        <v-chip-group>
+                          <v-chip
+                            v-for="(item, i) in comboboxModel"
+                            :key="i"
+                            color="primary"
+                            size="small"
+                            class="ma-1"
+                          >
+                            {{ typeof item === 'object' ? item.email : item }}
+                          </v-chip>
+                          <span v-if="!comboboxModel.length">No participant selected</span>
+                        </v-chip-group>
                       </p>
                       <p class="text-body-2 mb-3">
                         <strong>Scheduled:</strong>
@@ -354,6 +368,8 @@ import Notification from '@/shared/models/Notification'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'    
+import {showError, showSuccess} from '@/shared/utils/toast'
 
 // Props
 const props = defineProps({
@@ -365,6 +381,9 @@ const emit = defineEmits(['update:dialog'])
 
 // Store
 const store = useStore()
+
+// Composables
+const { validateEmail } = useCooperatorUtils()
 
 // Helper functions
 const getDefaultTime = () => {
@@ -387,7 +406,7 @@ const hour = ref(getDefaultTime())
 
 const inviteForm = ref(null)
 const valid = ref(false)
-const comboboxModel = ref({})
+const comboboxModel = ref([])
 const inviteMessage = ref('')
 const loading = ref(false)
 const selectedRole = ref(ACCESS_LEVEL.ADMIN)
@@ -446,11 +465,6 @@ const filteredUsers = computed(() => {
     })
 })
 
-const selectedUserEmail = computed(() => {
-  if (!comboboxModel.value?.userId || !users.value) return ''
-  const user = users.value.find((u) => u && u.id === comboboxModel.value.userId)
-  return user?.email || ''
-})
 
 const formattedDateTime = computed(() => {
   if (!date.value || !hour.value) return ''
@@ -484,18 +498,27 @@ const isParticipantAlreadyInvited = (userId) => {
   )
 }
 
+const isEmailAlreadySelected = (email) =>
+  comboboxModel.value.some(
+    item => (typeof item === 'object' ? item.email : item) === email
+  )
+
+const validateEmailInput = () => {
+  comboboxModel.value = comboboxModel.value.filter((item) => {
+    const email = typeof item === 'object' ? item.email : item
+    if (!validateEmail(email)) {
+      showError('Invalid email: ' + email)
+      return false
+    }
+    return true
+  })
+}
+
 const saveInvitation = async () => {
   try {
     loading.value = true
     const isValid = await inviteForm.value.validate()
     if (!isValid) return
-
-    const cooperator = users.value.find(
-      (user) => user.id === comboboxModel.value.userId,
-    )
-    if (!cooperator) {
-      throw new Error('Selected user not found')
-    }
 
     // Validate date and time values
     if (!date.value || !hour.value) {
@@ -532,25 +555,36 @@ const saveInvitation = async () => {
     }
 
     const timestamp = dateTime.toISOString()
+    // Loopin through all selected emails/users
+    comboboxModel.value.forEach(item => {
+      const email = typeof item === 'object' ? item.email : item
+      const userDocId = typeof item === 'object' ? item.id : null
 
-    cooperatorsEdit.value.push(
-      new Cooperators({
-        userDocId: cooperator.id,
-        email: cooperator.email,
-        invited: true,
-        accepted: false,
-        accessLevel: selectedRole.value,
-        testDate: timestamp,
-        inviteMessage: inviteMessage.value,
-        updateDate: test.value.updateDate,
-        testAuthorEmail: test.value.testAdmin.email,
-      }),
+      // Prevnt duplicate invites
+      if (
+        !cooperatorsEdit.value.some(
+          c => c.email === email && c.testDate === timestamp
+        )
+      ) {
+        cooperatorsEdit.value.push(
+          new Cooperators({
+            userDocId,
+            email,
+            invited: true,
+            accepted: false,
+            accessLevel: selectedRole.value,
+            testDate: timestamp,
+            inviteMessage: inviteMessage.value,
+            updateDate: test.value.updateDate,
+            testAuthorEmail: test.value.testAdmin.email,
+        }),
     )
-
+    }
+})
     await submit()
   } catch (error) {
     console.error('Error saving invitation:', error)
-    // You might want to show a toast notification here
+    showError(error.message)
   } finally {
     loading.value = false
   }
@@ -571,14 +605,14 @@ const submit = async () => {
   date.value = getDefaultDate()
 
   inviteMessage.value = ''
-  comboboxModel.value = {}
+  comboboxModel.value = []
   selectedRole.value = ACCESS_LEVEL.ADMIN
 
   emit('update:dialog', false)
 }
 
 const notifyCooperator = (guest) => {
-  console.log('Notifying cooperator', guest)
+  if (!guest) return
   if (guest.userDocId) {
     const path = '/testview'
     store.dispatch('addNotification', {
