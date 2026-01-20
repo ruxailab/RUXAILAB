@@ -80,7 +80,27 @@
     "viewAll": "Посмотреть все",
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
-    "test": "исследование"
+    "test": "исследование",
+    "itemsPerPage": "Элементов на странице:"
+  },
+  "storage": {
+    "pageTitle": "Хранилище",
+    "totalStorage": "Общее хранилище",
+    "acrossFiles": "В {count} файлах",
+    "mediaFiles": "Медиафайлы",
+    "searchByStudyOrDate": "Поиск по исследованию или дате",
+    "deleteFile": "Удалить файл",
+    "noMediaFiles": "Медиафайлы не найдены",
+    "confirmDeletion": "Подтвердить удаление",
+    "deleteConfirmMessage": "Вы уверены, что хотите удалить этот файл {type} из \"{studyName}\"?",
+    "actionCannotBeUndone": "Это действие нельзя отменить.",
+    "headers": {
+      "type": "Тип",
+      "studyName": "Название исследования",
+      "date": "Дата",
+      "size": "Размер",
+      "actions": "Действия"
+    }
   },
   "profile": {
     "title": "Профиль",

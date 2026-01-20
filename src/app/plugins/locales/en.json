@@ -84,7 +84,27 @@
     "sentBy": "Sent by",
     "new": "NEW",
     "test": "a Study",
-    "actions": "Actions"
+    "actions": "Actions",
+    "itemsPerPage": "Items per page:"
+  },
+  "storage": {
+    "pageTitle": "Storage",
+    "totalStorage": "Total Storage",
+    "acrossFiles": "Across {count} files",
+    "mediaFiles": "Media Files",
+    "searchByStudyOrDate": "Search by study or date",
+    "deleteFile": "Delete File",
+    "noMediaFiles": "No media files found",
+    "confirmDeletion": "Confirm Deletion",
+    "deleteConfirmMessage": "Are you sure you want to delete this {type} file from \"{studyName}\"?",
+    "actionCannotBeUndone": "This action cannot be undone.",
+    "headers": {
+      "type": "Type",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -581,7 +601,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },

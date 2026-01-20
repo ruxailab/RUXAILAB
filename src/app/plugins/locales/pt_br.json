@@ -72,7 +72,27 @@
     "viewAll": "Ver tudo",
     "sentBy": "Enviado por",
     "new": "NOVO",
-    "test": "um Estudo"
+    "test": "um Estudo",
+    "itemsPerPage": "Itens por página:"
+  },
+  "storage": {
+    "pageTitle": "Armazenamento",
+    "totalStorage": "Armazenamento Total",
+    "acrossFiles": "Em {count} arquivos",
+    "mediaFiles": "Arquivos de Mídia",
+    "searchByStudyOrDate": "Buscar por estudo ou data",
+    "deleteFile": "Excluir Arquivo",
+    "noMediaFiles": "Nenhum arquivo de mídia encontrado",
+    "confirmDeletion": "Confirmar Exclusão",
+    "deleteConfirmMessage": "Tem certeza de que deseja excluir este arquivo {type} de \"{studyName}\"?",
+    "actionCannotBeUndone": "Esta ação não pode ser desfeita.",
+    "headers": {
+      "type": "Tipo",
+      "studyName": "Nome do Estudo",
+      "date": "Data",
+      "size": "Tamanho",
+      "actions": "Ações"
+    }
   },
   "profile": {
     "title": "Perfil",
