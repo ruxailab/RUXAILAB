@@ -67,7 +67,27 @@
     "viewAll": "Alle anzeigen",
     "sentBy": "Gesendet von",
     "new": "NEU",
-    "test": "eine Studie"
+    "test": "eine Studie",
+    "itemsPerPage": "Elemente pro Seite:"
+  },
+  "storage": {
+    "pageTitle": "Speicher",
+    "totalStorage": "Gesamtspeicher",
+    "acrossFiles": "Über {count} Dateien",
+    "mediaFiles": "Mediendateien",
+    "searchByStudyOrDate": "Nach Studie oder Datum suchen",
+    "deleteFile": "Datei löschen",
+    "noMediaFiles": "Keine Mediendateien gefunden",
+    "confirmDeletion": "Löschung bestätigen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese {type}-Datei aus \"{studyName}\" löschen möchten?",
+    "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "headers": {
+      "type": "Typ",
+      "studyName": "Studienname",
+      "date": "Datum",
+      "size": "Größe",
+      "actions": "Aktionen"
+    }
   },
   "profile": {
     "title": "Profil",

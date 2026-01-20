@@ -80,7 +80,27 @@
     "viewAll": "すべて表示",
     "sentBy": "送信者",
     "new": "新着",
-    "test": "テスト"
+    "test": "テスト",
+    "itemsPerPage": "ページあたりのアイテム数:"
+  },
+  "storage": {
+    "pageTitle": "ストレージ",
+    "totalStorage": "総ストレージ",
+    "acrossFiles": "{count} ファイル",
+    "mediaFiles": "メディアファイル",
+    "searchByStudyOrDate": "研究または日付で検索",
+    "deleteFile": "ファイルを削除",
+    "noMediaFiles": "メディアファイルが見つかりません",
+    "confirmDeletion": "削除の確認",
+    "deleteConfirmMessage": "\"{studyName}\" からこの {type} ファイルを削除してもよろしいですか？",
+    "actionCannotBeUndone": "この操作は元に戻せません。",
+    "headers": {
+      "type": "タイプ",
+      "studyName": "研究名",
+      "date": "日付",
+      "size": "サイズ",
+      "actions": "アクション"
+    }
   },
   "profile": {
     "title": "プロフィール",
