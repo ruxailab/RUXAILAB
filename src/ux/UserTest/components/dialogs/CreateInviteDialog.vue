@@ -365,6 +365,7 @@
 <script setup>
 import Cooperators from '@/shared/models/Cooperators'
 import Notification from '@/shared/models/Notification'
+import EmailController from '@/shared/controllers/EmailController'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
@@ -414,7 +415,7 @@ const selectedRole = ref(ACCESS_LEVEL.ADMIN)
 const roleOptions = [
   {
     label: 'Evaluator',
-    value: ACCESS_LEVEL.ADMIN,
+    value: ACCESS_LEVEL.EVALUATOR,
     description: 'Participates in the test, shares screen/video.',
   },
   {
@@ -593,11 +594,18 @@ const saveInvitation = async () => {
 const submit = async () => {
   test.value.cooperators = [...cooperatorsEdit.value]
   await store.dispatch('updateStudy', test.value)
-  cooperatorsEdit.value.forEach((guest) => {
+
+  // Ensure notifications / external emails are sent one by one
+  for (const guest of cooperatorsEdit.value) {
     if (!guest.accepted) {
-      notifyCooperator(guest)
+      try {
+        await notifyCooperator(guest)
+      } catch (err) {
+        console.error('notfyCooperator error:', err)
+      }
     }
-  })
+  }
+
   inviteForm.value.resetValidation()
 
   // Reset to default values instead of null
@@ -611,22 +619,51 @@ const submit = async () => {
   emit('update:dialog', false)
 }
 
-const notifyCooperator = (guest) => {
+const notifyCooperator = async (guest) => {
   if (!guest) return
+
   if (guest.userDocId) {
     const path = '/testview'
-    store.dispatch('addNotification', {
-      userId: guest.userDocId,
-      notification: new Notification({
-        accessLevel: 2,
-        title: `You have been invited to test ${test.value.testTitle}!`,
-        description: inviteMessage.value,
-        redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
-        author: test.value.testAdmin?.email,
-        read: false,
+    try {
+      await store.dispatch('addNotification', {
+        userId: guest.userDocId,
+        notification: new Notification({
+          // use guest's access level when available (keeps behavior consistent)
+          accessLevel: guest.accessLevel || 2,
+          title: `You have been invited to test ${test.value.testTitle}!`,
+          description: inviteMessage.value,
+          redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
+          author: test.value.testAdmin?.email,
+          read: false,
+          testId: test.value.id,
+          
+          testDate: guest.testDate,
+        }),
+      })
+    } catch (err) {
+      console.error('addNotification failed:', err)
+    }
+    return
+  }
+
+  // For external (typed) emails, send via EmailController -> Cloud Function
+  try {
+    const emailController = new EmailController()
+    await emailController.send({
+      to: guest.email,
+      subject: `You have been invited to test ${test.value.testTitle}!`,
+      template: 'invite',
+      attachments: [],
+      data: {
+        message: inviteMessage.value,
+        testTitle: test.value.testTitle,
+        adminEmail: test.value.testAdmin?.email,
         testId: test.value.id,
-      }),
+        scheduledAt: guest.testDate,
+      },
     })
+  } catch (err) {
+    console.error('External email send failed:', err)
   }
 }
 </script>
