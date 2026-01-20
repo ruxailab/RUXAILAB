@@ -411,9 +411,6 @@ const formatDuration = (duration) => {
   return `${minutes}m ${seconds}s`
 }
 
-const getTaskAnswer = (taskName) => {
-
-}
 
 watch(
   () => props.userSession,
