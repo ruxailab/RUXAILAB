@@ -155,9 +155,8 @@ const updateComment = (input) => {
 }
 
 const handleImageUploaded = (imageUrl) => {
-  if (imageUrl) {
-    localComment.value = ''; 
-    emit('updateComment', '', props.heurisIndex, props.answerHeu.heuristicId)
+  if (imageUrl) { 
+    emit('updateComment', localComment.value, props.heurisIndex, props.answerHeu.heuristicId)
   }
 };
 </script>
