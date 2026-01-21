@@ -6,8 +6,22 @@
       </v-card-title>
 
       <v-card-text>
-        <div class="code-display">
-          <pre><code>{{ tikzCode }}</code></pre>
+        <div class="mb-4">
+          <div class="text-subtitle-2 font-weight-bold mb-2">
+            Required Packages (add to preamble):
+          </div>
+          <div class="code-display">
+            <pre><code>{{ latexCode.packages }}</code></pre>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-subtitle-2 font-weight-bold mb-2">
+            Graphic Code (add to document body):
+          </div>
+          <div class="code-display">
+            <pre><code>{{ latexCode.content }}</code></pre>
+          </div>
         </div>
       </v-card-text>
 
@@ -15,7 +29,7 @@
         <v-btn @click="closeDialog">Close</v-btn>
         <div class="d-flex align-center gap-2">
           <v-btn color="primary" @click="copyToClipboard">
-            Copy Code
+            Copy All Code
           </v-btn>
           <v-slide-x-transition>
             <span v-if="copySuccess" class="text-success font-weight-bold">
@@ -49,13 +63,14 @@ const isOpen = computed({
   set: (value) => emit('update:modelValue', value),
 })
 
-const tikzCode = computed(() =>
+const latexCode = computed(() =>
   generatePieChartLatex(props.questionTitle, props.options, props.counts, props.colors)
 )
 
 const copyToClipboard = async () => {
   try {
-    await navigator.clipboard.writeText(tikzCode.value)
+    const fullCode = `${latexCode.value.packages}\n\n${latexCode.value.content}`
+    await navigator.clipboard.writeText(fullCode)
     copySuccess.value = true
     // Hide message after 3 seconds
     setTimeout(() => {

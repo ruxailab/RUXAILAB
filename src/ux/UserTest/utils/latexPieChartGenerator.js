@@ -19,7 +19,7 @@ const escapeLatex = (text) => {
  * @param {Array} options - Array of option labels
  * @param {Object} counts - Object with counts for each option
  * @param {Array} colors - Array of hex color codes
- * @returns {string} LaTeX code
+ * @returns {Object} Object with packages and content properties
  */
 export const generatePieChartLatex = (title, options, counts, colors = []) => {
   // Default colors if not provided
@@ -42,23 +42,24 @@ export const generatePieChartLatex = (title, options, counts, colors = []) => {
     percentage: total > 0 ? (((counts[option] || 0) / total) * 100).toFixed(1) : 0
   }))
 
-  // Build LaTeX document
-  let latex = '\\documentclass{standalone}\n'
-  latex += '\\usepackage{tikz}\n'
-  latex += '\\begin{document}\n\n'
+  // Build packages section
+  let packages = '\\usepackage{tikz}\n'
+
+  // Build content section
+  let content = ''
 
   // Define custom colors if hex colors were provided
   if (colors && colors.length > 0 && colors[0] && colors[0].startsWith('#')) {
-    latex += '\\definecolor{color0}{HTML}{' + colors[0].replace('#', '').toUpperCase() + '}\n'
+    content += '\\definecolor{color0}{HTML}{' + colors[0].replace('#', '').toUpperCase() + '}\n'
     for (let i = 1; i < colors.length; i++) {
       if (colors[i] && colors[i].startsWith('#')) {
-        latex += `\\definecolor{color${i}}{HTML}{${colors[i].replace('#', '').toUpperCase()}}\n`
+        content += `\\definecolor{color${i}}{HTML}{${colors[i].replace('#', '').toUpperCase()}}\n`
       }
     }
-    latex += '\n'
+    content += '\n'
   }
 
-  latex += '\\begin{tikzpicture}\n'
+  content += '\\begin{tikzpicture}\n'
 
   // Draw pie chart with labels on slices
   let startAngle = 0
@@ -69,40 +70,39 @@ export const generatePieChartLatex = (title, options, counts, colors = []) => {
 
     // Draw pie slice
     if (item.count > 0) {
-      latex += `\\filldraw[fill=${color}, draw=white, line width=2pt]\n`
-      latex += `  (0, 0) -- (${Math.cos((startAngle * Math.PI) / 180) * 1.5}, ${Math.sin((startAngle * Math.PI) / 180) * 1.5})\n`
-      latex += `  arc[radius=1.5, start angle=${startAngle}, end angle=${endAngle}]\n`
-      latex += `  -- (0, 0);\n\n`
+      content += `\\filldraw[fill=${color}, draw=white, line width=2pt]\n`
+      content += `  (0, 0) -- (${Math.cos((startAngle * Math.PI) / 180) * 1.5}, ${Math.sin((startAngle * Math.PI) / 180) * 1.5})\n`
+      content += `  arc[radius=1.5, start angle=${startAngle}, end angle=${endAngle}]\n`
+      content += `  -- (0, 0);\n\n`
 
       // Add percentage label on the slice (white text)
       const labelRadius = 0.9
       const labelX = Math.cos((midAngle * Math.PI) / 180) * labelRadius
       const labelY = Math.sin((midAngle * Math.PI) / 180) * labelRadius
-      latex += `\\node at (${labelX}, ${labelY}) [font=\\bfseries, text=white] {${item.percentage}\\%};\n\n`
+      content += `\\node at (${labelX}, ${labelY}) [font=\\bfseries, text=white] {${item.percentage}\\%};\n\n`
     }
 
     startAngle = endAngle
   })
 
   // Draw legend below the pie chart
-  latex += '% Legend\n'
+  content += '% Legend\n'
   let legendY = -1.8
   data.forEach((item, idx) => {
     const color = tikzColors[idx % tikzColors.length]
     
     // Draw colored circle
-    latex += `\\filldraw[fill=${color}] (-2.2, ${legendY}) circle (0.1);\n`
+    content += `\\filldraw[fill=${color}] (-2.2, ${legendY}) circle (0.1);\n`
     
     // Draw label text
-    latex += `\\node at (-2.0, ${legendY}) [anchor=west, font=\\small] {${escapeLatex(item.label)} (${item.count})};\n`
+    content += `\\node at (-2.0, ${legendY}) [anchor=west, font=\\small] {${escapeLatex(item.label)} (${item.count})};\n`
     
     legendY -= 0.35
   })
 
-  latex += '\n\\end{tikzpicture}\n\n'
-  latex += '\\end{document}\n'
+  content += '\\end{tikzpicture}\n'
 
-  return latex
+  return { packages, content }
 }
 
 /**
@@ -142,32 +142,29 @@ export const generateSimplifiedPieChartLatex = (title, options, counts) => {
  * @param {string} title - Chart title
  * @param {Array} options - Array of option labels
  * @param {Object} counts - Object with counts for each option
- * @returns {string} PGFPlots LaTeX code
+ * @returns {Object} Object with packages and content properties
  */
 export const generatePgfplotsPieChartLatex = (title, options, counts) => {
   const total = Object.values(counts || {}).reduce((a, b) => a + b, 0)
 
-  let latex = '\\documentclass{standalone}\n'
-  latex += '\\usepackage{pgfplots}\n'
-  latex += '\\begin{document}\n\n'
+  let packages = '\\usepackage{pgfplots}\n'
 
-  latex += '\\begin{tikzpicture}\n'
-  latex += '\\begin{axis}[\n'
-  latex += '  title={' + escapeLatex(title) + '},\n'
-  latex += '  legend pos=outer north east,\n'
-  latex += '  legend columns=1,\n'
-  latex += ']\n'
-  latex += '\\addplot[pie chart] table[meta index=0] {\n'
+  let content = '\\begin{tikzpicture}\n'
+  content += '\\begin{axis}[\n'
+  content += '  title={' + escapeLatex(title) + '},\n'
+  content += '  legend pos=outer north east,\n'
+  content += '  legend columns=1,\n'
+  content += ']\n'
+  content += '\\addplot[pie chart] table[meta index=0] {\n'
   ;(options || []).forEach((option) => {
     const count = counts[option] || 0
-    latex += `${count}\n`
+    content += `${count}\n`
   })
 
-  latex += '};\n'
-  latex += '\\legend{' + (options || []).map(escapeLatex).join(',') + '}\n'
-  latex += '\\end{axis}\n'
-  latex += '\\end{tikzpicture}\n\n'
-  latex += '\\end{document}\n'
+  content += '};\n'
+  content += '\\legend{' + (options || []).map(escapeLatex).join(',') + '}\n'
+  content += '\\end{axis}\n'
+  content += '\\end{tikzpicture}\n'
 
-  return latex
+  return { packages, content }
 }
