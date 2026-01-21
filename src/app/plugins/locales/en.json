@@ -114,6 +114,8 @@
     "account": "Account",
     "admin": "Admin",
     "superAdmin": "Super Admin",
+    "guest": "Guest",
+    "evaluator": "Evaluator",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -167,7 +169,7 @@
   },
   "titles": {
     "manager": "Manager",
-    "test": "Test",
+    "tests": "Test",
     "preview": "Preview",
     "reports": "Reports",
     "answers": "Answers",
@@ -176,6 +178,10 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
+    "users": "Users",
+    "studies": "Studies",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -187,7 +193,10 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "name": "Name",
+      "studiesCount": "Studies Created",
+      "mediaSize": "Media Size"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -228,7 +237,11 @@
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
     "sendError": "Failed to send invitation. Please try again",
-    "missingVariableTitles": "Cannot save: Some variables are missing titles"
+    "missingVariableTitles": "Cannot save: Some variables are missing titles",
+    "authenticationCancelled": "Sign-in was cancelled. Please try again.",
+    "networkError": "Network error. Please check your internet connection and try again.",
+    "popupBlocked": "Your browser blocked the sign-in popup. Please allow popups for this site and try again.",
+    "tooManyAttempts": "Too many attempts. Please try again later."
   },
   "Introduction": {
     "title": "UX Remote LAB",

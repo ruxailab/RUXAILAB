@@ -177,6 +177,8 @@ let rafId = null
 const predictedData = ref(null)
 const selectedView = ref('precision')
 
+const mockEyeTracking = { accuracy: 92, fixations: 34 }
+
 function updateLoop() {
   if (!isPlaying.value) return
   const video = mainVideo2.value

@@ -34,6 +34,15 @@
       "reset_link_sent": "हमने पासवर्ड रीसेट लिंक भेजा है",
       "no_email": "ईमेल नहीं मिला?",
       "try_again": "पुनः प्रयास करें"
+    },
+    "passwordStrength": "पासवर्ड की मजबूती",
+    "number": "नंबर",
+    "strength": {
+      "veryWeak": "बहुत कमजोर",
+      "weak": "कमजोर",
+      "fair": "ठीक",
+      "good": "अच्छा",
+      "strong": "मजबूत"
     }
   },
   "common": {
