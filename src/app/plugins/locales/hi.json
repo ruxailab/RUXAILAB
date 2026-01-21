@@ -205,6 +205,8 @@
     "cta": "शुरू करें"
   },
   "Dashboard": {
+    "welcomeBack": "वापस स्वागत है, {name}!",
+    "subtitle": "आपके शोध परियोजनाओं में आज क्या हो रहा है",
     "createNewTest": "नया परीक्षण बनाएं",
     "tests": "परीक्षण",
     "templates": "टेम्पलेट्स",
@@ -214,7 +216,49 @@
     "publicTests": "सार्वजनिक परीक्षण",
     "sessions": "सत्र",
     "personal": "व्यक्तिगत",
-    "explore": "खोजें"
+    "explore": "खोजें",
+    "activeStudiesOverview": "सक्रिय अध्ययनों का अवलोकन",
+    "viewAll": "सभी देखें",
+    "showMore": "और दिखाएं",
+    "showLess": "कम दिखाएं",
+    "progress": "प्रगति",
+    "participants": "प्रतिभागी",
+    "participantsLabel": "प्रतिभागी",
+    "daysLeft": "दिन शेष",
+    "dayLeft": "दिन शेष",
+    "studies": "अध्ययन",
+    "storage": "भंडारण",
+    "free": "निःशुल्क",
+    "plan": "योजना",
+    "recentActivity": "हाल की गतिविधि",
+    "comingSoon": "जल्द आ रहा है",
+    "mostUsedMethods": "सबसे अधिक उपयोग की जाने वाली विधियाँ",
+    "use": "उपयोग",
+    "uses": "उपयोग",
+    "noDataAvailable": "अभी तक कोई डेटा उपलब्ध नहीं है",
+    "createFirstStudy": "यहाँ सांख्यिकी देखने के लिए अपना पहला अध्ययन बनाएं।",
+    "nextSession": "अगला सत्र",
+    "noSessionsScheduled": "कोई सत्र निर्धारित नहीं है",
+    "nextSessionWillAppear": "आपका अगला सत्र यहाँ दिखाई देगा",
+    "latestBlogPosts": "नवीनतम ब्लॉग पोस्ट",
+    "viewBlog": "ब्लॉग देखें",
+    "date": "तिथि",
+    "time": "समय",
+    "status": {
+      "active": "सक्रिय",
+      "recruiting": "भर्ती",
+      "paused": "रुका हुआ",
+      "finished": "समाप्त",
+      "unknown": "अज्ञात"
+    },
+    "webinar": {
+      "ended": "समाप्त",
+      "live": "लाइव",
+      "today": "आज",
+      "joinNow": "अभी जुड़ें",
+      "webinarEnded": "वेबिनार समाप्त",
+      "startingToday": "आज शुरू"
+    }
   },
   "HeuristicsTable": {
     "titles": {

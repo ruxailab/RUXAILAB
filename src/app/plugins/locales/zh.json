@@ -222,6 +222,8 @@
     "cta": "开始"
   },
   "Dashboard": {
+    "welcomeBack": "欢迎回来，{name}！",
+    "subtitle": "这是您今天研究项目的动态",
     "createNewTest": "创建新研究",
     "tests": "测试",
     "templates": "模板",
@@ -231,7 +233,49 @@
     "publicTests": "公开测试",
     "sessions": "会话",
     "personal": "个人",
-    "explore": "探索"
+    "explore": "探索",
+    "activeStudiesOverview": "活跃研究概览",
+    "viewAll": "查看全部",
+    "showMore": "显示更多",
+    "showLess": "显示更少",
+    "progress": "进度",
+    "participants": "参与者",
+    "participantsLabel": "参与者",
+    "daysLeft": "天剩余",
+    "dayLeft": "天剩余",
+    "studies": "研究",
+    "storage": "存储",
+    "free": "免费",
+    "plan": "计划",
+    "recentActivity": "最近活动",
+    "comingSoon": "即将推出",
+    "mostUsedMethods": "最常用方法",
+    "use": "使用",
+    "uses": "次使用",
+    "noDataAvailable": "暂无可用数据",
+    "createFirstStudy": "创建您的第一个研究以在此处查看统计信息。",
+    "nextSession": "下一个会话",
+    "noSessionsScheduled": "没有安排的会话",
+    "nextSessionWillAppear": "您的下一个会话将显示在这里",
+    "latestBlogPosts": "最新博客文章",
+    "viewBlog": "查看博客",
+    "date": "日期",
+    "time": "时间",
+    "status": {
+      "active": "活跃",
+      "recruiting": "招募中",
+      "paused": "已暂停",
+      "finished": "已完成",
+      "unknown": "未知"
+    },
+    "webinar": {
+      "ended": "已结束",
+      "live": "直播中",
+      "today": "今天",
+      "joinNow": "立即加入",
+      "webinarEnded": "网络研讨会已结束",
+      "startingToday": "今天开始"
+    }
   },
   "HeuristicsTable": {
     "titles": {

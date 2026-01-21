@@ -3,7 +3,7 @@
     <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
         <v-icon icon="mdi-flask-outline" class="me-2" color="primary" />
-        Active Studies Overview
+        {{ $t('Dashboard.activeStudiesOverview') }}
       </div>
       <v-btn
         variant="text"
@@ -11,7 +11,7 @@
         color="primary"
         @click="viewAllStudies"
       >
-        View All
+        {{ $t('Dashboard.viewAll') }}
       </v-btn>
     </v-card-title>
 
@@ -53,12 +53,7 @@
                   variant="tonal"
                   size="small"
                 >
-                  {{
-                    study.status
-                      ? study.status.charAt(0).toUpperCase() +
-                        study.status.slice(1)
-                      : 'Unknown'
-                  }}
+                  {{ $t('Dashboard.status.' + (study.status || 'unknown')) }}
                 </v-chip>
                 <v-icon
                   :icon="getMethodIcon(study)"
@@ -70,14 +65,37 @@
               <h4 class="text-subtitle-1 font-weight-bold mb-2">
                 {{ study.title }}
               </h4>
-              <p class="text-body-2 text-medium-emphasis mb-3">
-                {{ study.description }}
-              </p>
+              <div class="description-wrapper">
+                <p
+                  class="text-body-2 text-medium-emphasis mb-3"
+                  :class="{
+                    'description-truncated':
+                      !expandedStudies[study.id] && study.isLongDescription,
+                  }"
+                >
+                  {{ study.description }}
+                </p>
+                <v-btn
+                  v-if="study.isLongDescription"
+                  @click.stop="toggleExpand(study.id)"
+                  variant="text"
+                  size="small"
+                  color="primary"
+                  class="text-lowercase"
+                  :prepend-icon="
+                    expandedStudies[study.id]
+                      ? 'mdi-chevron-up'
+                      : 'mdi-chevron-down'
+                  "
+                >
+                  {{ expandedStudies[study.id] ? $t('Dashboard.showLess') : $t('Dashboard.showMore') }}
+                </v-btn>
+              </div>
 
               <!-- Progress -->
               <div class="mb-3">
                 <div class="d-flex justify-space-between align-center mb-1">
-                  <span class="text-caption font-weight-medium">Progress</span>
+                  <span class="text-caption font-weight-medium">{{ $t('Dashboard.progress') }}</span>
                   <span class="text-caption">{{ study.progress }}%</span>
                 </div>
                 <v-progress-linear
@@ -97,7 +115,7 @@
                     class="me-1"
                     color="info"
                   />
-                  <span>{{ study.participants }} participants</span>
+                  <span>{{ study.participants }} {{ $t('Dashboard.participants') }}</span>
                 </div>
                 <div v-if="study.daysLeft !== null" class="d-flex align-center">
                   <v-icon
@@ -108,7 +126,7 @@
                   />
                   <span>{{
                     `${study.daysLeft} ${
-                      study.daysLeft > 1 ? 'days left' : 'day left'
+                      study.daysLeft > 1 ? $t('Dashboard.daysLeft') : $t('Dashboard.dayLeft')
                     }`
                   }}</span>
                 </div>
