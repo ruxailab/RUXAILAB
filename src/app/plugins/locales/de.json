@@ -30,6 +30,15 @@
       "instructions": "Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
       "reset_button": "Reset-Link senden",
       "back_to_signin": "Zurück zur Anmeldung"
+    },
+    "passwordStrength": "Passwortstärke",
+    "number": "Nummer",
+    "strength": {
+      "veryWeak": "Sehr schwach",
+      "weak": "Schwach",
+      "fair": "Mittel",
+      "good": "Gut",
+      "strong": "Stark"
     }
   },
   "common": {
@@ -67,7 +76,27 @@
     "viewAll": "Alle anzeigen",
     "sentBy": "Gesendet von",
     "new": "NEU",
-    "test": "eine Studie"
+    "test": "eine Studie",
+    "itemsPerPage": "Elemente pro Seite:"
+  },
+  "storage": {
+    "pageTitle": "Speicher",
+    "totalStorage": "Gesamtspeicher",
+    "acrossFiles": "Über {count} Dateien",
+    "mediaFiles": "Mediendateien",
+    "searchByStudyOrDate": "Nach Studie oder Datum suchen",
+    "deleteFile": "Datei löschen",
+    "noMediaFiles": "Keine Mediendateien gefunden",
+    "confirmDeletion": "Löschung bestätigen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese {type}-Datei aus \"{studyName}\" löschen möchten?",
+    "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "headers": {
+      "type": "Typ",
+      "studyName": "Studienname",
+      "date": "Datum",
+      "size": "Größe",
+      "actions": "Aktionen"
+    }
   },
   "profile": {
     "title": "Profil",
