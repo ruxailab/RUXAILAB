@@ -662,7 +662,9 @@ const updateComment = (comment, heurisIndex, answerIndex) => {
   const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
   if (comment !== '' && comment !== undefined) {
     question.heuristicComment = comment;
-  } else if (store.state.Heuristic.currentImageUrl) {
+  }
+
+  if (store.state.Heuristic.currentImageUrl) {
     question.answerImageUrl = store.state.Heuristic.currentImageUrl;
   }
 };
