@@ -76,7 +76,27 @@
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
     "new": "جديد",
-    "test": "دراسة"
+    "test": "دراسة",
+    "itemsPerPage": "عناصر لكل صفحة:"
+  },
+  "storage": {
+    "pageTitle": "التخزين",
+    "totalStorage": "إجمالي التخزين",
+    "acrossFiles": "عبر {count} ملفات",
+    "mediaFiles": "ملفات الوسائط",
+    "searchByStudyOrDate": "البحث حسب الدراسة أو التاريخ",
+    "deleteFile": "حذف الملف",
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "confirmDeletion": "تأكيد الحذف",
+    "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف ملف {type} هذا من \"{studyName}\"؟",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
+    "headers": {
+      "type": "النوع",
+      "studyName": "اسم الدراسة",
+      "date": "التاريخ",
+      "size": "الحجم",
+      "actions": "الإجراءات"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",
