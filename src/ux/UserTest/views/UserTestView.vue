@@ -386,6 +386,11 @@
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
               }
             "
+            @update:sartAnswers="
+              (val) => {
+                localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
+              }
+            "
             @done="() => handleTaskFinish(true)"
             @couldNotFinish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true"
