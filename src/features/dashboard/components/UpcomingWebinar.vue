@@ -36,7 +36,7 @@
               <div class="info-value">
                 {{ webinar.date }}
               </div>
-              <div>Date</div>
+              <div>{{ $t('Dashboard.date') }}</div>
             </div>
           </div>
         </v-col>
@@ -49,7 +49,7 @@
               <div class="info-value">
                 {{ webinar.duration }}
               </div>
-              <div>Time</div>
+              <div>{{ $t('Dashboard.time') }}</div>
             </div>
           </div>
         </v-col>
@@ -66,7 +66,10 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import officeHoursImage from '@/assets/office_banner_gray.png'
+
+const { t } = useI18n()
 
 const props = defineProps({
   webinarData: {
@@ -109,7 +112,7 @@ const webinar = computed(() => {
 
 const webinarStatus = computed(() => {
   if (!webinar.value.dateObj) {
-    return { show: true, text: 'Coming Soon', color: 'primary', icon: 'mdi-clock-outline' }
+    return { show: true, text: t('Dashboard.comingSoon'), color: 'primary', icon: 'mdi-clock-outline' }
   }
 
   const now = new Date()
@@ -120,22 +123,22 @@ const webinarStatus = computed(() => {
 
   // If webinar has ended (more than 1 hour after start)
   if (diffHours < -1) {
-    return { show: true, text: 'Ended', color: 'grey', icon: 'mdi-check-circle' }
+    return { show: true, text: t('Dashboard.webinar.ended'), color: 'grey', icon: 'mdi-check-circle' }
   }
 
   // If webinar is happening now (within 1 hour after start)
   if (diffHours <= 0 && diffHours >= -1) {
-    return { show: true, text: 'Live', color: 'error', icon: 'mdi-access-point' }
+    return { show: true, text: t('Dashboard.webinar.live'), color: 'error', icon: 'mdi-access-point' }
   }
 
   // If less than 24 hours
   if (diffHours > 0 && diffHours < 24) {
-    return { show: true, text: 'Today', color: 'warning', icon: 'mdi-calendar-today' }
+    return { show: true, text: t('Dashboard.webinar.today'), color: 'warning', icon: 'mdi-calendar-today' }
   }
 
   // If less than a week (7 days)
   if (diffDays >= 1 && diffDays < 7) {
-    return { show: true, text: 'Coming Soon', color: 'primary', icon: 'mdi-clock-outline' }
+    return { show: true, text: t('Dashboard.comingSoon'), color: 'primary', icon: 'mdi-clock-outline' }
   }
 
   // Don't show chip if more than a week away
@@ -148,7 +151,7 @@ const buttonConfig = computed(() => {
 
   if (status === 'Live') {
     return {
-      text: 'Join Now',
+      text: t('Dashboard.webinar.joinNow'),
       icon: 'mdi-video',
       color: 'error',
       disabled: false,
@@ -158,7 +161,7 @@ const buttonConfig = computed(() => {
 
   if (status === 'Ended') {
     return {
-      text: 'Webinar Ended',
+      text: t('Dashboard.webinar.webinarEnded'),
       icon: 'mdi-check-circle',
       color: 'grey',
       disabled: true,
@@ -168,7 +171,7 @@ const buttonConfig = computed(() => {
 
   if (status === 'Today') {
     return {
-      text: 'Starting Today',
+      text: t('Dashboard.webinar.startingToday'),
       icon: 'mdi-calendar-clock',
       color: 'warning',
       disabled: true,
@@ -177,7 +180,7 @@ const buttonConfig = computed(() => {
   }
 
   return {
-    text: 'Coming Soon',
+    text: t('Dashboard.comingSoon'),
     icon: 'mdi-calendar-clock',
     color: 'primary',
     disabled: true,
