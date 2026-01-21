@@ -80,7 +80,27 @@
     "viewAll": "查看全部",
     "sentBy": "发送者",
     "new": "新",
-    "test": "一项研究"
+    "test": "一项研究",
+    "itemsPerPage": "每页项目数:"
+  },
+  "storage": {
+    "pageTitle": "存储",
+    "totalStorage": "总存储空间",
+    "acrossFiles": "在 {count} 个文件中",
+    "mediaFiles": "媒体文件",
+    "searchByStudyOrDate": "按研究或日期搜索",
+    "deleteFile": "删除文件",
+    "noMediaFiles": "未找到媒体文件",
+    "confirmDeletion": "确认删除",
+    "deleteConfirmMessage": "您确定要从 \"{studyName}\" 中删除此 {type} 文件吗？",
+    "actionCannotBeUndone": "此操作无法撤销。",
+    "headers": {
+      "type": "类型",
+      "studyName": "研究名称",
+      "date": "日期",
+      "size": "大小",
+      "actions": "操作"
+    }
   },
   "profile": {
     "title": "个人资料",

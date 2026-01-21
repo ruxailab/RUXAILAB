@@ -76,7 +76,27 @@
     "viewAll": "Voir tout",
     "sentBy": "Envoyé par",
     "new": "NOUVEAU",
-    "test": "une Étude"
+    "test": "une Étude",
+    "itemsPerPage": "Éléments par page :"
+  },
+  "storage": {
+    "pageTitle": "Stockage",
+    "totalStorage": "Stockage total",
+    "acrossFiles": "Sur {count} fichiers",
+    "mediaFiles": "Fichiers média",
+    "searchByStudyOrDate": "Rechercher par étude ou date",
+    "deleteFile": "Supprimer le fichier",
+    "noMediaFiles": "Aucun fichier média trouvé",
+    "confirmDeletion": "Confirmer la suppression",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer ce fichier {type} de \"{studyName}\" ?",
+    "actionCannotBeUndone": "Cette action ne peut pas être annulée.",
+    "headers": {
+      "type": "Type",
+      "studyName": "Nom de l'étude",
+      "date": "Date",
+      "size": "Taille",
+      "actions": "Actions"
+    }
   },
   "profile": {
     "title": "Profil",
