@@ -88,6 +88,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 // Feature views
 import ProfileView from '@/features/auth/views/ProfileView.vue'
@@ -110,6 +111,7 @@ import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 // 🔸 UI and navigation state
 const drawerOpen = ref(false)
@@ -124,23 +126,23 @@ let unsubscribeTests = null // Unsub function for real-time tests
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
     case 'dashboard':
-      return 'Dashboard'
+      return t('navigation.dashboard')
     case 'studies':
-      return 'Studies'
+      return t('navigation.studies')
     case 'sessions':
-      return 'Sessions'
+      return t('navigation.sessions')
     case 'templates':
-      return 'Templates'
+      return t('navigation.templates')
     case 'storage':
-      return 'Storage'
+      return t('navigation.storage')
     case 'notifications':
-      return 'Notifications'
+      return t('common.notifications')
     case 'profile':
-      return 'Profile'
+      return t('profile.title')
     case 'community':
       return activeSubSection.value === 'community-templates'
-        ? 'Community Templates'
-        : 'Community Studies'
+        ? t('navigation.communityTemplates')
+        : t('navigation.communityStudies')
     default:
       return 'RUXAI Lab'
   }

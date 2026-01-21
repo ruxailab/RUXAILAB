@@ -60,6 +60,7 @@
     "notifications": "सूचनाएं",
     "unread": "अनपढ़",
     "inbox": "इनबॉक्स",
+    "all": "सभी",
     "timeAgo": {
       "years": "{count} वर्ष पहले | {count} वर्षों पहले",
       "months": "{count} महीना पहले | {count} महीनों पहले",
@@ -72,6 +73,36 @@
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
     "test": "एक अध्ययन"
+  },
+  "notificationsPage": {
+    "subtitle": "अपनी गतिविधियों और सहयोग से अपडेट रहें",
+    "markAllRead": "सभी को पढ़ा हुआ चिह्नित करें",
+    "searchPlaceholder": "सूचनाएं खोजें…",
+    "notification": "सूचना",
+    "important": "महत्वपूर्ण",
+    "markAsRead": "पढ़ा हुआ चिह्नित करें",
+    "markAsUnread": "अपठित चिह्नित करें",
+    "refresh": "रीफ्रेश",
+    "noResultsFound": "कोई परिणाम नहीं मिला",
+    "allCaughtUp": "सब हो गया!",
+    "noNotificationsYet": "अभी तक कोई सूचना नहीं",
+    "tryDifferentKeywords": "अलग कीवर्ड आज़माएं या खोज साफ़ करें",
+    "allReadMessage": "आपने अपनी सभी सूचनाएं पढ़ ली हैं। बढ़िया!",
+    "newActivitiesMessage": "नई गतिविधियाँ होने पर आप यहाँ सूचनाएं देखेंगे",
+    "justNow": "अभी",
+    "minutesAgo": "{count} मिनट पहले",
+    "hoursAgo": "{count} घंटे पहले",
+    "daysAgo": "{count} दिन पहले",
+    "newNotification": "आपके पास एक नई सूचना है।"
+  },
+  "navigation": {
+    "dashboard": "डैशबोर्ड",
+    "studies": "अध्ययन",
+    "sessions": "सत्र",
+    "templates": "टेम्पलेट्स",
+    "storage": "भंडारण",
+    "communityStudies": "सामुदायिक अध्ययन",
+    "communityTemplates": "सामुदायिक टेम्पलेट्स"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
