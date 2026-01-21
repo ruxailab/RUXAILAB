@@ -651,16 +651,26 @@ const checkIfNan = (value) => {
 };
 
 const getColor = (value, max, min) => {
+  if (value == null) return 'grey';
+
+  const val = Number(value);
   max = Number(max) || 0;
   min = Number(min) || 0;
-  const h = max ? (max - min) / max : 0;
 
-  if (value == null) return 'grey';
-  else if (value === 0) return 'red';
-  else if (value <= min + 1 * h) return 'amber';
-  else if (value <= min + 2 * h) return 'orange lighten-1';
-  else if (value <= min + 3 * h) return 'lime';
-  else return 'green';
+  if (Number.isNaN(val)) return 'grey';
+  
+  if (val === 0) return 'red';
+
+  if (max === min) {
+    return val === max ? 'green' : 'grey';
+  }
+
+  const h = (max - min) / 4;
+
+  if (val <= min + 1 * h) return 'amber';
+  if (val <= min + 2 * h) return 'orange lighten-1';
+  if (value <= min + 3 * h) return 'lime';
+  return 'green';
 };
 
 const getColorPorcentage = (value) => {
