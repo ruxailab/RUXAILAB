@@ -34,6 +34,15 @@
       "reset_link_sent": "Enviamos um link para redefinir a senha para",
       "no_email": "Não recebeu o e-mail?",
       "try_again": "Tente novamente"
+    },
+    "passwordStrength": "Força da senha",
+    "number": "Número",
+    "strength": {
+      "veryWeak": "Muito fraca",
+      "weak": "Fraca",
+      "fair": "Razoável",
+      "good": "Boa",
+      "strong": "Forte"
     }
   },
   "common": {
