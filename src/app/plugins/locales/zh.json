@@ -43,7 +43,7 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    }   
+    }
   },
   "common": {
     "loading": "加载测试",
@@ -81,6 +81,36 @@
     "sentBy": "发送者",
     "new": "新",
     "test": "一项研究"
+  },
+  "notificationsPage": {
+    "subtitle": "随时了解您的活动和协作",
+    "markAllRead": "全部标为已读",
+    "searchPlaceholder": "搜索通知…",
+    "notification": "通知",
+    "important": "重要",
+    "markAsRead": "标为已读",
+    "markAsUnread": "标为未读",
+    "refresh": "刷新",
+    "noResultsFound": "未找到结果",
+    "allCaughtUp": "全部处理完毕！",
+    "noNotificationsYet": "暂无通知",
+    "tryDifferentKeywords": "尝试其他关键词或清除搜索",
+    "allReadMessage": "您已阅读所有通知。做得好！",
+    "newActivitiesMessage": "有新活动时，通知将显示在这里",
+    "justNow": "刚刚",
+    "minutesAgo": "{count}分钟前",
+    "hoursAgo": "{count}小时前",
+    "daysAgo": "{count}天前",
+    "newNotification": "您有一条新通知。"
+  },
+  "navigation": {
+    "dashboard": "仪表盘",
+    "studies": "研究",
+    "sessions": "会话",
+    "templates": "模板",
+    "storage": "存储",
+    "communityStudies": "社区研究",
+    "communityTemplates": "社区模板"
   },
   "profile": {
     "title": "个人资料",

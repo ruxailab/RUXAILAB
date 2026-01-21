@@ -69,6 +69,36 @@
     "new": "NOUVEAU",
     "test": "une Étude"
   },
+  "notificationsPage": {
+    "subtitle": "Restez informé de vos activités et collaborations",
+    "markAllRead": "Tout marquer comme lu",
+    "searchPlaceholder": "Rechercher des notifications…",
+    "notification": "Notification",
+    "important": "Important",
+    "markAsRead": "Marquer comme lu",
+    "markAsUnread": "Marquer comme non lu",
+    "refresh": "Actualiser",
+    "noResultsFound": "Aucun résultat trouvé",
+    "allCaughtUp": "Tout est à jour !",
+    "noNotificationsYet": "Pas encore de notifications",
+    "tryDifferentKeywords": "Essayez d'autres mots-clés ou effacez votre recherche",
+    "allReadMessage": "Vous avez lu toutes vos notifications. Bravo !",
+    "newActivitiesMessage": "Vous verrez les notifications ici quand vous aurez de nouvelles activités",
+    "justNow": "À l'instant",
+    "minutesAgo": "il y a {count}m",
+    "hoursAgo": "il y a {count}h",
+    "daysAgo": "il y a {count}j",
+    "newNotification": "Vous avez une nouvelle notification."
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "studies": "Études",
+    "sessions": "Sessions",
+    "templates": "Modèles",
+    "storage": "Stockage",
+    "communityStudies": "Études communautaires",
+    "communityTemplates": "Modèles communautaires"
+  },
   "profile": {
     "title": "Profil",
     "username": "Nom d'utilisateur",

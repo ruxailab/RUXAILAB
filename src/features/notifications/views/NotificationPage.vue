@@ -21,7 +21,7 @@
                 <h2 class="text-h5 text-h6-sm">{{ $t('common.notifications') }}</h2>
               </div>
               <p class="text-caption text-grey-darken-1 mt-1">
-                Stay updated with your activities and collaborations
+                {{ $t('notificationsPage.subtitle') }}
               </p>
             </div>
 
@@ -37,7 +37,7 @@
               class="elevation-0 text-capitalize"
               :class="{'flex-shrink-0': true}"
             >
-              Mark all read
+              {{ $t('notificationsPage.markAllRead') }}
             </v-btn>
           </div>
 
@@ -72,11 +72,7 @@
           <v-select
             v-else
             v-model="activeTab"
-            :items="[
-              { title: `All (${totalCount})`, value: 'all', prependIcon: 'mdi-view-list' },
-              { title: `Unread (${unreadCount})`, value: 'unread', prependIcon: 'mdi-email-outline' },
-              { title: 'Inbox', value: 'inbox', prependIcon: 'mdi-inbox' }
-            ]"
+            :items="mobileTabItems"
             variant="outlined"
             density="compact"
             class="mt-4"
@@ -89,7 +85,7 @@
         <v-text-field
           v-model="search"
           prepend-inner-icon="mdi-magnify"
-          placeholder="Search notifications…"
+          :placeholder="$t('notificationsPage.searchPlaceholder')"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -171,7 +167,7 @@
                   <div class="flex-grow-1">
                     <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1">
                       <div class="d-flex align-center flex-wrap gap-2">
-                        <span class="font-weight-medium text-body-1">{{ n.title || 'Notification' }}</span>
+                        <span class="font-weight-medium text-body-1">{{ n.title || $t('notificationsPage.notification') }}</span>
                         <v-chip
                           v-if="n.type"
                           size="x-small"
@@ -192,7 +188,7 @@
                           density="compact"
                           prepend-icon="mdi-star"
                         >
-                          Important
+                          {{ $t('notificationsPage.important') }}
                         </v-chip>
                       </div>
                       <div class="d-flex align-center gap-2">
@@ -204,19 +200,19 @@
                           size="x-small"
                           variant="text"
                           @click.stop="toggleRead(n)"
-                          :aria-label="n.read ? 'Mark unread' : 'Mark read'"
+                          :aria-label="n.read ? $t('notificationsPage.markAsUnread') : $t('notificationsPage.markAsRead')"
                         >
                           <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
                             {{ n.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
                           </v-icon>
                           <v-tooltip activator="parent">
-                            {{ n.read ? 'Mark as unread' : 'Mark as read' }}
+                            {{ n.read ? $t('notificationsPage.markAsUnread') : $t('notificationsPage.markAsRead') }}
                           </v-tooltip>
                         </v-btn>
                       </div>
                     </div>
                     <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                      {{ n.message || 'You have a new notification.' }}
+                      {{ n.message || $t('notificationsPage.newNotification') }}
                     </p>
                     <div v-if="n.senderName" class="text-caption text-grey-darken-2">
                       <v-icon size="small">mdi-account-outline</v-icon>
@@ -260,7 +256,7 @@
             :loading="refreshing"
             class="text-capitalize"
           >
-            Refresh
+            {{ $t('notificationsPage.refresh') }}
             <template #loader>
               <v-progress-circular
                 indeterminate
@@ -290,11 +286,13 @@ import { useRouter } from 'vue-router'
 import { useGoBack } from '@/composables/useGoBack'
 import NotificationList from '@/features/notifications/components/NotificationList.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import { useI18n } from 'vue-i18n'
 import StudyController from '@/controllers/StudyController'
 
 const store = useStore()
 const router = useRouter()
 const { goBackOrRedirect } = useGoBack()
+const { t } = useI18n()
 
 // State
 const activeTab = ref('unread')
@@ -325,6 +323,13 @@ const unreadCount = computed(() =>
 const allRead = computed(() =>
   user.value?.notifications?.every((notification) => notification.read) || false
 )
+
+// Mobile tab items
+const mobileTabItems = computed(() => [
+  { title: `${t('common.all')} (${totalCount.value})`, value: 'all', prependIcon: 'mdi-view-list' },
+  { title: `${t('common.unread')} (${unreadCount.value})`, value: 'unread', prependIcon: 'mdi-email-outline' },
+  { title: t('common.inbox'), value: 'inbox', prependIcon: 'mdi-inbox' }
+])
 
 const sortedNotifications = computed(() => {
   if (!user.value?.notifications) return []
@@ -402,24 +407,24 @@ const currentPages = computed(() => {
 
 // Empty states
 const emptyStateTitle = computed(() => {
-  if (search.value.trim()) return 'No results found'
-  if (activeTab.value === 'unread') return 'All caught up!'
-  return 'No notifications yet'
+  if (search.value.trim()) return t('notificationsPage.noResultsFound')
+  if (activeTab.value === 'unread') return t('notificationsPage.allCaughtUp')
+  return t('notificationsPage.noNotificationsYet')
 })
 
 const emptyStateMessage = computed(() => {
-  if (search.value.trim()) return 'Try different keywords or clear your search'
-  if (activeTab.value === 'unread') return "You've read all your notifications. Great job!"
-  return "You'll see notifications here when you have new activities"
+  if (search.value.trim()) return t('notificationsPage.tryDifferentKeywords')
+  if (activeTab.value === 'unread') return t('notificationsPage.allReadMessage')
+  return t('notificationsPage.newActivitiesMessage')
 })
 
 // Helper functions
 const relativeTime = (date) => {
   const diff = (Date.now() - new Date(date)) / 1000
-  if (diff < 60) return 'Just now'
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-  return `${Math.floor(diff / 86400)}d ago`
+  if (diff < 60) return t('notificationsPage.justNow')
+  if (diff < 3600) return t('notificationsPage.minutesAgo', { count: Math.floor(diff / 60) })
+  if (diff < 86400) return t('notificationsPage.hoursAgo', { count: Math.floor(diff / 3600) })
+  return t('notificationsPage.daysAgo', { count: Math.floor(diff / 86400) })
 }
 
 const getTypeIcon = (type) => {

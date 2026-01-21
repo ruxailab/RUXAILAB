@@ -74,6 +74,36 @@
     "new": "NOVO",
     "test": "um Estudo"
   },
+  "notificationsPage": {
+    "subtitle": "Mantenha-se atualizado com suas atividades e colaborações",
+    "markAllRead": "Marcar tudo como lido",
+    "searchPlaceholder": "Pesquisar notificações…",
+    "notification": "Notificação",
+    "important": "Importante",
+    "markAsRead": "Marcar como lido",
+    "markAsUnread": "Marcar como não lido",
+    "refresh": "Atualizar",
+    "noResultsFound": "Nenhum resultado encontrado",
+    "allCaughtUp": "Tudo em dia!",
+    "noNotificationsYet": "Nenhuma notificação ainda",
+    "tryDifferentKeywords": "Tente outras palavras-chave ou limpe sua pesquisa",
+    "allReadMessage": "Você leu todas as suas notificações. Ótimo trabalho!",
+    "newActivitiesMessage": "Você verá notificações aqui quando tiver novas atividades",
+    "justNow": "Agora mesmo",
+    "minutesAgo": "há {count}m",
+    "hoursAgo": "há {count}h",
+    "daysAgo": "há {count}d",
+    "newNotification": "Você tem uma nova notificação."
+  },
+  "navigation": {
+    "dashboard": "Painel",
+    "studies": "Estudos",
+    "sessions": "Sessões",
+    "templates": "Modelos",
+    "storage": "Armazenamento",
+    "communityStudies": "Estudos da comunidade",
+    "communityTemplates": "Modelos da comunidade"
+  },
   "profile": {
     "title": "Perfil",
     "superAdmin": "Super Administrador",
