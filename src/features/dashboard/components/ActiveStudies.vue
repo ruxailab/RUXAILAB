@@ -27,6 +27,36 @@
         </v-col>
       </v-row>
       <v-row v-else>
+        <!-- Empty state when no studies -->
+        <v-col v-if="hasNoStudies" cols="12" class="text-center py-8">
+          <div class="d-flex flex-column align-center">
+            <v-icon
+              icon="mdi-flask-empty-outline"
+              size="80"
+              color="grey-lighten-1"
+              class="mb-4"
+            />
+            <h3 class="text-h6 font-weight-medium mb-2 text-medium-emphasis">
+              No Active Studies
+            </h3>
+            <p class="text-body-2 text-medium-emphasis mb-6 max-width-400">
+              You don't have any studies yet. Create your first study to start
+              gathering valuable user insights.
+            </p>
+            <v-btn
+              color="primary"
+              variant="elevated"
+              size="large"
+              prepend-icon="mdi-plus"
+              @click="createNewStudy"
+              class="px-6"
+            >
+              Create New Study
+            </v-btn>
+          </div>
+        </v-col>
+
+        <!-- Studies list -->
         <v-col
           v-for="study in studies.filter((s) => s)"
           :key="study.id"
@@ -156,7 +186,11 @@ const studies = computed(() => {
     ? studiesWithAnswers.value
     : loading.value
     ? []
-    : defaultStudies
+    : []
+})
+
+const hasNoStudies = computed(() => {
+  return !loading.value && props.studies.length === 0
 })
 
 const lastFourStudies = computed(() => {
@@ -330,6 +364,10 @@ const defaultStudies = [
   },
 ]
 
+const createNewStudy = () => {
+  router.push({ name: 'study-create-step1' })
+}
+
 watch(
   () => props.studies,
   () => {
@@ -348,5 +386,9 @@ watch(
 .study-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.max-width-400 {
+  max-width: 400px;
 }
 </style>
