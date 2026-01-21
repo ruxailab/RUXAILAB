@@ -29,6 +29,16 @@
           />
 
           <v-text-field
+            v-model="username"
+            :rules="usernameRules"
+            :label="$t('buttons.username') + ' (' + $t('buttons.optional') + ')'"
+            type="text"
+            placeholder="John Doe"
+            prepend-inner-icon="mdi-account-outline"
+            variant="outlined"
+          />
+
+          <v-text-field
             v-model="password"
             :rules="passwordRules"
             :label="$t('auth.SIGNIN.password')"
@@ -110,6 +120,7 @@ import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 import PasswordStrength from '@/features/auth/components/PasswordStrength.vue'
 
 const email = ref('')
+const username = ref('')
 const password = ref('')
 const confirmpassword = ref('')
 const showPassword = ref(false)
@@ -127,6 +138,10 @@ const { t } = useI18n()
 const emailRules = [
   (v) => !!v || t('errors.emailIsRequired'),
   (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
+]
+
+const usernameRules = [
+  (v) => !v || v.length >= 3 || t('errors.usernameMinLength'),
 ]
 
 const passwordRules = [
@@ -150,6 +165,7 @@ const onSignUp = async () => {
       await store.dispatch('signup', {
         email: email.value,
         password: password.value,
+        username: username.value,
       })
       await router.push('/admin')
     } catch (error) {

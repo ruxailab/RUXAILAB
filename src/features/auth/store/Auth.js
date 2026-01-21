@@ -67,7 +67,7 @@ export default {
           payload.email,
           payload.password,
         )
-        await userController.create({ id: user.uid, email: user.email })
+        await userController.create({ id: user.uid, email: user.email, username: payload.username })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',

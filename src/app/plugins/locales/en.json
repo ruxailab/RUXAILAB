@@ -221,7 +221,8 @@
     "authenticationCancelled": "Sign-in was cancelled. Please try again.",
     "networkError": "Network error. Please check your internet connection and try again.",
     "popupBlocked": "Your browser blocked the sign-in popup. Please allow popups for this site and try again.",
-    "tooManyAttempts": "Too many attempts. Please try again later."
+    "tooManyAttempts": "Too many attempts. Please try again later.",
+    "usernameMinLength": "Username must be at least 3 characters"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -766,6 +767,7 @@
     "previous": "Previous",
     "seeCode": "See the code",
     "username": "Username",
+    "optional": "Optional",
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
     "profile": "profile",
