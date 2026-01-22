@@ -660,6 +660,27 @@
       "noTests": "Aucun test trouvé",
       "noTemplates": "Aucun modèle trouvé"
     },
+    "sessions": {
+      "searchPlaceholder": "Rechercher des sessions...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "sessionDate": "Date de session",
+      "selectRange": "Sélectionner une plage",
+      "statusLabel": "Statut",
+      "ownership": "Propriété",
+      "evaluator": "Évaluateur",
+      "noActiveSessions": "Vous n'avez pas de sessions actives",
+      "filters": {
+        "allStatuses": "Tous les statuts",
+        "today": "Aujourd'hui",
+        "upcoming": "À venir",
+        "completed": "Terminé",
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore"
+      }
+    },
     "createTest": {
       "title": "Créer un nouveau test",
       "blankTitle": "Créer un test vierge",

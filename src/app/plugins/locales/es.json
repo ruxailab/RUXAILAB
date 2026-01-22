@@ -733,6 +733,27 @@
       "noTests": "No se encontraron pruebas",
       "noTemplates": "No se encontraron plantillas"
     },
+    "sessions": {
+      "searchPlaceholder": "Buscar sesiones...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "sessionDate": "Fecha de sesión",
+      "selectRange": "Seleccionar rango",
+      "statusLabel": "Estado",
+      "ownership": "Propiedad",
+      "evaluator": "Evaluador",
+      "noActiveSessions": "No tienes sesiones activas",
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "today": "Hoy",
+        "upcoming": "Próximas",
+        "completed": "Completado",
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Donde colaboro"
+      }
+    },
     "createTest": {
       "title": "Crear una nueva prueba",
       "blankTitle": "Crear una prueba en blanco",
