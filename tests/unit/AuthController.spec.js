@@ -218,7 +218,7 @@ describe('AuthController', () => {
         })
 
         it('should delete email/password user with credential reauthentication', async () => {
-            const testPassword = 'userPassword123'
+            const testPassword = 'userPassword123' // NOSONAR
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -257,7 +257,7 @@ describe('AuthController', () => {
         })
 
         it('should not delete user if reauthentication fails', async () => {
-            const wrongPassword = 'wrong-password'
+            const wrongPassword = 'wrong-password' // NOSONAR
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -282,7 +282,7 @@ describe('AuthController', () => {
         })
 
         it('should throw and not call backend if user.delete fails', async () => {
-            const testPassword = 'userPassword123'
+            const testPassword = 'userPassword123' // NOSONAR
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
