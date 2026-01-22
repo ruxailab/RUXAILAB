@@ -163,7 +163,12 @@ const answerController = new AnswerController()
 
 const loading = ref(false)
 const studiesWithAnswers = ref([])
+const expandedStudies = ref({})
 const user = computed(() => store.getters.user)
+
+const toggleExpand = (studyId) => {
+  expandedStudies.value[studyId] = !expandedStudies.value[studyId]
+}
 
 const isLongDescription = (description) => {
   return description && description.length > 250
@@ -195,9 +200,11 @@ async function loadAnswers() {
   try {
     for (const study in lastFourStudies.value) {
       const testDoc = lastFourStudies.value[study]
+      if (!testDoc?.answersDocId) continue // Skip studies without answer doc
       const answerDoc = await answerController.getAnswerById(
         testDoc.answersDocId,
       )
+      if (!answerDoc) continue // Skip if answer doc not found
       if (answerDoc.type === STUDY_TYPES.USER) {
         last4.push({
           ...testDoc,
