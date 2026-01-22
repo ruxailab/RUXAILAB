@@ -545,13 +545,13 @@ const localTamAnswers = computed({
   set: (val) => emit('update:tamAnswers', val)
 });
 
-const VALIDATION_REQUIRED_TYPES = ['sus', 'tam-1', 'tam-2', 'tam-3', 'sart', 'nasa-tlx'];
+const VALIDATION_REQUIRED_TYPES = new Set(['sus', 'tam-1', 'tam-2', 'tam-3', 'sart', 'nasa-tlx']);
 
 const shouldDisableFinishButton = computed(() => {
   const taskType = props.task?.taskType
 
   // If this task type requires validation, use doneTaskDisabled
-  if (VALIDATION_REQUIRED_TYPES.includes(taskType)) {
+  if (VALIDATION_REQUIRED_TYPES.has(taskType)) {
     return props.doneTaskDisabled
   }
 
@@ -668,7 +668,7 @@ function handleShowPostForm(userCompleted) {
   showPostForm.value.userCompleted = userCompleted
 
   // Show post-task form for all validated task types
-  if (['sus', 'nasa-tlx', 'tam-1', 'tam-2', 'tam-3', 'sart'].includes(props.task?.taskType)) {
+  if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 3;
   } else {
     emitDoneOrCouldNotFinish(finalTime)

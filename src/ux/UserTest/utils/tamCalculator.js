@@ -3,6 +3,61 @@
  * Supports TAM-1, TAM-2, and TAM-3 versions
  */
 
+// Define dimension mappings for each TAM version
+const TAM_DIMENSION_CONFIGS = {
+  'tam-1': [
+    { key: 'perceivedUsefulness', name: 'Perceived Usefulness' },
+    { key: 'perceivedEaseOfUse', name: 'Perceived Ease of Use' },
+    { key: 'attitudeTowardUsing', name: 'Attitude Toward Using' },
+    { key: 'actualSystemUse', name: 'Actual System Use', isUsage: true }
+  ],
+  'tam-2': [
+    { key: 'intentionToUse', name: 'Intention to Use' },
+    { key: 'perceivedUsefulness', name: 'Perceived Usefulness' },
+    { key: 'perceivedEaseOfUse', name: 'Perceived Ease of Use' },
+    { key: 'subjectiveNorm', name: 'Subjective Norm' },
+    { key: 'voluntariness', name: 'Voluntariness' },
+    { key: 'image', name: 'Image' },
+    { key: 'jobRelevance', name: 'Job Relevance' },
+    { key: 'outputQuality', name: 'Output Quality' },
+    { key: 'resultDemonstrability', name: 'Result Demonstrability' }
+  ],
+  'tam-3': [
+    { key: 'perceivedUsefulness', name: 'Perceived Usefulness' },
+    { key: 'perceivedEaseOfUse', name: 'Perceived Ease of Use' },
+    { key: 'behavioralIntention', name: 'Behavioral Intention' },
+    { key: 'usePatterns', name: 'Use Behavior' },
+    { key: 'subjectiveNorm', name: 'Subjective Norm' },
+    { key: 'image', name: 'Image' },
+    { key: 'jobRelevance', name: 'Job Relevance' },
+    { key: 'outputQuality', name: 'Output Quality' },
+    { key: 'resultDemonstrability', name: 'Result Demonstrability' },
+    { key: 'computerSelfEfficacy', name: 'Computer Self-Efficacy' },
+    { key: 'perceptionsOfExternalControl', name: 'Perceptions of External Control' },
+    { key: 'computerAnxiety', name: 'Computer Anxiety' },
+    { key: 'computerPlayfulness', name: 'Computer Playfulness' },
+    { key: 'perceivedEnjoyment', name: 'Perceived Enjoyment' },
+    { key: 'objectiveUsability', name: 'Objective Usability' },
+    { key: 'experience', name: 'Experience' },
+    { key: 'voluntariness', name: 'Voluntariness' }
+  ]
+}
+
+// Scale configuration per TAM version
+const SCALE_CONFIG = {
+  'tam-1': 7,
+  'tam-2': 7,
+  'tam-3': 5
+}
+
+function processDimension(answers, config, scale) {
+  if (!answers[config.key]) return null
+  
+  return config.isUsage 
+    ? calculateUsageScore(answers[config.key], config.name)
+    : calculateDimensionScore(answers[config.key], config.name, scale)
+}
+
 export function calculateTAMScore(answers, version = 'tam-1') {
   if (!answers || typeof answers !== 'object') {
     return {
@@ -12,112 +67,23 @@ export function calculateTAMScore(answers, version = 'tam-1') {
     };
   }
 
+  const config = TAM_DIMENSION_CONFIGS[version] || TAM_DIMENSION_CONFIGS['tam-1']
+  const scale = SCALE_CONFIG[version] || 7
+  
+  // Process all dimensions for this version
   const dimensions = {};
-  
-  // TAM-1 uses 7-point scale (Davis 1985), TAM-2 uses 7-point scale (Venkatesh & Davis 2000), TAM-3 uses 5-point scale
-  const tam1Scale = 7;
-  const tam2Scale = 7;
-  const tam3Scale = 5;
-  
-  // TAM-1 dimensions (7-point Likert scale per Davis 1985)
-  if (version === 'tam-1') {
-    if (answers.perceivedUsefulness) {
-      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness', tam1Scale);
+  config.forEach(dimensionConfig => {
+    const result = processDimension(answers, dimensionConfig, scale)
+    if (result) {
+      dimensions[dimensionConfig.key] = result
     }
-    if (answers.perceivedEaseOfUse) {
-      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use', tam1Scale);
-    }
-    if (answers.attitudeTowardUsing) {
-      dimensions.attitudeTowardUsing = calculateDimensionScore(answers.attitudeTowardUsing, 'Attitude Toward Using', tam1Scale);
-    }
-    if (answers.actualSystemUse) {
-      dimensions.actualSystemUse = calculateUsageScore(answers.actualSystemUse, 'Actual System Use');
-    }
-  } else if (version === 'tam-2') {
-    // TAM-2 dimensions (7-point scale per Venkatesh & Davis 2000)
-    if (answers.intentionToUse) {
-      dimensions.intentionToUse = calculateDimensionScore(answers.intentionToUse, 'Intention to Use', tam2Scale);
-    }
-    if (answers.perceivedUsefulness) {
-      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness', tam2Scale);
-    }
-    if (answers.perceivedEaseOfUse) {
-      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use', tam2Scale);
-    }
-    if (answers.subjectiveNorm) {
-      dimensions.subjectiveNorm = calculateDimensionScore(answers.subjectiveNorm, 'Subjective Norm', tam2Scale);
-    }
-    if (answers.voluntariness) {
-      dimensions.voluntariness = calculateDimensionScore(answers.voluntariness, 'Voluntariness', tam2Scale);
-    }
-    if (answers.image) {
-      dimensions.image = calculateDimensionScore(answers.image, 'Image', tam2Scale);
-    }
-    if (answers.jobRelevance) {
-      dimensions.jobRelevance = calculateDimensionScore(answers.jobRelevance, 'Job Relevance', tam2Scale);
-    }
-    if (answers.outputQuality) {
-      dimensions.outputQuality = calculateDimensionScore(answers.outputQuality, 'Output Quality', tam2Scale);
-    }
-    if (answers.resultDemonstrability) {
-      dimensions.resultDemonstrability = calculateDimensionScore(answers.resultDemonstrability, 'Result Demonstrability', tam2Scale);
-    }
-  } else if (version === 'tam-3') {
-    if (answers.perceivedUsefulness) {
-      dimensions.perceivedUsefulness = calculateDimensionScore(answers.perceivedUsefulness, 'Perceived Usefulness', tam3Scale);
-    }
-    if (answers.perceivedEaseOfUse) {
-      dimensions.perceivedEaseOfUse = calculateDimensionScore(answers.perceivedEaseOfUse, 'Perceived Ease of Use', tam3Scale);
-    }
-    if (answers.behavioralIntention) {
-      dimensions.behavioralIntention = calculateDimensionScore(answers.behavioralIntention, 'Behavioral Intention', tam3Scale);
-    }
-    if (answers.usePatterns) {
-      dimensions.usePatterns = calculateDimensionScore(answers.usePatterns, 'Use Behavior', tam3Scale);
-    }
-    if (answers.subjectiveNorm) {
-      dimensions.subjectiveNorm = calculateDimensionScore(answers.subjectiveNorm, 'Subjective Norm', tam3Scale);
-    }
-    if (answers.image) {
-      dimensions.image = calculateDimensionScore(answers.image, 'Image', tam3Scale);
-    }
-    if (answers.jobRelevance) {
-      dimensions.jobRelevance = calculateDimensionScore(answers.jobRelevance, 'Job Relevance', tam3Scale);
-    }
-    if (answers.outputQuality) {
-      dimensions.outputQuality = calculateDimensionScore(answers.outputQuality, 'Output Quality', tam3Scale);
-    }
-    if (answers.resultDemonstrability) {
-      dimensions.resultDemonstrability = calculateDimensionScore(answers.resultDemonstrability, 'Result Demonstrability', tam3Scale);
-    }
-    if (answers.computerSelfEfficacy) {
-      dimensions.computerSelfEfficacy = calculateDimensionScore(answers.computerSelfEfficacy, 'Computer Self-Efficacy', tam3Scale);
-    }
-    if (answers.perceptionsOfExternalControl) {
-      dimensions.perceptionsOfExternalControl = calculateDimensionScore(answers.perceptionsOfExternalControl, 'Perceptions of External Control', tam3Scale);
-    }
-    if (answers.computerAnxiety) {
-      dimensions.computerAnxiety = calculateDimensionScore(answers.computerAnxiety, 'Computer Anxiety', tam3Scale);
-    }
-    if (answers.computerPlayfulness) {
-      dimensions.computerPlayfulness = calculateDimensionScore(answers.computerPlayfulness, 'Computer Playfulness', tam3Scale);
-    }
-    if (answers.perceivedEnjoyment) {
-      dimensions.perceivedEnjoyment = calculateDimensionScore(answers.perceivedEnjoyment, 'Perceived Enjoyment', tam3Scale);
-    }
-    if (answers.objectiveUsability) {
-      dimensions.objectiveUsability = calculateDimensionScore(answers.objectiveUsability, 'Objective Usability', tam3Scale);
-    }
-    if (answers.experience) {
-      dimensions.experience = calculateDimensionScore(answers.experience, 'Experience', tam3Scale);
-    }
-    if (answers.voluntariness) {
-      dimensions.voluntariness = calculateDimensionScore(answers.voluntariness, 'Voluntariness', tam3Scale);
-    }
-  }
+  })
 
   // Calculate overall score as average of all dimension scores
-  const dimensionScores = Object.values(dimensions).map(d => d.score).filter(s => !Number.isNaN(s));
+  const dimensionScores = Object.values(dimensions)
+    .map(d => d.score)
+    .filter(s => !Number.isNaN(s));
+  
   const overallScore = dimensionScores.length > 0 
     ? Math.round(dimensionScores.reduce((a, b) => a + b, 0) / dimensionScores.length * 10) / 10
     : 0;
