@@ -80,7 +80,66 @@
     "viewAll": "すべて表示",
     "sentBy": "送信者",
     "new": "新着",
-    "test": "テスト"
+    "test": "テスト",
+    "table": {
+      "type": "タイプ",
+      "name": "名前",
+      "tags": "タグ",
+      "owner": "オーナー",
+      "participants": "参加者",
+      "created": "作成日",
+      "evaluator": "評価者",
+      "status": "ステータス",
+      "sessionDate": "セッション日",
+      "itemsPerPage": "ページあたりの項目数:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "コミュニティ研究",
+      "searchPlaceholder": "研究を検索..."
+    },
+    "templates": {
+      "title": "コミュニティテンプレート",
+      "searchPlaceholder": "テンプレートを検索..."
+    },
+    "reset": "リセット",
+    "showFilters": "フィルターを表示",
+    "hideFilters": "フィルターを非表示",
+    "selectRange": "範囲を選択",
+    "filters": {
+      "creationDate": "作成日",
+      "status": "ステータス",
+      "method": "方法",
+      "ownership": "所有権",
+      "participants": "参加者"
+    },
+    "status": {
+      "allStatuses": "すべてのステータス",
+      "active": "アクティブ",
+      "draft": "下書き",
+      "completed": "完了"
+    },
+    "ownership": {
+      "allStudies": "すべての研究",
+      "myStudies": "私の研究",
+      "whereICollaborate": "コラボレーション中"
+    },
+    "participants": {
+      "all": "すべて",
+      "lessThan10": "< 10人の参加者",
+      "between10And50": "10 – 50人の参加者",
+      "moreThan50": "> 50人の参加者"
+    },
+    "method": {
+      "allMethods": "すべての方法",
+      "all": "すべて",
+      "heuristicEvaluation": "ヒューリスティック評価",
+      "userStudyUnmoderated": "ユーザー調査（非モデレート）",
+      "userStudyModerated": "ユーザー調査（モデレート）",
+      "manualAccessibility": "手動アクセシビリティ",
+      "automaticAccessibility": "自動アクセシビリティ"
+    }
   },
   "profile": {
     "title": "プロフィール",

@@ -67,7 +67,66 @@
     "viewAll": "Voir tout",
     "sentBy": "Envoyé par",
     "new": "NOUVEAU",
-    "test": "une Étude"
+    "test": "une Étude",
+    "table": {
+      "type": "Type",
+      "name": "Nom",
+      "tags": "Tags",
+      "owner": "Propriétaire",
+      "participants": "Participants",
+      "created": "Créé",
+      "evaluator": "Évaluateur",
+      "status": "Statut",
+      "sessionDate": "Date de session",
+      "itemsPerPage": "Éléments par page :"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Études communautaires",
+      "searchPlaceholder": "Rechercher des études..."
+    },
+    "templates": {
+      "title": "Modèles communautaires",
+      "searchPlaceholder": "Rechercher des modèles..."
+    },
+    "reset": "Réinitialiser",
+    "showFilters": "Afficher les filtres",
+    "hideFilters": "Masquer les filtres",
+    "selectRange": "Sélectionner une plage",
+    "filters": {
+      "creationDate": "Date de création",
+      "status": "Statut",
+      "method": "Méthode",
+      "ownership": "Propriété",
+      "participants": "Participants"
+    },
+    "status": {
+      "allStatuses": "Tous les statuts",
+      "active": "Actif",
+      "draft": "Brouillon",
+      "completed": "Terminé"
+    },
+    "ownership": {
+      "allStudies": "Toutes les études",
+      "myStudies": "Mes études",
+      "whereICollaborate": "Où je collabore"
+    },
+    "participants": {
+      "all": "Tous",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+    },
+    "method": {
+      "allMethods": "Toutes les méthodes",
+      "all": "Tous",
+      "heuristicEvaluation": "Évaluation heuristique",
+      "userStudyUnmoderated": "Étude utilisateur (Non modérée)",
+      "userStudyModerated": "Étude utilisateur (Modérée)",
+      "manualAccessibility": "Accessibilité manuelle",
+      "automaticAccessibility": "Accessibilité automatique"
+    }
   },
   "profile": {
     "title": "Profil",

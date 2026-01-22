@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search templates..."
+        :placeholder="$t('community.templates.searchPlaceholder')"
         class="flex-grow-1"
       />
 
@@ -21,7 +21,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('community.reset') }}
       </v-btn>
 
       <!-- 🎛️ Toggle filter visibility button -->
@@ -30,7 +30,7 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="showFilters ? $t('community.hideFilters') : $t('community.showFilters')"
         @click="toggleFilters"
       >
         <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
@@ -43,7 +43,7 @@
         <v-row dense>
           <!-- 📅 Filter by creation date range -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">{{ $t('community.filters.creationDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -61,7 +61,7 @@
                   hide-details
                   :placeholder="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
+                    : $t('community.selectRange')"
                   :model-value="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : ''"
@@ -75,7 +75,7 @@
 
           <!-- 🧭 Filter by method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('community.filters.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -121,8 +121,10 @@ import {
 } from '@/shared/constants/methodDefinitions';
 import ListComponent from '@/shared/components/tables/ListComponent.vue';
 import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
+import { useI18n } from 'vue-i18n';
 
 const store = useStore();
+const { t } = useI18n();
 
 // ===== State =====
 const temp = ref({}); // Current selected template
@@ -136,14 +138,14 @@ const selectedMethodFilter = ref('all');
 const creationDateRange = ref([]);
 
 // Available filtering options for method types
-const methodOptions = [
-  { title: 'All', value: 'all' },
-  { title: 'Heuristic Evaluation', value: METHOD_DEFINITIONS.HEURISTICS.id },
-  { title: 'User Study (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
-  { title: 'User Study (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
-  { title: 'Manual Accessibility', value: 'MANUAL' },
-  { title: 'Automatic Accessibility', value: 'AUTOMATIC' },
-];
+const methodOptions = computed(() => [
+  { title: t('community.method.all'), value: 'all' },
+  { title: t('community.method.heuristicEvaluation'), value: METHOD_DEFINITIONS.HEURISTICS.id },
+  { title: t('community.method.userStudyUnmoderated'), value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
+  { title: t('community.method.userStudyModerated'), value: METHOD_DEFINITIONS.USER_MODERATED.id },
+  { title: t('community.method.manualAccessibility'), value: 'MANUAL' },
+  { title: t('community.method.automaticAccessibility'), value: 'AUTOMATIC' },
+]);
 
 // ===== Filter logic =====
 const toggleFilters = () => (showFilters.value = !showFilters.value);
