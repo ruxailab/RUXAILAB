@@ -26,15 +26,6 @@
     },
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
-      "email": "电子邮箱",
-      "instructions": "输入您的电子邮箱，我们将发送重置密码链接给您。",
-      "reset_button": "发送重置链接",
-      "back_to_signin": "返回登录"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "重置密码",
       "email": "邮箱",
       "instructions": "输入您的邮箱，我们会发送一个重置密码的链接给您。",
       "reset_button": "发送重置链接",
@@ -43,7 +34,7 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    }   
+    }  
   },
   "common": {
     "loading": "加载测试",
@@ -235,7 +226,14 @@
       "deleteQuestion": "删除问题",
       "addNewDescription": "添加新描述",
       "addOption": "添加新选项",
-      "hasValue": "有值"
+      "hasValue": "有值",
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "Question": "问题",
+      "Questions": "问题",
+      "noQuestions": "没有问题",
+      "noDescriptions": "没有描述",
+      "loading": "加载中..."
     },
     "placeholders": {
       "titleHeuristic": "启发式标题",
@@ -250,7 +248,10 @@
       "youMustHave": "您可能输入了错误的内容...",
       "noHeuristicsDeleteAll": "抱歉，您不能删除所有启发式问题。",
       "noCsvFileSelected": "未选择CSV文件。请选择一个以继续。",
-      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。"
+      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
+      "noDescriptions": "没有可用的描述",
+      "startAddingQuestions": "从此启发式添加第一个问题开始",
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -263,6 +264,12 @@
       "showComment": "显示评论",
       "addComment": "添加评论",
       "hideTextArea": "隐藏文本区域"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
+      "failedToLoadEditForm": "加载编辑表单失败。请重试。",
+      "invalidHeuristic": "无效的启发式选择",
+      "invalidQuestion": "无效的问题选择"
     }
   },
   "HeuristicsOptionsTable": {
