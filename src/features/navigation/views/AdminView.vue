@@ -137,7 +137,7 @@ const currentPageTitle = computed(() => {
     case 'templates':
       return t('pages.navigation.templates')
     case 'storage':
-      return t('pages.navigation.storage')
+      return t('storage.pageTitle')
     case 'notifications':
       return t('pages.navigation.notifications')
     case 'profile':
