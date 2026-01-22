@@ -67,7 +67,66 @@
     "viewAll": "Alle anzeigen",
     "sentBy": "Gesendet von",
     "new": "NEU",
-    "test": "eine Studie"
+    "test": "eine Studie",
+    "table": {
+      "type": "Typ",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Besitzer",
+      "participants": "Teilnehmer",
+      "created": "Erstellt",
+      "evaluator": "Bewerter",
+      "status": "Status",
+      "sessionDate": "Sitzungsdatum",
+      "itemsPerPage": "Elemente pro Seite:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Community-Studien",
+      "searchPlaceholder": "Studien suchen..."
+    },
+    "templates": {
+      "title": "Community-Vorlagen",
+      "searchPlaceholder": "Vorlagen suchen..."
+    },
+    "reset": "Zurücksetzen",
+    "showFilters": "Filter anzeigen",
+    "hideFilters": "Filter ausblenden",
+    "selectRange": "Bereich auswählen",
+    "filters": {
+      "creationDate": "Erstellungsdatum",
+      "status": "Status",
+      "method": "Methode",
+      "ownership": "Eigentum",
+      "participants": "Teilnehmer"
+    },
+    "status": {
+      "allStatuses": "Alle Status",
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen"
+    },
+    "ownership": {
+      "allStudies": "Alle Studien",
+      "myStudies": "Meine Studien",
+      "whereICollaborate": "Wo ich zusammenarbeite"
+    },
+    "participants": {
+      "all": "Alle",
+      "lessThan10": "< 10 Teilnehmer",
+      "between10And50": "10 – 50 Teilnehmer",
+      "moreThan50": "> 50 Teilnehmer"
+    },
+    "method": {
+      "allMethods": "Alle Methoden",
+      "all": "Alle",
+      "heuristicEvaluation": "Heuristische Bewertung",
+      "userStudyUnmoderated": "Benutzerstudie (Unmoderiert)",
+      "userStudyModerated": "Benutzerstudie (Moderiert)",
+      "manualAccessibility": "Manuelle Barrierefreiheit",
+      "automaticAccessibility": "Automatische Barrierefreiheit"
+    }
   },
   "profile": {
     "title": "Profil",

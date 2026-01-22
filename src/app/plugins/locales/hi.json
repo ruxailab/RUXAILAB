@@ -71,7 +71,66 @@
     "viewAll": "सभी देखें",
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
-    "test": "एक अध्ययन"
+    "test": "एक अध्ययन",
+    "table": {
+      "type": "प्रकार",
+      "name": "नाम",
+      "tags": "टैग",
+      "owner": "मालिक",
+      "participants": "प्रतिभागी",
+      "created": "बनाया गया",
+      "evaluator": "मूल्यांकनकर्ता",
+      "status": "स्थिति",
+      "sessionDate": "सत्र तिथि",
+      "itemsPerPage": "प्रति पृष्ठ आइटम:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "सामुदायिक अध्ययन",
+      "searchPlaceholder": "अध्ययन खोजें..."
+    },
+    "templates": {
+      "title": "सामुदायिक टेम्पलेट्स",
+      "searchPlaceholder": "टेम्पलेट्स खोजें..."
+    },
+    "reset": "रीसेट",
+    "showFilters": "फ़िल्टर दिखाएं",
+    "hideFilters": "फ़िल्टर छुपाएं",
+    "selectRange": "रेंज चुनें",
+    "filters": {
+      "creationDate": "निर्माण तिथि",
+      "status": "स्थिति",
+      "method": "विधि",
+      "ownership": "स्वामित्व",
+      "participants": "प्रतिभागी"
+    },
+    "status": {
+      "allStatuses": "सभी स्थितियाँ",
+      "active": "सक्रिय",
+      "draft": "ड्राफ्ट",
+      "completed": "पूर्ण"
+    },
+    "ownership": {
+      "allStudies": "सभी अध्ययन",
+      "myStudies": "मेरे अध्ययन",
+      "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+    },
+    "participants": {
+      "all": "सभी",
+      "lessThan10": "< 10 प्रतिभागी",
+      "between10And50": "10 – 50 प्रतिभागी",
+      "moreThan50": "> 50 प्रतिभागी"
+    },
+    "method": {
+      "allMethods": "सभी विधियाँ",
+      "all": "सभी",
+      "heuristicEvaluation": "हेयुरिस्टिक मूल्यांकन",
+      "userStudyUnmoderated": "उपयोगकर्ता अध्ययन (अनमोडरेटेड)",
+      "userStudyModerated": "उपयोगकर्ता अध्ययन (मोडरेटेड)",
+      "manualAccessibility": "मैन्युअल एक्सेसिबिलिटी",
+      "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+    }
   },
   "profile": {
     "title": "प्रोफ़ाइल",

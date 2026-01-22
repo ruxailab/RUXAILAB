@@ -80,7 +80,66 @@
     "viewAll": "Посмотреть все",
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
-    "test": "исследование"
+    "test": "исследование",
+    "table": {
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "participants": "Участники",
+      "created": "Создано",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "itemsPerPage": "Элементов на странице:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Исследования сообщества",
+      "searchPlaceholder": "Поиск исследований..."
+    },
+    "templates": {
+      "title": "Шаблоны сообщества",
+      "searchPlaceholder": "Поиск шаблонов..."
+    },
+    "reset": "Сбросить",
+    "showFilters": "Показать фильтры",
+    "hideFilters": "Скрыть фильтры",
+    "selectRange": "Выбрать диапазон",
+    "filters": {
+      "creationDate": "Дата создания",
+      "status": "Статус",
+      "method": "Метод",
+      "ownership": "Владение",
+      "participants": "Участники"
+    },
+    "status": {
+      "allStatuses": "Все статусы",
+      "active": "Активный",
+      "draft": "Черновик",
+      "completed": "Завершённый"
+    },
+    "ownership": {
+      "allStudies": "Все исследования",
+      "myStudies": "Мои исследования",
+      "whereICollaborate": "Где я сотрудничаю"
+    },
+    "participants": {
+      "all": "Все",
+      "lessThan10": "< 10 участников",
+      "between10And50": "10 – 50 участников",
+      "moreThan50": "> 50 участников"
+    },
+    "method": {
+      "allMethods": "Все методы",
+      "all": "Все",
+      "heuristicEvaluation": "Эвристическая оценка",
+      "userStudyUnmoderated": "Пользовательское исследование (Немодерируемое)",
+      "userStudyModerated": "Пользовательское исследование (Модерируемое)",
+      "manualAccessibility": "Ручная доступность",
+      "automaticAccessibility": "Автоматическая доступность"
+    }
   },
   "profile": {
     "title": "Профиль",

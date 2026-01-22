@@ -67,7 +67,66 @@
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
     "new": "جديد",
-    "test": "دراسة"
+    "test": "دراسة",
+    "table": {
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء",
+      "evaluator": "المقيّم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "itemsPerPage": "عناصر لكل صفحة:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "الدراسات المجتمعية",
+      "searchPlaceholder": "البحث في الدراسات..."
+    },
+    "templates": {
+      "title": "القوالب المجتمعية",
+      "searchPlaceholder": "البحث في القوالب..."
+    },
+    "reset": "إعادة تعيين",
+    "showFilters": "إظهار الفلاتر",
+    "hideFilters": "إخفاء الفلاتر",
+    "selectRange": "تحديد النطاق",
+    "filters": {
+      "creationDate": "تاريخ الإنشاء",
+      "status": "الحالة",
+      "method": "الطريقة",
+      "ownership": "الملكية",
+      "participants": "المشاركون"
+    },
+    "status": {
+      "allStatuses": "جميع الحالات",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل"
+    },
+    "ownership": {
+      "allStudies": "جميع الدراسات",
+      "myStudies": "دراساتي",
+      "whereICollaborate": "حيث أتعاون"
+    },
+    "participants": {
+      "all": "الكل",
+      "lessThan10": "< 10 مشاركين",
+      "between10And50": "10 – 50 مشاركين",
+      "moreThan50": "> 50 مشاركين"
+    },
+    "method": {
+      "allMethods": "جميع الطرق",
+      "all": "الكل",
+      "heuristicEvaluation": "التقييم الإرشادي",
+      "userStudyUnmoderated": "دراسة المستخدم (غير مراقبة)",
+      "userStudyModerated": "دراسة المستخدم (مراقبة)",
+      "manualAccessibility": "إمكانية الوصول اليدوية",
+      "automaticAccessibility": "إمكانية الوصول التلقائية"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",

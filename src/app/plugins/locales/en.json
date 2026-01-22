@@ -84,7 +84,66 @@
     "sentBy": "Sent by",
     "new": "NEW",
     "test": "a Study",
-    "actions": "Actions"
+    "actions": "Actions",
+    "table": {
+      "type": "Type",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "participants": "Participants",
+      "created": "Created",
+      "evaluator": "Evaluator",
+      "status": "Status",
+      "sessionDate": "Session Date",
+      "itemsPerPage": "Items per page:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Community Studies",
+      "searchPlaceholder": "Search studies..."
+    },
+    "templates": {
+      "title": "Community Templates",
+      "searchPlaceholder": "Search templates..."
+    },
+    "reset": "Reset",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "selectRange": "Select range",
+    "filters": {
+      "creationDate": "Creation date",
+      "status": "Status",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participants": "Participants"
+    },
+    "status": {
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed"
+    },
+    "ownership": {
+      "allStudies": "All Studies",
+      "myStudies": "My Studies",
+      "whereICollaborate": "Where I Collaborate"
+    },
+    "participants": {
+      "all": "All",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+    },
+    "method": {
+      "allMethods": "All Methods",
+      "all": "All",
+      "heuristicEvaluation": "Heuristic Evaluation",
+      "userStudyUnmoderated": "User Study (Unmoderated)",
+      "userStudyModerated": "User Study (Moderated)",
+      "manualAccessibility": "Manual Accessibility",
+      "automaticAccessibility": "Automatic Accessibility"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -581,7 +640,6 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
-
     "buttons": {
       "done": "Done"
     },
