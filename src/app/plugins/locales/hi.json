@@ -209,7 +209,14 @@
       "deleteQuestion": "प्रश्न हटाएँ",
       "addNewDescription": "नया विवरण जोड़ें",
       "addOption": "नया विकल्प जोड़ें",
-      "hasValue": "मूल्य है"
+      "hasValue": "मूल्य है",
+      "moveUp": "ऊपर ले जाएँ",
+      "moveDown": "नीचे ले जाएँ",
+      "Question": "प्रश्न",
+      "Questions": "प्रश्न",
+      "noQuestions": "कोई प्रश्न नहीं",
+      "noDescriptions": "कोई विवरण नहीं",
+      "loading": "लोड हो रहा है..."
     },
     "placeholders": {
       "titleHeuristic": "हीयुरिस्टिक का शीर्षक",
@@ -224,7 +231,10 @@
       "youMustHave": "आपने कुछ गलत टाइप किया होगा...",
       "noHeuristicsDeleteAll": "क्षमा करें, आप सभी हीयुरिस्टिक प्रश्न नहीं हटा सकते।",
       "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक चुनें।",
-      "changeWeights": "ध्यान दें: हीयुरिस्टिक्स का क्रम बदलने पर वज़न स्वतः नहीं बदलेगा; आपको उन्हें मैन्युअल रूप से समायोजित करना होगा।"
+      "changeWeights": "ध्यान दें: हीयुरिस्टिक्स का क्रम बदलने पर वज़न स्वतः नहीं बदलेगा; आपको उन्हें मैन्युअल रूप से समायोजित करना होगा।",
+      "noDescriptions": "कोई विवरण उपलब्ध नहीं है",
+      "startAddingQuestions": "इस हीयुरिस्टिक में अपना पहला प्रश्न जोड़कर शुरू करें",
+      "cantDeleteAllQuestions": "क्षमा करें, आप एक हीयुरिस्टिक से सभी प्रश्न नहीं हटा सकते"
     },
     "validation": {
       "nameRequired": "नाम अनिवार्य है",
@@ -237,6 +247,12 @@
       "showComment": "टिप्पणी दिखाएं",
       "addComment": "टिप्पणी जोड़ें",
       "hideTextArea": "टेक्स्ट क्षेत्र छुपाएं"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "प्रश्न फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
+      "failedToLoadEditForm": "संपादन फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
+      "invalidHeuristic": "अमान्य हीयुरिस्टिक चयन",
+      "invalidQuestion": "अमान्य प्रश्न चयन"
     }
   },
   "HeuristicsOptionsTable": {
