@@ -23,39 +23,6 @@ export const formatBytes = (bytes, decimals = 2) => {
 }
 
 /**
- * Format percentage with proper handling of NaN and edge cases
- * @param {number} value - Percentage value
- * @param {number} decimals - Number of decimal places (default: 1)
- * @returns {string} Formatted percentage string (e.g., "85.5%")
- */
-export const formatPercentage = (value, decimals = 1) => {
-  if (isNaN(value) || value === null || value === undefined) return '0.0%'
-  return `${Number(value).toFixed(decimals)}%`
-}
-
-/**
- * Format number with thousands separator
- * @param {number} num - Number to format
- * @returns {string} Formatted number string (e.g., "1,234")
- */
-export const formatNumber = (num) => {
-  if (!num || isNaN(num)) return '0'
-  return num.toLocaleString()
-}
-
-/**
- * Truncate text with ellipsis
- * @param {string} text - Text to truncate
- * @param {number} maxLength - Maximum length before truncation
- * @returns {string} Truncated text with ellipsis if needed
- */
-export const truncateText = (text, maxLength = 50) => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
-}
-
-/**
  * Format initials from email or name
  * @param {string} emailOrName - Email address or name
  * @returns {string} Formatted initials (e.g., "JD")

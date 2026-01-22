@@ -4,7 +4,6 @@
 
 <script setup>
 import { ref, onBeforeMount } from 'vue'
-import { formatTimeFromMs } from '@/shared/utils/timeUtils'
 
 const props = defineProps({
   taskIndex: {
