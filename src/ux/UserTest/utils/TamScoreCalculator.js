@@ -8,9 +8,9 @@ export class TamScoreCalculator {
    * Calculate average for an array of values
    */
   static calculateAverage(values) {
-    if (!values || values.length === 0) return NaN;
+    if (!values || values.length === 0) return Number.NaN;
     const validValues = values.filter(v => typeof v === 'number');
-    if (validValues.length === 0) return NaN;
+    if (validValues.length === 0) return Number.NaN;
     return validValues.reduce((sum, v) => sum + v, 0) / validValues.length;
   }
 
@@ -55,9 +55,9 @@ export class TamScoreCalculator {
     
     // Get all valid averages
     const validAverages = Object.values(dimensionAverages)
-      .filter(v => typeof v === 'number' && !isNaN(v));
+      .filter(v => typeof v === 'number' && !Number.isNaN(v));
 
-    if (validAverages.length === 0) return NaN;
+    if (validAverages.length === 0) return Number.NaN;
 
     // Calculate mean of all dimension averages
     const meanScore = validAverages.reduce((sum, v) => sum + v, 0) / validAverages.length;
@@ -73,7 +73,7 @@ export class TamScoreCalculator {
     if (!tamAnswers) {
       return {
         tamVersion,
-        overallScore: NaN,
+        overallScore: Number.NaN,
         dimensionAverages: {},
         completionPercentage: 0,
         isComplete: false,
@@ -120,7 +120,7 @@ export class TamScoreCalculator {
    * Get interpretation of TAM score
    */
   static interpretScore(score) {
-    if (isNaN(score)) return "No score calculated";
+    if (Number.isNaN(score)) return "No score calculated";
     if (score >= 80) return "Very High Acceptance";
     if (score >= 60) return "High Acceptance";
     if (score >= 40) return "Moderate Acceptance";
@@ -132,7 +132,7 @@ export class TamScoreCalculator {
    * Get color for score visualization
    */
   static getScoreColor(score) {
-    if (isNaN(score)) return "grey";
+    if (Number.isNaN(score)) return "grey";
     if (score >= 80) return "success";
     if (score >= 60) return "info";
     if (score >= 40) return "warning";
@@ -147,7 +147,7 @@ export class TamScoreCalculator {
     if (!tamResponsesArray || tamResponsesArray.length === 0) {
       return {
         tamVersion,
-        averageOverallScore: NaN,
+        averageOverallScore: Number.NaN,
         dimensionAverages: {},
         respondents: 0
       };
@@ -183,10 +183,10 @@ export class TamScoreCalculator {
 
     // Calculate average overall score
     const overallScores = tamResponsesArray.map(r => this.calculateOverallScore(r, tamVersion));
-    const validScores = overallScores.filter(s => typeof s === 'number' && !isNaN(s));
+    const validScores = overallScores.filter(s => typeof s === 'number' && !Number.isNaN(s));
     const averageOverallScore = validScores.length > 0 
       ? Math.round(validScores.reduce((sum, s) => sum + s, 0) / validScores.length)
-      : NaN;
+      : Number.NaN;
 
     return {
       tamVersion,
@@ -203,7 +203,7 @@ export class TamScoreCalculator {
    * Calculate standard deviation
    */
   static calculateStandardDeviation(values) {
-    if (!values || values.length < 2) return NaN;
+    if (!values || values.length < 2) return Number.NaN;
     
     const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
     const squareDiffs = values.map(v => Math.pow(v - mean, 2));

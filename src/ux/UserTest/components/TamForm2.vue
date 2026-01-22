@@ -243,15 +243,15 @@ const props = defineProps({
   modelValue: {
     type: Object,
     default: () => ({
-      intentionToUse: Array(2).fill(undefined),
-      perceivedUsefulness: Array(4).fill(undefined),
-      perceivedEaseOfUse: Array(4).fill(undefined),
-      subjectiveNorm: Array(2).fill(undefined),
-      voluntariness: Array(3).fill(undefined),
-      image: Array(3).fill(undefined),
-      jobRelevance: Array(2).fill(undefined),
-      outputQuality: Array(2).fill(undefined),
-      resultDemonstrability: Array(4).fill(undefined)
+      intentionToUse: new Array(2).fill(undefined),
+      perceivedUsefulness: new Array(4).fill(undefined),
+      perceivedEaseOfUse: new Array(4).fill(undefined),
+      subjectiveNorm: new Array(2).fill(undefined),
+      voluntariness: new Array(3).fill(undefined),
+      image: new Array(3).fill(undefined),
+      jobRelevance: new Array(2).fill(undefined),
+      outputQuality: new Array(2).fill(undefined),
+      resultDemonstrability: new Array(4).fill(undefined)
     })
   }
 });

@@ -499,42 +499,42 @@ const getTamInitialStructure = () => {
   
   if (taskType === 'tam-1') {
     return {
-      perceivedUsefulness: Array(10).fill(undefined),
-      perceivedEaseOfUse: Array(10).fill(undefined),
-      attitudeTowardUsing: Array(5).fill(undefined),
-      actualSystemUse: Array(2).fill(undefined)
+      perceivedUsefulness: new Array(10).fill(undefined),
+      perceivedEaseOfUse: new Array(10).fill(undefined),
+      attitudeTowardUsing: new Array(5).fill(undefined),
+      actualSystemUse: new Array(2).fill(undefined)
     };
   } else if (taskType === 'tam-2') {
     return {
-      intentionToUse: Array(2).fill(undefined),
-      perceivedUsefulness: Array(4).fill(undefined),
-      perceivedEaseOfUse: Array(4).fill(undefined),
-      subjectiveNorm: Array(2).fill(undefined),
-      voluntariness: Array(3).fill(undefined),
-      image: Array(3).fill(undefined),
-      jobRelevance: Array(2).fill(undefined),
-      outputQuality: Array(2).fill(undefined),
-      resultDemonstrability: Array(4).fill(undefined)
+      intentionToUse: new Array(2).fill(undefined),
+      perceivedUsefulness: new Array(4).fill(undefined),
+      perceivedEaseOfUse: new Array(4).fill(undefined),
+      subjectiveNorm: new Array(2).fill(undefined),
+      voluntariness: new Array(3).fill(undefined),
+      image: new Array(3).fill(undefined),
+      jobRelevance: new Array(2).fill(undefined),
+      outputQuality: new Array(2).fill(undefined),
+      resultDemonstrability: new Array(4).fill(undefined)
     };
   } else if (taskType === 'tam-3') {
     return {
-      perceivedUsefulness: Array(3).fill(undefined),
-      perceivedEaseOfUse: Array(3).fill(undefined),
-      behavioralIntention: Array(2).fill(undefined),
-      usePatterns: Array(2).fill(undefined),
-      subjectiveNorm: Array(3).fill(undefined),
-      image: Array(2).fill(undefined),
-      jobRelevance: Array(3).fill(undefined),
-      outputQuality: Array(3).fill(undefined),
-      resultDemonstrability: Array(2).fill(undefined),
-      computerSelfEfficacy: Array(3).fill(undefined),
-      perceptionsOfExternalControl: Array(3).fill(undefined),
-      computerAnxiety: Array(2).fill(undefined),
-      computerPlayfulness: Array(2).fill(undefined),
-      perceivedEnjoyment: Array(3).fill(undefined),
-      objectiveUsability: Array(2).fill(undefined),
-      experience: Array(2).fill(undefined),
-      voluntariness: Array(2).fill(undefined)
+      perceivedUsefulness: new Array(3).fill(undefined),
+      perceivedEaseOfUse: new Array(3).fill(undefined),
+      behavioralIntention: new Array(2).fill(undefined),
+      usePatterns: new Array(2).fill(undefined),
+      subjectiveNorm: new Array(3).fill(undefined),
+      image: new Array(2).fill(undefined),
+      jobRelevance: new Array(3).fill(undefined),
+      outputQuality: new Array(3).fill(undefined),
+      resultDemonstrability: new Array(2).fill(undefined),
+      computerSelfEfficacy: new Array(3).fill(undefined),
+      perceptionsOfExternalControl: new Array(3).fill(undefined),
+      computerAnxiety: new Array(2).fill(undefined),
+      computerPlayfulness: new Array(2).fill(undefined),
+      perceivedEnjoyment: new Array(3).fill(undefined),
+      objectiveUsability: new Array(2).fill(undefined),
+      experience: new Array(2).fill(undefined),
+      voluntariness: new Array(2).fill(undefined)
     };
   }
   return {};
