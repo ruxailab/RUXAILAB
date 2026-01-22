@@ -41,9 +41,9 @@
                     class="recording-feature-card"
                   >
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary"
-                        >mdi-monitor-screenshot</v-icon
-                      >
+                      <v-icon size="48" color="secondary">
+                        mdi-monitor-screenshot
+                      </v-icon>
                     </div>
                     <div class="feature-content">
                       <h4
@@ -61,7 +61,7 @@
                   <!-- Camera Recording -->
                   <div v-if="task?.hasCamRecord" class="recording-feature-card">
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">mdi-camera</v-icon>
+                      <v-icon size="48" color="secondary"> mdi-camera </v-icon>
                     </div>
                     <div class="feature-content">
                       <h4
@@ -82,9 +82,9 @@
                     class="recording-feature-card"
                   >
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary"
-                        >mdi-microphone</v-icon
-                      >
+                      <v-icon size="48" color="secondary">
+                        mdi-microphone
+                      </v-icon>
                     </div>
                     <div class="feature-content">
                       <h4
@@ -102,7 +102,7 @@
                   <!-- Eye Tracking -->
                   <div v-if="task?.hasEye" class="recording-feature-card">
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">mdi-eye</v-icon>
+                      <v-icon size="48" color="secondary"> mdi-eye </v-icon>
                     </div>
                     <div class="feature-content">
                       <h4
@@ -320,6 +320,7 @@
         </template>
         <!-- STAGE 3:POST-TASK form -->
         <template v-else-if="stage === 3">
+          <!-- SUS Form -->
           <div v-if="task?.taskType === 'sus'">
             <SusForm
               v-model="localSusAnswers"
@@ -354,6 +355,19 @@
               @update:model-value="onUpdateTamAnswers"
             />
           </div>
+
+          <!-- SART Form -->
+          <div v-else-if="task?.taskType === 'sart'">
+            <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
+          </div>
+
+          <!-- Other task types -->
+          <div v-else>
+            <v-alert type="info" variant="tonal" class="mb-4">
+              No post-task questionnaire required for this task type.
+            </v-alert>
+          </div>
+
           <v-row justify="end">
             <v-col cols="12">
               <p
@@ -373,7 +387,7 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="doneTaskDisabled"
+                :disabled="shouldDisableFinishButton"
                 @click="emitDoneOrCouldNotFinish()"
               >
                 Finish task
@@ -409,7 +423,7 @@
         v-if="task?.hasCamRecord"
         ref="videoRecorder"
         :test-id="testId"
-        :userDocId="userDocId"
+        :user-doc-id="userDocId"
         :task-index="taskIndex"
         @show-loading="$emit('show-loading')"
         @stop-show-loading="$emit('stop-show-loading')"
@@ -433,6 +447,7 @@ import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
 import TAM1Form from '@/ux/UserTest/components/TAM1Form.vue'
 import TAM2Form from '@/ux/UserTest/components/TAM2Form.vue'
 import TAM3Form from '@/ux/UserTest/components/TAM3Form.vue'
+import sartForm from '@/ux/UserTest/components/sartForm.vue'
 
 const props = defineProps({
   task: Object,
@@ -447,6 +462,7 @@ const props = defineProps({
   susAnswers: Array,
   nasaTlxAnswers: Object,
   tamAnswers: Object,
+  sartAnswers: Object,
   testId: String,
   userDocId: String,
   taskIndex: Number,
@@ -469,6 +485,7 @@ const emit = defineEmits([
   'update:susAnswers',
   'update:nasaTlxAnswers',
   'update:tamAnswers',
+  'update:sartAnswers',
 ])
 
 onBeforeUnmount(() => {
@@ -492,6 +509,28 @@ const localTamAnswers = computed({
   get: () => props.tamAnswers || {},
   set: (val) => emit('update:tamAnswers', val),
 })
+
+
+const VALIDATION_REQUIRED_TYPES = ['sus'] // Only SUS requires validation for now
+
+const shouldDisableFinishButton = computed(() => {
+  const taskType = props.task?.taskType
+
+  // If this task type requires validation, use doneTaskDisabled
+  if (VALIDATION_REQUIRED_TYPES.includes(taskType)) {
+    return props.doneTaskDisabled
+  }
+
+  // For all other task types, no validation needed
+  return false
+})
+
+const localSartAnswers = ref(props.sartAnswers || {})
+
+function onUpdateSart(val) {
+  localSartAnswers.value = val
+  emit('update:sartAnswers', val)
+}
 
 const rawLink = computed(() => props.task?.taskLink || props.taskLink)
 const normalizedLink = computed(() => {
@@ -558,18 +597,6 @@ function reopenTool() {
 
 const showPostForm = ref({ userCompleted: undefined })
 
-function stopMediaRecorders() {
-  if (props.task?.hasAudioRecord && audioRecorder.value) {
-    audioRecorder.value.stopAudioRecording()
-  }
-  if (props.task?.hasCamRecord && videoRecorder.value) {
-    videoRecorder.value.stopRecording()
-  }
-  if (props.task?.hasScreenRecord && screenRecorder.value) {
-    screenRecorder.value.stopRecording()
-  }
-}
-
 async function startMediaRecorders() {
   if (props.task?.hasAudioRecord && audioRecorder.value) {
     await audioRecorder.value.startAudioRecording()
@@ -582,8 +609,14 @@ async function startMediaRecorders() {
   }
 }
 
+function forceStopAllMedia() {
+  audioRecorder.value?.stopAudioRecording?.()
+  videoRecorder.value?.stopRecording?.()
+  screenRecorder.value?.stopRecording?.()
+}
+
 function handleShowPostForm(userCompleted) {
-  stopMediaRecorders()
+  forceStopAllMedia()
   console.log('Stopping media recorders...')
 
   if (timerInterval) {
@@ -600,13 +633,8 @@ function handleShowPostForm(userCompleted) {
 
   showPostForm.value.userCompleted = userCompleted
 
-  if (
-    props.task?.taskType === 'sus' ||
-    props.task?.taskType === 'nasa-tlx' ||
-    props.task?.taskType === 'tam-1' ||
-    props.task?.taskType === 'tam-2' ||
-    props.task?.taskType === 'tam-3'
-  ) {
+  // Only show post-task form for specific task types
+  if (['sus', 'nasa-tlx', 'sart', 'tam-1', 'tam-2', 'tam-3'].includes(props.task?.taskType)) {
     stage.value = 3
   } else {
     emitDoneOrCouldNotFinish(finalTime)
@@ -663,6 +691,7 @@ watch(
 watch(
   () => props.taskIndex,
   () => {
+    forceStopAllMedia()
     stage.value = 1
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'

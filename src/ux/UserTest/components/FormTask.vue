@@ -1,5 +1,9 @@
 <template>
-  <v-stepper v-model="step" class="pa-sm-6" non-linear>
+  <v-stepper
+    v-model="step"
+    class="pa-sm-6"
+    non-linear
+  >
     <v-stepper-header>
       <v-stepper-item
         :complete="step > 1"
@@ -111,7 +115,8 @@ const selectItems = [
   { label: 'TAM-1 (Technology Acceptance Model)', value: 'tam-1' },
   { label: 'TAM-2 (Extended TAM)', value: 'tam-2' },
   { label: 'TAM-3 (Comprehensive TAM)', value: 'tam-3' },
-]
+  { label: 'Situation Awareness Rating Technique', value: 'sart' }
+];
 
 const requiredRule = [(v) => !!v || 'Field Required']
 

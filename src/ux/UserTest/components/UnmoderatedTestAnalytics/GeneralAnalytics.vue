@@ -17,24 +17,27 @@
           class="search-btn"
           prepend-icon="mdi-magnify"
           @click="triggerSearch"
-          >{{ $t('analytics.search') }}</v-btn
         >
+          {{ $t('analytics.search') }}
+        </v-btn>
         <v-btn
           color="primary"
           class="search-btn"
           prepend-icon="mdi-filter-remove"
           :disabled="!hasActiveFilters"
           @click="resetFilters"
-          >{{ $t('analytics.reset') }}</v-btn
         >
+          {{ $t('analytics.reset') }}
+        </v-btn>
 
         <v-btn
           color="info"
           class="search-btn"
           prepend-icon="mdi-download"
           @click="downloadPdfResume"
-          >{{ $t('analytics.downloadResume') }}</v-btn
         >
+          {{ $t('analytics.downloadResume') }}
+        </v-btn>
 
         <v-btn
           :color="showFilters ? 'primary' : 'grey'"
@@ -73,12 +76,14 @@
                 </template>
                 <span class="text-wrap">{{ def.title }}</span>
               </v-tooltip>
-              <div v-else class="filter-label truncate-2">{{ def.title }}</div>
+              <div v-else class="filter-label truncate-2">
+                {{ def.title }}
+              </div>
               <!-- Categórico (multi-select) -->
               <v-select
                 v-if="def.isCategorical && def.items.length"
-                :items="def.items"
                 v-model="selectedFilters[def.index]"
+                :items="def.items"
                 multiple
                 chips
                 clearable
@@ -371,19 +376,19 @@
                     class="task-chart"
                     width="120"
                     height="120"
-                  ></canvas>
+                  />
                 </div>
 
                 <div class="d-flex justify-space-between text-body-2">
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-success mr-2"></div>
+                    <div class="legend-dot bg-success mr-2" />
                     <span
                       >{{ $t('analytics.successCount') }}:
                       {{ taskStat.success }}</span
                     >
                   </div>
                   <div class="d-flex align-center">
-                    <div class="legend-dot bg-error mr-2"></div>
+                    <div class="legend-dot bg-error mr-2" />
                     <span
                       >{{ $t('analytics.errors') }}: {{ taskStat.errors }}</span
                     >
@@ -505,11 +510,13 @@ import CommentListCard from '../answers/CommentListCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
 import AnswersTimeline from '../answers/AnswersTimeline.vue'
 import axios from 'axios'
-import { useFilterDefinitions } from './useFilterDefinitions'
 import {
   calculateTAMScores,
   calculateOverallAcceptance,
 } from '@/ux/UserTest/utils/tamCalculator.js'
+import { calculateSUSScore } from '../../utils/susCalculator'
+import { getNASATLXData } from '../../utils/nasaTlxData'
+import { useFilterDefinitions } from './useFilterDefinitions'
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([])
@@ -727,6 +734,7 @@ const downloadPdfResume = async () => {
       {
         payload: {
           title: test.value.testTitle || '',
+          description: test.value.testDescription || '',
           type: test.value.testType || '',
           taskAnswers: answers.value,
         },
@@ -1088,6 +1096,81 @@ const calculateSatisfaction = () => {
   })
 
   return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount
+}
+
+const getAverageSUSSatisfaction = (answersData) => {
+  let totalSUS = 0
+  let susCount = 0
+
+  Object.values(answersData).forEach((item) => {
+    if (!item.tasks) return
+    Object.values(item.tasks).forEach((task) => {
+      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) {
+        const susScore = calculateSUSScore(task.susAnswers)
+        totalSUS += susScore
+        susCount++
+      }
+    })
+  })
+
+  return susCount === 0 ? 0 : totalSUS / susCount
+}
+
+const getAverageSatisfaction = () => {
+  let hasSUS = false
+  let hasNASATLX = false
+  let nasaTlxResponses = []
+
+  Object.values(answers.value).forEach((item) => {
+    if (!item.tasks) return
+    Object.values(item.tasks).forEach((task) => {
+      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) {
+        hasSUS = true
+      }
+
+      // Check if task is NASA-TLX type and has valid data
+      if (
+        testStructure.value?.userTasks?.[task.taskId]?.taskType ===
+          'nasa-tlx' &&
+        task.nasaTlxAnswers &&
+        typeof task.nasaTlxAnswers === 'object'
+      ) {
+        // Check if nasaTlxAnswers has actual data (not empty object/array)
+        const hasData = Array.isArray(task.nasaTlxAnswers)
+          ? task.nasaTlxAnswers.length > 0
+          : Object.keys(task.nasaTlxAnswers).length > 0
+
+        if (hasData) {
+          hasNASATLX = true
+          const scores = Object.values(task.nasaTlxAnswers)
+          nasaTlxResponses.push({
+            ...task,
+            overallScore:
+              scores.length > 0
+                ? Math.round(
+                    (scores.reduce((sum, score) => sum + score, 0) /
+                      scores.length) *
+                      10,
+                  ) / 10
+                : 0,
+            name: item.fullName,
+            nasaTlxAnswers: task.nasaTlxAnswers,
+          })
+        }
+      }
+    })
+  })
+
+  if (hasSUS && !hasNASATLX) {
+    return getAverageSUSSatisfaction(answers.value)
+  }
+
+  if (hasNASATLX && nasaTlxResponses.length > 0) {
+    const tlxData = getNASATLXData(nasaTlxResponses)
+    return tlxData.averageOverallScore
+  }
+
+  return 0
 }
 
 const getTasksPerformance = () => {

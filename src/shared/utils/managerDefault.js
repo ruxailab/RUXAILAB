@@ -1,28 +1,63 @@
-import { ACCESS_LEVEL } from "./accessLevel"
-import { ICONS, createCardConfig } from "../constants/theme"
+import { ACCESS_LEVEL } from './accessLevel'
+import { ICONS, createCardConfig } from '../constants/theme'
 
 export const getNavigatorDefault = (test, accessLevel, route, type) => {
-  if (!test) return [];
+  if (!test) return []
 
   const items = [
-    { title: 'Manager', icon: ICONS.MANAGER, path: `/${type}/manager/${route.params.id}` }
+    {
+      title: 'Manager',
+      icon: ICONS.MANAGER,
+      path: `/${type}/manager/${route.params.id}`,
+    },
   ]
 
-  if (accessLevel === ACCESS_LEVEL.ADMIN) {
+  if (
+    accessLevel === ACCESS_LEVEL.ADMIN ||
+    accessLevel === ACCESS_LEVEL.SUPER_ADMIN
+  ) {
     items.push(
-      { title: 'Test', icon: ICONS.DOCUMENT_EDIT, path: `/${type}/edit/${test.id}` },
+      {
+        title: 'Test',
+        icon: ICONS.DOCUMENT_EDIT,
+        path: `/${type}/edit/${test.id}`,
+      },
       { title: 'Preview', icon: ICONS.PREVIEW, path: `/testview/${test.id}` },
-      { title: 'Reports', icon: ICONS.BOOK, path: `/${type}/report/${test.id}` },
-      { title: 'Answers', icon: ICONS.ORDER, path: `/${type}/answer/${test.id}` },
-      { title: 'Cooperators', icon: ICONS.ACCOUNT_GROUP, path: `/${type}/cooperators/${test.id}` },
-      { title: 'Settings', icon: ICONS.COG, path: `/${type}/settings/${test.id}` }
+      {
+        title: 'Reports',
+        icon: ICONS.BOOK,
+        path: `/${type}/report/${test.id}`,
+      },
+      {
+        title: 'Answers',
+        icon: ICONS.ORDER,
+        path: `/${type}/answer/${test.id}`,
+      },
+      {
+        title: 'Cooperators',
+        icon: ICONS.ACCOUNT_GROUP,
+        path: `/${type}/cooperators/${test.id}`,
+      },
+      {
+        title: 'Settings',
+        icon: ICONS.COG,
+        path: `/${type}/settings/${test.id}`,
+      },
     )
   }
 
-  if (accessLevel === ACCESS_LEVEL.GUEST) {
+  if (accessLevel === ACCESS_LEVEL.EVALUATOR) {
     items.push(
-      { title: 'Answer Test', icon: ICONS.DOCUMENT, path: `/testview/${test.id}` },
-      { title: 'Answers', icon: ICONS.ORDER, path: `/${type}/answer/${test.id}` }
+      {
+        title: 'Answer Test',
+        icon: ICONS.DOCUMENT,
+        path: `/testview/${test.id}`,
+      },
+      {
+        title: 'Answers',
+        icon: ICONS.ORDER,
+        path: `/${type}/answer/${test.id}`,
+      },
     )
   }
 
@@ -31,20 +66,20 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
 
 // Accessibility-specific navigator
 export const getAccessibilityNavigator = (test, userRole, route, type) => {
-  if (!test) return [];
+  if (!test) return []
 
-  const isManual = type === 'accessibility/manual';
-  const isAutomatic = type === 'accessibility/automatic';
-  const testId = route.params.id;
+  const isManual = type === 'accessibility/manual'
+  const isAutomatic = type === 'accessibility/automatic'
+  const testId = route.params.id
 
   const items = [
     {
       title: 'Manager',
       icon: ICONS.MANAGER,
       path: `/${type}/${testId}`,
-      requiresAdmin: false
-    }
-  ];
+      requiresAdmin: false,
+    },
+  ]
 
   if (isManual) {
     items.push(
@@ -52,33 +87,33 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         title: 'Edit Study',
         icon: ICONS.DOCUMENT_EDIT,
         path: `/accessibility/manual/config/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: true,
       },
       {
         title: 'Settings',
         icon: ICONS.COG,
         path: `/accessibility/manual/setting/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: true,
       },
       {
         title: 'Preview',
         icon: ICONS.PREVIEW,
         path: `/accessibility/manual/preview/${testId}`,
-        requiresAdmin: false
+        requiresAdmin: false,
       },
       {
         title: 'Answers',
         icon: ICONS.ORDER,
         path: `/accessibility/manual/result/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: true,
       },
       {
         title: 'Cooperator',
         icon: ICONS.ACCOUNT_GROUP,
         path: `/accessibility/manual/cooperative/${testId}`,
-        requiresAdmin: true
-      }
-    );
+        requiresAdmin: true,
+      },
+    )
   }
 
   if (isAutomatic) {
@@ -87,40 +122,40 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         title: 'Analyse',
         icon: 'mdi-magnify',
         path: `/accessibility/automatic/analyse/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: true,
       },
       {
         title: 'Answers',
         icon: ICONS.ORDER,
         path: `/accessibility/automatic/answers/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: true,
       },
       {
         title: 'Report',
         icon: ICONS.BOOK,
         path: `/accessibility/automatic/reports/${testId}`,
-        requiresAdmin: false // Reports can be viewed by cooperators
+        requiresAdmin: false, // Reports can be viewed by cooperators
       },
       {
         title: 'Cooperation',
         icon: ICONS.ACCOUNT_GROUP,
         path: `/accessibility/automatic/cooperation/${testId}`,
-        requiresAdmin: true
+        requiresAdmin: true,
       },
       {
         title: 'Settings',
         icon: ICONS.COG,
         path: `/accessibility/automatic/settings/${testId}`,
-        requiresAdmin: true
-      }
-    );
+        requiresAdmin: true,
+      },
+    )
   }
 
   // Filter based on user role
   if (userRole === 'admin') {
-    return items; // Admins get all items
+    return items // Admins get all items
   } else {
-    return items.filter(item => !item.requiresAdmin); // Filter out admin-only items
+    return items.filter((item) => !item.requiresAdmin) // Filter out admin-only items
   }
 }
 
@@ -146,21 +181,23 @@ export const getTopCardsDefualt = (test, type) => {
 
 // Accessibility-specific top cards
 export const getAccessibilityTopCards = (test, userRole, type) => {
-  if (!test) return [];
+  if (!test) return []
 
-  const testId = test.id;
-  const isManual = type === 'accessibility/manual';
-  const isAutomatic = type === 'accessibility/automatic';
+  const testId = test.id
+  const isManual = type === 'accessibility/manual'
+  const isAutomatic = type === 'accessibility/automatic'
 
   const cards = [
     {
       title: 'View Dashboard',
       subtitle: 'Access detailed accessibility tools',
       icon: 'mdi-view-dashboard',
-      path: isManual ? `/accessibility/manual/home/${testId}` : `/accessibility/automatic/home/${testId}`,
-      color: 'info'
-    }
-  ];
+      path: isManual
+        ? `/accessibility/manual/home/${testId}`
+        : `/accessibility/automatic/home/${testId}`,
+      color: 'info',
+    },
+  ]
 
   if (userRole === 'admin') {
     if (isManual) {
@@ -170,16 +207,16 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
           subtitle: 'Set up accessibility test parameters',
           icon: 'mdi-cog',
           path: `/accessibility/manual/config/${testId}`,
-          color: 'primary'
+          color: 'primary',
         },
         {
           title: 'Manage Cooperators',
           subtitle: 'Invite and manage test participants',
           icon: 'mdi-account-group',
           path: `/accessibility/manual/cooperative/${testId}`,
-          color: 'success'
-        }
-      );
+          color: 'success',
+        },
+      )
     }
 
     if (isAutomatic) {
@@ -189,20 +226,20 @@ export const getAccessibilityTopCards = (test, userRole, type) => {
           subtitle: 'Run automated accessibility analysis',
           icon: 'mdi-magnify',
           path: `/accessibility/automatic/analyse/${testId}`,
-          color: 'primary'
+          color: 'primary',
         },
         {
           title: 'Manage Cooperators',
           subtitle: 'Share reports with team members',
           icon: 'mdi-account-group',
           path: `/accessibility/automatic/cooperation/${testId}`,
-          color: 'success'
-        }
-      );
+          color: 'success',
+        },
+      )
     }
   }
 
-  return cards;
+  return cards
 }
 
 export const getBottomCardsDefualt = (test, type) => {
@@ -227,13 +264,13 @@ export const getBottomCardsDefualt = (test, type) => {
 
 // Accessibility-specific bottom cards
 export const getAccessibilityBottomCards = (test, userRole, type) => {
-  if (!test) return [];
+  if (!test) return []
 
-  const testId = test.id;
-  const isManual = type === 'accessibility/manual';
-  const isAutomatic = type === 'accessibility/automatic';
+  const testId = test.id
+  const isManual = type === 'accessibility/manual'
+  const isAutomatic = type === 'accessibility/automatic'
 
-  const cards = [];
+  const cards = []
 
   if (isManual) {
     cards.push({
@@ -241,8 +278,8 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
       subtitle: 'See how the test appears to participants',
       icon: 'mdi-clipboard-check',
       path: `/accessibility/manual/preview/${testId}`,
-      color: 'info'
-    });
+      color: 'info',
+    })
 
     if (userRole === 'admin') {
       cards.push({
@@ -250,8 +287,8 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
         subtitle: 'Analyze accessibility test answers',
         icon: 'mdi-chart-bar',
         path: `/accessibility/manual/result/${testId}`,
-        color: 'warning'
-      });
+        color: 'warning',
+      })
     }
   }
 
@@ -261,8 +298,8 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
       subtitle: 'See accessibility analysis results',
       icon: 'mdi-chart-bar',
       path: `/accessibility/automatic/reports/${testId}`,
-      color: 'info'
-    });
+      color: 'info',
+    })
 
     if (userRole === 'admin') {
       cards.push({
@@ -270,10 +307,10 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
         subtitle: 'Configure analysis parameters',
         icon: 'mdi-cog',
         path: `/accessibility/automatic/settings/${testId}`,
-        color: 'warning'
-      });
+        color: 'warning',
+      })
     }
   }
 
-  return cards;
+  return cards
 }

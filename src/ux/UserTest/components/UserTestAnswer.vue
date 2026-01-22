@@ -17,18 +17,39 @@
             <v-tab value="1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" value="2"> Sentiment Analysis </v-tab>
-            <v-tab v-if="showSUS" value="3">
+            <v-tab
+              v-if="showSentiment"
+              value="2"
+            >
+              Sentiment Analysis
+            </v-tab>
+            <v-tab
+              v-if="showSUS"
+              value="3"
+            >
               {{ $t('analytics.susAnalytics') }}
             </v-tab>
             <v-tab v-if="showNasa" value="4">
               {{ $t('analytics.nasaTlxAnalytics') }}
             </v-tab>
             <v-tab v-if="showTAM" value="5"> TAM Analytics </v-tab>
-            <v-tab v-if="showEye" value="6">
+            
+            <v-tab
+              v-if="showSart"
+              value="6"
+            >
+              {{ $t('analytics.sartAnalytics') }}
+            </v-tab>
+            <v-tab
+              v-if="showEye"
+              value="7"
+            >
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" value="7">
+            <v-tab
+              v-if="showTranscription"
+              value="8"
+            >
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>
@@ -42,7 +63,8 @@
             <SusAnalytics v-if="tab === '3'" />
             <NasaTlxAnalytics v-if="tab === '4'" />
             <TAMAnalytics v-if="tab === '5'" />
-            <TranscriptionTool v-if="tab === '7'" />
+            <SartAnalytics v-if="tab === '6'" />
+            <TranscriptionTool v-if="tab === '8'" />
           </div>
         </template>
       </ShowInfo>
@@ -54,26 +76,25 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { statistics } from '@/ux/Heuristic/utils/statistics'
-import ShowInfo from '@/shared/components/ShowInfo.vue'
-import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer'
-import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue'
-import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue'
-import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisView.vue'
-import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue'
-import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue'
-import TAMAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TAMAnalytics.vue'
-import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue'
-import {
-  STUDY_TYPES,
-  USER_STUDY_SUBTYPES,
-} from '@/shared/constants/methodDefinitions'
-import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+import TAMAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TAMAnalytics.vue'
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { statistics } from '@/ux/Heuristic/utils/statistics';
+import ShowInfo from '@/shared/components/ShowInfo.vue';
+import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
+import UserAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/UserAnalytics.vue';
+import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/GeneralAnalytics.vue';
+import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
+import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
+import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
+import SartAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SartAnalytics.vue';
+import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
+import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
   id: {
@@ -123,6 +144,13 @@ const showTAM = computed(() => {
       task.taskType === 'tam-3',
   )
 })
+
+const showSart = computed(() => {
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
+  return Object.values(testStructure.value.userTasks).some(
+    (task) => task.taskType === 'sart'
+  );
+});
 
 const showSentiment = computed(() => {
   if (

@@ -3,10 +3,7 @@
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
     <!-- Actions Slot -->
-    <template
-      v-if="!showIntroView"
-      #actions
-    >
+    <template v-if="!showIntroView" #actions>
       <v-btn
         color="primary"
         size="large"
@@ -20,19 +17,13 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template
-      v-if="!showIntroView"
-      #subtitle
-    >
+    <template v-if="!showIntroView" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('HeuristicsCooperators.subtitles.manage_participants') }}
       </p>
     </template>
     <!-- Main Content -->
-    <Intro
-      v-if="showIntroView"
-      @close-intro="showIntroComponent = false"
-    />
+    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
     <CooperatorTable
       v-else
       :has-role-column="hasRoleColumn"
@@ -52,11 +43,7 @@
     />
 
     <!-- Leave Alert Dialog -->
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
+    <v-dialog v-model="dialog" width="600" persistent>
       <LeaveAlert />
     </v-dialog>
 
@@ -93,136 +80,139 @@
     <slot
       name="dialog"
       :is-drawer-open="drawerOpen"
-      :set-drawer-open="(val) => drawerOpen = val"
+      :set-drawer-open="(val) => (drawerOpen = val)"
     />
   </PageWrapper>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, useSlots } from 'vue';
-import { useStore } from 'vuex';
-import Intro from '@/shared/components/introduction_cards/IntroCoops.vue';
-import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue';
-import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue';
-import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import CooperatorTable from '@/shared/components/CooperatorTable.vue';
-import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue';
-import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue';
-import UIDGenerator from 'uid-generator';
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useCooperatorActions } from '@/shared/composables/useCooperatorActions';
-import Cooperators from '../models/Cooperators';
-import { getMethodManagerView } from '../constants/methodDefinitions';
-import { useRouter ,useRoute} from 'vue-router';
-import Notification from '@/shared/models/Notification';
-import EmailController from '../controllers/EmailController';
-import { useI18n } from 'vue-i18n';
-import {
-  showSuccess,
-  showError,
-} from '@/shared/utils/toast'
+import { ref, computed, watch, onMounted, useSlots } from 'vue'
+import { useStore } from 'vuex'
+import Intro from '@/shared/components/introduction_cards/IntroCoops.vue'
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import CooperatorTable from '@/shared/components/CooperatorTable.vue'
+import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
+import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
+import UIDGenerator from 'uid-generator'
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
+import Cooperators from '../models/Cooperators'
+import { getMethodManagerView } from '../constants/methodDefinitions'
+import { useRouter, useRoute } from 'vue-router'
+import Notification from '@/shared/models/Notification'
+import EmailController from '../controllers/EmailController'
+import { useI18n } from 'vue-i18n'
+import { showSuccess, showError } from '@/shared/utils/toast'
 
-
-const uidgen = new UIDGenerator();
-const router = useRouter();
+const uidgen = new UIDGenerator()
+const router = useRouter()
 
 const props = defineProps({
   id: {
     type: String,
-    default: ''
+    default: '',
   },
   hasRoleColumn: {
     type: Boolean,
-    default: true
+    default: true,
   },
   showSessionColumn: {
     type: Boolean,
-    default: false
+    default: false,
   },
   showDateColumns: {
     type: Boolean,
-    default: false
-  }
-});
+    default: false,
+  },
+})
 
 const emit = defineEmits(['open-invite-dialog'])
 
-const store = useStore();
-const route = useRoute();
-const slots = useSlots();
-const { t } = useI18n();
+const store = useStore()
+const route = useRoute()
+const slots = useSlots()
+const { t } = useI18n()
 
-const {
-  roleOptions
-} = useCooperatorUtils();
+const { roleOptions } = useCooperatorUtils()
 
 const {
   handleRoleChange,
   handleCooperatorRemoval,
   handleInvitationCancellation,
-} = useCooperatorActions();
+} = useCooperatorActions()
 
-const sendNotification = async ({ userId, title, description, redirectsTo = '/', testId = null, author } = {}) => {
+const sendNotification = async ({
+  userId,
+  title,
+  description,
+  redirectsTo = '/',
+  testId = null,
+  author,
+} = {}) => {
   const notification = new Notification({
     title,
     description,
     redirectsTo,
     author,
     read: false,
-    testId
-  });
+    testId,
+  })
 
   try {
     await store.dispatch('addNotification', {
       userId,
       notification,
-    });
-    return true;
+    })
+    return true
   } catch (error) {
-    console.error('Error sending notification:', error);
-    throw error;
+    console.error('Error sending notification:', error)
+    throw error
   }
-};
+}
 
-let showIntroComponent = ref(true);
-const inviteMessages = ref('');
-const verified = ref(false);
-const messageModel = ref(false);
-const selectedUser = ref([]);
-const cooperatorsUpdate = ref([]);
-const showInviteDialog = ref(false);
-const drawerOpen = ref(false);
+let showIntroComponent = ref(true)
+const inviteMessages = ref('')
+const verified = ref(false)
+const messageModel = ref(false)
+const selectedUser = ref([])
+const cooperatorsUpdate = ref([])
+const showInviteDialog = ref(false)
+const drawerOpen = ref(false)
 
 const showIntroView = computed(() => {
-  return (cooperatorsEdit.value.length <= 0) && showIntroComponent.value;
-});
+  return cooperatorsEdit.value.length <= 0 && showIntroComponent.value
+})
 
-const dialog = computed(() => store.getters.getDialogLeaveStatus);
-const test = computed(() => store.getters.test);
-const userAuth = computed(() => store.getters.user);
-const users = computed(() => store.state.Users?.users || []);
-const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : []);
-const loading = computed(() => store.getters.loading);
+const dialog = computed(() => store.getters.getDialogLeaveStatus)
+const test = computed(() => store.getters.test)
+const userAuth = computed(() => store.getters.user)
+const users = computed(() => store.state.Users?.users || [])
+const cooperatorsEdit = computed(() =>
+  test.value?.cooperators ? [...test.value.cooperators] : [],
+)
+const loading = computed(() => store.getters.loading)
 
 const openMessageDialog = (item) => {
-  selectedUser.value = item;
-  messageModel.value = true;
-};
+  selectedUser.value = item
+  messageModel.value = true
+}
 
 const handleSendMessage = async ({ user, title, content }) => {
-  messageModel.value = false;
+  messageModel.value = false
   if (user.userDocId && test.value) {
-    const author = test.value.testAdmin.email;
+    const author = test.value.testAdmin.email
     await sendNotification(
       user.userDocId,
       title,
       author,
       content,
       '/',
-      test.value.id
-    );
+      test.value.id,
+    )
   }
-};
+}
 
 const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
@@ -237,21 +227,21 @@ const handleSendEmail = async (guest) => {
       testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
-    }
+    },
   })
 }
 
 const handleSendInvitations = async (invitationData) => {
-  if (!test.value) return;
+  if (!test.value) return
 
-  const { selectedCoops, selectedRole, inviteMessage } = invitationData;
-  const tokens = {};
+  const { selectedCoops, selectedRole, inviteMessage } = invitationData
+  const tokens = {}
 
   inviteMessages.value = inviteMessage
-  cooperatorsUpdate.value = [...cooperatorsEdit.value];
+  cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
   selectedCoops.forEach((coop) => {
-    const token = uidgen.generateSync();
+    const token = uidgen.generateSync()
     if (!coop.id) {
       cooperatorsEdit.value.push({
         userDocId: null,
@@ -262,8 +252,8 @@ const handleSendInvitations = async (invitationData) => {
         token,
         progress: 0,
         updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || ''
-      });
+        testAuthorEmail: test.value?.testAdmin?.email || '',
+      })
     } else {
       cooperatorsEdit.value.push({
         userDocId: coop.id,
@@ -274,81 +264,101 @@ const handleSendInvitations = async (invitationData) => {
         token,
         progress: 0,
         updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || ''
-      });
+        testAuthorEmail: test.value?.testAdmin?.email || '',
+      })
     }
-    tokens[coop.id || coop] = token;
-  });
+    tokens[coop.id || coop] = token
+  })
 
-  await submit();
-  showInviteDialog.value = false;
-};
+  await submit()
+  showInviteDialog.value = false
+}
 
 const changeRole = async (item, newValue) => {
-  await handleRoleChange(item, newValue, roleOptions.value, async (item, newValue) => {
-    const index = cooperatorsEdit.value.indexOf(item);
-    const newCoop = { ...item, accessLevel: newValue.value };
-    test.value.cooperators[index] = newCoop;
-    await store.dispatch('updateStudy', test.value);
-    await store.dispatch('updateUserAnswer', {
-      testDocId: test.value.id,
-      cooperatorId: newCoop.userDocId,
-      data: { accessLevel: newCoop.accessLevel }
-    });
-  });
-};
+  await handleRoleChange(
+    item,
+    newValue,
+    roleOptions.value,
+    async (item, newValue) => {
+      const index = cooperatorsEdit.value.indexOf(item)
+      const newCoop = { ...item, accessLevel: newValue.value }
+      test.value.cooperators[index] = newCoop
+      await store.dispatch('updateStudy', test.value)
+      await store.dispatch('updateUserAnswer', {
+        testDocId: test.value.id,
+        cooperatorId: newCoop.userDocId,
+        data: { accessLevel: newCoop.accessLevel },
+      })
+    },
+  )
+}
 
 const submit = async () => {
-  if (!test.value) return;
+  if (!test.value) return
 
-  const coops = cooperatorsEdit.value.map((coop) => new Cooperators({...coop, userDocId: coop.userDocId || coop.id}))
+  const coops = cooperatorsEdit.value.map(
+    (coop) =>
+      new Cooperators({ ...coop, userDocId: coop.userDocId || coop.id }),
+  )
   test.value.cooperators = [...coops]
 
   const newCooperators = cooperatorsEdit.value.filter(
-    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email)
-  );
+    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email),
+  )
 
   try {
-    await store.dispatch('updateStudy', test.value);
+    await store.dispatch('updateStudy', test.value)
 
     await Promise.all([
       store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map(guest => sendMenssages(guest))
-    ]);
+      ...newCooperators.map((guest) => sendMenssages(guest)),
+    ])
   } catch (error) {
-    console.error('Error updating study:', error);
+    console.error('Error updating study:', error)
   }
-};
+}
 
 const sendMenssages = async (guest) => {
   try {
-    notifyCooperator(guest);
-    await handleSendEmail(guest);
-    showSuccess('pages.cooperators.invitationSent');
+    notifyCooperator(guest)
+    await handleSendEmail(guest)
+    showSuccess('pages.cooperators.invitationSent')
   } catch (error) {
-    console.error('Error sending messages:', error);
-    showError('errors.sendError');
+    console.error('Error sending messages:', error)
+    showError('errors.sendError')
   }
 }
 
 const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
-    let path = '';
-    let title = t('HeuristicsCooperators.actions.send_invitation');
-    let description = t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') });
+    let path = ''
+    let title = t('HeuristicsCooperators.actions.send_invitation')
+    let description = t('HeuristicsCooperators.messages.invite_message', {
+      testTitle: test.value.testTitle || t('common.test'),
+    })
 
     if (test.value.testType === 'MANUAL') {
-      path = `accessibility/manual/preview/${test.value.id}`;
-      title = t('studyCreation.methods.accessibility.manual_testing.name') + ' ' + t('HeuristicsCooperators.actions.send_invitation');
-      description = t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') });
+      path = `accessibility/manual/preview/${test.value.id}`
+      title =
+        t('studyCreation.methods.accessibility.manual_testing.name') +
+        ' ' +
+        t('HeuristicsCooperators.actions.send_invitation')
+      description = t('HeuristicsCooperators.messages.invite_message', {
+        testTitle: test.value.testTitle || t('common.test'),
+      })
     } else if (test.value.testType === 'AUTOMATIC') {
-      path = `accessibility/automatic/preview/${test.value.id}`;
-      title = t('studyCreation.methods.accessibility.automatic_testing.name') + ' ' + t('HeuristicsCooperators.actions.send_invitation');
-      description = t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') });
+      path = `accessibility/automatic/preview/${test.value.id}`
+      title =
+        t('studyCreation.methods.accessibility.automatic_testing.name') +
+        ' ' +
+        t('HeuristicsCooperators.actions.send_invitation')
+      description = t('HeuristicsCooperators.messages.invite_message', {
+        testTitle: test.value.testTitle || t('common.test'),
+      })
     }
 
     if (guest.userDocId && path) {
-      const author = test.value.testAdmin.email;
+      const author = test.value.testAdmin.email
       await sendNotification(
         guest.userDocId,
         title,
@@ -356,10 +366,10 @@ const notifyCooperatorAccessibility = async (guest) => {
         path,
         test.value.id,
         author,
-      );
+      )
     }
   }
-};
+}
 
 const notifyCooperator = (guest) => {
   if (guest.userDocId) {
@@ -370,80 +380,95 @@ const notifyCooperator = (guest) => {
     //}
 
     // admin - 0, evaluator -1, guest - 2
-    const managerViewByMethod = getMethodManagerView(test.value.testType, test.value.subType)
+    const managerViewByMethod = getMethodManagerView(
+      test.value.testType,
+      test.value.subType,
+    )
     const managerRoute = router.resolve({
       name: managerViewByMethod,
-      params: { id: test.value.id }
-    });
+      params: { id: test.value.id },
+    })
 
-    const path = guest.accessLevel == 0 ? managerRoute.href : `/testview/${test.value.id}/${guest.userDocId}`;
+    const path =
+      guest.accessLevel == 0
+        ? managerRoute.href
+        : `/testview/${test.value.id}/${guest.userDocId}`
 
     sendNotification({
       userId: guest.userDocId,
       title: t('HeuristicsCooperators.actions.send_invitation'),
-      description: inviteMessages.value || t('HeuristicsCooperators.messages.invite_message', { testTitle: test.value.testTitle || t('common.test') }),
+      description:
+        inviteMessages.value ||
+        t('HeuristicsCooperators.messages.invite_message', {
+          testTitle: test.value.testTitle || t('common.test'),
+        }),
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
-      accessLevel: roleOptions.value.find(r => r.value === guest.accessLevel)?.value
-    });
+      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
+        ?.value,
+    })
   }
-};
+}
 
 const reinvite = async (guest) => {
   await sendMenssages(guest)
-};
+}
 
 const removeCoop = async (coop) => {
   await handleCooperatorRemoval(coop, async (coop) => {
-    const index = cooperatorsEdit.value.indexOf(coop);
-    cooperatorsEdit.value.splice(index, 1);
-    test.value.cooperators = cooperatorsEdit.value;
-    await store.dispatch('updateStudy', test.value);
+    const index = cooperatorsEdit.value.indexOf(coop)
+    cooperatorsEdit.value.splice(index, 1)
+    test.value.cooperators = cooperatorsEdit.value
+    await store.dispatch('updateStudy', test.value)
     await store.dispatch('removeTestFromCooperator', {
       test: test.value,
-      cooperator: coop
-    });
-  });
-};
+      cooperator: coop,
+    })
+  })
+}
 
 const cancelInvitation = async (guest) => {
   await handleInvitationCancellation(guest, async (guest) => {
-    const index = cooperatorsEdit.value.indexOf(guest);
-    cooperatorsEdit.value.splice(index, 1);
-    test.value.cooperators = cooperatorsEdit.value;
-    await store.dispatch('updateStudy', test.value);
-  });
-};
+    const index = cooperatorsEdit.value.indexOf(guest)
+    cooperatorsEdit.value.splice(index, 1)
+    test.value.cooperators = cooperatorsEdit.value
+    await store.dispatch('updateStudy', test.value)
+  })
+}
 
 const openDialog = async () => {
-  if (slots.dialog) drawerOpen.value = true;
-  else showInviteDialog.value = true;
+  if (slots.dialog) drawerOpen.value = true
+  else showInviteDialog.value = true
 }
 
 watch(loading, (newVal) => {
   if (!newVal) {
-    showIntroComponent.value = cooperatorsEdit.value.length === 0;
+    showIntroComponent.value = cooperatorsEdit.value.length === 0
   }
-});
+})
 
-watch(test, (newTest) => {
-  // Test data watcher for reactivity
-}, { immediate: true });
+watch(
+  test,
+  (newTest) => {
+    // Test data watcher for reactivity
+  },
+  { immediate: true },
+)
 
 onMounted(async () => {
-  store.dispatch('getAllUsers');
+  store.dispatch('getAllUsers')
 
-  const testId = props.id || route.params.id;
+  const testId = props.id || route.params.id
 
   if (testId) {
     try {
-      await store.dispatch('getStudy', { id: testId });
+      await store.dispatch('getStudy', { id: testId })
     } catch (error) {
-      console.error('Error fetching test data:', error);
+      console.error('Error fetching test data:', error)
     }
   }
-});
+})
 </script>
 
 <style scoped>
