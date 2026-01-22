@@ -105,6 +105,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 // Feature views
 import ProfileView from '@/features/auth/views/ProfileView.vue'
@@ -127,6 +128,7 @@ import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 // 🔸 UI and navigation state
 const drawerOpen = ref(false)
@@ -149,7 +151,7 @@ const currentPageTitle = computed(() => {
     case 'templates':
       return 'Templates'
     case 'storage':
-      return 'Storage'
+      return t('storage.pageTitle')
     case 'notifications':
       return 'Notifications'
     case 'profile':

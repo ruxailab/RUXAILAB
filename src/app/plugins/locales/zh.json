@@ -71,7 +71,27 @@
     "viewAll": "查看全部",
     "sentBy": "发送者",
     "new": "新",
-    "test": "一项研究"
+    "test": "一项研究",
+    "itemsPerPage": "每页项目数:"
+  },
+  "storage": {
+    "pageTitle": "存储",
+    "totalStorage": "总存储空间",
+    "acrossFiles": "在 {count} 个文件中",
+    "mediaFiles": "媒体文件",
+    "searchByStudyOrDate": "按研究或日期搜索",
+    "deleteFile": "删除文件",
+    "noMediaFiles": "未找到媒体文件",
+    "confirmDeletion": "确认删除",
+    "deleteConfirmMessage": "您确定要从 \"{studyName}\" 中删除此 {type} 文件吗？",
+    "actionCannotBeUndone": "此操作无法撤销。",
+    "headers": {
+      "type": "类型",
+      "studyName": "研究名称",
+      "date": "日期",
+      "size": "大小",
+      "actions": "操作"
+    }
   },
   "profile": {
     "title": "个人资料",
@@ -193,6 +213,8 @@
     "cta": "开始"
   },
   "Dashboard": {
+    "welcomeBack": "欢迎回来，{name}！",
+    "subtitle": "这是您今天研究项目的动态",
     "createNewTest": "创建新研究",
     "tests": "测试",
     "templates": "模板",
@@ -202,7 +224,49 @@
     "publicTests": "公开测试",
     "sessions": "会话",
     "personal": "个人",
-    "explore": "探索"
+    "explore": "探索",
+    "activeStudiesOverview": "活跃研究概览",
+    "viewAll": "查看全部",
+    "showMore": "显示更多",
+    "showLess": "显示更少",
+    "progress": "进度",
+    "participants": "参与者",
+    "participantsLabel": "参与者",
+    "daysLeft": "天剩余",
+    "dayLeft": "天剩余",
+    "studies": "研究",
+    "storage": "存储",
+    "free": "免费",
+    "plan": "计划",
+    "recentActivity": "最近活动",
+    "comingSoon": "即将推出",
+    "mostUsedMethods": "最常用方法",
+    "use": "使用",
+    "uses": "次使用",
+    "noDataAvailable": "暂无可用数据",
+    "createFirstStudy": "创建您的第一个研究以在此处查看统计信息。",
+    "nextSession": "下一个会话",
+    "noSessionsScheduled": "没有安排的会话",
+    "nextSessionWillAppear": "您的下一个会话将显示在这里",
+    "latestBlogPosts": "最新博客文章",
+    "viewBlog": "查看博客",
+    "date": "日期",
+    "time": "时间",
+    "status": {
+      "active": "活跃",
+      "recruiting": "招募中",
+      "paused": "已暂停",
+      "finished": "已完成",
+      "unknown": "未知"
+    },
+    "webinar": {
+      "ended": "已结束",
+      "live": "直播中",
+      "today": "今天",
+      "joinNow": "立即加入",
+      "webinarEnded": "网络研讨会已结束",
+      "startingToday": "今天开始"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -606,6 +670,27 @@
       "version": "版本：",
       "noTests": "未找到测试",
       "noTemplates": "未找到模板"
+    },
+    "sessions": {
+      "searchPlaceholder": "搜索会话...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "sessionDate": "会话日期",
+      "selectRange": "选择范围",
+      "statusLabel": "状态",
+      "ownership": "所有权",
+      "evaluator": "评估者",
+      "noActiveSessions": "您没有活跃的会话",
+      "filters": {
+        "allStatuses": "所有状态",
+        "today": "今天",
+        "upcoming": "即将到来",
+        "completed": "已完成",
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的"
+      }
     },
     "createTest": {
       "title": "创建新测试",
