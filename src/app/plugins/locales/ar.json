@@ -30,6 +30,15 @@
       "instructions": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
       "reset_button": "إرسال رابط إعادة التعيين",
       "back_to_signin": "العودة إلى تسجيل الدخول"
+    },
+    "passwordStrength": "قوة كلمة المرور",
+    "number": "رقم",
+    "strength": {
+      "veryWeak": "ضعيفة جداً",
+      "weak": "ضعيفة",
+      "fair": "مقبولة",
+      "good": "جيدة",
+      "strong": "قوية"
     }
   },
   "common": {
@@ -67,7 +76,27 @@
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
     "new": "جديد",
-    "test": "دراسة"
+    "test": "دراسة",
+    "itemsPerPage": "عناصر لكل صفحة:"
+  },
+  "storage": {
+    "pageTitle": "التخزين",
+    "totalStorage": "إجمالي التخزين",
+    "acrossFiles": "عبر {count} ملفات",
+    "mediaFiles": "ملفات الوسائط",
+    "searchByStudyOrDate": "البحث حسب الدراسة أو التاريخ",
+    "deleteFile": "حذف الملف",
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "confirmDeletion": "تأكيد الحذف",
+    "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف ملف {type} هذا من \"{studyName}\"؟",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
+    "headers": {
+      "type": "النوع",
+      "studyName": "اسم الدراسة",
+      "date": "التاريخ",
+      "size": "الحجم",
+      "actions": "الإجراءات"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -189,6 +218,8 @@
     "cta": "ابدأ"
   },
   "Dashboard": {
+    "welcomeBack": "مرحباً بعودتك، {name}!",
+    "subtitle": "إليك ما يحدث في مشاريعك البحثية اليوم",
     "createNewTest": "إنشاء دراسة جديدة",
     "tests": "الاختبارات",
     "templates": "القوالب",
@@ -198,7 +229,49 @@
     "publicTests": "الاختبارات العامة",
     "sessions": "الجلسات",
     "personal": "شخصي",
-    "explore": "استكشف"
+    "explore": "استكشف",
+    "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "progress": "التقدم",
+    "participants": "المشاركون",
+    "participantsLabel": "المشاركون",
+    "daysLeft": "أيام متبقية",
+    "dayLeft": "يوم متبقي",
+    "studies": "الدراسات",
+    "storage": "التخزين",
+    "free": "مجاني",
+    "plan": "الخطة",
+    "recentActivity": "النشاط الأخير",
+    "comingSoon": "قريباً",
+    "mostUsedMethods": "الطرق الأكثر استخداماً",
+    "use": "استخدام",
+    "uses": "استخدامات",
+    "noDataAvailable": "لا توجد بيانات متاحة حتى الآن",
+    "createFirstStudy": "أنشئ دراستك الأولى لرؤية الإحصائيات هنا.",
+    "nextSession": "الجلسة التالية",
+    "noSessionsScheduled": "لا توجد جلسات مجدولة",
+    "nextSessionWillAppear": "ستظهر جلستك التالية هنا",
+    "latestBlogPosts": "أحدث منشورات المدونة",
+    "viewBlog": "عرض المدونة",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "status": {
+      "active": "نشط",
+      "recruiting": "توظيف",
+      "paused": "متوقف",
+      "finished": "منتهي",
+      "unknown": "غير معروف"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الندوة",
+      "startingToday": "يبدأ اليوم"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -639,6 +712,27 @@
         "participants": "المشاركون",
         "created": "تم الإنشاء",
         "itemsPerPage": "العناصر لكل صفحة:"
+      }
+    },
+    "sessions": {
+      "searchPlaceholder": "البحث في الجلسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "sessionDate": "تاريخ الجلسة",
+      "selectRange": "اختر النطاق",
+      "statusLabel": "الحالة",
+      "ownership": "الملكية",
+      "evaluator": "المقيم",
+      "noActiveSessions": "ليس لديك جلسات نشطة",
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "القادمة",
+        "completed": "مكتمل",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون"
       }
     },
     "createTest": {
