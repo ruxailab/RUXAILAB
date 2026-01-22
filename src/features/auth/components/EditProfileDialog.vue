@@ -24,24 +24,41 @@
                             mdi-account-circle
                         </v-icon>
                     </v-avatar>
-                    <div class="mt-2">
+                    <div class="mt-2 d-flex justify-center gap-1">
                         <v-btn icon size="small" @click="selectImage" :disabled="isProcessingImage">
+                            <v-icon>mdi-image-plus</v-icon>
+                            <v-tooltip activator="parent" location="bottom">
+                                {{ $t('profile.uploadProfilePicture') }}
+                            </v-tooltip>
+                        </v-btn>
+                        <v-btn icon size="small" @click="showCameraDialog = true" :disabled="isProcessingImage">
                             <v-icon>mdi-camera</v-icon>
+                            <v-tooltip activator="parent" location="bottom">
+                                {{ $t('profile.takePhoto') }}
+                            </v-tooltip>
                         </v-btn>
                         <v-btn 
                             v-if="localProfileData.profileImage" 
                             icon 
                             size="small" 
-                            class="ml-2" 
                             color="error"
                             @click="removeImage"
                             :disabled="isProcessingImage"
                         >
                             <v-icon>mdi-delete</v-icon>
+                            <v-tooltip activator="parent" location="bottom">
+                                {{ $t('profile.removeProfilePicture') }}
+                            </v-tooltip>
                         </v-btn>
                     </div>
                     <input ref="fileInput" type="file" accept="image/*" style="display: none"
                         @change="handleImageSelect">
+                    
+                    <!-- Camera Capture Dialog -->
+                    <CameraCaptureDialog
+                        v-model="showCameraDialog"
+                        @photo-captured="handleCameraCapture"
+                    />
                 </div>
                 <v-form ref="formRef" v-model="isValid">
                     <v-text-field v-model="localProfileData.username" :label="$t('profile.username')" variant="outlined"
@@ -88,6 +105,7 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { countries } from '@/shared/constants/countries';
+import CameraCaptureDialog from './CameraCaptureDialog.vue';
 
 const props = defineProps({
     modelValue: {
@@ -118,6 +136,7 @@ const hasChanges = ref(false);
 // Store pending image file
 const pendingImageFile = ref(null);
 const pendingImagePreview = ref(null);
+const showCameraDialog = ref(false);
 
 const localProfileData = ref({
     username: '',
@@ -230,6 +249,19 @@ const removeImage = () => {
     
     pendingImageFile.value = null;
     localProfileData.value.profileImage = '';
+    hasChanges.value = true;
+};
+
+const handleCameraCapture = ({ file, previewUrl }) => {
+    // Clean up previous preview if exists
+    if (pendingImagePreview.value) {
+        URL.revokeObjectURL(pendingImagePreview.value);
+    }
+
+    // Store the file and preview (same as handleImageSelect)
+    pendingImageFile.value = file;
+    pendingImagePreview.value = previewUrl;
+    localProfileData.value.profileImage = previewUrl;
     hasChanges.value = true;
 };
 

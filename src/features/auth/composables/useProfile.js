@@ -55,6 +55,7 @@ export function useProfile() {
 
   const updateProfile = async (profileData) => {
     try {
+      console.log('updateProfile: Starting...', profileData)
       const auth = getAuth()
       const user = auth.currentUser
 
@@ -62,6 +63,7 @@ export function useProfile() {
         throw new Error(t('profile.noUserSignedIn'))
       }
 
+      console.log('updateProfile: User authenticated:', user.uid)
       const db = getFirestore()
       const userDocRef = doc(db, 'users', user.uid)
 
@@ -69,9 +71,11 @@ export function useProfile() {
 
       // Handle image upload if there's a pending file
       if (profileData.pendingImageFile) {
+        console.log('updateProfile: Uploading image file...', profileData.pendingImageFile)
         finalProfileImage = await uploadProfileImage(
           profileData.pendingImageFile,
         )
+        console.log('updateProfile: Image uploaded, URL:', finalProfileImage)
         if (!finalProfileImage) {
           throw new Error(t('profile.profileImageUploadFailed'))
         }
@@ -110,80 +114,70 @@ export function useProfile() {
     }
   }
 
-  const uploadProfileImage = async (file) => {
-    let blobUrl = null
+  // Convert file to Base64 data URL (bypasses Firebase Storage - works on free plan)
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+      reader.readAsDataURL(file)
+    })
+  }
 
+  const uploadProfileImage = async (file) => {
     try {
+      console.log('uploadProfileImage: Starting...', file.name, file.type, file.size)
       const auth = getAuth()
       const user = auth.currentUser
       if (!user) throw new Error(t('profile.noUserSignedIn'))
 
-      // Create blob URL for preview and track it
-      blobUrl = URL.createObjectURL(file)
-      blobUrls.add(blobUrl)
-
-      // Compress and upload
+      // Compress the image first
+      console.log('uploadProfileImage: Starting compression...')
       const compressedFile = await compressImage(file, 300, 0.6)
-      const storage = getStorage()
-      const storageReference = storageRef(storage, `profileImages/${user.uid}`)
+      console.log('uploadProfileImage: Compression done, file size:', compressedFile.size)
+      
+      // Convert to Base64 (stores directly in Firestore, no Storage needed!)
+      console.log('uploadProfileImage: Converting to Base64...')
+      const base64DataUrl = await fileToBase64(compressedFile)
+      console.log('uploadProfileImage: Base64 conversion complete, length:', base64DataUrl.length)
 
-      await uploadBytes(storageReference, compressedFile)
-      const downloadURL = await getDownloadURL(storageReference)
-
-      return downloadURL
+      // Return the Base64 data URL (this will be stored in Firestore)
+      return base64DataUrl
     } catch (error) {
-      console.error('Error uploading image:', error)
+      console.error('uploadProfileImage: Error:', error)
       throw error
-    } finally {
-      // Always cleanup blob URL
-      if (blobUrl) {
-        URL.revokeObjectURL(blobUrl)
-        blobUrls.delete(blobUrl)
-      }
     }
   }
 
   const removeProfileImage = async () => {
-    try {
-      const auth = getAuth()
-      const user = auth.currentUser
-      if (!user) throw new Error(t('profile.noUserSignedIn'))
-
-      // Only try to delete if there's an existing image
-      if (userprofile.value.profileImage) {
-        const storage = getStorage()
-        const storageReference = storageRef(
-          storage,
-          `profileImages/${user.uid}`,
-        )
-
-        try {
-          await deleteObject(storageReference)
-        } catch (error) {
-          // Ignore error if file doesn't exist
-          if (error.code !== 'storage/object-not-found') {
-            throw error
-          }
-        }
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error removing profile image:', error)
-      throw error
-    }
+    // With Base64 storage in Firestore, we just need to set profileImage to ''
+    // The actual removal happens in updateProfile when it saves the empty string
+    console.log('removeProfileImage: Image will be cleared from Firestore on save')
+    return true
   }
 
   const compressImage = (file, maxWidth, quality) => {
     return new Promise((resolve, reject) => {
+      // Add a timeout to prevent infinite hangs
+      const timeout = setTimeout(() => {
+        console.error('compressImage: Timeout after 10 seconds')
+        reject(new Error('Image compression timed out'))
+      }, 10000)
+
+      console.log('compressImage: Starting compression for', file.name, file.type, file.size)
+
       const reader = new FileReader()
       reader.readAsDataURL(file)
 
       reader.onload = (event) => {
+        console.log('compressImage: FileReader loaded, data URL length:', event.target.result.length)
         const img = new Image()
         img.src = event.target.result
 
         img.onload = () => {
+          console.log('compressImage: Image loaded, dimensions:', img.width, 'x', img.height)
+          clearTimeout(timeout)
+          
           const canvas = document.createElement('canvas')
           let width = img.width
           let height = img.height
@@ -206,6 +200,7 @@ export function useProfile() {
           canvas.toBlob(
             (blob) => {
               if (blob) {
+                console.log('compressImage: Compression complete, blob size:', blob.size)
                 resolve(
                   new File([blob], file.name, {
                     type: 'image/jpeg',
@@ -213,6 +208,7 @@ export function useProfile() {
                   }),
                 )
               } else {
+                console.error('compressImage: Canvas to Blob conversion failed')
                 reject(new Error('Canvas to Blob conversion failed'))
               }
             },
@@ -221,10 +217,18 @@ export function useProfile() {
           )
         }
 
-        img.onerror = () => reject(new Error('Image load failed'))
+        img.onerror = (error) => {
+          clearTimeout(timeout)
+          console.error('compressImage: Image load failed', error)
+          reject(new Error('Image load failed'))
+        }
       }
 
-      reader.onerror = () => reject(new Error('FileReader error'))
+      reader.onerror = (error) => {
+        clearTimeout(timeout)
+        console.error('compressImage: FileReader error', error)
+        reject(new Error('FileReader error'))
+      }
     })
   }
 
