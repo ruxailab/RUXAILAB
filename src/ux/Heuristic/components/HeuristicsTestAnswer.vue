@@ -651,21 +651,14 @@ const checkIfNan = (value) => {
 };
 
 const getColor = (value, max, min) => {
-  if (value == null) return 'grey';
-
-  const val = Number(value);
   max = Number(max) || 0;
   min = Number(min) || 0;
 
-  if (Number.isNaN(val)) return 'grey';
-  
-  if (val === 0) return 'red';
+  if (value == null || Number.isNaN(Number(value))) return 'grey';
+  if (value === 0) return 'red';
+  if (max === min) return 'green';
 
-  if (max === min) {
-    return val === max ? 'green' : 'grey';
-  }
-
-  const h = (max - min) / 4;
+  const h = max ? (max - min) / max : 0;
 
   if (val <= min + 1 * h) return 'amber';
   if (val <= min + 2 * h) return 'orange lighten-1';
