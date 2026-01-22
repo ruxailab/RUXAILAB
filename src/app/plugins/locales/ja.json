@@ -27,15 +27,6 @@
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
-      "instructions": "メールアドレスを入力してください。パスワードリセット用のリンクをお送りします。",
-      "reset_button": "リセットリンクを送信",
-      "back_to_signin": "サインインに戻る"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "パスワードをリセット",
-      "email": "メールアドレス",
       "instructions": "メールアドレスを入力すると、パスワードをリセットするリンクを送信します。",
       "reset_button": "リセットリンクを送信",
       "back_to_signin": "ログイン画面に戻る",
@@ -43,6 +34,15 @@
       "reset_link_sent": "パスワードリセットリンクを送信しました：",
       "no_email": "メールが届いていませんか？",
       "try_again": "もう一度試す"
+    },
+    "passwordStrength": "パスワードの強度",
+    "number": "数字",
+    "strength": {
+      "veryWeak": "非常に弱い",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い"
     }
   },
   "common": {
@@ -80,7 +80,27 @@
     "viewAll": "すべて表示",
     "sentBy": "送信者",
     "new": "新着",
-    "test": "テスト"
+    "test": "テスト",
+    "itemsPerPage": "ページあたりのアイテム数:"
+  },
+  "storage": {
+    "pageTitle": "ストレージ",
+    "totalStorage": "総ストレージ",
+    "acrossFiles": "{count} ファイル",
+    "mediaFiles": "メディアファイル",
+    "searchByStudyOrDate": "研究または日付で検索",
+    "deleteFile": "ファイルを削除",
+    "noMediaFiles": "メディアファイルが見つかりません",
+    "confirmDeletion": "削除の確認",
+    "deleteConfirmMessage": "\"{studyName}\" からこの {type} ファイルを削除してもよろしいですか？",
+    "actionCannotBeUndone": "この操作は元に戻せません。",
+    "headers": {
+      "type": "タイプ",
+      "studyName": "研究名",
+      "date": "日付",
+      "size": "サイズ",
+      "actions": "アクション"
+    }
   },
   "profile": {
     "title": "プロフィール",
@@ -184,6 +204,8 @@
     "cta": "始める"
   },
   "Dashboard": {
+    "welcomeBack": "おかえりなさい、{name}さん！",
+    "subtitle": "今日のあなたの研究プロジェクトの状況です",
     "createNewTest": "新しいテストを作成",
     "tests": "テスト",
     "templates": "テンプレート",
@@ -193,7 +215,49 @@
     "publicTests": "公開テスト",
     "sessions": "セッション",
     "personal": "個人",
-    "explore": "探す"
+    "explore": "探す",
+    "activeStudiesOverview": "アクティブな研究の概要",
+    "viewAll": "すべて表示",
+    "showMore": "もっと見る",
+    "showLess": "少なく表示",
+    "progress": "進捗",
+    "participants": "参加者",
+    "participantsLabel": "参加者",
+    "daysLeft": "日残り",
+    "dayLeft": "日残り",
+    "studies": "研究",
+    "storage": "ストレージ",
+    "free": "無料",
+    "plan": "プラン",
+    "recentActivity": "最近のアクティビティ",
+    "comingSoon": "近日公開",
+    "mostUsedMethods": "最も使用されている方法",
+    "use": "使用",
+    "uses": "使用回数",
+    "noDataAvailable": "まだデータがありません",
+    "createFirstStudy": "ここに統計を表示するには、最初の研究を作成してください。",
+    "nextSession": "次のセッション",
+    "noSessionsScheduled": "予定されたセッションはありません",
+    "nextSessionWillAppear": "次のセッションがここに表示されます",
+    "latestBlogPosts": "最新のブログ投稿",
+    "viewBlog": "ブログを見る",
+    "date": "日付",
+    "time": "時間",
+    "status": {
+      "active": "アクティブ",
+      "recruiting": "募集中",
+      "paused": "一時停止",
+      "finished": "完了",
+      "unknown": "不明"
+    },
+    "webinar": {
+      "ended": "終了",
+      "live": "ライブ",
+      "today": "今日",
+      "joinNow": "今すぐ参加",
+      "webinarEnded": "ウェビナー終了",
+      "startingToday": "本日開始"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -581,6 +645,27 @@
       "version": "バージョン：",
       "noTests": "テストが見つかりません",
       "noTemplates": "テンプレートが見つかりません"
+    },
+    "sessions": {
+      "searchPlaceholder": "セッションを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "sessionDate": "セッション日",
+      "selectRange": "範囲を選択",
+      "statusLabel": "ステータス",
+      "ownership": "所有権",
+      "evaluator": "評価者",
+      "noActiveSessions": "アクティブなセッションがありません",
+      "filters": {
+        "allStatuses": "すべてのステータス",
+        "today": "今日",
+        "upcoming": "今後",
+        "completed": "完了",
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中"
+      }
     },
     "createTest": {
       "title": "新しいテストを作成",

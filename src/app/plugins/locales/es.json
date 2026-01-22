@@ -34,6 +34,15 @@
       "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
       "no_email": "¿No recibiste el correo?",
       "try_again": "Inténtalo de nuevo"
+    },
+    "passwordStrength": "Fortaleza de la contraseña",
+    "number": "Número",
+    "strength": {
+      "veryWeak": "Muy débil",
+      "weak": "Débil",
+      "fair": "Regular",
+      "good": "Buena",
+      "strong": "Fuerte"
     }
   },
   "common": {
@@ -72,7 +81,27 @@
     "viewAll": "Ver todo",
     "sentBy": "Enviado por",
     "new": "NUEVO",
-    "test": "un estudio"
+    "test": "un estudio",
+    "itemsPerPage": "Elementos por página:"
+  },
+  "storage": {
+    "pageTitle": "Almacenamiento",
+    "totalStorage": "Almacenamiento total",
+    "acrossFiles": "En {count} archivos",
+    "mediaFiles": "Archivos multimedia",
+    "searchByStudyOrDate": "Buscar por estudio o fecha",
+    "deleteFile": "Eliminar archivo",
+    "noMediaFiles": "No se encontraron archivos multimedia",
+    "confirmDeletion": "Confirmar eliminación",
+    "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar este archivo {type} de \"{studyName}\"?",
+    "actionCannotBeUndone": "Esta acción no se puede deshacer.",
+    "headers": {
+      "type": "Tipo",
+      "studyName": "Nombre del estudio",
+      "date": "Fecha",
+      "size": "Tamaño",
+      "actions": "Acciones"
+    }
   },
   "profile": {
     "superAdmin": "Súper Administrador",
@@ -196,6 +225,8 @@
     "cta": "Comenzar"
   },
   "Dashboard": {
+    "welcomeBack": "¡Bienvenido de nuevo, {name}!",
+    "subtitle": "Esto es lo que está pasando con tus proyectos de investigación hoy",
     "createNewTest": "Crear nueva prueba",
     "tests": "Pruebas",
     "templates": "Plantillas",
@@ -206,6 +237,48 @@
     "sessions": "Sesiones",
     "personal": "Personal",
     "explore": "Explorar",
+    "activeStudiesOverview": "Resumen de estudios activos",
+    "viewAll": "Ver todo",
+    "showMore": "Ver más",
+    "showLess": "Ver menos",
+    "progress": "Progreso",
+    "participants": "Participantes",
+    "participantsLabel": "Participantes",
+    "daysLeft": "días restantes",
+    "dayLeft": "día restante",
+    "studies": "Estudios",
+    "storage": "Almacenamiento",
+    "free": "Gratis",
+    "plan": "Plan",
+    "recentActivity": "Actividad reciente",
+    "comingSoon": "Próximamente",
+    "mostUsedMethods": "Métodos más usados",
+    "use": "uso",
+    "uses": "usos",
+    "noDataAvailable": "No hay datos disponibles todavía",
+    "createFirstStudy": "Crea tu primer estudio para ver estadísticas aquí.",
+    "nextSession": "Próxima sesión",
+    "noSessionsScheduled": "No hay sesiones programadas",
+    "nextSessionWillAppear": "Tu próxima sesión aparecerá aquí",
+    "latestBlogPosts": "Últimas publicaciones del blog",
+    "viewBlog": "Ver blog",
+    "date": "Fecha",
+    "time": "Hora",
+    "status": {
+      "active": "Activo",
+      "recruiting": "Reclutando",
+      "paused": "Pausado",
+      "finished": "Finalizado",
+      "unknown": "Desconocido"
+    },
+    "webinar": {
+      "ended": "Finalizado",
+      "live": "En vivo",
+      "today": "Hoy",
+      "joinNow": "Unirse ahora",
+      "webinarEnded": "Webinar finalizado",
+      "startingToday": "Comienza hoy"
+    },
     "cards": {
       "recentActivity": "Actividad Reciente",
       "activities7Days": "Actividades (7 días en total)",
@@ -659,6 +732,27 @@
       "version": "Versión:",
       "noTests": "No se encontraron pruebas",
       "noTemplates": "No se encontraron plantillas"
+    },
+    "sessions": {
+      "searchPlaceholder": "Buscar sesiones...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "sessionDate": "Fecha de sesión",
+      "selectRange": "Seleccionar rango",
+      "statusLabel": "Estado",
+      "ownership": "Propiedad",
+      "evaluator": "Evaluador",
+      "noActiveSessions": "No tienes sesiones activas",
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "today": "Hoy",
+        "upcoming": "Próximas",
+        "completed": "Completado",
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Donde colaboro"
+      }
     },
     "createTest": {
       "title": "Crear una nueva prueba",
