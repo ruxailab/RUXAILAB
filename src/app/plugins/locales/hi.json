@@ -491,7 +491,8 @@
       "cancel_invitation": "क्या आप वाकई {email} का आमंत्रण रद्द करना चाहते हैं?",
       "change_role": "क्या आप वाकई {email} की भूमिका {old} से {new} में बदलना चाहते हैं?",
       "message_title_hint": "संदेश का शीर्षक दर्ज करें",
-      "message_content_hint": "संदेश की सामग्री दर्ज करें"
+      "message_content_hint": "संदेश की सामग्री दर्ज करें",
+      "invite_message": "आपको '{testTitle}' पर सहयोग के लिए आमंत्रित किया गया है"
     }
   },
   "UserTestTable": {

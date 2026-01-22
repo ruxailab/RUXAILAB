@@ -236,42 +236,80 @@ const handleSendInvitations = async (invitationData) => {
 
   const { selectedCoops, selectedRole, inviteMessage } = invitationData
   const tokens = {}
+  const newInvites = []
+  const updatedRoles = []
 
   inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
   selectedCoops.forEach((coop) => {
-    const token = uidgen.generateSync()
-    if (!coop.id) {
-      cooperatorsEdit.value.push({
-        userDocId: null,
-        email: coop,
-        invited: true,
-        accepted: false,
-        accessLevel: roleOptions.value[selectedRole].value,
-        token,
-        progress: 0,
-        updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || '',
-      })
+    const coopEmail = coop.email || coop // Handle both object and string formats
+    
+    // Check if this email already exists in cooperators list
+    const existingIndex = cooperatorsEdit.value.findIndex(
+      (c) => c.email === coopEmail
+    )
+
+    if (existingIndex !== -1) {
+      // Email already exists - update their role instead of creating duplicate
+      const existing = cooperatorsEdit.value[existingIndex]
+      const newRole = roleOptions.value[selectedRole].value
+      
+      if (existing.accessLevel !== newRole) {
+        // Update the existing entry's role
+        cooperatorsEdit.value[existingIndex] = {
+          ...existing,
+          accessLevel: newRole,
+          updateDate: new Date().getTime(),
+        }
+        updatedRoles.push(coopEmail)
+      }
+      // Keep existing token so their invite link still works
+      tokens[coop.id || coop] = existing.token
     } else {
-      cooperatorsEdit.value.push({
-        userDocId: coop.id,
-        email: coop.email,
-        invited: true,
-        accepted: false,
-        accessLevel: roleOptions.value[selectedRole].value,
-        token,
-        progress: 0,
-        updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || '',
-      })
+      // New email - create new cooperator entry
+      const token = uidgen.generateSync()
+      if (!coop.id) {
+        cooperatorsEdit.value.push({
+          userDocId: null,
+          email: coop,
+          invited: true,
+          accepted: false,
+          accessLevel: roleOptions.value[selectedRole].value,
+          token,
+          progress: 0,
+          updateDate: test.value?.updateDate || new Date().toISOString(),
+          testAuthorEmail: test.value?.testAdmin?.email || '',
+        })
+      } else {
+        cooperatorsEdit.value.push({
+          userDocId: coop.id,
+          email: coop.email,
+          invited: true,
+          accepted: false,
+          accessLevel: roleOptions.value[selectedRole].value,
+          token,
+          progress: 0,
+          updateDate: test.value?.updateDate || new Date().toISOString(),
+          testAuthorEmail: test.value?.testAdmin?.email || '',
+        })
+      }
+      tokens[coop.id || coop] = token
+      newInvites.push(coopEmail)
     }
-    tokens[coop.id || coop] = token
   })
 
   await submit()
   showInviteDialog.value = false
+
+  // Show appropriate feedback
+  if (updatedRoles.length > 0) {
+    const roleName = roleOptions.value[selectedRole].title
+    showSuccess(`Updated role to ${roleName} for: ${updatedRoles.join(', ')}`)
+  }
+  if (newInvites.length > 0) {
+    showSuccess(`Invitation sent to: ${newInvites.join(', ')}`)
+  }
 }
 
 const changeRole = async (item, newValue) => {
