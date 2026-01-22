@@ -99,7 +99,7 @@
             <v-card-text class="pa-6">
               <div style="position: relative; height: 300px; width: 100%;">
                 <Scatter 
-                  v-if="scatterChartData.datasets[0].data.length > 0"
+                 v-if="scatterChartData?.datasets?.[0]?.data?.length > 0"
                   :data="scatterChartData" 
                   :options="scatterChartOptions"
                   style="height: 100%;"
@@ -111,7 +111,7 @@
               <div class="d-flex justify-center gap-2 mt-4">
                 <div class="d-flex align-center gap-1">
                   <div style="width: 10px; height: 10px; border-radius: 50%; background: #2196F3;"></div>
-                  <span class="text-caption">{{ scatterChartData.datasets[0].data.length }} Respondents</span>
+                  <span class="text-caption">{{ scatterChartData?.datasets?.[0]?.data?.length || 0 }} Respondents</span>
                 </div>
               </div>
             </v-card-text>
@@ -431,6 +431,33 @@ const availableVersions = computed(() => {
   return result.length > 0 ? result : [];
 })
 
+// Helper function to extract values from answers (handles both array and single values)
+function extractValuesFromAnswer(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.filter(v => typeof v === 'number');
+  if (typeof value === 'number') return [value];
+  return [];
+}
+
+// Helper function to get PU and EU values based on TAM version
+function getPUandEUValues(answers, itemVersion) {
+  let puValues = [];
+  let euValues = [];
+  
+  puValues = extractValuesFromAnswer(answers.perceivedUsefulness);
+  euValues = extractValuesFromAnswer(answers.perceivedEaseOfUse);
+  
+  return { puValues, euValues };
+}
+
+// Helper function to convert scores to 0-100 scale
+function convertScoreTo100(values, scaleMax) {
+  if (values.length === 0) return 0;
+  const denominator = scaleMax - 1;
+  const average = values.reduce((a, b) => a + b, 0) / values.length;
+  return ((average - 1) / denominator * 100);
+}
+
 // Generate scatter plot data showing Perceived Usefulness vs Ease of Use
 const scatterPlotData = computed(() => {
   const points = [];
@@ -452,108 +479,28 @@ const scatterPlotData = computed(() => {
     const answers = item.tamAnswers;
     console.log('Processing item', idx, 'with answers:', Object.keys(answers));
     
-    let puValues = [];
-    let euValues = [];
-    
-    // Determine which version we're looking at
     const itemVersion = item.taskType; // 'tam-1', 'tam-2', 'tam-3'
-    
-    // Handle TAM-2 structure (arrays of answers with full names)
-    if (itemVersion === 'tam-2') {
-      if (answers.perceivedUsefulness && Array.isArray(answers.perceivedUsefulness)) {
-        puValues = answers.perceivedUsefulness.filter(v => typeof v === 'number');
-      }
-      if (answers.perceivedEaseOfUse && Array.isArray(answers.perceivedEaseOfUse)) {
-        euValues = answers.perceivedEaseOfUse.filter(v => typeof v === 'number');
-      }
-    }
-    // Handle TAM-3 structure (abbreviated keys)
-    else if (itemVersion === 'tam-3') {
-      // Look for tam3_pu or pu data
-      if (answers.tam3_pu !== undefined) {
-        if (Array.isArray(answers.tam3_pu)) {
-          puValues = answers.tam3_pu.filter(v => typeof v === 'number');
-        } else if (typeof answers.tam3_pu === 'number') {
-          puValues = [answers.tam3_pu];
-        }
-      } else if (answers.perceivedUsefulness) {
-        if (Array.isArray(answers.perceivedUsefulness)) {
-          puValues = answers.perceivedUsefulness.filter(v => typeof v === 'number');
-        } else if (typeof answers.perceivedUsefulness === 'number') {
-          puValues = [answers.perceivedUsefulness];
-        }
-      }
-      
-      if (answers.tam3_eu !== undefined) {
-        if (Array.isArray(answers.tam3_eu)) {
-          euValues = answers.tam3_eu.filter(v => typeof v === 'number');
-        } else if (typeof answers.tam3_eu === 'number') {
-          euValues = [answers.tam3_eu];
-        }
-      } else if (answers.perceivedEaseOfUse) {
-        if (Array.isArray(answers.perceivedEaseOfUse)) {
-          euValues = answers.perceivedEaseOfUse.filter(v => typeof v === 'number');
-        } else if (typeof answers.perceivedEaseOfUse === 'number') {
-          euValues = [answers.perceivedEaseOfUse];
-        }
-      }
-    }
-    // Handle TAM-1 structure (abbreviated keys)
-    else if (itemVersion === 'tam-1') {
-      if (answers.tam1_pu !== undefined) {
-        if (Array.isArray(answers.tam1_pu)) {
-          puValues = answers.tam1_pu.filter(v => typeof v === 'number');
-        } else if (typeof answers.tam1_pu === 'number') {
-          puValues = [answers.tam1_pu];
-        }
-      } else if (answers.perceivedUsefulness) {
-        if (Array.isArray(answers.perceivedUsefulness)) {
-          puValues = answers.perceivedUsefulness.filter(v => typeof v === 'number');
-        } else if (typeof answers.perceivedUsefulness === 'number') {
-          puValues = [answers.perceivedUsefulness];
-        }
-      }
-      
-      if (answers.tam1_eu !== undefined) {
-        if (Array.isArray(answers.tam1_eu)) {
-          euValues = answers.tam1_eu.filter(v => typeof v === 'number');
-        } else if (typeof answers.tam1_eu === 'number') {
-          euValues = [answers.tam1_eu];
-        }
-      } else if (answers.perceivedEaseOfUse) {
-        if (Array.isArray(answers.perceivedEaseOfUse)) {
-          euValues = answers.perceivedEaseOfUse.filter(v => typeof v === 'number');
-        } else if (typeof answers.perceivedEaseOfUse === 'number') {
-          euValues = [answers.perceivedEaseOfUse];
-        }
-      }
-    }
+    const { puValues, euValues } = getPUandEUValues(answers, itemVersion);
     
     // Calculate averages (convert from scale to 0-100)
-    // TAM-1 and TAM-2 use 7-point scale: (average - 1) / 6 * 100
-    // TAM-3 uses 5-point scale: (average - 1) / 4 * 100
+    // TAM-1 and TAM-2 use 7-point scale
+    // TAM-3 uses 5-point scale
     const scaleMax = selectedVersionFull === 'tam-3' ? 5 : 7;
-    const denominator = scaleMax - 1;
     
-    const puAvg = puValues.length > 0 
-      ? ((puValues.reduce((a, b) => a + b, 0) / puValues.length - 1) / denominator * 100) 
-      : 0;
-    const euAvg = euValues.length > 0 
-      ? ((euValues.reduce((a, b) => a + b, 0) / euValues.length - 1) / denominator * 100) 
-      : 0;
+    const puAvg = convertScoreTo100(puValues, scaleMax);
+    const euAvg = convertScoreTo100(euValues, scaleMax);
     
-    console.log(`Item ${idx} (${itemVersion}): scaleMax=${scaleMax}, denominator=${denominator}, PU avg=${puAvg}, EU avg=${euAvg}, PU values=${puValues}, EU values=${euValues}`);
+    console.log(`Item ${idx} (${itemVersion}): scaleMax=${scaleMax}, PU avg=${puAvg}, EU avg=${euAvg}`);
     
     // Add point if we have at least some data
     if (puValues.length > 0 || euValues.length > 0) {
+      const respondentName = item.fullName || 'User ' + (idx + 1);
       points.push({
-        usefulness: Math.round(puAvg),
-        easeOfUse: Math.round(euAvg),
-        color: '#2196F3',
-        hovered: false,
-        respondent: item.fullName || `User ${idx + 1}`
+        respondent: respondentName,
+        usefulness: puAvg,
+        easeOfUse: euAvg
       });
-      console.log(`✓ Added point for ${item.fullName || `User ${idx + 1}`}: U=${Math.round(puAvg)}, E=${Math.round(euAvg)}`);
+      console.log('✓ Added point for ' + respondentName + ': U=' + Math.round(puAvg) + ', E=' + Math.round(euAvg));
     }
   });
   
@@ -725,7 +672,7 @@ const tamData = computed(() => {
       if (!task) return;
       
       // Get the actual task index/id
-      const taskId = task.taskId !== undefined ? task.taskId : taskIndexOrId;
+      const taskId = task.taskId ?? taskIndexOrId;
       
       // Get task type from test structure
       const taskType = test.value?.userTasks?.[taskId]?.taskType;
@@ -834,6 +781,12 @@ function openDetails(response) {
 // Helper function to get the answer array for a construct
 function getAnswerArrayForConstruct(answers, constructKey) {
   const mapping = {
+    // TAM-1
+    'tam1_pu': 'perceivedUsefulness',
+    'tam1_eu': 'perceivedEaseOfUse',
+    'tam1_att': 'attitudeTowardUsing',
+    'tam1_use': 'actualSystemUse',
+    // TAM-2
     'tam2_int': 'intentionToUse',
     'tam2_pu': 'perceivedUsefulness',
     'tam2_eu': 'perceivedEaseOfUse',
@@ -843,10 +796,28 @@ function getAnswerArrayForConstruct(answers, constructKey) {
     'tam2_jr': 'jobRelevance',
     'tam2_oq': 'outputQuality',
     'tam2_rd': 'resultDemonstrability',
-    'tam1_pu': 'perceivedUsefulness',
-    'tam1_eu': 'perceivedEaseOfUse',
-    'tam1_att': 'attitudeTowardUsing',
-    'tam1_use': 'actualSystemUse'
+    // TAM-3 Core
+    'tam3_pu': 'perceivedUsefulness',
+    'tam3_eu': 'perceivedEaseOfUse',
+    'tam3_bi': 'behavioralIntention',
+    'tam3_use': 'usePatterns',
+    // TAM-3 Determinants of PU
+    'tam3_sn': 'subjectiveNorm',
+    'tam3_img': 'image',
+    'tam3_jr': 'jobRelevance',
+    'tam3_oq': 'outputQuality',
+    'tam3_rd': 'resultDemonstrability',
+    // TAM-3 Determinants of PEOU - Anchors
+    'tam3_cse': 'computerSelfEfficacy',
+    'tam3_ec': 'perceptionsOfExternalControl',
+    'tam3_anx': 'computerAnxiety',
+    'tam3_pf': 'computerPlayfulness',
+    // TAM-3 Determinants of PEOU - Adjustments
+    'tam3_enj': 'perceivedEnjoyment',
+    'tam3_ou': 'objectiveUsability',
+    // TAM-3 Moderators
+    'tam3_exp': 'experience',
+    'tam3_vol': 'voluntariness'
   }
   
   const answerKey = mapping[constructKey]
@@ -997,14 +968,100 @@ function getConstructAnswers(constructKey) {
       'I believe I could communicate to others the consequences of using the system',
       'The results of using the system are apparent to me',
       'I would have difficulty explaining why using the system may or may not be beneficial'
+    ],
+    // TAM-3 Core Constructs
+    'tam3_pu': [
+      'I find the system useful in my job',
+      'Using the system enables me to accomplish tasks more quickly',
+      'Using the system improves the quality of the work I produce'
+    ],
+    'tam3_eu': [
+      'My interaction with the system is clear and understandable',
+      'I find it easy to get the system to do what I want it to do',
+      'Learning to operate the system is easy for me'
+    ],
+    'tam3_bi': [
+      'Assuming I have access to the system, I intend to use it',
+      'Given that I have access to the system, I predict that I would use it'
+    ],
+    'tam3_use': [
+      'Frequency of use',
+      'Hours per week'
+    ],
+    // TAM-3 Determinants of PU
+    'tam3_sn': [
+      'People who influence my behavior think that I should use the system',
+      'People who are important to me think that I should use the system',
+      'The senior management of my organization has been helpful in the use of the system'
+    ],
+    'tam3_img': [
+      'People in my organization who use the system have more prestige than those who do not',
+      'Having the system is a status symbol in my organization'
+    ],
+    'tam3_jr': [
+      'In my job, usage of the system is important',
+      'In my job, usage of the system is relevant',
+      'My use of the system is critical to aspects of my job'
+    ],
+    'tam3_oq': [
+      'The quality of the output I get from the system is high',
+      'I have no problem with the quality of the system\'s output'
+    ],
+    'tam3_rd': [
+      'I have no difficulty telling others about the results of using the system',
+      'The results of using the system are apparent to me'
+    ],
+    // TAM-3 Determinants of PEOU - Anchors
+    'tam3_cse': [
+      'I have the knowledge necessary to use the system',
+      'I could complete the job or task using the system, if there was no one around to help me',
+      'I feel apprehensive about using the system'
+    ],
+    'tam3_ec': [
+      'I have control over the decision of whether to use the system',
+      'The decision to use the system is beyond my control',
+      'I have the resources necessary to use the system'
+    ],
+    'tam3_anx': [
+      'I feel apprehensive about using the system',
+      'It scares me to think that I could lose a lot of information using the system',
+      'I hesitate to use the system for fear of making mistakes I cannot correct'
+    ],
+    'tam3_pf': [
+      'I find using the system to be enjoyable',
+      'Using the system is fun'
+    ],
+    // TAM-3 Determinants of PEOU - Adjustments
+    'tam3_enj': [
+      'I find the technology enjoyable to use',
+      'Using the technology is pleasurable',
+      'Using the technology is entertaining'
+    ],
+    'tam3_ou': [
+      'The technology is user-friendly',
+      'The technology requires minimal effort to use'
+    ],
+    // TAM-3 Moderators
+    'tam3_exp': [
+      'I have previous experience using similar technology',
+      'I have had considerable experience with computer technology'
+    ],
+    'tam3_vol': [
+      'My use of the system is voluntary',
+      'My supervisor does not require me to use the system',
+      'Although it might be helpful, using the system is certainly not compulsory in my job'
     ]
   }
 
   const answers = selectedResponse.value.tamAnswers
-  const constructAnswers = []
   
   // Handle special case (tam1_use with frequency labels)
   if (constructKey === 'tam1_use') {
+    return processSpecialAnswers(answers, constructKey, questions)
+  }
+  
+  // Handle special case (tam3_use with frequency labels)
+  if (constructKey === 'tam3_use') {
     return processSpecialAnswers(answers, constructKey, questions)
   }
   
@@ -1012,8 +1069,12 @@ function getConstructAnswers(constructKey) {
   const answerArray = getAnswerArrayForConstruct(answers, constructKey)
   
   // Determine if we need to limit the index
-  const indexLimit = ['tam2_pu', 'tam2_eu'].includes(constructKey) ? 4 : 
-                     ['tam2_img'].includes(constructKey) ? 3 : null
+  let indexLimit = null
+  if (['tam2_pu', 'tam2_eu'].includes(constructKey)) {
+    indexLimit = 4
+  } else if (['tam2_img'].includes(constructKey)) {
+    indexLimit = 3
+  }
   
   const results = processConstructAnswers(answerArray, questions, constructKey, indexLimit)
   
@@ -1029,7 +1090,6 @@ function getConstructAnswers(constructKey) {
 
 function calculateAnalytics() {
   // Filter data based on selected version (tam1, tam2, tam3)
-  const selectedVersionValue = selectedVersion.value.toLowerCase(); // 'tam1', 'tam2', 'tam3'
   const selectedVersionFull = selectedVersion.value.includes('-') ? selectedVersion.value : `tam-${selectedVersion.value.slice(-1)}`; // 'tam-1', 'tam-2', 'tam-3'
   
   const filteredData = tamData.value.filter(item => {
@@ -1104,7 +1164,7 @@ function calculateAnalytics() {
   activeDimensions.forEach(dim => {
     const values = responses
       .map(r => r.dimensionScores[dim.key])
-      .filter(v => typeof v === 'number' && !isNaN(v))
+      .filter(v => typeof v === 'number' && !Number.isNaN(v))
     dimensionAverages[dim.key] = values.length > 0
       ? Math.round((values.reduce((sum, val) => sum + val, 0) / values.length) * 10) / 10
       : 0
@@ -1198,7 +1258,7 @@ function getUsedVersionsCount() {
   count = uniqueVersions.size;
   console.log('Unique TAM versions in test:', Array.from(uniqueVersions), 'Count:', count);
   
-  return count > 0 ? count : 0;
+  return Math.max(count, 0);
 }
 
 // Get highest scoring dimension
@@ -1214,7 +1274,7 @@ function getHighestConstruct() {
   const topKey = sorted[0][0]
   
   // Find the dimension label for this key - directly from TAM_DIMENSIONS
-  const versionNum = selectedVersion.value.includes('tam') ? selectedVersion.value.replace(/[^0-9]/g, '') : selectedVersion.value
+  const versionNum = selectedVersion.value.includes('tam') ? selectedVersion.value.replaceAll(/\D/g, '') : selectedVersion.value
   const versionKey = `tam${versionNum}`
   const dimensions = TAM_DIMENSIONS[versionKey] || []
   const dimension = dimensions.find(d => d.key === topKey)
@@ -1235,7 +1295,7 @@ function getHighestConstructScore() {
   
   const scores = Object.values(analytics.value.dimensionAverages)
   const maxScore = Math.max(...scores.filter(s => typeof s === 'number'))
-  return isFinite(maxScore) ? maxScore.toFixed(1) : '0'
+  return Number.isFinite(maxScore) ? maxScore.toFixed(1) : '0'
 }
 
 // Get core dimensions and their scores for the bar chart

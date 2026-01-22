@@ -67,8 +67,8 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
-      tamAnswers: this.tamAnswers != null ? (this.tamAnswers instanceof TamAnswer ? this.tamAnswers : new TamAnswer(this.tamAnswers)).toFirestore() : null,
+      nasaTlxAnswers: this.nasaTlxAnswers ? ((this.nasaTlxAnswers instanceof NasaTlxAnswer) ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
+      tamAnswers: this.tamAnswers ? ((this.tamAnswers instanceof TamAnswer) ? this.tamAnswers : new TamAnswer(this.tamAnswers)).toFirestore() : null,
       sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers,
       facialSentimentResults: this.facialSentimentResults,
     }
