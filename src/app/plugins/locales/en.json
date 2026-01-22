@@ -240,6 +240,11 @@
     "sessions": "Sessions",
     "personal": "Personal",
     "explore": "Explore",
+    "activeStudies": {
+      "noActiveStudies": "No Active Studies",
+      "createNewStudy": "Create New Study",
+      "emptyStateMessage": "You don't have any studies yet. Create your first study to start gathering valuable user insights."
+    },
     "cards": {
       "recentActivity": "Recent Activity",
       "activities7Days": "Activities (7 days total)",

@@ -198,7 +198,12 @@
     "publicTests": "Tests publics",
     "sessions": "Sessions",
     "personal": "Personnel",
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "activeStudies": {
+      "noActiveStudies": "Aucune Étude Active",
+      "createNewStudy": "Créer une Nouvelle Étude",
+      "emptyStateMessage": "Vous n'avez pas encore d'études. Créez votre première étude pour commencer à recueillir des informations précieuses sur les utilisateurs."
+    }
   },
   "HeuristicsTable": {
     "titles": {

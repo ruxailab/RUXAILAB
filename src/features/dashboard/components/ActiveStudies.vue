@@ -37,11 +37,10 @@
               class="mb-4"
             />
             <h3 class="text-h6 font-weight-medium mb-2 text-medium-emphasis">
-              No Active Studies
+              {{ $t('Dashboard.activeStudies.noActiveStudies') }}
             </h3>
             <p class="text-body-2 text-medium-emphasis mb-6 max-width-400">
-              You don't have any studies yet. Create your first study to start
-              gathering valuable user insights.
+              {{ $t('Dashboard.activeStudies.emptyStateMessage') }}
             </p>
             <v-btn
               color="primary"
@@ -51,7 +50,7 @@
               @click="createNewStudy"
               class="px-6"
             >
-              Create New Study
+              {{ $t('Dashboard.activeStudies.createNewStudy') }}
             </v-btn>
           </div>
         </v-col>
@@ -161,6 +160,9 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   studies: {
@@ -182,11 +184,7 @@ const isLongDescription = (description) => {
 }
 
 const studies = computed(() => {
-  return props.studies.length > 0
-    ? studiesWithAnswers.value
-    : loading.value
-    ? []
-    : []
+  return props.studies.length > 0 ? studiesWithAnswers.value : []
 })
 
 const hasNoStudies = computed(() => {

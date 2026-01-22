@@ -198,7 +198,12 @@
     "publicTests": "Öffentliche Tests",
     "sessions": "Sitzungen",
     "personal": "Persönlich",
-    "explore": "Erkunden"
+    "explore": "Erkunden",
+    "activeStudies": {
+      "noActiveStudies": "Keine Aktiven Studien",
+      "createNewStudy": "Neue Studie Erstellen",
+      "emptyStateMessage": "Sie haben noch keine Studien. Erstellen Sie Ihre erste Studie, um wertvolle Benutzererkenntnisse zu sammeln."
+    }
   },
   "HeuristicsTable": {
     "titles": {
