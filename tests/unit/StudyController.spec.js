@@ -129,14 +129,6 @@ describe('StudyController', () => {
 
     describe('createStudy', () => {
         it('should call create method on parent with correct collection', async () => {
-            const mockPayload = {
-                testType: 'HEURISTIC',
-                testTitle: 'Test Study',
-                toFirestore: jest.fn().mockReturnValue({
-                    testType: 'HEURISTIC',
-                    testTitle: 'Test Study'
-                })
-            }
 
             spies.create.mockResolvedValueOnce({ id: 'study-123' })
             
