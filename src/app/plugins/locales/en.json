@@ -763,6 +763,27 @@
       "noTests": "No tests found",
       "noTemplates": "No templates found"
     },
+    "sessions": {
+      "searchPlaceholder": "Search sessions...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "sessionDate": "Session date",
+      "selectRange": "Select range",
+      "statusLabel": "Status",
+      "ownership": "Ownership",
+      "evaluator": "Evaluator",
+      "noActiveSessions": "You don't have active sessions",
+      "filters": {
+        "allStatuses": "All Statuses",
+        "today": "Today",
+        "upcoming": "Upcoming",
+        "completed": "Completed",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate"
+      }
+    },
     "createTest": {
       "title": "Create a new test",
       "blankTitle": "Create a blank test",
