@@ -45,7 +45,7 @@
           <img
             v-if="capturedImage"
             :src="capturedImage"
-            alt="Captured photo"
+            alt="Captured image preview"
             class="captured-image"
           />
 

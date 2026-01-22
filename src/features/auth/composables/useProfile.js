@@ -2,13 +2,6 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAuth } from 'firebase/auth'
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from 'firebase/storage'
 import { showError, showSuccess } from '../../../shared/utils/toast'
 
 export function useProfile() {
@@ -22,9 +15,6 @@ export function useProfile() {
   })
 
   const loading = ref(true)
-
-  // Track blob URLs for cleanup
-  const blobUrls = new Set()
 
   const fetchUserProfile = async () => {
     try {
@@ -119,7 +109,7 @@ export function useProfile() {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = () => resolve(reader.result)
-      reader.onerror = (error) => reject(error)
+      reader.onerror = (error) => reject(new Error('Failed to read file'))
       reader.readAsDataURL(file)
     })
   }
@@ -156,86 +146,73 @@ export function useProfile() {
     return true
   }
 
-  const compressImage = (file, maxWidth, quality) => {
+  // Helper function to load image from data URL
+  const loadImage = (dataUrl) => {
     return new Promise((resolve, reject) => {
-      // Add a timeout to prevent infinite hangs
-      const timeout = setTimeout(() => {
-        console.error('compressImage: Timeout after 10 seconds')
-        reject(new Error('Image compression timed out'))
-      }, 10000)
-
-      console.log('compressImage: Starting compression for', file.name, file.type, file.size)
-
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-
-      reader.onload = (event) => {
-        console.log('compressImage: FileReader loaded, data URL length:', event.target.result.length)
-        const img = new Image()
-        img.src = event.target.result
-
-        img.onload = () => {
-          console.log('compressImage: Image loaded, dimensions:', img.width, 'x', img.height)
-          clearTimeout(timeout)
-          
-          const canvas = document.createElement('canvas')
-          let width = img.width
-          let height = img.height
-
-          // Resize if image is larger than maxWidth
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width
-            width = maxWidth
-          }
-
-          canvas.width = width
-          canvas.height = height
-
-          const ctx = canvas.getContext('2d')
-          // Use better image rendering for quality
-          ctx.imageSmoothingEnabled = true
-          ctx.imageSmoothingQuality = 'high'
-          ctx.drawImage(img, 0, 0, width, height)
-
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                console.log('compressImage: Compression complete, blob size:', blob.size)
-                resolve(
-                  new File([blob], file.name, {
-                    type: 'image/jpeg',
-                    lastModified: Date.now(),
-                  }),
-                )
-              } else {
-                console.error('compressImage: Canvas to Blob conversion failed')
-                reject(new Error('Canvas to Blob conversion failed'))
-              }
-            },
-            'image/jpeg',
-            quality,
-          )
-        }
-
-        img.onerror = (error) => {
-          clearTimeout(timeout)
-          console.error('compressImage: Image load failed', error)
-          reject(new Error('Image load failed'))
-        }
-      }
-
-      reader.onerror = (error) => {
-        clearTimeout(timeout)
-        console.error('compressImage: FileReader error', error)
-        reject(new Error('FileReader error'))
-      }
+      const img = new Image()
+      img.onload = () => resolve(img)
+      img.onerror = () => reject(new Error('Image load failed'))
+      img.src = dataUrl
     })
   }
 
-  // Cleanup function to revoke all blob URLs
-  const cleanup = () => {
-    blobUrls.forEach((url) => URL.revokeObjectURL(url))
-    blobUrls.clear()
+  // Helper function to convert canvas to File
+  const canvasToFile = (canvas, fileName, quality) => {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(new File([blob], fileName, { type: 'image/jpeg', lastModified: Date.now() }))
+          } else {
+            reject(new Error('Canvas to Blob conversion failed'))
+          }
+        },
+        'image/jpeg',
+        quality,
+      )
+    })
+  }
+
+  const compressImage = async (file, maxWidth, quality) => {
+    console.log('compressImage: Starting compression for', file.name, file.type, file.size)
+
+    // Read file as data URL
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target.result)
+      reader.onerror = () => reject(new Error('FileReader error'))
+      reader.readAsDataURL(file)
+    })
+
+    console.log('compressImage: FileReader loaded, data URL length:', dataUrl.length)
+
+    // Load image
+    const img = await loadImage(dataUrl)
+    console.log('compressImage: Image loaded, dimensions:', img.width, 'x', img.height)
+
+    // Create canvas and resize
+    const canvas = document.createElement('canvas')
+    let width = img.width
+    let height = img.height
+
+    if (width > maxWidth) {
+      height = (height * maxWidth) / width
+      width = maxWidth
+    }
+
+    canvas.width = width
+    canvas.height = height
+
+    const ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+    ctx.drawImage(img, 0, 0, width, height)
+
+    // Convert to file
+    const compressedFile = await canvasToFile(canvas, file.name, quality)
+    console.log('compressImage: Compression complete, blob size:', compressedFile.size)
+
+    return compressedFile
   }
 
   return {
@@ -243,6 +220,5 @@ export function useProfile() {
     loading,
     fetchUserProfile,
     updateProfile,
-    cleanup, // Export cleanup function
   }
 }
