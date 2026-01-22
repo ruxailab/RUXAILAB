@@ -34,6 +34,15 @@
       "reset_link_sent": "हमने पासवर्ड रीसेट लिंक भेजा है",
       "no_email": "ईमेल नहीं मिला?",
       "try_again": "पुनः प्रयास करें"
+    },
+    "passwordStrength": "पासवर्ड की मजबूती",
+    "number": "नंबर",
+    "strength": {
+      "veryWeak": "बहुत कमजोर",
+      "weak": "कमजोर",
+      "fair": "ठीक",
+      "good": "अच्छा",
+      "strong": "मजबूत"
     }
   },
   "common": {
@@ -71,7 +80,27 @@
     "viewAll": "सभी देखें",
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
-    "test": "एक अध्ययन"
+    "test": "एक अध्ययन",
+    "itemsPerPage": "प्रति पृष्ठ आइटम:"
+  },
+  "storage": {
+    "pageTitle": "संग्रहण",
+    "totalStorage": "कुल संग्रहण",
+    "acrossFiles": "{count} फ़ाइलों में",
+    "mediaFiles": "मीडिया फ़ाइलें",
+    "searchByStudyOrDate": "अध्ययन या तिथि से खोजें",
+    "deleteFile": "फ़ाइल हटाएं",
+    "noMediaFiles": "कोई मीडिया फ़ाइलें नहीं मिलीं",
+    "confirmDeletion": "हटाने की पुष्टि करें",
+    "deleteConfirmMessage": "क्या आप वाकई \"{studyName}\" से यह {type} फ़ाइल हटाना चाहते हैं?",
+    "actionCannotBeUndone": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "headers": {
+      "type": "प्रकार",
+      "studyName": "अध्ययन का नाम",
+      "date": "तिथि",
+      "size": "आकार",
+      "actions": "कार्रवाइयाँ"
+    }
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -176,6 +205,8 @@
     "cta": "शुरू करें"
   },
   "Dashboard": {
+    "welcomeBack": "वापस स्वागत है, {name}!",
+    "subtitle": "आपके शोध परियोजनाओं में आज क्या हो रहा है",
     "createNewTest": "नया परीक्षण बनाएं",
     "tests": "परीक्षण",
     "templates": "टेम्पलेट्स",
@@ -185,7 +216,49 @@
     "publicTests": "सार्वजनिक परीक्षण",
     "sessions": "सत्र",
     "personal": "व्यक्तिगत",
-    "explore": "खोजें"
+    "explore": "खोजें",
+    "activeStudiesOverview": "सक्रिय अध्ययनों का अवलोकन",
+    "viewAll": "सभी देखें",
+    "showMore": "और दिखाएं",
+    "showLess": "कम दिखाएं",
+    "progress": "प्रगति",
+    "participants": "प्रतिभागी",
+    "participantsLabel": "प्रतिभागी",
+    "daysLeft": "दिन शेष",
+    "dayLeft": "दिन शेष",
+    "studies": "अध्ययन",
+    "storage": "भंडारण",
+    "free": "निःशुल्क",
+    "plan": "योजना",
+    "recentActivity": "हाल की गतिविधि",
+    "comingSoon": "जल्द आ रहा है",
+    "mostUsedMethods": "सबसे अधिक उपयोग की जाने वाली विधियाँ",
+    "use": "उपयोग",
+    "uses": "उपयोग",
+    "noDataAvailable": "अभी तक कोई डेटा उपलब्ध नहीं है",
+    "createFirstStudy": "यहाँ सांख्यिकी देखने के लिए अपना पहला अध्ययन बनाएं।",
+    "nextSession": "अगला सत्र",
+    "noSessionsScheduled": "कोई सत्र निर्धारित नहीं है",
+    "nextSessionWillAppear": "आपका अगला सत्र यहाँ दिखाई देगा",
+    "latestBlogPosts": "नवीनतम ब्लॉग पोस्ट",
+    "viewBlog": "ब्लॉग देखें",
+    "date": "तिथि",
+    "time": "समय",
+    "status": {
+      "active": "सक्रिय",
+      "recruiting": "भर्ती",
+      "paused": "रुका हुआ",
+      "finished": "समाप्त",
+      "unknown": "अज्ञात"
+    },
+    "webinar": {
+      "ended": "समाप्त",
+      "live": "लाइव",
+      "today": "आज",
+      "joinNow": "अभी जुड़ें",
+      "webinarEnded": "वेबिनार समाप्त",
+      "startingToday": "आज शुरू"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -573,6 +646,27 @@
       "version": "संस्करण:",
       "noTests": "कोई परीक्षण नहीं मिला",
       "noTemplates": "कोई टेम्पलेट नहीं मिला"
+    },
+    "sessions": {
+      "searchPlaceholder": "सत्र खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "sessionDate": "सत्र तिथि",
+      "selectRange": "सीमा चुनें",
+      "statusLabel": "स्थिति",
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
+      "filters": {
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आगामी",
+        "completed": "पूर्ण",
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+      }
     },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",

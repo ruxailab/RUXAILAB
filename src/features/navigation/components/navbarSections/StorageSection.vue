@@ -5,10 +5,10 @@
       <v-col cols="12" md="4">
         <v-card elevation="0" border class="h-100">
           <v-card-text>
-            <div class="text-overline mb-1">Total Storage</div>
+            <div class="text-overline mb-1">{{ t('storage.totalStorage') }}</div>
             <div class="text-h4 font-weight-bold">{{ totalFormatted }}</div>
             <div class="text-caption text-medium-emphasis mt-2">
-              Across {{ files.length }} files
+              {{ t('storage.acrossFiles', { count: files.length }) }}
             </div>
           </v-card-text>
         </v-card>
@@ -18,12 +18,12 @@
     <!-- Files Table -->
     <v-card elevation="0" border>
       <v-card-title class="px-4 py-3 d-flex align-center">
-        <span>Media Files</span>
+        <span>{{ t('storage.mediaFiles') }}</span>
         <v-spacer />
         <v-text-field
           v-model="search"
           prepend-inner-icon="mdi-magnify"
-          label="Search by study or date"
+          :label="t('storage.searchByStudyOrDate')"
           single-line
           hide-details
           density="compact"
@@ -38,6 +38,7 @@
         :headers="headers"
         :items="files"
         :search="search"
+        :items-per-page-text="t('common.itemsPerPage')"
         hover
       >
         <!-- File Type Icon -->
@@ -69,7 +70,7 @@
             @click="confirmDelete(item)"
           >
             <v-icon>mdi-delete</v-icon>
-            <v-tooltip activator="parent" location="top">Delete File</v-tooltip>
+            <v-tooltip activator="parent" location="top">{{ t('storage.deleteFile') }}</v-tooltip>
           </v-btn>
         </template>
         
@@ -77,7 +78,7 @@
         <template #no-data>
           <div class="pa-8 text-center text-medium-emphasis">
             <v-icon size="48" color="grey-lighten-1" class="mb-2">mdi-database-off</v-icon>
-            <div class="text-body-1">No media files found</div>
+            <div class="text-body-1">{{ t('storage.noMediaFiles') }}</div>
           </div>
         </template>
       </v-data-table>
@@ -88,20 +89,19 @@
       <v-card class="rounded-lg">
         <v-card-title class="bg-error text-white">
           <v-icon color="white" class="mr-2">mdi-alert</v-icon>
-          Confirm Deletion
+          {{ t('storage.confirmDeletion') }}
         </v-card-title>
         <v-card-text class="pt-4">
-          Are you sure you want to delete this <strong>{{ fileToDelete?.type }}</strong> file from 
-          "<strong>{{ fileToDelete?.studyName }}</strong>"?
+          {{ t('storage.deleteConfirmMessage', { type: fileToDelete?.type, studyName: fileToDelete?.studyName }) }}
           <div class="text-caption text-medium-emphasis mt-2">
-            This action cannot be undone.
+            {{ t('storage.actionCannotBeUndone') }}
           </div>
         </v-card-text>
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="outlined" class="rounded-lg" @click="deleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" class="rounded-lg" @click="executeDelete">Delete</v-btn>
+          <v-btn variant="outlined" class="rounded-lg" @click="deleteDialog = false">{{ t('common.cancel') }}</v-btn>
+          <v-btn color="error" class="rounded-lg" @click="executeDelete">{{ t('buttons.delete') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -126,7 +126,7 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn color="primary" class="rounded-lg" @click="previewDialog = false">Close</v-btn>
+          <v-btn color="primary" class="rounded-lg" @click="previewDialog = false">{{ t('buttons.close') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -137,10 +137,12 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
 
 const store = useStore()
+const { t } = useI18n()
 const search = ref('')
 const answerController = new AnswerController()
 const fetchedAnswers = ref({}) // Map<testId, answersList>
@@ -151,13 +153,13 @@ const fileToDelete = ref(null)
 const previewDialog = ref(false)
 const previewFile = ref(null)
 
-const headers = [
-  { title: 'Type', key: 'type', align: 'center', sortable: false, width: '60px' },
-  { title: 'Study Name', key: 'studyName', align: 'start' },
-  { title: 'Date', key: 'date', align: 'start' },
-  { title: 'Size', key: 'size', align: 'end' },
-  { title: 'Actions', key: 'actions', align: 'end', sortable: false }
-]
+const headers = computed(() => [
+  { title: t('storage.headers.type'), key: 'type', align: 'center', sortable: false, width: '60px' },
+  { title: t('storage.headers.studyName'), key: 'studyName', align: 'start' },
+  { title: t('storage.headers.date'), key: 'date', align: 'start' },
+  { title: t('storage.headers.size'), key: 'size', align: 'end' },
+  { title: t('storage.headers.actions'), key: 'actions', align: 'end', sortable: false }
+])
 
 const tests = computed(() => store.getters.tests || [])
 
