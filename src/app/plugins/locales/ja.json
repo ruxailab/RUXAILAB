@@ -193,7 +193,12 @@
     "publicTests": "公開テスト",
     "sessions": "セッション",
     "personal": "個人",
-    "explore": "探す"
+    "explore": "探す",
+    "activeStudies": {
+      "noActiveStudies": "アクティブな研究がありません",
+      "createNewStudy": "新しい研究を作成",
+      "emptyStateMessage": "まだ研究がありません。最初の研究を作成して、貴重なユーザーインサイトの収集を始めましょう。"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -709,11 +714,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -974,11 +975,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",
