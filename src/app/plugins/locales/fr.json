@@ -90,6 +90,25 @@
       "created": "Créé"
     }
   },
+  "storage": {
+    "pageTitle": "Stockage",
+    "totalStorage": "Stockage total",
+    "acrossFiles": "Sur {count} fichiers",
+    "mediaFiles": "Fichiers média",
+    "searchByStudyOrDate": "Rechercher par étude ou date",
+    "deleteFile": "Supprimer le fichier",
+    "noMediaFiles": "Aucun fichier média trouvé",
+    "confirmDeletion": "Confirmer la suppression",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer ce fichier {type} de \"{studyName}\" ?",
+    "actionCannotBeUndone": "Cette action ne peut pas être annulée.",
+    "headers": {
+      "type": "Type",
+      "studyName": "Nom de l'étude",
+      "date": "Date",
+      "size": "Taille",
+      "actions": "Actions"
+    }
+  },
   "profile": {
     "title": "Profil",
     "username": "Nom d'utilisateur",
@@ -210,6 +229,8 @@
     "cta": "Commencer"
   },
   "Dashboard": {
+    "welcomeBack": "Bon retour, {name} !",
+    "subtitle": "Voici ce qui se passe avec vos projets de recherche aujourd'hui",
     "createNewTest": "Créer une nouvelle étude",
     "tests": "Tests",
     "templates": "Modèles",
@@ -219,7 +240,49 @@
     "publicTests": "Tests publics",
     "sessions": "Sessions",
     "personal": "Personnel",
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "activeStudiesOverview": "Aperçu des études actives",
+    "viewAll": "Voir tout",
+    "showMore": "Voir plus",
+    "showLess": "Voir moins",
+    "progress": "Progression",
+    "participants": "Participants",
+    "participantsLabel": "Participants",
+    "daysLeft": "jours restants",
+    "dayLeft": "jour restant",
+    "studies": "Études",
+    "storage": "Stockage",
+    "free": "Gratuit",
+    "plan": "Plan",
+    "recentActivity": "Activité récente",
+    "comingSoon": "Bientôt disponible",
+    "mostUsedMethods": "Méthodes les plus utilisées",
+    "use": "utilisation",
+    "uses": "utilisations",
+    "noDataAvailable": "Aucune donnée disponible pour le moment",
+    "createFirstStudy": "Créez votre première étude pour voir les statistiques ici.",
+    "nextSession": "Prochaine session",
+    "noSessionsScheduled": "Aucune session planifiée",
+    "nextSessionWillAppear": "Votre prochaine session apparaîtra ici",
+    "latestBlogPosts": "Derniers articles de blog",
+    "viewBlog": "Voir le blog",
+    "date": "Date",
+    "time": "Heure",
+    "status": {
+      "active": "Actif",
+      "recruiting": "Recrutement",
+      "paused": "En pause",
+      "finished": "Terminé",
+      "unknown": "Inconnu"
+    },
+    "webinar": {
+      "ended": "Terminé",
+      "live": "En direct",
+      "today": "Aujourd'hui",
+      "joinNow": "Rejoindre maintenant",
+      "webinarEnded": "Webinaire terminé",
+      "startingToday": "Commence aujourd'hui"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -608,35 +671,25 @@
       "noTests": "Aucun test trouvé",
       "noTemplates": "Aucun modèle trouvé"
     },
-    "navigation": {
-      "dashboard": "Tableau de bord",
-      "studies": "Études",
-      "sessions": "Sessions",
-      "templates": "Modèles",
-      "storage": "Stockage",
-      "notifications": "Notifications",
-      "profile": "Profil",
-      "communityStudies": "Études communautaires",
-      "communityTemplates": "Modèles communautaires",
-      "studiesSubtitle": "Gérez vos études de recherche",
-      "templatesSubtitle": "Accédez à vos modèles enregistrés"
-    },
-    "templates": {
-      "searchPlaceholder": "Rechercher des modèles...",
+    "sessions": {
+      "searchPlaceholder": "Rechercher des sessions...",
       "reset": "Réinitialiser",
       "showFilters": "Afficher les filtres",
       "hideFilters": "Masquer les filtres",
-      "creationDate": "Date de création",
+      "sessionDate": "Date de session",
       "selectRange": "Sélectionner une plage",
-      "method": "Méthode",
-      "noTemplatesFound": "Aucun modèle trouvé",
+      "statusLabel": "Statut",
+      "ownership": "Propriété",
+      "evaluator": "Évaluateur",
+      "noActiveSessions": "Vous n'avez pas de sessions actives",
       "filters": {
-        "allMethods": "Tous",
-        "heuristicEvaluation": "Évaluation heuristique",
-        "userUnmoderated": "Étude utilisateur (non modérée)",
-        "userModerated": "Étude utilisateur (modérée)",
-        "manualAccessibility": "Accessibilité manuelle",
-        "automaticAccessibility": "Accessibilité automatique"
+        "allStatuses": "Tous les statuts",
+        "today": "Aujourd'hui",
+        "upcoming": "À venir",
+        "completed": "Terminé",
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore"
       }
     },
     "createTest": {

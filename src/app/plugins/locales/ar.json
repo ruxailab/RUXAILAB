@@ -90,6 +90,25 @@
       "created": "تم الإنشاء"
     }
   },
+  "storage": {
+    "pageTitle": "التخزين",
+    "totalStorage": "إجمالي التخزين",
+    "acrossFiles": "عبر {count} ملفات",
+    "mediaFiles": "ملفات الوسائط",
+    "searchByStudyOrDate": "البحث حسب الدراسة أو التاريخ",
+    "deleteFile": "حذف الملف",
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "confirmDeletion": "تأكيد الحذف",
+    "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف ملف {type} هذا من \"{studyName}\"؟",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
+    "headers": {
+      "type": "النوع",
+      "studyName": "اسم الدراسة",
+      "date": "التاريخ",
+      "size": "الحجم",
+      "actions": "الإجراءات"
+    }
+  },
   "profile": {
     "title": "الملف الشخصي",
     "username": "اسم المستخدم",
@@ -210,6 +229,8 @@
     "cta": "ابدأ"
   },
   "Dashboard": {
+    "welcomeBack": "مرحباً بعودتك، {name}!",
+    "subtitle": "إليك ما يحدث في مشاريعك البحثية اليوم",
     "createNewTest": "إنشاء دراسة جديدة",
     "tests": "الاختبارات",
     "templates": "القوالب",
@@ -219,7 +240,49 @@
     "publicTests": "الاختبارات العامة",
     "sessions": "الجلسات",
     "personal": "شخصي",
-    "explore": "استكشف"
+    "explore": "استكشف",
+    "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "progress": "التقدم",
+    "participants": "المشاركون",
+    "participantsLabel": "المشاركون",
+    "daysLeft": "أيام متبقية",
+    "dayLeft": "يوم متبقي",
+    "studies": "الدراسات",
+    "storage": "التخزين",
+    "free": "مجاني",
+    "plan": "الخطة",
+    "recentActivity": "النشاط الأخير",
+    "comingSoon": "قريباً",
+    "mostUsedMethods": "الطرق الأكثر استخداماً",
+    "use": "استخدام",
+    "uses": "استخدامات",
+    "noDataAvailable": "لا توجد بيانات متاحة حتى الآن",
+    "createFirstStudy": "أنشئ دراستك الأولى لرؤية الإحصائيات هنا.",
+    "nextSession": "الجلسة التالية",
+    "noSessionsScheduled": "لا توجد جلسات مجدولة",
+    "nextSessionWillAppear": "ستظهر جلستك التالية هنا",
+    "latestBlogPosts": "أحدث منشورات المدونة",
+    "viewBlog": "عرض المدونة",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "status": {
+      "active": "نشط",
+      "recruiting": "توظيف",
+      "paused": "متوقف",
+      "finished": "منتهي",
+      "unknown": "غير معروف"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الندوة",
+      "startingToday": "يبدأ اليوم"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -608,35 +671,25 @@
       "noTests": "لم يتم العثور على اختبارات",
       "noTemplates": "لم يتم العثور على قوالب"
     },
-    "navigation": {
-      "dashboard": "لوحة التحكم",
-      "studies": "الدراسات",
-      "sessions": "الجلسات",
-      "templates": "القوالب",
-      "storage": "التخزين",
-      "notifications": "الإشعارات",
-      "profile": "الملف الشخصي",
-      "communityStudies": "دراسات المجتمع",
-      "communityTemplates": "قوالب المجتمع",
-      "studiesSubtitle": "إدارة دراساتك البحثية",
-      "templatesSubtitle": "الوصول إلى قوالبك المحفوظة"
-    },
-    "templates": {
-      "searchPlaceholder": "البحث في القوالب...",
+    "sessions": {
+      "searchPlaceholder": "البحث في الجلسات...",
       "reset": "إعادة تعيين",
       "showFilters": "عرض الفلاتر",
       "hideFilters": "إخفاء الفلاتر",
-      "creationDate": "تاريخ الإنشاء",
+      "sessionDate": "تاريخ الجلسة",
       "selectRange": "اختر النطاق",
-      "method": "الطريقة",
-      "noTemplatesFound": "لم يتم العثور على قوالب",
+      "statusLabel": "الحالة",
+      "ownership": "الملكية",
+      "evaluator": "المقيم",
+      "noActiveSessions": "ليس لديك جلسات نشطة",
       "filters": {
-        "allMethods": "الكل",
-        "heuristicEvaluation": "التقييم الاستدلالي",
-        "userUnmoderated": "دراسة المستخدم (غير مُعدَّلة)",
-        "userModerated": "دراسة المستخدم (مُعدَّلة)",
-        "manualAccessibility": "إمكانية الوصول اليدوية",
-        "automaticAccessibility": "إمكانية الوصول التلقائية"
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "القادمة",
+        "completed": "مكتمل",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون"
       }
     },
     "createTest": {

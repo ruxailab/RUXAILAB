@@ -94,6 +94,25 @@
       "created": "Создано"
     }
   },
+  "storage": {
+    "pageTitle": "Хранилище",
+    "totalStorage": "Общее хранилище",
+    "acrossFiles": "В {count} файлах",
+    "mediaFiles": "Медиафайлы",
+    "searchByStudyOrDate": "Поиск по исследованию или дате",
+    "deleteFile": "Удалить файл",
+    "noMediaFiles": "Медиафайлы не найдены",
+    "confirmDeletion": "Подтвердить удаление",
+    "deleteConfirmMessage": "Вы уверены, что хотите удалить этот файл {type} из \"{studyName}\"?",
+    "actionCannotBeUndone": "Это действие нельзя отменить.",
+    "headers": {
+      "type": "Тип",
+      "studyName": "Название исследования",
+      "date": "Дата",
+      "size": "Размер",
+      "actions": "Действия"
+    }
+  },
   "profile": {
     "title": "Профиль",
     "username": "Имя пользователя",
@@ -214,6 +233,8 @@
     "cta": "Начать"
   },
   "Dashboard": {
+    "welcomeBack": "С возвращением, {name}!",
+    "subtitle": "Вот что происходит с вашими исследовательскими проектами сегодня",
     "createNewTest": "Создать новое исследование",
     "tests": "Тесты",
     "templates": "Шаблоны",
@@ -223,7 +244,49 @@
     "publicTests": "Публичные тесты",
     "sessions": "Сессии",
     "personal": "Личное",
-    "explore": "Исследовать"
+    "explore": "Исследовать",
+    "activeStudiesOverview": "Обзор активных исследований",
+    "viewAll": "Посмотреть все",
+    "showMore": "Показать больше",
+    "showLess": "Показать меньше",
+    "progress": "Прогресс",
+    "participants": "Участников",
+    "participantsLabel": "Участники",
+    "daysLeft": "дней осталось",
+    "dayLeft": "день остался",
+    "studies": "Исследования",
+    "storage": "Хранилище",
+    "free": "Бесплатно",
+    "plan": "План",
+    "recentActivity": "Недавняя активность",
+    "comingSoon": "Скоро",
+    "mostUsedMethods": "Наиболее используемые методы",
+    "use": "использование",
+    "uses": "использований",
+    "noDataAvailable": "Данных пока нет",
+    "createFirstStudy": "Создайте свое первое исследование, чтобы увидеть статистику здесь.",
+    "nextSession": "Следующая сессия",
+    "noSessionsScheduled": "Сессии не запланированы",
+    "nextSessionWillAppear": "Ваша следующая сессия появится здесь",
+    "latestBlogPosts": "Последние статьи в блоге",
+    "viewBlog": "Смотреть блог",
+    "date": "Дата",
+    "time": "Время",
+    "status": {
+      "active": "Активный",
+      "recruiting": "Набор",
+      "paused": "Приостановлен",
+      "finished": "Завершен",
+      "unknown": "Неизвестно"
+    },
+    "webinar": {
+      "ended": "Завершен",
+      "live": "В эфире",
+      "today": "Сегодня",
+      "joinNow": "Присоединиться",
+      "webinarEnded": "Вебинар завершен",
+      "startingToday": "Начинается сегодня"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -612,35 +675,25 @@
       "noTests": "Тесты не найдены",
       "noTemplates": "Шаблоны не найдены"
     },
-    "navigation": {
-      "dashboard": "Панель управления",
-      "studies": "Исследования",
-      "sessions": "Сессии",
-      "templates": "Шаблоны",
-      "storage": "Хранилище",
-      "notifications": "Уведомления",
-      "profile": "Профиль",
-      "communityStudies": "Исследования сообщества",
-      "communityTemplates": "Шаблоны сообщества",
-      "studiesSubtitle": "Управляйте своими исследованиями",
-      "templatesSubtitle": "Доступ к сохраненным шаблонам"
-    },
-    "templates": {
-      "searchPlaceholder": "Поиск шаблонов...",
+    "sessions": {
+      "searchPlaceholder": "Поиск сессий...",
       "reset": "Сбросить",
       "showFilters": "Показать фильтры",
       "hideFilters": "Скрыть фильтры",
-      "creationDate": "Дата создания",
+      "sessionDate": "Дата сессии",
       "selectRange": "Выбрать диапазон",
-      "method": "Метод",
-      "noTemplatesFound": "Шаблоны не найдены",
+      "statusLabel": "Статус",
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "noActiveSessions": "У вас нет активных сессий",
       "filters": {
-        "allMethods": "Все",
-        "heuristicEvaluation": "Эвристическая оценка",
-        "userUnmoderated": "Пользовательское исследование (без модератора)",
-        "userModerated": "Пользовательское исследование (с модератором)",
-        "manualAccessibility": "Ручная доступность",
-        "automaticAccessibility": "Автоматическая доступность"
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершенный",
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю"
       }
     },
     "createTest": {

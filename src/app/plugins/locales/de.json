@@ -90,6 +90,25 @@
       "created": "Erstellt"
     }
   },
+  "storage": {
+    "pageTitle": "Speicher",
+    "totalStorage": "Gesamtspeicher",
+    "acrossFiles": "Über {count} Dateien",
+    "mediaFiles": "Mediendateien",
+    "searchByStudyOrDate": "Nach Studie oder Datum suchen",
+    "deleteFile": "Datei löschen",
+    "noMediaFiles": "Keine Mediendateien gefunden",
+    "confirmDeletion": "Löschung bestätigen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese {type}-Datei aus \"{studyName}\" löschen möchten?",
+    "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "headers": {
+      "type": "Typ",
+      "studyName": "Studienname",
+      "date": "Datum",
+      "size": "Größe",
+      "actions": "Aktionen"
+    }
+  },
   "profile": {
     "title": "Profil",
     "username": "Benutzername",
@@ -210,6 +229,8 @@
     "cta": "Loslegen"
   },
   "Dashboard": {
+    "welcomeBack": "Willkommen zurück, {name}!",
+    "subtitle": "Das passiert heute mit Ihren Forschungsprojekten",
     "createNewTest": "Neue Studie erstellen",
     "tests": "Tests",
     "templates": "Vorlagen",
@@ -219,7 +240,49 @@
     "publicTests": "Öffentliche Tests",
     "sessions": "Sitzungen",
     "personal": "Persönlich",
-    "explore": "Erkunden"
+    "explore": "Erkunden",
+    "activeStudiesOverview": "Aktive Studien Übersicht",
+    "viewAll": "Alle anzeigen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "progress": "Fortschritt",
+    "participants": "Teilnehmer",
+    "participantsLabel": "Teilnehmer",
+    "daysLeft": "Tage übrig",
+    "dayLeft": "Tag übrig",
+    "studies": "Studien",
+    "storage": "Speicher",
+    "free": "Kostenlos",
+    "plan": "Plan",
+    "recentActivity": "Letzte Aktivität",
+    "comingSoon": "Bald verfügbar",
+    "mostUsedMethods": "Am häufigsten verwendete Methoden",
+    "use": "Verwendung",
+    "uses": "Verwendungen",
+    "noDataAvailable": "Noch keine Daten verfügbar",
+    "createFirstStudy": "Erstellen Sie Ihre erste Studie, um hier Statistiken zu sehen.",
+    "nextSession": "Nächste Sitzung",
+    "noSessionsScheduled": "Keine Sitzungen geplant",
+    "nextSessionWillAppear": "Ihre nächste Sitzung wird hier angezeigt",
+    "latestBlogPosts": "Neueste Blogbeiträge",
+    "viewBlog": "Blog anzeigen",
+    "date": "Datum",
+    "time": "Zeit",
+    "status": {
+      "active": "Aktiv",
+      "recruiting": "Rekrutierung",
+      "paused": "Pausiert",
+      "finished": "Abgeschlossen",
+      "unknown": "Unbekannt"
+    },
+    "webinar": {
+      "ended": "Beendet",
+      "live": "Live",
+      "today": "Heute",
+      "joinNow": "Jetzt beitreten",
+      "webinarEnded": "Webinar beendet",
+      "startingToday": "Startet heute"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -608,35 +671,25 @@
       "noTests": "Keine Tests gefunden",
       "noTemplates": "Keine Vorlagen gefunden"
     },
-    "navigation": {
-      "dashboard": "Dashboard",
-      "studies": "Studien",
-      "sessions": "Sitzungen",
-      "templates": "Vorlagen",
-      "storage": "Speicher",
-      "notifications": "Benachrichtigungen",
-      "profile": "Profil",
-      "communityStudies": "Community-Studien",
-      "communityTemplates": "Community-Vorlagen",
-      "studiesSubtitle": "Verwalten Sie Ihre Forschungsstudien",
-      "templatesSubtitle": "Zugriff auf Ihre gespeicherten Vorlagen"
-    },
-    "templates": {
-      "searchPlaceholder": "Vorlagen suchen...",
+    "sessions": {
+      "searchPlaceholder": "Sitzungen suchen...",
       "reset": "Zurücksetzen",
       "showFilters": "Filter anzeigen",
       "hideFilters": "Filter ausblenden",
-      "creationDate": "Erstellungsdatum",
+      "sessionDate": "Sitzungsdatum",
       "selectRange": "Bereich auswählen",
-      "method": "Methode",
-      "noTemplatesFound": "Keine Vorlagen gefunden",
+      "statusLabel": "Status",
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "noActiveSessions": "Sie haben keine aktiven Sitzungen",
       "filters": {
-        "allMethods": "Alle",
-        "heuristicEvaluation": "Heuristische Bewertung",
-        "userUnmoderated": "Benutzerstudie (unmoderiert)",
-        "userModerated": "Benutzerstudie (moderiert)",
-        "manualAccessibility": "Manuelle Barrierefreiheit",
-        "automaticAccessibility": "Automatische Barrierefreiheit"
+        "allStatuses": "Alle Status",
+        "today": "Heute",
+        "upcoming": "Bevorstehend",
+        "completed": "Abgeschlossen",
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich mitarbeite"
       }
     },
     "createTest": {
