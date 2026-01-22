@@ -218,6 +218,7 @@ describe('AuthController', () => {
         })
 
         it('should delete email/password user with credential reauthentication', async () => {
+            const testPassword = 'userPassword123'
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -233,12 +234,12 @@ describe('AuthController', () => {
 
             await authController.deleteAuth({
                 user: mockUser,
-                password: 'userPassword123'
+                password: testPassword
             })
 
             expect(EmailAuthProvider.credential).toHaveBeenCalledWith(
                 mockUser.email,
-                'userPassword123'
+                testPassword
             )
             expect(reauthenticateWithCredential).toHaveBeenCalled()
             expect(mockUser.delete).toHaveBeenCalled()
@@ -256,6 +257,7 @@ describe('AuthController', () => {
         })
 
         it('should not delete user if reauthentication fails', async () => {
+            const wrongPassword = 'wrong-password'
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -271,7 +273,7 @@ describe('AuthController', () => {
             await expect(
                 authController.deleteAuth({
                     user: mockUser,
-                    password: 'wrong-password'
+                    password: wrongPassword
                 })
             ).rejects.toThrow('Wrong password')
 
@@ -280,6 +282,7 @@ describe('AuthController', () => {
         })
 
         it('should throw and not call backend if user.delete fails', async () => {
+            const testPassword = 'userPassword123'
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -296,7 +299,7 @@ describe('AuthController', () => {
             await expect(
                 authController.deleteAuth({
                     user: mockUser,
-                    password: 'userPassword123'
+                    password: testPassword
                 })
             ).rejects.toThrow('Delete failed')
 
