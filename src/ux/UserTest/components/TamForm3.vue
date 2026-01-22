@@ -63,7 +63,6 @@
           <v-divider class="my-2" />
           <v-radio-group :model-value="answers.perceivedEaseOfUse[i]" @update:model-value="updateDimensionAnswer('perceivedEaseOfUse', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
-            <!-- </v-radio> -->
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -98,7 +97,6 @@
           <v-divider class="my-2" />
           <v-radio-group :model-value="answers.image[i]" @update:model-value="updateDimensionAnswer('image', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
-            <!-- </v-radio> -->
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -133,7 +131,6 @@
           <v-divider class="my-2" />
           <v-radio-group :model-value="answers.outputQuality[i]" @update:model-value="updateDimensionAnswer('outputQuality', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
-            <!-- </v-radio> -->
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -168,7 +165,6 @@
           <v-divider class="my-2" />
           <v-radio-group :model-value="answers.computerSelfEfficacy[i]" @update:model-value="updateDimensionAnswer('computerSelfEfficacy', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
-            <!-- </v-radio> -->
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -203,7 +199,6 @@
           <v-divider class="my-2" />
           <v-radio-group :model-value="answers.computerAnxiety[i]" @update:model-value="updateDimensionAnswer('computerAnxiety', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
-            <!-- </v-radio> -->
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -238,7 +233,6 @@
           <v-divider class="my-2" />
           <v-radio-group :model-value="answers.perceivedEnjoyment[i]" @update:model-value="updateDimensionAnswer('perceivedEnjoyment', i, $event)" inline>
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
-            <!-- </v-radio> -->
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -333,7 +327,7 @@
     <!-- Summary Content -->
     <div v-show="activeTab === 'summary'" class="mt-6">
       <!-- Header -->
-      <v-card variant="outlined" class="mb-6 pa-6" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+      <v-card variant="outlined" class="mb-6 pa-6" style="background: linear-gradient(135deg, #1a237e 0%, #283593 100%); color: white;">
         <v-card-title class="text-h5 font-weight-bold">Your TAM-3 Responses</v-card-title>
         <p class="text-body-2 mt-2">Summary of your answers to this TAM-3 assessment</p>
       </v-card>
@@ -450,23 +444,23 @@ const props = defineProps({
   modelValue: {
     type: Object,
     default: () => ({
-      perceivedUsefulness: Array(3).fill(undefined),
-      perceivedEaseOfUse: Array(3).fill(undefined),
-      behavioralIntention: Array(2).fill(undefined),
-      usePatterns: Array(2).fill(undefined),
-      subjectiveNorm: Array(3).fill(undefined),
-      image: Array(2).fill(undefined),
-      jobRelevance: Array(3).fill(undefined),
-      outputQuality: Array(3).fill(undefined),
-      resultDemonstrability: Array(2).fill(undefined),
-      computerSelfEfficacy: Array(3).fill(undefined),
-      perceptionsOfExternalControl: Array(3).fill(undefined),
-      computerAnxiety: Array(2).fill(undefined),
-      computerPlayfulness: Array(2).fill(undefined),
-      perceivedEnjoyment: Array(3).fill(undefined),
-      objectiveUsability: Array(2).fill(undefined),
-      experience: Array(2).fill(undefined),
-      voluntariness: Array(2).fill(undefined)
+      perceivedUsefulness: new Array(3).fill(undefined),
+      perceivedEaseOfUse: new Array(3).fill(undefined),
+      behavioralIntention: new Array(2).fill(undefined),
+      usePatterns: new Array(2).fill(undefined),
+      subjectiveNorm: new Array(3).fill(undefined),
+      image: new Array(2).fill(undefined),
+      jobRelevance: new Array(3).fill(undefined),
+      outputQuality: new Array(3).fill(undefined),
+      resultDemonstrability: new Array(2).fill(undefined),
+      computerSelfEfficacy: new Array(3).fill(undefined),
+      perceptionsOfExternalControl: new Array(3).fill(undefined),
+      computerAnxiety: new Array(2).fill(undefined),
+      computerPlayfulness: new Array(2).fill(undefined),
+      perceivedEnjoyment: new Array(3).fill(undefined),
+      objectiveUsability: new Array(2).fill(undefined),
+      experience: new Array(2).fill(undefined),
+      voluntariness: new Array(2).fill(undefined)
     })
   }
 });

@@ -333,10 +333,10 @@
 
 <script setup>
 // Force cache bust: v2
-import { ref, computed, watchEffect, nextTick } from 'vue'
+import { ref, computed, watchEffect} from 'vue'
 import { useStore } from 'vuex'
 import { calculateTAMScore} from '../../utils/tamCalculator'
-import { Scatter, Bar } from 'vue-chartjs'
+import { Scatter} from 'vue-chartjs'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Legend, Tooltip, Title } from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Legend, Tooltip, Title)
@@ -831,6 +831,75 @@ function openDetails(response) {
   detailsModal.value = true
 }
 
+// Helper function to get the answer array for a construct
+function getAnswerArrayForConstruct(answers, constructKey) {
+  const mapping = {
+    'tam2_int': 'intentionToUse',
+    'tam2_pu': 'perceivedUsefulness',
+    'tam2_eu': 'perceivedEaseOfUse',
+    'tam2_sn': 'subjectiveNorm',
+    'tam2_vol': 'voluntariness',
+    'tam2_img': 'image',
+    'tam2_jr': 'jobRelevance',
+    'tam2_oq': 'outputQuality',
+    'tam2_rd': 'resultDemonstrability',
+    'tam1_pu': 'perceivedUsefulness',
+    'tam1_eu': 'perceivedEaseOfUse',
+    'tam1_att': 'attitudeTowardUsing',
+    'tam1_use': 'actualSystemUse'
+  }
+  
+  const answerKey = mapping[constructKey]
+  return answerKey ? answers[answerKey] : null
+}
+
+// Helper function to process construct answers with index limits
+function processConstructAnswers(answersArray, questions, constructKey, indexLimit = null) {
+  const results = []
+  if (!answersArray || !Array.isArray(answersArray)) return results
+  
+  answersArray.forEach((answer, index) => {
+    if (answer !== undefined && (!indexLimit || index < indexLimit)) {
+      results.push({
+        question: questions[constructKey]?.[index] || `Question ${index + 1}`,
+        answer: answer
+      })
+    }
+  })
+  
+  return results
+}
+
+// Helper function to process special cases (tam1_use with frequency labels)
+function processSpecialAnswers(answers, constructKey, questions) {
+  if (constructKey !== 'tam1_use' || !answers.actualSystemUse) {
+    return []
+  }
+  
+  const useFrequencyOptions = [
+    'Less than once a month',
+    '1 - 2 times a month',
+    '1 - 2 times a week',
+    'About once a day',
+    'Several times a day',
+    'Constantly throughout the day'
+  ]
+  
+  const results = []
+  if (answers.actualSystemUse[0] !== undefined) {
+    results.push({
+      answer: useFrequencyOptions[answers.actualSystemUse[0]] || `Option ${answers.actualSystemUse[0]}`
+    })
+  }
+  if (answers.actualSystemUse[1] !== undefined) {
+    results.push({
+      answer: `${answers.actualSystemUse[1]} hours`
+    })
+  }
+  
+  return results
+}
+
 function getConstructAnswers(constructKey) {
   console.log('🔍 getConstructAnswers called with constructKey:', constructKey);
   
@@ -934,149 +1003,28 @@ function getConstructAnswers(constructKey) {
   const answers = selectedResponse.value.tamAnswers
   const constructAnswers = []
   
-  // TAM-2 constructs
-  if (constructKey === 'tam2_int' && answers.intentionToUse) {
-    console.log('✓ Matching tam2_int, found intentionToUse:', answers.intentionToUse);
-    answers.intentionToUse.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam2_int'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_pu' && answers.perceivedUsefulness) {
-    console.log('✓ Matching tam2_pu, found perceivedUsefulness:', answers.perceivedUsefulness);
-    answers.perceivedUsefulness.forEach((answer, index) => {
-      if (answer !== undefined && index < 4) {
-        constructAnswers.push({
-          question: questions['tam2_pu'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_eu' && answers.perceivedEaseOfUse) {
-    console.log('✓ Matching tam2_eu, found perceivedEaseOfUse:', answers.perceivedEaseOfUse);
-    answers.perceivedEaseOfUse.forEach((answer, index) => {
-      if (answer !== undefined && index < 4) {
-        constructAnswers.push({
-          question: questions['tam2_eu'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_sn' && answers.subjectiveNorm) {
-    console.log('✓ Matching tam2_sn, found subjectiveNorm:', answers.subjectiveNorm);
-    answers.subjectiveNorm.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam2_sn'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_vol' && answers.voluntariness) {
-    console.log('✓ Matching tam2_vol, found voluntariness:', answers.voluntariness);
-    answers.voluntariness.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam2_vol'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_img' && answers.image) {
-    console.log('✓ Matching tam2_img, found image:', answers.image);
-    answers.image.forEach((answer, index) => {
-      if (answer !== undefined && index < 3) {
-        constructAnswers.push({
-          question: questions['tam2_img'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_jr' && answers.jobRelevance) {
-    console.log('✓ Matching tam2_jr, found jobRelevance:', answers.jobRelevance);
-    answers.jobRelevance.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam2_jr'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_oq' && answers.outputQuality) {
-    console.log('✓ Matching tam2_oq, found outputQuality:', answers.outputQuality);
-    answers.outputQuality.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam2_oq'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam2_rd' && answers.resultDemonstrability) {
-    console.log('✓ Matching tam2_rd, found resultDemonstrability:', answers.resultDemonstrability);
-    answers.resultDemonstrability.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam2_rd'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam1_pu' && answers.perceivedUsefulness) {
-    answers.perceivedUsefulness.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam1_pu'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam1_eu' && answers.perceivedEaseOfUse) {
-    answers.perceivedEaseOfUse.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam1_eu'][index] || `Question ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam1_att' && answers.attitudeTowardUsing) {
-    answers.attitudeTowardUsing.forEach((answer, index) => {
-      if (answer !== undefined) {
-        constructAnswers.push({
-          question: questions['tam1_att'][index] || `Item ${index + 1}`,
-          answer: answer
-        })
-      }
-    })
-  } else if (constructKey === 'tam1_use' && answers.actualSystemUse) {
-    const useFrequencyOptions = [
-      'Less than once a month',
-      '1 - 2 times a month',
-      '1 - 2 times a week',
-      'About once a day',
-      'Several times a day',
-      'Constantly throughout the day'
-    ]
-    if (answers.actualSystemUse[0] !== undefined) {
-      constructAnswers.push({
-        question: questions['tam1_use'][0],
-        answer: useFrequencyOptions[answers.actualSystemUse[0]] || `Option ${answers.actualSystemUse[0]}`
-      })
-    }
-    if (answers.actualSystemUse[1] !== undefined) {
-      constructAnswers.push({
-        question: questions['tam1_use'][1],
-        answer: `${answers.actualSystemUse[1]} hours`
-      })
-    }
+  // Handle special case (tam1_use with frequency labels)
+  if (constructKey === 'tam1_use') {
+    return processSpecialAnswers(answers, constructKey, questions)
   }
   
-  console.log('🎯 Returning constructAnswers for key', constructKey, ':', constructAnswers);
-  return constructAnswers
+  // Get the answer array for this construct
+  const answerArray = getAnswerArrayForConstruct(answers, constructKey)
+  
+  // Determine if we need to limit the index
+  const indexLimit = ['tam2_pu', 'tam2_eu'].includes(constructKey) ? 4 : 
+                     ['tam2_img'].includes(constructKey) ? 3 : null
+  
+  const results = processConstructAnswers(answerArray, questions, constructKey, indexLimit)
+  
+  if (results.length > 0) {
+    console.log(`✓ Matching ${constructKey}, found ${results.length} answers`);
+  } else {
+    console.log(`⚠️ No answers found for ${constructKey}`);
+  }
+  
+  console.log('🎯 Returning constructAnswers for key', constructKey, ':', results);
+  return results
 }
 
 function calculateAnalytics() {

@@ -117,7 +117,7 @@ export function calculateTAMScore(answers, version = 'tam-1') {
   }
 
   // Calculate overall score as average of all dimension scores
-  const dimensionScores = Object.values(dimensions).map(d => d.score).filter(s => !isNaN(s));
+  const dimensionScores = Object.values(dimensions).map(d => d.score).filter(s => !Number.isNaN(s));
   const overallScore = dimensionScores.length > 0 
     ? Math.round(dimensionScores.reduce((a, b) => a + b, 0) / dimensionScores.length * 10) / 10
     : 0;
@@ -148,7 +148,7 @@ export function calculateDimensionScore(responses, dimensionName, scale = 5) {
   }
 
   // Filter out undefined/null values
-  const validResponses = responses.filter(r => typeof r === 'number' && !isNaN(r));
+  const validResponses = responses.filter(r => typeof r === 'number' && !Number.isNaN(r));
   
   if (validResponses.length === 0) {
     return {
@@ -197,13 +197,13 @@ export function calculateUsageScore(usageData, dimensionName) {
   const hoursPerWeek = usageData[1];
 
   // Validate frequency is a number
-  if (typeof frequency !== 'number' || isNaN(frequency)) {
+  if (typeof frequency !== 'number' || Number.isNaN(frequency)) {
     return {
       name: dimensionName,
       score: 0,
       count: 0,
       frequency: 0,
-      hoursPerWeek: parseFloat(hoursPerWeek) || 0
+      hoursPerWeek: Number.parseFloat(hoursPerWeek) || 0
     };
   }
 
@@ -212,7 +212,7 @@ export function calculateUsageScore(usageData, dimensionName) {
   const normalizedScore = (frequency / 5) * 100;
 
   // Parse hours per week
-  const hours = parseFloat(hoursPerWeek) || 0;
+  const hours = Number.parseFloat(hoursPerWeek) || 0;
 
   return {
     name: dimensionName,
