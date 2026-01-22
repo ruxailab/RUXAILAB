@@ -415,8 +415,8 @@
                 <v-table>
                   <thead>
                     <tr>
-                      <th>Question</th>
-                      <th style="width: 200px;">Your Response</th>
+                      <th scope="col">Question</th>
+                      <th scope="col" style="width: 200px;">Your Response</th>
                     </tr>
                   </thead>
                   <tbody>
