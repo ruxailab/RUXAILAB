@@ -12,7 +12,7 @@
           color="primary"
           style="padding:1.5rem"
         />
-        <span class="text-h6 font-weight-bold">Next Session</span>
+        <span class="text-h6 font-weight-bold">{{ $t('Dashboard.nextSession') }}</span>
       </div>
     </v-card-title>
 
@@ -104,10 +104,10 @@
           class="mb-4"
         />
         <h4 class="text-h6 mb-2">
-          No sessions scheduled
+          {{ $t('Dashboard.noSessionsScheduled') }}
         </h4>
         <p class="text-body-2 text-grey">
-          Your next session will appear here
+          {{ $t('Dashboard.nextSessionWillAppear') }}
         </p>
       </div>
     </v-card-text>
