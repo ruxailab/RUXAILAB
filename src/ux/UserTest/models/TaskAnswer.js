@@ -53,6 +53,12 @@ export default class TaskAnswer {
   }
 
   toFirestore() {
+    let tamData = null
+    if (this.tamAnswers) {
+      tamData = (this.tamAnswers instanceof TamAnswer) 
+        ? this.tamAnswers.toFirestore() 
+        : new TamAnswer(this.tamAnswers).toFirestore()
+    }
     return {
       taskId: this.taskId,
       taskAnswer: this.taskAnswer,
@@ -68,7 +74,7 @@ export default class TaskAnswer {
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
       nasaTlxAnswers: this.nasaTlxAnswers ? ((this.nasaTlxAnswers instanceof NasaTlxAnswer) ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
-      tamAnswers: this.tamAnswers ? ((this.tamAnswers instanceof TamAnswer) ? this.tamAnswers : new TamAnswer(this.tamAnswers)).toFirestore() : null,
+      tamAnswers: tamData,
       sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers,
       facialSentimentResults: this.facialSentimentResults,
     }
