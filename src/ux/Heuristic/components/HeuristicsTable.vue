@@ -509,7 +509,7 @@
                 @submit.prevent="addQuestion"
               >
                 <v-text-field
-                  v-if="newQuestion"
+                  v-if="dialogQuestion && newQuestion"
                   v-model="newQuestion.title"
                   :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
                   variant="outlined"
@@ -517,7 +517,7 @@
                   :rules="questionRequired"
                   autofocus
                 />
-                <v-alert v-else type="error" class="mt-4">
+                <v-alert v-else-if="dialogQuestion" type="error" class="mt-4">
                   {{ $t('HeuristicsTable.errors.failedToLoadQuestionForm') }}
                 </v-alert>
               </v-form>
@@ -628,6 +628,7 @@ const descBtn = ref([])
 const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
+const isDialogClosing = ref(false)
 
 const headers = ref([
   { title: t('HeuristicsTable.titles.titles'), align: 'start', value: 'title', width: '70%' },
@@ -870,22 +871,36 @@ const addHeuris = () => {
 
 const closeDialog = (dialogName) => {
   if (isProcessing.value) return;
-  if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
-    formHeurisRef.value.resetValidation()
-    formHeurisRef.value.reset()
+  if (dialogName === 'dialogHeuris') {
+    if (formHeurisRef.value) {
+      formHeurisRef.value.resetValidation()
+      formHeurisRef.value.reset()
+    }
+    dialogHeuris.value = false;
   }
-  if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
-    formQuestionRef.value.resetValidation();
-    formQuestionRef.value.reset();
+  else if (dialogName === 'dialogQuestion') {
+    dialogQuestion.value = false;
+    setTimeout(() => {
+      if (formQuestionRef.value) {
+        formQuestionRef.value.resetValidation();
+        formQuestionRef.value.reset();
+      }
+      newQuestion.value = null;
+      questionHeuristicIndex.value = null;
+    }, 150);
   }
-  if (dialogName === 'dialogEdit' && formEditRef.value) {
-    formEditRef.value.resetValidation()
-    formEditRef.value.reset()
+  else if (dialogName === 'dialogEdit') {
+    isDialogClosing.value = true;
+    if (formEditRef.value) {
+      formEditRef.value.resetValidation()
+      formEditRef.value.reset()
+    }
+    dialogEdit.value = false;
+    setTimeout(() => {
+      isDialogClosing.value = false;
+      itemEdit.value = null;
+    }, 300);
   }
-
-  if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
-  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false;
-  else if (dialogName === 'dialogEdit') dialogEdit.value = false;
 };
 
 const addQuestion = () => {
@@ -894,16 +909,17 @@ const addQuestion = () => {
     return
   }
   if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false
-    const newHeuristics = [...heuristics.value]
-    newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
-    newHeuristics[questionHeuristicIndex.value].total =
-      newHeuristics[questionHeuristicIndex.value].questions.length
-    store.dispatch('setHeuristics', newHeuristics)
-    newQuestion.value = null
-    questionHeuristicIndex.value = null
-    formQuestionRef.value.resetValidation()
-    emit('change')
+    try {
+      const newHeuristics = [...heuristics.value]
+      newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
+      newHeuristics[questionHeuristicIndex.value].total = newHeuristics[questionHeuristicIndex.value].questions.length
+      store.dispatch('setHeuristics', newHeuristics)
+      closeDialog('dialogQuestion')
+      emit('change')
+    } catch (error) {
+      console.error('Error adding question:', error)
+      showError('HeuristicsTable.errors.failedToLoadQuestionForm')
+    }
   }
 }
 

@@ -66,36 +66,17 @@
                 {{ study.title }}
               </h4>
               <div class="description-wrapper">
-                <p
-                  class="text-body-2 text-medium-emphasis mb-3"
-                  :class="{
-                    'description-truncated':
-                      !expandedStudies[study.id] && study.isLongDescription,
-                  }"
-                >
+                <p class="text-body-2 text-medium-emphasis mb-3">
                   {{ study.description }}
                 </p>
-                <v-btn
-                  v-if="study.isLongDescription"
-                  @click.stop="toggleExpand(study.id)"
-                  variant="text"
-                  size="small"
-                  color="primary"
-                  class="text-lowercase"
-                  :prepend-icon="
-                    expandedStudies[study.id]
-                      ? 'mdi-chevron-up'
-                      : 'mdi-chevron-down'
-                  "
-                >
-                  {{ expandedStudies[study.id] ? $t('Dashboard.showLess') : $t('Dashboard.showMore') }}
-                </v-btn>
               </div>
 
               <!-- Progress -->
               <div class="mb-3">
                 <div class="d-flex justify-space-between align-center mb-1">
-                  <span class="text-caption font-weight-medium">{{ $t('Dashboard.progress') }}</span>
+                  <span class="text-caption font-weight-medium">{{
+                    $t('Dashboard.progress')
+                  }}</span>
                   <span class="text-caption">{{ study.progress }}%</span>
                 </div>
                 <v-progress-linear
@@ -115,7 +96,10 @@
                     class="me-1"
                     color="info"
                   />
-                  <span>{{ study.participants }} {{ $t('Dashboard.participants') }}</span>
+                  <span
+                    >{{ study.participants }}
+                    {{ $t('Dashboard.participants') }}</span
+                  >
                 </div>
                 <div v-if="study.daysLeft !== null" class="d-flex align-center">
                   <v-icon
@@ -126,7 +110,9 @@
                   />
                   <span>{{
                     `${study.daysLeft} ${
-                      study.daysLeft > 1 ? $t('Dashboard.daysLeft') : $t('Dashboard.dayLeft')
+                      study.daysLeft > 1
+                        ? $t('Dashboard.daysLeft')
+                        : $t('Dashboard.dayLeft')
                     }`
                   }}</span>
                 </div>

@@ -143,19 +143,19 @@ let unsubscribeTests = null // Unsub function for real-time tests
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
     case 'dashboard':
-      return 'Dashboard'
+      return t('navigation.dashboard')
     case 'studies':
-      return 'Studies'
+      return t('navigation.studies')
     case 'sessions':
-      return 'Sessions'
+      return t('navigation.sessions')
     case 'templates':
-      return 'Templates'
+      return t('navigation.templates')
     case 'storage':
-      return t('storage.pageTitle')
+      return t('navigation.storage')
     case 'notifications':
-      return 'Notifications'
+      return t('common.notifications')
     case 'profile':
-      return 'Profile'
+      return t('profile.title')
     case 'community':
       return activeSubSection.value === 'community-templates'
         ? t('community.templates.title')

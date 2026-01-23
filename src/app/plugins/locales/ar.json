@@ -128,6 +128,36 @@
       "automaticAccessibility": "إمكانية الوصول التلقائية"
     }
   },
+  "notificationsPage": {
+    "subtitle": "ابق على اطلاع بأنشطتك وتعاوناتك",
+    "markAllRead": "تحديد الكل كمقروء",
+    "searchPlaceholder": "البحث في الإشعارات…",
+    "notification": "إشعار",
+    "important": "مهم",
+    "markAsRead": "تحديد كمقروء",
+    "markAsUnread": "تحديد كغير مقروء",
+    "refresh": "تحديث",
+    "noResultsFound": "لم يتم العثور على نتائج",
+    "allCaughtUp": "تم الانتهاء من الكل!",
+    "noNotificationsYet": "لا توجد إشعارات بعد",
+    "tryDifferentKeywords": "جرب كلمات مختلفة أو امسح البحث",
+    "allReadMessage": "لقد قرأت جميع إشعاراتك. عمل رائع!",
+    "newActivitiesMessage": "ستظهر الإشعارات هنا عندما يكون لديك أنشطة جديدة",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {count} دقيقة",
+    "hoursAgo": "منذ {count} ساعة",
+    "daysAgo": "منذ {count} يوم",
+    "newNotification": "لديك إشعار جديد."
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "studies": "الدراسات",
+    "sessions": "الجلسات",
+    "templates": "القوالب",
+    "storage": "التخزين",
+    "communityStudies": "الدراسات المجتمعية",
+    "communityTemplates": "القوالب المجتمعية"
+  },
   "profile": {
     "title": "الملف الشخصي",
     "username": "اسم المستخدم",
@@ -281,7 +311,14 @@
       "deleteQuestion": "حذف السؤال",
       "addNewDescription": "إضافة وصف جديد",
       "addOption": "إضافة خيار جديد",
-      "hasValue": "لديه قيمة"
+      "hasValue": "لديه قيمة",
+      "moveUp": "تحريك لأعلى",
+      "moveDown": "تحريك لأسفل",
+      "Question": "سؤال",
+      "Questions": "أسئلة",
+      "noQuestions": "لا توجد أسئلة",
+      "noDescriptions": "لا توجد أوصاف",
+      "loading": "جاري التحميل..."
     },
     "placeholders": {
       "titleHeuristic": "عنوان الاستدلال",
@@ -296,7 +333,10 @@
       "youMustHave": "يجب أن تكون قد أدخلت شيئًا خاطئًا...",
       "noHeuristicsDeleteAll": "عذرًا، لا يمكنك حذف جميع أسئلة الاستدلال.",
       "noCsvFileSelected": "لم يتم تحديد ملف CSV. يرجى تحديد واحد قبل المتابعة.",
-      "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا."
+      "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا.",
+      "noDescriptions": "لا توجد أوصاف متاحة",
+      "startAddingQuestions": "ابدأ بإضافة سؤالك الأول إلى هذا الاستدلال",
+      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال"
     },
     "validation": {
       "nameRequired": "الاسم مطلوب",
@@ -309,6 +349,12 @@
       "showComment": "إظهار التعليق",
       "addComment": "إضافة تعليق",
       "hideTextArea": "إخفاء منطقة النص"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "فشل تحميل نموذج السؤال. يرجى المحاولة مرة أخرى.",
+      "failedToLoadEditForm": "فشل تحميل نموذج التحرير. يرجى المحاولة مرة أخرى.",
+      "invalidHeuristic": "اختيار استدلال غير صالح",
+      "invalidQuestion": "اختيار سؤال غير صالح"
     }
   },
   "HeuristicsOptionsTable": {
