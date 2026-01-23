@@ -5,156 +5,217 @@
 [![Python](https://img.shields.io/badge/python-3.11.8-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Firebase](https://img.shields.io/badge/firebase-production-FFCA28?style=for-the-badge&logo=firebase&logoColor=white)](https://firebase.google.com/)
 
-**Production-grade contributor guide** — the canonical contributor reference: environment constraints, exact local setup, emulator & Docker workflows, architecture rules, security/observability requirements, PR & testing standards, templates, and the project roadmap.
+This guide covers everything you need to know to contribute to RUXAILAB: the system architecture, development setup, feature-specific workflows, and how to submit quality code.
 
-This file **preserves every technical detail** while being structured for quick navigation.
+RUXAILAB is an open-source platform for conducting professional UX research. It supports multiple methodologies including user testing, heuristic evaluation, card sorting, and accessibility assessment. Whether you're adding features, fixing bugs, or improving documentation, this guide will walk you through the process.
 
-> [!CAUTION]
-> **Security note:** Never commit real secrets. Use `YOUR_*` placeholders in examples and keep real secrets in CI / secret stores.
-
----
-
-## Contents
-
-1. [Quick start (30s)](#1--quick-start-30s)
-2. [Core environment & technical stack (full details)](#2--core-environment--technical-stack-points-130)
-3. [Local setup & configuration (complete steps)](#3--local-setup--configuration-logic-points-3160)
-4. [Firebase emulators, ports & Docker (tables and exact commands)](#4--firebase-emulator-suite--docker-points-1420-2630-5460)
-5. [Python AHP weight function — local & production flows](#5--python-weight-function-ahp--local--production-points-2125-4448)
-6. [System architecture & rules contributors must obey](#6--system-architecture--backend-logic-points-6190)
-7. [Security, observability & performance standards (detailed)](#7--deep-technical-standards--roadmap-points-91120)
-8. [CI/CD, automation, and quality gates (detailed)](#8--cicd-automation--quality-gates-points-6974)
-9. [Testing: unit, property, fuzzing, E2E, benchmarks](#9--testing-unit-property-fuzzing-e2e-benchmarks-points-7580-127129)
-10. [Contributor workflow, commits, PRs & required templates](#10--contributor-framework--workflow-points-121150)
-11. [Issue templates & where to discuss ideas (copy-ready)](#11--templates--copy-ready-artifacts)
-12. [Appendix: .env.example, commands, troubleshooting, checklists](#13--appendix-commands-troubleshooting--checklists)
+> **Security First**
+> Never commit real secrets or credentials. Use `YOUR_*` placeholders in examples and keep actual credentials in CI secrets and `.env` files (which are git-ignored).
 
 ---
 
-## 1 — Quick start (30s)
+## What is RUXAILAB?
 
-Minimal flow to get a dev environment running:
+RUXAILAB provides researchers with tools to conduct systematic usability studies:
+
+- **User Testing**: Collect feedback from real users performing tasks (unmoderated or moderated sessions)
+- **Heuristic Evaluation**: Expert assessment of products against Nielsen's usability heuristics with AI-powered weight calculation
+- **Card Sorting**: Help researchers understand user mental models for information architecture
+- **Accessibility Assessment**: Evaluate WCAG 2.1 compliance through manual expert review or automated scanning
+- **Analytics & Reporting**: Statistical analysis of results with comprehensive PDF reports
+
+The platform handles the full research lifecycle: study creation, participant management, data collection, analysis, and reporting.
+
+---
+
+## Table of Contents
+
+1. [Quick Start](#1-quick-start)
+2. [System Architecture](#2-system-architecture)
+3. [Tech Stack](#3-tech-stack)
+4. [Local Development Setup](#4-local-development-setup)
+5. [Study Types and Workflows](#5-study-types-and-workflows)
+6. [Vue Components and State Management](#6-vue-components-and-state-management)
+7. [Python AHP Weight Function](#7-python-ahp-weight-function)
+8. [Firebase and Emulators](#8-firebase-and-emulators)
+9. [Testing](#9-testing)
+10. [CI/CD Pipeline](#10-cicd-pipeline)
+11. [Contributing](#11-contributing)
+12. [Troubleshooting](#12-troubleshooting)
+
+---
+
+## 1. Quick Start
+
+Get the development environment running in about 2 minutes:
 
 ```bash
-git clone [https://github.com/](https://github.com/)<org>/ruxailab.git
-cd ruxailab
+# Clone the repository
+git clone https://github.com/ruxailab/RUXAILAB.git
+cd RUXAILAB
 
-# copy and edit .env (do not commit real secrets)
-cp .env.example .env      # edit with YOUR_* values (do not commit)
-
-# frontend deps
+# Install Node dependencies
 npm install
 
-# python deps for AHP engine
+# Set up Python environment for the AHP engine
 cd weight_function
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cd ..
 
-# start emulators and dev server
-firebase emulators:start
-npm run serve
-
-# App: http://localhost:5000
-# Emulator UI: http://localhost:8080
-```
-## 2 — Core environment & technical stack 
-- Hard constraints. Do not change these without an RFC, CI updates, and maintainer sign-off.
-- Node.js: Project requires ≤ 24.12.0. Use nvm to match CI.
-- Vue: Frontend uses Vue.js 3.5.26 (Composition API).
-- Vuetify: UI library is Vuetify 3.11.6. Stick to Vuetify components and theming.
-- Vue CLI: Build & dev via Vue CLI 5.0.8.
-- Python: 3.11.8 required for weight_function (AHP engine).
-- Repo composition: ~76.8% Vue, ~21.7% JS, ~0.9% Python; small TypeScript/HTML/Dockerfile fractions.
-- Commit history: ~6,882 commits; ~254 forks — preserve history, no force-push on protected branches.
-- Prettier: enforced via .prettierrc. Run formatting pre-commit and in CI.
-- Babel / browsers: babel.config.js / .browserslistrc determine transpilation targets.
-- EditorConfig: .editorconfig standardizes editor behavior.
-- Husky: pre-commit hooks live in .husky/ (lint & basic checks). Do not bypass.
-- i18n guard: i18n-diff-guard.js ensures translation key consistency.
-- SonarCloud: quality gate integration via sonarcloud_to_github.py.
-- Testing stacks: jest.config.js (unit), Playwright in e2e/ (E2E) with playwright.config.ts.
-- ESLint: config in eslint.config.mjs. CI enforces linting.
-- Firebase infra files: firebase.json, firestore.rules, storage.rules, firestore.indexes.json. Any infra change must update these.
-- package-lock.json: committed for deterministic installs.
-- Functions: functions/ contains Node Cloud Functions (keep stateless).
-- Python backend: weight_function/ holds the AHP codebase (separate packaging & deployment).
-- Public & source: public/ and src/ are the main frontend paths.
-- Project aliases: .firebaserc contains aliases used by CI and deploy scripts.
-  
-## 3 — Local setup & configuration logic 
-Follow this exactly for reproducible local environments.
-
-Prerequisites
-
-Node (≤ 24.12.0) — use nvm use <version>
-
-npm (bundled with Node)
-
-Python 3.11.8
-
-Firebase CLI (latest recommended)
-
-Docker & docker-compose (optional but recommended)
-
-make (optional helpers)
-
-Step-by-step bootstrap
-
-1. Clone repo
-
-Bash
-git clone [https://github.com/](https://github.com/)<org>/ruxailab.git
-cd ruxailab
-2. Install frontend deps
-
-Bash
-npm install
-3. Install Python deps (AHP engine)
-
-Bash
-cd weight_function
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cd ..
-4. Create .env
-
-Bash
+# Copy environment configuration
 cp .env.example .env
-# edit .env with YOUR_* placeholders
-Note: Do not commit .env. Use CI secrets for real values.
+# Edit .env with your Firebase project credentials
 
-5. Activate Realtime Database (manual in Firebase Console)
-
-Console → Build → Realtime Database → Create database (choose region & rules).
-
-Note: Realtime DB must be enabled manually; some live features depend on it.
-
-6. Uncomment emulator lines in src/index.js The repository includes deliberate emulator toggles — explicitly uncomment to route SDKs to local emulators. This prevents accidental production writes.
-
-7. Start emulators
-
-Bash
-firebase emulators:start
-Or for functions only:
-
-Bash
-firebase emulators:start --only functions
-8. Run frontend
-
-Bash
+# Start everything
+firebase emulators:start &
 npm run serve
-App (hosting emulator): http://localhost:5000
+```
 
-Emulator UI: http://localhost:8080 (see firebase.json)
+You should now be able to access the application at http://localhost:5000 and the emulator dashboard at http://localhost:4000.
 
-.env variables (essentials)
+---
 
-Use YOUR_* placeholders — never commit real values.
+## 2. System Architecture
 
-Properties
+### How the System Works
+
+RUXAILAB has three main layers that work together:
+
+![RUXAILAB Architecture Diagram](public/architecture-diagram.png)
+
+**Frontend Layer (Vue 3 + Vuetify)**
+The browser runs a responsive Vue 3 application that handles all user interactions. It communicates with Firebase services to read and write study data. Researchers create studies, experts enter evaluations, and participants complete tasks all through this interface.
+
+**Backend Layer (Firebase)**
+Firebase provides the entire backend infrastructure. Authentication handles user login, Firestore stores all application data (studies, responses, results), Cloud Functions process logic like sending notifications, and Cloud Storage holds media files. For development, we use the Firebase Emulator Suite which simulates all these services locally.
+
+**Analysis Engine (Python)**
+For heuristic evaluation, a Python service running as a Firebase Function performs the Analytic Hierarchy Process (AHP) computation. When experts provide pairwise comparisons of heuristic importance, this engine calculates normalized weights that ensure consistency across all expert opinions.
+
+### Data Flow
+
+When a researcher creates a heuristic evaluation study, this is what happens:
+
+1. Researcher fills in study details and selects heuristics in the Vue UI
+2. Frontend sends the study to Firebase Cloud Functions
+3. Functions validate the data and store it in Firestore
+4. A Study document is created and stored permanently
+5. An empty Answers document is created to hold responses
+
+When an expert evaluates the product:
+
+1. Expert accesses the study and provides pairwise comparison judgments
+2. Frontend sends comparisons to the Python AHP function
+3. AHP calculates weights and consistency metrics
+4. Frontend displays the weights and prompts expert to rate each heuristic
+5. Expert submissions are stored in the Answers document
+6. System calculates aggregate statistics and generates report
+
+---
+
+## 3. Tech Stack
+
+### Core Requirements
+
+| Component | Version | Reason |
+|-----------|---------|--------|
+| Node.js | ≤ 24.12.0 | Firebase CLI requires this specific range |
+| Vue.js | 3.5.26 | Latest with Composition API support |
+| Vuetify | 3.11.6 | Material Design components |
+| Python | 3.11.8 | AHP engine backend |
+| Firebase SDK | 9.23.0 (client) / 13.6.0 (admin) | Cloud services integration |
+
+### Project Language Breakdown
+
+- Vue: 76.8%
+- JavaScript: 21.7%
+- Python: 0.9%
+- TypeScript: 0.3%
+- Other: 0.3%
+
+The project is primarily Vue-based with JavaScript for complex logic. TypeScript usage is minimal—use JavaScript for new code unless absolutely necessary.
+
+### Development Tools
+
+| Tool | Config File | Purpose |
+|------|------------|---------|
+| Code Formatter | `.prettierrc` | Ensures consistent code style |
+| Linter | `eslint.config.mjs` | Catches common JavaScript issues |
+| Pre-commit Hooks | `.husky/` | Runs lint before commits |
+| Unit Tests | `jest.config.js` | Component and utility testing |
+| E2E Tests | `playwright.config.ts` | Full workflow testing |
+| Internationalization | `src/locales/` | English and Spanish support |
+| State Management | `src/store/` | Vuex with feature modules |
+
+### Browser Support
+
+Defined in `.browserslistrc`. Testing should include:
+
+- Chrome and Chromium (latest 2 versions)
+- Firefox (latest 2 versions)
+- Safari (latest 2 versions)
+- Edge (latest 2 versions)
+
+---
+
+## 4. Local Development Setup
+
+### Prerequisites
+
+Before starting, make sure you have:
+
+- Node.js 24.12.0 or lower (use nvm to manage versions: `nvm install 24.12.0 && nvm use 24.12.0`)
+- Python 3.11.8 (use pyenv: `pyenv install 3.11.8`)
+- Firebase CLI installed globally: `npm install -g firebase-tools`
+- A Firebase project (free tier is fine for development)
+- Git
+
+### Step 1: Clone and Install Dependencies
+
+```bash
+git clone https://github.com/ruxailab/RUXAILAB.git
+cd RUXAILAB
+npm install
+```
+
+Verify your Node version:
+```bash
+node --version    # Should be ≤ 24.12.0
+npm --version     # Any recent version is fine
+```
+
+### Step 2: Set Up Python Environment
+
+```bash
+cd weight_function
+python3.11 --version  # Confirm version 3.11.8
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements.txt
+cd ..
+```
+
+### Step 3: Create Firebase Project
+
+Go to [Firebase Console](https://console.firebase.google.com):
+
+1. Create a new project
+2. Enable Firestore Database (choose a region close to you)
+3. Enable Realtime Database
+4. Go to Project Settings and copy your Firebase configuration
+
+### Step 4: Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in your Firebase credentials:
+
+```properties
 VUE_APP_I18N_LOCALE=en
 VUE_APP_I18N_FALLBACK_LOCALE=en
 
@@ -165,429 +226,815 @@ VUE_APP_FIREBASE_STORAGE_BUCKET=YOUR_FIREBASE_STORAGE_BUCKET
 VUE_APP_FIREBASE_MESSAGING_SENDER_ID=YOUR_FIREBASE_MESSAGING_SENDER_ID
 VUE_APP_FIREBASE_APP_ID=YOUR_FIREBASE_APP_ID
 
-# Python AHP function (emulator or production)
-VUE_APP_FIREBASE_PYTHON_FUNCTION=http://localhost:5001/YOUR_FIREBASE_PROJECT_ID/us-central1/weightFunction
-4 — Firebase Emulator Suite & Docker (points 14–20, 26–30, 54–60)
-Emulator port map (local)
+VUE_APP_FIREBASE_PYTHON_FUNCTION=http://localhost:5001/YOUR_PROJECT_ID/us-central1/weightFunction
+```
 
-Service	Default port
-Hosting (emulated)	5000
-Firestore emulator	8081
-Auth emulator	9099
-Storage emulator	9199
-Functions emulator (Node & Python)	5001
-Emulator UI	8080
-Important emulator settings
+Never commit `.env`. It's already in `.gitignore`.
 
-singleProjectMode: true — prevents cross-project leakage.
+### Step 5: Start Firebase Emulators
 
-ui.enabled: true — enables the emulator UI dashboard.
+```bash
+firebase use default
+firebase emulators:start
+```
 
-Docker quick reproducible workflow
+You should see output showing all emulators starting on different ports:
 
-Build
+```
+✔  Auth emulator started at http://localhost:9099
+✔  Firestore emulator started at http://localhost:8081
+✔  Storage emulator started at http://localhost:9199
+✔  Functions emulator started at http://localhost:5001
+✔  Hosting emulator started at http://localhost:5000
+✔  Hub emulator started at http://localhost:4000
+```
 
-Bash
-docker build -t uxremotelab .
-Run
+### Step 6: Start Frontend Dev Server
 
-Bash
-docker run -d --env-file .env -p 5000:5000 uxremotelab
-# access: http://localhost:5000
-Playwright (CI-like) Use Dockerfile-playwright to build a container with deterministic browsers. CI should run Playwright in that container to avoid host inconsistencies.
+In a new terminal:
 
-5 — Python weight function (AHP) — local & production (points 21–25, 44–48)
-This is the mathematical heart of RUXAILAB. Respect its isolation and rules.
+```bash
+npm run serve
+```
 
-Purpose
+Open http://localhost:5000 in your browser. You should see the RUXAILAB login screen.
 
-Implements the Analytic Hierarchy Process (AHP) to convert expert pairwise comparisons into a consistent weight vector for usability heuristics.
+### Step 7: Test the Setup
 
-Local testing & invocation
+**Sign in with test credentials:**
+- Email: `testemail@gmail.com`
+- Password: `password123`
 
-Ensure weight_function/ dependencies are installed (see Section 3). Start the functions emulator:
+These are emulator-only credentials. In production, real authentication is used.
 
-Bash
-firebase emulators:start --only functions
-The functions emulator will print the local URL for the Python function, e.g.: http://localhost:5001/<project>/us-central1/weightFunction
+**Verify emulator services:**
+- Firestore: http://localhost:8081
+- Emulator UI: http://localhost:4000
+- Auth Emulator: http://localhost:9099
 
-Add that URL into .env:
+---
 
-Properties
-VUE_APP_FIREBASE_PYTHON_FUNCTION=http://localhost:5001/YOUR_FIREBASE_PROJECT_ID/us-central1/weightFunction
-Call the endpoint from frontend code or test via curl / Postman with a valid payload.
+## 5. Study Types and Workflows
 
-Packaging & deployment
+RUXAILAB supports five different research methodologies. Each has its own data structure and workflow.
 
-The Python function lives in weight_function/ and is deployed separately.
+### User Testing
 
-Production requirement: Python Cloud Functions require Firebase Blaze billing plan. Do not attempt to deploy Python functions on Spark (free) tier.
+Researchers recruit users to test a website or application while providing feedback.
 
-Size hygiene: .gitignore must exclude venv/ and dev-only artifacts. Keep function package size minimal.
+**Workflow:**
+1. Researcher creates study and defines tasks users will perform
+2. Users receive a link to the study
+3. User reads welcome message and consent form
+4. User completes pre-test survey (optional)
+5. User performs tasks on the target website
+6. User answers post-test questions
+7. User completes System Usability Scale (SUS) questionnaire
+8. User sees thank you message
+
+**Subtypes:**
+- Unmoderated: Users complete at their own pace from any location
+- Moderated: Researcher observes and may ask clarifying questions (future feature)
+
+**Code location:** `src/ux/UserTest/`
 
-Best practices for AHP function code
-
-Validate inputs strictly; reject malformed matrices with descriptive errors.
-
-Return metadata: weights plus consistency metrics (CR, eigenvalues), so consumers can reason about the results.
-
-Avoid blocking I/O: functions should return quickly; use async/background workers for heavy compute.
-
-Structured logs (JSON) and stable response schemas.
-
-6 — System architecture & backend logic (points 61–90)
-Design, boundaries, and rules to prevent accidental coupling and enable scale.
-
-Runtime topology
-
-UI (Vue): interactive client — consumes Firestore and calls Cloud Functions for orchestration. No heavy math in the UI.
-
-Cloud Functions (Node): API layer, security boundary, and orchestration. Keep stateless.
-
-Python AHP (weight_function): math engine accessible via HTTP from Node functions.
-
-Storage: Firestore (primary), Realtime Database (live sync), Cloud Storage (files/assets).
-
-Firestore & Realtime DB usage
-
-Realtime DB: used for low-latency live updates (e.g., active test sessions). Enable & test locally.
-
-Firestore: canonical app data — projects, tests, evaluations, reports.
-
-Security & rules
-
-All reads/writes must be governed by firestore.rules and storage.rules. Adding a new collection (e.g., /heatmaps) requires:
-
-Updating firestore.rules and storage.rules.
-
-Unit tests for access paths.
-
-Documentation in the PR.
-
-Indexes
-
-Add complex query indexes to firestore.indexes.json. Missing an index causes “index not found” in production/emulator.
-
-Observability & function stats
-
-Use Firebase Console and structured logs to monitor function performance and errors. Include request_id for traceability.
-
-Feature priorities & GSOC-worthy areas
-
-Analytics Tab (Asynchronous User Tests)
-
-Heat Maps & Card Sorting (major GSOC targets)
-
-Heuristic Evaluation Workspace
-
-Sentiment analysis pipeline (research/experimental)
-
-7 — Deep technical standards & roadmap (points 91–120)
-Production-grade requirements, goals, and implementation notes.
-
-Observability & tracing
-
-Adopt structured (JSON) logging everywhere. Include: request_id, user_id (if authorized), function, node_id.
-
-Plan OpenTelemetry spans exported to Jaeger / Honeycomb for deep traces.
-
-Request correlation
-
-Each inbound request should include a request_id (generate at the edge if necessary) and propagate it across Node ↔ Python calls.
-
-Security & secrets
-
-CI secrets must be scoped to the least privilege.
-
-Avoid exposing VUE_APP_* keys to jobs that don’t require them. Use masked secrets in GitHub Actions.
-
-Data protection
-
-Data at rest: encrypt snapshots and WALs (AES-GCM recommended).
-
-Sensitive local artifacts: chmod 0600 for service account JSON and backups.
-
-Performance targets (roadmap)
-
-p99 latency: target 4.0ms via batching & fsync tuning.
-
-Throughput: target 120k ops/sec through asynchronous I/O & batching.
-
-Explore io_uring / tokio-uring for future storage paths.
-
-Reliability & correctness
-
-Use Joint Consensus for configuration changes to prevent split-brain.
-
-Plan Two-Phase Commit (2PC) for cross-range transactions (future).
-
-Use property-based testing and model checking (TLA+/Kani) for critical invariants (e.g., election safety).
-
-Supply chain & vulnerability scanning
-
-Enforce npm audit and similar checks in CI. Run nightly dependency checks and block high-severity upgrades.
-
-8 — CI/CD, automation & quality gates (points 69–74)
-Exact expectations and example pipeline.
-
-Recommended GitHub Actions pipeline
-
-On PR:
-
-Checkout
-
-Setup Node & Python (matching versions)
-
-npm ci
-
-Lint: npm run lint
-
-Format check: npm run format:check
-
-Unit tests: npm run test:unit
-
-SonarCloud scan (if token present)
-
-Build artifacts
-
-Playwright tests in container (optional/conditional)
-
-On merge to develop/main:
-
-Run the above + deploy steps, gated by approvals & SonarCloud results.
-
-Pre-deploy hooks
-
-firebase.json includes predeploy hooks such as:
-
-Bash
-npm --prefix "$RESOURCE_DIR" run lint
-Do not disable predeploy hooks.
-
-SonarCloud
-
-sonarcloud_to_github.py posts Sonar results to PRs. If results are missing, check script permissions & tokens.
-
-9 — Testing (unit, property, fuzzing, E2E, benchmarks) (points 75–80, 127–129)
-Testing is mandatory and varies by subsystem.
-
-Frontend unit tests
-
-Framework: Jest
-
-Focus: reactive state, helper utilities, components with logic (avoid heavy DOM testing here).
-
-Commands:
-
-Bash
-npm run test:unit
-npm run test:unit:coverage
-Playwright E2E
-
-Cover critical flows: sign-in, create test, run test, submit evaluation, report generation, analytics.
-
-CI: run Playwright inside Dockerfile-playwright.
-
-Local:
-
-Bash
-npm run test:e2e
-Python (AHP) tests
-
-Run inside weight_function venv:
-
-Bash
+### Heuristic Evaluation
+
+Experts evaluate a product using Nielsen's 10 usability heuristics. The system uses weighted scoring based on expert consensus.
+
+**Workflow:**
+1. Researcher creates study and selects heuristics to evaluate
+2. Researcher invites experts and configures evaluation scale
+3. Expert performs pairwise comparisons of heuristic importance (AHP phase)
+4. Python engine calculates normalized weights
+5. Expert rates product against each heuristic using the scale
+6. System computes weighted usability score
+7. Report shows individual expert scores plus aggregated statistics
+
+**Nielsen's 10 Heuristics:**
+- Visibility of system status
+- Match between system and real world
+- User control and freedom
+- Consistency and standards
+- Error prevention
+- Error recovery
+- Flexibility and efficiency
+- Aesthetic and minimalist design
+- Help and documentation
+- Custom heuristics (researcher-defined)
+
+**Code location:** `src/ux/Heuristic/`
+
+### Card Sorting
+
+Researchers understand user mental models by having users organize content into categories.
+
+**Subtypes:**
+- Open: Users create their own categories
+- Closed: Users sort into predefined categories
+
+**Code location:** `src/ux/CardSorting/`
+
+### Accessibility Assessment
+
+Experts evaluate conformance to WCAG 2.1 accessibility guidelines.
+
+**Subtypes:**
+- Manual: Expert reviews using checklist and automated tools
+- Automatic: Scanning tool identifies common violations
+
+**Code location:** `src/ux/accessibility/`
+
+### Survey and Analytics (Planned)
+
+Future feature for collecting quantitative data and analyzing trends.
+
+---
+
+## 6. Vue Components and State Management
+
+### Folder Organization
+
+```
+src/
+├── main.js                  # Application entry point
+├── app/
+│   ├── App.vue              # Root Vue component
+│   ├── router/
+│   │   └── index.js         # Route definitions
+│   ├── plugins/
+│   │   ├── vuetify.js       # Material Design theme setup
+│   │   ├── i18n.js          # Internationalization
+│   │   └── firebase.js      # Firebase SDK initialization
+│   └── layouts/
+│       ├── AppLayout.vue    # Main authenticated layout
+│       └── AuthLayout.vue   # Login/signup layout
+├── store/
+│   ├── index.js             # Store root
+│   ├── modules/
+│   │   └── Study.js         # Study CRUD operations
+│   └── [other modules]      # Feature-specific stores
+├── features/                # Feature modules
+│   ├── auth/                # Login and authentication
+│   ├── dashboard/           # Home screen and study list
+│   ├── ux_creation/         # Study creation wizard
+│   └── navigation/          # Navigation components
+├── ux/                      # Research methodology implementations
+│   ├── UserTest/            # User testing interface
+│   ├── Heuristic/           # Heuristic evaluation
+│   ├── CardSorting/         # Card sorting
+│   └── accessibility/       # WCAG testing
+├── shared/                  # Reusable code
+│   ├── models/              # Data models and classes
+│   ├── constants/           # Constants and enums
+│   ├── components/          # Reusable components
+│   ├── store/               # Shared store modules
+│   └── utils/               # Helper functions
+└── locales/                 # i18n translations
+```
+
+### State Management with Vuex
+
+The application uses Vuex for centralized state management. Each feature has its own module:
+
+| Module | Responsibility |
+|--------|-----------------|
+| Auth | User login state and authentication |
+| Tests (Study) | CRUD operations for studies |
+| Heuristic | Heuristic-specific state |
+| UserStudy | User testing configuration |
+| CardStudy | Card sorting configuration |
+| Answer | Study responses and results |
+| Assessment | Accessibility evaluation |
+| Dashboard | Study listings and dashboard state |
+| Language | Current language preference |
+
+### Accessing State in Components
+
+Use the modern Composition API approach for new code:
+
+```javascript
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+
+export default {
+  setup() {
+    const store = useStore()
+    
+    // Read values that change
+    const currentStudy = computed(() => store.getters.test)
+    const isLoading = computed(() => store.state.loading)
+    
+    // Call actions to modify state
+    const saveStudy = async (studyData) => {
+      await store.dispatch('updateStudy', studyData)
+    }
+    
+    return { currentStudy, isLoading, saveStudy }
+  }
+}
+```
+
+Avoid the Options API (mapGetters, mapState) in new code.
+
+### Creating a Study: Data Flow Example
+
+Understanding how data flows through the system:
+
+```
+User Form Input
+  ↓
+Vue Component calls store.dispatch('createStudy', studyData)
+  ↓
+Study.js action calls StudyController.createStudy()
+  ↓
+Controller validates and sends to Firestore
+  ↓
+Firestore creates document and returns ID
+  ↓
+Action commits SET_TEST(study) to update store
+  ↓
+Component updates via computed property
+  ↓
+Vue re-renders automatically
+```
+
+---
+
+## 7. Python AHP Weight Function
+
+### Understanding the Analytic Hierarchy Process
+
+When multiple experts evaluate a product, they often disagree on the relative importance of different heuristics. The Analytic Hierarchy Process (AHP) provides a mathematical framework to handle this disagreement consistently.
+
+Here's how it works:
+
+1. **Pairwise Comparisons**: Each expert compares heuristics two at a time, saying things like "Consistency is 3 times more important than Error Prevention"
+2. **Matrix Construction**: These comparisons form a matrix
+3. **Eigenvalue Calculation**: Mathematical analysis derives a weight vector from the matrix
+4. **Consistency Check**: The system measures whether the expert's judgments are logically consistent
+
+In RUXAILAB, if expert A says "H1 is 3x more important than H2" and expert B says "H1 is 5x more important than H2", the system calculates a consensus: H1 is approximately 4x more important.
+
+### Location and Implementation
+
+```
+weight_function/
+├── main.py              # Firebase Cloud Function entry point
+├── requirements.txt     # Python package dependencies
+├── venv/                # Virtual environment (not committed)
+└── [other modules]      # Supporting code
+```
+
+### How the Algorithm Works
+
+```python
+def calculate_eigen(matrix):
+    """
+    Takes a pairwise comparison matrix and returns:
+    - Normalized weights (sum to 1.0)
+    - Consistency Index (CI)
+    - Consistency Ratio (CR)
+    - Interpretation (Consistent if CR <= 0.1)
+    """
+```
+
+Example comparison matrix for 3 heuristics:
+
+```
+       H1   H2   H3
+H1  [  1    3    5  ]  H1 is baseline
+H2  [ 1/3   1    2  ]  H1 is 3x more important than H2
+H3  [ 1/5  1/2   1  ]  H1 is 5x more important than H3
+```
+
+The algorithm produces normalized weights: H1 = 0.645, H2 = 0.223, H3 = 0.133
+
+### Local Testing
+
+To test the AHP function locally:
+
+```bash
 cd weight_function
 source venv/bin/activate
-pytest -q
-Property-based testing & fuzzing
+firebase emulators:start --only functions
 
-Use hypothesis (Python) or proptest for thorough math invariants.
+# In another terminal:
+curl -X POST http://localhost:5001/YOUR_PROJECT_ID/us-central1/weightFunction \
+  -H "Content-Type: application/json" \
+  -d '{
+    "matrix": [[1,3,5],[0.333,1,2],[0.2,0.5,1]]
+  }'
+```
 
-Plan fuzzing for JSON serialization boundaries (e.g., cargo-fuzz or Python fuzzers).
+### Deploying to Production
 
-Benchmarks
+The Python function requires Firebase Blaze billing plan (the free Spark plan doesn't support Python functions):
 
-Provide reproducible bench/ scripts. CI should run nightly benchmarks to detect regressions (e.g., cargo bench, Node.js benchmarks).
+```bash
+# Upgrade Firebase project to Blaze plan first
+firebase deploy --only functions
+```
 
-10 — Contributor framework & workflow (points 121–150)
-How to contribute responsibly and what reviewers expect.
+Then update your production `.env`:
 
-Branching strategy
+```properties
+VUE_APP_FIREBASE_PYTHON_FUNCTION=https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/weightFunction
+```
 
-Work from develop. Branch naming:
+### Using AHP Results in the Frontend
 
-feature/<short-desc>
+When experts submit their evaluations:
 
-fix/<short-desc>
+1. Frontend collects the pairwise comparison judgments
+2. Sends the comparison matrix to the Python AHP function
+3. Function returns weights and consistency metrics
+4. Frontend displays the weights for expert review
+5. If Consistency Ratio > 0.1, the system warns that judgments are inconsistent and asks for review
 
-docs/<short-desc>
+---
 
-test/<short-desc>
+## 8. Firebase and Emulators
 
-Commit messages
+### Emulator Services and Ports
 
-Use Conventional Commits:
+During development, the Firebase Emulator Suite provides fake versions of all backend services:
 
-Plaintext
-feat(scope): description
-fix(scope): description
-docs(scope): description
-chore(scope): description
-Keep commits small and focused.
+| Service | Port | Purpose |
+|---------|------|---------|
+| Firestore | 8081 | NoSQL database for documents |
+| Realtime Database | 9000 | Real-time JSON database |
+| Authentication | 9099 | User login and management |
+| Storage | 9199 | File storage |
+| Functions | 5001 | Backend functions (Node and Python) |
+| Hosting | 5000 | Frontend server |
+| Emulator Hub | 4000 | Dashboard for all emulators |
 
-PR requirements
+### Configuration Files
 
-Every PR must include:
+| File | Purpose |
+|------|---------|
+| firebase.json | Defines emulator ports, hosting settings, and build hooks |
+| .firebaserc | Project aliases used by deploy commands |
+| firestore.rules | Security rules for database access |
+| storage.rules | Security rules for file uploads |
+| firestore.indexes.json | Composite index definitions |
 
-Summary (1–2 lines)
+### Database Structure
 
-Technical approach (design, tradeoffs, alternatives)
+Understanding how data is organized in Firestore:
 
-Impact analysis (performance, storage, billing, security)
+```
+/tests
+  /testId1/
+    testTitle: "Website Usability Study"
+    testType: "HEURISTIC"
+    testStructure: { heuristics: [...], questions: [...] }
+    testWeights: { h1: 0.45, h2: 0.15, ... }
+    status: "active"
 
-Testing (what tests were added/updated)
+/answers
+  /answersDocId1/
+    type: "HEURISTIC"
+    evaluatorStatistics: [{ userDocId, heuristics: [...] }, ...]
+    heuristicAnswers: { ... }
+    submitted: true
 
-Rollback plan (for infra changes)
+/users
+  /userId1/
+    email: "researcher@example.com"
+    displayName: "Jane Researcher"
+    myTests: { testId1: true }
+    accessLevel: 1
 
-Pre-PR checklist (developer)
+/templates
+  /templateId1/
+    body: { testType, testStructure, testOptions }
+    header: { templateTitle, templateAuthor, ... }
+```
 
-[ ] Branched from develop
+### Security Rules in Development
 
-[ ] Rebased & resolved conflicts
+In the emulator environment, security rules are permissive by default. For production deployments, rules should restrict access:
 
-[ ] Lint & format run locally
+```javascript
+// Example production rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /tests/{testId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == resource.data.testAdmin.userDocId;
+    }
+    match /answers/{answersDocId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+  }
+}
+```
 
-[ ] Unit tests pass locally
+---
 
-[ ] E2E tests updated where necessary
+## 9. Testing
 
-[ ] Firestore indexes updated if needed (firestore.indexes.json)
+Quality code requires thorough testing. RUXAILAB uses multiple testing approaches.
 
-[ ] Firestore & Storage rules updated for new collections (firestore.rules / storage.rules)
+### Unit Tests with Jest
 
-[ ] No secrets in code/diffs
+Unit tests verify that individual functions and components work correctly in isolation.
 
-[ ] PR template filled out
+**When to write unit tests:**
+- Helper functions and utility logic
+- Vuex getters and complex state transformations
+- Component computed properties
+- Services and controllers
 
-Review & merge policy
+**Where to put tests:**
+- Co-locate with source: `component.spec.js` next to `component.vue`
+- Or in `tests/unit/` directory
 
-At least 1 maintainer review required (2 for infra changes).
+**Example test:**
 
-Merge only after CI passes and SonarCloud score acceptable.
+```javascript
+// src/ux/Heuristic/utils/statistics.spec.js
+import { calcFinalResult } from './statistics'
 
-Prefer rebase & merge for linear history (or squash if project policy requires).
+describe('Heuristic Statistics', () => {
+  it('calculates correct average score', () => {
+    const evaluatorScores = [80, 85, 75]
+    const result = calcFinalResult(evaluatorScores)
+    expect(result.average).toBeCloseTo(80)
+  })
 
-11 — Templates & copy-ready artifacts
-.env.example (place in repo root)
+  it('handles empty scores', () => {
+    const result = calcFinalResult([])
+    expect(result.average).toBe(0)
+  })
+})
+```
 
-Properties
-# Localization
-VUE_APP_I18N_LOCALE=en
-VUE_APP_I18N_FALLBACK_LOCALE=en
+**Running tests:**
 
-# Firebase placeholders — replace with YOUR_* values
-VUE_APP_FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
-VUE_APP_FIREBASE_AUTH_DOMAIN=YOUR_FIREBASE_AUTH_DOMAIN
-VUE_APP_FIREBASE_PROJECT_ID=YOUR_FIREBASE_PROJECT_ID
-VUE_APP_FIREBASE_STORAGE_BUCKET=YOUR_FIREBASE_STORAGE_BUCKET
-VUE_APP_FIREBASE_MESSAGING_SENDER_ID=YOUR_FIREBASE_MESSAGING_SENDER_ID
-VUE_APP_FIREBASE_APP_ID=YOUR_FIREBASE_APP_ID
+```bash
+npm run test:unit
+npm run test:unit:coverage    # Shows coverage report
+```
 
-# Python AHP function endpoint (emulator or prod)
-VUE_APP_FIREBASE_PYTHON_FUNCTION=http://localhost:5001/YOUR_FIREBASE_PROJECT_ID/us-central1/weightFunction
-PR template (.github/PULL_REQUEST_TEMPLATE.md)
+### E2E Tests with Playwright
 
-Markdown
-## Summary
-Concise description.
+End-to-end tests verify that complete user workflows function correctly, from login through report generation.
 
-## Technical Approach
-Design, decisions, trade-offs.
+**Critical workflows to test:**
+1. Create study, configure heuristics, complete evaluation, view results
+2. Create user test, invite participants, collect responses, generate report
+3. Join collaborative study, complete accessibility review
+4. Access public study link without authentication
 
-## Impact Analysis
-Performance, storage, security, billing.
+**Example test:**
+
+```javascript
+import { test, expect } from '@playwright/test'
+
+test('create heuristic study and evaluate', async ({ page }) => {
+  // Navigate to login
+  await page.goto('http://localhost:5000/signin')
+  
+  // Login
+  await page.getByLabel('Email').fill('testemail@gmail.com')
+  await page.getByLabel('Password').fill('password123')
+  await page.getByTestId('sign-in-button').click()
+  
+  // Wait for dashboard
+  await expect(page.getByTestId('create-test-btn')).toBeVisible({ timeout: 7000 })
+  
+  // Start study creation
+  await page.getByTestId('create-test-btn').click()
+  await page.getByText('Heuristic Evaluation').click()
+  
+  // Fill study details
+  await page.getByLabel('Study Title').fill('Website Redesign Evaluation')
+  await page.getByLabel('Description').fill('Evaluating the new design against usability heuristics')
+  await page.getByRole('button', { name: 'Create Study' }).click()
+  
+  // Verify success
+  await expect(page.getByText('Website Redesign Evaluation')).toBeVisible()
+})
+```
+
+**Running E2E tests:**
+
+```bash
+npm run test:e2e              # Headless mode
+npm run test:e2e:ui           # Interactive mode with UI
+npm run test-html-report      # Generate HTML report
+```
+
+### Python Tests for AHP
+
+```bash
+cd weight_function
+source venv/bin/activate
+pytest -v
+```
+
+### Accessibility Testing
+
+Manual testing using browser tools:
+
+```bash
+lighthouse http://localhost:5000 --view
+```
+
+Automated WCAG scanning is part of the accessibility module.
+
+---
+
+## 10. CI/CD Pipeline
+
+The project uses GitHub Actions to automatically test and deploy code.
+
+### On Every Pull Request
+
+1. Install dependencies
+2. Run linter and formatter
+3. Execute unit tests
+4. Run E2E tests in containers
+5. Analyze code with SonarCloud
+6. Check for secrets in code
+
+### On Merge to Main/Develop
+
+All PR checks plus:
+
+1. Build production bundle
+2. Run performance checks
+3. Deploy to Firebase hosting (if approved)
+
+### Pre-commit Hooks
+
+Git hooks (via Husky) run automatically before commits:
+
+```bash
+npm run lint      # ESLint
+npm run format    # Prettier
+```
+
+To bypass (not recommended):
+
+```bash
+git commit --no-verify
+```
+
+---
+
+## 11. Contributing
+
+### Branching
+
+Create feature branches from `develop`:
+
+```
+feature/add-custom-heuristics
+fix/consistency-calculation-bug
+docs/update-setup-guide
+test/add-card-sorting-e2e
+refactor/simplify-vuex-modules
+```
+
+### Commits
+
+Follow Conventional Commits format:
+
+```
+feat(heuristic): Add custom heuristic support
+fix(accessibility): Correct WCAG rule mapping
+docs(contributing): Add AHP explanation
+test(e2e): Add user test workflow
+refactor(store): Consolidate Study module
+chore(deps): Update Vuetify to 3.11.7
+```
+
+Keep commits atomic and focused. Each commit should build and pass tests.
+
+### Before Creating a Pull Request
+
+Developer checklist:
+
+- Branched from `develop`
+- Rebased and resolved any conflicts
+- Linter passes: `npm run lint`
+- Formatter applied: `npm run format`
+- Unit tests pass: `npm run test:unit`
+- E2E tests added for new features
+- No console errors or warnings
+- `.env` file not included
+- Documentation updated (README, CONTRIBUTING)
+- No secrets or credentials in code
+
+### Pull Request Template
+
+```markdown
+## What does this PR do?
+Brief description of changes
+
+## Why?
+Motivation and problem this solves
+
+## How to test?
+1. Start emulators
+2. Navigate to...
+3. Verify that...
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation
+- [ ] Breaking change
 
 ## Testing
-- Unit tests: (list)
-- E2E tests: (list)
-- Manual steps
+- [ ] Unit tests added
+- [ ] E2E tests added
+- [ ] Manual testing completed
 
-## Checklist
-- [ ] Branch from develop
-- [ ] Linted & formatted
-- [ ] Tests pass
-- [ ] Docs updated (if needed)
-- [ ] No secrets included
-Issue templates (.github/ISSUE_TEMPLATE/)
+## Impact
+- Performance: [no impact / improves / affects]
+- Security: [no impact / fixes / affects]
+- Accessibility: [no impact / improves / affects]
 
-bug_report.md
-
-Markdown
-**Title**
-
-**Describe the bug**
-
-**To Reproduce**
-1.
-2.
-3.
-
-**Expected behavior**
-
-**Environment**
-- OS:
-- Browser:
-- Node:
-- Firebase emulator: yes/no
-
-**Logs / screenshots**
-feature_request.md
-
-Markdown
-**Title**
-
-**Summary**
-
-**Use case / user story**
-
-**Proposed solution**
-
-
-## 12 — Appendix: commands, troubleshooting & checklists
-Useful commands
-
-```Bash
-# dev: frontend deps
-npm install
-
-# python deps (AHP engine)
-cd weight_function && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
-
-# start everything
-firebase emulators:start
-npm run serve
-
-# functions only
-firebase emulators:start --only functions
-
-# lint / format / tests
-npm run lint
-npm run format
-npm run format:check
-npm run test:unit
-npm run test:e2e
-
-# docker
-docker build -t uxremotelab .
-docker run -d --env-file .env -p 5000:5000 uxremotelab
+## Screenshots (if UI change)
+[Before/After]
 ```
-# Troubleshooting
 
-- Auth errors Ensure emulator toggles in src/index.js are enabled and VUE_APP_FIREBASE_AUTH_DOMAIN matches the emulator config.
+### Code Review and Merging
 
-- Firestore missing index Add the index to firestore.indexes.json and restart emulators.
+Requirements before merge:
 
-- Function not reachable Ensure firebase emulators:start --only functions is running and update VUE_APP_FIREBASE_PYTHON_FUNCTION with the printed URL.
+- Minimum 1 maintainer approval (2 for major features)
+- CI pipeline passes completely
+- No increase in code quality issues (SonarCloud)
+- All conversations resolved
 
-- Slow CI Playwright runs Use Dockerfile-playwright to run tests in container. Increase timeouts only if necessary; prefer mocking external resources.
+Preferred merge strategy: Rebase and merge for linear history.
+
+---
+
+## 12. Troubleshooting
+
+### Firebase Emulators
+
+**Port already in use:**
+
+```bash
+# Find which process is using the port
+lsof -i :5001
+
+# Kill it
+kill -9 <PID>
+
+# Or change ports in firebase.json
+{
+  "functions": { "port": 5051 },
+  "firestore": { "port": 8181 }
+}
+```
+
+**Firebase not initialized:**
+
+Make sure emulator connection code is uncommented in `src/plugins/firebase.js`:
+
+```javascript
+if (process.env.NODE_ENV === 'development') {
+  connectAuthEmulator(auth, "http://localhost:9099")
+  connectFirestoreEmulator(db, "localhost", 8081)
+  connectStorageEmulator(storage, "localhost", 9199)
+}
+```
+
+**Python function returns 404:**
+
+Update `.env` with the correct function URL after emulators start. Check the emulator console output for the exact URL.
+
+### Vue and JavaScript
+
+**Linter errors for undefined variables:**
+
+```bash
+npm run lint:fix    # Auto-fix many issues
+```
+
+Common fixes:
+- Add missing imports: `import { useStore } from 'vuex'`
+- Add missing lifecycle hooks: `import { onMounted } from 'vue'`
+
+**State not updating:**
+
+Verify Vuex modules are properly configured:
+
+```javascript
+export default {
+  namespaced: true,  // REQUIRED for feature modules
+  state: { },
+  mutations: { },
+  actions: { }
+}
+```
+
+### Testing
+
+**Playwright test timeout:**
+
+Increase timeout in `playwright.config.ts`:
+
+```javascript
+use: {
+  timeout: 30000,
+  navigationTimeout: 30000
+}
+```
+
+**E2E passes locally but fails in CI:**
+
+CI environment is headless and may have network delays. Add explicit waits:
+
+```javascript
+// Good
+await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible({ timeout: 5000 })
+await page.getByRole('button', { name: 'Submit' }).click()
+
+// Avoid
+await page.click('button')
+```
+
+### Data and State
+
+**Heuristic weights are NaN:**
+
+Verify the AHP comparison matrix has no zeros and is reciprocal:
+
+```javascript
+// Invalid: has 0
+matrix = [[1, 0, 5], [0, 1, 2], [1/5, 1/2, 1]]
+
+// Valid: all reciprocal
+matrix = [[1, 3, 5], [1/3, 1, 2], [1/5, 1/2, 1]]
+```
+
+**Data not persisting after refresh:**
+
+In development, all data is in memory. In production, verify Firestore security rules allow writes.
+
+### Performance
+
+**Slow dashboard loading:**
+
+Check DevTools Network tab for excessive Firestore queries. Consider using snapshot subscriptions instead of individual reads in loops.
+
+**E2E tests very slow:**
+
+Run tests in parallel:
+
+```javascript
+// playwright.config.ts
+fullyParallel: true,
+workers: process.env.CI ? 1 : 4
+```
+
+---
+
+## Learning Resources
+
+To understand the codebase better, explore these areas:
+
+- `src/ux/Heuristic/`: See how heuristic evaluation is implemented
+- `src/ux/UserTest/`: User testing workflow and task management
+- `src/store/modules/Study.js`: Core state management logic
+- `weight_function/main.py`: AHP algorithm implementation
+- `e2e/`: Example workflows and testing patterns
+
+Read the existing code thoughtfully. Look for patterns and conventions before writing new code.
+
+---
+
+## Getting Help
+
+- **Questions about contributing?** Open a GitHub Discussion
+- **Found a bug?** Create a GitHub Issue
+- **Need design clarification?** Ask in the repo Issues
+- **General support?** Contact the maintainers
+
+---
+
+## Summary for Contributors
+
+RUXAILAB is a sophisticated research platform. When contributing:
+
+1. Understand which study type your changes affect
+2. Know how Vuex state flows through the application
+3. Set up emulators correctly for reliable development
+4. Write tests for critical paths
+5. Follow Conventional Commits format
+6. Keep components small and focused
+7. Never commit secrets or credentials
+
+The community appreciates thoughtful, well-tested contributions. Thank you for building this with us.
