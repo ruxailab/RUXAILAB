@@ -241,6 +241,8 @@
     "cta": "始める"
   },
   "Dashboard": {
+    "welcomeBack": "おかえりなさい、{name}さん！",
+    "subtitle": "今日のあなたの研究プロジェクトの状況です",
     "createNewTest": "新しいテストを作成",
     "tests": "テスト",
     "templates": "テンプレート",
@@ -250,7 +252,41 @@
     "publicTests": "公開テスト",
     "sessions": "セッション",
     "personal": "個人",
-    "explore": "探す"
+    "explore": "探す",
+    "activeStudiesOverview": "アクティブな研究の概要",
+    "viewAll": "すべて表示",
+    "showMore": "もっと見る",
+    "showLess": "少なく表示",
+    "progress": "進捗",
+    "participants": "参加者",
+    "participantsLabel": "参加者",
+    "daysLeft": "残り日数",
+    "dayLeft": "残り1日",
+    "studies": "研究",
+    "storage": "ストレージ",
+    "free": "無料",
+    "plan": "プラン",
+    "recentActivity": "最近のアクティビティ",
+    "comingSoon": "近日公開",
+    "mostUsedMethods": "最も使用されている方法",
+    "use": "使用",
+    "uses": "使用回数",
+    "noDataAvailable": "まだデータがありません",
+    "createFirstStudy": "ここに統計を表示するには、最初の研究を作成してください。",
+    "nextSession": "次のセッション",
+    "noSessionsScheduled": "予定されたセッションはありません",
+    "nextSessionWillAppear": "次のセッションがここに表示されます",
+    "latestBlogPosts": "最新のブログ投稿",
+    "viewBlog": "ブログを見る",
+    "date": "日付",
+    "time": "時間",
+    "status": {
+      "active": "アクティブ",
+      "recruiting": "募集中",
+      "paused": "一時停止",
+      "finished": "完了",
+      "unknown": "不明"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -782,11 +818,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1047,11 +1079,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",
