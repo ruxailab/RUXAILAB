@@ -1138,5 +1138,69 @@
         "upcoming": "قادم"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "دراسة اختبار المستخدم",
+      "unmoderatedStudy": "دراسة غير مُيسَّرة",
+      "moderatedStudy": "دراسة مُيسَّرة",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل",
+      "archived": "مؤرشف"
+    },
+    "studyOverview": {
+      "totalParticipants": "إجمالي المشاركين",
+      "completed": "مكتمل",
+      "rate": "معدل {percentage}%",
+      "inProgress": "قيد التنفيذ",
+      "active": "نشط {percentage}%",
+      "averageTime": "متوسط الوقت",
+      "completionTime": "وقت الإكمال",
+      "minUnit": "{value} دقيقة"
+    },
+    "managementModules": {
+      "title": "وحدات الإدارة",
+      "description": "أدوات شاملة لإدارة المشاركين والمهام والإعدادات وتحليل بيانات دراستك",
+      "additionalModules": "مساحة للوحدات الإضافية"
+    },
+    "participants": {
+      "title": "المشاركون",
+      "subtitle": "نظرة عامة على المشاركة في الاختبار",
+      "beta": "تجريبي",
+      "completed": "مكتمل",
+      "notStarted": "لم يبدأ",
+      "pendingInvites": "دعوات معلقة",
+      "overallProgress": "التقدم العام",
+      "participantsCompleted": "أكمل {completed} من {total} مشاركين",
+      "details": "التفاصيل"
+    },
+    "tasks": {
+      "title": "نظرة عامة على المهام",
+      "subtitle": "هيكل المهام والإكمال",
+      "beta": "تجريبي",
+      "noTasksConfigured": "لا توجد مهام محددة",
+      "taskCompletionRate": "معدل إكمال المهام",
+      "totalTasks": "إجمالي المهام",
+      "avgTaskDuration": "متوسط مدة المهمة",
+      "successRate": "معدل النجاح",
+      "taskTypes": "أنواع المهام",
+      "viewTasks": "عرض المهام"
+    },
+    "storage": {
+      "title": "استخدام التخزين",
+      "subtitle": "ملفات الوسائط ومقاييس التخزين",
+      "beta": "تجريبي",
+      "storageUsed": "التخزين المستخدم",
+      "storageQuota": "تم استخدام {used} من {quota}",
+      "mediaFiles": "ملفات الوسائط",
+      "videoRecordings": "تسجيلات الفيديو",
+      "audioRecordings": "تسجيلات الصوت",
+      "screenRecordings": "تسجيلات الشاشة",
+      "storageBreakdown": "تفصيل التخزين",
+      "responsesData": "بيانات الردود",
+      "analyticsData": "بيانات التحليلات",
+      "manageStorage": "إدارة التخزين"
+    }
   }
 }

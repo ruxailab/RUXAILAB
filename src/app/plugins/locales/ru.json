@@ -1,38 +1,6 @@
 {
   "language": "Язык",
   "auth": {
-    "signupSuccess": "Регистрация успешна",
-    "logoutSuccess": "Выход успешен",
-    "resetPasswordSuccess": "Письмо для сброса пароля отправлено",
-    "deleteSuccess": "Аккаунт успешно удален",
-    "loginSuccess": "Вход выполнен успешно",
-    "SIGNIN": {
-      "sign-in": "Войти",
-      "sign-in-title": "С возвращением",
-      "sign-in-subtitle": "Войдите в свой аккаунт, чтобы продолжить",
-      "email": "Электронная почта",
-      "username": "Имя пользователя",
-      "password": "Пароль",
-      "signupSubtitle": "Заполните свои данные, чтобы начать",
-      "dont-have-account": "Нет аккаунта?",
-      "forgot-password": "Забыли пароль?",
-      "sign-up": "Создать аккаунт",
-      "contact": "Контактный номер",
-      "confirmPassword": "Подтвердите пароль",
-      "alreadyHaveAnAccount": "Уже есть аккаунт?",
-      "continueWithGoogle": "Продолжить с Google",
-      "rememberMe": "Запомнить меня",
-      "or": "или продолжить с"
-    },
-    "FORGOT_PASSWORD": {
-      "reset_password": "Сбросить пароль",
-      "email": "Электронная почта",
-      "instructions": "Введите свой адрес электронной почты, и мы отправим вам ссылку для сброса пароля.",
-      "reset_button": "Отправить ссылку сброса",
-      "back_to_signin": "Вернуться ко входу"
-    }
-  },
-  "auth": {
     "FORGOT_PASSWORD": {
       "reset_password": "Сбросить пароль",
       "email": "Электронная почта",
@@ -1151,6 +1119,70 @@
         "finished": "Завершено",
         "upcoming": "Предстоящее"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Исследование пользовательского тестирования",
+      "unmoderatedStudy": "Немодерируемое исследование",
+      "moderatedStudy": "Модерируемое исследование",
+      "active": "Активно",
+      "draft": "Черновик",
+      "completed": "Завершено",
+      "archived": "Архивировано"
+    },
+    "studyOverview": {
+      "totalParticipants": "Всего участников",
+      "completed": "Завершено",
+      "rate": "{percentage}% завершения",
+      "inProgress": "В процессе",
+      "active": "{percentage}% активно",
+      "averageTime": "Среднее время",
+      "completionTime": "Время завершения",
+      "minUnit": "{value} мин"
+    },
+    "managementModules": {
+      "title": "Модули управления",
+      "description": "Комплексные инструменты для управления участниками, задачами, настройками и анализа данных исследования",
+      "additionalModules": "Место для дополнительных модулей"
+    },
+    "participants": {
+      "title": "Участники",
+      "subtitle": "Обзор участия в тестировании",
+      "beta": "Бета",
+      "completed": "Завершено",
+      "notStarted": "Не начато",
+      "pendingInvites": "Ожидающие приглашения",
+      "overallProgress": "Общий прогресс",
+      "participantsCompleted": "{completed} из {total} участников завершили",
+      "details": "Подробнее"
+    },
+    "tasks": {
+      "title": "Обзор задач",
+      "subtitle": "Структура и выполнение задач",
+      "beta": "Бета",
+      "noTasksConfigured": "Задачи не настроены",
+      "taskCompletionRate": "Процент выполнения задач",
+      "totalTasks": "Всего задач",
+      "avgTaskDuration": "Средняя продолжительность",
+      "successRate": "Процент успеха",
+      "taskTypes": "Типы задач",
+      "viewTasks": "Посмотреть задачи"
+    },
+    "storage": {
+      "title": "Использование хранилища",
+      "subtitle": "Медиафайлы и метрики хранилища",
+      "beta": "Бета",
+      "storageUsed": "Использовано хранилища",
+      "storageQuota": "Использовано {used} из {quota}",
+      "mediaFiles": "Медиафайлы",
+      "videoRecordings": "Видеозаписи",
+      "audioRecordings": "Аудиозаписи",
+      "screenRecordings": "Записи экрана",
+      "storageBreakdown": "Разбивка хранилища",
+      "responsesData": "Данные ответов",
+      "analyticsData": "Аналитические данные",
+      "manageStorage": "Управление хранилищем"
     }
   }
 }

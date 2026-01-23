@@ -1139,5 +1139,69 @@
         "upcoming": "À venir"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Étude de Test Utilisateur",
+      "unmoderatedStudy": "Étude Non Modérée",
+      "moderatedStudy": "Étude Modérée",
+      "active": "Actif",
+      "draft": "Brouillon",
+      "completed": "Terminé",
+      "archived": "Archivé"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total des Participants",
+      "completed": "Terminé",
+      "rate": "{percentage}% taux",
+      "inProgress": "En Cours",
+      "active": "{percentage}% actif",
+      "averageTime": "Temps Moyen",
+      "completionTime": "Temps de complétion",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Modules de Gestion",
+      "description": "Outils complets pour gérer les participants, les tâches, les paramètres et analyser les données de votre étude",
+      "additionalModules": "Espace pour modules supplémentaires"
+    },
+    "participants": {
+      "title": "Participants",
+      "subtitle": "Aperçu de la participation aux tests",
+      "beta": "Bêta",
+      "completed": "Terminé",
+      "notStarted": "Non Commencé",
+      "pendingInvites": "Invitations en Attente",
+      "overallProgress": "Progression Globale",
+      "participantsCompleted": "{completed} sur {total} participants terminés",
+      "details": "Détails"
+    },
+    "tasks": {
+      "title": "Aperçu des Tâches",
+      "subtitle": "Structure et achèvement des tâches",
+      "beta": "Bêta",
+      "noTasksConfigured": "Aucune tâche configurée",
+      "taskCompletionRate": "Taux d'Achèvement des Tâches",
+      "totalTasks": "Total des Tâches",
+      "avgTaskDuration": "Durée Moyenne de Tâche",
+      "successRate": "Taux de Réussite",
+      "taskTypes": "Types de Tâches",
+      "viewTasks": "Voir les Tâches"
+    },
+    "storage": {
+      "title": "Utilisation du Stockage",
+      "subtitle": "Fichiers média et métriques de stockage",
+      "beta": "Bêta",
+      "storageUsed": "Stockage Utilisé",
+      "storageQuota": "{used} sur {quota} utilisé",
+      "mediaFiles": "Fichiers Média",
+      "videoRecordings": "Enregistrements Vidéo",
+      "audioRecordings": "Enregistrements Audio",
+      "screenRecordings": "Enregistrements d'Écran",
+      "storageBreakdown": "Répartition du Stockage",
+      "responsesData": "Données de Réponses",
+      "analyticsData": "Données Analytiques",
+      "manageStorage": "Gérer le Stockage"
+    }
   }
 }

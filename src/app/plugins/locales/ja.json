@@ -1,38 +1,6 @@
 {
   "language": "言語",
   "auth": {
-    "signupSuccess": "サインアップに成功しました",
-    "logoutSuccess": "ログアウトに成功しました",
-    "resetPasswordSuccess": "パスワードリセット用のメールを送信しました",
-    "deleteSuccess": "アカウントが正常に削除されました",
-    "loginSuccess": "ログインに成功しました",
-    "SIGNIN": {
-      "sign-in": "ログイン",
-      "sign-in-title": "お帰りなさい",
-      "sign-in-subtitle": "続行するにはアカウントにサインインしてください",
-      "email": "メールアドレス",
-      "username": "ユーザー名",
-      "password": "パスワード",
-      "signupSubtitle": "開始するために情報を入力してください",
-      "dont-have-account": "アカウントをお持ちでないですか？登録",
-      "forgot-password": "パスワードをお忘れですか？",
-      "sign-up": "登録",
-      "contact": "連絡先番号",
-      "confirmPassword": "パスワードを確認",
-      "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン",
-      "continueWithGoogle": "Googleで続行",
-      "rememberMe": "ログイン情報を保持する",
-      "or": "または"
-    },
-    "FORGOT_PASSWORD": {
-      "reset_password": "パスワードをリセット",
-      "email": "メールアドレス",
-      "instructions": "メールアドレスを入力してください。パスワードリセット用のリンクをお送りします。",
-      "reset_button": "リセットリンクを送信",
-      "back_to_signin": "サインインに戻る"
-    }
-  },
-  "auth": {
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
@@ -1128,6 +1096,70 @@
         "finished": "完了",
         "upcoming": "近日公開"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "ユーザーテスト研究",
+      "unmoderatedStudy": "非モデレート型研究",
+      "moderatedStudy": "モデレート型研究",
+      "active": "アクティブ",
+      "draft": "下書き",
+      "completed": "完了",
+      "archived": "アーカイブ済み"
+    },
+    "studyOverview": {
+      "totalParticipants": "参加者総数",
+      "completed": "完了",
+      "rate": "{percentage}% 完了率",
+      "inProgress": "進行中",
+      "active": "{percentage}% アクティブ",
+      "averageTime": "平均時間",
+      "completionTime": "完了時間",
+      "minUnit": "{value} 分"
+    },
+    "managementModules": {
+      "title": "管理モジュール",
+      "description": "参加者、タスク、設定を管理し、研究データを分析するための包括的なツール",
+      "additionalModules": "追加モジュール用スペース"
+    },
+    "participants": {
+      "title": "参加者",
+      "subtitle": "テスト参加状況の概要",
+      "beta": "ベータ",
+      "completed": "完了",
+      "notStarted": "未開始",
+      "pendingInvites": "保留中の招待",
+      "overallProgress": "全体の進捗",
+      "participantsCompleted": "{total} 人中 {completed} 人の参加者が完了",
+      "details": "詳細"
+    },
+    "tasks": {
+      "title": "タスク概要",
+      "subtitle": "タスク構造と完了状況",
+      "beta": "ベータ",
+      "noTasksConfigured": "タスクが設定されていません",
+      "taskCompletionRate": "タスク完了率",
+      "totalTasks": "タスク総数",
+      "avgTaskDuration": "平均タスク時間",
+      "successRate": "成功率",
+      "taskTypes": "タスクタイプ",
+      "viewTasks": "タスクを見る"
+    },
+    "storage": {
+      "title": "ストレージ使用状況",
+      "subtitle": "メディアファイルとストレージ指標",
+      "beta": "ベータ",
+      "storageUsed": "使用済みストレージ",
+      "storageQuota": "{quota} 中 {used} 使用済み",
+      "mediaFiles": "メディアファイル",
+      "videoRecordings": "ビデオ録画",
+      "audioRecordings": "オーディオ録音",
+      "screenRecordings": "画面録画",
+      "storageBreakdown": "ストレージ内訳",
+      "responsesData": "レスポンスデータ",
+      "analyticsData": "分析データ",
+      "manageStorage": "ストレージ管理"
     }
   }
 }

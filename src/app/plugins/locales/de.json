@@ -1139,5 +1139,69 @@
         "upcoming": "Bevorstehend"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Benutzertest-Studie",
+      "unmoderatedStudy": "Unmoderierte Studie",
+      "moderatedStudy": "Moderierte Studie",
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen",
+      "archived": "Archiviert"
+    },
+    "studyOverview": {
+      "totalParticipants": "Gesamtteilnehmer",
+      "completed": "Abgeschlossen",
+      "rate": "{percentage}% Rate",
+      "inProgress": "In Bearbeitung",
+      "active": "{percentage}% aktiv",
+      "averageTime": "Durchschnittszeit",
+      "completionTime": "Abschlusszeit",
+      "minUnit": "{value} Min"
+    },
+    "managementModules": {
+      "title": "Verwaltungsmodule",
+      "description": "Umfassende Tools zur Verwaltung von Teilnehmern, Aufgaben, Einstellungen und Analyse Ihrer Studiendaten",
+      "additionalModules": "Platz für zusätzliche Module"
+    },
+    "participants": {
+      "title": "Teilnehmer",
+      "subtitle": "Übersicht der Testteilnahme",
+      "beta": "Beta",
+      "completed": "Abgeschlossen",
+      "notStarted": "Nicht Gestartet",
+      "pendingInvites": "Ausstehende Einladungen",
+      "overallProgress": "Gesamtfortschritt",
+      "participantsCompleted": "{completed} von {total} Teilnehmern abgeschlossen",
+      "details": "Details"
+    },
+    "tasks": {
+      "title": "Aufgabenübersicht",
+      "subtitle": "Aufgabenstruktur und Abschluss",
+      "beta": "Beta",
+      "noTasksConfigured": "Keine Aufgaben konfiguriert",
+      "taskCompletionRate": "Aufgabenabschlussrate",
+      "totalTasks": "Gesamtaufgaben",
+      "avgTaskDuration": "Durchschn. Aufgabendauer",
+      "successRate": "Erfolgsrate",
+      "taskTypes": "Aufgabentypen",
+      "viewTasks": "Aufgaben Anzeigen"
+    },
+    "storage": {
+      "title": "Speichernutzung",
+      "subtitle": "Mediendateien und Speichermetriken",
+      "beta": "Beta",
+      "storageUsed": "Genutzter Speicher",
+      "storageQuota": "{used} von {quota} genutzt",
+      "mediaFiles": "Mediendateien",
+      "videoRecordings": "Videoaufnahmen",
+      "audioRecordings": "Audioaufnahmen",
+      "screenRecordings": "Bildschirmaufnahmen",
+      "storageBreakdown": "Speicheraufschlüsselung",
+      "responsesData": "Antwortdaten",
+      "analyticsData": "Analysedaten",
+      "manageStorage": "Speicher Verwalten"
+    }
   }
 }
