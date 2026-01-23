@@ -281,7 +281,14 @@
       "deleteQuestion": "質問を削除",
       "addNewDescription": "新しい説明を追加",
       "addOption": "新しいオプションを追加",
-      "hasValue": "値あり"
+      "hasValue": "値あり",
+      "moveUp": "上に移動",
+      "moveDown": "下に移動",
+      "Question": "質問",
+      "Questions": "質問",
+      "noQuestions": "質問がありません",
+      "noDescriptions": "説明がありません",
+      "loading": "読み込み中..."
     },
     "placeholders": {
       "titleHeuristic": "ヒューリスティックのタイトル",
@@ -296,7 +303,10 @@
       "youMustHave": "何か間違って入力したようです...",
       "noHeuristicsDeleteAll": "申し訳ありませんが、すべてのヒューリスティック質問を削除することはできません。",
       "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
-      "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。"
+      "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。",
+      "noDescriptions": "説明が利用できません",
+      "startAddingQuestions": "このヒューリスティックに最初の質問を追加して開始してください",
+      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません"
     },
     "validation": {
       "nameRequired": "名前は必須です",
@@ -309,6 +319,12 @@
       "showComment": "コメントを表示",
       "addComment": "コメントを追加",
       "hideTextArea": "テキストエリアを非表示"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "質問フォームの読み込みに失敗しました。もう一度お試しください。",
+      "failedToLoadEditForm": "編集フォームの読み込みに失敗しました。もう一度お試しください。",
+      "invalidHeuristic": "無効なヒューリスティック選択です",
+      "invalidQuestion": "無効な質問選択です"
     }
   },
   "HeuristicsOptionsTable": {

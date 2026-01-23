@@ -359,7 +359,14 @@
       "deleteQuestion": "Eliminar pregunta",
       "addNewDescription": "Agregar nueva descripción",
       "addOption": "Agregar nueva opción",
-      "hasValue": "Tiene valor"
+      "hasValue": "Tiene valor",
+      "moveUp": "Mover arriba",
+      "moveDown": "Mover abajo",
+      "Question": "Pregunta",
+      "Questions": "Preguntas",
+      "noQuestions": "No hay preguntas",
+      "noDescriptions": "No hay descripciones",
+      "loading": "Cargando..."
     },
     "placeholders": {
       "titleHeuristic": "Título de la heurística",
@@ -374,7 +381,10 @@
       "youMustHave": "Debes haber escrito algo mal...",
       "noHeuristicsDeleteAll": "Lo siento, pero no puedes eliminar todas las preguntas de las heurísticas.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
-      "changeWeights": "Ten en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debes ajustarlos manualmente."
+      "changeWeights": "Ten en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debes ajustarlos manualmente.",
+      "noDescriptions": "No hay descripciones disponibles",
+      "startAddingQuestions": "Comienza agregando tu primera pregunta a esta heurística",
+      "cantDeleteAllQuestions": "Lo siento, no puedes eliminar todas las preguntas de una heurística"
     },
     "validation": {
       "nameRequired": "El nombre es obligatorio",
@@ -387,6 +397,12 @@
       "showComment": "Mostrar comentario",
       "addComment": "Agregar comentario",
       "hideTextArea": "Ocultar área de texto"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Error al cargar el formulario de pregunta. Por favor, inténtalo de nuevo.",
+      "failedToLoadEditForm": "Error al cargar el formulario de edición. Por favor, inténtalo de nuevo.",
+      "invalidHeuristic": "Selección de heurística no válida",
+      "invalidQuestion": "Selección de pregunta no válida"
     }
   },
   "HeuristicsOptionsTable": {

@@ -301,7 +301,14 @@
       "deleteQuestion": "Excluir pergunta",
       "addNewDescription": "Adicionar nova descrição",
       "addOption": "Adicionar uma nova opção",
-      "hasValue": "Tem valor"
+      "hasValue": "Tem valor",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo",
+      "Question": "Pergunta",
+      "Questions": "Perguntas",
+      "noQuestions": "Nenhuma pergunta",
+      "noDescriptions": "Nenhuma descrição",
+      "loading": "Carregando..."
     },
     "placeholders": {
       "titleHeuristic": "Título da Heurística",
@@ -316,7 +323,10 @@
       "youMustHave": "Você deve ter digitado algo errado...",
       "noHeuristicsDeleteAll": "Desculpe, mas você não pode excluir todas as perguntas de heurísticas.",
       "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar.",
-      "changeWeights": "Esteja ciente que, ao alterar a ordem das heurísticas, os pesos NÃO mudam automaticamente; você deve ajustá-los manualmente."
+      "changeWeights": "Esteja ciente que, ao alterar a ordem das heurísticas, os pesos NÃO mudam automaticamente; você deve ajustá-los manualmente.",
+      "noDescriptions": "Nenhuma descrição disponível",
+      "startAddingQuestions": "Comece adicionando sua primeira pergunta a esta heurística",
+      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística"
     },
     "validation": {
       "nameRequired": "Nome é obrigatório",
@@ -329,6 +339,12 @@
       "showComment": "Mostrar comentário",
       "addComment": "Adicionar comentário",
       "hideTextArea": "Ocultar área de texto"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Falha ao carregar o formulário de pergunta. Por favor, tente novamente.",
+      "failedToLoadEditForm": "Falha ao carregar o formulário de edição. Por favor, tente novamente.",
+      "invalidHeuristic": "Seleção de heurística inválida",
+      "invalidQuestion": "Seleção de pergunta inválida"
     }
   },
   "HeuristicsOptionsTable": {
