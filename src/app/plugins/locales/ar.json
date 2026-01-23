@@ -98,6 +98,36 @@
       "actions": "الإجراءات"
     }
   },
+  "notificationsPage": {
+    "subtitle": "ابق على اطلاع بأنشطتك وتعاوناتك",
+    "markAllRead": "تحديد الكل كمقروء",
+    "searchPlaceholder": "البحث في الإشعارات…",
+    "notification": "إشعار",
+    "important": "مهم",
+    "markAsRead": "تحديد كمقروء",
+    "markAsUnread": "تحديد كغير مقروء",
+    "refresh": "تحديث",
+    "noResultsFound": "لم يتم العثور على نتائج",
+    "allCaughtUp": "تم الانتهاء من الكل!",
+    "noNotificationsYet": "لا توجد إشعارات بعد",
+    "tryDifferentKeywords": "جرب كلمات مختلفة أو امسح البحث",
+    "allReadMessage": "لقد قرأت جميع إشعاراتك. عمل رائع!",
+    "newActivitiesMessage": "ستظهر الإشعارات هنا عندما يكون لديك أنشطة جديدة",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {count} دقيقة",
+    "hoursAgo": "منذ {count} ساعة",
+    "daysAgo": "منذ {count} يوم",
+    "newNotification": "لديك إشعار جديد."
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "studies": "الدراسات",
+    "sessions": "الجلسات",
+    "templates": "القوالب",
+    "storage": "التخزين",
+    "communityStudies": "الدراسات المجتمعية",
+    "communityTemplates": "القوالب المجتمعية"
+  },
   "profile": {
     "title": "الملف الشخصي",
     "username": "اسم المستخدم",

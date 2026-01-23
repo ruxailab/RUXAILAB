@@ -98,6 +98,36 @@
       "actions": "Aktionen"
     }
   },
+  "notificationsPage": {
+    "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
+    "markAllRead": "Alle als gelesen markieren",
+    "searchPlaceholder": "Benachrichtigungen suchen…",
+    "notification": "Benachrichtigung",
+    "important": "Wichtig",
+    "markAsRead": "Als gelesen markieren",
+    "markAsUnread": "Als ungelesen markieren",
+    "refresh": "Aktualisieren",
+    "noResultsFound": "Keine Ergebnisse gefunden",
+    "allCaughtUp": "Alles erledigt!",
+    "noNotificationsYet": "Noch keine Benachrichtigungen",
+    "tryDifferentKeywords": "Versuchen Sie andere Stichwörter oder löschen Sie die Suche",
+    "allReadMessage": "Sie haben alle Benachrichtigungen gelesen. Gut gemacht!",
+    "newActivitiesMessage": "Hier werden Benachrichtigungen angezeigt, wenn Sie neue Aktivitäten haben",
+    "justNow": "Gerade eben",
+    "minutesAgo": "vor {count}m",
+    "hoursAgo": "vor {count}h",
+    "daysAgo": "vor {count}T",
+    "newNotification": "Sie haben eine neue Benachrichtigung."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "studies": "Studien",
+    "sessions": "Sitzungen",
+    "templates": "Vorlagen",
+    "storage": "Speicher",
+    "communityStudies": "Community-Studien",
+    "communityTemplates": "Community-Vorlagen"
+  },
   "profile": {
     "title": "Profil",
     "username": "Benutzername",

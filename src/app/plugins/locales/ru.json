@@ -102,6 +102,36 @@
       "actions": "Действия"
     }
   },
+  "notificationsPage": {
+    "subtitle": "Будьте в курсе своих действий и совместной работы",
+    "markAllRead": "Отметить все как прочитанные",
+    "searchPlaceholder": "Поиск уведомлений…",
+    "notification": "Уведомление",
+    "important": "Важно",
+    "markAsRead": "Отметить как прочитанное",
+    "markAsUnread": "Отметить как непрочитанное",
+    "refresh": "Обновить",
+    "noResultsFound": "Результатов не найдено",
+    "allCaughtUp": "Всё прочитано!",
+    "noNotificationsYet": "Уведомлений пока нет",
+    "tryDifferentKeywords": "Попробуйте другие ключевые слова или очистите поиск",
+    "allReadMessage": "Вы прочитали все уведомления. Отлично!",
+    "newActivitiesMessage": "Здесь будут появляться уведомления о новых действиях",
+    "justNow": "Только что",
+    "minutesAgo": "{count} мин назад",
+    "hoursAgo": "{count} ч назад",
+    "daysAgo": "{count} д назад",
+    "newNotification": "У вас новое уведомление."
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "studies": "Исследования",
+    "sessions": "Сессии",
+    "templates": "Шаблоны",
+    "storage": "Хранилище",
+    "communityStudies": "Исследования сообщества",
+    "communityTemplates": "Шаблоны сообщества"
+  },
   "profile": {
     "title": "Профиль",
     "username": "Имя пользователя",

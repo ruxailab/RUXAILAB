@@ -102,6 +102,36 @@
       "actions": "アクション"
     }
   },
+  "notificationsPage": {
+    "subtitle": "活動とコラボレーションの最新情報を確認",
+    "markAllRead": "すべて既読にする",
+    "searchPlaceholder": "通知を検索…",
+    "notification": "通知",
+    "important": "重要",
+    "markAsRead": "既読にする",
+    "markAsUnread": "未読にする",
+    "refresh": "更新",
+    "noResultsFound": "結果が見つかりません",
+    "allCaughtUp": "すべて確認済み！",
+    "noNotificationsYet": "通知はまだありません",
+    "tryDifferentKeywords": "別のキーワードを試すか、検索をクリアしてください",
+    "allReadMessage": "すべての通知を読みました。お疲れ様です！",
+    "newActivitiesMessage": "新しい活動があるとここに通知が表示されます",
+    "justNow": "たった今",
+    "minutesAgo": "{count}分前",
+    "hoursAgo": "{count}時間前",
+    "daysAgo": "{count}日前",
+    "newNotification": "新しい通知があります。"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "studies": "研究",
+    "sessions": "セッション",
+    "templates": "テンプレート",
+    "storage": "ストレージ",
+    "communityStudies": "コミュニティ研究",
+    "communityTemplates": "コミュニティテンプレート"
+  },
   "profile": {
     "title": "プロフィール",
     "username": "ユーザー名",
