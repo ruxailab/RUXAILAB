@@ -386,7 +386,12 @@
       "addOption": "Add a new Option",
       "hasValue": "Has Value",
       "moveUp": "Move Up",
-      "moveDown": "Move Down"
+      "moveDown": "Move Down",
+      "Question": "Question",
+      "Questions": "Questions", 
+      "noQuestions": "No Questions",
+      "noDescriptions": "No Descriptions",
+      "loading": "Loading..."
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -401,7 +406,10 @@
       "youMustHave": "You must have typen something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
       "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
-      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
+      "noDescriptions": "No descriptions available",
+      "startAddingQuestions": "Start by adding your first question to this heuristic",
+      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -414,6 +422,12 @@
       "showComment": "Show comment",
       "addComment": "Add comment",
       "hideTextArea": "Hide text area"
+    },
+    "errors": {
+    "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
+    "failedToLoadEditForm": "Failed to load edit form. Please try again.",
+    "invalidHeuristic": "Invalid heuristic selection",
+    "invalidQuestion": "Invalid question selection"
     }
   },
   "HeuristicsOptionsTable": {
