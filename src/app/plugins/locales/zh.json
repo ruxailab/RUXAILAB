@@ -291,6 +291,8 @@
     "cta": "开始"
   },
   "Dashboard": {
+    "welcomeBack": "欢迎回来，{name}！",
+    "subtitle": "这是您今天研究项目的最新动态",
     "createNewTest": "创建新研究",
     "tests": "测试",
     "templates": "模板",
@@ -300,7 +302,41 @@
     "publicTests": "公开测试",
     "sessions": "会话",
     "personal": "个人",
-    "explore": "探索"
+    "explore": "探索",
+    "activeStudiesOverview": "活跃研究概览",
+    "viewAll": "查看全部",
+    "showMore": "显示更多",
+    "showLess": "显示更少",
+    "progress": "进度",
+    "participants": "参与者",
+    "participantsLabel": "参与者",
+    "daysLeft": "剩余天数",
+    "dayLeft": "剩余一天",
+    "studies": "研究",
+    "storage": "存储",
+    "free": "免费",
+    "plan": "计划",
+    "recentActivity": "最近活动",
+    "comingSoon": "即将推出",
+    "mostUsedMethods": "最常用的方法",
+    "use": "使用",
+    "uses": "使用次数",
+    "noDataAvailable": "暂无可用数据",
+    "createFirstStudy": "创建您的第一个研究以在此处查看统计信息。",
+    "nextSession": "下一个会话",
+    "noSessionsScheduled": "没有安排的会话",
+    "nextSessionWillAppear": "您的下一个会话将显示在这里",
+    "latestBlogPosts": "最新博客文章",
+    "viewBlog": "查看博客",
+    "date": "日期",
+    "time": "时间",
+    "status": {
+      "active": "活跃",
+      "recruiting": "招募中",
+      "paused": "已暂停",
+      "finished": "已完成",
+      "unknown": "未知"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -814,11 +850,7 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": [
-        "可用性百分比",
-        "最终报告PDF",
-        "邀请专家评估您的应用程序"
-      ]
+      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -832,20 +864,12 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": [
-          "在空闲时间回答",
-          "增强的答案分析",
-          "任务自定义"
-        ]
+        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": [
-          "摄像头、音频和屏幕录制",
-          "增强的答案分析",
-          "有主持的实时测试"
-        ]
+        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
       }
     }
   },
@@ -1102,20 +1126,12 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": [
-          "完全可定制",
-          "从头构建",
-          "对设置的完全控制"
-        ]
+        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": [
-          "快速设置",
-          "预配置设置",
-          "包含最佳实践"
-        ]
+        "features": ["快速设置", "预配置设置", "包含最佳实践"]
       }
     },
     "details": {
