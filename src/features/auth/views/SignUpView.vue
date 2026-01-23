@@ -149,9 +149,10 @@ const onSignUp = async () => {
         email: email.value,
         password: password.value,
       })
-      await router.push('/admin')
+      sessionStorage.setItem('signupEmail', email.value)
+      await router.push({ name: 'verify-email', params: { email: email.value } })
     } catch (error) {
-      console.error('Signup failed:', error)
+      // Error is already shown by Vuex store
     } finally {
       store.commit('setLoading', false)
     }
@@ -171,8 +172,8 @@ const onGoogleSignInSuccess = async () => {
   await router.push('/admin')
   store.commit('setLoading', false)
 }
-const onGoogleSignInError = (error) => {
-  console.error('Google sign-in error:', error)
+
+const onGoogleSignInError = () => {
   store.commit('setLoading', false)
 }
 </script>

@@ -67,7 +67,7 @@ export default {
           payload.email,
           payload.password,
         )
-        await userController.create({ id: user.uid, email: user.email })
+        await userController.create({ id: user.uid, email: user.email, emailVerified: false })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
@@ -102,7 +102,15 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        showError('errors.incorrectCredential')
+        if (err.code === 'auth/email-not-verified') {
+          commit('SET_TOAST', {
+            message: i18n.global.t('emailNotVerified'),
+            type: 'warning',
+          })
+        } else {
+          showError('errors.incorrectCredential')
+        }
+        throw err
       } finally {
         commit('setLoading', false)
       }

@@ -11,7 +11,8 @@ import {
   browserSessionPersistence,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
-  EmailAuthProvider
+  EmailAuthProvider,
+  sendEmailVerification
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios';
@@ -28,7 +29,17 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signUp(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password)
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    
+    if (userCredential?.user) {
+      try {
+        await sendEmailVerification(userCredential.user)
+      } catch (error) {
+        // Silently fail - account created successfully
+      }
+    }
+    
+    return userCredential
   }
 
   /**
@@ -39,7 +50,16 @@ export default class AuthController {
    */
   async signIn(email, password, rememberMe) {
     await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
-    return signInWithEmailAndPassword(auth, email, password)
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    
+    // Check if email is verified
+    if (userCredential.user && !userCredential.user.emailVerified) {
+      const error = new Error('Email not verified')
+      error.code = 'auth/email-not-verified'
+      throw error
+    }
+    
+    return userCredential
   }
 
   /**
@@ -58,6 +78,17 @@ export default class AuthController {
    */
   async getCurrentUser() {
     return auth.currentUser
+  }
+
+  /**
+   * Refreshes current user data (including emailVerified status)
+   * @returns {Promise<void>}
+   */
+  async reloadCurrentUser() {
+    const currentUser = auth.currentUser
+    if (currentUser) {
+      await currentUser.reload()
+    }
   }
 
   /**

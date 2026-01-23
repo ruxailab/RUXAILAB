@@ -1,6 +1,7 @@
 import TestView from '@/views/public/TestView.vue'
 import SignIn from '@/features/auth/views/SignInView.vue'
 import SignUp from '@/features/auth/views/SignUpView.vue'
+import VerifyEmail from '@/features/auth/views/VerifyEmailView.vue'
 import ForgotPassword from '@/features/auth/views/ForgotPasswordView.vue'
 import PageNotFound from '@/shared/views/public/PageNotFoundView.vue'
 import Help from '@/shared/views/public/Help.vue'
@@ -27,6 +28,12 @@ export default [
     name: 'Sign Up',
     meta: { authorize: [], layout: 'no-toolbar' },
     component: SignUp,
+  },
+  {
+    path: '/verify-email/:email?',
+    name: 'verify-email',
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: VerifyEmail,
   },
   {
     path: '/forgot-password',
