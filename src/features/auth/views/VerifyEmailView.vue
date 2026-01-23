@@ -127,7 +127,6 @@ const startAutoVerificationCheck = () => {
           }, 1500)
         }
       } finally {
-        // Polling continues regardless of error
       }
     }
   }, 2000)

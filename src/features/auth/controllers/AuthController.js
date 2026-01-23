@@ -30,13 +30,13 @@ export default class AuthController {
    */
   async signUp(email, password) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    
-    // Send verification email (non-blocking)
+
     if (userCredential?.user) {
       sendEmailVerification(userCredential.user).catch(() => {
         // Verification email failed, but account creation succeeded
       })
     }
+
     return userCredential
   }
 
@@ -86,6 +86,17 @@ export default class AuthController {
     const currentUser = auth.currentUser
     if (currentUser) {
       await currentUser.reload()
+    }
+  }
+
+  /**
+   * Sends verification email to user
+   * @param {Object} user - Firebase auth user
+   * @returns {Promise<void>}
+   */
+  async sendVerificationEmail(user) {
+    if (user) {
+      await sendEmailVerification(user)
     }
   }
 
