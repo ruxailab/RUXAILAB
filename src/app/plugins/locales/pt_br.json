@@ -1125,5 +1125,69 @@
         "upcoming": "Próximo"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Estudo de Teste de Usuário",
+      "unmoderatedStudy": "Estudo Não Moderado",
+      "moderatedStudy": "Estudo Moderado",
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "completed": "Concluído",
+      "archived": "Arquivado"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total de Participantes",
+      "completed": "Concluído",
+      "rate": "{percentage}% taxa",
+      "inProgress": "Em Andamento",
+      "active": "{percentage}% ativo",
+      "averageTime": "Tempo Médio",
+      "completionTime": "Tempo de conclusão",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Módulos de Gerenciamento",
+      "description": "Ferramentas abrangentes para gerenciar participantes, tarefas, configurações e analisar os dados do seu estudo",
+      "additionalModules": "Espaço para módulos adicionais"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Visão geral da participação no teste",
+      "beta": "Beta",
+      "completed": "Concluído",
+      "notStarted": "Não Iniciado",
+      "pendingInvites": "Convites Pendentes",
+      "overallProgress": "Progresso Geral",
+      "participantsCompleted": "{completed} de {total} participantes concluídos",
+      "details": "Detalhes"
+    },
+    "tasks": {
+      "title": "Visão Geral das Tarefas",
+      "subtitle": "Estrutura e conclusão das tarefas",
+      "beta": "Beta",
+      "noTasksConfigured": "Nenhuma tarefa configurada",
+      "taskCompletionRate": "Taxa de Conclusão de Tarefas",
+      "totalTasks": "Total de Tarefas",
+      "avgTaskDuration": "Duração Média da Tarefa",
+      "successRate": "Taxa de Sucesso",
+      "taskTypes": "Tipos de Tarefas",
+      "viewTasks": "Ver Tarefas"
+    },
+    "storage": {
+      "title": "Uso de Armazenamento",
+      "subtitle": "Arquivos de mídia e métricas de armazenamento",
+      "beta": "Beta",
+      "storageUsed": "Armazenamento Usado",
+      "storageQuota": "{used} de {quota} usado",
+      "mediaFiles": "Arquivos de Mídia",
+      "videoRecordings": "Gravações de Vídeo",
+      "audioRecordings": "Gravações de Áudio",
+      "screenRecordings": "Gravações de Tela",
+      "storageBreakdown": "Detalhamento do Armazenamento",
+      "responsesData": "Dados de Respostas",
+      "analyticsData": "Dados de Análise",
+      "manageStorage": "Gerenciar Armazenamento"
+    }
   }
 }
