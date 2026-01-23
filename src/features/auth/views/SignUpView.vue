@@ -151,8 +151,6 @@ const onSignUp = async () => {
       })
       sessionStorage.setItem('signupEmail', email.value)
       await router.push({ name: 'verify-email', params: { email: email.value } })
-    } catch (error) {
-      // Error is already shown by Vuex store
     } finally {
       store.commit('setLoading', false)
     }

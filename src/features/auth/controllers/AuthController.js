@@ -31,14 +31,12 @@ export default class AuthController {
   async signUp(email, password) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     
+    // Send verification email (non-blocking)
     if (userCredential?.user) {
-      try {
-        await sendEmailVerification(userCredential.user)
-      } catch (error) {
-        // Silently fail - account created successfully
-      }
+      sendEmailVerification(userCredential.user).catch(() => {
+        // Verification email failed, but account creation succeeded
+      })
     }
-    
     return userCredential
   }
 

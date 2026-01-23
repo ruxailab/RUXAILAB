@@ -73,10 +73,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
 import AuthController from '@/features/auth/controllers/AuthController'
 import { auth } from '@/app/plugins/firebase'
@@ -84,7 +83,6 @@ import { auth } from '@/app/plugins/firebase'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
 
 const isChecking = ref(false)
 const isResending = ref(false)
@@ -110,9 +108,9 @@ onUnmounted(() => {
 
 const startAutoVerificationCheck = () => {
   verificationCheckInterval = setInterval(async () => {
-    try {
-      const currentUser = auth.currentUser
-      if (currentUser) {
+    const currentUser = auth.currentUser
+    if (currentUser) {
+      try {
         await authController.reloadCurrentUser()
         
         if (currentUser.emailVerified) {
@@ -128,9 +126,9 @@ const startAutoVerificationCheck = () => {
             router.push('/admin')
           }, 1500)
         }
+      } finally {
+        // Polling continues regardless of error
       }
-    } catch (error) {
-      // Continue polling silently
     }
   }, 2000)
 }
@@ -186,11 +184,9 @@ const logout = async () => {
   
   try {
     await store.dispatch('logout', { silent: true })
-  } catch (error) {
-    // Continue even if logout fails
+  } finally {
+    router.push('/signin')
   }
-  
-  router.push('/signin')
 }
 </script>
 
