@@ -678,6 +678,23 @@
         "whereICollaborate": "コラボレーション中"
       }
     },
+    "templates": {
+      "searchPlaceholder": "テンプレートを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "範囲を選択",
+      "method": "方法",
+      "filters": {
+        "allMethods": "すべての方法",
+        "heuristicEvaluation": "ヒューリスティック評価",
+        "userUnmoderated": "ユーザー非モデレート",
+        "userModerated": "ユーザーモデレート",
+        "manualAccessibility": "手動アクセシビリティー",
+        "automaticAccessibility": "自動アクセシビリティー"
+      }
+    },
     "createTest": {
       "title": "新しいテストを作成",
       "blankTitle": "空白のテストを作成",

@@ -795,6 +795,23 @@
         "whereICollaborate": "Where I Collaborate"
       }
     },
+    "templates": {
+      "searchPlaceholder": "Search templates...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "method": "Method",
+      "filters": {
+        "allMethods": "All Methods",
+        "heuristicEvaluation": "Heuristic Evaluation",
+        "userUnmoderated": "User Unmoderated",
+        "userModerated": "User Moderated",
+        "manualAccessibility": "Manual Accessibility",
+        "automaticAccessibility": "Automatic Accessibility"
+      }
+    },
     "createTest": {
       "title": "Create a new test",
       "blankTitle": "Create a blank test",

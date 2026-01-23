@@ -692,6 +692,23 @@
         "whereICollaborate": "حيث أتعاون"
       }
     },
+    "templates": {
+      "searchPlaceholder": "البحث في القوالب...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "method": "الطريقة",
+      "filters": {
+        "allMethods": "جميع الطرق",
+        "heuristicEvaluation": "التقييم الاستدلالي",
+        "userUnmoderated": "مستخدم غير مدار",
+        "userModerated": "مستخدم مدار",
+        "manualAccessibility": "إمكانية الوصول اليدوية",
+        "automaticAccessibility": "إمكانية الوصول الآلية"
+      }
+    },
     "createTest": {
       "title": "إنشاء اختبار جديد",
       "blankTitle": "إنشاء اختبار فارغ",
