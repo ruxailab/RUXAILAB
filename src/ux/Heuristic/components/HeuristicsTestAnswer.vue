@@ -651,6 +651,7 @@ const checkIfNan = (value) => {
 };
 
 const getColor = (value, max, min) => {
+  value = Number(value);
   max = Number(max) || 0;
   min = Number(min) || 0;
 
@@ -658,10 +659,10 @@ const getColor = (value, max, min) => {
   if (value === 0) return 'red';
   if (max === min) return 'green';
 
-  const h = max ? (max - min) / max : 0;
+  const h = (max - min) / 4;
 
-  if (val <= min + 1 * h) return 'amber';
-  if (val <= min + 2 * h) return 'orange lighten-1';
+  if (value <= min + 1 * h) return 'amber';
+  if (value <= min + 2 * h) return 'orange lighten-1';
   if (value <= min + 3 * h) return 'lime';
   return 'green';
 };
