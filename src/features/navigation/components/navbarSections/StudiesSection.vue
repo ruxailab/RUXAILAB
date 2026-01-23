@@ -30,7 +30,9 @@
         :title="showFilters ? $t('pages.studies.hideFilters') : $t('pages.studies.showFilters')"
         @click="toggleFilters"
       >
-        <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        <v-icon>{{
+          showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
+        }}</v-icon>
       </v-btn>
     </div>
 
@@ -44,7 +46,6 @@
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
               max-width="290px"
               min-width="290px"
             >
@@ -58,6 +59,7 @@
                   :placeholder="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : $t('pages.studies.selectRange')"
+                  prepend-inner-icon="mdi-calendar"
                   :model-value="creationDateRange.length > 1
                     ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
                     : ''"
@@ -150,7 +152,7 @@
 
 <script setup>
 // ===== Imports =====
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -161,7 +163,7 @@ import {
   METHOD_DEFINITIONS,
   METHOD_STATUSES,
   STUDY_TYPES,
-  USER_STUDY_SUBTYPES
+  USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 
 // ===== Setup =====
@@ -220,16 +222,17 @@ const clearFilters = () => {
   showFilters.value = false
 }
 
-const hasActiveFilters = computed(() =>
-  !!(
-    search.value ||
-    creationDateRange.value.length > 0 ||
-    selectedStatusFilter.value.length > 1 ||
-    selectedVisibilityFilter.value != 'all' ||
-    selectedOwnershipFilter.value != 'all' ||
-    selectedParticipantsFilter.value != 'all' ||
-    selectedMethodFilter.value != 'all'
-  )
+const hasActiveFilters = computed(
+  () =>
+    !!(
+      search.value ||
+      creationDateRange.value.length > 0 ||
+      selectedStatusFilter.value.length > 1 ||
+      selectedVisibilityFilter.value != 'all' ||
+      selectedOwnershipFilter.value != 'all' ||
+      selectedParticipantsFilter.value != 'all' ||
+      selectedMethodFilter.value != 'all'
+    ),
 )
 
 // ===== Method options =====
@@ -245,7 +248,7 @@ const user = computed(() => store.getters.user)
 const filteredTests = computed(() => {
   if (!tests.value) return []
 
-  return tests.value.filter(test => {
+  return tests.value.filter((test) => {
     const title = (test.testTitle || test.title || '').toLowerCase()
     const query = (search.value || '').toLowerCase()
     const matchesSearch = !query || title.includes(query)
@@ -259,7 +262,8 @@ const filteredTests = computed(() => {
 
       matchesMethod =
         method === 'all' ||
-        (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
+        (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+          testType === STUDY_TYPES.HEURISTIC) ||
         (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
           testType === STUDY_TYPES.USER &&
           subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
@@ -284,7 +288,9 @@ const filteredTests = computed(() => {
 
     // 👤 Ownership
     const isMine = test.testAdmin?.userDocId === user.value?.id
-    const isCooperator = test.cooperators?.some(c => c.userDocId === user.value?.id)
+    const isCooperator = test.cooperators?.some(
+      (c) => c.userDocId === user.value?.id,
+    )
     const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other'
     const matchesOwnership =
       selectedOwnershipFilter.value === 'all' ||
@@ -309,8 +315,12 @@ const filteredTests = computed(() => {
     let inCreationRange = true
     if (creationDateRange.value?.length > 1 && test.creationDate) {
       const start = new Date(creationDateRange.value[0])
-      const end = new Date(creationDateRange.value[creationDateRange.value.length - 1])
-      inCreationRange = new Date(test.creationDate) >= start && new Date(test.creationDate) <= end
+      const end = new Date(
+        creationDateRange.value[creationDateRange.value.length - 1],
+      )
+      inCreationRange =
+        new Date(test.creationDate) >= start &&
+        new Date(test.creationDate) <= end
     }
 
     return (
@@ -326,7 +336,7 @@ const filteredTests = computed(() => {
 })
 
 // ===== Navigation =====
-const goTo = test => {
+const goTo = (test) => {
   // Handle manual/automatic studies
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
     router.push(`/accessibility/manual/${test.testDocId || test.id}`)
@@ -356,7 +366,7 @@ const goTo = test => {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   margin-bottom: 4px;
   color: #475569;
 }
