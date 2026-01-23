@@ -158,8 +158,8 @@ const currentPageTitle = computed(() => {
       return t('profile.title')
     case 'community':
       return activeSubSection.value === 'community-templates'
-        ? t('navigation.communityTemplates')
-        : t('navigation.communityStudies')
+        ? t('community.templates.title')
+        : t('community.studies.title')
     default:
       return 'RUXAI Lab'
   }
