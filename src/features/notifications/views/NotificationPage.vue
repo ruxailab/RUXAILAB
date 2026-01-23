@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-4">
-    <v-row justify="center" v-if="user">
+    <v-row v-if="user" justify="center">
       <v-col 
         cols="12" 
         md="10" 
@@ -31,11 +31,11 @@
               size="small"
               variant="flat"
               color="primary"
-              @click="markAllAsRead"
               :loading="markingAllAsRead"
               prepend-icon="mdi-email-open-outline"
               class="elevation-0 text-capitalize"
               :class="{'flex-shrink-0': true}"
+              @click="markAllAsRead"
             >
               {{ $t('notificationsPage.markAllRead') }}
             </v-btn>
@@ -76,7 +76,6 @@
             variant="outlined"
             density="compact"
             hide-details
-            variant="outlined"
             placeholder="Search notifications..."
             class="flex-grow-1"
             clearable
@@ -145,8 +144,8 @@
                   'active': activeIndex === index,
                   'border-start-4': !n.read
                 }"
-                @click="handleNotificationClick(n)"
                 :style="!n.read ? 'border-left-color: var(--v-primary-base) !important' : ''"
+                @click="handleNotificationClick(n)"
               >
                 <div class="d-flex align-start gap-3">
                   <!-- AVATAR/ICON -->
@@ -202,8 +201,8 @@
                           icon
                           size="x-small"
                           variant="text"
-                          @click.stop="toggleRead(n)"
                           :aria-label="n.read ? $t('notificationsPage.markAsUnread') : $t('notificationsPage.markAsRead')"
+                          @click.stop="toggleRead(n)"
                         >
                           <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
                             {{ n.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
@@ -480,16 +479,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { useGoBack } from '@/composables/useGoBack'
-import NotificationList from '@/features/notifications/components/NotificationList.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import { useI18n } from 'vue-i18n'
 import StudyController from '@/controllers/StudyController'
 
 const store = useStore()
-const router = useRouter()
-const { goBackOrRedirect } = useGoBack()
 const { t } = useI18n()
 
 // State
@@ -516,12 +510,6 @@ const user = computed(() => store.getters.user)
 const totalCount = computed(() => user.value?.notifications?.length || 0)
 const unreadCount = computed(
   () => user.value?.notifications?.filter((n) => !n.read).length || 0,
-)
-
-const allRead = computed(
-  () =>
-    user.value?.notifications?.every((notification) => notification.read) ||
-    false,
 )
 
 // Mobile tab items
@@ -702,7 +690,7 @@ const goToNotificationRedirect = async (notification) => {
       if (!notification.read) {
         await markAsRead(notification)
       }
-    } catch (error) {
+    } catch {
       // Error handling without console.error for SonarCloud
       // In production, you might want to log this differently
     }
@@ -723,7 +711,7 @@ const goToNotificationRedirect = async (notification) => {
 
   try {
     globalThis.open(url, '_blank')
-  } catch (e) {
+  } catch {
     // Error handling without console.error for SonarCloud
   }
 }
@@ -736,7 +724,7 @@ const markAsRead = async (notification) => {
       notification,
       user: user.value,
     })
-  } catch (error) {
+  } catch {
     // Error handling without console.error for SonarCloud
   }
 }
@@ -760,7 +748,7 @@ const markAllAsRead = async () => {
         }),
       ),
     )
-  } catch (error) {
+  } catch {
     // Error handling without console.error for SonarCloud
   } finally {
     markingAllAsRead.value = false
@@ -771,7 +759,7 @@ const refreshNotifications = async () => {
   refreshing.value = true
   try {
     globalThis.location.reload()
-  } catch (error) {
+  } catch {
     // Error handling without console.error for SonarCloud
   } finally {
     refreshing.value = false
