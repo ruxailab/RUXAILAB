@@ -141,6 +141,36 @@
       "automaticAccessibility": "自动无障碍"
     }
   },
+  "notificationsPage": {
+    "subtitle": "随时了解您的活动和协作",
+    "markAllRead": "全部标为已读",
+    "searchPlaceholder": "搜索通知…",
+    "notification": "通知",
+    "important": "重要",
+    "markAsRead": "标为已读",
+    "markAsUnread": "标为未读",
+    "refresh": "刷新",
+    "noResultsFound": "未找到结果",
+    "allCaughtUp": "全部处理完毕！",
+    "noNotificationsYet": "暂无通知",
+    "tryDifferentKeywords": "尝试其他关键词或清除搜索",
+    "allReadMessage": "您已阅读所有通知。做得好！",
+    "newActivitiesMessage": "有新活动时，通知将显示在这里",
+    "justNow": "刚刚",
+    "minutesAgo": "{count}分钟前",
+    "hoursAgo": "{count}小时前",
+    "daysAgo": "{count}天前",
+    "newNotification": "您有一条新通知。"
+  },
+  "navigation": {
+    "dashboard": "仪表盘",
+    "studies": "研究",
+    "sessions": "会话",
+    "templates": "模板",
+    "storage": "存储",
+    "communityStudies": "社区研究",
+    "communityTemplates": "社区模板"
+  },
   "profile": {
     "title": "个人资料",
     "username": "用户名",
@@ -294,7 +324,14 @@
       "deleteQuestion": "删除问题",
       "addNewDescription": "添加新描述",
       "addOption": "添加新选项",
-      "hasValue": "有值"
+      "hasValue": "有值",
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "Question": "问题",
+      "Questions": "问题",
+      "noQuestions": "没有问题",
+      "noDescriptions": "没有描述",
+      "loading": "加载中..."
     },
     "placeholders": {
       "titleHeuristic": "启发式标题",
@@ -309,7 +346,10 @@
       "youMustHave": "您可能输入了错误的内容...",
       "noHeuristicsDeleteAll": "抱歉，您不能删除所有启发式问题。",
       "noCsvFileSelected": "未选择CSV文件。请选择一个以继续。",
-      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。"
+      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
+      "noDescriptions": "没有可用的描述",
+      "startAddingQuestions": "从此启发式添加第一个问题开始",
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -322,6 +362,12 @@
       "showComment": "显示评论",
       "addComment": "添加评论",
       "hideTextArea": "隐藏文本区域"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
+      "failedToLoadEditForm": "加载编辑表单失败。请重试。",
+      "invalidHeuristic": "无效的启发式选择",
+      "invalidQuestion": "无效的问题选择"
     }
   },
   "HeuristicsOptionsTable": {

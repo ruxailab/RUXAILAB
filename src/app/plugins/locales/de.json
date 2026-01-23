@@ -128,6 +128,36 @@
       "automaticAccessibility": "Automatische Barrierefreiheit"
     }
   },
+  "notificationsPage": {
+    "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
+    "markAllRead": "Alle als gelesen markieren",
+    "searchPlaceholder": "Benachrichtigungen suchen…",
+    "notification": "Benachrichtigung",
+    "important": "Wichtig",
+    "markAsRead": "Als gelesen markieren",
+    "markAsUnread": "Als ungelesen markieren",
+    "refresh": "Aktualisieren",
+    "noResultsFound": "Keine Ergebnisse gefunden",
+    "allCaughtUp": "Alles erledigt!",
+    "noNotificationsYet": "Noch keine Benachrichtigungen",
+    "tryDifferentKeywords": "Versuchen Sie andere Stichwörter oder löschen Sie die Suche",
+    "allReadMessage": "Sie haben alle Benachrichtigungen gelesen. Gut gemacht!",
+    "newActivitiesMessage": "Hier werden Benachrichtigungen angezeigt, wenn Sie neue Aktivitäten haben",
+    "justNow": "Gerade eben",
+    "minutesAgo": "vor {count}m",
+    "hoursAgo": "vor {count}h",
+    "daysAgo": "vor {count}T",
+    "newNotification": "Sie haben eine neue Benachrichtigung."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "studies": "Studien",
+    "sessions": "Sitzungen",
+    "templates": "Vorlagen",
+    "storage": "Speicher",
+    "communityStudies": "Community-Studien",
+    "communityTemplates": "Community-Vorlagen"
+  },
   "profile": {
     "title": "Profil",
     "username": "Benutzername",
@@ -281,7 +311,14 @@
       "deleteQuestion": "Frage löschen",
       "addNewDescription": "Neue Beschreibung hinzufügen",
       "addOption": "Neue Option hinzufügen",
-      "hasValue": "Hat Wert"
+      "hasValue": "Hat Wert",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "Question": "Frage",
+      "Questions": "Fragen",
+      "noQuestions": "Keine Fragen",
+      "noDescriptions": "Keine Beschreibungen",
+      "loading": "Lädt..."
     },
     "placeholders": {
       "titleHeuristic": "Titel Heuristik",
@@ -296,7 +333,10 @@
       "youMustHave": "Sie müssen etwas falsch eingegeben haben...",
       "noHeuristicsDeleteAll": "Sorry, aber Sie können nicht alle Heuristikfragen löschen.",
       "noCsvFileSelected": "Keine CSV-Datei ausgewählt. Bitte wählen Sie eine aus, bevor Sie fortfahren.",
-      "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern."
+      "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern.",
+      "noDescriptions": "Keine Beschreibungen verfügbar",
+      "startAddingQuestions": "Beginnen Sie, indem Sie Ihre erste Frage zu dieser Heuristik hinzufügen",
+      "cantDeleteAllQuestions": "Entschuldigung, Sie können nicht alle Fragen von einer Heuristik löschen"
     },
     "validation": {
       "nameRequired": "Name ist obligatorisch",
@@ -309,6 +349,12 @@
       "showComment": "Kommentar anzeigen",
       "addComment": "Kommentar hinzufügen",
       "hideTextArea": "Textbereich ausblenden"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Fehler beim Laden des Frageformulars. Bitte versuchen Sie es erneut.",
+      "failedToLoadEditForm": "Fehler beim Laden des Bearbeitungsformulars. Bitte versuchen Sie es erneut.",
+      "invalidHeuristic": "Ungültige Heuristikauswahl",
+      "invalidQuestion": "Ungültige Frageauswahl"
     }
   },
   "HeuristicsOptionsTable": {
