@@ -26,6 +26,15 @@
     },
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
+      "email": "电子邮箱",
+      "instructions": "输入您的电子邮箱，我们将发送重置密码链接给您。",
+      "reset_button": "发送重置链接",
+      "back_to_signin": "返回登录"
+    }
+  },
+  "auth": {
+    "FORGOT_PASSWORD": {
+      "reset_password": "重置密码",
       "email": "邮箱",
       "instructions": "输入您的邮箱，我们会发送一个重置密码的链接给您。",
       "reset_button": "发送重置链接",
@@ -34,15 +43,6 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    },
-    "passwordStrength": "密码强度",
-    "number": "数字",
-    "strength": {
-      "veryWeak": "非常弱",
-      "weak": "弱",
-      "fair": "一般",
-      "good": "好",
-      "strong": "强"
     }
   },
   "common": {
@@ -107,11 +107,93 @@
     "actionCannotBeUndone": "此操作无法撤销。",
     "headers": {
       "type": "类型",
-      "studyName": "研究名称",
-      "date": "日期",
-      "size": "大小",
-      "actions": "操作"
+      "name": "名称",
+      "tags": "标签",
+      "owner": "所有者",
+      "participants": "参与者",
+      "created": "创建时间",
+      "evaluator": "评估者",
+      "status": "状态",
+      "sessionDate": "会话日期",
+      "itemsPerPage": "每页项目数:"
     }
+  },
+  "community": {
+    "studies": {
+      "title": "社区研究",
+      "searchPlaceholder": "搜索研究..."
+    },
+    "templates": {
+      "title": "社区模板",
+      "searchPlaceholder": "搜索模板..."
+    },
+    "reset": "重置",
+    "showFilters": "显示筛选",
+    "hideFilters": "隐藏筛选",
+    "selectRange": "选择范围",
+    "filters": {
+      "creationDate": "创建日期",
+      "status": "状态",
+      "method": "方法",
+      "ownership": "所有权",
+      "participants": "参与者"
+    },
+    "status": {
+      "allStatuses": "所有状态",
+      "active": "活跃",
+      "draft": "草稿",
+      "completed": "已完成"
+    },
+    "ownership": {
+      "allStudies": "所有研究",
+      "myStudies": "我的研究",
+      "whereICollaborate": "我参与协作的"
+    },
+    "participants": {
+      "all": "全部",
+      "lessThan10": "< 10 参与者",
+      "between10And50": "10 – 50 参与者",
+      "moreThan50": "> 50 参与者"
+    },
+    "method": {
+      "allMethods": "所有方法",
+      "all": "全部",
+      "heuristicEvaluation": "启发式评估",
+      "userStudyUnmoderated": "用户研究（无主持）",
+      "userStudyModerated": "用户研究（有主持）",
+      "manualAccessibility": "手动无障碍",
+      "automaticAccessibility": "自动无障碍"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "随时了解您的活动和协作",
+    "markAllRead": "全部标为已读",
+    "searchPlaceholder": "搜索通知…",
+    "notification": "通知",
+    "important": "重要",
+    "markAsRead": "标为已读",
+    "markAsUnread": "标为未读",
+    "refresh": "刷新",
+    "noResultsFound": "未找到结果",
+    "allCaughtUp": "全部处理完毕！",
+    "noNotificationsYet": "暂无通知",
+    "tryDifferentKeywords": "尝试其他关键词或清除搜索",
+    "allReadMessage": "您已阅读所有通知。做得好！",
+    "newActivitiesMessage": "有新活动时，通知将显示在这里",
+    "justNow": "刚刚",
+    "minutesAgo": "{count}分钟前",
+    "hoursAgo": "{count}小时前",
+    "daysAgo": "{count}天前",
+    "newNotification": "您有一条新通知。"
+  },
+  "navigation": {
+    "dashboard": "仪表盘",
+    "studies": "研究",
+    "sessions": "会话",
+    "templates": "模板",
+    "storage": "存储",
+    "communityStudies": "社区研究",
+    "communityTemplates": "社区模板"
   },
   "profile": {
     "title": "个人资料",
@@ -233,8 +315,6 @@
     "cta": "开始"
   },
   "Dashboard": {
-    "welcomeBack": "欢迎回来，{name}！",
-    "subtitle": "这是您今天研究项目的动态",
     "createNewTest": "创建新研究",
     "tests": "测试",
     "templates": "模板",
@@ -244,49 +324,7 @@
     "publicTests": "公开测试",
     "sessions": "会话",
     "personal": "个人",
-    "explore": "探索",
-    "activeStudiesOverview": "活跃研究概览",
-    "viewAll": "查看全部",
-    "showMore": "显示更多",
-    "showLess": "显示更少",
-    "progress": "进度",
-    "participants": "参与者",
-    "participantsLabel": "参与者",
-    "daysLeft": "天剩余",
-    "dayLeft": "天剩余",
-    "studies": "研究",
-    "storage": "存储",
-    "free": "免费",
-    "plan": "计划",
-    "recentActivity": "最近活动",
-    "comingSoon": "即将推出",
-    "mostUsedMethods": "最常用方法",
-    "use": "使用",
-    "uses": "次使用",
-    "noDataAvailable": "暂无可用数据",
-    "createFirstStudy": "创建您的第一个研究以在此处查看统计信息。",
-    "nextSession": "下一个会话",
-    "noSessionsScheduled": "没有安排的会话",
-    "nextSessionWillAppear": "您的下一个会话将显示在这里",
-    "latestBlogPosts": "最新博客文章",
-    "viewBlog": "查看博客",
-    "date": "日期",
-    "time": "时间",
-    "status": {
-      "active": "活跃",
-      "recruiting": "招募中",
-      "paused": "已暂停",
-      "finished": "已完成",
-      "unknown": "未知"
-    },
-    "webinar": {
-      "ended": "已结束",
-      "live": "直播中",
-      "today": "今天",
-      "joinNow": "立即加入",
-      "webinarEnded": "网络研讨会已结束",
-      "startingToday": "今天开始"
-    }
+    "explore": "探索"
   },
   "HeuristicsTable": {
     "titles": {
@@ -310,7 +348,14 @@
       "deleteQuestion": "删除问题",
       "addNewDescription": "添加新描述",
       "addOption": "添加新选项",
-      "hasValue": "有值"
+      "hasValue": "有值",
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "Question": "问题",
+      "Questions": "问题",
+      "noQuestions": "没有问题",
+      "noDescriptions": "没有描述",
+      "loading": "加载中..."
     },
     "placeholders": {
       "titleHeuristic": "启发式标题",
@@ -325,7 +370,10 @@
       "youMustHave": "您可能输入了错误的内容...",
       "noHeuristicsDeleteAll": "抱歉，您不能删除所有启发式问题。",
       "noCsvFileSelected": "未选择CSV文件。请选择一个以继续。",
-      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。"
+      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
+      "noDescriptions": "没有可用的描述",
+      "startAddingQuestions": "从此启发式添加第一个问题开始",
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -338,6 +386,12 @@
       "showComment": "显示评论",
       "addComment": "添加评论",
       "hideTextArea": "隐藏文本区域"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
+      "failedToLoadEditForm": "加载编辑表单失败。请重试。",
+      "invalidHeuristic": "无效的启发式选择",
+      "invalidQuestion": "无效的问题选择"
     }
   },
   "HeuristicsOptionsTable": {
