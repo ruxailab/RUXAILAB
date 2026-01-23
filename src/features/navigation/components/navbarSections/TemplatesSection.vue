@@ -29,7 +29,9 @@
         :title="showFilters ? 'Hide filters' : 'Show filters'"
         @click="toggleFilters"
       >
-        <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        <v-icon>{{
+          showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
+        }}</v-icon>
       </v-btn>
     </div>
 
@@ -42,7 +44,6 @@
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
               max-width="290px"
               min-width="290px"
             >
@@ -53,12 +54,24 @@
                   variant="outlined"
                   density="compact"
                   hide-details
-                  :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
-                  :model-value="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : ''"
+                  :placeholder="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : 'Select range'
+                  "
+                  :model-value="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : ''
+                  "
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -101,10 +114,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import List from '@/shared/components/tables/ListComponent.vue'
-import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
+import {
+  METHOD_DEFINITIONS,
+  STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
 import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
 
 const store = useStore()
@@ -117,10 +134,16 @@ const templates = computed(() => store.state.Templates.templates || [])
 const methodOptions = [
   { title: 'All', value: 'all' },
   { title: 'Heuristic Evaluation', value: METHOD_DEFINITIONS.HEURISTICS.id },
-  { title: 'User Study (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
-  { title: 'User Study (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
+  {
+    title: 'User Study (Unmoderated)',
+    value: METHOD_DEFINITIONS.USER_UNMODERATED.id,
+  },
+  {
+    title: 'User Study (Moderated)',
+    value: METHOD_DEFINITIONS.USER_MODERATED.id,
+  },
   { title: 'Manual Accessibility', value: 'MANUAL' },
-  { title: 'Automatic Accessibility', value: 'AUTOMATIC' }
+  { title: 'Automatic Accessibility', value: 'AUTOMATIC' },
 ]
 
 const search = ref('')
@@ -135,13 +158,18 @@ const clearFilters = () => {
   creationDateRange.value = []
 }
 
-const hasActiveFilters = computed(() =>
-  !!(search.value || selectedMethodFilter.value !== 'all' || creationDateRange.value.length)
+const hasActiveFilters = computed(
+  () =>
+    !!(
+      search.value ||
+      selectedMethodFilter.value !== 'all' ||
+      creationDateRange.value.length
+    ),
 )
 
 // ===== Filtered templates =====
 const filteredTemplates = computed(() =>
-  templates.value?.filter(temp => {
+  templates.value?.filter((temp) => {
     const matchesSearch = temp.header.templateTitle
       .toLowerCase()
       .includes(search.value.toLowerCase())
@@ -152,7 +180,8 @@ const filteredTemplates = computed(() =>
 
     const matchesMethod =
       method === 'all' ||
-      (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+        testType === STUDY_TYPES.HEURISTIC) ||
       (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
         testType === STUDY_TYPES.USER &&
         subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
@@ -163,20 +192,22 @@ const filteredTemplates = computed(() =>
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
 
     const creationDate = temp.header?.creationDate
-    let inDateRange = true;
+    let inDateRange = true
     if (creationDateRange.value.length > 1 && creationDate) {
-      const date = new Date(creationDate);
-      const start = new Date(creationDateRange.value[0]);
-      const end = new Date(creationDateRange.value[creationDateRange.value.length - 1]);
-      inDateRange = date >= start && date <= end;
+      const date = new Date(creationDate)
+      const start = new Date(creationDateRange.value[0])
+      const end = new Date(
+        creationDateRange.value[creationDateRange.value.length - 1],
+      )
+      inDateRange = date >= start && date <= end
     }
 
     return matchesSearch && matchesMethod && inDateRange
-  })
+  }),
 )
 
 // ===== Methods =====
-const setupTempDialog = template => {
+const setupTempDialog = (template) => {
   if (!template?.header || !template?.body) return
   temp.value = { ...template }
   tempDialog.value = true
@@ -199,14 +230,14 @@ const reloadMyTemplates = async () => {
   min-width: 140px;
   height: 40px;
   font-weight: 600;
-  letter-spacing: .3px;
+  letter-spacing: 0.3px;
 }
 
 .filter-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   margin-bottom: 4px;
   line-height: 1.15;
   color: #475569;

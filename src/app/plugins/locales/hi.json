@@ -34,15 +34,6 @@
       "reset_link_sent": "हमने पासवर्ड रीसेट लिंक भेजा है",
       "no_email": "ईमेल नहीं मिला?",
       "try_again": "पुनः प्रयास करें"
-    },
-    "passwordStrength": "पासवर्ड की मजबूती",
-    "number": "नंबर",
-    "strength": {
-      "veryWeak": "बहुत कमजोर",
-      "weak": "कमजोर",
-      "fair": "ठीक",
-      "good": "अच्छा",
-      "strong": "मजबूत"
     }
   },
   "common": {
@@ -69,6 +60,7 @@
     "notifications": "सूचनाएं",
     "unread": "अनपढ़",
     "inbox": "इनबॉक्स",
+    "all": "सभी",
     "timeAgo": {
       "years": "{count} वर्ष पहले | {count} वर्षों पहले",
       "months": "{count} महीना पहले | {count} महीनों पहले",
@@ -81,26 +73,95 @@
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
     "test": "एक अध्ययन",
-    "itemsPerPage": "प्रति पृष्ठ आइटम:"
-  },
-  "storage": {
-    "pageTitle": "संग्रहण",
-    "totalStorage": "कुल संग्रहण",
-    "acrossFiles": "{count} फ़ाइलों में",
-    "mediaFiles": "मीडिया फ़ाइलें",
-    "searchByStudyOrDate": "अध्ययन या तिथि से खोजें",
-    "deleteFile": "फ़ाइल हटाएं",
-    "noMediaFiles": "कोई मीडिया फ़ाइलें नहीं मिलीं",
-    "confirmDeletion": "हटाने की पुष्टि करें",
-    "deleteConfirmMessage": "क्या आप वाकई \"{studyName}\" से यह {type} फ़ाइल हटाना चाहते हैं?",
-    "actionCannotBeUndone": "यह क्रिया पूर्ववत नहीं की जा सकती।",
-    "headers": {
+    "table": {
       "type": "प्रकार",
-      "studyName": "अध्ययन का नाम",
-      "date": "तिथि",
-      "size": "आकार",
-      "actions": "कार्रवाइयाँ"
+      "name": "नाम",
+      "tags": "टैग",
+      "owner": "मालिक",
+      "participants": "प्रतिभागी",
+      "created": "बनाया गया",
+      "evaluator": "मूल्यांकनकर्ता",
+      "status": "स्थिति",
+      "sessionDate": "सत्र तिथि",
+      "itemsPerPage": "प्रति पृष्ठ आइटम:"
     }
+  },
+  "community": {
+    "studies": {
+      "title": "सामुदायिक अध्ययन",
+      "searchPlaceholder": "अध्ययन खोजें..."
+    },
+    "templates": {
+      "title": "सामुदायिक टेम्पलेट्स",
+      "searchPlaceholder": "टेम्पलेट्स खोजें..."
+    },
+    "reset": "रीसेट",
+    "showFilters": "फ़िल्टर दिखाएं",
+    "hideFilters": "फ़िल्टर छुपाएं",
+    "selectRange": "रेंज चुनें",
+    "filters": {
+      "creationDate": "निर्माण तिथि",
+      "status": "स्थिति",
+      "method": "विधि",
+      "ownership": "स्वामित्व",
+      "participants": "प्रतिभागी"
+    },
+    "status": {
+      "allStatuses": "सभी स्थितियाँ",
+      "active": "सक्रिय",
+      "draft": "ड्राफ्ट",
+      "completed": "पूर्ण"
+    },
+    "ownership": {
+      "allStudies": "सभी अध्ययन",
+      "myStudies": "मेरे अध्ययन",
+      "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+    },
+    "participants": {
+      "all": "सभी",
+      "lessThan10": "< 10 प्रतिभागी",
+      "between10And50": "10 – 50 प्रतिभागी",
+      "moreThan50": "> 50 प्रतिभागी"
+    },
+    "method": {
+      "allMethods": "सभी विधियाँ",
+      "all": "सभी",
+      "heuristicEvaluation": "हेयुरिस्टिक मूल्यांकन",
+      "userStudyUnmoderated": "उपयोगकर्ता अध्ययन (अनमोडरेटेड)",
+      "userStudyModerated": "उपयोगकर्ता अध्ययन (मोडरेटेड)",
+      "manualAccessibility": "मैन्युअल एक्सेसिबिलिटी",
+      "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "अपनी गतिविधियों और सहयोग से अपडेट रहें",
+    "markAllRead": "सभी को पढ़ा हुआ चिह्नित करें",
+    "searchPlaceholder": "सूचनाएं खोजें…",
+    "notification": "सूचना",
+    "important": "महत्वपूर्ण",
+    "markAsRead": "पढ़ा हुआ चिह्नित करें",
+    "markAsUnread": "अपठित चिह्नित करें",
+    "refresh": "रीफ्रेश",
+    "noResultsFound": "कोई परिणाम नहीं मिला",
+    "allCaughtUp": "सब हो गया!",
+    "noNotificationsYet": "अभी तक कोई सूचना नहीं",
+    "tryDifferentKeywords": "अलग कीवर्ड आज़माएं या खोज साफ़ करें",
+    "allReadMessage": "आपने अपनी सभी सूचनाएं पढ़ ली हैं। बढ़िया!",
+    "newActivitiesMessage": "नई गतिविधियाँ होने पर आप यहाँ सूचनाएं देखेंगे",
+    "justNow": "अभी",
+    "minutesAgo": "{count} मिनट पहले",
+    "hoursAgo": "{count} घंटे पहले",
+    "daysAgo": "{count} दिन पहले",
+    "newNotification": "आपके पास एक नई सूचना है।"
+  },
+  "navigation": {
+    "dashboard": "डैशबोर्ड",
+    "studies": "अध्ययन",
+    "sessions": "सत्र",
+    "templates": "टेम्पलेट्स",
+    "storage": "भंडारण",
+    "communityStudies": "सामुदायिक अध्ययन",
+    "communityTemplates": "सामुदायिक टेम्पलेट्स"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -205,8 +266,6 @@
     "cta": "शुरू करें"
   },
   "Dashboard": {
-    "welcomeBack": "वापस स्वागत है, {name}!",
-    "subtitle": "आपके शोध परियोजनाओं में आज क्या हो रहा है",
     "createNewTest": "नया परीक्षण बनाएं",
     "tests": "परीक्षण",
     "templates": "टेम्पलेट्स",
@@ -216,49 +275,7 @@
     "publicTests": "सार्वजनिक परीक्षण",
     "sessions": "सत्र",
     "personal": "व्यक्तिगत",
-    "explore": "खोजें",
-    "activeStudiesOverview": "सक्रिय अध्ययनों का अवलोकन",
-    "viewAll": "सभी देखें",
-    "showMore": "और दिखाएं",
-    "showLess": "कम दिखाएं",
-    "progress": "प्रगति",
-    "participants": "प्रतिभागी",
-    "participantsLabel": "प्रतिभागी",
-    "daysLeft": "दिन शेष",
-    "dayLeft": "दिन शेष",
-    "studies": "अध्ययन",
-    "storage": "भंडारण",
-    "free": "निःशुल्क",
-    "plan": "योजना",
-    "recentActivity": "हाल की गतिविधि",
-    "comingSoon": "जल्द आ रहा है",
-    "mostUsedMethods": "सबसे अधिक उपयोग की जाने वाली विधियाँ",
-    "use": "उपयोग",
-    "uses": "उपयोग",
-    "noDataAvailable": "अभी तक कोई डेटा उपलब्ध नहीं है",
-    "createFirstStudy": "यहाँ सांख्यिकी देखने के लिए अपना पहला अध्ययन बनाएं।",
-    "nextSession": "अगला सत्र",
-    "noSessionsScheduled": "कोई सत्र निर्धारित नहीं है",
-    "nextSessionWillAppear": "आपका अगला सत्र यहाँ दिखाई देगा",
-    "latestBlogPosts": "नवीनतम ब्लॉग पोस्ट",
-    "viewBlog": "ब्लॉग देखें",
-    "date": "तिथि",
-    "time": "समय",
-    "status": {
-      "active": "सक्रिय",
-      "recruiting": "भर्ती",
-      "paused": "रुका हुआ",
-      "finished": "समाप्त",
-      "unknown": "अज्ञात"
-    },
-    "webinar": {
-      "ended": "समाप्त",
-      "live": "लाइव",
-      "today": "आज",
-      "joinNow": "अभी जुड़ें",
-      "webinarEnded": "वेबिनार समाप्त",
-      "startingToday": "आज शुरू"
-    }
+    "explore": "खोजें"
   },
   "HeuristicsTable": {
     "titles": {
@@ -282,7 +299,14 @@
       "deleteQuestion": "प्रश्न हटाएँ",
       "addNewDescription": "नया विवरण जोड़ें",
       "addOption": "नया विकल्प जोड़ें",
-      "hasValue": "मूल्य है"
+      "hasValue": "मूल्य है",
+      "moveUp": "ऊपर ले जाएँ",
+      "moveDown": "नीचे ले जाएँ",
+      "Question": "प्रश्न",
+      "Questions": "प्रश्न",
+      "noQuestions": "कोई प्रश्न नहीं",
+      "noDescriptions": "कोई विवरण नहीं",
+      "loading": "लोड हो रहा है..."
     },
     "placeholders": {
       "titleHeuristic": "हीयुरिस्टिक का शीर्षक",
@@ -297,7 +321,10 @@
       "youMustHave": "आपने कुछ गलत टाइप किया होगा...",
       "noHeuristicsDeleteAll": "क्षमा करें, आप सभी हीयुरिस्टिक प्रश्न नहीं हटा सकते।",
       "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक चुनें।",
-      "changeWeights": "ध्यान दें: हीयुरिस्टिक्स का क्रम बदलने पर वज़न स्वतः नहीं बदलेगा; आपको उन्हें मैन्युअल रूप से समायोजित करना होगा।"
+      "changeWeights": "ध्यान दें: हीयुरिस्टिक्स का क्रम बदलने पर वज़न स्वतः नहीं बदलेगा; आपको उन्हें मैन्युअल रूप से समायोजित करना होगा।",
+      "noDescriptions": "कोई विवरण उपलब्ध नहीं है",
+      "startAddingQuestions": "इस हीयुरिस्टिक में अपना पहला प्रश्न जोड़कर शुरू करें",
+      "cantDeleteAllQuestions": "क्षमा करें, आप एक हीयुरिस्टिक से सभी प्रश्न नहीं हटा सकते"
     },
     "validation": {
       "nameRequired": "नाम अनिवार्य है",
@@ -310,6 +337,12 @@
       "showComment": "टिप्पणी दिखाएं",
       "addComment": "टिप्पणी जोड़ें",
       "hideTextArea": "टेक्स्ट क्षेत्र छुपाएं"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "प्रश्न फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
+      "failedToLoadEditForm": "संपादन फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
+      "invalidHeuristic": "अमान्य हीयुरिस्टिक चयन",
+      "invalidQuestion": "अमान्य प्रश्न चयन"
     }
   },
   "HeuristicsOptionsTable": {
@@ -646,27 +679,6 @@
       "version": "संस्करण:",
       "noTests": "कोई परीक्षण नहीं मिला",
       "noTemplates": "कोई टेम्पलेट नहीं मिला"
-    },
-    "sessions": {
-      "searchPlaceholder": "सत्र खोजें...",
-      "reset": "रीसेट",
-      "showFilters": "फ़िल्टर दिखाएं",
-      "hideFilters": "फ़िल्टर छिपाएं",
-      "sessionDate": "सत्र तिथि",
-      "selectRange": "सीमा चुनें",
-      "statusLabel": "स्थिति",
-      "ownership": "स्वामित्व",
-      "evaluator": "मूल्यांकनकर्ता",
-      "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
-      "filters": {
-        "allStatuses": "सभी स्थितियाँ",
-        "today": "आज",
-        "upcoming": "आगामी",
-        "completed": "पूर्ण",
-        "allStudies": "सभी अध्ययन",
-        "myStudies": "मेरे अध्ययन",
-        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
-      }
     },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",
