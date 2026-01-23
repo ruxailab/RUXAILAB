@@ -844,6 +844,14 @@ const startTest = async () => {
     })
   }
 
+  if (isObservator.value) {
+    // Hidin start screen and mount VideoCall component
+    start.value = false
+    displayVideoCallComponent.value = true
+    return
+  }
+  
+
   // First, add the class for the exit animation
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) {
