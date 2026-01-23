@@ -278,6 +278,8 @@
     "cta": "Loslegen"
   },
   "Dashboard": {
+    "welcomeBack": "Willkommen zurück, {name}!",
+    "subtitle": "Das passiert heute mit deinen Forschungsprojekten",
     "createNewTest": "Neue Studie erstellen",
     "tests": "Tests",
     "templates": "Vorlagen",
@@ -287,7 +289,41 @@
     "publicTests": "Öffentliche Tests",
     "sessions": "Sitzungen",
     "personal": "Persönlich",
-    "explore": "Erkunden"
+    "explore": "Erkunden",
+    "activeStudiesOverview": "Übersicht über aktive Studien",
+    "viewAll": "Alle anzeigen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "progress": "Fortschritt",
+    "participants": "Teilnehmende",
+    "participantsLabel": "Teilnehmende",
+    "daysLeft": "Tage verbleibend",
+    "dayLeft": "Tag verbleibend",
+    "studies": "Studien",
+    "storage": "Speicher",
+    "free": "Kostenlos",
+    "plan": "Plan",
+    "recentActivity": "Letzte Aktivität",
+    "comingSoon": "Demnächst",
+    "mostUsedMethods": "Meistgenutzte Methoden",
+    "use": "Nutzung",
+    "uses": "Nutzungen",
+    "noDataAvailable": "Noch keine Daten verfügbar",
+    "createFirstStudy": "Erstelle deine erste Studie, um hier Statistiken zu sehen.",
+    "nextSession": "Nächste Sitzung",
+    "noSessionsScheduled": "Keine Sitzungen geplant",
+    "nextSessionWillAppear": "Deine nächste Sitzung wird hier angezeigt",
+    "latestBlogPosts": "Neueste Blogbeiträge",
+    "viewBlog": "Blog ansehen",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "status": {
+      "active": "Aktiv",
+      "recruiting": "Rekrutierung",
+      "paused": "Pausiert",
+      "finished": "Abgeschlossen",
+      "unknown": "Unbekannt"
+    }
   },
   "HeuristicsTable": {
     "titles": {
