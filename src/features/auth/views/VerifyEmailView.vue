@@ -107,27 +107,50 @@ onUnmounted(() => {
 })
 
 const startAutoVerificationCheck = () => {
+  const MAX_ATTEMPTS = 30 // 30 attempts × 2 seconds = 60 seconds max
+  let attemptCount = 0
+
   verificationCheckInterval = setInterval(async () => {
+    attemptCount++
+
+    // Safety: Stop polling after max attempts
+    if (attemptCount > MAX_ATTEMPTS) {
+      clearInterval(verificationCheckInterval)
+      store.commit('SET_TOAST', {
+        message: 'Email verification timed out. Please try again or contact support.',
+        type: 'error',
+      })
+      return
+    }
+
     const currentUser = auth.currentUser
-    if (currentUser) {
-      try {
-        await authController.reloadCurrentUser()
-        
-        if (currentUser.emailVerified) {
-          clearInterval(verificationCheckInterval)
-          
-          store.commit('SET_TOAST', {
-            message: 'Email verified successfully!',
-            type: 'success',
-          })
-          
-          setTimeout(() => {
-            sessionStorage.removeItem('signupEmail')
-            router.push('/admin')
-          }, 1500)
-        }
-      } finally {
+    if (!currentUser) {
+      clearInterval(verificationCheckInterval)
+      return
+    }
+
+    try {
+      // Reload user data to check verification status
+      await authController.reloadCurrentUser()
+
+      // Check if email is verified
+      if (currentUser.emailVerified) {
+        clearInterval(verificationCheckInterval)
+
+        store.commit('SET_TOAST', {
+          message: 'Email verified successfully!',
+          type: 'success',
+        })
+
+        // Redirect to dashboard after brief delay
+        setTimeout(() => {
+          sessionStorage.removeItem('signupEmail')
+          router.push('/admin')
+        }, 1500)
       }
+    } catch (error) {
+      // Log error but continue polling
+      console.warn('Verification check failed:', error.message)
     }
   }, 2000)
 }
