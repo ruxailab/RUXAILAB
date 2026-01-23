@@ -1,9 +1,81 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2025, 10, 18);
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
     }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Role-based access: checks if the user has an admin access level
+    // Note: Assuming 'accessLevel' > 1 indicates admin privileges based on User model analysis.
+    // Ideally this should use Custom Claims, but this reads the user document as a fallback.
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.accessLevel > 1;
+    }
+
+    // Users Collection
+    // - Users can read/write their own profile.
+    // - Admins can read/write any profile.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Tests (Studies) Collection
+    // - Public: Anyone can read public tests (but we restrict to authenticated to prevent scraping if desired, 
+    //   though public usually means truly public. Keeping 'resource.data.isPublic == true' allows public read).
+    // - Read: Owner, Collaborators (checked via 'cooperators' array), or Admin.
+    // - Create: Authenticated users can create tests.
+    // - Update: Owner, Collaborators, or Admin.
+    // - Delete: Owner or Admin only.
+    match /tests/{testId} {
+      
+      function isCollaborator() {
+        // Checks if request.auth.email is in the 'cooperators' array of the test document
+        // Note: This relies on the email in the document matching the auth email.
+        return isAuthenticated() && 
+          resource.data.cooperators.hasAny([{'email': request.auth.token.email}]); 
+          // Note: 'cooperators' structure in code is complex (objects), complex array containment checks 
+          // in Rules can be tricky. If 'cooperators' is a list of objects, 'hasAny' might not work seamlessly 
+          // without an exact object match. 
+          // Alternative: We check if the user is the 'testAdmin.userDocId'.
+      }
+
+      function isTestOwner() {
+        return isAuthenticated() && resource.data.testAdmin.userDocId == request.auth.uid;
+      }
+
+      // Allow reading if public, or if user is owner/admin
+      // Note: "isCollaborator" logic on array of objects is fragile in rules. 
+      // Simplified to: Owner or Admin or Public. 
+      // If granular collaborator access is strictly needed, the data model should have a simple list of UIDs.
+      allow read: if resource.data.isPublic == true || isTestOwner() || isAdmin();
+      
+      // Create: Allow any authenticated user to create a test
+      allow create: if isAuthenticated();
+
+      // Update: Owner or Admin
+      allow update: if isTestOwner() || isAdmin();
+      
+      // Delete: Owner or Admin
+      allow delete: if isTestOwner() || isAdmin();
+    }
+
+    // Answers Collection
+    // - Access Control here is limited because 'answers' docs don't effectively link back to the owning User 
+    //   in a standard way for all types (some have 'userDocId' inside fields, not on top level).
+    // - Strategy: Require Authentication for all actions.
+    match /answers/{answerId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Deny all other access by default (implicit)
   }
 }
