@@ -10,6 +10,7 @@ import {
     reauthenticateWithCredential,
     EmailAuthProvider
 } from 'firebase/auth'
+import { mockUserCredentials } from './helpers/testUtils'
 
 jest.mock('firebase/auth', () => ({
     createUserWithEmailAndPassword: jest.fn(),
@@ -218,7 +219,6 @@ describe('AuthController', () => {
         })
 
         it('should delete email/password user with credential reauthentication', async () => {
-            const testPassword = 'userPassword123' // NOSONAR
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -234,12 +234,12 @@ describe('AuthController', () => {
 
             await authController.deleteAuth({
                 user: mockUser,
-                password: testPassword
+                password: mockUserCredentials.secret
             })
 
             expect(EmailAuthProvider.credential).toHaveBeenCalledWith(
                 mockUser.email,
-                testPassword
+                mockUserCredentials.secret
             )
             expect(reauthenticateWithCredential).toHaveBeenCalled()
             expect(mockUser.delete).toHaveBeenCalled()
@@ -257,7 +257,6 @@ describe('AuthController', () => {
         })
 
         it('should not delete user if reauthentication fails', async () => {
-            const wrongPassword = 'wrong-password' // NOSONAR
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -273,7 +272,7 @@ describe('AuthController', () => {
             await expect(
                 authController.deleteAuth({
                     user: mockUser,
-                    password: wrongPassword
+                    password: mockUserCredentials.secret
                 })
             ).rejects.toThrow('Wrong password')
 
@@ -282,7 +281,6 @@ describe('AuthController', () => {
         })
 
         it('should throw and not call backend if user.delete fails', async () => {
-            const testPassword = 'userPassword123' // NOSONAR
             const mockUser = {
                 uid: 'email-user-id',
                 email: 'email@example.com',
@@ -299,7 +297,7 @@ describe('AuthController', () => {
             await expect(
                 authController.deleteAuth({
                     user: mockUser,
-                    password: testPassword
+                    password: mockUserCredentials.secret
                 })
             ).rejects.toThrow('Delete failed')
 
