@@ -129,7 +129,7 @@
         <div class="control-bar-left"></div>
 
         <!-- Center - main controls -->
-        <div class="control-buttons-container">
+        <div class="control-buttons-container" v-if="!isObservator">
           <!-- Camera toggle button -->
           <v-tooltip location="top">
             <template #activator="{ props }">
@@ -1154,7 +1154,24 @@ const startCall = async () => {
 const answerCall = async () => {
   /* Auto-started in Mesh */
 }
-const endCall = () => leaveRoom()
+const endCall = async () => {
+  if (caller.value) {
+    try {
+      await remove(dbRef(database, `calls/${props.roomId}`))
+    } catch (err) {
+      console.warn('Failed to remove calls node:', err)
+    }
+    try {
+      await update(dbRef(database, `rooms/${props.roomId}`), { showVideoCall: false })
+    } catch (err) {
+      console.warn('Failed to update rooms showVideoCall:', err)
+    }
+    leaveRoom()
+  } else {
+    // Non-moderator: can just leave locally
+    leaveRoom()
+  }
+}
 
 // Screen Sharing (Mesh Compatible)
 async function handleScreenShare() {
