@@ -146,14 +146,22 @@ const {
 const sendNotification = async ({
   userId,
   title,
+  titleKey,
+  titleParams,
   description,
+  descriptionKey,
+  descriptionParams,
   redirectsTo = '/',
   testId = null,
   author,
 } = {}) => {
   const notification = new Notification({
     title,
+    titleKey,
+    titleParams,
     description,
+    descriptionKey,
+    descriptionParams,
     redirectsTo,
     author,
     read: false,
@@ -250,23 +258,7 @@ const handleSendInvitations = async (invitationData) => {
       (c) => c.email === coopEmail
     )
 
-    if (existingIndex !== -1) {
-      // Email already exists - update their role instead of creating duplicate
-      const existing = cooperatorsEdit.value[existingIndex]
-      const newRole = roleOptions.value[selectedRole].value
-      
-      if (existing.accessLevel !== newRole) {
-        // Update the existing entry's role
-        cooperatorsEdit.value[existingIndex] = {
-          ...existing,
-          accessLevel: newRole,
-          updateDate: new Date().getTime(),
-        }
-        updatedRoles.push(coopEmail)
-      }
-      // Keep existing token so their invite link still works
-      tokens[coop.id || coop] = existing.token
-    } else {
+    if (existingIndex === -1) {
       // New email - create new cooperator entry
       const token = uidgen.generateSync()
       if (!coop.id) {
@@ -296,6 +288,22 @@ const handleSendInvitations = async (invitationData) => {
       }
       tokens[coop.id || coop] = token
       newInvites.push(coopEmail)
+    } else {
+      // Email already exists - update their role instead of creating duplicate
+      const existing = cooperatorsEdit.value[existingIndex]
+      const newRole = roleOptions.value[selectedRole].value
+      
+      if (existing.accessLevel !== newRole) {
+        // Update the existing entry's role
+        cooperatorsEdit.value[existingIndex] = {
+          ...existing,
+          accessLevel: newRole,
+          updateDate: Date.now(),
+        }
+        updatedRoles.push(coopEmail)
+      }
+      // Keep existing token so their invite link still works
+      tokens[coop.id || coop] = existing.token
     }
   })
 
@@ -375,12 +383,21 @@ const notifyCooperatorAccessibility = async (guest) => {
       testTitle: test.value.testTitle || t('common.test'),
     })
 
+    // Variables for i18n keys
+    let titleKey = 'HeuristicsCooperators.actions.send_invitation'
+    let titleParams = null
+    let descriptionKey = 'HeuristicsCooperators.messages.invite_message'
+    let descriptionParams = { testTitle: test.value.testTitle || 'Test' }
+
     if (test.value.testType === 'MANUAL') {
       path = `accessibility/manual/preview/${test.value.id}`
       title =
         t('studyCreation.methods.accessibility.manual_testing.name') +
         ' ' +
         t('HeuristicsCooperators.actions.send_invitation')
+      // Complex title concatenation, falling back to sender-side translation for title
+      titleKey = null 
+      
       description = t('HeuristicsCooperators.messages.invite_message', {
         testTitle: test.value.testTitle || t('common.test'),
       })
@@ -390,6 +407,9 @@ const notifyCooperatorAccessibility = async (guest) => {
         t('studyCreation.methods.accessibility.automatic_testing.name') +
         ' ' +
         t('HeuristicsCooperators.actions.send_invitation')
+      // Complex title concatenation, falling back to sender-side translation for title
+      titleKey = null
+
       description = t('HeuristicsCooperators.messages.invite_message', {
         testTitle: test.value.testTitle || t('common.test'),
       })
@@ -397,14 +417,18 @@ const notifyCooperatorAccessibility = async (guest) => {
 
     if (guest.userDocId && path) {
       const author = test.value.testAdmin.email
-      await sendNotification(
-        guest.userDocId,
+      await sendNotification({
+        userId: guest.userDocId,
         title,
+        titleKey,
+        titleParams,
         description,
-        path,
-        test.value.id,
+        descriptionKey,
+        descriptionParams,
+        redirectsTo: path,
+        testId: test.value.id,
         author,
-      )
+      })
     }
   }
 }
@@ -435,11 +459,14 @@ const notifyCooperator = (guest) => {
     sendNotification({
       userId: guest.userDocId,
       title: t('HeuristicsCooperators.actions.send_invitation'),
+      titleKey: 'HeuristicsCooperators.actions.send_invitation',
       description:
         inviteMessages.value ||
         t('HeuristicsCooperators.messages.invite_message', {
           testTitle: test.value.testTitle || t('common.test'),
         }),
+      descriptionKey: inviteMessages.value ? null : 'HeuristicsCooperators.messages.invite_message',
+      descriptionParams: inviteMessages.value ? null : { testTitle: test.value.testTitle || 'Test' },
       redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
