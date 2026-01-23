@@ -30,15 +30,6 @@
       "instructions": "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
       "reset_button": "Envoyer le lien de réinitialisation",
       "back_to_signin": "Retour à la connexion"
-    },
-    "passwordStrength": "Force du mot de passe",
-    "number": "Chiffre",
-    "strength": {
-      "veryWeak": "Très faible",
-      "weak": "Faible",
-      "fair": "Moyenne",
-      "good": "Bonne",
-      "strong": "Forte"
     }
   },
   "common": {
@@ -103,11 +94,93 @@
     "actionCannotBeUndone": "Cette action ne peut pas être annulée.",
     "headers": {
       "type": "Type",
-      "studyName": "Nom de l'étude",
-      "date": "Date",
-      "size": "Taille",
-      "actions": "Actions"
+      "name": "Nom",
+      "tags": "Tags",
+      "owner": "Propriétaire",
+      "participants": "Participants",
+      "created": "Créé",
+      "evaluator": "Évaluateur",
+      "status": "Statut",
+      "sessionDate": "Date de session",
+      "itemsPerPage": "Éléments par page :"
     }
+  },
+  "community": {
+    "studies": {
+      "title": "Études communautaires",
+      "searchPlaceholder": "Rechercher des études..."
+    },
+    "templates": {
+      "title": "Modèles communautaires",
+      "searchPlaceholder": "Rechercher des modèles..."
+    },
+    "reset": "Réinitialiser",
+    "showFilters": "Afficher les filtres",
+    "hideFilters": "Masquer les filtres",
+    "selectRange": "Sélectionner une plage",
+    "filters": {
+      "creationDate": "Date de création",
+      "status": "Statut",
+      "method": "Méthode",
+      "ownership": "Propriété",
+      "participants": "Participants"
+    },
+    "status": {
+      "allStatuses": "Tous les statuts",
+      "active": "Actif",
+      "draft": "Brouillon",
+      "completed": "Terminé"
+    },
+    "ownership": {
+      "allStudies": "Toutes les études",
+      "myStudies": "Mes études",
+      "whereICollaborate": "Où je collabore"
+    },
+    "participants": {
+      "all": "Tous",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+    },
+    "method": {
+      "allMethods": "Toutes les méthodes",
+      "all": "Tous",
+      "heuristicEvaluation": "Évaluation heuristique",
+      "userStudyUnmoderated": "Étude utilisateur (Non modérée)",
+      "userStudyModerated": "Étude utilisateur (Modérée)",
+      "manualAccessibility": "Accessibilité manuelle",
+      "automaticAccessibility": "Accessibilité automatique"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "Restez informé de vos activités et collaborations",
+    "markAllRead": "Tout marquer comme lu",
+    "searchPlaceholder": "Rechercher des notifications…",
+    "notification": "Notification",
+    "important": "Important",
+    "markAsRead": "Marquer comme lu",
+    "markAsUnread": "Marquer comme non lu",
+    "refresh": "Actualiser",
+    "noResultsFound": "Aucun résultat trouvé",
+    "allCaughtUp": "Tout est à jour !",
+    "noNotificationsYet": "Pas encore de notifications",
+    "tryDifferentKeywords": "Essayez d'autres mots-clés ou effacez votre recherche",
+    "allReadMessage": "Vous avez lu toutes vos notifications. Bravo !",
+    "newActivitiesMessage": "Vous verrez les notifications ici quand vous aurez de nouvelles activités",
+    "justNow": "À l'instant",
+    "minutesAgo": "il y a {count}m",
+    "hoursAgo": "il y a {count}h",
+    "daysAgo": "il y a {count}j",
+    "newNotification": "Vous avez une nouvelle notification."
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "studies": "Études",
+    "sessions": "Sessions",
+    "templates": "Modèles",
+    "storage": "Stockage",
+    "communityStudies": "Études communautaires",
+    "communityTemplates": "Modèles communautaires"
   },
   "profile": {
     "title": "Profil",
@@ -229,8 +302,6 @@
     "cta": "Commencer"
   },
   "Dashboard": {
-    "welcomeBack": "Bon retour, {name} !",
-    "subtitle": "Voici ce qui se passe avec vos projets de recherche aujourd'hui",
     "createNewTest": "Créer une nouvelle étude",
     "tests": "Tests",
     "templates": "Modèles",
@@ -240,49 +311,7 @@
     "publicTests": "Tests publics",
     "sessions": "Sessions",
     "personal": "Personnel",
-    "explore": "Explorer",
-    "activeStudiesOverview": "Aperçu des études actives",
-    "viewAll": "Voir tout",
-    "showMore": "Voir plus",
-    "showLess": "Voir moins",
-    "progress": "Progression",
-    "participants": "Participants",
-    "participantsLabel": "Participants",
-    "daysLeft": "jours restants",
-    "dayLeft": "jour restant",
-    "studies": "Études",
-    "storage": "Stockage",
-    "free": "Gratuit",
-    "plan": "Plan",
-    "recentActivity": "Activité récente",
-    "comingSoon": "Bientôt disponible",
-    "mostUsedMethods": "Méthodes les plus utilisées",
-    "use": "utilisation",
-    "uses": "utilisations",
-    "noDataAvailable": "Aucune donnée disponible pour le moment",
-    "createFirstStudy": "Créez votre première étude pour voir les statistiques ici.",
-    "nextSession": "Prochaine session",
-    "noSessionsScheduled": "Aucune session planifiée",
-    "nextSessionWillAppear": "Votre prochaine session apparaîtra ici",
-    "latestBlogPosts": "Derniers articles de blog",
-    "viewBlog": "Voir le blog",
-    "date": "Date",
-    "time": "Heure",
-    "status": {
-      "active": "Actif",
-      "recruiting": "Recrutement",
-      "paused": "En pause",
-      "finished": "Terminé",
-      "unknown": "Inconnu"
-    },
-    "webinar": {
-      "ended": "Terminé",
-      "live": "En direct",
-      "today": "Aujourd'hui",
-      "joinNow": "Rejoindre maintenant",
-      "webinarEnded": "Webinaire terminé",
-      "startingToday": "Commence aujourd'hui"
-    }
+    "explore": "Explorer"
   },
   "HeuristicsTable": {
     "titles": {
@@ -306,7 +335,14 @@
       "deleteQuestion": "Supprimer la question",
       "addNewDescription": "Ajouter une nouvelle description",
       "addOption": "Ajouter une nouvelle option",
-      "hasValue": "A une valeur"
+      "hasValue": "A une valeur",
+      "moveUp": "Déplacer vers le haut",
+      "moveDown": "Déplacer vers le bas",
+      "Question": "Question",
+      "Questions": "Questions",
+      "noQuestions": "Aucune question",
+      "noDescriptions": "Aucune description",
+      "loading": "Chargement..."
     },
     "placeholders": {
       "titleHeuristic": "Titre de l'heuristique",
@@ -321,7 +357,10 @@
       "youMustHave": "Vous devez avoir tapé quelque chose de mal...",
       "noHeuristicsDeleteAll": "Désolé, mais vous ne pouvez pas supprimer toutes les questions d'heuristique.",
       "noCsvFileSelected": "Aucun fichier CSV sélectionné. Veuillez en sélectionner un avant de continuer.",
-      "changeWeights": "Notez qu'en changeant l'ordre des heuristiques, les poids NE changent PAS automatiquement, vous devez les modifier manuellement."
+      "changeWeights": "Notez qu'en changeant l'ordre des heuristiques, les poids NE changent PAS automatiquement, vous devez les modifier manuellement.",
+      "noDescriptions": "Aucune description disponible",
+      "startAddingQuestions": "Commencez par ajouter votre première question à cette heuristique",
+      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique"
     },
     "validation": {
       "nameRequired": "Le nom est obligatoire",
@@ -334,6 +373,12 @@
       "showComment": "Afficher le commentaire",
       "addComment": "Ajouter un commentaire",
       "hideTextArea": "Masquer la zone de texte"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Échec du chargement du formulaire de question. Veuillez réessayer.",
+      "failedToLoadEditForm": "Échec du chargement du formulaire d'édition. Veuillez réessayer.",
+      "invalidHeuristic": "Sélection d'heuristique invalide",
+      "invalidQuestion": "Sélection de question invalide"
     }
   },
   "HeuristicsOptionsTable": {
