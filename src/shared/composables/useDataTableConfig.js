@@ -1,29 +1,29 @@
 import { computed, toRef } from 'vue'
 
-export function useDataTableConfig(type) {
+export function useDataTableConfig(type, t) {
     const typeRef = toRef(type)
 
     const headers = computed(() => [
         {
-            title: 'Type',
+            title: t('common.table.type'),
             key: 'type',
             sortable: false,
             align: 'center'
         },
         {
-            title: 'Name',
+            title: t('common.table.name'),
             key: 'name',
             sortable: true,
             value: item => item.header?.templateTitle ?? item.testTitle ?? item.email
         },
         {
-            title: 'Tags',
+            title: t('common.table.tags'),
             key: 'tags',
             align: 'start',
             sortable: false,
         },
         {
-            title: 'Owner',
+            title: t('common.table.owner'),
             key: 'owner',
             sortable: true,
         },
@@ -31,17 +31,17 @@ export function useDataTableConfig(type) {
 
     if (typeRef.value === 'sessions') {
         headers.value.push({
-            title: 'Evaluator',
+            title: t('common.table.evaluator'),
             key: 'evaluator',
             sortable: true,
         })
         headers.value.push({
-            title: 'Status',
+            title: t('common.table.status'),
             key: 'status',
             sortable: true,
         })
         headers.value.push({
-            title: 'Session Date',
+            title: t('common.table.sessionDate'),
             key: 'testDate',
             sortable: true,
         },)
@@ -49,7 +49,7 @@ export function useDataTableConfig(type) {
 
     if (typeRef.value !== 'sessions' && typeRef.value !== 'myTemplates' && typeRef.value !== 'publicTemplates') {
         headers.value.push({
-            title: 'Participants',
+            title: t('common.table.participants'),
             key: 'participants',
             sortable: true,
             align: 'center',
@@ -59,7 +59,7 @@ export function useDataTableConfig(type) {
 
     headers.value.push(
         {
-            title: 'Created',
+            title: t('common.table.created'),
             key: 'creationDate',
             sortable: true,
         })
