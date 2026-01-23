@@ -1106,5 +1106,69 @@
         "upcoming": "आगामी"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "उपयोगकर्ता परीक्षण अध्ययन",
+      "unmoderatedStudy": "अनमोडरेटेड अध्ययन",
+      "moderatedStudy": "मोडरेटेड अध्ययन",
+      "active": "सक्रिय",
+      "draft": "ड्राफ्ट",
+      "completed": "पूर्ण",
+      "archived": "संग्रहीत"
+    },
+    "studyOverview": {
+      "totalParticipants": "कुल प्रतिभागी",
+      "completed": "पूर्ण",
+      "rate": "{percentage}% दर",
+      "inProgress": "प्रगति में",
+      "active": "{percentage}% सक्रिय",
+      "averageTime": "औसत समय",
+      "completionTime": "पूर्णता समय",
+      "minUnit": "{value} मिनट"
+    },
+    "managementModules": {
+      "title": "प्रबंधन मॉड्यूल",
+      "description": "प्रतिभागियों, कार्यों, सेटिंग्स को प्रबंधित करने और अपने अध्ययन डेटा का विश्लेषण करने के लिए व्यापक उपकरण",
+      "additionalModules": "अतिरिक्त मॉड्यूल के लिए स्थान"
+    },
+    "participants": {
+      "title": "प्रतिभागी",
+      "subtitle": "परीक्षण भागीदारी का अवलोकन",
+      "beta": "बीटा",
+      "completed": "पूर्ण",
+      "notStarted": "शुरू नहीं हुआ",
+      "pendingInvites": "लंबित आमंत्रण",
+      "overallProgress": "समग्र प्रगति",
+      "participantsCompleted": "{total} में से {completed} प्रतिभागियों ने पूरा किया",
+      "details": "विवरण"
+    },
+    "tasks": {
+      "title": "कार्य अवलोकन",
+      "subtitle": "कार्य संरचना और पूर्णता",
+      "beta": "बीटा",
+      "noTasksConfigured": "कोई कार्य कॉन्फ़िगर नहीं किया गया",
+      "taskCompletionRate": "कार्य पूर्णता दर",
+      "totalTasks": "कुल कार्य",
+      "avgTaskDuration": "औसत कार्य अवधि",
+      "successRate": "सफलता दर",
+      "taskTypes": "कार्य प्रकार",
+      "viewTasks": "कार्य देखें"
+    },
+    "storage": {
+      "title": "भंडारण उपयोग",
+      "subtitle": "मीडिया फ़ाइलें और भंडारण मेट्रिक्स",
+      "beta": "बीटा",
+      "storageUsed": "उपयोग किया गया भंडारण",
+      "storageQuota": "{quota} में से {used} उपयोग किया गया",
+      "mediaFiles": "मीडिया फ़ाइलें",
+      "videoRecordings": "वीडियो रिकॉर्डिंग",
+      "audioRecordings": "ऑडियो रिकॉर्डिंग",
+      "screenRecordings": "स्क्रीन रिकॉर्डिंग",
+      "storageBreakdown": "भंडारण विवरण",
+      "responsesData": "प्रतिक्रिया डेटा",
+      "analyticsData": "विश्लेषण डेटा",
+      "manageStorage": "भंडारण प्रबंधित करें"
+    }
   }
 }

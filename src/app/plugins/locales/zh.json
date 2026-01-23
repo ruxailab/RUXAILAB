@@ -1,38 +1,6 @@
 {
   "language": "语言",
   "auth": {
-    "signupSuccess": "注册成功",
-    "logoutSuccess": "注销成功",
-    "resetPasswordSuccess": "密码重置邮件已发送",
-    "deleteSuccess": "账户删除成功",
-    "loginSuccess": "登录成功",
-    "SIGNIN": {
-      "sign-in": "登录",
-      "sign-in-title": "欢迎回来",
-      "sign-in-subtitle": "登录您的账户以继续",
-      "email": "电子邮箱",
-      "username": "用户名",
-      "password": "密码",
-      "signupSubtitle": "填写您的详细信息以开始",
-      "dont-have-account": "还没有账户？",
-      "forgot-password": "忘记密码？",
-      "sign-up": "创建账户",
-      "contact": "联系电话",
-      "confirmPassword": "确认密码",
-      "alreadyHaveAnAccount": "已有账户？",
-      "continueWithGoogle": "继续使用 Google",
-      "rememberMe": "记住我",
-      "or": "或继续使用"
-    },
-    "FORGOT_PASSWORD": {
-      "reset_password": "重置密码",
-      "email": "电子邮箱",
-      "instructions": "输入您的电子邮箱，我们将发送重置密码链接给您。",
-      "reset_button": "发送重置链接",
-      "back_to_signin": "返回登录"
-    }
-  },
-  "auth": {
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
       "email": "邮箱",
@@ -1151,6 +1119,70 @@
         "finished": "已完成",
         "upcoming": "即将开始"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "用户测试研究",
+      "unmoderatedStudy": "无主持研究",
+      "moderatedStudy": "有主持研究",
+      "active": "活跃",
+      "draft": "草稿",
+      "completed": "已完成",
+      "archived": "已归档"
+    },
+    "studyOverview": {
+      "totalParticipants": "总参与者",
+      "completed": "已完成",
+      "rate": "{percentage}% 完成率",
+      "inProgress": "进行中",
+      "active": "{percentage}% 活跃",
+      "averageTime": "平均时间",
+      "completionTime": "完成时间",
+      "minUnit": "{value} 分钟"
+    },
+    "managementModules": {
+      "title": "管理模块",
+      "description": "管理参与者、任务、设置并分析研究数据的综合工具",
+      "additionalModules": "额外模块空间"
+    },
+    "participants": {
+      "title": "参与者",
+      "subtitle": "测试参与情况概览",
+      "beta": "测试版",
+      "completed": "已完成",
+      "notStarted": "未开始",
+      "pendingInvites": "待处理邀请",
+      "overallProgress": "总体进度",
+      "participantsCompleted": "{total} 名参与者中有 {completed} 名已完成",
+      "details": "详情"
+    },
+    "tasks": {
+      "title": "任务概览",
+      "subtitle": "任务结构和完成情况",
+      "beta": "测试版",
+      "noTasksConfigured": "未配置任务",
+      "taskCompletionRate": "任务完成率",
+      "totalTasks": "任务总数",
+      "avgTaskDuration": "平均任务时长",
+      "successRate": "成功率",
+      "taskTypes": "任务类型",
+      "viewTasks": "查看任务"
+    },
+    "storage": {
+      "title": "存储使用情况",
+      "subtitle": "媒体文件和存储指标",
+      "beta": "测试版",
+      "storageUsed": "已用存储",
+      "storageQuota": "{quota} 中已使用 {used}",
+      "mediaFiles": "媒体文件",
+      "videoRecordings": "视频录制",
+      "audioRecordings": "音频录制",
+      "screenRecordings": "屏幕录制",
+      "storageBreakdown": "存储明细",
+      "responsesData": "响应数据",
+      "analyticsData": "分析数据",
+      "manageStorage": "管理存储"
     }
   }
 }
