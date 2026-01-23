@@ -6,7 +6,7 @@
   >
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
-      <!-- Screen Share Video (if any) -->
+      <!-- Screen Share Video (visible to everyone including observators) -->
       <v-col
         cols="12"
         class="d-flex justify-center align-center"
@@ -24,9 +24,9 @@
       </v-col>
 
       <!-- Grid of Participants -->
-      <v-col cols="12">
+      <v-col cols="12" v-if="callStarted">
         <div class="videos-grid">
-          <!-- Local Video (Hidden for Observator if they want, but usually good to see self status - wait, Observator has NO camera) -->
+          <!-- Local Video (not for observators) -->
           <div class="video-wrapper" v-if="!isObservator">
             <div class="video-container">
               <video
@@ -83,41 +83,76 @@
           </div>
         </div>
       </v-col>
+
+      <!-- Moderator Preview (before opening room) -->
+      <v-col cols="12" v-if="caller && !callStarted && !isObservator && localStream">
+        <div class="videos-grid">
+          <div class="video-wrapper">
+            <div class="video-container">
+              <video
+                ref="localVideo"
+                autoplay
+                muted
+                playsinline
+                class="video-element"
+              ></video>
+
+              <!-- Camera disabled overlay -->
+              <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
+                <v-icon size="64" color="white" class="mb-2"
+                  >mdi-video-off</v-icon
+                >
+                <p class="text-white">Camera is off</p>
+              </div>
+
+              <!-- Microphone muted indicator -->
+              <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
+                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+              </div>
+
+              <div class="video-label">
+                Your preview ({{ user?.email?.split('@')[0] }})
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-col>
+
+      <!-- Observator waiting message (before call starts) -->
+      <v-col cols="12" v-if="isObservator && !callStarted" class="d-flex justify-center align-center">
+        <div class="observator-notice">
+          <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
+          <h3 class="text-h5 mb-2">Observator Mode</h3>
+          <p class="text-body-1">
+            Waiting for moderator to start the session...
+          </p>
+          <p class="text-body-2 text-grey mt-2">
+            You will be able to observe all video feeds without sending your own.
+          </p>
+        </div>
+      </v-col>
     </v-row>
 
-    <!-- Participant Join Controls Row (completely separate from videos) -->
+    <!-- Participant/Observator Waiting State (only when not started) -->
     <v-row
-      v-if="!caller && !callStarted"
+      v-if="!caller && !callStarted && !isObservator"
       class="participant-controls-row"
       justify="center"
       no-gutters
     >
       <v-col cols="12" class="participant-controls-container">
         <div class="participant-controls-content">
-          <!-- Single Unified Join Button -->
-          <v-btn
-            :color="roomExists ? 'primary' : 'warning'"
-            size="x-large"
-            class="join-room-btn"
-            @click="answerCall"
-            :disabled="!roomExists"
-            :variant="roomExists ? 'flat' : 'outlined'"
-          >
-            <template v-if="!roomExists">
-              <v-progress-circular
-                indeterminate
-                size="20"
-                width="2"
-                class="me-2"
-              ></v-progress-circular>
-              <v-icon left size="24">mdi-clock-outline</v-icon>
-              Waiting for moderator...
-            </template>
-            <template v-else>
-              <v-icon left size="24">mdi-video</v-icon>
-              Join Room
-            </template>
-          </v-btn>
+          <v-progress-circular
+            indeterminate
+            size="48"
+            width="4"
+            color="primary"
+            class="mb-4"
+          ></v-progress-circular>
+          <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
+          <p class="text-body-2 text-grey">
+            The video call will start automatically when the moderator opens the room.
+          </p>
         </div>
       </v-col>
     </v-row>
@@ -369,46 +404,64 @@
 
         <div class="panel-section">
           <h4>Participantes</h4>
-          <div class="participant-item">
-            <v-avatar size="32" :color="caller ? 'blue' : 'green'">
+          <div 
+            v-for="participant in participantsList" 
+            :key="participant.id"
+            class="participant-item"
+          >
+            <v-avatar 
+              size="32" 
+              :color="participant.role === 'moderator' ? 'blue' : (participant.role === 'observator' ? 'orange' : 'green')"
+            >
               <v-icon color="white">{{
-                caller ? 'mdi-account-star' : 'mdi-account'
+                participant.role === 'moderator' ? 'mdi-account-star' : 
+                participant.role === 'observator' ? 'mdi-eye' : 
+                'mdi-account'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
-              <span class="participant-name">{{
-                caller ? 'Moderador (Tú)' : 'Participante (Tú)'
-              }}</span>
-              <div class="participant-status">
-                <v-chip size="x-small" color="green" v-if="isCameraEnabled"
-                  >Cámara</v-chip
-                >
-                <v-chip size="x-small" color="red" v-else>Sin cámara</v-chip>
-                <v-chip
-                  size="x-small"
-                  color="green"
-                  v-if="isMicrophoneEnabled"
+              <span class="participant-name">
+                {{ participant.name }}{{ participant.isSelf ? ' (Tú)' : '' }}
+                <v-chip 
+                  v-if="participant.role === 'observator'" 
+                  size="x-small" 
+                  color="orange" 
                   class="ml-1"
-                  >Micrófono</v-chip
                 >
-                <v-chip size="x-small" color="red" v-else class="ml-1"
-                  >Sin micrófono</v-chip
+                  Observador
+                </v-chip>
+                <v-chip 
+                  v-else-if="participant.role === 'moderator'" 
+                  size="x-small" 
+                  color="blue" 
+                  class="ml-1"
                 >
-              </div>
-            </div>
-          </div>
-          <div class="participant-item" v-if="callStarted">
-            <v-avatar size="32" :color="caller ? 'green' : 'blue'">
-              <v-icon color="white">{{
-                caller ? 'mdi-account' : 'mdi-account-star'
-              }}</v-icon>
-            </v-avatar>
-            <div class="participant-info">
-              <span class="participant-name">{{
-                caller ? 'Participante' : 'Moderador'
-              }}</span>
+                  Moderador
+                </v-chip>
+              </span>
               <div class="participant-status">
-                <v-chip size="x-small" color="green">Conectado</v-chip>
+                <v-chip 
+                  size="x-small" 
+                  :color="participant.connected ? 'green' : 'grey'"
+                >
+                  {{ participant.connected ? 'Conectado' : 'Desconectado' }}
+                </v-chip>
+                <v-chip 
+                  v-if="participant.isSelf && !isObservator"
+                  size="x-small" 
+                  :color="participant.hasCamera ? 'green' : 'red'"
+                  class="ml-1"
+                >
+                  {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
+                </v-chip>
+                <v-chip 
+                  v-if="participant.isSelf && !isObservator"
+                  size="x-small" 
+                  :color="participant.hasMicrophone ? 'green' : 'red'"
+                  class="ml-1"
+                >
+                  {{ participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono' }}
+                </v-chip>
               </div>
             </div>
           </div>
@@ -793,8 +846,56 @@ const remoteStreams = computed(() => {
   return streams
 })
 const callStarted = computed(
-  () => Object.keys(peers).length > 0 || !!localStream.value,
+  () => roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
 )
+
+// Organize participants by role
+const participantsList = computed(() => {
+  const list = []
+  
+  // Add self first
+  list.push({
+    id: props.user.id,
+    name: props.user.email?.split('@')[0] || 'You',
+    email: props.user.email,
+    isSelf: true,
+    role: isObservator.value ? 'observator' : (props.isModerator ? 'moderator' : 'participant'),
+    connected: true,
+    hasCamera: !isObservator.value && isCameraEnabled.value,
+    hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
+  })
+  
+  // Add others from participants
+  Object.keys(participants.value).forEach(userId => {
+    if (userId === props.user.id) return
+    
+    const p = participants.value[userId]
+    const coop = props.test?.cooperators?.find(c => c.userDocId === userId)
+    
+    // Determine role
+    let role = 'participant'
+    if (coop) {
+      if (coop.accessLevel === ACCESS_LEVEL.OBSERVATOR) {
+        role = 'observator'
+      } else if (coop.accessLevel === ACCESS_LEVEL.ADMIN) {
+        role = 'moderator'
+      }
+    }
+    
+    list.push({
+      id: userId,
+      name: p.name || p.email?.split('@')[0] || coop?.email?.split('@')[0] || 'Unknown',
+      email: p.email || coop?.email,
+      isSelf: false,
+      role: role,
+      connected: !!peers[userId],
+      hasCamera: role !== 'observator',
+      hasMicrophone: role !== 'observator',
+    })
+  })
+  
+  return list
+})
 
 // Helper to get name
 const getPeerName = (userId) => {
@@ -833,8 +934,45 @@ const currentStepperValue = computed(() => {
 
 // --- Initialization ---
 
+const roomReady = ref(false)
+
+// Watch for localVideo ref and ensure stream is attached
+watch([localVideo, localStream], ([videoEl, stream]) => {
+  if (videoEl && stream && !isObservator.value) {
+    videoEl.srcObject = stream
+  }
+})
+
 onMounted(async () => {
-  await joinRoom()
+  // Moderator gets media preview but doesn't join room yet
+  if (props.isModerator) {
+    // Just get local media for preview
+    if (!isObservator.value) {
+      await initLocalMedia()
+    }
+  } else {
+    // Participants and observators wait for room to be opened by moderator
+    const roomRef = dbRef(database, `rooms/${props.roomId}`)
+    
+    // Check initial value first
+    const initialSnapshot = await get(roomRef)
+    const initialData = initialSnapshot.val()
+    if (initialData?.showVideoCall && !roomReady.value) {
+      roomReady.value = true
+      await joinRoom()
+    }
+    
+    // Then listen for changes
+    onValue(roomRef, (snapshot) => {
+      const roomData = snapshot.val()
+      if (roomData?.showVideoCall) {
+        if (!roomReady.value) {
+          roomReady.value = true
+          joinRoom()
+        }
+      }
+    })
+  }
 })
 
 onBeforeUnmount(() => {
@@ -844,8 +982,8 @@ onBeforeUnmount(() => {
 // --- Signaling & Mesh Logic ---
 
 const joinRoom = async () => {
-  // 1. Get Local Media (if not observator)
-  if (!isObservator.value) {
+  // 1. Get Local Media (if not observator and don't have it yet)
+  if (!isObservator.value && !localStream.value) {
     await initLocalMedia()
   }
 
@@ -923,28 +1061,27 @@ const joinRoom = async () => {
 
     if (signal.type === 'offer') {
       const desc = new RTCSessionDescription({ type: 'offer', sdp: signal.sdp })
-      // Avoid glare: if we are initiating, we might ignore, but here we just accept for now (Mesh/Perfect Negotiation is complex, keeping simple)
-      if (pc.signalingState !== 'stable') {
-        // If we are both offering, the one with lower ID yields?
-        // Current logic: I only offer if I am "Newer".
-        // So I shouldn't receive an offer if I am newer, unless race condition.
-        // Let's accept offer if state allows.
-        await Promise.all([
-          pc.setRemoteDescription(desc),
-          pc.setLocalDescription(await pc.createAnswer()),
-        ])
-        sendSignal(senderId, { type: 'answer', sdp: pc.localDescription.sdp })
-      } else {
+      try {
         await pc.setRemoteDescription(desc)
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
         sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
+      } catch (e) {
+        console.error('Error handling offer:', e)
       }
     } else if (signal.type === 'answer') {
-      if (pc.signalingState !== 'stable') {
-        // only set if waiting
-        await pc.setRemoteDescription(
-          new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }),
+      // Only set answer if we're waiting for one (have-local-offer state)
+      if (pc.signalingState === 'have-local-offer') {
+        try {
+          await pc.setRemoteDescription(
+            new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }),
+          )
+        } catch (e) {
+          console.error('Error setting remote answer:', e)
+        }
+      } else {
+        console.warn(
+          `Received answer in unexpected state: ${pc.signalingState}`,
         )
       }
     } else if (signal.candidate) {
@@ -1014,16 +1151,16 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     stream: null,
   }
 
-  // Add local tracks (if not observator)
-  if (localStream.value) {
+  // Add local tracks ONLY if not an observator
+  // Observators receive-only to save bandwidth
+  if (!isObservator.value && localStream.value) {
     localStream.value.getTracks().forEach((track) => {
       pc.addTrack(track, localStream.value)
     })
   }
 
+  // If observator, set up receive-only transceivers
   if (isObservator.value) {
-    // Directions are handled by addTrack, or addTransceiver.
-    // If no tracks added, we add receive only transceivers to ensure we get video
     pc.addTransceiver('video', { direction: 'recvonly' })
     pc.addTransceiver('audio', { direction: 'recvonly' })
   }
@@ -1050,6 +1187,20 @@ const createPeerConnection = (targetUserId, isInitiator) => {
         console.error('Error on negotiation', e)
       }
     }
+    
+    // Manually trigger offer creation for initiator
+    // negotiationneeded might not fire immediately
+    setTimeout(async () => {
+      if (pc.signalingState === 'stable' && !pc.currentRemoteDescription) {
+        try {
+          const offer = await pc.createOffer()
+          await pc.setLocalDescription(offer)
+          sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
+        } catch (e) {
+          console.error('Error creating initial offer', e)
+        }
+      }
+    }, 100)
   }
 
   // Listen for specific signals from this sender?
@@ -1149,7 +1300,18 @@ function dismissJoinDialog() {
 
 // Aliases for Template Compatibility
 const startCall = async () => {
-  /* Auto-started in Mesh */
+  // Moderator joins the room and signals others
+  try {
+    // Set flag first so others can join
+    await update(dbRef(database, `rooms/${props.roomId}`), {
+      showVideoCall: true,
+    })
+    // Now moderator joins
+    roomReady.value = true
+    await joinRoom()
+  } catch (err) {
+    console.warn('Failed to open room:', err)
+  }
 }
 const answerCall = async () => {
   /* Auto-started in Mesh */
@@ -1283,6 +1445,21 @@ watch(
   padding: 20px;
   min-height: 400px;
   flex: 0 0 auto; /* Don't grow to fill height */
+}
+
+.videos-grid {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.video-wrapper {
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: center;
 }
 
 .videos-container {
@@ -1569,6 +1746,22 @@ watch(
   justify-content: center;
   z-index: 15;
   backdrop-filter: blur(4px);
+}
+
+/* Observator Notice */
+.observator-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 40px;
+  background: rgba(var(--v-theme-surface), 1);
+  border-radius: 16px;
+  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 40px auto;
 }
 
 /* Side Panel */
