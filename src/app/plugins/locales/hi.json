@@ -679,6 +679,23 @@
         "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
       }
     },
+    "templates": {
+      "searchPlaceholder": "टेम्पलेट्स खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "creationDate": "निर्माण तिथि",
+      "selectRange": "सीमा चुनें",
+      "method": "विधि",
+      "filters": {
+        "allMethods": "सभी विधियाँ",
+        "heuristicEvaluation": "हीयुरिस्टिक मूल्यांकन",
+        "userUnmoderated": "अनमॉडरेटेड उपयोगकर्ता",
+        "userModerated": "मॉडरेटेड उपयोगकर्ता",
+        "manualAccessibility": "मैनुअल एक्सेसिबिलिटी",
+        "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+      }
+    },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",
       "blankTitle": "खाली परीक्षण बनाएँ",

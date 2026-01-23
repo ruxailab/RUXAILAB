@@ -698,6 +698,23 @@
         "whereICollaborate": "Onde eu colaboro"
       }
     },
+    "templates": {
+      "searchPlaceholder": "Pesquisar modelos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Data de criação",
+      "selectRange": "Selecionar intervalo",
+      "method": "Método",
+      "filters": {
+        "allMethods": "Todos os métodos",
+        "heuristicEvaluation": "Avaliação Heurística",
+        "userUnmoderated": "Usuário não moderado",
+        "userModerated": "Usuário moderado",
+        "manualAccessibility": "Acessibilidade manual",
+        "automaticAccessibility": "Acessibilidade automática"
+      }
+    },
     "createTest": {
       "title": "Criar um novo teste",
       "blankTitle": "Criar um teste em branco",

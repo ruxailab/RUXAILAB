@@ -696,6 +696,23 @@
         "whereICollaborate": "我参与协作的"
       }
     },
+    "templates": {
+      "searchPlaceholder": "搜索模板...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择范围",
+      "method": "方法",
+      "filters": {
+        "allMethods": "所有方法",
+        "heuristicEvaluation": "启发式评估",
+        "userUnmoderated": "用户非主持",
+        "userModerated": "用户主持",
+        "manualAccessibility": "人工无障碍性",
+        "automaticAccessibility": "自动无障碍性"
+      }
+    },
     "createTest": {
       "title": "创建新测试",
       "blankTitle": "创建空白测试",

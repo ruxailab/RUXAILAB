@@ -692,6 +692,23 @@
         "whereICollaborate": "Où je collabore"
       }
     },
+    "templates": {
+      "searchPlaceholder": "Rechercher des modèles...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "creationDate": "Date de création",
+      "selectRange": "Sélectionner une plage",
+      "method": "Méthode",
+      "filters": {
+        "allMethods": "Toutes les méthodes",
+        "heuristicEvaluation": "Évaluation heuristique",
+        "userUnmoderated": "Utilisateur non modéré",
+        "userModerated": "Utilisateur modéré",
+        "manualAccessibility": "Accessibilité manuelle",
+        "automaticAccessibility": "Accessibilité automatique"
+      }
+    },
     "createTest": {
       "title": "Créer un nouveau test",
       "blankTitle": "Créer un test vierge",

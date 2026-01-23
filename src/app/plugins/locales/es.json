@@ -762,7 +762,24 @@
         "completed": "Completado",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Donde colaboro"
+        "whereICollaborate": "Donده colaboro"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Buscar plantillas...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "method": "Método",
+      "filters": {
+        "allMethods": "Todos los métodos",
+        "heuristicEvaluation": "Evaluación heurística",
+        "userUnmoderated": "Usuario no moderado",
+        "userModerated": "Usuario moderado",
+        "manualAccessibility": "Accesibilidad manual",
+        "automaticAccessibility": "Accesibilidad automática"
       }
     },
     "createTest": {

@@ -692,6 +692,23 @@
         "whereICollaborate": "Wo ich mitarbeite"
       }
     },
+    "templates": {
+      "searchPlaceholder": "Vorlagen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "creationDate": "Erstellungsdatum",
+      "selectRange": "Bereich auswählen",
+      "method": "Methode",
+      "filters": {
+        "allMethods": "Alle Methoden",
+        "heuristicEvaluation": "Heuristische Evaluation",
+        "userUnmoderated": "Benutzer unmoderiert",
+        "userModerated": "Benutzer moderiert",
+        "manualAccessibility": "Manuelle Barrierefreiheit",
+        "automaticAccessibility": "Automatische Barrierefreiheit"
+      }
+    },
     "createTest": {
       "title": "Neuen Test erstellen",
       "blankTitle": "Leeren Test erstellen",

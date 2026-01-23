@@ -696,6 +696,23 @@
         "whereICollaborate": "Где я сотрудничаю"
       }
     },
+    "templates": {
+      "searchPlaceholder": "Поиск шаблонов...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать диапазон",
+      "method": "Метод",
+      "filters": {
+        "allMethods": "Все методы",
+        "heuristicEvaluation": "Эвристическая оценка",
+        "userUnmoderated": "Немодерируемый пользователь",
+        "userModerated": "Модерируемый пользователь",
+        "manualAccessibility": "Ручная доступность",
+        "automaticAccessibility": "Автоматическая доступность"
+      }
+    },
     "createTest": {
       "title": "Создать новый тест",
       "blankTitle": "Создать пустой тест",
