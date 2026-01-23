@@ -1,316 +1,96 @@
 <template>
-  <v-container class="py-4">
-    <v-row v-if="user" justify="center">
-      <v-col 
-        cols="12" 
-        md="10" 
-        lg="8"
-        xl="6"
+  <v-row v-if="user">
+    <v-col cols="12" md="10" lg="8" xl="6">
+      <!-- HEADER -->
+      <v-card
+        class="rounded-xl"
+        flat
+        :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
-
-        <!-- HEADER -->
-        <v-card 
-          class="rounded-xl pa-4 pa-md-5 mb-4"
-          flat
-          :class="{'pa-3': $vuetify.display.smAndDown}"
+        <div
+          class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
         >
-          <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3">
-            <div class="flex-grow-1">
-              <div class="d-flex align-center gap-2 mb-1">
-                <v-icon size="28" color="primary" class="d-none d-sm-flex">mdi-bell-ring-outline</v-icon>
-                <h2 class="text-h5 text-h6-sm">{{ $t('common.notifications') }}</h2>
-              </div>
-              <p class="text-caption text-grey-darken-1 mt-1">
-                {{ $t('notificationsPage.subtitle') }}
-              </p>
-            </div>
-
-            <!-- MARK ALL AS READ BUTTON -->
-            <v-btn
-              v-if="activeTab === 'unread' && unreadCount > 0"
-              size="small"
-              variant="flat"
-              color="primary"
-              :loading="markingAllAsRead"
-              prepend-icon="mdi-email-open-outline"
-              class="elevation-0 text-capitalize"
-              :class="{'flex-shrink-0': true}"
-              @click="markAllAsRead"
-            >
-              {{ $t('notificationsPage.markAllRead') }}
-            </v-btn>
-          </div>
-
-          <!-- TABS FOR DESKTOP -->
-          <v-tabs 
-            v-if="!$vuetify.display.smAndDown"
-            v-model="activeTab" 
-            color="primary" 
-            class="mt-4"
-            height="48"
-          >
-            <v-tab value="all" class="text-capitalize">
-              <div class="d-flex align-center gap-2">
-                <span>{{ $t('common.all') }}</span>
-                <v-badge v-if="totalCount" :content="totalCount" inline size="small" />
-              </div>
-            </v-tab>
-            <v-tab value="unread" class="text-capitalize">
-              <div class="d-flex align-center gap-2">
-                <span>{{ $t('common.unread') }}</span>
-                <v-badge v-if="unreadCount" color="error" :content="unreadCount" inline size="small" />
-              </div>
-            </v-tab>
-            <v-tab value="inbox" class="text-capitalize">
-              <div class="d-flex align-center gap-2">
-                <span>{{ $t('common.inbox') }}</span>
-              </div>
-            </v-tab>
-          </v-tabs>
-
-          <!-- SELECT FOR MOBILE -->
-          <v-select
-            v-else
-            v-model="activeTab"
-            :items="mobileTabItems"
-            variant="outlined"
-            density="compact"
-            hide-details
-            placeholder="Search notifications..."
-            class="flex-grow-1"
-            clearable
-            @click:clear="search = ''"
-          />
-        </v-card>
-
-        <!-- SEARCH BAR -->
-        <v-text-field
-          v-model="search"
-          prepend-inner-icon="mdi-magnify"
-          :placeholder="$t('notificationsPage.searchPlaceholder')"
-          variant="outlined"
-          density="comfortable"
-          hide-details
-          class="mb-4"
-          clearable
-          @click:clear="search = ''"
-        />
-
-        <!-- NOTIFICATIONS CONTENT -->
-        <v-card 
-          flat 
-          class="rounded-xl pa-4"
-          :class="{'pa-3': $vuetify.display.smAndDown}"
-        >
-          <!-- SKELETON LOADER -->
-          <template v-if="loading">
-            <v-skeleton-loader
-              v-for="i in 3"
-              :key="i"
-              type="list-item-avatar-two-line"
-              class="mb-3"
-            />
-          </template>
-
-          <!-- NOTIFICATIONS LIST -->
-          <template v-else>
-            <!-- EMPTY STATES -->
-            <v-alert
-              v-if="paginatedNotifications.length === 0"
-              type="info"
-              variant="tonal"
-              icon="mdi-bell-off-outline"
-              class="mb-0"
-            >
-              <template #title>
-                <div class="d-flex align-center gap-2">
-                  <span>{{ emptyStateTitle }}</span>
-                  <v-icon v-if="search" color="info">mdi-magnify-remove</v-icon>
-                </div>
-              </template>
-              <template #text>
-                {{ emptyStateMessage }}
-              </template>
-            </v-alert>
-
-            <!-- LIST VIEW -->
-            <div v-else>
-              <div
-                v-for="(n, index) in paginatedNotifications"
-                :key="n.id"
-                class="notification-item pa-3 mb-3"
-                :class="{ 
-                  'unread': !n.read, 
-                  'active': activeIndex === index,
-                  'border-start-4': !n.read
-                }"
-                :style="!n.read ? 'border-left-color: var(--v-primary-base) !important' : ''"
-                @click="handleNotificationClick(n)"
-              >
-                <div class="d-flex align-start gap-3">
-                  <!-- AVATAR/ICON -->
-                  <div class="position-relative">
-                    <v-avatar
-                      size="44"
-                      :color="getTypeIcon(n.type).color + '-lighten-5'"
-                      class="elevation-1"
-                    >
-                      <v-icon :color="getTypeIcon(n.type).color">
-                        {{ getTypeIcon(n.type).icon }}
-                      </v-icon>
-                    </v-avatar>
-                    <div 
-                      v-if="!n.read"
-                      class="unread-dot"
-                    />
-                  </div>
-
-                  <!-- CONTENT -->
-                  <div class="flex-grow-1">
-                    <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1">
-                      <div class="d-flex align-center flex-wrap gap-2">
-                        <span class="font-weight-medium text-body-1">{{ n.title || $t('notificationsPage.notification') }}</span>
-                        <v-chip
-                          v-if="n.type"
-                          size="x-small"
-                          label
-                          :color="getTypeIcon(n.type).color"
-                          variant="flat"
-                          density="compact"
-                          class="text-capitalize"
-                        >
-                          {{ n.type }}
-                        </v-chip>
-                        <v-chip
-                          v-if="n.important"
-                          size="x-small"
-                          label
-                          color="warning"
-                          variant="flat"
-                          density="compact"
-                          prepend-icon="mdi-star"
-                        >
-                          {{ $t('notificationsPage.important') }}
-                        </v-chip>
-                      </div>
-                      <div class="d-flex align-center gap-2">
-                        <span class="text-caption text-grey-darken-2">
-                          {{ relativeTime(n.createdDate) }}
-                        </span>
-                        <v-btn
-                          icon
-                          size="x-small"
-                          variant="text"
-                          :aria-label="n.read ? $t('notificationsPage.markAsUnread') : $t('notificationsPage.markAsRead')"
-                          @click.stop="toggleRead(n)"
-                        >
-                          <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
-                            {{ n.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
-                          </v-icon>
-                          <v-tooltip activator="parent">
-                            {{ n.read ? $t('notificationsPage.markAsUnread') : $t('notificationsPage.markAsRead') }}
-                          </v-tooltip>
-                        </v-btn>
-                      </div>
-                    </div>
-                    <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                      {{ n.message || $t('notificationsPage.newNotification') }}
-                    </p>
-                    <div v-if="n.senderName" class="text-caption text-grey-darken-2">
-                      <v-icon size="small">mdi-account-outline</v-icon>
-                      {{ n.senderName }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+          <!-- MARK ALL AS READ BUTTON -->
           <v-btn
-            color="primary"
-            variant="tonal"
+            v-if="activeTab === 'unread' && unreadCount > 0"
             size="small"
-            prepend-icon="mdi-refresh"
-            :loading="refreshing"
-            class="refresh-btn"
-            @click="refreshNotifications"
+            variant="flat"
+            color="primary"
+            :loading="markingAllAsRead"
+            prepend-icon="mdi-email-open-outline"
+            class="elevation-0 text-capitalize"
+            :class="{ 'flex-shrink-0': true }"
+            @click="markAllAsRead"
           >
-            {{ $t('notificationsPage.refresh') }}
-            <template #loader>
-              <v-progress-circular indeterminate size="16" width="2" />
-            </template>
+            {{ $t('notificationsPage.markAllRead') }}
           </v-btn>
         </div>
 
-        <!-- 🔽 Tab buttons (All, Unread, Inbox) -->
-        <v-row dense class="mt-2">
-          <v-col cols="12">
-            <div class="d-flex gap-2 flex-wrap">
-              <v-btn
-                :variant="activeTab === 'all' ? 'flat' : 'outlined'"
-                :color="activeTab === 'all' ? 'primary' : 'grey'"
+        <!-- TABS FOR DESKTOP -->
+        <v-tabs
+          v-if="!$vuetify.display.smAndDown"
+          v-model="activeTab"
+          color="primary"
+          class="mt-4"
+          height="48"
+        >
+          <v-tab value="all" class="text-capitalize">
+            <div class="d-flex align-center gap-2">
+              <span>{{ $t('common.all') }}</span>
+              <v-badge
+                v-if="totalCount"
+                :content="totalCount"
+                inline
                 size="small"
-                class="text-capitalize tab-btn"
-                @click="activeTab = 'all'"
-              >
-                <div class="d-flex align-center gap-2">
-                  <span>{{ $t('common.all') || 'All' }}</span>
-                  <v-badge
-                    v-if="totalCount"
-                    :content="totalCount"
-                    inline
-                    size="small"
-                    :color="activeTab === 'all' ? 'white' : 'primary'"
-                  />
-                </div>
-              </v-btn>
-
-              <v-btn
-                :variant="activeTab === 'unread' ? 'flat' : 'outlined'"
-                :color="activeTab === 'unread' ? 'primary' : 'grey'"
-                size="small"
-                class="text-capitalize tab-btn mx-2"
-                @click="activeTab = 'unread'"
-              >
-                <div class="d-flex align-center gap-2">
-                  <span>{{ $t('common.unread') || 'Unread' }}</span>
-                  <v-badge
-                    v-if="unreadCount"
-                    color="error"
-                    :content="unreadCount"
-                    inline
-                    size="small"
-                  />
-                </div>
-              </v-btn>
-
-              <v-btn
-                :variant="activeTab === 'inbox' ? 'flat' : 'outlined'"
-                :color="activeTab === 'inbox' ? 'primary' : 'grey'"
-                size="small"
-                class="text-capitalize tab-btn"
-                @click="activeTab = 'inbox'"
-              >
-                <div class="d-flex align-center gap-2">
-                  <span>{{ $t('common.inbox') || 'Inbox' }}</span>
-                </div>
-              </v-btn>
-
-              <!-- MARK ALL AS READ BUTTON - Only show on unread tab -->
-              <v-btn
-                v-if="activeTab === 'unread' && unreadCount > 0"
-                variant="flat"
-                color="success"
-                size="small"
-                :loading="markingAllAsRead"
-                prepend-icon="mdi-email-open-outline"
-                class="text-capitalize tab-btn ml-auto"
-                @click="markAllAsRead"
-              >
-                Mark all read
-              </v-btn>
+              />
             </div>
-          </v-col>
-        </v-row>
+          </v-tab>
+          <v-tab value="unread" class="text-capitalize">
+            <div class="d-flex align-center gap-2">
+              <span>{{ $t('common.unread') }}</span>
+              <v-badge
+                v-if="unreadCount"
+                color="error"
+                :content="unreadCount"
+                inline
+                size="small"
+              />
+            </div>
+          </v-tab>
+          <v-tab value="inbox" class="text-capitalize">
+            <div class="d-flex align-center gap-2">
+              <span>{{ $t('common.inbox') }}</span>
+            </div>
+          </v-tab>
+        </v-tabs>
+
+        <!-- SELECT FOR MOBILE -->
+        <v-select
+          v-else
+          v-model="activeTab"
+          :items="mobileTabItems"
+          variant="outlined"
+          density="compact"
+          hide-details
+          placeholder="Search notifications..."
+          class="flex-grow-1"
+          clearable
+          @click:clear="search = ''"
+        />
       </v-card>
+
+      <!-- SEARCH BAR -->
+      <v-text-field
+        v-model="search"
+        prepend-inner-icon="mdi-magnify"
+        :placeholder="$t('notificationsPage.searchPlaceholder')"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        class="mb-4"
+        clearable
+        @click:clear="search = ''"
+      />
 
       <!-- NOTIFICATIONS CONTENT -->
       <v-card
@@ -389,7 +169,7 @@
                   >
                     <div class="d-flex align-center flex-wrap gap-2">
                       <span class="font-weight-medium text-body-1">{{
-                        n.title || 'Notification'
+                        n.title || $t('notificationsPage.notification')
                       }}</span>
                       <v-chip
                         v-if="n.type"
@@ -411,7 +191,7 @@
                         density="compact"
                         prepend-icon="mdi-star"
                       >
-                        Important
+                        {{ $t('notificationsPage.important') }}
                       </v-chip>
                     </div>
                     <div class="d-flex align-center gap-2">
@@ -422,7 +202,11 @@
                         icon
                         size="x-small"
                         variant="text"
-                        :aria-label="n.read ? 'Mark unread' : 'Mark read'"
+                        :aria-label="
+                          n.read
+                            ? $t('notificationsPage.markAsUnread')
+                            : $t('notificationsPage.markAsRead')
+                        "
                         @click.stop="toggleRead(n)"
                       >
                         <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
@@ -433,13 +217,17 @@
                           }}
                         </v-icon>
                         <v-tooltip activator="parent">
-                          {{ n.read ? 'Mark as unread' : 'Mark as read' }}
+                          {{
+                            n.read
+                              ? $t('notificationsPage.markAsUnread')
+                              : $t('notificationsPage.markAsRead')
+                          }}
                         </v-tooltip>
                       </v-btn>
                     </div>
                   </div>
                   <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                    {{ n.message || 'You have a new notification.' }}
+                    {{ n.message || $t('notificationsPage.newNotification') }}
                   </p>
                   <div
                     v-if="n.senderName"
@@ -451,19 +239,34 @@
                 </div>
               </div>
             </div>
-
-            <!-- PAGINATION -->
-            <v-pagination
-              v-if="currentPages > 1"
-              v-model="currentPage"
-              :length="currentPages"
-              :total-visible="$vuetify.display.smAndDown ? 3 : 5"
-              rounded="circle"
-              class="mt-4 justify-center"
-              density="comfortable"
-            />
           </div>
         </template>
+
+        <v-btn
+          color="primary"
+          variant="tonal"
+          size="small"
+          prepend-icon="mdi-refresh"
+          :loading="refreshing"
+          class="refresh-btn"
+          @click="refreshNotifications"
+        >
+          {{ $t('notificationsPage.refresh') }}
+          <template #loader>
+            <v-progress-circular indeterminate size="16" width="2" />
+          </template>
+        </v-btn>
+
+        <!-- PAGINATION -->
+        <v-pagination
+          v-if="currentPages > 1"
+          v-model="currentPage"
+          :length="currentPages"
+          :total-visible="$vuetify.display.smAndDown ? 3 : 5"
+          rounded="circle"
+          class="mt-4 justify-center"
+          density="comfortable"
+        />
       </v-card>
     </v-col>
   </v-row>
@@ -514,9 +317,17 @@ const unreadCount = computed(
 
 // Mobile tab items
 const mobileTabItems = computed(() => [
-  { title: `${t('common.all')} (${totalCount.value})`, value: 'all', prependIcon: 'mdi-view-list' },
-  { title: `${t('common.unread')} (${unreadCount.value})`, value: 'unread', prependIcon: 'mdi-email-outline' },
-  { title: t('common.inbox'), value: 'inbox', prependIcon: 'mdi-inbox' }
+  {
+    title: `${t('common.all')} (${totalCount.value})`,
+    value: 'all',
+    prependIcon: 'mdi-view-list',
+  },
+  {
+    title: `${t('common.unread')} (${unreadCount.value})`,
+    value: 'unread',
+    prependIcon: 'mdi-email-outline',
+  },
+  { title: t('common.inbox'), value: 'inbox', prependIcon: 'mdi-inbox' },
 ])
 
 const sortedNotifications = computed(() => {
@@ -613,8 +424,10 @@ const emptyStateMessage = computed(() => {
 const relativeTime = (date) => {
   const diff = (Date.now() - new Date(date)) / 1000
   if (diff < 60) return t('notificationsPage.justNow')
-  if (diff < 3600) return t('notificationsPage.minutesAgo', { count: Math.floor(diff / 60) })
-  if (diff < 86400) return t('notificationsPage.hoursAgo', { count: Math.floor(diff / 3600) })
+  if (diff < 3600)
+    return t('notificationsPage.minutesAgo', { count: Math.floor(diff / 60) })
+  if (diff < 86400)
+    return t('notificationsPage.hoursAgo', { count: Math.floor(diff / 3600) })
   return t('notificationsPage.daysAgo', { count: Math.floor(diff / 86400) })
 }
 
