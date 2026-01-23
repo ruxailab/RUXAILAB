@@ -114,6 +114,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import { createEmailRules } from '@/shared/utils/validators'
 
 const { t } = useI18n()
 const store = useStore()
@@ -128,10 +129,7 @@ const loadingType = ref('')
 
 const loading = computed(() => store.getters.loading)
 
-const emailRules = [
-  v => !!v || t('errors.emailIsRequired'),
-  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
-]
+const emailRules = createEmailRules(t)
 
 const rules = {
   required: (v) => !!v || t('errors.passwordRequired'),
