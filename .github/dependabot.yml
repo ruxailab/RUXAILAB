@@ -171,10 +171,6 @@ updates:
       - dependency-name: '@tensorflow-models/face-landmarks-detection'
         update-types: ['version-update:semver-major']
 
-      # Build tools - can break entire build process
-      - dependency-name: 'core-js'
-        update-types: ['version-update:semver-major']
-
       - dependency-name: 'axios'
         update-types: ['version-update:semver-major']
 
