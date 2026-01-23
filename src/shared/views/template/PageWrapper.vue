@@ -4,7 +4,7 @@
       <Snackbar />
 
       <!-- Loading Overlay -->
-      <v-overlay v-if="loading" model-value="loading" class="text-center">
+      <v-overlay v-if="loading" :model-value="loading" class="text-center">
         <v-progress-circular indeterminate color="primary" size="50" />
         <div class="text-white mt-3">
           {{ loadingText || $t('common.loading') }}

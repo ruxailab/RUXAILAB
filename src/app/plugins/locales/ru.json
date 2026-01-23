@@ -80,7 +80,96 @@
     "viewAll": "Посмотреть все",
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
-    "test": "исследование"
+    "test": "исследование",
+    "table": {
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "participants": "Участники",
+      "created": "Создано",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "itemsPerPage": "Элементов на странице:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Исследования сообщества",
+      "searchPlaceholder": "Поиск исследований..."
+    },
+    "templates": {
+      "title": "Шаблоны сообщества",
+      "searchPlaceholder": "Поиск шаблонов..."
+    },
+    "reset": "Сбросить",
+    "showFilters": "Показать фильтры",
+    "hideFilters": "Скрыть фильтры",
+    "selectRange": "Выбрать диапазон",
+    "filters": {
+      "creationDate": "Дата создания",
+      "status": "Статус",
+      "method": "Метод",
+      "ownership": "Владение",
+      "participants": "Участники"
+    },
+    "status": {
+      "allStatuses": "Все статусы",
+      "active": "Активный",
+      "draft": "Черновик",
+      "completed": "Завершённый"
+    },
+    "ownership": {
+      "allStudies": "Все исследования",
+      "myStudies": "Мои исследования",
+      "whereICollaborate": "Где я сотрудничаю"
+    },
+    "participants": {
+      "all": "Все",
+      "lessThan10": "< 10 участников",
+      "between10And50": "10 – 50 участников",
+      "moreThan50": "> 50 участников"
+    },
+    "method": {
+      "allMethods": "Все методы",
+      "all": "Все",
+      "heuristicEvaluation": "Эвристическая оценка",
+      "userStudyUnmoderated": "Пользовательское исследование (Немодерируемое)",
+      "userStudyModerated": "Пользовательское исследование (Модерируемое)",
+      "manualAccessibility": "Ручная доступность",
+      "automaticAccessibility": "Автоматическая доступность"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "Будьте в курсе своих действий и совместной работы",
+    "markAllRead": "Отметить все как прочитанные",
+    "searchPlaceholder": "Поиск уведомлений…",
+    "notification": "Уведомление",
+    "important": "Важно",
+    "markAsRead": "Отметить как прочитанное",
+    "markAsUnread": "Отметить как непрочитанное",
+    "refresh": "Обновить",
+    "noResultsFound": "Результатов не найдено",
+    "allCaughtUp": "Всё прочитано!",
+    "noNotificationsYet": "Уведомлений пока нет",
+    "tryDifferentKeywords": "Попробуйте другие ключевые слова или очистите поиск",
+    "allReadMessage": "Вы прочитали все уведомления. Отлично!",
+    "newActivitiesMessage": "Здесь будут появляться уведомления о новых действиях",
+    "justNow": "Только что",
+    "minutesAgo": "{count} мин назад",
+    "hoursAgo": "{count} ч назад",
+    "daysAgo": "{count} д назад",
+    "newNotification": "У вас новое уведомление."
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "studies": "Исследования",
+    "sessions": "Сессии",
+    "templates": "Шаблоны",
+    "storage": "Хранилище",
+    "communityStudies": "Исследования сообщества",
+    "communityTemplates": "Шаблоны сообщества"
   },
   "profile": {
     "title": "Профиль",
@@ -235,7 +324,14 @@
       "deleteQuestion": "Удалить вопрос",
       "addNewDescription": "Добавить новое описание",
       "addOption": "Добавить новый вариант",
-      "hasValue": "Имеет значение"
+      "hasValue": "Имеет значение",
+      "moveUp": "Переместить вверх",
+      "moveDown": "Переместить вниз",
+      "Question": "Вопрос",
+      "Questions": "Вопросы",
+      "noQuestions": "Нет вопросов",
+      "noDescriptions": "Нет описаний",
+      "loading": "Загрузка..."
     },
     "placeholders": {
       "titleHeuristic": "Заголовок эвристики",
@@ -250,7 +346,10 @@
       "youMustHave": "Вы, должно быть, ввели что-то не так...",
       "noHeuristicsDeleteAll": "Извините, но вы не можете удалить все вопросы эвристики.",
       "noCsvFileSelected": "CSV-файл не выбран. Пожалуйста, выберите один, чтобы продолжить.",
-      "changeWeights": "Обратите внимание, что изменение порядка эвристик НЕ изменяет веса автоматически, вы должны изменить их вручную."
+      "changeWeights": "Обратите внимание, что изменение порядка эвристик НЕ изменяет веса автоматически, вы должны изменить их вручную.",
+      "noDescriptions": "Описания недоступны",
+      "startAddingQuestions": "Начните с добавления вашего первого вопроса к этой эвристике",
+      "cantDeleteAllQuestions": "Извините, вы не можете удалить все вопросы из эвристики"
     },
     "validation": {
       "nameRequired": "Имя обязательно",
@@ -263,6 +362,12 @@
       "showComment": "Показать комментарий",
       "addComment": "Добавить комментарий",
       "hideTextArea": "Скрыть текстовое поле"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Не удалось загрузить форму вопроса. Пожалуйста, попробуйте снова.",
+      "failedToLoadEditForm": "Не удалось загрузить форму редактирования. Пожалуйста, попробуйте снова.",
+      "invalidHeuristic": "Неверный выбор эвристики",
+      "invalidQuestion": "Неверный выбор вопроса"
     }
   },
   "HeuristicsOptionsTable": {

@@ -17,11 +17,7 @@
           {{ $t('auth.SIGNIN.signupSubtitle') }}
         </p>
 
-        <v-form
-          ref="form"
-          v-model="valid"
-          @submit.prevent="onSignUp"
-        >
+        <v-form ref="form" v-model="valid" @submit.prevent="onSignUp">
           <v-text-field
             v-model="email"
             :rules="emailRules"
@@ -30,7 +26,6 @@
             placeholder="you@example.com"
             prepend-inner-icon="mdi-email-outline"
             variant="outlined"
-            class="mb-4"
           />
 
           <v-text-field
@@ -42,9 +37,11 @@
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             variant="outlined"
-            class="mb-4"
+            class="mb-2"
             @click:append-inner="showPassword = !showPassword"
           />
+
+          <PasswordStrength :password="password" />
 
           <v-text-field
             v-model="confirmpassword"
@@ -55,7 +52,6 @@
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
             variant="outlined"
-            class="mb-4"
             @click:append-inner="showConfirmPassword = !showConfirmPassword"
           />
 
@@ -71,8 +67,10 @@
           </v-btn>
         </v-form>
 
-        <v-divider class="my-6">
-          <span class="text-body-2 text-medium-emphasis">{{ $t('auth.SIGNIN.or') }}</span>
+        <v-divider class="my-4">
+          <span class="text-body-2 text-medium-emphasis">{{
+            $t('auth.SIGNIN.or')
+          }}</span>
         </v-divider>
 
         <GoogleSignInButton
@@ -84,7 +82,7 @@
           @google-sign-in-error="onGoogleSignInError"
         />
 
-        <div class="text-center mt-6">
+        <div class="text-center mt-4">
           <span class="text-body-2 text-medium-emphasis">
             {{ $t('auth.SIGNIN.alreadyHaveAnAccount') }}
           </span>
@@ -107,8 +105,10 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import Snackbar from '@/shared/components/Snackbar';
+import Snackbar from '@/shared/components/Snackbar'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import { createEmailRules } from '@/shared/utils/validators'
+import PasswordStrength from '@/features/auth/components/PasswordStrength.vue'
 
 const email = ref('')
 const password = ref('')
@@ -125,23 +125,19 @@ const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const emailRules = [
-  v => !!v || t('errors.emailIsRequired'),
-  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
-]
+const emailRules = createEmailRules(t)
 
 const passwordRules = [
-  v => !!v || t('errors.passwordRequired'),
-  v => (v?.length >= 8) || t('errors.passwordValidate'),
-  v => /[A-Z]/.test(v) || t('errors.passwordUppercase'),
-  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || t('errors.passwordSymbol'),
+  (v) => !!v || t('errors.passwordRequired'),
+  (v) => v?.length >= 8 || t('errors.passwordValidate'),
+  (v) => /[A-Z]/.test(v) || t('errors.passwordUppercase'),
+  (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || t('errors.passwordSymbol'),
 ]
 
 const comparePassword = [
-  v => !!v || t('errors.passwordRequired'),
-  v => v === password.value || t('errors.differentPasswords'),
+  (v) => !!v || t('errors.passwordRequired'),
+  (v) => v === password.value || t('errors.differentPasswords'),
 ]
-
 
 const onSignUp = async () => {
   const { valid } = await form.value.validate()
@@ -215,7 +211,7 @@ const onGoogleSignInError = (error) => {
 .signup-box {
   width: 100%;
   max-width: 450px;
-  padding: 32px;
+  padding: 30px 32px 32px 32px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Radar
-      :chart-data="chartData"
+      :data="chartData"
       :options="chartOptions"
     />
   </div>
@@ -10,6 +10,23 @@
 <script setup>
 import { Radar } from 'vue-chartjs'
 import { ref, computed, watch, onMounted } from 'vue'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+} from 'chart.js'
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+)
 
 const props = defineProps({
   labels: {

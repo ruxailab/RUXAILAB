@@ -12,17 +12,34 @@
     <!-- 📄 Main content area -->
     <v-main class="main-content">
       <v-container fluid class="pa-6">
-        <!-- 🔹 Page header (dynamic title + subtitle) -->
+        <!-- 🔹 Page header (dynamic title + subtitle with icon) -->
         <div class="content-header">
-          <h1 class="text-h4 font-weight-bold text-grey-darken-4">
-            {{ currentPageTitle }}
-          </h1>
+          <div class="d-flex align-center ga-3 mb-2">
+            <v-icon :icon="currentPageIcon" size="32" color="primary"></v-icon>
+            <h1 class="text-h4 font-weight-bold text-grey-darken-4">
+              {{ currentPageTitle }}
+            </h1>
+          </div>
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
                 ? 'Manage your research studies'
                 : activeSection === 'templates'
                 ? 'Access your saved templates'
+                : activeSection === 'notifications'
+                ? 'Stay updated with your activities and collaborations'
+                : activeSection === 'sessions'
+                ? 'Overview of your sessions'
+                : activeSection === 'storage'
+                ? 'Manage your stored media files'
+                : activeSection === 'profile'
+                ? 'View and edit your profile information'
+                : activeSection === 'community' &&
+                  activeSubSection === 'community-studies'
+                ? 'Explore studies shared by the RUXAI community'
+                : activeSection === 'community' &&
+                  activeSubSection === 'community-templates'
+                ? 'Browse templates contributed by the RUXAI community'
                 : ''
             }}
           </p>
@@ -38,7 +55,7 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <SessionsSection />
+          <SessionsSection :sessions="filteredModeratedSessions" />
         </div>
 
         <div v-if="activeSection === 'templates'">
@@ -88,6 +105,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 // Feature views
 import ProfileView from '@/features/auth/views/ProfileView.vue'
@@ -95,13 +113,13 @@ import NotificationPage from '@/features/notifications/views/NotificationPage.vu
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 
 // Navigation and sections
-import { DashboardSidebar } from '@/features/navigation/utils';
-import SessionsSection from '../components/navbarSections/SessionsSection.vue';
-import TemplatesSection from '../components/navbarSections/TemplatesSection.vue';
-import StudiesSection from '../components/navbarSections/StudiesSection.vue';
-import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue';
-import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue';
-import StorageSection from '../components/navbarSections/StorageSection.vue';
+import { DashboardSidebar } from '@/features/navigation/utils'
+import SessionsSection from '../components/navbarSections/SessionsSection.vue'
+import TemplatesSection from '../components/navbarSections/TemplatesSection.vue'
+import StudiesSection from '../components/navbarSections/StudiesSection.vue'
+import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue'
+import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
+import StorageSection from '../components/navbarSections/StorageSection.vue'
 
 // Utilities and constants
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
@@ -110,6 +128,7 @@ import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 // 🔸 UI and navigation state
 const drawerOpen = ref(false)
@@ -117,25 +136,58 @@ const activeSection = ref('dashboard')
 const activeSubSection = ref(null)
 
 // 🔸 Data
-const filteredModeratedSessions = ref([])
+
 let unsubscribeTests = null // Unsub function for real-time tests
 
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
-    case 'dashboard': return 'Dashboard';
-    case 'studies': return 'Studies';
-    case 'sessions': return 'Sessions';
-    case 'templates': return 'Templates';
-    case 'storage': return 'Storage';
-    case 'notifications': return 'Notifications';
-    case 'profile': return 'Profile';
+    case 'dashboard':
+      return t('navigation.dashboard')
+    case 'studies':
+      return t('navigation.studies')
+    case 'sessions':
+      return t('navigation.sessions')
+    case 'templates':
+      return t('navigation.templates')
+    case 'storage':
+      return t('navigation.storage')
+    case 'notifications':
+      return t('common.notifications')
+    case 'profile':
+      return t('profile.title')
     case 'community':
       return activeSubSection.value === 'community-templates'
-        ? 'Community Templates'
-        : 'Community Studies'
+        ? t('community.templates.title')
+        : t('community.studies.title')
     default:
       return 'RUXAI Lab'
+  }
+})
+
+// 🔹 Dynamic page icon
+const currentPageIcon = computed(() => {
+  switch (activeSection.value) {
+    case 'dashboard':
+      return 'mdi-view-dashboard'
+    case 'studies':
+      return 'mdi-flask'
+    case 'sessions':
+      return 'mdi-calendar-clock'
+    case 'templates':
+      return 'mdi-clipboard-text'
+    case 'storage':
+      return 'mdi-database'
+    case 'notifications':
+      return 'mdi-bell'
+    case 'profile':
+      return 'mdi-account-circle'
+    case 'community':
+      return activeSubSection.value === 'community-templates'
+        ? 'mdi-file-document'
+        : 'mdi-flask-outline'
+    default:
+      return 'mdi-view-dashboard'
   }
 })
 
@@ -148,8 +200,9 @@ const user = computed(() => store.getters.user)
  * Creates a list of sessions where the user is either the test admin
  * or a cooperator in a moderated session.
  */
-const filterModeratedSessions = () => {
+const filteredModeratedSessions = computed(() => {
   const cooperatorArray = []
+  if (!tests.value) return []
 
   tests.value.forEach((testObj) => {
     if (!testObj) return
@@ -191,8 +244,8 @@ const filterModeratedSessions = () => {
     }
   })
 
-  filteredModeratedSessions.value = cooperatorArray
-}
+  return cooperatorArray
+})
 
 /**
  * 🧭 Navigation logic
@@ -200,8 +253,13 @@ const filterModeratedSessions = () => {
  */
 const selectNavigation = (navigationData) => {
   const { sectionId, childId } = navigationData
-  activeSection.value = sectionId
-  activeSubSection.value = sectionId === 'community' ? childId : null
+  router.push({
+    query: {
+      ...route.query,
+      section: sectionId,
+      subsection: childId || undefined,
+    },
+  })
 }
 
 /**
@@ -223,10 +281,18 @@ const getPublicTemplates = () => store.dispatch('getPublicTemplates')
  */
 watch([activeSection, activeSubSection], async ([section, sub]) => {
   switch (section) {
-    case 'studies': await getMyPersonalTests(); break;
-    case 'sessions': filterModeratedSessions(); break;
-    case 'templates': await getMyTemplates(); break;
-    case 'storage': await getMyPersonalTests(); break;
+    case 'studies':
+      await getMyPersonalTests()
+      break
+    case 'sessions':
+      // filterModeratedSessions()
+      break
+    case 'templates':
+      await getMyTemplates()
+      break
+    case 'storage':
+      await getMyPersonalTests()
+      break
     case 'community':
       if (sub === 'community-studies') await getPublicStudies()
       else if (sub === 'community-templates') await getPublicTemplates()
@@ -240,7 +306,6 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
 onMounted(async () => {
   // unsubscribeTests = await store.dispatch('bindMyTests');
   await getMyPersonalTests()
-  filterModeratedSessions()
 
   // Load navigation state from query params
   if (route.query.section) {

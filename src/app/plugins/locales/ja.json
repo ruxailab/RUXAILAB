@@ -80,7 +80,96 @@
     "viewAll": "すべて表示",
     "sentBy": "送信者",
     "new": "新着",
-    "test": "テスト"
+    "test": "テスト",
+    "table": {
+      "type": "タイプ",
+      "name": "名前",
+      "tags": "タグ",
+      "owner": "オーナー",
+      "participants": "参加者",
+      "created": "作成日",
+      "evaluator": "評価者",
+      "status": "ステータス",
+      "sessionDate": "セッション日",
+      "itemsPerPage": "ページあたりの項目数:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "コミュニティ研究",
+      "searchPlaceholder": "研究を検索..."
+    },
+    "templates": {
+      "title": "コミュニティテンプレート",
+      "searchPlaceholder": "テンプレートを検索..."
+    },
+    "reset": "リセット",
+    "showFilters": "フィルターを表示",
+    "hideFilters": "フィルターを非表示",
+    "selectRange": "範囲を選択",
+    "filters": {
+      "creationDate": "作成日",
+      "status": "ステータス",
+      "method": "方法",
+      "ownership": "所有権",
+      "participants": "参加者"
+    },
+    "status": {
+      "allStatuses": "すべてのステータス",
+      "active": "アクティブ",
+      "draft": "下書き",
+      "completed": "完了"
+    },
+    "ownership": {
+      "allStudies": "すべての研究",
+      "myStudies": "私の研究",
+      "whereICollaborate": "コラボレーション中"
+    },
+    "participants": {
+      "all": "すべて",
+      "lessThan10": "< 10人の参加者",
+      "between10And50": "10 – 50人の参加者",
+      "moreThan50": "> 50人の参加者"
+    },
+    "method": {
+      "allMethods": "すべての方法",
+      "all": "すべて",
+      "heuristicEvaluation": "ヒューリスティック評価",
+      "userStudyUnmoderated": "ユーザー調査（非モデレート）",
+      "userStudyModerated": "ユーザー調査（モデレート）",
+      "manualAccessibility": "手動アクセシビリティ",
+      "automaticAccessibility": "自動アクセシビリティ"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "活動とコラボレーションの最新情報を確認",
+    "markAllRead": "すべて既読にする",
+    "searchPlaceholder": "通知を検索…",
+    "notification": "通知",
+    "important": "重要",
+    "markAsRead": "既読にする",
+    "markAsUnread": "未読にする",
+    "refresh": "更新",
+    "noResultsFound": "結果が見つかりません",
+    "allCaughtUp": "すべて確認済み！",
+    "noNotificationsYet": "通知はまだありません",
+    "tryDifferentKeywords": "別のキーワードを試すか、検索をクリアしてください",
+    "allReadMessage": "すべての通知を読みました。お疲れ様です！",
+    "newActivitiesMessage": "新しい活動があるとここに通知が表示されます",
+    "justNow": "たった今",
+    "minutesAgo": "{count}分前",
+    "hoursAgo": "{count}時間前",
+    "daysAgo": "{count}日前",
+    "newNotification": "新しい通知があります。"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "studies": "研究",
+    "sessions": "セッション",
+    "templates": "テンプレート",
+    "storage": "ストレージ",
+    "communityStudies": "コミュニティ研究",
+    "communityTemplates": "コミュニティテンプレート"
   },
   "profile": {
     "title": "プロフィール",
@@ -217,7 +306,14 @@
       "deleteQuestion": "質問を削除",
       "addNewDescription": "新しい説明を追加",
       "addOption": "新しいオプションを追加",
-      "hasValue": "値あり"
+      "hasValue": "値あり",
+      "moveUp": "上に移動",
+      "moveDown": "下に移動",
+      "Question": "質問",
+      "Questions": "質問",
+      "noQuestions": "質問がありません",
+      "noDescriptions": "説明がありません",
+      "loading": "読み込み中..."
     },
     "placeholders": {
       "titleHeuristic": "ヒューリスティックのタイトル",
@@ -232,7 +328,10 @@
       "youMustHave": "何か間違って入力したようです...",
       "noHeuristicsDeleteAll": "申し訳ありませんが、すべてのヒューリスティック質問を削除することはできません。",
       "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
-      "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。"
+      "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。",
+      "noDescriptions": "説明が利用できません",
+      "startAddingQuestions": "このヒューリスティックに最初の質問を追加して開始してください",
+      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません"
     },
     "validation": {
       "nameRequired": "名前は必須です",
@@ -245,6 +344,12 @@
       "showComment": "コメントを表示",
       "addComment": "コメントを追加",
       "hideTextArea": "テキストエリアを非表示"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "質問フォームの読み込みに失敗しました。もう一度お試しください。",
+      "failedToLoadEditForm": "編集フォームの読み込みに失敗しました。もう一度お試しください。",
+      "invalidHeuristic": "無効なヒューリスティック選択です",
+      "invalidQuestion": "無効な質問選択です"
     }
   },
   "HeuristicsOptionsTable": {
