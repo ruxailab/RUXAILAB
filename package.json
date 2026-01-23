@@ -41,7 +41,7 @@
     "buffer": "^6.0.3",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
-    "core-js": "^3.32.2",
+    "core-js": "^3.48.0",
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
     "firebase": "^9.23.0",
