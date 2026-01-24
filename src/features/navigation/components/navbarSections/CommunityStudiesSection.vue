@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search studies..."
+        :placeholder="$t('community.studies.searchPlaceholder')"
         class="flex-grow-1"
       />
       <v-btn
@@ -19,7 +19,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('community.reset') }}
       </v-btn>
 
       <v-btn
@@ -27,7 +27,7 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="showFilters ? $t('community.hideFilters') : $t('community.showFilters')"
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -42,11 +42,10 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">{{ $t('community.filters.creationDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              location="bottom"
               max-width="290px"
               min-width="290px"
             >
@@ -64,7 +63,7 @@
                         ).toLocaleDateString()} - ${new Date(
                           creationDateRange[creationDateRange.length - 1],
                         ).toLocaleDateString()}`
-                      : 'Select range'
+                      : $t('community.selectRange')
                   "
                   :model-value="
                     creationDateRange.length > 1
@@ -84,7 +83,7 @@
 
           <!-- ⚙️ Status filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">{{ $t('community.filters.status') }}</div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -100,7 +99,7 @@
 
           <!-- 🔹 Method filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('community.filters.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -114,7 +113,7 @@
 
           <!-- 👥 Ownership filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">{{ $t('community.filters.ownership') }}</div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -128,7 +127,7 @@
 
           <!-- 👤 Participants filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Participants</div>
+            <div class="filter-label">{{ $t('community.filters.participants') }}</div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -150,20 +149,22 @@
 
 <script setup>
 // 🔧 Imports and setup
-import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import List from '@/shared/components/tables/ListComponent.vue';
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import List from '@/shared/components/tables/ListComponent.vue'
 import {
   getMethodOptions,
   METHOD_DEFINITIONS,
   METHOD_STATUSES,
   STUDY_TYPES,
-  USER_STUDY_SUBTYPES
-} from '@/shared/constants/methodDefinitions';
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
 
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 
 // ===== Reactive state =====
 const search = ref('')
@@ -178,25 +179,25 @@ const selectedOwnershipFilter = ref('all')
 const selectedParticipantsFilter = ref(['all'])
 
 // ===== Filter options =====
-const statusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'active', text: 'Active' },
-  { value: 'draft', text: 'Draft' },
-  { value: 'completed', text: 'Completed' },
-]
+const statusOptions = computed(() => [
+  { value: 'all', text: t('community.status.allStatuses') },
+  { value: 'active', text: t('community.status.active') },
+  { value: 'draft', text: t('community.status.draft') },
+  { value: 'completed', text: t('community.status.completed') },
+])
 
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-]
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('community.ownership.allStudies') },
+  { value: 'mine', text: t('community.ownership.myStudies') },
+  { value: 'cooperator', text: t('community.ownership.whereICollaborate') },
+])
 
-const participantsOptions = [
-  { text: 'All', value: 'all' },
-  { text: '< 10 participants', value: 'lt10' },
-  { text: '10 – 50 participants', value: 'btw10_50' },
-  { text: '> 50 participants', value: 'gt50' },
-]
+const participantsOptions = computed(() => [
+  { text: t('community.participants.all'), value: 'all' },
+  { text: t('community.participants.lessThan10'), value: 'lt10' },
+  { text: t('community.participants.between10And50'), value: 'btw10_50' },
+  { text: t('community.participants.moreThan50'), value: 'gt50' },
+])
 
 // ===== UI actions =====
 const toggleFilters = () => (showFilters.value = !showFilters.value)
@@ -228,7 +229,7 @@ const hasActiveFilters = computed(() => {
 const methodOptions = computed(() => {
   const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id)
   return [
-    { value: 'all', text: 'All Methods' },
+    { value: 'all', text: t('community.method.allMethods') },
     ...options.map((option) => ({ value: option.value, text: option.text })),
   ]
 })
@@ -318,71 +319,40 @@ const filteredTests = computed(() => {
 })
 
 // ===== Navigation =====
-const getTestId = (test) => test.testDocId || test.id;
-const canManageStudy = (test) => {
-  const currentUser = user.value;
-  if (!currentUser || !test) return false;
-  if (currentUser.accessLevel === 0) return true;
-  if (test.testAdmin?.userDocId === currentUser.id) return true;
-  const coop = test.cooperators?.find(c => c.userDocId === currentUser.id);
-  return coop?.accessLevel === 0;
-};
-
 const goTo = (test) => {
-  const testId = getTestId(test);
-  if (!testId) return;
-
-  if (canManageStudy(test)) {
-    navigateToManagerStudy(test, testId);
-    return;
-  }
-
+  // Redirect depending on study type
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
-    router.push({ name: 'AccessibilityPreviewTest', params: { id: testId } });
-    return;
+    router.push(`/accessibility/manual/${test.testDocId || test.id}`)
+    return
   }
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
-    router.push({ name: 'AccessibilityReport', params: { id: testId } });
-    return;
+    router.push(`/accessibility/automatic/${test.testDocId || test.id}`)
+    return
   }
-  navigateToCommunityStudy(test, testId);
-};
+  navigateToCommunityStudy(test)
+}
 
-const navigateToManagerStudy = (test, testId) => {
+// Helper to navigate to community views
+const navigateToCommunityStudy = (test) => {
   switch (test.testType) {
     case STUDY_TYPES.HEURISTIC:
-      router.push({ name: 'HeuristicManagerView', params: { id: testId } });
-      break;
+      router.push({ name: 'HeuristicManagerView', params: { id: test.id } })
+      break
     case STUDY_TYPES.CARD_SORTING:
-      router.push({ name: 'CardSortingManagerView', params: { id: testId } });
-      break;
+      router.push({ name: 'CardSortingManagerView', params: { id: test.id } })
+      break
     case STUDY_TYPES.USER:
-      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED) {
-        router.push({ name: 'UserUnmoderatedManagerView', params: { id: testId } });
-      } else if (test.subType === USER_STUDY_SUBTYPES.MODERATED) {
-        router.push({ name: 'UserModeratedManagerView', params: { id: testId } });
-      }
-      break;
-    default:
-      router.push({ name: 'HeuristicManagerView', params: { id: testId } });
-      break;
-  }
-};
-
-const navigateToCommunityStudy = (test, testId) => {
-  switch (test.testType) {
-    case STUDY_TYPES.HEURISTIC:
-      router.push({ name: 'TestView', params: { id: testId } });
-      break;
-    case STUDY_TYPES.CARD_SORTING:
-      router.push({ name: 'CardSortingTestView', params: { id: testId } });
-      break;
-    case STUDY_TYPES.USER:
-      router.push({ name: 'TestView', params: { id: testId } });
-      break;
-    default:
-      router.push({ name: 'TestView', params: { id: testId } });
-      break;
+      if (test.subType === USER_STUDY_SUBTYPES.UNMODERATED)
+        router.push({
+          name: 'UserUnmoderatedManagerView',
+          params: { id: test.id },
+        })
+      else if (test.subType === USER_STUDY_SUBTYPES.MODERATED)
+        router.push({
+          name: 'UserModeratedManagerView',
+          params: { id: test.id },
+        })
+      break
   }
 }
 </script>

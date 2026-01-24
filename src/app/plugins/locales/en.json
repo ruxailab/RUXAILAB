@@ -85,7 +85,18 @@
     "new": "NEW",
     "test": "a Study",
     "actions": "Actions",
-    "itemsPerPage": "Items per page:"
+    "table": {
+      "itemsPerPage": "Items per page:",
+      "type": "Type",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "evaluator": "Evaluator",
+      "status": "Status",
+      "sessionDate": "Session Date",
+      "participants": "Participants",
+      "created": "Created"
+    }
   },
   "storage": {
     "pageTitle": "Storage",
@@ -100,11 +111,93 @@
     "actionCannotBeUndone": "This action cannot be undone.",
     "headers": {
       "type": "Type",
-      "studyName": "Study Name",
-      "date": "Date",
-      "size": "Size",
-      "actions": "Actions"
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "participants": "Participants",
+      "created": "Created",
+      "evaluator": "Evaluator",
+      "status": "Status",
+      "sessionDate": "Session Date",
+      "itemsPerPage": "Items per page:"
     }
+  },
+  "community": {
+    "studies": {
+      "title": "Community Studies",
+      "searchPlaceholder": "Search studies..."
+    },
+    "templates": {
+      "title": "Community Templates",
+      "searchPlaceholder": "Search templates..."
+    },
+    "reset": "Reset",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "selectRange": "Select range",
+    "filters": {
+      "creationDate": "Creation date",
+      "status": "Status",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participants": "Participants"
+    },
+    "status": {
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed"
+    },
+    "ownership": {
+      "allStudies": "All Studies",
+      "myStudies": "My Studies",
+      "whereICollaborate": "Where I Collaborate"
+    },
+    "participants": {
+      "all": "All",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+    },
+    "method": {
+      "allMethods": "All Methods",
+      "all": "All",
+      "heuristicEvaluation": "Heuristic Evaluation",
+      "userStudyUnmoderated": "User Study (Unmoderated)",
+      "userStudyModerated": "User Study (Moderated)",
+      "manualAccessibility": "Manual Accessibility",
+      "automaticAccessibility": "Automatic Accessibility"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "Stay updated with your activities and collaborations",
+    "markAllRead": "Mark all read",
+    "searchPlaceholder": "Search notifications…",
+    "notification": "Notification",
+    "important": "Important",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "refresh": "Refresh",
+    "noResultsFound": "No results found",
+    "allCaughtUp": "All caught up!",
+    "noNotificationsYet": "No notifications yet",
+    "tryDifferentKeywords": "Try different keywords or clear your search",
+    "allReadMessage": "You've read all your notifications. Great job!",
+    "newActivitiesMessage": "You'll see notifications here when you have new activities",
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "newNotification": "You have a new notification."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "studies": "Studies",
+    "sessions": "Sessions",
+    "templates": "Templates",
+    "storage": "Storage",
+    "communityStudies": "Community Studies",
+    "communityTemplates": "Community Templates"
   },
   "profile": {
     "title": "Profile",
@@ -114,8 +207,6 @@
     "account": "Account",
     "admin": "Admin",
     "superAdmin": "Super Admin",
-    "guest": "Guest",
-    "evaluator": "Evaluator",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -169,7 +260,7 @@
   },
   "titles": {
     "manager": "Manager",
-    "tests": "Test",
+    "test": "Test",
     "preview": "Preview",
     "reports": "Reports",
     "answers": "Answers",
@@ -178,10 +269,6 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
-    "accessLevel": "Access Level",
-    "actions": "Actions",
-    "users": "Users",
-    "studies": "Studies",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -193,10 +280,7 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings",
-      "name": "Name",
-      "studiesCount": "Studies Created",
-      "mediaSize": "Media Size"
+      "Settings": "Settings"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -221,6 +305,10 @@
       "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
     }
   },
+  "storage": {
+    "noMediaFiles": "No media file found",
+    "mediaFiles": "Media Files"
+  },
   "errors": {
     "invalidInvitation": "Invalid Invitation",
     "signupWithInvitationEmail": "User needs to signup using the same email as the invitation.",
@@ -237,11 +325,7 @@
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
     "sendError": "Failed to send invitation. Please try again",
-    "missingVariableTitles": "Cannot save: Some variables are missing titles",
-    "authenticationCancelled": "Sign-in was cancelled. Please try again.",
-    "networkError": "Network error. Please check your internet connection and try again.",
-    "popupBlocked": "Your browser blocked the sign-in popup. Please allow popups for this site and try again.",
-    "tooManyAttempts": "Too many attempts. Please try again later."
+    "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -295,14 +379,6 @@
       "paused": "Paused",
       "finished": "Finished",
       "unknown": "Unknown"
-    },
-    "webinar": {
-      "ended": "Ended",
-      "live": "Live",
-      "today": "Today",
-      "joinNow": "Join Now",
-      "webinarEnded": "Webinar Ended",
-      "startingToday": "Starting Today"
     },
     "cards": {
       "recentActivity": "Recent Activity",
@@ -386,7 +462,12 @@
       "addOption": "Add a new Option",
       "hasValue": "Has Value",
       "moveUp": "Move Up",
-      "moveDown": "Move Down"
+      "moveDown": "Move Down",
+      "Question": "Question",
+      "Questions": "Questions",
+      "noQuestions": "No Questions",
+      "noDescriptions": "No Descriptions",
+      "loading": "Loading..."
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -401,7 +482,10 @@
       "youMustHave": "You must have typen something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
       "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
-      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
+      "noDescriptions": "No descriptions available",
+      "startAddingQuestions": "Start by adding your first question to this heuristic",
+      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -414,6 +498,12 @@
       "showComment": "Show comment",
       "addComment": "Add comment",
       "hideTextArea": "Hide text area"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
+      "failedToLoadEditForm": "Failed to load edit form. Please try again.",
+      "invalidHeuristic": "Invalid heuristic selection",
+      "invalidQuestion": "Invalid question selection"
     }
   },
   "HeuristicsOptionsTable": {
@@ -717,6 +807,25 @@
     "goHome": "Go to Home"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "No active session found",
+      "selectRange": "Select range",
+      "reset": "Reset",
+      "searchPlaceholder":"Search studies...",
+      "filters": {
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate":"Where I Collaborate",
+        "allStatuses":"All Statuses",
+        "today": "Today",
+        "upcoming":"Upcoming",
+        "completed": "Completed"
+      },
+      "ownership":"Ownership",
+      "evaluator": "Evaluator",
+      "sessionDate":"Session Date",
+      "statusLabel": "Status"
+    },
     "intros": {
       "click": "Click here!",
       "learnMore": "Learn More",
@@ -782,6 +891,23 @@
         "allStudies": "All Studies",
         "myStudies": "My Studies",
         "whereICollaborate": "Where I Collaborate"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Search templates...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "method": "Method",
+      "filters": {
+        "allMethods": "All Methods",
+        "heuristicEvaluation": "Heuristic Evaluation",
+        "userUnmoderated": "User Unmoderated",
+        "userModerated": "User Moderated",
+        "manualAccessibility": "Manual Accessibility",
+        "automaticAccessibility": "Automatic Accessibility"
       }
     },
     "createTest": {
@@ -1217,5 +1343,69 @@
   "taskCreation": {
     "taskDescription": "Task Description",
     "taskDescriptionHelper": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow."
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "User Test Study",
+      "unmoderatedStudy": "Unmoderated Study",
+      "moderatedStudy": "Moderated Study",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total Participants",
+      "completed": "Completed",
+      "rate": "{percentage}% rate",
+      "inProgress": "In Progress",
+      "active": "{percentage}% active",
+      "averageTime": "Average Time",
+      "completionTime": "Completion time",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Management Modules",
+      "description": "Comprehensive tools to manage participants, tasks, settings, and analyze your study data",
+      "additionalModules": "Space for additional modules"
+    },
+    "participants": {
+      "title": "Participants",
+      "subtitle": "Test participation overview",
+      "beta": "Beta",
+      "completed": "Completed",
+      "notStarted": "Not Started",
+      "pendingInvites": "Pending Invites",
+      "overallProgress": "Overall Progress",
+      "participantsCompleted": "{completed} of {total} participants completed",
+      "details": "Details"
+    },
+    "tasks": {
+      "title": "Tasks Overview",
+      "subtitle": "Task structure and completion",
+      "beta": "Beta",
+      "noTasksConfigured": "No tasks configured",
+      "taskCompletionRate": "Task Completion Rate",
+      "totalTasks": "Total Tasks",
+      "avgTaskDuration": "Avg. Task Duration",
+      "successRate": "Success Rate",
+      "taskTypes": "Task Types",
+      "viewTasks": "View Tasks"
+    },
+    "storage": {
+      "title": "Storage Usage",
+      "subtitle": "Media files and storage metrics",
+      "beta": "Beta",
+      "storageUsed": "Storage Used",
+      "storageQuota": "{used} of {quota} used",
+      "mediaFiles": "Media Files",
+      "videoRecordings": "Video Recordings",
+      "audioRecordings": "Audio Recordings",
+      "screenRecordings": "Screen Recordings",
+      "storageBreakdown": "Storage Breakdown",
+      "responsesData": "Responses Data",
+      "analyticsData": "Analytics Data",
+      "manageStorage": "Manage Storage"
+    }
   }
 }

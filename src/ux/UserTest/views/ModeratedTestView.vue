@@ -24,9 +24,9 @@
             color="white"
             variant="outlined"
             rounded
-            x-large
-            @click="startTest"
+            size="x-large"
             :disabled="isStartTestDisabled"
+            @click="startTest"
           >
             Start Test
           </v-btn>
@@ -298,7 +298,7 @@
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <VideoCall
-              :roomId="roomId"
+              :room-id="roomId"
               :caller="isUserTestAdmin"
               :current-global-index="globalIndex"
               :current-task-index="taskIndex"
@@ -343,12 +343,12 @@
               :consent-text="test.testStructure.consent"
               :full-name-model="fullName"
               :consent-completed-model="localTestAnswer.consentCompleted"
-              @update:fullNameModel="(val) => (fullName = val)"
-              @update:consentCompletedModel="
+              @update:full-name-model="(val) => (fullName = val)"
+              @update:consent-completed-model="
                 (val) => (localTestAnswer.consentCompleted = val)
               "
               @continue="completeStep(taskIndex, 'consent')"
-              @declineConsent="handleConsentDecline"
+              @decline-consent="handleConsentDecline"
             />
 
             <!--Step 2: Pre-test -->
@@ -366,7 +366,7 @@
             <PreTasksStep
               v-if="globalIndex === 3 && taskIndex === 0"
               :num-tasks="test?.testStructure?.userTasks?.length || 0"
-              @startTasks="
+              @start-tasks="
                 () => {
                   taskIndex = 0
                   globalIndex = 4
@@ -378,14 +378,14 @@
             <TaskStep
               v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER"
               ref="taskStepComponent"
-              :task="test.testStructure.userTasks[taskIndex]"
-              :task-index="taskIndex"
-              :test-id="testId"
               v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
               v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
               v-model:task-observations="
                 localTestAnswer.tasks[taskIndex].taskObservations
               "
+              :task="test.testStructure.userTasks[taskIndex]"
+              :task-index="taskIndex"
+              :test-id="testId"
               :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
               :nasa-tlx-answers="
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers
@@ -393,9 +393,9 @@
               :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
               :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
-              :remoteStream="remoteStream"
-              :shouldRecordModerator="!isUserTestAdmin"
-              @update:susAnswers="
+              :remote-stream="remoteStream"
+              :should-record-moderator="!isUserTestAdmin"
+              @update:sus-answers="
                 (val) => {
                   localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(
                     val,
@@ -404,7 +404,7 @@
                     : []
                 }
               "
-              @update:nasaTlxAnswers="
+              @update:nasa-tlx-answers="
                 (val) => {
                   localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
                 }
@@ -415,7 +415,7 @@
                 }
               "
               @done="() => handleTaskFinish(true)"
-              @couldNotFinish="() => handleTaskFinish(false)"
+              @could-not-finish="() => handleTaskFinish(false)"
               @show-loading="isLoading = true"
               @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event"
@@ -963,24 +963,15 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 
   if (idx === undefined || idx === null) {
-    console.error('Índice de tarea no válido:', idx)
     return
   }
 
   if (localTestAnswer.tasks[idx]) {
-    console.log(
-      'Guardando tiempo para tarea',
-      idx,
-      ':',
-      elapsedTime,
-      'segundos',
-    )
     // Asegurar que el tiempo es un número
     const timeToSave =
       typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
-      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx])
     } else {
       console.error('TieisStartTestDisabledmpo no válido:', elapsedTime)
     }
@@ -1140,7 +1131,6 @@ const mappingSteps = async () => {
               nasaTlxAnswers: null,
               tamAnswers: {},
             })
-            console.log('Nueva tarea creada:', i, newTask)
             return newTask
           },
         )

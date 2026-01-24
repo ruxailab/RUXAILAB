@@ -1,8 +1,15 @@
 <template>
   <div>
-    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
-    <v-row v-else-if="hasAnswers" justify="center" class="ma-0">
-      <ShowInfo hide-col="true">
+    <IntroAnswer
+      v-if="intro"
+      @go-to-coops="goToCoops"
+    />
+    <v-row
+      v-else-if="hasAnswers"
+      justify="center"
+      class="ma-0"
+    >
+      <ShowInfo :hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs

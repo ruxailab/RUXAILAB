@@ -169,7 +169,7 @@
                         :items="itemsHeuristic"
                         :search="search"
                         height="375px"
-                        dense
+                        density="compact"
                       >
                         <template
                           v-for="header in headersHeuristic"
@@ -296,6 +296,7 @@ import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue';
+import IntroAnalytics from '@/shared/components/introduction_cards/IntroAnalytics.vue';
 
 const store = useStore();
 const route = useRoute();
