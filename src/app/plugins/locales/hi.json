@@ -306,6 +306,11 @@
     "sessions": "सत्र",
     "personal": "व्यक्तिगत",
     "explore": "खोजें",
+    "activeStudies": {
+      "noActiveStudies": "कोई सक्रिय अध्ययन नहीं",
+      "createNewStudy": "नया अध्ययन बनाएं",
+      "emptyStateMessage": "आपके पास अभी तक कोई अध्ययन नहीं है। मूल्यवान उपयोगकर्ता अंतर्दृष्टि एकत्र करना शुरू करने के लिए अपना पहला अध्ययन बनाएं।"
+    },
     "activeStudiesOverview": "सक्रिय अध्ययनों का अवलोकन",
     "viewAll": "सभी देखें",
     "showMore": "और दिखाएँ",

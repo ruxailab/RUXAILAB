@@ -314,6 +314,11 @@
     "sessions": "الجلسات",
     "personal": "شخصي",
     "explore": "استكشف",
+    "activeStudies": {
+      "noActiveStudies": "لا توجد دراسات نشطة",
+      "createNewStudy": "إنشاء دراسة جديدة",
+      "emptyStateMessage": "ليس لديك أي دراسات حتى الآن. أنشئ دراستك الأولى لبدء جمع رؤى قيمة من المستخدمين."
+    },
     "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
     "viewAll": "عرض الكل",
     "showMore": "عرض المزيد",

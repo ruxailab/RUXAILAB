@@ -321,6 +321,11 @@
     "sessions": "Sesiones",
     "personal": "Personal",
     "explore": "Explorar",
+    "activeStudies": {
+      "noActiveStudies": "Sin Estudios Activos",
+      "createNewStudy": "Crear Nuevo Estudio",
+      "emptyStateMessage": "Aún no tienes estudios. Crea tu primer estudio para comenzar a recopilar información valiosa de los usuarios."
+    },
     "activeStudiesOverview": "Resumen de estudios activos",
     "viewAll": "Ver todo",
     "showMore": "Mostrar más",
