@@ -15,7 +15,7 @@
       justify="center"
       class="ma-0 mt-4"
     >
-      <ShowInfo hide-col="true">
+      <ShowInfo :hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs
@@ -169,7 +169,7 @@
                   cols="10"
                 >
                   <v-data-table
-                    dense
+                    density="compact"
                     :headers="evaluatorStatistics.header"
                     :items="evaluatorStatistics.items"
                     :items-per-page="15"
@@ -302,7 +302,7 @@
                           :items="heuristicsEvaluator.items"
                           :items-per-page="15"
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
-                          dense
+                          density="compact"
                         >
                           <template
                             v-for="header in heuristicsEvaluator.header"
@@ -336,7 +336,7 @@
                           :items="heuristicsStatistics.items"
                           :items-per-page="15"
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
-                          dense
+                          density="compact"
                         >
                           <template #item.percentage="{ item }">
                             <div style="padding-top: 2px; padding-bottom: 2px">
@@ -651,16 +651,20 @@ const checkIfNan = (value) => {
 };
 
 const getColor = (value, max, min) => {
+  value = Number(value);
   max = Number(max) || 0;
   min = Number(min) || 0;
-  const h = max ? (max - min) / max : 0;
 
-  if (value == null) return 'grey';
-  else if (value === 0) return 'red';
-  else if (value <= min + 1 * h) return 'amber';
-  else if (value <= min + 2 * h) return 'orange lighten-1';
-  else if (value <= min + 3 * h) return 'lime';
-  else return 'green';
+  if (value == null || Number.isNaN(Number(value))) return 'grey';
+  if (value === 0) return 'red';
+  if (max === min) return 'green';
+
+  const h = (max - min) / 4;
+
+  if (value <= min + 1 * h) return 'amber';
+  if (value <= min + 2 * h) return 'orange lighten-1';
+  if (value <= min + 3 * h) return 'lime';
+  return 'green';
 };
 
 const getColorPorcentage = (value) => {

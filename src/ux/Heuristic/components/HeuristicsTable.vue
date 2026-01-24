@@ -79,8 +79,8 @@
                     size="small"
                     color="accent"
                     :disabled="index === 0 || testAnswerDocLength > 0"
-                    @click="moveItemUp(index)"
                     class="action-btn"
+                    @click="moveItemUp(index)"
                   >
                     <v-icon>mdi-arrow-up</v-icon>
                     <v-tooltip
@@ -96,8 +96,8 @@
                     size="small"
                     color="accent"
                     :disabled="index === filteredHeuristics.length - 1 || testAnswerDocLength > 0"
-                    @click="moveItemDown(index)"
                     class="action-btn"
+                    @click="moveItemDown(index)"
                   >
                     <v-icon>mdi-arrow-down</v-icon>
                     <v-tooltip
@@ -113,8 +113,8 @@
                     size="small"
                     color="accent"
                     :disabled="testAnswerDocLength > 0"
-                    @click="setupQuestion(index)"
                     class="action-btn"
+                    @click="setupQuestion(index)"
                   >
                     <v-icon>mdi-plus</v-icon>
                     <v-tooltip
@@ -131,8 +131,8 @@
                     size="small"
                     color="primary"
                     :disabled="testAnswerDocLength > 0"
-                    @click="editHeuris(heuristic)"
                     class="action-btn"
+                    @click="editHeuris(heuristic)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -155,8 +155,8 @@
                     size="small"
                     color="error"
                     :disabled="testAnswerDocLength > 0"
-                    @click="deleteHeuristic(index)"
                     class="action-btn"
+                    @click="deleteHeuristic(index)"
                   >
                     <v-icon>mdi-delete</v-icon>
                         </v-btn>
@@ -240,8 +240,8 @@
                               variant="text"
                               size="small"
                               color="primary"
-                              @click.stop="editQuestions(question)"
                               class="action-btn"
+                              @click.stop="editQuestions(question)"
                             />
                             <v-btn
                               icon="mdi-delete"
@@ -249,8 +249,8 @@
                               size="small"
                               color="error"
                               :disabled="testAnswerDocLength > 0"
-                              @click.stop="deleteQuestion(qIndex)"
                               class="action-btn"
+                              @click.stop="deleteQuestion(qIndex)"
                             />
                           </div>
                         </div>
@@ -273,8 +273,8 @@
                                     :ref="el => descBtn[index] = el"
                                     :question-index="questionSelect"
                                     :heuristic-index="itemSelect"
-                                    @update-description="updateDescription"
                                     class="add-desc-btn"
+                                    @update-description="updateDescription"
                                   />
                                 </div>
                                 
@@ -301,8 +301,8 @@
                                           size="small"
                                           variant="text"
                                           color="primary"
-                                          @click="editDescription(item)"
                                           class="table-action-btn"
+                                          @click="editDescription(item)"
                                         >
                                           <v-icon size="small">
                                             mdi-pencil
@@ -313,8 +313,8 @@
                                           size="small"
                                           variant="text"
                                           color="error"
-                                          @click="deleteItem(item)"
                                           class="table-action-btn"
+                                          @click="deleteItem(item)"
                                         >
                                           <v-icon size="small">
                                             mdi-delete
@@ -509,7 +509,7 @@
                 @submit.prevent="addQuestion"
               >
                 <v-text-field
-                  v-if="newQuestion"
+                  v-if="dialogQuestion && newQuestion"
                   v-model="newQuestion.title"
                   :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
                   variant="outlined"
@@ -517,7 +517,7 @@
                   :rules="questionRequired"
                   autofocus
                 />
-                <v-alert v-else type="error" class="mt-4">
+                <v-alert v-else-if="dialogQuestion" type="error" class="mt-4">
                   {{ $t('HeuristicsTable.errors.failedToLoadQuestionForm') }}
                 </v-alert>
               </v-form>
@@ -581,16 +581,16 @@
               <v-spacer />
               <v-btn
                 variant="text"
-                @click="closeDialog('dialogEdit')"
                 :disabled="isProcessing"
+                @click="closeDialog('dialogEdit')"
               >
                 {{ $t('HeuristicsTable.titles.cancel') }}
               </v-btn>
               <v-btn
                 color="primary"
                 variant="elevated"
-                @click="validateEdit"
                 :disabled="isProcessing || !itemEdit || isDialogClosing"
+                @click="validateEdit"
               >
                 {{ $t('HeuristicsTable.titles.ok') }}
               </v-btn>
@@ -628,6 +628,7 @@ const descBtn = ref([])
 const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
+const isDialogClosing = ref(false)
 
 const headers = ref([
   { title: t('HeuristicsTable.titles.titles'), align: 'start', value: 'title', width: '70%' },
@@ -870,22 +871,36 @@ const addHeuris = () => {
 
 const closeDialog = (dialogName) => {
   if (isProcessing.value) return;
-  if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
-    formHeurisRef.value.resetValidation()
-    formHeurisRef.value.reset()
+  if (dialogName === 'dialogHeuris') {
+    if (formHeurisRef.value) {
+      formHeurisRef.value.resetValidation()
+      formHeurisRef.value.reset()
+    }
+    dialogHeuris.value = false;
   }
-  if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
-    formQuestionRef.value.resetValidation();
-    formQuestionRef.value.reset();
+  else if (dialogName === 'dialogQuestion') {
+    dialogQuestion.value = false;
+    setTimeout(() => {
+      if (formQuestionRef.value) {
+        formQuestionRef.value.resetValidation();
+        formQuestionRef.value.reset();
+      }
+      newQuestion.value = null;
+      questionHeuristicIndex.value = null;
+    }, 150);
   }
-  if (dialogName === 'dialogEdit' && formEditRef.value) {
-    formEditRef.value.resetValidation()
-    formEditRef.value.reset()
+  else if (dialogName === 'dialogEdit') {
+    isDialogClosing.value = true;
+    if (formEditRef.value) {
+      formEditRef.value.resetValidation()
+      formEditRef.value.reset()
+    }
+    dialogEdit.value = false;
+    setTimeout(() => {
+      isDialogClosing.value = false;
+      itemEdit.value = null;
+    }, 300);
   }
-
-  if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
-  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false;
-  else if (dialogName === 'dialogEdit') dialogEdit.value = false;
 };
 
 const addQuestion = () => {
@@ -894,16 +909,17 @@ const addQuestion = () => {
     return
   }
   if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false
-    const newHeuristics = [...heuristics.value]
-    newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
-    newHeuristics[questionHeuristicIndex.value].total =
-      newHeuristics[questionHeuristicIndex.value].questions.length
-    store.dispatch('setHeuristics', newHeuristics)
-    newQuestion.value = null
-    questionHeuristicIndex.value = null
-    formQuestionRef.value.resetValidation()
-    emit('change')
+    try {
+      const newHeuristics = [...heuristics.value]
+      newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
+      newHeuristics[questionHeuristicIndex.value].total = newHeuristics[questionHeuristicIndex.value].questions.length
+      store.dispatch('setHeuristics', newHeuristics)
+      closeDialog('dialogQuestion')
+      emit('change')
+    } catch (error) {
+      console.error('Error adding question:', error)
+      showError('HeuristicsTable.errors.failedToLoadQuestionForm')
+    }
   }
 }
 

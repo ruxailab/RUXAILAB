@@ -16,12 +16,7 @@
         :disabled="!localChanges"
         @click="submit()"
       >
-        <v-icon
-          start
-          size="18"
-        >
-          mdi-check
-        </v-icon>
+        <v-icon start size="18"> mdi-check </v-icon>
         Save Changes
       </v-btn>
     </template>
@@ -38,17 +33,10 @@
     <LeaveAlert @submit="onSubmit" />
 
     <!-- Template Creation Dialog -->
-    <v-dialog
-      v-model="tempDialog"
-      max-width="800"
-    >
+    <v-dialog v-model="tempDialog" max-width="800">
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-center px-6 py-4">
-          <v-icon
-            color="primary"
-            size="28"
-            class="mr-3"
-          >
+          <v-icon color="primary" size="28" class="mr-3">
             mdi-file-document-plus-outline
           </v-icon>
           <h3 class="text-h5 font-weight-bold text-grey-darken-4">
@@ -65,10 +53,7 @@
           </v-btn>
         </v-card-title>
         <v-divider />
-        <v-form
-          ref="tempform"
-          class="pa-6"
-        >
+        <v-form ref="tempform" class="pa-6">
           <v-row>
             <v-col cols="12">
               <v-text-field
@@ -130,17 +115,12 @@
     <div class="settings-layout">
       <div class="content-wrapper">
         <div class="left-column">
-          <v-card
-            class="info-card"
-            elevation="0"
-            height="auto"
-          >
+          <v-card class="info-card" elevation="0" height="auto">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  :color="iconColor"
-                  size="20"
-                >
+              <div
+                class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon :color="iconColor" size="20">
                   {{ testIcon }}
                 </v-icon>
               </div>
@@ -163,7 +143,7 @@
                 @val-form="validate"
                 @update:test="updateObject"
               />
-              
+
               <!-- Website URL - moved here to be with basic test info -->
               <div class="input-group mt-6">
                 <v-text-field
@@ -183,16 +163,12 @@
         </div>
 
         <div class="right-column">
-          <v-card
-            class="advanced-card"
-            elevation="0"
-          >
+          <v-card class="advanced-card" elevation="0">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="blue-darken-2"
-                  size="20"
-                >
+              <div
+                class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon color="blue-darken-2" size="20">
                   mdi-cog-outline
                 </v-icon>
               </div>
@@ -206,10 +182,7 @@
               </div>
             </div>
             <v-card-text class="py-6">
-              <div 
-                v-if="object" 
-                class="d-flex flex-column ga-5"
-              >
+              <div v-if="object" class="d-flex flex-column ga-5">
                 <!-- Status Selection -->
                 <v-select
                   v-model="object.status"
@@ -244,7 +217,11 @@
                 </v-select>
 
                 <!-- Slot for test-specific advanced settings -->
-                <slot name="advanced-settings" :object="object" :update-object="updateObject" />
+                <slot
+                  name="advanced-settings"
+                  :object="object"
+                  :update-object="updateObject"
+                />
 
                 <!-- Public Test -->
                 <v-checkbox
@@ -261,16 +238,12 @@
       </div>
 
       <!-- Quick Actions Card -->
-      <v-card
-        class="actions-card"
-        elevation="0"
-      >
+      <v-card class="actions-card" elevation="0">
         <div class="d-flex align-start ga-3 pa-6 pb-0">
-          <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon
-              color="amber-darken-2"
-              size="20"
-            >
+          <div
+            class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center"
+          >
+            <v-icon color="amber-darken-2" size="20">
               mdi-lightning-bolt
             </v-icon>
           </div>
@@ -293,12 +266,7 @@
               :disabled="hasTemplate || !object"
               @click="tempDialog = true"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-file-document-plus-outline
-              </v-icon>
+              <v-icon start size="18"> mdi-file-document-plus-outline </v-icon>
               Create Template
             </v-btn>
             <v-btn
@@ -309,12 +277,7 @@
               :disabled="!object"
               @click="duplicateTest()"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-content-copy
-              </v-icon>
+              <v-icon start size="18"> mdi-content-copy </v-icon>
               Duplicate Test
             </v-btn>
             <v-btn
@@ -325,12 +288,7 @@
               :disabled="!object"
               @click="dialogDel = true"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-delete
-              </v-icon>
+              <v-icon start size="18"> mdi-delete </v-icon>
               Delete Test
             </v-btn>
           </div>
@@ -339,20 +297,13 @@
     </div>
 
     <!-- Delete Confirmation Dialog -->
-    <v-dialog
-      v-model="dialogDel"
-      max-width="500"
-      persistent
-    >
+    <v-dialog v-model="dialogDel" max-width="500" persistent>
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
-          <div class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon
-              color="error"
-              size="28"
-            >
-              mdi-alert-circle-outline
-            </v-icon>
+          <div
+            class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center"
+          >
+            <v-icon color="error" size="28"> mdi-alert-circle-outline </v-icon>
           </div>
           <div>
             <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
@@ -365,7 +316,8 @@
         </v-card-title>
         <v-card-text class="py-4 px-6">
           <p class="text-body-2 text-grey-darken-1">
-            {{ dialogText }} All associated data, results, and configurations will be lost forever.
+            {{ dialogText }} All associated data, results, and configurations
+            will be lost forever.
           </p>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
@@ -387,12 +339,7 @@
             height="44"
             @click="deleteTest(object)"
           >
-            <v-icon
-              start
-              size="16"
-            >
-              mdi-delete
-            </v-icon>
+            <v-icon start size="16"> mdi-delete </v-icon>
             Delete Forever
           </v-btn>
         </v-card-actions>
@@ -413,29 +360,29 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 const props = defineProps({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   subtitle: {
     type: String,
-    required: true
+    required: true,
   },
   testIcon: {
     type: String,
-    default: 'mdi-eye-check-outline'
+    default: 'mdi-eye-check-outline',
   },
   iconColor: {
     type: String,
-    default: 'primary'
+    default: 'primary',
   },
   advancedDescription: {
     type: String,
-    default: 'Test configuration and options'
+    default: 'Test configuration and options',
   },
   // Configuration for the composable
   composableConfig: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // Import and use the composable directly
@@ -444,17 +391,13 @@ import { useAccessibilityTestSettings } from '@/shared/composables/useAccessibil
 const {
   template,
   object,
-  valids,
   dialogDel,
   loading,
   loadingPage,
   tempDialog,
-  form1,
-  tempform,
   statusOptions,
   titleRequired,
   localChanges,
-  user,
   dialogText,
   hasTemplate,
   getStatusColor,
