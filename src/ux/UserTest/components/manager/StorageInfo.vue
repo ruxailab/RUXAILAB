@@ -8,9 +8,11 @@
             <v-icon color="white" size="24">mdi-database</v-icon>
           </div>
           <div>
-            <h3 class="text-h6 text-white mb-0">Storage Usage</h3>
+            <h3 class="text-h6 text-white mb-0">
+              {{ t('manager.storage.title') }}
+            </h3>
             <p class="text-body-2 text-white opacity-90 mb-0">
-              Media files and storage metrics
+              {{ t('manager.storage.subtitle') }}
             </p>
           </div>
         </div>
@@ -21,7 +23,7 @@
           class="border-white text-white"
         >
           <v-icon start size="16">mdi-flask</v-icon>
-          Beta
+          {{ t('manager.storage.beta') }}
         </v-chip>
       </div>
     </div>
@@ -29,7 +31,9 @@
     <v-card-text class="pa-4">
       <div class="mb-4">
         <div class="d-flex justify-space-between align-center mb-2">
-          <span class="text-body-2">Storage Used</span>
+          <span class="text-body-2">{{
+            t('manager.storage.storageUsed')
+          }}</span>
           <span class="text-body-2 font-weight-bold">{{
             storageUsedFormatted
           }}</span>
@@ -41,13 +45,18 @@
           rounded
         />
         <div class="text-caption text-medium-emphasis mt-1">
-          {{ storageUsedFormatted }} of {{ storageQuotaFormatted }} used
+          {{
+            t('manager.storage.storageQuota', {
+              used: storageUsedFormatted,
+              quota: storageQuotaFormatted,
+            })
+          }}
         </div>
       </div>
 
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Media Files</span>
+          <span class="text-body-2">{{ t('manager.storage.mediaFiles') }}</span>
           <v-chip size="small" color="primary" variant="outlined">
             {{ totalMediaFiles }}
           </v-chip>
@@ -56,7 +65,9 @@
 
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Video Recordings</span>
+          <span class="text-body-2">{{
+            t('manager.storage.videoRecordings')
+          }}</span>
           <v-chip size="small" color="success" variant="outlined">
             {{ videoCount }} ({{ videoSizeFormatted }})
           </v-chip>
@@ -65,7 +76,9 @@
 
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Audio Recordings</span>
+          <span class="text-body-2">{{
+            t('manager.storage.audioRecordings')
+          }}</span>
           <v-chip size="small" color="warning" variant="outlined">
             {{ audioCount }} ({{ audioSizeFormatted }})
           </v-chip>
@@ -74,7 +87,9 @@
 
       <div class="mb-3">
         <div class="d-flex justify-space-between align-center">
-          <span class="text-body-2">Screen Recordings</span>
+          <span class="text-body-2">{{
+            t('manager.storage.screenRecordings')
+          }}</span>
           <v-chip size="small" color="info" variant="outlined">
             {{ screenCount }} ({{ screenSizeFormatted }})
           </v-chip>
@@ -84,19 +99,19 @@
       <!-- Storage breakdown -->
       <div class="mt-4">
         <div class="text-caption text-medium-emphasis mb-2">
-          Storage Breakdown
+          {{ t('manager.storage.storageBreakdown') }}
         </div>
         <div class="d-flex flex-column gap-1">
           <div class="d-flex justify-space-between text-caption">
-            <span>Responses Data</span>
+            <span>{{ t('manager.storage.responsesData') }}</span>
             <span>{{ responseDataSize }}</span>
           </div>
           <div class="d-flex justify-space-between text-caption">
-            <span>Media Files</span>
+            <span>{{ t('manager.storage.mediaFiles') }}</span>
             <span>{{ mediaDataSize }}</span>
           </div>
           <div class="d-flex justify-space-between text-caption">
-            <span>Analytics Data</span>
+            <span>{{ t('manager.storage.analyticsData') }}</span>
             <span>{{ analyticsDataSize }}</span>
           </div>
         </div>
@@ -109,10 +124,10 @@
         variant="text"
         size="small"
         color="primary"
-        @click="manageStorage"
         disabled
+        @click="manageStorage"
       >
-        Manage Storage
+        {{ t('manager.storage.manageStorage') }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -122,6 +137,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatBytes } from '@/shared/utils/formatUtils'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   test: {
@@ -131,6 +147,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const { t } = useI18n()
 
 // Storage quota (in bytes) - you can make this configurable
 const STORAGE_QUOTA = 5 * 1024 * 1024 * 1024 // 5GB default

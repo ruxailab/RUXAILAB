@@ -675,6 +675,7 @@ const downloadPdfResume = async () => {
       {
         payload: {
           title: test.value.testTitle || '',
+          description: test.value.testDescription || '',
           type: test.value.testType || '',
           taskAnswers: answers.value,
         },

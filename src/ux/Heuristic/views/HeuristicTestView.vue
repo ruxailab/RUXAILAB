@@ -389,10 +389,10 @@
                         currentUserTestAnswer.heuristicQuestions[heurisIndex]
                           ?.heuristicQuestions[i] || {}
                       "
+                      :disable="currentUserTestAnswer?.submitted"
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
-                      :disable="currentUserTestAnswer?.submitted"
                     >
                       <template #answer>
                         <v-select
@@ -405,8 +405,8 @@
                           item-value="value"
                           variant="outlined"
                           density="compact"
-                          @update:model-value="calculateProgress()"
                           :disabled="currentUserTestAnswer?.submitted"
+                          @update:model-value="calculateProgress()"
                         />
                         <v-alert v-else type="error" class="mt-4">
                           {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
@@ -471,8 +471,8 @@
                           <v-btn
                             color="testPrimary"
                             variant="flat"
-                            @click="dialog = true"
                             :disabled="currentUserTestAnswer?.submitted"
+                            @click="dialog = true"
                           >
                             <v-icon start>
                               mdi-send
@@ -662,7 +662,9 @@ const updateComment = (comment, heurisIndex, answerIndex) => {
   const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
   if (comment !== '' && comment !== undefined) {
     question.heuristicComment = comment;
-  } else if (store.state.Heuristic.currentImageUrl) {
+  }
+
+  if (store.state.Heuristic.currentImageUrl) {
     question.answerImageUrl = store.state.Heuristic.currentImageUrl;
   }
 };
