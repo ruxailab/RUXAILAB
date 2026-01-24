@@ -196,6 +196,8 @@
     "cta": "Comenzar"
   },
   "Dashboard": {
+    "welcomeBack": "¡Bienvenido de nuevo, {name}!",
+    "subtitle": "Esto es lo que está sucediendo hoy con tus proyectos de investigación",
     "createNewTest": "Crear nueva prueba",
     "tests": "Pruebas",
     "templates": "Plantillas",

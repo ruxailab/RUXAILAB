@@ -195,6 +195,8 @@
     "cta": "Começar"
   },
   "Dashboard": {
+    "welcomeBack": "Bem-vindo de volta, {name}!",
+    "subtitle": "Veja o que está acontecendo hoje com seus projetos de pesquisa",
     "createNewTest": "Criar novo estudo",
     "tests": "Testes",
     "templates": "Modelos",

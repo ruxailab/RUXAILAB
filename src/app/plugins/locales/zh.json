@@ -202,6 +202,8 @@
     "cta": "开始"
   },
   "Dashboard": {
+    "welcomeBack": "欢迎回来，{name}！",
+    "subtitle": "以下是你今天的研究项目进展",
     "createNewTest": "创建新研究",
     "tests": "测试",
     "templates": "模板",

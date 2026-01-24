@@ -184,6 +184,8 @@
     "cta": "始める"
   },
   "Dashboard": {
+    "welcomeBack": "おかえりなさい、{name}さん！",
+    "subtitle": "本日のあなたの研究プロジェクトの状況です",
     "createNewTest": "新しいテストを作成",
     "tests": "テスト",
     "templates": "テンプレート",

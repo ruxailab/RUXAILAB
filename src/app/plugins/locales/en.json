@@ -208,6 +208,8 @@
     "cta": "Get started"
   },
   "Dashboard": {
+    "welcomeBack": "Welcome back, {name}!",
+    "subtitle": "Here's what's happening with your research projects today",
     "createNewTest": "Create new study",
     "tests": "Tests",
     "templates": "Templates",

@@ -189,6 +189,8 @@
     "cta": "Loslegen"
   },
   "Dashboard": {
+    "welcomeBack": "Willkommen zurück, {name}!",
+    "subtitle": "Das passiert heute in deinen Forschungsprojekten",
     "createNewTest": "Neue Studie erstellen",
     "tests": "Tests",
     "templates": "Vorlagen",
