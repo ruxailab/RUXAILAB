@@ -740,7 +740,7 @@ const submitAnswer = async () => {
     localTestAnswer.submitted = true
     await saveAnswer()
   } catch (error) {
-    console.error('Error submitting answer:', error.message)
+    console.error('Error submitting answer:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -913,6 +913,7 @@ const completeStep = (id, type, userCompleted = true) => {
       } else {
         console.log('All tasks attempted:', allTasksCompleted.value)
         if (allTasksCompleted.value) {
+          console.log('All tasks completed, moving to post-test') // eslint-disable-line no-console
           taskIndex.value = id + 1 // to help saving methods
           globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
         } else {
@@ -1157,6 +1158,7 @@ const mappingSteps = async () => {
               susAnswers: [],
               nasaTlxAnswers: {},
             })
+            console.log('Nueva tarea creada:', i, newTask) // eslint-disable-line no-console
 
             return newTask
           },

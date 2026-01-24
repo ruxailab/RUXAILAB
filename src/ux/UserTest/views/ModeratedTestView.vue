@@ -515,7 +515,15 @@ import {
   onDisconnect,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  reactive,
+  watchEffect,
+  onUnmounted,
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -541,6 +549,8 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 // Data variables
+const testDisabledReason = ref(null)
+const isStartTestDisabled = ref(true)
 const loggedIn = ref(null)
 const sessionCooperator = ref(null)
 const testDate = ref(null)
@@ -703,6 +713,7 @@ const handleSubmit = async () => {
     await saveAnswer()
     await router.push({ name: 'Admin' })
   } catch (error) {
+    console.error('Error submitting answer:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -830,6 +841,7 @@ const callTimerSave = () => {
 function handleTaskFinish(userCompleted) {
   const currentTask = localTestAnswer.tasks[taskIndex.value]
   if (currentTask) {
+    console.log('Estado actual de la tarea antes de finalizar:', currentTask) // eslint-disable-line no-console
   }
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
@@ -846,24 +858,38 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
+  console.log('handleTimerStopped llamado con:', { elapsedTime, idx }) // eslint-disable-line no-console
 
   if (!localTestAnswer.tasks) {
+    console.error('localTestAnswer.tasks no está definido') // eslint-disable-line no-console
     return
   }
 
-  if (idx === undefined || idx === null) {
+  if (idx < 0 || idx >= localTestAnswer.tasks.length) {
+    console.error('Índice de tarea no válido:', idx) // eslint-disable-line no-console
     return
   }
 
-  if (localTestAnswer.tasks[idx]) {
+  if (elapsedTime) {
+    console.log(
+      // eslint-disable-line no-console
+      'Guardando tiempo para tarea',
+      idx,
+      ':',
+      elapsedTime,
+      'segundos',
+    )
     // Asegurar que el tiempo es un número
     const timeToSave =
       typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
+      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]) // eslint-disable-line no-console
     } else {
+      console.error('Tiempo no válido:', elapsedTime) // eslint-disable-line no-console
     }
   } else {
+    console.error('No se pudo guardar el tiempo para la tarea', idx) // eslint-disable-line no-console
   }
 }
 
@@ -894,6 +920,11 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
+        console.error(
+          // eslint-disable-line no-console
+          'localTestAnswer.tasks is not an array:',
+          localTestAnswer.tasks,
+        )
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -913,6 +944,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
+        console.log('All tasks completed, moving to post-test') // eslint-disable-line no-console
         globalIndex.value = 5
       }
       if (userCompleted) {
@@ -941,6 +973,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     calculateProgress()
     await saveAnswer()
   } catch (error) {
+    console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to complete step. Please try again.',
@@ -1011,6 +1044,7 @@ const mappingSteps = async () => {
               susAnswers: [],
               nasaTlxAnswers: null,
             })
+            console.log('Nueva tarea creada:', i, newTask) // eslint-disable-line no-console
 
             return newTask
           },
@@ -1038,6 +1072,7 @@ const mappingSteps = async () => {
       }
     }
   } catch (error) {
+    console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to initialize test data. Please try again.',
@@ -1057,36 +1092,34 @@ const validate = (object) => {
 
 const calculateProgress = () => {
   try {
-    if (!localTestAnswer) return 0
-    const totalSteps = 4
+    const totalSteps = test.value?.testStructure?.userTasks?.length || 0
+    if (totalSteps === 0) return 0
+
     let completedSteps = 0
+    if (localTestAnswer.consentCompleted) completedSteps += 1
+    if (localTestAnswer.preTestCompleted) completedSteps += 1
+    if (localTestAnswer.postTestCompleted) completedSteps += 1
 
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
-
-    let tasksCompleted = 0
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === items.value[1].value.length) {
-        completedSteps++
-      }
+    if (Array.isArray(localTestAnswer.tasks)) {
+      completedSteps += localTestAnswer.tasks.filter((t) => t.completed).length
     }
-
-    if (localTestAnswer.postTestCompleted) completedSteps++
 
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
   } catch (error) {
+    console.error('Error in calculateProgress:', error) // eslint-disable-line no-console
     return 0
   }
 }
-const testDisabledReason = computed(() => {
-  if (!test.value) return 'test-no-data'
+// testDisabledReason is already declared at line 544
+
+watchEffect(() => {
+  if (!test.value) {
+    testDisabledReason.value = 'test-no-data'
+    isStartTestDisabled.value = true
+    return
+  }
 
   const now = new Date()
   const cooperator = test.value.cooperators.find(
@@ -1095,39 +1128,60 @@ const testDisabledReason = computed(() => {
   const sessionDate = cooperator.testDate ? new Date(cooperator.testDate) : null
 
   // 🧩 Test already completed
-  if (localTestAnswer.submitted) return 'test-already-completed'
+  if (localTestAnswer.submitted) {
+    testDisabledReason.value = 'test-already-completed'
+    isStartTestDisabled.value = true
+    return
+  }
 
   // 🧩 Test is not active
-  if (test.value.status !== 'active') return 'test-not-active'
+  if (test.value.status !== 'active') {
+    testDisabledReason.value = 'test-not-active'
+    isStartTestDisabled.value = true
+    return
+  }
 
   // 🧩 Test structure missing
   if (
     !test.value.testStructure ||
     Object.keys(test.value.testStructure).length === 0
   ) {
-    return 'test-no-tasks-configured'
+    testDisabledReason.value = 'test-no-tasks-configured'
+    isStartTestDisabled.value = true
+    return
   }
 
   // 🧩 Check session date
   if (sessionDate) {
     const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60)
 
-    if (diffHours < 0) return 'test-expired'
+    if (diffHours < 0) {
+      testDisabledReason.value = 'test-expired'
+      isStartTestDisabled.value = true
+      return
+    }
 
-    if (diffHours > 24) return 'test-session-too-far'
+    if (diffHours > 24) {
+      testDisabledReason.value = 'test-session-too-far'
+      isStartTestDisabled.value = true
+      return
+    }
   }
 
   // 🧩 Test expired (fallback endDate)
   if (test.value.endDate) {
     const endDate = new Date(test.value.endDate)
-    if (now > endDate) return 'test-expired'
+    if (now > endDate) {
+      testDisabledReason.value = 'test-expired'
+      isStartTestDisabled.value = true
+      return
+    }
   }
 
   // ✅ All good
-  return null
+  testDisabledReason.value = null
+  isStartTestDisabled.value = false
 })
-
-const isStartTestDisabled = computed(() => !!testDisabledReason.value)
 
 // Lifecycle hooks
 onMounted(async () => {
