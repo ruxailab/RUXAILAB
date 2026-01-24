@@ -554,6 +554,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
 import SessionAnalytics from '../SessionAnalytics.vue'
@@ -730,12 +731,6 @@ const tableData = computed(() => {
 
 const openSessionAnalyticsDialog = () => {
   showSessionAnalyticsDialog.value = true
-}
-
-const formatTime = (time) => {
-  const minutes = Math.floor(time / 60)
-  const seconds = time % 60
-  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }
 
 const viewAnswers = (item) => {
