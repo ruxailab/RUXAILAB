@@ -306,6 +306,39 @@
     "cta": "Get started"
   },
   "Dashboard": {
+    "welcomeBack": "Welcome back",
+    "recentActivity": "Recent Activity",
+    "nextSession": "Next Session",
+    "mostUsedMethods": "Most Used Methods",
+    "latestBlogPosts": "Latest Blog Posts",
+    "activeStudiesOverview": "Active Studies Overview",
+    "recruiting": "Recruiting",
+    "viewAll": "View All Studies",
+    "progress": "Progress",
+    "participants": "Participants",
+    "daysLeft": "days left",
+    "dayLeft": "day left",
+    "noSessionsScheduled": "No sessions scheduled",
+    "noDataAvailable": "No data available",
+    "nextSessionWillAppear": "Your next session will appear here",
+    "comingSoon": "Coming Soon",
+    "time": "Time",
+    "date": "Date",
+    "storage": "Storage",
+    "plan": "Plan",
+    "studies": "Studies",
+    "participantsLabel": "Participants",
+    "subtitle": "Subtitle",
+    "free": "Free",
+    "createFirstStudy": "Create your first study",
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "draft": "Draft",
+      "paused": "Paused",
+      "unknown": "Unknown",
+      "recruiting": "Recruiting"
+    },
     "createNewTest": "Create new study",
     "tests": "Tests",
     "templates": "Templates",
@@ -400,7 +433,7 @@
       "moveUp": "Move Up",
       "moveDown": "Move Down",
       "Question": "Question",
-      "Questions": "Questions", 
+      "Questions": "Questions",
       "noQuestions": "No Questions",
       "noDescriptions": "No Descriptions",
       "loading": "Loading..."
@@ -436,10 +469,10 @@
       "hideTextArea": "Hide text area"
     },
     "errors": {
-    "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
-    "failedToLoadEditForm": "Failed to load edit form. Please try again.",
-    "invalidHeuristic": "Invalid heuristic selection",
-    "invalidQuestion": "Invalid question selection"
+      "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
+      "failedToLoadEditForm": "Failed to load edit form. Please try again.",
+      "invalidHeuristic": "Invalid heuristic selection",
+      "invalidQuestion": "Invalid question selection"
     }
   },
   "HeuristicsOptionsTable": {
