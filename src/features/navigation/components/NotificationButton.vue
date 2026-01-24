@@ -42,7 +42,7 @@
       <v-card class="notification-dropdown" elevation="6">
         <!-- Header -->
         <div class="dropdown-header">
-          <span class="title">{{ $t('common.notifications') }}</span>
+          <span class="text-h6">{{ $t('common.notifications') }}</span>
 
           <div class="actions">
             <v-btn
@@ -214,20 +214,22 @@ watch(menuOpen, (open) => {
 /* Pulse animation */
 .notification-bell.pulse {
   position: relative;
+  z-index: 1;
 }
 
 .notification-bell.pulse::after {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 0, 0, 0.5);
   animation: pulse 1.5s infinite;
+  pointer-events: none;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.9); opacity: 1; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% { transform: scale(1.0); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
 }
 
 /* Dropdown */

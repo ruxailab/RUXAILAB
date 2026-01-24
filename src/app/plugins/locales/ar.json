@@ -67,7 +67,120 @@
     "viewAll": "عرض الكل",
     "sentBy": "مرسل من قبل",
     "new": "جديد",
-    "test": "دراسة"
+    "test": "دراسة",
+    "table": {
+      "itemsPerPage": "العناصر لكل صفحة:",
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "evaluator": "المقيم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء"
+    }
+  },
+  "storage": {
+    "pageTitle": "التخزين",
+    "totalStorage": "إجمالي التخزين",
+    "acrossFiles": "عبر {count} ملفات",
+    "mediaFiles": "ملفات الوسائط",
+    "searchByStudyOrDate": "البحث حسب الدراسة أو التاريخ",
+    "deleteFile": "حذف الملف",
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "confirmDeletion": "تأكيد الحذف",
+    "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف ملف {type} هذا من \"{studyName}\"؟",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
+    "headers": {
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء",
+      "evaluator": "المقيّم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "itemsPerPage": "عناصر لكل صفحة:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "الدراسات المجتمعية",
+      "searchPlaceholder": "البحث في الدراسات..."
+    },
+    "templates": {
+      "title": "القوالب المجتمعية",
+      "searchPlaceholder": "البحث في القوالب..."
+    },
+    "reset": "إعادة تعيين",
+    "showFilters": "إظهار الفلاتر",
+    "hideFilters": "إخفاء الفلاتر",
+    "selectRange": "تحديد النطاق",
+    "filters": {
+      "creationDate": "تاريخ الإنشاء",
+      "status": "الحالة",
+      "method": "الطريقة",
+      "ownership": "الملكية",
+      "participants": "المشاركون"
+    },
+    "status": {
+      "allStatuses": "جميع الحالات",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل"
+    },
+    "ownership": {
+      "allStudies": "جميع الدراسات",
+      "myStudies": "دراساتي",
+      "whereICollaborate": "حيث أتعاون"
+    },
+    "participants": {
+      "all": "الكل",
+      "lessThan10": "< 10 مشاركين",
+      "between10And50": "10 – 50 مشاركين",
+      "moreThan50": "> 50 مشاركين"
+    },
+    "method": {
+      "allMethods": "جميع الطرق",
+      "all": "الكل",
+      "heuristicEvaluation": "التقييم الإرشادي",
+      "userStudyUnmoderated": "دراسة المستخدم (غير مراقبة)",
+      "userStudyModerated": "دراسة المستخدم (مراقبة)",
+      "manualAccessibility": "إمكانية الوصول اليدوية",
+      "automaticAccessibility": "إمكانية الوصول التلقائية"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "ابق على اطلاع بأنشطتك وتعاوناتك",
+    "markAllRead": "تحديد الكل كمقروء",
+    "searchPlaceholder": "البحث في الإشعارات…",
+    "notification": "إشعار",
+    "important": "مهم",
+    "markAsRead": "تحديد كمقروء",
+    "markAsUnread": "تحديد كغير مقروء",
+    "refresh": "تحديث",
+    "noResultsFound": "لم يتم العثور على نتائج",
+    "allCaughtUp": "تم الانتهاء من الكل!",
+    "noNotificationsYet": "لا توجد إشعارات بعد",
+    "tryDifferentKeywords": "جرب كلمات مختلفة أو امسح البحث",
+    "allReadMessage": "لقد قرأت جميع إشعاراتك. عمل رائع!",
+    "newActivitiesMessage": "ستظهر الإشعارات هنا عندما يكون لديك أنشطة جديدة",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {count} دقيقة",
+    "hoursAgo": "منذ {count} ساعة",
+    "daysAgo": "منذ {count} يوم",
+    "newNotification": "لديك إشعار جديد."
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "studies": "الدراسات",
+    "sessions": "الجلسات",
+    "templates": "القوالب",
+    "storage": "التخزين",
+    "communityStudies": "الدراسات المجتمعية",
+    "communityTemplates": "القوالب المجتمعية"
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -189,6 +302,8 @@
     "cta": "ابدأ"
   },
   "Dashboard": {
+    "welcomeBack": "مرحباً بعودتك، {name}!",
+    "subtitle": "إليك ما يحدث في مشاريعك البحثية اليوم",
     "createNewTest": "إنشاء دراسة جديدة",
     "tests": "الاختبارات",
     "templates": "القوالب",
@@ -198,7 +313,46 @@
     "publicTests": "الاختبارات العامة",
     "sessions": "الجلسات",
     "personal": "شخصي",
-    "explore": "استكشف"
+    "explore": "استكشف",
+    "activeStudies": {
+      "noActiveStudies": "لا توجد دراسات نشطة",
+      "createNewStudy": "إنشاء دراسة جديدة",
+      "emptyStateMessage": "ليس لديك أي دراسات حتى الآن. أنشئ دراستك الأولى لبدء جمع رؤى قيمة من المستخدمين."
+    },
+    "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "progress": "التقدم",
+    "participants": "المشاركون",
+    "participantsLabel": "المشاركون",
+    "daysLeft": "أيام متبقية",
+    "dayLeft": "يوم متبقي",
+    "studies": "الدراسات",
+    "storage": "التخزين",
+    "free": "مجاني",
+    "plan": "الخطة",
+    "recentActivity": "النشاط الأخير",
+    "comingSoon": "قريباً",
+    "mostUsedMethods": "الطرق الأكثر استخداماً",
+    "use": "استخدام",
+    "uses": "استخدامات",
+    "noDataAvailable": "لا توجد بيانات متاحة حتى الآن",
+    "createFirstStudy": "أنشئ دراستك الأولى لرؤية الإحصائيات هنا.",
+    "nextSession": "الجلسة التالية",
+    "noSessionsScheduled": "لا توجد جلسات مجدولة",
+    "nextSessionWillAppear": "ستظهر جلستك التالية هنا",
+    "latestBlogPosts": "أحدث منشورات المدونة",
+    "viewBlog": "عرض المدونة",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "status": {
+      "active": "نشط",
+      "recruiting": "توظيف",
+      "paused": "متوقف",
+      "finished": "منتهي",
+      "unknown": "غير معروف"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -222,7 +376,14 @@
       "deleteQuestion": "حذف السؤال",
       "addNewDescription": "إضافة وصف جديد",
       "addOption": "إضافة خيار جديد",
-      "hasValue": "لديه قيمة"
+      "hasValue": "لديه قيمة",
+      "moveUp": "تحريك لأعلى",
+      "moveDown": "تحريك لأسفل",
+      "Question": "سؤال",
+      "Questions": "أسئلة",
+      "noQuestions": "لا توجد أسئلة",
+      "noDescriptions": "لا توجد أوصاف",
+      "loading": "جاري التحميل..."
     },
     "placeholders": {
       "titleHeuristic": "عنوان الاستدلال",
@@ -237,7 +398,10 @@
       "youMustHave": "يجب أن تكون قد أدخلت شيئًا خاطئًا...",
       "noHeuristicsDeleteAll": "عذرًا، لا يمكنك حذف جميع أسئلة الاستدلال.",
       "noCsvFileSelected": "لم يتم تحديد ملف CSV. يرجى تحديد واحد قبل المتابعة.",
-      "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا."
+      "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا.",
+      "noDescriptions": "لا توجد أوصاف متاحة",
+      "startAddingQuestions": "ابدأ بإضافة سؤالك الأول إلى هذا الاستدلال",
+      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال"
     },
     "validation": {
       "nameRequired": "الاسم مطلوب",
@@ -250,6 +414,12 @@
       "showComment": "إظهار التعليق",
       "addComment": "إضافة تعليق",
       "hideTextArea": "إخفاء منطقة النص"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "فشل تحميل نموذج السؤال. يرجى المحاولة مرة أخرى.",
+      "failedToLoadEditForm": "فشل تحميل نموذج التحرير. يرجى المحاولة مرة أخرى.",
+      "invalidHeuristic": "اختيار استدلال غير صالح",
+      "invalidQuestion": "اختيار سؤال غير صالح"
     }
   },
   "HeuristicsOptionsTable": {
@@ -541,6 +711,25 @@
     "goHome": "الذهاب إلى الصفحة الرئيسية"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "لم يتم العثور على جلسة نشطة",
+      "selectRange": "تحديد النطاق",
+      "reset": "إعادة تعيين",
+      "searchPlaceholder": "البحث في الدراسات...",
+      "filters": {
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون",
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "قادم",
+        "completed": "مكتمل"
+      },
+      "ownership": "الملكية",
+      "evaluator": "المقيّم",
+      "sessionDate": "تاريخ الجلسة",
+      "statusLabel": "الحالة"
+    },
     "intros": {
       "click": "انقر هنا!",
       "learnMore": "تعلم المزيد",
@@ -587,6 +776,44 @@
       "noTests": "لم يتم العثور على اختبارات",
       "noTemplates": "لم يتم العثور على قوالب"
     },
+    "sessions": {
+      "searchPlaceholder": "البحث في الجلسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "sessionDate": "تاريخ الجلسة",
+      "selectRange": "اختر النطاق",
+      "statusLabel": "الحالة",
+      "ownership": "الملكية",
+      "evaluator": "المقيم",
+      "noActiveSessions": "ليس لديك جلسات نشطة",
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "القادمة",
+        "completed": "مكتمل",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "البحث في القوالب...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "method": "الطريقة",
+      "filters": {
+        "allMethods": "جميع الطرق",
+        "heuristicEvaluation": "التقييم الاستدلالي",
+        "userUnmoderated": "مستخدم غير مدار",
+        "userModerated": "مستخدم مدار",
+        "manualAccessibility": "إمكانية الوصول اليدوية",
+        "automaticAccessibility": "إمكانية الوصول الآلية"
+      }
+    },
     "createTest": {
       "title": "إنشاء اختبار جديد",
       "blankTitle": "إنشاء اختبار فارغ",
@@ -632,6 +859,10 @@
     "cooperators": {
       "invitationSent": "تم إرسال الدعوة بنجاح"
     }
+  },
+  "storage": {
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "mediaFiles": "ملفات الوسائط"
   },
   "alerts": {
     "copy": "تم النسخ بنجاح",
@@ -714,11 +945,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1032,6 +1259,70 @@
         "finished": "منتهي",
         "upcoming": "قادم"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "دراسة اختبار المستخدم",
+      "unmoderatedStudy": "دراسة غير مُيسَّرة",
+      "moderatedStudy": "دراسة مُيسَّرة",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل",
+      "archived": "مؤرشف"
+    },
+    "studyOverview": {
+      "totalParticipants": "إجمالي المشاركين",
+      "completed": "مكتمل",
+      "rate": "معدل {percentage}%",
+      "inProgress": "قيد التنفيذ",
+      "active": "نشط {percentage}%",
+      "averageTime": "متوسط الوقت",
+      "completionTime": "وقت الإكمال",
+      "minUnit": "{value} دقيقة"
+    },
+    "managementModules": {
+      "title": "وحدات الإدارة",
+      "description": "أدوات شاملة لإدارة المشاركين والمهام والإعدادات وتحليل بيانات دراستك",
+      "additionalModules": "مساحة للوحدات الإضافية"
+    },
+    "participants": {
+      "title": "المشاركون",
+      "subtitle": "نظرة عامة على المشاركة في الاختبار",
+      "beta": "تجريبي",
+      "completed": "مكتمل",
+      "notStarted": "لم يبدأ",
+      "pendingInvites": "دعوات معلقة",
+      "overallProgress": "التقدم العام",
+      "participantsCompleted": "أكمل {completed} من {total} مشاركين",
+      "details": "التفاصيل"
+    },
+    "tasks": {
+      "title": "نظرة عامة على المهام",
+      "subtitle": "هيكل المهام والإكمال",
+      "beta": "تجريبي",
+      "noTasksConfigured": "لا توجد مهام محددة",
+      "taskCompletionRate": "معدل إكمال المهام",
+      "totalTasks": "إجمالي المهام",
+      "avgTaskDuration": "متوسط مدة المهمة",
+      "successRate": "معدل النجاح",
+      "taskTypes": "أنواع المهام",
+      "viewTasks": "عرض المهام"
+    },
+    "storage": {
+      "title": "استخدام التخزين",
+      "subtitle": "ملفات الوسائط ومقاييس التخزين",
+      "beta": "تجريبي",
+      "storageUsed": "التخزين المستخدم",
+      "storageQuota": "تم استخدام {used} من {quota}",
+      "mediaFiles": "ملفات الوسائط",
+      "videoRecordings": "تسجيلات الفيديو",
+      "audioRecordings": "تسجيلات الصوت",
+      "screenRecordings": "تسجيلات الشاشة",
+      "storageBreakdown": "تفصيل التخزين",
+      "responsesData": "بيانات الردود",
+      "analyticsData": "بيانات التحليلات",
+      "manageStorage": "إدارة التخزين"
     }
   }
 }

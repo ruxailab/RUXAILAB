@@ -5,16 +5,11 @@
       <v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
     </v-btn>
 
-    <!-- Linha de progresso -->
-    <div
-      class="timeline-bar"
-      @click="seek($event)"
-      @mousedown="startDrag"
-      ref="bar"
-    >
-      <div class="timeline-track" :style="{ width: progress + '%' }"></div>
-      <div class="timeline-thumb" :style="{ left: progress + '%' }"></div>
-    </div>
+        <!-- Linha de progresso -->
+        <div ref="bar" class="timeline-bar" @click="seek($event)" @mousedown="startDrag">
+            <div class="timeline-track" :style="{ width: progress + '%' }"></div>
+            <div class="timeline-thumb" :style="{ left: progress + '%' }"></div>
+        </div>
 
     <!-- Duração -->
     <span style="width: 60px; text-align: right">

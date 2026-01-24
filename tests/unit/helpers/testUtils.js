@@ -41,3 +41,7 @@ export const studyTypesMock = {
         USER: 'USER'
     }
 }
+
+export const mockUserCredentials = {
+    secret: 'mock-input-string'
+}

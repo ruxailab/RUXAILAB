@@ -61,8 +61,7 @@ export const formatDateShort = (date, locale = 'en-GB') => {
 
     return d.toLocaleDateString(locale)
   } catch (error) {
-    console.warn('Error formatting date:', error)
-    return '-'
+    return error
   }
 }
 

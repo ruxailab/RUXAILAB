@@ -74,7 +74,7 @@
           <!-- full transcription list for this run -->
           <TranscriptionList
             v-if="segmentsFor(run).length"
-            :transcriptSegments="segmentsFor(run)"
+            :transcript-segments="segmentsFor(run)"
           />
           <div v-else class="text-medium-emphasis text-caption">
             No segments in this run.
