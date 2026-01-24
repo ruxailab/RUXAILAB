@@ -590,14 +590,124 @@
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Vor dem Test - Einverständnis",
-      "preTestForm": "Vor dem Test - Formular",
-      "preTest": "Vor dem Test",
-      "postTest": "Nach dem Test",
+      "preTestConsent": "Vortest - Einverständnis",
+      "preTestForm": "Vortest - Formular",
+      "preTest": "Vortest",
+      "postTest": "Nachtest",
       "eyeTrackingCalibration": "Eye-Tracking-Kalibrierung"
+    },
+    "actions": {
+      "welcomeBack": "Willkommen zurück!",
+      "continueAs": "Fortfahren als {userEmail}",
+      "notYou": "Nicht Sie?",
+      "changeAccount": "Konto ändern",
+      "startTest": "Test starten"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test bereits abgeschlossen",
+      "testAlreadyCompletedMessage": "Sie haben diesen Test bereits abgeschlossen und eingereicht. Vielen Dank für Ihre Teilnahme!",
+      "testExpired": "Test abgelaufen",
+      "testExpiredMessage": "Dieser Test ist nicht mehr verfügbar, da das Enddatum überschritten wurde.",
+      "testNotActive": "Test nicht aktiv",
+      "testNotActiveMessage": "Dieser Test ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator.",
+      "testConfigError": "Test-Konfigurationsfehler",
+      "testConfigErrorMessage": "Dieser Test hat keine konfigurierten Aufgaben. Bitte kontaktieren Sie den Administrator.",
+      "consentDecline": "Test aufgrund von Ablehnung der Einverständniserklärung beendet. Vielen Dank für Ihre Zeit."
+    },
+    "stepper": {
+      "consent": "Einverständnis",
+      "preTest": "Vortest",
+      "calibration": "Kalibrierung",
+      "tasks": "Aufgaben",
+      "postTest": "Nachtest",
+      "completion": "Abschluss",
+      "taskX": "Aufgabe {num}"
+    },
+    "TaskStep": {
+      "preview": "Aufgabenvorschau",
+      "recordingInfo": "Diese Aufgabe wird die folgenden Daten während Ihrer Interaktion aufzeichnen:",
+      "screenRecord": "Bildschirmaufnahme",
+      "screenRecordDesc": "Erfasst Klicks, Scrollen und Interaktionen zur Analyse des Benutzerverhaltens.",
+      "camera": "Kamera",
+      "cameraDesc": "Zeichnet Gesichtsausdrücke und Reaktionen auf, um Benutzeremotionen zu verstehen.",
+      "audioRecord": "Audioaufnahme",
+      "audioRecordDesc": "Erfasst verbales Feedback und Think-Aloud-Protokolle während der Aufgabe.",
+      "eyeTracker": "Eye-Tracker",
+      "eyeTrackerDesc": "Verfolgt visuelle Aufmerksamkeitstester und Blickverhalten während der Aufgabe.",
+      "newWindow": "Neues Fenster wird geöffnet",
+      "newWindowDesc": "Wenn Sie die Aufgabe starten, wird ein neues Fenster mit dem Tool geöffnet, das Sie verwenden müssen.",
+      "tip": "Tipp",
+      "tipDesc": "Sie können jederzeit zwischen den Tabs wechseln oder das neue Fenster schließen. Die Aufzeichnung wird fortgesetzt, bis Sie die Aufgabe abschließen.",
+      "internalInterface": "Diese Aufgabe wird innerhalb der aktuellen Benutzeroberfläche abgeschlossen.",
+      "startTask": "Aufgabe starten",
+      "description": "Aufgabenbeschreibung",
+      "needHelp": "Brauchen Sie Hilfe?",
+      "needHelpDesc": "Haben Sie Probleme? Erhalten Sie hilfreiche Anleitungen zum Abschluss dieser Aufgabe.",
+      "externalTool": "Externes Tool",
+      "reopenDesc": "Fenster versehentlich geschlossen? Hier wieder öffnen.",
+      "reopenTool": "Tool wieder öffnen",
+      "answerLabel": "Antwort",
+      "observationLabel": "Beobachtung (optional)",
+      "cannotFinish": "Ich kann die Aufgabe nicht beenden",
+      "completed": "Aufgabe abgeschlossen",
+      "noQuestionnaire": "Kein Nachtest-Fragebogen für diesen Aufgabentyp erforderlich.",
+      "validationError": "Bitte beantworten Sie alle Fragen, bevor Sie fortfahren.",
+      "finishTask": "Aufgabe beenden"
+    },
+    "ConsentStep": {
+      "fullName": "Vollständiger Name",
+      "nameRequired": "Name ist erforderlich",
+      "acceptTerms": "Ich akzeptiere die Einverständniserklärung",
+      "declineTerms": "Ich akzeptiere die Einverständniserklärung nicht",
+      "continue": "Weiter",
+      "declinedTitle": "Einverständnis abgelehnt",
+      "declinedMessage1": "Sie haben sich entschieden, die Einverständniserklärung für diese Studie nicht zu akzeptieren.",
+      "declinedMessage2": "Wenn Sie diese Aktion bestätigen, wird der Test sofort beendet, da Ihre Teilnahme eine ausdrückliche Zustimmung erfordert. Ihre Daten werden nicht gesammelt oder gespeichert.",
+      "declinedConfirm": "Sind Sie sicher, dass Sie den Test beenden möchten, ohne teilzunehmen?",
+      "goBack": "Zurück",
+      "endTest": "Ja, Test beenden"
+    },
+    "PreTestStep": {
+      "title": "Vortest"
+    },
+    "PostTestStep": {
+      "title": "Nachtest"
     },
     "buttons": {
       "done": "Fertig"
+    },
+    "messages": {
+      "noTasks": "Dieser Test hat keine Aufgaben.",
+      "answerSaved": "Antwort erfolgreich gespeichert."
+    },
+    "errors": {
+      "noAnswerData": "Keine Antwortdaten gefunden.",
+      "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
+      "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut.",
+      "noTestData": "Keine Testdaten",
+      "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Kalibrierung abgeschlossen!",
+      "waiting": "Warten auf Kalibrierung...",
+      "calibrating": "Kalibrierung läuft, bitte warten...",
+      "notOpened": "Die Kalibrierung wurde nicht geöffnet?",
+      "clickHere": "Hier klicken",
+      "success": "Die Kalibrierung war erfolgreich!",
+      "continue": "WEITER ZUM TEST!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Moderatorenansicht",
+      "welcome": "Willkommen zur moderierten Testsitzung",
+      "description": "Als Moderator führen Sie den Teilnehmer durch den Testprozess und beobachten seine Interaktionen per Videoanruf.",
+      "instructionsTitle": "Moderatorenanweisungen",
+      "instruction1": "Beginnen Sie mit dem Öffnen des Videoanrufraums",
+      "instruction2": "Beobachten Sie die Interaktionen der Teilnehmer ohne Einmischung",
+      "instruction3": "Verwenden Sie den Schritt-Navigator, um zwischen den Testphasen zu springen",
+      "instruction4": "Geben Sie nur bei Bedarf Hilfestellung",
+      "remember": "Denken Sie daran:",
+      "note": "Ihre Rolle besteht darin, zu fördern und zu beobachten. Der Teilnehmer sollte die Aufgaben selbstständig erledigen, es sei denn, er bittet ausdrücklich um Hilfe.",
+      "startSession": "Moderierte Sitzung starten"
     },
     "WelcomeStep": {
       "welcome": "Willkommen bei RUXAILAB!",

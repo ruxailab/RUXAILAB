@@ -26,15 +26,6 @@
     },
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
-      "email": "电子邮箱",
-      "instructions": "输入您的电子邮箱，我们将发送重置密码链接给您。",
-      "reset_button": "发送重置链接",
-      "back_to_signin": "返回登录"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "重置密码",
       "email": "邮箱",
       "instructions": "输入您的邮箱，我们会发送一个重置密码的链接给您。",
       "reset_button": "发送重置链接",
@@ -609,8 +600,120 @@
       "postTest": "后测",
       "eyeTrackingCalibration": "眼动追踪校准"
     },
+    "actions": {
+      "welcomeBack": "欢迎回来！",
+      "continueAs": "继续作为 {userEmail}",
+      "notYou": "不是您？",
+      "changeAccount": "更改账户",
+      "startTest": "开始测试"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "测试已完成",
+      "testAlreadyCompletedMessage": "您已经完成并提交了此测试。感谢您的参与！",
+      "testExpired": "测试已过期",
+      "testExpiredMessage": "由于已过截止日期，此测试不再可用。",
+      "testNotActive": "测试未激活",
+      "testNotActiveMessage": "此测试目前未激活。请联系管理员。",
+      "testConfigError": "测试配置错误",
+      "testConfigErrorMessage": "此测试没有配置任务。请联系管理员。",
+      "consentDecline": "由于拒绝同意，测试已结束。感谢您的参与。",
+      "sessionTooFar": "会话日期过远",
+      "sessionTooFarMessage": "预定的会话时间距离现在超过 24 小时。请在会话日期临近时再回来。"
+    },
+    "stepper": {
+      "consent": "同意",
+      "preTest": "前测",
+      "calibration": "校准",
+      "tasks": "任务",
+      "postTest": "后测",
+      "completion": "完成",
+      "taskX": "任务 {num}"
+    },
+    "TaskStep": {
+      "preview": "任务预览",
+      "recordingInfo": "此任务将在您互动期间录制以下数据：",
+      "screenRecord": "屏幕录制",
+      "screenRecordDesc": "捕获点击、滚动和互动以分析用户行为。",
+      "camera": "摄像头",
+      "cameraDesc": "记录面部表情和反应以理解用户情绪。",
+      "audioRecord": "音频录制",
+      "audioRecordDesc": "捕获任务期间的语音反馈和有声思维协议。",
+      "eyeTracker": "眼动追踪",
+      "eyeTrackerDesc": "追踪任务期间的视觉注意模式和注视行为。",
+      "newWindow": "将打开一个新窗口",
+      "newWindowDesc": "当您开始任务时，将打开一个包含您需要使用的工具的新窗口。",
+      "tip": "提示",
+      "tipDesc": "您可以随时切换标签或关闭新窗口。录制将持续到您完成任务为止。",
+      "internalInterface": "此任务将在当前界面内完成。",
+      "startTask": "开始任务",
+      "description": "任务描述",
+      "needHelp": "需要帮助吗？",
+      "needHelpDesc": "遇到问题了？获取完成此任务的有用指导。",
+      "externalTool": "外部工具",
+      "reopenDesc": "不小心关闭了工具窗口？在此重新打开。",
+      "reopenTool": "重新打开工具",
+      "answerLabel": "答案",
+      "observationLabel": "观察（可选）",
+      "cannotFinish": "我无法完成任务",
+      "completed": "任务已完成",
+      "noQuestionnaire": "此任务类型不需要任务后问卷。",
+      "validationError": "请在继续之前回答所有问题。",
+      "finishTask": "完成任务"
+    },
+    "ConsentStep": {
+      "fullName": "全名",
+      "nameRequired": "姓名是必填项",
+      "acceptTerms": "我接受同意条款",
+      "declineTerms": "我不接受同意条款",
+      "continue": "继续",
+      "declinedTitle": "拒绝同意",
+      "declinedMessage1": "您选择不接受此研究的同意条款。",
+      "declinedMessage2": "如果您确认此操作，测试将立即结束，因为您的参与需要明确同意才能继续。您的数据将不会被收集或存储。",
+      "declinedConfirm": "您确定要在不参与的情况下结束测试吗？",
+      "goBack": "返回",
+      "endTest": "是，结束测试"
+    },
+    "PreTestStep": {
+      "title": "前测"
+    },
+    "PostTestStep": {
+      "title": "后测"
+    },
     "buttons": {
       "done": "完成"
+    },
+    "messages": {
+      "noTasks": "此测试没有任务。",
+      "answerSaved": "答案保存成功。"
+    },
+    "errors": {
+      "noAnswerData": "未找到答案数据。",
+      "failedToSaveAnswer": "保存答案失败。请重试。",
+      "failedToSubmitAnswer": "提交答案失败。请重试。",
+      "noTestData": "无测试数据",
+      "noTestDataMessage": "无法加载测试信息。请稍后再试。"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "校准完成！",
+      "waiting": "正在等待校准...",
+      "calibrating": "正在校准，请稍候...",
+      "notOpened": "校准窗口没打开？",
+      "clickHere": "点击这里",
+      "success": "校准成功！",
+      "continue": "继续进行测试！"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "主持人视图",
+      "welcome": "欢迎参加主持式测试环节",
+      "description": "作为主持人，您将引导参与者完成测试过程，同时通过视频通话观察他们的互动。",
+      "instructionsTitle": "主持人指示",
+      "instruction1": "首先打开视频通话室",
+      "instruction2": "观察参与者的互动而不进行干预",
+      "instruction3": "使用步骤导航器在测试阶段之间跳转",
+      "instruction4": "仅在必要时提供指导",
+      "remember": "记住：",
+      "note": "您的角色是提供便利和观察。参与者应独立完成任务，除非他们特别要求帮助。",
+      "startSession": "启动主持式环节"
     },
     "WelcomeStep": {
       "welcome": "欢迎来到RUXAILAB！",

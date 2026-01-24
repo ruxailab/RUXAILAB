@@ -660,8 +660,118 @@
       "postTest": "Prueba posterior",
       "eyeTrackingCalibration": "Calibración de seguimiento ocular"
     },
+    "actions": {
+      "welcomeBack": "¡Bienvenido de nuevo!",
+      "continueAs": "Continuar como {userEmail}",
+      "notYou": "¿No eres tú?",
+      "changeAccount": "Cambiar cuenta",
+      "startTest": "Comenzar prueba"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Prueba ya completada",
+      "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
+      "testExpired": "Prueba expirada",
+      "testExpiredMessage": "Esta prueba ya no está disponible porque ha pasado su fecha de finalización.",
+      "testNotActive": "Prueba no activa",
+      "testNotActiveMessage": "Esta prueba no está activa actualmente. Por favor, contacta al administrador.",
+      "testConfigError": "Error de configuración de la prueba",
+      "testConfigErrorMessage": "Esta prueba no tiene tareas configuradas. Por favor, contacta al administrador.",
+      "consentDecline": "Prueba finalizada debido al rechazo del consentimiento. Gracias por tu tiempo."
+    },
+    "stepper": {
+      "consent": "Consentimiento",
+      "preTest": "Prueba previa",
+      "calibration": "Calibración",
+      "tasks": "Tareas",
+      "postTest": "Prueba posterior",
+      "completion": "Finalización",
+      "taskX": "Tarea {num}"
+    },
+    "TaskStep": {
+      "preview": "Vista previa de la tarea",
+      "recordingInfo": "Esta tarea registrará los siguientes datos durante tu interacción:",
+      "screenRecord": "Grabación de pantalla",
+      "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
+      "camera": "Cámara",
+      "cameraDesc": "Registra expresiones faciales y reacciones para entender las emociones del usuario.",
+      "audioRecord": "Grabación de audio",
+      "audioRecordDesc": "Captura comentarios verbales y protocolos de pensamiento en voz alta durante la tarea.",
+      "eyeTracker": "Seguimiento ocular",
+      "eyeTrackerDesc": "Rastrea patrones de atención visual y comportamiento de la mirada durante la tarea.",
+      "newWindow": "Se abrirá una nueva ventana",
+      "newWindowDesc": "Cuando comiences la tarea, se abrirá una nueva ventana con la herramienta que necesitas usar.",
+      "tip": "Consejo",
+      "tipDesc": "Puedes cambiar entre pestañas o cerrar la nueva ventana en cualquier momento. La grabación continuará hasta que completes la tarea.",
+      "internalInterface": "Esta tarea se completará dentro de la interfaz actual.",
+      "startTask": "Iniciar tarea",
+      "description": "Descripción de la tarea",
+      "needHelp": "¿Necesitas ayuda?",
+      "needHelpDesc": "¿Tienes problemas? Obtén guía útil para completar esta tarea.",
+      "externalTool": "Herramienta externa",
+      "reopenDesc": "¿Cerraste accidentalmente la ventana de la herramienta? Ábrela aquí de nuevo.",
+      "reopenTool": "Reabrir herramienta",
+      "answerLabel": "Respuesta",
+      "observationLabel": "Observación (opcional)",
+      "cannotFinish": "No puedo finalizar la tarea",
+      "completed": "Tarea completada",
+      "noQuestionnaire": "No se requiere cuestionario posterior para este tipo de tarea.",
+      "validationError": "Por favor, responde todas las preguntas antes de continuar.",
+      "finishTask": "Finalizar tarea"
+    },
+    "ConsentStep": {
+      "fullName": "Nombre completo",
+      "nameRequired": "El nombre es obligatorio",
+      "acceptTerms": "Acepto los términos de consentimiento",
+      "declineTerms": "No acepto los términos de consentimiento",
+      "continue": "Continuar",
+      "declinedTitle": "Consentimiento rechazado",
+      "declinedMessage1": "Has elegido no aceptar los términos de consentimiento para este estudio.",
+      "declinedMessage2": "Si confirmas esta acción, la prueba se terminará inmediatamente ya que tu participación requiere consentimiento explícito para proceder. Tus datos no serán recopilados ni almacenados.",
+      "declinedConfirm": "¿Estás seguro de que quieres finalizar la prueba sin participar?",
+      "goBack": "Volver",
+      "endTest": "Sí, finalizar prueba"
+    },
+    "PreTestStep": {
+      "title": "Prueba previa"
+    },
+    "PostTestStep": {
+      "title": "Prueba posterior"
+    },
     "buttons": {
-      "done": "Finalizado"
+      "done": "Hecho"
+    },
+    "messages": {
+      "noTasks": "Esta prueba no tiene ninguna tarea.",
+      "answerSaved": "Respuesta guardada con éxito."
+    },
+    "errors": {
+      "noAnswerData": "No se encontraron datos de respuesta.",
+      "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtalo de nuevo.",
+      "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtalo de nuevo.",
+      "noTestData": "Sin datos de prueba",
+      "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "¡Calibración completada!",
+      "waiting": "Esperando calibración...",
+      "calibrating": "Calibrando, por favor espere...",
+      "notOpened": "¿No se abrió la calibración?",
+      "clickHere": "Haga clic aquí",
+      "success": "¡La calibración fue exitosa!",
+      "continue": "¡CONTINUAR AL TEST!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Vista del Moderador",
+      "welcome": "Bienvenido a la Sesión de Prueba Moderada",
+      "description": "Como moderador, guiará al participante a través del proceso de prueba mientras observa sus interacciones a través de una videollamada.",
+      "instructionsTitle": "Instrucciones para el Moderador",
+      "instruction1": "Comience abriendo la sala de videollamada",
+      "instruction2": "Observe las interacciones del participante sin interferencias",
+      "instruction3": "Use el navegador de pasos para saltar entre las fases de la prueba",
+      "instruction4": "Brinde orientación solo cuando sea necesario",
+      "remember": "Recuerde:",
+      "note": "Su función es facilitar y observar. El participante debe completar las tareas de forma independiente a menos que solicite ayuda específicamente.",
+      "startSession": "Iniciar Sesión Moderada"
     },
     "WelcomeStep": {
       "welcome": "¡Bienvenido a RUXAILAB!",
