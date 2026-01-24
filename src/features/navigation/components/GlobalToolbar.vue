@@ -84,7 +84,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import LocaleChanger from '@/features/language/components/LocaleChanger.vue'
