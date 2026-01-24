@@ -241,6 +241,10 @@
       "finalReport": "अपने हीयुरिस्टिक मूल्यांकन के लिए अंतिम रिपोर्ट तैयार करें और उन तत्वों का चयन करें जिन्हें आप शामिल करना चाहते हैं।"
     }
   },
+  "storage": {
+    "noMediaFiles": "कोई मीडिया फ़ाइल नहीं मिली",
+    "mediaFiles": "मीडिया फ़ाइलें"
+  },
   "errors": {
     "invalidInvitation": "अमान्य आमंत्रण",
     "signupWithInvitationEmail": "उपयोगकर्ता को आमंत्रण के समान ईमेल का उपयोग करके साइन-अप करना होगा।",
@@ -670,6 +674,25 @@
     "goHome": "होम पर जाएँ"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "कोई सक्रिय सत्र नहीं मिला",
+      "selectRange": "रेंज चुनें",
+      "reset": "रीसेट करें",
+      "searchPlaceholder": "अध्ययन खोजें...",
+      "filters": {
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आने वाले",
+        "completed": "पूर्ण"
+      },
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "sessionDate": "सत्र तिथि",
+      "statusLabel": "स्थिति"
+    },
     "intros": {
       "click": "यहाँ क्लिक करें!",
       "learnMore": "और जानें",

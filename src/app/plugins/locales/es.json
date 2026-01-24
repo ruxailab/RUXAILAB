@@ -755,6 +755,25 @@
     "goHome": "Ir a la página principal"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "No se encontró ninguna sesión activa",
+      "selectRange": "Seleccionar rango",
+      "reset": "Restablecer",
+      "searchPlaceholder": "Buscar estudios...",
+      "filters": {
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Dónde colaboro",
+        "allStatuses": "Todos los estados",
+        "today": "Hoy",
+        "upcoming": "Próximo",
+        "completed": "Completado"
+      },
+      "ownership": "Propiedad",
+      "evaluator": "Evaluador",
+      "sessionDate": "Fecha de sesión",
+      "statusLabel": "Estado"
+    },
     "intros": {
       "click": "¡Haz clic aquí!",
       "learnMore": "Aprende más",
@@ -846,6 +865,10 @@
     "cooperators": {
       "invitationSent": "Invitación enviada con éxito"
     }
+  },
+  "storage": {
+    "noMediaFiles": "No se encontraron archivos multimedia",
+    "mediaFiles": "Archivos multimedia"
   },
   "alerts": {
     "copy": "Copia exitosa",
