@@ -74,6 +74,30 @@
     "new": "NUEVO",
     "test": "un estudio",
     "table": {
+      "itemsPerPage": "Elementos por página:",
+      "type": "Tipo",
+      "name": "Nombre",
+      "tags": "Etiquetas",
+      "owner": "Propietario",
+      "evaluator": "Evaluador",
+      "status": "Estado",
+      "sessionDate": "Fecha de sesión",
+      "participants": "Participantes",
+      "created": "Creado"
+    }
+  },
+  "storage": {
+    "pageTitle": "Almacenamiento",
+    "totalStorage": "Almacenamiento total",
+    "acrossFiles": "En {count} archivos",
+    "mediaFiles": "Archivos multimedia",
+    "searchByStudyOrDate": "Buscar por estudio o fecha",
+    "deleteFile": "Eliminar archivo",
+    "noMediaFiles": "No se encontraron archivos multimedia",
+    "confirmDeletion": "Confirmar eliminación",
+    "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar este archivo {type} de \"{studyName}\"?",
+    "actionCannotBeUndone": "Esta acción no se puede deshacer.",
+    "headers": {
       "type": "Tipo",
       "name": "Nombre",
       "tags": "Etiquetas",
@@ -819,6 +843,44 @@
       "version": "Versión:",
       "noTests": "No se encontraron pruebas",
       "noTemplates": "No se encontraron plantillas"
+    },
+    "sessions": {
+      "searchPlaceholder": "Buscar sesiones...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "sessionDate": "Fecha de sesión",
+      "selectRange": "Seleccionar rango",
+      "statusLabel": "Estado",
+      "ownership": "Propiedad",
+      "evaluator": "Evaluador",
+      "noActiveSessions": "No tienes sesiones activas",
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "today": "Hoy",
+        "upcoming": "Próximas",
+        "completed": "Completado",
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Donده colaboro"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Buscar plantillas...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "method": "Método",
+      "filters": {
+        "allMethods": "Todos los métodos",
+        "heuristicEvaluation": "Evaluación heurística",
+        "userUnmoderated": "Usuario no moderado",
+        "userModerated": "Usuario moderado",
+        "manualAccessibility": "Accesibilidad manual",
+        "automaticAccessibility": "Accesibilidad automática"
+      }
     },
     "createTest": {
       "title": "Crear una nueva prueba",

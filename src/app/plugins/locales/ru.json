@@ -50,6 +50,30 @@
     "new": "НОВОЕ",
     "test": "исследование",
     "table": {
+      "itemsPerPage": "Элементов на странице:",
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "participants": "Участники",
+      "created": "Создано"
+    }
+  },
+  "storage": {
+    "pageTitle": "Хранилище",
+    "totalStorage": "Общее хранилище",
+    "acrossFiles": "В {count} файлах",
+    "mediaFiles": "Медиафайлы",
+    "searchByStudyOrDate": "Поиск по исследованию или дате",
+    "deleteFile": "Удалить файл",
+    "noMediaFiles": "Медиафайлы не найдены",
+    "confirmDeletion": "Подтвердить удаление",
+    "deleteConfirmMessage": "Вы уверены, что хотите удалить этот файл {type} из \"{studyName}\"?",
+    "actionCannotBeUndone": "Это действие нельзя отменить.",
+    "headers": {
       "type": "Тип",
       "name": "Название",
       "tags": "Теги",
@@ -731,6 +755,44 @@
       "version": "Версия:",
       "noTests": "Тесты не найдены",
       "noTemplates": "Шаблоны не найдены"
+    },
+    "sessions": {
+      "searchPlaceholder": "Поиск сессий...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "sessionDate": "Дата сессии",
+      "selectRange": "Выбрать диапазон",
+      "statusLabel": "Статус",
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "noActiveSessions": "У вас нет активных сессий",
+      "filters": {
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершенный",
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Поиск шаблонов...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать диапазон",
+      "method": "Метод",
+      "filters": {
+        "allMethods": "Все методы",
+        "heuristicEvaluation": "Эвристическая оценка",
+        "userUnmoderated": "Немодерируемый пользователь",
+        "userModerated": "Модерируемый пользователь",
+        "manualAccessibility": "Ручная доступность",
+        "automaticAccessibility": "Автоматическая доступность"
+      }
     },
     "createTest": {
       "title": "Создать новый тест",
