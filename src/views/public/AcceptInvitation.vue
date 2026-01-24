@@ -226,15 +226,9 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { showError, showSuccess } from "@/shared/utils/toast";
+import { showSuccess } from "@/shared/utils/toast";
 
 const route = useRoute();
-// DEBUG: Check URL parameters
-console.log("🔗 URL Parameters:", {
-  token: route.query.token,
-  email: route.query.email,
-  fullUrl: window.location.href
-});
 const router = useRouter();
 const store = useStore();
 
@@ -302,8 +296,6 @@ const validateInvitation = async () => {
   }
 
   try {
-    console.log("🔄 Validating invitation...", { token, email });
-
     const result = await store.dispatch("validateInvitation", { token, email });
 
     if (result.valid === false) {
@@ -348,7 +340,6 @@ const validateInvitation = async () => {
 
     loading.value = false;
   } catch (err) {
-    console.error("❌ Validation error:", err);
     error.value = err.message || "Failed to validate invitation. Please try again.";
     loading.value = false;
     invitationValid.value = false;
@@ -362,9 +353,7 @@ const createAccount = async () => {
   error.value = "";
 
   try {
-    console.log("🔄 Creating account...");
-
-    const result = await store.dispatch("acceptInvitation", {
+    await store.dispatch("acceptInvitation", {
       token: invitationData.value.token,
       email: form.value.email,
       name: form.value.name,
@@ -381,7 +370,6 @@ const createAccount = async () => {
       redirectToStudy();
     }, 2000);
   } catch (err) {
-    console.error("❌ Account creation error:", err);
     error.value = err.message || "Failed to create account. Please try again.";
     creatingAccount.value = false;
   }
@@ -409,12 +397,9 @@ const redirectToLogin = () => {
 
 // Lifecycle
 onMounted(async () => {
-  console.log("🚀 AcceptInvitation component mounted");
-  
   try {
     await validateInvitation();
   } catch (err) {
-    console.error("Mount error:", err);
     error.value = "An unexpected error occurred. Please try again.";
     loading.value = false;
   }

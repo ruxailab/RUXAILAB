@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join {{testTitle}} - RUXAILAB Invitation</title>
     <style>
       @media only screen and (max-width: 600px) {
@@ -12,112 +13,126 @@
           display: block !important;
           width: 100% !important;
         }
+        .email-container {
+          width: 100% !important;
+          border-radius: 0 !important;
+        }
+      }
+      /* Accessibility improvements */
+      a:focus {
+        outline: 2px solid #059669 !important;
+        outline-offset: 2px !important;
+      }
+      /* Better contrast for low vision users */
+      .high-contrast-text {
+        color: #111827 !important;
+      }
+      .medium-contrast-text {
+        color: #374151 !important;
       }
     </style>
   </head>
   <body style="margin:0; padding:0; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background:#f8fafc;">
-    <table align="center" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <!-- Use div-based layout instead of deprecated table attributes -->
+    <div role="main" style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" class="email-container">
       <!-- Logo Header -->
-      <tr>
-        <td style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #059669 0%, #10b981 100%);">
-          <img src="../../../../src/assets/logo_full.png"
-               alt="RUXAILAB Logo"
-               style="display:block; margin:0 auto; max-width:200px; height:auto;">
-          <h1 style="color:white; margin:15px 0 0 0; font-size:24px; font-weight:600;">You're Invited!</h1>
-        </td>
-      </tr>
+      <div role="banner" style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #059669 0%, #10b981 100%);">
+        <img src="../../../../src/assets/logo_full.png"
+             alt="RUXAILAB Logo"
+             width="200"
+             height="auto"
+             style="display:block; margin:0 auto; max-width:200px; height:auto;">
+        <h1 style="color:#ffffff; margin:15px 0 0 0; font-size:24px; font-weight:600; line-height:1.3;">You're Invited!</h1>
+      </div>
 
       <!-- Content -->
-      <tr>
-        <td style="padding:40px 30px; color:#374151; font-size:16px; line-height:1.6;">
-          <p style="margin:0 0 20px 0; font-size:18px; color:#111827; font-weight:500;">Hello,</p>
-          
-          <p style="margin:0 0 20px 0;">
-            {{message}}
+      <div role="article" style="padding:40px 30px; color:#374151; font-size:16px; line-height:1.6;">
+        <p style="margin:0 0 20px 0; font-size:18px; color:#111827; font-weight:500;" class="high-contrast-text">Hello,</p>
+        
+        <p style="margin:0 0 20px 0;" class="medium-contrast-text">
+          {{message}}
+        </p>
+        
+        <div style="background:#f0fdf4; padding:25px; border-radius:8px; margin:25px 0; border:1px solid #bbf7d0;" role="region" aria-label="Study Invitation Details">
+          <h2 style="margin:0 0 15px 0; font-weight:600; color:#065f46; display:flex; align-items:center; font-size:16px;">
+            <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Study Invitation Details
+          </h2>
+          <h3 style="margin:0 0 10px 0; font-size:18px; font-weight:600; color:#111827;" class="high-contrast-text">{{testTitle}}</h3>
+          <p style="margin:0; color:#4b5563;" class="medium-contrast-text">{{testDescription}}</p>
+          <p style="margin:15px 0 0 0; font-size:14px; color:#6b7280;">
+            Invited by: <strong style="color:#111827;">{{adminName}}</strong> ({{adminEmail}})
           </p>
-          
-          <div style="background:#f0fdf4; padding:25px; border-radius:8px; margin:25px 0; border:1px solid #bbf7d0;">
-            <p style="margin:0 0 15px 0; font-weight:600; color:#065f46; display:flex; align-items:center;">
-              <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-              Study Invitation Details
-            </p>
-            <p style="margin:0 0 10px 0; font-size:18px; font-weight:600; color:#111827;">{{testTitle}}</p>
-            <p style="margin:0; color:#4b5563;">{{testDescription}}</p>
-            <p style="margin:15px 0 0 0; font-size:14px; color:#6b7280;">
-              Invited by: <strong>{{adminName}}</strong> ({{adminEmail}})
-            </p>
-          </div>
+        </div>
 
-          <!-- Steps Box -->
-          <div style="background:#fef3c7; padding:20px; border-radius:8px; margin:30px 0; border:1px solid #fbbf24;">
-            <p style="margin:0 0 15px 0; font-weight:600; color:#92400e; display:flex; align-items:center;">
-              <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              To Get Started:
-            </p>
-            <ol style="margin:0; padding-left:20px; color:#78350f;">
-              <li style="margin-bottom:8px;">Create your RUXAILAB account using this invitation link</li>
-              <li style="margin-bottom:8px;">You'll automatically be added to the study</li>
-              <li>Begin your participation immediately</li>
-            </ol>
-          </div>
-        </td>
-      </tr>
+        <!-- Steps Box -->
+        <div style="background:#fef3c7; padding:20px; border-radius:8px; margin:30px 0; border:1px solid #fbbf24;" role="region" aria-label="Getting Started Steps">
+          <h2 style="margin:0 0 15px 0; font-weight:600; color:#92400e; display:flex; align-items:center; font-size:16px;">
+            <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            To Get Started:
+          </h2>
+          <ol style="margin:0; padding-left:20px; color:#78350f;" class="medium-contrast-text">
+            <li style="margin-bottom:8px;">Create your RUXAILAB account using this invitation link</li>
+            <li style="margin-bottom:8px;">You'll automatically be added to the study</li>
+            <li>Begin your participation immediately</li>
+          </ol>
+        </div>
+      </div>
 
       <!-- Primary Button -->
-      <tr>
-        <td style="padding:0 30px 30px 30px; text-align:center;">
-          <a href="{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}"
-             style="display:inline-block; margin:10px; padding:18px 40px; background:linear-gradient(135deg, #059669 0%, #10b981 100%); color:#fff; text-decoration:none; border-radius:8px; font-size:17px; font-weight:600; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.3); transition: all 0.3s ease;"
-             class="button">
-             Accept Invitation & Create Account
-          </a>
-        </td>
-      </tr>
+      <div style="padding:0 30px 30px 30px; text-align:center;">
+        <a href="{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}"
+           style="display:inline-block; margin:10px; padding:18px 40px; background:linear-gradient(135deg, #059669 0%, #10b981 100%); color:#ffffff; text-decoration:none; border-radius:8px; font-size:17px; font-weight:600; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.3); transition: all 0.3s ease;"
+           class="button"
+           role="button"
+           aria-label="Accept Invitation and Create Account">
+           Accept Invitation & Create Account
+        </a>
+      </div>
 
       <!-- Security & Info -->
-      <tr>
-        <td style="padding:0 30px 25px 30px; text-align:center;">
-          <div style="background:#f3f4f6; padding:15px; border-radius:6px;">
-            <p style="margin:0; font-size:13px; color:#6b7280;">
-              <strong>🔒 Security Note:</strong> This invitation link:
-              <br>
-              • Expires in 7 days
-              <br>
-              • Can only be used once
-              <br>
-              • Is unique to your email address
-            </p>
-          </div>
-          <p style="margin:15px 0 0 0; font-size:13px; color:#9ca3af;">
-            If the button doesn't work, use this link:<br>
-            <span style="color:#059669; word-break: break-all;">{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}</span>
+      <div style="padding:0 30px 25px 30px; text-align:center;">
+        <div style="background:#f3f4f6; padding:15px; border-radius:6px;" role="note" aria-label="Security Information">
+          <p style="margin:0; font-size:13px; color:#4b5563;" class="medium-contrast-text">
+            <strong style="color:#111827;">🔒 Security Note:</strong> This invitation link:
+            <br>
+            • Expires in 7 days
+            <br>
+            • Can only be used once
+            <br>
+            • Is unique to your email address
           </p>
-        </td>
-      </tr>
+        </div>
+        <p style="margin:15px 0 0 0; font-size:13px; color:#6b7280;">
+          If the button doesn't work, use this link:<br>
+          <a href="{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}"
+             style="color:#059669; word-break: break-all; text-decoration:underline;">
+             {{site}}/accept-invitation?token={{invitationToken}}&email={{email}}
+          </a>
+        </p>
+      </div>
 
       <!-- Footer -->
-      <tr>
-        <td style="background:#f9fafb; padding:25px; text-align:center; font-size:13px; color:#6b7280; line-height:1.5; border-top:1px solid #e5e7eb;">
-          <div style="margin-bottom:15px;">
-            <p style="margin:0 0 8px 0; font-weight:500; color:#374151;">Need Assistance?</p>
-            <p style="margin:0;">
-              Contact the study organizer:<br>
-              <a href="mailto:{{adminEmail}}" style="color:#059669; text-decoration:none; font-weight:500;">{{adminEmail}}</a>
-            </p>
-          </div>
-          <p style="margin:15px 0 0 0; font-size:12px; color:#9ca3af; border-top:1px solid #e5e7eb; padding-top:15px;">
-            © 2025 RUXAILAB - User Experience Research Platform
-            <br>
-            <span style="font-size:11px;">This is an automated invitation, please do not reply directly to this email.</span>
+      <footer style="background:#f9fafb; padding:25px; text-align:center; font-size:13px; color:#6b7280; line-height:1.5; border-top:1px solid #e5e7eb;">
+        <div style="margin-bottom:15px;">
+          <p style="margin:0 0 8px 0; font-weight:500; color:#374151;" class="medium-contrast-text">Need Assistance?</p>
+          <p style="margin:0;">
+            Contact the study organizer:<br>
+            <a href="mailto:{{adminEmail}}" style="color:#059669; text-decoration:none; font-weight:500;">{{adminEmail}}</a>
           </p>
-        </td>
-      </tr>
-    </table>
+        </div>
+        <p style="margin:15px 0 0 0; font-size:12px; color:#9ca3af; border-top:1px solid #e5e7eb; padding-top:15px;">
+          © 2025 RUXAILAB - User Experience Research Platform
+          <br>
+          <span style="font-size:11px;">This is an automated invitation, please do not reply directly to this email.</span>
+        </p>
+      </footer>
+    </div>
   </body>
 </html>

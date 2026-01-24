@@ -31,23 +31,23 @@ export const sendEmail = functions.onCall({
       if (content.isUnregisteredUser) {
         // for unregistered user template
         htmlTemplate = htmlTemplate
-          .replace(/{{site}}/g, process.env.SITE_URL)
-          .replace(/{{invitationToken}}/g, content.data.token || "")
-          .replace(/{{email}}/g, encodeURIComponent(content.to))
-          .replace(/{{testTitle}}/g, content.data.testTitle || "Untitled Study")
-          .replace(/{{testDescription}}/g, content.data.testDescription || "")
-          .replace(/{{adminEmail}}/g, content.data.adminEmail || "")
-          .replace(/{{adminName}}/g, content.data.adminName || "Study Administrator")
-          .replace(/{{message}}/g, content.data.message || "You've been invited to participate in a study.");
+          .replaceAll('{{site}}', process.env.SITE_URL)
+          .replaceAll('{{invitationToken}}', content.data.token || "")
+          .replaceAll('{{email}}', encodeURIComponent(content.to))
+          .replaceAll('{{testTitle}}', content.data.testTitle || "Untitled Study")
+          .replaceAll('{{testDescription}}', content.data.testDescription || "")
+          .replaceAll('{{adminEmail}}', content.data.adminEmail || "")
+          .replaceAll('{{adminName}}', content.data.adminName || "Study Administrator")
+          .replaceAll('{{message}}', content.data.message || "You've been invited to participate in a study.");
       } else {
         // for registered user template
         htmlTemplate = htmlTemplate
-          .replace(/{{site}}/g, process.env.SITE_URL)
-          .replace(/{{message}}/g, content.data.message || "You've been invited to participate in a study.")
-          .replace(/{{testTitle}}/g, content.data.testTitle || "Untitled Study")
-          .replace(/{{testDescription}}/g, content.data.testDescription || "")
-          .replace(/{{adminEmail}}/g, content.data.adminEmail || "")
-          .replace(/{{adminName}}/g, content.data.adminName || "Study Administrator");
+          .replaceAll('{{site}}', process.env.SITE_URL)
+          .replaceAll('{{message}}', content.data.message || "You've been invited to participate in a study.")
+          .replaceAll('{{testTitle}}', content.data.testTitle || "Untitled Study")
+          .replaceAll('{{testDescription}}', content.data.testDescription || "")
+          .replaceAll('{{adminEmail}}', content.data.adminEmail || "")
+          .replaceAll('{{adminName}}', content.data.adminName || "Study Administrator");
       }
     }
     else if (content.template === 'passwordReset') {
@@ -60,15 +60,15 @@ export const sendEmail = functions.onCall({
       const templatePath = path.join(process.cwd(), "src/templates/mails/passwordReset.html");
       htmlTemplate = fs.readFileSync(templatePath, "utf-8");
       htmlTemplate = htmlTemplate
-        .replace("{{resetLink}}", link);
+        .replaceAll('{{resetLink}}', link);
     }
     else if (content.template === 'invitationAccepted') {
       const templatePath = path.join(process.cwd(), "src/templates/mails/invitation_accepted.html");
       htmlTemplate = fs.readFileSync(templatePath, "utf-8");
       htmlTemplate = htmlTemplate
-        .replace(/{{userEmail}}/g, content.data.userEmail || "")
-        .replace(/{{testTitle}}/g, content.data.testTitle || "")
-        .replace(/{{adminEmail}}/g, content.data.adminEmail || "");
+        .replaceAll('{{userEmail}}', content.data.userEmail || "")
+        .replaceAll('{{testTitle}}', content.data.testTitle || "")
+        .replaceAll('{{adminEmail}}', content.data.adminEmail || "");
     }
 
     const mail = {

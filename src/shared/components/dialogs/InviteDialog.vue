@@ -293,28 +293,20 @@ const handleEmailInput = () => {
     .filter(email => email && isValidEmail(email))
   
   emails.forEach(email => {
-    if (!isCoopAlreadySelected(email)) {
-      const existingUser = props.users.find(user => user.email === email)
-      
-      if (existingUser) {
-        // if registered user - add as existing user
-        if (!selectedCoops.value.some(coop => 
-          (typeof coop === 'object' && coop.email === email) || coop === email
-        )) {
-          selectedCoops.value.push(existingUser)
-        }
-      } else {
-        // if nonregistered user - add as unregistered user
-        if (!selectedCoops.value.some(coop => 
-          typeof coop === 'object' && coop.email === email
-        )) {
-          selectedCoops.value.push({
-            email: email,
-            isUnregistered: true,
-            invitationToken: uidgen.generateSync()
-          })
-        }
-      }
+    if (isCoopAlreadySelected(email)) return
+    
+    const existingUser = props.users.find(user => user.email === email)
+    
+    if (existingUser) {
+      // Registered user
+      selectedCoops.value.push(existingUser)
+    } else {
+      // Non-registered user
+      selectedCoops.value.push({
+        email: email,
+        isUnregistered: true,
+        invitationToken: uidgen.generateSync()
+      })
     }
   })
   

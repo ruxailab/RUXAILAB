@@ -272,7 +272,7 @@ const handleSendInvitations = async (invitationData) => {
         inviteMessage: inviteMessage
       })
       cooperatorsEdit.value.push(newCooperator)
-    } else if (!coop.id) {
+    } else if (typeof coop === 'string' || !coop.id) {
       // string email (registered user not found in combobox)
       const existingUser = users.value.find(user => user.email === coop)
       cooperatorsEdit.value.push({
