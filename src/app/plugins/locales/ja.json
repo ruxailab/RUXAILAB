@@ -281,6 +281,11 @@
     "sessions": "セッション",
     "personal": "個人",
     "explore": "探す",
+    "activeStudies": {
+      "noActiveStudies": "アクティブな研究がありません",
+      "createNewStudy": "新しい研究を作成",
+      "emptyStateMessage": "まだ研究がありません。最初の研究を作成して、貴重なユーザーインサイトの収集を始めましょう。"
+    },
     "activeStudiesOverview": "アクティブな研究の概要",
     "viewAll": "すべて表示",
     "showMore": "もっと見る",

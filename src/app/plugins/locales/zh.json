@@ -295,6 +295,11 @@
     "sessions": "会话",
     "personal": "个人",
     "explore": "探索",
+    "activeStudies": {
+      "noActiveStudies": "没有活跃的研究",
+      "createNewStudy": "创建新研究",
+      "emptyStateMessage": "您还没有任何研究。创建您的第一个研究，开始收集有价值的用户洞察。"
+    },
     "activeStudiesOverview": "活跃研究概览",
     "viewAll": "查看全部",
     "showMore": "显示更多",
