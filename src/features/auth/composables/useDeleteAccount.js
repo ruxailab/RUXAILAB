@@ -49,28 +49,22 @@ export function useDeleteAccount() {
     try {
       const userDocRef = doc(db, 'users', user.uid)
       await deleteDoc(userDocRef)
-      console.log('Firestore user document deleted')
 
       try {
         await store.dispatch('deleteAuth', user.uid)
-        console.log('Vuex store cleanup completed')
       } catch (storeError) {
-        console.warn('Store cleanup failed (non-critical):', storeError)
+        return storeError
       }
 
       await deleteUser(user)
-      console.log('Firebase Auth user deleted')
 
       showSuccess('profile.accountDeletedSuccess')
 
       await signOut()
     } catch (error) {
-      console.error('Error deleting account:', error)
-
       if (error.code === 'permission-denied') {
         showError('profile.permissionDenied')
       } else if (error.code === 'not-found') {
-        console.warn('Firestore document not found, continuing...')
         try {
           await deleteUser(user)
           showSuccess('profile.accountDeletedSuccess')
@@ -119,10 +113,8 @@ export function useDeleteAccount() {
     try {
       isDeleting.value = true
       await reauthenticateWithPopup(user, new GoogleAuthProvider())
-      console.log('Google reauthentication successful')
       await deleteAccount(user)
     } catch (error) {
-      console.error('Error during Google account deletion:', error)
       handleAuthError(error, GOOGLE_ERRORS)
     } finally {
       isDeleting.value = false
@@ -148,11 +140,9 @@ export function useDeleteAccount() {
 
       const cred = EmailAuthProvider.credential(user.email, userPassword.value)
       await reauthenticateWithCredential(user, cred)
-      console.log('Email reauthentication successful')
 
       await deleteAccount(user)
     } catch (error) {
-      console.error('Error during email account deletion:', error)
       handleAuthError(error, EMAIL_ERRORS)
     } finally {
       isDeleting.value = false
