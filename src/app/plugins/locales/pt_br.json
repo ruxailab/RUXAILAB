@@ -700,7 +700,11 @@
       "filters": {
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde colaboro"
+        "whereICollaborate": "Onde colaboro",
+        "allStatuses": "Todos os status",
+        "today": "Hoje",
+        "upcoming": "Em breve",
+        "completed": "Concluído"
       },
       "ownership": "Propriedade",
       "evaluator": "Avaliador",

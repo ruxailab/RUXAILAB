@@ -675,7 +675,11 @@
       "filters": {
         "allStudies": "Все исследования",
         "myStudies": "Мои исследования",
-        "whereICollaborate": "Где я сотрудничаю"
+        "whereICollaborate": "Где я сотрудничаю",
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершено"
       },
       "ownership": "Владение",
       "evaluator": "Оценщик",

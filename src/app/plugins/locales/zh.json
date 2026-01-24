@@ -671,7 +671,11 @@
       "filters": {
         "allStudies": "所有研究",
         "myStudies": "我的研究",
-        "whereICollaborate": "我参与协作的"
+        "whereICollaborate": "我参与协作的",
+        "allStatuses": "所有状态",
+        "today": "今天",
+        "upcoming": "即将到来",
+        "completed": "已完成"
       },
       "ownership": "所有权",
       "evaluator": "评估者",
