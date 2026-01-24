@@ -397,12 +397,7 @@ const redirectToLogin = () => {
 
 // Lifecycle
 onMounted(async () => {
-  try {
-    await validateInvitation();
-  } catch (err) {
-    error.value = "An unexpected error occurred. Please try again.";
-    loading.value = false;
-  }
+  await validateInvitation();
 });
 </script>
 
