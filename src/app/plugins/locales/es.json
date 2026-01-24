@@ -763,7 +763,11 @@
       "filters": {
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Dónde colaboro"
+        "whereICollaborate": "Dónde colaboro",
+        "allStatuses": "Todos los estados",
+        "today": "Hoy",
+        "upcoming": "Próximo",
+        "completed": "Completado"
       },
       "ownership": "Propiedad",
       "evaluator": "Evaluador",

@@ -682,7 +682,11 @@
       "filters": {
         "allStudies": "सभी अध्ययन",
         "myStudies": "मेरे अध्ययन",
-        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आने वाले",
+        "completed": "पूर्ण"
       },
       "ownership": "स्वामित्व",
       "evaluator": "मूल्यांकनकर्ता",

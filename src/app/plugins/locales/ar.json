@@ -690,7 +690,11 @@
       "filters": {
         "allStudies": "جميع الدراسات",
         "myStudies": "دراساتي",
-        "whereICollaborate": "حيث أتعاون"
+        "whereICollaborate": "حيث أتعاون",
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "قادم",
+        "completed": "مكتمل"
       },
       "ownership": "الملكية",
       "evaluator": "المقيّم",

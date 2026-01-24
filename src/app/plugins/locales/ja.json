@@ -657,7 +657,11 @@
       "filters": {
         "allStudies": "すべての研究",
         "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中"
+        "whereICollaborate": "コラボレーション中",
+        "allStatuses": "すべてのステータス",
+        "today": "今日",
+        "upcoming": "今後",
+        "completed": "完了"
       },
       "ownership": "所有権",
       "evaluator": "評価者",

@@ -694,7 +694,11 @@
       "filters": {
         "allStudies": "Toutes les études",
         "myStudies": "Mes études",
-        "whereICollaborate": "Où je collabore"
+        "whereICollaborate": "Où je collabore",
+        "allStatuses": "Tous les statuts",
+        "today": "Aujourd'hui",
+        "upcoming": "À venir",
+        "completed": "Terminé"
       },
       "ownership": "Propriété",
       "evaluator": "Évaluateur",
