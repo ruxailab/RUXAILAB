@@ -682,6 +682,25 @@
     "goHome": "الذهاب إلى الصفحة الرئيسية"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "لم يتم العثور على جلسة نشطة",
+      "selectRange": "تحديد النطاق",
+      "reset": "إعادة تعيين",
+      "searchPlaceholder": "البحث في الدراسات...",
+      "filters": {
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون",
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "قادم",
+        "completed": "مكتمل"
+      },
+      "ownership": "الملكية",
+      "evaluator": "المقيّم",
+      "sessionDate": "تاريخ الجلسة",
+      "statusLabel": "الحالة"
+    },
     "intros": {
       "click": "انقر هنا!",
       "learnMore": "تعلم المزيد",
@@ -773,6 +792,10 @@
     "cooperators": {
       "invitationSent": "تم إرسال الدعوة بنجاح"
     }
+  },
+  "storage": {
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "mediaFiles": "ملفات الوسائط"
   },
   "alerts": {
     "copy": "تم النسخ بنجاح",
