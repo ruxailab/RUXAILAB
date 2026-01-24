@@ -1,38 +1,6 @@
 {
   "language": "言語",
   "auth": {
-    "signupSuccess": "サインアップに成功しました",
-    "logoutSuccess": "ログアウトに成功しました",
-    "resetPasswordSuccess": "パスワードリセット用のメールを送信しました",
-    "deleteSuccess": "アカウントが正常に削除されました",
-    "loginSuccess": "ログインに成功しました",
-    "SIGNIN": {
-      "sign-in": "ログイン",
-      "sign-in-title": "お帰りなさい",
-      "sign-in-subtitle": "続行するにはアカウントにサインインしてください",
-      "email": "メールアドレス",
-      "username": "ユーザー名",
-      "password": "パスワード",
-      "signupSubtitle": "開始するために情報を入力してください",
-      "dont-have-account": "アカウントをお持ちでないですか？登録",
-      "forgot-password": "パスワードをお忘れですか？",
-      "sign-up": "登録",
-      "contact": "連絡先番号",
-      "confirmPassword": "パスワードを確認",
-      "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン",
-      "continueWithGoogle": "Googleで続行",
-      "rememberMe": "ログイン情報を保持する",
-      "or": "または"
-    },
-    "FORGOT_PASSWORD": {
-      "reset_password": "パスワードをリセット",
-      "email": "メールアドレス",
-      "instructions": "メールアドレスを入力してください。パスワードリセット用のリンクをお送りします。",
-      "reset_button": "リセットリンクを送信",
-      "back_to_signin": "サインインに戻る"
-    }
-  },
-  "auth": {
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
@@ -82,6 +50,30 @@
     "new": "新着",
     "test": "テスト",
     "table": {
+      "itemsPerPage": "ページあたりのアイテム数:",
+      "type": "タイプ",
+      "name": "名前",
+      "tags": "タグ",
+      "owner": "オーナー",
+      "evaluator": "評価者",
+      "status": "ステータス",
+      "sessionDate": "セッション日",
+      "participants": "参加者",
+      "created": "作成日"
+    }
+  },
+  "storage": {
+    "pageTitle": "ストレージ",
+    "totalStorage": "総ストレージ",
+    "acrossFiles": "{count} ファイル",
+    "mediaFiles": "メディアファイル",
+    "searchByStudyOrDate": "研究または日付で検索",
+    "deleteFile": "ファイルを削除",
+    "noMediaFiles": "メディアファイルが見つかりません",
+    "confirmDeletion": "削除の確認",
+    "deleteConfirmMessage": "\"{studyName}\" からこの {type} ファイルを削除してもよろしいですか？",
+    "actionCannotBeUndone": "この操作は元に戻せません。",
+    "headers": {
       "type": "タイプ",
       "name": "名前",
       "tags": "タグ",
@@ -248,6 +240,10 @@
       "finalReport": "含めたい項目を選択して、ヒューリスティック評価の最終レポートを準備します。"
     }
   },
+  "storage": {
+    "noMediaFiles": "メディアファイルが見つかりません",
+    "mediaFiles": "メディアファイル"
+  },
   "errors": {
     "invalidInvitation": "無効な招待です",
     "signupWithInvitationEmail": "ユーザーは招待のメールアドレスと同じメールで登録する必要があります。",
@@ -273,6 +269,8 @@
     "cta": "始める"
   },
   "Dashboard": {
+    "welcomeBack": "おかえりなさい、{name}さん！",
+    "subtitle": "今日のあなたの研究プロジェクトの状況です",
     "createNewTest": "新しいテストを作成",
     "tests": "テスト",
     "templates": "テンプレート",
@@ -282,7 +280,41 @@
     "publicTests": "公開テスト",
     "sessions": "セッション",
     "personal": "個人",
-    "explore": "探す"
+    "explore": "探す",
+    "activeStudiesOverview": "アクティブな研究の概要",
+    "viewAll": "すべて表示",
+    "showMore": "もっと見る",
+    "showLess": "少なく表示",
+    "progress": "進捗",
+    "participants": "参加者",
+    "participantsLabel": "参加者",
+    "daysLeft": "残り日数",
+    "dayLeft": "残り1日",
+    "studies": "研究",
+    "storage": "ストレージ",
+    "free": "無料",
+    "plan": "プラン",
+    "recentActivity": "最近のアクティビティ",
+    "comingSoon": "近日公開",
+    "mostUsedMethods": "最も使用されている方法",
+    "use": "使用",
+    "uses": "使用回数",
+    "noDataAvailable": "まだデータがありません",
+    "createFirstStudy": "ここに統計を表示するには、最初の研究を作成してください。",
+    "nextSession": "次のセッション",
+    "noSessionsScheduled": "予定されたセッションはありません",
+    "nextSessionWillAppear": "次のセッションがここに表示されます",
+    "latestBlogPosts": "最新のブログ投稿",
+    "viewBlog": "ブログを見る",
+    "date": "日付",
+    "time": "時間",
+    "status": {
+      "active": "アクティブ",
+      "recruiting": "募集中",
+      "paused": "一時停止",
+      "finished": "完了",
+      "unknown": "不明"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -641,6 +673,25 @@
     "goHome": "ホームに戻る"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "アクティブなセッションが見つかりません",
+      "selectRange": "範囲を選択",
+      "reset": "リセット",
+      "searchPlaceholder": "研究を検索...",
+      "filters": {
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中",
+        "allStatuses": "すべてのステータス",
+        "today": "今日",
+        "upcoming": "今後",
+        "completed": "完了"
+      },
+      "ownership": "所有権",
+      "evaluator": "評価者",
+      "sessionDate": "セッション日",
+      "statusLabel": "ステータス"
+    },
     "intros": {
       "click": "ここをクリック！",
       "learnMore": "詳しく知る",
@@ -739,6 +790,44 @@
         "participants": "参加者",
         "created": "作成日",
         "itemsPerPage": "ページあたりのアイテム数:"
+      }
+    },
+    "sessions": {
+      "searchPlaceholder": "セッションを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "sessionDate": "セッション日",
+      "selectRange": "範囲を選択",
+      "statusLabel": "ステータス",
+      "ownership": "所有権",
+      "evaluator": "評価者",
+      "noActiveSessions": "アクティブなセッションがありません",
+      "filters": {
+        "allStatuses": "すべてのステータス",
+        "today": "今日",
+        "upcoming": "今後",
+        "completed": "完了",
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "テンプレートを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "範囲を選択",
+      "method": "方法",
+      "filters": {
+        "allMethods": "すべての方法",
+        "heuristicEvaluation": "ヒューリスティック評価",
+        "userUnmoderated": "ユーザー非モデレート",
+        "userModerated": "ユーザーモデレート",
+        "manualAccessibility": "手動アクセシビリティー",
+        "automaticAccessibility": "自動アクセシビリティー"
       }
     },
     "createTest": {
@@ -868,11 +957,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1133,11 +1218,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -1182,6 +1263,70 @@
         "finished": "完了",
         "upcoming": "近日公開"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "ユーザーテスト研究",
+      "unmoderatedStudy": "非モデレート型研究",
+      "moderatedStudy": "モデレート型研究",
+      "active": "アクティブ",
+      "draft": "下書き",
+      "completed": "完了",
+      "archived": "アーカイブ済み"
+    },
+    "studyOverview": {
+      "totalParticipants": "参加者総数",
+      "completed": "完了",
+      "rate": "{percentage}% 完了率",
+      "inProgress": "進行中",
+      "active": "{percentage}% アクティブ",
+      "averageTime": "平均時間",
+      "completionTime": "完了時間",
+      "minUnit": "{value} 分"
+    },
+    "managementModules": {
+      "title": "管理モジュール",
+      "description": "参加者、タスク、設定を管理し、研究データを分析するための包括的なツール",
+      "additionalModules": "追加モジュール用スペース"
+    },
+    "participants": {
+      "title": "参加者",
+      "subtitle": "テスト参加状況の概要",
+      "beta": "ベータ",
+      "completed": "完了",
+      "notStarted": "未開始",
+      "pendingInvites": "保留中の招待",
+      "overallProgress": "全体の進捗",
+      "participantsCompleted": "{total} 人中 {completed} 人の参加者が完了",
+      "details": "詳細"
+    },
+    "tasks": {
+      "title": "タスク概要",
+      "subtitle": "タスク構造と完了状況",
+      "beta": "ベータ",
+      "noTasksConfigured": "タスクが設定されていません",
+      "taskCompletionRate": "タスク完了率",
+      "totalTasks": "タスク総数",
+      "avgTaskDuration": "平均タスク時間",
+      "successRate": "成功率",
+      "taskTypes": "タスクタイプ",
+      "viewTasks": "タスクを見る"
+    },
+    "storage": {
+      "title": "ストレージ使用状況",
+      "subtitle": "メディアファイルとストレージ指標",
+      "beta": "ベータ",
+      "storageUsed": "使用済みストレージ",
+      "storageQuota": "{quota} 中 {used} 使用済み",
+      "mediaFiles": "メディアファイル",
+      "videoRecordings": "ビデオ録画",
+      "audioRecordings": "オーディオ録音",
+      "screenRecordings": "画面録画",
+      "storageBreakdown": "ストレージ内訳",
+      "responsesData": "レスポンスデータ",
+      "analyticsData": "分析データ",
+      "manageStorage": "ストレージ管理"
     }
   }
 }

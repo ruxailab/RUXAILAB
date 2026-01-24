@@ -37,8 +37,8 @@
             variant="outlined"
             rounded="lg"
             class="study-card"
-            @click="goToStudy(study)"
             hover
+            @click="goToStudy(study)"
           >
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
@@ -151,10 +151,6 @@ const loading = ref(false)
 const studiesWithAnswers = ref([])
 const user = computed(() => store.getters.user)
 
-const isLongDescription = (description) => {
-  return description && description.length > 250
-}
-
 const studies = computed(() => {
   return props.studies.length > 0
     ? studiesWithAnswers.value
@@ -198,8 +194,8 @@ async function loadAnswers() {
     }
     finalFour(last4)
   } catch (e) {
-    console.error('Error loading answers', e)
     studiesWithAnswers.value = []
+    return e
   } finally {
     loading.value = false
   }

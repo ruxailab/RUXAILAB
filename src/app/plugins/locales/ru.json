@@ -1,38 +1,6 @@
 {
   "language": "Язык",
   "auth": {
-    "signupSuccess": "Регистрация успешна",
-    "logoutSuccess": "Выход успешен",
-    "resetPasswordSuccess": "Письмо для сброса пароля отправлено",
-    "deleteSuccess": "Аккаунт успешно удален",
-    "loginSuccess": "Вход выполнен успешно",
-    "SIGNIN": {
-      "sign-in": "Войти",
-      "sign-in-title": "С возвращением",
-      "sign-in-subtitle": "Войдите в свой аккаунт, чтобы продолжить",
-      "email": "Электронная почта",
-      "username": "Имя пользователя",
-      "password": "Пароль",
-      "signupSubtitle": "Заполните свои данные, чтобы начать",
-      "dont-have-account": "Нет аккаунта?",
-      "forgot-password": "Забыли пароль?",
-      "sign-up": "Создать аккаунт",
-      "contact": "Контактный номер",
-      "confirmPassword": "Подтвердите пароль",
-      "alreadyHaveAnAccount": "Уже есть аккаунт?",
-      "continueWithGoogle": "Продолжить с Google",
-      "rememberMe": "Запомнить меня",
-      "or": "или продолжить с"
-    },
-    "FORGOT_PASSWORD": {
-      "reset_password": "Сбросить пароль",
-      "email": "Электронная почта",
-      "instructions": "Введите свой адрес электронной почты, и мы отправим вам ссылку для сброса пароля.",
-      "reset_button": "Отправить ссылку сброса",
-      "back_to_signin": "Вернуться ко входу"
-    }
-  },
-  "auth": {
     "FORGOT_PASSWORD": {
       "reset_password": "Сбросить пароль",
       "email": "Электронная почта",
@@ -82,6 +50,30 @@
     "new": "НОВОЕ",
     "test": "исследование",
     "table": {
+      "itemsPerPage": "Элементов на странице:",
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "participants": "Участники",
+      "created": "Создано"
+    }
+  },
+  "storage": {
+    "pageTitle": "Хранилище",
+    "totalStorage": "Общее хранилище",
+    "acrossFiles": "В {count} файлах",
+    "mediaFiles": "Медиафайлы",
+    "searchByStudyOrDate": "Поиск по исследованию или дате",
+    "deleteFile": "Удалить файл",
+    "noMediaFiles": "Медиафайлы не найдены",
+    "confirmDeletion": "Подтвердить удаление",
+    "deleteConfirmMessage": "Вы уверены, что хотите удалить этот файл {type} из \"{studyName}\"?",
+    "actionCannotBeUndone": "Это действие нельзя отменить.",
+    "headers": {
       "type": "Тип",
       "name": "Название",
       "tags": "Теги",
@@ -266,6 +258,10 @@
       "finalReport": "Подготовьте итоговый отчет для вашей эвристической оценки, выбрав элементы, которые хотите включить."
     }
   },
+  "storage": {
+    "noMediaFiles": "Медиафайлы не найдены",
+    "mediaFiles": "Медиафайлы"
+  },
   "errors": {
     "invalidInvitation": "Недействительное приглашение",
     "signupWithInvitationEmail": "Пользователь должен зарегистрироваться с тем же адресом электронной почты, что и в приглашении.",
@@ -291,6 +287,8 @@
     "cta": "Начать"
   },
   "Dashboard": {
+    "welcomeBack": "С возвращением, {name}!",
+    "subtitle": "Вот что происходит с вашими исследовательскими проектами сегодня",
     "createNewTest": "Создать новое исследование",
     "tests": "Тесты",
     "templates": "Шаблоны",
@@ -300,7 +298,41 @@
     "publicTests": "Публичные тесты",
     "sessions": "Сессии",
     "personal": "Личное",
-    "explore": "Исследовать"
+    "explore": "Исследовать",
+    "activeStudiesOverview": "Обзор активных исследований",
+    "viewAll": "Посмотреть все",
+    "showMore": "Показать больше",
+    "showLess": "Показать меньше",
+    "progress": "Прогресс",
+    "participants": "Участники",
+    "participantsLabel": "Участники",
+    "daysLeft": "дней осталось",
+    "dayLeft": "день остался",
+    "studies": "Исследования",
+    "storage": "Хранилище",
+    "free": "Бесплатно",
+    "plan": "План",
+    "recentActivity": "Недавняя активность",
+    "comingSoon": "Скоро",
+    "mostUsedMethods": "Наиболее используемые методы",
+    "use": "использование",
+    "uses": "использований",
+    "noDataAvailable": "Данных пока нет",
+    "createFirstStudy": "Создайте свое первое исследование, чтобы увидеть статистику здесь.",
+    "nextSession": "Следующая сессия",
+    "noSessionsScheduled": "Сессии не запланированы",
+    "nextSessionWillAppear": "Ваша следующая сессия появится здесь",
+    "latestBlogPosts": "Последние статьи в блоге",
+    "viewBlog": "Смотреть блог",
+    "date": "Дата",
+    "time": "Время",
+    "status": {
+      "active": "Активный",
+      "recruiting": "Набор",
+      "paused": "Приостановлен",
+      "finished": "Завершен",
+      "unknown": "Неизвестно"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -659,6 +691,25 @@
     "goHome": "Перейти на главную"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Активных сессий не найдено",
+      "selectRange": "Выбрать диапазон",
+      "reset": "Сбросить",
+      "searchPlaceholder": "Поиск исследований...",
+      "filters": {
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю",
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершено"
+      },
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "sessionDate": "Дата сессии",
+      "statusLabel": "Статус"
+    },
     "intros": {
       "click": "Нажмите здесь!",
       "learnMore": "Узнать больше",
@@ -757,6 +808,44 @@
         "participants": "Участники",
         "created": "Создано",
         "itemsPerPage": "Элементов на странице:"
+      }
+    },
+    "sessions": {
+      "searchPlaceholder": "Поиск сессий...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "sessionDate": "Дата сессии",
+      "selectRange": "Выбрать диапазон",
+      "statusLabel": "Статус",
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "noActiveSessions": "У вас нет активных сессий",
+      "filters": {
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершенный",
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Поиск шаблонов...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать диапазон",
+      "method": "Метод",
+      "filters": {
+        "allMethods": "Все методы",
+        "heuristicEvaluation": "Эвристическая оценка",
+        "userUnmoderated": "Немодерируемый пользователь",
+        "userModerated": "Модерируемый пользователь",
+        "manualAccessibility": "Ручная доступность",
+        "automaticAccessibility": "Автоматическая доступность"
       }
     },
     "createTest": {
@@ -1205,6 +1294,70 @@
         "finished": "Завершено",
         "upcoming": "Предстоящее"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Исследование пользовательского тестирования",
+      "unmoderatedStudy": "Немодерируемое исследование",
+      "moderatedStudy": "Модерируемое исследование",
+      "active": "Активно",
+      "draft": "Черновик",
+      "completed": "Завершено",
+      "archived": "Архивировано"
+    },
+    "studyOverview": {
+      "totalParticipants": "Всего участников",
+      "completed": "Завершено",
+      "rate": "{percentage}% завершения",
+      "inProgress": "В процессе",
+      "active": "{percentage}% активно",
+      "averageTime": "Среднее время",
+      "completionTime": "Время завершения",
+      "minUnit": "{value} мин"
+    },
+    "managementModules": {
+      "title": "Модули управления",
+      "description": "Комплексные инструменты для управления участниками, задачами, настройками и анализа данных исследования",
+      "additionalModules": "Место для дополнительных модулей"
+    },
+    "participants": {
+      "title": "Участники",
+      "subtitle": "Обзор участия в тестировании",
+      "beta": "Бета",
+      "completed": "Завершено",
+      "notStarted": "Не начато",
+      "pendingInvites": "Ожидающие приглашения",
+      "overallProgress": "Общий прогресс",
+      "participantsCompleted": "{completed} из {total} участников завершили",
+      "details": "Подробнее"
+    },
+    "tasks": {
+      "title": "Обзор задач",
+      "subtitle": "Структура и выполнение задач",
+      "beta": "Бета",
+      "noTasksConfigured": "Задачи не настроены",
+      "taskCompletionRate": "Процент выполнения задач",
+      "totalTasks": "Всего задач",
+      "avgTaskDuration": "Средняя продолжительность",
+      "successRate": "Процент успеха",
+      "taskTypes": "Типы задач",
+      "viewTasks": "Посмотреть задачи"
+    },
+    "storage": {
+      "title": "Использование хранилища",
+      "subtitle": "Медиафайлы и метрики хранилища",
+      "beta": "Бета",
+      "storageUsed": "Использовано хранилища",
+      "storageQuota": "Использовано {used} из {quota}",
+      "mediaFiles": "Медиафайлы",
+      "videoRecordings": "Видеозаписи",
+      "audioRecordings": "Аудиозаписи",
+      "screenRecordings": "Записи экрана",
+      "storageBreakdown": "Разбивка хранилища",
+      "responsesData": "Данные ответов",
+      "analyticsData": "Аналитические данные",
+      "manageStorage": "Управление хранилищем"
     }
   }
 }

@@ -31,24 +31,31 @@ export default {
         // Create a shallow copy with transformed heuristicAnswers
         const transformedDoc = {
           ...state.testAnswerDocument,
-          heuristicAnswers: {}
+          heuristicAnswers: {},
         }
 
-        for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
+        for (const [key, value] of Object.entries(
+          state.testAnswerDocument.heuristicAnswers,
+        )) {
           transformedDoc.heuristicAnswers[key] = {
             ...value,
-            heuristicQuestions: value.heuristicQuestions.map(heuristic => ({
+            heuristicQuestions: value.heuristicQuestions.map((heuristic) => ({
               ...heuristic,
-              heuristicQuestions: heuristic.heuristicQuestions.map(question => ({
-                ...question,
-                heuristicAnswer: question.heuristicAnswer?.text
-                  ? question.heuristicAnswer
-                  : {
-                    text: testOptions?.find(op => op.value === question.heuristicAnswer)?.text ?? "",
-                    value: question.heuristicAnswer,
-                  }
-              }))
-            }))
+              heuristicQuestions: heuristic.heuristicQuestions.map(
+                (question) => ({
+                  ...question,
+                  heuristicAnswer: question.heuristicAnswer?.text
+                    ? question.heuristicAnswer
+                    : {
+                        text:
+                          testOptions?.find(
+                            (op) => op.value === question.heuristicAnswer,
+                          )?.text ?? '',
+                        value: question.heuristicAnswer,
+                      },
+                }),
+              ),
+            })),
           }
         }
 
@@ -59,12 +66,12 @@ export default {
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
-        return {};
+        return {}
       }
 
       // Guard against undefined rootState.test or rootState.test.testStructure
       if (!rootState.test || !rootState.test.testStructure) {
-        return {};
+        return {}
       }
       if (!rootState.user) {
         return {}
@@ -75,67 +82,67 @@ export default {
 
         return heuristicAnswers[rootState.user.id]
           ? HeuristicAnswer.toHeuristicAnswer(
-            heuristicAnswers[rootState.user.id],
-            rootState.test.testOptions,
-          )
+              heuristicAnswers[rootState.user.id],
+              rootState.test.testOptions,
+            )
           : new HeuristicAnswer({
-            userDocId: rootState.user.id,
-          })
+              userDocId: rootState.user.id,
+            })
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
         const taskAnswers = state.testAnswerDocument.taskAnswers || {}
 
         return taskAnswers[rootState.user.id]
-          ? UserStudyEvaluatorAnswer.toModel(
-            taskAnswers[rootState.user.id],
-          )
+          ? UserStudyEvaluatorAnswer.toModel(taskAnswers[rootState.user.id])
           : new UserStudyEvaluatorAnswer({
-            userDocId: rootState.user.id,
-            preTestAnswer: (() => {
-              const preTestAnswer = [];
-              const preTestLength = rootState.test.testStructure.preTest?.length || 0;
-              for (let i = 0; i < preTestLength; i++) {
-                preTestAnswer[i] = {
-                  preTestAnswerId: i,
-                  answer: '',
-                };
-              }
-              return preTestAnswer;
-            })(),
-            consent: rootState.test.testStructure.consent || false,
-            postTestAnswer: rootState.test.testStructure.postTest || [],
-            preTestCompleted: false,
-            consentCompleted: false,
-            fullName: '',
-            postTestCompleted: false,
-            tasks: (() => {
-              const tasks = {};
-              const userTasksLength = rootState.test.testStructure.userTasks?.length || 0;
-              for (let i = 0; i < userTasksLength; i++) {
-                tasks[i] = new TaskAnswer({ taskId: i });
-              }
-              return tasks;
-            })(),
-          });
+              userDocId: rootState.user.id,
+              preTestAnswer: (() => {
+                const preTestAnswer = []
+                const preTestLength =
+                  rootState.test.testStructure.preTest?.length || 0
+                for (let i = 0; i < preTestLength; i++) {
+                  preTestAnswer[i] = {
+                    preTestAnswerId: i,
+                    answer: '',
+                  }
+                }
+                return preTestAnswer
+              })(),
+              consent: rootState.test.testStructure.consent || false,
+              postTestAnswer: rootState.test.testStructure.postTest || [],
+              preTestCompleted: false,
+              consentCompleted: false,
+              fullName: '',
+              postTestCompleted: false,
+              tasks: (() => {
+                const tasks = {}
+                const userTasksLength =
+                  rootState.test.testStructure.userTasks?.length || 0
+                for (let i = 0; i < userTasksLength; i++) {
+                  tasks[i] = new TaskAnswer({ taskId: i })
+                }
+                return tasks
+              })(),
+            })
       }
 
-      return {};
+      return {}
     },
     visibleUserAnswers(state) {
-      if (!state.testAnswerDocument) return {};
+      if (!state.testAnswerDocument) return {}
 
-      const doc = state.testAnswerDocument;
+      const doc = state.testAnswerDocument
 
       if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
-            ([, answer]) => answer.hidden !== true
-          )
-        );
+            ([, answer]) => answer.hidden !== true,
+          ),
+        )
       }
 
-      return {};
+      return {}
     },
   },
   mutations: {
@@ -150,30 +157,29 @@ export default {
     },
     SET_PRETEST_COMPLETED(state, { userId, value }) {
       if (state.testAnswerDocument?.taskAnswers?.[userId]) {
-        state.testAnswerDocument.taskAnswers[userId].preTestCompleted = value;
+        state.testAnswerDocument.taskAnswers[userId].preTestCompleted = value
       }
     },
     SET_POSTTEST_COMPLETED(state, { userId, value }) {
       if (state.testAnswerDocument?.taskAnswers?.[userId]) {
-        state.testAnswerDocument.taskAnswers[userId].postTestCompleted = value;
+        state.testAnswerDocument.taskAnswers[userId].postTestCompleted = value
       }
     },
     SET_CONSENT_COMPLETED(state, { userId, value }) {
       if (state.testAnswerDocument?.taskAnswers?.[userId]) {
-        state.testAnswerDocument.taskAnswers[userId].consentCompleted = value;
+        state.testAnswerDocument.taskAnswers[userId].consentCompleted = value
       }
     },
     SET_TASK_COMPLETED(state, { userId, taskId, value }) {
-      if (
-        state.testAnswerDocument?.taskAnswers?.[userId]?.tasks?.[taskId]
-      ) {
-        state.testAnswerDocument.taskAnswers[userId].tasks[taskId].completed = value;
+      if (state.testAnswerDocument?.taskAnswers?.[userId]?.tasks?.[taskId]) {
+        state.testAnswerDocument.taskAnswers[userId].tasks[taskId].completed =
+          value
       }
     },
     SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url }) {
       if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
       state.mediaUrls[taskIndex][mediaType] = url
-    }
+    },
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
@@ -228,8 +234,7 @@ export default {
           payload.testType,
         )
       } catch (e) {
-        console.error('Error in save test answer', e)
-        // commit("setError", true);
+        return e // commit("setError", true);
       } finally {
         commit('setLoading', false)
       }
@@ -237,7 +242,7 @@ export default {
     async updateTaskAnswer({ commit }, { payload, answersDocId }) {
       commit('setLoading', true)
       try {
-        await answerController.updateTaskAnswer(payload, answersDocId);
+        await answerController.updateTaskAnswer(payload, answersDocId)
       } catch (e) {
         console.error('Error in save test answer', e)
       } finally {
@@ -313,7 +318,7 @@ export default {
     },
 
     async updateTaskMediaUrl({ commit }, { taskIndex, mediaType, url }) {
-      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url });
-    }
+      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url })
+    },
   },
 }

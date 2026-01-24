@@ -275,7 +275,7 @@
               </h2>
 
               <!-- Issue Summary Cards -->
-              <v-row class="mb-3" dense v-if="currentRuleIssueCounts.total > 0">
+              <v-row v-if="currentRuleIssueCounts.total > 0" class="mb-3" dense>
                 <v-col cols="4" class="py-1">
                   <v-card
                     :color="currentRuleIssueCounts.errors > 0 ? 'error' : 'grey-lighten-3'"
@@ -530,8 +530,8 @@
                   variant="outlined"
                   size="small"
                   prepend-icon="mdi-chevron-left"
-                  @click="prevRule"
                   :disabled="!hasPrevRule"
+                  @click="prevRule"
                 >
                   Previous
                 </v-btn>
@@ -542,8 +542,8 @@
                   variant="outlined"
                   size="small"
                   append-icon="mdi-chevron-right"
-                  @click="nextRule"
                   :disabled="!hasNextRule"
+                  @click="nextRule"
                 >
                   Next
                 </v-btn>

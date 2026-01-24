@@ -17,7 +17,10 @@
         <div v-if="title || $slots.actions" class="header-section">
           <v-row align="center" class="">
             <v-col>
-              <h1 v-if="title" class="text-h3 font-weight-light text-on-surface">
+              <h1
+                v-if="title"
+                class="text-h3 font-weight-light text-on-surface"
+              >
                 {{ title }}
               </h1>
               <slot name="subtitle" />
@@ -38,8 +41,7 @@
 </template>
 
 <script setup>
-import Snackbar from '@/shared/components/Snackbar';
-import Loading from '@/shared/components/Loading.vue';
+import Snackbar from '@/shared/components/Snackbar'
 
 defineProps({
   title: {
@@ -58,5 +60,5 @@ defineProps({
     type: Boolean,
     default: true,
   },
-});
+})
 </script>
