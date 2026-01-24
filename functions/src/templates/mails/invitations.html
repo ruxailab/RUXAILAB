@@ -3,35 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <title>{{testTitle}} - Invitation</title>
+    <style>
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+        }
+      }
+    </style>
   </head>
-  <body style="margin:0; padding:0; font-family: Arial, sans-serif; background:#f5f5f5;">
-    <table align="center" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; background:#ffffff; border-radius:8px; overflow:hidden;">
-      <!-- Logo -->
+  <body style="margin:0; padding:0; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background:#f8fafc;">
+    <table align="center" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+      <!-- Logo Header -->
       <tr>
-        <td style="text-align:center; padding:20px; background:#222;">
+        <td style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
           <img src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/refs/heads/develop/src/assets/ruxailab-long-crop-white.png"
                alt="RUXAILAB Logo"
-               style="display:block; margin:0 auto; max-width:180px;">
+               style="display:block; margin:0 auto; max-width:200px; height:auto;">
+          <h1 style="color:white; margin:15px 0 0 0; font-size:24px; font-weight:600;">Study Invitation</h1>
         </td>
       </tr>
 
-      <!-- Message -->
+      <!-- Content -->
       <tr>
-        <td style="padding:30px; color:#333; font-size:16px; line-height:1.5;">
-          <p>Hello,</p>
-          <p>{{message}}</p>
-          <p>
-            You have been invited to participate in the study:
+        <td style="padding:40px 30px; color:#374151; font-size:16px; line-height:1.6;">
+          <p style="margin:0 0 20px 0; font-size:18px; color:#111827; font-weight:500;">Hello,</p>
+          
+          <p style="margin:0 0 20px 0;">
+            {{message}}
+          </p>
+          
+          <div style="background:#f3f4f6; padding:20px; border-radius:8px; margin:25px 0; border-left:4px solid #4f46e5;">
+            <p style="margin:0 0 10px 0; font-weight:600; color:#1f2937;">Study Details:</p>
+            <p style="margin:0; color:#4b5563;">
+              <strong>{{testTitle}}</strong>
+              <br>
+              {{testDescription}}
+            </p>
+          </div>
+          
+          <p style="margin:0 0 15px 0; font-size:15px; color:#6b7280;">
+            Organized by: <strong style="color:#4f46e5;">{{adminName}}</strong>
             <br>
-            <strong>{{testTitle}}</strong>
+            Contact: <a href="mailto:{{adminEmail}}" style="color:#4f46e5; text-decoration:none;">{{adminEmail}}</a>
           </p>
-          <p style="margin:0 0 15px 0; font-size:14px; color:#555;">
-            Organized by <strong>{{adminName}}</strong>
-          </p>
-          <p>
-            {{testDescription}}
-          </p>
-          <p>
+
+          <p style="margin:25px 0 20px 0; font-size:15px; color:#6b7280;">
             Click the button below to access the platform and begin your participation:
           </p>
         </td>
@@ -39,20 +55,29 @@
 
       <!-- Button -->
       <tr>
-        <td style="padding:0 30px 30px 30px; text-align:center;">
+        <td style="padding:0 30px 40px 30px; text-align:center;">
           <a href="{{site}}"
-             style="display:inline-block; margin:10px; padding:14px 28px; background:#4CAF50; color:#fff; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold;">
-             Access Platform
+             style="display:inline-block; margin:10px; padding:16px 32px; background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color:#fff; text-decoration:none; border-radius:8px; font-size:16px; font-weight:600; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3); transition: all 0.3s ease;">
+             Access Study Platform
           </a>
+          <p style="margin:15px 0 0 0; font-size:13px; color:#9ca3af;">
+            If the button doesn't work, copy and paste this link:<br>
+            <span style="color:#4f46e5; word-break: break-all;">{{site}}</span>
+          </p>
         </td>
       </tr>
 
       <!-- Footer -->
       <tr>
-        <td style="background:#f0f0f0; padding:20px; text-align:center; font-size:13px; color:#555; line-height:1.5;">
-          <p>Need help? Contact: <a href="mailto:{{adminEmail}}" style="color:#4CAF50; text-decoration:none;">{{adminEmail}}</a></p>
-          <p style="margin-top:15px; font-size:12px; color:#999;">
-            © 2025 RUXAILAB - All rights reserved.
+        <td style="background:#f9fafb; padding:25px; text-align:center; font-size:13px; color:#6b7280; line-height:1.5; border-top:1px solid #e5e7eb;">
+          <p style="margin:0 0 10px 0;">
+            Need help or have questions?<br>
+            Contact: <a href="mailto:{{adminEmail}}" style="color:#4f46e5; text-decoration:none; font-weight:500;">{{adminEmail}}</a>
+          </p>
+          <p style="margin:15px 0 0 0; font-size:12px; color:#9ca3af;">
+            © 2025 RUXAILAB - User Experience Research Platform. All rights reserved.
+            <br>
+            <span style="font-size:11px;">This is an automated message, please do not reply.</span>
           </p>
         </td>
       </tr>

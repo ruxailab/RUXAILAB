@@ -16,7 +16,11 @@ export default class Cooperators {
     testAuthorEmail,
     token,
     testDate,
-    inviteMessage
+    inviteMessage,
+    isUnregistered = false,
+    invitationToken = null,
+    invitationSentAt = null,
+    invitationExpires = null
   } = {}) {
     /**
      * Defines the user document id.
@@ -94,6 +98,34 @@ export default class Cooperators {
      * @type {string}
      */
     this.inviteMessage = inviteMessage
+    
+    /**
+     * Whether this is an unregistered user invitation.
+     *
+     * @type {boolean}
+     */
+    this.isUnregistered = isUnregistered
+
+    /**
+     * Unique token for invitation acceptance (for unregistered users).
+     *
+     * @type {string}
+     */
+    this.invitationToken = invitationToken
+
+    /**
+     * When the invitation was sent.
+     *
+     * @type {number}
+     */
+    this.invitationSentAt = invitationSentAt
+
+    /**
+     * When the invitation expires.
+     *
+     * @type {number}
+     */
+    this.invitationExpires = invitationExpires
   }
 
   /**
@@ -122,7 +154,11 @@ export default class Cooperators {
       testAuthorEmail: this.testAuthorEmail ?? null,
       token: this.token ?? null,
       testDate: this.testDate ?? null,
-      inviteMessage: this.inviteMessage ?? null
+      inviteMessage: this.inviteMessage ?? null,
+      isUnregistered: this.isUnregistered ?? false,
+      invitationToken: this.invitationToken ?? null,
+      invitationSentAt: this.invitationSentAt ?? null,
+      invitationExpires: this.invitationExpires ?? null
     }
   }
 }
