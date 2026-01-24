@@ -40,21 +40,40 @@
             @click="goToStudy(study)"
             hover
           >
+            <!--- adding new features -->
+
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
-                <v-chip
-                  :color="
-                    study.status === 'active'
-                      ? 'success'
-                      : study.status === 'finished'
-                      ? 'warning'
-                      : 'info'
-                  "
-                  variant="tonal"
-                  size="small"
-                >
-                  {{ $t('Dashboard.status.' + (study.status || 'unknown')) }}
-                </v-chip>
+                <div class="d-flex align-center gap-2">
+                  <!-- Status -->
+                  <v-chip
+                    :color="
+                      study.status === 'active'
+                        ? 'success'
+                        : study.status === 'paused'
+                          ? 'warning'
+                          : study.status === 'recruiting'
+                            ? 'info'
+                            : 'default'
+                    "
+                    variant="tonal"
+                    size="small"
+                  >
+                    {{ $t('Dashboard.status.' + (study.status || 'unknown')) }}
+                  </v-chip>
+
+                  <!-- Study Type -->
+                  <v-chip
+                    v-if="study.testType"
+                    color="primary"
+                    variant="tonal"
+                    size="small"
+                  >
+                    {{ getStudyTypeLabel(study) }}
+                  </v-chip>
+                </div>
+
+                <!-- Method Icon -->
                 <v-icon
                   :icon="getMethodIcon(study)"
                   size="20"
@@ -70,14 +89,15 @@
                   {{ study.description }}
                 </p>
               </div>
-
               <!-- Progress -->
               <div class="mb-3">
                 <div class="d-flex justify-space-between align-center mb-1">
                   <span class="text-caption font-weight-medium">{{
                     $t('Dashboard.progress')
                   }}</span>
-                  <span class="text-caption">{{ study.progress }}%</span>
+                  <span class="text-caption font-weight-medium">
+                    {{ Math.round(study.progress) }}% complete
+                  </span>
                 </div>
                 <v-progress-linear
                   :model-value="study.progress"
@@ -96,10 +116,7 @@
                     class="me-1"
                     color="info"
                   />
-                  <span
-                    >{{ study.participants }}
-                    {{ $t('Dashboard.participants') }}</span
-                  >
+                  <span>{{ study.participants }} participants</span>
                 </div>
                 <div v-if="study.daysLeft !== null" class="d-flex align-center">
                   <v-icon
@@ -108,13 +125,12 @@
                     class="me-1"
                     color="warning"
                   />
-                  <span>{{
-                    `${study.daysLeft} ${
-                      study.daysLeft > 1
-                        ? $t('Dashboard.daysLeft')
-                        : $t('Dashboard.dayLeft')
-                    }`
-                  }}</span>
+                  <span>
+                    {{ study.daysLeft }} day{{
+                      study.daysLeft !== 1 ? 's' : ''
+                    }}
+                    left
+                  </span>
                 </div>
               </div>
             </v-card-text>
@@ -159,8 +175,8 @@ const studies = computed(() => {
   return props.studies.length > 0
     ? studiesWithAnswers.value
     : loading.value
-    ? []
-    : defaultStudies
+      ? []
+      : defaultStudies
 })
 
 const lastFourStudies = computed(() => {
@@ -238,7 +254,7 @@ const finalFour = (studyArr) => {
       daysLeft: study.endDate ? daysLeft(study.endDate) : null,
       typeIcon: 'mdi-sort-variant',
       testType: study.testType,
-      subType: study.subType,
+      // subType: study.subType,
       testAdmin: study.testAdmin,
       cooperators: study.cooperators,
       isPublic: study.isPublic,
@@ -282,11 +298,20 @@ const goToStudy = async (study) => {
 
   router.push({ name: 'TestView', params: { id: study.id } })
 }
-
-const viewAllStudies = () => {
-  globalThis.dispatchEvent(
-    new CustomEvent('change-section', { detail: 'studies' }),
-  )
+const getStudyTypeLabel = (study) => {
+  switch (study.testType) {
+    case STUDY_TYPES.CARD_SORTING:
+      return 'Card Sorting'
+    case STUDY_TYPES.ACCESSIBILITY_MANUAL:
+    case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
+      return 'Accessibility Test'
+    case STUDY_TYPES.USER:
+      return 'Usability Test'
+    case STUDY_TYPES.HEURISTIC:
+      return 'Heuristic Evaluation'
+    default:
+      return study.testType || 'Study'
+  }
 }
 
 // Default studies if none provided
@@ -301,6 +326,8 @@ const defaultStudies = [
     participants: 24,
     daysLeft: 5,
     typeIcon: 'mdi-cellphone',
+    testType: 'Usability Test',
+    subType: 'Mobile UX',
   },
   {
     id: 2,
@@ -311,6 +338,8 @@ const defaultStudies = [
     participants: 18,
     daysLeft: 12,
     typeIcon: 'mdi-sort-variant',
+    testType: 'Card Sorting',
+    subType: 'Information Architecture',
   },
   {
     id: 3,
@@ -321,6 +350,8 @@ const defaultStudies = [
     participants: 32,
     daysLeft: 2,
     typeIcon: 'mdi-microphone',
+    testType: 'Usability Test',
+    subType: 'Voice UI',
   },
   {
     id: 4,
@@ -331,6 +362,8 @@ const defaultStudies = [
     participants: 12,
     daysLeft: 20,
     typeIcon: 'mdi-wheelchair-accessibility',
+    testType: 'Accessibility Test',
+    subType: 'WCAG Audit',
   },
 ]
 
@@ -346,7 +379,9 @@ watch(
 <style scoped>
 .study-card {
   height: 100%;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
 .study-card:hover {
