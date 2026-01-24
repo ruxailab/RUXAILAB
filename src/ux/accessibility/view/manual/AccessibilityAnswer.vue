@@ -1,5 +1,6 @@
 <template>
-  <PageWrapper :title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
+  <PageWrapper
+:title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
     :loading="isLoading"
     :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'">
     <template #subtitle>
@@ -39,7 +40,8 @@
 
             <!-- User table (only show when not loading) -->
             <v-card v-if="!isLoadingUsers" elevation="2">
-              <v-data-table :headers="userHeaders" :items="userDetails" :items-per-page="10" :loading="isLoadingUsers"
+              <v-data-table
+:headers="userHeaders" :items="userDetails" :items-per-page="10" :loading="isLoadingUsers"
                 loading-text="Fetching users..." class="user-table elevation-0" height="50vh" density="compact"
                 @click:row="(event, { item }) => selectUser(item)">
                 <!-- Email/User Info Column -->
@@ -77,7 +79,8 @@
                     <v-btn color="primary" variant="flat" size="small" prepend-icon="mdi-eye" @click="selectUser(item)">
                       View Results
                     </v-btn>
-                    <v-btn color="secondary" variant="outlined" size="small" prepend-icon="mdi-test-tube"
+                    <v-btn
+color="secondary" variant="outlined" size="small" prepend-icon="mdi-test-tube"
                       @click="viewUserInPreview(item)">
                       View in Preview
                     </v-btn>
@@ -101,7 +104,8 @@
         <v-card class="mb-4">
           <v-card-text class="d-flex align-center justify-space-between pa-4">
             <div class="d-flex align-center">
-              <v-btn color="primary" variant="outlined" prepend-icon="mdi-arrow-left" class="mr-4"
+              <v-btn
+color="primary" variant="outlined" prepend-icon="mdi-arrow-left" class="mr-4"
                 @click="goBackToUserSelection">
                 Back to User Selection
               </v-btn>
@@ -115,7 +119,8 @@
               </div>
             </div>
             <div class="d-flex ga-2 align-center">
-              <v-btn color="secondary" variant="outlined" prepend-icon="mdi-test-tube"
+              <v-btn
+color="secondary" variant="outlined" prepend-icon="mdi-test-tube"
                 @click="viewUserInPreview(selectedUser)">
                 View in Preview Mode
               </v-btn>
@@ -140,7 +145,8 @@
                 <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
               </v-col>
               <v-col cols="auto" class="pa-0 ml-3">
-                <v-btn-toggle v-model="selectedLevel" mandatory color="primary" variant="outlined" divided
+                <v-btn-toggle
+v-model="selectedLevel" mandatory color="primary" variant="outlined" divided
                   density="compact">
                   <v-btn value="A" size="small" :class="{ 'level-a': selectedLevel === 'A' }">
                     A
@@ -163,7 +169,8 @@
 
           <!-- Tabs for Principles -->
           <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
-            <v-tab v-for="(principle, index) in principles" :key="index" :value="index"
+            <v-tab
+v-for="(principle, index) in principles" :key="index" :value="index"
               :class="`principle-tab principle-${index}`">
               <v-icon start>
                 {{ getPrincipleIcon(index) }}
@@ -178,7 +185,8 @@
           <v-card-text class="pa-0">
             <v-window v-model="activeTab">
               <v-window-item v-for="(principle, pIndex) in principles" :key="pIndex" :value="pIndex">
-                <v-data-table :headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
+                <v-data-table
+:headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
                   :loading="isLoading" class="elevation-1" height="65vh">
                   <template #item.status="{ item }">
                     <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
@@ -187,7 +195,8 @@
                   </template>
 
                   <template #item.severity="{ item }">
-                    <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
+                    <v-chip
+:color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
                       variant="outlined">
                       {{ item.severity || 'Not Set' }}
                     </v-chip>
@@ -239,7 +248,8 @@
               <v-list-item-subtitle class="text-body-1 mb-2">
                 {{ note.text }}
               </v-list-item-subtitle>
-              <v-img v-if="note.imagePreview" :src="note.imagePreview" max-height="300" cover
+              <v-img
+v-if="note.imagePreview" :src="note.imagePreview" max-height="300" cover
                 class="mt-2 mb-2 rounded" />
               <v-chip v-if="note.imageName" size="small" color="grey-lighten-2" class="mt-2">
                 <v-icon size="small" class="mr-1">
