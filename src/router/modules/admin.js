@@ -1,6 +1,4 @@
 import TestList from '@/features/navigation/views/AdminView.vue'
-import Profile from '@/features/auth/views/ProfileView.vue'
-import Notification from '@/features/notifications/views/NotificationPage.vue'
 import Choose from '@/features/ux_creation/Choose.vue'
 import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
 import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
@@ -26,7 +24,7 @@ export default [
     meta: { authorize: [1] },
     redirect: () => ({
       path: '/admin',
-      query: { section: 'profile' }
+      query: { section: 'profile' },
     }),
   },
   {
@@ -35,7 +33,7 @@ export default [
     meta: { authorize: [1] },
     redirect: () => ({
       path: '/admin',
-      query: { section: 'notifications' }
+      query: { section: 'notifications' },
     }),
   },
   {
@@ -61,5 +59,5 @@ export default [
     name: 'study-create-step4',
     meta: { authorize: [1] },
     component: StudyDetailsForm,
-  }
+  },
 ]

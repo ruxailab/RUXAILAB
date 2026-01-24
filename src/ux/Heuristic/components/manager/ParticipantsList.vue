@@ -115,7 +115,7 @@
             {{ $t('manager.sendReminder') }}
           </v-list-item-title>
         </v-list-item>
-        <v-list-item @click="removeParticipant" class="text-error">
+        <v-list-item class="text-error" @click="removeParticipant">
           <v-list-item-title>
             <v-icon size="small" class="mr-2">mdi-account-remove</v-icon>
             {{ $t('manager.removeParticipant') }}

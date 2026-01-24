@@ -21,7 +21,8 @@
 
       <v-col cols="auto" class="volume-col">
         <v-icon>mdi-volume-high</v-icon>
-        <v-slider v-model="volume" min="0" max="1" step="0.01" hide-details class="volume-slider"
+        <v-slider
+v-model="volume" min="0" max="1" step="0.01" hide-details class="volume-slider"
           @update:model-value="setVolume" />
       </v-col>
     </v-row>
