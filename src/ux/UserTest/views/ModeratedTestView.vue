@@ -852,24 +852,15 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 
   if (idx === undefined || idx === null) {
-    console.error('Índice de tarea no válido:', idx)
     return
   }
 
   if (localTestAnswer.tasks[idx]) {
-    console.log(
-      'Guardando tiempo para tarea',
-      idx,
-      ':',
-      elapsedTime,
-      'segundos',
-    )
     // Asegurar que el tiempo es un número
     const timeToSave =
       typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
-      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx])
     } else {
       console.error('TieisStartTestDisabledmpo no válido:', elapsedTime)
     }
@@ -1028,7 +1019,6 @@ const mappingSteps = async () => {
               susAnswers: [],
               nasaTlxAnswers: null,
             })
-            console.log('Nueva tarea creada:', i, newTask)
             return newTask
           },
         )
