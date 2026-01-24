@@ -30,8 +30,8 @@ ChartJS.register(
 
 const props = defineProps({
   labels: {
-    type: String,
-    default: 'Data One'
+    type: Array,
+    default: () => []
   },
   data: {
     type: Array,
