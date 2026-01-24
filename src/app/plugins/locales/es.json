@@ -285,6 +285,8 @@
     "cta": "Comenzar"
   },
   "Dashboard": {
+    "welcomeBack": "¡Bienvenido de nuevo, {name}!",
+    "subtitle": "Esto es lo que está sucediendo con tus proyectos de investigación hoy",
     "createNewTest": "Crear nueva prueba",
     "tests": "Pruebas",
     "templates": "Plantillas",
@@ -295,6 +297,40 @@
     "sessions": "Sesiones",
     "personal": "Personal",
     "explore": "Explorar",
+    "activeStudiesOverview": "Resumen de estudios activos",
+    "viewAll": "Ver todo",
+    "showMore": "Mostrar más",
+    "showLess": "Mostrar menos",
+    "progress": "Progreso",
+    "participants": "Participantes",
+    "participantsLabel": "Participantes",
+    "daysLeft": "días restantes",
+    "dayLeft": "día restante",
+    "studies": "Estudios",
+    "storage": "Almacenamiento",
+    "free": "Gratis",
+    "plan": "Plan",
+    "recentActivity": "Actividad reciente",
+    "comingSoon": "Próximamente",
+    "mostUsedMethods": "Métodos más utilizados",
+    "use": "Uso",
+    "uses": "Usos",
+    "noDataAvailable": "Aún no hay datos disponibles",
+    "createFirstStudy": "Crea tu primer estudio para ver estadísticas aquí.",
+    "nextSession": "Próxima sesión",
+    "noSessionsScheduled": "No hay sesiones programadas",
+    "nextSessionWillAppear": "Tu próxima sesión aparecerá aquí",
+    "latestBlogPosts": "Últimas publicaciones del blog",
+    "viewBlog": "Ver blog",
+    "date": "Fecha",
+    "time": "Hora",
+    "status": {
+      "active": "Activo",
+      "recruiting": "Reclutando",
+      "paused": "Pausado",
+      "finished": "Finalizado",
+      "unknown": "Desconocido"
+    },
     "cards": {
       "recentActivity": "Actividad Reciente",
       "activities7Days": "Actividades (7 días en total)",
@@ -1192,6 +1228,70 @@
         "finished": "Finalizado",
         "upcoming": "Próximo"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Estudio de Prueba de Usuario",
+      "unmoderatedStudy": "Estudio No Moderado",
+      "moderatedStudy": "Estudio Moderado",
+      "active": "Activo",
+      "draft": "Borrador",
+      "completed": "Completado",
+      "archived": "Archivado"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total de Participantes",
+      "completed": "Completado",
+      "rate": "{percentage}% tasa",
+      "inProgress": "En Progreso",
+      "active": "{percentage}% activo",
+      "averageTime": "Tiempo Promedio",
+      "completionTime": "Tiempo de completación",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Módulos de Gestión",
+      "description": "Herramientas completas para gestionar participantes, tareas, configuraciones y analizar los datos de tu estudio",
+      "additionalModules": "Espacio para módulos adicionales"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Resumen de participación en pruebas",
+      "beta": "Beta",
+      "completed": "Completado",
+      "notStarted": "No Iniciado",
+      "pendingInvites": "Invitaciones Pendientes",
+      "overallProgress": "Progreso General",
+      "participantsCompleted": "{completed} de {total} participantes completados",
+      "details": "Detalles"
+    },
+    "tasks": {
+      "title": "Resumen de Tareas",
+      "subtitle": "Estructura y completación de tareas",
+      "beta": "Beta",
+      "noTasksConfigured": "No hay tareas configuradas",
+      "taskCompletionRate": "Tasa de Completación de Tareas",
+      "totalTasks": "Total de Tareas",
+      "avgTaskDuration": "Duración Promedio de Tarea",
+      "successRate": "Tasa de Éxito",
+      "taskTypes": "Tipos de Tareas",
+      "viewTasks": "Ver Tareas"
+    },
+    "storage": {
+      "title": "Uso de Almacenamiento",
+      "subtitle": "Archivos multimedia y métricas de almacenamiento",
+      "beta": "Beta",
+      "storageUsed": "Almacenamiento Usado",
+      "storageQuota": "{used} de {quota} usado",
+      "mediaFiles": "Archivos Multimedia",
+      "videoRecordings": "Grabaciones de Video",
+      "audioRecordings": "Grabaciones de Audio",
+      "screenRecordings": "Grabaciones de Pantalla",
+      "storageBreakdown": "Desglose de Almacenamiento",
+      "responsesData": "Datos de Respuestas",
+      "analyticsData": "Datos de Analítica",
+      "manageStorage": "Gestionar Almacenamiento"
     }
   }
 }
