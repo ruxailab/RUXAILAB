@@ -9,7 +9,8 @@
                 </div>
             </v-col>
             <v-col cols="auto">
-                <v-chip :color="isAnalyzing ? 'grey' : hasError ? 'red-darken-2' : 'primary'" variant="flat"
+                <v-chip
+:color="isAnalyzing ? 'grey' : hasError ? 'red-darken-2' : 'primary'" variant="flat"
                     prepend-icon="mdi-eye">
                     {{ isAnalyzing ? 'Analyzing...' : hasError ? 'Analysis Failed' : 'Analysis Completed' }}
                 </v-chip>
@@ -46,7 +47,8 @@
                         <v-icon :color="metric.color">{{ metric.icon }}</v-icon>
                     </div>
                     <div class="text-h6 font-weight-bold">{{ metric.value }}</div>
-                    <v-progress-linear :model-value="metric.progress" :color="metric.color" height="6" class="mt-2"
+                    <v-progress-linear
+:model-value="metric.progress" :color="metric.color" height="6" class="mt-2"
                         rounded />
                 </v-card>
             </v-col>
@@ -57,7 +59,8 @@
                     <h4 class="text-subtitle-1 font-weight-medium mb-3">Prediction Overview</h4>
 
                     <v-btn-toggle v-model="selectedView" class="mb-2 d-flex justify-space-between" divided mandatory>
-                        <v-btn value="precision" variant="outlined"
+                        <v-btn
+value="precision" variant="outlined"
                             :color="selectedView === 'precision' ? 'blue-darken-2' : 'blue-lighten-3'"
                             class="px-8 py-3 rounded-lg font-weight-medium">
                             <v-icon start :color="selectedView === 'precision' ? 'blue-darken-2' : 'blue-lighten-3'">
@@ -66,7 +69,8 @@
                             Prediction Points
                         </v-btn>
 
-                        <v-btn value="heatmap" variant="outlined"
+                        <v-btn
+value="heatmap" variant="outlined"
                             :color="selectedView === 'heatmap' ? 'orange-darken-2' : 'orange-lighten-3'"
                             class="px-8 py-3 rounded-lg font-weight-medium">
                             <v-icon start :color="selectedView === 'heatmap' ? 'orange-darken-2' : 'orange-lighten-3'">
@@ -75,7 +79,8 @@
                             Heatmap
                         </v-btn>
 
-                        <v-btn value="free" variant="outlined"
+                        <v-btn
+value="free" variant="outlined"
                             :color="selectedView === 'free' ? 'red-darken-2' : 'red-lighten-3'"
                             class="px-8 py-3 rounded-lg font-weight-medium">
                             <v-icon start :color="selectedView === 'free' ? 'red-darken-2' : 'red-lighten-3'">
@@ -94,7 +99,8 @@
                     <h4 class="text-subtitle-1 font-weight-medium mb-3">Key Insights</h4>
                     <v-row>
                         <v-col v-for="(insight, index) in insights" :key="index" cols="12">
-                            <v-alert :type="insight.type" variant="tonal" class="rounded-xl" border="start"
+                            <v-alert
+:type="insight.type" variant="tonal" class="rounded-xl" border="start"
                                 :border-color="insight.color">
                                 <v-icon class="mr-2" :color="insight.color">{{ insight.icon }}</v-icon>
                                 <span class="font-weight-medium">{{ insight.text }}</span>

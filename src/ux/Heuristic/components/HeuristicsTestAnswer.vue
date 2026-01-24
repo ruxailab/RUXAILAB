@@ -169,7 +169,7 @@
                   cols="10"
                 >
                   <v-data-table
-                    dense
+                    density="compact"
                     :headers="evaluatorStatistics.header"
                     :items="evaluatorStatistics.items"
                     :items-per-page="15"
@@ -302,7 +302,7 @@
                           :items="heuristicsEvaluator.items"
                           :items-per-page="15"
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
-                          dense
+                          density="compact"
                         >
                           <template
                             v-for="header in heuristicsEvaluator.header"
@@ -336,7 +336,7 @@
                           :items="heuristicsStatistics.items"
                           :items-per-page="15"
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
-                          dense
+                          density="compact"
                         >
                           <template #item.percentage="{ item }">
                             <div style="padding-top: 2px; padding-bottom: 2px">
