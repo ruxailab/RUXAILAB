@@ -102,7 +102,11 @@
       "evaluator": "المقيّم",
       "status": "الحالة",
       "sessionDate": "تاريخ الجلسة",
-      "itemsPerPage": "عناصر لكل صفحة:"
+      "itemsPerPage": "عناصر لكل صفحة:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
     }
   },
   "community": {
@@ -859,10 +863,6 @@
     "cooperators": {
       "invitationSent": "تم إرسال الدعوة بنجاح"
     }
-  },
-  "storage": {
-    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
-    "mediaFiles": "ملفات الوسائط"
   },
   "alerts": {
     "copy": "تم النسخ بنجاح",

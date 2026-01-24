@@ -107,7 +107,11 @@
       "evaluator": "Avaliador",
       "status": "Status",
       "sessionDate": "Data da sessão",
-      "itemsPerPage": "Itens por página:"
+      "itemsPerPage": "Itens por página:",
+      "studyName": "Nome do Estudo",
+      "date": "Data",
+      "size": "Tamanho",
+      "actions": "Ações"
     }
   },
   "community": {
@@ -282,10 +286,6 @@
       "edit": "Crie e personalize suas tarefas e heurísticas de acordo com suas necessidades de pesquisa.",
       "finalReport": "Prepare o relatório final para sua avaliação heurística selecionando os elementos que deseja incluir."
     }
-  },
-  "storage": {
-    "noMediaFiles": "Nenhum arquivo de mídia encontrado",
-    "mediaFiles": "Arquivos de mídia"
   },
   "errors": {
     "invalidInvitation": "Convite inválido",
