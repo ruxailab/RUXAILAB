@@ -8,9 +8,9 @@
     class="rounded-lg"
     elevation="2"
     hover
-    @click:row="emitClick"
     :loading="loadingStudy"
     :items-per-page-text="$t('common.table.itemsPerPage')"
+    @click:row="emitClick"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">
