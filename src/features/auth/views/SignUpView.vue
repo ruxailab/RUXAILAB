@@ -151,7 +151,7 @@ const onSignUp = async () => {
       })
       await router.push('/admin')
     } catch (error) {
-      console.error('Signup failed:', error)
+      return error
     } finally {
       store.commit('setLoading', false)
     }
@@ -172,8 +172,8 @@ const onGoogleSignInSuccess = async () => {
   store.commit('setLoading', false)
 }
 const onGoogleSignInError = (error) => {
-  console.error('Google sign-in error:', error)
   store.commit('setLoading', false)
+  return error
 }
 </script>
 

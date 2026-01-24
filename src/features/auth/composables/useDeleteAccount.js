@@ -40,7 +40,6 @@ export function useDeleteAccount() {
   const userPassword = ref('')
 
   const handleAuthError = (error, errorMap) => {
-    console.error('Account Deletion Error:', error)
     const messageKey = errorMap[error.code] || 'profile.accountDeletionFailed'
     showError(messageKey)
   }
@@ -87,8 +86,8 @@ export function useDeleteAccount() {
         globalThis.location.href = '/signin'
       }, 500)
     } catch (error) {
-      console.error('Error signing out:', error)
       globalThis.location.href = '/signin'
+      return error
     }
   }
 

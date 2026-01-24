@@ -255,7 +255,7 @@ const handleImageSelect = async (event) => {
     localProfileData.value.profileImage = previewUrl
     hasChanges.value = true
   } catch (error) {
-    console.error('Error processing image:', error)
+    return error
   } finally {
     isProcessingImage.value = false
     // Reset file input
@@ -307,7 +307,7 @@ const handleSave = async () => {
       }
     }
   } catch (error) {
-    console.error('Error saving profile:', error)
+    return error
   } finally {
     isSaving.value = false
   }
