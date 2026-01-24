@@ -40,7 +40,7 @@
             @click="goToStudy(study)"
             hover
           >
-            <!--- adding new features -->
+            <!--- adding a new feature -->
 
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
