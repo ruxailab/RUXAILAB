@@ -110,12 +110,13 @@ const {
 } = useChangePassword();
 
 const handleChangePassword = async () => {
-  if (!formRef.value.validate()) return;
-
+  const { valid } = await formRef.value.validate();
+  if (!valid) return;
+  
   isChanging.value = true;
   const success = await changePassword();
   isChanging.value = false;
-
+  
   if (success && formRef.value) {
     formRef.value.reset();
     resetForm();
