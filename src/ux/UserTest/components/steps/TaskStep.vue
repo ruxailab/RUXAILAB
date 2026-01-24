@@ -431,6 +431,7 @@
 
 <script setup>
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
+import { useStore } from 'vuex';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import TipButton from '@/ux/UserTest/components/TipButton.vue';
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
