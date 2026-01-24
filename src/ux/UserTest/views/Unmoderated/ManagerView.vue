@@ -212,17 +212,6 @@ const navigator = computed(() => {
   return items
 })
 
-// Methods para los componentes adicionales
-const getStatusColor = (status) => {
-  const statusMap = {
-    Active: 'success',
-    Draft: 'warning',
-    Completed: 'info',
-    Archived: 'error',
-  }
-  return statusMap[status] || 'primary'
-}
-
 const getStatusIcon = (status) => {
   const iconMap = {
     Active: 'mdi-play-circle',
