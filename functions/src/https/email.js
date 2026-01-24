@@ -19,15 +19,36 @@ export const sendEmail = functions.onCall({
 
     let htmlTemplate = "";
     if (content.template === 'invite') {
-      const templatePath = path.join(process.cwd(), "src/templates/mails/invitations.html");
+      let templatePath;
+      if (content.isUnregisteredUser) {
+        templatePath = path.join(process.cwd(), "src/templates/mails/invitation_unregistered.html");
+      } else {
+        templatePath = path.join(process.cwd(), "src/templates/mails/invitations.html");
+      }
+      
       htmlTemplate = fs.readFileSync(templatePath, "utf-8");
-      htmlTemplate = htmlTemplate
-        .replace("{{site}}", process.env.SITE_URL)
-        .replace("{{message}}", content.data.message)
-        .replace(/{{testTitle}}/g, content.data.testTitle)
-        .replace(/{{testDescription}}/g, content.data.testDescription)
-        .replace(/{{adminEmail}}/g, content.data.adminEmail)
-        .replace(/{{adminName}}/g, content.data.adminName);
+      
+      if (content.isUnregisteredUser) {
+        // for unregistered user template
+        htmlTemplate = htmlTemplate
+          .replace(/{{site}}/g, process.env.SITE_URL)
+          .replace(/{{invitationToken}}/g, content.data.token || "")
+          .replace(/{{email}}/g, encodeURIComponent(content.to))
+          .replace(/{{testTitle}}/g, content.data.testTitle || "Untitled Study")
+          .replace(/{{testDescription}}/g, content.data.testDescription || "")
+          .replace(/{{adminEmail}}/g, content.data.adminEmail || "")
+          .replace(/{{adminName}}/g, content.data.adminName || "Study Administrator")
+          .replace(/{{message}}/g, content.data.message || "You've been invited to participate in a study.");
+      } else {
+        // for registered user template
+        htmlTemplate = htmlTemplate
+          .replace(/{{site}}/g, process.env.SITE_URL)
+          .replace(/{{message}}/g, content.data.message || "You've been invited to participate in a study.")
+          .replace(/{{testTitle}}/g, content.data.testTitle || "Untitled Study")
+          .replace(/{{testDescription}}/g, content.data.testDescription || "")
+          .replace(/{{adminEmail}}/g, content.data.adminEmail || "")
+          .replace(/{{adminName}}/g, content.data.adminName || "Study Administrator");
+      }
     }
     else if (content.template === 'passwordReset') {
       const actionCodeSettings = {
@@ -40,6 +61,14 @@ export const sendEmail = functions.onCall({
       htmlTemplate = fs.readFileSync(templatePath, "utf-8");
       htmlTemplate = htmlTemplate
         .replace("{{resetLink}}", link);
+    }
+    else if (content.template === 'invitationAccepted') {
+      const templatePath = path.join(process.cwd(), "src/templates/mails/invitation_accepted.html");
+      htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+      htmlTemplate = htmlTemplate
+        .replace(/{{userEmail}}/g, content.data.userEmail || "")
+        .replace(/{{testTitle}}/g, content.data.testTitle || "")
+        .replace(/{{adminEmail}}/g, content.data.adminEmail || "");
     }
 
     const mail = {
@@ -59,4 +88,4 @@ export const sendEmail = functions.onCall({
       return err;
     }
   }
-})
+});

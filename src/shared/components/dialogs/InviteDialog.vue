@@ -10,35 +10,87 @@
         {{ title || 'Send Invitation' }}
       </v-card-title>
       <v-card-text class="pt-4">
-        <v-combobox
-          :key="comboboxKey"
-          ref="combobox"
-          v-model="comboboxModel"
-          :items="users.filter((user) => user?.email != null)"
-          item-title="email"
-          :label="selectLabel || 'Select cooperator'"
-          multiple
-          variant="outlined"
-          density="comfortable"
-          @update:model-value="validateEmail"
-        >
-          <template #no-data>
-            {{
-              noDataText ||
-              'There are no users registered with that email, press enter to select anyways.'
-            }}
-          </template>
-        </v-combobox>
+        <!-- Invitation Type Toggle -->
+        <div class="d-flex mb-4">
+          <v-btn 
+            :color="invitationType === 'existing' ? 'primary' : 'outlined'"
+            variant="outlined"
+            class="flex-grow-1"
+            @click="invitationType = 'existing'"
+            type="button"
+          >
+            <v-icon start>mdi-account</v-icon>
+            Existing User
+          </v-btn>
+          <v-btn 
+            :color="invitationType === 'email' ? 'primary' : 'outlined'"
+            variant="outlined"
+            class="flex-grow-1 ml-2"
+            @click="invitationType = 'email'"
+            type="button"
+          >
+            <v-icon start>mdi-email</v-icon>
+            Email Invite
+          </v-btn>
+        </div>
 
-        <v-chip-group>
+        <!-- Existing User Selection -->
+        <template v-if="invitationType === 'existing'">
+          <v-combobox
+            :key="comboboxKey"
+            ref="combobox"
+            v-model="comboboxModel"
+            :items="users.filter((user) => user?.email != null)"
+            item-title="email"
+            :label="selectLabel || 'Select cooperator'"
+            multiple
+            variant="outlined"
+            density="comfortable"
+            @update:model-value="validateEmail"
+          >
+            <template #no-data>
+              {{
+                noDataText ||
+                'There are no users registered with that email, press enter to select anyways.'
+              }}
+            </template>
+          </v-combobox>
+        </template>
+
+        <!-- Email Invite for Non-Registered Users -->
+        <template v-else>
+          <v-text-field
+            v-model="emailInput"
+            :label="'Enter email address(es)'"
+            variant="outlined"
+            density="comfortable"
+            placeholder="john@example.com, jane@example.com"
+            hint="Enter multiple emails separated by commas"
+            persistent-hint
+            @keyup.enter="handleEmailInput"
+            @blur="handleEmailInput"
+          />
+          <v-alert type="info" variant="tonal" density="compact" class="mt-2">
+            <small>Users will receive an email invitation to create an account and join the study</small>
+          </v-alert>
+        </template>
+
+        <!-- Selected Cooperators Display -->
+        <v-chip-group class="mt-4">
           <v-chip
             v-for="(coop, i) in selectedCoops"
             :key="i"
             closable
             class="ml-2 mt-2"
             @click:close="removeSelectedCoop(i)"
+            :color="coop.isUnregistered ? 'orange' : 'primary'"
+            variant="flat"
+            :prepend-icon="coop.isUnregistered ? 'mdi-email' : 'mdi-account'"
           >
-            {{ typeof coop == 'object' ? coop.email : coop }}
+            {{ typeof coop === 'object' ? coop.email : coop }}
+            <v-tooltip v-if="coop.isUnregistered" activator="parent" location="top">
+              Unregistered user - will receive invitation email
+            </v-tooltip>
           </v-chip>
         </v-chip-group>
 
@@ -154,6 +206,9 @@
 import { ref, computed, watch } from 'vue'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showError, showWarning } from '@/shared/utils/toast'
+import UIDGenerator from 'uid-generator'
+
+const uidgen = new UIDGenerator()
 
 const props = defineProps({
   show: {
@@ -189,6 +244,8 @@ const emit = defineEmits(['update:show', 'send-invitations'])
 const { roleOptions, validateEmail: isValidEmail } = useCooperatorUtils()
 
 // Local state
+const invitationType = ref('existing')
+const emailInput = ref('')
 const selectedCoops = ref([])
 const comboboxModel = ref([])
 const comboboxKey = ref(0)
@@ -225,6 +282,44 @@ const minTime = computed(() => {
     return '00:00'
   }
 })
+
+// handle email input for non registered users
+const handleEmailInput = () => {
+  if (!emailInput.value.trim()) return
+
+  const emails = emailInput.value
+    .split(',')
+    .map(email => email.trim())
+    .filter(email => email && isValidEmail(email))
+  
+  emails.forEach(email => {
+    if (!isCoopAlreadySelected(email)) {
+      const existingUser = props.users.find(user => user.email === email)
+      
+      if (existingUser) {
+        // if registered user - add as existing user
+        if (!selectedCoops.value.some(coop => 
+          (typeof coop === 'object' && coop.email === email) || coop === email
+        )) {
+          selectedCoops.value.push(existingUser)
+        }
+      } else {
+        // if nonregistered user - add as unregistered user
+        if (!selectedCoops.value.some(coop => 
+          typeof coop === 'object' && coop.email === email
+        )) {
+          selectedCoops.value.push({
+            email: email,
+            isUnregistered: true,
+            invitationToken: uidgen.generateSync()
+          })
+        }
+      }
+    }
+  })
+  
+  emailInput.value = ''
+}
 
 // Methods
 const removeSelectedCoop = (index) => {
@@ -290,6 +385,7 @@ const onSend = () => {
     selectedCoops: selectedCoops.value,
     selectedRole: selectedRole.value,
     inviteMessage: inviteMessage.value,
+    invitationType: invitationType.value
   }
 
   if (props.showDateTimeSelection) {
@@ -304,6 +400,8 @@ const onSend = () => {
 const resetForm = () => {
   selectedCoops.value = []
   comboboxModel.value = []
+  emailInput.value = ''
+  invitationType.value = 'existing'
   inviteMessage.value = ''
   selectedRole.value = 1
   combobox.value?.blur()

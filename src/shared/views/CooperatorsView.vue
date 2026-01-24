@@ -215,43 +215,78 @@ const handleSendMessage = async ({ user, title, content }) => {
 
 const handleSendEmail = async (guest) => {
   const emailController = new EmailController()
-  await emailController.send({
+  
+  const payload = {
     to: guest.email,
     subject: t('HeuristicsCooperators.actions.send_invitation'),
     attachments: [],
     template: 'invite',
     data: {
-      message: inviteMessages.value || '',
+      message: inviteMessages.value || `You've been invited to participate in "${test.value.testTitle}"`,
       testTitle: test.value.testTitle,
-      testDescription: test.value.testDescription,
+      testDescription: test.value.testDescription || '',
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
     },
-  })
+  }
+
+  // use unregistered user flag and token if the user is unregistered
+  if (guest.isUnregistered) {
+    payload.isUnregisteredUser = true
+    payload.data.token = guest.invitationToken
+  }
+
+  return await emailController.send(payload)
 }
 
 const handleSendInvitations = async (invitationData) => {
   if (!test.value) return
 
   const { selectedCoops, selectedRole, inviteMessage } = invitationData
-  const tokens = {}
 
   inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
   selectedCoops.forEach((coop) => {
     const token = uidgen.generateSync()
-    if (!coop.id) {
-      cooperatorsEdit.value.push({
+    
+    // if this is an unregistered user 
+    const isUnregistered = coop.isUnregistered === true
+    
+    if (isUnregistered) {
+      // unregistered user create cooperator with invitation details
+      const newCooperator = new Cooperators({
         userDocId: null,
+        email: coop.email,
+        invited: true,
+        accepted: false,
+        accessLevel: roleOptions.value[selectedRole].value,
+        token: token,
+        progress: 0,
+        updateDate: new Date().toISOString(),
+        testAuthorEmail: test.value.testAdmin.email,
+        isUnregistered: true,
+        invitationToken: coop.invitationToken || token,
+        invitationSentAt: Date.now(),
+        invitationExpires: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 days
+        inviteMessage: inviteMessage
+      })
+      cooperatorsEdit.value.push(newCooperator)
+    } else if (!coop.id) {
+      // string email (registered user not found in combobox)
+      const existingUser = users.value.find(user => user.email === coop)
+      cooperatorsEdit.value.push({
+        userDocId: existingUser ? existingUser.id : null,
         email: coop,
         invited: true,
         accepted: false,
         accessLevel: roleOptions.value[selectedRole].value,
-        token,
+        token: token,
         progress: 0,
-        updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || '',
+        updateDate: new Date().toISOString(),
+        testAuthorEmail: test.value.testAdmin.email,
+        isUnregistered: false,
+        inviteMessage: inviteMessage
       })
     } else {
       cooperatorsEdit.value.push({
@@ -260,13 +295,14 @@ const handleSendInvitations = async (invitationData) => {
         invited: true,
         accepted: false,
         accessLevel: roleOptions.value[selectedRole].value,
-        token,
+        token: token,
         progress: 0,
-        updateDate: test.value?.updateDate || new Date().toISOString(),
-        testAuthorEmail: test.value?.testAdmin?.email || '',
+        updateDate: new Date().toISOString(),
+        testAuthorEmail: test.value.testAdmin.email,
+        isUnregistered: false,
+        inviteMessage: inviteMessage
       })
     }
-    tokens[coop.id || coop] = token
   })
 
   await submit()
@@ -296,8 +332,7 @@ const submit = async () => {
   if (!test.value) return
 
   const coops = cooperatorsEdit.value.map(
-    (coop) =>
-      new Cooperators({ ...coop, userDocId: coop.userDocId || coop.id }),
+    (coop) => new Cooperators(coop),
   )
   test.value.cooperators = [...coops]
 
@@ -307,111 +342,82 @@ const submit = async () => {
 
   try {
     await store.dispatch('updateStudy', test.value)
+    await store.dispatch('getStudy', { id: test.value.id })
 
-    await Promise.all([
-      store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) => sendMenssages(guest)),
-    ])
+    // send emails to new cooperators
+    const emailPromises = newCooperators.map((guest) => sendMenssages(guest))
+    await Promise.all(emailPromises)
+
   } catch (error) {
     console.error('Error updating study:', error)
+    showError('Failed to save invitation: ' + error.message)
   }
 }
 
 const sendMenssages = async (guest) => {
   try {
-    notifyCooperator(guest)
-    await handleSendEmail(guest)
-    showSuccess('pages.cooperators.invitationSent')
+    // first send email
+    const emailResult = await handleSendEmail(guest)
+    
+    if (!emailResult.success) {
+      throw new Error(`Failed to send email: ${emailResult.message}`)
+    }
+    
+    // only notify registered users
+    if (guest.userDocId && !guest.isUnregistered) {
+      await notifyCooperator(guest)
+    }
+    
+    showSuccess(`Invitation sent to ${guest.email}`)
+    return { success: true, email: guest.email }
   } catch (error) {
-    return error
-    showError('errors.sendError')
-  }
-}
-
-const notifyCooperatorAccessibility = async (guest) => {
-  if (test.value) {
-    let path = ''
-    let title = t('HeuristicsCooperators.actions.send_invitation')
-    let description = t('HeuristicsCooperators.messages.invite_message', {
-      testTitle: test.value.testTitle || t('common.test'),
-    })
-
-    if (test.value.testType === 'MANUAL') {
-      path = `accessibility/manual/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.manual_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    } else if (test.value.testType === 'AUTOMATIC') {
-      path = `accessibility/automatic/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.automatic_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    }
-
-    if (guest.userDocId && path) {
-      const author = test.value.testAdmin.email
-      await sendNotification(
-        guest.userDocId,
-        title,
-        description,
-        path,
-        test.value.id,
-        author,
-      )
-    }
+    console.error('Error sending invitation to', guest.email, error)
+    showError(`Failed to send invitation to ${guest.email}`)
+    return { success: false, email: guest.email, error: error.message }
   }
 }
 
 const notifyCooperator = (guest) => {
-  if (guest.userDocId) {
-    // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-    //  notifyCooperatorAccessibility(guest);
-    //  return;
-    //}
+  if (!guest.userDocId || guest.isUnregistered) return
 
-    // admin - 0, evaluator -1, guest - 2
-    const managerViewByMethod = getMethodManagerView(
-      test.value.testType,
-      test.value.subType,
-    )
-    const managerRoute = router.resolve({
-      name: managerViewByMethod,
-      params: { id: test.value.id },
-    })
+  const managerViewByMethod = getMethodManagerView(
+    test.value.testType,
+    test.value.subType,
+  )
+  const managerRoute = router.resolve({
+    name: managerViewByMethod,
+    params: { id: test.value.id },
+  })
 
-    const path =
-      guest.accessLevel == 0
-        ? managerRoute.href
-        : `/testview/${test.value.id}/${guest.userDocId}`
+  const path =
+    guest.accessLevel == 0
+      ? managerRoute.href
+      : `/testview/${test.value.id}/${guest.userDocId}`
 
-    sendNotification({
-      userId: guest.userDocId,
-      title: t('HeuristicsCooperators.actions.send_invitation'),
-      description:
-        inviteMessages.value ||
-        t('HeuristicsCooperators.messages.invite_message', {
-          testTitle: test.value.testTitle || t('common.test'),
-        }),
-      redirectsTo: path,
-      author: test.value.testAdmin.email,
-      testId: test.value.id,
-      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
-        ?.value,
-    })
-  }
+  sendNotification({
+    userId: guest.userDocId,
+    title: t('HeuristicsCooperators.actions.send_invitation'),
+    description:
+      inviteMessages.value ||
+      t('HeuristicsCooperators.messages.invite_message', {
+        testTitle: test.value.testTitle || t('common.test'),
+      }),
+    redirectsTo: path,
+    author: test.value.testAdmin.email,
+    testId: test.value.id,
+    accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
+      ?.value,
+  })
 }
 
 const reinvite = async (guest) => {
-  await sendMenssages(guest)
+  try {
+    await sendMenssages(guest)
+    showSuccess(`Invitation resent to ${guest.email}`)
+  } catch (error) {
+    console.error('Error resending invitation:', error)
+    showError(`Failed to resend invitation: ${error.message}`)
+  }
 }
 
 const removeCoop = async (coop) => {

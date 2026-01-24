@@ -7,6 +7,7 @@ import StudyController from '@/controllers/StudyController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { auth, db } from '../../app/plugins/firebase/index'
 
 const studyController = new StudyController()
 
@@ -245,6 +246,186 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    /**
+     * Validate invitation token for non-registered users
+     */
+    async validateInvitation({ commit }, { token, email }) {
+      commit('setLoading', true)
+      try {
+        const decodedEmail = decodeURIComponent(email)
+        if (!db) {
+          throw new Error('Database connection error')
+        }
+        const { collection, getDocs, query, where } = await import('firebase/firestore')
+        const testsRef = collection(db, 'tests')
+        const allTestsQuery = await getDocs(testsRef)
+        let foundTest = null
+        let foundCooperator = null
+        // search all the tests
+        for (const docSnap of allTestsQuery.docs) {
+          const test = {
+            id: docSnap.id,
+            ...docSnap.data(),
+          }
+          if (test.cooperators && Array.isArray(test.cooperators)) {
+            const cooperator = test.cooperators.find(
+              (coop) => coop.invitationToken === token && coop.email === decodedEmail
+            )
+            if (cooperator) {
+              foundTest = test
+              foundCooperator = cooperator
+              break
+            }
+          }
+        }
+        
+        if (!foundCooperator) {
+          throw new Error('Invitation not found or has expired')
+        }
+
+        // check invitation is expired or nott
+        if (
+          foundCooperator.invitationExpires &&
+          new Date(foundCooperator.invitationExpires) < new Date()
+        ) {
+          throw new Error('Invitation has expired')
+        }
+
+        // check already accepted or not
+        if (foundCooperator.accepted) {
+          throw new Error('Invitation already accepted')
+        }
+
+        // check user already exists or not
+        const usersRef = collection(db, 'users')
+        const userQuery = query(usersRef, where('email', '==', decodedEmail))
+        const userSnapshot = await getDocs(userQuery)
+        const userExists = !userSnapshot.empty
+
+        if (userExists) {
+          throw new Error('User already exists. Please sign in instead.')
+        }
+
+        return {
+          valid: true,
+          testId: foundTest.id,
+          testTitle: foundTest.testTitle,
+          testDescription: foundTest.testDescription,
+          adminName: foundTest.testAdmin?.name || foundTest.testAdmin?.email || 'Study Administrator',
+          adminEmail: foundTest.testAdmin?.email,
+          email: decodedEmail,
+          accessLevel: foundCooperator.accessLevel,
+          invitationExpires: foundCooperator.invitationExpires,
+          invitationMessage: foundCooperator.inviteMessage,
+        }
+      } catch (error) {
+        console.error('Error validating invitation:', error)
+        return {
+          valid: false,
+          error: error.message,
+        }
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    /**
+     * Accept invitation and create account for non-registered users
+     */
+    async acceptInvitation({ commit, dispatch }, { token, email, name, password }) {
+      commit('setLoading', true)
+      try {
+        const decodedEmail = decodeURIComponent(email)        
+        const validationResult = await dispatch('validateInvitation', { 
+          token, 
+          email: decodedEmail 
+        })
+        if (!validationResult.valid) {
+          throw new Error(validationResult.error || 'Invalid invitation')
+        }
+        const { createUserWithEmailAndPassword } = await import('firebase/auth')        
+        let userCredential
+        try {
+          userCredential = await createUserWithEmailAndPassword(auth, decodedEmail, password)
+        } catch (authError) {
+          if (authError.code === 'auth/email-already-in-use') {
+            throw new Error('Email already in use. Please sign in instead.')
+          }
+          throw authError
+        }
+        if (name && userCredential.user) {
+          const { updateProfile } = await import('firebase/auth')
+          await updateProfile(userCredential.user, {
+            displayName: name
+          })
+        }
+        // Create user document in Firestore
+        const userData = {
+          email: decodedEmail,
+          name: name,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          accessLevel: 1,
+          myTests: {},
+          myAnswers: {},
+          notifications: [],
+          storageUsageMB: 0,
+        }
+        const { doc, setDoc, getDoc, updateDoc } = await import('firebase/firestore')
+        await setDoc(doc(db, 'users', userCredential.user.uid), userData)
+        // update cooperator record in the test document
+        const testRef = doc(db, 'tests', validationResult.testId)
+        const testDoc = await getDoc(testRef)
+        const testData = testDoc.data()
+        
+        if (!testData) {
+          throw new Error('Test not found')
+        }
+        
+        // find and update the specific cooperator
+        const updatedCooperators = testData.cooperators.map(coop => {
+          if (coop.invitationToken === token && coop.email === decodedEmail) {
+            return {
+              ...coop,
+              userDocId: userCredential.user.uid,
+              accepted: true,
+              isUnregistered: false,
+              invitationToken: null,
+              invitationExpires: null,
+              acceptedAt: new Date().toISOString(),
+              updateDate: new Date().toISOString(),
+            }
+          }
+          return coop
+        })
+        // update the test document with modified cooperators
+        await updateDoc(testRef, {
+          cooperators: updatedCooperators,
+          updateDate: new Date().toISOString()
+        })
+        
+        // auto login the user
+        await dispatch('signin', {
+          email: decodedEmail,
+          password: password
+        })
+        
+        return {
+          success: true,
+          userId: userCredential.user.uid,
+          testId: validationResult.testId,
+          testTitle: validationResult.testTitle,
+          accessLevel: validationResult.accessLevel,
+        }
+        
+      } catch (error) {
+        console.error('Error accepting invitation:', error)
+        throw error
       } finally {
         commit('setLoading', false)
       }
