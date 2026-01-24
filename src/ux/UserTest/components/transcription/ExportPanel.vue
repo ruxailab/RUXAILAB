@@ -77,10 +77,10 @@
     <v-row class="mb-4" dense>
       <v-col cols="12" md="6">
         <!-- Scope -->
-        <span class="sr-only" id="scopeLabel">Scope</span>
+        <span id="scopeLabel" class="sr-only">Scope</span>
         <v-btn-toggle
-          aria-labelledby="scopeLabel"
           v-model="scope"
+          aria-labelledby="scopeLabel"
           mandatory
           density="comfortable"
           class="toggle--responsive seg"
@@ -98,10 +98,10 @@
 
       <v-col cols="12" md="6">
         <!-- Format -->
-        <span class="sr-only" id="formatLabel">Format</span>
+        <span id="formatLabel" class="sr-only">Format</span>
         <v-btn-toggle
-          aria-labelledby="formatLabel"
           v-model="format"
+          aria-labelledby="formatLabel"
           mandatory
           density="comfortable"
           class="toggle--responsive seg"
@@ -205,7 +205,7 @@
             </div>
             <QuillEditor
               v-model:content="pdfSummaryHtml"
-              contentType="html"
+              content-type="html"
               theme="snow"
               style="height: 220px"
             />
@@ -255,98 +255,6 @@
     </v-card>
   </v-dialog>
 </template>
-
-<style scoped>
-.export-surface {
-  display: flex;
-  flex-direction: column;
-}
-.export-actions {
-  justify-content:flex-end;
-  gap: 8px;
-}
-@media (max-width: 960px) {
-  .export-actions {
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  .export-actions .v-btn {
-    width: 100%;
-  }
-}
-
-.toggle--responsive {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.toggle--responsive .v-btn {
-  flex: 1 1 220px;
-  min-width: 0;
-}
-
-.actions .v-btn {
-  min-width: 140px;
-}
-@media (max-width: 960px) {
-  .actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .actions .v-btn {
-    width: 100%;
-  }
-}
-
-/* PDF dialog: prevent overflow on small screens */
-.scroll-panel {
-  max-height: 60vh;
-  overflow: auto;
-}
-
-/* Tables: allow horizontal scroll on mobile */
-.scroll-x {
-  display: block;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.scroll-x table {
-  width: 100%;
-}
-
-.pdf-preview {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 20px 30px;
-}
-.seg-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-.seg-table th,
-.seg-table td {
-  border: 1px solid #e6e6e6;
-  padding: 6px 8px;
-  vertical-align: top;
-}
-.seg-table thead th {
-  background: #fff7ea;
-}
-.sr-only {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-</style>
 
 <script setup>
 import { ref, watch, computed } from 'vue'
@@ -920,3 +828,95 @@ function getImageSize(dataUrl) {
   })
 }
 </script>
+
+<style scoped>
+.export-surface {
+  display: flex;
+  flex-direction: column;
+}
+.export-actions {
+  justify-content:flex-end;
+  gap: 8px;
+}
+@media (max-width: 960px) {
+  .export-actions {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .export-actions .v-btn {
+    width: 100%;
+  }
+}
+
+.toggle--responsive {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toggle--responsive .v-btn {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.actions .v-btn {
+  min-width: 140px;
+}
+@media (max-width: 960px) {
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .actions .v-btn {
+    width: 100%;
+  }
+}
+
+/* PDF dialog: prevent overflow on small screens */
+.scroll-panel {
+  max-height: 60vh;
+  overflow: auto;
+}
+
+/* Tables: allow horizontal scroll on mobile */
+.scroll-x {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-x table {
+  width: 100%;
+}
+
+.pdf-preview {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px 30px;
+}
+.seg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.seg-table th,
+.seg-table td {
+  border: 1px solid #e6e6e6;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+.seg-table thead th {
+  background: #fff7ea;
+}
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>

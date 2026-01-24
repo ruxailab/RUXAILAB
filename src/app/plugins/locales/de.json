@@ -67,7 +67,120 @@
     "viewAll": "Alle anzeigen",
     "sentBy": "Gesendet von",
     "new": "NEU",
-    "test": "eine Studie"
+    "test": "eine Studie",
+    "table": {
+      "itemsPerPage": "Einträge pro Seite:",
+      "type": "Typ",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Besitzer",
+      "evaluator": "Bewerter",
+      "status": "Status",
+      "sessionDate": "Sitzungsdatum",
+      "participants": "Teilnehmer",
+      "created": "Erstellt"
+    }
+  },
+  "storage": {
+    "pageTitle": "Speicher",
+    "totalStorage": "Gesamtspeicher",
+    "acrossFiles": "Über {count} Dateien",
+    "mediaFiles": "Mediendateien",
+    "searchByStudyOrDate": "Nach Studie oder Datum suchen",
+    "deleteFile": "Datei löschen",
+    "noMediaFiles": "Keine Mediendateien gefunden",
+    "confirmDeletion": "Löschung bestätigen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese {type}-Datei aus \"{studyName}\" löschen möchten?",
+    "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "headers": {
+      "type": "Typ",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Besitzer",
+      "participants": "Teilnehmer",
+      "created": "Erstellt",
+      "evaluator": "Bewerter",
+      "status": "Status",
+      "sessionDate": "Sitzungsdatum",
+      "itemsPerPage": "Elemente pro Seite:"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Community-Studien",
+      "searchPlaceholder": "Studien suchen..."
+    },
+    "templates": {
+      "title": "Community-Vorlagen",
+      "searchPlaceholder": "Vorlagen suchen..."
+    },
+    "reset": "Zurücksetzen",
+    "showFilters": "Filter anzeigen",
+    "hideFilters": "Filter ausblenden",
+    "selectRange": "Bereich auswählen",
+    "filters": {
+      "creationDate": "Erstellungsdatum",
+      "status": "Status",
+      "method": "Methode",
+      "ownership": "Eigentum",
+      "participants": "Teilnehmer"
+    },
+    "status": {
+      "allStatuses": "Alle Status",
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen"
+    },
+    "ownership": {
+      "allStudies": "Alle Studien",
+      "myStudies": "Meine Studien",
+      "whereICollaborate": "Wo ich zusammenarbeite"
+    },
+    "participants": {
+      "all": "Alle",
+      "lessThan10": "< 10 Teilnehmer",
+      "between10And50": "10 – 50 Teilnehmer",
+      "moreThan50": "> 50 Teilnehmer"
+    },
+    "method": {
+      "allMethods": "Alle Methoden",
+      "all": "Alle",
+      "heuristicEvaluation": "Heuristische Bewertung",
+      "userStudyUnmoderated": "Benutzerstudie (Unmoderiert)",
+      "userStudyModerated": "Benutzerstudie (Moderiert)",
+      "manualAccessibility": "Manuelle Barrierefreiheit",
+      "automaticAccessibility": "Automatische Barrierefreiheit"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
+    "markAllRead": "Alle als gelesen markieren",
+    "searchPlaceholder": "Benachrichtigungen suchen…",
+    "notification": "Benachrichtigung",
+    "important": "Wichtig",
+    "markAsRead": "Als gelesen markieren",
+    "markAsUnread": "Als ungelesen markieren",
+    "refresh": "Aktualisieren",
+    "noResultsFound": "Keine Ergebnisse gefunden",
+    "allCaughtUp": "Alles erledigt!",
+    "noNotificationsYet": "Noch keine Benachrichtigungen",
+    "tryDifferentKeywords": "Versuchen Sie andere Stichwörter oder löschen Sie die Suche",
+    "allReadMessage": "Sie haben alle Benachrichtigungen gelesen. Gut gemacht!",
+    "newActivitiesMessage": "Hier werden Benachrichtigungen angezeigt, wenn Sie neue Aktivitäten haben",
+    "justNow": "Gerade eben",
+    "minutesAgo": "vor {count}m",
+    "hoursAgo": "vor {count}h",
+    "daysAgo": "vor {count}T",
+    "newNotification": "Sie haben eine neue Benachrichtigung."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "studies": "Studien",
+    "sessions": "Sitzungen",
+    "templates": "Vorlagen",
+    "storage": "Speicher",
+    "communityStudies": "Community-Studien",
+    "communityTemplates": "Community-Vorlagen"
   },
   "profile": {
     "title": "Profil",
@@ -164,6 +277,10 @@
       "finalReport": "Bereiten Sie den Abschlussbericht für Ihre Heuristik-Evaluation vor, indem Sie die Elemente auswählen, die Sie einbeziehen möchten."
     }
   },
+  "storage": {
+    "noMediaFiles": "Keine Mediendatei gefunden",
+    "mediaFiles": "Mediendateien"
+  },
   "errors": {
     "invalidInvitation": "Ungültige Einladung",
     "signupWithInvitationEmail": "Der Benutzer muss sich mit derselben E-Mail wie in der Einladung registrieren.",
@@ -189,6 +306,8 @@
     "cta": "Loslegen"
   },
   "Dashboard": {
+    "welcomeBack": "Willkommen zurück, {name}!",
+    "subtitle": "Das passiert heute mit deinen Forschungsprojekten",
     "createNewTest": "Neue Studie erstellen",
     "tests": "Tests",
     "templates": "Vorlagen",
@@ -198,7 +317,41 @@
     "publicTests": "Öffentliche Tests",
     "sessions": "Sitzungen",
     "personal": "Persönlich",
-    "explore": "Erkunden"
+    "explore": "Erkunden",
+    "activeStudiesOverview": "Übersicht über aktive Studien",
+    "viewAll": "Alle anzeigen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "progress": "Fortschritt",
+    "participants": "Teilnehmende",
+    "participantsLabel": "Teilnehmende",
+    "daysLeft": "Tage verbleibend",
+    "dayLeft": "Tag verbleibend",
+    "studies": "Studien",
+    "storage": "Speicher",
+    "free": "Kostenlos",
+    "plan": "Plan",
+    "recentActivity": "Letzte Aktivität",
+    "comingSoon": "Demnächst",
+    "mostUsedMethods": "Meistgenutzte Methoden",
+    "use": "Nutzung",
+    "uses": "Nutzungen",
+    "noDataAvailable": "Noch keine Daten verfügbar",
+    "createFirstStudy": "Erstelle deine erste Studie, um hier Statistiken zu sehen.",
+    "nextSession": "Nächste Sitzung",
+    "noSessionsScheduled": "Keine Sitzungen geplant",
+    "nextSessionWillAppear": "Deine nächste Sitzung wird hier angezeigt",
+    "latestBlogPosts": "Neueste Blogbeiträge",
+    "viewBlog": "Blog ansehen",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "status": {
+      "active": "Aktiv",
+      "recruiting": "Rekrutierung",
+      "paused": "Pausiert",
+      "finished": "Abgeschlossen",
+      "unknown": "Unbekannt"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -222,7 +375,14 @@
       "deleteQuestion": "Frage löschen",
       "addNewDescription": "Neue Beschreibung hinzufügen",
       "addOption": "Neue Option hinzufügen",
-      "hasValue": "Hat Wert"
+      "hasValue": "Hat Wert",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "Question": "Frage",
+      "Questions": "Fragen",
+      "noQuestions": "Keine Fragen",
+      "noDescriptions": "Keine Beschreibungen",
+      "loading": "Lädt..."
     },
     "placeholders": {
       "titleHeuristic": "Titel Heuristik",
@@ -237,7 +397,10 @@
       "youMustHave": "Sie müssen etwas falsch eingegeben haben...",
       "noHeuristicsDeleteAll": "Sorry, aber Sie können nicht alle Heuristikfragen löschen.",
       "noCsvFileSelected": "Keine CSV-Datei ausgewählt. Bitte wählen Sie eine aus, bevor Sie fortfahren.",
-      "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern."
+      "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern.",
+      "noDescriptions": "Keine Beschreibungen verfügbar",
+      "startAddingQuestions": "Beginnen Sie, indem Sie Ihre erste Frage zu dieser Heuristik hinzufügen",
+      "cantDeleteAllQuestions": "Entschuldigung, Sie können nicht alle Fragen von einer Heuristik löschen"
     },
     "validation": {
       "nameRequired": "Name ist obligatorisch",
@@ -250,6 +413,12 @@
       "showComment": "Kommentar anzeigen",
       "addComment": "Kommentar hinzufügen",
       "hideTextArea": "Textbereich ausblenden"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Fehler beim Laden des Frageformulars. Bitte versuchen Sie es erneut.",
+      "failedToLoadEditForm": "Fehler beim Laden des Bearbeitungsformulars. Bitte versuchen Sie es erneut.",
+      "invalidHeuristic": "Ungültige Heuristikauswahl",
+      "invalidQuestion": "Ungültige Frageauswahl"
     }
   },
   "HeuristicsOptionsTable": {
@@ -541,6 +710,25 @@
     "goHome": "Zur Startseite"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Keine aktive Sitzung gefunden",
+      "selectRange": "Bereich auswählen",
+      "reset": "Zurücksetzen",
+      "searchPlaceholder": "Studien suchen...",
+      "filters": {
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich zusammenarbeite",
+        "allStatuses": "Alle Status",
+        "today": "Heute",
+        "upcoming": "Bevorstehend",
+        "completed": "Abgeschlossen"
+      },
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "sessionDate": "Sitzungsdatum",
+      "statusLabel": "Status"
+    },
     "intros": {
       "click": "Hier klicken!",
       "learnMore": "Mehr erfahren",
@@ -586,6 +774,44 @@
       "version": "Version:",
       "noTests": "Keine Tests gefunden",
       "noTemplates": "Keine Vorlagen gefunden"
+    },
+    "sessions": {
+      "searchPlaceholder": "Sitzungen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "sessionDate": "Sitzungsdatum",
+      "selectRange": "Bereich auswählen",
+      "statusLabel": "Status",
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "noActiveSessions": "Sie haben keine aktiven Sitzungen",
+      "filters": {
+        "allStatuses": "Alle Status",
+        "today": "Heute",
+        "upcoming": "Bevorstehend",
+        "completed": "Abgeschlossen",
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich mitarbeite"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Vorlagen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "creationDate": "Erstellungsdatum",
+      "selectRange": "Bereich auswählen",
+      "method": "Methode",
+      "filters": {
+        "allMethods": "Alle Methoden",
+        "heuristicEvaluation": "Heuristische Evaluation",
+        "userUnmoderated": "Benutzer unmoderiert",
+        "userModerated": "Benutzer moderiert",
+        "manualAccessibility": "Manuelle Barrierefreiheit",
+        "automaticAccessibility": "Automatische Barrierefreiheit"
+      }
     },
     "createTest": {
       "title": "Neuen Test erstellen",
@@ -1033,6 +1259,70 @@
         "finished": "Beendet",
         "upcoming": "Bevorstehend"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Benutzertest-Studie",
+      "unmoderatedStudy": "Unmoderierte Studie",
+      "moderatedStudy": "Moderierte Studie",
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen",
+      "archived": "Archiviert"
+    },
+    "studyOverview": {
+      "totalParticipants": "Gesamtteilnehmer",
+      "completed": "Abgeschlossen",
+      "rate": "{percentage}% Rate",
+      "inProgress": "In Bearbeitung",
+      "active": "{percentage}% aktiv",
+      "averageTime": "Durchschnittszeit",
+      "completionTime": "Abschlusszeit",
+      "minUnit": "{value} Min"
+    },
+    "managementModules": {
+      "title": "Verwaltungsmodule",
+      "description": "Umfassende Tools zur Verwaltung von Teilnehmern, Aufgaben, Einstellungen und Analyse Ihrer Studiendaten",
+      "additionalModules": "Platz für zusätzliche Module"
+    },
+    "participants": {
+      "title": "Teilnehmer",
+      "subtitle": "Übersicht der Testteilnahme",
+      "beta": "Beta",
+      "completed": "Abgeschlossen",
+      "notStarted": "Nicht Gestartet",
+      "pendingInvites": "Ausstehende Einladungen",
+      "overallProgress": "Gesamtfortschritt",
+      "participantsCompleted": "{completed} von {total} Teilnehmern abgeschlossen",
+      "details": "Details"
+    },
+    "tasks": {
+      "title": "Aufgabenübersicht",
+      "subtitle": "Aufgabenstruktur und Abschluss",
+      "beta": "Beta",
+      "noTasksConfigured": "Keine Aufgaben konfiguriert",
+      "taskCompletionRate": "Aufgabenabschlussrate",
+      "totalTasks": "Gesamtaufgaben",
+      "avgTaskDuration": "Durchschn. Aufgabendauer",
+      "successRate": "Erfolgsrate",
+      "taskTypes": "Aufgabentypen",
+      "viewTasks": "Aufgaben Anzeigen"
+    },
+    "storage": {
+      "title": "Speichernutzung",
+      "subtitle": "Mediendateien und Speichermetriken",
+      "beta": "Beta",
+      "storageUsed": "Genutzter Speicher",
+      "storageQuota": "{used} von {quota} genutzt",
+      "mediaFiles": "Mediendateien",
+      "videoRecordings": "Videoaufnahmen",
+      "audioRecordings": "Audioaufnahmen",
+      "screenRecordings": "Bildschirmaufnahmen",
+      "storageBreakdown": "Speicheraufschlüsselung",
+      "responsesData": "Antwortdaten",
+      "analyticsData": "Analysedaten",
+      "manageStorage": "Speicher Verwalten"
     }
   }
 }

@@ -1,16 +1,16 @@
 const MONTHS_ES = {
-    0: 'January',
-    1: 'February',
-    2: 'March',
-    3: 'April',
-    4: 'May',
-    5: 'June',
-    6: 'July',
-    7: 'August',
-    8: 'September',
-    9: 'October',
-    10: 'November',
-    11: 'December'
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December',
 }
 
 /**
@@ -20,30 +20,30 @@ const MONTHS_ES = {
  * @returns {string} - Fecha formateada o '-' si no hay fecha
  */
 export const formatDateLong = (date, locale = 'es') => {
-    if (!date) return '-'
+  if (!date) return '-'
 
-    try {
-        const d = new Date(date)
-        if (isNaN(d.getTime())) return '-'
+  try {
+    const d = new Date(date)
+    if (isNaN(d.getTime())) return '-'
 
-        const day = d.getDate()
-        const month = d.getMonth()
-        const year = d.getFullYear()
+    const day = d.getDate()
+    const month = d.getMonth()
+    const year = d.getFullYear()
 
-        if (locale === 'es') {
-            return `${day} ${MONTHS_ES[month]} ${year}`
-        } else {
-            // Inglés por defecto
-            return d.toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            })
-        }
-    } catch (error) {
-        console.warn('Error formatting date:', error)
-        return '-'
+    if (locale === 'es') {
+      return `${day} ${MONTHS_ES[month]} ${year}`
+    } else {
+      // Inglés por defecto
+      return d.toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
     }
+  } catch (error) {
+    console.warn('Error formatting date:', error)
+    return '-'
+  }
 }
 
 /**
@@ -53,17 +53,16 @@ export const formatDateLong = (date, locale = 'es') => {
  * @returns {string} - Fecha formateada o '-' si no hay fecha
  */
 export const formatDateShort = (date, locale = 'en-GB') => {
-    if (!date) return '-'
+  if (!date) return '-'
 
-    try {
-        const d = new Date(date)
-        if (isNaN(d.getTime())) return '-'
+  try {
+    const d = new Date(date)
+    if (isNaN(d.getTime())) return '-'
 
-        return d.toLocaleDateString(locale)
-    } catch (error) {
-        console.warn('Error formatting date:', error)
-        return '-'
-    }
+    return d.toLocaleDateString(locale)
+  } catch (error) {
+    return error
+  }
 }
 
 /**
@@ -73,23 +72,23 @@ export const formatDateShort = (date, locale = 'en-GB') => {
  * @returns {string} - Fecha y hora formateada
  */
 export const formatDateTime = (date, locale = 'es-ES') => {
-    if (!date) return '-'
+  if (!date) return '-'
 
-    try {
-        const d = new Date(date)
-        if (isNaN(d.getTime())) return '-'
+  try {
+    const d = new Date(date)
+    if (isNaN(d.getTime())) return '-'
 
-        return d.toLocaleString(locale, {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-    } catch (error) {
-        console.warn('Error formatting datetime:', error)
-        return '-'
-    }
+    return d.toLocaleString(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch (error) {
+    console.warn('Error formatting datetime:', error)
+    return '-'
+  }
 }
 
 /**
@@ -98,25 +97,25 @@ export const formatDateTime = (date, locale = 'es-ES') => {
  * @returns {string} - Tiempo relativo
  */
 export const formatRelativeTime = (date) => {
-    if (!date) return '-'
+  if (!date) return '-'
 
-    try {
-        const d = new Date(date)
-        if (isNaN(d.getTime())) return '-'
+  try {
+    const d = new Date(date)
+    if (isNaN(d.getTime())) return '-'
 
-        const now = new Date()
-        const diffMs = now - d
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const now = new Date()
+    const diffMs = now - d
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-        if (diffDays === 0) return 'Hoy'
-        if (diffDays === 1) return 'Ayer'
-        if (diffDays < 7) return `Hace ${diffDays} días`
-        if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`
-        if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} meses`
+    if (diffDays === 0) return 'Hoy'
+    if (diffDays === 1) return 'Ayer'
+    if (diffDays < 7) return `Hace ${diffDays} días`
+    if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`
+    if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} meses`
 
-        return `Hace ${Math.floor(diffDays / 365)} años`
-    } catch (error) {
-        console.warn('Error formatting relative time:', error)
-        return '-'
-    }
+    return `Hace ${Math.floor(diffDays / 365)} años`
+  } catch (error) {
+    console.warn('Error formatting relative time:', error)
+    return '-'
+  }
 }
