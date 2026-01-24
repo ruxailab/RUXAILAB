@@ -107,7 +107,11 @@
       "evaluator": "Evaluador",
       "status": "Estado",
       "sessionDate": "Fecha de sesión",
-      "itemsPerPage": "Elementos por página:"
+      "itemsPerPage": "Elementos por página:",
+      "studyName": "Nombre del Estudio",
+      "date": "Fecha",
+      "size": "Tamaño",
+      "actions": "Acciones"
     }
   },
   "community": {
@@ -932,10 +936,6 @@
     "cooperators": {
       "invitationSent": "Invitación enviada con éxito"
     }
-  },
-  "storage": {
-    "noMediaFiles": "No se encontraron archivos multimedia",
-    "mediaFiles": "Archivos multimedia"
   },
   "alerts": {
     "copy": "Copia exitosa",

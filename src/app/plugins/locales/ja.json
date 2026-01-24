@@ -83,7 +83,11 @@
       "evaluator": "評価者",
       "status": "ステータス",
       "sessionDate": "セッション日",
-      "itemsPerPage": "ページあたりの項目数:"
+      "itemsPerPage": "ページあたりの項目数:",
+      "studyName": "研究名",
+      "date": "日付",
+      "size": "サイズ",
+      "actions": "操作"
     }
   },
   "community": {
@@ -239,10 +243,6 @@
       "edit": "研究ニーズに合わせてタスクとヒューリスティックを作成およびカスタマイズします。",
       "finalReport": "含めたい項目を選択して、ヒューリスティック評価の最終レポートを準備します。"
     }
-  },
-  "storage": {
-    "noMediaFiles": "メディアファイルが見つかりません",
-    "mediaFiles": "メディアファイル"
   },
   "errors": {
     "invalidInvitation": "無効な招待です",

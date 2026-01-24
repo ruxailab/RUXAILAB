@@ -83,7 +83,11 @@
       "evaluator": "评估者",
       "status": "状态",
       "sessionDate": "会话日期",
-      "itemsPerPage": "每页项目数:"
+      "itemsPerPage": "每页项目数:",
+      "studyName": "研究名称",
+      "date": "日期",
+      "size": "大小",
+      "actions": "操作"
     }
   },
   "community": {
@@ -840,10 +844,6 @@
     "cooperators": {
       "invitationSent": "邀请发送成功"
     }
-  },
-  "storage": {
-    "noMediaFiles": "未找到媒体文件",
-    "mediaFiles": "媒体文件"
   },
   "alerts": {
     "copy": "复制成功",
