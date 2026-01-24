@@ -102,7 +102,11 @@
       "evaluator": "Bewerter",
       "status": "Status",
       "sessionDate": "Sitzungsdatum",
-      "itemsPerPage": "Elemente pro Seite:"
+      "itemsPerPage": "Elemente pro Seite:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
     }
   },
   "community": {
@@ -276,10 +280,6 @@
       "edit": "Erstellen und passen Sie Ihre Aufgaben und Heuristiken für Ihre Forschungsbedürfnisse an.",
       "finalReport": "Bereiten Sie den Abschlussbericht für Ihre Heuristik-Evaluation vor, indem Sie die Elemente auswählen, die Sie einbeziehen möchten."
     }
-  },
-  "storage": {
-    "noMediaFiles": "Keine Mediendatei gefunden",
-    "mediaFiles": "Mediendateien"
   },
   "errors": {
     "invalidInvitation": "Ungültige Einladung",
