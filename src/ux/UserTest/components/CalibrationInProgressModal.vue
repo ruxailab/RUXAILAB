@@ -6,7 +6,7 @@
             </v-card-title>
 
             <v-card-text class="mt-14 d-flex flex-column align-center justify-center">
-                <div class="mb-4 text-h6" v-if="!isCompleted">
+                <div v-if="!isCompleted" class="mb-4 text-h6">
                     Calibrating, please wait...
                 </div>
 
@@ -16,11 +16,11 @@
                         mdi-check
                     </v-icon>
                 </div>
-                <div class="text-subtitle-1 mt-auto" v-if="!isCompleted">
-                    The calibration didn't open? <a @click="$emit('openCalibration')" class="openCalib">Click here</a>
+                <div v-if="!isCompleted" class="text-subtitle-1 mt-auto">
+                    The calibration didn't open? <a class="openCalib" @click="$emit('openCalibration')">Click here</a>
                 </div>
 
-                <div class="text-subtitle-1 mt-auto" v-else>
+                <div v-else class="text-subtitle-1 mt-auto">
                     The calibration was successful!
                     <br>
                     <v-btn class="mt-4" color="primary" @click="$emit('close')">

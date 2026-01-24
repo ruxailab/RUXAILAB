@@ -15,10 +15,7 @@
           {{ $t('auth.SIGNIN.sign-in-subtitle') }}
         </p>
 
-        <v-form
-          ref="form"
-          @submit.prevent="onSignIn"
-        >
+        <v-form ref="form" @submit.prevent="onSignIn">
           <v-text-field
             v-model="email"
             :rules="emailRules"
@@ -114,6 +111,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import { createEmailRules } from '@/shared/utils/validators'
 
 const { t } = useI18n()
 const store = useStore()
@@ -128,10 +126,7 @@ const loadingType = ref('')
 
 const loading = computed(() => store.getters.loading)
 
-const emailRules = [
-  v => !!v || t('errors.emailIsRequired'),
-  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || t('errors.invalidEmail'),
-]
+const emailRules = createEmailRules(t)
 
 const rules = {
   required: (v) => !!v || t('errors.passwordRequired'),
@@ -139,10 +134,10 @@ const rules = {
 
 const onSignIn = async () => {
   if (!form.value) return
-  
+
   const { valid } = await form.value.validate()
   if (!valid) return
-  
+
   try {
     store.commit('setLoading', true)
     loadingType.value = 'signin'
@@ -153,7 +148,7 @@ const onSignIn = async () => {
     })
     await router.push('/admin')
   } catch (error) {
-    console.error('Authentication error:', error)
+    return error
   } finally {
     loadingType.value = ''
     store.commit('setLoading', false)
@@ -183,9 +178,9 @@ const onGoogleSignInSuccess = async () => {
 }
 
 const onGoogleSignInError = (error) => {
-  console.error('Google sign-in error:', error)
   loadingType.value = ''
   store.dispatch('setLoading', false)
+  return error
 }
 </script>
 
