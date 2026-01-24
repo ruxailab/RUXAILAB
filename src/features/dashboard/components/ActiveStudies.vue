@@ -37,8 +37,8 @@
             variant="outlined"
             rounded="lg"
             class="study-card"
-            @click="goToStudy(study)"
             hover
+            @click="goToStudy(study)"
           >
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">

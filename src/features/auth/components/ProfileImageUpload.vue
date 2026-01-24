@@ -4,7 +4,7 @@
       <v-img :src="previewImage || currentImage" alt="No Image" />
     </v-avatar>
     <div class="d-flex justify-center align-center gap-2 mt-3">
-      <v-btn icon size="small" @click="selectImage" color="primary">
+      <v-btn icon size="small" color="primary" @click="selectImage">
         <v-icon>mdi-camera</v-icon>
         <v-tooltip activator="parent" location="bottom">
           {{ $t('profile.uploadProfilePicture') }}
@@ -14,8 +14,8 @@
         v-if="previewImage || currentImage"
         icon
         size="small"
-        @click="removeImage"
         color="error"
+        @click="removeImage"
       >
         <v-icon>mdi-delete</v-icon>
         <v-tooltip activator="parent" location="bottom">
