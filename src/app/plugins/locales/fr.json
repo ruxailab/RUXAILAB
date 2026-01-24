@@ -69,6 +69,30 @@
     "new": "NOUVEAU",
     "test": "une Étude",
     "table": {
+      "itemsPerPage": "Éléments par page :",
+      "type": "Type",
+      "name": "Nom",
+      "tags": "Tags",
+      "owner": "Propriétaire",
+      "evaluator": "Évaluateur",
+      "status": "Statut",
+      "sessionDate": "Date de session",
+      "participants": "Participants",
+      "created": "Créé"
+    }
+  },
+  "storage": {
+    "pageTitle": "Stockage",
+    "totalStorage": "Stockage total",
+    "acrossFiles": "Sur {count} fichiers",
+    "mediaFiles": "Fichiers média",
+    "searchByStudyOrDate": "Rechercher par étude ou date",
+    "deleteFile": "Supprimer le fichier",
+    "noMediaFiles": "Aucun fichier média trouvé",
+    "confirmDeletion": "Confirmer la suppression",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer ce fichier {type} de \"{studyName}\" ?",
+    "actionCannotBeUndone": "Cette action ne peut pas être annulée.",
+    "headers": {
       "type": "Type",
       "name": "Nom",
       "tags": "Tags",
@@ -253,6 +277,10 @@
       "finalReport": "Préparez le rapport final pour votre évaluation heuristique en sélectionnant les éléments que vous souhaitez inclure."
     }
   },
+  "storage": {
+    "noMediaFiles": "Aucun fichier média trouvé",
+    "mediaFiles": "Fichiers médias"
+  },
   "errors": {
     "invalidInvitation": "Invitation invalide",
     "signupWithInvitationEmail": "L'utilisateur doit s'inscrire avec la même adresse e-mail que celle de l'invitation.",
@@ -278,6 +306,8 @@
     "cta": "Commencer"
   },
   "Dashboard": {
+    "welcomeBack": "Bon retour, {name} !",
+    "subtitle": "Voici ce qui se passe aujourd’hui dans vos projets de recherche",
     "createNewTest": "Créer une nouvelle étude",
     "tests": "Tests",
     "templates": "Modèles",
@@ -287,7 +317,41 @@
     "publicTests": "Tests publics",
     "sessions": "Sessions",
     "personal": "Personnel",
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "activeStudiesOverview": "Aperçu des études actives",
+    "viewAll": "Voir tout",
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins",
+    "progress": "Progression",
+    "participants": "Participants",
+    "participantsLabel": "Participants",
+    "daysLeft": "jours restants",
+    "dayLeft": "jour restant",
+    "studies": "Études",
+    "storage": "Stockage",
+    "free": "Gratuit",
+    "plan": "Forfait",
+    "recentActivity": "Activité récente",
+    "comingSoon": "Bientôt disponible",
+    "mostUsedMethods": "Méthodes les plus utilisées",
+    "use": "Utilisation",
+    "uses": "Utilisations",
+    "noDataAvailable": "Aucune donnée disponible pour le moment",
+    "createFirstStudy": "Créez votre première étude pour voir les statistiques ici.",
+    "nextSession": "Prochaine session",
+    "noSessionsScheduled": "Aucune session planifiée",
+    "nextSessionWillAppear": "Votre prochaine session apparaîtra ici",
+    "latestBlogPosts": "Derniers articles du blog",
+    "viewBlog": "Voir le blog",
+    "date": "Date",
+    "time": "Heure",
+    "status": {
+      "active": "Actif",
+      "recruiting": "Recrutement",
+      "paused": "En pause",
+      "finished": "Terminé",
+      "unknown": "Inconnu"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -646,6 +710,25 @@
     "goHome": "Retour à l'accueil"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Aucune session active trouvée",
+      "selectRange": "Sélectionner une plage",
+      "reset": "Réinitialiser",
+      "searchPlaceholder": "Rechercher des études...",
+      "filters": {
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore",
+        "allStatuses": "Tous les statuts",
+        "today": "Aujourd'hui",
+        "upcoming": "À venir",
+        "completed": "Terminé"
+      },
+      "ownership": "Propriété",
+      "evaluator": "Évaluateur",
+      "sessionDate": "Date de session",
+      "statusLabel": "Statut"
+    },
     "intros": {
       "click": "Cliquez ici !",
       "learnMore": "En savoir plus",
@@ -691,6 +774,44 @@
       "version": "Version :",
       "noTests": "Aucun test trouvé",
       "noTemplates": "Aucun modèle trouvé"
+    },
+    "sessions": {
+      "searchPlaceholder": "Rechercher des sessions...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "sessionDate": "Date de session",
+      "selectRange": "Sélectionner une plage",
+      "statusLabel": "Statut",
+      "ownership": "Propriété",
+      "evaluator": "Évaluateur",
+      "noActiveSessions": "Vous n'avez pas de sessions actives",
+      "filters": {
+        "allStatuses": "Tous les statuts",
+        "today": "Aujourd'hui",
+        "upcoming": "À venir",
+        "completed": "Terminé",
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Rechercher des modèles...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "creationDate": "Date de création",
+      "selectRange": "Sélectionner une plage",
+      "method": "Méthode",
+      "filters": {
+        "allMethods": "Toutes les méthodes",
+        "heuristicEvaluation": "Évaluation heuristique",
+        "userUnmoderated": "Utilisateur non modéré",
+        "userModerated": "Utilisateur modéré",
+        "manualAccessibility": "Accessibilité manuelle",
+        "automaticAccessibility": "Accessibilité automatique"
+      }
     },
     "createTest": {
       "title": "Créer un nouveau test",
@@ -1138,6 +1259,70 @@
         "finished": "Terminé",
         "upcoming": "À venir"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Étude de Test Utilisateur",
+      "unmoderatedStudy": "Étude Non Modérée",
+      "moderatedStudy": "Étude Modérée",
+      "active": "Actif",
+      "draft": "Brouillon",
+      "completed": "Terminé",
+      "archived": "Archivé"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total des Participants",
+      "completed": "Terminé",
+      "rate": "{percentage}% taux",
+      "inProgress": "En Cours",
+      "active": "{percentage}% actif",
+      "averageTime": "Temps Moyen",
+      "completionTime": "Temps de complétion",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Modules de Gestion",
+      "description": "Outils complets pour gérer les participants, les tâches, les paramètres et analyser les données de votre étude",
+      "additionalModules": "Espace pour modules supplémentaires"
+    },
+    "participants": {
+      "title": "Participants",
+      "subtitle": "Aperçu de la participation aux tests",
+      "beta": "Bêta",
+      "completed": "Terminé",
+      "notStarted": "Non Commencé",
+      "pendingInvites": "Invitations en Attente",
+      "overallProgress": "Progression Globale",
+      "participantsCompleted": "{completed} sur {total} participants terminés",
+      "details": "Détails"
+    },
+    "tasks": {
+      "title": "Aperçu des Tâches",
+      "subtitle": "Structure et achèvement des tâches",
+      "beta": "Bêta",
+      "noTasksConfigured": "Aucune tâche configurée",
+      "taskCompletionRate": "Taux d'Achèvement des Tâches",
+      "totalTasks": "Total des Tâches",
+      "avgTaskDuration": "Durée Moyenne de Tâche",
+      "successRate": "Taux de Réussite",
+      "taskTypes": "Types de Tâches",
+      "viewTasks": "Voir les Tâches"
+    },
+    "storage": {
+      "title": "Utilisation du Stockage",
+      "subtitle": "Fichiers média et métriques de stockage",
+      "beta": "Bêta",
+      "storageUsed": "Stockage Utilisé",
+      "storageQuota": "{used} sur {quota} utilisé",
+      "mediaFiles": "Fichiers Média",
+      "videoRecordings": "Enregistrements Vidéo",
+      "audioRecordings": "Enregistrements Audio",
+      "screenRecordings": "Enregistrements d'Écran",
+      "storageBreakdown": "Répartition du Stockage",
+      "responsesData": "Données de Réponses",
+      "analyticsData": "Données Analytiques",
+      "manageStorage": "Gérer le Stockage"
     }
   }
 }

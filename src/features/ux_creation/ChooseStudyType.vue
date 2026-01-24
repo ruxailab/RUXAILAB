@@ -20,8 +20,8 @@
             :description="option.description"
             :color="option.color"
             :badge="option.recommended ? { text: $t('studyCreation.comingSoon'), color: 'warning' } : null"
-            @click="() => selectOption(option.id)"
             :disabled="option.disabled"
+            @click="() => selectOption(option.id)"
           >
             <template #extra>
               <v-list class="bg-transparent pl-8 text-start" density="compact">

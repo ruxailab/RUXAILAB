@@ -74,6 +74,30 @@
     "new": "NOVO",
     "test": "um Estudo",
     "table": {
+      "itemsPerPage": "Itens por página:",
+      "type": "Tipo",
+      "name": "Nome",
+      "tags": "Tags",
+      "owner": "Proprietário",
+      "evaluator": "Avaliador",
+      "status": "Status",
+      "sessionDate": "Data da sessão",
+      "participants": "Participantes",
+      "created": "Criado"
+    }
+  },
+  "storage": {
+    "pageTitle": "Armazenamento",
+    "totalStorage": "Armazenamento Total",
+    "acrossFiles": "Em {count} arquivos",
+    "mediaFiles": "Arquivos de Mídia",
+    "searchByStudyOrDate": "Buscar por estudo ou data",
+    "deleteFile": "Excluir Arquivo",
+    "noMediaFiles": "Nenhum arquivo de mídia encontrado",
+    "confirmDeletion": "Confirmar Exclusão",
+    "deleteConfirmMessage": "Tem certeza de que deseja excluir este arquivo {type} de \"{studyName}\"?",
+    "actionCannotBeUndone": "Esta ação não pode ser desfeita.",
+    "headers": {
       "type": "Tipo",
       "name": "Nome",
       "tags": "Tags",
@@ -259,6 +283,10 @@
       "finalReport": "Prepare o relatório final para sua avaliação heurística selecionando os elementos que deseja incluir."
     }
   },
+  "storage": {
+    "noMediaFiles": "Nenhum arquivo de mídia encontrado",
+    "mediaFiles": "Arquivos de mídia"
+  },
   "errors": {
     "invalidInvitation": "Convite inválido",
     "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite.",
@@ -284,6 +312,8 @@
     "cta": "Começar"
   },
   "Dashboard": {
+    "welcomeBack": "Bem-vindo de volta, {name}!",
+    "subtitle": "Veja o que está acontecendo com seus projetos de pesquisa hoje",
     "createNewTest": "Criar novo estudo",
     "tests": "Testes",
     "templates": "Modelos",
@@ -293,7 +323,41 @@
     "publicTests": "Testes públicos",
     "sessions": "Sessões",
     "personal": "Pessoais",
-    "explore": "Explorar"
+    "explore": "Explorar",
+    "activeStudiesOverview": "Visão geral dos estudos ativos",
+    "viewAll": "Ver tudo",
+    "showMore": "Ver mais",
+    "showLess": "Ver menos",
+    "progress": "Progresso",
+    "participants": "Participantes",
+    "participantsLabel": "Participantes",
+    "daysLeft": "dias restantes",
+    "dayLeft": "dia restante",
+    "studies": "Estudos",
+    "storage": "Armazenamento",
+    "free": "Grátis",
+    "plan": "Plano",
+    "recentActivity": "Atividade recente",
+    "comingSoon": "Em breve",
+    "mostUsedMethods": "Métodos mais usados",
+    "use": "uso",
+    "uses": "usos",
+    "noDataAvailable": "Nenhum dado disponível ainda",
+    "createFirstStudy": "Crie seu primeiro estudo para ver estatísticas aqui.",
+    "nextSession": "Próxima sessão",
+    "noSessionsScheduled": "Nenhuma sessão agendada",
+    "nextSessionWillAppear": "Sua próxima sessão aparecerá aqui",
+    "latestBlogPosts": "Últimos posts do blog",
+    "viewBlog": "Ver blog",
+    "date": "Data",
+    "time": "Hora",
+    "status": {
+      "active": "Ativo",
+      "recruiting": "Recrutando",
+      "paused": "Pausado",
+      "finished": "Finalizado",
+      "unknown": "Desconhecido"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -652,6 +716,25 @@
     "goHome": "Ir para a página inicial"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Nenhuma sessão ativa encontrada",
+      "selectRange": "Selecionar intervalo",
+      "reset": "Redefinir",
+      "searchPlaceholder": "Pesquisar estudos...",
+      "filters": {
+        "allStudies": "Todos os estudos",
+        "myStudies": "Meus estudos",
+        "whereICollaborate": "Onde colaboro",
+        "allStatuses": "Todos os status",
+        "today": "Hoje",
+        "upcoming": "Em breve",
+        "completed": "Concluído"
+      },
+      "ownership": "Propriedade",
+      "evaluator": "Avaliador",
+      "sessionDate": "Data da sessão",
+      "statusLabel": "Status"
+    },
     "intros": {
       "click": "Clique aqui!",
       "learnMore": "Saiba mais",
@@ -697,6 +780,44 @@
       "version": "Versão:",
       "noTests": "Nenhum teste encontrado",
       "noTemplates": "Nenhum modelo encontrado"
+    },
+    "sessions": {
+      "searchPlaceholder": "Pesquisar sessões...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "sessionDate": "Data da sessão",
+      "selectRange": "Selecionar intervalo",
+      "statusLabel": "Status",
+      "ownership": "Propriedade",
+      "evaluator": "Avaliador",
+      "noActiveSessions": "Você não tem sessões ativas",
+      "filters": {
+        "allStatuses": "Todos os status",
+        "today": "Hoje",
+        "upcoming": "Próximas",
+        "completed": "Concluído",
+        "allStudies": "Todos os estudos",
+        "myStudies": "Meus estudos",
+        "whereICollaborate": "Onde eu colaboro"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Pesquisar modelos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Data de criação",
+      "selectRange": "Selecionar intervalo",
+      "method": "Método",
+      "filters": {
+        "allMethods": "Todos os métodos",
+        "heuristicEvaluation": "Avaliação Heurística",
+        "userUnmoderated": "Usuário não moderado",
+        "userModerated": "Usuário moderado",
+        "manualAccessibility": "Acessibilidade manual",
+        "automaticAccessibility": "Acessibilidade automática"
+      }
     },
     "createTest": {
       "title": "Criar um novo teste",
@@ -1124,6 +1245,70 @@
         "finished": "Concluído",
         "upcoming": "Próximo"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Estudo de Teste de Usuário",
+      "unmoderatedStudy": "Estudo Não Moderado",
+      "moderatedStudy": "Estudo Moderado",
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "completed": "Concluído",
+      "archived": "Arquivado"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total de Participantes",
+      "completed": "Concluído",
+      "rate": "{percentage}% taxa",
+      "inProgress": "Em Andamento",
+      "active": "{percentage}% ativo",
+      "averageTime": "Tempo Médio",
+      "completionTime": "Tempo de conclusão",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Módulos de Gerenciamento",
+      "description": "Ferramentas abrangentes para gerenciar participantes, tarefas, configurações e analisar os dados do seu estudo",
+      "additionalModules": "Espaço para módulos adicionais"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Visão geral da participação no teste",
+      "beta": "Beta",
+      "completed": "Concluído",
+      "notStarted": "Não Iniciado",
+      "pendingInvites": "Convites Pendentes",
+      "overallProgress": "Progresso Geral",
+      "participantsCompleted": "{completed} de {total} participantes concluídos",
+      "details": "Detalhes"
+    },
+    "tasks": {
+      "title": "Visão Geral das Tarefas",
+      "subtitle": "Estrutura e conclusão das tarefas",
+      "beta": "Beta",
+      "noTasksConfigured": "Nenhuma tarefa configurada",
+      "taskCompletionRate": "Taxa de Conclusão de Tarefas",
+      "totalTasks": "Total de Tarefas",
+      "avgTaskDuration": "Duração Média da Tarefa",
+      "successRate": "Taxa de Sucesso",
+      "taskTypes": "Tipos de Tarefas",
+      "viewTasks": "Ver Tarefas"
+    },
+    "storage": {
+      "title": "Uso de Armazenamento",
+      "subtitle": "Arquivos de mídia e métricas de armazenamento",
+      "beta": "Beta",
+      "storageUsed": "Armazenamento Usado",
+      "storageQuota": "{used} de {quota} usado",
+      "mediaFiles": "Arquivos de Mídia",
+      "videoRecordings": "Gravações de Vídeo",
+      "audioRecordings": "Gravações de Áudio",
+      "screenRecordings": "Gravações de Tela",
+      "storageBreakdown": "Detalhamento do Armazenamento",
+      "responsesData": "Dados de Respostas",
+      "analyticsData": "Dados de Análise",
+      "manageStorage": "Gerenciar Armazenamento"
     }
   }
 }

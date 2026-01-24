@@ -3,7 +3,7 @@
     :title="hasTestAnswerDocument ? 'Answers' : ''"
     :side-gap="true"
   >
-    <template #subtitle v-if="hasTestAnswerDocument && !isRecovering">
+    <template v-if="hasTestAnswerDocument && !isRecovering" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('analytics.overallAnalyticsDescription') }}
       </p>
@@ -18,10 +18,10 @@
       <div v-if="hasTestAnswerDocument">
         <HeuristicsTestAnswer />
       </div>
-      
+
       <div v-else class="text-center pa-10">
          <v-icon size="64" color="grey-lighten-1">mdi-database-off</v-icon>
-         <p class="mt-4 grey--text">{{ $t('common.noData') || 'No data found for this evaluation.' }}</p>
+         <p class="mt-4 text-grey">{{ $t('common.noData') || 'No data found for this evaluation.' }}</p>
       </div>
     </template>
   </PageWrapper>
@@ -29,9 +29,9 @@
 
 <script setup>
 import HeuristicsTestAnswer from '@/ux/Heuristic/components/HeuristicsTestAnswer.vue'
-import { computed, onMounted, ref } from 'vue'; 
+import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router'; 
+import { useRoute } from 'vue-router';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 
 const store = useStore()
@@ -47,13 +47,12 @@ const hasTestAnswerDocument = computed(() => {
 
 onMounted(async () => {
   const testId = route.params.testId;
-  
+
   if (!hasTestAnswerDocument.value && testId) {
     isRecovering.value = true;
     try {
       await store.dispatch('heuristic/getHeuristicTestAnswer', testId);
-    } catch (error) {
-      console.error("Recovery failed:", error);
+    } catch {
     } finally {
       isRecovering.value = false;
     }

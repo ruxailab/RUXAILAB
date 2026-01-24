@@ -74,6 +74,30 @@
     "new": "नया",
     "test": "एक अध्ययन",
     "table": {
+      "itemsPerPage": "प्रति पृष्ठ आइटम:",
+      "type": "प्रकार",
+      "name": "नाम",
+      "tags": "टैग",
+      "owner": "मालिक",
+      "evaluator": "मूल्यांकनकर्ता",
+      "status": "स्थिति",
+      "sessionDate": "सत्र तिथि",
+      "participants": "प्रतिभागी",
+      "created": "बनाया गया"
+    }
+  },
+  "storage": {
+    "pageTitle": "संग्रहण",
+    "totalStorage": "कुल संग्रहण",
+    "acrossFiles": "{count} फ़ाइलों में",
+    "mediaFiles": "मीडिया फ़ाइलें",
+    "searchByStudyOrDate": "अध्ययन या तिथि से खोजें",
+    "deleteFile": "फ़ाइल हटाएं",
+    "noMediaFiles": "कोई मीडिया फ़ाइलें नहीं मिलीं",
+    "confirmDeletion": "हटाने की पुष्टि करें",
+    "deleteConfirmMessage": "क्या आप वाकई \"{studyName}\" से यह {type} फ़ाइल हटाना चाहते हैं?",
+    "actionCannotBeUndone": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "headers": {
       "type": "प्रकार",
       "name": "नाम",
       "tags": "टैग",
@@ -241,6 +265,10 @@
       "finalReport": "अपने हीयुरिस्टिक मूल्यांकन के लिए अंतिम रिपोर्ट तैयार करें और उन तत्वों का चयन करें जिन्हें आप शामिल करना चाहते हैं।"
     }
   },
+  "storage": {
+    "noMediaFiles": "कोई मीडिया फ़ाइल नहीं मिली",
+    "mediaFiles": "मीडिया फ़ाइलें"
+  },
   "errors": {
     "invalidInvitation": "अमान्य आमंत्रण",
     "signupWithInvitationEmail": "उपयोगकर्ता को आमंत्रण के समान ईमेल का उपयोग करके साइन-अप करना होगा।",
@@ -266,6 +294,8 @@
     "cta": "शुरू करें"
   },
   "Dashboard": {
+    "welcomeBack": "वापसी पर स्वागत है, {name}!",
+    "subtitle": "आज आपके शोध प्रोजेक्ट्स में क्या हो रहा है",
     "createNewTest": "नया परीक्षण बनाएं",
     "tests": "परीक्षण",
     "templates": "टेम्पलेट्स",
@@ -275,7 +305,41 @@
     "publicTests": "सार्वजनिक परीक्षण",
     "sessions": "सत्र",
     "personal": "व्यक्तिगत",
-    "explore": "खोजें"
+    "explore": "खोजें",
+    "activeStudiesOverview": "सक्रिय अध्ययनों का अवलोकन",
+    "viewAll": "सभी देखें",
+    "showMore": "और दिखाएँ",
+    "showLess": "कम दिखाएँ",
+    "progress": "प्रगति",
+    "participants": "प्रतिभागी",
+    "participantsLabel": "प्रतिभागी",
+    "daysLeft": "दिन शेष",
+    "dayLeft": "दिन शेष",
+    "studies": "अध्ययन",
+    "storage": "स्टोरेज",
+    "free": "निःशुल्क",
+    "plan": "योजना",
+    "recentActivity": "हाल की गतिविधि",
+    "comingSoon": "जल्द आ रहा है",
+    "mostUsedMethods": "सबसे अधिक उपयोग की जाने वाली विधियाँ",
+    "use": "उपयोग",
+    "uses": "उपयोग",
+    "noDataAvailable": "अभी कोई डेटा उपलब्ध नहीं है",
+    "createFirstStudy": "यहाँ आँकड़े देखने के लिए अपना पहला अध्ययन बनाएँ।",
+    "nextSession": "अगला सत्र",
+    "noSessionsScheduled": "कोई सत्र निर्धारित नहीं है",
+    "nextSessionWillAppear": "आपका अगला सत्र यहाँ दिखाई देगा",
+    "latestBlogPosts": "नवीनतम ब्लॉग पोस्ट",
+    "viewBlog": "ब्लॉग देखें",
+    "date": "तारीख",
+    "time": "समय",
+    "status": {
+      "active": "सक्रिय",
+      "recruiting": "भर्ती जारी",
+      "paused": "रोका गया",
+      "finished": "पूर्ण",
+      "unknown": "अज्ञात"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -634,6 +698,25 @@
     "goHome": "होम पर जाएँ"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "कोई सक्रिय सत्र नहीं मिला",
+      "selectRange": "रेंज चुनें",
+      "reset": "रीसेट करें",
+      "searchPlaceholder": "अध्ययन खोजें...",
+      "filters": {
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आने वाले",
+        "completed": "पूर्ण"
+      },
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "sessionDate": "सत्र तिथि",
+      "statusLabel": "स्थिति"
+    },
     "intros": {
       "click": "यहाँ क्लिक करें!",
       "learnMore": "और जानें",
@@ -679,6 +762,44 @@
       "version": "संस्करण:",
       "noTests": "कोई परीक्षण नहीं मिला",
       "noTemplates": "कोई टेम्पलेट नहीं मिला"
+    },
+    "sessions": {
+      "searchPlaceholder": "सत्र खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "sessionDate": "सत्र तिथि",
+      "selectRange": "सीमा चुनें",
+      "statusLabel": "स्थिति",
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
+      "filters": {
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आगामी",
+        "completed": "पूर्ण",
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "टेम्पलेट्स खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "creationDate": "निर्माण तिथि",
+      "selectRange": "सीमा चुनें",
+      "method": "विधि",
+      "filters": {
+        "allMethods": "सभी विधियाँ",
+        "heuristicEvaluation": "हीयुरिस्टिक मूल्यांकन",
+        "userUnmoderated": "अनमॉडरेटेड उपयोगकर्ता",
+        "userModerated": "मॉडरेटेड उपयोगकर्ता",
+        "manualAccessibility": "मैनुअल एक्सेसिबिलिटी",
+        "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+      }
     },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",
@@ -1105,6 +1226,70 @@
         "finished": "समाप्त",
         "upcoming": "आगामी"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "उपयोगकर्ता परीक्षण अध्ययन",
+      "unmoderatedStudy": "अनमोडरेटेड अध्ययन",
+      "moderatedStudy": "मोडरेटेड अध्ययन",
+      "active": "सक्रिय",
+      "draft": "ड्राफ्ट",
+      "completed": "पूर्ण",
+      "archived": "संग्रहीत"
+    },
+    "studyOverview": {
+      "totalParticipants": "कुल प्रतिभागी",
+      "completed": "पूर्ण",
+      "rate": "{percentage}% दर",
+      "inProgress": "प्रगति में",
+      "active": "{percentage}% सक्रिय",
+      "averageTime": "औसत समय",
+      "completionTime": "पूर्णता समय",
+      "minUnit": "{value} मिनट"
+    },
+    "managementModules": {
+      "title": "प्रबंधन मॉड्यूल",
+      "description": "प्रतिभागियों, कार्यों, सेटिंग्स को प्रबंधित करने और अपने अध्ययन डेटा का विश्लेषण करने के लिए व्यापक उपकरण",
+      "additionalModules": "अतिरिक्त मॉड्यूल के लिए स्थान"
+    },
+    "participants": {
+      "title": "प्रतिभागी",
+      "subtitle": "परीक्षण भागीदारी का अवलोकन",
+      "beta": "बीटा",
+      "completed": "पूर्ण",
+      "notStarted": "शुरू नहीं हुआ",
+      "pendingInvites": "लंबित आमंत्रण",
+      "overallProgress": "समग्र प्रगति",
+      "participantsCompleted": "{total} में से {completed} प्रतिभागियों ने पूरा किया",
+      "details": "विवरण"
+    },
+    "tasks": {
+      "title": "कार्य अवलोकन",
+      "subtitle": "कार्य संरचना और पूर्णता",
+      "beta": "बीटा",
+      "noTasksConfigured": "कोई कार्य कॉन्फ़िगर नहीं किया गया",
+      "taskCompletionRate": "कार्य पूर्णता दर",
+      "totalTasks": "कुल कार्य",
+      "avgTaskDuration": "औसत कार्य अवधि",
+      "successRate": "सफलता दर",
+      "taskTypes": "कार्य प्रकार",
+      "viewTasks": "कार्य देखें"
+    },
+    "storage": {
+      "title": "भंडारण उपयोग",
+      "subtitle": "मीडिया फ़ाइलें और भंडारण मेट्रिक्स",
+      "beta": "बीटा",
+      "storageUsed": "उपयोग किया गया भंडारण",
+      "storageQuota": "{quota} में से {used} उपयोग किया गया",
+      "mediaFiles": "मीडिया फ़ाइलें",
+      "videoRecordings": "वीडियो रिकॉर्डिंग",
+      "audioRecordings": "ऑडियो रिकॉर्डिंग",
+      "screenRecordings": "स्क्रीन रिकॉर्डिंग",
+      "storageBreakdown": "भंडारण विवरण",
+      "responsesData": "प्रतिक्रिया डेटा",
+      "analyticsData": "विश्लेषण डेटा",
+      "manageStorage": "भंडारण प्रबंधित करें"
     }
   }
 }
