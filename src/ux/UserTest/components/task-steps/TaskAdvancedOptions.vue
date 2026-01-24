@@ -45,7 +45,7 @@
                 v-model="localTask.hasEye"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -89,7 +89,7 @@
                 v-model="localTask.hasScreenRecord"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -131,7 +131,7 @@
                 v-model="localTask.hasCamRecord"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -175,7 +175,7 @@
                 v-model="localTask.hasAudioRecord"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
