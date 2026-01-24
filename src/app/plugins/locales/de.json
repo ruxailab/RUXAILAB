@@ -69,6 +69,30 @@
     "new": "NEU",
     "test": "eine Studie",
     "table": {
+      "itemsPerPage": "Einträge pro Seite:",
+      "type": "Typ",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Besitzer",
+      "evaluator": "Bewerter",
+      "status": "Status",
+      "sessionDate": "Sitzungsdatum",
+      "participants": "Teilnehmer",
+      "created": "Erstellt"
+    }
+  },
+  "storage": {
+    "pageTitle": "Speicher",
+    "totalStorage": "Gesamtspeicher",
+    "acrossFiles": "Über {count} Dateien",
+    "mediaFiles": "Mediendateien",
+    "searchByStudyOrDate": "Nach Studie oder Datum suchen",
+    "deleteFile": "Datei löschen",
+    "noMediaFiles": "Keine Mediendateien gefunden",
+    "confirmDeletion": "Löschung bestätigen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese {type}-Datei aus \"{studyName}\" löschen möchten?",
+    "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "headers": {
       "type": "Typ",
       "name": "Name",
       "tags": "Tags",
@@ -750,6 +774,44 @@
       "version": "Version:",
       "noTests": "Keine Tests gefunden",
       "noTemplates": "Keine Vorlagen gefunden"
+    },
+    "sessions": {
+      "searchPlaceholder": "Sitzungen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "sessionDate": "Sitzungsdatum",
+      "selectRange": "Bereich auswählen",
+      "statusLabel": "Status",
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "noActiveSessions": "Sie haben keine aktiven Sitzungen",
+      "filters": {
+        "allStatuses": "Alle Status",
+        "today": "Heute",
+        "upcoming": "Bevorstehend",
+        "completed": "Abgeschlossen",
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich mitarbeite"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Vorlagen suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "creationDate": "Erstellungsdatum",
+      "selectRange": "Bereich auswählen",
+      "method": "Methode",
+      "filters": {
+        "allMethods": "Alle Methoden",
+        "heuristicEvaluation": "Heuristische Evaluation",
+        "userUnmoderated": "Benutzer unmoderiert",
+        "userModerated": "Benutzer moderiert",
+        "manualAccessibility": "Manuelle Barrierefreiheit",
+        "automaticAccessibility": "Automatische Barrierefreiheit"
+      }
     },
     "createTest": {
       "title": "Neuen Test erstellen",

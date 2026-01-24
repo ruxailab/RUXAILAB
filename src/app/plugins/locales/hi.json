@@ -74,6 +74,30 @@
     "new": "नया",
     "test": "एक अध्ययन",
     "table": {
+      "itemsPerPage": "प्रति पृष्ठ आइटम:",
+      "type": "प्रकार",
+      "name": "नाम",
+      "tags": "टैग",
+      "owner": "मालिक",
+      "evaluator": "मूल्यांकनकर्ता",
+      "status": "स्थिति",
+      "sessionDate": "सत्र तिथि",
+      "participants": "प्रतिभागी",
+      "created": "बनाया गया"
+    }
+  },
+  "storage": {
+    "pageTitle": "संग्रहण",
+    "totalStorage": "कुल संग्रहण",
+    "acrossFiles": "{count} फ़ाइलों में",
+    "mediaFiles": "मीडिया फ़ाइलें",
+    "searchByStudyOrDate": "अध्ययन या तिथि से खोजें",
+    "deleteFile": "फ़ाइल हटाएं",
+    "noMediaFiles": "कोई मीडिया फ़ाइलें नहीं मिलीं",
+    "confirmDeletion": "हटाने की पुष्टि करें",
+    "deleteConfirmMessage": "क्या आप वाकई \"{studyName}\" से यह {type} फ़ाइल हटाना चाहते हैं?",
+    "actionCannotBeUndone": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "headers": {
       "type": "प्रकार",
       "name": "नाम",
       "tags": "टैग",
@@ -738,6 +762,44 @@
       "version": "संस्करण:",
       "noTests": "कोई परीक्षण नहीं मिला",
       "noTemplates": "कोई टेम्पलेट नहीं मिला"
+    },
+    "sessions": {
+      "searchPlaceholder": "सत्र खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "sessionDate": "सत्र तिथि",
+      "selectRange": "सीमा चुनें",
+      "statusLabel": "स्थिति",
+      "ownership": "स्वामित्व",
+      "evaluator": "मूल्यांकनकर्ता",
+      "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
+      "filters": {
+        "allStatuses": "सभी स्थितियाँ",
+        "today": "आज",
+        "upcoming": "आगामी",
+        "completed": "पूर्ण",
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "टेम्पलेट्स खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "creationDate": "निर्माण तिथि",
+      "selectRange": "सीमा चुनें",
+      "method": "विधि",
+      "filters": {
+        "allMethods": "सभी विधियाँ",
+        "heuristicEvaluation": "हीयुरिस्टिक मूल्यांकन",
+        "userUnmoderated": "अनमॉडरेटेड उपयोगकर्ता",
+        "userModerated": "मॉडरेटेड उपयोगकर्ता",
+        "manualAccessibility": "मैनुअल एक्सेसिबिलिटी",
+        "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+      }
     },
     "createTest": {
       "title": "एक नया परीक्षण बनाएँ",

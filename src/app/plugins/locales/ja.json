@@ -50,6 +50,30 @@
     "new": "新着",
     "test": "テスト",
     "table": {
+      "itemsPerPage": "ページあたりのアイテム数:",
+      "type": "タイプ",
+      "name": "名前",
+      "tags": "タグ",
+      "owner": "オーナー",
+      "evaluator": "評価者",
+      "status": "ステータス",
+      "sessionDate": "セッション日",
+      "participants": "参加者",
+      "created": "作成日"
+    }
+  },
+  "storage": {
+    "pageTitle": "ストレージ",
+    "totalStorage": "総ストレージ",
+    "acrossFiles": "{count} ファイル",
+    "mediaFiles": "メディアファイル",
+    "searchByStudyOrDate": "研究または日付で検索",
+    "deleteFile": "ファイルを削除",
+    "noMediaFiles": "メディアファイルが見つかりません",
+    "confirmDeletion": "削除の確認",
+    "deleteConfirmMessage": "\"{studyName}\" からこの {type} ファイルを削除してもよろしいですか？",
+    "actionCannotBeUndone": "この操作は元に戻せません。",
+    "headers": {
       "type": "タイプ",
       "name": "名前",
       "tags": "タグ",
@@ -713,6 +737,44 @@
       "version": "バージョン：",
       "noTests": "テストが見つかりません",
       "noTemplates": "テンプレートが見つかりません"
+    },
+    "sessions": {
+      "searchPlaceholder": "セッションを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "sessionDate": "セッション日",
+      "selectRange": "範囲を選択",
+      "statusLabel": "ステータス",
+      "ownership": "所有権",
+      "evaluator": "評価者",
+      "noActiveSessions": "アクティブなセッションがありません",
+      "filters": {
+        "allStatuses": "すべてのステータス",
+        "today": "今日",
+        "upcoming": "今後",
+        "completed": "完了",
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "テンプレートを検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "範囲を選択",
+      "method": "方法",
+      "filters": {
+        "allMethods": "すべての方法",
+        "heuristicEvaluation": "ヒューリスティック評価",
+        "userUnmoderated": "ユーザー非モデレート",
+        "userModerated": "ユーザーモデレート",
+        "manualAccessibility": "手動アクセシビリティー",
+        "automaticAccessibility": "自動アクセシビリティー"
+      }
     },
     "createTest": {
       "title": "新しいテストを作成",

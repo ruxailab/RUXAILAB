@@ -69,6 +69,30 @@
     "new": "جديد",
     "test": "دراسة",
     "table": {
+      "itemsPerPage": "العناصر لكل صفحة:",
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "evaluator": "المقيم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء"
+    }
+  },
+  "storage": {
+    "pageTitle": "التخزين",
+    "totalStorage": "إجمالي التخزين",
+    "acrossFiles": "عبر {count} ملفات",
+    "mediaFiles": "ملفات الوسائط",
+    "searchByStudyOrDate": "البحث حسب الدراسة أو التاريخ",
+    "deleteFile": "حذف الملف",
+    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
+    "confirmDeletion": "تأكيد الحذف",
+    "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف ملف {type} هذا من \"{studyName}\"؟",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
+    "headers": {
       "type": "النوع",
       "name": "الاسم",
       "tags": "العلامات",
@@ -746,6 +770,44 @@
       "version": "الإصدار:",
       "noTests": "لم يتم العثور على اختبارات",
       "noTemplates": "لم يتم العثور على قوالب"
+    },
+    "sessions": {
+      "searchPlaceholder": "البحث في الجلسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "sessionDate": "تاريخ الجلسة",
+      "selectRange": "اختر النطاق",
+      "statusLabel": "الحالة",
+      "ownership": "الملكية",
+      "evaluator": "المقيم",
+      "noActiveSessions": "ليس لديك جلسات نشطة",
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "today": "اليوم",
+        "upcoming": "القادمة",
+        "completed": "مكتمل",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "البحث في القوالب...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "method": "الطريقة",
+      "filters": {
+        "allMethods": "جميع الطرق",
+        "heuristicEvaluation": "التقييم الاستدلالي",
+        "userUnmoderated": "مستخدم غير مدار",
+        "userModerated": "مستخدم مدار",
+        "manualAccessibility": "إمكانية الوصول اليدوية",
+        "automaticAccessibility": "إمكانية الوصول الآلية"
+      }
     },
     "createTest": {
       "title": "إنشاء اختبار جديد",

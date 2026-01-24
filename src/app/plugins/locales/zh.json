@@ -50,6 +50,30 @@
     "new": "新",
     "test": "一项研究",
     "table": {
+      "itemsPerPage": "每页项目数:",
+      "type": "类型",
+      "name": "名称",
+      "tags": "标签",
+      "owner": "所有者",
+      "evaluator": "评估者",
+      "status": "状态",
+      "sessionDate": "会话日期",
+      "participants": "参与者",
+      "created": "创建时间"
+    }
+  },
+  "storage": {
+    "pageTitle": "存储",
+    "totalStorage": "总存储空间",
+    "acrossFiles": "在 {count} 个文件中",
+    "mediaFiles": "媒体文件",
+    "searchByStudyOrDate": "按研究或日期搜索",
+    "deleteFile": "删除文件",
+    "noMediaFiles": "未找到媒体文件",
+    "confirmDeletion": "确认删除",
+    "deleteConfirmMessage": "您确定要从 \"{studyName}\" 中删除此 {type} 文件吗？",
+    "actionCannotBeUndone": "此操作无法撤销。",
+    "headers": {
       "type": "类型",
       "name": "名称",
       "tags": "标签",
@@ -727,6 +751,44 @@
       "version": "版本：",
       "noTests": "未找到测试",
       "noTemplates": "未找到模板"
+    },
+    "sessions": {
+      "searchPlaceholder": "搜索会话...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "sessionDate": "会话日期",
+      "selectRange": "选择范围",
+      "statusLabel": "状态",
+      "ownership": "所有权",
+      "evaluator": "评估者",
+      "noActiveSessions": "您没有活跃的会话",
+      "filters": {
+        "allStatuses": "所有状态",
+        "today": "今天",
+        "upcoming": "即将到来",
+        "completed": "已完成",
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "搜索模板...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择范围",
+      "method": "方法",
+      "filters": {
+        "allMethods": "所有方法",
+        "heuristicEvaluation": "启发式评估",
+        "userUnmoderated": "用户非主持",
+        "userModerated": "用户主持",
+        "manualAccessibility": "人工无障碍性",
+        "automaticAccessibility": "自动无障碍性"
+      }
     },
     "createTest": {
       "title": "创建新测试",
