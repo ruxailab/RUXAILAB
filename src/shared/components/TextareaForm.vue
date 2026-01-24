@@ -5,7 +5,8 @@
         <v-row class="pa-4 pa-0">
           <v-col>
 
-            <v-card-title class="text-h5 font-weight-bold pa-0"
+            <v-card-title
+class="text-h5 font-weight-bold pa-0"
               :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
               {{ title }}
             </v-card-title>
