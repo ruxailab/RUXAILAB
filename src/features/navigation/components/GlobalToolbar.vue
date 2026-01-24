@@ -87,7 +87,6 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
-import { useI18n } from 'vue-i18n'
 import LocaleChanger from '@/features/language/components/LocaleChanger.vue'
 import HelpButton from '@/features/navigation/components/HelpButton.vue'
 import UserMenu from './UserMenu.vue'
@@ -100,7 +99,6 @@ defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer'])
 
 // Composables
 const router = useRouter()
-const route = useRoute()
 const store = useStore()
 const { smAndDown, xs } = useDisplay()
 

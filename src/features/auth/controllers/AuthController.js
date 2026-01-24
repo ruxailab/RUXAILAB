@@ -5,17 +5,16 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
-  EmailAuthProvider
+  EmailAuthProvider,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
-import axios from 'axios';
-import EmailController from '@/shared/controllers/EmailController';
+import axios from 'axios'
+import EmailController from '@/shared/controllers/EmailController'
 
 /**
  * Controller for authentication operations
@@ -38,7 +37,10 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signIn(email, password, rememberMe) {
-    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence,
+    )
     return signInWithEmailAndPassword(auth, email, password)
   }
 
@@ -47,7 +49,10 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signInWithGoogle(rememberMe) {
-    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence,
+    )
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }
@@ -107,10 +112,12 @@ export default class AuthController {
    */
   async deleteAuth(payload) {
     const { user, password } = payload
-    
+
     if (!user) throw new Error('No user provided')
 
-    const hasGoogle = user.providerData.some(p => p.providerId === 'google.com')
+    const hasGoogle = user.providerData.some(
+      (p) => p.providerId === 'google.com',
+    )
 
     // Reauthenticate based on provider
     if (hasGoogle) {
@@ -123,22 +130,23 @@ export default class AuthController {
 
     // Delete user from Firebase Auth
     await user.delete()
-    
+
     // Call backend to clean up (non-blocking - don't fail if this errors)
     // User is already deleted from Firebase, so this is best-effort cleanup
     try {
       await this.deleteUserData(user.uid)
-    } catch (err) {
-      console.warn('Backend cleanup failed but user already deleted:', err)
+    } catch {
       // Don't throw - user deletion succeeded
     }
   }
 
   async deleteUserData(userId) {
     try {
-      await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth', { data: { userId } })
+      await axios.post(
+        process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth',
+        { data: { userId } },
+      )
     } catch (err) {
-      console.error('Error deleting user data:', err)
       throw err
     }
   }
