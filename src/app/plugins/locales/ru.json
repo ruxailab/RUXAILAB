@@ -1,29 +1,6 @@
 {
   "language": "Язык",
   "auth": {
-    "signupSuccess": "Регистрация успешна",
-    "logoutSuccess": "Выход успешен",
-    "resetPasswordSuccess": "Письмо для сброса пароля отправлено",
-    "deleteSuccess": "Аккаунт успешно удален",
-    "loginSuccess": "Вход выполнен успешно",
-    "SIGNIN": {
-      "sign-in": "Войти",
-      "sign-in-title": "С возвращением",
-      "sign-in-subtitle": "Войдите в свой аккаунт, чтобы продолжить",
-      "email": "Электронная почта",
-      "username": "Имя пользователя",
-      "password": "Пароль",
-      "signupSubtitle": "Заполните свои данные, чтобы начать",
-      "dont-have-account": "Нет аккаунта?",
-      "forgot-password": "Забыли пароль?",
-      "sign-up": "Создать аккаунт",
-      "contact": "Контактный номер",
-      "confirmPassword": "Подтвердите пароль",
-      "alreadyHaveAnAccount": "Уже есть аккаунт?",
-      "continueWithGoogle": "Продолжить с Google",
-      "rememberMe": "Запомнить меня",
-      "or": "или продолжить с"
-    },
     "FORGOT_PASSWORD": {
       "reset_password": "Сбросить пароль",
       "email": "Электронная почта",
@@ -34,15 +11,6 @@
       "reset_link_sent": "Мы отправили ссылку для сброса пароля на",
       "no_email": "Не получили письмо?",
       "try_again": "Попробовать снова"
-    },
-    "passwordStrength": "Сложность пароля",
-    "number": "Цифра",
-    "strength": {
-      "veryWeak": "Очень слабый",
-      "weak": "Слабый",
-      "fair": "Средний",
-      "good": "Хороший",
-      "strong": "Сильный"
     }
   },
   "common": {
@@ -81,7 +49,18 @@
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
     "test": "исследование",
-    "itemsPerPage": "Элементов на странице:"
+    "table": {
+      "itemsPerPage": "Элементов на странице:",
+      "type": "Тип",
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "participants": "Участники",
+      "created": "Создано"
+    }
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -96,11 +75,93 @@
     "actionCannotBeUndone": "Это действие нельзя отменить.",
     "headers": {
       "type": "Тип",
-      "studyName": "Название исследования",
-      "date": "Дата",
-      "size": "Размер",
-      "actions": "Действия"
+      "name": "Название",
+      "tags": "Теги",
+      "owner": "Владелец",
+      "participants": "Участники",
+      "created": "Создано",
+      "evaluator": "Оценщик",
+      "status": "Статус",
+      "sessionDate": "Дата сессии",
+      "itemsPerPage": "Элементов на странице:"
     }
+  },
+  "community": {
+    "studies": {
+      "title": "Исследования сообщества",
+      "searchPlaceholder": "Поиск исследований..."
+    },
+    "templates": {
+      "title": "Шаблоны сообщества",
+      "searchPlaceholder": "Поиск шаблонов..."
+    },
+    "reset": "Сбросить",
+    "showFilters": "Показать фильтры",
+    "hideFilters": "Скрыть фильтры",
+    "selectRange": "Выбрать диапазон",
+    "filters": {
+      "creationDate": "Дата создания",
+      "status": "Статус",
+      "method": "Метод",
+      "ownership": "Владение",
+      "participants": "Участники"
+    },
+    "status": {
+      "allStatuses": "Все статусы",
+      "active": "Активный",
+      "draft": "Черновик",
+      "completed": "Завершённый"
+    },
+    "ownership": {
+      "allStudies": "Все исследования",
+      "myStudies": "Мои исследования",
+      "whereICollaborate": "Где я сотрудничаю"
+    },
+    "participants": {
+      "all": "Все",
+      "lessThan10": "< 10 участников",
+      "between10And50": "10 – 50 участников",
+      "moreThan50": "> 50 участников"
+    },
+    "method": {
+      "allMethods": "Все методы",
+      "all": "Все",
+      "heuristicEvaluation": "Эвристическая оценка",
+      "userStudyUnmoderated": "Пользовательское исследование (Немодерируемое)",
+      "userStudyModerated": "Пользовательское исследование (Модерируемое)",
+      "manualAccessibility": "Ручная доступность",
+      "automaticAccessibility": "Автоматическая доступность"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "Будьте в курсе своих действий и совместной работы",
+    "markAllRead": "Отметить все как прочитанные",
+    "searchPlaceholder": "Поиск уведомлений…",
+    "notification": "Уведомление",
+    "important": "Важно",
+    "markAsRead": "Отметить как прочитанное",
+    "markAsUnread": "Отметить как непрочитанное",
+    "refresh": "Обновить",
+    "noResultsFound": "Результатов не найдено",
+    "allCaughtUp": "Всё прочитано!",
+    "noNotificationsYet": "Уведомлений пока нет",
+    "tryDifferentKeywords": "Попробуйте другие ключевые слова или очистите поиск",
+    "allReadMessage": "Вы прочитали все уведомления. Отлично!",
+    "newActivitiesMessage": "Здесь будут появляться уведомления о новых действиях",
+    "justNow": "Только что",
+    "minutesAgo": "{count} мин назад",
+    "hoursAgo": "{count} ч назад",
+    "daysAgo": "{count} д назад",
+    "newNotification": "У вас новое уведомление."
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "studies": "Исследования",
+    "sessions": "Сессии",
+    "templates": "Шаблоны",
+    "storage": "Хранилище",
+    "communityStudies": "Исследования сообщества",
+    "communityTemplates": "Шаблоны сообщества"
   },
   "profile": {
     "title": "Профиль",
@@ -197,6 +258,10 @@
       "finalReport": "Подготовьте итоговый отчет для вашей эвристической оценки, выбрав элементы, которые хотите включить."
     }
   },
+  "storage": {
+    "noMediaFiles": "Медиафайлы не найдены",
+    "mediaFiles": "Медиафайлы"
+  },
   "errors": {
     "invalidInvitation": "Недействительное приглашение",
     "signupWithInvitationEmail": "Пользователь должен зарегистрироваться с тем же адресом электронной почты, что и в приглашении.",
@@ -244,7 +309,7 @@
     "showMore": "Показать больше",
     "showLess": "Показать меньше",
     "progress": "Прогресс",
-    "participants": "Участников",
+    "participants": "Участники",
     "participantsLabel": "Участники",
     "daysLeft": "дней осталось",
     "dayLeft": "день остался",
@@ -272,14 +337,6 @@
       "paused": "Приостановлен",
       "finished": "Завершен",
       "unknown": "Неизвестно"
-    },
-    "webinar": {
-      "ended": "Завершен",
-      "live": "В эфире",
-      "today": "Сегодня",
-      "joinNow": "Присоединиться",
-      "webinarEnded": "Вебинар завершен",
-      "startingToday": "Начинается сегодня"
     }
   },
   "HeuristicsTable": {
@@ -304,7 +361,14 @@
       "deleteQuestion": "Удалить вопрос",
       "addNewDescription": "Добавить новое описание",
       "addOption": "Добавить новый вариант",
-      "hasValue": "Имеет значение"
+      "hasValue": "Имеет значение",
+      "moveUp": "Переместить вверх",
+      "moveDown": "Переместить вниз",
+      "Question": "Вопрос",
+      "Questions": "Вопросы",
+      "noQuestions": "Нет вопросов",
+      "noDescriptions": "Нет описаний",
+      "loading": "Загрузка..."
     },
     "placeholders": {
       "titleHeuristic": "Заголовок эвристики",
@@ -319,7 +383,10 @@
       "youMustHave": "Вы, должно быть, ввели что-то не так...",
       "noHeuristicsDeleteAll": "Извините, но вы не можете удалить все вопросы эвристики.",
       "noCsvFileSelected": "CSV-файл не выбран. Пожалуйста, выберите один, чтобы продолжить.",
-      "changeWeights": "Обратите внимание, что изменение порядка эвристик НЕ изменяет веса автоматически, вы должны изменить их вручную."
+      "changeWeights": "Обратите внимание, что изменение порядка эвристик НЕ изменяет веса автоматически, вы должны изменить их вручную.",
+      "noDescriptions": "Описания недоступны",
+      "startAddingQuestions": "Начните с добавления вашего первого вопроса к этой эвристике",
+      "cantDeleteAllQuestions": "Извините, вы не можете удалить все вопросы из эвристики"
     },
     "validation": {
       "nameRequired": "Имя обязательно",
@@ -332,6 +399,12 @@
       "showComment": "Показать комментарий",
       "addComment": "Добавить комментарий",
       "hideTextArea": "Скрыть текстовое поле"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Не удалось загрузить форму вопроса. Пожалуйста, попробуйте снова.",
+      "failedToLoadEditForm": "Не удалось загрузить форму редактирования. Пожалуйста, попробуйте снова.",
+      "invalidHeuristic": "Неверный выбор эвристики",
+      "invalidQuestion": "Неверный выбор вопроса"
     }
   },
   "HeuristicsOptionsTable": {
@@ -623,6 +696,25 @@
     "goHome": "Перейти на главную"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Активных сессий не найдено",
+      "selectRange": "Выбрать диапазон",
+      "reset": "Сбросить",
+      "searchPlaceholder": "Поиск исследований...",
+      "filters": {
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю",
+        "allStatuses": "Все статусы",
+        "today": "Сегодня",
+        "upcoming": "Предстоящие",
+        "completed": "Завершено"
+      },
+      "ownership": "Владение",
+      "evaluator": "Оценщик",
+      "sessionDate": "Дата сессии",
+      "statusLabel": "Статус"
+    },
     "intros": {
       "click": "Нажмите здесь!",
       "learnMore": "Узнать больше",
@@ -688,6 +780,23 @@
         "allStudies": "Все исследования",
         "myStudies": "Мои исследования",
         "whereICollaborate": "Где я сотрудничаю"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Поиск шаблонов...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать диапазон",
+      "method": "Метод",
+      "filters": {
+        "allMethods": "Все методы",
+        "heuristicEvaluation": "Эвристическая оценка",
+        "userUnmoderated": "Немодерируемый пользователь",
+        "userModerated": "Модерируемый пользователь",
+        "manualAccessibility": "Ручная доступность",
+        "automaticAccessibility": "Автоматическая доступность"
       }
     },
     "createTest": {
@@ -1136,6 +1245,70 @@
         "finished": "Завершено",
         "upcoming": "Предстоящее"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Исследование пользовательского тестирования",
+      "unmoderatedStudy": "Немодерируемое исследование",
+      "moderatedStudy": "Модерируемое исследование",
+      "active": "Активно",
+      "draft": "Черновик",
+      "completed": "Завершено",
+      "archived": "Архивировано"
+    },
+    "studyOverview": {
+      "totalParticipants": "Всего участников",
+      "completed": "Завершено",
+      "rate": "{percentage}% завершения",
+      "inProgress": "В процессе",
+      "active": "{percentage}% активно",
+      "averageTime": "Среднее время",
+      "completionTime": "Время завершения",
+      "minUnit": "{value} мин"
+    },
+    "managementModules": {
+      "title": "Модули управления",
+      "description": "Комплексные инструменты для управления участниками, задачами, настройками и анализа данных исследования",
+      "additionalModules": "Место для дополнительных модулей"
+    },
+    "participants": {
+      "title": "Участники",
+      "subtitle": "Обзор участия в тестировании",
+      "beta": "Бета",
+      "completed": "Завершено",
+      "notStarted": "Не начато",
+      "pendingInvites": "Ожидающие приглашения",
+      "overallProgress": "Общий прогресс",
+      "participantsCompleted": "{completed} из {total} участников завершили",
+      "details": "Подробнее"
+    },
+    "tasks": {
+      "title": "Обзор задач",
+      "subtitle": "Структура и выполнение задач",
+      "beta": "Бета",
+      "noTasksConfigured": "Задачи не настроены",
+      "taskCompletionRate": "Процент выполнения задач",
+      "totalTasks": "Всего задач",
+      "avgTaskDuration": "Средняя продолжительность",
+      "successRate": "Процент успеха",
+      "taskTypes": "Типы задач",
+      "viewTasks": "Посмотреть задачи"
+    },
+    "storage": {
+      "title": "Использование хранилища",
+      "subtitle": "Медиафайлы и метрики хранилища",
+      "beta": "Бета",
+      "storageUsed": "Использовано хранилища",
+      "storageQuota": "Использовано {used} из {quota}",
+      "mediaFiles": "Медиафайлы",
+      "videoRecordings": "Видеозаписи",
+      "audioRecordings": "Аудиозаписи",
+      "screenRecordings": "Записи экрана",
+      "storageBreakdown": "Разбивка хранилища",
+      "responsesData": "Данные ответов",
+      "analyticsData": "Аналитические данные",
+      "manageStorage": "Управление хранилищем"
     }
   }
 }
