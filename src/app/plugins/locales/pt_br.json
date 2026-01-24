@@ -259,6 +259,10 @@
       "finalReport": "Prepare o relatório final para sua avaliação heurística selecionando os elementos que deseja incluir."
     }
   },
+  "storage": {
+    "noMediaFiles": "Nenhum arquivo de mídia encontrado",
+    "mediaFiles": "Arquivos de mídia"
+  },
   "errors": {
     "invalidInvitation": "Convite inválido",
     "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite.",
@@ -688,6 +692,21 @@
     "goHome": "Ir para a página inicial"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Nenhuma sessão ativa encontrada",
+      "selectRange": "Selecionar intervalo",
+      "reset": "Redefinir",
+      "searchPlaceholder": "Pesquisar estudos...",
+      "filters": {
+        "allStudies": "Todos os estudos",
+        "myStudies": "Meus estudos",
+        "whereICollaborate": "Onde colaboro"
+      },
+      "ownership": "Propriedade",
+      "evaluator": "Avaliador",
+      "sessionDate": "Data da sessão",
+      "statusLabel": "Status"
+    },
     "intros": {
       "click": "Clique aqui!",
       "learnMore": "Saiba mais",

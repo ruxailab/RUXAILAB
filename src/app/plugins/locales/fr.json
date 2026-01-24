@@ -253,6 +253,10 @@
       "finalReport": "Préparez le rapport final pour votre évaluation heuristique en sélectionnant les éléments que vous souhaitez inclure."
     }
   },
+  "storage": {
+    "noMediaFiles": "Aucun fichier média trouvé",
+    "mediaFiles": "Fichiers médias"
+  },
   "errors": {
     "invalidInvitation": "Invitation invalide",
     "signupWithInvitationEmail": "L'utilisateur doit s'inscrire avec la même adresse e-mail que celle de l'invitation.",
@@ -682,6 +686,21 @@
     "goHome": "Retour à l'accueil"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Aucune session active trouvée",
+      "selectRange": "Sélectionner une plage",
+      "reset": "Réinitialiser",
+      "searchPlaceholder": "Rechercher des études...",
+      "filters": {
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore"
+      },
+      "ownership": "Propriété",
+      "evaluator": "Évaluateur",
+      "sessionDate": "Date de session",
+      "statusLabel": "Statut"
+    },
     "intros": {
       "click": "Cliquez ici !",
       "learnMore": "En savoir plus",

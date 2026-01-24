@@ -281,6 +281,10 @@
       "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
     }
   },
+  "storage": {
+    "noMediaFiles": "No media file found",
+    "mediaFiles": "Media Files"
+  },
   "errors": {
     "invalidInvitation": "Invalid Invitation",
     "signupWithInvitationEmail": "User needs to signup using the same email as the invitation.",
@@ -779,6 +783,25 @@
     "goHome": "Go to Home"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "No active session found",
+      "selectRange": "Select range",
+      "reset": "Reset",
+      "searchPlaceholder":"Search studies...",
+      "filters": {
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate":"Where I Collaborate",
+        "allStatuses":"All Statuses",
+        "today": "Today",
+        "upcoming":"Upcoming",
+        "completed": "Completed"
+      },
+      "ownership":"Ownership",
+      "evaluator": "Evaluator",
+      "sessionDate":"Session Date",
+      "statusLabel": "Status"
+    },
     "intros": {
       "click": "Click here!",
       "learnMore": "Learn More",
