@@ -253,6 +253,10 @@
       "finalReport": "Bereiten Sie den Abschlussbericht für Ihre Heuristik-Evaluation vor, indem Sie die Elemente auswählen, die Sie einbeziehen möchten."
     }
   },
+  "storage": {
+    "noMediaFiles": "Keine Mediendatei gefunden",
+    "mediaFiles": "Mediendateien"
+  },
   "errors": {
     "invalidInvitation": "Ungültige Einladung",
     "signupWithInvitationEmail": "Der Benutzer muss sich mit derselben E-Mail wie in der Einladung registrieren.",
@@ -682,6 +686,21 @@
     "goHome": "Zur Startseite"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "Keine aktive Sitzung gefunden",
+      "selectRange": "Bereich auswählen",
+      "reset": "Zurücksetzen",
+      "searchPlaceholder": "Studien suchen...",
+      "filters": {
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich zusammenarbeite"
+      },
+      "ownership": "Eigentum",
+      "evaluator": "Bewerter",
+      "sessionDate": "Sitzungsdatum",
+      "statusLabel": "Status"
+    },
     "intros": {
       "click": "Hier klicken!",
       "learnMore": "Mehr erfahren",

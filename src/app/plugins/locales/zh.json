@@ -663,6 +663,21 @@
     "goHome": "返回首页"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "未找到活动会话",
+      "selectRange": "选择范围",
+      "reset": "重置",
+      "searchPlaceholder": "搜索研究...",
+      "filters": {
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的"
+      },
+      "ownership": "所有权",
+      "evaluator": "评估者",
+      "sessionDate": "会话日期",
+      "statusLabel": "状态"
+    },
     "intros": {
       "click": "点击这里！",
       "learnMore": "了解更多",
@@ -754,6 +769,10 @@
     "cooperators": {
       "invitationSent": "邀请发送成功"
     }
+  },
+  "storage": {
+    "noMediaFiles": "未找到媒体文件",
+    "mediaFiles": "媒体文件"
   },
   "alerts": {
     "copy": "复制成功",
