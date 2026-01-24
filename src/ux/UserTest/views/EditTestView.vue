@@ -34,14 +34,16 @@
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
+            <TestConfigForm
+:welcome="welcomeMessage" :final-message="finalMessage"
               @update:welcome-message="welcomeMessage = $event; change = true"
               @update:final-message="finalMessage = $event; change = true" />
           </div>
 
           <!-- CONSENT FORM -->
           <div v-if="index === 1" rounded="xxl">
-            <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+            <TextareaForm
+v-model="consent" :title="$t('ModeratedTest.consentForm')"
               :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="consent = $event" />
           </div>
 

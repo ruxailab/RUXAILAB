@@ -370,7 +370,7 @@ import {
   onMounted,
 } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import FormTestDescription from '@/shared/components/FormTestDescription'
 import Snackbar from '@/shared/components/Snackbar'
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert'
@@ -445,7 +445,6 @@ const test = computed({
   set: (val) => store.commit('SET_TEST', val),
 })
 const user = computed(() => store.getters.user)
-const answers = computed(() => store.getters.answers || [])
 // const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
 // const reports = computed(() => store.getters.reports || []);
 // const cooperators = computed(() => store.getters.cooperators || {});
@@ -472,8 +471,7 @@ const formattedEndDate = computed(() => {
       }
       return date.toLocaleDateString()
     } catch (error) {
-      console.error('Error formatting date:', error)
-      return ''
+      return error
     }
   }
   return ''
@@ -555,8 +553,8 @@ onMounted(async () => {
         showError('errors.globalError')
       }
     } catch (error) {
-      console.error('Error fetching test data:', error)
       showError('errors.globalError')
+      return error
     }
   } else {
     showError('errors.globalError')
@@ -639,7 +637,6 @@ const deleteStudy = async (item) => {
     router.push({ name: 'Admin' })
   } catch (error) {
     showError('errors.globalError')
-    console.error('Error deleting test:', error)
   } finally {
     loading.value = false
     dialogDel.value = false
@@ -682,7 +679,7 @@ const createTemplate = async () => {
     closeDialog()
   } catch (error) {
     showError('errors.globalError')
-    console.error('Error creating template:', error)
+    return error
   } finally {
     loading.value = false
   }
