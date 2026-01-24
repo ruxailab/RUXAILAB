@@ -119,7 +119,11 @@
       "evaluator": "Evaluator",
       "status": "Status",
       "sessionDate": "Session Date",
-      "itemsPerPage": "Items per page:"
+      "itemsPerPage": "Items per page:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
     }
   },
   "community": {
@@ -304,10 +308,6 @@
       "edit": "Create and customize your tasks and heuristics for your research needs.",
       "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
     }
-  },
-  "storage": {
-    "noMediaFiles": "No media file found",
-    "mediaFiles": "Media Files"
   },
   "errors": {
     "invalidInvitation": "Invalid Invitation",
@@ -816,19 +816,19 @@
       "noActiveSessions": "No active session found",
       "selectRange": "Select range",
       "reset": "Reset",
-      "searchPlaceholder":"Search studies...",
+      "searchPlaceholder": "Search studies...",
       "filters": {
         "allStudies": "All Studies",
         "myStudies": "My Studies",
-        "whereICollaborate":"Where I Collaborate",
-        "allStatuses":"All Statuses",
+        "whereICollaborate": "Where I Collaborate",
+        "allStatuses": "All Statuses",
         "today": "Today",
-        "upcoming":"Upcoming",
+        "upcoming": "Upcoming",
         "completed": "Completed"
       },
-      "ownership":"Ownership",
+      "ownership": "Ownership",
       "evaluator": "Evaluator",
-      "sessionDate":"Session Date",
+      "sessionDate": "Session Date",
       "statusLabel": "Status"
     },
     "intros": {
