@@ -35,38 +35,30 @@
                       <v-text-field
                         v-model="test.title"
                         :rules="[
-                          (v) =>
-                            !!v ||
-                            $t('studyCreation.details.validation.enterTitle'),
-                          (v) =>
-                            v.length <= 200 ||
-                            $t(
-                              'studyCreation.details.validation.max200Characters',
-                            ),
+                          (v) => !!v || $t('studyCreation.details.validation.enterTitle'),
                         ]"
                         :label="$t('studyCreation.details.studyTitle')"
                         :placeholder="$t('studyCreation.details.enterTitle')"
                         variant="outlined"
                         :counter="200"
+                        maxlength="200"
+                        :error="test.title?.length === 200"
+                        :error-messages="test.title?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
                         prepend-inner-icon="mdi-format-title"
                         class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
                       <v-textarea
                         v-model="test.description"
-                        :rules="[
-                          (v) =>
-                            v.length <= 600 ||
-                            $t(
-                              'studyCreation.details.validation.max600Characters',
-                            ),
-                        ]"
                         :label="$t('studyCreation.details.studyDescription')"
                         :placeholder="
                           $t('studyCreation.details.enterDescription')
                         "
                         variant="outlined"
                         :counter="600"
+                        maxlength="600"
+                        :error="test.description?.length === 600"
+                        :error-messages="test.description?.length === 600 ? $t('studyCreation.details.validation.max600Characters') : []"
                         prepend-inner-icon="mdi-text"
                         class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
@@ -92,6 +84,9 @@
                           "
                           variant="outlined"
                           :counter="200"
+                          maxlength="200"
+                          :error="websiteDetails.siteName?.length === 200"
+                          :error-messages="websiteDetails.siteName?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
                           prepend-inner-icon="mdi-alpha-n-box"
                           class="mb-4"
                           @change="store.commit('SET_LOCAL_CHANGES', true)"
@@ -127,6 +122,9 @@
                           "
                           variant="outlined"
                           :counter="200"
+                           maxlength="200"
+                          :error="websiteDetails.siteURL?.length === 200"
+                          :error-messages="websiteDetails.siteURL?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
                           prepend-inner-icon="mdi-link-variant"
                           @change="store.commit('SET_LOCAL_CHANGES', true)"
                         />
