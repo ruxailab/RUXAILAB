@@ -1,5 +1,6 @@
 <template>
-  <v-navigation-drawer v-model="isOpen" :width="drawerWidth" :temporary="isMobile" :permanent="!isMobile && isPermanent"
+  <v-navigation-drawer
+v-model="isOpen" :width="drawerWidth" :temporary="isMobile" :permanent="!isMobile && isPermanent"
     :location="isMobile ? 'left' : 'right'" elevation="0" class="test-drawer">
     <!-- Test Header -->
     <div class="test-header pa-4">
@@ -47,7 +48,8 @@
           </div>
 
           <!-- Navigation Items -->
-          <v-list-item v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
+          <v-list-item
+v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
             :active="activeStep === item.id" :disabled="item.disabled" class="nav-item mb-1" rounded="lg"
             @click="navigateToStep(item)">
             <template v-if="item.status" #append>
@@ -59,7 +61,8 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons pa-4 mt-auto">
-        <v-btn v-if="canGoBack" variant="outlined" color="primary" block class="mb-2" prepend-icon="mdi-arrow-left"
+        <v-btn
+v-if="canGoBack" variant="outlined" color="primary" block class="mb-2" prepend-icon="mdi-arrow-left"
           @click="goBack">
           Previous Step
         </v-btn>

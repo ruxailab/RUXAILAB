@@ -18,9 +18,10 @@
             <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
             Give your task a clear, concise name that describes what participants need to accomplish
           </p>
-          <v-text-field v-model="localTask.taskName" :rules="validationRules" variant="outlined" density="comfortable"
+          <v-text-field
+v-model="localTask.taskName" :rules="validationRules" variant="outlined" density="comfortable"
             prepend-inner-icon="mdi-format-title"
-            placeholder="e.g., 'Find product information', 'Complete checkout process'" @input="validateStep" />
+            placeholder="e.g., 'Find product information', 'Complete checkout process'" @update:model-value="validateStep" />
         </v-col>
 
         <v-col cols="12">
@@ -32,9 +33,11 @@
             Provide detailed instructions for participants. Include the goal, context, and any specific steps they
             should follow.
           </p>
-          <div class="description-editor"
+          <div
+class="description-editor"
             :class="{ 'editor-error': showDescriptionError && !localTask.taskDescription?.trim() }">
-            <quill-editor v-model:value="localTask.taskDescription" :options="editorOptions" class="custom-editor"
+            <quill-editor
+v-model:value="localTask.taskDescription" :options="editorOptions" class="custom-editor"
               @change="onChangeEditor" @blur="checkDescriptionValidation" />
           </div>
           <span v-if="showDescriptionError && !localTask.taskDescription?.trim()" class="error-text ml-4">
@@ -50,9 +53,10 @@
             <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
             Optional guidance or hints to help participants during the task
           </p>
-          <v-text-field v-model="localTask.taskTip" variant="outlined" density="comfortable"
+          <v-text-field
+v-model="localTask.taskTip" variant="outlined" density="comfortable"
             prepend-inner-icon="mdi-lightbulb-outline"
-            placeholder="e.g., 'Focus on the main navigation', 'Take your time to explore'" @input="validateStep" />
+            placeholder="e.g., 'Focus on the main navigation', 'Take your time to explore'" @update:model-value="validateStep" />
         </v-col>
       </v-row>
     </v-form>

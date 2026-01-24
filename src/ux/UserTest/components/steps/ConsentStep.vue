@@ -5,7 +5,8 @@
         <div class="rich-text mb-6 pa-md-4" v-html="consentText" />
         <v-row justify="center">
           <v-col cols="12" md="6">
-            <v-text-field :model-value="localFullName" label="Full Name" variant="outlined" density="comfortable"
+            <v-text-field
+:model-value="localFullName" label="Full Name" variant="outlined" density="comfortable"
               :rules="[v => !!v || 'Name is required']" @update:model-value="onFullNameInput" />
           </v-col>
         </v-row>
@@ -19,7 +20,8 @@
         </v-row>
         <v-row justify="center" class="mt-4">
           <v-col cols="12" md="6" class="text-center">
-            <v-btn color="primary" variant="flat" block :disabled="localConsentCompleted === null || !localFullName"
+            <v-btn
+color="primary" variant="flat" block :disabled="localConsentCompleted === null || !localFullName"
               @click="handleContinue">
               Continue
             </v-btn>
