@@ -80,7 +80,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <CardSortingForm :value="card" v-model:dialog="dialog" @save="save" :options="options" />
+    <CardSortingForm v-model:dialog="dialog" :value="card" :options="options" @save="save" />
   </v-container>
 </template>
 

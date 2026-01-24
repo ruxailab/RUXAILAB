@@ -9,7 +9,7 @@
       justify="center"
       class="ma-0"
     >
-      <ShowInfo hide-col="true">
+      <ShowInfo :hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs

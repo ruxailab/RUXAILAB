@@ -16,7 +16,7 @@
             class="my-6 mx-auto"
             max-width="1000"
           >
-            <v-card-text class="pa-4">
+            <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
               <div class="d-flex align-center mb-3">
                 <v-icon color="secondary" size="24" class="mr-2">
                   mdi-play-circle-outline
@@ -162,11 +162,11 @@
         <template v-else-if="stage === 2">
           <!-- Task Description During Execution -->
           <v-card variant="outlined" color="primary" class="mb-4">
-            <v-card-text class="pa-3">
+            <v-card-text :class="$vuetify.display.xs ? 'pa-2' : 'pa-3'">
               <!-- Two Column Layout -->
               <v-row>
                 <!-- Left Column: Task Description -->
-                <v-col cols="8">
+                <v-col cols="12" md="8">
                   <div class="d-flex align-center mb-3">
                     <v-icon color="primary" size="20" class="mr-2">
                       mdi-clipboard-text-outline
@@ -182,10 +182,10 @@
                 </v-col>
 
                 <!-- Right Column: Help & Actions -->
-                <v-col cols="4">
+                <v-col cols="12" md="4">
                   <v-row>
                     <!-- Help Section -->
-                    <v-col v-if="task?.taskTip" cols="6">
+                    <v-col v-if="task?.taskTip" cols="12" sm="6">
                       <div
                         class="help-section pa-2 text-center rounded h-100"
                         style="
@@ -205,7 +205,11 @@
                         </div>
                         <p
                           class="text-caption text-grey-darken-3 mb-2"
-                          style="font-size: 11px; line-height: 1.3"
+                          :style="
+                            $vuetify.display.xs
+                              ? 'font-size: 12px; line-height: 1.4'
+                              : 'font-size: 11px; line-height: 1.3'
+                          "
                         >
                           Having trouble? Get helpful guidance to complete this
                           task.
@@ -217,7 +221,8 @@
                     <!-- Reopen Tool Section -->
                     <v-col
                       v-if="task?.taskLink || taskLink"
-                      :cols="task?.taskTip ? 6 : 12"
+                      cols="12"
+                      :sm="task?.taskTip ? 6 : 12"
                     >
                       <div
                         class="tool-section pa-2 rounded text-center h-100"
@@ -294,23 +299,26 @@
             />
           </div>
           <v-row justify="space-between">
-            <v-col>
+            <v-col cols="12" sm="6">
               <v-btn
                 color="error"
                 block
                 variant="outlined"
-                class="mr-2"
+                :class="{
+                  'mb-3': $vuetify.display.xs,
+                  'mr-2': $vuetify.display.smAndUp,
+                }"
                 @click="handleShowPostForm(false)"
               >
                 I can not finish the task
               </v-btn>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="6">
               <v-btn
                 color="primary"
                 block
                 variant="flat"
-                class="ml-2"
+                :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
                 Task completed
@@ -482,11 +490,6 @@ onBeforeUnmount(() => {
     clearInterval(timerInterval)
     timerInterval = null
   }
-})
-const store = useStore()
-
-const susAnswersFromStore = computed(() => {
-  return store.state.tasks?.[props.taskIndex]?.susAnswers || []
 })
 
 const localSusAnswers = computed({
@@ -661,7 +664,6 @@ function handleShowPostForm(userCompleted) {
   let finalTime = null
   if (taskStartTime) {
     finalTime = Math.round(Date.now() - taskStartTime)
-    console.log('Tiempo detenido en:', finalTime, 'segundos')
     emit('timer-stopped', finalTime, props.taskIndex)
   }
 
@@ -676,10 +678,6 @@ function handleShowPostForm(userCompleted) {
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {
-  console.log('--------')
-  console.log(showPostForm.value)
-  console.log('--------')
-
   if (showPostForm.value.userCompleted) {
     emit('done', savedTime, props.taskIndex)
   } else {

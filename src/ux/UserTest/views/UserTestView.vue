@@ -9,9 +9,9 @@
         "
         :is-running="isTracking"
         :ms-per-capture="300"
-        @faceData="handleIrisData"
         :test-id="testId"
         :task-index="taskIndex"
+        @face-data="handleIrisData"
       />
     </div>
 
@@ -99,9 +99,9 @@
             color="white"
             variant="outlined"
             rounded
-            @click="startTest"
             class="mt-4"
             :disabled="isStartTestDisabled"
+            @click="startTest"
           >
             Start Test
           </v-btn>
@@ -306,7 +306,7 @@
           <WelcomeStep
             v-if="globalIndex === 0"
             :stepper-value="stepperValue"
-            :hasEyeTracking="hasEyeTracking"
+            :has-eye-tracking="hasEyeTracking"
             :welcome-message="test?.testStructure?.welcomeMessage"
             @start="globalIndex = 1"
           />
@@ -317,12 +317,12 @@
             :consent-text="test.testStructure.consent"
             :full-name-model="fullName"
             :consent-completed-model="localTestAnswer.consentCompleted"
-            @update:fullNameModel="(val) => (fullName = val)"
-            @update:consentCompletedModel="
+            @update:full-name-model="(val) => (fullName = val)"
+            @update:consent-completed-model="
               (val) => (localTestAnswer.consentCompleted = val)
             "
             @continue="completeStep(taskIndex, 'consent')"
-            @declineConsent="handleConsentDecline"
+            @decline-consent="handleConsentDecline"
           />
 
           <PreTestStep
@@ -336,17 +336,17 @@
 
           <EyeTrackingCalibrationStep
             v-if="globalIndex === 3 && hasEyeTracking"
+            :calibration-in-progress="calibrationInProgress"
+            :calibration-completed="calibrationCompleted"
             @done="globalIndex = 4"
-            @closeCalibration="closeCalibration()"
-            @openCalibration="openCalibration()"
-            :calibrationInProgress="calibrationInProgress"
-            :calibrationCompleted="calibrationCompleted"
+            @close-calibration="closeCalibration()"
+            @open-calibration="openCalibration()"
           />
 
           <PreTasksStep
             v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @startTasks="
+            @start-tasks="
               () => {
                 taskIndex = 0
                 globalIndex = hasEyeTracking ? 5 : 4
@@ -361,29 +361,29 @@
               test.testType === STUDY_TYPES.USER
             "
             ref="taskStepComponent"
-            :task="test.testStructure.userTasks[taskIndex]"
-            :task-index="taskIndex"
-            :test-id="testId"
-            :user-doc-id="user?.id || anonymousUserDocId"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="
               localTestAnswer.tasks[taskIndex].taskObservations
             "
+            :task="test.testStructure.userTasks[taskIndex]"
+            :task-index="taskIndex"
+            :test-id="testId"
+            :user-doc-id="user?.id || anonymousUserDocId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
             :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
             :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
-            @update:susAnswers="
+            @update:sus-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val)
                   ? [...val]
                   : []
               }
             "
-            @update:nasaTlxAnswers="
+            @update:nasa-tlx-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
               }
@@ -399,7 +399,7 @@
               }
             "
             @done="() => handleTaskFinish(true)"
-            @couldNotFinish="() => handleTaskFinish(false)"
+            @could-not-finish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
@@ -503,7 +503,7 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
-import EyeTrackingCalibrationStep from '@/components/UserTest/steps/EyeTrackingCalibrationStep.vue'
+import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCalibrationStep.vue'
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'

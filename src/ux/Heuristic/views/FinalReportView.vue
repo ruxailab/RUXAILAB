@@ -1,5 +1,6 @@
 <template>
-  <PageWrapper :title="answers.length > 0 ? $t('Final Report') : ''" :loading="loading"
+  <PageWrapper
+:title="answers.length > 0 ? $t('Final Report') : ''" :loading="loading"
     :loading-text="$t('HeuristicsReport.messages.reports_loading')" :side-gap="true">
 
     <!-- Subtitle Slot - only show when answers exist -->
@@ -16,7 +17,8 @@
     <div v-else class="finalReportView">
       <v-container>
 
-        <v-stepper :model-value="step" style="background-color:#F5F7FF" class="final-report-box rounded pt-0 mb-4"
+        <v-stepper
+:model-value="step" style="background-color:#F5F7FF" class="final-report-box rounded pt-0 mb-4"
           elevation="0">
           <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
             <v-stepper-item :complete="step > 1" :value="1" color="orange">
