@@ -663,8 +663,6 @@ const closeCalibration = () => {
 }
 
 function toggleTracking(value) {
-  console.log('toggleTracking', value)
-
   isTracking.value = value
   isRecording.value = value
 }
@@ -681,7 +679,6 @@ function saveIrisDataIntoTask() {
 
 const saveAnswer = async () => {
   try {
-    console.log('Saving answer...')
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
@@ -691,10 +688,8 @@ const saveAnswer = async () => {
       localTestAnswer.invited = true
     } else if (!user.value && anonymousUserDocId.value) {
       localTestAnswer.userDocId = anonymousUserDocId.value
-      console.log('Using stored anonymousUserDocId:', anonymousUserDocId.value)
     }
 
-    console.log('Saving answer to Firestore...')
     if (!user.value) {
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
@@ -737,8 +732,7 @@ const submitAnswer = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-  } catch (error) {
-    console.error('Error submitting answer:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to submit the answer. Please try again.',
@@ -819,7 +813,6 @@ const callTimerSave = () => {
 }
 
 function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value]
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
 }
@@ -835,10 +828,8 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx })
 
   if (!localTestAnswer.tasks) {
-    console.error('localTestAnswer.tasks no está definido')
     return
   }
 
@@ -1016,8 +1007,7 @@ const calculateProgress = () => {
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error)
+  } catch {
     return 0
   }
 }
@@ -1025,7 +1015,6 @@ const calculateProgress = () => {
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
     anonymousUserDocId.value = nanoid(16)
-    console.log('Generated anonymousUserDocId:', anonymousUserDocId.value)
   }
 }
 
@@ -1145,7 +1134,6 @@ const mappingSteps = async () => {
               tamAnswers: {},
               sartAnswers: {},
             })
-            console.log('Nueva tarea creada:', i, newTask)
             return newTask
           },
         )

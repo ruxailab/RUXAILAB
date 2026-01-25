@@ -156,7 +156,7 @@ import { useI18n } from 'vue-i18n'
 import FormDialog from './FormDialog.vue'
 import Task from '../models/Task'
 
-const emit = defineEmits(['change'])
+//const emit = defineEmits(['change'])
 const store = useStore()
 const { t } = useI18n()
 

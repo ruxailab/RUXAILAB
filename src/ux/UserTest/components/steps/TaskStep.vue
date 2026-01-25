@@ -4,10 +4,9 @@
       <div class="test-content pa-4 rounded-xl">
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
-          <div
-            class="rich-text mb-4"
-            v-html="task?.taskDescription || taskDescription"
-          />
+          <div class="rich-text mb-4 task-description">
+            {{ task?.taskDescription || taskDescription }}
+          </div>
 
           <!-- Task Preview Information -->
           <v-card
@@ -175,10 +174,9 @@
                       Task Description
                     </span>
                   </div>
-                  <div
-                    class="rich-text text-body-1"
-                    v-html="task?.taskDescription || taskDescription"
-                  />
+                  <div class="rich-text text-body-1 task-description">
+                    {{ task?.taskDescription || taskDescription }}
+                  </div>
                 </v-col>
 
                 <!-- Right Column: Help & Actions -->
@@ -352,20 +350,29 @@
 
           <!-- TAM-1 Form -->
           <div v-else-if="task?.taskType === 'tam-1'">
-            <TamForm1 v-model="localTamAnswers" :task-index="taskIndex"
-              @update:model-value="val => emit('update:tamAnswers', val)" />
+            <TamForm1
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="val => emit('update:tamAnswers', val)"
+            />
           </div>
 
           <!-- TAM-2 Form -->
           <div v-else-if="task?.taskType === 'tam-2'">
-            <TamForm2 v-model="localTamAnswers" :task-index="taskIndex"
-              @update:model-value="val => emit('update:tamAnswers', val)" />
+            <TamForm2
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="val => emit('update:tamAnswers', val)"
+            />
           </div>
 
           <!-- TAM-3 Form -->
           <div v-else-if="task?.taskType === 'tam-3'">
-            <TamForm3 v-model="localTamAnswers" :task-index="taskIndex"
-              @update:model-value="val => emit('update:tamAnswers', val)" />
+            <TamForm3
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="val => emit('update:tamAnswers', val)"
+            />
           </div>
 
           <!-- Other task types -->
@@ -569,10 +576,6 @@ function onUpdateSart(val) {
 }
 
 const rawLink = computed(() => props.task?.taskLink || props.taskLink)
-const normalizedLink = computed(() => {
-  const link = rawLink.value || ''
-  return link.match(/^https?:\/\//i) ? link : `https://${link}`
-})
 
 const hasAnyRecording = computed(() => {
   return (
@@ -653,7 +656,6 @@ function forceStopAllMedia() {
 
 function handleShowPostForm(userCompleted) {
   forceStopAllMedia()
-  console.log('Stopping media recorders...')
 
   if (timerInterval) {
     clearInterval(timerInterval)
@@ -747,6 +749,10 @@ function onTimerStopped(elapsedTime) {
 </script>
 
 <style scoped>
+.task-description {
+  white-space: pre-line;
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
