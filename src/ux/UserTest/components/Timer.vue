@@ -34,12 +34,20 @@ const stopTimer = () => {
   emit('timerStopped', elapsedTime.value, props.taskIndex)
 }
 
+const toggleTimer = () => {
+  if (!timerVisible.value) {
+    timerVisible.value = true
+  } else {
+    timerVisible.value = !timerVisible.value
+  }
+}
+
 onBeforeMount(() => {
   startTimer()
 })
 
 defineExpose({
   startTimer,
-  stopTimer
+  stopTimer,
 })
 </script>

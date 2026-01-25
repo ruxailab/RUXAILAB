@@ -54,6 +54,9 @@
     "type": "النوع",
     "noNotifications": "ليس لديك إشعارات حتى الآن",
     "notifications": "الإشعارات",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "caughtUp": "لقد قرأت كل شيء",
+    "noNewNotifications": "لا توجد إشعارات جديدة",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {
@@ -102,7 +105,11 @@
       "evaluator": "المقيّم",
       "status": "الحالة",
       "sessionDate": "تاريخ الجلسة",
-      "itemsPerPage": "عناصر لكل صفحة:"
+      "itemsPerPage": "عناصر لكل صفحة:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
     }
   },
   "community": {
@@ -774,7 +781,61 @@
       "updated": "تم التحديث في",
       "version": "الإصدار:",
       "noTests": "لم يتم العثور على اختبارات",
-      "noTemplates": "لم يتم العثور على قوالب"
+      "noTemplates": "لم يتم العثور على قوالب",
+      "noSessions": "لم يتم العثور على جلسات"
+    },
+    "navigation": {
+      "dashboard": "لوحة التحكم",
+      "studies": "الدراسات",
+      "sessions": "الجلسات",
+      "templates": "القوالب",
+      "storage": "التخزين",
+      "notifications": "الإشعارات",
+      "profile": "الملف الشخصي",
+      "communityStudies": "دراسات المجتمع",
+      "communityTemplates": "قوالب المجتمع",
+      "studiesSubtitle": "إدارة دراساتك البحثية",
+      "templatesSubtitle": "الوصول إلى قوالبك المحفوظة"
+    },
+    "studies": {
+      "searchPlaceholder": "البحث في الدراسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "statusLabel": "الحالة",
+      "visibility": "الرؤية",
+      "method": "الطريقة",
+      "ownership": "الملكية",
+      "participants": "المشاركون",
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "active": "نشط",
+        "draft": "مسودة",
+        "completed": "مكتمل",
+        "allVisibility": "كل الرؤية",
+        "public": "عام",
+        "private": "خاص",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون",
+        "lessThan10": "< 10 مشاركين",
+        "between10And50": "10 – 50 مشارك",
+        "moreThan50": "> 50 مشارك"
+      },
+      "table": {
+        "type": "النوع",
+        "name": "الاسم",
+        "tags": "العلامات",
+        "owner": "المالك",
+        "evaluator": "المقيم",
+        "status": "الحالة",
+        "sessionDate": "تاريخ الجلسة",
+        "participants": "المشاركون",
+        "created": "تم الإنشاء",
+        "itemsPerPage": "العناصر لكل صفحة:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "البحث في الجلسات...",
@@ -859,10 +920,6 @@
     "cooperators": {
       "invitationSent": "تم إرسال الدعوة بنجاح"
     }
-  },
-  "storage": {
-    "noMediaFiles": "لم يتم العثور على ملفات وسائط",
-    "mediaFiles": "ملفات الوسائط"
   },
   "alerts": {
     "copy": "تم النسخ بنجاح",
