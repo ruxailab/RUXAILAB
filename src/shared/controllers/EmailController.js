@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 export default class EmailController {
   /**
@@ -14,11 +14,12 @@ export default class EmailController {
    */
   async send(payload) {
     try {
-      await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/sendEmail', { data: payload });
-      return { success: true, message: "Email sent successfully." };
+      await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/sendEmail', {
+        data: payload,
+      })
+      return { success: true, message: 'Email sent successfully.' }
     } catch (error) {
-      console.error('Error sending email:', error);
-      return { success: false, message: error.message };
+      return { success: false, message: error.message }
     }
   }
 }

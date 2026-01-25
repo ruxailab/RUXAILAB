@@ -2,9 +2,10 @@
   <v-container>
     <v-row justify="center" justify-md="space-around">
       <v-col v-for="(item, n) in cards" :key="n" cols="12" :md="12 / perRow">
-        <v-card :ripple="false" @click="$emit('click', item.path)"  :style="backgroundImage" elevation="3" rounded="lg">
+        <v-card :ripple="false" :style="backgroundImage"  elevation="3" rounded="lg" @click="$emit('click', item.path)">
           <div class="d-flex justify-center align-center pa-2">
-            <v-img height="180" max-width="180" max-height="200" :style="item.imageStyle"
+            <v-img
+height="180" max-width="180" max-height="200" :style="item.imageStyle"
               :src="require('../../assets/manager/' + item.image)" class="mx-auto" />
           </div>
           <v-divider></v-divider>
