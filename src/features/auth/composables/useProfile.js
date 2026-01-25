@@ -46,8 +46,8 @@ export function useProfile() {
         }
       }
     } catch (error) {
-      console.error('Error fetching profile:', error)
       showError(t('profile.profileLoadFailed'))
+      return error
     } finally {
       loading.value = false
     }
@@ -103,8 +103,7 @@ export function useProfile() {
 
       showSuccess(t('profile.profileUpdatedSuccess'))
       return true
-    } catch (error) {
-      console.error('Error updating profile:', error)
+    } catch {
       showError(t('profile.profileUpdateFailed'))
       return false
     }
@@ -132,7 +131,6 @@ export function useProfile() {
 
       return downloadURL
     } catch (error) {
-      console.error('Error uploading image:', error)
       throw error
     } finally {
       // Always cleanup blob URL
@@ -169,7 +167,6 @@ export function useProfile() {
 
       return true
     } catch (error) {
-      console.error('Error removing profile image:', error)
       throw error
     }
   }

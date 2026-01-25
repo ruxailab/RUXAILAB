@@ -68,8 +68,8 @@
               <!-- Categórico (multi-select) -->
               <v-select
                 v-if="def.isCategorical && def.items.length"
-                :items="def.items"
                 v-model="selectedFilters[def.index]"
+                :items="def.items"
                 multiple
                 chips
                 clearable
@@ -134,7 +134,7 @@
         <template
           v-for="(t, i) in taskColumns"
           :key="'col-task-' + i"
-          v-slot:[`item.task_${i}`]="{ item }"
+          #[`item.task_${i}`]="{ item }"
         >
           <div class="d-flex flex-column align-center py-2">
             <v-chip
@@ -224,12 +224,12 @@
               </v-btn>
             </template>
             <v-list density="compact" class="py-0">
-              <v-list-item @click="viewAnswers(item)" prepend-icon="mdi-eye">
+              <v-list-item prepend-icon="mdi-eye" @click="viewAnswers(item)">
                 <v-list-item-title>Test detail</v-list-item-title>
               </v-list-item>
               <v-list-item
-                @click="showTaskDetails(item)"
                 prepend-icon="mdi-clipboard-list"
+                @click="showTaskDetails(item)"
               >
                 <v-list-item-title>Task Details</v-list-item-title>
               </v-list-item>
@@ -283,9 +283,9 @@
 
               <!-- Pre-Test Answers -->
               <v-col
+                v-if="dialogItem?.preTestAnswer?.length"
                 cols="12"
                 md="6"
-                v-if="dialogItem?.preTestAnswer?.length"
                 class="section-col"
               >
                 <div class="section-card">
@@ -319,9 +319,9 @@
 
               <!-- Post-Test Answers -->
               <v-col
+                v-if="dialogItem?.postTestAnswer?.length"
                 cols="12"
                 md="6"
-                v-if="dialogItem?.postTestAnswer?.length"
                 class="section-col"
               >
                 <div class="section-card">
@@ -355,8 +355,8 @@
 
               <!-- Task Selector -->
               <v-col
-                cols="12"
                 v-if="testStructure?.userTasks?.length"
+                cols="12"
                 class="section-col"
               >
                 <div class="section-card">
@@ -387,28 +387,28 @@
                   >
                     <div class="mb-2 d-flex flex-wrap gap-2">
                       <v-chip
+                        v-if="dialogItem.tasks[taskSelect].completed"
                         size="x-small"
                         color="success"
                         variant="tonal"
-                        v-if="dialogItem.tasks[taskSelect].completed"
                       >
                         <v-icon size="14" start>mdi-check-circle</v-icon>
                         Completed
                       </v-chip>
                       <v-chip
+                        v-else
                         size="x-small"
                         color="error"
                         variant="tonal"
-                        v-else
                       >
                         <v-icon size="14" start>mdi-close-circle</v-icon> Not
                         Completed
                       </v-chip>
                       <v-chip
+                        v-if="dialogItem.tasks[taskSelect].taskTime"
                         size="x-small"
                         color="info"
                         variant="tonal"
-                        v-if="dialogItem.tasks[taskSelect].taskTime"
                       >
                         <v-icon size="14" start>mdi-timer-outline</v-icon>
                         {{
@@ -435,14 +435,14 @@
                     <!-- Media -->
                     <v-expansion-panels multiple class="media-panels">
                       <v-expansion-panel
-                        readonly
-                        hide-actions
-                        @click.stop="openSessionAnalyticsDialog"
                         v-if="
                           dialogItem.tasks[taskSelect].webcamRecordURL ||
                           dialogItem.tasks[taskSelect].irisTrackingData > 0
                         "
+                        readonly
+                        hide-actions
                         class="cursor-pointer"
+                        @click.stop="openSessionAnalyticsDialog"
                       >
                         <v-expansion-panel-title>
                           Task Analytics
@@ -463,12 +463,12 @@
                             aria-label="Webcam recording"
                           >
                             <track
-                              kind="captions"
-                              srclang="en"
-                              label="English"
                               v-if="
                                 dialogItem.tasks[taskSelect].webcamCaptionsURL
                               "
+                              kind="captions"
+                              srclang="en"
+                              label="English"
                               :src="
                                 dialogItem.tasks[taskSelect].webcamCaptionsURL
                               "
@@ -490,12 +490,12 @@
                             aria-label="Screen recording"
                           >
                             <track
-                              kind="captions"
-                              srclang="en"
-                              label="English"
                               v-if="
                                 dialogItem.tasks[taskSelect].screenCaptionsURL
                               "
+                              kind="captions"
+                              srclang="en"
+                              label="English"
                               :src="
                                 dialogItem.tasks[taskSelect].screenCaptionsURL
                               "
@@ -522,17 +522,17 @@
                     <v-dialog v-model="showSessionAnalytics" fullscreen>
                       <SessionAnalytics
                         :tasks="dialogItem.tasks"
-                        :taskSelect="taskSelect"
+                        :task-select="taskSelect"
                         @close="showSessionAnalytics = false"
                       />
                     </v-dialog>
                     <SessionAnalyticsDialog
                       v-model="showSessionAnalyticsDialog"
-                      :userId="dialogItem.userDocId"
+                      :user-id="dialogItem.userDocId"
                       :task-answer="dialogItem.tasks[taskSelect]"
-                      :selectedTask="taskSelect"
+                      :selected-task="taskSelect"
                       :test-answer="answers[dialogItem.userDocId]"
-                      :fromEyeTracking="true"
+                      :from-eye-tracking="true"
                     />
                   </div>
                 </div>
@@ -554,6 +554,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
 import SessionAnalytics from '../SessionAnalytics.vue'
@@ -730,12 +731,6 @@ const tableData = computed(() => {
 
 const openSessionAnalyticsDialog = () => {
   showSessionAnalyticsDialog.value = true
-}
-
-const formatTime = (time) => {
-  const minutes = Math.floor(time / 60)
-  const seconds = time % 60
-  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }
 
 const viewAnswers = (item) => {

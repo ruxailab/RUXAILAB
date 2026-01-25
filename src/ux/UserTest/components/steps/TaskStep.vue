@@ -417,7 +417,6 @@
 
 <script setup>
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
-import { useStore } from 'vuex'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
@@ -471,11 +470,6 @@ onBeforeUnmount(() => {
     clearInterval(timerInterval)
     timerInterval = null
   }
-})
-const store = useStore()
-
-const susAnswersFromStore = computed(() => {
-  return store.state.tasks?.[props.taskIndex]?.susAnswers || []
 })
 
 const localSusAnswers = computed({
@@ -599,7 +593,6 @@ function handleShowPostForm(userCompleted) {
   let finalTime = null
   if (taskStartTime) {
     finalTime = Math.round(Date.now() - taskStartTime)
-    console.log('Tiempo detenido en:', finalTime, 'segundos')
     emit('timer-stopped', finalTime, props.taskIndex)
   }
 
@@ -614,10 +607,6 @@ function handleShowPostForm(userCompleted) {
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {
-  console.log('--------')
-  console.log(showPostForm.value)
-  console.log('--------')
-
   if (showPostForm.value.userCompleted) {
     emit('done', savedTime, props.taskIndex)
   } else {
