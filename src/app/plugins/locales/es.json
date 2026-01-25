@@ -34,6 +34,15 @@
       "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
       "no_email": "¿No recibiste el correo?",
       "try_again": "Inténtalo de nuevo"
+    },
+    "passwordStrength": "Seguridad de la contraseña",
+    "number": "Número",
+    "strength": {
+      "veryWeak": "Muy débil",
+      "weak": "Débil",
+      "fair": "Regular",
+      "good": "Buena",
+      "strong": "Fuerte"
     }
   },
   "common": {
