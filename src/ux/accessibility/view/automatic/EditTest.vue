@@ -1,36 +1,17 @@
 <template>
-  <PageWrapper 
-    title="Website Analysis"
-    subtitle="Analyze website accessibility using automated tools"
-  >
-  <template #subtitle>
+  <PageWrapper title="Website Analysis" subtitle="Analyze website accessibility using automated tools">
+    <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         Enter a website URL to run an automated accessibility test and get a detailed report.
       </p>
     </template>
-    <v-row
-      justify="center"
-      class="min-height-screen"
-    >
-      <v-col
-        cols="12"
-        sm="10"
-        md="8"
-        lg="6"
-        xl="5"
-      >
+    <v-row justify="center" class="min-height-screen">
+      <v-col cols="12" sm="10" md="8" lg="6" xl="5">
         <!-- Header Section -->
-        <v-card
-          class="header-card mb-8 text-center"
-          elevation="0"
-        >
+        <v-card class="header-card mb-8 text-center" elevation="0">
           <v-card-text class="pa-8">
             <div class="icon-wrapper mb-4">
-              <v-icon
-                size="64"
-                color="white"
-                class="header-icon"
-              >
+              <v-icon size="64" color="white" class="header-icon">
                 mdi-web-check
               </v-icon>
             </div>
@@ -45,38 +26,17 @@
         </v-card>
 
         <!-- Form Section -->
-        <v-card
-          class="form-card mb-6"
-          elevation="8"
-          rounded="xl"
-        >
+        <v-card class="form-card mb-6" elevation="8" rounded="xl">
           <v-card-text class="pa-8">
             <v-form @submit.prevent="runTest">
               <v-text-field
-                v-model="url"
-                label="Website URL"
-                placeholder="https://example.com"
-                type="url"
-                required
-                :disabled="isLoading"
-                prepend-inner-icon="mdi-web"
-                append-inner-icon="mdi-link"
-                variant="outlined"
-                color="primary"
-                class="mb-4"
-                :rules="[rules.required, rules.url]"
-              />
+v-model="url" label="Website URL" placeholder="https://example.com" type="url" required
+                :disabled="isLoading" prepend-inner-icon="mdi-web" append-inner-icon="mdi-link" variant="outlined"
+                color="primary" class="mb-4" :rules="[rules.required, rules.url]" />
 
               <v-btn
-                type="submit"
-                :disabled="isLoading || !url.trim()"
-                :loading="isLoading"
-                color="primary"
-                size="large"
-                block
-                rounded="lg"
-                class="text-none"
-              >
+type="submit" :disabled="isLoading || !url.trim()" :loading="isLoading" color="primary"
+                size="large" block rounded="lg" class="text-none">
                 <template #prepend>
                   <v-icon v-if="!isLoading">
                     mdi-play
@@ -89,20 +49,9 @@
         </v-card>
 
         <!-- Loading Section -->
-        <v-card
-          v-if="isLoading"
-          class="loading-card mb-6"
-          elevation="8"
-          rounded="xl"
-        >
+        <v-card v-if="isLoading" class="loading-card mb-6" elevation="8" rounded="xl">
           <v-card-text class="pa-8 text-center">
-            <v-progress-circular
-              indeterminate
-              size="64"
-              width="4"
-              color="primary"
-              class="mb-4"
-            />
+            <v-progress-circular indeterminate size="64" width="4" color="primary" class="mb-4" />
 
             <h3 class="loading-title mb-2">
               Analyzing Accessibility
@@ -114,17 +63,12 @@
             <div class="loading-steps">
               <v-list class="bg-transparent">
                 <v-list-item
-                  v-for="(step, index) in steps"
-                  :key="index"
-                  :class="{ 'step-active': currentStep >= index + 1 }"
-                  class="step-item"
-                >
+v-for="(step, index) in steps" :key="index"
+                  :class="{ 'step-active': currentStep >= index + 1 }" class="step-item">
                   <template #prepend>
                     <v-icon
-                      :color="currentStep >= index + 1 ? 'success' : 'grey-lighten-1'
-                      "
-                      size="20"
-                    >
+:color="currentStep >= index + 1 ? 'success' : 'grey-lighten-1'
+                      " size="20">
                       mdi-check-circle
                     </v-icon>
                   </template>
@@ -136,21 +80,10 @@
         </v-card>
 
         <!-- Error Section -->
-        <v-card
-          v-if="error"
-          class="error-card mb-6"
-          elevation="8"
-          rounded="xl"
-          color="error"
-          variant="tonal"
-        >
+        <v-card v-if="error" class="error-card mb-6" elevation="8" rounded="xl" color="error" variant="tonal">
           <v-card-text class="pa-8">
             <div class="error-header mb-4">
-              <v-icon
-                size="32"
-                color="error"
-                class="me-3"
-              >
+              <v-icon size="32" color="error" class="me-3">
                 mdi-alert-circle
               </v-icon>
               <h3 class="error-title">
@@ -163,10 +96,7 @@
                 {{ getErrorMessage() }}
               </p>
 
-              <v-expansion-panels
-                v-if="errorType"
-                class="mb-4"
-              >
+              <v-expansion-panels v-if="errorType" class="mb-4">
                 <v-expansion-panel>
                   <v-expansion-panel-title>
                     <v-icon class="me-2">
@@ -176,16 +106,9 @@
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-list class="bg-transparent">
-                      <v-list-item
-                        v-for="solution in getSolutions()"
-                        :key="solution.type"
-                        class="pa-3"
-                      >
+                      <v-list-item v-for="solution in getSolutions()" :key="solution.type" class="pa-3">
                         <template #prepend>
-                          <v-icon
-                            :color="solution.color"
-                            size="20"
-                          >
+                          <v-icon :color="solution.color" size="20">
                             {{ solution.icon }}
                           </v-icon>
                         </template>
@@ -201,12 +124,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
 
-              <v-alert
-                type="info"
-                variant="tonal"
-                icon="mdi-lightbulb"
-                class="mb-4"
-              >
+              <v-alert type="info" variant="tonal" icon="mdi-lightbulb" class="mb-4">
                 <div class="font-weight-medium mb-2">
                   Troubleshooting Tips:
                 </div>
@@ -220,22 +138,13 @@
             </div>
 
             <div class="error-actions">
-              <v-btn
-                variant="outlined"
-                color="error"
-                class="me-2"
-                @click="clearError"
-              >
+              <v-btn variant="outlined" color="error" class="me-2" @click="clearError">
                 <template #prepend>
                   <v-icon>mdi-close</v-icon>
                 </template>
                 Dismiss
               </v-btn>
-              <v-btn
-                color="primary"
-                variant="elevated"
-                @click="retryTest"
-              >
+              <v-btn color="primary" variant="elevated" @click="retryTest">
                 <template #prepend>
                   <v-icon>mdi-refresh</v-icon>
                 </template>
@@ -254,10 +163,10 @@ import axios from 'axios'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
+  name: 'Home',
   components: {
     PageWrapper
   },
-  name: 'Home',
   data() {
     return {
       url: '',
@@ -303,7 +212,7 @@ export default {
         const testId = this.$route.params.testId || this.testId
 
         // Use env variable for API endpoint
-        const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API 
+        const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API
         const response = await axios.post(apiUrl, {
           url: this.url,
           testId: testId,

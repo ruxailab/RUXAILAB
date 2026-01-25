@@ -3,7 +3,7 @@
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4 clickable-header" @click="navigateToReport">
       <v-icon size="24" color="primary" class="header-icon">mdi-file-document</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">Final Report</v-card-title>
+      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.finalReport') }}</v-card-title>
     </div>
     
     <!-- Estado del informe -->
@@ -32,7 +32,7 @@
       <div class="report-info">
         <div v-if="reportExists" class="d-flex align-center justify-center mb-2">
           <v-icon size="16" color="success" class="mr-2">mdi-calendar-check</v-icon>
-          <span class="text-caption text-grey-darken-1">Generado: {{ reportDate }}</span>
+          <span class="text-caption text-grey-darken-1">{{ $t('Dashboard.cards.generated') }} {{ reportDate }}</span>
         </div>
         
         <div v-if="reportExists" class="d-flex justify-center">
@@ -42,7 +42,7 @@
             variant="outlined"
             prepend-icon="mdi-download"
           >
-            Descargar
+            {{ $t('Dashboard.cards.download') }}
           </v-btn>
         </div>
         
@@ -54,7 +54,7 @@
             prepend-icon="mdi-plus"
             disabled
           >
-            Generar Informe
+            {{ $t('Dashboard.cards.generateReport') }}
           </v-btn>
         </div>
       </div>
@@ -65,6 +65,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   test: {
@@ -74,6 +75,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const { t } = useI18n()
 
 // Navigate to final report section
 const navigateToReport = () => {
@@ -93,22 +95,22 @@ const reportExists = computed(() => {
 })
 
 const reportStatusText = computed(() => {
-  return reportExists.value ? 'Report Available' : 'No Report Generated'
+  return reportExists.value ? t('Dashboard.cards.reportAvailable') : t('Dashboard.cards.noReport')
 })
 
 const reportSubtitle = computed(() => {
   if (reportExists.value) {
-    return 'Final report ready for download'
+    return t('Dashboard.cards.readyForDownload')
   } else {
     const completedEvaluations = props.test?.participants?.filter(p => p.completed).length || 0
     const totalParticipants = props.test?.participants?.length || 0
     
     if (totalParticipants === 0) {
-      return 'Waiting for participants'
+      return t('Dashboard.cards.waitingForParticipants')
     } else if (completedEvaluations < totalParticipants) {
-      return `${completedEvaluations}/${totalParticipants} evaluations completed`
+      return `${completedEvaluations}/${totalParticipants} ${t('Dashboard.cards.evaluationsCompleted')}`
     } else {
-      return 'Ready to generate report'
+      return t('Dashboard.cards.readyToGenerate')
     }
   }
 })

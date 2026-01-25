@@ -4,27 +4,14 @@
     rounded="lg"
     class="top-methods-card position-relative"
   >
-    <!-- Coming Soon Chip -->
-    <v-chip
-      class="coming-soon-chip"
-      color="primary"
-      variant="outlined"
-      size="small"
-      prepend-icon="mdi-clock-outline"
-    >
-      Coming Soon
-    </v-chip>
-
     <v-card-title class="d-flex align-center py-4">
-
-      <div class="d-flex align-center justify-space-between">
-        <span class="text-h6 font-weight-bold">Most used methods</span>
-      
+      <div class="d-flex align-center justify-space-between w-100">
+        <span class="text-h6 font-weight-bold">{{ $t('Dashboard.mostUsedMethods') }}</span>
       </div>
     </v-card-title>
 
-    <v-card-text class="pa-4 coming-soon-overlay">
-      <div class="methods-list">
+    <v-card-text class="pa-4">
+      <div v-if="topMethods.length > 0" class="methods-list">
         <div
           v-for="method in topMethods"
           :key="method.id"
@@ -46,7 +33,6 @@
                 <div class="method-name">
                   {{ method.name }}
                 </div>
-                <div>{{ method.type }}</div>
               </div>
             </div>
             <div class=" usage-stats">
@@ -56,12 +42,25 @@
                 size="small"
                 class="usage-chip"
               >
-                {{ method.usage }} Uses
+                {{ method.usage }} {{ method.usage == 1 ? $t('Dashboard.use') : $t('Dashboard.uses') }}
               </v-chip>
             </div>
           </div>
         </div>
       </div>
+      
+      <!-- Empty State -->
+      <div v-else class="d-flex flex-column align-center justify-center fill-height pa-4 text-center">
+        <v-icon
+          icon="mdi-chart-bar-off"
+          size="48"
+          color="grey-lighten-2"
+          class="mb-2"
+        />
+        <div class="text-body-1 text-grey-darken-1">{{ $t('Dashboard.noDataAvailable') }}</div>
+        <div class="text-caption text-grey">{{ $t('Dashboard.createFirstStudy') }}</div>
+      </div>
+
     </v-card-text>
   </v-card>
 </template>
@@ -77,92 +76,19 @@ const props = defineProps({
 })
 
 const topMethods = computed(() => {
-    if (props.methodsData.length > 0) {
-        return props.methodsData.slice(0, 5)
-    }
-
-    // Default top methods data
-    return [
-        {
-            id: 1,
-            name: 'Heuristic Evaluation',
-            type: 'Expert Review',
-            icon: 'mdi-eye-check',
-            color: 'purple',
-            bgColor: '#9c27b0',
-            usage: '2.3k'
-        },
-        {
-            id: 2,
-            name: 'User Interview',
-            type: 'Qualitative Research',
-            icon: 'mdi-account-voice',
-            color: 'cyan',
-            bgColor: '#00bcd4',
-            usage: '1.8k'
-        },
-        {
-            id: 3,
-            name: 'A/B Testing',
-            type: 'Quantitative Test',
-            icon: 'mdi-flask',
-            color: 'green',
-            bgColor: '#4caf50',
-            usage: '1.5k'
-        },
-        {
-            id: 4,
-            name: 'Card Sorting',
-            type: 'Information Architecture',
-            icon: 'mdi-card-multiple',
-            color: 'orange',
-            bgColor: '#ff9800',
-            usage: '1.2k'
-        },
-        {
-            id: 5,
-            name: 'Usability Testing',
-            type: 'User Testing',
-            icon: 'mdi-account-check',
-            color: 'pink',
-            bgColor: '#e91e63',
-            usage: '967'
-        }
-    ]
+    return props.methodsData.slice(0, 5)
 })
 </script>
 
 <style scoped>
 .top-methods-card {
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Coming Soon Chip */
-.coming-soon-chip {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 10;
-}
-
-/* Overlay for content */
-.coming-soon-overlay {
-    position: relative;
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-.coming-soon-overlay::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(248, 249, 250, 0.8);
-    backdrop-filter: blur(0.5px);
-    border-radius: 0 0 12px 12px;
-    z-index: 1;
+.methods-list {
+  flex: 1;
 }
 
 .method-item {

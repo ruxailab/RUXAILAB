@@ -1,14 +1,11 @@
 <template>
-    <v-container
-      fluid
-      class="pa-6"
-    >
+
       <v-card
         elevation="2"
         class="pa-6"
       >
         <!-- Header Section -->
-        <div class="d-flex align-center justify-space-between mb-8">
+        <div class="d-flex align-center justify-space-between mb-8 mobile-header">
           <div>
             <h1 class="text-h4 font-weight-bold text-on-surface">
               {{ $t('HeuristicsTable.titles.currentHeuristics') }}
@@ -21,7 +18,7 @@
             variant="elevated"
             size="large"
             :disabled="testAnswerDocLength > 0"
-            class="text-none"
+            class="text-none add-heuristic-btn"
             @click="dialogHeuris = true"
           >
             {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
@@ -39,6 +36,7 @@
               density="comfortable"
               hide-details
               clearable
+              class="search-field"
             />
           </v-col>
         </v-row>
@@ -56,31 +54,32 @@
               :class="{ 'expanded': itemSelect === index }"
             >
               <!-- Heuristic Header -->
-              <v-card-title class="d-flex align-center pa-4">
+              <v-card-title class="d-flex align-center pa-4 heuristic-header">
                 <v-btn
                   :icon="itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                   variant="text"
                   size="small"
-                  class="me-3"
+                  class="me-3 toggle-btn"
                   @click="toggleHeuristic(index)"
                 />
                 
-                <div class="flex-grow-1">
-                  <h3 class="text-h6 font-weight-medium text-on-surface">
+                <div class="flex-grow-1 heuristic-info">
+                  <h3 class="text-h6 font-weight-medium text-on-surface heuristic-title">
                     {{ heuristic.id + 1 }} - {{ heuristic.title }}
                   </h3>
-                  <p class="text-body-2 text-ternary ma-0 mt-1">
+                  <p class="text-body-2 text-ternary ma-0 mt-1 question-count">
                     {{ heuristic.questions.length }} {{ $t('HeuristicsTable.titles.questions') }}
                   </p>
                 </div>
 
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 heuristic-actions">
                   <v-btn
                     icon="mdi-arrow-up"
                     variant="text"
                     size="small"
                     color="accent"
                     :disabled="index === 0 || testAnswerDocLength > 0"
+                    class="action-btn"
                     @click="moveItemUp(index)"
                   >
                     <v-icon>mdi-arrow-up</v-icon>
@@ -97,6 +96,7 @@
                     size="small"
                     color="accent"
                     :disabled="index === filteredHeuristics.length - 1 || testAnswerDocLength > 0"
+                    class="action-btn"
                     @click="moveItemDown(index)"
                   >
                     <v-icon>mdi-arrow-down</v-icon>
@@ -113,6 +113,7 @@
                     size="small"
                     color="accent"
                     :disabled="testAnswerDocLength > 0"
+                    class="action-btn"
                     @click="setupQuestion(index)"
                   >
                     <v-icon>mdi-plus</v-icon>
@@ -130,6 +131,7 @@
                     size="small"
                     color="primary"
                     :disabled="testAnswerDocLength > 0"
+                    class="action-btn"
                     @click="editHeuris(heuristic)"
                   >
                     <v-icon>mdi-pencil</v-icon>
@@ -153,6 +155,7 @@
                     size="small"
                     color="error"
                     :disabled="testAnswerDocLength > 0"
+                    class="action-btn"
                     @click="deleteHeuristic(index)"
                   >
                     <v-icon>mdi-delete</v-icon>
@@ -180,20 +183,24 @@
                 <div v-if="itemSelect === index">
                   <v-divider />
                   <v-card-text class="pa-4">
-                    <div class="d-flex align-center justify-space-between mb-4">
-                      <h4 class="text-h6 text-on-surface">
-                        {{ $t('HeuristicsTable.titles.questions') }}
-                      </h4>
+                    <!-- Updated Questions Header - Matches heuristic header style -->
+                    <div class="d-flex align-center mb-4 questions-header">
+                      <div class="flex-grow-1">
+                        <h4 class="text-h6 font-weight-medium text-on-surface">
+                          {{ $t('HeuristicsTable.titles.questions') }}
+                        </h4>
+                      </div>
                       <v-chip
                         :color="heuristic.questions.length > 0 ? 'success' : 'warning'"
                         variant="tonal"
                         size="small"
+                        class="ms-2"
                       >
                         {{ heuristic.questions.length }} {{ heuristic.questions.length === 1 ? $t('Question') : $t('Questions') }}
                       </v-chip>
                     </div>
 
-                    <!-- Questions Grid -->
+                    <!-- Questions Grid - UPDATED STRUCTURE -->
                     <div
                       v-if="heuristic.questions.length > 0"
                       class="questions-list"
@@ -205,93 +212,158 @@
                         class="question-card mb-3"
                         @click="questionSelect = qIndex"
                       >
-                        <v-card-text class="pa-4">
-                          <div class="d-flex align-center justify-space-between">
-                            <div class="d-flex align-center flex-grow-1">
-                              <v-chip
-                                color="primary"
-                                variant="tonal"
-                                size="small"
-                                class="me-3"
-                              >
-                                Q{{ qIndex + 1 }}
-                              </v-chip>
-                              <h5 class="text-subtitle-1 font-weight-medium text-on-surface">
+                        <!-- Question Header - EXACTLY LIKE HEURISTIC HEADER -->
+                        <div class="d-flex align-center pa-3 question-header">
+                          <div class="d-flex align-center flex-grow-1 question-info">
+                            <v-chip
+                              color="primary"
+                              variant="tonal"
+                              size="small"
+                              class="me-3 question-chip"
+                            >
+                              Q{{ qIndex + 1 }}
+                            </v-chip>
+                            <div>
+                              <h5 class="text-subtitle-1 font-weight-medium text-on-surface question-title mb-0">
                                 {{ question.title }}
                               </h5>
-                            </div>
-                            <div class="d-flex gap-1">
-                              <v-btn
-                                icon="mdi-pencil"
-                                variant="text"
-                                size="small"
-                                color="primary"
-                                @click.stop="editQuestions(question)"
-                              />
-                              <v-btn
-                                icon="mdi-delete"
-                                variant="text"
-                                size="small"
-                                color="error"
-                                :disabled="testAnswerDocLength > 0"
-                                @click.stop="deleteQuestion(qIndex)"
-                              />
+                              <!-- Optional: Add question description/subtitle if needed -->
+                              <!-- <p class="text-body-2 text-ternary ma-0 mt-1 question-desc">
+                                {{ question.description || 'No description' }}
+                              </p> -->
                             </div>
                           </div>
-                        </v-card-text>
-                      </v-card>
 
-                      <!-- Descriptions Section -->
-                      <v-card
-                        v-if="questionSelect !== null"
-                        class="mt-4"
-                      >
-                        <v-card-text>
-                          <div class="d-flex align-center justify-space-between mb-4">
-                            <h4 class="text-h6 text-on-surface">
-                              {{ $t('HeuristicsTable.titles.descriptions') }}
-                            </h4>
-                            <AddDescBtn
-                              :ref="el => descBtn[index] = el"
-                              :question-index="questionSelect"
-                              :heuristic-index="itemSelect"
-                              @update-description="updateDescription"
+                          <div class="d-flex gap-1 question-actions">
+                            <v-btn
+                              icon="mdi-pencil"
+                              variant="text"
+                              size="small"
+                              color="primary"
+                              class="action-btn"
+                              @click.stop="editQuestions(question)"
+                            />
+                            <v-btn
+                              icon="mdi-delete"
+                              variant="text"
+                              size="small"
+                              color="error"
+                              :disabled="testAnswerDocLength > 0"
+                              class="action-btn"
+                              @click.stop="deleteQuestion(qIndex)"
                             />
                           </div>
-                          <v-data-table
-                            :headers="headers"
-                            :items="heuristic.questions[questionSelect].descriptions"
-                            :items-per-page="5"
-                            class="elevation-0"
-                          >
-                            <template #item.actions="{ item }">
-                              <v-row
-                                justify="end"
-                                class="pr-1"
-                              >
-                                <v-btn
-                                  icon
-                                  size="small"
-                                  class="mr-2"
-                                  @click="editDescription(item)"
-                                >
-                                  <v-icon size="small">
-                                    mdi-pencil
-                                  </v-icon>
-                                </v-btn>
-                                <v-btn
-                                  icon
-                                  size="small"
-                                  @click="deleteItem(item)"
-                                >
-                                  <v-icon size="small">
-                                    mdi-delete
-                                  </v-icon>
-                                </v-btn>
-                              </v-row>
-                            </template>
-                          </v-data-table>
-                        </v-card-text>
+                        </div>
+
+                        <!-- Question Expanded Content (for descriptions) -->
+                        <v-expand-transition>
+                          <div v-if="questionSelect === qIndex">
+                            <v-divider />
+                            <!-- Descriptions Section - UPDATED FOR RESPONSIVENESS -->
+                            <v-card
+                              class="mt-3 mx-3 mb-2 description-card"
+                            >
+                              <v-card-text class="pa-3">
+                                <div class="d-flex align-center justify-space-between mb-3 description-header">
+                                  <h4 class="text-h6 text-on-surface mb-0">
+                                    {{ $t('HeuristicsTable.titles.descriptions') }}
+                                  </h4>
+                                  <!-- Updated Add Description Button -->
+                                  <AddDescBtn
+                                    :ref="el => descBtn[index] = el"
+                                    :question-index="questionSelect"
+                                    :heuristic-index="itemSelect"
+                                    class="add-desc-btn"
+                                    @update-description="updateDescription"
+                                  />
+                                </div>
+                                
+                                <!-- Responsive Data Table -->
+                                <div class="responsive-table-wrapper">
+                                  <v-data-table
+                                    :headers="headers"
+                                    :items="Array.isArray(heuristic.questions[questionSelect]?.descriptions)
+                                    ? heuristic.questions[questionSelect].descriptions
+                                    : Object.values(heuristic.questions[questionSelect]?.descriptions || {})"
+                                    :items-per-page="5"
+                                    class="elevation-0 description-table"
+                                    hide-default-footer
+                                  >
+                                    <template #item.title="{ item }">
+                                      <div class="description-title">
+                                        {{ item.title || 'No title' }}
+                                      </div>
+                                    </template>
+                                    <template #item.actions="{ item }">
+                                      <div class="description-actions">
+                                        <v-btn
+                                          icon
+                                          size="small"
+                                          variant="text"
+                                          color="primary"
+                                          class="table-action-btn"
+                                          @click="editDescription(item)"
+                                        >
+                                          <v-icon size="small">
+                                            mdi-pencil
+                                          </v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                          icon
+                                          size="small"
+                                          variant="text"
+                                          color="error"
+                                          class="table-action-btn"
+                                          @click="deleteItem(item)"
+                                        >
+                                          <v-icon size="small">
+                                            mdi-delete
+                                          </v-icon>
+                                        </v-btn>
+                                      </div>
+                                    </template>
+                                    <template #no-data>
+                                      <div class="text-center py-4 no-data-message">
+                                        <v-icon
+                                          icon="mdi-text-box-remove-outline"
+                                          size="48"
+                                          color="grey-lighten-1"
+                                          class="mb-2"
+                                        />
+                                        <p class="text-body-2 text-grey">
+                                          {{ $t('HeuristicsTable.messages.noDescriptions') }}
+                                        </p>
+                                      </div>
+                                    </template>
+                                  </v-data-table>
+                                  
+                                  <!-- Custom Pagination for better mobile control -->
+                                  <div v-if="heuristic.questions[questionSelect]?.descriptions?.length > 0" class="custom-pagination">
+                                    <div class="d-flex align-center justify-space-between flex-wrap gap-2 pa-2">
+                                      <div class="d-flex align-center items-per-page">
+                                        <span class="text-caption text-grey mr-2">
+                                          {{ $t('common.itemsPerPage') }}
+                                        </span>
+                                        <v-select
+                                          :items="[3, 5, 10, 20]"
+                                          :model-value="5"
+                                          density="compact"
+                                          variant="outlined"
+                                          hide-details
+                                          class="items-select"
+                                          @update:model-value="handleItemsPerPage"
+                                        />
+                                      </div>
+                                      <div class="pagination-info text-caption text-grey">
+                                        {{ getPaginationInfo(heuristic.questions[questionSelect]?.descriptions?.length || 0) }}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </v-card-text>
+                            </v-card>
+                          </div>
+                        </v-expand-transition>
                       </v-card>
                     </div>
 
@@ -299,7 +371,7 @@
                     <v-card
                       v-else
                       variant="outlined"
-                      class="text-center pa-8"
+                      class="text-center pa-8 empty-questions"
                       style="border-style: dashed;"
                     >
                       <v-icon
@@ -311,7 +383,7 @@
                       <h4 class="text-h6 text-secondary mb-2">
                         {{ $t('HeuristicsTable.titles.noQuestions') }}
                       </h4>
-                      <p class="text-body-2 text-secondary mb-4">
+                      <p class="text-body-2 text-secondary mb-4 empty-state-text">
                         {{ $t('HeuristicsTable.messages.startAddingQuestions') }}
                       </p>
                       <v-btn
@@ -335,7 +407,7 @@
         <v-row v-if="filteredHeuristics.length === 0">
           <v-col cols="12">
             <v-card
-              class="text-center pa-8"
+              class="text-center pa-8 empty-heuristics"
               variant="outlined"
             >
               <v-icon
@@ -347,7 +419,7 @@
               <h3 class="text-h5 text-ternary mb-2">
                 {{ $t('HeuristicsTable.titles.noHeuristicsFound') }}
               </h3>
-              <p class="text-body-1 text-ternary">
+              <p class="text-body-1 text-ternary empty-state-text">
                 {{ $t('HeuristicsTable.messages.noHeuristics') }}
               </p>
               <v-btn
@@ -437,7 +509,7 @@
                 @submit.prevent="addQuestion"
               >
                 <v-text-field
-                  v-if="newQuestion"
+                  v-if="dialogQuestion && newQuestion"
                   v-model="newQuestion.title"
                   :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
                   variant="outlined"
@@ -445,7 +517,7 @@
                   :rules="questionRequired"
                   autofocus
                 />
-                <v-alert v-else type="error" class="mt-4">
+                <v-alert v-else-if="dialogQuestion" type="error" class="mt-4">
                   {{ $t('HeuristicsTable.errors.failedToLoadQuestionForm') }}
                 </v-alert>
               </v-form>
@@ -509,16 +581,16 @@
               <v-spacer />
               <v-btn
                 variant="text"
-                @click="closeDialog('dialogEdit')"
                 :disabled="isProcessing"
+                @click="closeDialog('dialogEdit')"
               >
                 {{ $t('HeuristicsTable.titles.cancel') }}
               </v-btn>
               <v-btn
                 color="primary"
                 variant="elevated"
-                @click="validateEdit"
                 :disabled="isProcessing || !itemEdit || isDialogClosing"
+                @click="validateEdit"
               >
                 {{ $t('HeuristicsTable.titles.ok') }}
               </v-btn>
@@ -526,20 +598,19 @@
           </v-card>
         </v-dialog>
       </v-card>
-    </v-container> 
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue';
+import { showError, showWarning } from '@/shared/utils/toast'
+
 
 const emit = defineEmits(['change'])
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
 
 const itemSelect = ref(null)
 const questionSelect = ref(null)
@@ -556,10 +627,12 @@ const formHeurisRef = ref(null)
 const descBtn = ref([])
 const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
+const itemsPerPage = ref(5)
+const isDialogClosing = ref(false)
 
 const headers = ref([
-  { title: t('HeuristicsTable.titles.title'), align: 'start', value: 'title' },
-  { title: t('HeuristicsTable.titles.actions'), value: 'actions', align: 'end', sortable: false },
+  { title: t('HeuristicsTable.titles.titles'), align: 'start', value: 'title', width: '70%' },
+  { title: t('HeuristicsTable.titles.actions'), value: 'actions', align: 'end', sortable: false, width: '30%' },
 ])
 
 const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')]);
@@ -569,16 +642,24 @@ const test = computed(() => store.getters.test);
 
 
 const heuristics = computed(() => {
-  // 1. Try heuristics getter
-  if (store.getters.heuristics && store.getters.heuristics.length) {
-    return store.getters.heuristics;
-  }
-  // 2. Try store.state.Test.test (if it exists and is an array)
-  if (store.state.Tests?.Test.testStructure && Array.isArray(store.state.Tests.Test.testStructure)) {
-    return store.state.Tests.Test.testStructure;
-  }
-  // 3. Fallback to empty array
-  return [];
+  const source =
+    store.getters.heuristics?.length
+      ? store.getters.heuristics
+      : store.state.Tests?.Test.testStructure || [];
+
+  return Array.isArray(source)
+    ? source.map(h => ({
+        ...h,
+        questions: Array.isArray(h.questions)
+          ? h.questions.map(q => ({
+              ...q,
+              descriptions: Array.isArray(q.descriptions)
+                ? q.descriptions
+                : Object.values(q.descriptions || {}),
+            }))
+          : [],
+      }))
+    : [];
 });
 
 const filteredHeuristics = computed(() => {
@@ -596,6 +677,16 @@ const filteredHeuristics = computed(() => {
 const testAnswerDocLength = computed(() => {
   return Object.keys(store.getters.testAnswerDocument?.heuristicAnswers ?? {}).length;
 });
+const getPaginationInfo = (totalItems) => {
+  const page = 1;
+  const start = (page - 1) * itemsPerPage.value + 1;
+  const end = Math.min(page * itemsPerPage.value, totalItems);
+  return `${start}-${end} of ${totalItems}`;
+};
+
+const handleItemsPerPage = (value) => {
+  itemsPerPage.value = value;
+};
 
 watch(dialogHeuris, (newVal) => {
   if (!newVal && heuristics.value.length > 0 && !itemEdit.value) {
@@ -647,7 +738,7 @@ const moveItemUp = (index) => {
     itemAbove.id = index;
 
     store.dispatch('setHeuristics', newHeuristics);
-    toast.warning(t('HeuristicsTable.messages.changeWeights'));
+    showWarning('HeuristicsTable.messages.changeWeights');
     emit('change');
   }
 }
@@ -665,7 +756,7 @@ const moveItemDown = (index) => {
     itemBelow.id = index;
 
     store.dispatch('setHeuristics', newHeuristics);
-    toast.warning(t('HeuristicsTable.messages.changeWeights'));
+    showWarning('HeuristicsTable.messages.changeWeights');
     emit('change');
   }
 };
@@ -694,7 +785,7 @@ const deleteQuestion = (qIndex) => {
       emit('change');
     }
   } else {
-    toast.warning(t('HeuristicsTable.messages.cantDeleteAllQuestions'))
+    showWarning('HeuristicsTable.messages.cantDeleteAllQuestions')
   }
 }
 
@@ -702,7 +793,7 @@ const editHeuris = (item) => {
   const heuristicIndex = heuristics.value.findIndex(h => h.id === item.id)
   if (heuristicIndex === -1) {
     console.warn('Heuristic not found:', item);
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError(t('HeuristicsTable.errors.invalidHeuristic'));
     return
   }
   itemEdit.value = {
@@ -718,7 +809,7 @@ const editHeuris = (item) => {
 const editQuestions = (item) => {
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
     console.warn('Invalid heuristic for question edit, itemSelect:', itemSelect.value);
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError('HeuristicsTable.errors.invalidHeuristic');
     return;
   }
   itemEdit.value = {
@@ -742,7 +833,7 @@ const editDescription = (desc) => {
 
 const setupQuestion = (heuristicIndex) => {
   if (!heuristics.value[heuristicIndex]) {
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    showError('HeuristicsTable.errors.invalidHeuristic')
     return
   }
   questionHeuristicIndex.value = heuristicIndex  // remember index
@@ -780,40 +871,55 @@ const addHeuris = () => {
 
 const closeDialog = (dialogName) => {
   if (isProcessing.value) return;
-  if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
-    formHeurisRef.value.resetValidation()
-    formHeurisRef.value.reset()
+  if (dialogName === 'dialogHeuris') {
+    if (formHeurisRef.value) {
+      formHeurisRef.value.resetValidation()
+      formHeurisRef.value.reset()
+    }
+    dialogHeuris.value = false;
   }
-  if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
-    formQuestionRef.value.resetValidation();
-    formQuestionRef.value.reset();
+  else if (dialogName === 'dialogQuestion') {
+    dialogQuestion.value = false;
+    setTimeout(() => {
+      if (formQuestionRef.value) {
+        formQuestionRef.value.resetValidation();
+        formQuestionRef.value.reset();
+      }
+      newQuestion.value = null;
+      questionHeuristicIndex.value = null;
+    }, 150);
   }
-  if (dialogName === 'dialogEdit' && formEditRef.value) {
-    formEditRef.value.resetValidation()
-    formEditRef.value.reset()
+  else if (dialogName === 'dialogEdit') {
+    isDialogClosing.value = true;
+    if (formEditRef.value) {
+      formEditRef.value.resetValidation()
+      formEditRef.value.reset()
+    }
+    dialogEdit.value = false;
+    setTimeout(() => {
+      isDialogClosing.value = false;
+      itemEdit.value = null;
+    }, 300);
   }
-
-  if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
-  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false;
-  else if (dialogName === 'dialogEdit') dialogEdit.value = false;
 };
 
 const addQuestion = () => {
   if (!newQuestion.value || questionHeuristicIndex.value === null) {
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'))
+    showError('HeuristicsTable.errors.invalidHeuristic')
     return
   }
   if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false
-    const newHeuristics = [...heuristics.value]
-    newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
-    newHeuristics[questionHeuristicIndex.value].total =
-      newHeuristics[questionHeuristicIndex.value].questions.length
-    store.dispatch('setHeuristics', newHeuristics)
-    newQuestion.value = null
-    questionHeuristicIndex.value = null
-    formQuestionRef.value.resetValidation()
-    emit('change')
+    try {
+      const newHeuristics = [...heuristics.value]
+      newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
+      newHeuristics[questionHeuristicIndex.value].total = newHeuristics[questionHeuristicIndex.value].questions.length
+      store.dispatch('setHeuristics', newHeuristics)
+      closeDialog('dialogQuestion')
+      emit('change')
+    } catch (error) {
+      console.error('Error adding question:', error)
+      showError('HeuristicsTable.errors.failedToLoadQuestionForm')
+    }
   }
 }
 
@@ -830,7 +936,7 @@ const validateEdit = () => {
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
     console.warn('Invalid itemSelect or heuristic not found:', itemSelect.value);
     dialogEdit.value = false;
-    toast.error(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError('HeuristicsTable.errors.invalidHeuristic');
     return;
   }
   isProcessing.value = true;
@@ -847,7 +953,7 @@ const validateEdit = () => {
         newHeuristics[itemSelect.value].questions[questionIndex].title = itemEdit.value.titleEdit;
       } else {
         console.warn('Question not found for id:', itemEdit.value.id);
-        toast.error(t('HeuristicsTable.errors.invalidQuestion'));
+        showError('HeuristicsTable.errors.invalidQuestion')
       }
     }
     store.dispatch('setHeuristics', newHeuristics);
@@ -866,3 +972,623 @@ const updateDescription = () => {
   emit('change');
 };
 </script>
+
+<style scoped>
+/* Responsive styles for mobile devices */
+@media (max-width: 768px) {
+  /* Make header section stack vertically */
+  .mobile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px !important;
+  }
+
+  /* Make add heuristic button full width on mobile */
+  .add-heuristic-btn {
+    width: 100%;
+  }
+
+  /* Adjust title size on mobile */
+  .text-h4.font-weight-bold.text-on-surface {
+    font-size: 1.75rem !important;
+    line-height: 1.2;
+  }
+
+  /* Make heuristic header more compact on mobile */
+  .heuristic-header {
+    flex-wrap: wrap;
+    padding: 12px !important;
+    align-items: center !important;
+  }
+
+  /* Make action buttons wrap properly */
+  .heuristic-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* Make action buttons smaller on mobile */
+  .action-btn {
+    min-width: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Adjust heuristic info for mobile */
+  .heuristic-info {
+    min-width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .heuristic-title {
+    font-size: 1.1rem !important;
+    line-height: 1.3;
+  }
+
+  .question-count {
+    font-size: 0.875rem !important;
+  }
+
+  /* Reduce padding on smaller screens */
+  .v-container.fluid.pa-6,
+  .v-card.pa-6 {
+    padding: 16px !important;
+  }
+
+  /* Question header - matches heuristic header exactly */
+  .question-header {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    padding: 12px !important;
+    width: 100%;
+  }
+
+  .question-info {
+    display: flex !important;
+    align-items: center !important;
+    flex-grow: 1;
+    min-width: 0;
+    min-width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .question-chip {
+    flex-shrink: 0 !important;
+    margin-right: 12px !important;
+    background-color: rgba(var(--v-theme-primary), 0.1) !important;
+    color: rgb(var(--v-theme-primary)) !important;
+    font-weight: 600;
+    min-width: 40px !important;
+    justify-content: center;
+  }
+
+  .question-title {
+    font-size: 1rem !important;
+    line-height: 1.3;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  /* Question actions exactly like heuristic actions */
+  .question-actions {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+
+  /* Make questions header stack like heuristic header on mobile */
+  .questions-header {
+    flex-wrap: wrap;
+    padding: 0 0 16px 0 !important;
+    align-items: center;
+  }
+
+  .questions-header .flex-grow-1 {
+    min-width: 100%;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .questions-header .v-chip {
+    align-self: center;
+    margin-left: 0 !important;
+    background-color: rgba(var(--v-theme-primary), 0.1) !important;
+    color: rgb(var(--v-theme-primary)) !important;
+    font-weight: 600;
+  }
+
+  /* Responsive Descriptions Section */
+  .description-card {
+    margin: 12px 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
+  .description-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .description-header h4 {
+    margin-bottom: 0 !important;
+    font-size: 1.1rem !important;
+    width: 100%;
+  }
+
+  .add-desc-btn {
+    width: 100% !important;
+  }
+
+  .add-desc-btn :deep(.v-btn) {
+    width: 100% !important;
+    justify-content: center;
+  }
+
+  /* Responsive table wrapper */
+  .responsive-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .description-table :deep(.v-data-table__wrapper) {
+    min-width: 400px;
+  }
+
+  .description-table :deep(.v-data-table-header) {
+    font-size: 0.875rem !important;
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .description-table :deep(th),
+  .description-table :deep(td) {
+    padding: 12px 8px !important;
+    font-size: 0.875rem !important;
+    white-space: nowrap;
+  }
+
+  .description-table :deep(th) {
+    font-weight: 600 !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  /* Description title with better wrapping */
+  .description-title {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal !important;
+    max-width: 250px;
+  }
+
+  /* Description actions */
+  .description-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+  }
+
+  .table-action-btn {
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  /* No data message */
+  .no-data-message {
+    padding: 24px 0 !important;
+  }
+
+  .no-data-message .v-icon {
+    opacity: 0.5;
+  }
+
+  .no-data-message p {
+    opacity: 0.7;
+    max-width: 80%;
+    margin: 0 auto;
+  }
+
+  /* Custom pagination */
+  .custom-pagination {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .items-per-page {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .items-select {
+    max-width: 80px;
+    min-width: 80px;
+  }
+
+  .items-select :deep(.v-field) {
+    font-size: 0.75rem !important;
+  }
+
+  .pagination-info {
+    font-size: 0.75rem !important;
+  }
+
+  /* Make empty state cards more compact */
+  .empty-questions,
+  .empty-heuristics {
+    padding: 20px !important;
+  }
+
+  /* Fix text wrapping for empty state messages */
+  .empty-state-text {
+    max-width: 100%;
+    word-break: normal;
+    word-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.6;
+    padding: 0 8px;
+    /* Add responsive font size for mobile */
+    font-size: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Make search field better on mobile */
+  .search-field :deep(.v-field__prepend-inner) {
+    padding-top: 0;
+  }
+
+  /* More compact button for mobile */
+  .empty-heuristics .v-btn {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    margin-top: 4px;
+    font-size: 13px !important;
+    min-height: 38px !important;
+    height: auto !important;
+    line-height: 1.3 !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 960px) and (min-width: 769px) {
+  .heuristic-header {
+    flex-wrap: wrap;
+  }
+  
+  .heuristic-actions {
+    margin-top: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* Make data table more compact on tablet */
+  .description-table :deep(.v-data-table-header) {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Very small mobile screens */
+@media (max-width: 480px) {
+  /* Further reduce padding */
+  .v-container.fluid.pa-6,
+  .v-card.pa-6 {
+    padding: 12px !important;
+  }
+  
+  /* Adjust card title padding */
+  .v-card-title.pa-4 {
+    padding: 12px !important;
+  }
+  
+  /* Make title even smaller on very small screens */
+  .text-h4.font-weight-bold.text-on-surface {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Adjust toggle button */
+  .toggle-btn {
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  /* Better text wrapping for very small screens */
+  .empty-state-text {
+    font-size: 13px !important; /* Smaller for iPhone */
+    line-height: 1.5;
+    margin-bottom: 10px !important;
+  }
+  
+  .empty-heuristics h3.text-h5 {
+    font-size: 1.25rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* EXTRA COMPACT button for small screens */
+  .empty-heuristics .v-btn {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 12px !important;
+    min-height: 34px !important;
+    line-height: 1.2 !important;
+    margin-top: 2px;
+  }
+
+  /* Reduce empty card padding more */
+  .empty-heuristics {
+    padding: 16px !important;
+  }
+
+  .empty-questions {
+    padding: 16px !important;
+  }
+
+  /* More compact question layout for small screens - matching heuristic */
+  .question-header {
+    padding: 10px !important;
+  }
+
+  .question-info {
+    margin-bottom: 6px;
+  }
+
+  .question-title {
+    font-size: 0.95rem !important;
+    line-height: 1.3;
+  }
+
+  .question-chip {
+    font-size: 0.75rem !important;
+    height: 24px !important;
+    min-width: 36px !important;
+    margin-right: 8px !important;
+  }
+
+  /* Smaller action buttons matching heuristic */
+  .question-actions .v-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+  }
+
+  /* Make questions header more compact on small screens */
+  .questions-header .flex-grow-1 {
+    margin-bottom: 6px;
+  }
+
+  .questions-header h4 {
+    font-size: 1.1rem !important;
+  }
+
+  .questions-header .v-chip {
+    font-size: 0.8rem !important;
+    height: 24px !important;
+  }
+
+  /* Ultra compact descriptions for small screens */
+  .description-header {
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .description-header h4 {
+    font-size: 1rem !important;
+  }
+
+  .description-table :deep(.v-data-table__wrapper) {
+    min-width: 320px;
+  }
+
+  .description-table :deep(.v-data-table-header) {
+    font-size: 0.8rem !important;
+  }
+
+  .description-table :deep(th),
+  .description-table :deep(td) {
+    padding: 8px 6px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .description-title {
+    max-width: 180px;
+    font-size: 0.8rem !important;
+  }
+
+  .table-action-btn {
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  /* Smaller pagination */
+  .items-per-page {
+    font-size: 0.75rem !important;
+  }
+
+  .items-select {
+    max-width: 70px;
+    min-width: 70px;
+  }
+
+  .pagination-info {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .empty-state-text {
+    font-size: 11px !important;
+    line-height: 1.4;
+    margin-bottom: 8px !important;
+  }
+  
+  .empty-heuristics h3.text-h5 {
+    font-size: 1rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  /* ULTRA COMPACT button for very small screens */
+  .empty-heuristics .v-btn {
+    font-size: 11px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    min-height: 30px !important;
+    line-height: 1.1 !important;
+    margin-top: 0;
+  }
+
+  /* Reduce icon size */
+  .empty-heuristics .v-icon {
+    font-size: 42px !important;
+    height: 42px !important;
+    width: 42px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Minimal card padding */
+  .empty-heuristics {
+    padding: 14px 10px !important;
+  }
+
+  /* Ultra compact question layout for iPhone SE - matching heuristic */
+  .question-header {
+    padding: 8px !important;
+  }
+
+  .question-info {
+    margin-bottom: 4px;
+  }
+
+  .question-title {
+    font-size: 0.9rem !important;
+    line-height: 1.2;
+  }
+
+  .question-chip {
+    font-size: 0.7rem !important;
+    height: 22px !important;
+    min-width: 32px !important;
+    margin-right: 6px !important;
+  }
+
+  /* Even smaller action buttons matching heuristic */
+  .question-actions .v-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+  }
+
+  /* Ultra compact questions header for iPhone SE */
+  .questions-header h4 {
+    font-size: 1rem !important;
+  }
+
+  .questions-header .v-chip {
+    font-size: 0.75rem !important;
+    height: 22px !important;
+  }
+
+  /* Super compact descriptions for iPhone SE */
+  .description-header {
+    gap: 6px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .description-header h4 {
+    font-size: 0.95rem !important;
+  }
+
+  .description-table :deep(.v-data-table__wrapper) {
+    min-width: 280px;
+  }
+
+  .description-table :deep(.v-data-table-header) {
+    font-size: 0.75rem !important;
+  }
+
+  .description-table :deep(th),
+  .description-table :deep(td) {
+    padding: 6px 4px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .description-title {
+    max-width: 150px;
+    font-size: 0.75rem !important;
+  }
+
+  /* Hide "Title" header text on very small screens */
+  .description-table :deep(th:first-child .v-data-table-header__content) {
+    font-size: 0;
+  }
+  
+  .description-table :deep(th:first-child .v-data-table-header__content::after) {
+    content: 'Title';
+    font-size: 0.75rem;
+  }
+
+  /* Even smaller table action buttons */
+  .table-action-btn {
+    min-width: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .table-action-btn :deep(.v-icon) {
+    font-size: 16px !important;
+  }
+
+  /* Ultra compact pagination */
+  .custom-pagination {
+    padding: 4px !important;
+  }
+
+  .items-per-page {
+    font-size: 0.7rem !important;
+  }
+
+  .items-select {
+    max-width: 60px;
+    min-width: 60px;
+  }
+
+  .items-select :deep(.v-field) {
+    font-size: 0.7rem !important;
+    padding: 0 4px !important;
+  }
+
+  .pagination-info {
+    font-size: 0.65rem !important;
+  }
+
+  /* Hide "Items per page" text on very small screens */
+  .items-per-page .text-caption {
+    display: none;
+  }
+
+  .items-per-page .v-select .v-field__input {
+    padding: 0 2px !important;
+  }
+}
+</style>

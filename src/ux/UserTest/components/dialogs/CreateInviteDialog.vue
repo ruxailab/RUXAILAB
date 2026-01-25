@@ -206,7 +206,7 @@
                   <h3 class="text-h6 font-weight-bold">Invitation Preview</h3>
                 </div>
                 
-                <v-card class="invitation-preview elevation-2" outlined>
+                <v-card class="invitation-preview elevation-2" border>
                   <v-card-title class="bg-grey-lighten-4 py-3">
                     <v-icon class="mr-2" color="primary">mdi-email-outline</v-icon>
                     <span class="text-subtitle-1">Evaluation Invitation</span>

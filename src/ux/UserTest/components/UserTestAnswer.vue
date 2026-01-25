@@ -9,39 +9,55 @@
       justify="center"
       class="ma-0"
     >
-      <ShowInfo hide-col="true">
+      <ShowInfo :hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs
             v-model="tab"
             bg-color="transparent"
             color="#FCA326"
+            slider-size="4"
           >
-            <v-tab @click="tab = 0">
+            <v-tab value="0">
               {{ $t('analytics.generalAnalytics') }}
             </v-tab>
-            <v-tab @click="tab = 1">
+            <v-tab value="1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" @click="tab = 2">
+            <v-tab
+              v-if="showSentiment"
+              value="2"
+            >
               Sentiment Analysis
             </v-tab>
             <v-tab
               v-if="showSUS"
-              @click="tab = 3"
+              value="3"
             >
               {{ $t('analytics.susAnalytics') }}
             </v-tab>
             <v-tab
               v-if="showNasa"
-              @click="tab = 4"
+              value="4"
             >
               {{ $t('analytics.nasaTlxAnalytics') }}
             </v-tab>
-            <v-tab v-if="showEye" @click="tab = 4">
+            <v-tab
+              v-if="showSart"
+              value="5"
+            >
+              {{ $t('analytics.sartAnalytics') }}
+            </v-tab>
+            <v-tab
+              v-if="showEye"
+              value="6"
+            >
               {{ $t('analytics.eyeTrackingAnalytics') }}
             </v-tab>
-            <v-tab v-if="showTranscription" @click="tab = 5">
+            <v-tab
+              v-if="showTranscription"
+              value="6"
+            >
               {{ $t('analytics.transcriptions') }}
             </v-tab>
           </v-tabs>
@@ -51,18 +67,19 @@
           <div
             class="ma-0 pa-0"
           >
-            <GeneralAnalytics v-if="tab === 0" />
-            <UserAnalytics v-if="tab === 1" />
-            <SentimentAnalysisView v-if="tab === 2" />
-            <SusAnalytics v-if="tab === 3" />
-            <NasaTlxAnalytics v-if="tab === 4" />
-            <TranscriptionTool v-if="tab === 5" />
+            <GeneralAnalytics v-if="tab === '0'" />
+            <UserAnalytics v-if="tab === '1'" />
+            <SentimentAnalysisView v-if="tab === '2'" />
+            <SusAnalytics v-if="tab === '3'" />
+            <NasaTlxAnalytics v-if="tab === '4'" />
+            <SartAnalytics v-if="tab === '5'" />
+            <TranscriptionTool v-if="tab === '6'" />
           </div>
         </template>
       </ShowInfo>
     </v-row>
     <div v-else>
-      <IntroAnswer />
+      <IntroAnswer @go-to-coops="goToCoops" />
     </div>
   </div>
 </template>
@@ -70,6 +87,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import { statistics } from '@/ux/Heuristic/utils/statistics';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer';
@@ -78,6 +96,7 @@ import GeneralAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import SentimentAnalysisView from './UnmoderatedTestAnalytics/SentimentAnalysisView.vue';
 import SusAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SusAnalytics.vue';
 import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/NasaTlxAnalytics.vue';
+import SartAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SartAnalytics.vue';
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue';
 import { STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
 import { useI18n } from 'vue-i18n';
@@ -94,14 +113,15 @@ defineProps({
 const emit = defineEmits(['goToCoops']);
 
 const store = useStore();
+const router = useRouter();
 
 const tab = ref(0);
 const ind = ref(0);
 const intro = ref(null);
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
-const study = computed(() => store.state.Tests.Test);
-const testStructure = computed(() => store.state.Tests.Test.testStructure);
+const study = computed(() => store.getters.test || {});
+const testStructure = computed(() => store.getters.test?.testStructure || {});
 
 const hasAnswers = computed(() => {
   const answers = testAnswerDocument.value?.taskAnswers;
@@ -120,6 +140,13 @@ const showNasa = computed(() => {
   if (!testStructure.value || !testStructure.value.userTasks) return false;
   return Object.values(testStructure.value.userTasks).some(
     (task) => task.taskType === 'nasa-tlx'
+  );
+});
+
+const showSart = computed(() => {
+  if (!testStructure.value || !testStructure.value.userTasks) return false;
+  return Object.values(testStructure.value.userTasks).some(
+    (task) => task.taskType === 'sart'
   );
 });
 
@@ -159,6 +186,12 @@ const allIrisTrackingData = computed(() => {
 });
 
 const goToCoops = () => {
+  if (!study.value?.id) return;
+  
+  const isModerated = study.value.subType === 'Moderated';
+  const routeBase = isModerated ? '/userTest/moderated' : '/userTest/unmoderated';
+  
+  router.push(`${routeBase}/edit/${study.value.id}`);
   emit('goToCoops');
 };
 

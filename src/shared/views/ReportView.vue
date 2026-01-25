@@ -37,22 +37,22 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <template #subtitle v-if="showIntroView">
-      <div class="d-flex align-center">
+    <template v-if="showIntroView" #subtitle>
+      <div class="d-flex align-center mb-4">
         <v-icon
           icon="mdi-update"
           size="small"
           class="mr-2 text-medium-emphasis"
         />
         <span class="text-body-2 text-medium-emphasis">
-          {{ $t('common.timeAgo.now') }}: {{ formatDate(lastUpdated) }}
+          {{ $t('Dashboard.cards.lastActivity') }}: {{ formatDate(lastUpdated) }}
         </span>
       </div>
     </template>
 
-    <template #filters v-if="showIntroView">
-      <div class="d-flex align-center justify-space-between mb-6">
-        <div class="d-flex align-center gap-4">
+    <template v-if="showIntroView" #filters>
+      <div class="d-flex align-center justify-space-between mb-6 flex-wrap gap-4">
+        <div class="d-flex align-center gap-4 flex-wrap w-100">
           <v-text-field
             v-model="searchQuery"
             prepend-inner-icon="mdi-magnify"
@@ -60,7 +60,8 @@
             variant="outlined"
             density="compact"
             hide-details
-            style="max-width: 500px; min-width: 400px;"
+            class="flex-grow-1"
+            style="min-width: 250px; max-width: 500px;"
           />
           <v-select
             v-model="statusFilter"
@@ -84,7 +85,7 @@
     <v-card
       v-if="reports.length > 0"
       elevation="2"
-      class="rounded-lg"
+      class="rounded-lg d-none d-sm-block"
     >
       <v-data-table
         :headers="headers"
@@ -197,6 +198,136 @@
       </v-data-table>
     </v-card>
 
+      <div class="d-sm-none">
+        <template v-for="item in filteredReports" :key="item.id">
+          <v-card class="mb-4 report-card pa-4" variant="flat" border>
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="d-flex align-center">
+                <v-avatar
+                  :color="getAvatarColor(item.evaluator)"
+                  size="40"
+                  class="mr-3"
+                >
+                  <span class="text-white font-weight-medium">
+                    {{ getInitials(item.fullName) }}
+                  </span>
+                </v-avatar>
+                <div style="min-width: 0">
+                  <div class="text-subtitle-1 font-weight-bold text-on-surface text-truncate">
+                    {{ item.fullName }}
+                  </div>
+                  <div class="text-body-2 text-medium-emphasis text-truncate">
+                    {{ item.evaluator }}
+                  </div>
+                </div>
+              </div>
+
+              <v-menu>
+                <template #activator="{ props }">
+                  <v-btn
+                    icon="mdi-dots-vertical"
+                    variant="text"
+                    size="default"
+                    v-bind="props"
+                  />
+                </template>
+                <v-list min-width="180">
+                  <v-list-item
+                    prepend-icon="mdi-delete"
+                    :title="$t('HeuristicsReport.messages.remove_report')"
+                    class="text-error"
+                    @click="dialog = true; report = item"
+                  />
+                  <v-list-item
+                    v-if="item.hidden"
+                    prepend-icon="mdi-eye"
+                    :title="$t('HeuristicsReport.actions.unhide_report')"
+                    @click="unhideReport(item)"
+                  />
+                </v-list>
+              </v-menu>
+            </div>
+
+            <v-divider class="mb-4" />
+
+            <v-row dense>
+              <v-col cols="12" class="mb-3">
+                 <v-sheet rounded color="blue-lighten-5" variant="flat" class="pa-3">
+                  <div class="d-flex align-center justify-space-between">
+                    <span class="text-caption font-weight-bold text-blue-darken-3">
+                      {{ $t('HeuristicsReport.headers.last_update') }}
+                    </span>
+                    <div class="d-flex align-center">
+                      <v-icon
+                        icon="mdi-clock-outline"
+                        size="small"
+                        class="mr-2 text-blue-darken-3"
+                      />
+                      <span class="text-body-2 font-weight-medium text-blue-darken-3">
+                        {{ item.lastUpdate }}
+                      </span>
+                    </div>
+                  </div>
+                 </v-sheet>
+              </v-col>
+
+              <v-col cols="6">
+                <v-sheet rounded color="grey-lighten-4" variant="flat" class="pa-3 h-100">
+                  <div class="text-caption font-weight-bold text-medium-emphasis mb-1">
+                    {{ $t('HeuristicsReport.headers.status') }}
+                  </div>
+                  <v-chip
+                    :color="getStatusColor(item.status)"
+                    :text="item.status"
+                    variant="flat"
+                    size="small"
+                    class="text-capitalize font-weight-medium w-100 justify-center"
+                  />
+                </v-sheet>
+              </v-col>
+
+              <v-col cols="6">
+                <v-sheet rounded color="grey-lighten-4" variant="flat" class="pa-3 h-100">
+                  <div class="text-caption font-weight-bold text-medium-emphasis mb-1">
+                    {{ $t('common.hidden') }}
+                  </div>
+                   <v-chip
+                    :color="item.hidden ? 'success' : 'error'"
+                    size="small"
+                    variant="tonal"
+                    class="w-100 justify-center"
+                  >
+                    <v-icon start size="small">
+                      {{ item.hidden ? 'mdi-check' : 'mdi-close' }}
+                    </v-icon>
+                    {{ item.hidden ? 'Hidden' : 'Visible' }}
+                  </v-chip>
+                </v-sheet>
+              </v-col>
+
+              <v-col cols="12" class="mt-2">
+                <v-sheet rounded color="teal-lighten-5" variant="flat" class="pa-3">
+                   <div class="d-flex align-center justify-space-between mb-2">
+                    <span class="text-caption font-weight-bold text-teal-darken-3">
+                      {{ $t('HeuristicsReport.headers.progress') }}
+                    </span>
+                    <span class="text-body-2 font-weight-bold text-teal-darken-3">
+                      {{ item.progress }}%
+                    </span>
+                  </div>
+                  <v-progress-linear
+                    :model-value="parseFloat(item.progress)"
+                    :color="getProgressColor(parseFloat(item.progress))"
+                    height="8"
+                    rounded
+                    class="mb-1"
+                  />
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </v-card>
+        </template>
+      </div>
     <div
       v-if="filteredReports.length === 0 && reports.length > 0 && !loading"
       class="text-center py-12"
@@ -220,15 +351,14 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
 import Intro from '@/shared/components/introduction_cards/IntroReports.vue';
 import PageWrapper from '@/shared/views/template/PageWrapper.vue';
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import { showSuccess } from '../utils/toast';
 
 const store = useStore();
 const { t } = useI18n();
-const toast = useToast();
 
 const props = defineProps({ id: { type: String, default: '' } });
 const emit = defineEmits(['goToCoops']);
@@ -339,7 +469,7 @@ const unhideReport = async (item) => {
         ...payload,
         hidden: !item.hidden,
       }),
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
     });
   } catch (error) {
     console.error('Error saving answer:', error.message);
@@ -367,7 +497,7 @@ const removeReport = async (report) => {
   await store.dispatch("Reports/removeReport", { report, test: test.value });
 
   await getCurrentAnswer();
-  toast?.success(t("alerts.genericSuccess"));
+  showSuccess("alerts.genericSuccess");
 
   loadingBtn.value = false;
   dialog.value = false;

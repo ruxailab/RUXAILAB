@@ -17,7 +17,7 @@
                     <v-list density="compact" class="list-scroll">
                         <v-list-subheader>Evaluators</v-list-subheader>
                         <v-divider />
-                        <v-list dense nav>
+                        <v-list density="compact" nav>
                             <v-list-item v-for="i in 2" :key="i" class="rounded" @click="selectedUserId = i">
                                 <v-list-item-title>
                                     <v-skeleton-loader type="text" width="80%" />
@@ -49,9 +49,6 @@
             </v-row>
         </v-card>
     </v-container>
-
-    <!-- Diálogo da tarefa -->
-    <SessionAnalyticsDialog v-model="taskDialog" :task-answer="selectedTask" />
 
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" :timeout="4000">
         {{ snackbar.text }}
@@ -102,6 +99,14 @@ export default {
             _timelineInterval: null
         };
     },
+    mounted() {
+        this._timelineInterval = setInterval(() => {
+            this.updateTimeline();
+        }, 200);
+    },
+    beforeUnmount() {
+        clearInterval(this._timelineInterval);
+    },
     methods: {
         emitTimelineUpdate() {
             const v1 = this.$refs.mainVideo1;
@@ -110,7 +115,6 @@ export default {
             this.currentTime = v1.currentTime;
         },
         openTaskDialog(task) {
-            console.log('openTaskDialog', task);
 
             this.selectedTask = task;
             this.taskDialog = true;
@@ -144,7 +148,6 @@ export default {
             }
         },
         handleTimelineSeek(time) {
-            console.log('[SessionAnalytics] handleTimelineSeek recibido:', time);
             const v1 = this.$refs.mainVideo1;
             const v2 = this.$refs.mainVideo2;
             if (!v1 || !v2) return;
@@ -154,7 +157,6 @@ export default {
         },
         watch: {
             currentTime(newVal) {
-                console.log('[SessionAnalytics] watcher currentTime:', newVal);
             }
         },
         updateTimeline() {
@@ -162,14 +164,6 @@ export default {
                 this.emitTimelineUpdate();
             }
         }
-    },
-    mounted() {
-        this._timelineInterval = setInterval(() => {
-            this.updateTimeline();
-        }, 200);
-    },
-    beforeUnmount() {
-        clearInterval(this._timelineInterval);
     }
 }
 
