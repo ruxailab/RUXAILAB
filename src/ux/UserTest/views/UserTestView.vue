@@ -725,8 +725,7 @@ const saveAnswer = async () => {
     }
 
     router.push('/admin')
-  } catch (error) {
-    console.error('Error saving answer:', error)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to save the answer. Please try again.',
@@ -821,9 +820,6 @@ const callTimerSave = () => {
 
 function handleTaskFinish(userCompleted) {
   const currentTask = localTestAnswer.tasks[taskIndex.value]
-  if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask)
-  }
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
 }
@@ -847,7 +843,6 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 
   if (idx === undefined || idx === null) {
-    console.error('Índice de tarea no válido:', idx)
     return
   }
 
@@ -885,10 +880,6 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -910,13 +901,10 @@ const completeStep = (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
-        console.log('All tasks attempted:', allTasksCompleted.value)
         if (allTasksCompleted.value) {
-          console.log('All tasks completed, moving to post-test')
           taskIndex.value = id + 1 // to help saving methods
           globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
         } else {
-          console.log('Última task finalizada, mas ainda há tasks incompletas.')
         }
       }
       //TODO: Show proper toast not the following one
@@ -939,8 +927,7 @@ const completeStep = (id, type, userCompleted = true) => {
 
     saveIrisDataIntoTask()
     calculateProgress()
-  } catch (error) {
-    console.error('Error in completeStep:', error)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to complete step. Please try again.',
@@ -1080,8 +1067,7 @@ const setTest = async () => {
     await autoComplete()
     localTestAnswer.progress = calculateProgress()
     initializeAnonymousUser()
-  } catch (error) {
-    console.error('Error setting test:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to load test data. Please try again.',
@@ -1185,8 +1171,7 @@ const mappingSteps = async () => {
         )
       }
     }
-  } catch (error) {
-    console.error('Error mapping steps:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to initialize test data. Please try again.',

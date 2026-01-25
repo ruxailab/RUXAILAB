@@ -27,10 +27,9 @@
                 <div class="text-body-2 text-grey-darken-1 mb-2">
                   Description:
                 </div>
-                <div 
-                  class="description-content"
-                  v-html="(task && task.taskDescription) || 'No description provided'"
-                />
+                <div class="description-content">
+                  {{ (task && task.taskDescription) || 'No description provided' }}
+                </div>
               </div>
 
               <div
@@ -306,6 +305,7 @@ watch(
   padding: 12px;
   border-radius: 8px;
   border-left: 4px solid rgb(var(--v-theme-primary));
+  white-space: pre-line;
 }
 
 .preview-mockup {
