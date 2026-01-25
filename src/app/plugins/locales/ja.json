@@ -34,6 +34,15 @@
       "reset_link_sent": "パスワードリセットリンクを送信しました：",
       "no_email": "メールが届いていませんか？",
       "try_again": "もう一度試す"
+    },
+    "passwordStrength": "パスワード強度",
+    "number": "番号",
+    "strength": {
+      "veryWeak": "非常に弱い",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い"
     }
   },
   "common": {
@@ -654,8 +663,118 @@
       "postTest": "事後テスト",
       "eyeTrackingCalibration": "アイトラッキングのキャリブレーション"
     },
+    "actions": {
+      "welcomeBack": "お帰りなさい！",
+      "continueAs": "{userEmail}として続行",
+      "notYou": "ご本人ではありませんか？",
+      "changeAccount": "アカウントを変更",
+      "startTest": "テストを開始"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "テストは既に完了しています",
+      "testAlreadyCompletedMessage": "このテストは既に完了し、提出されています。ご協力ありがとうございました！",
+      "testExpired": "テストの期限が切れています",
+      "testExpiredMessage": "このテストは終了日を過ぎたため、現在はご利用いただけません。",
+      "testNotActive": "テストがアクティブではありません",
+      "testNotActiveMessage": "このテストは現在アクティブではありません。管理者にお問い合わせください。",
+      "testConfigError": "テスト設定エラー",
+      "testConfigErrorMessage": "このテストにはタスクが設定されていません。管理者にお問い合わせください。",
+      "consentDecline": "同意が得られなかったため、テストを終了しました。お時間をいただきありがとうございました。"
+    },
+    "stepper": {
+      "consent": "同意",
+      "preTest": "事前テスト",
+      "calibration": "キャリブレーション",
+      "tasks": "タスク",
+      "postTest": "事後テスト",
+      "completion": "完了",
+      "taskX": "タスク {num}"
+    },
+    "TaskStep": {
+      "preview": "タスクのプレビュー",
+      "recordingInfo": "このタスクでは、操作中に以下のデータが記録されます：",
+      "screenRecord": "画面記録",
+      "screenRecordDesc": "ユーザーの行動を分析するために、クリック、スクロール、操作をキャプチャします。",
+      "camera": "カメラ",
+      "cameraDesc": "ユーザーの感情を理解するために、表情や反応を記録します。",
+      "audioRecord": "音声記録",
+      "audioRecordDesc": "タスク中の音声フィードバックや思考発話（think-aloud）をキャプチャします。",
+      "eyeTracker": "アイトラッカー",
+      "eyeTrackerDesc": "タスク中の視線パターンの注意や注視行動を追跡します。",
+      "newWindow": "新しいウィンドウが開きます",
+      "newWindowDesc": "タスクを開始すると、使用するツールの新しいウィンドウが開きます。",
+      "tip": "ヒント",
+      "tipDesc": "タブを切り替えたり、新しいウィンドウをいつでも閉じたりできます。記録はタスクを完了するまで継続されます。",
+      "internalInterface": "このタスクは現在のインターフェース内で完了します。",
+      "startTask": "タスクを開始",
+      "description": "タスクの説明",
+      "needHelp": "お困りですか？",
+      "needHelpDesc": "タスクの進行に問題がありますか？完了するためのガイダンスを確認できます。",
+      "externalTool": "外部ツール",
+      "reopenDesc": "誤って構成ウィンドウを閉じましたか？ここで再度開くことができます。",
+      "reopenTool": "ツールを再度開く",
+      "answerLabel": "回答",
+      "observationLabel": "所感（任意）",
+      "cannotFinish": "タスクを完了できません",
+      "completed": "タスク完了",
+      "noQuestionnaire": "このタスクタイプでは、タスク後のアンケートは不要です。",
+      "validationError": "続行する前にすべての質問に回答してください。",
+      "finishTask": "タスクを終了"
+    },
+    "ConsentStep": {
+      "fullName": "氏名",
+      "nameRequired": "氏名は必須です",
+      "acceptTerms": "同意事項に同意します",
+      "declineTerms": "同意事項に同意しません",
+      "continue": "続行",
+      "declinedTitle": "同意が拒否されました",
+      "declinedMessage1": "この調査の同意事項に同意しないことを選択されました。",
+      "declinedMessage2": "この操作を確定すると、テストは直ちに終了します。参加には明示的な同意が必要です。データが収集または保存されることはありません。",
+      "declinedConfirm": "参加せずにテストを終了してもよろしいですか？",
+      "goBack": "戻る",
+      "endTest": "はい、テストを終了します"
+    },
+    "PreTestStep": {
+      "title": "事前テスト"
+    },
+    "PostTestStep": {
+      "title": "事後テスト"
+    },
     "buttons": {
       "done": "完了"
+    },
+    "messages": {
+      "noTasks": "このテストにはタスクがありません。",
+      "answerSaved": "回答が正常に保存されました。"
+    },
+    "errors": {
+      "noAnswerData": "回答データが見つかりません。",
+      "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
+      "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。",
+      "noTestData": "テストデータなし",
+      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "キャリブレーション完了！",
+      "waiting": "キャリブレーションを待機中...",
+      "calibrating": "キャリブレーション中、少々お待ちください...",
+      "notOpened": "キャリブレーションが開きませんでしたか？",
+      "clickHere": "ここをクリック",
+      "success": "キャリブレーションに成功しました！",
+      "continue": "テストを続行する！"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "モデレーター表示",
+      "welcome": "モデレートテストセッションへようこそ",
+      "description": "モデレーターとして、ビデオ通話で参加者のインタラクションを観察しながら、テストプロセスを通じて参加者を案内します。",
+      "instructionsTitle": "モデレーターの指示",
+      "instruction1": "ビデオ通話ルームを開くことから始めます",
+      "instruction2": "干渉せずに参加者のインタラクションを観察します",
+      "instruction3": "ステップナビゲーターを使用してテストフェーズ間を移動します",
+      "instruction4": "必要な場合にのみガイダンスを提供します",
+      "remember": "注意：",
+      "note": "あなたの役割は進行のサポートと観察です。参加者が特に助けを求めない限り、タスクは参加者自身で完了させてください。",
+      "startSession": "モデレートセッションを開始"
     },
     "WelcomeStep": {
       "welcome": "RUXAILABへようこそ！",
@@ -988,7 +1107,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1249,7 +1372,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -1359,5 +1486,9 @@
       "analyticsData": "分析データ",
       "manageStorage": "ストレージ管理"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "タスクの説明",
+    "taskDescriptionHelper": "従うべき具体的な手順を提供してください。"
   }
 }

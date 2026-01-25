@@ -46,7 +46,7 @@
           </v-avatar>
         </v-row>
         <v-card-title class="text-center text-h6 font-weight-bold mt-4">
-          Welcome back!
+          {{ $t('UserTestView.actions.welcomeBack') }}
         </v-card-title>
         <v-card-text class="text-center text-body-1">
           <p class="font-weight-medium">
@@ -61,15 +61,17 @@
             class="my-2"
             @click="setTest"
           >
-            Continue as {{ user.email }}
+            {{
+              $t('UserTestView.actions.continueAs', { userEmail: user.email })
+            }}
           </v-btn>
           <p class="text-caption mt-2">
-            Not you?
+            {{ $t('UserTestView.actions.notYou') }}
             <a
               href="#"
               class="text-primary font-weight-medium"
               @click.prevent="signOut"
-              >Change account</a
+              >{{ $t('UserTestView.actions.changeAccount') }}</a
             >
           </p>
         </v-card-actions>
@@ -103,7 +105,7 @@
             :disabled="isStartTestDisabled"
             @click="startTest"
           >
-            Start Test
+            {{ $t('UserTestView.actions.startTest') }}
           </v-btn>
 
           <!-- Messages when test is disabled -->
@@ -122,9 +124,11 @@
               <v-icon color="white"> mdi-check-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Already Completed</strong><br />
-              You have already completed and submitted this test. Thank you for
-              your participation!
+              <strong>{{
+                $t('UserTestView.alerts.testAlreadyCompleted')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testAlreadyCompletedMessage') }}
             </span>
           </v-alert>
 
@@ -143,8 +147,9 @@
               <v-icon color="white"> mdi-clock-alert </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Expired</strong><br />
-              This test is no longer available as it has passed its end date.
+              <strong>{{ $t('UserTestView.alerts.testExpired') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testExpiredMessage') }}
             </span>
           </v-alert>
 
@@ -163,9 +168,9 @@
               <v-icon color="white"> mdi-pause-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Not Active</strong><br />
-              This test is currently not active. Please contact the
-              administrator.
+              <strong>{{ $t('UserTestView.alerts.testNotActive') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testNotActiveMessage') }}
             </span>
           </v-alert>
 
@@ -184,9 +189,9 @@
               <v-icon color="white"> mdi-alert-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Configuration Error</strong><br />
-              This test has no tasks configured. Please contact the
-              administrator.
+              <strong>{{ $t('UserTestView.alerts.testConfigError') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testConfigErrorMessage') }}
             </span>
           </v-alert>
         </v-col>
@@ -209,7 +214,7 @@
                 <v-stepper-header>
                   <v-stepper-item
                     value="1"
-                    title="Consent"
+                    :title="$t('UserTestView.stepper.consent')"
                     :complete="stepperValue >= 1"
                     color="white"
                     complete-icon="mdi-check"
@@ -217,7 +222,7 @@
                   <v-divider />
                   <v-stepper-item
                     value="2"
-                    title="Pre-test"
+                    :title="$t('UserTestView.stepper.preTest')"
                     :complete="stepperValue >= 2"
                     color="white"
                     complete-icon="mdi-check"
@@ -227,7 +232,7 @@
                   <v-stepper-item
                     v-if="hasEyeTracking"
                     value="3"
-                    title="Calibration"
+                    :title="$t('UserTestView.stepper.calibration')"
                     :complete="stepperValue >= 3"
                     color="white"
                     complete-icon="mdi-check"
@@ -236,7 +241,7 @@
 
                   <v-stepper-item
                     :value="hasEyeTracking ? 4 : 3"
-                    title="Tasks"
+                    :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
                     color="white"
                     complete-icon="mdi-check"
@@ -244,7 +249,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="hasEyeTracking ? 5 : 4"
-                    title="Post-test"
+                    :title="$t('UserTestView.stepper.postTest')"
                     :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
                     color="white"
                     complete-icon="mdi-check"
@@ -252,7 +257,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="hasEyeTracking ? 6 : 5"
-                    title="Completion"
+                    :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
                     color="white"
                     complete-icon="mdi-check"
@@ -283,7 +288,9 @@
                   >
                     <v-stepper-item
                       :value="idx + 1"
-                      :title="`Task ${idx + 1}`"
+                      :title="
+                        $t('UserTestView.stepper.taskX', { num: idx + 1 })
+                      "
                       :complete="taskIndex > idx"
                       :color="
                         taskIndex > idx
@@ -491,6 +498,7 @@ import {
 } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
 import { nanoid } from 'nanoid'
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
@@ -547,6 +555,7 @@ const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 
 const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
@@ -723,7 +732,7 @@ const saveAnswer = async () => {
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to save the answer. Please try again.',
+      message: t('UserTestView.errors.failedToSaveAnswer'),
     })
   }
 }
@@ -735,7 +744,7 @@ const submitAnswer = async () => {
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to submit the answer. Please try again.',
+      message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
   }
 }
@@ -744,7 +753,7 @@ const handleConsentDecline = () => {
   // User declined consent, end the test
   store.commit('SET_TOAST', {
     type: 'info',
-    message: 'Test ended due to consent decline. Thank you for your time.',
+    message: t('UserTestView.alerts.consentDecline'),
     timeout: 5000,
   })
 
@@ -778,7 +787,7 @@ const startTest = async () => {
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', {
       type: 'info',
-      message: "This test doesn't have any tasks.",
+      message: t('UserTestView.messages.noTasks'),
     })
     router.push(`/missions/${test.value.id}`)
     return
