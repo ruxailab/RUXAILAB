@@ -34,6 +34,15 @@
       "reset_link_sent": "Enviamos um link para redefinir a senha para",
       "no_email": "Não recebeu o e-mail?",
       "try_again": "Tente novamente"
+    },
+    "passwordStrength": "Força da senha",
+    "number": "Número",
+    "strength": {
+      "veryWeak": "Muito fraca",
+      "weak": "Fraca",
+      "fair": "Regular",
+      "good": "Boa",
+      "strong": "Forte"
     }
   },
   "common": {
@@ -674,8 +683,118 @@
       "postTest": "Pós-teste",
       "eyeTrackingCalibration": "Calibração de rastreamento ocular"
     },
+    "actions": {
+      "welcomeBack": "Bem-vindo de volta!",
+      "continueAs": "Continuar como {userEmail}",
+      "notYou": "Não é você?",
+      "changeAccount": "Mudar de conta",
+      "startTest": "Iniciar teste"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Teste já concluído",
+      "testAlreadyCompletedMessage": "Você já concluiu e enviou este teste. Obrigado pela sua participação!",
+      "testExpired": "Teste expirado",
+      "testExpiredMessage": "Este teste não está mais disponível porque ultrapassou a data de validade.",
+      "testNotActive": "Teste não ativo",
+      "testNotActiveMessage": "Este teste não está ativo no momento. Entre em contato com o administrador.",
+      "testConfigError": "Erro de configuração do teste",
+      "testConfigErrorMessage": "Este teste não possui tarefas configuradas. Entre em contato com o administrador.",
+      "consentDecline": "Teste encerrado devido à recusa do consentimento. Obrigado pelo seu tempo."
+    },
+    "stepper": {
+      "consent": "Consentimento",
+      "preTest": "Pré-teste",
+      "calibration": "Calibração",
+      "tasks": "Tarefas",
+      "postTest": "Pós-teste",
+      "completion": "Conclusão",
+      "taskX": "Tarefa {num}"
+    },
+    "TaskStep": {
+      "preview": "Visualização da tarefa",
+      "recordingInfo": "Esta tarefa registrará os seguintes dados durante sua interação:",
+      "screenRecord": "Gravação de tela",
+      "screenRecordDesc": "Captura cliques, rolagem e interações para analisar o comportamento do usuário.",
+      "camera": "Câmera",
+      "cameraDesc": "Grava expressões faciais e reações para entender as emoções do usuário.",
+      "audioRecord": "Gravação de áudio",
+      "audioRecordDesc": "Captura feedback verbal e protocolos de pensamento em voz alta durante a tarefa.",
+      "eyeTracker": "Rastreador ocular",
+      "eyeTrackerDesc": "Rastreia padrões de atenção visual e comportamento do olhar durante a tarefa.",
+      "newWindow": "Uma nova janela será aberta",
+      "newWindowDesc": "Ao iniciar a tarefa, uma nova janela será aberta com a ferramenta que você precisa usar.",
+      "tip": "Dica",
+      "tipDesc": "Você pode alternar entre as abas ou fechar a nova janela a qualquer momento. A gravação continuará até que você conclua a tarefa.",
+      "internalInterface": "Esta tarefa será concluída dentro da interface atual.",
+      "startTask": "Iniciar tarefa",
+      "description": "Descrição da tarefa",
+      "needHelp": "Precisa de ajuda?",
+      "needHelpDesc": "Está tendo problemas? Obtenha orientações úteis para concluir esta tarefa.",
+      "externalTool": "Ferramenta externa",
+      "reopenDesc": "Fechou a janela da ferramenta por engano? Abra-a aqui novamente.",
+      "reopenTool": "Reabrir ferramenta",
+      "answerLabel": "Resposta",
+      "observationLabel": "Observação (opcional)",
+      "cannotFinish": "Não consigo concluir a tarefa",
+      "completed": "Tarefa concluída",
+      "noQuestionnaire": "Nenhum questionário pós-tarefa é necessário para este tipo de tarefa.",
+      "validationError": "Responda a todas as perguntas antes de continuar.",
+      "finishTask": "Finalizar tarefa"
+    },
+    "ConsentStep": {
+      "fullName": "Nome completo",
+      "nameRequired": "Nome é obrigatório",
+      "acceptTerms": "Eu aceito os termos de consentimento",
+      "declineTerms": "Eu não aceito os termos de consentimento",
+      "continue": "Continuar",
+      "declinedTitle": "Consentimento recusado",
+      "declinedMessage1": "Você optou por não aceitar os termos de consentimento para este estudo.",
+      "declinedMessage2": "Se você confirmar esta ação, o teste será encerrado imediatamente, pois sua participação requer consentimento explícito para prosseguir. Seus dados não serão coletados nem armazenados.",
+      "declinedConfirm": "Tem certeza de que deseja encerrar o teste sem participar?",
+      "goBack": "Voltar",
+      "endTest": "Sim, encerrar teste"
+    },
+    "PreTestStep": {
+      "title": "Pré-teste"
+    },
+    "PostTestStep": {
+      "title": "Pós-teste"
+    },
     "buttons": {
       "done": "Concluído"
+    },
+    "messages": {
+      "noTasks": "Este teste não possui tarefas.",
+      "answerSaved": "Resposta salva com sucesso."
+    },
+    "errors": {
+      "noAnswerData": "Nenhum dado de resposta encontrado.",
+      "failedToSaveAnswer": "Falha ao salvar resposta. Tente novamente.",
+      "failedToSubmitAnswer": "Falha ao enviar resposta. Tente novamente.",
+      "noTestData": "Sem dados de teste",
+      "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Calibração concluída!",
+      "waiting": "Aguardando calibração...",
+      "calibrating": "Calibrando, por favor aguarde...",
+      "notOpened": "A calibração não abriu?",
+      "clickHere": "Clique aqui",
+      "success": "A calibração foi bem-sucedida!",
+      "continue": "CONTINUAR PARA O TESTE!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Vista do Moderador",
+      "welcome": "Bem-vindo à Sessão de Teste Moderada",
+      "description": "Como moderador, você guiará o participante pelo processo de teste enquanto observa suas interações via vídeo chamada.",
+      "instructionsTitle": "Instruções do Moderador",
+      "instruction1": "Comece abrindo a sala de vídeo chamada",
+      "instruction2": "Observe as interações do participante sem interferência",
+      "instruction3": "Use o navegador de etapas para saltar entre as fases do teste",
+      "instruction4": "Forneça orientação apenas quando necessário",
+      "remember": "Lembre-se:",
+      "note": "Seu papel é facilitar e observar. O participante deve concluir as tarefas de forma independente, a menos que solicite ajuda especificamente.",
+      "startSession": "Iniciar Sessão Moderada"
     },
     "WelcomeStep": {
       "welcome": "Bem-vindo ao RUXAILAB!",
@@ -1372,5 +1491,9 @@
       "analyticsData": "Dados de Análise",
       "manageStorage": "Gerenciar Armazenamento"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Descrição da Tarefa",
+    "taskDescriptionHelper": "Forneça etapas específicas que eles devem seguir."
   }
 }
