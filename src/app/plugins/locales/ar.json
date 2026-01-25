@@ -1436,5 +1436,9 @@
       "analyticsData": "بيانات التحليلات",
       "manageStorage": "إدارة التخزين"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "وصف المهمة",
+    "taskDescriptionHelper": "قدم خطوات محددة يجب عليهم اتباعها."
   }
 }

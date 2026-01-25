@@ -1425,5 +1425,9 @@
       "analyticsData": "分析数据",
       "manageStorage": "管理存储"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "任务描述",
+    "taskDescriptionHelper": "提供他们应该遵循的具体步骤。"
   }
 }

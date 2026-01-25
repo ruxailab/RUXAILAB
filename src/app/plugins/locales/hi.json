@@ -1408,5 +1408,9 @@
       "analyticsData": "विश्लेषण डेटा",
       "manageStorage": "भंडारण प्रबंधित करें"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "कार्य विवरण",
+    "taskDescriptionHelper": "उन्हें पालन करने के लिए विशिष्ट चरण प्रदान करें।"
   }
 }

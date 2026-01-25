@@ -1439,5 +1439,9 @@
       "analyticsData": "Analysedaten",
       "manageStorage": "Speicher Verwalten"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Aufgabenbeschreibung",
+    "taskDescriptionHelper": "Geben Sie spezifische Schritte an, die sie befolgen sollen."
   }
 }
