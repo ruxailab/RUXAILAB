@@ -4,7 +4,7 @@
       <div class="moderator-content pa-6 rounded-xl text-center fade-in">
         <div class="moderator-badge mb-4">
           <v-chip color="primary" size="large" class="px-4 py-2">
-            <v-icon left size="20">mdi-account-star</v-icon>
+            <v-icon start size="20">mdi-account-star</v-icon>
             Moderator View
           </v-chip>
         </div>
@@ -21,7 +21,7 @@
           <v-col cols="12" md="10" lg="8">
             <v-card class="moderator-instructions elevation-3" color="blue-grey-lighten-5">
               <v-card-title class="text-h6 text-center pb-2">
-                <v-icon left color="primary">mdi-clipboard-list</v-icon>
+                <v-icon start color="primary">mdi-clipboard-list</v-icon>
                 Moderator Instructions
               </v-card-title>
               <v-card-text>
@@ -62,7 +62,7 @@
             class="px-8"
             @click="$emit('start')"
           >
-            <v-icon left>mdi-play</v-icon>
+            <v-icon start>mdi-play</v-icon>
             Start Moderated Session
           </v-btn>
         </div>
