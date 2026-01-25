@@ -27,7 +27,11 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? $t('pages.studies.hideFilters') : $t('pages.studies.showFilters')"
+        :title="
+          showFilters
+            ? $t('pages.studies.hideFilters')
+            : $t('pages.studies.showFilters')
+        "
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -42,7 +46,9 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ $t('pages.studies.creationDate') }}</div>
+            <div class="filter-label">
+              {{ $t('pages.studies.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -56,14 +62,17 @@
                   variant="outlined"
                   density="compact"
                   hide-details
-                  :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : $t('pages.studies.selectRange')"
+                  :placeholder="
+                    creationDateRange.length > 1
+                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      : $t('pages.studies.selectRange')
+                  "
                   prepend-inner-icon="mdi-calendar"
-                  :model-value="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : ''"
-                  prepend-inner-icon="mdi-calendar"
+                  :model-value="
+                    creationDateRange.length > 1
+                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      : ''
+                  "
                 />
               </template>
               <v-date-picker v-model="creationDateRange" multiple="range" />
@@ -72,7 +81,9 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ $t('pages.studies.statusLabel') }}</div>
+            <div class="filter-label">
+              {{ $t('pages.studies.statusLabel') }}
+            </div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -130,7 +141,9 @@
 
           <!-- 👤 Participants -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ $t('pages.studies.participants') }}</div>
+            <div class="filter-label">
+              {{ $t('pages.studies.participants') }}
+            </div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -188,26 +201,26 @@ const statusOptions = computed(() => [
   { value: 'all', text: t('pages.studies.filters.allStatuses') },
   { value: 'active', text: t('pages.studies.filters.active') },
   { value: 'draft', text: t('pages.studies.filters.draft') },
-  { value: 'completed', text: t('pages.studies.filters.completed') }
+  { value: 'completed', text: t('pages.studies.filters.completed') },
 ])
 
 const visibilityOptions = computed(() => [
   { value: 'all', text: t('pages.studies.filters.allVisibility') },
   { value: 'public', text: t('pages.studies.filters.public') },
-  { value: 'private', text: t('pages.studies.filters.private') }
+  { value: 'private', text: t('pages.studies.filters.private') },
 ])
 
 const ownershipOptions = computed(() => [
   { value: 'all', text: t('pages.studies.filters.allStudies') },
   { value: 'mine', text: t('pages.studies.filters.myStudies') },
-  { value: 'cooperator', text: t('pages.studies.filters.whereICollaborate') }
+  { value: 'cooperator', text: t('pages.studies.filters.whereICollaborate') },
 ])
 
 const participantsOptions = computed(() => [
   { text: t('common.all'), value: 'all' },
   { text: t('pages.studies.filters.lessThan10'), value: 'lt10' },
   { text: t('pages.studies.filters.between10And50'), value: 'btw10_50' },
-  { text: t('pages.studies.filters.moreThan50'), value: 'gt50' }
+  { text: t('pages.studies.filters.moreThan50'), value: 'gt50' },
 ])
 
 // ===== Helpers =====
