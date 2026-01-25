@@ -127,7 +127,7 @@
       </div>
 
       <v-btn
-      variant="elevated"
+        variant="elevated"
         color="orange"
         class="text-white"
         :disabled="loading || runs.length === 0"
@@ -329,9 +329,8 @@ async function refetch() {
       String(props.taskId),
     )
     runs.value = Array.isArray(arr) ? arr : []
-  } catch (e) {
+  } catch {
     toast('Error loading transcriptions', 'red')
-    console.error(e)
   } finally {
     loading.value = false
   }
@@ -797,7 +796,6 @@ async function loadImageAsDataURL(url) {
     const isJpg =
       (blob.type || '').includes('jpeg') || (blob.type || '').includes('jpg')
     if (!isPng && !isJpg) {
-      console.warn('Logo is not PNG/JPEG. Content-Type:', blob.type)
     }
     const reader = new FileReader()
     const dataUrl = await new Promise((resolve, reject) => {
@@ -806,8 +804,7 @@ async function loadImageAsDataURL(url) {
       reader.readAsDataURL(blob)
     })
     return dataUrl // e.g. "data:image/png;base64,...."
-  } catch (e) {
-    console.error('Failed to load logo for PDF:', e)
+  } catch {
     return null
   }
 }
@@ -835,7 +832,7 @@ function getImageSize(dataUrl) {
   flex-direction: column;
 }
 .export-actions {
-  justify-content:flex-end;
+  justify-content: flex-end;
   gap: 8px;
 }
 @media (max-width: 960px) {

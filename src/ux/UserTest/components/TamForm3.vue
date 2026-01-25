@@ -44,7 +44,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.perceivedUsefulness[i]" @update:model-value="updateDimensionAnswer('perceivedUsefulness', i, $event)" inline>
+          <v-radio-group :model-value="answers.perceivedUsefulness[i]" inline @update:model-value="updateDimensionAnswer('perceivedUsefulness', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -61,7 +61,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.perceivedEaseOfUse[i]" @update:model-value="updateDimensionAnswer('perceivedEaseOfUse', i, $event)" inline>
+          <v-radio-group :model-value="answers.perceivedEaseOfUse[i]" inline @update:model-value="updateDimensionAnswer('perceivedEaseOfUse', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -78,7 +78,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.subjectiveNorm[i]" @update:model-value="updateDimensionAnswer('subjectiveNorm', i, $event)" inline>
+          <v-radio-group :model-value="answers.subjectiveNorm[i]" inline @update:model-value="updateDimensionAnswer('subjectiveNorm', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -95,7 +95,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.image[i]" @update:model-value="updateDimensionAnswer('image', i, $event)" inline>
+          <v-radio-group :model-value="answers.image[i]" inline @update:model-value="updateDimensionAnswer('image', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -112,7 +112,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.jobRelevance[i]" @update:model-value="updateDimensionAnswer('jobRelevance', i, $event)" inline>
+          <v-radio-group :model-value="answers.jobRelevance[i]" inline @update:model-value="updateDimensionAnswer('jobRelevance', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -129,7 +129,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.outputQuality[i]" @update:model-value="updateDimensionAnswer('outputQuality', i, $event)" inline>
+          <v-radio-group :model-value="answers.outputQuality[i]" inline @update:model-value="updateDimensionAnswer('outputQuality', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -146,7 +146,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.resultDemonstrability[i]" @update:model-value="updateDimensionAnswer('resultDemonstrability', i, $event)" inline>
+          <v-radio-group :model-value="answers.resultDemonstrability[i]" inline @update:model-value="updateDimensionAnswer('resultDemonstrability', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -163,7 +163,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.computerSelfEfficacy[i]" @update:model-value="updateDimensionAnswer('computerSelfEfficacy', i, $event)" inline>
+          <v-radio-group :model-value="answers.computerSelfEfficacy[i]" inline @update:model-value="updateDimensionAnswer('computerSelfEfficacy', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -180,7 +180,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.perceptionsOfExternalControl[i]" @update:model-value="updateDimensionAnswer('perceptionsOfExternalControl', i, $event)" inline>
+          <v-radio-group :model-value="answers.perceptionsOfExternalControl[i]" inline @update:model-value="updateDimensionAnswer('perceptionsOfExternalControl', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -197,7 +197,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.computerAnxiety[i]" @update:model-value="updateDimensionAnswer('computerAnxiety', i, $event)" inline>
+          <v-radio-group :model-value="answers.computerAnxiety[i]" inline @update:model-value="updateDimensionAnswer('computerAnxiety', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -214,7 +214,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.computerPlayfulness[i]" @update:model-value="updateDimensionAnswer('computerPlayfulness', i, $event)" inline>
+          <v-radio-group :model-value="answers.computerPlayfulness[i]" inline @update:model-value="updateDimensionAnswer('computerPlayfulness', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -231,7 +231,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.perceivedEnjoyment[i]" @update:model-value="updateDimensionAnswer('perceivedEnjoyment', i, $event)" inline>
+          <v-radio-group :model-value="answers.perceivedEnjoyment[i]" inline @update:model-value="updateDimensionAnswer('perceivedEnjoyment', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -248,7 +248,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.objectiveUsability[i]" @update:model-value="updateDimensionAnswer('objectiveUsability', i, $event)" inline>
+          <v-radio-group :model-value="answers.objectiveUsability[i]" inline @update:model-value="updateDimensionAnswer('objectiveUsability', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -265,7 +265,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.behavioralIntention[i]" @update:model-value="updateDimensionAnswer('behavioralIntention', i, $event)" inline>
+          <v-radio-group :model-value="answers.behavioralIntention[i]" inline @update:model-value="updateDimensionAnswer('behavioralIntention', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -282,7 +282,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.usePatterns[i]" @update:model-value="updateDimensionAnswer('usePatterns', i, $event)" inline>
+          <v-radio-group :model-value="answers.usePatterns[i]" inline @update:model-value="updateDimensionAnswer('usePatterns', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -299,7 +299,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.experience[i]" @update:model-value="updateDimensionAnswer('experience', i, $event)" inline>
+          <v-radio-group :model-value="answers.experience[i]" inline @update:model-value="updateDimensionAnswer('experience', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -316,7 +316,7 @@
         <v-card-text>
           <span class="text-error font-weight-bold">{{ question }} *</span>
           <v-divider class="my-2" />
-          <v-radio-group :model-value="answers.voluntariness[i]" @update:model-value="updateDimensionAnswer('voluntariness', i, $event)" inline>
+          <v-radio-group :model-value="answers.voluntariness[i]" inline @update:model-value="updateDimensionAnswer('voluntariness', i, $event)">
             <v-radio v-for="n in 5" :key="n" :value="n" :label="`${n} - ${likertLabels[n - 1]}`" class="mx-4" />
           </v-radio-group>
         </v-card-text>
@@ -379,8 +379,8 @@
               <v-card variant="flat" class="pa-4 mb-3" style="border-left: 4px solid;" :style="{ borderLeftColor: dimension.color, background: '#fafafa' }">
                 <div class="d-flex justify-space-between align-center mb-2">
                   <div class="text-subtitle-2 font-weight-bold">{{ dimension.label }}</div>
-                  <v-chip v-if="dimension.answered > 0" :color="dimension.color" text-color="white" size="small">{{ dimension.average.toFixed(1) }}</v-chip>
-                  <v-chip v-else color="grey" text-color="white" size="small">-</v-chip>
+                  <v-chip v-if="dimension.answered > 0" :color="dimension.color" theme="dark" size="small">{{ dimension.average.toFixed(1) }}</v-chip>
+                  <v-chip v-else color="grey" theme="dark" size="small">-</v-chip>
                 </div>
                 <v-progress-linear v-if="dimension.answered > 0" :model-value="(dimension.average / 5) * 100" :color="dimension.color" class="my-2"></v-progress-linear>
                 <div class="text-caption text-grey-darken-2">
@@ -400,7 +400,7 @@
               <template #title>
                 <div class="font-weight-bold" :style="{ color: dimension.color }">
                   {{ dimension.label }} 
-                  <v-chip :color="dimension.color" text-color="white" size="x-small" class="ml-2">
+                  <v-chip :color="dimension.color" theme="dark" size="x-small" class="ml-2">
                     {{ dimension.responses.filter(r => r.value).length }}/{{ dimension.responses.length }}
                   </v-chip>
                 </div>
@@ -417,10 +417,10 @@
                     <tr v-for="(response, idx) in dimension.responses" :key="idx">
                       <td class="text-body-2">{{ response.question }}</td>
                       <td>
-                        <v-chip v-if="response.value" :color="dimension.color" text-color="white" size="small">
+                        <v-chip v-if="response.value" :color="dimension.color" theme="dark" size="small">
                           {{ response.value }} - {{ likertLabels[response.value - 1] }}
                         </v-chip>
-                        <v-chip v-else color="grey" text-color="white" size="small">Not answered</v-chip>
+                        <v-chip v-else color="grey" theme="dark" size="small">Not answered</v-chip>
                       </td>
                     </tr>
                   </tbody>
