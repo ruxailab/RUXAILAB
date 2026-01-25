@@ -27,15 +27,6 @@
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
-      "instructions": "メールアドレスを入力してください。パスワードリセット用のリンクをお送りします。",
-      "reset_button": "リセットリンクを送信",
-      "back_to_signin": "サインインに戻る"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "パスワードをリセット",
-      "email": "メールアドレス",
       "instructions": "メールアドレスを入力すると、パスワードをリセットするリンクを送信します。",
       "reset_button": "リセットリンクを送信",
       "back_to_signin": "ログイン画面に戻る",
@@ -67,6 +58,9 @@
     "type": "タイプ",
     "noNotifications": "まだ通知はありません",
     "notifications": "通知",
+    "markAllAsRead": "すべて既読にする",
+    "caughtUp": "最新の状態です",
+    "noNewNotifications": "新しい通知はありません",
     "unread": "未読",
     "inbox": "受信トレイ",
     "timeAgo": {
