@@ -3,7 +3,7 @@
     <v-col cols="12" md="10" lg="8" xl="6">
       <!-- HEADER -->
       <v-card
-        class="rounded-xl"
+        class="notification-card-clean"
         flat
         :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
@@ -95,7 +95,7 @@
       <!-- NOTIFICATIONS CONTENT -->
       <v-card
         flat
-        class="rounded-xl pa-4"
+        class="notification-card-clean pa-4"
         :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
         <!-- SKELETON LOADER -->
@@ -138,13 +138,9 @@
               :class="{
                 unread: !n.read,
                 active: activeIndex === index,
-                'border-start-4': !n.read,
+                
               }"
-              :style="
-                !n.read
-                  ? 'border-left-color: var(--v-primary-base) !important'
-                  : ''
-              "
+              
               @click="handleNotificationClick(n)"
             >
               <div class="d-flex align-start gap-3">
@@ -674,12 +670,23 @@ onUnmounted(() => {
   letter-spacing: 0.3px;
 }
 
-.notification-item {
+.notification-card-clean {
   border-radius: 12px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  overflow: hidden;
+}
+
+.notification-item {
+  position: relative;
+  border-radius: 8px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25 cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.08);
   background: white;
+  overflow: hidden;
 }
 
 .notification-item:hover {
@@ -689,12 +696,17 @@ onUnmounted(() => {
 }
 
 .notification-item.unread {
-  background: linear-gradient(
-    90deg,
-    rgba(var(--v-theme-primary), 0.03) 0%,
-    white 3%
-  );
-  border-left-width: 4px;
+  background: rgba(var(--v-theme-primary), 0.02);
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: rgb(var(--v-theme-primary));
 }
 
 .notification-item.active {
