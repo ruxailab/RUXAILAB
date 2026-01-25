@@ -851,7 +851,61 @@
       "updated": "Última actualización",
       "version": "Versión:",
       "noTests": "No se encontraron pruebas",
-      "noTemplates": "No se encontraron plantillas"
+      "noTemplates": "No se encontraron plantillas",
+      "noSessions": "No se encontraron sesiones"
+    },
+    "navigation": {
+      "dashboard": "Panel",
+      "studies": "Estudios",
+      "sessions": "Sesiones",
+      "templates": "Plantillas",
+      "storage": "Almacenamiento",
+      "notifications": "Notificaciones",
+      "profile": "Perfil",
+      "communityStudies": "Estudios comunitarios",
+      "communityTemplates": "Plantillas comunitarias",
+      "studiesSubtitle": "Administra tus estudios de investigación",
+      "templatesSubtitle": "Accede a tus plantillas guardadas"
+    },
+    "studies": {
+      "searchPlaceholder": "Buscar estudios...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "statusLabel": "Estado",
+      "visibility": "Visibilidad",
+      "method": "Método",
+      "ownership": "Propiedad",
+      "participants": "Participantes",
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "active": "Activo",
+        "draft": "Borrador",
+        "completed": "Completado",
+        "allVisibility": "Toda visibilidad",
+        "public": "Público",
+        "private": "Privado",
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Donde colaboro",
+        "lessThan10": "< 10 participantes",
+        "between10And50": "10 – 50 participantes",
+        "moreThan50": "> 50 participantes"
+      },
+      "table": {
+        "type": "Tipo",
+        "name": "Nombre",
+        "tags": "Etiquetas",
+        "owner": "Propietario",
+        "evaluator": "Evaluador",
+        "status": "Estado",
+        "sessionDate": "Fecha de sesión",
+        "participants": "Participantes",
+        "created": "Creado",
+        "itemsPerPage": "Elementos por página:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Buscar sesiones...",
