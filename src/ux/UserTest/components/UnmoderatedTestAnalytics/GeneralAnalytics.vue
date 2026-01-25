@@ -525,7 +525,7 @@ const chartColors = [
 ]
 
 // Encuentra todas las preguntas de selección
-const selectionQuestions = computed(() => {
+computed(() => {
   if (!taskAnswers.value.length || !taskAnswers.value[0].postTestAnswer)
     return []
   return taskAnswers.value[0].postTestAnswer.filter(
@@ -562,7 +562,6 @@ function getSelectionCounts(questionIdx) {
 
 function getPreSelectionCounts(questionIdx) {
   const counts = {}
-  const q = filteredSessions.value[0]?.preTestAnswer?.[questionIdx]
   if (!testStructure.value?.preTest?.[questionIdx]?.selectionFields)
     return counts
   const options = testStructure.value.preTest[questionIdx].selectionFields
@@ -595,7 +594,7 @@ function getPreTextAnswers(questionIdx) {
 }
 
 const store = useStore()
-const { t } = useI18n()
+useI18n()
 
 const test = computed(() => store.getters.test)
 const testStructure = computed(() => store.state.Tests.Test.testStructure)
@@ -613,7 +612,7 @@ const { filterDefinitions } = useFilterDefinitions({
 
 // Check if there are active filters
 const hasActiveFilters = computed(() => {
-  const someFilters = Object.entries(selectedFilters.value).some(([k, v]) => {
+  const someFilters = Object.entries(selectedFilters.value).some(([_k, v]) => {
     if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE)
     return !!v // texto
   })
@@ -692,8 +691,8 @@ const downloadPdfResume = async () => {
     link.download = `${test.value.testTitle || 'resume'}.pdf`
     link.click()
     window.URL.revokeObjectURL(url)
-  } catch (error) {
-    console.error('Error generating PDF:', error)
+  } catch {
+    // Error generating PDF
   }
 }
 
@@ -962,7 +961,7 @@ const calculateEfficiency = () => {
   }
 }
 
-const calculateSatisfaction = () => {
+() => {
   if (!filteredSessions.value.length) return 0
 
   let totalSatisfaction = 0
@@ -1248,7 +1247,7 @@ const onRefreshTimeline = async () => {
           await store.dispatch(act)
           dispatched = true
           break
-        } catch (e) {
+        } catch {
           // Ignore and try next
         }
       }
@@ -1267,8 +1266,8 @@ const onRefreshTimeline = async () => {
         : []
     await nextTick()
     setTimeout(() => createTaskCharts(), 300)
-  } catch (err) {
-    console.error('Refresh timeline failed:', err)
+  } catch {
+    // Refresh timeline failed
   }
 }
 

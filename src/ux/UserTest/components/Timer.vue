@@ -34,21 +34,6 @@ const stopTimer = () => {
   emit('timerStopped', elapsedTime.value, props.taskIndex)
 }
 
-const toggleTimer = () => {
-  if (!timerVisible.value) {
-    timerVisible.value = true
-  } else {
-    timerVisible.value = !timerVisible.value
-  }
-}
-
-const formatTime = (time) => {
-  const seconds = Math.floor(time / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
-}
-
 onBeforeMount(() => {
   startTimer()
 })

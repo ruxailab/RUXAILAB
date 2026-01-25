@@ -31,13 +31,6 @@
 
 <script setup>
 // JS props (no types)
-const props = defineProps({
-  transcriptSegments: {
-    type: Array,
-    required: true,
-    default: () => [],
-  },
-})
 
 function formatTime(seconds) {
   const min = Math.floor(seconds / 60)

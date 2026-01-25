@@ -241,7 +241,7 @@ onMounted(async () => {
 
     processAnalytics(data)
     emit('predictions-ready', data)
-  } catch (err) {
+  } catch {
     predictedData.value = 'Error loading predictions.'
     hasError.value = true
   } finally {

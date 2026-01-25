@@ -1,31 +1,24 @@
 <template>
   <div class="task-configuration">
     <div class="step-header mb-6">
-      <h3 class="text-h6 font-weight-bold mb-2">
-        Step 2: Task Configuration
-      </h3>
+      <h3 class="text-h6 font-weight-bold mb-2">Step 2: Task Configuration</h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
-        Configure where the task takes place and how participants will provide their responses. This determines the user experience and data collection method.
+        Configure where the task takes place and how participants will provide
+        their responses. This determines the user experience and data collection
+        method.
       </p>
     </div>
 
     <v-row>
-      <v-col
-        cols="12"
-        md="4"
-      >
+      <v-col cols="12" md="4">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          Task Link (URL) 
+          Task Link (URL)
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon
-            size="14"
-            class="mr-1"
-          >
-            mdi-information-outline
-          </v-icon>
-          The website or application URL where participants will perform the task
+          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+          The website or application URL where participants will perform the
+          task
         </p>
         <v-text-field
           v-model="localTask.taskLink"
@@ -38,21 +31,13 @@
         />
       </v-col>
 
-      <v-col
-        cols="12"
-        md="4"
-      >
+      <v-col cols="12" md="4">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          Estimated Time (minutes) 
+          Estimated Time (minutes)
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon
-            size="14"
-            class="mr-1"
-          >
-            mdi-information-outline
-          </v-icon>
+          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
           The estimated time participants will need to complete this task
         </p>
         <v-text-field
@@ -67,22 +52,15 @@
         />
       </v-col>
 
-      <v-col
-        cols="12"
-        md="4"
-      >
+      <v-col cols="12" md="4">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('titles.answerType') }} 
+          {{ $t('titles.answerType') }}
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon
-            size="14"
-            class="mr-1"
-          >
-            mdi-information-outline
-          </v-icon>
-          Choose how participants will provide feedback after completing the task
+          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+          Choose how participants will provide feedback after completing the
+          task
         </p>
         <v-select
           v-model="localTask.taskType"
@@ -96,39 +74,28 @@
           @update:model-value="validateStep"
         >
           <template #item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              class="answer-type-item"
-            >
+            <v-list-item v-bind="props" class="answer-type-item">
               <template #prepend>
-                <v-icon
-                  :icon="getAnswerTypeIcon(item.raw.value)"
-                  size="20"
-                />
+                <v-icon :icon="getAnswerTypeIcon(item.raw.value)" size="20" />
               </template>
-              <v-list-item-subtitle>{{ getAnswerTypeDescription(item.raw.value) }}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{
+                getAnswerTypeDescription(item.raw.value)
+              }}</v-list-item-subtitle>
             </v-list-item>
           </template>
         </v-select>
       </v-col>
 
       <!-- Conditional Fields -->
-      <v-col
-        v-if="localTask.taskType === 'post-test'"
-        cols="12"
-      >
+      <v-col v-if="localTask.taskType === 'post-test'" cols="12">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('switches.postTest') }} 
+          {{ $t('switches.postTest') }}
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon
-            size="14"
-            class="mr-1"
-          >
-            mdi-information-outline
-          </v-icon>
-          Enter the specific question you want to ask participants after they complete the task
+          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+          Enter the specific question you want to ask participants after they
+          complete the task
         </p>
         <v-text-field
           v-model="localTask.postQuestion"
@@ -140,22 +107,15 @@
         />
       </v-col>
 
-      <v-col
-        v-if="localTask.taskType === 'post-form'"
-        cols="12"
-      >
+      <v-col v-if="localTask.taskType === 'post-form'" cols="12">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('switches.postForm') }} 
+          {{ $t('switches.postForm') }}
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon
-            size="14"
-            class="mr-1"
-          >
-            mdi-information-outline
-          </v-icon>
-          URL to an external form that participants will fill out after completing the task
+          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+          URL to an external form that participants will fill out after
+          completing the task
         </p>
         <v-text-field
           v-model="localTask.postForm"
@@ -175,11 +135,10 @@
       class="mt-6 answer-preview-card"
       elevation="0"
     >
-      <v-card-title class="text-subtitle-1 font-weight-medium d-flex align-center">
-        <v-icon
-          :icon="getAnswerTypeIcon(localTask.taskType)"
-          class="mr-2"
-        />
+      <v-card-title
+        class="text-subtitle-1 font-weight-medium d-flex align-center"
+      >
+        <v-icon :icon="getAnswerTypeIcon(localTask.taskType)" class="mr-2" />
         Answer Type Preview
       </v-card-title>
       <v-card-text>
@@ -190,52 +149,59 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import AnswerTypePreview from './AnswerTypePreview.vue';
+import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import AnswerTypePreview from './AnswerTypePreview.vue'
 
 const props = defineProps({
   modelValue: {
     type: Object,
-    required: true
+    required: true,
   },
   selectItems: {
     type: Array,
-    required: true
+    required: true,
   },
   validationRules: {
     type: Array,
-    default: () => []
-  }
-});
+    default: () => [],
+  },
+})
 
-const emit = defineEmits(['update:modelValue', 'validate']);
-const { t } = useI18n();
+const emit = defineEmits(['update:modelValue', 'validate'])
 
-const localTask = ref({ ...props.modelValue });
+const localTask = ref({ ...props.modelValue })
 
 const linkRules = [
-  (v) => !v || /^https?:\/\/.+/.test(v) || 'Must be a valid URL starting with http:// or https://'
-];
+  (v) =>
+    !v ||
+    /^https?:\/\/.+/.test(v) ||
+    'Must be a valid URL starting with http:// or https://',
+]
 
 const urlRules = [
   (v) => !!v || 'Field Required',
-  (v) => /^https?:\/\/.+/.test(v) || 'Must be a valid URL starting with http:// or https://'
-];
+  (v) =>
+    /^https?:\/\/.+/.test(v) ||
+    'Must be a valid URL starting with http:// or https://',
+]
 
 const timeRules = [
   (v) => !!v || 'Field Required',
-  (v) => (v && v > 0) || 'Must be a positive number'
+  (v) => (v && v > 0) || 'Must be a positive number',
 ]
 
 const isValid = computed(() => {
-  const hasTaskType = !!localTask.value.taskType;
-  const linkValid = !localTask.value.taskLink || /^https?:\/\/.+/.test(localTask.value.taskLink);
-  const postFormValid = localTask.value.taskType !== 'post-form' ||
-    (localTask.value.postForm && /^https?:\/\/.+/.test(localTask.value.postForm));
+  const hasTaskType = !!localTask.value.taskType
+  const linkValid =
+    !localTask.value.taskLink || /^https?:\/\/.+/.test(localTask.value.taskLink)
+  const postFormValid =
+    localTask.value.taskType !== 'post-form' ||
+    (localTask.value.postForm &&
+      /^https?:\/\/.+/.test(localTask.value.postForm))
 
-  return hasTaskType && linkValid && postFormValid;
-});
+  return hasTaskType && linkValid && postFormValid
+})
 
 const getAnswerTypeIcon = (type) => {
   const icons = {
@@ -244,14 +210,14 @@ const getAnswerTypeIcon = (type) => {
     'post-test': 'mdi-comment-question-outline',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket-launch-outline',
-    'sus': 'mdi-chart-line',
+    sus: 'mdi-chart-line',
     'tam-1': 'mdi-chart-box',
     'tam-2': 'mdi-chart-box-multiple-outline',
     'tam-3': 'mdi-chart-donut',
-    'sart': 'mdi-chart-areaspline'
-  };
-  return icons[type] || 'mdi-help-circle-outline';
-};
+    sart: 'mdi-chart-areaspline',
+  }
+  return icons[type] || 'mdi-help-circle-outline'
+}
 
 const getAnswerTypeDescription = (type) => {
   const descriptions = {
@@ -260,28 +226,31 @@ const getAnswerTypeDescription = (type) => {
     'post-test': 'Participants answer specific questions after the task',
     'post-form': 'Participants fill out an external form after the task',
     'nasa-tlx': 'NASA Task Load Index - measures workload',
-    'sus': 'System Usability Scale - measures usability',
-    'tam-1': 'TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use',
-    'tam-2': 'TAM-2 (Extended) - adds external influences and results demonstrability',
-    'tam-3': 'TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability',
-    'sart': 'Situation Awareness Rating Technique - measures situational awareness'
-  };
-  return descriptions[type] || '';
-};
+    sus: 'System Usability Scale - measures usability',
+    'tam-1':
+      'TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use',
+    'tam-2':
+      'TAM-2 (Extended) - adds external influences and results demonstrability',
+    'tam-3':
+      'TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability',
+    sart: 'Situation Awareness Rating Technique - measures situational awareness',
+  }
+  return descriptions[type] || ''
+}
 
 const validateStep = () => {
-  emit('validate', isValid.value);
-};
+  emit('validate', isValid.value)
+}
 
 // Watch for local changes and emit
 watch(
   localTask,
   (newValue) => {
-    emit('update:modelValue', { ...newValue });
-    validateStep();
+    emit('update:modelValue', { ...newValue })
+    validateStep()
   },
-  { deep: true, immediate: true }
-);
+  { deep: true, immediate: true },
+)
 </script>
 
 <style scoped>
