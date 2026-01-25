@@ -372,6 +372,8 @@
             :user-doc-id="user?.id || anonymousUserDocId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
+            :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
+            :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
             @update:sus-answers="
@@ -384,6 +386,11 @@
             @update:nasa-tlx-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
+              }
+            "
+            @update:tam-answers="
+              (val) => {
+                localTestAnswer.tasks[taskIndex].tamAnswers = { ...val }
               }
             "
             @update:sart-answers="
@@ -656,8 +663,6 @@ const closeCalibration = () => {
 }
 
 function toggleTracking(value) {
-  console.log('toggleTracking', value)
-
   isTracking.value = value
   isRecording.value = value
 }
@@ -674,7 +679,6 @@ function saveIrisDataIntoTask() {
 
 const saveAnswer = async () => {
   try {
-    console.log('Saving answer...')
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
@@ -684,10 +688,8 @@ const saveAnswer = async () => {
       localTestAnswer.invited = true
     } else if (!user.value && anonymousUserDocId.value) {
       localTestAnswer.userDocId = anonymousUserDocId.value
-      console.log('Using stored anonymousUserDocId:', anonymousUserDocId.value)
     }
 
-    console.log('Saving answer to Firestore...')
     if (!user.value) {
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
@@ -699,6 +701,7 @@ const saveAnswer = async () => {
         ...currentUserTestAnswer.value,
         fullName: localTestAnswer.fullName,
         progress: localTestAnswer.progress,
+        submitted: localTestAnswer.submitted,
         preTestAnswer: localTestAnswer.preTestAnswer,
         postTestAnswer: localTestAnswer.postTestAnswer,
         tasks: {
@@ -717,8 +720,7 @@ const saveAnswer = async () => {
     }
 
     router.push('/admin')
-  } catch (error) {
-    console.error('Error saving answer:', error)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to save the answer. Please try again.',
@@ -730,8 +732,7 @@ const submitAnswer = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-  } catch (error) {
-    console.error('Error submitting answer:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to submit the answer. Please try again.',
@@ -812,10 +813,6 @@ const callTimerSave = () => {
 }
 
 function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value]
-  if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask)
-  }
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
 }
@@ -831,15 +828,12 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx })
 
   if (!localTestAnswer.tasks) {
-    console.error('localTestAnswer.tasks no está definido')
     return
   }
 
   if (idx === undefined || idx === null) {
-    console.error('Índice de tarea no válido:', idx)
     return
   }
 
@@ -877,10 +871,6 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -902,13 +892,10 @@ const completeStep = (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
-        console.log('All tasks attempted:', allTasksCompleted.value)
         if (allTasksCompleted.value) {
-          console.log('All tasks completed, moving to post-test')
           taskIndex.value = id + 1 // to help saving methods
           globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
         } else {
-          console.log('Última task finalizada, mas ainda há tasks incompletas.')
         }
       }
       //TODO: Show proper toast not the following one
@@ -931,8 +918,7 @@ const completeStep = (id, type, userCompleted = true) => {
 
     saveIrisDataIntoTask()
     calculateProgress()
-  } catch (error) {
-    console.error('Error in completeStep:', error)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to complete step. Please try again.',
@@ -1021,8 +1007,7 @@ const calculateProgress = () => {
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error)
+  } catch {
     return 0
   }
 }
@@ -1030,7 +1015,6 @@ const calculateProgress = () => {
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
     anonymousUserDocId.value = nanoid(16)
-    console.log('Generated anonymousUserDocId:', anonymousUserDocId.value)
   }
 }
 
@@ -1072,8 +1056,7 @@ const setTest = async () => {
     await autoComplete()
     localTestAnswer.progress = calculateProgress()
     initializeAnonymousUser()
-  } catch (error) {
-    console.error('Error setting test:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to load test data. Please try again.',
@@ -1148,8 +1131,9 @@ const mappingSteps = async () => {
               attempted: false, // Track whether task has been attempted
               susAnswers: [],
               nasaTlxAnswers: {},
+              tamAnswers: {},
+              sartAnswers: {},
             })
-            console.log('Nueva tarea creada:', i, newTask)
             return newTask
           },
         )
@@ -1175,8 +1159,7 @@ const mappingSteps = async () => {
         )
       }
     }
-  } catch (error) {
-    console.error('Error mapping steps:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to initialize test data. Please try again.',
