@@ -54,6 +54,9 @@
     "type": "Typ",
     "noNotifications": "Sie haben noch keine Benachrichtigungen",
     "notifications": "Benachrichtigungen",
+    "markAllAsRead": "Alle als gelesen markieren",
+    "caughtUp": "Du bist auf dem Laufenden",
+    "noNewNotifications": "Keine neuen Benachrichtigungen",
     "unread": "ungelesen",
     "inbox": "Posteingang",
     "timeAgo": {
