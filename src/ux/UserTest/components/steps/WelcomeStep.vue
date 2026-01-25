@@ -7,8 +7,8 @@
         </h2>
         <div
           v-if="welcomeMessage"
-          v-html="welcomeMessage"
           class="text-body-1 mb-4 text-grey-darken-3"
+          v-html="welcomeMessage"
         ></div>
         <p v-else class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.description') }}

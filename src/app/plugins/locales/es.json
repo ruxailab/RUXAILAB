@@ -34,15 +34,6 @@
       "reset_link_sent": "Hemos enviado un enlace para restablecer la contraseña a",
       "no_email": "¿No recibiste el correo?",
       "try_again": "Inténtalo de nuevo"
-    },
-    "passwordStrength": "Fortaleza de la contraseña",
-    "number": "Número",
-    "strength": {
-      "veryWeak": "Muy débil",
-      "weak": "Débil",
-      "fair": "Regular",
-      "good": "Buena",
-      "strong": "Fuerte"
     }
   },
   "common": {
@@ -68,6 +59,9 @@
     "type": "Tipo",
     "noNotifications": "Aún no tienes notificaciones",
     "notifications": "Notificaciones",
+    "markAllAsRead": "Marcar todo como leído",
+    "caughtUp": "Estás al día",
+    "noNewNotifications": "No hay notificaciones nuevas",
     "unread": "No leído",
     "inbox": "Bandeja de entrada",
     "timeAgo": {
@@ -82,7 +76,18 @@
     "sentBy": "Enviado por",
     "new": "NUEVO",
     "test": "un estudio",
-    "itemsPerPage": "Elementos por página:"
+    "table": {
+      "itemsPerPage": "Elementos por página:",
+      "type": "Tipo",
+      "name": "Nombre",
+      "tags": "Etiquetas",
+      "owner": "Propietario",
+      "evaluator": "Evaluador",
+      "status": "Estado",
+      "sessionDate": "Fecha de sesión",
+      "participants": "Participantes",
+      "created": "Creado"
+    }
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -97,11 +102,97 @@
     "actionCannotBeUndone": "Esta acción no se puede deshacer.",
     "headers": {
       "type": "Tipo",
-      "studyName": "Nombre del estudio",
+      "name": "Nombre",
+      "tags": "Etiquetas",
+      "owner": "Propietario",
+      "participants": "Participantes",
+      "created": "Creado",
+      "evaluator": "Evaluador",
+      "status": "Estado",
+      "sessionDate": "Fecha de sesión",
+      "itemsPerPage": "Elementos por página:",
+      "studyName": "Nombre del Estudio",
       "date": "Fecha",
       "size": "Tamaño",
       "actions": "Acciones"
     }
+  },
+  "community": {
+    "studies": {
+      "title": "Estudios comunitarios",
+      "searchPlaceholder": "Buscar estudios..."
+    },
+    "templates": {
+      "title": "Plantillas comunitarias",
+      "searchPlaceholder": "Buscar plantillas..."
+    },
+    "reset": "Restablecer",
+    "showFilters": "Mostrar filtros",
+    "hideFilters": "Ocultar filtros",
+    "selectRange": "Seleccionar rango",
+    "filters": {
+      "creationDate": "Fecha de creación",
+      "status": "Estado",
+      "method": "Método",
+      "ownership": "Propiedad",
+      "participants": "Participantes"
+    },
+    "status": {
+      "allStatuses": "Todos los estados",
+      "active": "Activo",
+      "draft": "Borrador",
+      "completed": "Completado"
+    },
+    "ownership": {
+      "allStudies": "Todos los estudios",
+      "myStudies": "Mis estudios",
+      "whereICollaborate": "Donde colaboro"
+    },
+    "participants": {
+      "all": "Todos",
+      "lessThan10": "< 10 participantes",
+      "between10And50": "10 – 50 participantes",
+      "moreThan50": "> 50 participantes"
+    },
+    "method": {
+      "allMethods": "Todos los métodos",
+      "all": "Todos",
+      "heuristicEvaluation": "Evaluación heurística",
+      "userStudyUnmoderated": "Estudio de usuario (No moderado)",
+      "userStudyModerated": "Estudio de usuario (Moderado)",
+      "manualAccessibility": "Accesibilidad manual",
+      "automaticAccessibility": "Accesibilidad automática"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "Mantente actualizado con tus actividades y colaboraciones",
+    "markAllRead": "Marcar todo como leído",
+    "searchPlaceholder": "Buscar notificaciones…",
+    "notification": "Notificación",
+    "important": "Importante",
+    "markAsRead": "Marcar como leído",
+    "markAsUnread": "Marcar como no leído",
+    "refresh": "Actualizar",
+    "noResultsFound": "No se encontraron resultados",
+    "allCaughtUp": "¡Todo al día!",
+    "noNotificationsYet": "Aún no hay notificaciones",
+    "tryDifferentKeywords": "Prueba con otras palabras clave o borra tu búsqueda",
+    "allReadMessage": "Has leído todas tus notificaciones. ¡Buen trabajo!",
+    "newActivitiesMessage": "Verás notificaciones aquí cuando tengas nuevas actividades",
+    "justNow": "Ahora mismo",
+    "minutesAgo": "hace {count}m",
+    "hoursAgo": "hace {count}h",
+    "daysAgo": "hace {count}d",
+    "newNotification": "Tienes una nueva notificación."
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "studies": "Estudios",
+    "sessions": "Sesiones",
+    "templates": "Plantillas",
+    "storage": "Almacenamiento",
+    "communityStudies": "Estudios comunitarios",
+    "communityTemplates": "Plantillas comunitarias"
   },
   "profile": {
     "superAdmin": "Súper Administrador",
@@ -226,7 +317,7 @@
   },
   "Dashboard": {
     "welcomeBack": "¡Bienvenido de nuevo, {name}!",
-    "subtitle": "Esto es lo que está pasando con tus proyectos de investigación hoy",
+    "subtitle": "Esto es lo que está sucediendo con tus proyectos de investigación hoy",
     "createNewTest": "Crear nueva prueba",
     "tests": "Pruebas",
     "templates": "Plantillas",
@@ -237,10 +328,15 @@
     "sessions": "Sesiones",
     "personal": "Personal",
     "explore": "Explorar",
+    "activeStudies": {
+      "noActiveStudies": "Sin Estudios Activos",
+      "createNewStudy": "Crear Nuevo Estudio",
+      "emptyStateMessage": "Aún no tienes estudios. Crea tu primer estudio para comenzar a recopilar información valiosa de los usuarios."
+    },
     "activeStudiesOverview": "Resumen de estudios activos",
     "viewAll": "Ver todo",
-    "showMore": "Ver más",
-    "showLess": "Ver menos",
+    "showMore": "Mostrar más",
+    "showLess": "Mostrar menos",
     "progress": "Progreso",
     "participants": "Participantes",
     "participantsLabel": "Participantes",
@@ -252,10 +348,10 @@
     "plan": "Plan",
     "recentActivity": "Actividad reciente",
     "comingSoon": "Próximamente",
-    "mostUsedMethods": "Métodos más usados",
-    "use": "uso",
-    "uses": "usos",
-    "noDataAvailable": "No hay datos disponibles todavía",
+    "mostUsedMethods": "Métodos más utilizados",
+    "use": "Uso",
+    "uses": "Usos",
+    "noDataAvailable": "Aún no hay datos disponibles",
     "createFirstStudy": "Crea tu primer estudio para ver estadísticas aquí.",
     "nextSession": "Próxima sesión",
     "noSessionsScheduled": "No hay sesiones programadas",
@@ -270,14 +366,6 @@
       "paused": "Pausado",
       "finished": "Finalizado",
       "unknown": "Desconocido"
-    },
-    "webinar": {
-      "ended": "Finalizado",
-      "live": "En vivo",
-      "today": "Hoy",
-      "joinNow": "Unirse ahora",
-      "webinarEnded": "Webinar finalizado",
-      "startingToday": "Comienza hoy"
     },
     "cards": {
       "recentActivity": "Actividad Reciente",
@@ -359,7 +447,14 @@
       "deleteQuestion": "Eliminar pregunta",
       "addNewDescription": "Agregar nueva descripción",
       "addOption": "Agregar nueva opción",
-      "hasValue": "Tiene valor"
+      "hasValue": "Tiene valor",
+      "moveUp": "Mover arriba",
+      "moveDown": "Mover abajo",
+      "Question": "Pregunta",
+      "Questions": "Preguntas",
+      "noQuestions": "No hay preguntas",
+      "noDescriptions": "No hay descripciones",
+      "loading": "Cargando..."
     },
     "placeholders": {
       "titleHeuristic": "Título de la heurística",
@@ -374,7 +469,10 @@
       "youMustHave": "Debes haber escrito algo mal...",
       "noHeuristicsDeleteAll": "Lo siento, pero no puedes eliminar todas las preguntas de las heurísticas.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
-      "changeWeights": "Ten en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debes ajustarlos manualmente."
+      "changeWeights": "Ten en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debes ajustarlos manualmente.",
+      "noDescriptions": "No hay descripciones disponibles",
+      "startAddingQuestions": "Comienza agregando tu primera pregunta a esta heurística",
+      "cantDeleteAllQuestions": "Lo siento, no puedes eliminar todas las preguntas de una heurística"
     },
     "validation": {
       "nameRequired": "El nombre es obligatorio",
@@ -387,6 +485,12 @@
       "showComment": "Mostrar comentario",
       "addComment": "Agregar comentario",
       "hideTextArea": "Ocultar área de texto"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Error al cargar el formulario de pregunta. Por favor, inténtalo de nuevo.",
+      "failedToLoadEditForm": "Error al cargar el formulario de edición. Por favor, inténtalo de nuevo.",
+      "invalidHeuristic": "Selección de heurística no válida",
+      "invalidQuestion": "Selección de pregunta no válida"
     }
   },
   "HeuristicsOptionsTable": {
@@ -688,6 +792,25 @@
     "goHome": "Ir a la página principal"
   },
   "pages": {
+    "sessions": {
+      "noActiveSessions": "No se encontró ninguna sesión activa",
+      "selectRange": "Seleccionar rango",
+      "reset": "Restablecer",
+      "searchPlaceholder": "Buscar estudios...",
+      "filters": {
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Dónde colaboro",
+        "allStatuses": "Todos los estados",
+        "today": "Hoy",
+        "upcoming": "Próximo",
+        "completed": "Completado"
+      },
+      "ownership": "Propiedad",
+      "evaluator": "Evaluador",
+      "sessionDate": "Fecha de sesión",
+      "statusLabel": "Estado"
+    },
     "intros": {
       "click": "¡Haz clic aquí!",
       "learnMore": "Aprende más",
@@ -732,7 +855,61 @@
       "updated": "Última actualización",
       "version": "Versión:",
       "noTests": "No se encontraron pruebas",
-      "noTemplates": "No se encontraron plantillas"
+      "noTemplates": "No se encontraron plantillas",
+      "noSessions": "No se encontraron sesiones"
+    },
+    "navigation": {
+      "dashboard": "Panel",
+      "studies": "Estudios",
+      "sessions": "Sesiones",
+      "templates": "Plantillas",
+      "storage": "Almacenamiento",
+      "notifications": "Notificaciones",
+      "profile": "Perfil",
+      "communityStudies": "Estudios comunitarios",
+      "communityTemplates": "Plantillas comunitarias",
+      "studiesSubtitle": "Administra tus estudios de investigación",
+      "templatesSubtitle": "Accede a tus plantillas guardadas"
+    },
+    "studies": {
+      "searchPlaceholder": "Buscar estudios...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "statusLabel": "Estado",
+      "visibility": "Visibilidad",
+      "method": "Método",
+      "ownership": "Propiedad",
+      "participants": "Participantes",
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "active": "Activo",
+        "draft": "Borrador",
+        "completed": "Completado",
+        "allVisibility": "Toda visibilidad",
+        "public": "Público",
+        "private": "Privado",
+        "allStudies": "Todos los estudios",
+        "myStudies": "Mis estudios",
+        "whereICollaborate": "Donde colaboro",
+        "lessThan10": "< 10 participantes",
+        "between10And50": "10 – 50 participantes",
+        "moreThan50": "> 50 participantes"
+      },
+      "table": {
+        "type": "Tipo",
+        "name": "Nombre",
+        "tags": "Etiquetas",
+        "owner": "Propietario",
+        "evaluator": "Evaluador",
+        "status": "Estado",
+        "sessionDate": "Fecha de sesión",
+        "participants": "Participantes",
+        "created": "Creado",
+        "itemsPerPage": "Elementos por página:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Buscar sesiones...",
@@ -752,7 +929,24 @@
         "completed": "Completado",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Donde colaboro"
+        "whereICollaborate": "Donده colaboro"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Buscar plantillas...",
+      "reset": "Restablecer",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Fecha de creación",
+      "selectRange": "Seleccionar rango",
+      "method": "Método",
+      "filters": {
+        "allMethods": "Todos los métodos",
+        "heuristicEvaluation": "Evaluación heurística",
+        "userUnmoderated": "Usuario no moderado",
+        "userModerated": "Usuario moderado",
+        "manualAccessibility": "Accesibilidad manual",
+        "automaticAccessibility": "Accesibilidad automática"
       }
     },
     "createTest": {
@@ -1182,6 +1376,70 @@
         "finished": "Finalizado",
         "upcoming": "Próximo"
       }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Estudio de Prueba de Usuario",
+      "unmoderatedStudy": "Estudio No Moderado",
+      "moderatedStudy": "Estudio Moderado",
+      "active": "Activo",
+      "draft": "Borrador",
+      "completed": "Completado",
+      "archived": "Archivado"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total de Participantes",
+      "completed": "Completado",
+      "rate": "{percentage}% tasa",
+      "inProgress": "En Progreso",
+      "active": "{percentage}% activo",
+      "averageTime": "Tiempo Promedio",
+      "completionTime": "Tiempo de completación",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Módulos de Gestión",
+      "description": "Herramientas completas para gestionar participantes, tareas, configuraciones y analizar los datos de tu estudio",
+      "additionalModules": "Espacio para módulos adicionales"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Resumen de participación en pruebas",
+      "beta": "Beta",
+      "completed": "Completado",
+      "notStarted": "No Iniciado",
+      "pendingInvites": "Invitaciones Pendientes",
+      "overallProgress": "Progreso General",
+      "participantsCompleted": "{completed} de {total} participantes completados",
+      "details": "Detalles"
+    },
+    "tasks": {
+      "title": "Resumen de Tareas",
+      "subtitle": "Estructura y completación de tareas",
+      "beta": "Beta",
+      "noTasksConfigured": "No hay tareas configuradas",
+      "taskCompletionRate": "Tasa de Completación de Tareas",
+      "totalTasks": "Total de Tareas",
+      "avgTaskDuration": "Duración Promedio de Tarea",
+      "successRate": "Tasa de Éxito",
+      "taskTypes": "Tipos de Tareas",
+      "viewTasks": "Ver Tareas"
+    },
+    "storage": {
+      "title": "Uso de Almacenamiento",
+      "subtitle": "Archivos multimedia y métricas de almacenamiento",
+      "beta": "Beta",
+      "storageUsed": "Almacenamiento Usado",
+      "storageQuota": "{used} de {quota} usado",
+      "mediaFiles": "Archivos Multimedia",
+      "videoRecordings": "Grabaciones de Video",
+      "audioRecordings": "Grabaciones de Audio",
+      "screenRecordings": "Grabaciones de Pantalla",
+      "storageBreakdown": "Desglose de Almacenamiento",
+      "responsesData": "Datos de Respuestas",
+      "analyticsData": "Datos de Analítica",
+      "manageStorage": "Gestionar Almacenamiento"
     }
   }
 }

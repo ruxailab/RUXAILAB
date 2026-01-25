@@ -15,10 +15,7 @@
           {{ $t('auth.SIGNIN.sign-in-subtitle') }}
         </p>
 
-        <v-form
-          ref="form"
-          @submit.prevent="onSignIn"
-        >
+        <v-form ref="form" @submit.prevent="onSignIn">
           <v-text-field
             v-model="email"
             :rules="emailRules"
@@ -137,10 +134,10 @@ const rules = {
 
 const onSignIn = async () => {
   if (!form.value) return
-  
+
   const { valid } = await form.value.validate()
   if (!valid) return
-  
+
   try {
     store.commit('setLoading', true)
     loadingType.value = 'signin'
@@ -151,7 +148,7 @@ const onSignIn = async () => {
     })
     await router.push('/admin')
   } catch (error) {
-    console.error('Authentication error:', error)
+    return error
   } finally {
     loadingType.value = ''
     store.commit('setLoading', false)
@@ -181,9 +178,9 @@ const onGoogleSignInSuccess = async () => {
 }
 
 const onGoogleSignInError = (error) => {
-  console.error('Google sign-in error:', error)
   loadingType.value = ''
   store.dispatch('setLoading', false)
+  return error
 }
 </script>
 

@@ -11,7 +11,8 @@
                 <text-clamp class="titleText" :text="test.testTitle" :max-lines="2" />
               </v-col>
               <v-col>
-                <v-progress-circular rotate="-90" :model-value="calculateProgress()" color="#fca326" :size="50"
+                <v-progress-circular
+rotate="-90" :model-value="calculateProgress()" color="#fca326" :size="50"
                   class="mt-2">
                   {{ calculateProgress() }}%
                 </v-progress-circular>
@@ -21,7 +22,8 @@
         </div>
 
         <!-- Navigation Body -->
-        <v-list class="nav-list" density="compact" max-height="85%"
+        <v-list
+class="nav-list" density="compact" max-height="85%"
           style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
           <div v-for="item in items" :key="item.id">
             <!-- Pre Test -->

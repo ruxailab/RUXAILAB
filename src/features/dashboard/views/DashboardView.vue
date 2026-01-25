@@ -37,7 +37,7 @@
         <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
       </v-col>
       <v-col cols="12" lg="4">
-        <TopMethods :methodsData="topMethodsData" />
+        <TopMethods :methods-data="topMethodsData" />
       </v-col>
       <v-col cols="12" lg="4">
         <NextSession :next-session="nextSession" />
