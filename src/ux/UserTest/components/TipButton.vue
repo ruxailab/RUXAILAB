@@ -48,10 +48,9 @@
 
       <v-card-text class="pa-6">
         <div class="tip-content">
-          <div 
-            class="rich-text text-body-1 text-grey-darken-3 line-height-relaxed"
-            v-html="task.taskTip"
-          />
+          <div class="rich-text text-body-1 text-grey-darken-3 line-height-relaxed tip-text">
+            {{ task.taskTip }}
+          </div>
         </div>
       </v-card-text>
 
@@ -76,7 +75,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   task: {
     type: Object,
     default: () => ({
@@ -167,5 +166,9 @@ const dialog = ref(false)
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+.tip-text {
+  white-space: pre-line;
 }
 </style>

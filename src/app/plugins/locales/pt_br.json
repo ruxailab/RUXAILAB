@@ -59,6 +59,9 @@
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
     "notifications": "Notificações",
+    "markAllAsRead": "Marcar todas como lidas",
+    "caughtUp": "Você está em dia",
+    "noNewNotifications": "Nenhuma notificação nova",
     "unread": "Não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
@@ -784,7 +787,61 @@
       "updated": "Última atualização em",
       "version": "Versão:",
       "noTests": "Nenhum teste encontrado",
-      "noTemplates": "Nenhum modelo encontrado"
+      "noTemplates": "Nenhum modelo encontrado",
+      "noSessions": "Nenhuma sessão encontrada"
+    },
+    "navigation": {
+      "dashboard": "Painel",
+      "studies": "Estudos",
+      "sessions": "Sessões",
+      "templates": "Modelos",
+      "storage": "Armazenamento",
+      "notifications": "Notificações",
+      "profile": "Perfil",
+      "communityStudies": "Estudos da comunidade",
+      "communityTemplates": "Modelos da comunidade",
+      "studiesSubtitle": "Gerencie seus estudos de pesquisa",
+      "templatesSubtitle": "Acesse seus modelos salvos"
+    },
+    "studies": {
+      "searchPlaceholder": "Pesquisar estudos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Data de criação",
+      "selectRange": "Selecionar intervalo",
+      "statusLabel": "Status",
+      "visibility": "Visibilidade",
+      "method": "Método",
+      "ownership": "Propriedade",
+      "participants": "Participantes",
+      "filters": {
+        "allStatuses": "Todos os status",
+        "active": "Ativo",
+        "draft": "Rascunho",
+        "completed": "Concluído",
+        "allVisibility": "Todas as visibilidades",
+        "public": "Público",
+        "private": "Privado",
+        "allStudies": "Todos os estudos",
+        "myStudies": "Meus estudos",
+        "whereICollaborate": "Onde eu colaboro",
+        "lessThan10": "< 10 participantes",
+        "between10And50": "10 – 50 participantes",
+        "moreThan50": "> 50 participantes"
+      },
+      "table": {
+        "type": "Tipo",
+        "name": "Nome",
+        "tags": "Tags",
+        "owner": "Proprietário",
+        "evaluator": "Avaliador",
+        "status": "Status",
+        "sessionDate": "Data da sessão",
+        "participants": "Participantes",
+        "created": "Criado",
+        "itemsPerPage": "Itens por página:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Pesquisar sessões...",
