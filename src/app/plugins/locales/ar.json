@@ -186,8 +186,23 @@
     "sessions": "الجلسات",
     "templates": "القوالب",
     "storage": "التخزين",
+    "community": "المجتمع",
     "communityStudies": "الدراسات المجتمعية",
-    "communityTemplates": "القوالب المجتمعية"
+    "communityTemplates": "القوالب المجتمعية",
+    "visibility": "الرؤية",
+    "public": "عام",
+    "private": "خاص",
+    "allVisibility": "جميع الرؤى",
+    "subtitles": {
+      "manageStudies": "إدارة دراساتك البحثية",
+      "accessTemplates": "الوصول إلى القوالب المحفوظة الخاصة بك",
+      "stayUpdated": "ابقَ على اطلاع بأنشطتك وتعاوناتك",
+      "overviewSessions": "نظرة عامة على جلساتك",
+      "manageStorage": "إدارة ملفات الوسائط المخزنة الخاصة بك",
+      "viewEditProfile": "عرض وتحرير معلومات ملفك الشخصي",
+      "exploreCommunityStudies": "استكشف الدراسات التي تمت مشاركتها من قبل مجتمع RUXAI",
+      "browseCommunityTemplates": "تصفح القوالب التي ساهم بها مجتمع RUXAI"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -336,6 +351,33 @@
     "daysLeft": "أيام متبقية",
     "dayLeft": "يوم متبقي",
     "studies": "الدراسات",
+    "studiesPage": {
+      "searchPlaceholder": "البحث في الدراسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "إظهار الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "filters": {
+        "creationDate": "تاريخ الإنشاء",
+        "status": "الحالة",
+        "visibility": "الرؤية",
+        "method": "الطريقة",
+        "ownership": "الملكية",
+        "participants": "المشاركون",
+        "selectRange": "تحديد النطاق",
+        "allStatuses": "جميع الحالات",
+        "allVisibility": "جميع الرؤى",
+        "public": "عام",
+        "private": "خاص",
+        "allMethods": "جميع الطرق",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون",
+        "all": "الكل",
+        "lt10": "< 10 مشاركين",
+        "btw10_50": "10 – 50 مشاركين",
+        "gt50": "> 50 مشاركين"
+      }
+    },
     "storage": "التخزين",
     "free": "مجاني",
     "plan": "الخطة",
@@ -830,25 +872,6 @@
     "goHome": "الذهاب إلى الصفحة الرئيسية"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "لم يتم العثور على جلسة نشطة",
-      "selectRange": "تحديد النطاق",
-      "reset": "إعادة تعيين",
-      "searchPlaceholder": "البحث في الدراسات...",
-      "filters": {
-        "allStudies": "جميع الدراسات",
-        "myStudies": "دراساتي",
-        "whereICollaborate": "حيث أتعاون",
-        "allStatuses": "جميع الحالات",
-        "today": "اليوم",
-        "upcoming": "قادم",
-        "completed": "مكتمل"
-      },
-      "ownership": "الملكية",
-      "evaluator": "المقيّم",
-      "sessionDate": "تاريخ الجلسة",
-      "statusLabel": "الحالة"
-    },
     "intros": {
       "click": "انقر هنا!",
       "learnMore": "تعلم المزيد",
@@ -1114,7 +1137,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",

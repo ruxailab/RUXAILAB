@@ -195,8 +195,23 @@
     "sessions": "Sessions",
     "templates": "Modèles",
     "storage": "Stockage",
+    "community": "Communauté",
     "communityStudies": "Études communautaires",
-    "communityTemplates": "Modèles communautaires"
+    "communityTemplates": "Modèles communautaires",
+    "visibility": "Visibilité",
+    "public": "Public",
+    "private": "Privé",
+    "allVisibility": "Toute les visibilités",
+    "subtitles": {
+      "manageStudies": "Gérez vos études de recherche",
+      "accessTemplates": "Accédez à vos modèles enregistrés",
+      "stayUpdated": "Restez informé de vos activités et collaborations",
+      "overviewSessions": "Aperçu de vos sessions",
+      "manageStorage": "Gérez vos fichiers multimédias stockés",
+      "viewEditProfile": "Afficher et modifier les informations de votre profil",
+      "exploreCommunityStudies": "Explorez les études partagées par la communauté RUXAI",
+      "browseCommunityTemplates": "Parcourez les modèles fournis par la communauté RUXAI"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -345,6 +360,33 @@
     "daysLeft": "jours restants",
     "dayLeft": "jour restant",
     "studies": "Études",
+    "studiesPage": {
+      "searchPlaceholder": "Rechercher des études...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "filters": {
+        "creationDate": "Date de création",
+        "status": "Statut",
+        "visibility": "Visibilité",
+        "method": "Méthode",
+        "ownership": "Propriété",
+        "participants": "Participants",
+        "selectRange": "Sélectionner la période",
+        "allStatuses": "Tous les statuts",
+        "allVisibility": "Toutes les visibilités",
+        "public": "Public",
+        "private": "Privé",
+        "allMethods": "Toutes les méthodes",
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore",
+        "all": "Tous",
+        "lt10": "< 10 participants",
+        "btw10_50": "10 – 50 participants",
+        "gt50": "> 50 participants"
+      }
+    },
     "storage": "Stockage",
     "free": "Gratuit",
     "plan": "Forfait",
@@ -837,25 +879,6 @@
     "goHome": "Retour à l'accueil"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Aucune session active trouvée",
-      "selectRange": "Sélectionner une plage",
-      "reset": "Réinitialiser",
-      "searchPlaceholder": "Rechercher des études...",
-      "filters": {
-        "allStudies": "Toutes les études",
-        "myStudies": "Mes études",
-        "whereICollaborate": "Où je collabore",
-        "allStatuses": "Tous les statuts",
-        "today": "Aujourd'hui",
-        "upcoming": "À venir",
-        "completed": "Terminé"
-      },
-      "ownership": "Propriété",
-      "evaluator": "Évaluateur",
-      "sessionDate": "Date de session",
-      "statusLabel": "Statut"
-    },
     "intros": {
       "click": "Cliquez ici !",
       "learnMore": "En savoir plus",

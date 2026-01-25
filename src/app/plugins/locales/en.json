@@ -203,8 +203,23 @@
     "sessions": "Sessions",
     "templates": "Templates",
     "storage": "Storage",
+    "community": "Community",
     "communityStudies": "Community Studies",
-    "communityTemplates": "Community Templates"
+    "communityTemplates": "Community Templates",
+    "visibility": "Visibility",
+    "public": "Public",
+    "private": "Private",
+    "allVisibility": "All Visibility",
+    "subtitles": {
+      "manageStudies": "Manage your research studies",
+      "accessTemplates": "Access your saved templates",
+      "stayUpdated": "Stay updated with your activities and collaborations",
+      "overviewSessions": "Overview of your sessions",
+      "manageStorage": "Manage your stored media files",
+      "viewEditProfile": "View and edit your profile information",
+      "exploreCommunityStudies": "Explore studies shared by the RUXAI community",
+      "browseCommunityTemplates": "Browse templates contributed by the RUXAI community"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -364,6 +379,33 @@
     "daysLeft": "days left",
     "dayLeft": "day left",
     "studies": "Studies",
+    "studiesPage": {
+      "searchPlaceholder": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "filters": {
+        "creationDate": "Creation date",
+        "status": "Status",
+        "visibility": "Visibility",
+        "method": "Method",
+        "ownership": "Ownership",
+        "participants": "Participants",
+        "selectRange": "Select range",
+        "allStatuses": "All Statuses",
+        "allVisibility": "All Visibility",
+        "public": "Public",
+        "private": "Private",
+        "allMethods": "All Methods",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate",
+        "all": "All",
+        "lt10": "< 10 participants",
+        "btw10_50": "10 – 50 participants",
+        "gt50": "> 50 participants"
+      }
+    },
     "storage": "Storage",
     "free": "Free",
     "plan": "Plan",
@@ -927,25 +969,6 @@
     "goHome": "Go to Home"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "No active session found",
-      "selectRange": "Select range",
-      "reset": "Reset",
-      "searchPlaceholder": "Search studies...",
-      "filters": {
-        "allStudies": "All Studies",
-        "myStudies": "My Studies",
-        "whereICollaborate": "Where I Collaborate",
-        "allStatuses": "All Statuses",
-        "today": "Today",
-        "upcoming": "Upcoming",
-        "completed": "Completed"
-      },
-      "ownership": "Ownership",
-      "evaluator": "Evaluator",
-      "sessionDate": "Session Date",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Click here!",
       "learnMore": "Learn More",

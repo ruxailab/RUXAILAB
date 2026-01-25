@@ -190,8 +190,23 @@
     "sessions": "会话",
     "templates": "模板",
     "storage": "存储",
+    "community": "社区",
     "communityStudies": "社区研究",
-    "communityTemplates": "社区模板"
+    "communityTemplates": "社区模板",
+    "visibility": "可见性",
+    "public": "公开",
+    "private": "私有",
+    "allVisibility": "所有可见性",
+    "subtitles": {
+      "manageStudies": "管理您的研究调查",
+      "accessTemplates": "访问您保存的模板",
+      "stayUpdated": "随时了解您的活动和协作",
+      "overviewSessions": "会话概览",
+      "manageStorage": "管理您存储的媒体文件",
+      "viewEditProfile": "查看和编辑您的个人资料信息",
+      "exploreCommunityStudies": "探索由 RUXAI 社区共享的调查",
+      "browseCommunityTemplates": "浏览由 RUXAI 社区贡献的模板"
+    }
   },
   "profile": {
     "title": "个人资料",
@@ -340,6 +355,33 @@
     "daysLeft": "剩余天数",
     "dayLeft": "剩余一天",
     "studies": "研究",
+    "studiesPage": {
+      "searchPlaceholder": "搜索调查...",
+      "reset": "重置",
+      "showFilters": "显示过滤器",
+      "hideFilters": "隐藏过滤器",
+      "filters": {
+        "creationDate": "创建日期",
+        "status": "状态",
+        "visibility": "可见性",
+        "method": "方法",
+        "ownership": "所有权",
+        "participants": "参与者",
+        "selectRange": "选择范围",
+        "allStatuses": "所有状态",
+        "allVisibility": "所有可见性",
+        "public": "公开",
+        "private": "私有",
+        "allMethods": "所有方法",
+        "allStudies": "所有调查",
+        "myStudies": "我的调查",
+        "whereICollaborate": "我参与的协作",
+        "all": "全部",
+        "lt10": "< 10 名参与者",
+        "btw10_50": "10 – 50 名参与者",
+        "gt50": "> 50 名参与者"
+      }
+    },
     "storage": "存储",
     "free": "免费",
     "plan": "计划",
@@ -834,25 +876,6 @@
     "goHome": "返回首页"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "未找到活动会话",
-      "selectRange": "选择范围",
-      "reset": "重置",
-      "searchPlaceholder": "搜索研究...",
-      "filters": {
-        "allStudies": "所有研究",
-        "myStudies": "我的研究",
-        "whereICollaborate": "我参与协作的",
-        "allStatuses": "所有状态",
-        "today": "今天",
-        "upcoming": "即将到来",
-        "completed": "已完成"
-      },
-      "ownership": "所有权",
-      "evaluator": "评估者",
-      "sessionDate": "会话日期",
-      "statusLabel": "状态"
-    },
     "intros": {
       "click": "点击这里！",
       "learnMore": "了解更多",
@@ -1100,7 +1123,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1114,12 +1141,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1376,12 +1411,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {
