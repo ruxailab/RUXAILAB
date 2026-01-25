@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search studies..."
+        :placeholder="$t('Dashboard.studiesPage.searchPlaceholder')"
         class="flex-grow-1"
       />
       <v-btn
@@ -19,7 +19,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('Dashboard.studiesPage.reset') }}
       </v-btn>
 
       <v-btn
@@ -27,7 +27,11 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="
+          showFilters
+            ? $t('Dashboard.studiesPage.hideFilters')
+            : $t('Dashboard.studiesPage.showFilters')
+        "
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -42,7 +46,9 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">
+              {{ $t('Dashboard.studiesPage.filters.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -63,7 +69,7 @@
                         ).toLocaleDateString()} - ${new Date(
                           creationDateRange[creationDateRange.length - 1],
                         ).toLocaleDateString()}`
-                      : 'Select range'
+                      : $t('Dashboard.studiesPage.filters.selectRange')
                   "
                   :model-value="
                     creationDateRange.length > 1
@@ -83,7 +89,9 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">
+              {{ $t('Dashboard.studiesPage.filters.status') }}
+            </div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -99,7 +107,9 @@
 
           <!-- 🔓 Visibility -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Visibility</div>
+            <div class="filter-label">
+              {{ $t('Dashboard.studiesPage.filters.visibility') }}
+            </div>
             <v-select
               v-model="selectedVisibilityFilter"
               :items="visibilityOptions"
@@ -113,7 +123,9 @@
 
           <!-- 🧭 Method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">
+              {{ $t('Dashboard.studiesPage.filters.method') }}
+            </div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -127,7 +139,9 @@
 
           <!-- 👥 Ownership -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">
+              {{ $t('Dashboard.studiesPage.filters.ownership') }}
+            </div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -141,7 +155,9 @@
 
           <!-- 👤 Participants -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Participants</div>
+            <div class="filter-label">
+              {{ $t('Dashboard.studiesPage.filters.participants') }}
+            </div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -166,6 +182,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
   getMethodManagerView,
@@ -179,6 +196,7 @@ import {
 // ===== Setup =====
 const store = useStore()
 const router = useRouter()
+const { t, locale } = useI18n()
 const search = ref('')
 
 // ===== Filter state =====
@@ -193,31 +211,34 @@ const showFilters = ref(false)
 const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 // ===== Filter options =====
-const statusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'active', text: 'Active' },
-  { value: 'draft', text: 'Draft' },
-  { value: 'completed', text: 'Completed' },
-]
+const statusOptions = computed(() => [
+  { value: 'all', text: t('Dashboard.studiesPage.filters.allStatuses') },
+  { value: 'active', text: t('Dashboard.studiesPage.filters.active') },
+  { value: 'draft', text: t('Dashboard.studiesPage.filters.draft') },
+  { value: 'completed', text: t('Dashboard.studiesPage.filters.completed') },
+])
 
-const visibilityOptions = [
-  { value: 'all', text: 'All Visibility' },
-  { value: 'public', text: 'Public' },
-  { value: 'private', text: 'Private' },
-]
+const visibilityOptions = computed(() => [
+  { value: 'all', text: t('Dashboard.studiesPage.filters.allVisibility') },
+  { value: 'public', text: t('Dashboard.studiesPage.filters.public') },
+  { value: 'private', text: t('Dashboard.studiesPage.filters.private') },
+])
 
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-]
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('Dashboard.studiesPage.filters.allStudies') },
+  { value: 'mine', text: t('Dashboard.studiesPage.filters.myStudies') },
+  {
+    value: 'cooperator',
+    text: t('Dashboard.studiesPage.filters.whereICollaborate'),
+  },
+])
 
-const participantsOptions = [
-  { text: 'All', value: 'all' },
-  { text: '< 10 participants', value: 'lt10' },
-  { text: '10 – 50 participants', value: 'btw10_50' },
-  { text: '> 50 participants', value: 'gt50' },
-]
+const participantsOptions = computed(() => [
+  { text: t('Dashboard.studiesPage.filters.all'), value: 'all' },
+  { text: t('Dashboard.studiesPage.filters.lt10'), value: 'lt10' },
+  { text: t('Dashboard.studiesPage.filters.btw10_50'), value: 'btw10_50' },
+  { text: t('Dashboard.studiesPage.filters.gt50'), value: 'gt50' },
+])
 
 // ===== Helpers =====
 const clearFilters = () => {
@@ -244,10 +265,28 @@ const hasActiveFilters = computed(
     ),
 )
 
+// Helper to map method IDs to i18n keys
+const getMethodKey = (methodId) => {
+  const mapping = {
+    HEURISTICS: 'heuristicEvaluation',
+    USER_UNMODERATED: 'userStudyUnmoderated',
+    USER_MODERATED: 'userStudyModerated',
+    MANUAL: 'manualAccessibility',
+    AUTOMATIC: 'automaticAccessibility',
+  }
+  return mapping[methodId] || methodId
+}
+
 // ===== Method options =====
 const methodOptions = computed(() => {
-  const options = getMethodOptions('en', METHOD_STATUSES.AVAILABLE.id)
-  return [{ value: 'all', text: 'All Methods' }, ...options]
+  const options = getMethodOptions(locale.value, METHOD_STATUSES.AVAILABLE.id)
+  return [
+    { value: 'all', text: t('Dashboard.studiesPage.filters.allMethods') },
+    ...options.map((opt) => ({
+      ...opt,
+      text: t(`common.method.${getMethodKey(opt.value)}`),
+    })),
+  ]
 })
 
 // ===== Filtered list =====
