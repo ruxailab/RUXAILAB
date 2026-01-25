@@ -4,7 +4,7 @@
       <v-img :src="previewImage || currentImage" alt="No Image" />
     </v-avatar>
     <div class="d-flex justify-center align-center gap-2 mt-3">
-      <v-btn icon size="small" @click="selectImage" color="primary">
+      <v-btn icon size="small" color="primary" @click="selectImage">
         <v-icon>mdi-camera</v-icon>
         <v-tooltip activator="parent" location="bottom">
           {{ $t('profile.uploadProfilePicture') }}
@@ -14,8 +14,8 @@
         v-if="previewImage || currentImage"
         icon
         size="small"
-        @click="removeImage"
         color="error"
+        @click="removeImage"
       >
         <v-icon>mdi-delete</v-icon>
         <v-tooltip activator="parent" location="bottom">
@@ -35,19 +35,16 @@
 
 <script setup>
 import { ref, watch, onBeforeUnmount } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const props = defineProps({
   currentImage: {
     type: String,
-    default: ''
+    default: '',
   },
   size: {
     type: Number,
-    default: 100
-  }
+    default: 100,
+  },
 })
 
 const emit = defineEmits(['image-selected', 'image-removed'])
@@ -69,23 +66,21 @@ const handleFileSelect = (event) => {
 
   try {
     const previewUrl = URL.createObjectURL(file)
-    
+
     selectedFile.value = file
     previewImage.value = previewUrl
-    
+
     emit('image-selected', {
       file: file,
-      previewUrl: previewUrl
+      previewUrl: previewUrl,
     })
-    
+
     if (fileInput.value) fileInput.value.value = ''
-    
   } catch (error) {
-    console.error('Error creating image preview:', error)
     emit('image-selected', {
       file: null,
       previewUrl: null,
-      error: error
+      error: error,
     })
   }
 }
@@ -106,10 +101,13 @@ onBeforeUnmount(() => {
   }
 })
 
-watch(() => props.currentImage, (newVal) => {
-  if (!newVal && previewImage.value) {
-    URL.revokeObjectURL(previewImage.value)
-    previewImage.value = ''
-  }
-})
+watch(
+  () => props.currentImage,
+  (newVal) => {
+    if (!newVal && previewImage.value) {
+      URL.revokeObjectURL(previewImage.value)
+      previewImage.value = ''
+    }
+  },
+)
 </script>
