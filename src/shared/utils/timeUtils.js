@@ -34,8 +34,8 @@ export const formatTimeFromMs = (timeInMs) => {
  */
 export const formatTimeDetailedFromMs = (timeInMs) => {
   if (!timeInMs || timeInMs < 0) {
-    return formatTimeDetailed(0)
+    return formatTime(0)
   }
   const seconds = Math.floor(timeInMs / 1000)
-  return formatTimeDetailed(seconds)
+  return formatTime(seconds)
 }
