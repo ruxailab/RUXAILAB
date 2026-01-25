@@ -130,6 +130,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { getStatusColor, getStatusIcon } from '@/shared/utils/statusUtils'
 import { useI18n } from 'vue-i18n'
 import {
   getBottomCardsDefualt,
@@ -211,16 +212,6 @@ const navigator = computed(() => {
 
   return items
 })
-
-const getStatusIcon = (status) => {
-  const iconMap = {
-    Active: 'mdi-play-circle',
-    Draft: 'mdi-pencil-circle',
-    Completed: 'mdi-check-circle',
-    Archived: 'mdi-archive',
-  }
-  return iconMap[status] || 'mdi-information'
-}
 
 // Lifecycle
 onMounted(async () => {

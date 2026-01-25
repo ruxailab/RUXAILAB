@@ -119,3 +119,62 @@ export const formatRelativeTime = (date) => {
     return '-'
   }
 }
+
+/**
+ * Format date for general use (used by many components)
+ * @param {string|Date|object} timestamp - Date to format (can be Date, string, or Firestore timestamp)
+ * @returns {string} - Formatted date string
+ */
+export const formatDate = (timestamp) => {
+  if (!timestamp) return ''
+
+  try {
+    let date
+
+    // Handle Firestore timestamp objects
+    if (timestamp && typeof timestamp.toDate === 'function') {
+      date = timestamp.toDate()
+    } else {
+      date = new Date(timestamp)
+    }
+
+    if (isNaN(date.getTime())) return ''
+
+    const day = date.getDate()
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
+    return `${day}/${month}/${year}`
+  } catch (error) {
+    console.warn('Error formatting date:', error)
+    return ''
+  }
+}
+
+/**
+ * Format time from timestamp
+ * @param {string|Date|object} timestamp - Date to format
+ * @returns {string} - Formatted time string (HH:MM)
+ */
+export const formatTime = (timestamp) => {
+  if (!timestamp) return ''
+
+  try {
+    let date
+
+    // Handle Firestore timestamp objects
+    if (timestamp && typeof timestamp.toDate === 'function') {
+      date = timestamp.toDate()
+    } else {
+      date = new Date(timestamp)
+    }
+
+    if (isNaN(date.getTime())) return ''
+
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
+  } catch (error) {
+    console.warn('Error formatting time:', error)
+    return ''
+  }
+}
