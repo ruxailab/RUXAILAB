@@ -1,6 +1,29 @@
 {
   "language": "言語",
   "auth": {
+    "signupSuccess": "サインアップに成功しました",
+    "logoutSuccess": "ログアウトに成功しました",
+    "resetPasswordSuccess": "パスワードリセット用のメールを送信しました",
+    "deleteSuccess": "アカウントが正常に削除されました",
+    "loginSuccess": "ログインに成功しました",
+    "SIGNIN": {
+      "sign-in": "ログイン",
+      "sign-in-title": "お帰りなさい",
+      "sign-in-subtitle": "続行するにはアカウントにサインインしてください",
+      "email": "メールアドレス",
+      "username": "ユーザー名",
+      "password": "パスワード",
+      "signupSubtitle": "開始するために情報を入力してください",
+      "dont-have-account": "アカウントをお持ちでないですか？登録",
+      "forgot-password": "パスワードをお忘れですか？",
+      "sign-up": "登録",
+      "contact": "連絡先番号",
+      "confirmPassword": "パスワードを確認",
+      "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン",
+      "continueWithGoogle": "Googleで続行",
+      "rememberMe": "ログイン情報を保持する",
+      "or": "または"
+    },
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
@@ -35,6 +58,9 @@
     "type": "タイプ",
     "noNotifications": "まだ通知はありません",
     "notifications": "通知",
+    "markAllAsRead": "すべて既読にする",
+    "caughtUp": "最新の状態です",
+    "noNewNotifications": "新しい通知はありません",
     "unread": "未読",
     "inbox": "受信トレイ",
     "timeAgo": {

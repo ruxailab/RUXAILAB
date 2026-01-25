@@ -1,6 +1,29 @@
 {
   "language": "语言",
   "auth": {
+    "signupSuccess": "注册成功",
+    "logoutSuccess": "注销成功",
+    "resetPasswordSuccess": "密码重置邮件已发送",
+    "deleteSuccess": "账户删除成功",
+    "loginSuccess": "登录成功",
+    "SIGNIN": {
+      "sign-in": "登录",
+      "sign-in-title": "欢迎回来",
+      "sign-in-subtitle": "登录您的账户以继续",
+      "email": "电子邮箱",
+      "username": "用户名",
+      "password": "密码",
+      "signupSubtitle": "填写您的详细信息以开始",
+      "dont-have-account": "还没有账户？",
+      "forgot-password": "忘记密码？",
+      "sign-up": "创建账户",
+      "contact": "联系电话",
+      "confirmPassword": "确认密码",
+      "alreadyHaveAnAccount": "已有账户？",
+      "continueWithGoogle": "继续使用 Google",
+      "rememberMe": "记住我",
+      "or": "或继续使用"
+    },
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
       "email": "邮箱",
@@ -35,6 +58,9 @@
     "type": "类型",
     "noNotifications": "您还没有通知",
     "notifications": "通知",
+    "markAllAsRead": "全部标记为已读",
+    "caughtUp": "您已读完所有通知",
+    "noNewNotifications": "没有新通知",
     "unread": "未读",
     "inbox": "收件箱",
     "timeAgo": {

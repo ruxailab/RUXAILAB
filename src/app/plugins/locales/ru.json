@@ -1,6 +1,29 @@
 {
   "language": "Язык",
   "auth": {
+    "signupSuccess": "Регистрация успешна",
+    "logoutSuccess": "Выход успешен",
+    "resetPasswordSuccess": "Письмо для сброса пароля отправлено",
+    "deleteSuccess": "Аккаунт успешно удален",
+    "loginSuccess": "Вход выполнен успешно",
+    "SIGNIN": {
+      "sign-in": "Войти",
+      "sign-in-title": "С возвращением",
+      "sign-in-subtitle": "Войдите в свой аккаунт, чтобы продолжить",
+      "email": "Электронная почта",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "signupSubtitle": "Заполните свои данные, чтобы начать",
+      "dont-have-account": "Нет аккаунта?",
+      "forgot-password": "Забыли пароль?",
+      "sign-up": "Создать аккаунт",
+      "contact": "Контактный номер",
+      "confirmPassword": "Подтвердите пароль",
+      "alreadyHaveAnAccount": "Уже есть аккаунт?",
+      "continueWithGoogle": "Продолжить с Google",
+      "rememberMe": "Запомнить меня",
+      "or": "или продолжить с"
+    },
     "FORGOT_PASSWORD": {
       "reset_password": "Сбросить пароль",
       "email": "Электронная почта",
@@ -35,6 +58,9 @@
     "type": "Тип",
     "noNotifications": "У вас пока нет уведомлений",
     "notifications": "Уведомления",
+    "markAllAsRead": "Отметить все как прочитанные",
+    "caughtUp": "Вы в курсе всех событий",
+    "noNewNotifications": "Новых уведомлений нет",
     "unread": "непрочитанное",
     "inbox": "Входящие",
     "timeAgo": {
