@@ -69,6 +69,9 @@
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
     "notifications": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "caughtUp": "You're all caught up",
+    "noNewNotifications": "No new notifications",
     "unread": "unread",
     "inbox": "inbox",
     "all": "All",
@@ -119,7 +122,11 @@
       "evaluator": "Evaluator",
       "status": "Status",
       "sessionDate": "Session Date",
-      "itemsPerPage": "Items per page:"
+      "itemsPerPage": "Items per page:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
     }
   },
   "community": {
@@ -304,10 +311,6 @@
       "edit": "Create and customize your tasks and heuristics for your research needs.",
       "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
     }
-  },
-  "storage": {
-    "noMediaFiles": "No media file found",
-    "mediaFiles": "Media Files"
   },
   "errors": {
     "invalidInvitation": "Invalid Invitation",
@@ -816,19 +819,19 @@
       "noActiveSessions": "No active session found",
       "selectRange": "Select range",
       "reset": "Reset",
-      "searchPlaceholder":"Search studies...",
+      "searchPlaceholder": "Search studies...",
       "filters": {
         "allStudies": "All Studies",
         "myStudies": "My Studies",
-        "whereICollaborate":"Where I Collaborate",
-        "allStatuses":"All Statuses",
+        "whereICollaborate": "Where I Collaborate",
+        "allStatuses": "All Statuses",
         "today": "Today",
-        "upcoming":"Upcoming",
+        "upcoming": "Upcoming",
         "completed": "Completed"
       },
-      "ownership":"Ownership",
+      "ownership": "Ownership",
       "evaluator": "Evaluator",
-      "sessionDate":"Session Date",
+      "sessionDate": "Session Date",
       "statusLabel": "Status"
     },
     "intros": {
@@ -875,7 +878,61 @@
       "updated": "Last Updated on",
       "version": "Version:",
       "noTests": "No tests found",
-      "noTemplates": "No templates found"
+      "noTemplates": "No templates found",
+      "noSessions": "No sessions found"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "storage": "Storage",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "communityStudies": "Community Studies",
+      "communityTemplates": "Community Templates",
+      "studiesSubtitle": "Manage your research studies",
+      "templatesSubtitle": "Access your saved templates"
+    },
+    "studies": {
+      "searchPlaceholder": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "statusLabel": "Status",
+      "visibility": "Visibility",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participants": "Participants",
+      "filters": {
+        "allStatuses": "All Statuses",
+        "active": "Active",
+        "draft": "Draft",
+        "completed": "Completed",
+        "allVisibility": "All Visibility",
+        "public": "Public",
+        "private": "Private",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate",
+        "lessThan10": "< 10 participants",
+        "between10And50": "10 – 50 participants",
+        "moreThan50": "> 50 participants"
+      },
+      "table": {
+        "type": "Type",
+        "name": "Name",
+        "tags": "Tags",
+        "owner": "Owner",
+        "evaluator": "Evaluator",
+        "status": "Status",
+        "sessionDate": "Session Date",
+        "participants": "Participants",
+        "created": "Created",
+        "itemsPerPage": "Items per page:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Search sessions...",
