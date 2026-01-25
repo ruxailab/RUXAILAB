@@ -1,5 +1,6 @@
 <template>
-  <PageWrapper :title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
+  <PageWrapper
+:title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
     :loading="isLoading"
     :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'">
     <template #subtitle>
@@ -39,7 +40,8 @@
 
             <!-- User table (only show when not loading) -->
             <v-card v-if="!isLoadingUsers" elevation="2">
-              <v-data-table :headers="userHeaders" :items="userDetails" :items-per-page="10" :loading="isLoadingUsers"
+              <v-data-table
+:headers="userHeaders" :items="userDetails" :items-per-page="10" :loading="isLoadingUsers"
                 loading-text="Fetching users..." class="user-table elevation-0" height="50vh" density="compact"
                 @click:row="(event, { item }) => selectUser(item)">
                 <!-- Email/User Info Column -->
@@ -77,7 +79,8 @@
                     <v-btn color="primary" variant="flat" size="small" prepend-icon="mdi-eye" @click="selectUser(item)">
                       View Results
                     </v-btn>
-                    <v-btn color="secondary" variant="outlined" size="small" prepend-icon="mdi-test-tube"
+                    <v-btn
+color="secondary" variant="outlined" size="small" prepend-icon="mdi-test-tube"
                       @click="viewUserInPreview(item)">
                       View in Preview
                     </v-btn>
@@ -101,7 +104,8 @@
         <v-card class="mb-4">
           <v-card-text class="d-flex align-center justify-space-between pa-4">
             <div class="d-flex align-center">
-              <v-btn color="primary" variant="outlined" prepend-icon="mdi-arrow-left" class="mr-4"
+              <v-btn
+color="primary" variant="outlined" prepend-icon="mdi-arrow-left" class="mr-4"
                 @click="goBackToUserSelection">
                 Back to User Selection
               </v-btn>
@@ -115,7 +119,8 @@
               </div>
             </div>
             <div class="d-flex ga-2 align-center">
-              <v-btn color="secondary" variant="outlined" prepend-icon="mdi-test-tube"
+              <v-btn
+color="secondary" variant="outlined" prepend-icon="mdi-test-tube"
                 @click="viewUserInPreview(selectedUser)">
                 View in Preview Mode
               </v-btn>
@@ -140,7 +145,8 @@
                 <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
               </v-col>
               <v-col cols="auto" class="pa-0 ml-3">
-                <v-btn-toggle v-model="selectedLevel" mandatory color="primary" variant="outlined" divided
+                <v-btn-toggle
+v-model="selectedLevel" mandatory color="primary" variant="outlined" divided
                   density="compact">
                   <v-btn value="A" size="small" :class="{ 'level-a': selectedLevel === 'A' }">
                     A
@@ -163,7 +169,8 @@
 
           <!-- Tabs for Principles -->
           <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
-            <v-tab v-for="(principle, index) in principles" :key="index" :value="index"
+            <v-tab
+v-for="(principle, index) in principles" :key="index" :value="index"
               :class="`principle-tab principle-${index}`">
               <v-icon start>
                 {{ getPrincipleIcon(index) }}
@@ -178,7 +185,8 @@
           <v-card-text class="pa-0">
             <v-window v-model="activeTab">
               <v-window-item v-for="(principle, pIndex) in principles" :key="pIndex" :value="pIndex">
-                <v-data-table :headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
+                <v-data-table
+:headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
                   :loading="isLoading" class="elevation-1" height="65vh">
                   <template #item.status="{ item }">
                     <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
@@ -187,7 +195,8 @@
                   </template>
 
                   <template #item.severity="{ item }">
-                    <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
+                    <v-chip
+:color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
                       variant="outlined">
                       {{ item.severity || 'Not Set' }}
                     </v-chip>
@@ -239,7 +248,8 @@
               <v-list-item-subtitle class="text-body-1 mb-2">
                 {{ note.text }}
               </v-list-item-subtitle>
-              <v-img v-if="note.imagePreview" :src="note.imagePreview" max-height="300" cover
+              <v-img
+v-if="note.imagePreview" :src="note.imagePreview" max-height="300" cover
                 class="mt-2 mb-2 rounded" />
               <v-chip v-if="note.imageName" size="small" color="grey-lighten-2" class="mt-2">
                 <v-icon size="small" class="mr-1">
@@ -271,7 +281,12 @@ import { ref, onMounted, watch } from 'vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from '@/shared/utils/toast'
+
 
 // Icons for principles
 const principleIcons = [
@@ -284,7 +299,6 @@ const principleIcons = [
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 
 // State
 const isLoading = ref(true)
@@ -329,7 +343,7 @@ onMounted(async () => {
     console.log('Full route:', route)
 
     if (!route.params.id) {
-      toast.error('Test ID is missing from route parameters. Please check the URL.')
+      showError('Test ID is missing from route parameters. Please check the URL.')
       isLoadingUsers.value = false
       return
     }
@@ -338,7 +352,7 @@ onMounted(async () => {
     await fetchUserEmails()
   } catch (error) {
     console.error('Error in onMounted:', error)
-    toast.error('Failed to load data: ' + error.message)
+    showError('Failed to load data: ' + error.message)
   } finally {
     isLoadingUsers.value = false
   }
@@ -363,7 +377,7 @@ const selectUser = async (user) => {
     console.log('Selecting user:', user)
 
     if (!user || !user.id) {
-      toast.error('Invalid user selection')
+      showError('Invalid user selection')
       console.error('Invalid user object:', user)
       return
     }
@@ -379,7 +393,7 @@ const selectUser = async (user) => {
     await loadAssessmentData(user.id)
   } catch (error) {
     console.error('Error selecting user:', error)
-    toast.error('Failed to load user assessment data: ' + error.message)
+    showError('Failed to load user assessment data: ' + error.message)
   }
 }
 
@@ -387,23 +401,23 @@ const selectUser = async (user) => {
 const viewUserInPreview = (user) => {
   try {
     if (!user || !user.id) {
-      toast.error('Invalid user selection')
+      showError('Invalid user selection')
       return
     }
 
     const testId = route.params.id
     if (!testId) {
-      toast.error('Test ID not found')
+      showError('Test ID not found')
       return
     }
 
     // Navigate to preview page with user ID parameter
     const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
     window.open(previewUrl, '_blank')
-    toast.success(`Opening preview for ${getDisplayName(user.email)}`)
+    showSuccess(`Opening preview for ${getDisplayName(user.email)}`)
   } catch (error) {
     console.error('Error opening preview for user:', error)
-    toast.error('Failed to open preview mode')
+    showError('Failed to open preview mode')
   }
 }
 
@@ -649,11 +663,11 @@ const loadWcagData = async () => {
         })
       })
     } else {
-      toast.error('Failed to load WCAG principles')
+      showError('Failed to load WCAG principles')
     }
   } catch (error) {
     console.error('Error loading WCAG data:', error)
-    toast.error(`Failed to load WCAG data: ${error.message}`)
+    showError(`Failed to load WCAG data: ${error.message}`)
   } finally {
     isLoading.value = false
   }
@@ -689,11 +703,11 @@ const fetchUserIdsForTest = async () => {
 
     if (userIds.value.length === 0) {
       console.log('No assessment documents found for test ID:', testId);
-      toast.info('No assessment data found for this test. Users need to complete assessments first.');
+      showInfo('No assessment data found for this test. Users need to complete assessments first.');
     }
   } catch (error) {
     console.error('Error fetching user IDs:', error);
-    toast.error('Failed to fetch user IDs: ' + error.message);
+    showError('Failed to fetch user IDs: ' + error.message);
     isLoadingUsers.value = false; // Stop loading on error
   }
 };
@@ -723,7 +737,7 @@ const fetchUserEmails = async () => {
     console.log('Final user details:', userDetails.value);
   } catch (error) {
     console.error('Error fetching user emails:', error);
-    toast.error('Failed to fetch user emails.');
+    showError('Failed to fetch user emails.');
     isLoadingUsers.value = false; // Stop loading on error
   }
 };
@@ -775,13 +789,13 @@ const loadAssessmentData = async (userId) => {
       }
     } else {
       console.log('No assessment document found for:', docId)
-      toast.info('No assessment data found for the selected user.');
+      showInfo('No assessment data found for the selected user.');
     }
 
     // Validate WCAG rules are loaded
     if (!allRules.value || allRules.value.length === 0) {
       console.error('WCAG rules not loaded')
-      toast.error('WCAG rules not loaded. Please refresh the page.')
+      showError('WCAG rules not loaded. Please refresh the page.')
       return
     }
 
@@ -805,7 +819,7 @@ const loadAssessmentData = async (userId) => {
 
   } catch (error) {
     console.error('Error loading assessment data:', error)
-    toast.error(
+    showError(
       `Failed to load assessment data: ${error.message || 'Unknown error'}`,
     )
   } finally {

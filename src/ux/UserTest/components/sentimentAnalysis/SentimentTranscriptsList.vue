@@ -23,9 +23,7 @@
                   <v-icon v-else-if="region.sentiment === 'NEU'" color="blue">
                     mdi-emoticon-neutral-outline
                   </v-icon>
-                  <v-icon v-else color="red">
-                    mdi-emoticon-sad-outline
-                  </v-icon>
+                  <v-icon v-else color="red"> mdi-emoticon-sad-outline </v-icon>
                   <div class="text-caption">
                     {{ (region.confidence * 100).toFixed(2) }}%
                   </div>
@@ -58,7 +56,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
+import { formatTime } from '@/shared/utils/timeUtils'
 
 const props = defineProps({
   regions: {
@@ -67,21 +66,15 @@ const props = defineProps({
   },
   playSegment: {
     type: Function,
-    default: () => { },
+    default: () => {},
   },
   deleteRegion: {
     type: Function,
-    default: () => { },
+    default: () => {},
   },
-});
+})
 
-const selected = ref([]);
-
-const formatTime = (seconds) => {
-  const mins = Math.floor(seconds / 60)
-  const secs = Math.floor(seconds % 60)
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
-}
+const selected = ref([])
 </script>
 
 <style scoped>

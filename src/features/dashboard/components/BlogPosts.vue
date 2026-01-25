@@ -12,17 +12,17 @@
           color="primary"
           style="padding:1.5rem"
         />
-        Latest Blog Posts
+        {{ $t('Dashboard.latestBlogPosts') }}
       </div>
       <div class="d-flex align-center ga-2">
         <v-btn
           variant="text"
           size="small"
           color="primary"
-          @click="openBlog"
           target="_blank"
+          @click="openBlog"
         >
-          View Blog
+          {{ $t('Dashboard.viewBlog') }}
         </v-btn>
         <v-progress-circular
           v-if="loading"
@@ -93,6 +93,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+
+const loading = ref(false)
+const error = ref(null)
 
 const blogUrl = "https://blog-ruxailab.web.app";
 

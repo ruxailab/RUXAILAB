@@ -2,11 +2,12 @@
 # As from now node-16 is currently in beta for firebase functions
 # But if you want to run the beta you can change node:14-alpine to node:16-alpine
 # https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version
-FROM openjdk:11
+FROM eclipse-temurin:11-jdk
 
 # Instala Node.js
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install the firebase cli
 RUN npm install -g firebase-tools
@@ -21,11 +22,15 @@ RUN firebase setup:emulators:ui
 # This is the folder containing the firebase.json
 WORKDIR /firebase-emulator
 
+# Create a non-root user for running the emulator
+RUN useradd -m -u 1001 firebase
+
 # Copia los archivos de configuración de Firebase al contenedor
 COPY firebase.json .
 COPY firestore.rules .
 COPY firestore.indexes.json .
 COPY storage.rules .
+RUN touch /firebase-emulator/firebase-debug.log && chown firebase:firebase /firebase-emulator/firebase-debug.log
 
 # Expose the emulator ports
 # If you use non standard ports change them to the ones in your firebase.json
@@ -34,4 +39,5 @@ EXPOSE 9099 5001 8081 5002 9199 4000 4400 4500 9150 5007
 
 # When startup of the container is complete this is the command that will be executed
 # In our case we want to start the firebase emulator suite
+USER firebase
 CMD ["firebase", "emulators:start", "--project", "retlab-dev"]

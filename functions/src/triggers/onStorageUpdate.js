@@ -35,9 +35,14 @@ export const onStorageUpdate = functions.onStorageTrigger({
         const userData = doc.data();
         const userTestIds = Object.keys(userData.myTests || {});
 
+        // Parallelize file fetching for all test IDs
+        const filePromises = userTestIds.map(tid =>
+          bucket.getFiles({ prefix: `tests/${tid}` })
+        );
+        const fileResults = await Promise.all(filePromises);
+
         let totalBytes = 0;
-        for (const tid of userTestIds) {
-          const [testFiles] = await bucket.getFiles({ prefix: `tests/${tid}` });
+        for (const [testFiles] of fileResults) {
           for (const file of testFiles) {
             totalBytes += Number(file.metadata.size || 0);
           }

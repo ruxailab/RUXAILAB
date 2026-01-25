@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search sessions..."
+        :placeholder="t('pages.sessions.searchPlaceholder')"
         class="flex-grow-1"
       />
 
@@ -19,15 +19,17 @@
         class="search-btn"
         prepend-icon="mdi-filter-remove"
         :disabled="!hasActiveSessionFilters"
-        @click="() => {
-          searchSessions='';
-          selectedSessionStatusFilter=['all'];
-          selectedSessionOwnershipFilter='all';
-          selectedSessionEvaluatorFilter='all';
-          selectedSessionDateRange=[];
-        }"
+        @click="
+          () => {
+            searchSessions = ''
+            selectedSessionStatusFilter = ['all']
+            selectedSessionOwnershipFilter = 'all'
+            selectedSessionEvaluatorFilter = 'all'
+            selectedSessionDateRange = []
+          }
+        "
       >
-        Reset
+        {{ t('pages.sessions.reset') }}
       </v-btn>
 
       <!-- Toggle filters visibility -->
@@ -38,7 +40,9 @@
         size="small"
         @click="toggleFilters"
       >
-        <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        <v-icon>{{
+          showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
+        }}</v-icon>
       </v-btn>
     </div>
 
@@ -48,7 +52,7 @@
         <v-row dense>
           <!-- 👤 Ownership filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">{{ t('pages.sessions.ownership') }}</div>
             <v-select
               v-model="selectedSessionOwnershipFilter"
               :items="ownershipOptions"
@@ -62,7 +66,7 @@
 
           <!-- 👥 Evaluator filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Evaluator</div>
+            <div class="filter-label">{{ t('pages.sessions.evaluator') }}</div>
             <v-select
               v-model="selectedSessionEvaluatorFilter"
               :items="evaluatorOptions"
@@ -76,11 +80,10 @@
 
           <!-- 📅 Session date range filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Session date</div>
+            <div class="filter-label">{{ t('pages.sessions.sessionDate') }}</div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
               max-width="290px"
               min-width="290px"
             >
@@ -91,20 +94,31 @@
                   variant="outlined"
                   density="compact"
                   hide-details
-                  :placeholder="selectedSessionDateRange.length > 1
-                    ? `${new Date(selectedSessionDateRange[0]).toLocaleDateString()} - ${new Date(selectedSessionDateRange[1]).toLocaleDateString()}`
-                    : 'Select range'"
+                  :placeholder="
+                    selectedSessionDateRange.length > 1
+                      ? `${new Date(
+                          selectedSessionDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          selectedSessionDateRange[
+                            selectedSessionDateRange.length - 1
+                          ],
+                        ).toLocaleDateString()}`
+                      : t('pages.sessions.selectRange')
+                  "
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
               <!-- Vuetify date picker (supports range mode) -->
-              <v-date-picker v-model="selectedSessionDateRange" multiple="range" />
+              <v-date-picker
+                v-model="selectedSessionDateRange"
+                multiple="range"
+              />
             </v-menu>
           </v-col>
 
           <!-- ⚙️ Status filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">{{ t('pages.sessions.statusLabel') }}</div>
             <v-select
               v-model="selectedSessionStatusFilter"
               :items="sessionStatusOptions"
@@ -139,112 +153,131 @@
       color="grey-lighten-1"
       class="mb-2"
     />
-    <p class="text-h6">You don't have active sessions</p>
+    <p class="text-h6">{{ t('pages.sessions.noActiveSessions') }}</p>
   </div>
 </template>
 
-
 <script setup>
 // ===== Imports =====
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import List from '@/shared/components/tables/ListComponent.vue';
-import { METHOD_DEFINITIONS, STUDY_TYPES, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions';
-import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils';
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import List from '@/shared/components/tables/ListComponent.vue'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import {
+  getSessionStatus,
+  SESSION_STATUSES,
+} from '@/shared/utils/sessionsUtils'
+
+const { t } = useI18n()
+
+const props = defineProps({
+  sessions: {
+    type: Array,
+    default: () => [],
+  },
+})
 
 // ===== State and setup =====
-const store = useStore();
-const router = useRouter();
-
-const search = ref('');
-const activeSection = ref('dashboard');
-const filteredModeratedSessions = ref([]);
+const store = useStore()
+const router = useRouter()
+const activeSection = ref('dashboard')
 
 // ===== Filter options =====
 
 // Ownership dropdown options
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-];
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('pages.sessions.filters.allStudies') },
+  { value: 'mine', text: t('pages.sessions.filters.myStudies') },
+  { value: 'cooperator', text: t('pages.sessions.filters.whereICollaborate') },
+])
 
 // Filter visibility toggle
-const showFilters = ref(false);
-const toggleFilters = () => (showFilters.value = !showFilters.value);
+const showFilters = ref(false)
+const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 // Selected filter states
-const selectedSessionOwnershipFilter = ref('all');
-const selectedSessionEvaluatorFilter = ref('all');
-const selectedSessionStatusFilter = ref(['all']);
-const selectedSessionDateRange = ref([]);
-const searchSessions = ref('');
+const selectedSessionOwnershipFilter = ref('all')
+const selectedSessionEvaluatorFilter = ref('all')
+const selectedSessionStatusFilter = ref(['all'])
+const selectedSessionDateRange = ref([])
+const searchSessions = ref('')
 
 // Dynamically build evaluator dropdown based on sessions
 const evaluatorOptions = computed(() => {
-  const evaluatorsSet = new Set();
-  filteredModeratedSessions.value.forEach(s => evaluatorsSet.add(s.evaluator));
-  return [{ text: 'All', value: 'all' }, ...Array.from(evaluatorsSet).map(ev => ({ text: ev, value: ev }))];
-});
+  const evaluatorsSet = new Set()
+  props.sessions.forEach((s) => evaluatorsSet.add(s.evaluator))
+  return [
+    { text: t('common.all'), value: 'all' },
+    ...Array.from(evaluatorsSet).map((ev) => ({ text: ev, value: ev })),
+  ]
+})
 
 // Session status options
-const sessionStatusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'today', text: 'Today' },
-  { value: 'upcoming', text: 'Upcoming' },
-  { value: 'completed', text: 'Completed' },
-];
+const sessionStatusOptions = computed(() => [
+  { value: 'all', text: t('pages.sessions.filters.allStatuses') },
+  { value: 'today', text: t('pages.sessions.filters.today') },
+  { value: 'upcoming', text: t('pages.sessions.filters.upcoming') },
+  { value: 'completed', text: t('pages.sessions.filters.completed') },
+])
 
 // Whether filters are currently active (to enable/disable reset button)
 const hasActiveSessionFilters = computed(() => {
   return (
     searchSessions.value.length > 0 ||
-    (selectedSessionStatusFilter.value.length > 1 && !selectedSessionStatusFilter.value.includes('all')) ||
-    (selectedSessionEvaluatorFilter.value !== 'all' && selectedSessionEvaluatorFilter.value?.length > 0) ||
+    (selectedSessionStatusFilter.value.length > 1 &&
+      !selectedSessionStatusFilter.value.includes('all')) ||
+    (selectedSessionEvaluatorFilter.value !== 'all' &&
+      selectedSessionEvaluatorFilter.value?.length > 0) ||
     selectedSessionOwnershipFilter.value !== 'all' ||
     selectedSessionDateRange.value.length === 2
-  );
-});
+  )
+})
 
 // ===== Main session filtering logic =====
-const tests = computed(() => store.getters.tests || []);
-const user = computed(() => store.getters.user);
+const user = computed(() => store.getters.user)
 
 const filteredSessions = computed(() => {
-  return filteredModeratedSessions.value.filter(session => {
+  return props.sessions.filter((session) => {
     // 🔍 Search filter
     const matchesSearch =
       !searchSessions.value ||
-      session.testTitle.toLowerCase().includes(searchSessions.value.toLowerCase());
+      session.testTitle
+        .toLowerCase()
+        .includes(searchSessions.value.toLowerCase())
 
     // ⚙️ Status filter (based on test date)
-    const sessionStatus = getSessionStatus(session.testDate).status;
+    const sessionStatus = getSessionStatus(session.testDate).status
     const matchesStatus =
       !selectedSessionStatusFilter.value.length ||
       selectedSessionStatusFilter.value.includes('all') ||
-      selectedSessionStatusFilter.value.includes(sessionStatus);
+      selectedSessionStatusFilter.value.includes(sessionStatus)
 
     // 👤 Ownership filter
-    const isMine = session.testAdmin.userDocId === user.value?.id;
-    const isCooperator = session.userDocId === user.value?.id;
-    const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other';
+    const isMine = session.testAdmin.userDocId === user.value?.id
+    const isCooperator = session.userDocId === user.value?.id
+    const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other'
     const matchesOwnership =
       selectedSessionOwnershipFilter.value === 'all' ||
-      selectedSessionOwnershipFilter.value === ownership;
+      selectedSessionOwnershipFilter.value === ownership
 
     // 👥 Evaluator filter
     const matchesEvaluator =
       selectedSessionEvaluatorFilter.value === 'all' ||
-      selectedSessionEvaluatorFilter.value === session.evaluator;
+      selectedSessionEvaluatorFilter.value === session.evaluator
 
     // 📅 Date range filter
-    let inDateRange = true;
-    if (selectedSessionDateRange.value.length > 2 && session.testDate) {
-      const date = new Date(session.testDate);
-      const start = new Date(selectedSessionDateRange.value[0]);
-      const end = new Date(selectedSessionDateRange.value[selectedSessionDateRange.value.length - 1]);
-      inDateRange = date >= start && date <= end;
+    let inDateRange = true
+    if (selectedSessionDateRange.value.length > 1 && session.testDate) {
+      const date = new Date(session.testDate)
+      const start = new Date(selectedSessionDateRange.value[0])
+      const end = new Date(
+        selectedSessionDateRange.value[
+          selectedSessionDateRange.value.length - 1
+        ],
+      )
+      inDateRange = date >= start && date <= end
     }
 
     // ✅ Final inclusion condition
@@ -254,83 +287,35 @@ const filteredSessions = computed(() => {
       matchesOwnership &&
       matchesEvaluator &&
       inDateRange
-    );
-  });
-});
+    )
+  })
+})
 
 // ===== Navigation logic =====
 const goTo = (test) => {
   // Open MANUAL accessibility test view
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
-    const baseUrl = activeSection.value === 'studies' ? test.testDocId || test.id : test.id;
-    router.push(`/accessibility/manual/${baseUrl}`);
-    return;
+    const baseUrl =
+      activeSection.value === 'studies' ? test.testDocId || test.id : test.id
+    router.push(`/accessibility/manual/${baseUrl}`)
+    return
   }
 
   // Open AUTOMATIC accessibility test view
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
-    const baseUrl = activeSection.value === 'studies' ? test.testDocId || test.id : test.id;
-    router.push(`/accessibility/automatic/${baseUrl}`);
-    return;
+    const baseUrl =
+      activeSection.value === 'studies' ? test.testDocId || test.id : test.id
+    router.push(`/accessibility/automatic/${baseUrl}`)
+    return
   }
 
   // Navigate to live session view if available today
-  const canNavigateToSession = (testDate) => getSessionStatus(testDate) === SESSION_STATUSES.TODAY;
+  const canNavigateToSession = (testDate) =>
+    getSessionStatus(testDate) === SESSION_STATUSES.TODAY
   if (canNavigateToSession(test.testDate)) {
-    router.push(`testview/${test.id}/${user.value.id}`);
+    router.push(`testview/${test.id}/${user.value.id}`)
   }
-};
-
-// ===== Data fetching & filtering =====
-
-// Build moderated session list (tests of type MODERATED)
-const filterModeratedSessions = () => {
-  const cooperatorArray = [];
-
-  tests.value.forEach((testObj) => {
-    if (!testObj) return;
-
-    // If user is a cooperator
-    const cooperatorObj = testObj.cooperators?.find(
-      (coop) => coop.userDocId === user.value?.id
-    );
-    if (cooperatorObj && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
-      cooperatorArray.push({
-        ...cooperatorObj,
-        testTitle: testObj.testTitle,
-        testAdmin: testObj.testAdmin,
-        id: testObj.id,
-        testType: testObj.testType,
-        subType: testObj.subType,
-        testDescription: testObj.testDescription,
-        evaluator: cooperatorObj.email,
-      });
-    }
-
-    // If user is test admin, include all cooperators
-    if (testObj.testAdmin?.userDocId === user.value?.id && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
-      testObj.cooperators?.forEach((coop) => {
-        cooperatorArray.push({
-          ...coop,
-          testTitle: testObj.testTitle,
-          testAdmin: testObj.testAdmin,
-          id: testObj.id,
-          testType: testObj.testType,
-          subType: testObj.subType,
-          evaluator: coop.email,
-          testDescription: testObj.testDescription,
-        });
-      });
-    }
-  });
-
-  filteredModeratedSessions.value = cooperatorArray;
-};
-
-// ===== Lifecycle hooks =====
-onMounted(() => {
-  filterModeratedSessions();
-});
+}
 </script>
 
 <style scoped>
@@ -353,7 +338,7 @@ onMounted(() => {
   min-width: 140px;
   height: 40px;
   font-weight: 600;
-  letter-spacing: .3px;
+  letter-spacing: 0.3px;
 }
 
 /* Filter label (small uppercase label above inputs) */
@@ -361,7 +346,7 @@ onMounted(() => {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   margin-bottom: 4px;
   line-height: 1.15;
   color: #475569;

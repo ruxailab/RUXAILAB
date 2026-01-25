@@ -24,7 +24,7 @@
                 <v-col cols="6">
                   <v-text-field
                     v-model="localOption.text"
-                    max-length="100"
+                    maxlength="100"
                     counter="100"
                     :label="$t('common.text')"
                     variant="outlined"
@@ -54,9 +54,11 @@
                   <v-text-field
                     v-model="localOption.description"
                     variant="outlined"
-                    max-length="250"
+                    maxlength="250"
                     counter="250"
                     :label="$t('HeuristicsTable.placeholders.optionDescription')"
+                    :error="localOption.description && localOption.description.length >= 250"
+                    :error-messages="localOption.description && localOption.description.length >= 250 ? ['Maximum 250 characters reached'] : []"
                   />
                 </v-col>
               </v-row>
@@ -155,13 +157,10 @@ const validate = async () => {
   if (valid) {
     const optionToSave = { ...localOption.value };
     if (!localHasValue.value) optionToSave.value = null;
-    console.log('Emitting addOption:', optionToSave);
     emit('addOption', optionToSave);
     emit('change');
     emit('update:dialog', false);
     resetVal();
-  } else {
-    console.log('Form validation failed');
   }
 };
 

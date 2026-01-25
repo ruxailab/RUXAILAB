@@ -4,7 +4,7 @@
       lg="12"
       class="px-0 py-5"
     >
-      <v-card class="elevation-2 rounded-lg pa-6">
+      <v-card class="elevation-2 rounded-lg pa-md-6">
         <v-row
           align="center"
           class="pa-4"
@@ -23,15 +23,15 @@
           <v-col
             cols="12"
             sm="6"
-            class="text-right"
+            class="text-sm-right"
           >
             <v-btn
               color="primary"
               variant="flat"
               size="large"
-              class="px-6 text-capitalize"
+              class="text-capitalize w-100 w-md-auto"
               rounded="lg"
-              @click="() => {dialog = true; task = new Task();}"
+              @click="() => { dialog = true; task = new Task(); }"
             >
               <v-icon start>
                 mdi-plus-circle
@@ -65,7 +65,10 @@
                 </v-icon>
                 {{ getTaskTypeLabel(item.taskType) }}
               </v-chip>
-              <span v-else class="text-grey-400">{{ $t('UserTestTable.headers.na') }}</span>
+              <span
+                v-else
+                class="text-grey-400"
+              >{{ $t('UserTestTable.headers.na') }}</span>
             </template>
 
             <template #item.taskDescription="{ item }">
@@ -175,7 +178,7 @@ const deleteItem = async (item) => {
   if (confirm('Are you sure you want to delete this task?')) {
     try {
       allTasks.value.splice(index, 1);
-      await store.dispatch('setTasks', allTasks.value);
+      await store.dispatch('UserStudy/setTasks', allTasks.value);
     } catch (error) {
       console.error('Error deleting task:', error.message);
     }
@@ -190,7 +193,7 @@ const addTask = async (newTask) => {
     } else {
       allTasks.value.push(newTask.toFirestore());
     }
-    await store.dispatch('setTasks', allTasks.value);
+    await store.dispatch('UserStudy/setTasks', allTasks.value);
     task.value = new Task();
     dialog.value = false;
   } catch (error) {
@@ -200,7 +203,7 @@ const addTask = async (newTask) => {
 
 const setAllTasks = () => {
   allTasks.value = Object.assign(
-    store.getters.tasks,
+    store.getters['UserStudy/tasks'],
     store.state.Tests.Test.testStructure.userTasks
   );
 };
@@ -213,7 +216,8 @@ const getTaskTypeColor = (taskType) => {
     'post-test': 'secondary',
     'post-form': 'success',
     'nasa-tlx': 'warning',
-    'sus': 'info'
+    'sus': 'info',
+    'sart': 'deep blue'
   };
   return colors[taskType] || 'grey';
 };
@@ -225,7 +229,8 @@ const getTaskTypeIcon = (taskType) => {
     'post-test': 'mdi-clipboard-check',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket',
-    'sus': 'mdi-account-check'
+    'sus': 'mdi-account-check',
+    'sart': 'mdi-chart-areaspline'
   };
   return icons[taskType] || 'mdi-help-circle';
 };
@@ -237,7 +242,8 @@ const getTaskTypeLabel = (taskType) => {
     'post-test': t('switches.postTest'),
     'post-form': t('switches.postForm'),
     'nasa-tlx': t('switches.nasa'),
-    'sus': t('switches.sus')
+    'sus': t('switches.sus'),
+    'sart': t('switches.sart')
   };
   return labels[taskType] || 'Unknown';
 };

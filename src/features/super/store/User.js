@@ -29,35 +29,34 @@ export default {
       state.users = payload
     },
     REMOVE_USER(state, userId) {
-      state.users = state.users.filter(user => user.id !== userId)
+      state.users = state.users.filter((user) => user.id !== userId)
     },
-
   },
 
   actions: {
-
-
     async getAllUsers({ commit }) {
       try {
         const res = await userController.readAll()
         commit('SET_USERS', res)
       } catch (e) {
-        console.error(e)
+        return e
       }
     },
 
     async updateLevel({ commit }, { data }) {
       commit('setLoading', true)
       try {
-        await userController.updateLevel(data.uid, data.customClaims.accessLevel)
+        await userController.updateLevel(
+          data.uid,
+          data.customClaims.accessLevel,
+        )
         const updatedUsers = await userController.readAll()
         commit('SET_USERS', updatedUsers)
       } catch (e) {
-        console.error(e)
+        return e
       } finally {
         commit('setLoading', false)
       }
     },
-
   },
 }

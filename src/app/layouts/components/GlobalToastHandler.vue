@@ -5,34 +5,27 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
+import { showSuccess, showError, showInfo, showWarning, showToast } from '../../../shared/utils/toast';
 
 const store = useStore()
-const toast = useToast()
 
 const toastMessage = computed(() => store.state.toastMessage)
 const toastType = computed(() => store.state.toastType)
+
+const toastHelpers = {
+  error: showError,
+  success: showSuccess,
+  info: showInfo,
+  warning: showWarning,
+  default: showToast,
+}
 
 watch(
   [toastMessage, toastType],
   ([message, type]) => {
     if (message) {
-      switch (type) {
-        case 'error':
-          toast.error(message)
-          break
-        case 'success':
-          toast.success(message)
-          break
-        case 'info':
-          toast.info(message)
-          break
-        case 'warning':
-          toast.warning(message)
-          break
-        default:
-          toast(message)
-      }
+      const helper = toastHelpers[type] || showToast
+      helper(message)
       store.commit('RESET_TOAST')
     }
   },

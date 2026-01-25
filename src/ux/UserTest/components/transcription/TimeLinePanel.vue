@@ -3,7 +3,7 @@
     <!---------------------------------------------------------->
     <!-------------------------- Debug ------------------------->
     <!---------------------------------------------------------->
-    <!-- <div>Answer Doc ID: {{ answerDocId }}</div>
+    <!-- <div>Answer Doc ID: {{ answersDocId }}</div>
     <div>User Doc ID: {{ userDocId }}</div>
     <div>Task ID: {{ taskId }}</div> -->
     <!-- <h3>Timeline</h3>
@@ -41,17 +41,17 @@
         <!-- Provider -->
         <v-col cols="12" md="4" lg="4">
           <v-select
+            v-model="selectedProvider"
             label="Provider"
             :items="providers"
             item-title="label"
             item-value="value"
-            v-model="selectedProvider"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-robot-outline"
             hide-details
             :menu-props="{ maxHeight: 260 }"
-            @update:modelValue="
+            @update:model-value="
               (val) => {
                 selectedProvider = val
                 selectedModel = modelsByProvider[val]?.[0] || ''
@@ -63,11 +63,11 @@
         <!-- Model -->
         <v-col cols="12" md="4" lg="4">
           <v-select
+            v-model="selectedModel"
             label="Model"
             :items="modelOptions"
             item-title="label"
             item-value="value"
-            v-model="selectedModel"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-cube-outline"
@@ -100,7 +100,7 @@
     <!-- Runs list -->
     <TranscriptionList
       v-if="transcriptSegments.length"
-      :transcriptSegments="transcriptSegments"
+      :transcript-segments="transcriptSegments"
     />
 
     <!-- Empty state -->
@@ -137,7 +137,7 @@ import { transcribe } from '@/app/services/transcription/TranscriptionService'
 
 // JS props (no types)
 const props = defineProps({
-  answerDocId: { type: String, default: null },
+  answersDocId: { type: String, default: null },
   userDocId: { type: String, default: null },
   taskId: { type: [String, Number], required: true },
   audioUrlEvaluator: { type: String, default: null },
@@ -208,15 +208,10 @@ async function transcribeSession() {
     // Clear previous segments
     transcriptSegments.value = []
 
-    // console.log('🔊 Starting transcription', props.audioUrlEvaluator)
-    // console.log('🔊 Starting transcription', props.audioUrlModerator)
-
     const [evaluator, moderator] = await Promise.all([
       transcribeAudio(provider, model, props.audioUrlEvaluator, 'evaluator'),
       transcribeAudio(provider, model, props.audioUrlModerator, 'moderator'),
     ])
-    // console.log('Evaluator Segments:', evaluator)
-    // console.log('Moderator Segments:', moderator)
     const evaluatorSegs = evaluator.segments
     const moderatorSegs = moderator.segments
 
@@ -447,7 +442,7 @@ async function transcribeSession() {
 
     // TODO: Save transcription to backend and get a transcription ID
     const result = await transcriptionController.create({
-      answerDocId: props.answerDocId,
+      answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: props.taskId,
       provider,
@@ -471,11 +466,10 @@ async function transcribeSession() {
         })),
       },
     })
-    console.log('✅ Transcription saved:', result)
 
     // result.id should be the new transcription id
     await answerController.updateTaskTranscriptionMeta({
-      answerDocId: props.answerDocId,
+      answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: props.taskId,
       latestId: result.id,
@@ -495,7 +489,6 @@ async function transcribeSession() {
       text: 'Error during transcription. Please try again.',
       color: 'red',
     }
-    console.error('❌ Error during session transcription:', error)
   } finally {
     isTranscribing.value = false
   }
@@ -504,9 +497,6 @@ async function transcribeSession() {
 async function transcribeAudio(provider, model, audioUrl, role) {
   try {
     if (!audioUrl) {
-      console.warn(
-        `⚠️ No audio URL provided for ${role}. Skipping transcription.`,
-      )
       return []
     }
 

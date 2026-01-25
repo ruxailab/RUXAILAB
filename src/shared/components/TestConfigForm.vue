@@ -2,16 +2,12 @@
   <v-row>
     <v-col cols="12">
       <TextareaForm
-        v-model="welcomeMessageComputed"
-        :title="$t('ModeratedTest.welcomeMessage')"
-        :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
-      />
+v-model="welcomeMessageComputed" :title="$t('ModeratedTest.welcomeMessage')"
+        :subtitle="$t('ModeratedTest.welcomeMessageDescription')" />
 
       <TextareaForm
-        v-model="finalMessageComputed"
-        :title="$t('ModeratedTest.finalMessage')"
-        :subtitle="$t('ModeratedTest.finalMessageDescription')"
-      />
+v-model="finalMessageComputed" :title="$t('ModeratedTest.finalMessage')"
+        :subtitle="$t('ModeratedTest.finalMessageDescription')" />
     </v-col>
   </v-row>
 </template>

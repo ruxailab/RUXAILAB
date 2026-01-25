@@ -89,8 +89,8 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
 import TextareaForm from '@/shared/components/TextareaForm'
+import { showInfo } from '@/shared/utils/toast'
 
 const props = defineProps({
   questionIndex: {
@@ -109,7 +109,6 @@ const emit = defineEmits(['update-description'])
 
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
 
 const dialog = ref(false)
 const desc = ref({
@@ -135,9 +134,15 @@ const testAnswerDocLength = computed(() => {
   return Object.keys(doc.heuristicAnswers).length
 })
 
+const stripHtml = (value) => {
+  const el = document.createElement('div')
+  el.innerHTML = value || ''
+  return (el.textContent || '').trim()
+}
+
 const validate = async () => {
   const { valid } = await form.value.validate()
-  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
     store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
@@ -148,7 +153,7 @@ const validate = async () => {
     emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
-    toast.info(t('alerts.addDescription'))
+    showInfo('alerts.addDescription')
   }
 }
 
@@ -174,7 +179,7 @@ const editSetup = (i) => {
 
 const submitEdit = async () => {
   const { valid } = await form.value.validate()
-  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
     store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
@@ -185,7 +190,7 @@ const submitEdit = async () => {
     emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
-    toast.info(t('alerts.addDescription'))
+    showInfo('alerts.addDescription')
   }
 }
 

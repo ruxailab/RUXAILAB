@@ -17,13 +17,10 @@
               <v-icon>mdi-camera</v-icon>
             </v-btn>
           </template>
-          <span>Start Recording</span>
-        </v-tooltip>
-        <v-tooltip
-          v-if="recording"
-          location="bottom"
-        >
-          <template #activator="{ props }">
+<span>Start Recording</span>
+</v-tooltip>
+<v-tooltip v-if="recording" location="bottom">
+  <template #activator="{ props }">
             <v-btn
               class="ml-4 my-2 mr-auto"
               color="red"
@@ -36,27 +33,35 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Stop Recording</span>
-        </v-tooltip>
-      </v-row>
-    </v-col> -->
+  <span>Stop Recording</span>
+</v-tooltip>
+</v-row>
+</v-col> -->
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import { showError } from '@/shared/utils/toast'
 
 const props = defineProps({
   testId: {
-    type: String
+    type: String,
+  },
+  userDocId: {
+    type: String,
   },
   taskIndex: {
-    type: Number
+    type: Number,
   },
 })
 
@@ -64,9 +69,9 @@ const emit = defineEmits(['showLoading', 'stopShowLoading'])
 
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
-
-const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
+const currentUserTestAnswer = computed(
+  () => store.getters.currentUserTestAnswer,
+)
 
 const recording = ref(false)
 const videoStream = ref(null)
@@ -77,22 +82,25 @@ const recordingTaskIndex = ref(null) // Store the task index when recording star
 
 async function hasCamera() {
   try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    return devices.some(device => device.kind === "videoinput");
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    return devices.some((device) => device.kind === 'videoinput')
   } catch (err) {
-    console.error("Erro ao verificar dispositivos:", err);
-    return false;
+    console.error('Erro ao verificar dispositivos:', err)
+    return false
   }
 }
 
 const startRecording = async () => {
   try {
-    const cameraAvailable = await hasCamera();
-    if (!cameraAvailable) return;
+    const cameraAvailable = await hasCamera()
+    if (!cameraAvailable) return
 
     recording.value = true
     recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
-    console.log('VideoRecorder: Recording started for task index:', props.taskIndex);
+    console.log(
+      'VideoRecorder: Recording started for task index:',
+      props.taskIndex,
+    )
     videoStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
     })
@@ -108,7 +116,7 @@ const startRecording = async () => {
   } catch (e) {
     recording.value = false
     console.error(e)
-    toast.error(t('errors.globalError'))
+    showError('errors.globalError')
   }
 
   try {
@@ -118,30 +126,42 @@ const startRecording = async () => {
         type: 'video/webm',
       })
       const storage = getStorage()
-      const correctTaskIndex = recordingTaskIndex.value;
+      const correctTaskIndex = recordingTaskIndex.value
       const storageReference = storageRef(
         storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
+        `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
       )
       await uploadBytes(storageReference, videoBlob)
 
       recordedVideo.value = await getDownloadURL(storageReference)
-      console.log('webcam url =>', correctTaskIndex, recordedVideo.value);
-      console.log('Tasks array:', currentUserTestAnswer.value.tasks);
-      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length);
-      console.log('Task at index:', currentUserTestAnswer.value.tasks?.[correctTaskIndex]);
-      
+      console.log('webcam url =>', correctTaskIndex, recordedVideo.value)
+      console.log('Tasks array:', currentUserTestAnswer.value.tasks)
+      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length)
+      console.log(
+        'Task at index:',
+        currentUserTestAnswer.value.tasks?.[correctTaskIndex],
+      )
+
       await store.dispatch('updateTaskMediaUrl', {
         taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.webcam,
-        url: recordedVideo.value
-      });
+        url: recordedVideo.value,
+      })
 
       // Add safety check before setting the property
-      if (currentUserTestAnswer.value.tasks && currentUserTestAnswer.value.tasks[correctTaskIndex]) {
-        currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL = recordedVideo.value;
+      if (
+        currentUserTestAnswer.value.tasks &&
+        currentUserTestAnswer.value.tasks[correctTaskIndex]
+      ) {
+        currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL =
+          recordedVideo.value
       } else {
-        console.error('Task not found at index:', correctTaskIndex, 'Available tasks:', currentUserTestAnswer.value.tasks?.length);
+        console.error(
+          'Task not found at index:',
+          correctTaskIndex,
+          'Available tasks:',
+          currentUserTestAnswer.value.tasks?.length,
+        )
       }
 
       videoStream.value.getTracks().forEach((track) => track.stop())
@@ -153,7 +173,7 @@ const startRecording = async () => {
     mediaRecorder.value.start()
   } catch (e) {
     console.error(e)
-    toast.error(t('errors.globalError'))
+    showError('errors.globalError')
   }
 }
 

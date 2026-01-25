@@ -50,7 +50,8 @@
               <v-radio-group v-model="selectedCompliance" class="mb-4">
                 <v-row dense>
                   <v-col v-for="level in complianceLevels" :key="level.value" cols="12" sm="6" md="4" class="pa-1">
-                    <v-card :class="[
+                    <v-card
+:class="[
                       'compliance-card cursor-pointer',
                       selectedCompliance === level.value ? 'selected-compliance' : ''
                     ]" :variant="selectedCompliance === level.value ? 'flat' : 'outlined'" elevation="1" hover
@@ -58,7 +59,8 @@
                       <v-card-text class="pa-3">
                         <div class="d-flex align-center mb-2">
                           <v-radio :value="level.value" :color="level.color" hide-details class="mr-2" readonly />
-                          <v-chip :color="level.color"
+                          <v-chip
+:color="level.color"
                             :variant="selectedCompliance === level.value ? 'flat' : 'outlined'" size="small"
                             class="font-weight-bold">
                             {{ level.value }}
@@ -104,12 +106,14 @@
             </v-card-text>
 
             <v-card-actions class="pa-4 pt-2">
-              <v-btn variant="outlined" :disabled="isLoading" prepend-icon="mdi-refresh" size="small"
+              <v-btn
+variant="outlined" :disabled="isLoading" prepend-icon="mdi-refresh" size="small"
                 @click="resetToDefaults">
                 Reset
               </v-btn>
               <v-spacer />
-              <v-btn color="primary" :loading="isLoading" :disabled="!selectedCompliance" append-icon="mdi-arrow-right"
+              <v-btn
+color="primary" :loading="isLoading" :disabled="!selectedCompliance" append-icon="mdi-arrow-right"
                 @click="saveComplianceAndContinue">
                 Continue
               </v-btn>
@@ -138,7 +142,8 @@
               </v-alert>
 
               <!-- Validation Error Alert -->
-              <v-alert v-if="showValidationErrors && validationErrors.length > 0" color="error" variant="tonal"
+              <v-alert
+v-if="showValidationErrors && validationErrors.length > 0" color="error" variant="tonal"
                 class="mb-4" density="compact">
                 <template #prepend>
                   <v-icon size="18">
@@ -156,9 +161,11 @@
               </v-alert>
 
               <!-- Compact Principle Tabs -->
-              <v-tabs v-model="selectedPrincipleTab" class="mb-3" color="primary" slider-color="primary" show-arrows
+              <v-tabs
+v-model="selectedPrincipleTab" class="mb-3" color="primary" slider-color="primary" show-arrows
                 density="compact">
-                <v-tab v-for="(principle, idx) in filteredPrinciples" :key="principle.id || idx" class="text-capitalize"
+                <v-tab
+v-for="(principle, idx) in filteredPrinciples" :key="principle.id || idx" class="text-capitalize"
                   size="small">
                   <v-icon :color="getPrincipleIcon(idx).color" class="mr-1" size="16">
                     {{ getPrincipleIcon(idx).icon }}
@@ -173,10 +180,12 @@
                   <v-window-item v-for="(principle, pIdx) in filteredPrinciples" :key="principle.id || pIdx">
                     <v-card variant="outlined" class="mb-3">
                       <v-list density="compact">
-                        <v-list-item v-for="(guideline) in principle.Guidelines || []" :key="guideline.id" class="pa-2"
+                        <v-list-item
+v-for="(guideline) in principle.Guidelines || []" :key="guideline.id" class="pa-2"
                           :class="{ 'guideline-error': isGuidelineInvalid(guideline.id) }">
                           <template #prepend>
-                            <v-checkbox v-model="selectedGuidelines" :value="guideline.id" hide-details
+                            <v-checkbox
+v-model="selectedGuidelines" :value="guideline.id" hide-details
                               density="compact" color="primary" @update:model-value="onGuidelineCheck(guideline.id)" />
                           </template>
 
@@ -193,7 +202,8 @@
                           <div
                             v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
                             class="mt-2">
-                            <v-select v-model="selectedRulesByGuideline[guideline.id]"
+                            <v-select
+v-model="selectedRulesByGuideline[guideline.id]"
                               :items="guideline.rules.map(r => ({ title: r.title, value: r.id }))" item-title="title"
                               item-value="value" label="Select specific rules (required)" multiple chips clearable
                               density="compact" variant="outlined" hide-details class="rules-select"
@@ -236,7 +246,8 @@
                 Back
               </v-btn>
               <v-spacer />
-              <v-btn color="primary" :loading="isLoading" :disabled="!isValidConfiguration"
+              <v-btn
+color="primary" :loading="isLoading" :disabled="!isValidConfiguration"
                 append-icon="mdi-content-save" @click="saveConfiguration">
                 Save Config
               </v-btn>
@@ -251,13 +262,17 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
-import { useToast } from 'vue-toastification'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import {
+  showSuccess,
+  showError,
+  showInfo,
+} from '@/shared/utils/toast'
+
 
 const route = useRoute()
 const store = useStore()
 const router = useRouter()
-const toast = useToast()
 const testId = ref(route.params.testId || route.params.id || '');
 
 console.log('AccessibilityConfig: Route params:', route.params)
@@ -458,11 +473,11 @@ const saveComplianceAndContinue = async () => {
     // Pre-select all guidelines and rules based on compliance level
     preselectGuidelinesForComplianceLevel()
 
-    toast.success(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
+    showSuccess(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
     step.value = 2
   } catch (err) {
     console.log(err)
-    toast.error('Failed to save compliance level')
+    showError('Failed to save compliance level')
   } finally {
     console.log("Saving")
     isLoading.value = false
@@ -477,7 +492,7 @@ const saveConfiguration = async () => {
   await new Promise(resolve => setTimeout(resolve, 100))
 
   if (!isValidConfiguration.value) {
-    toast.error('Please fix validation errors before saving')
+    showError('Please fix validation errors before saving')
     return
   }
 
@@ -524,7 +539,7 @@ const saveConfiguration = async () => {
     })
 
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
-    toast.success(`WCAG ${selectedCompliance.value} configuration saved!`)
+    showSuccess(`WCAG ${selectedCompliance.value} configuration saved!`)
 
     // Optionally redirect to assessment page after a delay
     setTimeout(() => {
@@ -534,7 +549,7 @@ const saveConfiguration = async () => {
   } catch (err) {
     console.error('Failed to save configuration:', err)
     error.value = 'Failed to save configuration. Please try again.'
-    toast.error('Failed to save configuration')
+    showError('Failed to save configuration')
   } finally {
     isLoading.value = false
   }
@@ -608,14 +623,14 @@ const resetToDefaults = () => {
     // If we're on step 2, pre-select guidelines for the compliance level
     preselectGuidelinesForComplianceLevel()
     success.value = 'Configuration reset to defaults with pre-selected guidelines'
-    toast.info('Configuration reset to defaults with pre-selected guidelines')
+    showInfo('Configuration reset to defaults with pre-selected guidelines')
   } else {
     // If we're on step 1, clear selections and go back to step 1
     selectedGuidelines.value = []
     selectedRulesByGuideline.value = {}
     step.value = 1
     success.value = 'Configuration reset to defaults'
-    toast.info('Configuration reset to defaults')
+    showInfo('Configuration reset to defaults')
   }
 }
 
