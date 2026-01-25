@@ -30,6 +30,15 @@
       "instructions": "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
       "reset_button": "Envoyer le lien de réinitialisation",
       "back_to_signin": "Retour à la connexion"
+    },
+    "passwordStrength": "Force du mot de passe",
+    "number": "Numéro",
+    "strength": {
+      "veryWeak": "Très faible",
+      "weak": "Faible",
+      "fair": "Moyen",
+      "good": "Bon",
+      "strong": "Fort"
     }
   },
   "common": {
