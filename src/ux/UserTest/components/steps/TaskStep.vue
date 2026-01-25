@@ -353,7 +353,7 @@
             <TamForm1
               v-model="localTamAnswers"
               :task-index="taskIndex"
-              @update:model-value="val => emit('update:tamAnswers', val)"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
             />
           </div>
 
@@ -362,7 +362,7 @@
             <TamForm2
               v-model="localTamAnswers"
               :task-index="taskIndex"
-              @update:model-value="val => emit('update:tamAnswers', val)"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
             />
           </div>
 
@@ -371,7 +371,7 @@
             <TamForm3
               v-model="localTamAnswers"
               :task-index="taskIndex"
-              @update:model-value="val => emit('update:tamAnswers', val)"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
             />
           </div>
 
@@ -383,7 +383,18 @@
           </div>
           <v-row justify="end">
             <v-col cols="12">
-              <p v-if="(task?.taskType === 'sus' || task?.taskType === 'tam-1' || task?.taskType === 'tam-2' || task?.taskType === 'tam-3' || task?.taskType === 'sart' || task?.taskType === 'nasa-tlx') && doneTaskDisabled" class="text-error mb-4">
+              <p
+                v-if="
+                  (task?.taskType === 'sus' ||
+                    task?.taskType === 'tam-1' ||
+                    task?.taskType === 'tam-2' ||
+                    task?.taskType === 'tam-3' ||
+                    task?.taskType === 'sart' ||
+                    task?.taskType === 'nasa-tlx') &&
+                  doneTaskDisabled
+                "
+                class="text-error mb-4"
+              >
                 Please answer all questions before continuing.
               </p>
               <v-btn
@@ -437,20 +448,20 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import TipButton from '@/ux/UserTest/components/TipButton.vue';
-import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
-import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue';
-import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue';
-import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
-import Timer from '@/ux/UserTest/components/Timer.vue';
-import SusForm from '@/ux/UserTest/SusForm.vue';
-import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
-import TamForm1 from '@/ux/UserTest/components/TamForm1.vue';
-import TamForm2 from '@/ux/UserTest/components/TamForm2.vue';
-import TamForm3 from '@/ux/UserTest/components/TamForm3.vue';
-import sartForm from '@/ux/UserTest/components/sartForm.vue';
+import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
+import ShowInfo from '@/shared/components/ShowInfo.vue'
+import TipButton from '@/ux/UserTest/components/TipButton.vue'
+import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
+import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue'
+import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
+import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
+import Timer from '@/ux/UserTest/components/Timer.vue'
+import SusForm from '@/ux/UserTest/SusForm.vue'
+import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
+import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
+import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
+import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
+import sartForm from '@/ux/UserTest/components/sartForm.vue'
 
 const props = defineProps({
   task: Object,
@@ -488,8 +499,8 @@ const emit = defineEmits([
   'update:susAnswers',
   'update:nasaTlxAnswers',
   'update:tamAnswers',
-  'update:sartAnswers'
-]);
+  'update:sartAnswers',
+])
 
 onBeforeUnmount(() => {
   if (timerInterval) {
@@ -504,15 +515,15 @@ const localSusAnswers = computed({
 })
 
 const getTamInitialStructure = () => {
-  const taskType = props.task?.taskType;
-  
+  const taskType = props.task?.taskType
+
   if (taskType === 'tam-1') {
     return {
       perceivedUsefulness: new Array(10).fill(undefined),
       perceivedEaseOfUse: new Array(10).fill(undefined),
       attitudeTowardUsing: new Array(5).fill(undefined),
-      actualSystemUse: new Array(2).fill(undefined)
-    };
+      actualSystemUse: new Array(2).fill(undefined),
+    }
   } else if (taskType === 'tam-2') {
     return {
       intentionToUse: new Array(2).fill(undefined),
@@ -523,8 +534,8 @@ const getTamInitialStructure = () => {
       image: new Array(3).fill(undefined),
       jobRelevance: new Array(2).fill(undefined),
       outputQuality: new Array(2).fill(undefined),
-      resultDemonstrability: new Array(4).fill(undefined)
-    };
+      resultDemonstrability: new Array(4).fill(undefined),
+    }
   } else if (taskType === 'tam-3') {
     return {
       perceivedUsefulness: new Array(3).fill(undefined),
@@ -543,18 +554,25 @@ const getTamInitialStructure = () => {
       perceivedEnjoyment: new Array(3).fill(undefined),
       objectiveUsability: new Array(2).fill(undefined),
       experience: new Array(2).fill(undefined),
-      voluntariness: new Array(2).fill(undefined)
-    };
+      voluntariness: new Array(2).fill(undefined),
+    }
   }
-  return {};
-};
+  return {}
+}
 
 const localTamAnswers = computed({
   get: () => props.tamAnswers || getTamInitialStructure(),
-  set: (val) => emit('update:tamAnswers', val)
-});
+  set: (val) => emit('update:tamAnswers', val),
+})
 
-const VALIDATION_REQUIRED_TYPES = new Set(['sus', 'tam-1', 'tam-2', 'tam-3', 'sart', 'nasa-tlx']);
+const VALIDATION_REQUIRED_TYPES = new Set([
+  'sus',
+  'tam-1',
+  'tam-2',
+  'tam-3',
+  'sart',
+  'nasa-tlx',
+])
 
 const shouldDisableFinishButton = computed(() => {
   const taskType = props.task?.taskType
@@ -574,8 +592,6 @@ function onUpdateSart(val) {
   localSartAnswers.value = val
   emit('update:sartAnswers', val)
 }
-
-const rawLink = computed(() => props.task?.taskLink || props.taskLink)
 
 const hasAnyRecording = computed(() => {
   return (
@@ -672,7 +688,7 @@ function handleShowPostForm(userCompleted) {
 
   // Show post-task form for all validated task types
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
-    stage.value = 3;
+    stage.value = 3
   } else {
     emitDoneOrCouldNotFinish(finalTime)
   }

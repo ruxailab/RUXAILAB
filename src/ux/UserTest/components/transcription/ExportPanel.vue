@@ -222,6 +222,7 @@
                 <strong>User:</strong> {{ pdfMeta.user || '-' }}
               </div>
 
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div class="mt-4" v-html="pdfSummaryHtml"></div>
 
               <div v-for="(run, i) in previewRuns" :key="run.id" class="mt-6">
@@ -509,7 +510,6 @@ function cleanRunForJson(run) {
 
 /* Build simple rows for the HTML table preview */
 function buildPreviewRows(run) {
-  const rows = []
   const ev = (run?.evaluator?.segments || []).map((s, idx) => ({
     key: `e-${idx}`,
     role: 'evaluator',
