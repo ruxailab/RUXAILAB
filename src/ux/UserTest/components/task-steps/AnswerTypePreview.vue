@@ -246,6 +246,70 @@
       </div>
     </div>
 
+    <!-- TAM-1 Preview -->
+    <div v-else-if="taskType === 'tam-1'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">TAM-1: Technology Acceptance Model (Basic)</div>
+        <div class="text-body-2 text-grey-darken-1 mb-3">10 items across 2 dimensions</div>
+        
+        <!-- Dimension 1 -->
+        <div class="tam-dimension mb-4">
+          <div class="text-body-2 font-weight-600 mb-2">Perceived Usefulness (5 items)</div>
+          <div class="tam-item mb-2">
+            <div class="text-body-2 mb-2">1. Using the system improves my job performance.</div>
+            <v-radio-group readonly inline density="compact" class="tam-radio-group">
+              <v-radio v-for="n in 5" :key="`pu-${n}`" :value="n" :label="`${n}`" density="compact" />
+            </v-radio-group>
+          </div>
+        </div>
+
+        <!-- Dimension 2 -->
+        <div class="tam-dimension">
+          <div class="text-body-2 font-weight-600 mb-2">Perceived Ease of Use (5 items)</div>
+          <div class="tam-item">
+            <div class="text-body-2 mb-2">6. The system is easy to use.</div>
+            <v-radio-group readonly inline density="compact" class="tam-radio-group">
+              <v-radio v-for="n in 5" :key="`eu-${n}`" :value="n" :label="`${n}`" density="compact" />
+            </v-radio-group>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAM-2 Preview -->
+    <div v-else-if="taskType === 'tam-2'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">TAM-2: Technology Acceptance Model (Extended)</div>
+        <div class="text-body-2 text-grey-darken-1 mb-3">25 items across 7 dimensions</div>
+        
+        <div class="tam-dimensions-grid">
+          <div v-for="(dim, idx) in ['Perceived Usefulness', 'Perceived Ease of Use', 'Subjective Norm', 'Image', 'Job Relevance', 'Output Quality', 'Result Demonstrability']" :key="idx" class="tam-dimension-badge">
+            <v-chip size="small" variant="outlined">{{ dim }}</v-chip>
+          </div>
+        </div>
+        <div class="text-caption text-grey-darken-1 mt-3">
+          Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)
+        </div>
+      </div>
+    </div>
+
+    <!-- TAM-3 Preview -->
+    <div v-else-if="taskType === 'tam-3'" class="preview-content">
+      <div class="preview-mockup">
+        <div class="text-subtitle-2 mb-3">TAM-3: Technology Acceptance Model (Comprehensive)</div>
+        <div class="text-body-2 text-grey-darken-1 mb-3">39 items across 13 dimensions</div>
+        
+        <div class="tam-dimensions-grid">
+          <div v-for="(dim, idx) in ['Perceived Usefulness', 'Perceived Ease of Use', 'Subjective Norm', 'Image', 'Job Relevance', 'Output Quality', 'Result Demonstrability', 'Computer Self-Efficacy', 'External Control', 'Anxiety', 'Playfulness', 'Enjoyment', 'Objective Usability']" :key="idx" class="tam-dimension-badge">
+            <v-chip size="small" variant="outlined">{{ dim }}</v-chip>
+          </div>
+        </div>
+        <div class="text-caption text-grey-darken-1 mt-3">
+          Comprehensive assessment with 39 statements across 13 dimensions on a 5-point Likert scale
+        </div>
+      </div>
+    </div>
+
     <!-- Default/Unknown Type -->
     <div
       v-else
@@ -341,6 +405,33 @@ const mockRating = ref(4);
   padding: 12px;
   border-radius: 6px;
   border: 1px solid rgba(var(--v-theme-outline), 0.1);
+}
+
+.tam-dimension {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.1);
+}
+
+.tam-item {
+  padding: 8px 0;
+}
+
+.tam-radio-group {
+  margin: 8px 0 4px 0;
+}
+
+.tam-dimensions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tam-dimension-badge {
+  display: flex;
+  justify-content: center;
 }
 
 .sus-radio-group {
