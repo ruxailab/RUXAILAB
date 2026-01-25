@@ -24,7 +24,12 @@ export default class StudyController extends Controller {
     )
     payload.answersDocId = answerDoc.id
 
-    return await super.create(COLLECTION, payload.toFirestore())
+    const res = await super.create(COLLECTION, payload.toFirestore())
+    
+    // Add test to user's myTests list
+    await userController.addTestToUser(payload.testAdmin.userDocId, res.id, payload)
+    
+    return res
   }
   async duplicateStudy(payload) {
     try {

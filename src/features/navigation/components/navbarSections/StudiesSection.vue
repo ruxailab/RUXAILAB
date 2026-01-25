@@ -1,151 +1,205 @@
 <template>
-  <!-- 🔹 Search & Filters -->
-  <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
-    <!-- 🔹 Top bar -->
-    <div class="d-flex align-center mb-3 flex-wrap button-bar">
-      <v-text-field
-        v-model="search"
-        prepend-inner-icon="mdi-magnify"
-        density="compact"
-        hide-details
-        variant="outlined"
-        placeholder="Search studies..."
-        class="flex-grow-1"
-      />
-      <v-btn
-        color="primary"
-        class="search-btn"
-        prepend-icon="mdi-filter-remove"
-        :disabled="!hasActiveFilters"
-        @click="clearFilters"
-      >
-        Reset
-      </v-btn>
+  <div>
+    <!-- 🔹 Empty State (Only shown when no tests exist and not loading) -->
+    <div v-if="!loadingStudy && tests && tests.length === 0" class="empty-state text-center pa-10">
+      <div class="d-flex justify-center mb-6">
+        <v-icon
+          icon="mdi-flask-empty-minus-outline"
+          size="120"
+          color="grey-lighten-2"
+        ></v-icon>
+      </div>
+
+      <h2 class="text-h4 font-weight-bold text-grey-darken-3 mb-2">
+        You haven't created any studies yet
+      </h2>
+      <p class="text-body-1 text-grey-darken-1 mb-8">
+        Get started by creating your first study to gather insights.
+      </p>
 
       <v-btn
-        :color="showFilters ? 'primary' : 'grey'"
-        variant="tonal"
-        icon
-        size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
-        @click="toggleFilters"
+        color="primary"
+        size="x-large"
+        prepend-icon="mdi-plus"
+        elevation="4"
+        rounded="pill"
+        height="56"
+        class="px-8 font-weight-bold"
+        @click="goToCreateTestRoute"
       >
-        <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        Create Your First Study
       </v-btn>
     </div>
 
-    <!-- 🔹 Expanded filters -->
-    <v-expand-transition>
-      <div v-show="showFilters">
-        <v-row dense>
-          <!-- 📅 Creation date -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
-            <v-menu
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template #activator="{ props }">
-                <v-text-field
-                  v-bind="props"
-                  readonly
-                  variant="outlined"
+    <!-- 🔹 Existing Content (Shown when tests exist or loading) -->
+    <div v-else>
+      <!-- 🔹 Search & Filters -->
+      <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
+        <!-- 🔹 Top bar -->
+        <div class="d-flex align-center mb-3 flex-wrap button-bar">
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            density="compact"
+            hide-details
+            variant="outlined"
+            placeholder="Search studies..."
+            class="flex-grow-1"
+            bg-color="white"
+          />
+
+          <!-- ✨ New Header CTA -->
+          <v-btn
+            color="primary"
+            variant="elevated"
+            prepend-icon="mdi-plus"
+            class="create-btn"
+            elevation="2"
+            @click="goToCreateTestRoute"
+          >
+            Create New Study
+          </v-btn>
+
+          <v-divider vertical class="mx-2 my-1" inset></v-divider>
+
+          <v-btn
+            color="primary"
+            class="search-btn"
+            prepend-icon="mdi-filter-remove"
+            variant="text"
+            :disabled="!hasActiveFilters"
+            @click="clearFilters"
+          >
+            Reset
+          </v-btn>
+
+          <v-btn
+            :color="showFilters ? 'primary' : 'grey-darken-1'"
+            variant="tonal"
+            icon
+            size="small"
+            class="filter-toggle-btn"
+            :title="showFilters ? 'Hide filters' : 'Show filters'"
+            @click="toggleFilters"
+          >
+            <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+          </v-btn>
+        </div>
+
+        <!-- 🔹 Expanded filters -->
+        <v-expand-transition>
+          <div v-show="showFilters" class="mt-4 pt-4 border-t">
+            <v-row dense>
+              <!-- 📅 Creation date -->
+              <v-col cols="12" sm="6" md="3">
+                <div class="filter-label">Creation date</div>
+                <v-menu
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template #activator="{ props }">
+                    <v-text-field
+                      v-bind="props"
+                      readonly
+                      variant="outlined"
+                      density="compact"
+                      hide-details
+                      :placeholder="creationDateRange.length > 1
+                        ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                        : 'Select range'"
+                      :model-value="creationDateRange.length > 1
+                        ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                        : ''"
+                      prepend-inner-icon="mdi-calendar"
+                    />
+                  </template>
+                  <v-date-picker v-model="creationDateRange" multiple="range" />
+                </v-menu>
+              </v-col>
+
+              <!-- ⚙️ Status -->
+              <v-col cols="12" sm="6" md="3">
+                <div class="filter-label">Status</div>
+                <v-select
+                  v-model="selectedStatusFilter"
+                  :items="statusOptions"
+                  item-title="text"
+                  item-value="value"
+                  multiple
+                  chips
                   density="compact"
+                  variant="outlined"
                   hide-details
-                  :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
-                  :model-value="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : ''"
-                  prepend-inner-icon="mdi-calendar"
                 />
-              </template>
-              <v-date-picker v-model="creationDateRange" multiple="range" />
-            </v-menu>
-          </v-col>
+              </v-col>
 
-          <!-- ⚙️ Status -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
-            <v-select
-              v-model="selectedStatusFilter"
-              :items="statusOptions"
-              item-title="text"
-              item-value="value"
-              multiple
-              chips
-              density="compact"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
+              <!-- 🔓 Visibility -->
+              <v-col cols="12" sm="6" md="3">
+                <div class="filter-label">Visibility</div>
+                <v-select
+                  v-model="selectedVisibilityFilter"
+                  :items="visibilityOptions"
+                  item-title="text"
+                  item-value="value"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                />
+              </v-col>
 
-          <!-- 🔓 Visibility -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Visibility</div>
-            <v-select
-              v-model="selectedVisibilityFilter"
-              :items="visibilityOptions"
-              item-title="text"
-              item-value="value"
-              density="compact"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
+              <!-- 🧭 Method -->
+              <v-col cols="12" sm="6" md="3">
+                <div class="filter-label">Method</div>
+                <v-select
+                  v-model="selectedMethodFilter"
+                  :items="methodOptions"
+                  item-title="text"
+                  item-value="value"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                />
+              </v-col>
 
-          <!-- 🧭 Method -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
-            <v-select
-              v-model="selectedMethodFilter"
-              :items="methodOptions"
-              item-title="text"
-              item-value="value"
-              density="compact"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
+              <!-- 👥 Ownership -->
+              <v-col cols="12" sm="6" md="3">
+                <div class="filter-label">Ownership</div>
+                <v-select
+                  v-model="selectedOwnershipFilter"
+                  :items="ownershipOptions"
+                  item-title="text"
+                  item-value="value"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                />
+              </v-col>
 
-          <!-- 👥 Ownership -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
-            <v-select
-              v-model="selectedOwnershipFilter"
-              :items="ownershipOptions"
-              item-title="text"
-              item-value="value"
-              density="compact"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
+              <!-- 👤 Participants -->
+              <v-col cols="12" sm="6" md="3">
+                <div class="filter-label">Participants</div>
+                <v-select
+                  v-model="selectedParticipantsFilter"
+                  :items="participantsOptions"
+                  item-title="text"
+                  item-value="value"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                />
+              </v-col>
+            </v-row>
+          </div>
+        </v-expand-transition>
+      </v-card>
 
-          <!-- 👤 Participants -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Participants</div>
-            <v-select
-              v-model="selectedParticipantsFilter"
-              :items="participantsOptions"
-              item-title="text"
-              item-value="value"
-              density="compact"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
-        </v-row>
-      </div>
-    </v-expand-transition>
-  </v-card>
-
-  <!-- 📋 Study list -->
-  <List :items="filteredTests" type="myTests" @clicked="goTo" />
+      <!-- 📋 Study list -->
+      <List :items="filteredTests" type="myTests" @clicked="goTo" />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -178,6 +232,9 @@ const selectedParticipantsFilter = ref(['all'])
 
 const showFilters = ref(false)
 const toggleFilters = () => (showFilters.value = !showFilters.value)
+
+// ===== Loading State =====
+const loadingStudy = computed(() => store.getters.loading)
 
 // ===== Filter options =====
 const statusOptions = [
@@ -339,16 +396,26 @@ const goTo = test => {
   const methodView = getMethodManagerView(test.testType, test.subType)
   router.push({ name: methodView, params: { id: test.testDocId || test.id } })
 }
+
+const goToCreateTestRoute = () => {
+    router.push('/choose')
+}
 </script>
 
 <style scoped>
 .button-bar {
-  gap: 14px;
+  gap: 12px;
 }
 .search-btn {
-  min-width: 140px;
+  /* min-width: 100px; */
   height: 40px;
   font-weight: 600;
+}
+.create-btn {
+  height: 40px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.3px;
 }
 .filter-label {
   font-size: 11px;
@@ -360,5 +427,8 @@ const goTo = test => {
 }
 .filter-field :deep(.v-field__input) {
   min-height: 36px;
+}
+.empty-state {
+  margin-top: 80px;
 }
 </style>
