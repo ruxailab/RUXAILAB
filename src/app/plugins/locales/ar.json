@@ -54,6 +54,9 @@
     "type": "النوع",
     "noNotifications": "ليس لديك إشعارات حتى الآن",
     "notifications": "الإشعارات",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "caughtUp": "لقد قرأت كل شيء",
+    "noNewNotifications": "لا توجد إشعارات جديدة",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {

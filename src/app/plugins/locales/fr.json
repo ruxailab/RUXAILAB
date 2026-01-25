@@ -54,6 +54,9 @@
     "type": "Type",
     "noNotifications": "Vous n'avez pas encore de notifications",
     "notifications": "Notifications",
+    "markAllAsRead": "Tout marquer comme lu",
+    "caughtUp": "Vous êtes à jour",
+    "noNewNotifications": "Pas de nouvelles notifications",
     "unread": "non lu",
     "inbox": "Boîte de réception",
     "timeAgo": {

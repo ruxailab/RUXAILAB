@@ -26,15 +26,6 @@
     },
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
-      "email": "电子邮箱",
-      "instructions": "输入您的电子邮箱，我们将发送重置密码链接给您。",
-      "reset_button": "发送重置链接",
-      "back_to_signin": "返回登录"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "重置密码",
       "email": "邮箱",
       "instructions": "输入您的邮箱，我们会发送一个重置密码的链接给您。",
       "reset_button": "发送重置链接",
@@ -67,6 +58,9 @@
     "type": "类型",
     "noNotifications": "您还没有通知",
     "notifications": "通知",
+    "markAllAsRead": "全部标记为已读",
+    "caughtUp": "您已读完所有通知",
+    "noNewNotifications": "没有新通知",
     "unread": "未读",
     "inbox": "收件箱",
     "timeAgo": {
