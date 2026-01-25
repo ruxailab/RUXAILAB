@@ -388,12 +388,12 @@
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
               }
             "
-            @update:tamAnswers="
+            @update:tam-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].tamAnswers = { ...val }
               }
             "
-            @update:sartAnswers="
+            @update:sart-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
               }
