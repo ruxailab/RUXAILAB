@@ -778,7 +778,61 @@
       "updated": "Zuletzt aktualisiert am",
       "version": "Version:",
       "noTests": "Keine Tests gefunden",
-      "noTemplates": "Keine Vorlagen gefunden"
+      "noTemplates": "Keine Vorlagen gefunden",
+      "noSessions": "Keine Sitzungen gefunden"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "studies": "Studien",
+      "sessions": "Sitzungen",
+      "templates": "Vorlagen",
+      "storage": "Speicher",
+      "notifications": "Benachrichtigungen",
+      "profile": "Profil",
+      "communityStudies": "Community-Studien",
+      "communityTemplates": "Community-Vorlagen",
+      "studiesSubtitle": "Verwalten Sie Ihre Forschungsstudien",
+      "templatesSubtitle": "Greifen Sie auf Ihre gespeicherten Vorlagen zu"
+    },
+    "studies": {
+      "searchPlaceholder": "Studien suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "creationDate": "Erstellungsdatum",
+      "selectRange": "Bereich auswählen",
+      "statusLabel": "Status",
+      "visibility": "Sichtbarkeit",
+      "method": "Methode",
+      "ownership": "Eigentum",
+      "participants": "Teilnehmer",
+      "filters": {
+        "allStatuses": "Alle Status",
+        "active": "Aktiv",
+        "draft": "Entwurf",
+        "completed": "Abgeschlossen",
+        "allVisibility": "Alle Sichtbarkeit",
+        "public": "Öffentlich",
+        "private": "Privat",
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich mitarbeite",
+        "lessThan10": "< 10 Teilnehmer",
+        "between10And50": "10 – 50 Teilnehmer",
+        "moreThan50": "> 50 Teilnehmer"
+      },
+      "table": {
+        "type": "Typ",
+        "name": "Name",
+        "tags": "Tags",
+        "owner": "Besitzer",
+        "evaluator": "Bewerter",
+        "status": "Status",
+        "sessionDate": "Sitzungsdatum",
+        "participants": "Teilnehmer",
+        "created": "Erstellt",
+        "itemsPerPage": "Einträge pro Seite:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Sitzungen suchen...",
