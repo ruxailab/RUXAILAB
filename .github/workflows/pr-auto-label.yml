@@ -32,28 +32,32 @@ jobs:
             const prBody = pr.body || "";
             const labelsToAdd = [];
 
-            // Get files changed in PR
-            const { data: files } = await github.rest.pulls.listFiles({
+            // Get ALL files changed in PR using pagination
+            const files = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
+              per_page: 100,
             });
 
-            const fileCount = files.length;
-            console.log(`PR has ${fileCount} files changed`);
-
-            // Calculate total lines changed
+            // Calculate total lines changed (excluding lockfiles)
             let totalAdditions = 0;
             let totalDeletions = 0;
-            const changedPaths = files.map(f => f.filename);
+            const changedPaths = [];
 
             for (const file of files) {
+              // Ignore lockfiles for complexity/size stats to avoid noise
+              if (file.filename === 'package-lock.json' || file.filename === 'yarn.lock') {
+                continue;
+              }
+              changedPaths.push(file.filename);
               totalAdditions += file.additions;
               totalDeletions += file.deletions;
             }
 
+            const fileCount = changedPaths.length;
             const totalChanges = totalAdditions + totalDeletions;
-            console.log(`PR has ${totalChanges} lines changed (${totalAdditions} additions, ${totalDeletions} deletions)`);
+            console.log(`Stats (excluding lockfiles): ${fileCount} files, ${totalChanges} lines changed (${totalAdditions} additions, ${totalDeletions} deletions)`);
 
             // 1. Size labels based on lines changed
             if (totalChanges < 10) {
@@ -132,14 +136,14 @@ jobs:
                 descriptionIssues.push("- Missing issue reference (e.g., 'Fixes #123')");
               } else {
                 const issueNumber = parseInt(issueRefMatch[1]);
-                
+
                 try {
                   const { data: issue } = await github.rest.issues.get({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     issue_number: issueNumber,
                   });
-                  
+
                   if (issue.state === 'closed') {
                     descriptionIssues.push(`- Referenced issue #${issueNumber} is closed. Please reference an open issue.`);
                   } else {
@@ -161,7 +165,7 @@ jobs:
                 repo: context.repo.repo,
                 issue_number: prNumber,
               });
-              
+
               const existingComment = comments.find(c => c.body && c.body.includes("PR Description Issues Detected"));
 
               // Both rules satisfied - remove label and comment
@@ -180,7 +184,7 @@ jobs:
                     console.log(`Could not remove label: ${error.message}`);
                   }
                 }
-                
+
                 // Delete comment if exists
                 if (existingComment) {
                   try {
@@ -198,9 +202,9 @@ jobs:
               // At least one rule fails - add label and comment
               else if (descriptionIssues.length > 0) {
                 labelsToAdd.push("needs-description");
-                
+
                 const warningComment = `⚠️ **PR Description Issues Detected**\n\n${descriptionIssues.join("\n")}\n\nPlease update the PR description to address these issues.`;
-                
+
                 try {
                   if (existingComment) {
                     await github.rest.issues.updateComment({
@@ -233,12 +237,20 @@ jobs:
             });
             const existingLabels = updatedPR.labels.map(l => l.name);
 
-            // Remove old size and complexity labels
+            // DEFINE MANAGED LABELS
+            // These are labels that this script "owns". If they are not in labelsToAdd, they will be removed.
             const sizeLabels = ["size/XS", "size/S", "size/M", "size/L", "size/XL"];
             const complexityLabels = ["low-complexity", "medium-complexity", "high-complexity"];
-            const labelsToRemove = [...sizeLabels, ...complexityLabels];
+            const typeLabels = ["fix", "new-feature"];
+            const componentLabels = [
+              "ui/ux", "backend", "testing", "documentation", "ci/cd", "assets",
+              "accessibility", "card-sorting", "heuristic", "user-test"
+            ];
 
-            for (const label of labelsToRemove) {
+            const allManagedLabels = [...sizeLabels, ...complexityLabels, ...typeLabels, ...componentLabels];
+
+            // Remove ANY managed label that is NOT in the calculated list
+            for (const label of allManagedLabels) {
               if (existingLabels.includes(label) && !labelsToAdd.includes(label)) {
                 try {
                   await github.rest.issues.removeLabel({

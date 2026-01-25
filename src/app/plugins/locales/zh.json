@@ -808,7 +808,61 @@
       "updated": "最后更新于",
       "version": "版本：",
       "noTests": "未找到测试",
-      "noTemplates": "未找到模板"
+      "noTemplates": "未找到模板",
+      "noSessions": "未找到会话"
+    },
+    "navigation": {
+      "dashboard": "仪表板",
+      "studies": "研究",
+      "sessions": "会话",
+      "templates": "模板",
+      "storage": "存储",
+      "notifications": "通知",
+      "profile": "个人资料",
+      "communityStudies": "社区研究",
+      "communityTemplates": "社区模板",
+      "studiesSubtitle": "管理您的研究项目",
+      "templatesSubtitle": "访问您保存的模板"
+    },
+    "studies": {
+      "searchPlaceholder": "搜索研究...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择范围",
+      "statusLabel": "状态",
+      "visibility": "可见性",
+      "method": "方法",
+      "ownership": "所有权",
+      "participants": "参与者",
+      "filters": {
+        "allStatuses": "所有状态",
+        "active": "活跃",
+        "draft": "草稿",
+        "completed": "已完成",
+        "allVisibility": "所有可见性",
+        "public": "公开",
+        "private": "私有",
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的",
+        "lessThan10": "< 10名参与者",
+        "between10And50": "10 – 50名参与者",
+        "moreThan50": "> 50名参与者"
+      },
+      "table": {
+        "type": "类型",
+        "name": "名称",
+        "tags": "标签",
+        "owner": "所有者",
+        "evaluator": "评估者",
+        "status": "状态",
+        "sessionDate": "会话日期",
+        "participants": "参与者",
+        "created": "创建时间",
+        "itemsPerPage": "每页项目数:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "搜索会话...",
