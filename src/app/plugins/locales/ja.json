@@ -1412,5 +1412,9 @@
       "analyticsData": "分析データ",
       "manageStorage": "ストレージ管理"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "タスクの説明",
+    "taskDescriptionHelper": "従うべき具体的な手順を提供してください。"
   }
 }

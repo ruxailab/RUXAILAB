@@ -1443,5 +1443,9 @@
       "analyticsData": "Аналитические данные",
       "manageStorage": "Управление хранилищем"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Описание задачи",
+    "taskDescriptionHelper": "Укажите конкретные шаги, которым они должны следовать."
   }
 }

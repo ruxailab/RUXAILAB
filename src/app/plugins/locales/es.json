@@ -1493,5 +1493,9 @@
       "analyticsData": "Datos de Analítica",
       "manageStorage": "Gestionar Almacenamiento"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Descripción de la Tarea",
+    "taskDescriptionHelper": "Proporcione pasos específicos que deben seguir."
   }
 }
