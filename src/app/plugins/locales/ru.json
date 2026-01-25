@@ -67,6 +67,9 @@
     "type": "Тип",
     "noNotifications": "У вас пока нет уведомлений",
     "notifications": "Уведомления",
+    "markAllAsRead": "Отметить все как прочитанные",
+    "caughtUp": "Вы в курсе всех событий",
+    "noNewNotifications": "Новых уведомлений нет",
     "unread": "непрочитанное",
     "inbox": "Входящие",
     "timeAgo": {
@@ -901,7 +904,61 @@
       "updated": "Последнее обновление",
       "version": "Версия:",
       "noTests": "Тесты не найдены",
-      "noTemplates": "Шаблоны не найдены"
+      "noTemplates": "Шаблоны не найдены",
+      "noSessions": "Сессии не найдены"
+    },
+    "navigation": {
+      "dashboard": "Панель управления",
+      "studies": "Исследования",
+      "sessions": "Сессии",
+      "templates": "Шаблоны",
+      "storage": "Хранилище",
+      "notifications": "Уведомления",
+      "profile": "Профиль",
+      "communityStudies": "Исследования сообщества",
+      "communityTemplates": "Шаблоны сообщества",
+      "studiesSubtitle": "Управляйте своими исследованиями",
+      "templatesSubtitle": "Доступ к сохраненным шаблонам"
+    },
+    "studies": {
+      "searchPlaceholder": "Поиск исследований...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "creationDate": "Дата создания",
+      "selectRange": "Выбрать диапазон",
+      "statusLabel": "Статус",
+      "visibility": "Видимость",
+      "method": "Метод",
+      "ownership": "Владение",
+      "participants": "Участники",
+      "filters": {
+        "allStatuses": "Все статусы",
+        "active": "Активный",
+        "draft": "Черновик",
+        "completed": "Завершенный",
+        "allVisibility": "Вся видимость",
+        "public": "Публичный",
+        "private": "Приватный",
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я сотрудничаю",
+        "lessThan10": "< 10 участников",
+        "between10And50": "10 – 50 участников",
+        "moreThan50": "> 50 участников"
+      },
+      "table": {
+        "type": "Тип",
+        "name": "Название",
+        "tags": "Теги",
+        "owner": "Владелец",
+        "evaluator": "Оценщик",
+        "status": "Статус",
+        "sessionDate": "Дата сессии",
+        "participants": "Участники",
+        "created": "Создано",
+        "itemsPerPage": "Элементов на странице:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Поиск сессий...",
