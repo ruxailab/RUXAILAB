@@ -1,15 +1,12 @@
 <template>
   <div>
-    <Radar
-      :data="chartData"
-      :options="chartOptions"
-    />
+    <Radar :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
 <script setup>
 import { Radar } from 'vue-chartjs'
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   Chart as ChartJS,
   Title,
@@ -78,7 +75,7 @@ watch(
       chartInstance.value.update()
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 // onMounted(() => {
