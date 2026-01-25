@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        :placeholder="$t('Dashboard.studiesPage.searchPlaceholder')"
+        :placeholder="$t('pages.studies.searchPlaceholder')"
         class="flex-grow-1"
       />
       <v-btn
@@ -19,7 +19,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        {{ $t('Dashboard.studiesPage.reset') }}
+        {{ $t('pages.studies.reset') }}
       </v-btn>
 
       <v-btn
@@ -29,8 +29,8 @@
         size="small"
         :title="
           showFilters
-            ? $t('Dashboard.studiesPage.hideFilters')
-            : $t('Dashboard.studiesPage.showFilters')
+            ? $t('pages.studies.hideFilters')
+            : $t('pages.studies.showFilters')
         "
         @click="toggleFilters"
       >
@@ -47,7 +47,7 @@
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
             <div class="filter-label">
-              {{ $t('Dashboard.studiesPage.filters.creationDate') }}
+              {{ $t('pages.studies.creationDate') }}
             </div>
             <v-menu
               :close-on-content-click="false"
@@ -64,23 +64,15 @@
                   hide-details
                   :placeholder="
                     creationDateRange.length > 1
-                      ? `${new Date(
-                          creationDateRange[0],
-                        ).toLocaleDateString()} - ${new Date(
-                          creationDateRange[creationDateRange.length - 1],
-                        ).toLocaleDateString()}`
-                      : $t('Dashboard.studiesPage.filters.selectRange')
-                  "
-                  :model-value="
-                    creationDateRange.length > 1
-                      ? `${new Date(
-                          creationDateRange[0],
-                        ).toLocaleDateString()} - ${new Date(
-                          creationDateRange[creationDateRange.length - 1],
-                        ).toLocaleDateString()}`
-                      : ''
+                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      : $t('pages.studies.selectRange')
                   "
                   prepend-inner-icon="mdi-calendar"
+                  :model-value="
+                    creationDateRange.length > 1
+                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      : ''
+                  "
                 />
               </template>
               <v-date-picker v-model="creationDateRange" multiple="range" />
@@ -90,7 +82,7 @@
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
             <div class="filter-label">
-              {{ $t('Dashboard.studiesPage.filters.status') }}
+              {{ $t('pages.studies.statusLabel') }}
             </div>
             <v-select
               v-model="selectedStatusFilter"
@@ -107,9 +99,7 @@
 
           <!-- 🔓 Visibility -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">
-              {{ $t('Dashboard.studiesPage.filters.visibility') }}
-            </div>
+            <div class="filter-label">{{ $t('pages.studies.visibility') }}</div>
             <v-select
               v-model="selectedVisibilityFilter"
               :items="visibilityOptions"
@@ -123,9 +113,7 @@
 
           <!-- 🧭 Method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">
-              {{ $t('Dashboard.studiesPage.filters.method') }}
-            </div>
+            <div class="filter-label">{{ $t('pages.studies.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -139,9 +127,7 @@
 
           <!-- 👥 Ownership -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">
-              {{ $t('Dashboard.studiesPage.filters.ownership') }}
-            </div>
+            <div class="filter-label">{{ $t('pages.studies.ownership') }}</div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -156,7 +142,7 @@
           <!-- 👤 Participants -->
           <v-col cols="12" sm="6" md="3">
             <div class="filter-label">
-              {{ $t('Dashboard.studiesPage.filters.participants') }}
+              {{ $t('pages.studies.participants') }}
             </div>
             <v-select
               v-model="selectedParticipantsFilter"
@@ -196,7 +182,7 @@ import {
 // ===== Setup =====
 const store = useStore()
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const search = ref('')
 
 // ===== Filter state =====
@@ -212,32 +198,29 @@ const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 // ===== Filter options =====
 const statusOptions = computed(() => [
-  { value: 'all', text: t('Dashboard.studiesPage.filters.allStatuses') },
-  { value: 'active', text: t('Dashboard.studiesPage.filters.active') },
-  { value: 'draft', text: t('Dashboard.studiesPage.filters.draft') },
-  { value: 'completed', text: t('Dashboard.studiesPage.filters.completed') },
+  { value: 'all', text: t('pages.studies.filters.allStatuses') },
+  { value: 'active', text: t('pages.studies.filters.active') },
+  { value: 'draft', text: t('pages.studies.filters.draft') },
+  { value: 'completed', text: t('pages.studies.filters.completed') },
 ])
 
 const visibilityOptions = computed(() => [
-  { value: 'all', text: t('Dashboard.studiesPage.filters.allVisibility') },
-  { value: 'public', text: t('Dashboard.studiesPage.filters.public') },
-  { value: 'private', text: t('Dashboard.studiesPage.filters.private') },
+  { value: 'all', text: t('pages.studies.filters.allVisibility') },
+  { value: 'public', text: t('pages.studies.filters.public') },
+  { value: 'private', text: t('pages.studies.filters.private') },
 ])
 
 const ownershipOptions = computed(() => [
-  { value: 'all', text: t('Dashboard.studiesPage.filters.allStudies') },
-  { value: 'mine', text: t('Dashboard.studiesPage.filters.myStudies') },
-  {
-    value: 'cooperator',
-    text: t('Dashboard.studiesPage.filters.whereICollaborate'),
-  },
+  { value: 'all', text: t('pages.studies.filters.allStudies') },
+  { value: 'mine', text: t('pages.studies.filters.myStudies') },
+  { value: 'cooperator', text: t('pages.studies.filters.whereICollaborate') },
 ])
 
 const participantsOptions = computed(() => [
-  { text: t('Dashboard.studiesPage.filters.all'), value: 'all' },
-  { text: t('Dashboard.studiesPage.filters.lt10'), value: 'lt10' },
-  { text: t('Dashboard.studiesPage.filters.btw10_50'), value: 'btw10_50' },
-  { text: t('Dashboard.studiesPage.filters.gt50'), value: 'gt50' },
+  { text: t('common.all'), value: 'all' },
+  { text: t('pages.studies.filters.lessThan10'), value: 'lt10' },
+  { text: t('pages.studies.filters.between10And50'), value: 'btw10_50' },
+  { text: t('pages.studies.filters.moreThan50'), value: 'gt50' },
 ])
 
 // ===== Helpers =====
