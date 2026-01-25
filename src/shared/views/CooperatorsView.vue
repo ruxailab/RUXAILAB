@@ -175,7 +175,6 @@ const sendNotification = async ({
     })
     return true
   } catch (error) {
-    console.error('Error sending notification:', error)
     throw error
   }
 }
@@ -370,7 +369,7 @@ const sendMenssages = async (guest) => {
     await handleSendEmail(guest)
     showSuccess('pages.cooperators.invitationSent')
   } catch (error) {
-    console.error('Error sending messages:', error)
+    return error
     showError('errors.sendError')
   }
 }
@@ -513,14 +512,6 @@ watch(loading, (newVal) => {
   }
 })
 
-watch(
-  test,
-  (newTest) => {
-    // Test data watcher for reactivity
-  },
-  { immediate: true },
-)
-
 onMounted(async () => {
   store.dispatch('getAllUsers')
 
@@ -530,7 +521,7 @@ onMounted(async () => {
     try {
       await store.dispatch('getStudy', { id: testId })
     } catch (error) {
-      console.error('Error fetching test data:', error)
+      return error
     }
   }
 })

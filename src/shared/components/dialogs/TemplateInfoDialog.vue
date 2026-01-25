@@ -239,10 +239,9 @@ const formRef = ref(null);
 const formValid = ref(false);
 
 const mountTest = computed(() => {
-  if (!props.template?.body) {
-    console.warn('Template body is undefined:', props.template);
-    return {};
-  }
+  // if no template or no body just return null
+  if(!props.template || !props.template.body) 
+    return null;
 
   const test = { ...props.template.body };
   if (!test.testType && props.template.body.testType) {
@@ -264,7 +263,11 @@ watch(
   (newTemplate) => {
     isMyTemplate.value =
       newTemplate?.header?.templateAuthor?.userDocId === user.value?.id;
-    localTest.value = mountTest.value ? { ...mountTest.value } : null;
+    if(mountTest.value){
+      localTest.value = { ...mountTest.value };
+    } else {
+      localTest.value = null;
+    }
   },
   { immediate: true, deep: true }
 );

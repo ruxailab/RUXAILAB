@@ -23,23 +23,9 @@
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
-                ? 'Manage your research studies'
+                ? $t('pages.navigation.studiesSubtitle')
                 : activeSection === 'templates'
-                ? 'Access your saved templates'
-                : activeSection === 'notifications'
-                ? 'Stay updated with your activities and collaborations'
-                : activeSection === 'sessions'
-                ? 'Overview of your sessions'
-                : activeSection === 'storage'
-                ? 'Manage your stored media files'
-                : activeSection === 'profile'
-                ? 'View and edit your profile information'
-                : activeSection === 'community' &&
-                  activeSubSection === 'community-studies'
-                ? 'Explore studies shared by the RUXAI community'
-                : activeSection === 'community' &&
-                  activeSubSection === 'community-templates'
-                ? 'Browse templates contributed by the RUXAI community'
+                ? $t('pages.navigation.templatesSubtitle')
                 : ''
             }}
           </p>
@@ -143,23 +129,23 @@ let unsubscribeTests = null // Unsub function for real-time tests
 const currentPageTitle = computed(() => {
   switch (activeSection.value) {
     case 'dashboard':
-      return 'Dashboard'
+      return t('pages.navigation.dashboard')
     case 'studies':
-      return 'Studies'
+      return t('pages.navigation.studies')
     case 'sessions':
-      return 'Sessions'
+      return t('pages.navigation.sessions')
     case 'templates':
-      return 'Templates'
+      return t('pages.navigation.templates')
     case 'storage':
-      return t('storage.pageTitle')
+      return t('navigation.storage')
     case 'notifications':
-      return 'Notifications'
+      return t('pages.navigation.notifications')
     case 'profile':
-      return 'Profile'
+      return t('pages.navigation.profile')
     case 'community':
       return activeSubSection.value === 'community-templates'
-        ? 'Community Templates'
-        : 'Community Studies'
+        ? t('pages.navigation.communityTemplates')
+        : t('pages.navigation.communityStudies')
     default:
       return 'RUXAI Lab'
   }
