@@ -190,8 +190,23 @@
     "sessions": "Сессии",
     "templates": "Шаблоны",
     "storage": "Хранилище",
+    "community": "Сообщество",
     "communityStudies": "Исследования сообщества",
-    "communityTemplates": "Шаблоны сообщества"
+    "communityTemplates": "Шаблоны сообщества",
+    "visibility": "Видимость",
+    "public": "Публичный",
+    "private": "Приватный",
+    "allVisibility": "Любая видимость",
+    "subtitles": {
+      "manageStudies": "Управляйте вашими исследованиями",
+      "accessTemplates": "Доступ к сохраненным шаблонам",
+      "stayUpdated": "Будьте в курсе ваших действий и совместной работы",
+      "overviewSessions": "Обзор ваших сессий",
+      "manageStorage": "Управляйте вашими сохраненными медиафайлами",
+      "viewEditProfile": "Просмотр и редактирование информации профиля",
+      "exploreCommunityStudies": "Исследуйте исследования, которыми поделилось сообщество RUXAI",
+      "browseCommunityTemplates": "Просматривайте шаблоны, предоставленные сообществом RUXAI"
+    }
   },
   "profile": {
     "title": "Профиль",
@@ -340,6 +355,33 @@
     "daysLeft": "дней осталось",
     "dayLeft": "день остался",
     "studies": "Исследования",
+    "studiesPage": {
+      "searchPlaceholder": "Поиск исследований...",
+      "reset": "Сбросить",
+      "showFilters": "Показать фильтры",
+      "hideFilters": "Скрыть фильтры",
+      "filters": {
+        "creationDate": "Дата создания",
+        "status": "Статус",
+        "visibility": "Видимость",
+        "method": "Метод",
+        "ownership": "Владение",
+        "participants": "Участники",
+        "selectRange": "Выбрать период",
+        "allStatuses": "Все статусы",
+        "allVisibility": "Любая видимость",
+        "public": "Публичный",
+        "private": "Приватный",
+        "allMethods": "Все методы",
+        "allStudies": "Все исследования",
+        "myStudies": "Мои исследования",
+        "whereICollaborate": "Где я участвую",
+        "all": "Все",
+        "lt10": "< 10 участников",
+        "btw10_50": "10 – 50 участников",
+        "gt50": "> 50 участников"
+      }
+    },
     "storage": "Хранилище",
     "free": "Бесплатно",
     "plan": "План",
@@ -722,25 +764,6 @@
     "goHome": "Перейти на главную"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Активных сессий не найдено",
-      "selectRange": "Выбрать диапазон",
-      "reset": "Сбросить",
-      "searchPlaceholder": "Поиск исследований...",
-      "filters": {
-        "allStudies": "Все исследования",
-        "myStudies": "Мои исследования",
-        "whereICollaborate": "Где я сотрудничаю",
-        "allStatuses": "Все статусы",
-        "today": "Сегодня",
-        "upcoming": "Предстоящие",
-        "completed": "Завершено"
-      },
-      "ownership": "Владение",
-      "evaluator": "Оценщик",
-      "sessionDate": "Дата сессии",
-      "statusLabel": "Статус"
-    },
     "intros": {
       "click": "Нажмите здесь!",
       "learnMore": "Узнать больше",

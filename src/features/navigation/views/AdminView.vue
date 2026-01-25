@@ -23,23 +23,23 @@
           <p class="text-h6 text-grey-darken-1">
             {{
               activeSection === 'studies'
-                ? 'Manage your research studies'
+                ? $t('navigation.subtitles.manageStudies')
                 : activeSection === 'templates'
-                ? 'Access your saved templates'
+                ? $t('navigation.subtitles.accessTemplates')
                 : activeSection === 'notifications'
-                ? 'Stay updated with your activities and collaborations'
+                ? $t('navigation.subtitles.stayUpdated')
                 : activeSection === 'sessions'
-                ? 'Overview of your sessions'
+                ? $t('navigation.subtitles.overviewSessions')
                 : activeSection === 'storage'
-                ? 'Manage your stored media files'
+                ? $t('navigation.subtitles.manageStorage')
                 : activeSection === 'profile'
-                ? 'View and edit your profile information'
+                ? $t('navigation.subtitles.viewEditProfile')
                 : activeSection === 'community' &&
                   activeSubSection === 'community-studies'
-                ? 'Explore studies shared by the RUXAI community'
+                ? $t('navigation.subtitles.exploreCommunityStudies')
                 : activeSection === 'community' &&
                   activeSubSection === 'community-templates'
-                ? 'Browse templates contributed by the RUXAI community'
+                ? $t('navigation.subtitles.browseCommunityTemplates')
                 : ''
             }}
           </p>

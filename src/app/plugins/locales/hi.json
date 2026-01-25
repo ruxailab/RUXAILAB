@@ -191,8 +191,23 @@
     "sessions": "सत्र",
     "templates": "टेम्पलेट्स",
     "storage": "भंडारण",
+    "community": "समुदाय",
     "communityStudies": "सामुदायिक अध्ययन",
-    "communityTemplates": "सामुदायिक टेम्पलेट्स"
+    "communityTemplates": "सामुदायिक टेम्पलेट्स",
+    "visibility": "दृश्यता",
+    "public": "सार्वजनिक",
+    "private": "निजी",
+    "allVisibility": "सभी दृश्यता",
+    "subtitles": {
+      "manageStudies": "अपने शोध अध्ययनों का प्रबंधन करें",
+      "accessTemplates": "अपने सहेजे गए टेम्पलेट्स तक पहुँचें",
+      "stayUpdated": "अपनी गतिविधियों और सहयोग के साथ अपडेट रहें",
+      "overviewSessions": "अपने सत्रों का अवलोकन",
+      "manageStorage": "अपनी संग्रहीत मीडिया फ़ाइलों का प्रबंधन करें",
+      "viewEditProfile": "अपनी प्रोफ़ाइल जानकारी देखें और संपादित करें",
+      "exploreCommunityStudies": "RUXAI समुदाय द्वारा साझा किए गए अध्ययनों का पता लगाएं",
+      "browseCommunityTemplates": "RUXAI समुदाय द्वारा योगदान किए गए टेम्पलेट्स ब्राउज़ करें"
+    }
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -324,6 +339,33 @@
     "daysLeft": "दिन शेष",
     "dayLeft": "दिन शेष",
     "studies": "अध्ययन",
+    "studiesPage": {
+      "searchPlaceholder": "अध्ययन खोजें...",
+      "reset": "रीसेट",
+      "showFilters": "फ़िल्टर दिखाएं",
+      "hideFilters": "फ़िल्टर छिपाएं",
+      "filters": {
+        "creationDate": "निर्माण तिथि",
+        "status": "स्थिति",
+        "visibility": "दृश्यता",
+        "method": "विधि",
+        "ownership": "स्वामित्व",
+        "participants": "प्रतिभागी",
+        "selectRange": "सीमा चुनें",
+        "allStatuses": "सभी स्थितियाँ",
+        "allVisibility": "सभी दृश्यता",
+        "public": "सार्वजनिक",
+        "private": "निजी",
+        "allMethods": "सभी विधियाँ",
+        "allStudies": "सभी अध्ययन",
+        "myStudies": "मेरे अध्ययन",
+        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+        "all": "सभी",
+        "lt10": "10 से कम प्रतिभागी",
+        "btw10_50": "10 - 50 प्रतिभागी",
+        "gt50": "50 से अधिक प्रतिभागी"
+      }
+    },
     "storage": "स्टोरेज",
     "free": "निःशुल्क",
     "plan": "योजना",
@@ -706,25 +748,6 @@
     "goHome": "होम पर जाएँ"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "कोई सक्रिय सत्र नहीं मिला",
-      "selectRange": "रेंज चुनें",
-      "reset": "रीसेट करें",
-      "searchPlaceholder": "अध्ययन खोजें...",
-      "filters": {
-        "allStudies": "सभी अध्ययन",
-        "myStudies": "मेरे अध्ययन",
-        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
-        "allStatuses": "सभी स्थितियाँ",
-        "today": "आज",
-        "upcoming": "आने वाले",
-        "completed": "पूर्ण"
-      },
-      "ownership": "स्वामित्व",
-      "evaluator": "मूल्यांकनकर्ता",
-      "sessionDate": "सत्र तिथि",
-      "statusLabel": "स्थिति"
-    },
     "intros": {
       "click": "यहाँ क्लिक करें!",
       "learnMore": "और जानें",
