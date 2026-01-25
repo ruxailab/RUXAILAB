@@ -1,6 +1,29 @@
 {
   "language": "言語",
   "auth": {
+    "signupSuccess": "サインアップに成功しました",
+    "logoutSuccess": "ログアウトに成功しました",
+    "resetPasswordSuccess": "パスワードリセット用のメールを送信しました",
+    "deleteSuccess": "アカウントが正常に削除されました",
+    "loginSuccess": "ログインに成功しました",
+    "SIGNIN": {
+      "sign-in": "ログイン",
+      "sign-in-title": "お帰りなさい",
+      "sign-in-subtitle": "続行するにはアカウントにサインインしてください",
+      "email": "メールアドレス",
+      "username": "ユーザー名",
+      "password": "パスワード",
+      "signupSubtitle": "開始するために情報を入力してください",
+      "dont-have-account": "アカウントをお持ちでないですか？登録",
+      "forgot-password": "パスワードをお忘れですか？",
+      "sign-up": "登録",
+      "contact": "連絡先番号",
+      "confirmPassword": "パスワードを確認",
+      "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン",
+      "continueWithGoogle": "Googleで続行",
+      "rememberMe": "ログイン情報を保持する",
+      "or": "または"
+    },
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
@@ -35,6 +58,9 @@
     "type": "タイプ",
     "noNotifications": "まだ通知はありません",
     "notifications": "通知",
+    "markAllAsRead": "すべて既読にする",
+    "caughtUp": "最新の状態です",
+    "noNewNotifications": "新しい通知はありません",
     "unread": "未読",
     "inbox": "受信トレイ",
     "timeAgo": {
@@ -83,7 +109,11 @@
       "evaluator": "評価者",
       "status": "ステータス",
       "sessionDate": "セッション日",
-      "itemsPerPage": "ページあたりの項目数:"
+      "itemsPerPage": "ページあたりの項目数:",
+      "studyName": "研究名",
+      "date": "日付",
+      "size": "サイズ",
+      "actions": "操作"
     }
   },
   "community": {
@@ -239,10 +269,6 @@
       "edit": "研究ニーズに合わせてタスクとヒューリスティックを作成およびカスタマイズします。",
       "finalReport": "含めたい項目を選択して、ヒューリスティック評価の最終レポートを準備します。"
     }
-  },
-  "storage": {
-    "noMediaFiles": "メディアファイルが見つかりません",
-    "mediaFiles": "メディアファイル"
   },
   "errors": {
     "invalidInvitation": "無効な招待です",
@@ -741,7 +767,61 @@
       "updated": "最終更新日",
       "version": "バージョン：",
       "noTests": "テストが見つかりません",
-      "noTemplates": "テンプレートが見つかりません"
+      "noTemplates": "テンプレートが見つかりません",
+      "noSessions": "セッションが見つかりません"
+    },
+    "navigation": {
+      "dashboard": "ダッシュボード",
+      "studies": "研究",
+      "sessions": "セッション",
+      "templates": "テンプレート",
+      "storage": "ストレージ",
+      "notifications": "通知",
+      "profile": "プロフィール",
+      "communityStudies": "コミュニティ研究",
+      "communityTemplates": "コミュニティテンプレート",
+      "studiesSubtitle": "研究を管理する",
+      "templatesSubtitle": "保存したテンプレートにアクセス"
+    },
+    "studies": {
+      "searchPlaceholder": "研究を検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "範囲を選択",
+      "statusLabel": "ステータス",
+      "visibility": "可視性",
+      "method": "方法",
+      "ownership": "所有権",
+      "participants": "参加者",
+      "filters": {
+        "allStatuses": "すべてのステータス",
+        "active": "アクティブ",
+        "draft": "下書き",
+        "completed": "完了",
+        "allVisibility": "すべての可視性",
+        "public": "公開",
+        "private": "非公開",
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中",
+        "lessThan10": "< 10名の参加者",
+        "between10And50": "10 – 50名の参加者",
+        "moreThan50": "> 50名の参加者"
+      },
+      "table": {
+        "type": "タイプ",
+        "name": "名前",
+        "tags": "タグ",
+        "owner": "オーナー",
+        "evaluator": "評価者",
+        "status": "ステータス",
+        "sessionDate": "セッション日",
+        "participants": "参加者",
+        "created": "作成日",
+        "itemsPerPage": "ページあたりのアイテム数:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "セッションを検索...",
