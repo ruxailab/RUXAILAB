@@ -86,3 +86,4 @@ export function useDataTableConfig(type, t) {
         getEmptyStateMessage
     }
 }
+

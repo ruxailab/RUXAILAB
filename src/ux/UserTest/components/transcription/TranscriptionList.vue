@@ -33,6 +33,7 @@
 import { formatTime } from '@/shared/utils/timeUtils'
 
 // JS props (no types)
+
 const props = defineProps({
   transcriptSegments: {
     type: Array,
