@@ -595,6 +595,58 @@ const analytics = ref({
 
 const selectedVersion = ref('')
 
+// Define test and testAnswerDocument BEFORE they are used in computed properties
+const test = computed(() => store.getters.test?.testStructure || {})
+const testAnswerDocument = computed(
+  () => store.getters.visibleUserAnswers || {},
+)
+
+// Define tamData BEFORE availableVersions (which uses it)
+const tamData = computed(() => {
+  const allData = []
+
+  Object.entries(testAnswerDocument.value || {}).forEach(
+    ([userId, answerItem]) => {
+      if (!answerItem || !answerItem.tasks) {
+        return
+      }
+
+      // Handle both array and object formats for tasks
+      const taskEntries = Array.isArray(answerItem.tasks)
+        ? answerItem.tasks.entries()
+        : Object.entries(answerItem.tasks)
+
+      taskEntries.forEach(([taskIndexOrId, task]) => {
+        if (!task) return
+
+        // Get the actual task index/id
+        const taskId = task.taskId ?? taskIndexOrId
+
+        // Get task type from test structure
+        const taskType = test.value?.userTasks?.[taskId]?.taskType
+
+        // Check if this is a TAM task with answers
+        if (
+          ['tam-1', 'tam-2', 'tam-3'].includes(taskType) &&
+          task.tamAnswers &&
+          typeof task.tamAnswers === 'object' &&
+          Object.keys(task.tamAnswers).length > 0
+        ) {
+          allData.push({
+            ...task,
+            userId,
+            taskId,
+            taskType,
+            fullName: answerItem.fullName || 'Anonymous',
+          })
+        }
+      })
+    },
+  )
+
+  return allData
+})
+
 const availableVersions = computed(() => {
   // First, check test structure for all created TAM tasks
   const versionsFromTest = new Set()
@@ -789,56 +841,6 @@ const scatterChartOptions = {
 const detailsModal = ref(false)
 const selectedResponse = ref(null)
 const selectedConstructForDetails = ref(null)
-
-const test = computed(() => store.getters.test.testStructure)
-const testAnswerDocument = computed(
-  () => store.getters.visibleUserAnswers || {},
-)
-
-const tamData = computed(() => {
-  const allData = []
-
-  Object.entries(testAnswerDocument.value || {}).forEach(
-    ([userId, answerItem]) => {
-      if (!answerItem || !answerItem.tasks) {
-        return
-      }
-
-      // Handle both array and object formats for tasks
-      const taskEntries = Array.isArray(answerItem.tasks)
-        ? answerItem.tasks.entries()
-        : Object.entries(answerItem.tasks)
-
-      taskEntries.forEach(([taskIndexOrId, task]) => {
-        if (!task) return
-
-        // Get the actual task index/id
-        const taskId = task.taskId ?? taskIndexOrId
-
-        // Get task type from test structure
-        const taskType = test.value?.userTasks?.[taskId]?.taskType
-
-        // Check if this is a TAM task with answers
-        if (
-          ['tam-1', 'tam-2', 'tam-3'].includes(taskType) &&
-          task.tamAnswers &&
-          typeof task.tamAnswers === 'object' &&
-          Object.keys(task.tamAnswers).length > 0
-        ) {
-          allData.push({
-            ...task,
-            userId,
-            taskId,
-            taskType,
-            fullName: answerItem.fullName || 'Anonymous',
-          })
-        }
-      })
-    },
-  )
-
-  return allData
-})
 
 function getActiveDimensions(version) {
   // Handle both 'tam1' and 'tam-1' formats
