@@ -199,8 +199,23 @@
     "sessions": "セッション",
     "templates": "テンプレート",
     "storage": "ストレージ",
+    "community": "コミュニティ",
     "communityStudies": "コミュニティ研究",
-    "communityTemplates": "コミュニティテンプレート"
+    "communityTemplates": "コミュニティテンプレート",
+    "visibility": "公開範囲",
+    "public": "公開",
+    "private": "非公開",
+    "allVisibility": "すべての公開範囲",
+    "subtitles": {
+      "manageStudies": "研究調査の管理",
+      "accessTemplates": "保存したテンプレートへのアクセス",
+      "stayUpdated": "アクティビティやコラボレーションの最新情報を確認",
+      "overviewSessions": "セッションの概要",
+      "manageStorage": "保存されたメディアファイルの管理",
+      "viewEditProfile": "プロファイル情報の表示と編集",
+      "exploreCommunityStudies": "RUXAIコミュニティで共有されている調査を探索",
+      "browseCommunityTemplates": "RUXAIコミュニティが提供するテンプレートを閲覧"
+    }
   },
   "profile": {
     "title": "プロフィール",
@@ -331,6 +346,33 @@
     "daysLeft": "残り日数",
     "dayLeft": "残り1日",
     "studies": "研究",
+    "studiesPage": {
+      "searchPlaceholder": "調査を検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "filters": {
+        "creationDate": "作成日",
+        "status": "ステータス",
+        "visibility": "公開範囲",
+        "method": "手法",
+        "ownership": "所有者",
+        "participants": "参加者",
+        "selectRange": "期間を選択",
+        "allStatuses": "すべてのステータス",
+        "allVisibility": "すべての公開範囲",
+        "public": "公開",
+        "private": "非公開",
+        "allMethods": "すべての手法",
+        "allStudies": "すべての調査",
+        "myStudies": "自分の調査",
+        "whereICollaborate": "コラボレーション中",
+        "all": "すべて",
+        "lt10": "10人未満",
+        "btw10_50": "10～50人",
+        "gt50": "50人超"
+      }
+    },
     "storage": "ストレージ",
     "free": "無料",
     "plan": "プラン",
@@ -823,25 +865,6 @@
     "goHome": "ホームに戻る"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "アクティブなセッションが見つかりません",
-      "selectRange": "範囲を選択",
-      "reset": "リセット",
-      "searchPlaceholder": "研究を検索...",
-      "filters": {
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中",
-        "allStatuses": "すべてのステータス",
-        "today": "今日",
-        "upcoming": "今後",
-        "completed": "完了"
-      },
-      "ownership": "所有権",
-      "evaluator": "評価者",
-      "sessionDate": "セッション日",
-      "statusLabel": "ステータス"
-    },
     "intros": {
       "click": "ここをクリック！",
       "learnMore": "詳しく知る",
