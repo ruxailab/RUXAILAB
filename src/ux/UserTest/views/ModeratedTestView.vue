@@ -865,26 +865,16 @@ const handleTimerStopped = (elapsedTime, idx) => {
     return
   }
 
-  if (idx < 0 || idx >= localTestAnswer.tasks.length) {
-    console.error('Índice de tarea no válido:', idx) // eslint-disable-line no-console
+  if (idx === undefined || idx === null) {
     return
   }
 
-  if (elapsedTime) {
-    console.log(
-      // eslint-disable-line no-console
-      'Guardando tiempo para tarea',
-      idx,
-      ':',
-      elapsedTime,
-      'segundos',
-    )
+  if (localTestAnswer.tasks[idx]) {
     // Asegurar que el tiempo es un número
     const timeToSave =
       typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
-      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]) // eslint-disable-line no-console
     } else {
       console.error('Tiempo no válido:', elapsedTime) // eslint-disable-line no-console
     }
@@ -1044,8 +1034,6 @@ const mappingSteps = async () => {
               susAnswers: [],
               nasaTlxAnswers: null,
             })
-            console.log('Nueva tarea creada:', i, newTask) // eslint-disable-line no-console
-
             return newTask
           },
         )

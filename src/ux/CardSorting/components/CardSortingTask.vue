@@ -12,7 +12,8 @@
                 <VCardTitle class="d-flex justify-center align-center">
                   <VCol class="text-center">
                     <p>{{ pendingAllocationCount }} of {{ props.test.testStructure.cardSorting.cards.length }} cards</p>
-                    <v-progress-linear v-model="pendingAllocationCount" color="primary" height="12"
+                    <v-progress-linear
+v-model="pendingAllocationCount" color="primary" height="12"
                       :max="props.test.testStructure.cardSorting.cards.length" />
                   </VCol>
                 </VCardTitle>
@@ -26,8 +27,9 @@
             </VCol>
 
             <!-- Categories -->
-            <VCol :cols="12 / (categories.length + 1)" class="mb-0 pb-0" v-for="(category, index) in categories"
-              :key="index">
+            <VCol
+v-for="(category, index) in categories" :key="index" :cols="12 / (categories.length + 1)"
+              class="mb-0 pb-0">
               <VCard class="card-category category">
                 <VCardTitle class="d-flex justify-center align-center">
                   <VCol class="text-center">
@@ -38,7 +40,8 @@
                   </VCol>
                 </VCardTitle>
 
-                <Draggable :list="localTestAnswer.tasks[category.title]" item-key="title" class="list-group"
+                <Draggable
+:list="localTestAnswer.tasks[category.title]" item-key="title" class="list-group"
                   group="cards">
                   <template #item="{ element }">
                     <CardSortingCard :element="element" :options="props.test.testStructure.cardSorting.options" />

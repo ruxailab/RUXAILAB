@@ -25,8 +25,8 @@
           icon 
           size="small" 
           variant="text" 
-          @click="toggleStepPanel"
           class="close-btn"
+          @click="toggleStepPanel"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -40,7 +40,7 @@
             size="large" 
             class="mb-3"
           >
-            <v-icon left>mdi-play-circle</v-icon>
+            <v-icon start>mdi-play-circle</v-icon>
             Step {{ currentStep }} of {{ totalSteps }}
           </v-chip>
           <p class="step-description">{{ getCurrentStepDescription() }}</p>
@@ -93,7 +93,7 @@
                 </div>
               </div>
               
-              <div class="step-item-action" v-if="index + 1 !== currentStep">
+              <div v-if="index + 1 !== currentStep" class="step-item-action">
                 <v-btn
                   size="small"
                   variant="text"
@@ -113,22 +113,22 @@
             size="large"
             block
             class="mb-2"
-            @click="proceedToNextStep"
             :disabled="currentStep >= totalSteps"
+            @click="proceedToNextStep"
           >
-            <v-icon left>mdi-arrow-right</v-icon>
+            <v-icon start>mdi-arrow-right</v-icon>
             {{ currentStep >= totalSteps ? 'Test Complete' : `Proceed to Step ${currentStep + 1}` }}
           </v-btn>
           
           <v-btn
+            v-if="currentStep > 1"
             color="primary"
             size="large"
             block
             variant="outlined"
             @click="resetToFirstStep"
-            v-if="currentStep > 1"
           >
-            <v-icon left>mdi-restart</v-icon>
+            <v-icon start>mdi-restart</v-icon>
             Restart Test
           </v-btn>
         </div>
