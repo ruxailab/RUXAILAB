@@ -144,8 +144,39 @@
     </v-expand-transition>
   </v-card>
 
+  <!-- 🔹 Empty State (Only shown when no tests exist and not loading) -->
+  <div v-if="!loadingStudy && tests && tests.length === 0" class="empty-state text-center pa-10">
+    <div class="d-flex justify-center mb-6">
+      <v-icon
+        icon="mdi-account-group-outline"
+        size="120"
+        color="grey-lighten-2"
+      ></v-icon>
+    </div>
+
+    <h2 class="text-h4 font-weight-bold text-grey-darken-3 mb-2">
+      No community studies available yet
+    </h2>
+    <p class="text-body-1 text-grey-darken-1 mb-8">
+      Be the first to share a study with the RUXAI community!
+    </p>
+
+    <v-btn
+      color="primary"
+      size="x-large"
+      prepend-icon="mdi-plus"
+      elevation="4"
+      rounded="pill"
+      height="56"
+      class="px-8 font-weight-bold"
+      @click="goToCreateTestRoute"
+    >
+      Create Your First Study
+    </v-btn>
+  </div>
+
   <!-- 📋 List of filtered studies -->
-  <List :items="filteredTests" type="publicTests" @clicked="goTo" />
+  <List v-else :items="filteredTests" type="publicTests" @clicked="goTo" />
 </template>
 
 <script setup>
@@ -164,6 +195,12 @@ import {
 
 const store = useStore()
 const router = useRouter()
+
+const loadingStudy = computed(() => store.getters.loading)
+
+const goToCreateTestRoute = () => {
+    router.push('/choose')
+}
 
 // ===== Reactive state =====
 const search = ref('')

@@ -131,6 +131,25 @@ export default class UserController extends Controller {
     await reauthenticateWithCredential(user, credential);
   }
 
+  async addTestToUser(userId, testId, testData) {
+    const userDoc = await super.readOne('users', userId);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      if (!userData.myTests) userData.myTests = {};
+      
+      userData.myTests[testId] = {
+        testTitle: testData.testTitle,
+        testType: testData.testType,
+        subType: testData.subType,
+        description: testData.testDescription, // Some views might use description
+        status: testData.status,
+        date: testData.creationDate // Consistency with some user test objects
+      };
+
+      await super.update('users', userId, { myTests: userData.myTests });
+    }
+  }
+
   async addNotification(payload) {
     const userToUpdate = await this.getById(payload.userId)
     userToUpdate.notifications.push(payload.notification.toFirestore())
