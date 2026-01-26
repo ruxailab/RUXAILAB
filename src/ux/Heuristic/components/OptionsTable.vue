@@ -122,7 +122,7 @@
       <!-- Mobile List View (similar to heuristics) -->
       <div class="mobile-options-list">
         <div
-          v-for="(item, index) in optionsWithFormattedValue"
+          v-for="item in optionsWithFormattedValue"
           :key="item.timestamp"
           class="option-item-mobile"
         >
