@@ -5,7 +5,6 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
