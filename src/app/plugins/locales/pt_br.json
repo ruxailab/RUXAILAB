@@ -96,7 +96,10 @@
       "sessionDate": "Data da sessão",
       "participants": "Participantes",
       "created": "Criado"
-    }
+    },
+    "proceed": "prosseguir",
+    "all": "Todos",
+    "actions": "Ações"
   },
   "storage": {
     "pageTitle": "Armazenamento",
@@ -268,7 +271,14 @@
     "accountDeletedSuccess": "Conta excluída com sucesso",
     "yourPassword": "Sua senha",
     "back": "Voltar",
-    "deleteForever": "Excluir permanentemente"
+    "deleteForever": "Excluir permanentemente",
+    "uploadProfilePicture": "Enviar foto de perfil",
+    "removeProfilePicture": "Remover foto de perfil",
+    "currentPassword": "Senha atual",
+    "currentPasswordRequired": "A senha atual é obrigatória",
+    "wrongCurrentPassword": "A senha atual está incorreta",
+    "recentLoginRequired": "Por favor, saia e faça login novamente antes de alterar sua senha",
+    "googleUserPasswordInfo": "Você fez login com o Google. Clique no botão abaixo para verificar com o Google e definir uma senha para sua conta."
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -312,7 +322,10 @@
       "start": "Comece!",
       "edit": "Crie e personalize suas tarefas e heurísticas de acordo com suas necessidades de pesquisa.",
       "finalReport": "Prepare o relatório final para sua avaliação heurística selecionando os elementos que deseja incluir."
-    }
+    },
+    "overallAnalyticsDescription": "Veja as análises agregadas do seu teste.",
+    "individualAnalytics": "Análises Individuais",
+    "nasaTlxAnalytics": "Análises NASA-TLX"
   },
   "errors": {
     "invalidInvitation": "Convite inválido",
@@ -416,6 +429,63 @@
       "paused": "Pausado",
       "finished": "Finalizado",
       "unknown": "Desconhecido"
+    },
+    "cards": {
+      "recentActivity": "Atividade Recente",
+      "activities7Days": "Atividades (total de 7 dias)",
+      "lastActivity": "Última atividade",
+      "noActivity": "Nenhuma atividade",
+      "edit": "Editar",
+      "heuristics": "Heurísticas",
+      "questions": "Perguntas",
+      "totalOptions": "Total de Opções",
+      "qualitative": "Qualitativo",
+      "quantitative": "Quantitativo",
+      "weights": "Pesos",
+      "on": "LIGADO",
+      "off": "DESLIGADO",
+      "cooperators": "Colaboradores",
+      "totalInvited": "Total convidados",
+      "accepted": "Aceito",
+      "pending": "Pendente",
+      "storage": "Armazenamento",
+      "currentStorage": "Armazenamento (atual)",
+      "limitAvailable": "Limite disponível",
+      "results": "Resultados",
+      "generalUsability": "Usabilidade Geral",
+      "finalReport": "Relatório Final",
+      "generatePDF": "Gerar PDF",
+      "download": "Baixar",
+      "generated": "Gerado:",
+      "generateReport": "Gerar Relatório",
+      "reportAvailable": "Relatório Disponível",
+      "noReport": "Nenhum Relatório Gerado",
+      "readyForDownload": "Relatório final pronto para download",
+      "waitingForParticipants": "Aguardando participantes",
+      "evaluationsCompleted": "avaliações concluídas",
+      "readyToGenerate": "Pronto para gerar relatório",
+      "excellentUsability": "Usabilidade Excelente",
+      "acceptableUsability": "Usabilidade Aceitável",
+      "needsImprovement": "Precisa de Melhoria",
+      "basedOn": "Baseado em",
+      "evaluations": "avaliações",
+      "evaluationUpdated": "Avaliação atualizada",
+      "updatedProgress": "atualizou seu progresso",
+      "invitationSentTitle": "Convite enviado",
+      "invitationPendingDesc": "Convite pendente para",
+      "pendingStatus": "Pendente"
+    },
+    "managerView": {
+      "heuristicStudy": "Estudo Heurístico",
+      "freePlan": "Plano Gratuito",
+      "generalStatistics": "Estatísticas Gerais",
+      "modules": "Módulos"
+    },
+    "stats": {
+      "participants": "Participantes",
+      "completion": "Conclusão",
+      "daysActive": "Dias ativo",
+      "heuristics": "Heurísticas"
     }
   },
   "HeuristicsTable": {
@@ -491,7 +561,9 @@
       "options": "Opções",
       "noOptions": "Nenhuma opção"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Comece a adicionar opções às suas perguntas heurísticas"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -509,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Configurações"
+      "settings": "Configurações",
+      "confirmUpload": "Confirmar Upload"
     },
     "messages": {
       "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
@@ -741,7 +814,9 @@
       "testNotActiveMessage": "Este teste não está ativo no momento. Entre em contato com o administrador.",
       "testConfigError": "Erro de configuração do teste",
       "testConfigErrorMessage": "Este teste não possui tarefas configuradas. Entre em contato com o administrador.",
-      "consentDecline": "Teste encerrado devido à recusa do consentimento. Obrigado pelo seu tempo."
+      "consentDecline": "Teste encerrado devido à recusa do consentimento. Obrigado pelo seu tempo.",
+      "sessionTooFar": "Sessão Muito Distante",
+      "sessionTooFarMessage": "A sessão agendada é daqui a mais de 24 horas. Por favor, volte mais perto da data da sessão."
     },
     "stepper": {
       "consent": "Consentimento",
@@ -867,6 +942,15 @@
       "audioRecording": "Áudio",
       "eyeTracking": "Rastreamento ocular",
       "recordingNote": "Você será notificado antes que qualquer gravação comece. Todos os dados são coletados apenas para fins de pesquisa e tratados de acordo com as diretrizes de privacidade."
+    },
+    "CalibrationStep": {
+      "title": "Calibração de Rastreamento Ocular",
+      "heading": "Antes de iniciar a calibração",
+      "description": "Vamos preparar seu dispositivo para <strong>gravar o movimento dos seus olhos</strong>. Isso nos permitirá entender como você navega na tela durante o teste.",
+      "process": "A calibração envolve acompanhar com os olhos os pontos que aparecerão na tela. É importante que você esteja em um local bem iluminado, sente-se confortavelmente e mantenha a cabeça estável.",
+      "instruction": "Quando estiver pronto, pressione o botão para iniciar a calibração.",
+      "startButton": "Iniciar calibração",
+      "inProgress": "Em andamento..."
     }
   },
   "eyeTracking": {
@@ -1121,7 +1205,8 @@
     "audioRecord": "Gravação de áudio",
     "postForm": "Formulário posterior",
     "nasa": "NASA-TLX",
-    "sus": "SUS"
+    "sus": "SUS",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
@@ -1310,7 +1395,9 @@
     "user": "Usuário",
     "invite": "Convidar",
     "actions": "Ações",
-    "no": "Não"
+    "no": "Não",
+    "downloadResume": "Baixar Resumo em PDF",
+    "sartAnalytics": "Análises SART"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Escolha a Categoria de Avaliação",

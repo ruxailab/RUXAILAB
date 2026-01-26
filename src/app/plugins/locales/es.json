@@ -96,7 +96,10 @@
       "sessionDate": "Fecha de sesión",
       "participants": "Participantes",
       "created": "Creado"
-    }
+    },
+    "proceed": "proceder",
+    "all": "Todos",
+    "actions": "Acciones"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -269,7 +272,13 @@
     "accountDeletedSuccess": "Cuenta eliminada con éxito",
     "yourPassword": "Tu contraseña",
     "back": "Volver",
-    "deleteForever": "Eliminar permanentemente"
+    "deleteForever": "Eliminar permanentemente",
+    "uploadProfilePicture": "Subir foto de perfil",
+    "removeProfilePicture": "Eliminar foto de perfil",
+    "currentPassword": "Contraseña actual",
+    "currentPasswordRequired": "Se requiere la contraseña actual",
+    "wrongCurrentPassword": "La contraseña actual es incorrecta",
+    "recentLoginRequired": "Por favor, cierre sesión y vuelva a entrar antes de cambiar su contraseña"
   },
   "titles": {
     "manager": "Gerente",
@@ -313,7 +322,10 @@
       "start": "¡Comienza!",
       "edit": "Crea y personaliza tus tareas y heurísticas para tus necesidades de investigación.",
       "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir."
-    }
+    },
+    "overallAnalyticsDescription": "Ver los análisis agregados de su prueba.",
+    "individualAnalytics": "Análisis individual",
+    "nasaTlxAnalytics": "Análisis NASA-TLX"
   },
   "errors": {
     "invalidInvitation": "Invitación inválida",
@@ -549,7 +561,9 @@
       "options": "Opciones",
       "noOptions": "Sin opciones"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Comience a agregar opciones a sus preguntas heurísticas"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -567,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "confirmUpload": "Confirmar carga"
     },
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
@@ -799,7 +814,9 @@
       "testNotActiveMessage": "Esta prueba no está activa actualmente. Por favor, contacta al administrador.",
       "testConfigError": "Error de configuración de la prueba",
       "testConfigErrorMessage": "Esta prueba no tiene tareas configuradas. Por favor, contacta al administrador.",
-      "consentDecline": "Prueba finalizada debido al rechazo del consentimiento. Gracias por tu tiempo."
+      "consentDecline": "Prueba finalizada debido al rechazo del consentimiento. Gracias por tu tiempo.",
+      "sessionTooFar": "Sesión demasiado lejana",
+      "sessionTooFarMessage": "La sesión programada es en más de 24 horas. Por favor regrese más cerca de la fecha de la sesión."
     },
     "stepper": {
       "consent": "Consentimiento",
@@ -1188,7 +1205,8 @@
     "audioRecord": "Grabación de audio",
     "postForm": "Formulario posterior",
     "nasa": "NASA-TLX",
-    "sus": "SUS"
+    "sus": "SUS",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Formulario de consentimiento",
@@ -1378,7 +1396,8 @@
     "invited": "Invitado",
     "answers": "Respuestas",
     "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
-    "no": "No"
+    "no": "No",
+    "sartAnalytics": "Análisis SART"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
