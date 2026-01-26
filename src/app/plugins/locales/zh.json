@@ -34,6 +34,15 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
+    },
+    "passwordStrength": "密码强度",
+    "number": "号码",
+    "strength": {
+      "veryWeak": "非常弱",
+      "weak": "弱",
+      "fair": "一般",
+      "good": "好",
+      "strong": "强"
     }
   },
   "common": {
@@ -86,7 +95,11 @@
       "sessionDate": "会话日期",
       "participants": "参与者",
       "created": "创建时间"
-    }
+    },
+    "hidden": "隐藏",
+    "proceed": "继续",
+    "all": "全部",
+    "actions": "操作"
   },
   "storage": {
     "pageTitle": "存储",
@@ -257,7 +270,15 @@
     "accountDeletedSuccess": "账户删除成功",
     "yourPassword": "您的密码",
     "back": "返回",
-    "deleteForever": "永久删除"
+    "deleteForever": "永久删除",
+    "superAdmin": "超级管理员",
+    "uploadProfilePicture": "上传头像",
+    "removeProfilePicture": "删除头像",
+    "currentPassword": "当前密码",
+    "currentPasswordRequired": "当前密码为必填项",
+    "wrongCurrentPassword": "当前密码错误",
+    "recentLoginRequired": "请在更改密码前注销并重新登录",
+    "googleUserPasswordInfo": "您已使用 Google 登录。点击下方按钮以通过 Google 验证并为您的帐户设置密码。"
   },
   "titles": {
     "manager": "管理员",
@@ -301,7 +322,10 @@
       "start": "开始！",
       "edit": "根据研究需求创建和自定义您的任务和启发式方法。",
       "finalReport": "通过选择要包含的元素来准备您的启发式评估的最终报告。"
-    }
+    },
+    "overallAnalyticsDescription": "查看您测试的综合分析。",
+    "individualAnalytics": "个人分析",
+    "nasaTlxAnalytics": "NASA-TLX 分析"
   },
   "errors": {
     "invalidInvitation": "无效邀请",
@@ -405,6 +429,63 @@
       "paused": "已暂停",
       "finished": "已完成",
       "unknown": "未知"
+    },
+    "cards": {
+      "recentActivity": "近期活动",
+      "activities7Days": "活动（共7天）",
+      "lastActivity": "最后活动",
+      "noActivity": "无活动",
+      "edit": "编辑",
+      "heuristics": "启发式评估",
+      "questions": "问题",
+      "totalOptions": "总选项",
+      "qualitative": "定性",
+      "quantitative": "定量",
+      "weights": "权重",
+      "on": "开启",
+      "off": "关闭",
+      "cooperators": "合作者",
+      "totalInvited": "已邀请总数",
+      "accepted": "已接受",
+      "pending": "待定",
+      "storage": "存储",
+      "currentStorage": "存储（当前）",
+      "limitAvailable": "可用限额",
+      "results": "结果",
+      "generalUsability": "一般可用性",
+      "finalReport": "最终报告",
+      "generatePDF": "生成PDF",
+      "download": "下载",
+      "generated": "生成时间：",
+      "generateReport": "生成报告",
+      "reportAvailable": "报告可用",
+      "noReport": "未生成报告",
+      "readyForDownload": "最终报告准备好下载",
+      "waitingForParticipants": "等待参与者",
+      "evaluationsCompleted": "评估已完成",
+      "readyToGenerate": "准备生成报告",
+      "excellentUsability": "优秀的可用性",
+      "acceptableUsability": "可接受的可用性",
+      "needsImprovement": "需要改进",
+      "basedOn": "基于",
+      "evaluations": "评估",
+      "evaluationUpdated": "评估已更新",
+      "updatedProgress": "更新了进度",
+      "invitationSentTitle": "邀请已发送",
+      "invitationPendingDesc": "邀请待定",
+      "pendingStatus": "待定"
+    },
+    "managerView": {
+      "heuristicStudy": "启发式研究",
+      "freePlan": "免费计划",
+      "generalStatistics": "一般统计",
+      "modules": "模块"
+    },
+    "stats": {
+      "participants": "参与者",
+      "completion": "完成度",
+      "daysActive": "活跃天数",
+      "heuristics": "启发式"
     }
   },
   "HeuristicsTable": {
@@ -480,7 +561,9 @@
       "options": "选项",
       "noOptions": "没有选项"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "开始为您的启发式问题添加选项"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -498,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "设置"
+      "settings": "设置",
+      "confirmUpload": "确认上传"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
@@ -858,6 +942,15 @@
       "audioRecording": "音频",
       "eyeTracking": "眼动追踪",
       "recordingNote": "在任何录制开始前，您会收到通知。所有数据仅用于研究目的，并根据隐私准则处理。"
+    },
+    "CalibrationStep": {
+      "title": "眼动追踪校准",
+      "heading": "在开始校准之前",
+      "description": "我们将准备您的设备来<strong>记录您的眼球运动</strong>。这将使我们能够了解您在测试过程中如何浏览屏幕。",
+      "process": "校准包括用眼睛跟随屏幕上出现的点。重要的是要在光线充足的地方，坐得舒服，保持头部稳定。",
+      "instruction": "准备好后，按按钮开始校准。",
+      "startButton": "开始校准",
+      "inProgress": "进行中..."
     }
   },
   "eyeTracking": {
@@ -1111,7 +1204,8 @@
     "eyeTracker": "眼动追踪",
     "audioRecord": "音频录制",
     "postForm": "后测表单",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "同意书",
@@ -1321,7 +1415,9 @@
     "user": "用户",
     "invite": "邀请",
     "actions": "操作",
-    "no": "否"
+    "no": "否",
+    "downloadResume": "下载简历 PDF",
+    "sartAnalytics": "SART 分析"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "选择评估类别",

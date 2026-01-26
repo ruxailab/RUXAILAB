@@ -29,7 +29,20 @@
       "email": "البريد الإلكتروني",
       "instructions": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
       "reset_button": "إرسال رابط إعادة التعيين",
-      "back_to_signin": "العودة إلى تسجيل الدخول"
+      "back_to_signin": "العودة إلى تسجيل الدخول",
+      "check_your_email": "تحقق من بريدك الإلكتروني",
+      "reset_link_sent": "لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى",
+      "no_email": "لم تتلق البريد الإلكتروني؟",
+      "try_again": "حاول مرة أخرى"
+    },
+    "passwordStrength": "قوة كلمة المرور",
+    "number": "رقم",
+    "strength": {
+      "veryWeak": "ضعيف جدا",
+      "weak": "ضعيف",
+      "fair": "متوسط",
+      "good": "جيد",
+      "strong": "قوي"
     }
   },
   "common": {
@@ -82,7 +95,11 @@
       "sessionDate": "تاريخ الجلسة",
       "participants": "المشاركون",
       "created": "تم الإنشاء"
-    }
+    },
+    "hidden": "مخفي",
+    "proceed": "متابعة",
+    "all": "الكل",
+    "actions": "إجراءات"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -253,7 +270,15 @@
     "accountDeletedSuccess": "تم حذف الحساب بنجاح",
     "yourPassword": "كلمة المرور الخاصة بك",
     "back": "عودة",
-    "deleteForever": "حذف نهائي"
+    "deleteForever": "حذف نهائي",
+    "superAdmin": "مشرف فائق",
+    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
+    "removeProfilePicture": "إزالة صورة الملف الشخصي",
+    "currentPassword": "كلمة المرور الحالية",
+    "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
+    "wrongCurrentPassword": "كلمة المرور الحالية غير صحيحة",
+    "recentLoginRequired": "يرجى تسجيل الخروج وتسجيل الدخول مرة أخرى قبل تغيير كلمة المرور",
+    "googleUserPasswordInfo": "لقد قمت بتسجيل الدخول باستخدام Google. انقر فوق الزر أدناه للتحقق مع Google وتعيين كلمة مرور لحسابك."
   },
   "titles": {
     "manager": "المدير",
@@ -297,7 +322,10 @@
       "start": "ابدأ!",
       "edit": "أنشئ وقم بتخصيص مهامك واستدلالاتك وفقًا لاحتياجات بحثك.",
       "finalReport": "قم بإعداد التقرير النهائي لتقييم الاستدلال الخاص بك من خلال تحديد العناصر التي تريد تضمينها."
-    }
+    },
+    "overallAnalyticsDescription": "عرض التحليلات المجمعة للاختبار الخاص بك.",
+    "individualAnalytics": "تحليلات فردية",
+    "nasaTlxAnalytics": "تحليلات NASA-TLX"
   },
   "errors": {
     "invalidInvitation": "دعوة غير صالحة",
@@ -401,6 +429,63 @@
       "paused": "متوقف",
       "finished": "منتهي",
       "unknown": "غير معروف"
+    },
+    "cards": {
+      "recentActivity": "النشاط الأخير",
+      "activities7Days": "الأنشطة (إجمالي 7 أيام)",
+      "lastActivity": "آخر نشاط",
+      "noActivity": "لا يوجد نشاط",
+      "edit": "تعديل",
+      "heuristics": "الاستدلالات",
+      "questions": "أسئلة",
+      "totalOptions": "مجموع الخيارات",
+      "qualitative": "نوعي",
+      "quantitative": "كمي",
+      "weights": "الأوزان",
+      "on": "تشغيل",
+      "off": "إيقاف",
+      "cooperators": "المتعاونون",
+      "totalInvited": "إجمالي المدعوين",
+      "accepted": "مقبول",
+      "pending": "قيد الانتظار",
+      "storage": "تخزين",
+      "currentStorage": "التخزين (الحالي)",
+      "limitAvailable": "الحد المتاح",
+      "results": "النتائج",
+      "generalUsability": "قابلية الاستخدام العامة",
+      "finalReport": "التقرير النهائي",
+      "generatePDF": "إنشاء PDF",
+      "download": "تحميل",
+      "generated": "تم الإنشاء:",
+      "generateReport": "إنشاء تقرير",
+      "reportAvailable": "التقرير متاح",
+      "noReport": "لم يتم إنشاء تقرير",
+      "readyForDownload": "التقرير النهائي جاهز للتنزيل",
+      "waitingForParticipants": "في انتظار المشاركين",
+      "evaluationsCompleted": "التقييمات المكتملة",
+      "readyToGenerate": "جاهز لإنشاء التقرير",
+      "excellentUsability": "قابلية استخدام ممتازة",
+      "acceptableUsability": "قابلية استخدام مقبولة",
+      "needsImprovement": "يحتاج التحسين",
+      "basedOn": "على أساس",
+      "evaluations": "التقييمات",
+      "evaluationUpdated": "تم تحديث التقييم",
+      "updatedProgress": "تم تحديث التقدم",
+      "invitationSentTitle": "تم إرسال الدعوة",
+      "invitationPendingDesc": "الدعوة معلقة لـ",
+      "pendingStatus": "قيد الانتظار"
+    },
+    "managerView": {
+      "heuristicStudy": "دراسة إرشادية",
+      "freePlan": "خطة مجانية",
+      "generalStatistics": "إحصائيات عامة",
+      "modules": "وحدات"
+    },
+    "stats": {
+      "participants": "مشاركين",
+      "completion": "إكمال",
+      "daysActive": "أيام نشطة",
+      "heuristics": "المعرفات"
     }
   },
   "HeuristicsTable": {
@@ -476,7 +561,9 @@
       "options": "الخيارات",
       "noOptions": "لا يوجد خيارات"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "ابدأ بإضافة خيارات لأسئلتك التجريبية"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -494,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "confirmUpload": "تأكيد التحميل"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
@@ -854,6 +942,15 @@
       "audioRecording": "الصوت",
       "eyeTracking": "تتبع العين",
       "recordingNote": "سيتم إعلامك قبل بدء أي تسجيل. يتم جمع جميع البيانات لأغراض البحث فقط والتعامل معها وفقًا لإرشادات الخصوصية."
+    },
+    "CalibrationStep": {
+      "title": "معايرة تتبع العين",
+      "heading": "قبل بدء المعايرة",
+      "description": "سنقوم بإعداد جهازك <strong>لتسجيل حركة عينيك</strong>. سيسمح لنا ذلك بفهم كيفية تنقلك في الشاشة أثناء الاختبار.",
+      "process": "تتضمن المعايرة متابعة النقاط التي ستظهر  على الشاشة بعينيك. من المهم أن تكون في مكان جيد الإضاءة، وتجلس بشكل مريح، وتحافظ على ثبات رأسك.",
+      "instruction": "عندما تكون جاهزًا، اضغط على الزر لبدء المعايرة.",
+      "startButton": "بدء المعايرة",
+      "inProgress": "جارٍ العمل..."
     }
   },
   "eyeTracking": {
@@ -1107,7 +1204,8 @@
     "eyeTracker": "تتبع العين",
     "audioRecord": "تسجيل الصوت",
     "postForm": "نموذج ما بعد الاختبار",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "نموذج الموافقة",
@@ -1317,7 +1415,9 @@
     "user": "المستخدم",
     "invite": "دعوة",
     "actions": "إجراءات",
-    "no": "لا"
+    "no": "لا",
+    "downloadResume": "تحميل الملخص PDF",
+    "sartAnalytics": "تحليلات SART"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "اختر فئة التقييم",
@@ -1455,7 +1555,8 @@
         "finished": "منتهي",
         "upcoming": "قادم"
       }
-    }
+    },
+    "backToMethods": "العودة إلى الطرق"
   },
   "manager": {
     "dashboard": {

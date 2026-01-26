@@ -95,7 +95,11 @@
       "sessionDate": "Дата сессии",
       "participants": "Участники",
       "created": "Создано"
-    }
+    },
+    "hidden": "Скрыто",
+    "proceed": "продолжить",
+    "all": "Все",
+    "actions": "Действия"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -266,7 +270,15 @@
     "accountDeletedSuccess": "Аккаунт успешно удален",
     "yourPassword": "Ваш пароль",
     "back": "Назад",
-    "deleteForever": "Удалить навсегда"
+    "deleteForever": "Удалить навсегда",
+    "superAdmin": "Суперадмин",
+    "uploadProfilePicture": "Загрузить фото профиля",
+    "removeProfilePicture": "Удалить фото профиля",
+    "currentPassword": "Текущий пароль",
+    "currentPasswordRequired": "Требуется текущий пароль",
+    "wrongCurrentPassword": "Текущий пароль неверен",
+    "recentLoginRequired": "Пожалуйста, выйдите и войдите снова перед изменением пароля",
+    "googleUserPasswordInfo": "Вы вошли через Google. Нажмите кнопку ниже, чтобы подтвердить через Google и установить пароль для вашей учетной записи."
   },
   "titles": {
     "manager": "Менеджер",
@@ -310,7 +322,10 @@
       "start": "Начните!",
       "edit": "Создавайте и настраивайте свои задачи и эвристики в соответствии с вашими исследовательскими потребностями.",
       "finalReport": "Подготовьте итоговый отчет для вашей эвристической оценки, выбрав элементы, которые хотите включить."
-    }
+    },
+    "overallAnalyticsDescription": "Просмотр сводной аналитики для вашего теста.",
+    "individualAnalytics": "Индивидуальная аналитика",
+    "nasaTlxAnalytics": "Аналитика NASA-TLX"
   },
   "errors": {
     "invalidInvitation": "Недействительное приглашение",
@@ -414,6 +429,63 @@
       "paused": "Приостановлен",
       "finished": "Завершен",
       "unknown": "Неизвестно"
+    },
+    "cards": {
+      "recentActivity": "Недавняя активность",
+      "activities7Days": "Активность (всего за 7 дней)",
+      "lastActivity": "Последняя активность",
+      "noActivity": "Нет активности",
+      "edit": "Редактировать",
+      "heuristics": "Эвристики",
+      "questions": "Вопросы",
+      "totalOptions": "Всего опций",
+      "qualitative": "Качественный",
+      "quantitative": "Количественный",
+      "weights": "Веса",
+      "on": "ВКЛ",
+      "off": "ВЫКЛ",
+      "cooperators": "Соавторы",
+      "totalInvited": "Всего приглашено",
+      "accepted": "Принято",
+      "pending": "Ожидает",
+      "storage": "Хранилище",
+      "currentStorage": "Хранилище (текущее)",
+      "limitAvailable": "Доступный лимит",
+      "results": "Результаты",
+      "generalUsability": "Общее удобство использования",
+      "finalReport": "Итоговый отчет",
+      "generatePDF": "Создать PDF",
+      "download": "Скачать",
+      "generated": "Создано:",
+      "generateReport": "Создать отчет",
+      "reportAvailable": "Отчет доступен",
+      "noReport": "Отчет не создан",
+      "readyForDownload": "Итоговый отчет готов к загрузке",
+      "waitingForParticipants": "Ожидание участников",
+      "evaluationsCompleted": "оценок завершено",
+      "readyToGenerate": "Готов к созданию отчета",
+      "excellentUsability": "Отличное удобство использования",
+      "acceptableUsability": "Приемлемое удобство использования",
+      "needsImprovement": "Требует улучшения",
+      "basedOn": "Основано на",
+      "evaluations": "оценках",
+      "evaluationUpdated": "Оценка обновлена",
+      "updatedProgress": "обновил(а) прогресс",
+      "invitationSentTitle": "Приглашение отправлено",
+      "invitationPendingDesc": "Приглашение ожидает",
+      "pendingStatus": "Ожидает"
+    },
+    "managerView": {
+      "heuristicStudy": "Эвристическое исследование",
+      "freePlan": "Бесплатный план",
+      "generalStatistics": "Общая статистика",
+      "modules": "Модули"
+    },
+    "stats": {
+      "participants": "Участники",
+      "completion": "Завершение",
+      "daysActive": "Дней активно",
+      "heuristics": "Эвристики"
     }
   },
   "HeuristicsTable": {
@@ -489,7 +561,9 @@
       "options": "Варианты",
       "noOptions": "Нет вариантов"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Начните добавлять варианты к вашим эвристическим вопросам"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -507,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Настройки"
+      "settings": "Настройки",
+      "confirmUpload": "Подтвердить загрузку"
     },
     "messages": {
       "acceptCsv": "Если вы согласны, все ваши текущие эвристики будут заменены теми, что в CSV-файле.",
@@ -739,7 +814,9 @@
       "testNotActiveMessage": "В данный момент этот тест не активен. Пожалуйста, свяжитесь с администратором.",
       "testConfigError": "Ошибка конфигурации теста",
       "testConfigErrorMessage": "В этом тесте не настроены задачи. Пожалуйста, свяжитесь с администратором.",
-      "consentDecline": "Тест завершен из-за отказа от согласия. Благодарим за уделенное время."
+      "consentDecline": "Тест завершен из-за отказа от согласия. Благодарим за уделенное время.",
+      "sessionTooFar": "Сессия слишком далеко",
+      "sessionTooFarMessage": "Запланированная сессия состоится более чем через 24 часа. Пожалуйста, вернитесь ближе к дате сессии."
     },
     "stepper": {
       "consent": "Согласие",
@@ -865,6 +942,15 @@
       "audioRecording": "Аудио",
       "eyeTracking": "Трекер глаз",
       "recordingNote": "Вы будете уведомлены перед началом любой записи. Все данные собираются исключительно для исследовательских целей и обрабатываются в соответствии с правилами конфиденциальности."
+    },
+    "CalibrationStep": {
+      "title": "Калибровка отслеживания глаз",
+      "heading": "Перед началом калибровки",
+      "description": "Мы собираемся подготовить ваше устройство к <strong>записи движения ваших глаз</strong>. Это позволит нам понять, как вы перемещаетесь по экрану во время теста.",
+      "process": "Калибровка включает в себя слежение глазами за точками, которые появятся на экране. Важно, чтобы вы находились в хорошо освещенном месте, сидели удобно и держали голову неподвижно.",
+      "instruction": "Когда будете готовы, нажмите кнопку, чтобы начать калибровку.",
+      "startButton": "Начать калибровку",
+      "inProgress": "В процессе..."
     }
   },
   "eyeTracking": {
@@ -1118,7 +1204,8 @@
     "eyeTracker": "Трекер глаз",
     "audioRecord": "Запись звука",
     "postForm": "Форма после теста",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Форма согласия",
@@ -1328,7 +1415,9 @@
     "user": "Пользователь",
     "invite": "Пригласить",
     "actions": "Действия",
-    "no": "Нет"
+    "no": "Нет",
+    "downloadResume": "Скачать резюме PDF",
+    "sartAnalytics": "Аналитика SART"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Выберите категорию оценки",
