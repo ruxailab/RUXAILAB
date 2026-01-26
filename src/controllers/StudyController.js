@@ -65,7 +65,7 @@ export default class StudyController extends Controller {
         }
         await Promise.all(promises)
       }
-      await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
+      await userController.removeTestFromUser(payload.testAdmin.userDocId, payload.id)
       await super.delete(COLLECTION, payload.id)
     } catch (error) {
       throw error

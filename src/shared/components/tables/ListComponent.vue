@@ -111,6 +111,11 @@
       </v-chip>
     </template>
 
+    <!-- Actions Column -->
+    <template #item.actions="{ item }">
+      <slot name="actions" :item="item"></slot>
+    </template>
+
     <!-- No Data Slot -->
     <template #no-data>
       <div class="text-center pa-4">

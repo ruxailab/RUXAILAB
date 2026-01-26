@@ -28,6 +28,12 @@ export function useDataTableConfig(type, t) {
                 key: 'owner',
                 sortable: true,
             },
+            {
+                title: 'Actions',
+                key: 'actions',
+                sortable: false,
+                align: 'end',
+            },
         ]
 
         if (typeRef.value === 'sessions') {

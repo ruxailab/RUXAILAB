@@ -160,7 +160,53 @@
   </v-card>
 
   <!-- 📋 Study list -->
-  <List :items="filteredTests" type="myTests" @clicked="goTo" />
+  <List :items="filteredTests" type="myTests" @clicked="goTo">
+    <template #actions="{ item }">
+      <v-btn
+        icon
+        variant="text"
+        color="error"
+        density="compact"
+        @click.stop="openDeleteModal(item)"
+        :disabled="item.status === 'active' && item.testAdmin?.userDocId !== user?.id"
+        :title="item.status === 'active' ? 'Cannot delete active study' : 'Delete study'"
+      >
+        <v-icon>mdi-delete-outline</v-icon>
+      </v-btn>
+    </template>
+  </List>
+
+  <!-- 🗑️ Delete Confirmation Dialog -->
+  <v-dialog v-model="deleteDialog" max-width="450">
+    <v-card>
+      <v-card-title class="text-h6 font-weight-bold text-error">
+        Delete Study
+      </v-card-title>
+      <v-card-text>
+        Are you sure you want to delete this study? This action cannot be undone.
+        <div v-if="itemToDelete" class="mt-2 font-weight-medium bg-grey-lighten-4 pa-2 rounded">
+          "{{ itemToDelete.testTitle || itemToDelete.title }}"
+        </div>
+      </v-card-text>
+      <v-card-actions class="justify-end pa-4">
+        <v-btn
+          variant="plain"
+          @click="closeDeleteModal"
+          :disabled="deleting"
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          color="error"
+          variant="flat"
+          @click="confirmDelete"
+          :loading="deleting"
+        >
+          Delete
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -381,6 +427,49 @@ const goTo = (test) => {
 
   const methodView = getMethodManagerView(test.testType, test.subType)
   router.push({ name: methodView, params: { id: test.testDocId || test.id } })
+
+}
+
+// ===== Delete Logic =====
+const deleteDialog = ref(false)
+const itemToDelete = ref(null)
+const deleting = ref(false)
+
+const openDeleteModal = (item) => {
+  itemToDelete.value = item
+  deleteDialog.value = true
+}
+
+const closeDeleteModal = () => {
+  deleteDialog.value = false
+  setTimeout(() => {
+    itemToDelete.value = null
+  }, 300)
+}
+
+const confirmDelete = async () => {
+  if (!itemToDelete.value) return
+
+  deleting.value = true
+  try {
+    // Construct payload required by StudyController.deleteStudy
+    // Payload needs: id, testAdmin (for notification cleanup)
+    const payload = {
+      id: itemToDelete.value.id || itemToDelete.value.testDocId,
+      testAdmin: itemToDelete.value.testAdmin
+    }
+
+    await store.dispatch('deleteStudy', payload)
+    
+    // Toast handled by store or global error handler usually, but adding local success feedback
+    store.commit('SET_TOAST', { message: 'Study deleted successfully', type: 'success' })
+    closeDeleteModal()
+  } catch (error) {
+    console.error('Delete failed:', error)
+    store.commit('SET_TOAST', { message: 'Failed to delete study', type: 'error' })
+  } finally {
+    deleting.value = false
+  }
 }
 </script>
 

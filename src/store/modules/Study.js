@@ -98,6 +98,9 @@ export default {
       state.answersId = null
       state.module = 'test'
     },
+    REMOVE_TEST_FROM_LIST(state, testId) {
+      state.tests = state.tests.filter(t => t.id !== testId && t.testDocId !== testId)
+    },
   },
   actions: {
     async createStudy({ commit }, payload) {
@@ -136,8 +139,8 @@ export default {
     async deleteStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
-        const res = await studyController.deleteStudy(payload)
-        commit('SET_TESTS', res)
+        await studyController.deleteStudy(payload)
+        commit('REMOVE_TEST_FROM_LIST', payload.id)
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',
