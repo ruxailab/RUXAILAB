@@ -50,6 +50,11 @@ export default {
           .filter(([key]) => !isNaN(key))
           .map(([_, value]) => ({ ...value }))
         state.testWeights = payload.testWeights || {}
+
+        // Sync to Heuristic store (following the working heuristics pattern)
+        this.commit('SET_HEURISTICS', state.heuristics)
+        this.commit('SET_TEST_WEIGHTS', state.testWeights)
+        this.commit('SET_TEST_OPTIONS', payload.testOptions || [])
       }
     },
     SET_TESTS(state, payload) {
