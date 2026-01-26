@@ -220,6 +220,31 @@ export default class UserController extends Controller {
       throw error
     }
   }
+  async addTestToUser(userId, testId, testData) {
+    try {
+      const userDoc = await super.readOne(COLLECTION, userId)
+
+      if (!userDoc.exists()) {
+        console.log('User not found.')
+        return
+      }
+      const userData = userDoc.data()
+      
+      if (!userData.myTests) {
+        userData.myTests = {}
+      }
+
+      userData.myTests[testId] = testData
+
+      await super.update(COLLECTION, userId, userData)
+
+      console.log(`Test ${testId} added to user ${userId}'s data.`)
+    } catch (error) {
+      console.error('Error adding test to user:', error)
+      throw error
+    }
+  }
+
   async updateLevel(uid, accessLevel) {
     try {
       return super.update(COLLECTION, uid, { accessLevel })

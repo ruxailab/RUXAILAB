@@ -1012,9 +1012,9 @@
       "progress": "Progress",
       "updated": "Last Updated on",
       "version": "Version:",
-      "noTests": "No tests found",
-      "noTemplates": "No templates found",
-      "noSessions": "No sessions found"
+      "noTests": "No studies yet. Create your first study to get started.",
+      "noTemplates": "No templates found. Create a template from an existing study or explore community templates.",
+      "noSessions": "No sessions scheduled. Sessions will appear here when you schedule moderated tests."
     },
     "navigation": {
       "dashboard": "Dashboard",

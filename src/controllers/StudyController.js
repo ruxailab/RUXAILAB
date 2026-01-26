@@ -24,7 +24,18 @@ export default class StudyController extends Controller {
     )
     payload.answersDocId = answerDoc.id
 
-    return await super.create(COLLECTION, payload.toFirestore())
+    const res = await super.create(COLLECTION, payload.toFirestore())
+    
+    // Link study to user
+    if (payload.testAdmin && payload.testAdmin.userDocId) {
+      await userController.addTestToUser(
+        payload.testAdmin.userDocId,
+        res.id,
+        { ...payload.toFirestore(), id: res.id }
+      )
+    }
+
+    return res
   }
   async duplicateStudy(payload) {
     try {
@@ -36,7 +47,18 @@ export default class StudyController extends Controller {
       const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
-      return await super.create(COLLECTION, duplicatedStudy.toFirestore())
+      const res = await super.create(COLLECTION, duplicatedStudy.toFirestore())
+
+      // Link study to user
+      if (duplicatedStudy.testAdmin && duplicatedStudy.testAdmin.userDocId) {
+        await userController.addTestToUser(
+          duplicatedStudy.testAdmin.userDocId,
+          res.id,
+          { ...duplicatedStudy.toFirestore(), id: res.id }
+        )
+      }
+
+      return res
     } catch (error) {
       throw error
     }
