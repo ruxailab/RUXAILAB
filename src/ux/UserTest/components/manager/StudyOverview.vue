@@ -1,15 +1,14 @@
 <template>
-    <v-row>
+  <v-row>
     <!-- Total Users -->
     <v-col cols="12" md="6" class="py-0">
-      <v-card 
-        class="study-card study-card-primary-blur"
-        elevation="8"
-      >
+      <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">Total Participants</h3>
+              <h3 class="card-title-small mb-1 text-white">
+                {{ t('manager.studyOverview.totalParticipants') }}
+              </h3>
               <div class="metric-value-small text-white">{{ totalUsers }}</div>
             </div>
             <div class="icon-container-small">
@@ -21,17 +20,22 @@
     </v-col>
 
     <!-- Completed Tests -->
-    <v-col cols="12" md="6"  class="py-0">
-      <v-card 
-        class="study-card study-card-primary-blur"
-        elevation="8"
-      >
+    <v-col cols="12" md="6" class="py-0">
+      <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">Completed</h3>
-              <div class="metric-value-small text-white">{{ completedTests }}</div>
-              <span class="progress-text-small text-white opacity-90">{{ completionPercentage }}% rate</span>
+              <h3 class="card-title-small mb-1 text-white">
+                {{ t('manager.studyOverview.completed') }}
+              </h3>
+              <div class="metric-value-small text-white">
+                {{ completedTests }}
+              </div>
+              <span class="progress-text-small text-white opacity-90">{{
+                t('manager.studyOverview.rate', {
+                  percentage: completionPercentage,
+                })
+              }}</span>
             </div>
             <div class="icon-container-small">
               <v-icon size="20" color="white">mdi-check-circle</v-icon>
@@ -42,17 +46,22 @@
     </v-col>
 
     <!-- In Progress -->
-    <v-col cols="12" md="6" m >
-      <v-card 
-        class="study-card study-card-primary-blur"
-        elevation="8"
-      >
+    <v-col cols="12" md="6" m>
+      <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">In Progress</h3>
-              <div class="metric-value-small text-white">{{ inProgressTests }}</div>
-              <span class="progress-text-small text-white opacity-90">{{ inProgressPercentage }}% active</span>
+              <h3 class="card-title-small mb-1 text-white">
+                {{ t('manager.studyOverview.inProgress') }}
+              </h3>
+              <div class="metric-value-small text-white">
+                {{ inProgressTests }}
+              </div>
+              <span class="progress-text-small text-white opacity-90">{{
+                t('manager.studyOverview.active', {
+                  percentage: inProgressPercentage,
+                })
+              }}</span>
             </div>
             <div class="icon-container-small">
               <v-icon size="20" color="white">mdi-clock-outline</v-icon>
@@ -64,16 +73,19 @@
 
     <!-- Average Completion Time -->
     <v-col cols="12" md="6">
-      <v-card 
-        class="study-card study-card-primary-blur"
-        elevation="8"
-      >
+      <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
             <div class="flex-grow-1">
-              <h3 class="card-title-small mb-1 text-white">Average Time</h3>
-              <div class="metric-value-small text-white">{{ averageCompletionTime }}</div>
-              <span class="progress-text-small text-white opacity-90">Completion time</span>
+              <h3 class="card-title-small mb-1 text-white">
+                {{ t('manager.studyOverview.averageTime') }}
+              </h3>
+              <div class="metric-value-small text-white">
+                {{ averageCompletionTime }}
+              </div>
+              <span class="progress-text-small text-white opacity-90">{{
+                t('manager.studyOverview.completionTime')
+              }}</span>
             </div>
             <div class="icon-container-small">
               <v-icon size="20" color="white">mdi-timer-outline</v-icon>
@@ -87,18 +99,21 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   test: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 })
 
 // Combine answers and cooperators since both are participants
 const getAllParticipants = computed(() => {
   let participants = []
-  
+
   // Add answers if they exist
   const testAnswers = props.test?.answers || []
   if (Array.isArray(testAnswers)) {
@@ -106,15 +121,15 @@ const getAllParticipants = computed(() => {
   } else if (typeof testAnswers === 'object' && testAnswers !== null) {
     participants = Object.values(testAnswers)
   }
-  
+
   // Add cooperators since they are also participants who respond
   const cooperators = props.test?.cooperators || []
   if (Array.isArray(cooperators)) {
     participants = [...participants, ...cooperators]
   }
-  
-  return participants.filter(participant => 
-    typeof participant === 'object' && participant !== null
+
+  return participants.filter(
+    (participant) => typeof participant === 'object' && participant !== null,
   )
 })
 
@@ -123,12 +138,12 @@ const totalUsers = computed(() => {
 })
 
 const completedTests = computed(() => {
-  return getAllParticipants.value.filter(answer => answer.submitted).length
+  return getAllParticipants.value.filter((answer) => answer.submitted).length
 })
 
 const inProgressTests = computed(() => {
-  return getAllParticipants.value.filter(answer => 
-    !answer.submitted && (answer.progress || 0) > 0
+  return getAllParticipants.value.filter(
+    (answer) => !answer.submitted && (answer.progress || 0) > 0,
   ).length
 })
 
@@ -152,25 +167,29 @@ const timeEfficiencyPercentage = computed(() => {
 })
 
 const averageCompletionTime = computed(() => {
-  const completedAnswers = getAllParticipants.value.filter(answer => answer.submitted && answer.tasks)
-  
+  const completedAnswers = getAllParticipants.value.filter(
+    (answer) => answer.submitted && answer.tasks,
+  )
+
   if (completedAnswers.length === 0) return '0 min'
-  
+
   let totalTime = 0
   let taskCount = 0
-  
-  completedAnswers.forEach(answer => {
-    const tasks = Array.isArray(answer.tasks) ? answer.tasks : Object.values(answer.tasks || {})
-    tasks.forEach(task => {
+
+  completedAnswers.forEach((answer) => {
+    const tasks = Array.isArray(answer.tasks)
+      ? answer.tasks
+      : Object.values(answer.tasks || {})
+    tasks.forEach((task) => {
       if (task.taskTime) {
         totalTime += task.taskTime
         taskCount++
       }
     })
   })
-  
+
   if (taskCount === 0) return '0 min'
-  
+
   const avgMs = totalTime / taskCount
   const avgMinutes = Math.round(avgMs / 1000 / 60)
   return `${avgMinutes} min`
@@ -248,19 +267,17 @@ const averageCompletionTime = computed(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
-
-
 /* Responsive Design */
 @media (max-width: 960px) {
   .study-card {
     min-height: 100px !important;
     max-height: 110px !important;
   }
-  
+
   .metric-value-small {
     font-size: 1.25rem !important;
   }
-  
+
   .icon-container-small {
     width: 32px !important;
     height: 32px !important;
@@ -272,15 +289,15 @@ const averageCompletionTime = computed(() => {
     min-height: 90px !important;
     max-height: 100px !important;
   }
-  
+
   .metric-value-small {
     font-size: 1.1rem !important;
   }
-  
+
   .card-title-small {
     font-size: 0.8rem !important;
   }
-  
+
   .progress-text-small {
     font-size: 0.65rem !important;
   }

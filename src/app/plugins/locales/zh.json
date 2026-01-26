@@ -26,15 +26,6 @@
     },
     "FORGOT_PASSWORD": {
       "reset_password": "重置密码",
-      "email": "电子邮箱",
-      "instructions": "输入您的电子邮箱，我们将发送重置密码链接给您。",
-      "reset_button": "发送重置链接",
-      "back_to_signin": "返回登录"
-    }
-  },
-  "auth": {
-    "FORGOT_PASSWORD": {
-      "reset_password": "重置密码",
       "email": "邮箱",
       "instructions": "输入您的邮箱，我们会发送一个重置密码的链接给您。",
       "reset_button": "发送重置链接",
@@ -43,7 +34,16 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
-    }   
+    },
+    "passwordStrength": "密码强度",
+    "number": "号码",
+    "strength": {
+      "veryWeak": "非常弱",
+      "weak": "弱",
+      "fair": "一般",
+      "good": "好",
+      "strong": "强"
+    }
   },
   "common": {
     "loading": "加载测试",
@@ -67,6 +67,9 @@
     "type": "类型",
     "noNotifications": "您还没有通知",
     "notifications": "通知",
+    "markAllAsRead": "全部标记为已读",
+    "caughtUp": "您已读完所有通知",
+    "noNewNotifications": "没有新通知",
     "unread": "未读",
     "inbox": "收件箱",
     "timeAgo": {
@@ -80,7 +83,143 @@
     "viewAll": "查看全部",
     "sentBy": "发送者",
     "new": "新",
-    "test": "一项研究"
+    "test": "一项研究",
+    "table": {
+      "itemsPerPage": "每页项目数:",
+      "type": "类型",
+      "name": "名称",
+      "tags": "标签",
+      "owner": "所有者",
+      "evaluator": "评估者",
+      "status": "状态",
+      "sessionDate": "会话日期",
+      "participants": "参与者",
+      "created": "创建时间"
+    },
+    "hidden": "隐藏",
+    "proceed": "继续",
+    "all": "全部",
+    "actions": "操作"
+  },
+  "storage": {
+    "pageTitle": "存储",
+    "totalStorage": "总存储空间",
+    "acrossFiles": "在 {count} 个文件中",
+    "mediaFiles": "媒体文件",
+    "searchByStudyOrDate": "按研究或日期搜索",
+    "deleteFile": "删除文件",
+    "noMediaFiles": "未找到媒体文件",
+    "confirmDeletion": "确认删除",
+    "deleteConfirmMessage": "您确定要从 \"{studyName}\" 中删除此 {type} 文件吗？",
+    "actionCannotBeUndone": "此操作无法撤销。",
+    "headers": {
+      "type": "类型",
+      "name": "名称",
+      "tags": "标签",
+      "owner": "所有者",
+      "participants": "参与者",
+      "created": "创建时间",
+      "evaluator": "评估者",
+      "status": "状态",
+      "sessionDate": "会话日期",
+      "itemsPerPage": "每页项目数:",
+      "studyName": "研究名称",
+      "date": "日期",
+      "size": "大小",
+      "actions": "操作"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "社区研究",
+      "searchPlaceholder": "搜索研究..."
+    },
+    "templates": {
+      "title": "社区模板",
+      "searchPlaceholder": "搜索模板..."
+    },
+    "reset": "重置",
+    "showFilters": "显示筛选",
+    "hideFilters": "隐藏筛选",
+    "selectRange": "选择范围",
+    "filters": {
+      "creationDate": "创建日期",
+      "status": "状态",
+      "method": "方法",
+      "ownership": "所有权",
+      "participants": "参与者"
+    },
+    "status": {
+      "allStatuses": "所有状态",
+      "active": "活跃",
+      "draft": "草稿",
+      "completed": "已完成"
+    },
+    "ownership": {
+      "allStudies": "所有研究",
+      "myStudies": "我的研究",
+      "whereICollaborate": "我参与协作的"
+    },
+    "participants": {
+      "all": "全部",
+      "lessThan10": "< 10 参与者",
+      "between10And50": "10 – 50 参与者",
+      "moreThan50": "> 50 参与者"
+    },
+    "method": {
+      "allMethods": "所有方法",
+      "all": "全部",
+      "heuristicEvaluation": "启发式评估",
+      "userStudyUnmoderated": "用户研究（无主持）",
+      "userStudyModerated": "用户研究（有主持）",
+      "manualAccessibility": "手动无障碍",
+      "automaticAccessibility": "自动无障碍"
+    }
+  },
+  "notificationsPage": {
+    "subtitle": "随时了解您的活动和协作",
+    "markAllRead": "全部标为已读",
+    "searchPlaceholder": "搜索通知…",
+    "notification": "通知",
+    "important": "重要",
+    "markAsRead": "标为已读",
+    "markAsUnread": "标为未读",
+    "refresh": "刷新",
+    "noResultsFound": "未找到结果",
+    "allCaughtUp": "全部处理完毕！",
+    "noNotificationsYet": "暂无通知",
+    "tryDifferentKeywords": "尝试其他关键词或清除搜索",
+    "allReadMessage": "您已阅读所有通知。做得好！",
+    "newActivitiesMessage": "有新活动时，通知将显示在这里",
+    "justNow": "刚刚",
+    "minutesAgo": "{count}分钟前",
+    "hoursAgo": "{count}小时前",
+    "daysAgo": "{count}天前",
+    "newNotification": "您有一条新通知。"
+  },
+  "navigation": {
+    "dashboard": "仪表盘",
+    "studies": "研究",
+    "sessions": "会话",
+    "templates": "模板",
+    "storage": "存储",
+    "community": "社区",
+    "communityStudies": "社区研究",
+    "communityTemplates": "社区模板",
+    "visibility": "可见性",
+    "public": "公开",
+    "private": "私有",
+    "allVisibility": "所有可见性",
+    "subtitles": {
+      "manageStudies": "管理您的研究调查",
+      "accessTemplates": "访问您保存的模板",
+      "stayUpdated": "随时了解您的活动和协作",
+      "overviewSessions": "会话概览",
+      "manageStorage": "管理您存储的媒体文件",
+      "viewEditProfile": "查看和编辑您的个人资料信息",
+      "exploreCommunityStudies": "探索由 RUXAI 社区共享的调查",
+      "browseCommunityTemplates": "浏览由 RUXAI 社区贡献的模板"
+    }
   },
   "profile": {
     "title": "个人资料",
@@ -137,7 +276,15 @@
     "accountDeletedSuccess": "账户删除成功",
     "yourPassword": "您的密码",
     "back": "返回",
-    "deleteForever": "永久删除"
+    "deleteForever": "永久删除",
+    "superAdmin": "超级管理员",
+    "uploadProfilePicture": "上传头像",
+    "removeProfilePicture": "删除头像",
+    "currentPassword": "当前密码",
+    "currentPasswordRequired": "当前密码为必填项",
+    "wrongCurrentPassword": "当前密码错误",
+    "recentLoginRequired": "请在更改密码前注销并重新登录",
+    "googleUserPasswordInfo": "您已使用 Google 登录。点击下方按钮以通过 Google 验证并为您的帐户设置密码。"
   },
   "titles": {
     "manager": "管理员",
@@ -181,7 +328,10 @@
       "start": "开始！",
       "edit": "根据研究需求创建和自定义您的任务和启发式方法。",
       "finalReport": "通过选择要包含的元素来准备您的启发式评估的最终报告。"
-    }
+    },
+    "overallAnalyticsDescription": "查看您测试的综合分析。",
+    "individualAnalytics": "个人分析",
+    "nasaTlxAnalytics": "NASA-TLX 分析"
   },
   "errors": {
     "invalidInvitation": "无效邀请",
@@ -208,6 +358,8 @@
     "cta": "开始"
   },
   "Dashboard": {
+    "welcomeBack": "欢迎回来，{name}！",
+    "subtitle": "这是您今天研究项目的最新动态",
     "createNewTest": "创建新研究",
     "tests": "测试",
     "templates": "模板",
@@ -217,7 +369,130 @@
     "publicTests": "公开测试",
     "sessions": "会话",
     "personal": "个人",
-    "explore": "探索"
+    "explore": "探索",
+    "activeStudies": {
+      "noActiveStudies": "没有活跃的研究",
+      "createNewStudy": "创建新研究",
+      "emptyStateMessage": "您还没有任何研究。创建您的第一个研究，开始收集有价值的用户洞察。"
+    },
+    "activeStudiesOverview": "活跃研究概览",
+    "viewAll": "查看全部",
+    "showMore": "显示更多",
+    "showLess": "显示更少",
+    "progress": "进度",
+    "participants": "参与者",
+    "participantsLabel": "参与者",
+    "daysLeft": "剩余天数",
+    "dayLeft": "剩余一天",
+    "studies": "研究",
+    "studiesPage": {
+      "searchPlaceholder": "搜索调查...",
+      "reset": "重置",
+      "showFilters": "显示过滤器",
+      "hideFilters": "隐藏过滤器",
+      "filters": {
+        "creationDate": "创建日期",
+        "status": "状态",
+        "visibility": "可见性",
+        "method": "方法",
+        "ownership": "所有权",
+        "participants": "参与者",
+        "selectRange": "选择范围",
+        "allStatuses": "所有状态",
+        "allVisibility": "所有可见性",
+        "public": "公开",
+        "private": "私有",
+        "allMethods": "所有方法",
+        "allStudies": "所有调查",
+        "myStudies": "我的调查",
+        "whereICollaborate": "我参与的协作",
+        "all": "全部",
+        "lt10": "< 10 名参与者",
+        "btw10_50": "10 – 50 名参与者",
+        "gt50": "> 50 名参与者"
+      }
+    },
+    "storage": "存储",
+    "free": "免费",
+    "plan": "计划",
+    "recentActivity": "最近活动",
+    "comingSoon": "即将推出",
+    "mostUsedMethods": "最常用的方法",
+    "use": "使用",
+    "uses": "使用次数",
+    "noDataAvailable": "暂无可用数据",
+    "createFirstStudy": "创建您的第一个研究以在此处查看统计信息。",
+    "nextSession": "下一个会话",
+    "noSessionsScheduled": "没有安排的会话",
+    "nextSessionWillAppear": "您的下一个会话将显示在这里",
+    "latestBlogPosts": "最新博客文章",
+    "viewBlog": "查看博客",
+    "date": "日期",
+    "time": "时间",
+    "status": {
+      "active": "活跃",
+      "recruiting": "招募中",
+      "paused": "已暂停",
+      "finished": "已完成",
+      "unknown": "未知"
+    },
+    "cards": {
+      "recentActivity": "近期活动",
+      "activities7Days": "活动（共7天）",
+      "lastActivity": "最后活动",
+      "noActivity": "无活动",
+      "edit": "编辑",
+      "heuristics": "启发式评估",
+      "questions": "问题",
+      "totalOptions": "总选项",
+      "qualitative": "定性",
+      "quantitative": "定量",
+      "weights": "权重",
+      "on": "开启",
+      "off": "关闭",
+      "cooperators": "合作者",
+      "totalInvited": "已邀请总数",
+      "accepted": "已接受",
+      "pending": "待定",
+      "storage": "存储",
+      "currentStorage": "存储（当前）",
+      "limitAvailable": "可用限额",
+      "results": "结果",
+      "generalUsability": "一般可用性",
+      "finalReport": "最终报告",
+      "generatePDF": "生成PDF",
+      "download": "下载",
+      "generated": "生成时间：",
+      "generateReport": "生成报告",
+      "reportAvailable": "报告可用",
+      "noReport": "未生成报告",
+      "readyForDownload": "最终报告准备好下载",
+      "waitingForParticipants": "等待参与者",
+      "evaluationsCompleted": "评估已完成",
+      "readyToGenerate": "准备生成报告",
+      "excellentUsability": "优秀的可用性",
+      "acceptableUsability": "可接受的可用性",
+      "needsImprovement": "需要改进",
+      "basedOn": "基于",
+      "evaluations": "评估",
+      "evaluationUpdated": "评估已更新",
+      "updatedProgress": "更新了进度",
+      "invitationSentTitle": "邀请已发送",
+      "invitationPendingDesc": "邀请待定",
+      "pendingStatus": "待定"
+    },
+    "managerView": {
+      "heuristicStudy": "启发式研究",
+      "freePlan": "免费计划",
+      "generalStatistics": "一般统计",
+      "modules": "模块"
+    },
+    "stats": {
+      "participants": "参与者",
+      "completion": "完成度",
+      "daysActive": "活跃天数",
+      "heuristics": "启发式"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -241,7 +516,14 @@
       "deleteQuestion": "删除问题",
       "addNewDescription": "添加新描述",
       "addOption": "添加新选项",
-      "hasValue": "有值"
+      "hasValue": "有值",
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "Question": "问题",
+      "Questions": "问题",
+      "noQuestions": "没有问题",
+      "noDescriptions": "没有描述",
+      "loading": "加载中..."
     },
     "placeholders": {
       "titleHeuristic": "启发式标题",
@@ -256,7 +538,10 @@
       "youMustHave": "您可能输入了错误的内容...",
       "noHeuristicsDeleteAll": "抱歉，您不能删除所有启发式问题。",
       "noCsvFileSelected": "未选择CSV文件。请选择一个以继续。",
-      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。"
+      "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
+      "noDescriptions": "没有可用的描述",
+      "startAddingQuestions": "从此启发式添加第一个问题开始",
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -269,6 +554,12 @@
       "showComment": "显示评论",
       "addComment": "添加评论",
       "hideTextArea": "隐藏文本区域"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
+      "failedToLoadEditForm": "加载编辑表单失败。请重试。",
+      "invalidHeuristic": "无效的启发式选择",
+      "invalidQuestion": "无效的问题选择"
     }
   },
   "HeuristicsOptionsTable": {
@@ -276,7 +567,9 @@
       "options": "选项",
       "noOptions": "没有选项"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "开始为您的启发式问题添加选项"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -294,7 +587,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "设置"
+      "settings": "设置",
+      "confirmUpload": "确认上传"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
@@ -510,8 +804,120 @@
       "postTest": "后测",
       "eyeTrackingCalibration": "眼动追踪校准"
     },
+    "actions": {
+      "welcomeBack": "欢迎回来！",
+      "continueAs": "继续作为 {userEmail}",
+      "notYou": "不是您？",
+      "changeAccount": "更改账户",
+      "startTest": "开始测试"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "测试已完成",
+      "testAlreadyCompletedMessage": "您已经完成并提交了此测试。感谢您的参与！",
+      "testExpired": "测试已过期",
+      "testExpiredMessage": "由于已过截止日期，此测试不再可用。",
+      "testNotActive": "测试未激活",
+      "testNotActiveMessage": "此测试目前未激活。请联系管理员。",
+      "testConfigError": "测试配置错误",
+      "testConfigErrorMessage": "此测试没有配置任务。请联系管理员。",
+      "consentDecline": "由于拒绝同意，测试已结束。感谢您的参与。",
+      "sessionTooFar": "会话日期过远",
+      "sessionTooFarMessage": "预定的会话时间距离现在超过 24 小时。请在会话日期临近时再回来。"
+    },
+    "stepper": {
+      "consent": "同意",
+      "preTest": "前测",
+      "calibration": "校准",
+      "tasks": "任务",
+      "postTest": "后测",
+      "completion": "完成",
+      "taskX": "任务 {num}"
+    },
+    "TaskStep": {
+      "preview": "任务预览",
+      "recordingInfo": "此任务将在您互动期间录制以下数据：",
+      "screenRecord": "屏幕录制",
+      "screenRecordDesc": "捕获点击、滚动和互动以分析用户行为。",
+      "camera": "摄像头",
+      "cameraDesc": "记录面部表情和反应以理解用户情绪。",
+      "audioRecord": "音频录制",
+      "audioRecordDesc": "捕获任务期间的语音反馈和有声思维协议。",
+      "eyeTracker": "眼动追踪",
+      "eyeTrackerDesc": "追踪任务期间的视觉注意模式和注视行为。",
+      "newWindow": "将打开一个新窗口",
+      "newWindowDesc": "当您开始任务时，将打开一个包含您需要使用的工具的新窗口。",
+      "tip": "提示",
+      "tipDesc": "您可以随时切换标签或关闭新窗口。录制将持续到您完成任务为止。",
+      "internalInterface": "此任务将在当前界面内完成。",
+      "startTask": "开始任务",
+      "description": "任务描述",
+      "needHelp": "需要帮助吗？",
+      "needHelpDesc": "遇到问题了？获取完成此任务的有用指导。",
+      "externalTool": "外部工具",
+      "reopenDesc": "不小心关闭了工具窗口？在此重新打开。",
+      "reopenTool": "重新打开工具",
+      "answerLabel": "答案",
+      "observationLabel": "观察（可选）",
+      "cannotFinish": "我无法完成任务",
+      "completed": "任务已完成",
+      "noQuestionnaire": "此任务类型不需要任务后问卷。",
+      "validationError": "请在继续之前回答所有问题。",
+      "finishTask": "完成任务"
+    },
+    "ConsentStep": {
+      "fullName": "全名",
+      "nameRequired": "姓名是必填项",
+      "acceptTerms": "我接受同意条款",
+      "declineTerms": "我不接受同意条款",
+      "continue": "继续",
+      "declinedTitle": "拒绝同意",
+      "declinedMessage1": "您选择不接受此研究的同意条款。",
+      "declinedMessage2": "如果您确认此操作，测试将立即结束，因为您的参与需要明确同意才能继续。您的数据将不会被收集或存储。",
+      "declinedConfirm": "您确定要在不参与的情况下结束测试吗？",
+      "goBack": "返回",
+      "endTest": "是，结束测试"
+    },
+    "PreTestStep": {
+      "title": "前测"
+    },
+    "PostTestStep": {
+      "title": "后测"
+    },
     "buttons": {
       "done": "完成"
+    },
+    "messages": {
+      "noTasks": "此测试没有任务。",
+      "answerSaved": "答案保存成功。"
+    },
+    "errors": {
+      "noAnswerData": "未找到答案数据。",
+      "failedToSaveAnswer": "保存答案失败。请重试。",
+      "failedToSubmitAnswer": "提交答案失败。请重试。",
+      "noTestData": "无测试数据",
+      "noTestDataMessage": "无法加载测试信息。请稍后再试。"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "校准完成！",
+      "waiting": "正在等待校准...",
+      "calibrating": "正在校准，请稍候...",
+      "notOpened": "校准窗口没打开？",
+      "clickHere": "点击这里",
+      "success": "校准成功！",
+      "continue": "继续进行测试！"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "主持人视图",
+      "welcome": "欢迎参加主持式测试环节",
+      "description": "作为主持人，您将引导参与者完成测试过程，同时通过视频通话观察他们的互动。",
+      "instructionsTitle": "主持人指示",
+      "instruction1": "首先打开视频通话室",
+      "instruction2": "观察参与者的互动而不进行干预",
+      "instruction3": "使用步骤导航器在测试阶段之间跳转",
+      "instruction4": "仅在必要时提供指导",
+      "remember": "记住：",
+      "note": "您的角色是提供便利和观察。参与者应独立完成任务，除非他们特别要求帮助。",
+      "startSession": "启动主持式环节"
     },
     "WelcomeStep": {
       "welcome": "欢迎来到RUXAILAB！",
@@ -542,6 +948,15 @@
       "audioRecording": "音频",
       "eyeTracking": "眼动追踪",
       "recordingNote": "在任何录制开始前，您会收到通知。所有数据仅用于研究目的，并根据隐私准则处理。"
+    },
+    "CalibrationStep": {
+      "title": "眼动追踪校准",
+      "heading": "在开始校准之前",
+      "description": "我们将准备您的设备来<strong>记录您的眼球运动</strong>。这将使我们能够了解您在测试过程中如何浏览屏幕。",
+      "process": "校准包括用眼睛跟随屏幕上出现的点。重要的是要在光线充足的地方，坐得舒服，保持头部稳定。",
+      "instruction": "准备好后，按按钮开始校准。",
+      "startButton": "开始校准",
+      "inProgress": "进行中..."
     }
   },
   "eyeTracking": {
@@ -604,7 +1019,99 @@
       "updated": "最后更新于",
       "version": "版本：",
       "noTests": "未找到测试",
-      "noTemplates": "未找到模板"
+      "noTemplates": "未找到模板",
+      "noSessions": "未找到会话"
+    },
+    "navigation": {
+      "dashboard": "仪表板",
+      "studies": "研究",
+      "sessions": "会话",
+      "templates": "模板",
+      "storage": "存储",
+      "notifications": "通知",
+      "profile": "个人资料",
+      "communityStudies": "社区研究",
+      "communityTemplates": "社区模板",
+      "studiesSubtitle": "管理您的研究项目",
+      "templatesSubtitle": "访问您保存的模板"
+    },
+    "studies": {
+      "searchPlaceholder": "搜索研究...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择范围",
+      "statusLabel": "状态",
+      "visibility": "可见性",
+      "method": "方法",
+      "ownership": "所有权",
+      "participants": "参与者",
+      "filters": {
+        "allStatuses": "所有状态",
+        "active": "活跃",
+        "draft": "草稿",
+        "completed": "已完成",
+        "allVisibility": "所有可见性",
+        "public": "公开",
+        "private": "私有",
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的",
+        "lessThan10": "< 10名参与者",
+        "between10And50": "10 – 50名参与者",
+        "moreThan50": "> 50名参与者"
+      },
+      "table": {
+        "type": "类型",
+        "name": "名称",
+        "tags": "标签",
+        "owner": "所有者",
+        "evaluator": "评估者",
+        "status": "状态",
+        "sessionDate": "会话日期",
+        "participants": "参与者",
+        "created": "创建时间",
+        "itemsPerPage": "每页项目数:"
+      }
+    },
+    "sessions": {
+      "searchPlaceholder": "搜索会话...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "sessionDate": "会话日期",
+      "selectRange": "选择范围",
+      "statusLabel": "状态",
+      "ownership": "所有权",
+      "evaluator": "评估者",
+      "noActiveSessions": "您没有活跃的会话",
+      "filters": {
+        "allStatuses": "所有状态",
+        "today": "今天",
+        "upcoming": "即将到来",
+        "completed": "已完成",
+        "allStudies": "所有研究",
+        "myStudies": "我的研究",
+        "whereICollaborate": "我参与协作的"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "搜索模板...",
+      "reset": "重置",
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "creationDate": "创建日期",
+      "selectRange": "选择范围",
+      "method": "方法",
+      "filters": {
+        "allMethods": "所有方法",
+        "heuristicEvaluation": "启发式评估",
+        "userUnmoderated": "用户非主持",
+        "userModerated": "用户主持",
+        "manualAccessibility": "人工无障碍性",
+        "automaticAccessibility": "自动无障碍性"
+      }
     },
     "createTest": {
       "title": "创建新测试",
@@ -703,7 +1210,8 @@
     "eyeTracker": "眼动追踪",
     "audioRecord": "音频录制",
     "postForm": "后测表单",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "同意书",
@@ -913,7 +1421,9 @@
     "user": "用户",
     "invite": "邀请",
     "actions": "操作",
-    "no": "否"
+    "no": "否",
+    "downloadResume": "下载简历 PDF",
+    "sartAnalytics": "SART 分析"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "选择评估类别",
@@ -1053,5 +1563,73 @@
         "upcoming": "即将开始"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "用户测试研究",
+      "unmoderatedStudy": "无主持研究",
+      "moderatedStudy": "有主持研究",
+      "active": "活跃",
+      "draft": "草稿",
+      "completed": "已完成",
+      "archived": "已归档"
+    },
+    "studyOverview": {
+      "totalParticipants": "总参与者",
+      "completed": "已完成",
+      "rate": "{percentage}% 完成率",
+      "inProgress": "进行中",
+      "active": "{percentage}% 活跃",
+      "averageTime": "平均时间",
+      "completionTime": "完成时间",
+      "minUnit": "{value} 分钟"
+    },
+    "managementModules": {
+      "title": "管理模块",
+      "description": "管理参与者、任务、设置并分析研究数据的综合工具",
+      "additionalModules": "额外模块空间"
+    },
+    "participants": {
+      "title": "参与者",
+      "subtitle": "测试参与情况概览",
+      "beta": "测试版",
+      "completed": "已完成",
+      "notStarted": "未开始",
+      "pendingInvites": "待处理邀请",
+      "overallProgress": "总体进度",
+      "participantsCompleted": "{total} 名参与者中有 {completed} 名已完成",
+      "details": "详情"
+    },
+    "tasks": {
+      "title": "任务概览",
+      "subtitle": "任务结构和完成情况",
+      "beta": "测试版",
+      "noTasksConfigured": "未配置任务",
+      "taskCompletionRate": "任务完成率",
+      "totalTasks": "任务总数",
+      "avgTaskDuration": "平均任务时长",
+      "successRate": "成功率",
+      "taskTypes": "任务类型",
+      "viewTasks": "查看任务"
+    },
+    "storage": {
+      "title": "存储使用情况",
+      "subtitle": "媒体文件和存储指标",
+      "beta": "测试版",
+      "storageUsed": "已用存储",
+      "storageQuota": "{quota} 中已使用 {used}",
+      "mediaFiles": "媒体文件",
+      "videoRecordings": "视频录制",
+      "audioRecordings": "音频录制",
+      "screenRecordings": "屏幕录制",
+      "storageBreakdown": "存储明细",
+      "responsesData": "响应数据",
+      "analyticsData": "分析数据",
+      "manageStorage": "管理存储"
+    }
+  },
+  "taskCreation": {
+    "taskDescription": "任务描述",
+    "taskDescriptionHelper": "提供他们应该遵循的具体步骤。"
   }
 }

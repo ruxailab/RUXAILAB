@@ -108,30 +108,30 @@ import { countries } from '@/shared/constants/countries';
 import CameraCaptureDialog from './CameraCaptureDialog.vue';
 
 const props = defineProps({
-    modelValue: {
-        type: Boolean,
-        default: false,
-    },
-    profileData: {
-        type: Object,
-        required: true,
-    },
-    onSave: {
-        type: Function,
-        required: true,
-    },
-});
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+  profileData: {
+    type: Object,
+    required: true,
+  },
+  onSave: {
+    type: Function,
+    required: true,
+  },
+})
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue'])
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const fileInput = ref(null);
-const formRef = ref(null);
-const isValid = ref(false);
-const isSaving = ref(false);
-const isProcessingImage = ref(false);
-const hasChanges = ref(false);
+const fileInput = ref(null)
+const formRef = ref(null)
+const isValid = ref(false)
+const isSaving = ref(false)
+const isProcessingImage = ref(false)
+const hasChanges = ref(false)
 
 // Store pending image file
 const pendingImageFile = ref(null);
@@ -139,118 +139,118 @@ const pendingImagePreview = ref(null);
 const showCameraDialog = ref(false);
 
 const localProfileData = ref({
-    username: '',
-    contactNo: '',
-    country: '',
-    profileImage: '',
-});
+  username: '',
+  contactNo: '',
+  country: '',
+  profileImage: '',
+})
 
 // Watch for prop changes
 watch(
-    () => props.profileData,
-    (newData) => {
-        if (newData) {
-            localProfileData.value = { ...newData };
-            // Reset pending changes when dialog opens
-            hasChanges.value = false;
-            pendingImageFile.value = null;
-            if (pendingImagePreview.value) {
-                URL.revokeObjectURL(pendingImagePreview.value);
-                pendingImagePreview.value = null;
-            }
-        }
-    },
-    { immediate: true, deep: true }
-);
+  () => props.profileData,
+  (newData) => {
+    if (newData) {
+      localProfileData.value = { ...newData }
+      // Reset pending changes when dialog opens
+      hasChanges.value = false
+      pendingImageFile.value = null
+      if (pendingImagePreview.value) {
+        URL.revokeObjectURL(pendingImagePreview.value)
+        pendingImagePreview.value = null
+      }
+    }
+  },
+  { immediate: true, deep: true },
+)
 
 watch(
-    localProfileData,
-    (newVal) => {
-        const hasFormChanges = 
-            newVal.username !== props.profileData.username ||
-            newVal.contactNo !== props.profileData.contactNo ||
-            newVal.country !== props.profileData.country ||
-            newVal.profileImage !== props.profileData.profileImage;
-        
-        hasChanges.value = hasFormChanges || pendingImageFile.value !== null;
-    },
-    { deep: true }
-);
+  localProfileData,
+  (newVal) => {
+    const hasFormChanges =
+      newVal.username !== props.profileData.username ||
+      newVal.contactNo !== props.profileData.contactNo ||
+      newVal.country !== props.profileData.country ||
+      newVal.profileImage !== props.profileData.profileImage
+
+    hasChanges.value = hasFormChanges || pendingImageFile.value !== null
+  },
+  { deep: true },
+)
 
 // Validation rules
 const usernameRules = computed(() => [
-    (v) => !!v || t('profile.usernameRequired'),
-    (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
-]);
+  (v) => !!v || t('profile.usernameRequired'),
+  (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
+])
 
-const countryRules = computed(() => [(v) => !!v || t('profile.countryRequired')]);
+const countryRules = computed(() => [
+  (v) => !!v || t('profile.countryRequired'),
+])
 
 const contactRules = computed(() => [
-    (v) => !!v || t('profile.contactNumberRequired'),
-    (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
-]);
+  (v) => !!v || t('profile.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
+])
 
-const canSave = computed(() => isValid.value && hasChanges.value);
+const canSave = computed(() => isValid.value && hasChanges.value)
 
 const selectImage = () => {
-    fileInput.value.click();
-};
+  fileInput.value.click()
+}
 
 const handleImageSelect = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const file = event.target.files[0]
+  if (!file) return
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-        console.error('Selected file is not an image');
-        return;
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    return
+  }
+
+  // Warn if file is very large (over 5MB)
+  const maxSize = 5 * 1024 * 1024 // 5MB
+  if (file.size > maxSize) {
+  }
+
+  try {
+    isProcessingImage.value = true
+
+    // Clean up previous preview if exists
+    if (pendingImagePreview.value) {
+      URL.revokeObjectURL(pendingImagePreview.value)
     }
 
-    // Warn if file is very large (over 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-        console.warn('Large file detected, will be compressed on save...');
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file)
+    pendingImagePreview.value = previewUrl
+
+    // Store the file for later upload
+    pendingImageFile.value = file
+
+    // Update local preview
+    localProfileData.value.profileImage = previewUrl
+    hasChanges.value = true
+  } catch (error) {
+    return error
+  } finally {
+    isProcessingImage.value = false
+    // Reset file input
+    if (fileInput.value) {
+      fileInput.value.value = ''
     }
-
-    try {
-        isProcessingImage.value = true;
-
-        // Clean up previous preview if exists
-        if (pendingImagePreview.value) {
-            URL.revokeObjectURL(pendingImagePreview.value);
-        }
-
-        // Create preview URL
-        const previewUrl = URL.createObjectURL(file);
-        pendingImagePreview.value = previewUrl;
-        
-        // Store the file for later upload
-        pendingImageFile.value = file;
-        
-        // Update local preview
-        localProfileData.value.profileImage = previewUrl;
-        hasChanges.value = true;
-    } catch (error) {
-        console.error('Error processing image:', error);
-    } finally {
-        isProcessingImage.value = false;
-        // Reset file input
-        if (fileInput.value) {
-            fileInput.value.value = '';
-        }
-    }
-};
+  }
+}
 
 const removeImage = () => {
-    if (pendingImagePreview.value) {
-        URL.revokeObjectURL(pendingImagePreview.value);
-        pendingImagePreview.value = null;
-    }
-    
-    pendingImageFile.value = null;
-    localProfileData.value.profileImage = '';
-    hasChanges.value = true;
-};
+  if (pendingImagePreview.value) {
+    URL.revokeObjectURL(pendingImagePreview.value)
+    pendingImagePreview.value = null
+  }
+
+  pendingImageFile.value = null
+  localProfileData.value.profileImage = ''
+  hasChanges.value = true
+}
 
 const handleCameraCapture = ({ file, previewUrl }) => {
     // Clean up previous preview if exists
@@ -266,69 +266,70 @@ const handleCameraCapture = ({ file, previewUrl }) => {
 };
 
 const handleSave = async () => {
-    try {
-        const { valid } = await formRef.value?.validate();
-        if (!valid) return;
-        
-        isSaving.value = true;
+  try {
+    if (!formRef.value) return
+    const { valid } = await formRef.value.validate()
+    if (!valid) return
 
-        if (pendingImageFile.value) {
-            const uploadResult = await props.onSave({
-                ...localProfileData.value,
-                pendingImageFile: pendingImageFile.value,
-            });
-            
-            if (uploadResult) {
-                // Clean up preview URL
-                if (pendingImagePreview.value) {
-                    URL.revokeObjectURL(pendingImagePreview.value);
-                    pendingImagePreview.value = null;
-                }
-                pendingImageFile.value = null;
-                emit('update:modelValue', false);
-            }
-        } else {
-            // No image change, just update other fields
-            const success = await props.onSave(localProfileData.value);
-            
-            if (success) {
-                emit('update:modelValue', false);
-            }
+    isSaving.value = true
+
+    if (pendingImageFile.value) {
+      const uploadResult = await props.onSave({
+        ...localProfileData.value,
+        pendingImageFile: pendingImageFile.value,
+      })
+
+      if (uploadResult) {
+        // Clean up preview URL
+        if (pendingImagePreview.value) {
+          URL.revokeObjectURL(pendingImagePreview.value)
+          pendingImagePreview.value = null
         }
-    } catch (error) {
-        console.error('Error saving profile:', error);
-    } finally {
-        isSaving.value = false;
+        pendingImageFile.value = null
+        emit('update:modelValue', false)
+      }
+    } else {
+      // No image change, just update other fields
+      const success = await props.onSave(localProfileData.value)
+
+      if (success) {
+        emit('update:modelValue', false)
+      }
     }
-};
+  } catch (error) {
+    return error
+  } finally {
+    isSaving.value = false
+  }
+}
 
 const handleCancel = () => {
-    if (pendingImagePreview.value) {
-        URL.revokeObjectURL(pendingImagePreview.value);
-        pendingImagePreview.value = null;
-    }
-    pendingImageFile.value = null;
-    hasChanges.value = false;
-    emit('update:modelValue', false);
-};
+  if (pendingImagePreview.value) {
+    URL.revokeObjectURL(pendingImagePreview.value)
+    pendingImagePreview.value = null
+  }
+  pendingImageFile.value = null
+  hasChanges.value = false
+  emit('update:modelValue', false)
+}
 
 const countryFilter = (item, queryText) => {
-    if (!queryText) return true;
+  if (!queryText) return true
 
-    const text = queryText.toString().toLowerCase();
-    const name = typeof item === 'string' ? item : (item?.name || '');
+  const text = queryText.toString().toLowerCase()
+  const name = typeof item === 'string' ? item : item?.name || ''
 
-    return name.toString().toLowerCase().includes(text);
-};
+  return name.toString().toLowerCase().includes(text)
+}
 </script>
 
 <style scoped>
 .upload-indicator {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    padding: 2px;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: 2px;
 }
 </style>

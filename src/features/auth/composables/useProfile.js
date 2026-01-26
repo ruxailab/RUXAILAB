@@ -36,8 +36,8 @@ export function useProfile() {
         }
       }
     } catch (error) {
-      console.error('Error fetching profile:', error)
       showError(t('profile.profileLoadFailed'))
+      return error
     } finally {
       loading.value = false
     }
@@ -97,8 +97,7 @@ export function useProfile() {
 
       showSuccess(t('profile.profileUpdatedSuccess'))
       return true
-    } catch (error) {
-      console.error('Error updating profile:', error)
+    } catch {
       showError(t('profile.profileUpdateFailed'))
       return false
     }

@@ -4,7 +4,8 @@
       <v-card class="elevation-2 rounded-lg pa-md-6" width="100%">
         <v-row class="pa-4">
           <v-col>
-            <v-card-title class="text-h5 font-weight-bold mb-0 pa-0"
+            <v-card-title
+class="text-h5 font-weight-bold mb-0 pa-0"
               :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
               {{ type === 'pre-test' ? $t('ModeratedTest.preTestVariables') : $t('ModeratedTest.postTestVariables') }}
             </v-card-title>
@@ -14,12 +15,14 @@
           </v-col>
         </v-row>
         <v-card-text>
-          <v-expansion-panels v-if="items.length > 0" variant="accordion" class="elevation-0"
+          <v-expansion-panels
+v-if="items.length > 0" variant="accordion" class="elevation-0"
             style="border: 1px solid #E5E7EB; border-radius: 12px;">
             <v-expansion-panel v-for="(item, i) in items" :key="i" class="rounded-lg mb-2" :disabled="isSaving">
               <v-expansion-panel-title class="py-3 px-4">
                 <div class="d-flex align-center">
-                  <span class="text-body-1 font-weight-medium"
+                  <span
+class="text-body-1 font-weight-medium"
                     :class="{ 'text-error': !item.title || !item.title.trim() }">
                     {{ item.title || $t('UserTestTable.fallbacks.untitledVariable') }}
                   </span>
@@ -30,15 +33,18 @@
               </v-expansion-panel-title>
               <v-expansion-panel-text class="pa-md-4">
                 <v-form @submit.prevent>
-                  <v-text-field v-model="item.title" :label="$t('UserTestTable.inputs.variableName')" variant="outlined"
+                  <v-text-field
+v-model="item.title" :label="$t('UserTestTable.inputs.variableName')" variant="outlined"
                     density="comfortable" :rules="[v => !!v || $t('errors.fieldRequired')]" color="primary"
                     class="mb-md-4" @update:model-value="markDirty" />
-                  <v-textarea v-model="item.description" :label="$t('UserTestTable.inputs.description')"
+                  <v-textarea
+v-model="item.description" :label="$t('UserTestTable.inputs.description')"
                     variant="outlined" density="comfortable" color="primary" rows="3" class="mb-4"
                     @update:model-value="markDirty" />
                   <div v-if="item.selectionField">
                     <div v-for="(field, index) in item.selectionFields" :key="index" class="d-flex align-center mb-2">
-                      <v-text-field v-model="item.selectionFields[index]"
+                      <v-text-field
+v-model="item.selectionFields[index]"
                         :label="$t('UserTestTable.inputs.selection') + ` ${index + 1}`" variant="outlined"
                         density="comfortable" :rules="[v => !!v || $t('errors.fieldRequired')]" color="primary"
                         class="mr-md-2" @update:model-value="markDirty">
@@ -46,7 +52,8 @@
                           <v-icon color="accent" class="mr-2" @click="newSelection(i)">
                             mdi-plus-circle
                           </v-icon>
-                          <v-icon v-if="item.selectionFields.length > 1" color="error"
+                          <v-icon
+v-if="item.selectionFields.length > 1" color="error"
                             @click="deleteSelection(i, index)">
                             mdi-trash-can-outline
                           </v-icon>
@@ -65,11 +72,13 @@
                   </div>
                   <v-row align="center" class="mt-2">
                     <v-col cols="12" sm="6">
-                      <v-checkbox v-model="item.selectionField" :label="$t('UserTestTable.checkboxes.selectionField')"
+                      <v-checkbox
+v-model="item.selectionField" :label="$t('UserTestTable.checkboxes.selectionField')"
                         color="primary" @update:model-value="selectField(i); markDirty()" />
                     </v-col>
                     <v-col cols="12" sm="5">
-                      <v-checkbox v-model="item.textField" :label="$t('UserTestTable.checkboxes.textField')"
+                      <v-checkbox
+v-model="item.textField" :label="$t('UserTestTable.checkboxes.textField')"
                         color="primary" @update:model-value="selectText(i); markDirty()" />
                     </v-col>
                     <v-col cols="12" sm="1" class="text-right">
@@ -82,11 +91,13 @@
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
-          <v-alert v-else type="info" icon="mdi-information-outline" class="mt-4 rounded-lg"
+          <v-alert
+v-else type="info" icon="mdi-information-outline" class="mt-4 rounded-lg"
             :text="$t('UserTestTable.messages.noVariables')" />
         </v-card-text>
         <v-card-actions>
-          <v-card class="border-dashed text-center py-6" width="100%" variant="outlined"
+          <v-card
+class="border-dashed text-center py-6" width="100%" variant="outlined"
             style="cursor: pointer; border-style: dashed !important; border-color: #D1D5DB;" @click="showModal">
             <v-card-text>
               <v-icon icon="mdi-plus-circle" size="24" class="mb-2" />
@@ -103,13 +114,15 @@
   <!-- New Variable Dialog -->
   <v-dialog v-model="show" max-width="600" persistent transition="dialog-bottom-transition">
     <v-card class="rounded-lg pa-6">
-      <v-card-title class="text-h6 font-weight-bold mb-4"
+      <v-card-title
+class="text-h6 font-weight-bold mb-4"
         :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
         {{ $t('ModeratedTest.createNewVariableTitle') }}
       </v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid">
-          <v-text-field v-model="newItem" :label="$t('UserTestTable.inputs.dialogVariableName')" variant="outlined"
+          <v-text-field
+v-model="newItem" :label="$t('UserTestTable.inputs.dialogVariableName')" variant="outlined"
             density="comfortable" :rules="[v => !!v.trim() || $t('errors.fieldRequired')]" color="primary"
             @update:model-value="markDirty" />
         </v-form>
@@ -122,7 +135,8 @@
           </v-icon>
           {{ $t('buttons.close') }}
         </v-btn>
-        <v-btn color="success" variant="flat" class="px-6" :disabled="!valid || isSaving" :loading="isSaving"
+        <v-btn
+color="success" variant="flat" class="px-6" :disabled="!valid || isSaving" :loading="isSaving"
           @click="saveNewItem">
           <v-icon start>
             mdi-content-save
