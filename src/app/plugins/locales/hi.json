@@ -34,6 +34,15 @@
       "reset_link_sent": "हमने पासवर्ड रीसेट लिंक भेजा है",
       "no_email": "ईमेल नहीं मिला?",
       "try_again": "पुनः प्रयास करें"
+    },
+    "passwordStrength": "पासवर्ड की ताकत",
+    "number": "संख्या",
+    "strength": {
+      "veryWeak": "बहुत कमजोर",
+      "weak": "कमजोर",
+      "fair": "ठीक",
+      "good": "अच्छा",
+      "strong": "मजबूत"
     }
   },
   "common": {
@@ -87,7 +96,10 @@
       "sessionDate": "सत्र तिथि",
       "participants": "प्रतिभागी",
       "created": "बनाया गया"
-    }
+    },
+    "hidden": "छिपा हुआ",
+    "proceed": "आगे बढ़ें",
+    "actions": "क्रियाएँ"
   },
   "storage": {
     "pageTitle": "संग्रहण",
@@ -241,7 +253,32 @@
     "passwordUppercase": "इसमें एक अपरकेस अक्षर होना चाहिए",
     "passwordSymbol": "इसमें एक प्रतीक होना चाहिए",
     "confirmPasswordRequired": "पासवर्ड की पुष्टि आवश्यक है",
-    "passwordsMatch": "पासवर्ड मेल खाने चाहिए"
+    "passwordsMatch": "पासवर्ड मेल खाने चाहिए",
+    "usernameRequired": "उपयोगकर्ता नाम आवश्यक है",
+    "usernameMinLength": "उपयोगकर्ता नाम कम से कम 3 वर्णों का होना चाहिए",
+    "countryRequired": "देश आवश्यक है",
+    "contactNumberRequired": "संपर्क नंबर आवश्यक है",
+    "enterValidPhoneNumber": "कृपया एक वैध फोन नंबर दर्ज करें (केवल 9-15 अंक)",
+    "profileImageUpdatedSuccess": "प्रोफ़ाइल छवि सफलतापूर्वक अपडेट की गई",
+    "profileImageUploadFailed": "प्रोफ़ाइल छवि अपलोड करने में विफल",
+    "uploadProfilePicture": "प्रोफ़ाइल चित्र अपलोड करें",
+    "removeProfilePicture": "प्रोफ़ाइल चित्र हटाएं",
+    "noUserSignedIn": "कोई उपयोगकर्ता साइन इन नहीं है",
+    "profileLoadFailed": "प्रोफ़ाइल लोड करने में विफल",
+    "profileUpdatedSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
+    "profileUpdateFailed": "प्रोफ़ाइल अपडेट करने में विफल",
+    "currentPassword": "वर्तमान पासवर्ड",
+    "currentPasswordRequired": "वर्तमान पासवर्ड आवश्यक है",
+    "wrongCurrentPassword": "वर्तमान पासवर्ड गलत है",
+    "recentLoginRequired": "कृपया अपना पासवर्ड बदलने से पहले लॉग आउट करें और वापस लॉग इन करें",
+    "googleUserPasswordInfo": "आपने Google के साथ साइन इन किया है। Google के साथ सत्यापित करने और अपने खाते के लिए पासवर्ड सेट करने के लिए नीचे दिए गए बटन पर क्लिक करें।",
+    "passwordChangedSuccess": "पासवर्ड सफलतापूर्वक बदला गया",
+    "passwordChangeFailed": "पासवर्ड बदलने में विफल",
+    "accountDeletionFailed": "खाता हटाने में विफल",
+    "accountDeletedSuccess": "खाता सफलतापूर्वक हटाया गया",
+    "yourPassword": "आपका पासवर्ड",
+    "back": "वापस",
+    "deleteForever": "हमेशा के लिए हटाएं"
   },
   "titles": {
     "manager": "प्रबंधक",
@@ -285,7 +322,10 @@
       "start": "शुरू करें!",
       "edit": "अपनी अनुसंधान आवश्यकताओं के अनुसार अपने कार्यों और हीयुरिस्टिक्स को बनाएं और अनुकूलित करें।",
       "finalReport": "अपने हीयुरिस्टिक मूल्यांकन के लिए अंतिम रिपोर्ट तैयार करें और उन तत्वों का चयन करें जिन्हें आप शामिल करना चाहते हैं।"
-    }
+    },
+    "overallAnalyticsDescription": "अपने परीक्षण के लिए समेकित विश्लेषण देखें।",
+    "individualAnalytics": "व्यक्तिगत विश्लेषण",
+    "nasaTlxAnalytics": "नासा-टीएलएक्स विश्लेषण"
   },
   "errors": {
     "invalidInvitation": "अमान्य आमंत्रण",
@@ -389,6 +429,63 @@
       "paused": "रोका गया",
       "finished": "पूर्ण",
       "unknown": "अज्ञात"
+    },
+    "cards": {
+      "recentActivity": "हाल की गतिविधि",
+      "activities7Days": "गतिविधियाँ (कुल 7 दिन)",
+      "lastActivity": "अंतिम गतिविधि",
+      "noActivity": "कोई गतिविधि नहीं",
+      "edit": "संपादित करें",
+      "heuristics": "अनुमानी",
+      "questions": "प्रश्न",
+      "totalOptions": "कुल विकल्प",
+      "qualitative": "गुणात्मक",
+      "quantitative": "मात्रात्मक",
+      "weights": "वजन",
+      "on": "चालू",
+      "off": "बंद",
+      "cooperators": "सहयोगी",
+      "totalInvited": "कुल आमंत्रित",
+      "accepted": "स्वीकृत",
+      "pending": "लंबित",
+      "storage": "भंडारण",
+      "currentStorage": "भंडारण (वर्तमान)",
+      "limitAvailable": "सीमा उपलब्ध",
+      "results": "परिणाम",
+      "generalUsability": "सामान्य प्रयोज्यता",
+      "finalReport": "अंतिम रिपोर्ट",
+      "generatePDF": "पीडीएफ उत्पन्न करें",
+      "download": "डाउनलोड",
+      "generated": "उत्पन्न:",
+      "generateReport": "रिपोर्ट उत्पन्न करें",
+      "reportAvailable": "रिपोर्ट उपलब्ध",
+      "noReport": "कोई रिपोर्ट उत्पन्न नहीं हुई",
+      "readyForDownload": "अंतिम रिपोर्ट डाउनलोड के लिए तैयार",
+      "waitingForParticipants": "प्रतिभागियों की प्रतीक्षा कर रहा है",
+      "evaluationsCompleted": "मूल्यांकन पूर्ण",
+      "readyToGenerate": "रिपोर्ट उत्पन्न करने के लिए तैयार",
+      "excellentUsability": "उत्कृष्ट प्रयोज्यता",
+      "acceptableUsability": "स्वीकार्य प्रयोज्यता",
+      "needsImprovement": "सुधार की आवश्यकता है",
+      "basedOn": "आधारित",
+      "evaluations": "मूल्यांकन",
+      "evaluationUpdated": "मूल्यांकन अद्यतन",
+      "updatedProgress": "ने अपनी प्रगति अद्यतन की",
+      "invitationSentTitle": "आमंत्रण भेजा गया",
+      "invitationPendingDesc": "के लिए आमंत्रण लंबित",
+      "pendingStatus": "लंबित"
+    },
+    "managerView": {
+      "heuristicStudy": "अनुमानी अध्ययन",
+      "freePlan": "मुफ्त योजना",
+      "generalStatistics": "सामान्य सांख्यिकी",
+      "modules": "मॉड्यूल"
+    },
+    "stats": {
+      "participants": "प्रतिभागी",
+      "completion": "पूर्णता",
+      "daysActive": "सक्रिय दिन",
+      "heuristics": "अनुमानी"
     }
   },
   "HeuristicsTable": {
@@ -464,7 +561,9 @@
       "options": "विकल्प",
       "noOptions": "कोई विकल्प नहीं"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "अपने अनुमानी प्रश्नों में विकल्प जोड़ना शुरू करें"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -482,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "सेटिंग्स"
+      "settings": "सेटिंग्स",
+      "confirmUpload": "अपलोड की पुष्टि करें"
     },
     "messages": {
       "acceptCsv": "स्वीकार करने पर, आपके सभी वर्तमान हीयुरिस्टिक्स .csv फ़ाइल में दिए गए हीयुरिस्टिक्स से बदल दिए जाएंगे।",
@@ -842,6 +942,15 @@
       "audioRecording": "ऑडियो रिकॉर्डिंग",
       "eyeTracking": "आई ट्रैकिंग",
       "recordingNote": "किसी भी रिकॉर्डिंग के शुरू होने से पहले आपको सूचित किया जाएगा। सभी डेटा केवल अनुसंधान उद्देश्यों के लिए एकत्रित किए जाते हैं और गोपनीयता दिशानिर्देशों के अनुसार संभाले जाते हैं।"
+    },
+    "CalibrationStep": {
+      "title": "आई ट्रैकिंग अंशांकन",
+      "heading": "अंशांकन शुरू करने से पहले",
+      "description": "हम आपके डिवाइस को <strong>आपकी आंखों की गतिविधियों को रिकॉर्ड करने</strong> के लिए तैयार करने जा रहे हैं। इससे हमें यह समझने में मदद मिलेगी कि आप परीक्षण के दौरान स्क्रीन को कैसे नेविगेट करते हैं।",
+      "process": "अंशांकन में स्क्रीन पर दिखाई देने वाले बिंदुओं को अपनी आंखों से फॉलो करना शामिल है। यह महत्वपूर्ण है कि आप अच्छी रोशनी वाली जगह पर हों, आराम से बैठें और अपना सिर स्थिर रखें।",
+      "instruction": "जब आप तैयार हों, तो अंशांकन शुरू करने के लिए बटन दबाएं।",
+      "startButton": "अंशांकन शुरू करें",
+      "inProgress": "प्रगति पर है..."
     }
   },
   "eyeTracking": {
@@ -1095,7 +1204,8 @@
     "eyeTracker": "नेत्र ट्रैकर",
     "audioRecord": "ऑडियो रिकॉर्ड",
     "postForm": "पोस्ट-फॉर्म",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "सहमति पत्र",
@@ -1284,7 +1394,9 @@
     "user": "उपयोगकर्ता",
     "invite": "आमंत्रित करें",
     "actions": "क्रियाएँ",
-    "no": "नहीं"
+    "no": "नहीं",
+    "downloadResume": "बायोडाटा पीडीएफ डाउनलोड करें",
+    "sartAnalytics": "SART विश्लेषण"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "मूल्यांकन श्रेणी चुनें",
