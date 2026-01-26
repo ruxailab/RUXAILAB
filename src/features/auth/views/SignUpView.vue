@@ -151,22 +151,22 @@ const onSignUp = async () => {
       })
       sessionStorage.setItem('signupEmail', email.value)
       await router.push({ name: 'verify-email', params: { email: email.value } })
-    // } catch (error) {
-    //   store.commit('setLoading', false)
-    //   // Handle email already in use error
-    //   if (error.code === 'auth/email-already-in-use') {
-    //     store.commit('setSnackbar', {
-    //       show: true,
-    //       message: t('errors.emailAlreadyInUse'),
-    //       type: 'error'
-    //     })
-    //   } else {
-    //     store.commit('setSnackbar', {
-    //       show: true,
-    //       message: error.message || t('errors.signupFailed'),
-    //       type: 'error'
-    //     })
-    //   }
+    } catch (error) {
+      store.commit('setLoading', false)
+      // Handle email already in use error
+      if (error.code === 'auth/email-already-in-use') {
+        store.commit('setSnackbar', {
+          show: true,
+          message: t('errors.emailAlreadyInUse'),
+          type: 'error'
+        })
+      } else {
+        store.commit('setSnackbar', {
+          show: true,
+          message: error.message || t('errors.signupFailed'),
+          type: 'error'
+        })
+      }
     } finally {
       store.commit('setLoading', false)
     }
