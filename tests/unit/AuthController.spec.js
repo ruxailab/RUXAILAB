@@ -5,7 +5,8 @@ import {
     setPersistence,
     signInWithEmailAndPassword,
     signInWithPopup,
-    signOut
+    signOut,
+    sendEmailVerification
 } from 'firebase/auth'
 
 jest.mock('firebase/auth', () => ({
@@ -16,6 +17,7 @@ jest.mock('firebase/auth', () => ({
     signInWithPopup: jest.fn(),
     GoogleAuthProvider: jest.fn(),
     sendPasswordResetEmail: jest.fn(),
+    sendEmailVerification: jest.fn(),
     setPersistence: jest.fn(),
     browserLocalPersistence: 'local',
     browserSessionPersistence: 'session'
@@ -40,6 +42,7 @@ describe('AuthController', () => {
 
     beforeEach(() => {
         jest.clearAllMocks()
+        sendEmailVerification.mockResolvedValue(undefined)
         authController = new AuthController()
     })
 
@@ -69,7 +72,7 @@ describe('AuthController', () => {
 
     describe('signIn', () => {
         it('should set local persistence when rememberMe is true', async () => {
-            const mockCredential = { user: { uid: 'user-id' } }
+            const mockCredential = { user: { uid: 'user-id', emailVerified: true } }
             setPersistence.mockResolvedValue()
             signInWithEmailAndPassword.mockResolvedValue(mockCredential)
 
@@ -85,7 +88,7 @@ describe('AuthController', () => {
 
         it('should set session persistence when rememberMe is false', async () => {
             setPersistence.mockResolvedValue()
-            signInWithEmailAndPassword.mockResolvedValue({ user: {} })
+            signInWithEmailAndPassword.mockResolvedValue({ user: { emailVerified: true } })
 
             await authController.signIn('test@example.com', 'password123', false)
 
