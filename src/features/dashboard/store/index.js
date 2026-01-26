@@ -6,13 +6,13 @@ export default {
   namespaced: true,
 
   state: {
-    upcomingWebinar: null
+    upcomingWebinar: null,
   },
 
   mutations: {
     SET_UPCOMING_WEBINAR(state, payload) {
       state.upcomingWebinar = payload
-    }
+    },
   },
 
   actions: {
@@ -23,12 +23,12 @@ export default {
           commit('SET_UPCOMING_WEBINAR', snap.data())
         }
       } catch (e) {
-        console.error('Error fetching upcoming webinar data', e)
+        return e
       }
-    }
+    },
   },
 
   getters: {
-    upcomingWebinar: state => state.upcomingWebinar
-  }
+    upcomingWebinar: (state) => state.upcomingWebinar,
+  },
 }

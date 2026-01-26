@@ -12,22 +12,42 @@
 
       <!-- Options Grid -->
       <v-row justify="center" class="mb-8">
-        <v-col v-for="option in options" :key="option.id" cols="12" sm="6" md="6" lg="5">
+        <v-col
+          v-for="option in options"
+          :key="option.id"
+          cols="12"
+          sm="6"
+          md="6"
+          lg="5"
+        >
           <SelectableCard
             :selected="selectedOption === option.id"
             :icon="option.icon"
             :title="option.title"
             :description="option.description"
             :color="option.color"
-            :badge="option.recommended ? { text: $t('studyCreation.comingSoon'), color: 'warning' } : null"
-            @click="() => selectOption(option.id)"
+            :badge="
+              option.recommended
+                ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
+                : null
+            "
             :disabled="option.disabled"
+            @click="() => selectOption(option.id)"
           >
             <template #extra>
               <v-list class="bg-transparent pl-8 text-start" density="compact">
-                <v-list-item v-for="feature in option.features" :key="feature" class="pa-0 mb-1">
+                <v-list-item
+                  v-for="feature in option.features"
+                  :key="feature"
+                  class="pa-0 mb-1"
+                >
                   <template #prepend>
-                    <v-icon icon="mdi-check" color="success" size="16" class="mr-2" />
+                    <v-icon
+                      icon="mdi-check"
+                      color="success"
+                      size="16"
+                      class="mr-2"
+                    />
                   </template>
                   <v-list-item-title class="text-body-2">
                     {{ feature }}
@@ -57,7 +77,7 @@ import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const store = useStore()
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const selectedOption = ref('')
 
 const steps = computed(() => [
@@ -76,11 +96,7 @@ const options = computed(() => [
     color: 'primary',
     recommended: false,
     disabled: false,
-    features: [
-      'Complete customization',
-      'Build from ground up',
-      'Full control over settings'
-    ]
+    features: tm('studyCreation.studyTypes.blank.features'),
   },
   {
     id: 'template',
@@ -90,12 +106,8 @@ const options = computed(() => [
     color: 'success',
     recommended: true,
     disabled: true,
-    features: [
-      'Quick setup',
-      'Pre-configured settings',
-      'Best practices included'
-    ]
-  }
+    features: tm('studyCreation.studyTypes.template.features'),
+  },
 ])
 
 const selectOption = (optionId) => {
