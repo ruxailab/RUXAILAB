@@ -33,6 +33,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "ميجابايت",
+      "gb": "جيجابايت"
+    },
     "loading": "جاري التحميل",
     "continueAs": "المتابعة كـ",
     "notUser": "لست {userEmail}؟",
@@ -359,6 +363,63 @@
       "paused": "متوقف",
       "finished": "منتهي",
       "unknown": "غير معروف"
+    },
+    "cards": {
+      "recentActivity": "النشاط الأخير",
+      "activities7Days": "الأنشطة (إجمالي 7 أيام)",
+      "lastActivity": "آخر نشاط",
+      "noActivity": "لا يوجد نشاط",
+      "edit": "تعديل",
+      "heuristics": "الاستدلالات",
+      "questions": "الأسئلة",
+      "totalOptions": "إجمالي الخيارات",
+      "qualitative": "نوعي",
+      "quantitative": "كمي",
+      "weights": "الأوزان",
+      "on": "تشغيل",
+      "off": "إيقاف",
+      "cooperators": "المتعاونون",
+      "totalInvited": "إجمالي المدعوين",
+      "accepted": "تم القبول",
+      "pending": "قيد الانتظار",
+      "storage": "التخزين",
+      "currentStorage": "التخزين (الحالي)",
+      "limitAvailable": "الحد المتاح",
+      "results": "النتائج",
+      "generalUsability": "سهولة الاستخدام العامة",
+      "finalReport": "التقرير النهائي",
+      "generatePDF": "إنشاء PDF",
+      "download": "تنزيل",
+      "generated": "تم إنشاؤه:",
+      "generateReport": "إنشاء التقرير",
+      "reportAvailable": "التقرير متاح",
+      "noReport": "لم يتم إنشاء تقرير",
+      "readyForDownload": "التقرير النهائي جاهز للتنزيل",
+      "waitingForParticipants": "في انتظار المشاركين",
+      "evaluationsCompleted": "التقييمات المكتملة",
+      "readyToGenerate": "جاهز لإنشاء التقرير",
+      "excellentUsability": "سهولة استخدام ممتازة",
+      "acceptableUsability": "سهولة استخدام مقبولة",
+      "needsImprovement": "يحتاج إلى تحسين",
+      "basedOn": "بناءً على",
+      "evaluations": "التقييمات",
+      "evaluationUpdated": "تم تحديث التقييم",
+      "updatedProgress": "قام بتحديث تقدمه",
+      "invitationSentTitle": "تم إرسال الدعوة",
+      "invitationPendingDesc": "الدعوة معلقة لـ",
+      "pendingStatus": "قيد الانتظار"
+    },
+    "managerView": {
+      "heuristicStudy": "دراسة استدلالية",
+      "freePlan": "خطة مجانية",
+      "generalStatistics": "الإحصائيات العامة",
+      "modules": "الوحدات"
+    },
+    "stats": {
+      "participants": "المشاركون",
+      "completion": "الإكمال",
+      "daysActive": "أيام النشاط",
+      "heuristics": "الاستدلالات"
     }
   },
   "HeuristicsTable": {
@@ -1002,7 +1063,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",

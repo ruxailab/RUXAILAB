@@ -37,6 +37,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "テストを読み込み中",
     "continueAs": "として続行",
     "notUser": "{userEmail}ではありませんか？",
@@ -345,6 +349,63 @@
       "paused": "一時停止",
       "finished": "完了",
       "unknown": "不明"
+    },
+    "cards": {
+      "recentActivity": "最近の活動",
+      "activities7Days": "アクティビティ（合計7日間）",
+      "lastActivity": "最後の活動",
+      "noActivity": "活動なし",
+      "edit": "編集",
+      "heuristics": "ヒューリスティック",
+      "questions": "質問",
+      "totalOptions": "総オプション数",
+      "qualitative": "定性的",
+      "quantitative": "定量的",
+      "weights": "重み付け",
+      "on": "オン",
+      "off": "オフ",
+      "cooperators": "協力者",
+      "totalInvited": "招待合計",
+      "accepted": "承認済み",
+      "pending": "保留中",
+      "storage": "ストレージ",
+      "currentStorage": "ストレージ（現在）",
+      "limitAvailable": "利用可能制限",
+      "results": "結果",
+      "generalUsability": "一般的なユーザビリティ",
+      "finalReport": "最終レポート",
+      "generatePDF": "PDFを生成",
+      "download": "ダウンロード",
+      "generated": "生成日:",
+      "generateReport": "レポートを生成",
+      "reportAvailable": "レポート利用可能",
+      "noReport": "レポート未生成",
+      "readyForDownload": "最終レポートのダウンロード準備ができました",
+      "waitingForParticipants": "参加者を待機中",
+      "evaluationsCompleted": "評価完了",
+      "readyToGenerate": "レポートの生成準備完了",
+      "excellentUsability": "優れたユーザビリティ",
+      "acceptableUsability": "許容できるユーザビリティ",
+      "needsImprovement": "改善が必要",
+      "basedOn": "基づく",
+      "evaluations": "評価",
+      "evaluationUpdated": "評価が更新されました",
+      "updatedProgress": "進捗を更新しました",
+      "invitationSentTitle": "招待送信済み",
+      "invitationPendingDesc": "招待保留中:",
+      "pendingStatus": "保留中"
+    },
+    "managerView": {
+      "heuristicStudy": "ヒューリスティック評価",
+      "freePlan": "無料プラン",
+      "generalStatistics": "一般統計",
+      "modules": "モジュール"
+    },
+    "stats": {
+      "participants": "参加者",
+      "completion": "完了",
+      "daysActive": "活動日数",
+      "heuristics": "ヒューリスティック"
     }
   },
   "HeuristicsTable": {
@@ -704,25 +765,6 @@
     "goHome": "ホームに戻る"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "アクティブなセッションが見つかりません",
-      "selectRange": "範囲を選択",
-      "reset": "リセット",
-      "searchPlaceholder": "研究を検索...",
-      "filters": {
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中",
-        "allStatuses": "すべてのステータス",
-        "today": "今日",
-        "upcoming": "今後",
-        "completed": "完了"
-      },
-      "ownership": "所有権",
-      "evaluator": "評価者",
-      "sessionDate": "セッション日",
-      "statusLabel": "ステータス"
-    },
     "intros": {
       "click": "ここをクリック！",
       "learnMore": "詳しく知る",
@@ -988,7 +1030,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1249,7 +1295,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",

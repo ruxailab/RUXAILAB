@@ -37,6 +37,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "加载测试",
     "continueAs": "继续作为",
     "notUser": "不是 {userEmail}？",
@@ -363,6 +367,63 @@
       "paused": "已暂停",
       "finished": "已完成",
       "unknown": "未知"
+    },
+    "cards": {
+      "recentActivity": "最近活动",
+      "activities7Days": "活动（7天总计）",
+      "lastActivity": "最后活动",
+      "noActivity": "无活动",
+      "edit": "编辑",
+      "heuristics": "启发式",
+      "questions": "问题",
+      "totalOptions": "总选项数",
+      "qualitative": "定性",
+      "quantitative": "定量",
+      "weights": "权重",
+      "on": "开启",
+      "off": "关闭",
+      "cooperators": "合作者",
+      "totalInvited": "总邀人数",
+      "accepted": "已接受",
+      "pending": "待处理",
+      "storage": "存储",
+      "currentStorage": "存储（当前）",
+      "limitAvailable": "可用限制",
+      "results": "结果",
+      "generalUsability": "一般可用性",
+      "finalReport": "最终报告",
+      "generatePDF": "生成 PDF",
+      "download": "下载",
+      "generated": "生成于：",
+      "generateReport": "生成报告",
+      "reportAvailable": "报告可用",
+      "noReport": "未生成报告",
+      "readyForDownload": "最终报告已准备好下载",
+      "waitingForParticipants": "等待参与者",
+      "evaluationsCompleted": "评价已完成",
+      "readyToGenerate": "准备生成报告",
+      "excellentUsability": "优秀的可用性",
+      "acceptableUsability": "可接受的可用性",
+      "needsImprovement": "需要改进",
+      "basedOn": "基于",
+      "evaluations": "评价",
+      "evaluationUpdated": "评价已更新",
+      "updatedProgress": "更新了进度",
+      "invitationSentTitle": "邀请已发送",
+      "invitationPendingDesc": "邀请待处理：",
+      "pendingStatus": "待处理"
+    },
+    "managerView": {
+      "heuristicStudy": "启发式研究",
+      "freePlan": "免费计划",
+      "generalStatistics": "一般统计",
+      "modules": "模块"
+    },
+    "stats": {
+      "participants": "参与者",
+      "completion": "完成度",
+      "daysActive": "活跃天数",
+      "heuristics": "启发式"
     }
   },
   "HeuristicsTable": {
@@ -722,25 +783,6 @@
     "goHome": "返回首页"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "未找到活动会话",
-      "selectRange": "选择范围",
-      "reset": "重置",
-      "searchPlaceholder": "搜索研究...",
-      "filters": {
-        "allStudies": "所有研究",
-        "myStudies": "我的研究",
-        "whereICollaborate": "我参与协作的",
-        "allStatuses": "所有状态",
-        "today": "今天",
-        "upcoming": "即将到来",
-        "completed": "已完成"
-      },
-      "ownership": "所有权",
-      "evaluator": "评估者",
-      "sessionDate": "会话日期",
-      "statusLabel": "状态"
-    },
     "intros": {
       "click": "点击这里！",
       "learnMore": "了解更多",
@@ -988,7 +1030,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1002,12 +1048,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1264,12 +1318,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {

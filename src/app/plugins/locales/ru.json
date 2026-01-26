@@ -37,6 +37,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "МБ",
+      "gb": "ГБ"
+    },
     "loading": "Загрузка теста",
     "continueAs": "Продолжить как",
     "notUser": "Не {userEmail}?",
@@ -363,6 +367,63 @@
       "paused": "Приостановлен",
       "finished": "Завершен",
       "unknown": "Неизвестно"
+    },
+    "cards": {
+      "recentActivity": "Последняя активность",
+      "activities7Days": "Активность (всего за 7 дней)",
+      "lastActivity": "Последнее действие",
+      "noActivity": "Нет активности",
+      "edit": "Редактировать",
+      "heuristics": "Эвристики",
+      "questions": "Вопросы",
+      "totalOptions": "Всего вариантов",
+      "qualitative": "Качественный",
+      "quantitative": "Количественный",
+      "weights": "Веса",
+      "on": "ВКЛ",
+      "off": "ВЫКЛ",
+      "cooperators": "Соавторы",
+      "totalInvited": "Всего приглашено",
+      "accepted": "Принято",
+      "pending": "В ожидании",
+      "storage": "Хранилище",
+      "currentStorage": "Хранилище (текущее)",
+      "limitAvailable": "Доступный лимит",
+      "results": "Результаты",
+      "generalUsability": "Общее удобство использования",
+      "finalReport": "Финальный отчет",
+      "generatePDF": "Создать PDF",
+      "download": "Скачать",
+      "generated": "Создано:",
+      "generateReport": "Создать отчет",
+      "reportAvailable": "Отчет доступен",
+      "noReport": "Отчет не создан",
+      "readyForDownload": "Финальный отчет готов к скачиванию",
+      "waitingForParticipants": "Ожидание участников",
+      "evaluationsCompleted": "оценок завершено",
+      "readyToGenerate": "Готов к созданию отчета",
+      "excellentUsability": "Отличное удобство использования",
+      "acceptableUsability": "Приемлемое удобство использования",
+      "needsImprovement": "Требует улучшения",
+      "basedOn": "На основе",
+      "evaluations": "оценок",
+      "evaluationUpdated": "Оценка обновлена",
+      "updatedProgress": "обновил прогресс",
+      "invitationSentTitle": "Приглашение отправлено",
+      "invitationPendingDesc": "Приглашение ожидает для",
+      "pendingStatus": "В ожидании"
+    },
+    "managerView": {
+      "heuristicStudy": "Эвристическое исследование",
+      "freePlan": "Бесплатный тариф",
+      "generalStatistics": "Общая статистика",
+      "modules": "Модули"
+    },
+    "stats": {
+      "participants": "Участники",
+      "completion": "Завершение",
+      "daysActive": "Дней активно",
+      "heuristics": "Эвристики"
     }
   },
   "HeuristicsTable": {
@@ -722,25 +783,6 @@
     "goHome": "Перейти на главную"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Активных сессий не найдено",
-      "selectRange": "Выбрать диапазон",
-      "reset": "Сбросить",
-      "searchPlaceholder": "Поиск исследований...",
-      "filters": {
-        "allStudies": "Все исследования",
-        "myStudies": "Мои исследования",
-        "whereICollaborate": "Где я сотрудничаю",
-        "allStatuses": "Все статусы",
-        "today": "Сегодня",
-        "upcoming": "Предстоящие",
-        "completed": "Завершено"
-      },
-      "ownership": "Владение",
-      "evaluator": "Оценщик",
-      "sessionDate": "Дата сессии",
-      "statusLabel": "Статус"
-    },
     "intros": {
       "click": "Нажмите здесь!",
       "learnMore": "Узнать больше",
