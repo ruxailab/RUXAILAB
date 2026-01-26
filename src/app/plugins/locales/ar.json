@@ -30,15 +30,6 @@
       "instructions": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
       "reset_button": "إرسال رابط إعادة التعيين",
       "back_to_signin": "العودة إلى تسجيل الدخول"
-    },
-    "passwordStrength": "قوة كلمة المرور",
-    "number": "رقم",
-    "strength": {
-      "veryWeak": "ضعيفة جداً",
-      "weak": "ضعيفة",
-      "fair": "مقبولة",
-      "good": "جيدة",
-      "strong": "قوية"
     }
   },
   "common": {
@@ -63,6 +54,9 @@
     "type": "النوع",
     "noNotifications": "ليس لديك إشعارات حتى الآن",
     "notifications": "الإشعارات",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "caughtUp": "لقد قرأت كل شيء",
+    "noNewNotifications": "لا توجد إشعارات جديدة",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {
@@ -77,7 +71,18 @@
     "sentBy": "مرسل من قبل",
     "new": "جديد",
     "test": "دراسة",
-    "itemsPerPage": "عناصر لكل صفحة:"
+    "table": {
+      "itemsPerPage": "العناصر لكل صفحة:",
+      "type": "النوع",
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "evaluator": "المقيم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء"
+    }
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -92,10 +97,66 @@
     "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء.",
     "headers": {
       "type": "النوع",
-      "studyName": "اسم الدراسة",
-      "date": "التاريخ",
-      "size": "الحجم",
-      "actions": "الإجراءات"
+      "name": "الاسم",
+      "tags": "العلامات",
+      "owner": "المالك",
+      "participants": "المشاركون",
+      "created": "تم الإنشاء",
+      "evaluator": "المقيّم",
+      "status": "الحالة",
+      "sessionDate": "تاريخ الجلسة",
+      "itemsPerPage": "عناصر لكل صفحة:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "الدراسات المجتمعية",
+      "searchPlaceholder": "البحث في الدراسات..."
+    },
+    "templates": {
+      "title": "القوالب المجتمعية",
+      "searchPlaceholder": "البحث في القوالب..."
+    },
+    "reset": "إعادة تعيين",
+    "showFilters": "إظهار الفلاتر",
+    "hideFilters": "إخفاء الفلاتر",
+    "selectRange": "تحديد النطاق",
+    "filters": {
+      "creationDate": "تاريخ الإنشاء",
+      "status": "الحالة",
+      "method": "الطريقة",
+      "ownership": "الملكية",
+      "participants": "المشاركون"
+    },
+    "status": {
+      "allStatuses": "جميع الحالات",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل"
+    },
+    "ownership": {
+      "allStudies": "جميع الدراسات",
+      "myStudies": "دراساتي",
+      "whereICollaborate": "حيث أتعاون"
+    },
+    "participants": {
+      "all": "الكل",
+      "lessThan10": "< 10 مشاركين",
+      "between10And50": "10 – 50 مشاركين",
+      "moreThan50": "> 50 مشاركين"
+    },
+    "method": {
+      "allMethods": "جميع الطرق",
+      "all": "الكل",
+      "heuristicEvaluation": "التقييم الإرشادي",
+      "userStudyUnmoderated": "دراسة المستخدم (غير مراقبة)",
+      "userStudyModerated": "دراسة المستخدم (مراقبة)",
+      "manualAccessibility": "إمكانية الوصول اليدوية",
+      "automaticAccessibility": "إمكانية الوصول التلقائية"
     }
   },
   "notificationsPage": {
@@ -125,8 +186,23 @@
     "sessions": "الجلسات",
     "templates": "القوالب",
     "storage": "التخزين",
+    "community": "المجتمع",
     "communityStudies": "الدراسات المجتمعية",
-    "communityTemplates": "القوالب المجتمعية"
+    "communityTemplates": "القوالب المجتمعية",
+    "visibility": "الرؤية",
+    "public": "عام",
+    "private": "خاص",
+    "allVisibility": "جميع الرؤى",
+    "subtitles": {
+      "manageStudies": "إدارة دراساتك البحثية",
+      "accessTemplates": "الوصول إلى القوالب المحفوظة الخاصة بك",
+      "stayUpdated": "ابقَ على اطلاع بأنشطتك وتعاوناتك",
+      "overviewSessions": "نظرة عامة على جلساتك",
+      "manageStorage": "إدارة ملفات الوسائط المخزنة الخاصة بك",
+      "viewEditProfile": "عرض وتحرير معلومات ملفك الشخصي",
+      "exploreCommunityStudies": "استكشف الدراسات التي تمت مشاركتها من قبل مجتمع RUXAI",
+      "browseCommunityTemplates": "تصفح القوالب التي ساهم بها مجتمع RUXAI"
+    }
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -260,6 +336,11 @@
     "sessions": "الجلسات",
     "personal": "شخصي",
     "explore": "استكشف",
+    "activeStudies": {
+      "noActiveStudies": "لا توجد دراسات نشطة",
+      "createNewStudy": "إنشاء دراسة جديدة",
+      "emptyStateMessage": "ليس لديك أي دراسات حتى الآن. أنشئ دراستك الأولى لبدء جمع رؤى قيمة من المستخدمين."
+    },
     "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
     "viewAll": "عرض الكل",
     "showMore": "عرض المزيد",
@@ -270,6 +351,33 @@
     "daysLeft": "أيام متبقية",
     "dayLeft": "يوم متبقي",
     "studies": "الدراسات",
+    "studiesPage": {
+      "searchPlaceholder": "البحث في الدراسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "إظهار الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "filters": {
+        "creationDate": "تاريخ الإنشاء",
+        "status": "الحالة",
+        "visibility": "الرؤية",
+        "method": "الطريقة",
+        "ownership": "الملكية",
+        "participants": "المشاركون",
+        "selectRange": "تحديد النطاق",
+        "allStatuses": "جميع الحالات",
+        "allVisibility": "جميع الرؤى",
+        "public": "عام",
+        "private": "خاص",
+        "allMethods": "جميع الطرق",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون",
+        "all": "الكل",
+        "lt10": "< 10 مشاركين",
+        "btw10_50": "10 – 50 مشاركين",
+        "gt50": "> 50 مشاركين"
+      }
+    },
     "storage": "التخزين",
     "free": "مجاني",
     "plan": "الخطة",
@@ -293,14 +401,6 @@
       "paused": "متوقف",
       "finished": "منتهي",
       "unknown": "غير معروف"
-    },
-    "webinar": {
-      "ended": "انتهى",
-      "live": "مباشر",
-      "today": "اليوم",
-      "joinNow": "انضم الآن",
-      "webinarEnded": "انتهى الندوة",
-      "startingToday": "يبدأ اليوم"
     }
   },
   "HeuristicsTable": {
@@ -610,8 +710,120 @@
       "postTest": "ما بعد الاختبار",
       "eyeTrackingCalibration": "معايرة تتبع العين"
     },
+    "actions": {
+      "welcomeBack": "مرحبًا بعودتك!",
+      "continueAs": "المتابعة كـ {userEmail}",
+      "notYou": "لست أنت؟",
+      "changeAccount": "تغيير الحساب",
+      "startTest": "بدء الاختبار"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "تم إكمال الاختبار بالفعل",
+      "testAlreadyCompletedMessage": "لقد قمت بالفعل بإكمال وتقديم هذا الاختبار. شكرًا لك على مشاركتك!",
+      "testExpired": "انتهت صلاحية الاختبار",
+      "testExpiredMessage": "هذا الاختبار لم يعد متاحًا لأنه تجاوز تاريخ انتهائه.",
+      "testNotActive": "الاختبار غير نشط",
+      "testNotActiveMessage": "هذا الاختبار غير نشط حاليًا. يرجى الاتصال بالمسؤول.",
+      "testConfigError": "خطأ في تكوين الاختبار",
+      "testConfigErrorMessage": "هذا الاختبار ليس لديه أي مهام مكونة. يرجى الاتصال بالمسؤول.",
+      "consentDecline": "انتهى الاختبار بسبب رفض الموافقة. شكرًا لك على وقتك.",
+      "sessionTooFar": "الجلسة بعيدة جداً",
+      "sessionTooFarMessage": "الجلسة المجدولة تبعد أكثر من 24 ساعة. يرجى العودة عند القرب من موعد الجلسة."
+    },
+    "stepper": {
+      "consent": "الموافقة",
+      "preTest": "ما قبل الاختبار",
+      "calibration": "المعايرة",
+      "tasks": "المهام",
+      "postTest": "ما بعد الاختبار",
+      "completion": "الإكمال",
+      "taskX": "المهمة {num}"
+    },
+    "TaskStep": {
+      "preview": "معاينة المهمة",
+      "recordingInfo": "ستسجل هذه المهمة البيانات التالية أثناء تفاعلك:",
+      "screenRecord": "تسجيل الشاشة",
+      "screenRecordDesc": "يلتقط النقرات، التمرير، والتفاعلات لتحليل سلوك المستخدم.",
+      "camera": "الكاميرا",
+      "cameraDesc": "يسجل تعبيرات الوجه وردود الفعل لفهم عواطف المستخدم.",
+      "audioRecord": "تسجيل الصوت",
+      "audioRecordDesc": "يلتقط الملاحظات الصوتية وبروتوكولات التفكير بصوت عالٍ أثناء المهمة.",
+      "eyeTracker": "تتبع العين",
+      "eyeTrackerDesc": "يتتبع أنماط الانتباه البصري وسلوك النظرة أثناء المهمة.",
+      "newWindow": "ستفتح نافذة جديدة",
+      "newWindowDesc": "عندما تبدأ المهمة، ستفتح نافذة جديدة مع الأداة التي تحتاج إلى استخدامها.",
+      "tip": "نصيحة",
+      "tipDesc": "يمكنك التبديل بين علامات التبويب أو إغلاق النافذة الجديدة في أي وقت. سيستمر التسجيل حتى تكمل المهمة.",
+      "internalInterface": "سيتم إكمال هذه المهمة داخل الواجهة الحالية.",
+      "startTask": "بدء المهمة",
+      "description": "وصف المهمة",
+      "needHelp": "هل تحتاج لمساعدة؟",
+      "needHelpDesc": "هل تواجه مشكلة؟ احصل على توجيهات مفيدة لإكمال هذه المهمة.",
+      "externalTool": "أداة خارجية",
+      "reopenDesc": "أغلقت نافذة الأداة بالخطأ؟ أعد فتحها هنا.",
+      "reopenTool": "إعادة فتح الأداة",
+      "answerLabel": "الإجابة",
+      "observationLabel": "الملاحظة (اختياري)",
+      "cannotFinish": "لا يمكنني إنهاء المهمة",
+      "completed": "تم إكمال المهمة",
+      "noQuestionnaire": "لا يلزم استبيان لما بعد المهمة لهذا النوع من المهام.",
+      "validationError": "يرجى الإجابة على جميع الأسئلة قبل المتابعة.",
+      "finishTask": "إنهاء المهمة"
+    },
+    "ConsentStep": {
+      "fullName": "الاسم الكامل",
+      "nameRequired": "الاسم مطلوب",
+      "acceptTerms": "أوافق على شروط الموافقة",
+      "declineTerms": "لا أوافق على شروط الموافقة",
+      "continue": "الاستمرار",
+      "declinedTitle": "تم رفض الموافقة",
+      "declinedMessage1": "لقد اخترت عدم قبول شروط الموافقة لهذه الدراسة.",
+      "declinedMessage2": "إذا قمت بتأكيد هذا الإجراء، فسيتم إنهاء الاختبار على الفور لأن مشاركتك تتطلب موافقة صريحة للمتابعة. لن يتم جمع بياناتك أو تخزينها.",
+      "declinedConfirm": "هل أنت متأكد أنك تريد إنهاء الاختبار دون مشاركة؟",
+      "goBack": "الرجوع",
+      "endTest": "نعم، إنهاء الاختبار"
+    },
+    "PreTestStep": {
+      "title": "ما قبل الاختبار"
+    },
+    "PostTestStep": {
+      "title": "ما بعد الاختبار"
+    },
     "buttons": {
       "done": "تم"
+    },
+    "messages": {
+      "noTasks": "هذا الاختبار ليس لديه أي مهام.",
+      "answerSaved": "تم حفظ الإجابة بنجاح."
+    },
+    "errors": {
+      "noAnswerData": "لم يتم العثور على بيانات إجابة.",
+      "failedToSaveAnswer": "فشل في حفظ الإجابة. يرجى المحاولة مرة أخرى.",
+      "failedToSubmitAnswer": "فشل في تقديم الإجابة. يرجى المحاولة مرة أخرى.",
+      "noTestData": "لا توجد بيانات اختبار",
+      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "اكتملت المعايرة!",
+      "waiting": "في انتظار المعايرة...",
+      "calibrating": "جاري المعايرة، يرجى الانتظار...",
+      "notOpened": "لم تفتح المعايرة؟",
+      "clickHere": "انقر هنا",
+      "success": "تمت المعايرة بنجاح!",
+      "continue": "الاستمرار في الاختبار!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "عرض المشرف",
+      "welcome": "مرحبًا بك في جلسة الاختبار الخاضعة للإشراف",
+      "description": "بصفتك مشرفًا، ستقوم بتوجيه المشارك خلال عملية الاختبار أثناء مراقبة تفاعلاته عبر مكالمة فيديو.",
+      "instructionsTitle": "تعليمات المشرف",
+      "instruction1": "ابدأ بفتح غرفة مكالمة الفيديو",
+      "instruction2": "راقب تفاعلات المشارك دون تدخل",
+      "instruction3": "استخدم متصفح الخطوات للتنقل بين مراحل الاختبار",
+      "instruction4": "تقديم التوجيه عند الضرورة فقط",
+      "remember": "تذكر:",
+      "note": "دورك هو التسهيل والمراقبة. يجب على المشارك إكمال المهام بشكل مستقل ما لم يطلب المساعدة بشكل خاص.",
+      "startSession": "بدء الجلسة الخاضعة للإشراف"
     },
     "WelcomeStep": {
       "welcome": "مرحبًا بك في RUXAILAB!",
@@ -704,7 +916,61 @@
       "updated": "تم التحديث في",
       "version": "الإصدار:",
       "noTests": "لم يتم العثور على اختبارات",
-      "noTemplates": "لم يتم العثور على قوالب"
+      "noTemplates": "لم يتم العثور على قوالب",
+      "noSessions": "لم يتم العثور على جلسات"
+    },
+    "navigation": {
+      "dashboard": "لوحة التحكم",
+      "studies": "الدراسات",
+      "sessions": "الجلسات",
+      "templates": "القوالب",
+      "storage": "التخزين",
+      "notifications": "الإشعارات",
+      "profile": "الملف الشخصي",
+      "communityStudies": "دراسات المجتمع",
+      "communityTemplates": "قوالب المجتمع",
+      "studiesSubtitle": "إدارة دراساتك البحثية",
+      "templatesSubtitle": "الوصول إلى قوالبك المحفوظة"
+    },
+    "studies": {
+      "searchPlaceholder": "البحث في الدراسات...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "statusLabel": "الحالة",
+      "visibility": "الرؤية",
+      "method": "الطريقة",
+      "ownership": "الملكية",
+      "participants": "المشاركون",
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "active": "نشط",
+        "draft": "مسودة",
+        "completed": "مكتمل",
+        "allVisibility": "كل الرؤية",
+        "public": "عام",
+        "private": "خاص",
+        "allStudies": "جميع الدراسات",
+        "myStudies": "دراساتي",
+        "whereICollaborate": "حيث أتعاون",
+        "lessThan10": "< 10 مشاركين",
+        "between10And50": "10 – 50 مشارك",
+        "moreThan50": "> 50 مشارك"
+      },
+      "table": {
+        "type": "النوع",
+        "name": "الاسم",
+        "tags": "العلامات",
+        "owner": "المالك",
+        "evaluator": "المقيم",
+        "status": "الحالة",
+        "sessionDate": "تاريخ الجلسة",
+        "participants": "المشاركون",
+        "created": "تم الإنشاء",
+        "itemsPerPage": "العناصر لكل صفحة:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "البحث في الجلسات...",
@@ -725,6 +991,23 @@
         "allStudies": "جميع الدراسات",
         "myStudies": "دراساتي",
         "whereICollaborate": "حيث أتعاون"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "البحث في القوالب...",
+      "reset": "إعادة تعيين",
+      "showFilters": "عرض الفلاتر",
+      "hideFilters": "إخفاء الفلاتر",
+      "creationDate": "تاريخ الإنشاء",
+      "selectRange": "اختر النطاق",
+      "method": "الطريقة",
+      "filters": {
+        "allMethods": "جميع الطرق",
+        "heuristicEvaluation": "التقييم الاستدلالي",
+        "userUnmoderated": "مستخدم غير مدار",
+        "userModerated": "مستخدم مدار",
+        "manualAccessibility": "إمكانية الوصول اليدوية",
+        "automaticAccessibility": "إمكانية الوصول الآلية"
       }
     },
     "createTest": {
@@ -1173,5 +1456,73 @@
         "upcoming": "قادم"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "دراسة اختبار المستخدم",
+      "unmoderatedStudy": "دراسة غير مُيسَّرة",
+      "moderatedStudy": "دراسة مُيسَّرة",
+      "active": "نشط",
+      "draft": "مسودة",
+      "completed": "مكتمل",
+      "archived": "مؤرشف"
+    },
+    "studyOverview": {
+      "totalParticipants": "إجمالي المشاركين",
+      "completed": "مكتمل",
+      "rate": "معدل {percentage}%",
+      "inProgress": "قيد التنفيذ",
+      "active": "نشط {percentage}%",
+      "averageTime": "متوسط الوقت",
+      "completionTime": "وقت الإكمال",
+      "minUnit": "{value} دقيقة"
+    },
+    "managementModules": {
+      "title": "وحدات الإدارة",
+      "description": "أدوات شاملة لإدارة المشاركين والمهام والإعدادات وتحليل بيانات دراستك",
+      "additionalModules": "مساحة للوحدات الإضافية"
+    },
+    "participants": {
+      "title": "المشاركون",
+      "subtitle": "نظرة عامة على المشاركة في الاختبار",
+      "beta": "تجريبي",
+      "completed": "مكتمل",
+      "notStarted": "لم يبدأ",
+      "pendingInvites": "دعوات معلقة",
+      "overallProgress": "التقدم العام",
+      "participantsCompleted": "أكمل {completed} من {total} مشاركين",
+      "details": "التفاصيل"
+    },
+    "tasks": {
+      "title": "نظرة عامة على المهام",
+      "subtitle": "هيكل المهام والإكمال",
+      "beta": "تجريبي",
+      "noTasksConfigured": "لا توجد مهام محددة",
+      "taskCompletionRate": "معدل إكمال المهام",
+      "totalTasks": "إجمالي المهام",
+      "avgTaskDuration": "متوسط مدة المهمة",
+      "successRate": "معدل النجاح",
+      "taskTypes": "أنواع المهام",
+      "viewTasks": "عرض المهام"
+    },
+    "storage": {
+      "title": "استخدام التخزين",
+      "subtitle": "ملفات الوسائط ومقاييس التخزين",
+      "beta": "تجريبي",
+      "storageUsed": "التخزين المستخدم",
+      "storageQuota": "تم استخدام {used} من {quota}",
+      "mediaFiles": "ملفات الوسائط",
+      "videoRecordings": "تسجيلات الفيديو",
+      "audioRecordings": "تسجيلات الصوت",
+      "screenRecordings": "تسجيلات الشاشة",
+      "storageBreakdown": "تفصيل التخزين",
+      "responsesData": "بيانات الردود",
+      "analyticsData": "بيانات التحليلات",
+      "manageStorage": "إدارة التخزين"
+    }
+  },
+  "taskCreation": {
+    "taskDescription": "وصف المهمة",
+    "taskDescriptionHelper": "قدم خطوات محددة يجب عليهم اتباعها."
   }
 }

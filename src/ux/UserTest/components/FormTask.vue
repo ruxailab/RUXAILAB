@@ -70,7 +70,9 @@
       </v-card-text>
 
       <v-card-text v-if="step === '4'">
-        <TaskPreview :task="localTask" />
+        <TaskPreview
+          :task="localTask"
+        />
       </v-card-text>
     </div>
 
@@ -108,10 +110,12 @@ const selectItems = [
   { label: 'No Answer', value: 'no-answer' },
   { label: 'Short Answer', value: 'post-test' },
   { label: 'Paragraph Answer', value: 'text-area' },
-
   { label: 'Google Forms Link', value: 'post-form' },
   { label: 'NASA TLX', value: 'nasa-tlx' },
   { label: 'System Usability Scale', value: 'sus' },
+  { label: 'TAM-1 – Basic Acceptance', value: 'tam-1' },
+  { label: 'TAM-2 – Extended Acceptance', value: 'tam-2' },
+  { label: 'TAM-3 – Advanced Acceptance', value: 'tam-3' },
   { label: 'Situation Awareness Rating Technique', value: 'sart' }
 ];
 
@@ -142,7 +146,7 @@ const valida = () => {
 
   // trigger visual validator for task name
   taskBasicInfoRef.value?.isValid?.value;
-
+  
   if (nameOk && descOk) {
     emit('validate', localTask.value);
     return true;
@@ -163,11 +167,5 @@ defineExpose({ valida, resetVal });
 .stepper-content {
   min-height: 400px;
   padding: 16px;
-}
-
-@media (max-width: 600px) {
-  .stepper-content {
-    padding: 0;
-  }
 }
 </style>

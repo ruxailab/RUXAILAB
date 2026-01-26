@@ -1,4 +1,3 @@
-
 import { db } from '@/app/plugins/firebase'
 import {
   doc,
@@ -71,14 +70,14 @@ export default class Controller {
    * Fetches documents from a specified Firestore collection based on multiple query conditions.
    *
    * @param {string} col - The name of the collection from which to retrieve documents.
-   * @param {Array<Object>} conditions - An array of condition objects, each specifying a field, 
+   * @param {Array<Object>} conditions - An array of condition objects, each specifying a field,
    *                                     a comparison operator, and a value to filter by.
    * @param {string} conditions[].field - The name of the document field to filter on.
-   * @param {string} conditions[].condition - The comparison operator to apply 
+   * @param {string} conditions[].condition - The comparison operator to apply
    *                                          (e.g., '==', '>=', '<=', '!=', etc.).
    * @param {*} conditions[].value - The value to compare against the specified field.
    *
-   * @returns {Promise<QuerySnapshot>} - A Promise that resolves to a QuerySnapshot containing 
+   * @returns {Promise<QuerySnapshot>} - A Promise that resolves to a QuerySnapshot containing
    *                                     the documents that match all the specified conditions.
    *
    * @example
@@ -96,15 +95,13 @@ export default class Controller {
    */
   async queryWithMultipleConditions(col, conditions) {
     const conditionArray = conditions.map((condition) =>
-      where(condition.field, condition.condition, condition.value)
-    );
+      where(condition.field, condition.condition, condition.value),
+    )
 
-    const q = query(collection(db, col), ...conditionArray);
+    const q = query(collection(db, col), ...conditionArray)
 
-    return getDocs(q);
+    return getDocs(q)
   }
-
-
 
   /**
    * Makes a query to get data from the database.
@@ -161,7 +158,6 @@ export default class Controller {
       const ref = doc(db, `${col}/${docId}`)
       return updateDoc(ref, payload)
     } catch (e) {
-      console.log(e)
       throw e
     }
   }

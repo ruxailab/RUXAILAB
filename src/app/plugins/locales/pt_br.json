@@ -40,7 +40,7 @@
     "strength": {
       "veryWeak": "Muito fraca",
       "weak": "Fraca",
-      "fair": "Razoável",
+      "fair": "Regular",
       "good": "Boa",
       "strong": "Forte"
     }
@@ -68,6 +68,9 @@
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
     "notifications": "Notificações",
+    "markAllAsRead": "Marcar todas como lidas",
+    "caughtUp": "Você está em dia",
+    "noNewNotifications": "Nenhuma notificação nova",
     "unread": "Não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
@@ -82,7 +85,18 @@
     "sentBy": "Enviado por",
     "new": "NOVO",
     "test": "um Estudo",
-    "itemsPerPage": "Itens por página:"
+    "table": {
+      "itemsPerPage": "Itens por página:",
+      "type": "Tipo",
+      "name": "Nome",
+      "tags": "Tags",
+      "owner": "Proprietário",
+      "evaluator": "Avaliador",
+      "status": "Status",
+      "sessionDate": "Data da sessão",
+      "participants": "Participantes",
+      "created": "Criado"
+    }
   },
   "storage": {
     "pageTitle": "Armazenamento",
@@ -97,10 +111,66 @@
     "actionCannotBeUndone": "Esta ação não pode ser desfeita.",
     "headers": {
       "type": "Tipo",
+      "name": "Nome",
+      "tags": "Tags",
+      "owner": "Proprietário",
+      "participants": "Participantes",
+      "created": "Criado",
+      "evaluator": "Avaliador",
+      "status": "Status",
+      "sessionDate": "Data da sessão",
+      "itemsPerPage": "Itens por página:",
       "studyName": "Nome do Estudo",
       "date": "Data",
       "size": "Tamanho",
       "actions": "Ações"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Estudos da comunidade",
+      "searchPlaceholder": "Pesquisar estudos..."
+    },
+    "templates": {
+      "title": "Modelos da comunidade",
+      "searchPlaceholder": "Pesquisar modelos..."
+    },
+    "reset": "Redefinir",
+    "showFilters": "Mostrar filtros",
+    "hideFilters": "Ocultar filtros",
+    "selectRange": "Selecionar intervalo",
+    "filters": {
+      "creationDate": "Data de criação",
+      "status": "Status",
+      "method": "Método",
+      "ownership": "Propriedade",
+      "participants": "Participantes"
+    },
+    "status": {
+      "allStatuses": "Todos os status",
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "completed": "Concluído"
+    },
+    "ownership": {
+      "allStudies": "Todos os estudos",
+      "myStudies": "Meus estudos",
+      "whereICollaborate": "Onde colaboro"
+    },
+    "participants": {
+      "all": "Todos",
+      "lessThan10": "< 10 participantes",
+      "between10And50": "10 – 50 participantes",
+      "moreThan50": "> 50 participantes"
+    },
+    "method": {
+      "allMethods": "Todos os métodos",
+      "all": "Todos",
+      "heuristicEvaluation": "Avaliação heurística",
+      "userStudyUnmoderated": "Estudo de usuário (Não moderado)",
+      "userStudyModerated": "Estudo de usuário (Moderado)",
+      "manualAccessibility": "Acessibilidade manual",
+      "automaticAccessibility": "Acessibilidade automática"
     }
   },
   "notificationsPage": {
@@ -130,8 +200,23 @@
     "sessions": "Sessões",
     "templates": "Modelos",
     "storage": "Armazenamento",
+    "community": "Comunidade",
     "communityStudies": "Estudos da comunidade",
-    "communityTemplates": "Modelos da comunidade"
+    "communityTemplates": "Modelos da comunidade",
+    "visibility": "Visibilidade",
+    "public": "Público",
+    "private": "Privado",
+    "allVisibility": "Todas as visibilidades",
+    "subtitles": {
+      "manageStudies": "Gerencie seus estudos de pesquisa",
+      "accessTemplates": "Acesse seus modelos salvos",
+      "stayUpdated": "Mantenha-se atualizado com suas atividades e colaborações",
+      "overviewSessions": "Visão geral de suas sessões",
+      "manageStorage": "Gerencie seus arquivos de mídia armazenados",
+      "viewEditProfile": "Visualizar e editar suas informações de perfil",
+      "exploreCommunityStudies": "Explore estudos compartilhados pela comunidade RUXAI",
+      "browseCommunityTemplates": "Navegue por modelos contribuídos pela comunidade RUXAI"
+    }
   },
   "profile": {
     "title": "Perfil",
@@ -266,6 +351,11 @@
     "sessions": "Sessões",
     "personal": "Pessoais",
     "explore": "Explorar",
+    "activeStudies": {
+      "noActiveStudies": "Nenhum Estudo Ativo",
+      "createNewStudy": "Criar Novo Estudo",
+      "emptyStateMessage": "Você ainda não tem estudos. Crie seu primeiro estudo para começar a coletar insights valiosos dos usuários."
+    },
     "activeStudiesOverview": "Visão geral dos estudos ativos",
     "viewAll": "Ver tudo",
     "showMore": "Ver mais",
@@ -276,6 +366,33 @@
     "daysLeft": "dias restantes",
     "dayLeft": "dia restante",
     "studies": "Estudos",
+    "studiesPage": {
+      "searchPlaceholder": "Pesquisar estudos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "filters": {
+        "creationDate": "Data de criação",
+        "status": "Status",
+        "visibility": "Visibilidade",
+        "method": "Método",
+        "ownership": "Propriedade",
+        "participants": "Participantes",
+        "selectRange": "Selecionar intervalo",
+        "allStatuses": "Todos os status",
+        "allVisibility": "Todas as visibilidades",
+        "public": "Público",
+        "private": "Privado",
+        "allMethods": "Todos os métodos",
+        "allStudies": "Todos os estudos",
+        "myStudies": "Meus estudos",
+        "whereICollaborate": "Onde eu colaboro",
+        "all": "Todos",
+        "lt10": "< 10 participantes",
+        "btw10_50": "10 – 50 participantes",
+        "gt50": "> 50 participantes"
+      }
+    },
     "storage": "Armazenamento",
     "free": "Grátis",
     "plan": "Plano",
@@ -299,14 +416,6 @@
       "paused": "Pausado",
       "finished": "Finalizado",
       "unknown": "Desconhecido"
-    },
-    "webinar": {
-      "ended": "Encerrado",
-      "live": "Ao vivo",
-      "today": "Hoje",
-      "joinNow": "Entrar agora",
-      "webinarEnded": "Webinar encerrado",
-      "startingToday": "Começa hoje"
     }
   },
   "HeuristicsTable": {
@@ -616,8 +725,118 @@
       "postTest": "Pós-teste",
       "eyeTrackingCalibration": "Calibração de rastreamento ocular"
     },
+    "actions": {
+      "welcomeBack": "Bem-vindo de volta!",
+      "continueAs": "Continuar como {userEmail}",
+      "notYou": "Não é você?",
+      "changeAccount": "Mudar de conta",
+      "startTest": "Iniciar teste"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Teste já concluído",
+      "testAlreadyCompletedMessage": "Você já concluiu e enviou este teste. Obrigado pela sua participação!",
+      "testExpired": "Teste expirado",
+      "testExpiredMessage": "Este teste não está mais disponível porque ultrapassou a data de validade.",
+      "testNotActive": "Teste não ativo",
+      "testNotActiveMessage": "Este teste não está ativo no momento. Entre em contato com o administrador.",
+      "testConfigError": "Erro de configuração do teste",
+      "testConfigErrorMessage": "Este teste não possui tarefas configuradas. Entre em contato com o administrador.",
+      "consentDecline": "Teste encerrado devido à recusa do consentimento. Obrigado pelo seu tempo."
+    },
+    "stepper": {
+      "consent": "Consentimento",
+      "preTest": "Pré-teste",
+      "calibration": "Calibração",
+      "tasks": "Tarefas",
+      "postTest": "Pós-teste",
+      "completion": "Conclusão",
+      "taskX": "Tarefa {num}"
+    },
+    "TaskStep": {
+      "preview": "Visualização da tarefa",
+      "recordingInfo": "Esta tarefa registrará os seguintes dados durante sua interação:",
+      "screenRecord": "Gravação de tela",
+      "screenRecordDesc": "Captura cliques, rolagem e interações para analisar o comportamento do usuário.",
+      "camera": "Câmera",
+      "cameraDesc": "Grava expressões faciais e reações para entender as emoções do usuário.",
+      "audioRecord": "Gravação de áudio",
+      "audioRecordDesc": "Captura feedback verbal e protocolos de pensamento em voz alta durante a tarefa.",
+      "eyeTracker": "Rastreador ocular",
+      "eyeTrackerDesc": "Rastreia padrões de atenção visual e comportamento do olhar durante a tarefa.",
+      "newWindow": "Uma nova janela será aberta",
+      "newWindowDesc": "Ao iniciar a tarefa, uma nova janela será aberta com a ferramenta que você precisa usar.",
+      "tip": "Dica",
+      "tipDesc": "Você pode alternar entre as abas ou fechar a nova janela a qualquer momento. A gravação continuará até que você conclua a tarefa.",
+      "internalInterface": "Esta tarefa será concluída dentro da interface atual.",
+      "startTask": "Iniciar tarefa",
+      "description": "Descrição da tarefa",
+      "needHelp": "Precisa de ajuda?",
+      "needHelpDesc": "Está tendo problemas? Obtenha orientações úteis para concluir esta tarefa.",
+      "externalTool": "Ferramenta externa",
+      "reopenDesc": "Fechou a janela da ferramenta por engano? Abra-a aqui novamente.",
+      "reopenTool": "Reabrir ferramenta",
+      "answerLabel": "Resposta",
+      "observationLabel": "Observação (opcional)",
+      "cannotFinish": "Não consigo concluir a tarefa",
+      "completed": "Tarefa concluída",
+      "noQuestionnaire": "Nenhum questionário pós-tarefa é necessário para este tipo de tarefa.",
+      "validationError": "Responda a todas as perguntas antes de continuar.",
+      "finishTask": "Finalizar tarefa"
+    },
+    "ConsentStep": {
+      "fullName": "Nome completo",
+      "nameRequired": "Nome é obrigatório",
+      "acceptTerms": "Eu aceito os termos de consentimento",
+      "declineTerms": "Eu não aceito os termos de consentimento",
+      "continue": "Continuar",
+      "declinedTitle": "Consentimento recusado",
+      "declinedMessage1": "Você optou por não aceitar os termos de consentimento para este estudo.",
+      "declinedMessage2": "Se você confirmar esta ação, o teste será encerrado imediatamente, pois sua participação requer consentimento explícito para prosseguir. Seus dados não serão coletados nem armazenados.",
+      "declinedConfirm": "Tem certeza de que deseja encerrar o teste sem participar?",
+      "goBack": "Voltar",
+      "endTest": "Sim, encerrar teste"
+    },
+    "PreTestStep": {
+      "title": "Pré-teste"
+    },
+    "PostTestStep": {
+      "title": "Pós-teste"
+    },
     "buttons": {
       "done": "Concluído"
+    },
+    "messages": {
+      "noTasks": "Este teste não possui tarefas.",
+      "answerSaved": "Resposta salva com sucesso."
+    },
+    "errors": {
+      "noAnswerData": "Nenhum dado de resposta encontrado.",
+      "failedToSaveAnswer": "Falha ao salvar resposta. Tente novamente.",
+      "failedToSubmitAnswer": "Falha ao enviar resposta. Tente novamente.",
+      "noTestData": "Sem dados de teste",
+      "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Calibração concluída!",
+      "waiting": "Aguardando calibração...",
+      "calibrating": "Calibrando, por favor aguarde...",
+      "notOpened": "A calibração não abriu?",
+      "clickHere": "Clique aqui",
+      "success": "A calibração foi bem-sucedida!",
+      "continue": "CONTINUAR PARA O TESTE!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Vista do Moderador",
+      "welcome": "Bem-vindo à Sessão de Teste Moderada",
+      "description": "Como moderador, você guiará o participante pelo processo de teste enquanto observa suas interações via vídeo chamada.",
+      "instructionsTitle": "Instruções do Moderador",
+      "instruction1": "Comece abrindo a sala de vídeo chamada",
+      "instruction2": "Observe as interações do participante sem interferência",
+      "instruction3": "Use o navegador de etapas para saltar entre as fases do teste",
+      "instruction4": "Forneça orientação apenas quando necessário",
+      "remember": "Lembre-se:",
+      "note": "Seu papel é facilitar e observar. O participante deve concluir as tarefas de forma independente, a menos que solicite ajuda especificamente.",
+      "startSession": "Iniciar Sessão Moderada"
     },
     "WelcomeStep": {
       "welcome": "Bem-vindo ao RUXAILAB!",
@@ -710,7 +929,61 @@
       "updated": "Última atualização em",
       "version": "Versão:",
       "noTests": "Nenhum teste encontrado",
-      "noTemplates": "Nenhum modelo encontrado"
+      "noTemplates": "Nenhum modelo encontrado",
+      "noSessions": "Nenhuma sessão encontrada"
+    },
+    "navigation": {
+      "dashboard": "Painel",
+      "studies": "Estudos",
+      "sessions": "Sessões",
+      "templates": "Modelos",
+      "storage": "Armazenamento",
+      "notifications": "Notificações",
+      "profile": "Perfil",
+      "communityStudies": "Estudos da comunidade",
+      "communityTemplates": "Modelos da comunidade",
+      "studiesSubtitle": "Gerencie seus estudos de pesquisa",
+      "templatesSubtitle": "Acesse seus modelos salvos"
+    },
+    "studies": {
+      "searchPlaceholder": "Pesquisar estudos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Data de criação",
+      "selectRange": "Selecionar intervalo",
+      "statusLabel": "Status",
+      "visibility": "Visibilidade",
+      "method": "Método",
+      "ownership": "Propriedade",
+      "participants": "Participantes",
+      "filters": {
+        "allStatuses": "Todos os status",
+        "active": "Ativo",
+        "draft": "Rascunho",
+        "completed": "Concluído",
+        "allVisibility": "Todas as visibilidades",
+        "public": "Público",
+        "private": "Privado",
+        "allStudies": "Todos os estudos",
+        "myStudies": "Meus estudos",
+        "whereICollaborate": "Onde eu colaboro",
+        "lessThan10": "< 10 participantes",
+        "between10And50": "10 – 50 participantes",
+        "moreThan50": "> 50 participantes"
+      },
+      "table": {
+        "type": "Tipo",
+        "name": "Nome",
+        "tags": "Tags",
+        "owner": "Proprietário",
+        "evaluator": "Avaliador",
+        "status": "Status",
+        "sessionDate": "Data da sessão",
+        "participants": "Participantes",
+        "created": "Criado",
+        "itemsPerPage": "Itens por página:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "Pesquisar sessões...",
@@ -731,6 +1004,23 @@
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
         "whereICollaborate": "Onde eu colaboro"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Pesquisar modelos...",
+      "reset": "Redefinir",
+      "showFilters": "Mostrar filtros",
+      "hideFilters": "Ocultar filtros",
+      "creationDate": "Data de criação",
+      "selectRange": "Selecionar intervalo",
+      "method": "Método",
+      "filters": {
+        "allMethods": "Todos os métodos",
+        "heuristicEvaluation": "Avaliação Heurística",
+        "userUnmoderated": "Usuário não moderado",
+        "userModerated": "Usuário moderado",
+        "manualAccessibility": "Acessibilidade manual",
+        "automaticAccessibility": "Acessibilidade automática"
       }
     },
     "createTest": {
@@ -1160,5 +1450,73 @@
         "upcoming": "Próximo"
       }
     }
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "Estudo de Teste de Usuário",
+      "unmoderatedStudy": "Estudo Não Moderado",
+      "moderatedStudy": "Estudo Moderado",
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "completed": "Concluído",
+      "archived": "Arquivado"
+    },
+    "studyOverview": {
+      "totalParticipants": "Total de Participantes",
+      "completed": "Concluído",
+      "rate": "{percentage}% taxa",
+      "inProgress": "Em Andamento",
+      "active": "{percentage}% ativo",
+      "averageTime": "Tempo Médio",
+      "completionTime": "Tempo de conclusão",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Módulos de Gerenciamento",
+      "description": "Ferramentas abrangentes para gerenciar participantes, tarefas, configurações e analisar os dados do seu estudo",
+      "additionalModules": "Espaço para módulos adicionais"
+    },
+    "participants": {
+      "title": "Participantes",
+      "subtitle": "Visão geral da participação no teste",
+      "beta": "Beta",
+      "completed": "Concluído",
+      "notStarted": "Não Iniciado",
+      "pendingInvites": "Convites Pendentes",
+      "overallProgress": "Progresso Geral",
+      "participantsCompleted": "{completed} de {total} participantes concluídos",
+      "details": "Detalhes"
+    },
+    "tasks": {
+      "title": "Visão Geral das Tarefas",
+      "subtitle": "Estrutura e conclusão das tarefas",
+      "beta": "Beta",
+      "noTasksConfigured": "Nenhuma tarefa configurada",
+      "taskCompletionRate": "Taxa de Conclusão de Tarefas",
+      "totalTasks": "Total de Tarefas",
+      "avgTaskDuration": "Duração Média da Tarefa",
+      "successRate": "Taxa de Sucesso",
+      "taskTypes": "Tipos de Tarefas",
+      "viewTasks": "Ver Tarefas"
+    },
+    "storage": {
+      "title": "Uso de Armazenamento",
+      "subtitle": "Arquivos de mídia e métricas de armazenamento",
+      "beta": "Beta",
+      "storageUsed": "Armazenamento Usado",
+      "storageQuota": "{used} de {quota} usado",
+      "mediaFiles": "Arquivos de Mídia",
+      "videoRecordings": "Gravações de Vídeo",
+      "audioRecordings": "Gravações de Áudio",
+      "screenRecordings": "Gravações de Tela",
+      "storageBreakdown": "Detalhamento do Armazenamento",
+      "responsesData": "Dados de Respostas",
+      "analyticsData": "Dados de Análise",
+      "manageStorage": "Gerenciar Armazenamento"
+    }
+  },
+  "taskCreation": {
+    "taskDescription": "Descrição da Tarefa",
+    "taskDescriptionHelper": "Forneça etapas específicas que eles devem seguir."
   }
 }

@@ -133,7 +133,7 @@ export default {
           dbUser = await userController.getById(user.uid)
         } catch (error) {
           // User doesn't exist in DB, will be created below
-          console.log('User not found in database, creating new profile')
+          return error
         }
 
         // Create user if they don't exist yet
@@ -167,7 +167,7 @@ export default {
       try {
         await authController.signOut()
         commit('SET_USER', null)
-      
+
         if (!silent) {
           commit('SET_TOAST', {
             message: i18n.global.t('auth.logoutSuccess'),
@@ -175,14 +175,13 @@ export default {
           })
         }
       } catch (err) {
-        console.error(err)
-      
         if (!silent) {
           commit('SET_TOAST', {
             message: i18n.global.t('errors.globalError'),
             type: 'error',
           })
         }
+        return err
       } finally {
         commit('setLoading', false)
       }
@@ -196,11 +195,11 @@ export default {
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (e) {
-        console.error(e)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
         })
+        return e
       }
     },
 
@@ -234,7 +233,6 @@ export default {
         await authController.signOut()
         commit('SET_USER', null)
       } catch (err) {
-        console.error('Error deleting user:', err)
         throw err
       } finally {
         commit('setLoading', false)

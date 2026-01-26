@@ -173,6 +173,7 @@ const onGoogleSignInSuccess = async () => {
 
 const onGoogleSignInError = () => {
   store.commit('setLoading', false)
+  return error
 }
 </script>
 

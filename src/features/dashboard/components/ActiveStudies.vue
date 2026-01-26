@@ -27,6 +27,35 @@
         </v-col>
       </v-row>
       <v-row v-else>
+        <!-- Empty state when no studies -->
+        <v-col v-if="hasNoStudies" cols="12" class="text-center py-8">
+          <div class="d-flex flex-column align-center">
+            <v-icon
+              icon="mdi-flask-empty-outline"
+              size="80"
+              color="grey-lighten-1"
+              class="mb-4"
+            />
+            <h3 class="text-h6 font-weight-medium mb-2 text-medium-emphasis">
+              {{ $t('Dashboard.activeStudies.noActiveStudies') }}
+            </h3>
+            <p class="text-body-2 text-medium-emphasis mb-6 max-width-400">
+              {{ $t('Dashboard.activeStudies.emptyStateMessage') }}
+            </p>
+            <v-btn
+              color="primary"
+              variant="elevated"
+              size="large"
+              prepend-icon="mdi-plus"
+              @click="createNewStudy"
+              class="px-6"
+            >
+              {{ $t('Dashboard.activeStudies.createNewStudy') }}
+            </v-btn>
+          </div>
+        </v-col>
+
+        <!-- Studies list -->
         <v-col
           v-for="study in studies.filter((s) => s)"
           :key="study.id"
@@ -37,8 +66,8 @@
             variant="outlined"
             rounded="lg"
             class="study-card"
-            @click="goToStudy(study)"
             hover
+            @click="goToStudy(study)"
           >
             <v-card-text class="pa-4">
               <div class="d-flex align-center justify-space-between mb-3">
@@ -135,6 +164,9 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   studies: {
@@ -151,16 +183,12 @@ const loading = ref(false)
 const studiesWithAnswers = ref([])
 const user = computed(() => store.getters.user)
 
-const isLongDescription = (description) => {
-  return description && description.length > 250
-}
-
 const studies = computed(() => {
-  return props.studies.length > 0
-    ? studiesWithAnswers.value
-    : loading.value
-    ? []
-    : defaultStudies
+  return props.studies.length > 0 ? studiesWithAnswers.value : []
+})
+
+const hasNoStudies = computed(() => {
+  return !loading.value && props.studies.length === 0
 })
 
 const lastFourStudies = computed(() => {
@@ -198,8 +226,8 @@ async function loadAnswers() {
     }
     finalFour(last4)
   } catch (e) {
-    console.error('Error loading answers', e)
     studiesWithAnswers.value = []
+    return e
   } finally {
     loading.value = false
   }
@@ -334,6 +362,10 @@ const defaultStudies = [
   },
 ]
 
+const createNewStudy = () => {
+  router.push({ name: 'study-create-step1' })
+}
+
 watch(
   () => props.studies,
   () => {
@@ -352,5 +384,9 @@ watch(
 .study-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.max-width-400 {
+  max-width: 400px;
 }
 </style>

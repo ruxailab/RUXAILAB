@@ -8,23 +8,14 @@
     :temporary="isMobile"
   >
     <!-- Navigation Items -->
-    <v-list
-      class="pa-4"
-      nav
-    >
-      <template
-        v-for="item in navigationItems"
-        :key="item.id"
-      >
-        <v-list-group
-          v-if="item.children"
-          :value="activeSection === item.id"
-        >
+    <v-list class="pa-4" nav>
+      <template v-for="item in navigationItems" :key="item.id">
+        <v-list-group v-if="item.children" :value="activeSection === item.id">
           <template #activator="{ props }">
             <v-list-item
               v-bind="props"
               :prepend-icon="item.icon"
-              :title="item.title"
+              :title="$t(item.title)"
               class="section-header mb-2"
               rounded="lg"
             />
@@ -32,7 +23,7 @@
           <v-list-item
             v-for="child in item.children"
             :key="child.id"
-            :title="child.title"
+            :title="$t(child.title)"
             :prepend-icon="child.icon"
             :active="activeSection === item.id && activeSubSection === child.id"
             class="subsection-item ml-4 mb-1"
@@ -43,7 +34,7 @@
 
         <v-list-item
           v-else
-          :title="item.title"
+          :title="$t(item.title)"
           :prepend-icon="item.icon"
           :active="activeSection === item.id"
           class="section-header mb-2"
@@ -65,60 +56,56 @@
         class="create-button"
         @click="$emit('create-test')"
       >
-  {{ $t('Dashboard.createNewTest') }}
+        {{ $t('Dashboard.createNewTest') }}
       </v-btn>
     </div>
   </v-navigation-drawer>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useDisplay } from 'vuetify';
-import { dashboardNavigationItems } from '@/features/dashboard';
+import { computed } from 'vue'
+import { useDisplay } from 'vuetify'
+import { dashboardNavigationItems } from '@/features/dashboard'
 
 // Composables
-const { mobile } = useDisplay();
+const { mobile } = useDisplay()
 
 // Props
 const props = defineProps({
-    activeSection: {
-        type: String,
-        default: 'dashboard'
-    },
-    activeSubSection: {
-        type: String,
-        default: null
-    },
-    modelValue: {
-        type: Boolean,
-        default: false
-    }
-});
+  activeSection: {
+    type: String,
+    default: 'dashboard',
+  },
+  activeSubSection: {
+    type: String,
+    default: null,
+  },
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 // Emits
-const emit = defineEmits(['navigate', 'create-test', 'update:modelValue']);
+const emit = defineEmits(['navigate', 'create-test', 'update:modelValue'])
 
 // Computed
-const isMobile = computed(() => mobile.value);
-const isOpen = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
-});
+const isMobile = computed(() => mobile.value)
 
 // Para el drawer: en desktop siempre true, en mobile controlado por modelValue
 const drawerState = computed({
-    get: () => {
-        return isMobile.value ? props.modelValue : true;
-    },
-    set: (value) => {
-        if (isMobile.value) {
-            emit('update:modelValue', value);
-        }
+  get: () => {
+    return isMobile.value ? props.modelValue : true
+  },
+  set: (value) => {
+    if (isMobile.value) {
+      emit('update:modelValue', value)
     }
-});
+  },
+})
 
 // Data
-const navigationItems = dashboardNavigationItems;
+const navigationItems = dashboardNavigationItems
 
 // Methods
 const selectNavigation = (sectionId, childId = null) => {
@@ -126,94 +113,97 @@ const selectNavigation = (sectionId, childId = null) => {
   if (isMobile.value) {
     emit('update:modelValue', false)
   }
-};
+}
 </script>
 
 <style scoped>
 .sidebar {
-    background-color: white !important;
-    border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background-color: white !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
 .sidebar-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo {
-    transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
 .sidebar-header:hover .logo {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .create-button {
-    text-transform: none !important;
-    letter-spacing: normal !important;
-    font-weight: 600 !important;
-    transition: transform 0.2s ease-in-out !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: 600 !important;
+  transition: transform 0.2s ease-in-out !important;
 }
 
 .create-button:hover {
-    transform: translateY(-2px);
+  transform: translateY(-2px);
 }
 
 /* Navigation Styling */
 .v-list {
-    padding: 0.5rem !important;
+  padding: 0.5rem !important;
 }
 
 .v-list-group__items .v-list-item {
-    margin-bottom: 4px;
-    transition: all 0.2s ease-in-out;
+  margin-bottom: 4px;
+  transition: all 0.2s ease-in-out;
 }
 
 .v-list-group__items .v-list-item.v-list-item--active {
-    background-color: var(--v-primary-lighten-5, rgba(0, 33, 63, 0.1)) !important;
-    color: var(--v-primary-base, #00213F) !important;
-    font-weight: 600 !important;
+  background-color: var(--v-primary-lighten-5, rgba(0, 33, 63, 0.1)) !important;
+  color: var(--v-primary-base, #00213f) !important;
+  font-weight: 600 !important;
 }
 
-.v-list-group__items .v-list-item.v-list-item--active .v-list-item__prepend .v-icon {
-    color: var(--v-primary-base, #00213F) !important;
+.v-list-group__items
+  .v-list-item.v-list-item--active
+  .v-list-item__prepend
+  .v-icon {
+  color: var(--v-primary-base, #00213f) !important;
 }
 
 .v-list-group__items .v-list-item:hover:not(.v-list-item--active) {
-    background-color: rgba(0, 0, 0, 0.03) !important;
-    transform: translateX(4px);
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  transform: translateX(4px);
 }
 
 .section-header {
-    font-weight: 600 !important;
-    border-radius: 8px;
-    margin-bottom: 4px;
+  font-weight: 600 !important;
+  border-radius: 8px;
+  margin-bottom: 4px;
 }
 
 .section-header .v-list-item__prepend .v-icon {
-    margin-right: 12px;
-    transition: transform 0.2s ease-in-out;
+  margin-right: 12px;
+  transition: transform 0.2s ease-in-out;
 }
 
 .section-header:hover .v-list-item__prepend .v-icon {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .subsection-item {
-    font-size: 0.9rem;
-    padding: 0;
-    opacity: 0.85;
-    transition: opacity 0.2s ease-in-out;
+  font-size: 0.9rem;
+  padding: 0;
+  opacity: 0.85;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .subsection-item:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .subsection-item .v-list-item__prepend .v-icon {
-    font-size: 18px;
-    margin-right: 12px;
+  font-size: 18px;
+  margin-right: 12px;
 }
 </style>
