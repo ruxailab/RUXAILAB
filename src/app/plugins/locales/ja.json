@@ -35,14 +35,14 @@
       "no_email": "メールが届いていませんか？",
       "try_again": "もう一度試す"
     },
-    "passwordStrength": "Password Strength",
-    "number": "Number",
+    "passwordStrength": "パスワード強度",
+    "number": "番号",
     "strength": {
-      "veryWeak": "Very Weak",
-      "weak": "Weak",
-      "fair": "Fair",
-      "good": "Good",
-      "strong": "Strong"
+      "veryWeak": "非常に弱い",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い"
     }
   },
   "common": {
@@ -100,10 +100,10 @@
       "participants": "参加者",
       "created": "作成日"
     },
-    "units": {
-      "mb": "MB",
-      "gb": "GB"
-    }
+    "hidden": "非表示",
+    "proceed": "続行",
+    "all": "すべて",
+    "actions": "アクション"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -207,8 +207,23 @@
     "sessions": "セッション",
     "templates": "テンプレート",
     "storage": "ストレージ",
+    "community": "コミュニティ",
     "communityStudies": "コミュニティ研究",
-    "communityTemplates": "コミュニティテンプレート"
+    "communityTemplates": "コミュニティテンプレート",
+    "visibility": "公開範囲",
+    "public": "公開",
+    "private": "非公開",
+    "allVisibility": "すべての公開範囲",
+    "subtitles": {
+      "manageStudies": "研究調査の管理",
+      "accessTemplates": "保存したテンプレートへのアクセス",
+      "stayUpdated": "アクティビティやコラボレーションの最新情報を確認",
+      "overviewSessions": "セッションの概要",
+      "manageStorage": "保存されたメディアファイルの管理",
+      "viewEditProfile": "プロファイル情報の表示と編集",
+      "exploreCommunityStudies": "RUXAIコミュニティで共有されている調査を探索",
+      "browseCommunityTemplates": "RUXAIコミュニティが提供するテンプレートを閲覧"
+    }
   },
   "profile": {
     "title": "プロフィール",
@@ -243,31 +258,32 @@
     "passwordSymbol": "記号を1つ含める必要があります",
     "confirmPasswordRequired": "パスワード確認は必須です",
     "passwordsMatch": "パスワードが一致する必要があります",
-    "usernameRequired": "Username is required",
-    "usernameMinLength": "Username must be at least 3 characters",
-    "countryRequired": "Country is required",
-    "contactNumberRequired": "Contact number is required",
-    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
-    "profileImageUpdatedSuccess": "Profile image updated successfully",
-    "profileImageUploadFailed": "Failed to upload profile image",
-    "uploadProfilePicture": "Upload Profile Picture",
-    "removeProfilePicture": "Remove Profile Picture",
-    "noUserSignedIn": "No user signed in",
-    "profileLoadFailed": "Failed to load profile",
-    "profileUpdatedSuccess": "Profile updated successfully",
-    "profileUpdateFailed": "Failed to update profile",
-    "currentPassword": "Current Password",
-    "currentPasswordRequired": "Current password is required",
-    "wrongCurrentPassword": "Current password is incorrect",
-    "recentLoginRequired": "Please log out and log back in before changing your password",
-    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
-    "passwordChangedSuccess": "Password changed successfully",
-    "passwordChangeFailed": "Failed to change password",
-    "accountDeletionFailed": "Account deletion failed",
-    "accountDeletedSuccess": "Account deleted successfully",
-    "yourPassword": "Your Password",
-    "back": "Back",
-    "deleteForever": "Delete Forever"
+    "superAdmin": "スーパー管理者",
+    "usernameRequired": "ユーザー名は必須です",
+    "usernameMinLength": "ユーザー名は3文字以上である必要があります",
+    "countryRequired": "国は必須です",
+    "contactNumberRequired": "連絡先番号は必須です",
+    "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁のみ）",
+    "profileImageUpdatedSuccess": "プロフィール画像が正常に更新されました",
+    "profileImageUploadFailed": "プロフィール画像のアップロードに失敗しました",
+    "uploadProfilePicture": "プロフィール画像をアップロード",
+    "removeProfilePicture": "プロフィール画像を削除",
+    "noUserSignedIn": "ユーザーがサインインしていません",
+    "profileLoadFailed": "プロフィールの読み込みに失敗しました",
+    "profileUpdatedSuccess": "プロフィールが正常に更新されました",
+    "profileUpdateFailed": "プロフィールの更新に失敗しました",
+    "currentPassword": "現在のパスワード",
+    "currentPasswordRequired": "現在のパスワードは必須です",
+    "wrongCurrentPassword": "現在のパスワードが正しくありません",
+    "recentLoginRequired": "パスワードを変更する前に、一度ログアウトして再度ログインしてください",
+    "googleUserPasswordInfo": "Googleでサインインしました。下のボタンをクリックしてGoogleで確認し、アカウントのパスワードを設定してください。",
+    "passwordChangedSuccess": "パスワードが正常に変更されました",
+    "passwordChangeFailed": "パスワードの変更に失敗しました",
+    "accountDeletionFailed": "アカウントの削除に失敗しました",
+    "accountDeletedSuccess": "アカウントが正常に削除されました",
+    "yourPassword": "あなたのパスワード",
+    "back": "戻る",
+    "deleteForever": "完全に削除"
   },
   "titles": {
     "manager": "マネージャー",
@@ -314,7 +330,10 @@
       "start": "始めましょう！",
       "edit": "研究ニーズに合わせてタスクとヒューリスティックを作成およびカスタマイズします。",
       "finalReport": "含めたい項目を選択して、ヒューリスティック評価の最終レポートを準備します。"
-    }
+    },
+    "overallAnalyticsDescription": "テストの集計分析を表示します。",
+    "individualAnalytics": "個別分析",
+    "nasaTlxAnalytics": "NASA-TLX分析"
   },
   "errors": {
     "invalidInvitation": "無効な招待です",
@@ -368,6 +387,33 @@
     "daysLeft": "残り日数",
     "dayLeft": "残り1日",
     "studies": "研究",
+    "studiesPage": {
+      "searchPlaceholder": "調査を検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "filters": {
+        "creationDate": "作成日",
+        "status": "ステータス",
+        "visibility": "公開範囲",
+        "method": "手法",
+        "ownership": "所有者",
+        "participants": "参加者",
+        "selectRange": "期間を選択",
+        "allStatuses": "すべてのステータス",
+        "allVisibility": "すべての公開範囲",
+        "public": "公開",
+        "private": "非公開",
+        "allMethods": "すべての手法",
+        "allStudies": "すべての調査",
+        "myStudies": "自分の調査",
+        "whereICollaborate": "コラボレーション中",
+        "all": "すべて",
+        "lt10": "10人未満",
+        "btw10_50": "10～50人",
+        "gt50": "50人超"
+      }
+    },
     "storage": "ストレージ",
     "free": "無料",
     "plan": "プラン",
@@ -394,73 +440,60 @@
     },
     "cards": {
       "recentActivity": "最近のアクティビティ",
-      "activities7Days": "アクティビティ (過去7日間合計)",
-      "lastActivity": "最終アクティビティ",
+      "activities7Days": "アクティビティ（合計7日間）",
+      "lastActivity": "最後のアクティビティ",
       "noActivity": "アクティビティなし",
       "edit": "編集",
       "heuristics": "ヒューリスティック",
       "questions": "質問",
-      "totalOptions": "オプション総数",
+      "totalOptions": "合計オプション",
       "qualitative": "定性的",
       "quantitative": "定量的",
       "weights": "重み",
-      "on": "ON",
-      "off": "OFF",
+      "on": "オン",
+      "off": "オフ",
       "cooperators": "協力者",
-      "totalInvited": "招待合計",
-      "accepted": "承諾済み",
+      "totalInvited": "招待総数",
+      "accepted": "承認済み",
       "pending": "保留中",
       "storage": "ストレージ",
-      "currentStorage": "現在のストレージ",
-      "limitAvailable": "利用可能制限",
+      "currentStorage": "ストレージ（現在）",
+      "limitAvailable": "利用可能な制限",
       "results": "結果",
-      "generalUsability": "総合的なユーザビリティ",
+      "generalUsability": "一般的なユーザビリティ",
       "finalReport": "最終レポート",
       "generatePDF": "PDFを生成",
       "download": "ダウンロード",
-      "generated": "生成日時:",
+      "generated": "生成済み:",
       "generateReport": "レポートを生成",
       "reportAvailable": "レポート利用可能",
-      "noReport": "レポート未生成",
-      "readyForDownload": "最終レポートのダウンロード準備ができました",
-      "waitingForParticipants": "参加者を待機中",
+      "noReport": "レポートは生成されていません",
+      "readyForDownload": "最終レポートをダウンロードする準備ができました",
+      "waitingForParticipants": "参加者を待っています",
       "evaluationsCompleted": "評価完了",
-      "readyToGenerate": "レポート生成の準備完了",
-      "excellentUsability": "素晴らしいユーザビリティ",
+      "readyToGenerate": "レポートを生成する準備ができました",
+      "excellentUsability": "優れたユーザビリティ",
       "acceptableUsability": "許容可能なユーザビリティ",
       "needsImprovement": "改善が必要",
       "basedOn": "基づく",
       "evaluations": "評価",
       "evaluationUpdated": "評価が更新されました",
-      "updatedProgress": "が進捗を更新しました",
-      "invitationSentTitle": "招待を送信しました",
-      "invitationPendingDesc": "の招待が保留中です",
+      "updatedProgress": "進捗を更新しました",
+      "invitationSentTitle": "招待が送信されました",
+      "invitationPendingDesc": "招待保留中",
       "pendingStatus": "保留中"
     },
     "managerView": {
-      "heuristicStudy": "ヒューリスティック研究",
+      "heuristicStudy": "ヒューリスティック調査",
       "freePlan": "無料プラン",
       "generalStatistics": "一般統計",
       "modules": "モジュール"
     },
     "stats": {
       "participants": "参加者",
-      "completion": "完了率",
+      "completion": "完了",
       "daysActive": "アクティブ日数",
-      "heuristics": "ヒューリスティック",
-      "units": {
-        "participants": "{count} 参加者 | {count} 参加者",
-        "completion": "{count}% 完了",
-        "daysActive": "{count} 日間アクティブ | {count} 日間アクティブ",
-        "heuristics": "{count} ヒューリスティック | {count} ヒューリスティック"
-      },
-      "importance": {
-        "equal": "同等の重要性",
-        "moderately": "中程度の重要性",
-        "strongly": "強い重要性",
-        "veryStrongly": "非常に強い重要性",
-        "extreme": "極めて高い重要性"
-      }
+      "heuristics": "ヒューリスティック"
     }
   },
   "HeuristicsTable": {
@@ -543,6 +576,9 @@
     "messages": {
       "startAddingOptions": "ヒューリスティックな質問にオプションの追加を開始します"
     },
+    "messages": {
+      "startAddingOptions": "ヒューリスティックな質問へのオプションの追加を開始してください"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -577,7 +613,7 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "設定",
-      "confirmUpload": "Confirm Upload"
+      "confirmUpload": "アップロードの確認"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
@@ -810,8 +846,120 @@
       "postTest": "事後テスト",
       "eyeTrackingCalibration": "アイトラッキングのキャリブレーション"
     },
+    "actions": {
+      "welcomeBack": "お帰りなさい！",
+      "continueAs": "{userEmail}として続行",
+      "notYou": "ご本人ではありませんか？",
+      "changeAccount": "アカウントを変更",
+      "startTest": "テストを開始"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "テストは既に完了しています",
+      "testAlreadyCompletedMessage": "このテストは既に完了し、提出されています。ご協力ありがとうございました！",
+      "testExpired": "テストの期限が切れています",
+      "testExpiredMessage": "このテストは終了日を過ぎたため、現在はご利用いただけません。",
+      "testNotActive": "テストがアクティブではありません",
+      "testNotActiveMessage": "このテストは現在アクティブではありません。管理者にお問い合わせください。",
+      "testConfigError": "テスト設定エラー",
+      "testConfigErrorMessage": "このテストにはタスクが設定されていません。管理者にお問い合わせください。",
+      "consentDecline": "同意が得られなかったため、テストを終了しました。お時間をいただきありがとうございました。",
+      "sessionTooFar": "セッションが遠すぎます",
+      "sessionTooFarMessage": "予定されているセッションは24時間以上先です。セッション日が近づいてから戻ってきてください。"
+    },
+    "stepper": {
+      "consent": "同意",
+      "preTest": "事前テスト",
+      "calibration": "キャリブレーション",
+      "tasks": "タスク",
+      "postTest": "事後テスト",
+      "completion": "完了",
+      "taskX": "タスク {num}"
+    },
+    "TaskStep": {
+      "preview": "タスクのプレビュー",
+      "recordingInfo": "このタスクでは、操作中に以下のデータが記録されます：",
+      "screenRecord": "画面記録",
+      "screenRecordDesc": "ユーザーの行動を分析するために、クリック、スクロール、操作をキャプチャします。",
+      "camera": "カメラ",
+      "cameraDesc": "ユーザーの感情を理解するために、表情や反応を記録します。",
+      "audioRecord": "音声記録",
+      "audioRecordDesc": "タスク中の音声フィードバックや思考発話（think-aloud）をキャプチャします。",
+      "eyeTracker": "アイトラッカー",
+      "eyeTrackerDesc": "タスク中の視線パターンの注意や注視行動を追跡します。",
+      "newWindow": "新しいウィンドウが開きます",
+      "newWindowDesc": "タスクを開始すると、使用するツールの新しいウィンドウが開きます。",
+      "tip": "ヒント",
+      "tipDesc": "タブを切り替えたり、新しいウィンドウをいつでも閉じたりできます。記録はタスクを完了するまで継続されます。",
+      "internalInterface": "このタスクは現在のインターフェース内で完了します。",
+      "startTask": "タスクを開始",
+      "description": "タスクの説明",
+      "needHelp": "お困りですか？",
+      "needHelpDesc": "タスクの進行に問題がありますか？完了するためのガイダンスを確認できます。",
+      "externalTool": "外部ツール",
+      "reopenDesc": "誤って構成ウィンドウを閉じましたか？ここで再度開くことができます。",
+      "reopenTool": "ツールを再度開く",
+      "answerLabel": "回答",
+      "observationLabel": "所感（任意）",
+      "cannotFinish": "タスクを完了できません",
+      "completed": "タスク完了",
+      "noQuestionnaire": "このタスクタイプでは、タスク後のアンケートは不要です。",
+      "validationError": "続行する前にすべての質問に回答してください。",
+      "finishTask": "タスクを終了"
+    },
+    "ConsentStep": {
+      "fullName": "氏名",
+      "nameRequired": "氏名は必須です",
+      "acceptTerms": "同意事項に同意します",
+      "declineTerms": "同意事項に同意しません",
+      "continue": "続行",
+      "declinedTitle": "同意が拒否されました",
+      "declinedMessage1": "この調査の同意事項に同意しないことを選択されました。",
+      "declinedMessage2": "この操作を確定すると、テストは直ちに終了します。参加には明示的な同意が必要です。データが収集または保存されることはありません。",
+      "declinedConfirm": "参加せずにテストを終了してもよろしいですか？",
+      "goBack": "戻る",
+      "endTest": "はい、テストを終了します"
+    },
+    "PreTestStep": {
+      "title": "事前テスト"
+    },
+    "PostTestStep": {
+      "title": "事後テスト"
+    },
     "buttons": {
       "done": "完了"
+    },
+    "messages": {
+      "noTasks": "このテストにはタスクがありません。",
+      "answerSaved": "回答が正常に保存されました。"
+    },
+    "errors": {
+      "noAnswerData": "回答データが見つかりません。",
+      "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
+      "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。",
+      "noTestData": "テストデータなし",
+      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "キャリブレーション完了！",
+      "waiting": "キャリブレーションを待機中...",
+      "calibrating": "キャリブレーション中、少々お待ちください...",
+      "notOpened": "キャリブレーションが開きませんでしたか？",
+      "clickHere": "ここをクリック",
+      "success": "キャリブレーションに成功しました！",
+      "continue": "テストを続行する！"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "モデレーター表示",
+      "welcome": "モデレートテストセッションへようこそ",
+      "description": "モデレーターとして、ビデオ通話で参加者のインタラクションを観察しながら、テストプロセスを通じて参加者を案内します。",
+      "instructionsTitle": "モデレーターの指示",
+      "instruction1": "ビデオ通話ルームを開くことから始めます",
+      "instruction2": "干渉せずに参加者のインタラクションを観察します",
+      "instruction3": "ステップナビゲーターを使用してテストフェーズ間を移動します",
+      "instruction4": "必要な場合にのみガイダンスを提供します",
+      "remember": "注意：",
+      "note": "あなたの役割は進行のサポートと観察です。参加者が特に助けを求めない限り、タスクは参加者自身で完了させてください。",
+      "startSession": "モデレートセッションを開始"
     },
     "WelcomeStep": {
       "welcome": "RUXAILABへようこそ！",
@@ -844,13 +992,13 @@
       "recordingNote": "いかなる記録も始まる前に通知されます。すべてのデータは研究目的のみで収集され、プライバシーガイドラインに従って扱われます。"
     },
     "CalibrationStep": {
-      "title": "Eye Tracking Calibration",
-      "heading": "Before starting calibration",
-      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
-      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
-      "instruction": "When you are ready, press the button to start calibration.",
-      "startButton": "Start calibration",
-      "inProgress": "In progress..."
+      "title": "アイトラッキングキャリブレーション",
+      "heading": "キャリブレーションを開始する前に",
+      "description": "デバイスを<strong>目の動きを記録する</strong>準備をします。これにより、テスト中に画面をどのように移動するかを理解できます。",
+      "process": "キャリブレーションには、画面に表示されるポイントを目で追うことが含まれます。明るい場所にいて、快適に座り、頭を安定させることが重要です。",
+      "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
+      "startButton": "キャリブレーションを開始",
+      "inProgress": "進行中..."
     }
   },
   "eyeTracking": {
@@ -1159,9 +1307,9 @@
     "test-description": "テスト説明",
     "test-label": "すべてのユーザーに公開するテスト",
     "template": {
-      "title": "Enter a title for your template",
-      "description": "Provide a description for your template",
-      "public": "Make template public to all users"
+      "title": "テンプレートのタイトルを入力してください",
+      "description": "テンプレートの説明を入力してください",
+      "public": "テンプレートをすべてのユーザーに公開する"
     }
   },
   "finishTest": {
@@ -1288,15 +1436,9 @@
     "summary": "概要",
     "invite": "招待",
     "actions": "操作",
-    "completed": "完了",
-    "notCompleted": "未完了",
-    "timeTaken": "所要時間",
-    "tasks": "タスク",
-    "total": "合計",
-    "yes": "はい",
-    "invited": "招待済み",
-    "answers": "回答",
-    "no": "いいえ"
+    "no": "いいえ",
+    "downloadResume": "履歴書PDFをダウンロード",
+    "sartAnalytics": "SART分析"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "評価カテゴリを選択",
@@ -1504,5 +1646,9 @@
       "analyticsData": "分析データ",
       "manageStorage": "ストレージ管理"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "タスクの説明",
+    "taskDescriptionHelper": "従うべき具体的な手順を提供してください。"
   }
 }

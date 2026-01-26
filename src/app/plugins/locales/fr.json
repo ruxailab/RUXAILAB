@@ -30,19 +30,19 @@
       "instructions": "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
       "reset_button": "Envoyer le lien de réinitialisation",
       "back_to_signin": "Retour à la connexion",
-      "check_your_email": "Check your email",
-      "reset_link_sent": "We’ve sent a password reset link to",
-      "no_email": "Didn’t get the email?",
-      "try_again": "Try again"
+      "check_your_email": "Vérifiez votre e-mail",
+      "reset_link_sent": "Nous avons envoyé un lien de réinitialisation du mot de passe à",
+      "no_email": "Vous n'avez pas reçu l'e-mail ?",
+      "try_again": "Réessayer"
     },
-    "passwordStrength": "Password Strength",
-    "number": "Number",
+    "passwordStrength": "Force du mot de passe",
+    "number": "Numéro",
     "strength": {
-      "veryWeak": "Very Weak",
-      "weak": "Weak",
-      "fair": "Fair",
-      "good": "Good",
-      "strong": "Strong"
+      "veryWeak": "Très faible",
+      "weak": "Faible",
+      "fair": "Moyen",
+      "good": "Bon",
+      "strong": "Fort"
     }
   },
   "common": {
@@ -100,10 +100,10 @@
       "participants": "Participants",
       "created": "Créé"
     },
-    "units": {
-      "mb": "Mo",
-      "gb": "Go"
-    }
+    "hidden": "Caché",
+    "proceed": "procéder",
+    "all": "Tout",
+    "actions": "Actions"
   },
   "storage": {
     "pageTitle": "Stockage",
@@ -207,8 +207,23 @@
     "sessions": "Sessions",
     "templates": "Modèles",
     "storage": "Stockage",
+    "community": "Communauté",
     "communityStudies": "Études communautaires",
-    "communityTemplates": "Modèles communautaires"
+    "communityTemplates": "Modèles communautaires",
+    "visibility": "Visibilité",
+    "public": "Public",
+    "private": "Privé",
+    "allVisibility": "Toute les visibilités",
+    "subtitles": {
+      "manageStudies": "Gérez vos études de recherche",
+      "accessTemplates": "Accédez à vos modèles enregistrés",
+      "stayUpdated": "Restez informé de vos activités et collaborations",
+      "overviewSessions": "Aperçu de vos sessions",
+      "manageStorage": "Gérez vos fichiers multimédias stockés",
+      "viewEditProfile": "Afficher et modifier les informations de votre profil",
+      "exploreCommunityStudies": "Explorez les études partagées par la communauté RUXAI",
+      "browseCommunityTemplates": "Parcourez les modèles fournis par la communauté RUXAI"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -267,7 +282,15 @@
     "accountDeletedSuccess": "Compte supprimé avec succès",
     "yourPassword": "Votre mot de passe",
     "back": "Retour",
-    "deleteForever": "Supprimer définitivement"
+    "deleteForever": "Supprimer définitivement",
+    "superAdmin": "Super Admin",
+    "uploadProfilePicture": "Télécharger une photo de profil",
+    "removeProfilePicture": "Supprimer la photo de profil",
+    "currentPassword": "Mot de passe actuel",
+    "currentPasswordRequired": "Le mot de passe actuel est requis",
+    "wrongCurrentPassword": "Le mot de passe actuel est incorrect",
+    "recentLoginRequired": "Veuillez vous déconnecter et vous reconnecter avant de changer votre mot de passe",
+    "googleUserPasswordInfo": "Vous vous êtes connecté avec Google. Cliquez sur le bouton ci-dessous pour vérifier avec Google et définir un mot de passe pour votre compte."
   },
   "titles": {
     "manager": "Gestionnaire",
@@ -314,7 +337,10 @@
       "start": "Commencez !",
       "edit": "Créez et personnalisez vos tâches et heuristiques selon les besoins de votre recherche.",
       "finalReport": "Préparez le rapport final pour votre évaluation heuristique en sélectionnant les éléments que vous souhaitez inclure."
-    }
+    },
+    "overallAnalyticsDescription": "Voir les analyses agrégées pour votre test.",
+    "individualAnalytics": "Analyses individuelles",
+    "nasaTlxAnalytics": "Analyses NASA-TLX"
   },
   "errors": {
     "invalidInvitation": "Invitation invalide",
@@ -368,6 +394,33 @@
     "daysLeft": "jours restants",
     "dayLeft": "jour restant",
     "studies": "Études",
+    "studiesPage": {
+      "searchPlaceholder": "Rechercher des études...",
+      "reset": "Réinitialiser",
+      "showFilters": "Afficher les filtres",
+      "hideFilters": "Masquer les filtres",
+      "filters": {
+        "creationDate": "Date de création",
+        "status": "Statut",
+        "visibility": "Visibilité",
+        "method": "Méthode",
+        "ownership": "Propriété",
+        "participants": "Participants",
+        "selectRange": "Sélectionner la période",
+        "allStatuses": "Tous les statuts",
+        "allVisibility": "Toutes les visibilités",
+        "public": "Public",
+        "private": "Privé",
+        "allMethods": "Toutes les méthodes",
+        "allStudies": "Toutes les études",
+        "myStudies": "Mes études",
+        "whereICollaborate": "Où je collabore",
+        "all": "Tous",
+        "lt10": "< 10 participants",
+        "btw10_50": "10 – 50 participants",
+        "gt50": "> 50 participants"
+      }
+    },
     "storage": "Stockage",
     "free": "Gratuit",
     "plan": "Forfait",
@@ -400,35 +453,35 @@
       "edit": "Modifier",
       "heuristics": "Heuristiques",
       "questions": "Questions",
-      "totalOptions": "Nombre total d'options",
+      "totalOptions": "Options totales",
       "qualitative": "Qualitatif",
       "quantitative": "Quantitatif",
       "weights": "Poids",
-      "on": "ACTIVER",
-      "off": "DÉSACTIVER",
+      "on": "ON",
+      "off": "OFF",
       "cooperators": "Collaborateurs",
-      "totalInvited": "Total des invités",
+      "totalInvited": "Total invités",
       "accepted": "Accepté",
       "pending": "En attente",
       "storage": "Stockage",
       "currentStorage": "Stockage (actuel)",
       "limitAvailable": "Limite disponible",
       "results": "Résultats",
-      "generalUsability": "Usabilité générale",
+      "generalUsability": "Utilisabilité générale",
       "finalReport": "Rapport final",
       "generatePDF": "Générer PDF",
       "download": "Télécharger",
       "generated": "Généré :",
-      "generateReport": "Générer le rapport",
+      "generateReport": "Générer un rapport",
       "reportAvailable": "Rapport disponible",
       "noReport": "Aucun rapport généré",
-      "readyForDownload": "Rapport final prêt pour le téléchargement",
+      "readyForDownload": "Rapport final prêt à être téléchargé",
       "waitingForParticipants": "En attente de participants",
       "evaluationsCompleted": "évaluations terminées",
       "readyToGenerate": "Prêt à générer le rapport",
-      "excellentUsability": "Excellente usabilité",
-      "acceptableUsability": "Usabilité acceptable",
-      "needsImprovement": "Nécessite des améliorations",
+      "excellentUsability": "Excellente utilisabilité",
+      "acceptableUsability": "Utilisabilité acceptable",
+      "needsImprovement": "À améliorer",
       "basedOn": "Basé sur",
       "evaluations": "évaluations",
       "evaluationUpdated": "Évaluation mise à jour",
@@ -439,13 +492,13 @@
     },
     "managerView": {
       "heuristicStudy": "Étude heuristique",
-      "freePlan": "Forfait gratuit",
+      "freePlan": "Plan gratuit",
       "generalStatistics": "Statistiques générales",
       "modules": "Modules"
     },
     "stats": {
       "participants": "Participants",
-      "completion": "Complétion",
+      "completion": "Achèvement",
       "daysActive": "Jours actifs",
       "heuristics": "Heuristiques"
     }
@@ -530,6 +583,9 @@
     "messages": {
       "startAddingOptions": "Commencez à ajouter des options à vos questions heuristiques"
     },
+    "messages": {
+      "startAddingOptions": "Commencez à ajouter des options à vos questions heuristiques"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -564,7 +620,7 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirm Upload"
+      "confirmUpload": "Confirmer le téléchargement"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
@@ -797,8 +853,120 @@
       "postTest": "Post-test",
       "eyeTrackingCalibration": "Calibration du suivi oculaire"
     },
+    "actions": {
+      "welcomeBack": "Bon retour !",
+      "continueAs": "Continuer en tant que {userEmail}",
+      "notYou": "Pas vous ?",
+      "changeAccount": "Changer de compte",
+      "startTest": "Commencer le test"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test déjà terminé",
+      "testAlreadyCompletedMessage": "Vous avez déjà complété et soumis ce test. Merci pour votre participation !",
+      "testExpired": "Test expiré",
+      "testExpiredMessage": "Ce test n'est plus disponible car sa date de fin est dépassée.",
+      "testNotActive": "Test non actif",
+      "testNotActiveMessage": "Ce test n'est pas actif actuellement. Veuillez contacter l'administrateur.",
+      "testConfigError": "Erreur de configuration du test",
+      "testConfigErrorMessage": "Ce test n'a pas de tâches configurées. Veuillez contacter l'administrateur.",
+      "consentDecline": "Test terminé en raison du refus du consentement. Merci pour votre temps.",
+      "sessionTooFar": "Session trop éloignée",
+      "sessionTooFarMessage": "La session prévue est dans plus de 24 heures. Veuillez revenir plus près de la date de la session."
+    },
+    "stepper": {
+      "consent": "Consentement",
+      "preTest": "Pré-test",
+      "calibration": "Calibration",
+      "tasks": "Tâches",
+      "postTest": "Post-test",
+      "completion": "Fin du test",
+      "taskX": "Tâche {num}"
+    },
+    "TaskStep": {
+      "preview": "Aperçu de la tâche",
+      "recordingInfo": "Cette tâche enregistrera les données suivantes lors de votre interaction :",
+      "screenRecord": "Enregistrement d'écran",
+      "screenRecordDesc": "Capture les clics, le défilement et les interactions pour analyser le comportement de l'utilisateur.",
+      "camera": "Caméra",
+      "cameraDesc": "Enregistre les expressions faciales et les réactions pour comprendre les émotions de l'utilisateur.",
+      "audioRecord": "Enregistrement audio",
+      "audioRecordDesc": "Capture les commentaires verbaux et les protocoles de réflexion à voix haute pendant la tâche.",
+      "eyeTracker": "Suivi oculaire",
+      "eyeTrackerDesc": "Suit les schémas d'attention visuelle et le comportement du regard pendant la tâche.",
+      "newWindow": "Une nouvelle fenêtre va s'ouvrir",
+      "newWindowDesc": "Lorsque vous commencez la tâche, une nouvelle fenêtre s'ouvrira avec l'outil que vous devez utiliser.",
+      "tip": "Astuce",
+      "tipDesc": "Vous pouvez basculer entre les onglets ou fermer la nouvelle fenêtre à tout moment. L'enregistrement continuera jusqu'à ce que vous terminiez la tâche.",
+      "internalInterface": "Cette tâche sera effectuée dans l'interface actuelle.",
+      "startTask": "Démarrer la tâche",
+      "description": "Description de la tâche",
+      "needHelp": "Besoin d'aide ?",
+      "needHelpDesc": "Vous rencontrez des problèmes ? Obtenez des conseils utiles pour terminer cette tâche.",
+      "externalTool": "Outil externe",
+      "reopenDesc": "Vous avez fermé la fenêtre de l'outil par erreur ? Rouvrez-la ici.",
+      "reopenTool": "Rouvrir l'outil",
+      "answerLabel": "Réponse",
+      "observationLabel": "Observation (facultatif)",
+      "cannotFinish": "Je ne peux pas terminer la tâche",
+      "completed": "Tâche terminée",
+      "noQuestionnaire": "Aucun questionnaire post-tâche requis pour ce type de tâche.",
+      "validationError": "Veuillez répondre à toutes les questions avant de continuer.",
+      "finishTask": "Terminer la tâche"
+    },
+    "ConsentStep": {
+      "fullName": "Nom complet",
+      "nameRequired": "Le nom est requis",
+      "acceptTerms": "J'accepte les termes du consentement",
+      "declineTerms": "Je n'accepte pas les termes du consentement",
+      "continue": "Continuer",
+      "declinedTitle": "Consentement refusé",
+      "declinedMessage1": "Vous avez choisi de ne pas accepter les termes du consentement pour cette étude.",
+      "declinedMessage2": "Si vous confirmez cette action, le test sera interrompu immédiatement car votre participation nécessite un consentement explicite pour continuer. Vos données ne seront pas collectées ni stockées.",
+      "declinedConfirm": "Êtes-vous sûr de vouloir mettre fin au test sans participer ?",
+      "goBack": "Retour",
+      "endTest": "Oui, terminer le test"
+    },
+    "PreTestStep": {
+      "title": "Pré-test"
+    },
+    "PostTestStep": {
+      "title": "Post-test"
+    },
     "buttons": {
       "done": "Terminé"
+    },
+    "messages": {
+      "noTasks": "Ce test n'a aucune tâche.",
+      "answerSaved": "Réponse enregistrée avec succès."
+    },
+    "errors": {
+      "noAnswerData": "Aucune donnée de réponse trouvée.",
+      "failedToSaveAnswer": "Échec de l'enregistrement de la réponse. Veuillez réessayer.",
+      "failedToSubmitAnswer": "Échec de la soumission de la réponse. Veuillez réessayer.",
+      "noTestData": "Aucune donnée de test",
+      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Calibrage terminé !",
+      "waiting": "En attente du calibrage...",
+      "calibrating": "Calibrage en cours, veuillez patienter...",
+      "notOpened": "Le calibrage ne s'est pas ouvert ?",
+      "clickHere": "Cliquez ici",
+      "success": "Le calibrage a réussi !",
+      "continue": "CONTINUER LE TEST !"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Vue Modérateur",
+      "welcome": "Bienvenue à la séance de test modérée",
+      "description": "En tant que modérateur, vous guiderez le participant tout au long du processus de test tout en observant ses interactions via un appel vidéo.",
+      "instructionsTitle": "Instructions pour le modérateur",
+      "instruction1": "Commencez par ouvrir la salle d'appel vidéo",
+      "instruction2": "Observez les interactions du participant sans interférence",
+      "instruction3": "Utilisez le navigateur d'étapes pour sauter entre les phases du test",
+      "instruction4": "Ne fournissez des conseils que si nécessaire",
+      "remember": "Rappel :",
+      "note": "Votre rôle est de faciliter et d'observer. Le participant doit effectuer les tâches de manière indépendante, sauf s'il demande spécifiquement de l'aide.",
+      "startSession": "Démarrer la session modérée"
     },
     "WelcomeStep": {
       "welcome": "Bienvenue sur RUXAILAB !",
@@ -831,13 +999,13 @@
       "recordingNote": "Vous serez informé avant le début de tout enregistrement. Toutes les données sont collectées uniquement à des fins de recherche et traitées selon les directives de confidentialité."
     },
     "CalibrationStep": {
-      "title": "Eye Tracking Calibration",
-      "heading": "Before starting calibration",
-      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
-      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
-      "instruction": "When you are ready, press the button to start calibration.",
-      "startButton": "Start calibration",
-      "inProgress": "In progress..."
+      "title": "Calibrage du suivi oculaire",
+      "heading": "Avant de commencer le calibrage",
+      "description": "Nous allons préparer votre appareil pour <strong>enregistrer les mouvements de vos yeux</strong>. Cela nous permettra de comprendre comment vous naviguez sur l'écran pendant le test.",
+      "process": "Le calibrage consiste à suivre des points qui apparaîtront sur l'écran avec vos yeux. Il est important que vous soyez dans un endroit bien éclairé, assis confortablement et que vous gardiez la tête stable.",
+      "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
+      "startButton": "Commencer le calibrage",
+      "inProgress": "En cours..."
     }
   },
   "eyeTracking": {
@@ -1275,15 +1443,9 @@
     "summary": "Résumé",
     "invite": "Inviter",
     "actions": "Actions",
-    "completed": "Terminé",
-    "notCompleted": "Non terminé",
-    "timeTaken": "Temps écoulé",
-    "tasks": "Tâches",
-    "total": "Total",
-    "yes": "Oui",
-    "invited": "Invité",
-    "answers": "Réponses",
-    "no": "Non"
+    "no": "Non",
+    "downloadResume": "Télécharger le CV PDF",
+    "sartAnalytics": "Analyses SART"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Choisir la catégorie d'évaluation",
@@ -1491,5 +1653,9 @@
       "analyticsData": "Données Analytiques",
       "manageStorage": "Gérer le Stockage"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Description de la Tâche",
+    "taskDescriptionHelper": "Fournissez les étapes spécifiques qu'ils doivent suivre."
   }
 }
