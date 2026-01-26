@@ -33,6 +33,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "Test laden",
     "continueAs": "Fortfahren als",
     "notUser": "Nicht {userEmail}?",
@@ -359,6 +363,63 @@
       "paused": "Pausiert",
       "finished": "Abgeschlossen",
       "unknown": "Unbekannt"
+    },
+    "cards": {
+      "recentActivity": "Letzte Aktivitäten",
+      "activities7Days": "Aktivitäten (insgesamt 7 Tage)",
+      "lastActivity": "Letzte Aktivität",
+      "noActivity": "Keine Aktivität",
+      "edit": "Bearbeiten",
+      "heuristics": "Heuristiken",
+      "questions": "Fragen",
+      "totalOptions": "Gesamtoptionen",
+      "qualitative": "Qualitativ",
+      "quantitative": "Quantitativ",
+      "weights": "Gewichtungen",
+      "on": "AN",
+      "off": "AUS",
+      "cooperators": "Mitarbeiter",
+      "totalInvited": "Insgesamt eingeladen",
+      "accepted": "Akzeptiert",
+      "pending": "Ausstehend",
+      "storage": "Speicher",
+      "currentStorage": "Speicher (aktuell)",
+      "limitAvailable": "Verfügbares Limit",
+      "results": "Ergebnisse",
+      "generalUsability": "Allgemeine Benutzerfreundlichkeit",
+      "finalReport": "Abschlussbericht",
+      "generatePDF": "PDF generieren",
+      "download": "Herunterladen",
+      "generated": "Generiert:",
+      "generateReport": "Bericht generieren",
+      "reportAvailable": "Bericht verfügbar",
+      "noReport": "Kein Bericht generiert",
+      "readyForDownload": "Abschlussbericht bereit zum Herunterladen",
+      "waitingForParticipants": "Warten auf Teilnehmer",
+      "evaluationsCompleted": "Bewertungen abgeschlossen",
+      "readyToGenerate": "Bereit zum Generieren des Berichts",
+      "excellentUsability": "Hervorragende Benutzerfreundlichkeit",
+      "acceptableUsability": "Akzeptable Benutzerfreundlichkeit",
+      "needsImprovement": "Verbesserungsbedürftig",
+      "basedOn": "Basierend auf",
+      "evaluations": "Bewertungen",
+      "evaluationUpdated": "Bewertung aktualisiert",
+      "updatedProgress": "hat seinen Fortschritt aktualisiert",
+      "invitationSentTitle": "Einladung gesendet",
+      "invitationPendingDesc": "Einladung ausstehend für",
+      "pendingStatus": "Ausstehend"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristische Studie",
+      "freePlan": "Kostenloser Plan",
+      "generalStatistics": "Allgemeine Statistiken",
+      "modules": "Module"
+    },
+    "stats": {
+      "participants": "Teilnehmer",
+      "completion": "Abschluss",
+      "daysActive": "Tage aktiv",
+      "heuristics": "Heuristiken"
     }
   },
   "HeuristicsTable": {

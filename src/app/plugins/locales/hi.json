@@ -37,6 +37,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "परीक्षण लोड हो रहा है",
     "continueAs": "के रूप में जारी रखें",
     "notUser": "नहीं हैं {userEmail}?",
@@ -347,6 +351,63 @@
       "paused": "रोका गया",
       "finished": "पूर्ण",
       "unknown": "अज्ञात"
+    },
+    "cards": {
+      "recentActivity": "हाल की गतिविधि",
+      "activities7Days": "गतिविधियाँ (कुल 7 दिन)",
+      "lastActivity": "अंतिम गतिविधि",
+      "noActivity": "कोई गतिविधि नहीं",
+      "edit": "संपादित करें",
+      "heuristics": "हीयुरिस्टिक्स",
+      "questions": "प्रश्न",
+      "totalOptions": "कुल विकल्प",
+      "qualitative": "गुणात्मक",
+      "quantitative": "मात्रात्मक",
+      "weights": "वजन",
+      "on": "चालू",
+      "off": "बंद",
+      "cooperators": "सहयोगी",
+      "totalInvited": "कुल आमंत्रित",
+      "accepted": "स्वीकार किया गया",
+      "pending": "लंबित",
+      "storage": "स्टोरेज",
+      "currentStorage": "स्टोरेज (वर्तमान)",
+      "limitAvailable": "उपलब्ध सीमा",
+      "results": "परिणाम",
+      "generalUsability": "सामान्य उपयोगिता",
+      "finalReport": "अंतिम रिपोर्ट",
+      "generatePDF": "PDF जेनरेट करें",
+      "download": "डाउनलोड करें",
+      "generated": "जेनरेट किया गया:",
+      "generateReport": "रिपोर्ट जेनरेट करें",
+      "reportAvailable": "रिपोर्ट उपलब्ध है",
+      "noReport": "कोई रिपोर्ट जेनरेट नहीं की गई",
+      "readyForDownload": "अंतिम रिपोर्ट डाउनलोड के लिए तैयार है",
+      "waitingForParticipants": "प्रतिभागियों की प्रतीक्षा है",
+      "evaluationsCompleted": "मूल्यांकन पूरे हुए",
+      "readyToGenerate": "रिपोर्ट जेनरेट करने के लिए तैयार",
+      "excellentUsability": "उत्कृष्ट उपयोगिता",
+      "acceptableUsability": "सराहनीय उपयोगिता",
+      "needsImprovement": "सुधार की आवश्यकता है",
+      "basedOn": "आधारित",
+      "evaluations": "मूल्यांकन",
+      "evaluationUpdated": "मूल्यांकन अपडेट किया गया",
+      "updatedProgress": "अपनी प्रगति अपडेट की",
+      "invitationSentTitle": "आमंत्रण भेजा गया",
+      "invitationPendingDesc": "आमंत्रण लंबित है",
+      "pendingStatus": "लंबित"
+    },
+    "managerView": {
+      "heuristicStudy": "हीयुरिस्टिक अध्ययन",
+      "freePlan": "निःशुल्क योजना",
+      "generalStatistics": "सामान्य आँकड़े",
+      "modules": "मॉड्यूल"
+    },
+    "stats": {
+      "participants": "प्रतिभागी",
+      "completion": "पूर्णता",
+      "daysActive": "सक्रिय दिन",
+      "heuristics": "हीयुरिस्टिक्स"
     }
   },
   "HeuristicsTable": {
@@ -706,25 +767,6 @@
     "goHome": "होम पर जाएँ"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "कोई सक्रिय सत्र नहीं मिला",
-      "selectRange": "रेंज चुनें",
-      "reset": "रीसेट करें",
-      "searchPlaceholder": "अध्ययन खोजें...",
-      "filters": {
-        "allStudies": "सभी अध्ययन",
-        "myStudies": "मेरे अध्ययन",
-        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
-        "allStatuses": "सभी स्थितियाँ",
-        "today": "आज",
-        "upcoming": "आने वाले",
-        "completed": "पूर्ण"
-      },
-      "ownership": "स्वामित्व",
-      "evaluator": "मूल्यांकनकर्ता",
-      "sessionDate": "सत्र तिथि",
-      "statusLabel": "स्थिति"
-    },
     "intros": {
       "click": "यहाँ क्लिक करें!",
       "learnMore": "और जानें",

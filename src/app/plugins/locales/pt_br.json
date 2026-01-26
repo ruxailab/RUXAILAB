@@ -37,6 +37,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "hidden": "Oculto",
     "loading": "Carregando teste",
     "continueAs": "Continuar como",
@@ -365,6 +369,63 @@
       "paused": "Pausado",
       "finished": "Finalizado",
       "unknown": "Desconhecido"
+    },
+    "cards": {
+      "recentActivity": "Atividade Recente",
+      "activities7Days": "Atividades (7 dias no total)",
+      "lastActivity": "Última atividade",
+      "noActivity": "Sem atividade",
+      "edit": "Editar",
+      "heuristics": "Heurísticas",
+      "questions": "Perguntas",
+      "totalOptions": "Total de opções",
+      "qualitative": "Qualitativo",
+      "quantitative": "Quantitativo",
+      "weights": "Pesos",
+      "on": "LIGADO",
+      "off": "DESLIGADO",
+      "cooperators": "Colaboradores",
+      "totalInvited": "Total de convidados",
+      "accepted": "Aceitos",
+      "pending": "Pendentes",
+      "storage": "Armazenamento",
+      "currentStorage": "Armazenamento (atual)",
+      "limitAvailable": "Limite disponível",
+      "results": "Resultados",
+      "generalUsability": "Usabilidade Geral",
+      "finalReport": "Relatório Final",
+      "generatePDF": "Gerar PDF",
+      "download": "Baixar",
+      "generated": "Gerado em:",
+      "generateReport": "Gerar Relatório",
+      "reportAvailable": "Relatório Disponível",
+      "noReport": "Nenhum relatório gerado",
+      "readyForDownload": "Relatório final pronto para download",
+      "waitingForParticipants": "Aguardando participantes",
+      "evaluationsCompleted": "avaliações concluídas",
+      "readyToGenerate": "Pronto para gerar relatório",
+      "excellentUsability": "Usabilidade Excelente",
+      "acceptableUsability": "Usabilidade Aceitável",
+      "needsImprovement": "Necessita de Melhorias",
+      "basedOn": "Baseado em",
+      "evaluations": "avaliações",
+      "evaluationUpdated": "Avaliação atualizada",
+      "updatedProgress": "atualizou seu progresso",
+      "invitationSentTitle": "Convite enviado",
+      "invitationPendingDesc": "Convite pendente para",
+      "pendingStatus": "Pendente"
+    },
+    "managerView": {
+      "heuristicStudy": "Estudo Heurístico",
+      "freePlan": "Plano Gratuito",
+      "generalStatistics": "Estatísticas Gerais",
+      "modules": "Módulos"
+    },
+    "stats": {
+      "participants": "Participantes",
+      "completion": "Conclusão",
+      "daysActive": "Dias ativos",
+      "heuristics": "Heurísticas"
     }
   },
   "HeuristicsTable": {
@@ -724,25 +785,6 @@
     "goHome": "Ir para a página inicial"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Nenhuma sessão ativa encontrada",
-      "selectRange": "Selecionar intervalo",
-      "reset": "Redefinir",
-      "searchPlaceholder": "Pesquisar estudos...",
-      "filters": {
-        "allStudies": "Todos os estudos",
-        "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde colaboro",
-        "allStatuses": "Todos os status",
-        "today": "Hoje",
-        "upcoming": "Em breve",
-        "completed": "Concluído"
-      },
-      "ownership": "Propriedade",
-      "evaluator": "Avaliador",
-      "sessionDate": "Data da sessão",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Clique aqui!",
       "learnMore": "Saiba mais",
