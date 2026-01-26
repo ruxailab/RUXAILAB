@@ -6,6 +6,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
+    sendEmailVerification,
     reauthenticateWithPopup,
     reauthenticateWithCredential,
     EmailAuthProvider
@@ -22,6 +23,7 @@ jest.mock('firebase/auth', () => ({
     browserLocalPersistence: 'local',
     browserSessionPersistence: 'session',
     GoogleAuthProvider: jest.fn(),
+    sendEmailVerification: jest.fn(),
     reauthenticateWithPopup: jest.fn(),
     reauthenticateWithCredential: jest.fn(),
     EmailAuthProvider: {
