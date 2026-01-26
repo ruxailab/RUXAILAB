@@ -34,9 +34,19 @@
       "reset_link_sent": "Мы отправили ссылку для сброса пароля на",
       "no_email": "Не получили письмо?",
       "try_again": "Попробовать снова"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Загрузка теста",
     "continueAs": "Продолжить как",
     "notUser": "Не {userEmail}?",
@@ -49,6 +59,7 @@
     "title": "Заголовок",
     "description": "Описание",
     "cancel": "Отмена",
+    "proceed": "proceed",
     "confirm": "Подтвердить",
     "add": "Добавить",
     "text": "Текст",
@@ -63,6 +74,7 @@
     "noNewNotifications": "Новых уведомлений нет",
     "unread": "непрочитанное",
     "inbox": "Входящие",
+    "all": "All",
     "timeAgo": {
       "years": "{count} год | {count} года | {count} лет",
       "months": "{count} месяц | {count} месяца | {count} месяцев",
@@ -75,6 +87,7 @@
     "sentBy": "Отправлено",
     "new": "НОВОЕ",
     "test": "исследование",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "Элементов на странице:",
       "type": "Тип",
@@ -86,6 +99,10 @@
       "sessionDate": "Дата сессии",
       "participants": "Участники",
       "created": "Создано"
+    },
+    "units": {
+      "mb": "МБ",
+      "gb": "ГБ"
     }
   },
   "storage": {
@@ -200,6 +217,7 @@
     "editProfile": "Редактировать профиль",
     "account": "Аккаунт",
     "admin": "Администратор",
+    "superAdmin": "Super Admin",
     "security": "Безопасность",
     "personalInfo": "Личная информация",
     "changePassword": "Изменить пароль",
@@ -232,10 +250,17 @@
     "enterValidPhoneNumber": "Пожалуйста, введите действительный номер телефона (только 9-15 цифр)",
     "profileImageUpdatedSuccess": "Изображение профиля успешно обновлено",
     "profileImageUploadFailed": "Не удалось загрузить изображение профиля",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "Пользователь не авторизован",
     "profileLoadFailed": "Не удалось загрузить профиль",
     "profileUpdatedSuccess": "Профиль успешно обновлен",
     "profileUpdateFailed": "Не удалось обновить профиль",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "Пароль успешно изменен",
     "passwordChangeFailed": "Не удалось изменить пароль",
     "accountDeletionFailed": "Не удалось удалить аккаунт",
@@ -276,6 +301,9 @@
     "reports": "Посмотрите, как справляются ваши оценщики.",
     "answers": "Посмотрите, как ваши оценщики оценивают ваш проект.",
     "analytics": "Анализируйте комментарии и ответы ваших оценщиков.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Добавьте дополнительные данные в ваш тест.",
     "intro": {
       "reports": "Отслеживайте прогресс и статус ответов ваших оценщиков, пока они завершают ваш тест.",
@@ -358,43 +386,102 @@
     "date": "Дата",
     "time": "Время",
     "status": {
-      "active": "Активный",
+      "active": "Активно",
       "recruiting": "Набор",
-      "paused": "Приостановлен",
-      "finished": "Завершен",
+      "paused": "Пауза",
+      "finished": "Завершено",
       "unknown": "Неизвестно"
+    },
+    "cards": {
+      "recentActivity": "Недавняя активность",
+      "activities7Days": "Действия (всего за 7 дней)",
+      "lastActivity": "Последнее действие",
+      "noActivity": "Нет активности",
+      "edit": "Редактировать",
+      "heuristics": "Эвристики",
+      "questions": "Вопросы",
+      "totalOptions": "Всего вариантов",
+      "qualitative": "Качественный",
+      "quantitative": "Количественный",
+      "weights": "Веса",
+      "on": "ВКЛ",
+      "off": "ВЫКЛ",
+      "cooperators": "Сотрудники",
+      "totalInvited": "Всего приглашено",
+      "accepted": "Принято",
+      "pending": "В ожидании",
+      "storage": "Хранилище",
+      "currentStorage": "Текущее хранилище",
+      "limitAvailable": "Доступный лимит",
+      "results": "Результаты",
+      "generalUsability": "Общее удобство использования",
+      "finalReport": "Итоговый отчет",
+      "generatePDF": "Создать PDF",
+      "download": "Скачать",
+      "generated": "Создано:",
+      "generateReport": "Создать отчет",
+      "reportAvailable": "Отчет доступен",
+      "noReport": "Отчет не создан",
+      "readyForDownload": "Итоговый отчет готов к загрузке",
+      "waitingForParticipants": "Ожидание участников",
+      "evaluationsCompleted": "оценки завершены",
+      "readyToGenerate": "Готов к созданию отчета",
+      "excellentUsability": "Отличное удобство",
+      "acceptableUsability": "Приемлемое удобство",
+      "needsImprovement": "Нужны улучшения",
+      "basedOn": "На основе",
+      "evaluations": "оценок",
+      "evaluationUpdated": "Оценка обновлена",
+      "updatedProgress": "обновил(а) свой прогресс",
+      "invitationSentTitle": "Приглашение отправлено",
+      "invitationPendingDesc": "Приглашение ожидает для",
+      "pendingStatus": "В ожидании"
+    },
+    "managerView": {
+      "heuristicStudy": "Эвристическое исследование",
+      "freePlan": "Бесплатный план",
+      "generalStatistics": "Общая статистика",
+      "modules": "Модули"
+    },
+    "stats": {
+      "participants": "Участники",
+      "completion": "Завершение",
+      "daysActive": "Активных дней",
+      "heuristics": "Эвристики"
     }
   },
   "HeuristicsTable": {
     "titles": {
-      "editHeuristic": "Редактировать эвристику",
-      "editQuestion": "Редактировать вопрос",
-      "newQuestion": "Новый вопрос",
-      "creatingHeuristic": "Создание эвристики",
-      "currentHeuristics": "Эвристики",
-      "addNewHeuristic": "Добавить новую эвристику",
-      "searchHeuristics": "Поиск эвристик...",
-      "noHeuristicsFound": "Эвристики не найдены",
-      "addNewQuestion": "Добавить новый вопрос",
-      "questions": "Вопросы",
-      "descriptions": "Описания",
-      "actions": "Действия",
-      "titles": "Заголовок",
-      "cancel": "Отмена",
-      "ok": "Ок",
-      "add": "Добавить",
-      "deleteHeuristic": "Удалить эвристику",
-      "deleteQuestion": "Удалить вопрос",
-      "addNewDescription": "Добавить новое описание",
-      "addOption": "Добавить новый вариант",
-      "hasValue": "Имеет значение",
-      "moveUp": "Переместить вверх",
-      "moveDown": "Переместить вниз",
-      "Question": "Вопрос",
-      "Questions": "Вопросы",
-      "noQuestions": "Нет вопросов",
-      "noDescriptions": "Нет описаний",
-      "loading": "Загрузка..."
+      "editHeuristic": "Edit Heuristic",
+      "editQuestion": "Edit Question",
+      "newQuestion": "New Question",
+      "creatingHeuristic": "Creating a heuristic",
+      "currentHeuristics": "Heuristics",
+      "addNewHeuristic": "Add new heuristic",
+      "searchHeuristics": "Search heuristics...",
+      "noHeuristicsFound": "No heuristics found",
+      "addNewQuestion": "Add new question",
+      "questions": "Questions",
+      "descriptions": "Descriptions",
+      "actions": "Actions",
+      "titles": "Title",
+      "cancel": "Cancel",
+      "ok": "Ok",
+      "add": "Add",
+      "deleteHeuristic": "Delete heuristic",
+      "deleteQuestion": "Delete question",
+      "addNewDescription": "Add a new Description",
+      "addOption": "Add a new Option",
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "Question": "Question",
+      "Questions": "Questions",
+      "noQuestions": "No Questions",
+      "noDescriptions": "No Descriptions",
+      "loading": "Loading...",
+      "questionsCount": "{count} Question | {count} Questions",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "Заголовок эвристики",
@@ -412,7 +499,8 @@
       "changeWeights": "Обратите внимание, что изменение порядка эвристик НЕ изменяет веса автоматически, вы должны изменить их вручную.",
       "noDescriptions": "Описания недоступны",
       "startAddingQuestions": "Начните с добавления вашего первого вопроса к этой эвристике",
-      "cantDeleteAllQuestions": "Извините, вы не можете удалить все вопросы из эвристики"
+      "cantDeleteAllQuestions": "Извините, вы не можете удалить все вопросы из эвристики",
+      "studyHasAnswers": "В этом исследовании есть ответы"
     },
     "validation": {
       "nameRequired": "Имя обязательно",
@@ -431,14 +519,19 @@
       "failedToLoadEditForm": "Не удалось загрузить форму редактирования. Пожалуйста, попробуйте снова.",
       "invalidHeuristic": "Неверный выбор эвристики",
       "invalidQuestion": "Неверный выбор вопроса"
-    }
+    },
+    "loading": "Загрузка...",
+    "questionsCount": "{count} вопрос | {count} вопроса | {count} вопросов"
   },
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "Варианты",
-      "noOptions": "Нет вариантов"
+      "noOptions": "Нет вариантов",
+      "optionsCount": "{count} вариант | {count} варианта | {count} вариантов"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Начните добавлять варианты к вашим эвристическим вопросам"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -447,27 +540,59 @@
       "weights": "Веса",
       "heuristics": "Эвристики"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "Необходимо как минимум 2 эвристики для назначения весов."
-    },
     "actions": {
       "saveWeights": "сохранить значения весов"
+    },
+    "importance": {
+      "equal": "Равная важность",
+      "moderately": "Умеренная важность",
+      "strongly": "Сильная важность",
+      "veryStrongly": "Очень сильная важность",
+      "extreme": "Чрезвычайная важность",
+      "modLess": "Умеренно менее важно",
+      "strongLess": "Значительно менее важно",
+      "veryStrongLess": "Очень значительно менее важно",
+      "extremeLess": "Крайне менее важно"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Необходимо как минимум 2 эвристики для назначения весов.",
+      "comparisonTooltip": "H{h1} имеет {importance} чем H{h2}",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Настройки"
+      "settings": "Настройки",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "Если вы согласны, все ваши текущие эвристики будут заменены теми, что в CSV-файле.",
-      "noCsvFileSelected": "CSV-файл не выбран. \nПожалуйста, выберите один, чтобы продолжить."
+      "noCsvFileSelected": "CSV-файл не выбран. \nПожалуйста, выберите один, чтобы продолжить.",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "Импортируйте ваш CSV тестовый файл сюда."
     },
     "actions": {
-      "downloadCsvTemplate": "Скачать шаблон CSV",
-      "update": "Обновить"
+      "update": "Обновить",
+      "downloadCsvTemplate": "Скачать шаблон CSV"
+    },
+    "errors": {
+      "maxChars": "Достигнут лимит в 250 символов"
+    },
+    "placeholders": {
+      "valueEx": "Пример: 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -488,6 +613,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "Редактировать тест",
+      "description": "Настройте параметры и предпочтения вашего теста",
       "heuristics": "Эвристики",
       "options": "Варианты",
       "weights": "Веса",
@@ -704,6 +831,15 @@
       "audioRecording": "Аудио",
       "eyeTracking": "Трекер глаз",
       "recordingNote": "Вы будете уведомлены перед началом любой записи. Все данные собираются исключительно для исследовательских целей и обрабатываются в соответствии с правилами конфиденциальности."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -722,25 +858,6 @@
     "goHome": "Перейти на главную"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Активных сессий не найдено",
-      "selectRange": "Выбрать диапазон",
-      "reset": "Сбросить",
-      "searchPlaceholder": "Поиск исследований...",
-      "filters": {
-        "allStudies": "Все исследования",
-        "myStudies": "Мои исследования",
-        "whereICollaborate": "Где я сотрудничаю",
-        "allStatuses": "Все статусы",
-        "today": "Сегодня",
-        "upcoming": "Предстоящие",
-        "completed": "Завершено"
-      },
-      "ownership": "Владение",
-      "evaluator": "Оценщик",
-      "sessionDate": "Дата сессии",
-      "statusLabel": "Статус"
-    },
     "intros": {
       "click": "Нажмите здесь!",
       "learnMore": "Узнать больше",
@@ -976,7 +1093,8 @@
     "eyeTracker": "Трекер глаз",
     "audioRecord": "Запись звука",
     "postForm": "Форма после теста",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Форма согласия",
@@ -1076,27 +1194,6 @@
     "viewAllArticles": "Посмотреть все статьи",
     "videoAltText": "Демонстрационное видео FAQ, показывающее визуальные шаги для решения часто задаваемого вопроса. В этом обучающем видео нет аудиоконтента."
   },
-  "PROFILE": {
-    "user": "ПОЛЬЗОВАТЕЛЬ",
-    "account": "Аккаунт",
-    "security": "Безопасность",
-    "personalInfo": "Личная информация",
-    "contact": "Контакт",
-    "country": "Страна",
-    "editDetails": "Редактировать детали",
-    "typeDeleteToConfirm": "Введите \"УДАЛИТЬ\" для подтверждения",
-    "pleaseTypeDeleteToConfirm": "Пожалуйста, введите УДАЛИТЬ для подтверждения",
-    "finalStepVerifyIdentity": "Последний шаг: Подтвердите вашу личность",
-    "enterPasswordForAccountDeletion": "Введите ваш пароль, чтобы продолжить удаление аккаунта",
-    "yourPassword": "Ваш пароль",
-    "usernameRequired": "Имя пользователя обязательно",
-    "usernameMinLength": "Имя пользователя должно содержать минимум 3 символа",
-    "countryRequired": "Страна обязательна",
-    "contactNumberRequired": "Контактный номер обязателен",
-    "enterValidPhoneNumber": "Пожалуйста, введите действительный номер телефона (только 9-15 цифр)",
-    "email": "Электронная почта",
-    "username": "Имя пользователя"
-  },
   "ModeratedTest": {
     "preTest": "ПРЕДВАРИТЕЛЬНЫЙ ТЕСТ",
     "tasks": "ЗАДАЧИ",
@@ -1167,25 +1264,27 @@
     "all": "Все",
     "question": "Вопрос {number}",
     "comingSoon": "Скоро",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "Общая аналитика",
     "individualAnalytics": "Индивидуальная аналитика",
-    "summary": "Сводка",
-    "completed": "Завершено",
-    "timeTaken": "Затраченное время",
-    "yes": "Да",
-    "invited": "Приглашён",
-    "answers": "Ответы",
-    "overallAnalyticsDescription": "Просмотреть общую аналитику вашего исследования",
     "susAnalytics": "Аналитика SUS",
     "nasaTlxAnalytics": "Аналитика NASA-TLX",
     "eyeTrackingAnalytics": "Аналитика отслеживания взгляда",
     "transcriptions": "Транскрипции",
-    "notCompleted": "Не завершено",
-    "tasks": "Задачи",
-    "total": "Всего",
+    "overallAnalyticsDescription": "Просмотреть общую аналитику вашего исследования",
     "user": "Пользователь",
+    "summary": "Сводка",
     "invite": "Пригласить",
     "actions": "Действия",
+    "completed": "Завершено",
+    "notCompleted": "Не завершено",
+    "timeTaken": "Затраченное время",
+    "tasks": "Задачи",
+    "total": "Всего",
+    "yes": "Да",
+    "invited": "Приглашён",
+    "answers": "Ответы",
     "no": "Нет"
   },
   "studyCreation": {
@@ -1326,6 +1425,10 @@
         "upcoming": "Предстоящее"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Описание задачи",
+    "taskDescriptionHelper": "Предоставьте участникам подробные инструкции. Включите цель, контекст и любые конкретные шаги, которые они должны выполнить."
   },
   "manager": {
     "dashboard": {

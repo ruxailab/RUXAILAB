@@ -29,10 +29,24 @@
       "email": "E-mail",
       "instructions": "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
       "reset_button": "Envoyer le lien de réinitialisation",
-      "back_to_signin": "Retour à la connexion"
+      "back_to_signin": "Retour à la connexion",
+      "check_your_email": "Check your email",
+      "reset_link_sent": "We’ve sent a password reset link to",
+      "no_email": "Didn’t get the email?",
+      "try_again": "Try again"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "Chargement du test",
     "continueAs": "Continuer en tant que",
     "notUser": "Pas {userEmail} ?",
@@ -45,6 +59,7 @@
     "title": "Titre",
     "description": "Description",
     "cancel": "Annuler",
+    "proceed": "proceed",
     "confirm": "Confirmer",
     "add": "Ajouter",
     "text": "Texte",
@@ -59,6 +74,7 @@
     "noNewNotifications": "Pas de nouvelles notifications",
     "unread": "non lu",
     "inbox": "Boîte de réception",
+    "all": "All",
     "timeAgo": {
       "years": "{count} an | {count} ans",
       "months": "{count} mois | {count} mois",
@@ -71,6 +87,7 @@
     "sentBy": "Envoyé par",
     "new": "NOUVEAU",
     "test": "une Étude",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "Éléments par page :",
       "type": "Type",
@@ -82,6 +99,10 @@
       "sessionDate": "Date de session",
       "participants": "Participants",
       "created": "Créé"
+    },
+    "units": {
+      "mb": "Mo",
+      "gb": "Go"
     }
   },
   "storage": {
@@ -196,6 +217,7 @@
     "editProfile": "Modifier le profil",
     "account": "Compte",
     "admin": "Administrateur",
+    "superAdmin": "Super Admin",
     "security": "Sécurité",
     "personalInfo": "Informations personnelles",
     "changePassword": "Changer le mot de passe",
@@ -228,10 +250,17 @@
     "enterValidPhoneNumber": "Veuillez entrer un numéro de téléphone valide (9-15 chiffres uniquement)",
     "profileImageUpdatedSuccess": "Image de profil mise à jour avec succès",
     "profileImageUploadFailed": "Échec du téléchargement de l'image de profil",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "Aucun utilisateur connecté",
     "profileLoadFailed": "Échec du chargement du profil",
     "profileUpdatedSuccess": "Profil mis à jour avec succès",
     "profileUpdateFailed": "Échec de la mise à jour du profil",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "Mot de passe changé avec succès",
     "passwordChangeFailed": "Échec du changement de mot de passe",
     "accountDeletionFailed": "Échec de la suppression du compte",
@@ -272,6 +301,9 @@
     "reports": "Consultez les performances de vos évaluateurs.",
     "answers": "Voyez comment vos évaluateurs évaluent votre projet.",
     "analytics": "Analysez les commentaires et les réponses de vos évaluateurs.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Ajoutez des données supplémentaires à votre test.",
     "intro": {
       "reports": "Suivez la progression et l'état des réponses de vos évaluateurs pendant qu'ils complètent votre test.",
@@ -359,6 +391,63 @@
       "paused": "En pause",
       "finished": "Terminé",
       "unknown": "Inconnu"
+    },
+    "cards": {
+      "recentActivity": "Activité récente",
+      "activities7Days": "Activités (7 jours au total)",
+      "lastActivity": "Dernière activité",
+      "noActivity": "Aucune activité",
+      "edit": "Modifier",
+      "heuristics": "Heuristiques",
+      "questions": "Questions",
+      "totalOptions": "Nombre total d'options",
+      "qualitative": "Qualitatif",
+      "quantitative": "Quantitatif",
+      "weights": "Poids",
+      "on": "ACTIVER",
+      "off": "DÉSACTIVER",
+      "cooperators": "Collaborateurs",
+      "totalInvited": "Total des invités",
+      "accepted": "Accepté",
+      "pending": "En attente",
+      "storage": "Stockage",
+      "currentStorage": "Stockage (actuel)",
+      "limitAvailable": "Limite disponible",
+      "results": "Résultats",
+      "generalUsability": "Usabilité générale",
+      "finalReport": "Rapport final",
+      "generatePDF": "Générer PDF",
+      "download": "Télécharger",
+      "generated": "Généré :",
+      "generateReport": "Générer le rapport",
+      "reportAvailable": "Rapport disponible",
+      "noReport": "Aucun rapport généré",
+      "readyForDownload": "Rapport final prêt pour le téléchargement",
+      "waitingForParticipants": "En attente de participants",
+      "evaluationsCompleted": "évaluations terminées",
+      "readyToGenerate": "Prêt à générer le rapport",
+      "excellentUsability": "Excellente usabilité",
+      "acceptableUsability": "Usabilité acceptable",
+      "needsImprovement": "Nécessite des améliorations",
+      "basedOn": "Basé sur",
+      "evaluations": "évaluations",
+      "evaluationUpdated": "Évaluation mise à jour",
+      "updatedProgress": "a mis à jour sa progression",
+      "invitationSentTitle": "Invitation envoyée",
+      "invitationPendingDesc": "Invitation en attente pour",
+      "pendingStatus": "En attente"
+    },
+    "managerView": {
+      "heuristicStudy": "Étude heuristique",
+      "freePlan": "Forfait gratuit",
+      "generalStatistics": "Statistiques générales",
+      "modules": "Modules"
+    },
+    "stats": {
+      "participants": "Participants",
+      "completion": "Complétion",
+      "daysActive": "Jours actifs",
+      "heuristics": "Heuristiques"
     }
   },
   "HeuristicsTable": {
@@ -390,7 +479,9 @@
       "Questions": "Questions",
       "noQuestions": "Aucune question",
       "noDescriptions": "Aucune description",
-      "loading": "Chargement..."
+      "loading": "Chargement...",
+      "questionsCount": "{count} Question | {count} Questions",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "Titre de l'heuristique",
@@ -408,7 +499,8 @@
       "changeWeights": "Notez qu'en changeant l'ordre des heuristiques, les poids NE changent PAS automatiquement, vous devez les modifier manuellement.",
       "noDescriptions": "Aucune description disponible",
       "startAddingQuestions": "Commencez par ajouter votre première question à cette heuristique",
-      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique"
+      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique",
+      "studyHasAnswers": "Cette étude a des réponses"
     },
     "validation": {
       "nameRequired": "Le nom est obligatoire",
@@ -432,9 +524,12 @@
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "Options",
-      "noOptions": "Aucune option"
+      "noOptions": "Aucune option",
+      "optionsCount": "{count} option | {count} options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Commencez à ajouter des options à vos questions heuristiques"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -443,27 +538,59 @@
       "weights": "Poids",
       "heuristics": "Heuristiques"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "Il faut au moins 2 heuristiques pour pouvoir attribuer des poids."
-    },
     "actions": {
       "saveWeights": "enregistrer les valeurs de poids"
+    },
+    "importance": {
+      "equal": "Importance égale",
+      "moderately": "Importance modérée",
+      "strongly": "Importance forte",
+      "veryStrongly": "Importance très forte",
+      "extreme": "Importance extrême",
+      "modLess": "Modérément moins important",
+      "strongLess": "Fortement moins important",
+      "veryStrongLess": "Beaucoup moins important",
+      "extremeLess": "Extrêmement moins important"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Il faut au moins 2 heuristiques pour pouvoir attribuer des poids.",
+      "comparisonTooltip": "H{h1} a {importance} que H{h2}",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
     },
     "actions": {
-      "downloadCsvTemplate": "Télécharger le modèle CSV",
-      "update": "Mettre à jour"
+      "update": "Mettre à jour",
+      "downloadCsvTemplate": "Télécharger le modèle CSV"
+    },
+    "errors": {
+      "maxChars": "Limite de 250 caractères atteinte"
+    },
+    "placeholders": {
+      "valueEx": "Ex: 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -484,6 +611,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "Modifier le test",
+      "description": "Personnalisez les paramètres et les préférences de votre test",
       "heuristics": "Heuristiques",
       "options": "Options",
       "weights": "Poids",
@@ -700,6 +829,15 @@
       "audioRecording": "Audio",
       "eyeTracking": "Suivi oculaire",
       "recordingNote": "Vous serez informé avant le début de tout enregistrement. Toutes les données sont collectées uniquement à des fins de recherche et traitées selon les directives de confidentialité."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -718,25 +856,6 @@
     "goHome": "Retour à l'accueil"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Aucune session active trouvée",
-      "selectRange": "Sélectionner une plage",
-      "reset": "Réinitialiser",
-      "searchPlaceholder": "Rechercher des études...",
-      "filters": {
-        "allStudies": "Toutes les études",
-        "myStudies": "Mes études",
-        "whereICollaborate": "Où je collabore",
-        "allStatuses": "Tous les statuts",
-        "today": "Aujourd'hui",
-        "upcoming": "À venir",
-        "completed": "Terminé"
-      },
-      "ownership": "Propriété",
-      "evaluator": "Évaluateur",
-      "sessionDate": "Date de session",
-      "statusLabel": "Statut"
-    },
     "intros": {
       "click": "Cliquez ici !",
       "learnMore": "En savoir plus",
@@ -972,7 +1091,8 @@
     "eyeTracker": "Suivi oculaire",
     "audioRecord": "Enregistrement audio",
     "postForm": "Formulaire post-test",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Formulaire de consentement",
@@ -1072,27 +1192,6 @@
     "viewAllArticles": "Voir tous les articles",
     "videoAltText": "Vidéo de démonstration FAQ montrant les étapes visuelles pour résoudre la question fréquemment posée. Aucun contenu audio n'est présent dans cette vidéo pédagogique."
   },
-  "PROFILE": {
-    "user": "UTILISATEUR",
-    "account": "Compte",
-    "security": "Sécurité",
-    "personalInfo": "Informations personnelles",
-    "contact": "Contact",
-    "country": "Pays",
-    "editDetails": "Modifier les détails",
-    "typeDeleteToConfirm": "Tapez \"DELETE\" pour confirmer",
-    "pleaseTypeDeleteToConfirm": "Veuillez taper DELETE pour confirmer",
-    "finalStepVerifyIdentity": "Dernière étape : Vérifiez votre identité",
-    "enterPasswordForAccountDeletion": "Entrez votre mot de passe pour procéder à la suppression du compte",
-    "yourPassword": "Votre mot de passe",
-    "usernameRequired": "Nom d'utilisateur requis",
-    "usernameMinLength": "Le nom d'utilisateur doit comporter au moins 3 caractères",
-    "countryRequired": "Pays requis",
-    "contactNumberRequired": "Numéro de contact requis",
-    "enterValidPhoneNumber": "Veuillez entrer un numéro de téléphone valide (9-15 chiffres uniquement)",
-    "email": "E-mail",
-    "username": "Nom d'utilisateur"
-  },
   "ModeratedTest": {
     "preTest": "PRÉ-TEST",
     "tasks": "TÂCHES",
@@ -1163,25 +1262,27 @@
     "all": "Tous",
     "question": "Question {number}",
     "comingSoon": "Bientôt disponible",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "Analyse générale",
     "individualAnalytics": "Analyse individuelle",
-    "summary": "Résumé",
-    "completed": "Terminé",
-    "timeTaken": "Temps écoulé",
-    "yes": "Oui",
-    "invited": "Invité",
-    "answers": "Réponses",
-    "overallAnalyticsDescription": "Afficher l’analyse globale de votre étude",
     "susAnalytics": "Analyse SUS",
     "nasaTlxAnalytics": "Analyse NASA-TLX",
     "eyeTrackingAnalytics": "Analyse du suivi oculaire",
     "transcriptions": "Transcriptions",
-    "notCompleted": "Non terminé",
-    "tasks": "Tâches",
-    "total": "Total",
+    "overallAnalyticsDescription": "Afficher l’analyse globale de votre étude",
     "user": "Utilisateur",
+    "summary": "Résumé",
     "invite": "Inviter",
     "actions": "Actions",
+    "completed": "Terminé",
+    "notCompleted": "Non terminé",
+    "timeTaken": "Temps écoulé",
+    "tasks": "Tâches",
+    "total": "Total",
+    "yes": "Oui",
+    "invited": "Invité",
+    "answers": "Réponses",
     "no": "Non"
   },
   "studyCreation": {
@@ -1322,6 +1423,10 @@
         "upcoming": "À venir"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Description de la tâche",
+    "taskDescriptionHelper": "Fournissez des instructions détaillées aux participants. Incluez l’objectif, le contexte et toutes les étapes spécifiques qu’ils doivent suivre."
   },
   "manager": {
     "dashboard": {

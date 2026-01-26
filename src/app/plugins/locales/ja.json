@@ -34,9 +34,19 @@
       "reset_link_sent": "パスワードリセットリンクを送信しました：",
       "no_email": "メールが届いていませんか？",
       "try_again": "もう一度試す"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "テストを読み込み中",
     "continueAs": "として続行",
     "notUser": "{userEmail}ではありませんか？",
@@ -49,6 +59,7 @@
     "title": "タイトル",
     "description": "説明",
     "cancel": "キャンセル",
+    "proceed": "proceed",
     "confirm": "確認",
     "add": "追加",
     "text": "テキスト",
@@ -63,6 +74,7 @@
     "noNewNotifications": "新しい通知はありません",
     "unread": "未読",
     "inbox": "受信トレイ",
+    "all": "All",
     "timeAgo": {
       "years": "{count} 年前 | {count} 年前",
       "months": "{count} ヶ月前 | {count} ヶ月前",
@@ -75,6 +87,7 @@
     "sentBy": "送信者",
     "new": "新着",
     "test": "テスト",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "ページあたりのアイテム数:",
       "type": "タイプ",
@@ -86,6 +99,10 @@
       "sessionDate": "セッション日",
       "participants": "参加者",
       "created": "作成日"
+    },
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
     }
   },
   "storage": {
@@ -200,6 +217,7 @@
     "editProfile": "プロフィールを編集",
     "account": "アカウント",
     "admin": "管理者",
+    "superAdmin": "Super Admin",
     "security": "セキュリティ",
     "personalInfo": "個人情報",
     "changePassword": "パスワードを変更",
@@ -224,7 +242,32 @@
     "passwordUppercase": "大文字を1文字含める必要があります",
     "passwordSymbol": "記号を1つ含める必要があります",
     "confirmPasswordRequired": "パスワード確認は必須です",
-    "passwordsMatch": "パスワードが一致する必要があります"
+    "passwordsMatch": "パスワードが一致する必要があります",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "countryRequired": "Country is required",
+    "contactNumberRequired": "Contact number is required",
+    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+    "profileImageUpdatedSuccess": "Profile image updated successfully",
+    "profileImageUploadFailed": "Failed to upload profile image",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
+    "noUserSignedIn": "No user signed in",
+    "profileLoadFailed": "Failed to load profile",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
+    "passwordChangedSuccess": "Password changed successfully",
+    "passwordChangeFailed": "Failed to change password",
+    "accountDeletionFailed": "Account deletion failed",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "yourPassword": "Your Password",
+    "back": "Back",
+    "deleteForever": "Delete Forever"
   },
   "titles": {
     "manager": "マネージャー",
@@ -258,6 +301,9 @@
     "reports": "評価者の進捗と回答状況を確認します。",
     "answers": "評価者があなたのプロジェクトをどのように評価しているかを確認します。",
     "analytics": "評価者のコメントと回答を分析します。",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "テストに追加のデータを追加します。",
     "intro": {
       "reports": "評価者がテストを完了する際の進行状況や回答状況を追跡します。",
@@ -341,10 +387,80 @@
     "time": "時間",
     "status": {
       "active": "アクティブ",
-      "recruiting": "募集中",
-      "paused": "一時停止",
+      "recruiting": "採用中",
+      "paused": "一時停止中",
       "finished": "完了",
       "unknown": "不明"
+    },
+    "cards": {
+      "recentActivity": "最近のアクティビティ",
+      "activities7Days": "アクティビティ (過去7日間合計)",
+      "lastActivity": "最終アクティビティ",
+      "noActivity": "アクティビティなし",
+      "edit": "編集",
+      "heuristics": "ヒューリスティック",
+      "questions": "質問",
+      "totalOptions": "オプション総数",
+      "qualitative": "定性的",
+      "quantitative": "定量的",
+      "weights": "重み",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "協力者",
+      "totalInvited": "招待合計",
+      "accepted": "承諾済み",
+      "pending": "保留中",
+      "storage": "ストレージ",
+      "currentStorage": "現在のストレージ",
+      "limitAvailable": "利用可能制限",
+      "results": "結果",
+      "generalUsability": "総合的なユーザビリティ",
+      "finalReport": "最終レポート",
+      "generatePDF": "PDFを生成",
+      "download": "ダウンロード",
+      "generated": "生成日時:",
+      "generateReport": "レポートを生成",
+      "reportAvailable": "レポート利用可能",
+      "noReport": "レポート未生成",
+      "readyForDownload": "最終レポートのダウンロード準備ができました",
+      "waitingForParticipants": "参加者を待機中",
+      "evaluationsCompleted": "評価完了",
+      "readyToGenerate": "レポート生成の準備完了",
+      "excellentUsability": "素晴らしいユーザビリティ",
+      "acceptableUsability": "許容可能なユーザビリティ",
+      "needsImprovement": "改善が必要",
+      "basedOn": "基づく",
+      "evaluations": "評価",
+      "evaluationUpdated": "評価が更新されました",
+      "updatedProgress": "が進捗を更新しました",
+      "invitationSentTitle": "招待を送信しました",
+      "invitationPendingDesc": "の招待が保留中です",
+      "pendingStatus": "保留中"
+    },
+    "managerView": {
+      "heuristicStudy": "ヒューリスティック研究",
+      "freePlan": "無料プラン",
+      "generalStatistics": "一般統計",
+      "modules": "モジュール"
+    },
+    "stats": {
+      "participants": "参加者",
+      "completion": "完了率",
+      "daysActive": "アクティブ日数",
+      "heuristics": "ヒューリスティック",
+      "units": {
+        "participants": "{count} 参加者 | {count} 参加者",
+        "completion": "{count}% 完了",
+        "daysActive": "{count} 日間アクティブ | {count} 日間アクティブ",
+        "heuristics": "{count} ヒューリスティック | {count} ヒューリスティック"
+      },
+      "importance": {
+        "equal": "同等の重要性",
+        "moderately": "中程度の重要性",
+        "strongly": "強い重要性",
+        "veryStrongly": "非常に強い重要性",
+        "extreme": "極めて高い重要性"
+      }
     }
   },
   "HeuristicsTable": {
@@ -376,7 +492,9 @@
       "Questions": "質問",
       "noQuestions": "質問がありません",
       "noDescriptions": "説明がありません",
-      "loading": "読み込み中..."
+      "loading": "読み込み中...",
+      "questionsCount": "{count} 質問 | {count} 質問",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "ヒューリスティックのタイトル",
@@ -394,7 +512,8 @@
       "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。",
       "noDescriptions": "説明が利用できません",
       "startAddingQuestions": "このヒューリスティックに最初の質問を追加して開始してください",
-      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません"
+      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません",
+      "studyHasAnswers": "この調査には回答があります"
     },
     "validation": {
       "nameRequired": "名前は必須です",
@@ -418,9 +537,12 @@
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "オプション",
-      "noOptions": "オプションなし"
+      "noOptions": "オプションなし",
+      "optionsCount": "{count} オプション | {count} オプション"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "ヒューリスティックな質問にオプションの追加を開始します"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -429,27 +551,59 @@
       "weights": "重み",
       "heuristics": "ヒューリスティック"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "重みを設定するには少なくとも2つのヒューリスティックが必要です。"
-    },
     "actions": {
       "saveWeights": "重み値を保存"
+    },
+    "importance": {
+      "equal": "同等の重要性",
+      "moderately": "中程度の重要性",
+      "strongly": "強い重要性",
+      "veryStrongly": "非常に強い重要性",
+      "extreme": "極めて高い重要性",
+      "modLess": "中程度に低い重要性",
+      "strongLess": "かなり低い重要性",
+      "veryStrongLess": "極めて低い重要性",
+      "extremeLess": "圧倒的に低い重要性"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "重みを設定するには少なくとも2つのヒューリスティックが必要です。",
+      "comparisonTooltip": "H{h1}はH{h2}に対して{importance}です",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "設定"
+      "settings": "設定",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
-      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。"
+      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "ここにCSVテストファイルをインポートしてください。"
     },
     "actions": {
-      "downloadCsvTemplate": "CSVテンプレートをダウンロード",
-      "update": "更新"
+      "update": "更新",
+      "downloadCsvTemplate": "CSVテンプレートをダウンロード"
+    },
+    "errors": {
+      "maxChars": "最大250文字の制限に達しました"
+    },
+    "placeholders": {
+      "valueEx": "例: 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -470,6 +624,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "テストの編集",
+      "description": "テストの設定と好みをカスタマイズする",
       "heuristics": "ヒューリスティック",
       "options": "オプション",
       "weights": "重み",
@@ -686,6 +842,15 @@
       "audioRecording": "音声",
       "eyeTracking": "アイトラッキング",
       "recordingNote": "いかなる記録も始まる前に通知されます。すべてのデータは研究目的のみで収集され、プライバシーガイドラインに従って扱われます。"
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -704,25 +869,6 @@
     "goHome": "ホームに戻る"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "アクティブなセッションが見つかりません",
-      "selectRange": "範囲を選択",
-      "reset": "リセット",
-      "searchPlaceholder": "研究を検索...",
-      "filters": {
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中",
-        "allStatuses": "すべてのステータス",
-        "today": "今日",
-        "upcoming": "今後",
-        "completed": "完了"
-      },
-      "ownership": "所有権",
-      "evaluator": "評価者",
-      "sessionDate": "セッション日",
-      "statusLabel": "ステータス"
-    },
     "intros": {
       "click": "ここをクリック！",
       "learnMore": "詳しく知る",
@@ -958,7 +1104,8 @@
     "eyeTracker": "アイトラッカー",
     "audioRecord": "音声録音",
     "postForm": "事後フォーム",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "同意フォーム",
@@ -988,7 +1135,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1006,7 +1157,12 @@
     "sub-heading": "テストの名前を入力してください！",
     "test-name": "テスト名",
     "test-description": "テスト説明",
-    "test-label": "すべてのユーザーに公開するテスト"
+    "test-label": "すべてのユーザーに公開するテスト",
+    "template": {
+      "title": "Enter a title for your template",
+      "description": "Provide a description for your template",
+      "public": "Make template public to all users"
+    }
   },
   "finishTest": {
     "title": "テストを終了",
@@ -1048,27 +1204,6 @@
     "browseAllCategories": "必要なヘルプを見つけるためにすべてのカテゴリを参照してください",
     "viewAllArticles": "すべての記事を見る",
     "videoAltText": "FAQのデモ動画。視覚的にステップを示す教育用ビデオで、音声は含まれていません。"
-  },
-  "PROFILE": {
-    "user": "ユーザー",
-    "account": "アカウント",
-    "security": "セキュリティ",
-    "personalInfo": "個人情報",
-    "contact": "連絡先",
-    "country": "国",
-    "editDetails": "詳細を編集",
-    "typeDeleteToConfirm": "確認のために「DELETE」と入力してください",
-    "pleaseTypeDeleteToConfirm": "確認のためにDELETEと入力してください",
-    "finalStepVerifyIdentity": "最終ステップ：本人確認",
-    "enterPasswordForAccountDeletion": "アカウント削除を進めるにはパスワードを入力してください",
-    "yourPassword": "あなたのパスワード",
-    "usernameRequired": "ユーザー名は必須です",
-    "usernameMinLength": "ユーザー名は少なくとも3文字必要です",
-    "countryRequired": "国は必須です",
-    "contactNumberRequired": "連絡先番号は必須です",
-    "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁）",
-    "email": "メールアドレス",
-    "username": "ユーザー名"
   },
   "ModeratedTest": {
     "preTest": "事前テスト",
@@ -1140,25 +1275,27 @@
     "all": "すべて",
     "question": "質問 {number}",
     "comingSoon": "近日公開",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "一般分析",
     "individualAnalytics": "個別分析",
-    "summary": "概要",
-    "completed": "完了",
-    "timeTaken": "所要時間",
-    "yes": "はい",
-    "invited": "招待済み",
-    "answers": "回答",
-    "overallAnalyticsDescription": "調査の全体分析を表示",
     "susAnalytics": "SUS 分析",
     "nasaTlxAnalytics": "NASA-TLX 分析",
     "eyeTrackingAnalytics": "アイトラッキング分析",
     "transcriptions": "文字起こし",
-    "notCompleted": "未完了",
-    "tasks": "タスク",
-    "total": "合計",
+    "overallAnalyticsDescription": "調査の全体分析を表示",
     "user": "ユーザー",
+    "summary": "概要",
     "invite": "招待",
     "actions": "操作",
+    "completed": "完了",
+    "notCompleted": "未完了",
+    "timeTaken": "所要時間",
+    "tasks": "タスク",
+    "total": "合計",
+    "yes": "はい",
+    "invited": "招待済み",
+    "answers": "回答",
     "no": "いいえ"
   },
   "studyCreation": {
@@ -1249,7 +1386,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -1295,6 +1436,10 @@
         "upcoming": "近日公開"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "タスクの説明",
+    "taskDescriptionHelper": "参加者に詳細な指示を提供します。目標、コンテキスト、および従うべき具体的な手順を含めます。"
   },
   "manager": {
     "dashboard": {

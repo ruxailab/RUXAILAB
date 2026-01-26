@@ -29,10 +29,24 @@
       "email": "البريد الإلكتروني",
       "instructions": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
       "reset_button": "إرسال رابط إعادة التعيين",
-      "back_to_signin": "العودة إلى تسجيل الدخول"
+      "back_to_signin": "العودة إلى تسجيل الدخول",
+      "check_your_email": "Check your email",
+      "reset_link_sent": "We’ve sent a password reset link to",
+      "no_email": "Didn’t get the email?",
+      "try_again": "Try again"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "جاري التحميل",
     "continueAs": "المتابعة كـ",
     "notUser": "لست {userEmail}؟",
@@ -45,6 +59,7 @@
     "title": "العنوان",
     "description": "الوصف",
     "cancel": "إلغاء",
+    "proceed": "proceed",
     "confirm": "تأكيد",
     "add": "إضافة",
     "text": "النص",
@@ -59,6 +74,7 @@
     "noNewNotifications": "لا توجد إشعارات جديدة",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
+    "all": "All",
     "timeAgo": {
       "years": "منذ {count} سنة | منذ {count} سنوات",
       "months": "منذ {count} شهر | منذ {count} أشهر",
@@ -71,6 +87,7 @@
     "sentBy": "مرسل من قبل",
     "new": "جديد",
     "test": "دراسة",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "العناصر لكل صفحة:",
       "type": "النوع",
@@ -82,6 +99,10 @@
       "sessionDate": "تاريخ الجلسة",
       "participants": "المشاركون",
       "created": "تم الإنشاء"
+    },
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
     }
   },
   "storage": {
@@ -196,6 +217,7 @@
     "editProfile": "تحرير الملف الشخصي",
     "account": "الحساب",
     "admin": "المدير",
+    "superAdmin": "Super Admin",
     "security": "الأمان",
     "personalInfo": "المعلومات الشخصية",
     "changePassword": "تغيير كلمة المرور",
@@ -228,10 +250,17 @@
     "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
     "profileImageUpdatedSuccess": "تم تحديث صورة الملف الشخصي بنجاح",
     "profileImageUploadFailed": "فشل تحميل صورة الملف الشخصي",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "لا يوجد مستخدم مسجل الدخول",
     "profileLoadFailed": "فشل تحميل الملف الشخصي",
     "profileUpdatedSuccess": "تم تحديث الملف الشخصي بنجاح",
     "profileUpdateFailed": "فشل تحديث الملف الشخصي",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح",
     "passwordChangeFailed": "فشل تغيير كلمة المرور",
     "accountDeletionFailed": "فشل حذف الحساب",
@@ -272,6 +301,9 @@
     "reports": "تحقق من أداء المقيمين لديك.",
     "answers": "شاهد كيف يقوم المقيمون بتقييم مشروعك.",
     "analytics": "حلل التعليقات والإجابات من المقيمين لديك.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "أضف بيانات إضافية إلى اختبارك.",
     "intro": {
       "reports": "تابع تقدم المقيمين وحالة الإجابات أثناء قيامهم بإكمال اختبارك.",
@@ -359,6 +391,63 @@
       "paused": "متوقف",
       "finished": "منتهي",
       "unknown": "غير معروف"
+    },
+    "cards": {
+      "recentActivity": "النشاط الأخير",
+      "activities7Days": "الأنشطة (إجمالي 7 أيام)",
+      "lastActivity": "آخر نشاط",
+      "noActivity": "لا يوجد نشاط",
+      "edit": "تحرير",
+      "heuristics": "استدلالات",
+      "questions": "أسئلة",
+      "totalOptions": "إجمالي الخيارات",
+      "qualitative": "نوعي",
+      "quantitative": "كمي",
+      "weights": "أوزان",
+      "on": "تشغيل",
+      "off": "إيقاف",
+      "cooperators": "التعاون",
+      "totalInvited": "إجمالي المدعوين",
+      "accepted": "تم القبول",
+      "pending": "قيد الانتظار",
+      "storage": "التخزين",
+      "currentStorage": "التخزين (الحالي)",
+      "limitAvailable": "الحد المتاح",
+      "results": "النتائج",
+      "generalUsability": "سهولة الاستخدام العامة",
+      "finalReport": "التقرير النهائي",
+      "generatePDF": "إنشاء PDF",
+      "download": "تحميل",
+      "generated": "تم الإنشاء:",
+      "generateReport": "إنشاء تقرير",
+      "reportAvailable": "التقرير متاح",
+      "noReport": "لم يتم إنشاء تقرير",
+      "readyForDownload": "التقرير النهائي جاهز للتحميل",
+      "waitingForParticipants": "في انتظار المشاركين",
+      "evaluationsCompleted": "التقييمات المكتملة",
+      "readyToGenerate": "جاهز لإنشاء التقرير",
+      "excellentUsability": "سهولة استخدام ممتازة",
+      "acceptableUsability": "سهولة استخدام مقبولة",
+      "needsImprovement": "يحتاج إلى تحسين",
+      "basedOn": "بناءً على",
+      "evaluations": "تقييمات",
+      "evaluationUpdated": "تم تحديث التقييم",
+      "updatedProgress": "حدث تقدمهم",
+      "invitationSentTitle": "تم إرسال الدعوة",
+      "invitationPendingDesc": "الدعوة معلقة لـ",
+      "pendingStatus": "قيد الانتظار"
+    },
+    "managerView": {
+      "heuristicStudy": "دراسة استدلالية",
+      "freePlan": "الخطة المجانية",
+      "generalStatistics": "إحصائيات عامة",
+      "modules": "الوحدات"
+    },
+    "stats": {
+      "participants": "المشاركون",
+      "completion": "الإكمال",
+      "daysActive": "أيام النشاط",
+      "heuristics": "استدلالات"
     }
   },
   "HeuristicsTable": {
@@ -390,7 +479,9 @@
       "Questions": "أسئلة",
       "noQuestions": "لا توجد أسئلة",
       "noDescriptions": "لا توجد أوصاف",
-      "loading": "جاري التحميل..."
+      "loading": "جاري التحميل...",
+      "questionsCount": "{count} سؤال | {count} أسئلة",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "عنوان الاستدلال",
@@ -408,7 +499,8 @@
       "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا.",
       "noDescriptions": "لا توجد أوصاف متاحة",
       "startAddingQuestions": "ابدأ بإضافة سؤالك الأول إلى هذا الاستدلال",
-      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال"
+      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال",
+      "studyHasAnswers": "هذه الدراسة لديها إجابات"
     },
     "validation": {
       "nameRequired": "الاسم مطلوب",
@@ -432,9 +524,12 @@
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "الخيارات",
-      "noOptions": "لا يوجد خيارات"
+      "noOptions": "لا يوجد خيارات",
+      "optionsCount": "{count} خيار | {count} خيارات"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "ابدأ بإضافة خيارات لأسئلة الاستدلال الخاصة بك"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -443,27 +538,59 @@
       "weights": "الأوزان",
       "heuristics": "الاستدلالات"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "يحتاج إلى استدلالين على الأقل لتحديد الأوزان."
-    },
     "actions": {
       "saveWeights": "حفظ قيم الأوزان"
+    },
+    "importance": {
+      "equal": "أهمية متساوية",
+      "moderately": "أهمية متوسطة",
+      "strongly": "أهمية قوية",
+      "veryStrongly": "أهمية قوية جداً",
+      "extreme": "أهمية قصوى",
+      "modLess": "أقل أهمية (متوسط)",
+      "strongLess": "أقل أهمية (قوي)",
+      "veryStrongLess": "أقل أهمية جداً",
+      "extremeLess": "أقل أهمية قصوى"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "يحتاج إلى استدلالين على الأقل لتحديد الأوزان.",
+      "comparisonTooltip": "H{h1} لديه {importance} من H{h2}",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
-      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة."
+      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة.",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "قم باستيراد ملف CSV الخاص بك هنا."
     },
     "actions": {
-      "downloadCsvTemplate": "تحميل نموذج CSV",
-      "update": "تحديث"
+      "update": "تحديث",
+      "downloadCsvTemplate": "تحميل نموذج CSV"
+    },
+    "errors": {
+      "maxChars": "تم الوصول إلى الحد الأقصى 250 حرفاً"
+    },
+    "placeholders": {
+      "valueEx": "مثال: 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -484,6 +611,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "تعديل الاختبار",
+      "description": "تخصيص إعدادات وتفضيلات الاختبار الخاص بك",
       "heuristics": "الاستدلالات",
       "options": "الخيارات",
       "weights": "الأوزان",
@@ -700,6 +829,15 @@
       "audioRecording": "الصوت",
       "eyeTracking": "تتبع العين",
       "recordingNote": "سيتم إعلامك قبل بدء أي تسجيل. يتم جمع جميع البيانات لأغراض البحث فقط والتعامل معها وفقًا لإرشادات الخصوصية."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -718,25 +856,6 @@
     "goHome": "الذهاب إلى الصفحة الرئيسية"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "لم يتم العثور على جلسة نشطة",
-      "selectRange": "تحديد النطاق",
-      "reset": "إعادة تعيين",
-      "searchPlaceholder": "البحث في الدراسات...",
-      "filters": {
-        "allStudies": "جميع الدراسات",
-        "myStudies": "دراساتي",
-        "whereICollaborate": "حيث أتعاون",
-        "allStatuses": "جميع الحالات",
-        "today": "اليوم",
-        "upcoming": "قادم",
-        "completed": "مكتمل"
-      },
-      "ownership": "الملكية",
-      "evaluator": "المقيّم",
-      "sessionDate": "تاريخ الجلسة",
-      "statusLabel": "الحالة"
-    },
     "intros": {
       "click": "انقر هنا!",
       "learnMore": "تعلم المزيد",
@@ -972,7 +1091,8 @@
     "eyeTracker": "تتبع العين",
     "audioRecord": "تسجيل الصوت",
     "postForm": "نموذج ما بعد الاختبار",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "نموذج الموافقة",
@@ -1002,7 +1122,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1067,27 +1191,6 @@
     "browseAllCategories": "تصفح جميع الفئات للعثور على المساعدة التي تحتاجها",
     "viewAllArticles": "عرض جميع المقالات",
     "videoAltText": "فيديو توضيحي للأسئلة الشائعة يوضح الخطوات المرئية لحل السؤال المتكرر. لا يوجد محتوى صوتي في هذا الفيديو التعليمي."
-  },
-  "PROFILE": {
-    "user": "المستخدم",
-    "account": "الحساب",
-    "security": "الأمان",
-    "personalInfo": "المعلومات الشخصية",
-    "contact": "الاتصال",
-    "country": "البلد",
-    "editDetails": "تحرير التفاصيل",
-    "typeDeleteToConfirm": "اكتب \"DELETE\" للتأكيد",
-    "pleaseTypeDeleteToConfirm": "الرجاء كتابة DELETE للتأكيد",
-    "finalStepVerifyIdentity": "الخطوة الأخيرة: تحقق من هويتك",
-    "enterPasswordForAccountDeletion": "أدخل كلمة المرور الخاصة بك للمتابعة مع حذف الحساب",
-    "yourPassword": "كلمة المرور الخاصة بك",
-    "usernameRequired": "اسم المستخدم مطلوب",
-    "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
-    "countryRequired": "البلد مطلوب",
-    "contactNumberRequired": "رقم الاتصال مطلوب",
-    "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
-    "email": "البريد الإلكتروني",
-    "username": "اسم المستخدم"
   },
   "ModeratedTest": {
     "preTest": "ما قبل الاختبار",
@@ -1159,25 +1262,27 @@
     "all": "الكل",
     "question": "سؤال {number}",
     "comingSoon": "قريبًا",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "التحليلات العامة",
     "individualAnalytics": "التحليلات الفردية",
-    "summary": "ملخص",
-    "completed": "مكتمل",
-    "timeTaken": "الوقت المستغرق",
-    "yes": "نعم",
-    "invited": "مدعو",
-    "answers": "الإجابات",
-    "overallAnalyticsDescription": "عرض التحليلات العامة لدراستك",
     "susAnalytics": "تحليلات SUS",
     "nasaTlxAnalytics": "تحليلات NASA-TLX",
     "eyeTrackingAnalytics": "تحليلات تتبع العين",
     "transcriptions": "التفريغات النصية",
-    "notCompleted": "غير مكتمل",
-    "tasks": "المهام",
-    "total": "الإجمالي",
+    "overallAnalyticsDescription": "عرض التحليلات العامة لدراستك",
     "user": "المستخدم",
+    "summary": "ملخص",
     "invite": "دعوة",
     "actions": "إجراءات",
+    "completed": "مكتمل",
+    "notCompleted": "غير مكتمل",
+    "timeTaken": "الوقت المستغرق",
+    "tasks": "المهام",
+    "total": "الإجمالي",
+    "yes": "نعم",
+    "invited": "مدعو",
+    "answers": "الإجابات",
     "no": "لا"
   },
   "studyCreation": {
@@ -1189,9 +1294,10 @@
     "backToCategories": "العودة إلى الفئات",
     "chooseStudyType": "اختر نوع الدراسة",
     "selectStudyType": "اختر كيفية إنشاء دراستك",
-    "backToStudyType": "العودة إلى نوع الدراسة",
+    "backToMethods": "Back to Methods",
     "studyDetails": "تفاصيل الدراسة",
     "provideStudyInfo": "قدم معلومات أساسية عن دراستك",
+    "backToStudyType": "العودة إلى نوع الدراسة",
     "createStudy": "إنشاء الدراسة",
     "multipleMethods": "طرق متعددة",
     "comingSoon": "قريبًا",
@@ -1317,6 +1423,10 @@
         "upcoming": "قادم"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "وصف المهمة",
+    "taskDescriptionHelper": "تقديم تعليمات مفصلة للمشاركين. قم بتضمين الهدف والسياق وأي خطوات محددة يجب عليهم اتباعها."
   },
   "manager": {
     "dashboard": {

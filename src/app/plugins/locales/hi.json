@@ -34,9 +34,19 @@
       "reset_link_sent": "हमने पासवर्ड रीसेट लिंक भेजा है",
       "no_email": "ईमेल नहीं मिला?",
       "try_again": "पुनः प्रयास करें"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "परीक्षण लोड हो रहा है",
     "continueAs": "के रूप में जारी रखें",
     "notUser": "नहीं हैं {userEmail}?",
@@ -49,6 +59,7 @@
     "title": "शीर्षक",
     "description": "विवरण",
     "cancel": "रद्द करें",
+    "proceed": "proceed",
     "confirm": "पुष्टि करें",
     "add": "जोड़ें",
     "text": "पाठ",
@@ -76,6 +87,7 @@
     "sentBy": "द्वारा भेजा गया",
     "new": "नया",
     "test": "एक अध्ययन",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "प्रति पृष्ठ आइटम:",
       "type": "प्रकार",
@@ -87,6 +99,10 @@
       "sessionDate": "सत्र तिथि",
       "participants": "प्रतिभागी",
       "created": "बनाया गया"
+    },
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
     }
   },
   "storage": {
@@ -196,12 +212,12 @@
   },
   "profile": {
     "title": "प्रोफ़ाइल",
-    "superAdmin": "सुपर व्यवस्थापक",
     "username": "उपयोगकर्ता नाम",
     "email": "ईमेल",
     "editProfile": "प्रोफ़ाइल संपादित करें",
     "account": "खाता",
     "admin": "व्यवस्थापक",
+    "superAdmin": "सुपर व्यवस्थापक",
     "security": "सुरक्षा",
     "personalInfo": "व्यक्तिगत जानकारी",
     "changePassword": "पासवर्ड बदलें",
@@ -226,7 +242,32 @@
     "passwordUppercase": "इसमें एक अपरकेस अक्षर होना चाहिए",
     "passwordSymbol": "इसमें एक प्रतीक होना चाहिए",
     "confirmPasswordRequired": "पासवर्ड की पुष्टि आवश्यक है",
-    "passwordsMatch": "पासवर्ड मेल खाने चाहिए"
+    "passwordsMatch": "पासवर्ड मेल खाने चाहिए",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "countryRequired": "Country is required",
+    "contactNumberRequired": "Contact number is required",
+    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+    "profileImageUpdatedSuccess": "Profile image updated successfully",
+    "profileImageUploadFailed": "Failed to upload profile image",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
+    "noUserSignedIn": "No user signed in",
+    "profileLoadFailed": "Failed to load profile",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
+    "passwordChangedSuccess": "Password changed successfully",
+    "passwordChangeFailed": "Failed to change password",
+    "accountDeletionFailed": "Account deletion failed",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "yourPassword": "Your Password",
+    "back": "Back",
+    "deleteForever": "Delete Forever"
   },
   "titles": {
     "manager": "प्रबंधक",
@@ -260,6 +301,9 @@
     "reports": "देखें कि आपके मूल्यांकक कैसे प्रदर्शन कर रहे हैं।",
     "answers": "देखें कि आपके मूल्यांकक आपकी परियोजना का मूल्यांकन कैसे कर रहे हैं।",
     "analytics": "अपने मूल्यांककों की टिप्पणियों और उत्तरों का विश्लेषण करें।",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "अपने परीक्षण में अतिरिक्त डेटा जोड़ें।",
     "intro": {
       "reports": "अपने मूल्यांककों की प्रगति और उत्तर देने की स्थिति को ट्रैक करें जब वे आपके परीक्षण को पूरा करते हैं।",
@@ -343,10 +387,67 @@
     "time": "समय",
     "status": {
       "active": "सक्रिय",
-      "recruiting": "भर्ती जारी",
-      "paused": "रोका गया",
-      "finished": "पूर्ण",
+      "recruiting": "भर्ती",
+      "paused": "रुका हुआ",
+      "finished": "समाप्त",
       "unknown": "अज्ञात"
+    },
+    "cards": {
+      "recentActivity": "हाल की गतिविधि",
+      "activities7Days": "गतिविधियाँ (कुल 7 दिन)",
+      "lastActivity": "अंतिम गतिविधि",
+      "noActivity": "कोई गतिविधि नहीं",
+      "edit": "संपादित करें",
+      "heuristics": "हीयुरिस्टिक्स",
+      "questions": "प्रश्न",
+      "totalOptions": "कुल विकल्प",
+      "qualitative": "गुणात्मक",
+      "quantitative": "मात्रात्मक",
+      "weights": "वज़न",
+      "on": "चालू",
+      "off": "बंद",
+      "cooperators": "सहयोगी",
+      "totalInvited": "कुल आमंत्रित",
+      "accepted": "स्वीकार किया गया",
+      "pending": "लंबित",
+      "storage": "संग्रहण",
+      "currentStorage": "संग्रहण (वर्तमान)",
+      "limitAvailable": "उपलब्ध सीमा",
+      "results": "परिणाम",
+      "generalUsability": "सामान्य उपयोगिता",
+      "finalReport": "अंतिम रिपोर्ट",
+      "generatePDF": "PDF जेनरेट करें",
+      "download": "डाउनलोड करें",
+      "generated": "जेनरेट किया गया:",
+      "generateReport": "रिपोर्ट जेनरेट करें",
+      "reportAvailable": "रिपोर्ट उपलब्ध",
+      "noReport": "कोई रिपोर्ट जेनरेट नहीं हुई",
+      "readyForDownload": "अंतिम रिपोर्ट डाउनलोड के लिए तैयार",
+      "waitingForParticipants": "प्रतिभागियों की प्रतीक्षा है",
+      "evaluationsCompleted": "मूल्यांकन पूर्ण",
+      "readyToGenerate": "रिपोर्ट जेनरेट करने के लिए तैयार",
+      "excellentUsability": "उत्कृष्ट उपयोगिता",
+      "acceptableUsability": "स्वीकार्य उपयोगिता",
+      "needsImprovement": "सुधार की आवश्यकता है",
+      "basedOn": "आधारित",
+      "evaluations": "मूल्यांकन",
+      "evaluationUpdated": "मूल्यांकन अपडेट किया गया",
+      "updatedProgress": "अपनी प्रगति अपडेट की",
+      "invitationSentTitle": "आमंत्रण भेजा गया",
+      "invitationPendingDesc": "के लिए आमंत्रण लंबित है",
+      "pendingStatus": "लंबित"
+    },
+    "managerView": {
+      "heuristicStudy": "हीयुरिस्टिक अध्ययन",
+      "freePlan": "मुफ़्त योजना",
+      "generalStatistics": "सामान्य सांख्यिकी",
+      "modules": "मॉड्यूल"
+    },
+    "stats": {
+      "participants": "प्रतिभागी",
+      "completion": "पूर्णता",
+      "daysActive": "सक्रिय दिन",
+      "heuristics": "हीयुरिस्टिक्स"
     }
   },
   "HeuristicsTable": {
@@ -378,7 +479,9 @@
       "Questions": "प्रश्न",
       "noQuestions": "कोई प्रश्न नहीं",
       "noDescriptions": "कोई विवरण नहीं",
-      "loading": "लोड हो रहा है..."
+      "loading": "लोड हो रहा है...",
+      "questionsCount": "{count} प्रश्न | {count} प्रश्न",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "हीयुरिस्टिक का शीर्षक",
@@ -396,7 +499,8 @@
       "changeWeights": "ध्यान दें: हीयुरिस्टिक्स का क्रम बदलने पर वज़न स्वतः नहीं बदलेगा; आपको उन्हें मैन्युअल रूप से समायोजित करना होगा।",
       "noDescriptions": "कोई विवरण उपलब्ध नहीं है",
       "startAddingQuestions": "इस हीयुरिस्टिक में अपना पहला प्रश्न जोड़कर शुरू करें",
-      "cantDeleteAllQuestions": "क्षमा करें, आप एक हीयुरिस्टिक से सभी प्रश्न नहीं हटा सकते"
+      "cantDeleteAllQuestions": "क्षमा करें, आप एक हीयुरिस्टिक से सभी प्रश्न नहीं हटा सकते",
+      "studyHasAnswers": "इस अध्ययन में उत्तर हैं"
     },
     "validation": {
       "nameRequired": "नाम अनिवार्य है",
@@ -420,9 +524,12 @@
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "विकल्प",
-      "noOptions": "कोई विकल्प नहीं"
+      "noOptions": "कोई विकल्प नहीं",
+      "optionsCount": "{count} विकल्प | {count} विकल्प"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "अपने हीयुरिस्टिक्स सवालों के लिए विकल्प जोड़ना शुरू करें"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -431,27 +538,59 @@
       "weights": "वज़न",
       "heuristics": "हीयुरिस्टिक्स"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "वज़न निर्धारित करने के लिए कम से कम 2 हीयुरिस्टिक्स की आवश्यकता है"
-    },
     "actions": {
       "saveWeights": "वज़न मान सहेजें"
+    },
+    "importance": {
+      "equal": "समान महत्व",
+      "moderately": "मध्यम महत्व",
+      "strongly": "मजबूत महत्व",
+      "veryStrongly": "बहुत मजबूत महत्व",
+      "extreme": "अत्यधिक महत्व",
+      "modLess": "मध्यम कम महत्वपूर्ण",
+      "strongLess": "मजबूत कम महत्वपूर्ण",
+      "veryStrongLess": "बहुत मजबूत कम महत्वपूर्ण",
+      "extremeLess": "अत्यधिक कम महत्वपूर्ण"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "वज़न निर्धारित करने के लिए कम से कम 2 हीयुरिस्टिक्स की आवश्यकता है",
+      "comparisonTooltip": "H{h1} का H{h2} की तुलना में {importance} है",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "सेटिंग्स"
+      "settings": "सेटिंग्स",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "स्वीकार करने पर, आपके सभी वर्तमान हीयुरिस्टिक्स .csv फ़ाइल में दिए गए हीयुरिस्टिक्स से बदल दिए जाएंगे।",
-      "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक चुनें।"
+      "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक चुनें।",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "यहां अपनी परीक्षण CSV फ़ाइल आयात करें।"
     },
     "actions": {
-      "downloadCsvTemplate": "CSV टेम्पलेट डाउनलोड करें",
-      "update": "अपडेट करें"
+      "update": "अपडेट करें",
+      "downloadCsvTemplate": "CSV टेम्पलेट डाउनलोड करें"
+    },
+    "errors": {
+      "maxChars": "अधिकतम 250 वर्णों की सीमा तक पहुँच गए"
+    },
+    "placeholders": {
+      "valueEx": "उदाहरण: 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -472,6 +611,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "परीक्षण संपादित करें",
+      "description": "अपने परीक्षण की सेटिंग्स और प्राथमिकताओं को कस्टमाइज़ करें",
       "heuristics": "हीयुरिस्टिक्स",
       "options": "विकल्प",
       "weights": "वज़न",
@@ -688,6 +829,15 @@
       "audioRecording": "ऑडियो रिकॉर्डिंग",
       "eyeTracking": "आई ट्रैकिंग",
       "recordingNote": "किसी भी रिकॉर्डिंग के शुरू होने से पहले आपको सूचित किया जाएगा। सभी डेटा केवल अनुसंधान उद्देश्यों के लिए एकत्रित किए जाते हैं और गोपनीयता दिशानिर्देशों के अनुसार संभाले जाते हैं।"
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -706,25 +856,6 @@
     "goHome": "होम पर जाएँ"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "कोई सक्रिय सत्र नहीं मिला",
-      "selectRange": "रेंज चुनें",
-      "reset": "रीसेट करें",
-      "searchPlaceholder": "अध्ययन खोजें...",
-      "filters": {
-        "allStudies": "सभी अध्ययन",
-        "myStudies": "मेरे अध्ययन",
-        "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
-        "allStatuses": "सभी स्थितियाँ",
-        "today": "आज",
-        "upcoming": "आने वाले",
-        "completed": "पूर्ण"
-      },
-      "ownership": "स्वामित्व",
-      "evaluator": "मूल्यांकनकर्ता",
-      "sessionDate": "सत्र तिथि",
-      "statusLabel": "स्थिति"
-    },
     "intros": {
       "click": "यहाँ क्लिक करें!",
       "learnMore": "और जानें",
@@ -934,8 +1065,8 @@
     "profile": "प्रोफ़ाइल",
     "returnToConsole": "कंसोल पर लौटें",
     "tip": "टिप",
-    "create": "बनाएं",
     "cancel": "रद्द करें",
+    "create": "बनाएं",
     "close": "बंद करें",
     "save": "सहेजें",
     "stay": "रहें",
@@ -960,7 +1091,8 @@
     "eyeTracker": "नेत्र ट्रैकर",
     "audioRecord": "ऑडियो रिकॉर्ड",
     "postForm": "पोस्ट-फॉर्म",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "सहमति पत्र",
@@ -1130,25 +1262,27 @@
     "all": "सभी",
     "question": "प्रश्न {number}",
     "comingSoon": "जल्द ही आ रहा है",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "सामान्य विश्लेषण",
     "individualAnalytics": "व्यक्तिगत विश्लेषण",
-    "summary": "सारांश",
-    "completed": "पूर्ण",
-    "timeTaken": "लिया गया समय",
-    "yes": "हाँ",
-    "invited": "आमंत्रित",
-    "answers": "उत्तर",
-    "overallAnalyticsDescription": "अपने अध्ययन का समग्र विश्लेषण देखें",
     "susAnalytics": "SUS विश्लेषण",
     "nasaTlxAnalytics": "NASA-TLX विश्लेषण",
     "eyeTrackingAnalytics": "आई-ट्रैकिंग विश्लेषण",
     "transcriptions": "प्रतिलेख",
-    "notCompleted": "पूरा नहीं हुआ",
-    "tasks": "कार्य",
-    "total": "कुल",
+    "overallAnalyticsDescription": "अपने अध्ययन का समग्र विश्लेषण देखें",
     "user": "उपयोगकर्ता",
+    "summary": "सारांश",
     "invite": "आमंत्रित करें",
     "actions": "क्रियाएँ",
+    "completed": "पूर्ण",
+    "notCompleted": "पूरा नहीं हुआ",
+    "timeTaken": "लिया गया समय",
+    "tasks": "कार्य",
+    "total": "कुल",
+    "yes": "हाँ",
+    "invited": "आमंत्रित",
+    "answers": "उत्तर",
     "no": "नहीं"
   },
   "studyCreation": {
@@ -1289,6 +1423,10 @@
         "upcoming": "आगामी"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "कार्य विवरण",
+    "taskDescriptionHelper": "प्रतिभागियों के लिए विस्तृत निर्देश प्रदान करें। इसमें लक्ष्य, संदर्भ और उनके द्वारा पालन किए जाने वाले किसी भी विशिष्ट चरण को शामिल करें।"
   },
   "manager": {
     "dashboard": {

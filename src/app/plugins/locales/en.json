@@ -99,6 +99,10 @@
       "sessionDate": "Session Date",
       "participants": "Participants",
       "created": "Created"
+    },
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
     }
   },
   "storage": {
@@ -475,7 +479,9 @@
       "Questions": "Questions",
       "noQuestions": "No Questions",
       "noDescriptions": "No Descriptions",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "questionsCount": "{count} Question | {count} Questions",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -493,7 +499,8 @@
       "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
       "noDescriptions": "No descriptions available",
       "startAddingQuestions": "Start by adding your first question to this heuristic",
-      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic"
+      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -517,7 +524,8 @@
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "Options",
-      "noOptions": "No Options"
+      "noOptions": "No Options",
+      "optionsCount": "{count} option | {count} options"
     },
     "messages": {
       "startAddingOptions": "Start adding options to your heuristic questions"
@@ -530,11 +538,27 @@
       "weights": "Weights",
       "heuristics": "Heuristics"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "Need at least 2 heuristics to be able to place the weights."
-    },
     "actions": {
       "saveWeights": "save weight values"
+    },
+    "importance": {
+      "equal": "Equal Importance",
+      "moderately": "Moderately Importance",
+      "strongly": "Strongly Importance",
+      "veryStrongly": "Very Strongly Importance",
+      "extreme": "Extreme Importance",
+      "modLess": "Moderately Less Important",
+      "strongLess": "Strongly Less Important",
+      "veryStrongLess": "Very Strongly Less Important",
+      "extremeLess": "Extremely Less Important"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Need at least 2 heuristics to be able to place the weights.",
+      "comparisonTooltip": "H{h1} has {importance} than H{h2}",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
@@ -544,14 +568,29 @@
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
     },
     "actions": {
-      "downloadCsvTemplate": "Download CSV template",
-      "update": "Update"
+      "update": "Update",
+      "downloadCsvTemplate": "Download CSV Template"
+    },
+    "errors": {
+      "maxChars": "Maximum 250 characters reached"
+    },
+    "placeholders": {
+      "valueEx": "Ex. 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -572,6 +611,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "Edit Test",
+      "description": "Customize the settings and preferences of your test",
       "heuristics": "Heuristics",
       "options": "Options",
       "weights": "Weights",
@@ -815,25 +856,6 @@
     "goHome": "Go to Home"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "No active session found",
-      "selectRange": "Select range",
-      "reset": "Reset",
-      "searchPlaceholder": "Search studies...",
-      "filters": {
-        "allStudies": "All Studies",
-        "myStudies": "My Studies",
-        "whereICollaborate": "Where I Collaborate",
-        "allStatuses": "All Statuses",
-        "today": "Today",
-        "upcoming": "Upcoming",
-        "completed": "Completed"
-      },
-      "ownership": "Ownership",
-      "evaluator": "Evaluator",
-      "sessionDate": "Session Date",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Click here!",
       "learnMore": "Learn More",

@@ -34,6 +34,15 @@
       "reset_link_sent": "Enviamos um link para redefinir a senha para",
       "no_email": "Não recebeu o e-mail?",
       "try_again": "Tente novamente"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
@@ -50,6 +59,7 @@
     "title": "Título",
     "description": "Descrição",
     "cancel": "Cancelar",
+    "proceed": "proceed",
     "confirm": "Confirmar",
     "add": "Adicionar",
     "text": "Texto",
@@ -64,6 +74,7 @@
     "noNewNotifications": "Nenhuma notificação nova",
     "unread": "Não lido",
     "inbox": "Caixa de entrada",
+    "all": "All",
     "timeAgo": {
       "years": "{count} ano | {count} anos",
       "months": "{count} mês | {count} meses",
@@ -76,6 +87,7 @@
     "sentBy": "Enviado por",
     "new": "NOVO",
     "test": "um Estudo",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "Itens por página:",
       "type": "Tipo",
@@ -87,6 +99,10 @@
       "sessionDate": "Data da sessão",
       "participants": "Participantes",
       "created": "Criado"
+    },
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
     }
   },
   "storage": {
@@ -196,12 +212,12 @@
   },
   "profile": {
     "title": "Perfil",
-    "superAdmin": "Super Administrador",
     "username": "Nome de usuário",
     "email": "E-mail",
     "editProfile": "Editar perfil",
     "account": "Conta",
     "admin": "Administrador",
+    "superAdmin": "Super Administrador",
     "security": "Segurança",
     "personalInfo": "Informações pessoais",
     "changePassword": "Alterar senha",
@@ -234,10 +250,17 @@
     "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
     "profileImageUpdatedSuccess": "Imagem de perfil atualizada com sucesso",
     "profileImageUploadFailed": "Falha ao enviar imagem de perfil",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "Nenhum usuário conectado",
     "profileLoadFailed": "Falha ao carregar perfil",
     "profileUpdatedSuccess": "Perfil atualizado com sucesso",
     "profileUpdateFailed": "Falha ao atualizar perfil",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "Senha alterada com sucesso",
     "passwordChangeFailed": "Falha ao alterar senha",
     "accountDeletionFailed": "Falha ao excluir conta",
@@ -278,6 +301,9 @@
     "reports": "Veja como os seus avaliadores estão se saindo.",
     "answers": "Veja como os seus avaliadores estão avaliando o seu projeto.",
     "analytics": "Analise os comentários e respostas dos seus avaliadores.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Adicione dados adicionais ao seu teste.",
     "intro": {
       "reports": "Acompanhe o progresso e o status das respostas dos seus avaliadores enquanto eles concluem o seu teste.",
@@ -363,40 +389,99 @@
       "active": "Ativo",
       "recruiting": "Recrutando",
       "paused": "Pausado",
-      "finished": "Finalizado",
+      "finished": "Concluído",
       "unknown": "Desconhecido"
+    },
+    "cards": {
+      "recentActivity": "Atividade recente",
+      "activities7Days": "Atividades (total de 7 dias)",
+      "lastActivity": "Última atividade",
+      "noActivity": "Nenhuma atividade",
+      "edit": "Editar",
+      "heuristics": "Heurísticas",
+      "questions": "Perguntas",
+      "totalOptions": "Total de Opções",
+      "qualitative": "Qualitativo",
+      "quantitative": "Quantitativo",
+      "weights": "Pesos",
+      "on": "LIGADO",
+      "off": "DESLIGADO",
+      "cooperators": "Colaboradores",
+      "totalInvited": "Total de convidados",
+      "accepted": "Aceito",
+      "pending": "Pendente",
+      "storage": "Armazenamento",
+      "currentStorage": "Armazenamento (atual)",
+      "limitAvailable": "Limite disponível",
+      "results": "Resultados",
+      "generalUsability": "Usabilidade Geral",
+      "finalReport": "Relatório Final",
+      "generatePDF": "Gerar PDF",
+      "download": "Baixar",
+      "generated": "Gerado:",
+      "generateReport": "Gerar Relatório",
+      "reportAvailable": "Relatório Disponível",
+      "noReport": "Nenhum Relatório Gerado",
+      "readyForDownload": "Relatório final pronto para baixar",
+      "waitingForParticipants": "Aguardando participantes",
+      "evaluationsCompleted": "avaliações concluídas",
+      "readyToGenerate": "Pronto para gerar relatório",
+      "excellentUsability": "Excelente Usabilidade",
+      "acceptableUsability": "Usabilidade Aceitável",
+      "needsImprovement": "Precisa de Melhorias",
+      "basedOn": "Baseado em",
+      "evaluations": "avaliações",
+      "evaluationUpdated": "Avaliação atualizada",
+      "updatedProgress": "atualizou seu progresso",
+      "invitationSentTitle": "Convite enviado",
+      "invitationPendingDesc": "Convite pendente para",
+      "pendingStatus": "Pendente"
+    },
+    "managerView": {
+      "heuristicStudy": "Estudo Heurístico",
+      "freePlan": "Plano Gratuito",
+      "generalStatistics": "Estatísticas Gerais",
+      "modules": "Módulos"
+    },
+    "stats": {
+      "participants": "Participantes",
+      "completion": "Conclusão",
+      "daysActive": "Dias ativos",
+      "heuristics": "Heurísticas"
     }
   },
   "HeuristicsTable": {
     "titles": {
-      "editHeuristic": "Editar Heurística",
-      "editQuestion": "Editar Pergunta",
-      "newQuestion": "Nova Pergunta",
-      "creatingHeuristic": "Criando uma heurística",
-      "currentHeuristics": "Heurísticas",
-      "addNewHeuristic": "Adicionar nova heurística",
-      "searchHeuristics": "Buscar heurísticas...",
-      "noHeuristicsFound": "Nenhuma heurística encontrada",
-      "addNewQuestion": "Adicionar nova pergunta",
-      "questions": "Perguntas",
-      "descriptions": "Descrições",
-      "actions": "Ações",
-      "titles": "Título",
-      "cancel": "Cancelar",
-      "ok": "OK",
-      "add": "Adicionar",
-      "deleteHeuristic": "Excluir heurística",
-      "deleteQuestion": "Excluir pergunta",
-      "addNewDescription": "Adicionar nova descrição",
-      "addOption": "Adicionar uma nova opção",
-      "hasValue": "Tem valor",
-      "moveUp": "Mover para cima",
-      "moveDown": "Mover para baixo",
-      "Question": "Pergunta",
-      "Questions": "Perguntas",
-      "noQuestions": "Nenhuma pergunta",
-      "noDescriptions": "Nenhuma descrição",
-      "loading": "Carregando..."
+      "editHeuristic": "Edit Heuristic",
+      "editQuestion": "Edit Question",
+      "newQuestion": "New Question",
+      "creatingHeuristic": "Creating a heuristic",
+      "currentHeuristics": "Heuristics",
+      "addNewHeuristic": "Add new heuristic",
+      "searchHeuristics": "Search heuristics...",
+      "noHeuristicsFound": "No heuristics found",
+      "addNewQuestion": "Add new question",
+      "questions": "Questions",
+      "descriptions": "Descriptions",
+      "actions": "Actions",
+      "titles": "Title",
+      "cancel": "Cancel",
+      "ok": "Ok",
+      "add": "Add",
+      "deleteHeuristic": "Delete heuristic",
+      "deleteQuestion": "Delete question",
+      "addNewDescription": "Add a new Description",
+      "addOption": "Add a new Option",
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "Question": "Question",
+      "Questions": "Questions",
+      "noQuestions": "No Questions",
+      "noDescriptions": "No Descriptions",
+      "loading": "Loading...",
+      "questionsCount": "{count} Question | {count} Questions",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "Título da Heurística",
@@ -414,7 +499,8 @@
       "changeWeights": "Esteja ciente que, ao alterar a ordem das heurísticas, os pesos NÃO mudam automaticamente; você deve ajustá-los manualmente.",
       "noDescriptions": "Nenhuma descrição disponível",
       "startAddingQuestions": "Comece adicionando sua primeira pergunta a esta heurística",
-      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística"
+      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística",
+      "studyHasAnswers": "Este estudo tem respostas"
     },
     "validation": {
       "nameRequired": "Nome é obrigatório",
@@ -433,14 +519,19 @@
       "failedToLoadEditForm": "Falha ao carregar o formulário de edição. Por favor, tente novamente.",
       "invalidHeuristic": "Seleção de heurística inválida",
       "invalidQuestion": "Seleção de pergunta inválida"
-    }
+    },
+    "loading": "Carregando...",
+    "questionsCount": "{count} Pergunta | {count} Perguntas"
   },
   "HeuristicsOptionsTable": {
     "titles": {
       "options": "Opções",
-      "noOptions": "Nenhuma opção"
+      "noOptions": "Nenhuma opção",
+      "optionsCount": "{count} opção | {count} opções"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Comece a adicionar opções às suas perguntas de heurística"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -449,27 +540,59 @@
       "weights": "Pesos",
       "heuristics": "Heurísticas"
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para atribuir pesos."
-    },
     "actions": {
       "saveWeights": "Salvar valores de peso"
+    },
+    "importance": {
+      "equal": "Importância Igual",
+      "moderately": "Importância Moderada",
+      "strongly": "Importância Forte",
+      "veryStrongly": "Importância Muito Forte",
+      "extreme": "Importância Extrema",
+      "modLess": "Moderadamente Menos Importante",
+      "strongLess": "Fortemente Menos Importante",
+      "veryStrongLess": "Muito Menos Importante",
+      "extremeLess": "Extremamente Menos Importante"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para atribuir pesos.",
+      "comparisonTooltip": "H{h1} tem {importance} do que H{h2}",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Configurações"
+      "settings": "Configurações",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar."
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar.",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
     },
     "placeHolders": {
       "importCsv": "Importe seu arquivo CSV de teste aqui."
     },
     "actions": {
-      "downloadCsvTemplate": "Baixar modelo CSV",
-      "update": "Atualizar"
+      "update": "Atualizar",
+      "downloadCsvTemplate": "Baixar modelo CSV"
+    },
+    "errors": {
+      "maxChars": "Limite de 250 caracteres atingido"
+    },
+    "placeholders": {
+      "valueEx": "Ex: 0.5"
     }
   },
   "HeuristicsTestView": {
@@ -490,6 +613,8 @@
   },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "Editar Teste",
+      "description": "Personalize as configurações e preferências do seu teste",
       "heuristics": "Heurísticas",
       "options": "Opções",
       "weights": "Pesos",
@@ -706,6 +831,15 @@
       "audioRecording": "Áudio",
       "eyeTracking": "Rastreamento ocular",
       "recordingNote": "Você será notificado antes que qualquer gravação comece. Todos os dados são coletados apenas para fins de pesquisa e tratados de acordo com as diretrizes de privacidade."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -724,25 +858,6 @@
     "goHome": "Ir para a página inicial"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Nenhuma sessão ativa encontrada",
-      "selectRange": "Selecionar intervalo",
-      "reset": "Redefinir",
-      "searchPlaceholder": "Pesquisar estudos...",
-      "filters": {
-        "allStudies": "Todos os estudos",
-        "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde colaboro",
-        "allStatuses": "Todos os status",
-        "today": "Hoje",
-        "upcoming": "Em breve",
-        "completed": "Concluído"
-      },
-      "ownership": "Propriedade",
-      "evaluator": "Avaliador",
-      "sessionDate": "Data da sessão",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Clique aqui!",
       "learnMore": "Saiba mais",
@@ -979,6 +1094,7 @@
     "audioRecord": "Gravação de áudio",
     "postForm": "Formulário posterior",
     "nasa": "NASA-TLX",
+    "sart": "SART",
     "sus": "SUS"
   },
   "inputs": {
@@ -1149,25 +1265,27 @@
     "all": "Todos",
     "question": "Pergunta {number}",
     "comingSoon": "Em breve",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "Análise geral",
     "individualAnalytics": "Análise individual",
-    "summary": "Resumo",
-    "completed": "Concluído",
-    "timeTaken": "Tempo gasto",
-    "yes": "Sim",
-    "invited": "Convidado",
-    "answers": "Respostas",
-    "overallAnalyticsDescription": "Ver a análise geral do seu estudo",
     "susAnalytics": "Análise SUS",
     "nasaTlxAnalytics": "Análise NASA-TLX",
     "eyeTrackingAnalytics": "Análise de Rastreamento Ocular",
     "transcriptions": "Transcrições",
-    "notCompleted": "Não concluído",
-    "tasks": "Tarefas",
-    "total": "Total",
+    "overallAnalyticsDescription": "Ver a análise geral do seu estudo",
     "user": "Usuário",
+    "summary": "Resumo",
     "invite": "Convidar",
     "actions": "Ações",
+    "completed": "Concluído",
+    "notCompleted": "Não concluído",
+    "timeTaken": "Tempo gasto",
+    "tasks": "Tarefas",
+    "total": "Total",
+    "yes": "Sim",
+    "invited": "Convidado",
+    "answers": "Respostas",
     "no": "Não"
   },
   "studyCreation": {
@@ -1179,10 +1297,10 @@
     "backToCategories": "Voltar às Categorias",
     "chooseStudyType": "Escolha o Tipo de Estudo",
     "selectStudyType": "Selecione como deseja criar seu estudo",
-    "backToStudyType": "Voltar ao Tipo de Estudo",
+    "backToMethods": "Voltar aos Métodos",
     "studyDetails": "Detalhes do Estudo",
     "provideStudyInfo": "Forneça informações básicas sobre seu estudo",
-    "backToMethods": "Voltar aos Métodos",
+    "backToStudyType": "Voltar ao Tipo de Estudo",
     "createStudy": "Criar Estudo",
     "multipleMethods": "Múltiplos Métodos",
     "comingSoon": "Em Breve",
@@ -1308,6 +1426,10 @@
         "upcoming": "Próximo"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Descrição da tarefa",
+    "taskDescriptionHelper": "Forneça instruções detalhadas para os participantes. Inclua o objetivo, o contexto e quaisquer etapas específicas que eles devem seguir."
   },
   "manager": {
     "dashboard": {

@@ -306,7 +306,7 @@ const confirmUpload = async () => {
         const heuristicTest = Array.from(heuristicMap.values())
 
         if (!heuristicTest.length) {
-          errorMessage.value = 'No valid data found in CSV file'
+          errorMessage.value = t('HeuristicsSettings.messages.noValidData')
           errorVisible.value = true
           return
         }
@@ -314,7 +314,11 @@ const confirmUpload = async () => {
         store.state.Tests.Test.testStructure = heuristicTest
         await store.dispatch('updateStudy', test.value)
 
-        showSuccess(`${csvFile.value.name} uploaded`)
+        showSuccess(
+          t('HeuristicsSettings.messages.fileUploaded', {
+            fileName: csvFile.value.name,
+          }),
+        )
         csvFile.value = null
       } finally {
         loadingUpdate.value = false

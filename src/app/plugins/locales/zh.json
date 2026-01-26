@@ -34,9 +34,19 @@
       "reset_link_sent": "我们已将重置链接发送至",
       "no_email": "没有收到邮件？",
       "try_again": "再试一次"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
   "common": {
+    "hidden": "Hidden",
     "loading": "加载测试",
     "continueAs": "继续作为",
     "notUser": "不是 {userEmail}？",
@@ -49,6 +59,7 @@
     "title": "标题",
     "description": "描述",
     "cancel": "取消",
+    "proceed": "proceed",
     "confirm": "确认",
     "add": "添加",
     "text": "文本",
@@ -63,6 +74,7 @@
     "noNewNotifications": "没有新通知",
     "unread": "未读",
     "inbox": "收件箱",
+    "all": "All",
     "timeAgo": {
       "years": "{count} 年 | {count} 年",
       "months": "{count} 月 | {count} 月",
@@ -75,6 +87,7 @@
     "sentBy": "发送者",
     "new": "新",
     "test": "一项研究",
+    "actions": "Actions",
     "table": {
       "itemsPerPage": "每页项目数:",
       "type": "类型",
@@ -86,6 +99,10 @@
       "sessionDate": "会话日期",
       "participants": "参与者",
       "created": "创建时间"
+    },
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
     }
   },
   "storage": {
@@ -200,6 +217,7 @@
     "editProfile": "编辑个人资料",
     "account": "账户",
     "admin": "管理员",
+    "superAdmin": "Super Admin",
     "security": "安全",
     "personalInfo": "个人信息",
     "changePassword": "更改密码",
@@ -232,10 +250,17 @@
     "enterValidPhoneNumber": "请输入有效的电话号码（仅9-15位数字）",
     "profileImageUpdatedSuccess": "个人资料图片更新成功",
     "profileImageUploadFailed": "个人资料图片上传失败",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
     "noUserSignedIn": "未登录用户",
     "profileLoadFailed": "加载个人资料失败",
     "profileUpdatedSuccess": "个人资料更新成功",
     "profileUpdateFailed": "个人资料更新失败",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
     "passwordChangedSuccess": "密码更改成功",
     "passwordChangeFailed": "密码更改失败",
     "accountDeletionFailed": "账户删除失败",
@@ -276,6 +301,9 @@
     "reports": "查看您的评估者的表现。",
     "answers": "查看您的评估者如何评估您的项目。",
     "analytics": "分析您的评估者的评论和答案。",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "为您的测试添加额外数据。",
     "intro": {
       "reports": "跟踪您的评估者在完成测试时的进度和回答状态。",
@@ -363,6 +391,63 @@
       "paused": "已暂停",
       "finished": "已完成",
       "unknown": "未知"
+    },
+    "cards": {
+      "recentActivity": "最近活动",
+      "activities7Days": "活动 (过去7天总计)",
+      "lastActivity": "上次活动",
+      "noActivity": "暂无活动",
+      "edit": "编辑",
+      "heuristics": "启发式",
+      "questions": "问题",
+      "totalOptions": "选项总数",
+      "qualitative": "定性",
+      "quantitative": "定量",
+      "weights": "权重",
+      "on": "开启",
+      "off": "关闭",
+      "cooperators": "协作者",
+      "totalInvited": "总计邀请",
+      "accepted": "已接受",
+      "pending": "待定",
+      "storage": "存储",
+      "currentStorage": "当前存储",
+      "limitAvailable": "可用限制",
+      "results": "结果",
+      "generalUsability": "总体可用性",
+      "finalReport": "最终报告",
+      "generatePDF": "生成 PDF",
+      "download": "下载",
+      "generated": "已生成：",
+      "generateReport": "生成报告",
+      "reportAvailable": "报告可用",
+      "noReport": "尚未生成报告",
+      "readyForDownload": "最终报告已准备好下载",
+      "waitingForParticipants": "等待参与者",
+      "evaluationsCompleted": "评估已完成",
+      "readyToGenerate": "准备生成报告",
+      "excellentUsability": "优秀的可用性",
+      "acceptableUsability": "可接受的可用性",
+      "needsImprovement": "需改进",
+      "basedOn": "基于",
+      "evaluations": "评估",
+      "evaluationUpdated": "评估已更新",
+      "updatedProgress": "更新了进度",
+      "invitationSentTitle": "邀请已发送",
+      "invitationPendingDesc": "待处理的邀请：",
+      "pendingStatus": "待定"
+    },
+    "managerView": {
+      "heuristicStudy": "启发式研究",
+      "freePlan": "免费计划",
+      "generalStatistics": "一般统计",
+      "modules": "模块"
+    },
+    "stats": {
+      "participants": "参与者",
+      "completion": "完成度",
+      "daysActive": "活跃天数",
+      "heuristics": "启发式"
     }
   },
   "HeuristicsTable": {
@@ -394,7 +479,9 @@
       "Questions": "问题",
       "noQuestions": "没有问题",
       "noDescriptions": "没有描述",
-      "loading": "加载中..."
+      "loading": "加载中...",
+      "questionsCount": "{count} 个问题 | {count} 个问题",
+      "unknownHeuristic": "Unknown Heuristic"
     },
     "placeholders": {
       "titleHeuristic": "启发式标题",
@@ -412,7 +499,8 @@
       "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
       "noDescriptions": "没有可用的描述",
       "startAddingQuestions": "从此启发式添加第一个问题开始",
-      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题",
+      "studyHasAnswers": "此研究已有回答"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -428,53 +516,9 @@
     },
     "errors": {
       "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
-      "failedToLoadEditForm": "加载编辑表单失败。请重试。",
-      "invalidHeuristic": "无效的启发式选择",
-      "invalidQuestion": "无效的问题选择"
-    }
-  },
-  "HeuristicsOptionsTable": {
-    "titles": {
-      "options": "选项",
-      "noOptions": "没有选项"
-    },
-    "messages": {},
-    "placeHolders": {},
-    "actions": {}
-  },
-  "HeuristicsWeightsTable": {
-    "titles": {
-      "weights": "权重",
-      "heuristics": "启发式"
-    },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "至少需要2个启发式才能设置权重。"
-    },
-    "actions": {
-      "saveWeights": "保存权重值"
-    }
-  },
-  "HeuristicsSettings": {
-    "titles": {
-      "settings": "设置"
-    },
-    "messages": {
-      "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
-      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
-    },
-    "placeHolders": {
-      "importCsv": "在此导入您的CSV测试文件。"
-    },
-    "actions": {
-      "downloadCsvTemplate": "下载CSV模板",
-      "update": "更新"
-    }
-  },
-  "HeuristicsTestView": {
-    "messages": {
-      "submitTest": "您确定要提交此测试吗？",
-      "submitOnce": "您确定要提交您的测试吗？您只能提交一次。",
-      "noHeuristics": "此测试没有任何启发式"
+      "failedToLoadEditForm": "Failed to load edit form. Please try again.",
+      "invalidHeuristic": "Invalid heuristic selection",
+      "invalidQuestion": "Invalid question selection"
     },
     "actions": {
       "cancel": "取消",
@@ -486,8 +530,98 @@
       "startTest": "开始测试"
     }
   },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "Options",
+      "noOptions": "No Options",
+      "optionsCount": "{count} option | {count} options"
+    },
+    "messages": {
+      "startAddingOptions": "开始为您的启发式问题添加选项"
+    },
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Weights",
+      "heuristics": "Heuristics"
+    },
+    "actions": {
+      "saveWeights": "save weight values"
+    },
+    "importance": {
+      "equal": "Equal Importance",
+      "moderately": "Moderately Importance",
+      "strongly": "Strongly Importance",
+      "veryStrongly": "Very Strongly Importance",
+      "extreme": "Extreme Importance",
+      "modLess": "Moderately Less Important",
+      "strongLess": "Strongly Less Important",
+      "veryStrongLess": "Very Strongly Less Important",
+      "extremeLess": "Extremely Less Important"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Need at least 2 heuristics to be able to place the weights.",
+      "comparisonTooltip": "H{h1} has {importance} than H{h2}",
+      "weightsSaved": "Weights saved successfully"
+    },
+    "errors": {
+      "failedToSaveWeights": "Failed to save weights"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "Settings",
+      "confirmUpload": "Confirm Upload"
+    },
+    "messages": {
+      "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "invalidFileType": "Invalid file type. Please upload a .csv file.",
+      "emptyCsvFile": "Empty CSV file.",
+      "noValidData": "No valid data found in CSV file",
+      "fileUploaded": "{fileName} uploaded successfully",
+      "templateNotFound": "Template not found",
+      "unauthorizedAccess": "Unauthorized access",
+      "downloadCanceled": "Download canceled",
+      "unknownError": "An unknown error occurred",
+      "updateFailed": "Update failed"
+    },
+    "placeHolders": {
+      "importCsv": "Import your CSV testfile here."
+    },
+    "actions": {
+      "update": "Update",
+      "downloadCsvTemplate": "Download CSV Template"
+    },
+    "errors": {
+      "maxChars": "Maximum 250 characters reached"
+    },
+    "placeholders": {
+      "valueEx": "Ex. 0.5"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "Are you sure you want to submit this test?",
+      "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
+      "noHeuristics": "This test don't have any heuristic"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "save": "Save",
+      "continueAs": "Continue as {userEmail}",
+      "notMail": "Not {userEmail}?",
+      "changeAccount": "Change account",
+      "startTest": "Start Test"
+    }
+  },
   "HeuristicsEditTest": {
     "titles": {
+      "title": "编辑测试",
+      "description": "自定义测试的设置和首选项",
       "heuristics": "启发式",
       "options": "选项",
       "weights": "权重",
@@ -704,6 +838,15 @@
       "audioRecording": "音频",
       "eyeTracking": "眼动追踪",
       "recordingNote": "在任何录制开始前，您会收到通知。所有数据仅用于研究目的，并根据隐私准则处理。"
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
     }
   },
   "eyeTracking": {
@@ -722,25 +865,6 @@
     "goHome": "返回首页"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "未找到活动会话",
-      "selectRange": "选择范围",
-      "reset": "重置",
-      "searchPlaceholder": "搜索研究...",
-      "filters": {
-        "allStudies": "所有研究",
-        "myStudies": "我的研究",
-        "whereICollaborate": "我参与协作的",
-        "allStatuses": "所有状态",
-        "today": "今天",
-        "upcoming": "即将到来",
-        "completed": "已完成"
-      },
-      "ownership": "所有权",
-      "evaluator": "评估者",
-      "sessionDate": "会话日期",
-      "statusLabel": "状态"
-    },
     "intros": {
       "click": "点击这里！",
       "learnMore": "了解更多",
@@ -976,7 +1100,8 @@
     "eyeTracker": "眼动追踪",
     "audioRecord": "音频录制",
     "postForm": "后测表单",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "同意书",
@@ -988,7 +1113,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1002,12 +1131,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1063,27 +1200,6 @@
     "browseAllCategories": "浏览所有类别以找到您需要的帮助",
     "viewAllArticles": "查看所有文章",
     "videoAltText": "常见问题解答演示视频，展示解决常见问题的视觉步骤。此教学视频中没有音频内容。"
-  },
-  "PROFILE": {
-    "user": "用户",
-    "account": "账户",
-    "security": "安全",
-    "personalInfo": "个人信息",
-    "contact": "联系方式",
-    "country": "国家",
-    "editDetails": "编辑详情",
-    "typeDeleteToConfirm": "输入\"删除\"确认",
-    "pleaseTypeDeleteToConfirm": "请输入删除确认",
-    "finalStepVerifyIdentity": "最后一步：验证您的身份",
-    "enterPasswordForAccountDeletion": "输入您的密码以继续删除账户",
-    "yourPassword": "您的密码",
-    "usernameRequired": "用户名为必填项",
-    "usernameMinLength": "用户名必须至少包含3个字符",
-    "countryRequired": "国家为必填项",
-    "contactNumberRequired": "联系电话为必填项",
-    "enterValidPhoneNumber": "请输入有效的电话号码（仅9-15位数字）",
-    "email": "电子邮箱",
-    "username": "用户名"
   },
   "ModeratedTest": {
     "preTest": "前测",
@@ -1155,25 +1271,27 @@
     "all": "全部",
     "question": "问题{number}",
     "comingSoon": "即将推出",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
     "generalAnalytics": "总体分析",
     "individualAnalytics": "个人分析",
-    "summary": "摘要",
-    "completed": "已完成",
-    "timeTaken": "耗时",
-    "yes": "是",
-    "invited": "已邀请",
-    "answers": "答案",
-    "overallAnalyticsDescription": "查看您研究的整体分析",
     "susAnalytics": "SUS 分析",
     "nasaTlxAnalytics": "NASA-TLX 分析",
     "eyeTrackingAnalytics": "眼动追踪分析",
     "transcriptions": "转录",
-    "notCompleted": "未完成",
-    "tasks": "任务",
-    "total": "总计",
+    "overallAnalyticsDescription": "查看您研究的整体分析",
     "user": "用户",
+    "summary": "摘要",
     "invite": "邀请",
     "actions": "操作",
+    "completed": "已完成",
+    "notCompleted": "未完成",
+    "timeTaken": "耗时",
+    "tasks": "任务",
+    "total": "总计",
+    "yes": "是",
+    "invited": "已邀请",
+    "answers": "答案",
     "no": "否"
   },
   "studyCreation": {
@@ -1264,12 +1382,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {
@@ -1306,6 +1432,10 @@
         "upcoming": "即将开始"
       }
     }
+  },
+  "taskCreation": {
+    "taskDescription": "任务描述",
+    "taskDescriptionHelper": "为参与者提供详细说明。包括目标、背景和他们应遵循的任何具体步骤。"
   },
   "manager": {
     "dashboard": {
