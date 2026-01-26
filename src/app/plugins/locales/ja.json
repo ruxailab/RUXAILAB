@@ -95,7 +95,11 @@
       "sessionDate": "セッション日",
       "participants": "参加者",
       "created": "作成日"
-    }
+    },
+    "hidden": "非表示",
+    "proceed": "続行",
+    "all": "すべて",
+    "actions": "アクション"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -248,7 +252,33 @@
     "passwordUppercase": "大文字を1文字含める必要があります",
     "passwordSymbol": "記号を1つ含める必要があります",
     "confirmPasswordRequired": "パスワード確認は必須です",
-    "passwordsMatch": "パスワードが一致する必要があります"
+    "passwordsMatch": "パスワードが一致する必要があります",
+    "superAdmin": "スーパー管理者",
+    "usernameRequired": "ユーザー名は必須です",
+    "usernameMinLength": "ユーザー名は3文字以上である必要があります",
+    "countryRequired": "国は必須です",
+    "contactNumberRequired": "連絡先番号は必須です",
+    "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁のみ）",
+    "profileImageUpdatedSuccess": "プロフィール画像が正常に更新されました",
+    "profileImageUploadFailed": "プロフィール画像のアップロードに失敗しました",
+    "uploadProfilePicture": "プロフィール画像をアップロード",
+    "removeProfilePicture": "プロフィール画像を削除",
+    "noUserSignedIn": "ユーザーがサインインしていません",
+    "profileLoadFailed": "プロフィールの読み込みに失敗しました",
+    "profileUpdatedSuccess": "プロフィールが正常に更新されました",
+    "profileUpdateFailed": "プロフィールの更新に失敗しました",
+    "currentPassword": "現在のパスワード",
+    "currentPasswordRequired": "現在のパスワードは必須です",
+    "wrongCurrentPassword": "現在のパスワードが正しくありません",
+    "recentLoginRequired": "パスワードを変更する前に、一度ログアウトして再度ログインしてください",
+    "googleUserPasswordInfo": "Googleでサインインしました。下のボタンをクリックしてGoogleで確認し、アカウントのパスワードを設定してください。",
+    "passwordChangedSuccess": "パスワードが正常に変更されました",
+    "passwordChangeFailed": "パスワードの変更に失敗しました",
+    "accountDeletionFailed": "アカウントの削除に失敗しました",
+    "accountDeletedSuccess": "アカウントが正常に削除されました",
+    "yourPassword": "あなたのパスワード",
+    "back": "戻る",
+    "deleteForever": "完全に削除"
   },
   "titles": {
     "manager": "マネージャー",
@@ -292,7 +322,10 @@
       "start": "始めましょう！",
       "edit": "研究ニーズに合わせてタスクとヒューリスティックを作成およびカスタマイズします。",
       "finalReport": "含めたい項目を選択して、ヒューリスティック評価の最終レポートを準備します。"
-    }
+    },
+    "overallAnalyticsDescription": "テストの集計分析を表示します。",
+    "individualAnalytics": "個別分析",
+    "nasaTlxAnalytics": "NASA-TLX分析"
   },
   "errors": {
     "invalidInvitation": "無効な招待です",
@@ -396,6 +429,63 @@
       "paused": "一時停止",
       "finished": "完了",
       "unknown": "不明"
+    },
+    "cards": {
+      "recentActivity": "最近のアクティビティ",
+      "activities7Days": "アクティビティ（合計7日間）",
+      "lastActivity": "最後のアクティビティ",
+      "noActivity": "アクティビティなし",
+      "edit": "編集",
+      "heuristics": "ヒューリスティック",
+      "questions": "質問",
+      "totalOptions": "合計オプション",
+      "qualitative": "定性的",
+      "quantitative": "定量的",
+      "weights": "重み",
+      "on": "オン",
+      "off": "オフ",
+      "cooperators": "協力者",
+      "totalInvited": "招待総数",
+      "accepted": "承認済み",
+      "pending": "保留中",
+      "storage": "ストレージ",
+      "currentStorage": "ストレージ（現在）",
+      "limitAvailable": "利用可能な制限",
+      "results": "結果",
+      "generalUsability": "一般的なユーザビリティ",
+      "finalReport": "最終レポート",
+      "generatePDF": "PDFを生成",
+      "download": "ダウンロード",
+      "generated": "生成済み:",
+      "generateReport": "レポートを生成",
+      "reportAvailable": "レポート利用可能",
+      "noReport": "レポートは生成されていません",
+      "readyForDownload": "最終レポートをダウンロードする準備ができました",
+      "waitingForParticipants": "参加者を待っています",
+      "evaluationsCompleted": "評価完了",
+      "readyToGenerate": "レポートを生成する準備ができました",
+      "excellentUsability": "優れたユーザビリティ",
+      "acceptableUsability": "許容可能なユーザビリティ",
+      "needsImprovement": "改善が必要",
+      "basedOn": "基づく",
+      "evaluations": "評価",
+      "evaluationUpdated": "評価が更新されました",
+      "updatedProgress": "進捗を更新しました",
+      "invitationSentTitle": "招待が送信されました",
+      "invitationPendingDesc": "招待保留中",
+      "pendingStatus": "保留中"
+    },
+    "managerView": {
+      "heuristicStudy": "ヒューリスティック調査",
+      "freePlan": "無料プラン",
+      "generalStatistics": "一般統計",
+      "modules": "モジュール"
+    },
+    "stats": {
+      "participants": "参加者",
+      "completion": "完了",
+      "daysActive": "アクティブ日数",
+      "heuristics": "ヒューリスティック"
     }
   },
   "HeuristicsTable": {
@@ -471,7 +561,9 @@
       "options": "オプション",
       "noOptions": "オプションなし"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "ヒューリスティックな質問へのオプションの追加を開始してください"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -489,7 +581,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "設定"
+      "settings": "設定",
+      "confirmUpload": "アップロードの確認"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
@@ -721,7 +814,9 @@
       "testNotActiveMessage": "このテストは現在アクティブではありません。管理者にお問い合わせください。",
       "testConfigError": "テスト設定エラー",
       "testConfigErrorMessage": "このテストにはタスクが設定されていません。管理者にお問い合わせください。",
-      "consentDecline": "同意が得られなかったため、テストを終了しました。お時間をいただきありがとうございました。"
+      "consentDecline": "同意が得られなかったため、テストを終了しました。お時間をいただきありがとうございました。",
+      "sessionTooFar": "セッションが遠すぎます",
+      "sessionTooFarMessage": "予定されているセッションは24時間以上先です。セッション日が近づいてから戻ってきてください。"
     },
     "stepper": {
       "consent": "同意",
@@ -847,6 +942,15 @@
       "audioRecording": "音声",
       "eyeTracking": "アイトラッキング",
       "recordingNote": "いかなる記録も始まる前に通知されます。すべてのデータは研究目的のみで収集され、プライバシーガイドラインに従って扱われます。"
+    },
+    "CalibrationStep": {
+      "title": "アイトラッキングキャリブレーション",
+      "heading": "キャリブレーションを開始する前に",
+      "description": "デバイスを<strong>目の動きを記録する</strong>準備をします。これにより、テスト中に画面をどのように移動するかを理解できます。",
+      "process": "キャリブレーションには、画面に表示されるポイントを目で追うことが含まれます。明るい場所にいて、快適に座り、頭を安定させることが重要です。",
+      "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
+      "startButton": "キャリブレーションを開始",
+      "inProgress": "進行中..."
     }
   },
   "eyeTracking": {
@@ -1100,7 +1204,8 @@
     "eyeTracker": "アイトラッカー",
     "audioRecord": "音声録音",
     "postForm": "事後フォーム",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "同意フォーム",
@@ -1152,7 +1257,12 @@
     "sub-heading": "テストの名前を入力してください！",
     "test-name": "テスト名",
     "test-description": "テスト説明",
-    "test-label": "すべてのユーザーに公開するテスト"
+    "test-label": "すべてのユーザーに公開するテスト",
+    "template": {
+      "title": "テンプレートのタイトルを入力してください",
+      "description": "テンプレートの説明を入力してください",
+      "public": "テンプレートをすべてのユーザーに公開する"
+    }
   },
   "finishTest": {
     "title": "テストを終了",
@@ -1305,7 +1415,9 @@
     "user": "ユーザー",
     "invite": "招待",
     "actions": "操作",
-    "no": "いいえ"
+    "no": "いいえ",
+    "downloadResume": "履歴書PDFをダウンロード",
+    "sartAnalytics": "SART分析"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "評価カテゴリを選択",
