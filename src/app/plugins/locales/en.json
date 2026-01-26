@@ -207,8 +207,23 @@
     "sessions": "Sessions",
     "templates": "Templates",
     "storage": "Storage",
+    "community": "Community",
     "communityStudies": "Community Studies",
-    "communityTemplates": "Community Templates"
+    "communityTemplates": "Community Templates",
+    "visibility": "Visibility",
+    "public": "Public",
+    "private": "Private",
+    "allVisibility": "All Visibility",
+    "subtitles": {
+      "manageStudies": "Manage your research studies",
+      "accessTemplates": "Access your saved templates",
+      "stayUpdated": "Stay updated with your activities and collaborations",
+      "overviewSessions": "Overview of your sessions",
+      "manageStorage": "Manage your stored media files",
+      "viewEditProfile": "View and edit your profile information",
+      "exploreCommunityStudies": "Explore studies shared by the RUXAI community",
+      "browseCommunityTemplates": "Browse templates contributed by the RUXAI community"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -368,6 +383,33 @@
     "daysLeft": "days left",
     "dayLeft": "day left",
     "studies": "Studies",
+    "studiesPage": {
+      "searchPlaceholder": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "filters": {
+        "creationDate": "Creation date",
+        "status": "Status",
+        "visibility": "Visibility",
+        "method": "Method",
+        "ownership": "Ownership",
+        "participants": "Participants",
+        "selectRange": "Select range",
+        "allStatuses": "All Statuses",
+        "allVisibility": "All Visibility",
+        "public": "Public",
+        "private": "Private",
+        "allMethods": "All Methods",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate",
+        "all": "All",
+        "lt10": "< 10 participants",
+        "btw10_50": "10 – 50 participants",
+        "gt50": "> 50 participants"
+      }
+    },
     "storage": "Storage",
     "free": "Free",
     "plan": "Plan",
@@ -760,8 +802,120 @@
       "postTest": "Post-Test",
       "eyeTrackingCalibration": "Eye tracking calibration"
     },
+    "actions": {
+      "welcomeBack": "Welcome back!",
+      "continueAs": "Continue as {userEmail}",
+      "notYou": "Not you?",
+      "changeAccount": "Change account",
+      "startTest": "Start Test"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test Already Completed",
+      "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
+      "testExpired": "Test Expired",
+      "testExpiredMessage": "This test is no longer available as it has passed its end date.",
+      "testNotActive": "Test Not Active",
+      "testNotActiveMessage": "This test is currently not active. Please contact the administrator.",
+      "testConfigError": "Test Configuration Error",
+      "testConfigErrorMessage": "This test has no tasks configured. Please contact the administrator.",
+      "consentDecline": "Test ended due to consent decline. Thank you for your time.",
+      "sessionTooFar": "Session Too Far",
+      "sessionTooFarMessage": "The scheduled session is more than 24 hours away. Please come back closer to the session date."
+    },
+    "stepper": {
+      "consent": "Consent",
+      "preTest": "Pre-test",
+      "calibration": "Calibration",
+      "tasks": "Tasks",
+      "postTest": "Post-test",
+      "completion": "Completion",
+      "taskX": "Task {num}"
+    },
+    "TaskStep": {
+      "preview": "Task Preview",
+      "recordingInfo": "This task will record the following data during your interaction:",
+      "screenRecord": "Screen Record",
+      "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
+      "camera": "Camera",
+      "cameraDesc": "Records facial expressions and reactions to understand user emotions.",
+      "audioRecord": "Audio Record",
+      "audioRecordDesc": "Captures verbal feedback and think-aloud protocols during the task.",
+      "eyeTracker": "Eye Tracker",
+      "eyeTrackerDesc": "Tracks visual attention patterns and gaze behavior during the task.",
+      "newWindow": "New Window Will Open",
+      "newWindowDesc": "When you start the task, a new window will open with the tool you need to use.",
+      "tip": "Tip",
+      "tipDesc": "You can switch between tabs or close the new window at any time. The recording will continue until you complete the task.",
+      "internalInterface": "This task will be completed within the current interface.",
+      "startTask": "Start task",
+      "description": "Task Description",
+      "needHelp": "Need Help?",
+      "needHelpDesc": "Having trouble? Get helpful guidance to complete this task.",
+      "externalTool": "External Tool",
+      "reopenDesc": "Accidentally closed the tool window? Reopen it here.",
+      "reopenTool": "Reopen Tool",
+      "answerLabel": "Answer",
+      "observationLabel": "Observation (optional)",
+      "cannotFinish": "I can not finish the task",
+      "completed": "Task completed",
+      "noQuestionnaire": "No post-task questionnaire required for this task type.",
+      "validationError": "Please answer all questions before continuing.",
+      "finishTask": "Finish task"
+    },
+    "ConsentStep": {
+      "fullName": "Full Name",
+      "nameRequired": "Name is required",
+      "acceptTerms": "I accept the consent terms",
+      "declineTerms": "I do not accept the consent terms",
+      "continue": "Continue",
+      "declinedTitle": "Consent Declined",
+      "declinedMessage1": "You have chosen not to accept the consent terms for this study.",
+      "declinedMessage2": "If you confirm this action, the test will be terminated immediately as your participation requires explicit consent to proceed. Your data will not be collected or stored.",
+      "declinedConfirm": "Are you sure you want to end the test without participating?",
+      "goBack": "Go Back",
+      "endTest": "Yes, End Test"
+    },
+    "PreTestStep": {
+      "title": "PreTest"
+    },
+    "PostTestStep": {
+      "title": "Post-Test"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Calibration completed!",
+      "waiting": "Waiting for calibration...",
+      "calibrating": "Calibrating, please wait...",
+      "notOpened": "The calibration didn't open?",
+      "clickHere": "Click here",
+      "success": "The calibration was successful!",
+      "continue": "CONTINUE TO THE TEST!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Moderator View",
+      "welcome": "Welcome to the Moderated Test Session",
+      "description": "As the moderator, you will guide the participant through the test process while observing their interactions via video call.",
+      "instructionsTitle": "Moderator Instructions",
+      "instruction1": "Start by opening the video call room",
+      "instruction2": "Observe participant interactions without interference",
+      "instruction3": "Use the step navigator to jump between test phases",
+      "instruction4": "Provide guidance only when necessary",
+      "remember": "Remember:",
+      "note": "Your role is to facilitate and observe. The participant should complete tasks independently unless they specifically request help.",
+      "startSession": "Start Moderated Session"
+    },
     "buttons": {
       "done": "Done"
+    },
+    "messages": {
+      "noTasks": "This test doesn't have any tasks.",
+      "answerSaved": "Answer saved successfully."
+    },
+    "errors": {
+      "noAnswerData": "No answer data found.",
+      "failedToSaveAnswer": "Failed to save the answer. Please try again.",
+      "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
+      "noTestData": "No Test Data",
+      "noTestDataMessage": "Test information could not be loaded. Please try again later."
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -819,25 +973,6 @@
     "goHome": "Go to Home"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "No active session found",
-      "selectRange": "Select range",
-      "reset": "Reset",
-      "searchPlaceholder": "Search studies...",
-      "filters": {
-        "allStudies": "All Studies",
-        "myStudies": "My Studies",
-        "whereICollaborate": "Where I Collaborate",
-        "allStatuses": "All Statuses",
-        "today": "Today",
-        "upcoming": "Upcoming",
-        "completed": "Completed"
-      },
-      "ownership": "Ownership",
-      "evaluator": "Evaluator",
-      "sessionDate": "Session Date",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Click here!",
       "learnMore": "Learn More",

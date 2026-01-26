@@ -182,7 +182,7 @@ import {
 // ===== Setup =====
 const store = useStore()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const search = ref('')
 
 // ===== Filter state =====
@@ -248,10 +248,28 @@ const hasActiveFilters = computed(
     ),
 )
 
+// Helper to map method IDs to i18n keys
+const getMethodKey = (methodId) => {
+  const mapping = {
+    HEURISTICS: 'heuristicEvaluation',
+    USER_UNMODERATED: 'userStudyUnmoderated',
+    USER_MODERATED: 'userStudyModerated',
+    MANUAL: 'manualAccessibility',
+    AUTOMATIC: 'automaticAccessibility',
+  }
+  return mapping[methodId] || methodId
+}
+
 // ===== Method options =====
 const methodOptions = computed(() => {
-  const options = getMethodOptions('en', METHOD_STATUSES.AVAILABLE.id)
-  return [{ value: 'all', text: 'All Methods' }, ...options]
+  const options = getMethodOptions(locale.value, METHOD_STATUSES.AVAILABLE.id)
+  return [
+    { value: 'all', text: t('Dashboard.studiesPage.filters.allMethods') },
+    ...options.map((opt) => ({
+      ...opt,
+      text: t(`common.method.${getMethodKey(opt.value)}`),
+    })),
+  ]
 })
 
 // ===== Filtered list =====
