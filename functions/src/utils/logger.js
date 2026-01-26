@@ -1,14 +1,14 @@
-import * as functions from 'firebase-functions';
+import { logger as functionsLogger } from 'firebase-functions';
 
 const logger = {
   log: (level, message, context = {}) => {
     const payload = { ...context, message, level, timestamp: new Date().toISOString() };
     if (level === 'error') {
-      functions.logger.error(payload);
+      functionsLogger.error(payload);
     } else if (level === 'warn') {
-      functions.logger.warn(payload);
+      functionsLogger.warn(payload);
     } else {
-      functions.logger.info(payload);
+      functionsLogger.info(payload);
     }
   },
   info: (message, context) => logger.log('info', message, context),
