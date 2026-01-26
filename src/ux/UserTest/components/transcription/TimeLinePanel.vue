@@ -185,7 +185,6 @@ const answerController = new AnswerController()
 
 async function transcribeSession() {
   if (!props.audioUrlEvaluator && !props.audioUrlModerator) {
-    console.warn('⚠️ No audio URLs provided for transcription.')
     return
   }
   isTranscribing.value = true
@@ -483,7 +482,7 @@ async function transcribeSession() {
     }
 
     // TODO: Add Snackbar or notification to inform user of success
-  } catch (error) {
+  } catch {
     snackbar.value = {
       visible: true,
       text: 'Error during transcription. Please try again.',
@@ -532,8 +531,7 @@ async function transcribeAudio(provider, model, audioUrl, role) {
     }))
 
     return { language: data.language, segments, transcript: data.transcript }
-  } catch (error) {
-    console.error(`❌ Error during ${role} transcription:`, error)
+  } catch {
     return []
   }
 }

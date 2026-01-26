@@ -32,7 +32,7 @@
             </v-col>
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <!--STORAGE USED BY USER -->
-              <div class="stats-value">
+              <div class="stats-value storage-text">
                 {{ formattedStorage }}
               </div>
               <div class="stats-label">{{ $t('Dashboard.storage') }}</div>
@@ -74,7 +74,9 @@
             <!-- COOPERATORS FROM STUDIES WHERE USER IS TESTADMIN -->
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <div class="stats-value">{{ totalParticipants }}/5</div>
-              <div class="stats-label">{{ $t('Dashboard.participantsLabel') }}</div>
+              <div class="stats-label">
+                {{ $t('Dashboard.participantsLabel') }}
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -137,6 +139,11 @@ const formattedStorage = computed(() => {
   font-weight: 700;
   color: rgb(var(--v-theme-on-surface));
   line-height: 1.2;
+}
+
+.storage-text {
+  font-size: 16px;
+  white-space: nowrap;
 }
 
 .stats-label {

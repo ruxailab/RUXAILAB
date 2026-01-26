@@ -29,7 +29,20 @@
       "email": "E-Mail",
       "instructions": "Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
       "reset_button": "Reset-Link senden",
-      "back_to_signin": "Zurück zur Anmeldung"
+      "back_to_signin": "Zurück zur Anmeldung",
+      "check_your_email": "Überprüfen Sie Ihre E-Mail",
+      "reset_link_sent": "Wir haben einen Link zum Zurücksetzen des Passworts gesendet an",
+      "no_email": "Keine E-Mail erhalten?",
+      "try_again": "Erneut versuchen"
+    },
+    "passwordStrength": "Passwortstärke",
+    "number": "Nummer",
+    "strength": {
+      "veryWeak": "Sehr schwach",
+      "weak": "Schwach",
+      "fair": "Mittel",
+      "good": "Gut",
+      "strong": "Stark"
     }
   },
   "common": {
@@ -86,7 +99,11 @@
       "sessionDate": "Sitzungsdatum",
       "participants": "Teilnehmer",
       "created": "Erstellt"
-    }
+    },
+    "hidden": "Versteckt",
+    "proceed": "fortfahren",
+    "all": "Alle",
+    "actions": "Aktionen"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -190,8 +207,23 @@
     "sessions": "Sitzungen",
     "templates": "Vorlagen",
     "storage": "Speicher",
+    "community": "Community",
     "communityStudies": "Community-Studien",
-    "communityTemplates": "Community-Vorlagen"
+    "communityTemplates": "Community-Vorlagen",
+    "visibility": "Sichtbarkeit",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "allVisibility": "Alle Sichtbarkeiten",
+    "subtitles": {
+      "manageStudies": "Verwalte deine Forschungsstudien",
+      "accessTemplates": "Greife auf deine gespeicherten Vorlagen zu",
+      "stayUpdated": "Bleibe über deine Aktivitäten und Kooperationen auf dem Laufenden",
+      "overviewSessions": "Übersicht über deine Sitzungen",
+      "manageStorage": "Verwalte deine gespeicherten Mediendateien",
+      "viewEditProfile": "Sieh dir deine Profilinformationen an und bearbeite diese",
+      "exploreCommunityStudies": "Erkunde Studien, die von der RUXAI-Community geteilt wurden",
+      "browseCommunityTemplates": "Durchsuche Vorlagen, die von der RUXAI-Community beigesteuert wurden"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -242,7 +274,15 @@
     "accountDeletedSuccess": "Konto erfolgreich gelöscht",
     "yourPassword": "Ihr Passwort",
     "back": "Zurück",
-    "deleteForever": "Endgültig löschen"
+    "deleteForever": "Endgültig löschen",
+    "superAdmin": "Super-Admin",
+    "uploadProfilePicture": "Profilbild hochladen",
+    "removeProfilePicture": "Profilbild entfernen",
+    "currentPassword": "Aktuelles Passwort",
+    "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
+    "wrongCurrentPassword": "Das aktuelle Passwort ist falsch",
+    "recentLoginRequired": "Bitte melden Sie sich ab und wieder an, bevor Sie Ihr Passwort ändern",
+    "googleUserPasswordInfo": "Sie haben sich mit Google angemeldet. Klicken Sie auf die Schaltfläche unten, um sich bei Google zu verifizieren und ein Passwort für Ihr Konto festzulegen."
   },
   "titles": {
     "manager": "Manager",
@@ -286,7 +326,10 @@
       "start": "Loslegen!",
       "edit": "Erstellen und passen Sie Ihre Aufgaben und Heuristiken für Ihre Forschungsbedürfnisse an.",
       "finalReport": "Bereiten Sie den Abschlussbericht für Ihre Heuristik-Evaluation vor, indem Sie die Elemente auswählen, die Sie einbeziehen möchten."
-    }
+    },
+    "overallAnalyticsDescription": "Sehen Sie sich die aggregierten Analysen für Ihren Test an.",
+    "individualAnalytics": "Individuelle Analysen",
+    "nasaTlxAnalytics": "NASA-TLX Analysen"
   },
   "errors": {
     "invalidInvitation": "Ungültige Einladung",
@@ -340,6 +383,33 @@
     "daysLeft": "Tage verbleibend",
     "dayLeft": "Tag verbleibend",
     "studies": "Studien",
+    "studiesPage": {
+      "searchPlaceholder": "Studien suchen...",
+      "reset": "Zurücksetzen",
+      "showFilters": "Filter anzeigen",
+      "hideFilters": "Filter ausblenden",
+      "filters": {
+        "creationDate": "Erstellungsdatum",
+        "status": "Status",
+        "visibility": "Sichtbarkeit",
+        "method": "Methode",
+        "ownership": "Eigentum",
+        "participants": "Teilnehmer",
+        "selectRange": "Bereich auswählen",
+        "allStatuses": "Alle Status",
+        "allVisibility": "Alle Sichtbarkeiten",
+        "public": "Öffentlich",
+        "private": "Privat",
+        "allMethods": "Alle Methoden",
+        "allStudies": "Alle Studien",
+        "myStudies": "Meine Studien",
+        "whereICollaborate": "Wo ich zusammenarbeite",
+        "all": "Alle",
+        "lt10": "< 10 Teilnehmer",
+        "btw10_50": "10 – 50 Teilnehmer",
+        "gt50": "> 50 Teilnehmer"
+      }
+    },
     "storage": "Speicher",
     "free": "Kostenlos",
     "plan": "Plan",
@@ -495,7 +565,9 @@
       "options": "Optionen",
       "noOptions": "Keine Optionen"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Beginnen Sie mit dem Hinzufügen von Optionen zu Ihren heuristischen Fragen"
+    },
     "placeHolders": {},
     "actions": {}
   },
@@ -513,7 +585,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "confirmUpload": "Upload bestätigen"
     },
     "messages": {
       "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
@@ -655,7 +728,8 @@
       "cancel_invitation": "Einladung stornieren",
       "cancel": "Abbrechen",
       "send": "Senden",
-      "select_cooperator": "Mitarbeiter auswählen"
+      "select_cooperator": "Mitarbeiter auswählen",
+      "reinvite": "Erneut einladen"
     },
     "roles": {
       "administrator": "Administrator",
@@ -723,14 +797,126 @@
   },
   "UserTestView": {
     "titles": {
-      "preTestConsent": "Vor dem Test - Einverständnis",
-      "preTestForm": "Vor dem Test - Formular",
-      "preTest": "Vor dem Test",
-      "postTest": "Nach dem Test",
+      "preTestConsent": "Vortest - Einverständnis",
+      "preTestForm": "Vortest - Formular",
+      "preTest": "Vortest",
+      "postTest": "Nachtest",
       "eyeTrackingCalibration": "Eye-Tracking-Kalibrierung"
+    },
+    "actions": {
+      "welcomeBack": "Willkommen zurück!",
+      "continueAs": "Fortfahren als {userEmail}",
+      "notYou": "Nicht Sie?",
+      "changeAccount": "Konto ändern",
+      "startTest": "Test starten"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test bereits abgeschlossen",
+      "testAlreadyCompletedMessage": "Sie haben diesen Test bereits abgeschlossen und eingereicht. Vielen Dank für Ihre Teilnahme!",
+      "testExpired": "Test abgelaufen",
+      "testExpiredMessage": "Dieser Test ist nicht mehr verfügbar, da das Enddatum überschritten wurde.",
+      "testNotActive": "Test nicht aktiv",
+      "testNotActiveMessage": "Dieser Test ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator.",
+      "testConfigError": "Test-Konfigurationsfehler",
+      "testConfigErrorMessage": "Dieser Test hat keine konfigurierten Aufgaben. Bitte kontaktieren Sie den Administrator.",
+      "consentDecline": "Test aufgrund von Ablehnung der Einverständniserklärung beendet. Vielen Dank für Ihre Zeit.",
+      "sessionTooFar": "Sitzung zu weit entfernt",
+      "sessionTooFarMessage": "Die geplante Sitzung liegt mehr als 24 Stunden in der Zukunft. Bitte kommen Sie näher zum Sitzungstermin zurück."
+    },
+    "stepper": {
+      "consent": "Einverständnis",
+      "preTest": "Vortest",
+      "calibration": "Kalibrierung",
+      "tasks": "Aufgaben",
+      "postTest": "Nachtest",
+      "completion": "Abschluss",
+      "taskX": "Aufgabe {num}"
+    },
+    "TaskStep": {
+      "preview": "Aufgabenvorschau",
+      "recordingInfo": "Diese Aufgabe wird die folgenden Daten während Ihrer Interaktion aufzeichnen:",
+      "screenRecord": "Bildschirmaufnahme",
+      "screenRecordDesc": "Erfasst Klicks, Scrollen und Interaktionen zur Analyse des Benutzerverhaltens.",
+      "camera": "Kamera",
+      "cameraDesc": "Zeichnet Gesichtsausdrücke und Reaktionen auf, um Benutzeremotionen zu verstehen.",
+      "audioRecord": "Audioaufnahme",
+      "audioRecordDesc": "Erfasst verbales Feedback und Think-Aloud-Protokolle während der Aufgabe.",
+      "eyeTracker": "Eye-Tracker",
+      "eyeTrackerDesc": "Verfolgt visuelle Aufmerksamkeitstester und Blickverhalten während der Aufgabe.",
+      "newWindow": "Neues Fenster wird geöffnet",
+      "newWindowDesc": "Wenn Sie die Aufgabe starten, wird ein neues Fenster mit dem Tool geöffnet, das Sie verwenden müssen.",
+      "tip": "Tipp",
+      "tipDesc": "Sie können jederzeit zwischen den Tabs wechseln oder das neue Fenster schließen. Die Aufzeichnung wird fortgesetzt, bis Sie die Aufgabe abschließen.",
+      "internalInterface": "Diese Aufgabe wird innerhalb der aktuellen Benutzeroberfläche abgeschlossen.",
+      "startTask": "Aufgabe starten",
+      "description": "Aufgabenbeschreibung",
+      "needHelp": "Brauchen Sie Hilfe?",
+      "needHelpDesc": "Haben Sie Probleme? Erhalten Sie hilfreiche Anleitungen zum Abschluss dieser Aufgabe.",
+      "externalTool": "Externes Tool",
+      "reopenDesc": "Fenster versehentlich geschlossen? Hier wieder öffnen.",
+      "reopenTool": "Tool wieder öffnen",
+      "answerLabel": "Antwort",
+      "observationLabel": "Beobachtung (optional)",
+      "cannotFinish": "Ich kann die Aufgabe nicht beenden",
+      "completed": "Aufgabe abgeschlossen",
+      "noQuestionnaire": "Kein Nachtest-Fragebogen für diesen Aufgabentyp erforderlich.",
+      "validationError": "Bitte beantworten Sie alle Fragen, bevor Sie fortfahren.",
+      "finishTask": "Aufgabe beenden"
+    },
+    "ConsentStep": {
+      "fullName": "Vollständiger Name",
+      "nameRequired": "Name ist erforderlich",
+      "acceptTerms": "Ich akzeptiere die Einverständniserklärung",
+      "declineTerms": "Ich akzeptiere die Einverständniserklärung nicht",
+      "continue": "Weiter",
+      "declinedTitle": "Einverständnis abgelehnt",
+      "declinedMessage1": "Sie haben sich entschieden, die Einverständniserklärung für diese Studie nicht zu akzeptieren.",
+      "declinedMessage2": "Wenn Sie diese Aktion bestätigen, wird der Test sofort beendet, da Ihre Teilnahme eine ausdrückliche Zustimmung erfordert. Ihre Daten werden nicht gesammelt oder gespeichert.",
+      "declinedConfirm": "Sind Sie sicher, dass Sie den Test beenden möchten, ohne teilzunehmen?",
+      "goBack": "Zurück",
+      "endTest": "Ja, Test beenden"
+    },
+    "PreTestStep": {
+      "title": "Vortest"
+    },
+    "PostTestStep": {
+      "title": "Nachtest"
     },
     "buttons": {
       "done": "Fertig"
+    },
+    "messages": {
+      "noTasks": "Dieser Test hat keine Aufgaben.",
+      "answerSaved": "Antwort erfolgreich gespeichert."
+    },
+    "errors": {
+      "noAnswerData": "Keine Antwortdaten gefunden.",
+      "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
+      "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut.",
+      "noTestData": "Keine Testdaten",
+      "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Kalibrierung abgeschlossen!",
+      "waiting": "Warten auf Kalibrierung...",
+      "calibrating": "Kalibrierung läuft, bitte warten...",
+      "notOpened": "Die Kalibrierung wurde nicht geöffnet?",
+      "clickHere": "Hier klicken",
+      "success": "Die Kalibrierung war erfolgreich!",
+      "continue": "WEITER ZUM TEST!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Moderatorenansicht",
+      "welcome": "Willkommen zur moderierten Testsitzung",
+      "description": "Als Moderator führen Sie den Teilnehmer durch den Testprozess und beobachten seine Interaktionen per Videoanruf.",
+      "instructionsTitle": "Moderatorenanweisungen",
+      "instruction1": "Beginnen Sie mit dem Öffnen des Videoanrufraums",
+      "instruction2": "Beobachten Sie die Interaktionen der Teilnehmer ohne Einmischung",
+      "instruction3": "Verwenden Sie den Schritt-Navigator, um zwischen den Testphasen zu springen",
+      "instruction4": "Geben Sie nur bei Bedarf Hilfestellung",
+      "remember": "Denken Sie daran:",
+      "note": "Ihre Rolle besteht darin, zu fördern und zu beobachten. Der Teilnehmer sollte die Aufgaben selbstständig erledigen, es sei denn, er bittet ausdrücklich um Hilfe.",
+      "startSession": "Moderierte Sitzung starten"
     },
     "WelcomeStep": {
       "welcome": "Willkommen bei RUXAILAB!",
@@ -761,6 +947,15 @@
       "audioRecording": "Audio",
       "eyeTracking": "Eye-Tracking",
       "recordingNote": "Sie werden vor Beginn jeder Aufzeichnung benachrichtigt. Alle Daten werden ausschließlich für Forschungszwecke gesammelt und gemäß den Datenschutzrichtlinien behandelt."
+    },
+    "CalibrationStep": {
+      "title": "Eye-Tracking-Kalibrierung",
+      "heading": "Vor Beginn der Kalibrierung",
+      "description": "Wir werden Ihr Gerät vorbereiten, um <strong>Ihre Augenbewegungen aufzuzeichnen</strong>. Dies ermöglicht uns zu verstehen, wie Sie während des Tests auf dem Bildschirm navigieren.",
+      "process": "Die Kalibrierung beinhaltet das Verfolgen von Punkten, die auf dem Bildschirm erscheinen, mit Ihren Augen. Es ist wichtig, dass Sie sich an einem gut beleuchteten Ort befinden, bequem sitzen und Ihren Kopf ruhig halten.",
+      "instruction": "Wenn Sie bereit sind, drücken Sie die Taste, um die Kalibrierung zu starten.",
+      "startButton": "Kalibrierung starten",
+      "inProgress": "In Bearbeitung..."
     }
   },
   "eyeTracking": {
@@ -779,25 +974,6 @@
     "goHome": "Zur Startseite"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Keine aktive Sitzung gefunden",
-      "selectRange": "Bereich auswählen",
-      "reset": "Zurücksetzen",
-      "searchPlaceholder": "Studien suchen...",
-      "filters": {
-        "allStudies": "Alle Studien",
-        "myStudies": "Meine Studien",
-        "whereICollaborate": "Wo ich zusammenarbeite",
-        "allStatuses": "Alle Status",
-        "today": "Heute",
-        "upcoming": "Bevorstehend",
-        "completed": "Abgeschlossen"
-      },
-      "ownership": "Eigentum",
-      "evaluator": "Bewerter",
-      "sessionDate": "Sitzungsdatum",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Hier klicken!",
       "learnMore": "Mehr erfahren",
@@ -1033,7 +1209,8 @@
     "eyeTracker": "Eye-Tracker",
     "audioRecord": "Audioaufnahme",
     "postForm": "Nachtest-Formular",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Einverständniserklärung",
@@ -1243,7 +1420,9 @@
     "user": "Benutzer",
     "invite": "Einladen",
     "actions": "Aktionen",
-    "no": "Nein"
+    "no": "Nein",
+    "downloadResume": "Lebenslauf PDF herunterladen",
+    "sartAnalytics": "SART Analysen"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Evaluationskategorie wählen",
@@ -1447,5 +1626,9 @@
       "analyticsData": "Analysedaten",
       "manageStorage": "Speicher Verwalten"
     }
+  },
+  "taskCreation": {
+    "taskDescription": "Aufgabenbeschreibung",
+    "taskDescriptionHelper": "Geben Sie spezifische Schritte an, die sie befolgen sollen."
   }
 }

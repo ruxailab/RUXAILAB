@@ -37,7 +37,6 @@
                 v-if="run.id === latestTranscriptionId"
                 size="x-small"
                 color="success"
-                text-color="white"
                 >Latest</v-chip
               >
             </div>
@@ -147,8 +146,6 @@ const hasRuns = computed(
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 const transcriptionController = new TranscriptionController()
 
-import AnswerController from '@/shared/controllers/AnswerController'
-const answerController = new AnswerController()
 watch(
   () => [props.answersDocId, props.userDocId, props.taskId],
   async () => {
@@ -175,8 +172,7 @@ async function fetchSelectedTaskTranscriptions() {
     transcriptionsArray.value = Array.isArray(transcriptions)
       ? transcriptions
       : []
-  } catch (error) {
-    console.error('Error fetching transcriptions:', error)
+  } catch {
     transcriptionsArray.value = [] // ✅ fallback
   } finally {
     loading.value = false
@@ -212,8 +208,7 @@ async function confirmDelete() {
     //   latestTranscriptionDocId: newLatestId,
     //   transcriptionsCount: newCount,
     // })
-  } catch (e) {
-    console.error('Failed to delete transcription:', e)
+  } catch {
   } finally {
     confirmOpen.value = false
     deletingId.value = null

@@ -27,10 +27,9 @@
                 <div class="text-body-2 text-grey-darken-1 mb-2">
                   Description:
                 </div>
-                <div 
-                  class="description-content"
-                  v-html="(task && task.taskDescription) || 'No description provided'"
-                />
+                <div class="description-content">
+                  {{ (task && task.taskDescription) || 'No description provided' }}
+                </div>
               </div>
 
               <div
@@ -221,6 +220,9 @@ const getAnswerTypeIcon = (type) => {
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket-launch-outline',
     'sus': 'mdi-chart-line',
+    'tam-1': 'mdi-chart-line',
+    'tam-2': 'mdi-chart-box',
+    'tam-3': 'mdi-chart-donut',
     'sart': 'mdi-eye-areaspline'
   };
   return icons[type] || 'mdi-help-circle-outline';
@@ -235,6 +237,9 @@ const getAnswerTypeLabel = (type) => {
     'post-form': 'External Form',
     'nasa-tlx': 'NASA-TLX',
     'sus': 'System Usability Scale',
+    'tam-1': 'TAM-1 (Basic)',
+    'tam-2': 'TAM-2 (Extended)',
+    'tam-3': 'TAM-3 (Comprehensive)',
     'sart': 'SART'
   };
   return labels[type] || 'Unknown';
@@ -243,7 +248,7 @@ const getAnswerTypeLabel = (type) => {
 const isSystemChoice = (type) => {
   if (!type) return false;
   // System choices are standardized questionnaires/scales
-  return ['nasa-tlx', 'sus', 'sart'].includes(type);
+  return ['nasa-tlx', 'sus', 'tam-1', 'tam-2', 'tam-3', 'sart'].includes(type);
 };
 
 // Always emit validation as true since this is just a preview
@@ -300,6 +305,7 @@ watch(
   padding: 12px;
   border-radius: 8px;
   border-left: 4px solid rgb(var(--v-theme-primary));
+  white-space: pre-line;
 }
 
 .preview-mockup {
