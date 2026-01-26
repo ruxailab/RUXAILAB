@@ -24,15 +24,11 @@ const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
-// Emulator connections - DISABLED because we now use Base64 storage in Firestore
-// Profile images are stored as Base64 data URLs directly in Firestore documents
-// This works on the free Firebase plan without needing Storage or emulators
-// if (process.env.VUE_APP_USE_EMULATORS === 'true') {
-//   console.log('🔧 Using Firebase Emulators')
-//   connectFirestoreEmulator(db, 'localhost', 8081)
-//   connectAuthEmulator(auth, 'http://localhost:9099')
-//   connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
-//   connectStorageEmulator(storage, 'localhost', 9199)
-// }
+if (process.env.VUE_APP_USE_EMULATORS === 'true') {
+  connectFirestoreEmulator(db, 'localhost', 8081)
+  connectAuthEmulator(auth, 'http://localhost:9099')
+  connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+  connectStorageEmulator(storage, '127.0.0.1', 9199)
+}
 
 export { auth, db, analytics, fbFunctions, storage, database }
