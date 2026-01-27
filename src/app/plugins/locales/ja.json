@@ -343,8 +343,7 @@
     "incorrectCredential": "ユーザー名またはパスワードが正しくありません。",
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。",
     "sendError": "招待の送信に失敗しました。再試行してください",
-    "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません",
-    "user-disabled": "このアカウントは無効になっています。管理者に連絡してください。"
+    "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません"
   },
   "Introduction": {
     "title": "UXリモートラボ",
