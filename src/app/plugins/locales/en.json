@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Enter text here...",
     "hidden": "Hidden",
     "loading": "Loading Test",
     "continueAs": "Continue as",

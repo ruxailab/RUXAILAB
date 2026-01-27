@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Text hier eingeben...",
     "loading": "Test laden",
     "continueAs": "Fortfahren als",
     "notUser": "Nicht {userEmail}?",

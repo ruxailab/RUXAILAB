@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "यहाँ टेक्स्ट दर्ज करें...",
     "loading": "परीक्षण लोड हो रहा है",
     "continueAs": "के रूप में जारी रखें",
     "notUser": "नहीं हैं {userEmail}?",

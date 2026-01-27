@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Digite o texto aqui...",
     "hidden": "Oculto",
     "loading": "Carregando teste",
     "continueAs": "Continuar como",
