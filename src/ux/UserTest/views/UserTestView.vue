@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                          ? 'primary'
-                          : 'grey'
+                            ? 'primary'
+                            : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -1002,7 +1002,10 @@ const calculateProgress = () => {
       localTestAnswer.tasks.length > 0
     ) {
       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
+        if (
+          localTestAnswer.tasks[i]?.completed ||
+          localTestAnswer.tasks[i]?.attempted
+        ) {
           tasksCompleted++
         }
       }
@@ -1265,7 +1268,9 @@ onMounted(async () => {
 
     if (data.calibrationId) {
       calibrationCompleted.value = true
-      calibrationPopup.value.close()
+      if (calibrationPopup.value) {
+        calibrationPopup.value.close()
+      }
     }
   })
 })
@@ -1354,7 +1359,8 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
