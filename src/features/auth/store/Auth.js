@@ -73,14 +73,11 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        const errorCode = err.code
-          ? `errors.${err.code.replace('auth/', '')}`
-          : 'errors.signupError'
-        const messageToShow = i18n.global.te(errorCode)
-          ? errorCode
-          : 'errors.signupError'
-        showError(messageToShow)
-        return err
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
+        throw err
       } finally {
         commit('setLoading', false)
       }
@@ -105,13 +102,7 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        const errorCode = err.code
-          ? `errors.${err.code.replace('auth/', '')}`
-          : 'errors.incorrectCredential'
-        const messageToShow = i18n.global.te(errorCode)
-          ? errorCode
-          : 'errors.incorrectCredential'
-        showError(messageToShow)
+        showError('errors.incorrectCredential')
         return err
       } finally {
         commit('setLoading', false)
