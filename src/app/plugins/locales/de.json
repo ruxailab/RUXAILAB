@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "Fehler beim Laden des Bearbeitungsformulars. Bitte versuchen Sie es erneut.",
       "invalidHeuristic": "Ungültige Heuristikauswahl",
       "invalidQuestion": "Ungültige Frageauswahl"
+    },
+    "count": {
+      "question": "Frage",
+      "questions": "Fragen"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "Beginnen Sie mit dem Hinzufügen von Optionen zu Ihren heuristischen Fragen"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "Option",
+      "options": "Optionen"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "Test bearbeiten",
+    "pageSubtitle": "Passen Sie die Einstellungen und Präferenzen Ihres Tests an",
     "titles": {
       "heuristics": "Heuristiken",
       "options": "Optionen",

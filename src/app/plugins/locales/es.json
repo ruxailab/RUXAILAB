@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "Error al cargar el formulario de edición. Por favor, inténtalo de nuevo.",
       "invalidHeuristic": "Selección de heurística no válida",
       "invalidQuestion": "Selección de pregunta no válida"
+    },
+    "count": {
+      "question": "Pregunta",
+      "questions": "Preguntas"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "Comience a agregar opciones a sus preguntas heurísticas"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "opción",
+      "options": "opciones"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "Editar prueba",
+    "pageSubtitle": "Personaliza la configuración y preferencias de tu prueba",
     "titles": {
       "heuristics": "Heurísticas",
       "options": "Opciones",

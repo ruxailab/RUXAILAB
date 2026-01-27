@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "加载编辑表单失败。请重试。",
       "invalidHeuristic": "无效的启发式选择",
       "invalidQuestion": "无效的问题选择"
+    },
+    "count": {
+      "question": "问题",
+      "questions": "问题"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "开始为您的启发式问题添加选项"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "选项",
+      "options": "选项"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "编辑测试",
+    "pageSubtitle": "自定义测试的设置和偏好",
     "titles": {
       "heuristics": "启发式",
       "options": "选项",

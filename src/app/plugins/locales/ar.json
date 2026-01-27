@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "فشل تحميل نموذج التحرير. يرجى المحاولة مرة أخرى.",
       "invalidHeuristic": "اختيار استدلال غير صالح",
       "invalidQuestion": "اختيار سؤال غير صالح"
+    },
+    "count": {
+      "question": "سؤال",
+      "questions": "أسئلة"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "ابدأ بإضافة خيارات لأسئلتك التجريبية"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "خيار",
+      "options": "خيارات"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "تحرير الاختبار",
+    "pageSubtitle": "خصص إعدادات وتفضيلات اختبارك",
     "titles": {
       "heuristics": "الاستدلالات",
       "options": "الخيارات",
