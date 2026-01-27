@@ -369,6 +369,15 @@
       "createNewStudy": "创建新研究",
       "emptyStateMessage": "您还没有任何研究。创建您的第一个研究，开始收集有价值的用户洞察。"
     },
+    "studyStatus": {
+      "finished": "已完成",
+      "expiredDaysAgo": "{days} 天前过期",
+      "endsToday": "今天结束",
+      "endsTodayStarted": "今天结束 · 已开始",
+      "readyToSubmit": "准备提交",
+      "endsTodayReady": "今天结束 · 准备提交",
+      "notStarted": "未开始"
+    },
     "activeStudiesOverview": "活跃研究概览",
     "viewAll": "查看全部",
     "showMore": "显示更多",
@@ -1217,11 +1226,7 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": [
-        "可用性百分比",
-        "最终报告PDF",
-        "邀请专家评估您的应用程序"
-      ]
+      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1235,20 +1240,12 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": [
-          "在空闲时间回答",
-          "增强的答案分析",
-          "任务自定义"
-        ]
+        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": [
-          "摄像头、音频和屏幕录制",
-          "增强的答案分析",
-          "有主持的实时测试"
-        ]
+        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
       }
     }
   },
@@ -1507,20 +1504,12 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": [
-          "完全可定制",
-          "从头构建",
-          "对设置的完全控制"
-        ]
+        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": [
-          "快速设置",
-          "预配置设置",
-          "包含最佳实践"
-        ]
+        "features": ["快速设置", "预配置设置", "包含最佳实践"]
       }
     },
     "details": {
