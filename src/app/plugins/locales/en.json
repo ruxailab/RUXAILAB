@@ -88,6 +88,8 @@
     "new": "NEW",
     "test": "a Study",
     "actions": "Actions",
+    "user": "User",
+    "id": "ID",
     "table": {
       "itemsPerPage": "Items per page:",
       "type": "Type",
@@ -291,6 +293,10 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "users": "Users",
+    "studies": "Studies",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -302,7 +308,10 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "name": "Name",
+      "studiesCount": "Studies Count",
+      "mediaSize": "Media Size"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -1166,7 +1175,8 @@
     "deleteHeuristic": "Are you sure delete the heuristic ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
     "genericSuccess": "Operation successful",
-    "savedChanges": "Changes saved successfully"
+    "savedChanges": "Changes saved successfully",
+    "deleteUser": "Are you sure you want to delete this user? This action cannot be undone."
   },
   "buttons": {
     "next": "Next",
