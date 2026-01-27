@@ -343,8 +343,7 @@
     "incorrectCredential": "Nom d'utilisateur ou mot de passe incorrect.",
     "globalError": "Une erreur est survenue, désolé pour le désagrément.",
     "sendError": "Échec de l'envoi de l'invitation. Veuillez réessayer",
-    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres",
-    "user-disabled": "Ce compte a été désactivé. Veuillez contacter l'administrateur."
+    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres"
   },
   "Introduction": {
     "title": "UX Remote LAB",
