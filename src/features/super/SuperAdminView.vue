@@ -269,7 +269,7 @@ const testsHeaders = computed(() => [
 
 const accessLevels = computed(() => [
   { title: t('profile.superAdmin'), level: 0 },
-  { title: t('common.user'), level: 1 },
+  { title: t('profile.admin'), level: 1 },
 ])
 
 const dialogText = computed(
