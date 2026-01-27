@@ -514,7 +514,11 @@ const usernameRules = [
 ]
 const countryRules = []
 const contactRules = [
-  (v) => !v || /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
+  (v) =>
+    !v ||
+    (typeof v === 'string' &&
+      (/^\d{9,15}$/.test(v.trim()) || v.trim().length === 0)) ||
+    t('profile.enterValidPhoneNumber'),
 ]
 const passwordRules = [
   (v) => !!v || t('profile.passwordRequired'),
