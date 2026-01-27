@@ -170,10 +170,10 @@
       "allMethods": "所有方法",
       "all": "全部",
       "heuristicEvaluation": "启发式评估",
-      "userStudyUnmoderated": "用户研究（无主持）",
-      "userStudyModerated": "用户研究（有主持）",
-      "manualAccessibility": "手动无障碍",
-      "automaticAccessibility": "自动无障碍"
+      "moderatedUserTest": "有主持用户测试",
+      "unmoderatedUserTest": "无主持用户测试",
+      "accessibilityManual": "手动无障碍评估",
+      "accessibilityAutomatic": "自动无障碍评估"
     }
   },
   "notificationsPage": {

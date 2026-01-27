@@ -170,10 +170,10 @@
       "allMethods": "Все методы",
       "all": "Все",
       "heuristicEvaluation": "Эвристическая оценка",
-      "userStudyUnmoderated": "Пользовательское исследование (Немодерируемое)",
-      "userStudyModerated": "Пользовательское исследование (Модерируемое)",
-      "manualAccessibility": "Ручная доступность",
-      "automaticAccessibility": "Автоматическая доступность"
+      "moderatedUserTest": "Модерируемый пользовательский тест",
+      "unmoderatedUserTest": "Немодерируемый пользовательский тест",
+      "accessibilityManual": "Ручная оценка доступности",
+      "accessibilityAutomatic": "Автоматическая оценка доступности"
     }
   },
   "notificationsPage": {

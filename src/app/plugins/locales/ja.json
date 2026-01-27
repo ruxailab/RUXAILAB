@@ -170,10 +170,10 @@
       "allMethods": "すべての方法",
       "all": "すべて",
       "heuristicEvaluation": "ヒューリスティック評価",
-      "userStudyUnmoderated": "ユーザー調査（非モデレート）",
-      "userStudyModerated": "ユーザー調査（モデレート）",
-      "manualAccessibility": "手動アクセシビリティ",
-      "automaticAccessibility": "自動アクセシビリティ"
+      "moderatedUserTest": "モデレートユーザーテスト",
+      "unmoderatedUserTest": "非モデレートユーザーテスト",
+      "accessibilityManual": "手動アクセシビリティ評価",
+      "accessibilityAutomatic": "自動アクセシビリティ評価"
     }
   },
   "notificationsPage": {
