@@ -600,7 +600,18 @@
     "messages": {
       "submitTest": "您确定要提交此测试吗？",
       "submitOnce": "您确定要提交您的测试吗？您只能提交一次。",
-      "noHeuristics": "此测试没有任何启发式"
+      "noHeuristics": "此测试没有任何启发式",
+      "noHeuristicsConfigured": "未配置启发式",
+      "answerSaved": "回答保存成功"
+    },
+    "unknownHeuristic": "未知启发式",
+    "unknownQuestion": "未知问题",
+    "selectAnOption": "请选择一个选项",
+    "errors": {
+      "questionNotLoaded": "无法加载问题",
+      "noAnswerData": "未找到回答数据",
+      "failedToSaveAnswer": "保存回答失败。请再试一次。",
+      "failedToSubmitAnswer": "提交回答失败。请再试一次。"
     },
     "actions": {
       "cancel": "取消",
@@ -610,6 +621,9 @@
       "notMail": "不是 {userEmail}？",
       "changeAccount": "更改账户",
       "startTest": "开始测试"
+    },
+    "headers": {
+      "heuristics": "启发式"
     }
   },
   "HeuristicsEditTest": {

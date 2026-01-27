@@ -600,7 +600,21 @@
     "messages": {
       "submitTest": "¿Estás seguro de que deseas enviar esta prueba?",
       "submitOnce": "¿Estás seguro de que deseas enviar tu prueba? Solo puedes enviarla una vez.",
-      "noHeuristics": "Esta prueba no tiene ninguna heurística"
+      "noHeuristics": "Esta prueba no tiene ninguna heurística",
+      "noHeuristicsConfigured": "Error de configuración: esta prueba no tiene heurísticas configuradas. Por favor, agregue heurísticas para continuar.",
+      "answerSaved": "Respuesta guardada con éxito"
+    },
+    "errors": {
+      "questionNotLoaded": "No se pudo cargar la pregunta",
+      "noAnswerData": "No se encontraron datos de respuesta",
+      "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtelo de nuevo.",
+      "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtelo de nuevo."
+    },
+    "unknownHeuristic": "Heurística desconocida",
+    "unknownQuestion": "Pregunta desconocida",
+    "selectAnOption": "Seleccionar una opción",
+    "headers": {
+      "heuristics": "HEURÍSTICAS"
     },
     "actions": {
       "cancel": "Cancelar",
