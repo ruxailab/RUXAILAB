@@ -4,9 +4,10 @@
       <div class="test-content pa-4 rounded-xl">
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
-          <div class="rich-text mb-4 task-description">
-            {{ task?.taskDescription || taskDescription }}
-          </div>
+          <div
+            class="rich-text mb-4 task-description"
+            v-html="task?.taskDescription || taskDescription"
+          />
 
           <!-- Task Preview Information -->
           <v-card
@@ -174,9 +175,10 @@
                       Task Description
                     </span>
                   </div>
-                  <div class="rich-text text-body-1 task-description">
-                    {{ task?.taskDescription || taskDescription }}
-                  </div>
+                  <div
+                    class="rich-text text-body-1 task-description"
+                    v-html="task?.taskDescription || taskDescription"
+                  />
                 </v-col>
 
                 <!-- Right Column: Help & Actions -->
