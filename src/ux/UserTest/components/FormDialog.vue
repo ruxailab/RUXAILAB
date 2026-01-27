@@ -30,14 +30,7 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="red-lighten-1"
-          variant="text"
-          @click="
-            $emit('update:dialog', false)
-            reset()
-          "
-        >
+        <v-btn color="red-lighten-1" variant="text" @click="closeDialog">
           {{ $t('buttons.cancel') }}
         </v-btn>
         <v-btn class="text-white bg-orange" @click="validate">
@@ -81,6 +74,11 @@ const validate = () => {
 
 const submit = (task) => {
   emit('addTask', task)
+  emit('update:dialog', false)
+  reset()
+}
+
+const closeDialog = () => {
   emit('update:dialog', false)
   reset()
 }
