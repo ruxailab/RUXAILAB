@@ -484,12 +484,19 @@ const deleteConfirmText = ref('')
 const isSmallScreen = ref(false)
 const editProfileValid = ref(false)
 
+const normalizeEmpty = (value) =>
+  value === null || value === undefined || (typeof value === 'string' && value.trim() === '')? '' : value
+
 const hasProfileChanges = computed(() => {
   return (
-    editProfileData.value.username !== userprofile.value.username ||
-    editProfileData.value.contactNo !== userprofile.value.contactNo ||
-    editProfileData.value.country !== userprofile.value.country ||
-    editProfileData.value.profileImage !== userprofile.value.profileImage
+    normalizeEmpty(editProfileData.value.username) !==
+      normalizeEmpty(userprofile.value.username) ||
+    normalizeEmpty(editProfileData.value.contactNo) !==
+      normalizeEmpty(userprofile.value.contactNo) ||
+    normalizeEmpty(editProfileData.value.country) !==
+      normalizeEmpty(userprofile.value.country) ||
+    normalizeEmpty(editProfileData.value.profileImage) !==
+      normalizeEmpty(userprofile.value.profileImage)
   )
 })
 
