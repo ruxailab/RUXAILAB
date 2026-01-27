@@ -47,8 +47,8 @@
               variant="elevated"
               size="large"
               prepend-icon="mdi-plus"
-              @click="createNewStudy"
               class="px-6"
+              @click="createNewStudy"
             >
               {{ $t('Dashboard.activeStudies.createNewStudy') }}
             </v-btn>
