@@ -170,10 +170,10 @@
       "allMethods": "सभी विधियाँ",
       "all": "सभी",
       "heuristicEvaluation": "हेयुरिस्टिक मूल्यांकन",
-      "userStudyUnmoderated": "उपयोगकर्ता अध्ययन (अनमोडरेटेड)",
-      "userStudyModerated": "उपयोगकर्ता अध्ययन (मोडरेटेड)",
-      "manualAccessibility": "मैन्युअल एक्सेसिबिलिटी",
-      "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी"
+      "moderatedUserTest": "मोडरेटेड उपयोगकर्ता परीक्षण",
+      "unmoderatedUserTest": "अनमोडरेटेड उपयोगकर्ता परीक्षण",
+      "accessibilityManual": "एक्सेसिबिलिटी मैन्युअल मूल्यांकन",
+      "accessibilityAutomatic": "एक्सेसिबिलिटी स्वचालित मूल्यांकन"
     }
   },
   "notificationsPage": {

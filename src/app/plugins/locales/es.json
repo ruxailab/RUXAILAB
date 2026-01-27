@@ -170,10 +170,10 @@
       "allMethods": "Todos los métodos",
       "all": "Todos",
       "heuristicEvaluation": "Evaluación heurística",
-      "userStudyUnmoderated": "Estudio de usuario (No moderado)",
-      "userStudyModerated": "Estudio de usuario (Moderado)",
-      "manualAccessibility": "Accesibilidad manual",
-      "automaticAccessibility": "Accesibilidad automática"
+      "moderatedUserTest": "Prueba de usuario moderada",
+      "unmoderatedUserTest": "Prueba de usuario no moderada",
+      "accessibilityManual": "Evaluación de accesibilidad manual",
+      "accessibilityAutomatic": "Evaluación de accesibilidad automática"
     }
   },
   "notificationsPage": {
