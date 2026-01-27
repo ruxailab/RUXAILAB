@@ -27,9 +27,10 @@
                 <div class="text-body-2 text-grey-darken-1 mb-2">
                   Description:
                 </div>
-                <div class="description-content">
-                  {{ (task && task.taskDescription) || 'No description provided' }}
-                </div>
+                <div 
+                  class="description-content"
+                  v-html="(task && task.taskDescription) || 'No description provided'"
+                />
               </div>
 
               <div
