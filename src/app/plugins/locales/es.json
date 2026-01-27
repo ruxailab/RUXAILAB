@@ -343,7 +343,8 @@
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
-    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título"
+    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
+    "user-disabled": "Esta cuenta ha sido deshabilitada. Por favor, póngase en contacto con el administrador."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
