@@ -369,6 +369,15 @@
       "createNewStudy": "Create New Study",
       "emptyStateMessage": "You don't have any studies yet. Create your first study to start gathering valuable user insights."
     },
+    "studyStatus": {
+      "finished": "Finished",
+      "expiredDaysAgo": "Expired {days} days ago",
+      "endsToday": "Ends today",
+      "endsTodayStarted": "Ends today · started",
+      "readyToSubmit": "Ready to submit",
+      "endsTodayReady": "Ends today · Ready",
+      "notStarted": "Not started"
+    },
     "activeStudiesOverview": "Active Studies Overview",
     "viewAll": "View All",
     "showMore": "Show more",

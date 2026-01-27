@@ -369,6 +369,15 @@
       "createNewStudy": "Criar Novo Estudo",
       "emptyStateMessage": "Você ainda não tem estudos. Crie seu primeiro estudo para começar a coletar insights valiosos dos usuários."
     },
+    "studyStatus": {
+      "finished": "Concluído",
+      "expiredDaysAgo": "Expirado há {days} dias",
+      "endsToday": "Termina hoje",
+      "endsTodayStarted": "Termina hoje · Iniciado",
+      "readyToSubmit": "Pronto para enviar",
+      "endsTodayReady": "Termina hoje · Pronto",
+      "notStarted": "Não iniciado"
+    },
     "activeStudiesOverview": "Visão geral dos estudos ativos",
     "viewAll": "Ver tudo",
     "showMore": "Ver mais",
