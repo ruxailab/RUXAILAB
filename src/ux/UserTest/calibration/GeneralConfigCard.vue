@@ -1,62 +1,147 @@
 <template>
-    <v-container>
-        <v-col>
-            <v-card flat>
-                <v-card-title
-class="text-h5 font-weight-bold mb-4"
-                    :style="{ color: $vuetify.theme.current.colors['on-surface'] }">
-                    General Configuration
-                </v-card-title>
+  <v-container>
+    <v-col>
+      <v-card flat>
+        <v-card-title
+          class="text-h5 font-weight-bold mb-4"
+          :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+        >
+          General Configuration
+        </v-card-title>
 
-                <div class="custom-outline space-y-4">
-                    <!-- Point Number -->
-                    <v-tooltip text="Number of calibration points shown on the screen (more points = higher accuracy).">
-                        <template #activator="{ props }">
-                            <v-slider
-v-bind="props" v-model="pointNumber" :min="2" :max="9" step="1"
-                                label="Point Number" thumb-label />
-                        </template>
-                    </v-tooltip>
+        <div class="custom-outline space-y-4">
+          <v-slider
+            v-model="pointNumber"
+            :min="2"
+            :max="9"
+            step="1"
+            thumb-label
+          >
+            <template #label>
+              <div class="d-flex align-center">
+                Point Number
+                <v-tooltip
+                  content-class="modern-tooltip"
+                  location="top"
+                  max-width="300"
+                  offset="10"
+                  text="Specifies the total number of target points in the calibration grid. Increasing this value enhances mapping accuracy but extends calibration time."
+                >
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      size="x-small"
+                      color="primary"
+                      icon="mdi-information-outline"
+                      class="ml-2"
+                    ></v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </template>
+          </v-slider>
 
-                    <!-- Samples Per Point -->
-                    <v-tooltip
-                        text="How many gaze samples are collected per calibration point. Higher values improve precision but increase duration.">
-                        <template #activator="{ props }">
-                            <v-slider
-v-bind="props" v-model="samplePerPoint" :min="10" :max="200" step="1"
-                                label="Samples Per Point" thumb-label />
-                        </template>
-                    </v-tooltip>
+          <v-slider
+            v-model="samplePerPoint"
+            :min="10"
+            :max="200"
+            step="1"
+            thumb-label
+          >
+            <template #label>
+              <div class="d-flex align-center">
+                Samples Per Point
+                <v-tooltip
+                  content-class="modern-tooltip"
+                  location="top"
+                  max-width="300"
+                  offset="10"
+                  text="Determines the number of gaze data packets collected per target. Higher sampling rates improve precision by reducing statistical noise"
+                >
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      size="x-small"
+                      color="primary"
+                      icon="mdi-information-outline"
+                      class="ml-2"
+                    ></v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </template>
+          </v-slider>
 
-                    <!-- Milliseconds Per Point Capture -->
-                    <v-tooltip
-                        text="Duration (in milliseconds) to capture data per point. Defines how long the user must look at each target.">
-                        <template #activator="{ props }">
-                            <v-slider
-v-bind="props" v-model="msPerCapture" :min="20" :max="100" step="5"
-                                label="Milliseconds Per Point Capture" thumb-label />
-                        </template>
-                    </v-tooltip>
+          <v-slider
+            v-model="msPerCapture"
+            :min="20"
+            :max="100"
+            step="5"
+            thumb-label
+          >
+            <template #label>
+              <div class="d-flex align-center">
+                Milliseconds Per Point Capture
+                <v-tooltip
+                  content-class="modern-tooltip"
+                  location="top"
+                  max-width="300"
+                  offset="10"
+                  text="The fixed duration (ms) for which each target remains active. Ensures sufficient time for stable gaze fixation during data ingestion."
+                >
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      size="x-small"
+                      color="primary"
+                      icon="mdi-information-outline"
+                      class="ml-2"
+                    ></v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </template>
+          </v-slider>
 
-                    <!-- Points Distance Threshold -->
-                    <v-tooltip
-                        text="Maximum distance (in pixels) allowed between calibration samples before they are discarded. Controls spatial tolerance.">
-                        <template #activator="{ props }">
-                            <v-slider
-v-bind="props" v-model="threshold" :min="0" :max="1000" step="5"
-                                label="Points Distance Threshold" thumb-label />
-                        </template>
-                    </v-tooltip>
-                </div>
+          <v-slider
+            v-model="threshold"
+            :min="0"
+            :max="1000"
+            step="5"
+            thumb-label
+          >
+            <template #label>
+              <div class="d-flex align-center">
+                Points Distance Threshold
+                <v-tooltip
+                  content-class="modern-tooltip"
+                  location="top"
+                  max-width="300"
+                  offset="10"
+                  text="The maximum spatial variance (in pixels) allowed between samples. Data exceeding this threshold is discarded as an outlier to maintain quality"
+                >
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      size="x-small"
+                      color="primary"
+                      icon="mdi-information-outline"
+                      class="ml-2"
+                    ></v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </template>
+          </v-slider>
+        </div>
 
-
-                <div class="custom-outline">
-                    <RadiusCalibration />
-                    <OffsetCalibration />
-                </div>
-            </v-card>
-        </v-col>
-    </v-container>
+        <div class="custom-outline">
+          <RadiusCalibration />
+          <OffsetCalibration />
+        </div>
+      </v-card>
+    </v-col>
+  </v-container>
 </template>
 
 <script setup>
@@ -68,50 +153,81 @@ import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
 
 const store = useStore()
 
+// --- State Management: Calibration Reactive References ---
+// These refs hold the local state for the calibration settings shown in the UI.
 const pointNumber = ref(8)
 const samplePerPoint = ref(90)
 const msPerCapture = ref(100)
 const threshold = ref(200)
 
+/**
+ * Data Initialization:
+ * Fetches existing calibration configuration from the store.
+ * Initializes the settings model if not already present in the Vuex state.
+ */
 const getCalibrationConfig = () => {
-    const calibrationConfig = store.getters.test.calibrationConfig instanceof EyeCalibrationSettings
-        ? store.getters.test.calibrationConfig
-        : new EyeCalibrationSettings()
+  const calibrationConfig =
+    store.getters.test.calibrationConfig instanceof EyeCalibrationSettings
+      ? store.getters.test.calibrationConfig
+      : new EyeCalibrationSettings()
 
-    store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
+  store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
 
-    pointNumber.value = calibrationConfig.pointNumber || 8
-    samplePerPoint.value = calibrationConfig.samplePerPoint || 90
-    msPerCapture.value = calibrationConfig.msPerCapture || 100
-    threshold.value = calibrationConfig.threshold || 200
+  // Syncing local refs with the store data
+  pointNumber.value = calibrationConfig.pointNumber || 8
+  samplePerPoint.value = calibrationConfig.samplePerPoint || 90
+  msPerCapture.value = calibrationConfig.msPerCapture || 100
+  threshold.value = calibrationConfig.threshold || 200
 }
 
+/**
+ * State Synchronization:
+ * Updates the global store with new calibration settings whenever a value changes.
+ * Creates a new instance of EyeCalibrationSettings to maintain data integrity and trigger reactivity.
+ */
 const updateCalibrationConfig = () => {
-    const calibrationConfig = new EyeCalibrationSettings({
-        ...store.getters.test.calibrationConfig,
-        pointNumber: pointNumber.value,
-        samplePerPoint: samplePerPoint.value,
-        msPerCapture: msPerCapture.value,
-        threshold: threshold.value,
-    })
+  const calibrationConfig = new EyeCalibrationSettings({
+    ...store.getters.test.calibrationConfig,
+    pointNumber: pointNumber.value,
+    samplePerPoint: samplePerPoint.value,
+    msPerCapture: msPerCapture.value,
+    threshold: threshold.value,
+  })
 
-    store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
+  store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
 }
 
+// --- Watchers ---
+// Automatically sync UI changes to the Vuex store to ensure data persistence during the session.
 watch([pointNumber, samplePerPoint, msPerCapture, threshold], () => {
-    updateCalibrationConfig();
-});
+  updateCalibrationConfig()
+})
 
+// --- Lifecycle Hooks ---
+// Initial data fetch happens when the component is first mounted to the DOM.
 onMounted(() => {
-    getCalibrationConfig()
+  getCalibrationConfig()
 })
 </script>
 
-
 <style scoped>
+/**
+ * Styling for the calibration blocks.
+ * Provides a clear visual boundary (outline) for different configuration sections.
+ */
 .custom-outline {
-    border: 1px solid #000;
-    padding: 10px;
-    border-radius: 5px;margin: 10px;
+  border: 1px solid #000;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px;
+}
+</style>
+
+<style>
+.modern-tooltip {
+  background: rgba(33, 33, 33, 0.95) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
 </style>
