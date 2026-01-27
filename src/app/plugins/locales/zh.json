@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "在此输入文本...",
     "loading": "加载测试",
     "continueAs": "继续作为",
     "notUser": "不是 {userEmail}？",

@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "ここにテキストを入力...",
     "loading": "テストを読み込み中",
     "continueAs": "として続行",
     "notUser": "{userEmail}ではありませんか？",

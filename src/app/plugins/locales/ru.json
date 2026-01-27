@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Введите текст здесь...",
     "loading": "Загрузка теста",
     "continueAs": "Продолжить как",
     "notUser": "Не {userEmail}?",
