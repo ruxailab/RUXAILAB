@@ -506,7 +506,11 @@ const fileInput = ref(null)
 
 // Validation rules - fields are optional but validate format if provided
 const usernameRules = [
-  (v) => !v || v.length >= 3 || t('profile.usernameMinLength'),
+  (v) =>
+    !v ||
+    (typeof v === 'string' && v.trim().length === 0) ||
+    (typeof v === 'string' && v.trim().length >= 3) ||
+    t('profile.usernameMinLength'),
 ]
 const countryRules = []
 const contactRules = [
