@@ -485,7 +485,7 @@ const isSmallScreen = ref(false)
 const editProfileValid = ref(false)
 
 const normalizeEmpty = (value) =>
-  value === null || value === undefined || (typeof value === 'string' && value.trim() === '')? '' : value
+  value === null || value === undefined || (typeof value === 'string' && value.trim() === '') ? '' : value
 
 const hasProfileChanges = computed(() => {
   return (
