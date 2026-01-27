@@ -128,14 +128,14 @@ const handleTaskUpdate = (updatedTask) => {
 }
 
 const goToNextStep = () => {
-  const currentStepNum = parseInt(step.value)
+  const currentStepNum = Number.parseInt(step.value, 10)
   if (currentStepNum < 4) {
     step.value = String(currentStepNum + 1)
   }
 }
 
 const goToPreviousStep = () => {
-  const currentStepNum = parseInt(step.value)
+  const currentStepNum = Number.parseInt(step.value, 10)
   if (currentStepNum > 1) {
     step.value = String(currentStepNum - 1)
   }
@@ -146,7 +146,7 @@ const valida = () => {
   const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation()
 
   // trigger visual validator for task name
-  taskBasicInfoRef.value?.isValid?.value
+  const _ = taskBasicInfoRef.value?.isValid?.value // eslint-disable-line no-unused-vars
 
   if (nameOk && descOk) {
     emit('validate', localTask.value)

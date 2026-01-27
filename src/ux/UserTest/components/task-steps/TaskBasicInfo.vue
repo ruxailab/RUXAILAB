@@ -151,8 +151,7 @@ const checkTaskNameValidation = () => {
 
 const checkDescriptionValidation = () => {
   const descOk = !!localTask.value.taskDescription?.trim()
-  if (!descOk) showDescriptionError.value = true
-  else showDescriptionError.value = false
+  showDescriptionError.value = !descOk
   return descOk
 }
 
