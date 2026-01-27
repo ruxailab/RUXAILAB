@@ -343,7 +343,8 @@
     "incorrectCredential": "Falscher Benutzername oder Passwort.",
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
     "sendError": "Einladung konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
-    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel"
+    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel",
+    "user-disabled": "Dieses Konto wurde deaktiviert. Bitte wenden Sie sich an den Administrator."
   },
   "Introduction": {
     "title": "UX Remote LAB",

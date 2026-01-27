@@ -343,7 +343,8 @@
     "incorrectCredential": "Usuário ou senha incorretos.",
     "globalError": "Ocorreu um erro, desculpe-nos pelo transtorno.",
     "sendError": "Não foi possível enviar o convite. Por favor, tente novamente",
-    "missingVariableTitles": "Não é possível salvar: Algumas variáveis estão sem títulos"
+    "missingVariableTitles": "Não é possível salvar: Algumas variáveis estão sem títulos",
+    "user-disabled": "Esta conta foi desativada. Por favor, entre em contato con o administrador."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
