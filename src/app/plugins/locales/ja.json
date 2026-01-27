@@ -600,7 +600,21 @@
     "messages": {
       "submitTest": "このテストを提出してもよろしいですか？",
       "submitOnce": "このテストを提出してもよろしいですか？提出は一度だけです。",
-      "noHeuristics": "このテストにはヒューリスティックがありません"
+      "noHeuristics": "このテストにはヒューリスティックがありません",
+      "noHeuristicsConfigured": "設定エラー：このテストにはヒューリスティックが構成されていません。続行するにはヒューリスティックを追加してください。",
+      "answerSaved": "回答が正常に保存されました"
+    },
+    "errors": {
+      "questionNotLoaded": "質問を読み込めませんでした",
+      "noAnswerData": "回答データが見つかりません",
+      "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
+      "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。"
+    },
+    "unknownHeuristic": "不明なヒューリスティック",
+    "unknownQuestion": "不明な質問",
+    "selectAnOption": "オプションを選択してください",
+    "headers": {
+      "heuristics": "ヒューリスティック"
     },
     "actions": {
       "cancel": "キャンセル",
