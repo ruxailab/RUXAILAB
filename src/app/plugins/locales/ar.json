@@ -1625,5 +1625,197 @@
   "taskCreation": {
     "taskDescription": "وصف المهمة",
     "taskDescriptionHelper": "قدم خطوات محددة يجب عليهم اتباعها."
+  },
+  "UserTestTaskDialog": {
+    "titles": {
+      "createTask": "Create New Task",
+      "configureStepByStep": "Configure your task step by step"
+    },
+    "steps": {
+      "basicInfo": "Basic Info",
+      "configuration": "Configuration",
+      "advanced": "Advanced",
+      "preview": "Preview",
+      "step1Title": "Step 1: Task Basic Information",
+      "step1Desc": "Define what participants will do in this task. This is the foundation of your user test - be clear and specific about the goals and expectations.",
+      "step2Title": "Step 2: Task Configuration",
+      "step2Desc": "Configure where the task takes place and how participants will provide their responses. This determines the user experience and data collection method.",
+      "step3Title": "Step 3: Advanced Options",
+      "step3Desc": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
+      "step4Title": "Step 4: Preview"
+    },
+    "fields": {
+      "taskTitle": "Task title",
+      "taskTitleHint": "Give your task a clear, concise name that describes what participants need to accomplish",
+      "taskTitlePlaceholder": "e.g., 'Find product information', 'Complete checkout process'",
+      "taskDescription": "Task Description",
+      "taskDescriptionHint": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow.",
+      "taskDescriptionPlaceholder": "Describe the task in detail. What should the participant do?",
+      "taskTip": "Tip",
+      "taskTipHint": "Optional guidance or hints to help participants during the task",
+      "taskTipPlaceholder": "e.g., 'Focus on the main navigation', 'Take your time to explore'",
+      "taskLink": "Task Link (URL)",
+      "taskLinkHint": "The website or application URL where participants will perform the task",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "Estimated Time (minutes)",
+      "estimatedTimeHint": "The estimated time participants will need to complete this task",
+      "estimatedTimePlaceholder": "e.g. 10",
+      "answerType": "Answer Type",
+      "answerTypeHint": "Choose how participants will provide feedback after completing the task",
+      "postTestQuestion": "Post-Test Question",
+      "postTestQuestionHint": "Enter the specific question you want to ask participants after they complete the task",
+      "postTestQuestionPlaceholder": "e.g., 'How easy was it to find the product information?'",
+      "postFormUrl": "Post-Task Form URL",
+      "postFormUrlHint": "URL to an external form that participants will fill out after completing the task",
+      "postFormUrlPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "answerTypes": {
+      "noAnswer": "No Answer Required",
+      "noAnswerDesc": "Participants complete the task without providing feedback",
+      "textArea": "Text Area",
+      "textAreaDesc": "Participants provide written feedback after the task",
+      "postTest": "Post-Test Questions",
+      "postTestDesc": "Participants answer specific questions after the task",
+      "postForm": "External Form",
+      "postFormDesc": "Participants fill out an external form after the task",
+      "nasaTlx": "NASA-TLX",
+      "nasaTlxDesc": "NASA Task Load Index - measures workload",
+      "sus": "System Usability Scale",
+      "susDesc": "System Usability Scale - measures usability",
+      "tam1": "TAM-1 (Basic)",
+      "tam1Desc": "TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use",
+      "tam2": "TAM-2 (Extended)",
+      "tam2Desc": "TAM-2 (Extended) - adds external influences and results demonstrability",
+      "tam3": "TAM-3 (Comprehensive)",
+      "tam3Desc": "TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability",
+      "sart": "SART",
+      "sartDesc": "Situation Awareness Rating Technique - measures situational awareness"
+    },
+    "advanced": {
+      "eyeTracking": "Eye Tracking",
+      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
+      "screenRecord": "Screen Recording",
+      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
+      "camera": "Camera Recording",
+      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
+      "audioRecord": "Audio Recording",
+      "audioRecordDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
+      "privacyNotice": "Privacy Notice",
+      "privacyNoticeDesc": "Recording features require explicit consent from participants. Make sure to:",
+      "privacyPoint1": "Clearly inform participants about data collection",
+      "privacyPoint2": "Obtain proper consent before starting the test",
+      "privacyPoint3": "Follow data protection regulations (GDPR, etc.)",
+      "privacyPoint4": "Secure storage and handling of recorded data"
+    },
+    "preview": {
+      "taskSummary": "Task Summary",
+      "untitledTask": "Untitled Task",
+      "noDescription": "No description provided",
+      "participantTip": "Participant Tip",
+      "taskUrl": "Task URL",
+      "answerType": "Answer Type",
+      "recordingFeatures": "Recording Features",
+      "postTaskQuestion": "Post-Task Question",
+      "postTaskForm": "Post-Task Form",
+      "externalForm": "External Form",
+      "taskReady": "Task Ready!",
+      "taskReadyDesc": "Your task is properly configured and ready to be used in your study.",
+      "reviewRequired": "Review Required",
+      "reviewRequiredDesc": "Please review the previous steps to ensure all required fields are completed."
+    },
+    "buttons": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "validation": {
+      "fieldRequired": "Field Required",
+      "validUrl": "Must be a valid URL starting with http:// or https://",
+      "positiveNumber": "Must be a positive number"
+    }
+  },
+  "UserTestAnswerPreview": {
+    "noAnswer": {
+      "completed": "Task completed! No additional feedback required."
+    },
+    "textArea": {
+      "placeholder": "Participants will provide their feedback here...",
+      "submit": "Submit Feedback"
+    },
+    "postTest": {
+      "title": "Post-Task Questions",
+      "q1": "1. How would you rate the difficulty of this task?",
+      "q2": "2. Any additional comments?",
+      "optional": "Optional feedback..."
+    },
+    "postForm": {
+      "notice": "Participants will be redirected to complete an external form after the task.",
+      "button": "Open External Form"
+    },
+    "nasaTlx": {
+      "mental": "Mental Demand",
+      "physical": "Physical Demand",
+      "lowHigh": "Low - High",
+      "more": "+ 4 more dimensions"
+    },
+    "sus": {
+      "q1": "1. I think that I would like to use this system frequently.",
+      "disagree": "Strongly Disagree",
+      "agree": "Strongly Agree",
+      "more": "+ 9 more statements"
+    },
+    "sart": {
+      "instability": "Instability of Situation",
+      "complexity": "Complexity of Situation",
+      "stable": "Very Stable",
+      "unstable": "Very Unstable",
+      "simple": "Very Simple",
+      "complex": "Very Complex",
+      "more": "+ 8 more SART dimensions"
+    },
+    "tam1": {
+      "title": "TAM-1: Technology Acceptance Model (Basic)",
+      "items": "10 items across 2 dimensions",
+      "pu": "Perceived Usefulness (5 items)",
+      "q1": "1. Using the system improves my job performance.",
+      "peu": "Perceived Ease of Use (5 items)",
+      "q6": "6. The system is easy to use."
+    },
+    "tam2": {
+      "title": "TAM-2: Technology Acceptance Model (Extended)",
+      "items": "25 items across 7 dimensions",
+      "dimensions": {
+        "pu": "Perceived Usefulness",
+        "peu": "Perceived Ease of Use",
+        "sn": "Subjective Norm",
+        "image": "Image",
+        "jr": "Job Relevance",
+        "oq": "Output Quality",
+        "rd": "Result Demonstrability"
+      },
+      "note": "Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)"
+    },
+    "tam3": {
+      "title": "TAM-3: Technology Acceptance Model (Comprehensive)",
+      "items": "39 items across 13 dimensions",
+      "dimensions": {
+        "pu": "Perceived Usefulness",
+        "peu": "Perceived Ease of Use",
+        "sn": "Subjective Norm",
+        "image": "Image",
+        "jr": "Job Relevance",
+        "oq": "Output Quality",
+        "rd": "Result Demonstrability",
+        "ce": "Computer Self-Efficacy",
+        "ec": "External Control",
+        "anx": "Anxiety",
+        "play": "Playfulness",
+        "enj": "Enjoyment",
+        "ou": "Objective Usability"
+      },
+      "note": "Comprehensive assessment with 39 statements across 13 dimensions on a 5-point Likert scale"
+    },
+    "default": {
+      "selectType": "Select an answer type to see preview"
+    }
   }
 }

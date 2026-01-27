@@ -1,11 +1,11 @@
 <template>
   <div class="task-advanced-options">
     <div class="step-header mb-6">
-      <h3 class="text-h6 font-weight-bold mb-2">Step 3: Advanced Options</h3>
+      <h3 class="text-h6 font-weight-bold mb-2">
+        {{ $t('UserTestTaskDialog.steps.step3Title') }}
+      </h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
-        Enable additional data collection methods to gather deeper insights. All
-        options are optional but can provide valuable behavioral data and user
-        feedback.
+        {{ $t('UserTestTaskDialog.steps.step3Desc') }}
       </p>
     </div>
 
@@ -28,14 +28,12 @@
               <v-row dense>
                 <v-col cols="12">
                   <h4 class="text-subtitle-1 font-weight-medium">
-                    {{ $t('switches.eyeTracker') }}
+                    {{ $t('UserTestTaskDialog.advanced.eyeTracking') }}
                   </h4>
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Track where participants look during the task. Provides
-                    heatmaps and gaze patterns to understand visual attention
-                    and navigation behavior.
+                    {{ $t('UserTestTaskDialog.advanced.eyeTrackingDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -72,14 +70,12 @@
               <v-row dense>
                 <v-col cols="12">
                   <h4 class="text-subtitle-1 font-weight-medium">
-                    {{ $t('switches.screenRecord') }}
+                    {{ $t('UserTestTaskDialog.advanced.screenRecord') }}
                   </h4>
                 </v-col>
                 <v-col cols="12">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record the participant's screen activity. Captures clicks,
-                    scrolling, and interactions to analyze user behavior and
-                    identify pain points.
+                    {{ $t('UserTestTaskDialog.advanced.screenRecordDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -114,14 +110,12 @@
               <v-row dense>
                 <v-col cols="12">
                   <h4 class="text-subtitle-1 font-weight-medium">
-                    {{ $t('switches.camera') }}
+                    {{ $t('UserTestTaskDialog.advanced.camera') }}
                   </h4>
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record participant's facial expressions and reactions.
-                    Captures emotions, confusion, and satisfaction to understand
-                    user experience beyond interactions.
+                    {{ $t('UserTestTaskDialog.advanced.cameraDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -158,14 +152,12 @@
               <v-row dense>
                 <v-col cols="12">
                   <h4 class="text-subtitle-1 font-weight-medium">
-                    {{ $t('switches.audioRecord') }}
+                    {{ $t('UserTestTaskDialog.advanced.audioRecord') }}
                   </h4>
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record participant's verbal feedback and comments. Captures
-                    think-aloud protocols, frustrations, and insights that
-                    reveal thought processes.
+                    {{ $t('UserTestTaskDialog.advanced.audioRecordDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -191,15 +183,16 @@
       class="mt-6"
       icon="mdi-shield-account-outline"
     >
-      <v-alert-title>Privacy Notice</v-alert-title>
+      <v-alert-title>{{
+        $t('UserTestTaskDialog.advanced.privacyNotice')
+      }}</v-alert-title>
       <div class="text-body-2 mt-2">
-        Recording features require explicit consent from participants. Make sure
-        to:
+        {{ $t('UserTestTaskDialog.advanced.privacyNoticeDesc') }}
         <ul class="mt-2">
-          <li>Clearly inform participants about data collection</li>
-          <li>Obtain proper consent before starting the test</li>
-          <li>Follow data protection regulations (GDPR, etc.)</li>
-          <li>Secure storage and handling of recorded data</li>
+          <li>{{ $t('UserTestTaskDialog.advanced.privacyPoint1') }}</li>
+          <li>{{ $t('UserTestTaskDialog.advanced.privacyPoint2') }}</li>
+          <li>{{ $t('UserTestTaskDialog.advanced.privacyPoint3') }}</li>
+          <li>{{ $t('UserTestTaskDialog.advanced.privacyPoint4') }}</li>
         </ul>
       </div>
     </v-alert>
@@ -237,28 +230,28 @@ const enabledFeatures = computed(() => {
   if (localTask.value.hasEye) {
     features.push({
       key: 'eye',
-      label: 'Eye Tracking',
+      label: t('UserTestTaskDialog.advanced.eyeTracking'),
       icon: 'mdi-eye-outline',
     })
   }
   if (localTask.value.hasScreenRecord) {
     features.push({
       key: 'screen',
-      label: 'Screen Recording',
+      label: t('UserTestTaskDialog.advanced.screenRecord'),
       icon: 'mdi-monitor-screenshot',
     })
   }
   if (localTask.value.hasCamRecord) {
     features.push({
       key: 'camera',
-      label: 'Camera Recording',
+      label: t('UserTestTaskDialog.advanced.camera'),
       icon: 'mdi-video-outline',
     })
   }
   if (localTask.value.hasAudioRecord) {
     features.push({
       key: 'audio',
-      label: 'Audio Recording',
+      label: t('UserTestTaskDialog.advanced.audioRecord'),
       icon: 'mdi-microphone-outline',
     })
   }

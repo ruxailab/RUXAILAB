@@ -1605,5 +1605,197 @@
   "taskCreation": {
     "taskDescription": "Descripción de la Tarea",
     "taskDescriptionHelper": "Proporcione pasos específicos que deben seguir."
+  },
+  "UserTestTaskDialog": {
+    "titles": {
+      "createTask": "Crear Nueva Tarea",
+      "configureStepByStep": "Configure su tarea paso a paso"
+    },
+    "steps": {
+      "basicInfo": "Información Básica",
+      "configuration": "Configuración",
+      "advanced": "Opciones Avanzadas",
+      "preview": "Vista Previa",
+      "step1Title": "Paso 1: Información Básica de la Tarea",
+      "step1Desc": "Defina qué harán los participantes en esta tarea. Esta es la base de su prueba de usuario: sea claro y específico sobre los objetivos y expectativas.",
+      "step2Title": "Paso 2: Configuración de la Tarea",
+      "step2Desc": "Configure dónde se lleva a cabo la tarea y cómo los participantes proporcionarán sus respuestas. Esto determina la experiencia del usuario y el método de recolección de datos.",
+      "step3Title": "Paso 3: Opciones Avanzadas",
+      "step3Desc": "Habilite métodos adicionales de recolección de datos para obtener información más profunda. Todas las opciones son opcionales pero pueden proporcionar datos de comportamiento valiosos y comentarios de los usuarios.",
+      "step4Title": "Paso 4: Vista Previa"
+    },
+    "fields": {
+      "taskTitle": "Título de la tarea",
+      "taskTitleHint": "Dé a su tarea un nombre claro y conciso que describa lo que los participantes deben lograr",
+      "taskTitlePlaceholder": "p. ej., 'Buscar información del producto', 'Completar proceso de pago'",
+      "taskDescription": "Descripción de la Tarea",
+      "taskDescriptionHint": "Proporcione instrucciones detalladas para los participantes. Incluya el objetivo, el contexto y cualquier paso específico que deban seguir.",
+      "taskDescriptionPlaceholder": "Describa la tarea en detalle. ¿Qué debe hacer el participante?",
+      "taskTip": "Consejo",
+      "taskTipHint": "Guía opcional o sugerencias para ayudar a los participantes durante la tarea",
+      "taskTipPlaceholder": "p. ej., 'Concéntrese en la navegación principal', 'Tómese su tiempo para explorar'",
+      "taskLink": "Enlace de la Tarea (URL)",
+      "taskLinkHint": "La URL del sitio web o aplicación donde los participantes realizarán la tarea",
+      "taskLinkPlaceholder": "https://ejemplo.com",
+      "estimatedTime": "Tiempo Estimado (minutos)",
+      "estimatedTimeHint": "El tiempo estimado que los participantes necesitarán para completar esta tarea",
+      "estimatedTimePlaceholder": "p. ej. 10",
+      "answerType": "Tipo de Respuesta",
+      "answerTypeHint": "Elija cómo los participantes proporcionarán sus comentarios después de completar la tarea",
+      "postTestQuestion": "Pregunta Post-Prueba",
+      "postTestQuestionHint": "Ingrese la pregunta específica que desea hacer a los participantes después de que completen la tarea",
+      "postTestQuestionPlaceholder": "p. ej., '¿Qué tan fácil fue encontrar la información del producto?'",
+      "postFormUrl": "URL del Formulario Post-Tarea",
+      "postFormUrlHint": "URL a un formulario externo que los participantes completarán después de realizar la tarea",
+      "postFormUrlPlaceholder": "https://forms.google.com/d/id-de-tu-formulario"
+    },
+    "answerTypes": {
+      "noAnswer": "No se Requiere Respuesta",
+      "noAnswerDesc": "Los participantes completan la tarea sin proporcionar comentarios",
+      "textArea": "Área de Texto",
+      "textAreaDesc": "Los participantes proporcionan comentarios escritos después de la tarea",
+      "postTest": "Preguntas Post-Prueba",
+      "postTestDesc": "Los participantes responden preguntas específicas después de la tarea",
+      "postForm": "Formulario Externo",
+      "postFormDesc": "Los participantes completan un formulario externo después de la tarea",
+      "nasaTlx": "NASA-TLX",
+      "nasaTlxDesc": "NASA Task Load Index - mide la carga de trabajo",
+      "sus": "Escala de Usabilidad del Sistema (SUS)",
+      "susDesc": "System Usability Scale - mide la usabilidad",
+      "tam1": "TAM-1 (Básico)",
+      "tam1Desc": "TAM-1 (Aceptación Básica) - mide la utilidad percibida y la facilidad de uso",
+      "tam2": "TAM-2 (Extendido)",
+      "tam2Desc": "TAM-2 (Extendido) - añade influencias externas y demostrabilidad de resultados",
+      "tam3": "TAM-3 (Completo)",
+      "tam3Desc": "TAM-3 (Completo) - incluye ansiedad, alegría y usabilidad objetiva",
+      "sart": "SART",
+      "sartDesc": "Situation Awareness Rating Technique - mide la conciencia situacional"
+    },
+    "advanced": {
+      "eyeTracking": "Seguimiento Ocular",
+      "eyeTrackingDesc": "Rastrea dónde miran los participantes durante la tarea. Proporciona mapas de calor y patrones de mirada para entender la atención visual y el comportamiento de navegación.",
+      "screenRecord": "Grabación de Pantalla",
+      "screenRecordDesc": "Graba la actividad de la pantalla del participante. Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario e identificar puntos de fricción.",
+      "camera": "Grabación de Cámara",
+      "cameraDesc": "Graba las expresiones faciales y reacciones del participante. Captura emociones, confusión y satisfacción para entender la experiencia del usuario más allá de las interacciones.",
+      "audioRecord": "Grabación de Audio",
+      "audioRecordDesc": "Graba los comentarios y la retroalimentación verbal del participante. Captura protocolos de pensamiento en voz alta, frustraciones e ideas que revelan procesos de pensamiento.",
+      "privacyNotice": "Aviso de Privacidad",
+      "privacyNoticeDesc": "Las funciones de grabación requieren el consentimiento explícito de los participantes. Asegúrese de:",
+      "privacyPoint1": "Informar claramente a los participantes sobre la recolección de datos",
+      "privacyPoint2": "Obtener el consentimiento adecuado antes de comenzar la prueba",
+      "privacyPoint3": "Seguir las regulaciones de protección de datos (GDPR, etc.)",
+      "privacyPoint4": "Almacenamiento y manejo seguro de los datos grabados"
+    },
+    "preview": {
+      "taskSummary": "Resumen de la Tarea",
+      "untitledTask": "Tarea sin Título",
+      "noDescription": "No se proporcionó descripción",
+      "participantTip": "Consejo para el Participante",
+      "taskUrl": "URL de la Tarea",
+      "answerType": "Tipo de Respuesta",
+      "recordingFeatures": "Funciones de Grabación",
+      "postTaskQuestion": "Pregunta Post-Tarea",
+      "postTaskForm": "Formulario Post-Tarea",
+      "externalForm": "Formulario Externo",
+      "taskReady": "¡Tarea Lista!",
+      "taskReadyDesc": "Su tarea está configurada correctamente y lista para ser utilizada en su estudio.",
+      "reviewRequired": "Revisión Requerida",
+      "reviewRequiredDesc": "Revise los pasos anteriores para asegurarse de que todos los campos obligatorios estén completos."
+    },
+    "buttons": {
+      "prev": "Anterior",
+      "next": "Siguiente"
+    },
+    "validation": {
+      "fieldRequired": "Campo Obligatorio",
+      "validUrl": "Debe ser una URL válida que comience con http:// o https://",
+      "positiveNumber": "Debe ser un número positivo"
+    }
+  },
+  "UserTestAnswerPreview": {
+    "noAnswer": {
+      "completed": "¡Tarea completada! No se requiere retroalimentación adicional."
+    },
+    "textArea": {
+      "placeholder": "Los participantes proporcionarán su retroalimentación aquí...",
+      "submit": "Enviar Retroalimentación"
+    },
+    "postTest": {
+      "title": "Preguntas Post-Tarea",
+      "q1": "1. ¿Cómo calificaría la dificultad de esta tarea?",
+      "q2": "2. ¿Algún comentario adicional?",
+      "optional": "Retroalimentación opcional..."
+    },
+    "postForm": {
+      "notice": "Los participantes serán redirigidos para completar un formulario externo después de la tarea.",
+      "button": "Abrir Formulario Externo"
+    },
+    "nasaTlx": {
+      "mental": "Demanda Mental",
+      "physical": "Demanda Física",
+      "lowHigh": "Baja - Alta",
+      "more": "+ 4 dimensiones más"
+    },
+    "sus": {
+      "q1": "1. Creo que me gustaría usar este sistema con frecuencia.",
+      "disagree": "Muy en desacuerdo",
+      "agree": "Muy de acuerdo",
+      "more": "+ 9 declaraciones más"
+    },
+    "sart": {
+      "instability": "Inestabilidad de la Situación",
+      "complexity": "Complejidad de la Situación",
+      "stable": "Muy Estable",
+      "unstable": "Muy Inestable",
+      "simple": "Muy Simple",
+      "complex": "Muy Compleja",
+      "more": "+ 8 dimensiones SART más"
+    },
+    "tam1": {
+      "title": "TAM-1: Modelo de Aceptación de Tecnología (Básico)",
+      "items": "10 elementos en 2 dimensiones",
+      "pu": "Utilidad Percibida (5 elementos)",
+      "q1": "1. El uso del sistema mejora mi desempeño laboral.",
+      "peu": "Facilidad de Uso Percibida (5 elementos)",
+      "q6": "6. El sistema es fácil de usar."
+    },
+    "tam2": {
+      "title": "TAM-2: Modelo de Aceptación de Tecnología (Extendido)",
+      "items": "25 elementos en 7 dimensiones",
+      "dimensions": {
+        "pu": "Utilidad Percibida",
+        "peu": "Facilidad de Uso Percibida",
+        "sn": "Norma Subjetiva",
+        "image": "Imagen",
+        "jr": "Relevancia del Trabajo",
+        "oq": "Calidad del Resultado",
+        "rd": "Demostrabilidad de Resultados"
+      },
+      "note": "Los participantes califican 25 declaraciones en una escala Likert de 5 puntos (Muy en desacuerdo - Muy de acuerdo)"
+    },
+    "tam3": {
+      "title": "TAM-3: Modelo de Aceptación de Tecnología (Integral)",
+      "items": "39 elementos en 13 dimensiones",
+      "dimensions": {
+        "pu": "Utilidad Percibida",
+        "peu": "Facilidad de Uso Percibida",
+        "sn": "Norma Subjetiva",
+        "image": "Imagen",
+        "jr": "Relevancia del Trabajo",
+        "oq": "Calidad del Resultado",
+        "rd": "Demostrabilidad de Resultados",
+        "ce": "Autoeficacia Computacional",
+        "ec": "Control Externo",
+        "anx": "Ansiedad",
+        "play": "Lúdica",
+        "enj": "Disfrute",
+        "ou": "Usabilidad Objetiva"
+      },
+      "note": "Evaluación integral con 39 declaraciones en 13 dimensiones en una escala Likert de 5 puntos"
+    },
+    "default": {
+      "selectType": "Seleccione un tipo de respuesta para ver la vista previa"
+    }
   }
 }
