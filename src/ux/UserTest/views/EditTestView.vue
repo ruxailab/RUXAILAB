@@ -132,18 +132,18 @@ const getConsent = () => {
 }
 
 const getTasks = () => {
-  store.dispatch('UserStudy/setTasks', test.value.testStructure.userTasks || [])
+  const tasksData = test.value.testStructure.userTasks || []
+  store.dispatch('UserStudy/setTasks', JSON.parse(JSON.stringify(tasksData)))
 }
 
 const getPreTest = () => {
-  store.dispatch('UserStudy/setPreTest', test.value.testStructure.preTest || [])
+  const preTestData = test.value.testStructure.preTest || []
+  store.dispatch('UserStudy/setPreTest', JSON.parse(JSON.stringify(preTestData)))
 }
 
 const getPostTest = () => {
-  store.dispatch(
-    'UserStudy/setPostTest',
-    test.value.testStructure.postTest || [],
-  )
+  const postTestData = test.value.testStructure.postTest || []
+  store.dispatch('UserStudy/setPostTest', JSON.parse(JSON.stringify(postTestData)))
 }
 
 const hasEyeTracking = computed(() => {
@@ -179,9 +179,9 @@ const save = async () => {
     const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: store.getters['UserStudy/preTest'],
-      userTasks: store.getters['UserStudy/tasks'],
-      postTest: store.getters['UserStudy/postTest'],
+      preTest: JSON.parse(JSON.stringify(store.getters['UserStudy/preTest'])),
+      userTasks: JSON.parse(JSON.stringify(store.getters['UserStudy/tasks'])),
+      postTest: JSON.parse(JSON.stringify(store.getters['UserStudy/postTest'])),
       consent: consent.value,
     }
 
