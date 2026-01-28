@@ -213,7 +213,7 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
   if (user.userDocId && test.value) {
-    const author = test.value.testAdmin.email
+    const author = userAuth.value.email
     try {
       await sendNotification({
         userId: user.userDocId,
