@@ -68,7 +68,7 @@
                 <v-btn variant="text" class="text-capitalize" @click="handleCancel">
                     {{ $t('common.cancel') }}
                 </v-btn>
-                <v-btn color="primary" variant="flat" class="text-capitalize" :disabled="!isValid || isSaving"
+                <v-btn color="primary" variant="flat" class="text-capitalize" :disabled="!isValid || !hasProfileChanges || isSaving"
                     :loading="isSaving" @click="handleSave">
                     <v-icon start>mdi-content-save</v-icon>
                     {{ $t('profile.saveChanges') }}
@@ -119,28 +119,58 @@ const localProfileData = ref({
     profileImage: '',
 });
 
+// Store original data for comparison
+const originalProfileData = ref({});
+
+// Normalize empty values (null, undefined, whitespace-only) for comparison
+const normalizeEmpty = (value) =>
+    value === null || value === undefined || (typeof value === 'string' && value.trim() === '')
+        ? ''
+        : value;
+
+// Detect actual changes (ignoring null/undefined/whitespace differences)
+const hasProfileChanges = computed(() => {
+    return (
+        normalizeEmpty(localProfileData.value.username) !==
+            normalizeEmpty(originalProfileData.value.username) ||
+        normalizeEmpty(localProfileData.value.contactNo) !==
+            normalizeEmpty(originalProfileData.value.contactNo) ||
+        normalizeEmpty(localProfileData.value.country) !==
+            normalizeEmpty(originalProfileData.value.country) ||
+        normalizeEmpty(localProfileData.value.profileImage) !==
+            normalizeEmpty(originalProfileData.value.profileImage)
+    );
+});
+
 // Watch for prop changes
 watch(
     () => props.profileData,
     (newData) => {
         if (newData) {
             localProfileData.value = { ...newData };
+            originalProfileData.value = { ...newData };
         }
     },
     { immediate: true, deep: true }
 );
 
-// Validation rules
+// Validation rules - fields are optional but validate format if provided
 const usernameRules = computed(() => [
-    (v) => !!v || t('profile.usernameRequired'),
-    (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
+    (v) =>
+        !v ||
+        (typeof v === 'string' && v.trim().length === 0) ||
+        (typeof v === 'string' && v.trim().length >= 3) ||
+        t('profile.usernameMinLength'),
 ]);
 
-const countryRules = computed(() => [(v) => !!v || t('profile.countryRequired')]);
+const countryRules = computed(() => []);
 
 const contactRules = computed(() => [
-    (v) => !!v || t('profile.contactNumberRequired'),
-    (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
+    (v) =>
+        !v ||
+        (typeof v === 'string' &&
+            (/^\d{9,15}$/.test(v.trim()) || v.trim().length === 0)) ||
+        t('profile.enterValidPhoneNumber'),
 ]);
 
 const selectImage = () => {
