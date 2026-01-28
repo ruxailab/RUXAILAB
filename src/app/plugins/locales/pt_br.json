@@ -1168,6 +1168,12 @@
     "genericSuccess": "Operação bem-sucedida",
     "savedChanges": "Alterações salvas com sucesso"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "Sair",
+      "message": "Tem certeza de que deseja sair?"
+    }
+  },
   "buttons": {
     "next": "Próximo",
     "previous": "Anterior",

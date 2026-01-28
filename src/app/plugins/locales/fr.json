@@ -1168,6 +1168,12 @@
     "genericSuccess": "Opération réussie",
     "savedChanges": "Modifications enregistrées avec succès"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "Déconnexion",
+      "message": "Êtes-vous sûr de vouloir vous déconnecter ?"
+    }
+  },
   "buttons": {
     "next": "Suivant",
     "previous": "Précédent",

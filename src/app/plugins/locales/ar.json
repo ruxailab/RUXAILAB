@@ -1168,6 +1168,12 @@
     "genericSuccess": "تمت العملية بنجاح",
     "savedChanges": "تم حفظ التغييرات بنجاح"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "تسجيل الخروج",
+      "message": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
+    }
+  },
   "buttons": {
     "next": "التالي",
     "previous": "السابق",

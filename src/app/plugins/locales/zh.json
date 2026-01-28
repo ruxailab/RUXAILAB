@@ -1168,6 +1168,12 @@
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "退出登录",
+      "message": "您确定要退出登录吗？"
+    }
+  },
   "buttons": {
     "next": "下一步",
     "previous": "上一步",

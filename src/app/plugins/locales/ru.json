@@ -1168,6 +1168,12 @@
     "genericSuccess": "Операция выполнена успешно",
     "savedChanges": "Изменения успешно сохранены"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "Выход",
+      "message": "Вы уверены, что хотите выйти?"
+    }
+  },
   "buttons": {
     "next": "Далее",
     "previous": "Назад",

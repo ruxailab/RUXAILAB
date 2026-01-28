@@ -1168,6 +1168,12 @@
     "genericSuccess": "ऑपरेशन सफल रहा",
     "savedChanges": "परिवर्तनों को सफलतापूर्वक सहेजा गया"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "साइन आउट",
+      "message": "क्या आप वाकई साइन आउट करना चाहते हैं?"
+    }
+  },
   "buttons": {
     "next": "अगला",
     "previous": "पिछला",

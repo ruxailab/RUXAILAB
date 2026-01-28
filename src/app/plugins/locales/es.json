@@ -1168,6 +1168,12 @@
     "genericSuccess": "Operación exitosa",
     "savedChanges": "Cambios guardados con éxito"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "Cerrar sesión",
+      "message": "¿Estás seguro de que deseas cerrar sesión?"
+    }
+  },
   "buttons": {
     "next": "Siguiente",
     "previous": "Anterior",

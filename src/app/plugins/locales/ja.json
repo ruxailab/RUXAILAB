@@ -1168,6 +1168,12 @@
     "genericSuccess": "操作が成功しました",
     "savedChanges": "変更が保存されました"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "ログアウト",
+      "message": "ログアウトしてもよろしいですか？"
+    }
+  },
   "buttons": {
     "next": "次へ",
     "previous": "前へ",

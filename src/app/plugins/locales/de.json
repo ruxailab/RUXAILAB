@@ -1169,6 +1169,12 @@
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert"
   },
+  "dialogs": {
+    "signOutConfirm": {
+      "title": "Abmelden",
+      "message": "Sind Sie sicher, dass Sie sich abmelden möchten?"
+    }
+  },
   "buttons": {
     "next": "Weiter",
     "previous": "Zurück",

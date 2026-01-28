@@ -93,7 +93,10 @@
               <div
                 class="d-flex align-center px-4 py-3 rounded-lg cursor-pointer"
                 :class="{ 'error lighten-5': isHovering }"
-                @click="signOut(), (menu = false)"
+                @click="
+                  showSignOutConfirm = true
+                  menu = false
+                "
               >
                 <v-icon color="error" size="20"> mdi-logout </v-icon>
                 <span
@@ -108,6 +111,36 @@
         </div>
       </template>
     </v-menu>
+
+    <!-- Sign Out Confirmation Dialog -->
+    <v-dialog
+      v-model="showSignOutConfirm"
+      max-width="400"
+      role="dialog"
+      aria-labelledby="signout-dialog-title"
+    >
+      <v-card class="rounded-lg">
+        <v-card-title
+          id="signout-dialog-title"
+          class="text-h6 d-flex align-center"
+        >
+          <v-icon color="warning" class="mr-2">mdi-logout</v-icon>
+          {{ $t('dialogs.signOutConfirm.title') }}
+        </v-card-title>
+        <v-card-text class="text-body-1">
+          {{ $t('dialogs.signOutConfirm.message') }}
+        </v-card-text>
+        <v-card-actions class="pa-4 pt-0">
+          <v-spacer />
+          <v-btn variant="text" @click="showSignOutConfirm = false">
+            {{ $t('buttons.cancel') }}
+          </v-btn>
+          <v-btn color="error" variant="flat" @click="confirmedSignOut">
+            {{ $t('buttons.signout') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -127,6 +160,7 @@ const store = useStore()
 const menu = ref(false)
 const username = ref(null)
 const profileImage = ref(null)
+const showSignOutConfirm = ref(false)
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -178,6 +212,11 @@ const goToProfile = () => {
 const signOut = async () => {
   await store.dispatch('logout')
   router.push('/').catch(() => {})
+}
+
+const confirmedSignOut = async () => {
+  showSignOutConfirm.value = false
+  await signOut()
 }
 
 // Watchers
