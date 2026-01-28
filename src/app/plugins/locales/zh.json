@@ -99,7 +99,9 @@
     "hidden": "隐藏",
     "proceed": "继续",
     "all": "全部",
-    "actions": "操作"
+    "actions": "操作",
+    "user": "用户",
+    "id": "ID"
   },
   "storage": {
     "pageTitle": "存储",
@@ -291,6 +293,10 @@
     "template": "模板",
     "finalReport": "最终报告",
     "answerType": "答案类型：",
+    "users": "用户",
+    "studies": "研究",
+    "accessLevel": "访问级别",
+    "actions": "操作",
     "drawer": {
       "Manager": "管理员",
       "Test": "测试",
@@ -302,7 +308,10 @@
       "Template": "模板",
       "Final Report": "最终报告",
       "Answer Test": "回答测试",
-      "Settings": "设置"
+      "Settings": "设置",
+      "name": "姓名",
+      "studiesCount": "研究数量",
+      "mediaSize": "媒体大小"
     },
     "heuristic": "可用性启发式评估"
   },
@@ -1176,7 +1185,8 @@
     "deleteHeuristic": "您确定要删除启发式",
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
-    "savedChanges": "更改保存成功"
+    "savedChanges": "更改保存成功",
+    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。"
   },
   "buttons": {
     "next": "下一步",

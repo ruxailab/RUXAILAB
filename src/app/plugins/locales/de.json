@@ -99,7 +99,9 @@
     "hidden": "Versteckt",
     "proceed": "fortfahren",
     "all": "Alle",
-    "actions": "Aktionen"
+    "actions": "Aktionen",
+    "user": "Benutzer",
+    "id": "ID"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -291,6 +293,10 @@
     "template": "Vorlage",
     "finalReport": "Abschlussbericht",
     "answerType": "Antworttyp:",
+    "users": "Benutzer",
+    "studies": "Studien",
+    "accessLevel": "Zugriffsebene",
+    "actions": "Aktionen",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -302,7 +308,10 @@
       "Template": "Vorlage",
       "Final Report": "Abschlussbericht",
       "Answer Test": "Test beantworten",
-      "Settings": "Einstellungen"
+      "Settings": "Einstellungen",
+      "name": "Name",
+      "studiesCount": "Studienanzahl",
+      "mediaSize": "Mediengröße"
     },
     "heuristic": "Usability-Heuristik-Evaluation"
   },
@@ -1177,7 +1186,8 @@
     "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten ",
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
-    "savedChanges": "Änderungen erfolgreich gespeichert"
+    "savedChanges": "Änderungen erfolgreich gespeichert",
+    "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {
     "next": "Weiter",

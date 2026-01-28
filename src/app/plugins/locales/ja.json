@@ -99,7 +99,9 @@
     "hidden": "非表示",
     "proceed": "続行",
     "all": "すべて",
-    "actions": "アクション"
+    "actions": "アクション",
+    "user": "ユーザー",
+    "id": "ID"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -291,6 +293,10 @@
     "template": "テンプレート",
     "finalReport": "最終レポート",
     "answerType": "回答タイプ：",
+    "users": "ユーザー",
+    "studies": "研究",
+    "accessLevel": "アクセスレベル",
+    "actions": "アクション",
     "drawer": {
       "Manager": "マネージャー",
       "Test": "テスト",
@@ -302,7 +308,10 @@
       "Template": "テンプレート",
       "Final Report": "最終レポート",
       "Answer Test": "テストに回答",
-      "Settings": "設定"
+      "Settings": "設定",
+      "name": "名前",
+      "studiesCount": "研究数",
+      "mediaSize": "メディアサイズ"
     },
     "heuristic": "ユーザビリティ ヒューリスティック評価"
   },
@@ -1176,7 +1185,8 @@
     "deleteHeuristic": "ヒューリスティックを削除してもよろしいですか？",
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
-    "savedChanges": "変更が保存されました"
+    "savedChanges": "変更が保存されました",
+    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。"
   },
   "buttons": {
     "next": "次へ",
