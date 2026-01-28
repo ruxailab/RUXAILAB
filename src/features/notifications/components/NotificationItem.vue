@@ -18,7 +18,7 @@
       <!-- Content -->
       <div class="content">
         <div class="title-row">
-          <div class="text-h6">
+          <div class="text-subtitle-1 font-weight-medium">
             {{ notification.title || (notification.titleTemplate ? $t(notification.titleTemplate, notification.titleParams || {}) : 'Notification') }}
           </div>
 

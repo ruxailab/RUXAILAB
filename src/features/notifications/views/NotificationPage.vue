@@ -147,7 +147,7 @@
               "
               @click="handleNotificationClick(n)"
             >
-              <div class="d-flex align-start gap-3">
+              <div class="d-flex align-start ga-4">
                 <!-- AVATAR/ICON -->
                 <div class="position-relative">
                   <v-avatar
