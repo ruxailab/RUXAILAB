@@ -6,9 +6,8 @@ const toast = useToast()
 function resolveMessage(message) {
   if (!message) return ''
 
-  if (typeof message === 'string' && message.includes('.')) {
-    const translated = i18n.global.t(message)
-    if (translated !== message) return translated
+  if (typeof message === 'string' && message.includes('.') && i18n.global.te(message)) {
+    return i18n.global.t(message)
   }
 
   return message

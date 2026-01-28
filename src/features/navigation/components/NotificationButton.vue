@@ -145,24 +145,27 @@ const showAcceptDialog = () => {
 
 /* actions */
 const goToNotificationRedirect = async (notification) => {
-  const accepted = await showAcceptDialog()
+  // Only show dialog for Collaboration type invitations
+  if (notification.type === 'Collaboration') {
+    const accepted = await showAcceptDialog()
 
-  if (!accepted) {
-    await store.dispatch('markNotificationAsRead', {
-      notification,
-      user: user.value,
-    })
-    return
-  }
+    if (!accepted) {
+      await store.dispatch('markNotificationAsRead', {
+        notification,
+        user: user.value,
+      })
+      return
+    }
 
-  if (notification.testId) {
-    const study = await new StudyController().getStudy({
-      id: notification.testId,
-    })
-    await store.dispatch('acceptStudyCollaboration', {
-      test: study,
-      cooperator: user.value,
-    })
+    if (notification.testId) {
+      const study = await new StudyController().getStudy({
+        id: notification.testId,
+      })
+      await store.dispatch('acceptStudyCollaboration', {
+        test: study,
+        cooperator: user.value,
+      })
+    }
   }
 
   await store.dispatch('markNotificationAsRead', {
@@ -170,13 +173,11 @@ const goToNotificationRedirect = async (notification) => {
     user: user.value,
   })
 
-  if (notification.redirectsTo) {
+  if (notification.redirectsTo && notification.redirectsTo !== '/') {
     globalThis.open(
       globalThis.location.origin + notification.redirectsTo,
       '_blank',
     )
-  } else {
-    goToNotificationPage()
   }
 
   menuOpen.value = false
