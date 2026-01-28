@@ -615,7 +615,10 @@
       "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
       "message_title_hint": "Digite um título para sua mensagem",
       "message_content_hint": "Digite o conteúdo da sua mensagem",
-      "invite_message": "Você foi convidado para colaborar em '{testTitle}'"
+      "invite_message": "Você foi convidado para colaborar em '{testTitle}'",
+      "message_sent_success": "Mensagem enviada com sucesso",
+      "message_sent_error": "Falha ao enviar a mensagem",
+      "user_not_registered": "Este usuário ainda não aceitou o convite ou não está registrado."
     }
   },
   "UserTestTable": {
@@ -725,25 +728,6 @@
     "goHome": "Ir para a página inicial"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Nenhuma sessão ativa encontrada",
-      "selectRange": "Selecionar intervalo",
-      "reset": "Redefinir",
-      "searchPlaceholder": "Pesquisar estudos...",
-      "filters": {
-        "allStudies": "Todos os estudos",
-        "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde colaboro",
-        "allStatuses": "Todos os status",
-        "today": "Hoje",
-        "upcoming": "Em breve",
-        "completed": "Concluído"
-      },
-      "ownership": "Propriedade",
-      "evaluator": "Avaliador",
-      "sessionDate": "Data da sessão",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Clique aqui!",
       "learnMore": "Saiba mais",
@@ -858,11 +842,11 @@
       "filters": {
         "allStatuses": "Todos os status",
         "today": "Hoje",
-        "upcoming": "Próximas",
+        "upcoming": "Em breve",
         "completed": "Concluído",
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde eu colaboro"
+        "whereICollaborate": "Onde colaboro"
       }
     },
     "templates": {

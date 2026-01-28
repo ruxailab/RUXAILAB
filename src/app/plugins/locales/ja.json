@@ -595,7 +595,10 @@
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
       "message_title_hint": "メッセージのタイトルを入力",
       "message_content_hint": "メッセージの内容を入力",
-      "invite_message": "'{testTitle}' への共同作業に招待されました"
+      "invite_message": "'{testTitle}' への共同作業に招待されました",
+      "message_sent_success": "メッセージが正常に送信されました",
+      "message_sent_error": "メッセージの送信に失敗しました",
+      "user_not_registered": "このユーザーはまだ招待を承諾していないか、登録されていません。"
     }
   },
   "UserTestTable": {
@@ -705,25 +708,6 @@
     "goHome": "ホームに戻る"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "アクティブなセッションが見つかりません",
-      "selectRange": "範囲を選択",
-      "reset": "リセット",
-      "searchPlaceholder": "研究を検索...",
-      "filters": {
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中",
-        "allStatuses": "すべてのステータス",
-        "today": "今日",
-        "upcoming": "今後",
-        "completed": "完了"
-      },
-      "ownership": "所有権",
-      "evaluator": "評価者",
-      "sessionDate": "セッション日",
-      "statusLabel": "ステータス"
-    },
     "intros": {
       "click": "ここをクリック！",
       "learnMore": "詳しく知る",
@@ -834,15 +818,15 @@
       "statusLabel": "ステータス",
       "ownership": "所有権",
       "evaluator": "評価者",
-      "noActiveSessions": "アクティブなセッションがありません",
+      "noActiveSessions": "アクティブなセッションはありません",
       "filters": {
         "allStatuses": "すべてのステータス",
         "today": "今日",
-        "upcoming": "今後",
+        "upcoming": "今後の予定",
         "completed": "完了",
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中"
+        "allStudies": "すべてのスタディ",
+        "myStudies": "マイスタディ",
+        "whereICollaborate": "共同作業中"
       }
     },
     "templates": {
