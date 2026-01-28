@@ -201,11 +201,8 @@ const handleImageUpload = async (event) => {
         // Show uploading state but don't block UI
         isUploadingImage.value = true;
         
-        // Upload in background
-        const downloadURL = await props.onUploadImage(file, (preview) => {
-            // This callback is called immediately with preview
-            localProfileData.value.profileImage = preview;
-        });
+        // Upload in background using the provided upload handler
+        const downloadURL = await props.onUploadImage(file);
         
         if (downloadURL) {
             // Clean up preview URL
