@@ -203,4 +203,7 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
 }
+:deep(.v-row) {
+  margin: -14px !important;
+}
 </style>
