@@ -156,15 +156,37 @@ export default class UserController extends Controller {
       userToUpdate.notifications[notificationIndex].readAt = Date.now()
 
       // Save updated user data to Firestore
-      const updatedUser = await this.update(
+      await this.update(
         userToUpdate.id,
         userToUpdate.toFirestore(),
       )
-      return updatedUser
+      return userToUpdate
     } else {
       // Notification was not found in the array
       throw new Error('Notification not found.')
     }
+  }
+
+  async markAllNotificationsAsRead(user) {
+    const userToUpdate = new User(user)
+
+    let hasUnread = false
+    userToUpdate.notifications.forEach((n) => {
+      if (!n.read) {
+        n.read = true
+        n.readAt = Date.now()
+        hasUnread = true
+      }
+    })
+
+    if (!hasUnread) return userToUpdate
+
+    await this.update(
+      userToUpdate.id,
+      userToUpdate.toFirestore(),
+    )
+    // Return the updated user object (in memory) so the store can commit it immediately
+    return userToUpdate
   }
 
   async removeNotificationsForTest(testId, cooperators) {
