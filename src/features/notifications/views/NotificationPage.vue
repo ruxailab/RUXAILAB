@@ -169,7 +169,7 @@
                   >
                     <div class="d-flex align-center flex-wrap gap-2">
                       <span class="font-weight-medium text-body-1">{{
-                        n.title || $t('notificationsPage.notification')
+                        n.title || (n.titleTemplate ? $t(n.titleTemplate, n.titleParams || {}) : $t('notificationsPage.notification'))
                       }}</span>
                       <v-chip
                         v-if="n.type"
@@ -178,7 +178,7 @@
                         :color="getTypeIcon(n.type).color"
                         variant="flat"
                         density="compact"
-                        class="text-capitalize"
+                        class="text-capitalize ml-2"
                       >
                         {{ n.type }}
                       </v-chip>
@@ -226,15 +226,17 @@
                       </v-btn>
                     </div>
                   </div>
-                  <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                    {{ n.message || $t('notificationsPage.newNotification') }}
-                  </p>
                   <div
-                    v-if="n.senderName"
+                    class="text-body-2 text-grey-darken-1 mb-2 notification-description line-clamp-2"
+                  >
+                    {{ n.description || (n.descriptionTemplate ? $t(n.descriptionTemplate, n.descriptionParams || {}) : $t('notificationsPage.newNotification')) }}
+                  </div>
+                  <div
+                    v-if="n.author"
                     class="text-caption text-grey-darken-2"
                   >
                     <v-icon size="small">mdi-account-outline</v-icon>
-                    {{ n.senderName }}
+                    {{ n.author }}
                   </div>
                 </div>
               </div>
@@ -355,8 +357,8 @@ const filteredNotifications = computed(() => {
     list = list.filter(
       (n) =>
         (n.title || '').toLowerCase().includes(query) ||
-        (n.message || '').toLowerCase().includes(query) ||
-        (n.senderName || '').toLowerCase().includes(query),
+        (n.description || '').toLowerCase().includes(query) ||
+        (n.author || '').toLowerCase().includes(query),
     )
   }
 
@@ -431,6 +433,7 @@ const relativeTime = (date) => {
   return t('notificationsPage.daysAgo', { count: Math.floor(diff / 86400) })
 }
 
+
 const getTypeIcon = (type) => {
   const icons = {
     Study: { icon: 'mdi-flask-outline', color: 'primary' },
@@ -479,11 +482,8 @@ const handleNotificationClick = async (notification) => {
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
 
-  // For collaboration invitations, show dialog
-  if (
-    notification.type === 'Collaboration' ||
-    notification.action === 'invitation'
-  ) {
+  // For collaboration invitations, show dialog (only for explicit 'Collaboration' type)
+  if (notification.type === 'Collaboration') {
     const accepted = await showAcceptDialog()
     if (!accepted) {
       await markAsRead(notification)
@@ -653,6 +653,9 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.notification-description {
+  white-space: pre-line;
+}
 /* 💅 Basic styles for layout and filters */
 .button-bar {
   gap: 14px;

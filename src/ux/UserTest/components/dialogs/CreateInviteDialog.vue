@@ -494,6 +494,7 @@ const notifyCooperator = (guest) => {
         description: inviteMessage.value,
         redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
         author: test.value.testAdmin?.email,
+        type: 'Collaboration',
         read: false,
         testId: test.value.id,
       }),

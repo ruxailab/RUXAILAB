@@ -19,13 +19,7 @@
       <div class="content">
         <div class="title-row">
           <div class="text-h6">
-            {{ notification.titleKey ? $t(notification.titleKey, notification.titleParams || {}) : (notification.title || 'Notification') }}
-            <span
-              v-if="notification.type"
-              class="type-badge"
-            >
-              {{ notification.type }}
-            </span>
+            {{ notification.title || (notification.titleTemplate ? $t(notification.titleTemplate, notification.titleParams || {}) : 'Notification') }}
           </div>
 
           <span class="time">
@@ -33,10 +27,9 @@
           </span>
         </div>
 
-        <div
-          class="description"
-          v-html="formatMultiline(notification.descriptionKey ? $t(notification.descriptionKey, notification.descriptionParams || {}) : notification.description)"
-        />
+        <div class="description line-clamp-2">
+          {{ notification.description || (notification.descriptionTemplate ? $t(notification.descriptionTemplate, notification.descriptionParams || {}) : '') }}
+        </div>
 
         <div class="meta">
           {{ $t('common.sentBy') }}: {{ notification.author }}
@@ -62,6 +55,7 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js'
 
 const props = defineProps({
@@ -72,8 +66,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['go-to-redirect', 'mark-as-read'])
+const { t } = useI18n()
 
 const onClick = () => emit('go-to-redirect', props.notification)
+
 
 const getTestIcon = (type) =>
   METHOD_DEFINITIONS?.[type]?.icon || 'mdi-bell-outline'

@@ -146,26 +146,30 @@ const {
 const sendNotification = async ({
   userId,
   title,
-  titleKey,
+  titleTemplate,
   titleParams,
   description,
-  descriptionKey,
+  descriptionTemplate,
   descriptionParams,
   redirectsTo = '/',
   testId = null,
   author,
+  type,
+  accessLevel,
 } = {}) => {
   const notification = new Notification({
     title,
-    titleKey,
+    titleTemplate,
     titleParams,
     description,
-    descriptionKey,
+    descriptionTemplate,
     descriptionParams,
     redirectsTo,
     author,
     read: false,
     testId,
+    type,
+    accessLevel,
   })
 
   try {
@@ -210,14 +214,22 @@ const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
   if (user.userDocId && test.value) {
     const author = test.value.testAdmin.email
-    await sendNotification(
-      user.userDocId,
-      title,
-      author,
-      content,
-      '/',
-      test.value.id,
-    )
+    try {
+      await sendNotification({
+        userId: user.userDocId,
+        title: title,
+        author: author,
+        description: content,
+        redirectsTo: null,
+        testId: test.value.id,
+        type: 'Message',
+      })
+      showSuccess('HeuristicsCooperators.messages.message_sent_success')
+    } catch (error) {
+      showError('HeuristicsCooperators.messages.message_sent_error')
+    }
+  } else {
+    showWarning('HeuristicsCooperators.messages.user_not_registered')
   }
 }
 
@@ -365,74 +377,50 @@ const submit = async () => {
 
 const sendMenssages = async (guest) => {
   try {
-    notifyCooperator(guest)
-    await handleSendEmail(guest)
+    await notifyCooperator(guest)
+    // Email is optional - don't let it block the notification
+    try {
+      await handleSendEmail(guest)
+    } catch (emailError) {
+      console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
+    }
     showSuccess('pages.cooperators.invitationSent')
   } catch (error) {
-    return error
+    console.error('sendMenssages error:', error)
     showError('errors.sendError')
+    return error
   }
 }
 
 const notifyCooperatorAccessibility = async (guest) => {
   if (test.value) {
-    let path = ''
-    let title = t('HeuristicsCooperators.actions.send_invitation')
-    let description = t('HeuristicsCooperators.messages.invite_message', {
-      testTitle: test.value.testTitle || t('common.test'),
-    })
+    const isManual = test.value.testType === 'MANUAL'
+    const methodPath = isManual ? 'manual' : 'automatic'
+    const methodLabel = isManual ? 'manual_testing' : 'automatic_testing'
+    
+    const path = `accessibility/${methodPath}/preview/${test.value.id}`
+    const author = test.value.testAdmin.email
 
-    // Variables for i18n keys
-    let titleKey = 'HeuristicsCooperators.actions.send_invitation'
-    let titleParams = null
-    let descriptionKey = 'HeuristicsCooperators.messages.invite_message'
-    let descriptionParams = { testTitle: test.value.testTitle || 'Test' }
-
-    if (test.value.testType === 'MANUAL') {
-      path = `accessibility/manual/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.manual_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      // Complex title concatenation, falling back to sender-side translation for title
-      titleKey = null 
-      
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    } else if (test.value.testType === 'AUTOMATIC') {
-      path = `accessibility/automatic/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.automatic_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      // Complex title concatenation, falling back to sender-side translation for title
-      titleKey = null
-
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
+    const payload = {
+      userId: guest.userDocId,
+      author,
+      redirectsTo: path,
+      testId: test.value.id,
+      titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
     }
 
-    if (guest.userDocId && path) {
-      const author = test.value.testAdmin.email
-      await sendNotification({
-        userId: guest.userDocId,
-        title,
-        titleKey,
-        titleParams,
-        description,
-        descriptionKey,
-        descriptionParams,
-        redirectsTo: path,
-        testId: test.value.id,
-        author,
-      })
+    if (inviteMessages.value) {
+      payload.description = inviteMessages.value
+    } else {
+      payload.descriptionTemplate = 'HeuristicsCooperators.messages.invite_message'
+      payload.descriptionParams = { testTitle: test.value.testTitle || 'Test' }
     }
+
+    await sendNotification(payload)
   }
 }
 
-const notifyCooperator = (guest) => {
+const notifyCooperator = async (guest) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
@@ -455,23 +443,24 @@ const notifyCooperator = (guest) => {
         ? managerRoute.href
         : `/testview/${test.value.id}/${guest.userDocId}`
 
-    sendNotification({
+    const payload = {
       userId: guest.userDocId,
-      title: t('HeuristicsCooperators.actions.send_invitation'),
-      titleKey: 'HeuristicsCooperators.actions.send_invitation',
-      description:
-        inviteMessages.value ||
-        t('HeuristicsCooperators.messages.invite_message', {
-          testTitle: test.value.testTitle || t('common.test'),
-        }),
-      descriptionKey: inviteMessages.value ? null : 'HeuristicsCooperators.messages.invite_message',
-      descriptionParams: inviteMessages.value ? null : { testTitle: test.value.testTitle || 'Test' },
-      redirectsTo: path,
       author: test.value.testAdmin.email,
       testId: test.value.id,
-      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
-        ?.value,
-    })
+      redirectsTo: path,
+      type: 'Collaboration',
+      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)?.value,
+      titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
+    }
+
+    if (inviteMessages.value) {
+      payload.description = inviteMessages.value
+    } else {
+      payload.descriptionTemplate = 'HeuristicsCooperators.messages.invite_message'
+      payload.descriptionParams = { testTitle: test.value.testTitle || 'Test' }
+    }
+
+    await sendNotification(payload)
   }
 }
 

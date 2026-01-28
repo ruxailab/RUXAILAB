@@ -1,20 +1,20 @@
 /**
  * Create a Notification.
- * @param {string} title - The title value (fallback for old notifications).
- * @param {string} titleKey - The i18n key for the title.
+ * @param {string} title - The title value.
+ * @param {string} titleTemplate - The i18n key for the title template.
  * @param {object} titleParams - The i18n params for the title.
- * @param {string} description - The description value (fallback for old notifications).
- * @param {string} descriptionKey - The i18n key for the description.
+ * @param {string} description - The description value.
+ * @param {string} descriptionTemplate - The i18n key for the description template.
  * @param {object} descriptionParams - The i18n params for the description.
  */
 
 export default class Notification {
   constructor({
     title,
-    titleKey,
+    titleTemplate,
     titleParams,
     description,
-    descriptionKey,
+    descriptionTemplate,
     descriptionParams,
     redirectsTo,
     author,
@@ -24,17 +24,17 @@ export default class Notification {
     readAt,
     type,
   } = {}) {
-    this.title = title;
-    this.titleKey = titleKey ?? null;
+    this.title = title ?? null;
+    this.titleTemplate = titleTemplate ?? null;
     this.titleParams = titleParams ?? null;
-    this.description = description;
-    this.descriptionKey = descriptionKey ?? null;
+    this.description = description ?? null;
+    this.descriptionTemplate = descriptionTemplate ?? null;
     this.descriptionParams = descriptionParams ?? null;
-    this.redirectsTo = redirectsTo;
+    this.redirectsTo = redirectsTo ?? null;
     this.createdDate = Date.now();
-    this.author = author;
-    this.read = read;
-    this.testId = testId;
+    this.author = author ?? null;
+    this.read = read ?? false;
+    this.testId = testId ?? null;
     this.accessLevel = accessLevel ?? null;
     this.readAt = readAt ?? null;
     this.type = type ?? null;
@@ -47,10 +47,10 @@ export default class Notification {
   toFirestore() {
     return {
       title: this.title,
-      titleKey: this.titleKey,
+      titleTemplate: this.titleTemplate,
       titleParams: this.titleParams,
       description: this.description,
-      descriptionKey: this.descriptionKey,
+      descriptionTemplate: this.descriptionTemplate,
       descriptionParams: this.descriptionParams,
       redirectsTo: this.redirectsTo,
       createdDate: this.createdDate,
