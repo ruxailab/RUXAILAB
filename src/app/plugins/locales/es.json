@@ -99,7 +99,9 @@
     },
     "proceed": "proceder",
     "all": "Todos",
-    "actions": "Acciones"
+    "actions": "Acciones",
+    "user": "Usuario",
+    "id": "ID"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -291,6 +293,10 @@
     "template": "Plantilla",
     "finalReport": "Informe final",
     "answerType": "Tipo de respuesta:",
+    "users": "Usuarios",
+    "studies": "Estudios",
+    "accessLevel": "Nivel de Acceso",
+    "actions": "Acciones",
     "drawer": {
       "Manager": "Gerente",
       "Test": "Prueba",
@@ -302,7 +308,10 @@
       "Template": "Plantilla",
       "Final Report": "Informe final",
       "Answer Test": "Responder prueba",
-      "Settings": "Configuración"
+      "Settings": "Configuración",
+      "name": "Nombre",
+      "studiesCount": "Recuento de Estudios",
+      "mediaSize": "Tamaño de Medios"
     },
     "heuristic": "Evaluación heurística de usabilidad"
   },
@@ -1176,7 +1185,8 @@
     "deleteHeuristic": "¿Estás seguro de que deseas eliminar la heurística ",
     "deleteAccount": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
     "genericSuccess": "Operación exitosa",
-    "savedChanges": "Cambios guardados con éxito"
+    "savedChanges": "Cambios guardados con éxito",
+    "deleteUser": "¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer."
   },
   "buttons": {
     "next": "Siguiente",

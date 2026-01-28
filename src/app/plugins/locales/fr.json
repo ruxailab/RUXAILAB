@@ -99,7 +99,9 @@
     "hidden": "Caché",
     "proceed": "procéder",
     "all": "Tout",
-    "actions": "Actions"
+    "actions": "Actions",
+    "user": "Utilisateur",
+    "id": "ID"
   },
   "storage": {
     "pageTitle": "Stockage",
@@ -291,6 +293,10 @@
     "template": "Modèle",
     "finalReport": "Rapport final",
     "answerType": "Type de réponse :",
+    "users": "Utilisateurs",
+    "studies": "Études",
+    "accessLevel": "Niveau d'Accès",
+    "actions": "Actions",
     "drawer": {
       "Manager": "Gestionnaire",
       "Test": "Test",
@@ -302,7 +308,10 @@
       "Template": "Modèle",
       "Final Report": "Rapport final",
       "Answer Test": "Répondre au test",
-      "Settings": "Paramètres"
+      "Settings": "Paramètres",
+      "name": "Nom",
+      "studiesCount": "Nombre d'Études",
+      "mediaSize": "Taille des Médias"
     },
     "heuristic": "Évaluation heuristique de l'utilisabilité"
   },
@@ -1176,7 +1185,8 @@
     "deleteHeuristic": "Êtes-vous sûr de vouloir supprimer l'heuristique ",
     "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
     "genericSuccess": "Opération réussie",
-    "savedChanges": "Modifications enregistrées avec succès"
+    "savedChanges": "Modifications enregistrées avec succès",
+    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée."
   },
   "buttons": {
     "next": "Suivant",
