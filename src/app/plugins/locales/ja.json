@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "編集フォームの読み込みに失敗しました。もう一度お試しください。",
       "invalidHeuristic": "無効なヒューリスティック選択です",
       "invalidQuestion": "無効な質問選択です"
+    },
+    "count": {
+      "question": "質問",
+      "questions": "質問"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "ヒューリスティックな質問へのオプションの追加を開始してください"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "オプション",
+      "options": "オプション"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "テストを編集",
+    "pageSubtitle": "テストの設定と環境設定をカスタマイズ",
     "titles": {
       "heuristics": "ヒューリスティック",
       "options": "オプション",

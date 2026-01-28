@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "Не удалось загрузить форму редактирования. Пожалуйста, попробуйте снова.",
       "invalidHeuristic": "Неверный выбор эвристики",
       "invalidQuestion": "Неверный выбор вопроса"
+    },
+    "count": {
+      "question": "Вопрос",
+      "questions": "Вопросы"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "Начните добавлять варианты к вашим эвристическим вопросам"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "вариант",
+      "options": "варианты"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "Редактировать тест",
+    "pageSubtitle": "Настройте параметры и предпочтения вашего теста",
     "titles": {
       "heuristics": "Эвристики",
       "options": "Варианты",
