@@ -609,7 +609,10 @@
       "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
       "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
       "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein",
-      "invite_message": "Sie wurden eingeladen, an '{testTitle}' mitzuarbeiten"
+      "invite_message": "Sie wurden eingeladen, an '{testTitle}' mitzuarbeiten",
+      "message_sent_success": "Nachricht erfolgreich gesendet",
+      "message_sent_error": "Nachricht konnte nicht gesendet werden",
+      "user_not_registered": "Dieser Benutzer hat die Einladung noch nicht angenommen oder ist nicht registriert."
     }
   },
   "UserTestTable": {
@@ -719,25 +722,6 @@
     "goHome": "Zur Startseite"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "Keine aktive Sitzung gefunden",
-      "selectRange": "Bereich auswählen",
-      "reset": "Zurücksetzen",
-      "searchPlaceholder": "Studien suchen...",
-      "filters": {
-        "allStudies": "Alle Studien",
-        "myStudies": "Meine Studien",
-        "whereICollaborate": "Wo ich zusammenarbeite",
-        "allStatuses": "Alle Status",
-        "today": "Heute",
-        "upcoming": "Bevorstehend",
-        "completed": "Abgeschlossen"
-      },
-      "ownership": "Eigentum",
-      "evaluator": "Bewerter",
-      "sessionDate": "Sitzungsdatum",
-      "statusLabel": "Status"
-    },
     "intros": {
       "click": "Hier klicken!",
       "learnMore": "Mehr erfahren",
@@ -846,13 +830,13 @@
       "sessionDate": "Sitzungsdatum",
       "selectRange": "Bereich auswählen",
       "statusLabel": "Status",
-      "ownership": "Eigentum",
+      "ownership": "Besitz",
       "evaluator": "Bewerter",
       "noActiveSessions": "Sie haben keine aktiven Sitzungen",
       "filters": {
         "allStatuses": "Alle Status",
         "today": "Heute",
-        "upcoming": "Bevorstehend",
+        "upcoming": "Demnächst",
         "completed": "Abgeschlossen",
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",

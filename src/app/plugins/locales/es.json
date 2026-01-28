@@ -673,7 +673,10 @@
       "change_role": "¿Estás seguro de que deseas cambiar el rol de {email} de {old} a {new}?",
       "message_title_hint": "Escribe un título para tu mensaje",
       "message_content_hint": "Escribe el contenido de tu mensaje",
-      "invite_message": "Has sido invitado a colaborar en '{testTitle}'"
+      "invite_message": "Has sido invitado a colaborar en '{testTitle}'",
+      "message_sent_success": "Mensaje enviado con éxito",
+      "message_sent_error": "Error al enviar el mensaje",
+      "user_not_registered": "Este usuario aún no ha aceptado la invitación o no está registrado."
     }
   },
   "UserTestTable": {
@@ -792,25 +795,6 @@
     "goHome": "Ir a la página principal"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "No se encontró ninguna sesión activa",
-      "selectRange": "Seleccionar rango",
-      "reset": "Restablecer",
-      "searchPlaceholder": "Buscar estudios...",
-      "filters": {
-        "allStudies": "Todos los estudios",
-        "myStudies": "Mis estudios",
-        "whereICollaborate": "Dónde colaboro",
-        "allStatuses": "Todos los estados",
-        "today": "Hoy",
-        "upcoming": "Próximo",
-        "completed": "Completado"
-      },
-      "ownership": "Propiedad",
-      "evaluator": "Evaluador",
-      "sessionDate": "Fecha de sesión",
-      "statusLabel": "Estado"
-    },
     "intros": {
       "click": "¡Haz clic aquí!",
       "learnMore": "Aprende más",
@@ -925,11 +909,11 @@
       "filters": {
         "allStatuses": "Todos los estados",
         "today": "Hoy",
-        "upcoming": "Próximas",
+        "upcoming": "Próximamente",
         "completed": "Completado",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Donده colaboro"
+        "whereICollaborate": "Donde colaboro"
       }
     },
     "templates": {

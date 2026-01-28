@@ -613,7 +613,10 @@
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
       "message_title_hint": "输入您的消息标题",
       "message_content_hint": "输入您的消息内容",
-      "invite_message": "您已被邀请参与 '{testTitle}' 的协作"
+      "invite_message": "您已被邀请参与 '{testTitle}' 的协作",
+      "message_sent_success": "消息发送成功",
+      "message_sent_error": "消息发送失败",
+      "user_not_registered": "该用户尚未接受邀请或未注册。"
     }
   },
   "UserTestTable": {
@@ -723,25 +726,6 @@
     "goHome": "返回首页"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "未找到活动会话",
-      "selectRange": "选择范围",
-      "reset": "重置",
-      "searchPlaceholder": "搜索研究...",
-      "filters": {
-        "allStudies": "所有研究",
-        "myStudies": "我的研究",
-        "whereICollaborate": "我参与协作的",
-        "allStatuses": "所有状态",
-        "today": "今天",
-        "upcoming": "即将到来",
-        "completed": "已完成"
-      },
-      "ownership": "所有权",
-      "evaluator": "评估者",
-      "sessionDate": "会话日期",
-      "statusLabel": "状态"
-    },
     "intros": {
       "click": "点击这里！",
       "learnMore": "了解更多",
@@ -852,7 +836,7 @@
       "statusLabel": "状态",
       "ownership": "所有权",
       "evaluator": "评估者",
-      "noActiveSessions": "您没有活跃的会话",
+      "noActiveSessions": "您没有活动的会话",
       "filters": {
         "allStatuses": "所有状态",
         "today": "今天",
