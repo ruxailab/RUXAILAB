@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "संपादन फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
       "invalidHeuristic": "अमान्य हीयुरिस्टिक चयन",
       "invalidQuestion": "अमान्य प्रश्न चयन"
+    },
+    "count": {
+      "question": "प्रश्न",
+      "questions": "प्रश्न"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "अपने अनुमानी प्रश्नों में विकल्प जोड़ना शुरू करें"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "विकल्प",
+      "options": "विकल्प"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "परीक्षण संपादित करें",
+    "pageSubtitle": "अपने परीक्षण की सेटिंग्स और प्राथमिकताओं को अनुकूलित करें",
     "titles": {
       "heuristics": "हीयुरिस्टिक्स",
       "options": "विकल्प",

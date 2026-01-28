@@ -554,6 +554,10 @@
       "failedToLoadEditForm": "Failed to load edit form. Please try again.",
       "invalidHeuristic": "Invalid heuristic selection",
       "invalidQuestion": "Invalid question selection"
+    },
+    "count": {
+      "question": "Question",
+      "questions": "Questions"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +569,11 @@
       "startAddingOptions": "Start adding options to your heuristic questions"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "option",
+      "options": "options"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -613,6 +621,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "Edit Test",
+    "pageSubtitle": "Customize the settings and preferences of your test",
     "titles": {
       "heuristics": "Heuristics",
       "options": "Options",
