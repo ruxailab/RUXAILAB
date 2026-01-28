@@ -59,7 +59,7 @@
             <UserVariables
               type="pre-test"
               @change="change = true"
-              @update="store.dispatch('setPreTest', $event)"
+              @update="store.dispatch('UserStudy/setPreTest', $event)"
             />
           </div>
 
@@ -72,7 +72,7 @@
             <UserVariables
               type="post-test"
               @change="change = true"
-              @update="store.dispatch('setPostTest', $event)"
+              @update="store.dispatch('UserStudy/setPostTest', $event)"
             />
           </div>
 
@@ -133,17 +133,17 @@ const getConsent = () => {
 
 const getTasks = () => {
   const tasksData = test.value.testStructure.userTasks || []
-  store.dispatch('UserStudy/setTasks', JSON.parse(JSON.stringify(tasksData)))
+  store.dispatch('UserStudy/setTasks', structuredClone(tasksData))
 }
 
 const getPreTest = () => {
   const preTestData = test.value.testStructure.preTest || []
-  store.dispatch('UserStudy/setPreTest', JSON.parse(JSON.stringify(preTestData)))
+  store.dispatch('UserStudy/setPreTest', structuredClone(preTestData))
 }
 
 const getPostTest = () => {
   const postTestData = test.value.testStructure.postTest || []
-  store.dispatch('UserStudy/setPostTest', JSON.parse(JSON.stringify(postTestData)))
+  store.dispatch('UserStudy/setPostTest', structuredClone(postTestData))
 }
 
 const hasEyeTracking = computed(() => {
@@ -179,9 +179,9 @@ const save = async () => {
     const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: JSON.parse(JSON.stringify(store.getters['UserStudy/preTest'])),
-      userTasks: JSON.parse(JSON.stringify(store.getters['UserStudy/tasks'])),
-      postTest: JSON.parse(JSON.stringify(store.getters['UserStudy/postTest'])),
+      preTest: structuredClone(store.getters['UserStudy/preTest']),
+      userTasks: structuredClone(store.getters['UserStudy/tasks']),
+      postTest: structuredClone(store.getters['UserStudy/postTest']),
       consent: consent.value,
     }
 
