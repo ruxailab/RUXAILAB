@@ -184,14 +184,9 @@ const goToNotificationRedirect = async (notification) => {
 
 const markAllAsRead = async () => {
   const unread = user.value.notifications.filter((n) => !n.read)
-  await Promise.all(
-    unread.map((n) =>
-      store.dispatch('markNotificationAsRead', {
-        notification: n,
-        user: user.value,
-      }),
-    ),
-  )
+  if (unread.length === 0) return
+
+  await store.dispatch('markAllNotificationsAsRead', user.value)
 }
 
 const goToNotificationPage = () => {
