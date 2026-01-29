@@ -46,6 +46,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "Test laden",
     "continueAs": "Fortfahren als",
     "notUser": "Nicht {userEmail}?",
@@ -449,7 +453,7 @@
       "unknown": "Unbekannt"
     },
     "cards": {
-      "recentActivity": "Letzte Aktivität",
+      "recentActivity": "Letzte Aktivitäten",
       "activities7Days": "Aktivitäten (insgesamt 7 Tage)",
       "lastActivity": "Letzte Aktivität",
       "noActivity": "Keine Aktivität",
@@ -478,17 +482,17 @@
       "generateReport": "Bericht generieren",
       "reportAvailable": "Bericht verfügbar",
       "noReport": "Kein Bericht generiert",
-      "readyForDownload": "Abschlussbericht bereit zum Download",
+      "readyForDownload": "Abschlussbericht bereit zum Herunterladen",
       "waitingForParticipants": "Warten auf Teilnehmer",
       "evaluationsCompleted": "Bewertungen abgeschlossen",
-      "readyToGenerate": "Bereit zur Berichterstellung",
-      "excellentUsability": "Exzellente Benutzerfreundlichkeit",
+      "readyToGenerate": "Bereit zum Generieren des Berichts",
+      "excellentUsability": "Hervorragende Benutzerfreundlichkeit",
       "acceptableUsability": "Akzeptable Benutzerfreundlichkeit",
-      "needsImprovement": "Verbesserungswürdig",
+      "needsImprovement": "Verbesserungsbedürftig",
       "basedOn": "Basierend auf",
       "evaluations": "Bewertungen",
       "evaluationUpdated": "Bewertung aktualisiert",
-      "updatedProgress": "hat den Fortschritt aktualisiert",
+      "updatedProgress": "hat seinen Fortschritt aktualisiert",
       "invitationSentTitle": "Einladung gesendet",
       "invitationPendingDesc": "Einladung ausstehend für",
       "pendingStatus": "Ausstehend"
