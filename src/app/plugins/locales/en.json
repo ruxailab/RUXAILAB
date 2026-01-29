@@ -630,7 +630,21 @@
     "messages": {
       "submitTest": "Are you sure you want to submit this test?",
       "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
-      "noHeuristics": "This test don't have any heuristic"
+      "noHeuristics": "This test don't have any heuristic",
+      "noHeuristicsConfigured": "Configuration Error: This test has no heuristics configured. Please add heuristics to proceed.",
+      "answerSaved": "Answer saved successfully"
+    },
+    "errors": {
+      "questionNotLoaded": "Question could not be loaded",
+      "noAnswerData": "No answer data found",
+      "failedToSaveAnswer": "Failed to save answer. Please try again.",
+      "failedToSubmitAnswer": "Failed to submit answer. Please try again."
+    },
+    "unknownHeuristic": "Unknown Heuristic",
+    "unknownQuestion": "Unknown Question",
+    "selectAnOption": "Select an Option",
+    "headers": {
+      "heuristics": "HEURISTICS"
     },
     "actions": {
       "cancel": "Cancel",

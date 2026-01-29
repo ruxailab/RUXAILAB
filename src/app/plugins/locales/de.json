@@ -630,7 +630,21 @@
     "messages": {
       "submitTest": "Sind Sie sicher, dass Sie diesen Test einreichen möchten?",
       "submitOnce": "Sind Sie sicher, dass Sie Ihren Test einreichen möchten? Sie können dies nur einmal tun.",
-      "noHeuristics": "Dieser Test hat keine Heuristiken"
+      "noHeuristics": "Dieser Test hat keine Heuristiken",
+      "noHeuristicsConfigured": "Konfigurationsfehler: Dieser Test hat keine konfigurierten Heuristiken. Bitte Heuristiken hinzufügen, um fortzufahren.",
+      "answerSaved": "Antwort erfolgreich gespeichert"
+    },
+    "errors": {
+      "questionNotLoaded": "Frage konnte nicht geladen werden",
+      "noAnswerData": "Keine Antwortdaten gefunden",
+      "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
+      "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut."
+    },
+    "unknownHeuristic": "Unbekannte Heuristik",
+    "unknownQuestion": "Unbekannte Frage",
+    "selectAnOption": "Wählen Sie eine Option",
+    "headers": {
+      "heuristics": "HEURISTIKEN"
     },
     "actions": {
       "cancel": "Abbrechen",
