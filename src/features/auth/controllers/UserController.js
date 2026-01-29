@@ -220,7 +220,6 @@ export default class UserController extends Controller {
       throw error
     }
   }
-
   async updateLevel(uid, accessLevel) {
     try {
       return super.update(COLLECTION, uid, { accessLevel })
