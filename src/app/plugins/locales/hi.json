@@ -378,6 +378,15 @@
       "createNewStudy": "नया अध्ययन बनाएं",
       "emptyStateMessage": "आपके पास अभी तक कोई अध्ययन नहीं है। मूल्यवान उपयोगकर्ता अंतर्दृष्टि एकत्र करना शुरू करने के लिए अपना पहला अध्ययन बनाएं।"
     },
+    "studyStatus": {
+      "finished": "समाप्त",
+      "expiredDaysAgo": "{days} दिन पहले समाप्त",
+      "endsToday": "आज समाप्त हो रहा है",
+      "endsTodayStarted": "आज समाप्त हो रहा है · शुरू हुआ",
+      "readyToSubmit": "सबमिट करने के लिए तैयार",
+      "endsTodayReady": "आज समाप्त हो रहा है · तैयार",
+      "notStarted": "प्रारंभ नहीं हुआ"
+    },
     "activeStudiesOverview": "सक्रिय अध्ययनों का अवलोकन",
     "viewAll": "सभी देखें",
     "showMore": "और दिखाएँ",
