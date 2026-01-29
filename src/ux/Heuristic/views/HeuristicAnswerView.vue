@@ -10,7 +10,7 @@
       </p>
     </template>
     <!-- checking whether to show heuristics answer sheet or user answer sheet-->
-    <div v-if="testAnswerDocument">
+    <div v-if="hasTestAnswerDocument">
       <HeuristicsTestAnswer />
     </div>
   </PageWrapper>

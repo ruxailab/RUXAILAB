@@ -496,7 +496,7 @@ const emit = defineEmits(['goToCoops']);
 
 const tab = ref(0);
 const ind = ref(0);
-const resultEvaluator = ref(statistics());
+const resultEvaluator = ref([]);
 let intro = ref(null);
 const tabelacompleta = ref(null);
 const decisionmatrix = ref(null);
@@ -753,12 +753,18 @@ const setTab = (value) => {
   ind.value = 0;
 };
 
-watch(answers, () => {
-  if (testAnswerDocument.value && (answers.value !== null || answers.value.length > 0)) {
-    resultEvaluator.value = statistics();
-    intro.value = answers.value.length === 0;
-  }
-});
+// Watch both test and testAnswerDocument since statistics() needs both
+watch(
+  () => [store.state.Tests.Test, store.state.Answer.testAnswerDocument],
+  ([newTest, newDoc]) => {
+    if (newTest && newDoc && newDoc.heuristicAnswers) {
+      // Both dependencies are ready, now statistics() should work
+      resultEvaluator.value = statistics();
+      intro.value = Object.keys(newDoc.heuristicAnswers).length === 0;
+    }
+  },
+  { immediate: true, deep: true }
+);
 
 // Watch testAnswerDocument to trigger usuability_percentage_array when dependencies are ready
 watch(
