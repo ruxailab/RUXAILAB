@@ -1772,5 +1772,15 @@
   "taskCreation": {
     "taskDescription": "任务描述",
     "taskDescriptionHelper": "提供他们应该遵循的具体步骤。"
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "删除变量",
+      "message": "您确定要删除此变量吗？此操作无法撤消。"
+    },
+    "deleteOptionConfirm": {
+      "title": "删除选项",
+      "message": "您确定要删除此选项吗？此操作无法撤消。"
+    }
   }
 }
