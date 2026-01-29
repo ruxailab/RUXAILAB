@@ -9,8 +9,7 @@
       >
         <div
           class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
-        >
-        </div>
+        ></div>
 
         <!-- TABS FOR DESKTOP -->
         <v-tabs
@@ -79,7 +78,10 @@
       />
 
       <!-- MARK ALL AS READ BUTTON (New Location) -->
-      <div class="d-flex justify-end mb-4" v-if="['unread', 'inbox'].includes(activeTab)">
+      <div
+        v-if="['unread', 'inbox'].includes(activeTab)"
+        class="d-flex justify-end mb-4"
+      >
         <v-btn
           size="small"
           variant="flat"
@@ -635,7 +637,7 @@ onMounted(() => {
   }, 600)
 
   globalThis.addEventListener('keydown', handleKeyDown)
-  
+
   // Expose test function for user to verify in console
   globalThis.testByInjectingNotification = () => {
     const fakeNotification = {
@@ -644,12 +646,14 @@ onMounted(() => {
       message: 'This is a test notification generated locally.',
       type: 'System',
       read: false,
-      createdDate: new Date().toISOString()
+      createdDate: new Date().toISOString(),
     }
-    // We can't easily push to the store user without a mutation, 
+    // We can't easily push to the store user without a mutation,
     // but we can force the button to enable by mocking the unread count check locally if needed.
     // Actually, let's just log instructions for them.
-    console.log('To test, please use the app UI to perform an action that triggers a notification, or ask another user to invite you.')
+    console.log(
+      'To test, please use the app UI to perform an action that triggers a notification, or ask another user to invite you.',
+    )
   }
 })
 
