@@ -6,6 +6,7 @@ on:
 
 permissions:
   issues: write
+  contents: read
 
 jobs:
   auto-label:
@@ -23,11 +24,73 @@ jobs:
             const isBot = BOT_LOGINS.has(issue.user?.login) || issue.user?.type === 'Bot';
             if (isBot) return;
 
-            const title = (issue.title || '').toLowerCase();
-            const body = (issue.body || '').toLowerCase();
+            const rawTitle = issue.title || '';
+            const rawBody = issue.body || '';
+            const title = rawTitle.toLowerCase();
+            const body = rawBody.toLowerCase();
             const existingLabels = (issue.labels || []).map(l => (typeof l === 'string' ? l : l.name));
 
             const labelsToAdd = new Set();
+
+            // --- maintainer vs community ---
+            const { owner, repo } = context.repo;
+            let isMaintainer = false;
+            try {
+              const perm = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner,
+                repo,
+                username: issue.user.login,
+              });
+              const level = perm.data.permission;
+              isMaintainer = ['admin', 'maintain', 'write', 'triage'].includes(level);
+            } catch (e) {
+              // Non-collaborators (or API error) are treated as community by default
+            }
+
+            if (isMaintainer) {
+              labelsToAdd.add('maintainer-issue');
+            } else {
+              labelsToAdd.add('community-issue');
+            }
+
+            // --- conventional commits-style keywords ---
+            const ccMatch = rawTitle.match(/^(\w+)(\(.+\))?:/);
+            const ccType = ccMatch ? ccMatch[1].toLowerCase() : null;
+
+            switch (ccType) {
+              case 'feat':
+                labelsToAdd.add('feature');
+                break;
+              case 'fix':
+                labelsToAdd.add('bug');
+                break;
+              case 'docs':
+                labelsToAdd.add('documentation');
+                break;
+              case 'chore':
+                labelsToAdd.add('chore');
+                break;
+              case 'refactor':
+                labelsToAdd.add('refactor');
+                break;
+              case 'test':
+                labelsToAdd.add('tests');
+                break;
+              case 'perf':
+                labelsToAdd.add('performance');
+                break;
+              case 'ci':
+                labelsToAdd.add('ci');
+                break;
+              case 'build':
+                labelsToAdd.add('build');
+                break;
+              case 'style':
+                labelsToAdd.add('style');
+                break;
+              default:
+                break;
+            }
 
             // --- bug ---
             const looksLikeBugTemplate =
@@ -40,7 +103,8 @@ jobs:
               title.startsWith('[🐞 bug]') ||
               title.startsWith('[bug]') ||
               title.includes('bug:') ||
-              title.includes('🐞');
+              title.includes('🐞') ||
+              (ccType === 'fix');
 
             if (looksLikeBugTemplate || looksLikeBugTitle) {
               labelsToAdd.add('bug');
@@ -58,48 +122,9 @@ jobs:
               labelsToAdd.add('help');
             }
 
-            // --- good for wannabe gsocers ---
-            // Conservative heuristic: only auto-apply for clearly small-scope issues.
-            const gsocPositiveKeywords = [
-              'docs',
-              'documentation',
-              'typo',
-              'readme',
-              'workflow',
-              'github action',
-              'ci',
-              'label',
-              'lint',
-              'eslint',
-              'test',
-              'unit test',
-              'i18n',
-              'translation',
-              'copy',
-              'text',
-            ];
-
-            const gsocNegativeKeywords = [
-              'refactor',
-              'rewrite',
-              'migration',
-              'breaking',
-              'architecture',
-              'performance',
-              'security',
-              'auth',
-              'firebase',
-              'database',
-              'backend',
-              'infrastructure',
-            ];
-
-            const hasPositive = gsocPositiveKeywords.some(k => title.includes(k) || body.includes(k));
-            const hasNegative = gsocNegativeKeywords.some(k => title.includes(k) || body.includes(k));
-
-            if (hasPositive && !hasNegative) {
-              labelsToAdd.add('good for wannabe gsocers');
-            }
+            // Note: per maintainer feedback, we no longer auto-apply
+            // "good for wannabe gsocers" because maintainers prefer
+            // to decide that label manually on a case-by-case basis.
 
             // Remove labels that already exist
             for (const l of existingLabels) labelsToAdd.delete(l);
@@ -108,8 +133,8 @@ jobs:
             if (finalLabels.length === 0) return;
 
             await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner,
+              repo,
               issue_number: issue.number,
               labels: finalLabels,
             });
