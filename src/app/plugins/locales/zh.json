@@ -809,6 +809,126 @@
       "untitledVariable": "未命名变量"
     }
   },
+  "CreateTask": {
+    "dialog": {
+      "title": "创建新任务",
+      "subtitle": "逐步配置您的任务"
+    },
+    "stepper": {
+      "basicInfo": "基本信息",
+      "configuration": "配置",
+      "advanced": "高级",
+      "preview": "预览"
+    },
+    "selectItems": {
+      "noAnswer": "无需回答",
+      "shortAnswer": "简短回答",
+      "paragraphAnswer": "段落回答",
+      "googleFormsLink": "Google 表单链接",
+      "nasaTlx": "NASA TLX",
+      "sus": "系统可用性量表",
+      "tam1": "TAM-1 – 基本接受度",
+      "tam2": "TAM-2 – 扩展接受度",
+      "tam3": "TAM-3 – 高级接受度",
+      "sart": "情境意识评估技术"
+    },
+    "validation": {
+      "fieldRequired": "字段必填",
+      "validUrl": "必须是以 http:// 或 https:// 开头的有效 URL",
+      "positiveNumber": "必须是正数"
+    },
+    "basicInfo": {
+      "stepTitle": "步骤 1：任务基本信息",
+      "stepDescription": "定义参与者在此任务中将要做什么。这是您用户测试的基础 - 请明确具体地说明目标和期望。",
+      "taskTitle": "任务标题",
+      "taskTitleHint": "为您的任务取一个清晰简洁的名称，描述参与者需要完成的内容",
+      "taskTitlePlaceholder": "例如，'查找产品信息'、'完成结账流程'",
+      "taskDescription": "任务描述",
+      "taskDescriptionHint": "为参与者提供详细说明。包括目标、背景和任何具体步骤。",
+      "taskDescriptionPlaceholder": "详细描述任务。参与者应该做什么？",
+      "tipLabel": "提示",
+      "tipHint": "帮助参与者完成任务的可选指导或提示",
+      "tipPlaceholder": "例如，'专注于主导航'、'花时间探索'"
+    },
+    "configuration": {
+      "stepTitle": "步骤 2：任务配置",
+      "stepDescription": "配置任务发生的位置以及参与者如何提供他们的回答。",
+      "taskLink": "任务链接 (URL)",
+      "taskLinkHint": "参与者将执行任务的网站或应用程序 URL",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "预计时间（分钟）",
+      "estimatedTimeHint": "参与者完成此任务所需的预计时间",
+      "estimatedTimePlaceholder": "例如 10",
+      "answerTypeHint": "选择参与者在完成任务后如何提供反馈",
+      "answerTypePreview": "回答类型预览",
+      "postTestHint": "输入您想在参与者完成任务后问他们的具体问题",
+      "postTestPlaceholder": "例如，'找到产品信息有多容易？'",
+      "postFormHint": "参与者在任务后填写的外部表单 URL",
+      "postFormPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "参与者完成任务而不提供反馈",
+      "textArea": "参与者在任务后提供书面反馈",
+      "postTest": "参与者在任务后回答具体问题",
+      "postForm": "参与者在任务后填写外部表单",
+      "nasaTlx": "NASA 任务负载指数 - 测量工作负载",
+      "sus": "系统可用性量表 - 测量可用性",
+      "tam1": "TAM-1（基本接受度）- 测量感知实用性和易用性",
+      "tam2": "TAM-2（扩展）- 添加外部影响和结果可演示性",
+      "tam3": "TAM-3（综合）- 包括焦虑、趣味性和客观可用性",
+      "sart": "情境意识评估技术 - 测量情境意识"
+    },
+    "advanced": {
+      "stepTitle": "步骤 3：高级选项",
+      "stepDescription": "启用额外的数据收集方法以获得更深入的见解。",
+      "eyeTrackingDesc": "追踪参与者在任务期间看向哪里。",
+      "screenRecordDesc": "记录参与者的屏幕活动。",
+      "cameraDesc": "记录参与者的面部表情和反应。",
+      "audioDesc": "记录参与者的口头反馈。",
+      "privacyNotice": "隐私声明",
+      "privacyText": "录制功能需要参与者的明确同意。",
+      "privacyItem1": "清楚地告知参与者数据收集情况",
+      "privacyItem2": "在开始测试前获得适当同意",
+      "privacyItem3": "遵守数据保护法规（GDPR 等）",
+      "privacyItem4": "安全存储和处理录制的数据"
+    },
+    "preview": {
+      "taskSummary": "任务摘要",
+      "untitledTask": "未命名任务",
+      "description": "描述：",
+      "noDescription": "未提供描述",
+      "participantTip": "参与者提示：",
+      "taskUrl": "任务 URL：",
+      "answerType": "回答类型：",
+      "recordingFeatures": "录制功能：",
+      "postTaskQuestion": "任务后问题：",
+      "postTaskForm": "任务后表单：",
+      "externalForm": "外部表单",
+      "taskReady": "任务准备就绪！",
+      "reviewRequired": "需要审核",
+      "taskReadyMessage": "您的任务已正确配置，可以在研究中使用了。",
+      "reviewRequiredMessage": "请检查之前的步骤，确保所有必填字段已填写完毕。",
+      "noTypeSelected": "未选择类型",
+      "answerTypes": {
+        "noAnswer": "无需回答",
+        "textArea": "文本区域",
+        "postTest": "测后问题",
+        "postForm": "外部表单",
+        "nasaTlx": "NASA-TLX",
+        "sus": "系统可用性量表",
+        "tam1": "TAM-1（基本）",
+        "tam2": "TAM-2（扩展）",
+        "tam3": "TAM-3（综合）",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "眼动追踪",
+        "screenRecording": "屏幕录制",
+        "camera": "摄像头",
+        "audio": "音频"
+      }
+    }
+  },
   "UserTestView": {
     "titles": {
       "preTestConsent": "前测 - 同意",
