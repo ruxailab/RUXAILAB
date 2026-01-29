@@ -172,10 +172,10 @@
       "allMethods": "جميع الطرق",
       "all": "الكل",
       "heuristicEvaluation": "التقييم الإرشادي",
-      "userStudyUnmoderated": "دراسة المستخدم (غير مراقبة)",
-      "userStudyModerated": "دراسة المستخدم (مراقبة)",
-      "manualAccessibility": "إمكانية الوصول اليدوية",
-      "automaticAccessibility": "إمكانية الوصول التلقائية"
+      "moderatedUserTest": "اختبار المستخدم المراقب",
+      "unmoderatedUserTest": "اختبار المستخدم غير المراقب",
+      "accessibilityManual": "تقييم إمكانية الوصول اليدوي",
+      "accessibilityAutomatic": "تقييم إمكانية الوصول التلقائي"
     }
   },
   "notificationsPage": {

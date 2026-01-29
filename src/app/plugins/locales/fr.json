@@ -172,10 +172,10 @@
       "allMethods": "Toutes les méthodes",
       "all": "Tous",
       "heuristicEvaluation": "Évaluation heuristique",
-      "userStudyUnmoderated": "Étude utilisateur (Non modérée)",
-      "userStudyModerated": "Étude utilisateur (Modérée)",
-      "manualAccessibility": "Accessibilité manuelle",
-      "automaticAccessibility": "Accessibilité automatique"
+      "moderatedUserTest": "Test utilisateur modéré",
+      "unmoderatedUserTest": "Test utilisateur non modéré",
+      "accessibilityManual": "Évaluation d'accessibilité manuelle",
+      "accessibilityAutomatic": "Évaluation d'accessibilité automatique"
     }
   },
   "notificationsPage": {
