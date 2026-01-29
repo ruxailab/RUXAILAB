@@ -3,28 +3,13 @@
     <v-col cols="12" md="10" lg="8" xl="6">
       <!-- HEADER -->
       <v-card
-        class="rounded-xl"
+        class="notification-card-clean"
         flat
         :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
         <div
           class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
-        >
-          <!-- MARK ALL AS READ BUTTON -->
-          <v-btn
-            v-if="activeTab === 'unread' && unreadCount > 0"
-            size="small"
-            variant="flat"
-            color="primary"
-            :loading="markingAllAsRead"
-            prepend-icon="mdi-email-open-outline"
-            class="elevation-0 text-capitalize"
-            :class="{ 'flex-shrink-0': true }"
-            @click="markAllAsRead"
-          >
-            {{ $t('notificationsPage.markAllRead') }}
-          </v-btn>
-        </div>
+        ></div>
 
         <!-- TABS FOR DESKTOP -->
         <v-tabs
@@ -92,10 +77,30 @@
         @click:clear="search = ''"
       />
 
+      <!-- MARK ALL AS READ BUTTON (Below search, visible on unread and inbox) -->
+      <div
+        v-if="['unread', 'inbox'].includes(activeTab)"
+        class="d-flex justify-end mb-4"
+      >
+        <v-btn
+          size="small"
+          variant="flat"
+          :color="unreadCount > 0 ? 'primary' : 'grey-lighten-2'"
+          :class="{ 'text-medium-emphasis': unreadCount === 0 }"
+          :disabled="unreadCount === 0"
+          :loading="markingAllAsRead"
+          prepend-icon="mdi-email-open-outline"
+          class="text-capitalize"
+          @click="markAllAsRead"
+        >
+          {{ $t('notificationsPage.markAllRead') }}
+        </v-btn>
+      </div>
+
       <!-- NOTIFICATIONS CONTENT -->
       <v-card
         flat
-        class="rounded-xl pa-4"
+        class="notification-card-clean pa-4"
         :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
         <!-- SKELETON LOADER -->
@@ -138,13 +143,7 @@
               :class="{
                 unread: !n.read,
                 active: activeIndex === index,
-                'border-start-4': !n.read,
               }"
-              :style="
-                !n.read
-                  ? 'border-left-color: var(--v-primary-base) !important'
-                  : ''
-              "
               @click="handleNotificationClick(n)"
             >
               <div class="d-flex align-start ga-4">
@@ -433,7 +432,6 @@ const relativeTime = (date) => {
   return t('notificationsPage.daysAgo', { count: Math.floor(diff / 86400) })
 }
 
-
 const getTypeIcon = (type) => {
   const icons = {
     Study: { icon: 'mdi-flask-outline', color: 'primary' },
@@ -482,8 +480,11 @@ const handleNotificationClick = async (notification) => {
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
 
-  // For collaboration invitations, show dialog (only for explicit 'Collaboration' type)
-  if (notification.type === 'Collaboration') {
+  // For collaboration invitations, show dialog (check both type and action)
+  if (
+    notification.type === 'Collaboration' ||
+    notification.action === 'invitation'
+  ) {
     const accepted = await showAcceptDialog()
     if (!accepted) {
       await markAsRead(notification)
@@ -505,7 +506,6 @@ const goToNotificationRedirect = async (notification) => {
       }
     } catch {
       // Error handling without console.error for SonarCloud
-      // In production, you might want to log this differently
     }
   }
 
@@ -656,6 +656,7 @@ onUnmounted(() => {
 .notification-description {
   white-space: pre-line;
 }
+
 /* 💅 Basic styles for layout and filters */
 .button-bar {
   gap: 14px;
@@ -666,7 +667,7 @@ onUnmounted(() => {
   height: 40px;
   font-weight: bold;
   letter-spacing: 0.3px;
-  background-color: #768898 !important; /* Add custom background */
+  background-color: #768898 !important;
   color: white !important;
 }
 
@@ -677,12 +678,23 @@ onUnmounted(() => {
   letter-spacing: 0.3px;
 }
 
-.notification-item {
+.notification-card-clean {
   border-radius: 12px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  overflow: hidden;
+}
+
+.notification-item {
+  position: relative;
+  border-radius: 8px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.08);
   background: white;
+  overflow: hidden;
 }
 
 .notification-item:hover {
@@ -692,12 +704,17 @@ onUnmounted(() => {
 }
 
 .notification-item.unread {
-  background: linear-gradient(
-    90deg,
-    rgba(var(--v-theme-primary), 0.03) 0%,
-    white 3%
-  );
-  border-left-width: 4px;
+  background: rgba(var(--v-theme-primary), 0.02);
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: rgb(var(--v-theme-primary));
 }
 
 .notification-item.active {
