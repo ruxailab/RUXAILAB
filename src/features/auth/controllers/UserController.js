@@ -221,15 +221,6 @@ export default class UserController extends Controller {
     }
   }
 
-async addStudyToUser(userId, studyId) {
-  const userDoc = await super.readOne('users', userId)
-  const userData = userDoc.data()
-  userData.myTests = userData.myTests || {}
-  userData.myTests[studyId] = {
-    createdAt: Date.now(),
-  }
-  await super.update('users', userId, userData)
-}
   async updateLevel(uid, accessLevel) {
     try {
       return super.update(COLLECTION, uid, { accessLevel })

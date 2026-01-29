@@ -23,11 +23,7 @@ export default class StudyController extends Controller {
       new StudyAnswer({ type: payload.testType }),
     )
     payload.answersDocId = answerDoc.id
-
     const newStudyRef = await super.create(COLLECTION, payload.toFirestore())
-    
-    // Link study to user
-    await userController.addStudyToUser(payload.testAdmin.userDocId, newStudyRef.id)
 
     return newStudyRef
   }
@@ -79,7 +75,20 @@ export default class StudyController extends Controller {
 
   async updateStudy(payload) {
     try {
-      return await super.update(COLLECTION, payload.id, payload.toFirestore())
+      await super.update(COLLECTION, payload.id, payload.toFirestore())
+      
+      // Link study to user if testAdmin is present (for new creation)
+      if (payload.testAdmin && payload.testAdmin.userDocId) {
+        const userDoc = await super.readOne('users', payload.testAdmin.userDocId)
+        const userData = userDoc.data()
+        userData.myTests = userData.myTests || {}
+        userData.myTests[payload.id] = {
+          createdAt: Date.now(),
+        }
+        await userController.update(payload.testAdmin.userDocId, userData)
+        }
+      
+      return payload
     } catch (e) {
       throw e
     }

@@ -106,6 +106,25 @@ export default {
         const res = await studyController.createStudy(payload)
         payload.id = res.id
         commit('SET_TEST', payload)
+        // Link study to user via updateStudy
+        await studyController.updateStudy(payload)
+        
+        // Refresh the entire tests list
+        const auth = getAuth()
+        const user = auth.currentUser
+        if (user) {
+            const userController = new UserController()
+            const userDoc = await userController.getUserWithStudies(user.uid)
+            if (userDoc) {
+              const tests = [
+                ...Object.values(userDoc.myTests || {}),
+                ...Object.values(userDoc.myAnswers || {}),
+              ]
+              commit('SET_TESTS', tests)
+            
+          }
+        }
+      
         return res.id
       } catch (err) {
         commit('setError', {
