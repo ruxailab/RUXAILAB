@@ -1784,5 +1784,15 @@
   "taskCreation": {
     "taskDescription": "タスクの説明",
     "taskDescriptionHelper": "従うべき具体的な手順を提供してください。"
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "変数を削除",
+      "message": "この変数を削除してもよろしいですか？この操作は元に戻せません。"
+    },
+    "deleteOptionConfirm": {
+      "title": "オプションを削除",
+      "message": "このオプションを削除してもよろしいですか？この操作は元に戻せません。"
+    }
   }
 }

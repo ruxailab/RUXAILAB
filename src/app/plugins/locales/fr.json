@@ -1792,5 +1792,15 @@
   "taskCreation": {
     "taskDescription": "Description de la Tâche",
     "taskDescriptionHelper": "Fournissez les étapes spécifiques qu'ils doivent suivre."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Supprimer la Variable",
+      "message": "Êtes-vous sûr de vouloir supprimer cette variable ? Cette action ne peut pas être annulée."
+    },
+    "deleteOptionConfirm": {
+      "title": "Supprimer l'Option",
+      "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action ne peut pas être annulée."
+    }
   }
 }
