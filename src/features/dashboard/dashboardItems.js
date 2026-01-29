@@ -4,20 +4,36 @@
  */
 
 export const dashboardNavigationItems = [
-    { id: 'dashboard', title: 'Dashboard', icon: 'mdi-view-dashboard' },
-    { id: 'studies', title: 'Studies', icon: 'mdi-flask' },
-    { id: 'sessions', title: 'Sessions', icon: 'mdi-calendar-clock' },
-    { id: 'templates', title: 'Templates', icon: 'mdi-clipboard-text' },
-    { id: 'storage', title: 'Storage', icon: 'mdi-database' },
-    { id: 'notifications', title: 'Notifications', icon: 'mdi-bell' },
-    { id: 'profile', title: 'Profile', icon: 'mdi-account-circle' },
-    {
-        id: 'community',
-        title: 'Community',
-        icon: 'mdi-earth',
-        children: [
-            { id: 'community-studies', title: 'Studies', icon: 'mdi-flask-outline' },
-            { id: 'community-templates', title: 'Templates', icon: 'mdi-file-document' }
-        ]
-    }
-];
+  {
+    id: 'dashboard',
+    title: 'navigation.dashboard',
+    icon: 'mdi-view-dashboard',
+  },
+  { id: 'studies', title: 'navigation.studies', icon: 'mdi-flask' },
+  { id: 'sessions', title: 'navigation.sessions', icon: 'mdi-calendar-clock' },
+  {
+    id: 'templates',
+    title: 'navigation.templates',
+    icon: 'mdi-clipboard-text',
+  },
+  { id: 'storage', title: 'navigation.storage', icon: 'mdi-database' },
+  { id: 'notifications', title: 'common.notifications', icon: 'mdi-bell' },
+  { id: 'profile', title: 'profile.title', icon: 'mdi-account-circle' },
+  {
+    id: 'community',
+    title: 'navigation.community',
+    icon: 'mdi-earth',
+    children: [
+      {
+        id: 'community-studies',
+        title: 'navigation.communityStudies',
+        icon: 'mdi-flask-outline',
+      },
+      {
+        id: 'community-templates',
+        title: 'navigation.communityTemplates',
+        icon: 'mdi-file-document',
+      },
+    ],
+  },
+]

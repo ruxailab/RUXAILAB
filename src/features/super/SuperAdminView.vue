@@ -109,7 +109,7 @@
                     <v-row>
                       <v-col cols="12">
                         <v-text-field
-                          label="Id"
+                          :label="$t('common.id')"
                           :model-value="editedUser.id"
                           disabled
                           variant="outlined"
@@ -117,20 +117,20 @@
                       </v-col>
                       <v-col cols="12">
                         <v-text-field
-                          label="E-mail"
+                          :label="$t('auth.SIGNIN.email')"
                           :model-value="editedUser.email"
                           disabled
                           variant="outlined"
                         />
                       </v-col>
                       <v-col cols="12">
-                        <p>Access Level</p>
+                        <p>{{ $t('titles.accessLevel') }}</p>
                         <v-select
                           v-model="editedUser.accessLevel"
                           class="my-2"
                           :items="accessLevels"
                           item-value="level"
-                          item-title="text"
+                          item-title="title"
                           variant="outlined"
                         />
                       </v-col>
@@ -140,14 +140,14 @@
                 <v-card-actions>
                   <v-spacer />
                   <v-btn color="blue-darken-1" variant="text" @click="close">
-                    Cancel
+                    {{ $t('common.cancel') }}
                   </v-btn>
                   <v-btn
                     color="blue-darken-1"
                     variant="text"
                     @click="save(editedUser)"
                   >
-                    Save
+                    {{ $t('common.save') }}
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -173,7 +173,7 @@
                   prepend-inner-icon="mdi-magnify"
                   class="mx-3"
                   density="compact"
-                  label="Search"
+                  :label="$t('Dashboard.search')"
                 />
               </template>
               <template #[`item.actions`]="{ item }">
@@ -269,7 +269,7 @@ const testsHeaders = computed(() => [
 
 const accessLevels = computed(() => [
   { title: t('profile.superAdmin'), level: 0 },
-  { title: t('common.user'), level: 1 },
+  { title: t('profile.admin'), level: 1 },
 ])
 
 const dialogText = computed(
