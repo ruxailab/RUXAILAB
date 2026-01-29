@@ -28,7 +28,7 @@
             :disabled="isStartTestDisabled"
             @click="startTest"
           >
-            Start Test
+            {{ $t('UserTestView.actions.startTest') }}
           </v-btn>
 
           <!-- Messages when test is disabled -->
@@ -47,9 +47,11 @@
               <v-icon color="white"> mdi-check-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Already Completed</strong><br />
-              You have already completed and submitted this test. Thank you for
-              your participation!
+              <strong>{{
+                $t('UserTestView.alerts.testAlreadyCompleted')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testAlreadyCompletedMessage') }}
             </span>
           </v-alert>
 
@@ -68,8 +70,9 @@
               <v-icon color="white"> mdi-clock-alert </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Expired</strong><br />
-              This test is no longer available as it has passed its end date.
+              <strong>{{ $t('UserTestView.alerts.testExpired') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testExpiredMessage') }}
             </span>
           </v-alert>
 
@@ -88,9 +91,9 @@
               <v-icon color="white"> mdi-pause-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Not Active</strong><br />
-              This test is currently not active. Please contact the
-              administrator.
+              <strong>{{ $t('UserTestView.alerts.testNotActive') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testNotActiveMessage') }}
             </span>
           </v-alert>
 
@@ -109,9 +112,9 @@
               <v-icon color="white"> mdi-alert-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Configuration Error</strong><br />
-              This test has no tasks configured. Please contact the
-              administrator.
+              <strong>{{ $t('UserTestView.alerts.testConfigError') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testConfigErrorMessage') }}
             </span>
           </v-alert>
 
@@ -130,9 +133,9 @@
               <v-icon color="white"> mdi-calendar-clock </v-icon>
             </template>
             <span class="text-white">
-              <strong>Session Too Far</strong><br />
-              The scheduled session is more than 24 hours away. Please come back
-              closer to the session date.
+              <strong>{{ $t('UserTestView.alerts.sessionTooFar') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.sessionTooFarMessage') }}
             </span>
           </v-alert>
 
@@ -151,8 +154,9 @@
               <v-icon color="white"> mdi-alert-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>No Test Data</strong><br />
-              Test information could not be loaded. Please try again later.
+              <strong>{{ $t('UserTestView.errors.noTestData') }}</strong
+              ><br />
+              {{ $t('UserTestView.errors.noTestDataMessage') }}
             </span>
           </v-alert>
         </v-col>
@@ -180,7 +184,7 @@
                 <v-stepper-header>
                   <v-stepper-item
                     :value="1"
-                    title="Consent"
+                    :title="$t('UserTestView.stepper.consent')"
                     :complete="stepperValue > 1"
                     :color="
                       stepperValue == 1
@@ -194,7 +198,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="2"
-                    title="Pre-test"
+                    :title="$t('UserTestView.stepper.preTest')"
                     :complete="stepperValue > 2"
                     :color="
                       stepperValue == 2
@@ -208,7 +212,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="3"
-                    title="Tasks"
+                    :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue > 3"
                     :color="
                       stepperValue == 3
@@ -222,7 +226,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="4"
-                    title="Post-test"
+                    :title="$t('UserTestView.stepper.postTest')"
                     :complete="stepperValue > 4"
                     :color="
                       stepperValue == 4
@@ -236,7 +240,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="5"
-                    title="Completion"
+                    :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue > 5"
                     :color="
                       stepperValue == 5
@@ -467,7 +471,7 @@
           </v-avatar>
         </v-row>
         <v-card-title class="text-center text-h6 font-weight-bold mt-4">
-          Welcome back!
+          {{ $t('UserTestView.actions.welcomeBack') }}
         </v-card-title>
         <v-card-text class="text-center text-body-1">
           <p class="font-weight-medium">
@@ -482,15 +486,17 @@
             class="my-2"
             @click="setTestAnswer()"
           >
-            Continue as {{ user.email }}
+            {{
+              $t('UserTestView.actions.continueAs', { userEmail: user.email })
+            }}
           </v-btn>
           <p class="text-caption mt-2">
-            Not you?
+            {{ $t('UserTestView.actions.notYou') }}
             <a
               href="#"
               class="text-primary font-weight-medium"
               @click.prevent="signOut"
-              >Change account</a
+              >{{ $t('UserTestView.actions.changeAccount') }}</a
             >
           </p>
         </v-card-actions>
@@ -509,7 +515,15 @@ import {
   onDisconnect,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  reactive,
+  watchEffect,
+  onUnmounted,
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -536,6 +550,7 @@ const route = useRoute()
 const { t } = useI18n()
 // Data variables
 const testDisabledReason = ref(null)
+const isStartTestDisabled = ref(true)
 const loggedIn = ref(null)
 const sessionCooperator = ref(null)
 const testDate = ref(null)
@@ -616,7 +631,6 @@ watchEffect(() => {
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter((v) => typeof v === 'number').length ?? 0
     doneTaskDisabled.value = validCount < 10
-    console.log('SUS respostas válidas:', validCount)
   } else {
     doneTaskDisabled.value = false
   }
@@ -678,7 +692,7 @@ const handleConsentDecline = async () => {
   // User declined consent, end the moderated test
   store.commit('SET_TOAST', {
     type: 'info',
-    message: 'Test ended due to consent decline. Thank you for your time.',
+    message: t('UserTestView.alerts.consentDecline'),
     timeout: 5000,
   })
 
@@ -699,10 +713,10 @@ const handleSubmit = async () => {
     await saveAnswer()
     await router.push({ name: 'Admin' })
   } catch (error) {
-    console.error('Error submitting answer:', error.message)
+    console.error('Error submitting answer:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to submit the answer. Please try again.',
+      message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
   }
 }
@@ -728,7 +742,7 @@ const saveAnswer = async () => {
     console.error('Error saving answer:', error.message)
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to save the answer. Please try again.',
+      message: t('UserTestView.errors.failedToSaveAnswer'),
     })
   }
 }
@@ -763,7 +777,7 @@ const startTest = async () => {
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', {
       type: 'info',
-      message: "This test doesn't have any tasks.",
+      message: t('UserTestView.messages.noTasks'),
     })
     router.push(`/missions/${test.value.id}`)
     return
@@ -827,7 +841,7 @@ const callTimerSave = () => {
 function handleTaskFinish(userCompleted) {
   const currentTask = localTestAnswer.tasks[taskIndex.value]
   if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask)
+    console.log('Estado actual de la tarea antes de finalizar:', currentTask) // eslint-disable-line no-console
   }
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
@@ -844,10 +858,10 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx })
+  console.log('handleTimerStopped llamado con:', { elapsedTime, idx }) // eslint-disable-line no-console
 
   if (!localTestAnswer.tasks) {
-    console.error('localTestAnswer.tasks no está definido')
+    console.error('localTestAnswer.tasks no está definido') // eslint-disable-line no-console
     return
   }
 
@@ -862,10 +876,10 @@ const handleTimerStopped = (elapsedTime, idx) => {
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      console.error('TieisStartTestDisabledmpo no válido:', elapsedTime)
+      console.error('Tiempo no válido:', elapsedTime) // eslint-disable-line no-console
     }
   } else {
-    console.error('No se pudo guardar el tiempo para la tarea', idx)
+    console.error('No se pudo guardar el tiempo para la tarea', idx) // eslint-disable-line no-console
   }
 }
 
@@ -919,7 +933,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
-        console.log('All tasks completed, moving to post-test')
+        console.log('All tasks completed, moving to post-test') // eslint-disable-line no-console
         globalIndex.value = 5
       }
       if (userCompleted) {
@@ -948,7 +962,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     calculateProgress()
     await saveAnswer()
   } catch (error) {
-    console.error('Error in completeStep:', error)
+    console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to complete step. Please try again.',
@@ -1045,7 +1059,7 @@ const mappingSteps = async () => {
       }
     }
   } catch (error) {
-    console.error('Error mapping steps:', error.message)
+    console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to initialize test data. Please try again.',
@@ -1065,39 +1079,33 @@ const validate = (object) => {
 
 const calculateProgress = () => {
   try {
-    if (!localTestAnswer) return 0
-    const totalSteps = 4
+    const totalSteps = test.value?.testStructure?.userTasks?.length || 0
+    if (totalSteps === 0) return 0
+
     let completedSteps = 0
+    if (localTestAnswer.consentCompleted) completedSteps += 1
+    if (localTestAnswer.preTestCompleted) completedSteps += 1
+    if (localTestAnswer.postTestCompleted) completedSteps += 1
 
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
-
-    let tasksCompleted = 0
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === items.value[1].value.length) {
-        completedSteps++
-      }
+    if (Array.isArray(localTestAnswer.tasks)) {
+      completedSteps += localTestAnswer.tasks.filter((t) => t.completed).length
     }
-
-    if (localTestAnswer.postTestCompleted) completedSteps++
 
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
   } catch (error) {
-    console.error('Error in calculateProgress:', error)
+    console.error('Error in calculateProgress:', error) // eslint-disable-line no-console
     return 0
   }
 }
-const isStartTestDisabled = computed(() => {
+// testDisabledReason is already declared at line 544
+
+watchEffect(() => {
   if (!test.value) {
     testDisabledReason.value = 'test-no-data'
-    return true
+    isStartTestDisabled.value = true
+    return
   }
 
   const now = new Date()
@@ -1109,13 +1117,15 @@ const isStartTestDisabled = computed(() => {
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
     testDisabledReason.value = 'test-already-completed'
-    return true
+    isStartTestDisabled.value = true
+    return
   }
 
   // 🧩 Test is not active
   if (test.value.status !== 'active') {
     testDisabledReason.value = 'test-not-active'
-    return true
+    isStartTestDisabled.value = true
+    return
   }
 
   // 🧩 Test structure missing
@@ -1124,7 +1134,8 @@ const isStartTestDisabled = computed(() => {
     Object.keys(test.value.testStructure).length === 0
   ) {
     testDisabledReason.value = 'test-no-tasks-configured'
-    return true
+    isStartTestDisabled.value = true
+    return
   }
 
   // 🧩 Check session date
@@ -1133,12 +1144,14 @@ const isStartTestDisabled = computed(() => {
 
     if (diffHours < 0) {
       testDisabledReason.value = 'test-expired'
-      return true
+      isStartTestDisabled.value = true
+      return
     }
 
     if (diffHours > 24) {
       testDisabledReason.value = 'test-session-too-far'
-      return true
+      isStartTestDisabled.value = true
+      return
     }
   }
 
@@ -1147,13 +1160,14 @@ const isStartTestDisabled = computed(() => {
     const endDate = new Date(test.value.endDate)
     if (now > endDate) {
       testDisabledReason.value = 'test-expired'
-      return true
+      isStartTestDisabled.value = true
+      return
     }
   }
 
   // ✅ All good
   testDisabledReason.value = null
-  return false
+  isStartTestDisabled.value = false
 })
 
 // Lifecycle hooks
@@ -1203,10 +1217,6 @@ onMounted(async () => {
     Object.keys(currentUserTestAnswer.value).length > 0
   ) {
     Object.assign(localTestAnswer, currentUserTestAnswer.value)
-    console.log(
-      'LocalTestAnswer initialized with existing data:',
-      localTestAnswer,
-    )
   }
 
   await mappingSteps()
