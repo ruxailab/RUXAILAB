@@ -630,7 +630,18 @@
     "messages": {
       "submitTest": "هل أنت متأكد أنك تريد تقديم هذا الاختبار؟",
       "submitOnce": "هل أنت متأكد أنك تريد تقديم اختبارك؟ يمكنك القيام بذلك مرة واحدة فقط.",
-      "noHeuristics": "هذا الاختبار ليس لديه أي استدلالات"
+      "noHeuristics": "هذا الاختبار ليس لديه أي استدلالات",
+      "noHeuristicsConfigured": "لم يتم تكوين أي استدلالات",
+      "answerSaved": "تم حفظ الإجابة بنجاح"
+    },
+    "unknownHeuristic": "استدلال غير معروف",
+    "unknownQuestion": "سؤال غير معروف",
+    "selectAnOption": "يرجى تحديد خيار",
+    "errors": {
+      "questionNotLoaded": "تعذر تحميل السؤال",
+      "noAnswerData": "لم يتم العثور على بيانات الإجابة",
+      "failedToSaveAnswer": "فشل في حفظ الإجابة. يرجى المحاولة مرة أخرى.",
+      "failedToSubmitAnswer": "فشل في تقديم الإجابة. يرجى المحاولة مرة أخرى."
     },
     "actions": {
       "cancel": "إلغاء",
@@ -640,6 +651,9 @@
       "notMail": "ليس {userEmail}؟",
       "changeAccount": "تغيير الحساب",
       "startTest": "بدء الاختبار"
+    },
+    "headers": {
+      "heuristics": "الاستدلالات"
     }
   },
   "HeuristicsEditTest": {
