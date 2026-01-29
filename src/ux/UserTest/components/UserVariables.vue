@@ -133,10 +133,7 @@
                         v-model="item.selectionField"
                         :label="$t('UserTestTable.checkboxes.selectionField')"
                         color="primary"
-                        @update:model-value="
-                          selectField(i)
-                          markDirty()
-                        "
+                        @update:model-value="selectField(i), markDirty()"
                       />
                     </v-col>
                     <v-col cols="12" sm="5">
@@ -144,10 +141,7 @@
                         v-model="item.textField"
                         :label="$t('UserTestTable.checkboxes.textField')"
                         color="primary"
-                        @update:model-value="
-                          selectText(i)
-                          markDirty()
-                        "
+                        @update:model-value="selectText(i), markDirty()"
                       />
                     </v-col>
                     <v-col cols="12" sm="1" class="text-right">
