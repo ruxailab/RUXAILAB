@@ -1,31 +1,30 @@
 <template>
   <div class="task-configuration">
     <div class="step-header mb-6">
-      <h3 class="text-h6 font-weight-bold mb-2">Step 2: Task Configuration</h3>
+      <h3 class="text-h6 font-weight-bold mb-2">
+        {{ $t('CreateTask.configuration.stepTitle') }}
+      </h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
-        Configure where the task takes place and how participants will provide
-        their responses. This determines the user experience and data collection
-        method.
+        {{ $t('CreateTask.configuration.stepDescription') }}
       </p>
     </div>
 
     <v-row>
       <v-col cols="12" md="4">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          Task Link (URL)
+          {{ $t('CreateTask.configuration.taskLink') }}
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          The website or application URL where participants will perform the
-          task
+          {{ $t('CreateTask.configuration.taskLinkHint') }}
         </p>
         <v-text-field
           v-model="localTask.taskLink"
           variant="outlined"
           density="comfortable"
           prepend-inner-icon="mdi-link"
-          placeholder="https://example.com"
+          :placeholder="$t('CreateTask.configuration.taskLinkPlaceholder')"
           :rules="linkRules"
           @update:model-value="validateStep"
         />
@@ -33,12 +32,12 @@
 
       <v-col cols="12" md="4">
         <p class="text-subtitle-2 font-weight-medium mb-2">
-          Estimated Time (minutes)
+          {{ $t('CreateTask.configuration.estimatedTime') }}
           <!-- <span class="text-error">*</span> -->
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          The estimated time participants will need to complete this task
+          {{ $t('CreateTask.configuration.estimatedTimeHint') }}
         </p>
         <v-text-field
           v-model="localTask.estimatedTime"
@@ -46,7 +45,7 @@
           variant="outlined"
           density="comfortable"
           prepend-inner-icon="mdi-clock-outline"
-          placeholder="e.g. 10"
+          :placeholder="$t('CreateTask.configuration.estimatedTimePlaceholder')"
           :rules="timeRules"
           @update:model-value="validateStep"
         />
@@ -59,8 +58,7 @@
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          Choose how participants will provide feedback after completing the
-          task
+          {{ $t('CreateTask.configuration.answerTypeHint') }}
         </p>
         <v-select
           v-model="localTask.taskType"
@@ -94,15 +92,14 @@
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          Enter the specific question you want to ask participants after they
-          complete the task
+          {{ $t('CreateTask.configuration.postTestHint') }}
         </p>
         <v-text-field
           v-model="localTask.postQuestion"
           variant="outlined"
           density="comfortable"
           prepend-inner-icon="mdi-help-circle-outline"
-          placeholder="e.g., 'How easy was it to find the product information?'"
+          :placeholder="$t('CreateTask.configuration.postTestPlaceholder')"
           @update:model-value="validateStep"
         />
       </v-col>
@@ -114,15 +111,14 @@
         </p>
         <p class="text-caption text-grey-darken-1 mb-3">
           <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          URL to an external form that participants will fill out after
-          completing the task
+          {{ $t('CreateTask.configuration.postFormHint') }}
         </p>
         <v-text-field
           v-model="localTask.postForm"
           variant="outlined"
           density="comfortable"
           prepend-inner-icon="mdi-form-select"
-          placeholder="https://forms.google.com/d/your-form-id"
+          :placeholder="$t('CreateTask.configuration.postFormPlaceholder')"
           :rules="urlRules"
           @update:model-value="validateStep"
         />
@@ -139,7 +135,7 @@
         class="text-subtitle-1 font-weight-medium d-flex align-center"
       >
         <v-icon :icon="getAnswerTypeIcon(localTask.taskType)" class="mr-2" />
-        Answer Type Preview
+        {{ $t('CreateTask.configuration.answerTypePreview') }}
       </v-card-title>
       <v-card-text>
         <AnswerTypePreview :task-type="localTask.taskType" />

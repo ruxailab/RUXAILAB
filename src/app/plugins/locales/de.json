@@ -46,6 +46,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "Test laden",
     "continueAs": "Fortfahren als",
     "notUser": "Nicht {userEmail}?",
@@ -172,10 +176,10 @@
       "allMethods": "Alle Methoden",
       "all": "Alle",
       "heuristicEvaluation": "Heuristische Bewertung",
-      "userStudyUnmoderated": "Benutzerstudie (Unmoderiert)",
-      "userStudyModerated": "Benutzerstudie (Moderiert)",
-      "manualAccessibility": "Manuelle Barrierefreiheit",
-      "automaticAccessibility": "Automatische Barrierefreiheit"
+      "moderatedUserTest": "Moderierter Benutzertest",
+      "unmoderatedUserTest": "Unmoderierter Benutzertest",
+      "accessibilityManual": "Manuelle Barrierefreiheitsprüfung",
+      "accessibilityAutomatic": "Automatische Barrierefreiheitsprüfung"
     }
   },
   "notificationsPage": {
@@ -378,6 +382,15 @@
       "createNewStudy": "Neue Studie Erstellen",
       "emptyStateMessage": "Sie haben noch keine Studien. Erstellen Sie Ihre erste Studie, um wertvolle Benutzererkenntnisse zu sammeln."
     },
+    "studyStatus": {
+      "finished": "Abgeschlossen",
+      "expiredDaysAgo": "Abgelaufen vor {days} Tagen",
+      "endsToday": "Endet heute",
+      "endsTodayStarted": "Endet heute · Gestartet",
+      "readyToSubmit": "Bereit zur Einreichung",
+      "endsTodayReady": "Endet heute · Bereit",
+      "notStarted": "Nicht gestartet"
+    },
     "activeStudiesOverview": "Übersicht über aktive Studien",
     "viewAll": "Alle anzeigen",
     "showMore": "Mehr anzeigen",
@@ -440,7 +453,7 @@
       "unknown": "Unbekannt"
     },
     "cards": {
-      "recentActivity": "Letzte Aktivität",
+      "recentActivity": "Letzte Aktivitäten",
       "activities7Days": "Aktivitäten (insgesamt 7 Tage)",
       "lastActivity": "Letzte Aktivität",
       "noActivity": "Keine Aktivität",
@@ -469,17 +482,17 @@
       "generateReport": "Bericht generieren",
       "reportAvailable": "Bericht verfügbar",
       "noReport": "Kein Bericht generiert",
-      "readyForDownload": "Abschlussbericht bereit zum Download",
+      "readyForDownload": "Abschlussbericht bereit zum Herunterladen",
       "waitingForParticipants": "Warten auf Teilnehmer",
       "evaluationsCompleted": "Bewertungen abgeschlossen",
-      "readyToGenerate": "Bereit zur Berichterstellung",
-      "excellentUsability": "Exzellente Benutzerfreundlichkeit",
+      "readyToGenerate": "Bereit zum Generieren des Berichts",
+      "excellentUsability": "Hervorragende Benutzerfreundlichkeit",
       "acceptableUsability": "Akzeptable Benutzerfreundlichkeit",
-      "needsImprovement": "Verbesserungswürdig",
+      "needsImprovement": "Verbesserungsbedürftig",
       "basedOn": "Basierend auf",
       "evaluations": "Bewertungen",
       "evaluationUpdated": "Bewertung aktualisiert",
-      "updatedProgress": "hat den Fortschritt aktualisiert",
+      "updatedProgress": "hat seinen Fortschritt aktualisiert",
       "invitationSentTitle": "Einladung gesendet",
       "invitationPendingDesc": "Einladung ausstehend für",
       "pendingStatus": "Ausstehend"
@@ -617,7 +630,21 @@
     "messages": {
       "submitTest": "Sind Sie sicher, dass Sie diesen Test einreichen möchten?",
       "submitOnce": "Sind Sie sicher, dass Sie Ihren Test einreichen möchten? Sie können dies nur einmal tun.",
-      "noHeuristics": "Dieser Test hat keine Heuristiken"
+      "noHeuristics": "Dieser Test hat keine Heuristiken",
+      "noHeuristicsConfigured": "Konfigurationsfehler: Dieser Test hat keine konfigurierten Heuristiken. Bitte Heuristiken hinzufügen, um fortzufahren.",
+      "answerSaved": "Antwort erfolgreich gespeichert"
+    },
+    "errors": {
+      "questionNotLoaded": "Frage konnte nicht geladen werden",
+      "noAnswerData": "Keine Antwortdaten gefunden",
+      "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
+      "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut."
+    },
+    "unknownHeuristic": "Unbekannte Heuristik",
+    "unknownQuestion": "Unbekannte Frage",
+    "selectAnOption": "Wählen Sie eine Option",
+    "headers": {
+      "heuristics": "HEURISTIKEN"
     },
     "actions": {
       "cancel": "Abbrechen",
@@ -808,6 +835,126 @@
     },
     "fallbacks": {
       "untitledVariable": "Unbenannte Variable"
+    }
+  },
+  "CreateTask": {
+    "dialog": {
+      "title": "Neue Aufgabe Erstellen",
+      "subtitle": "Konfigurieren Sie Ihre Aufgabe Schritt für Schritt"
+    },
+    "stepper": {
+      "basicInfo": "Grundinfo",
+      "configuration": "Konfiguration",
+      "advanced": "Erweitert",
+      "preview": "Vorschau"
+    },
+    "selectItems": {
+      "noAnswer": "Keine Antwort",
+      "shortAnswer": "Kurzantwort",
+      "paragraphAnswer": "Absatzantwort",
+      "googleFormsLink": "Google Forms Link",
+      "nasaTlx": "NASA TLX",
+      "sus": "System Usability Scale",
+      "tam1": "TAM-1 – Grundakzeptanz",
+      "tam2": "TAM-2 – Erweiterte Akzeptanz",
+      "tam3": "TAM-3 – Fortgeschrittene Akzeptanz",
+      "sart": "Situationsbewusstsein-Bewertungstechnik"
+    },
+    "validation": {
+      "fieldRequired": "Feld Erforderlich",
+      "validUrl": "Muss eine gültige URL sein, die mit http:// oder https:// beginnt",
+      "positiveNumber": "Muss eine positive Zahl sein"
+    },
+    "basicInfo": {
+      "stepTitle": "Schritt 1: Grundlegende Aufgabeninformationen",
+      "stepDescription": "Definieren Sie, was die Teilnehmer in dieser Aufgabe tun werden. Dies ist die Grundlage Ihres Benutzertests - seien Sie klar und spezifisch über die Ziele und Erwartungen.",
+      "taskTitle": "Aufgabentitel",
+      "taskTitleHint": "Geben Sie Ihrer Aufgabe einen klaren, prägnanten Namen, der beschreibt, was die Teilnehmer erreichen müssen",
+      "taskTitlePlaceholder": "z.B., 'Produktinformationen finden', 'Checkout-Prozess abschließen'",
+      "taskDescription": "Aufgabenbeschreibung",
+      "taskDescriptionHint": "Geben Sie detaillierte Anweisungen für die Teilnehmer. Fügen Sie das Ziel, den Kontext und alle spezifischen Schritte hinzu.",
+      "taskDescriptionPlaceholder": "Beschreiben Sie die Aufgabe im Detail. Was soll der Teilnehmer tun?",
+      "tipLabel": "Tipp",
+      "tipHint": "Optionale Hinweise oder Tipps, um den Teilnehmern während der Aufgabe zu helfen",
+      "tipPlaceholder": "z.B., 'Konzentrieren Sie sich auf die Hauptnavigation', 'Nehmen Sie sich Zeit zum Erkunden'"
+    },
+    "configuration": {
+      "stepTitle": "Schritt 2: Aufgabenkonfiguration",
+      "stepDescription": "Konfigurieren Sie, wo die Aufgabe stattfindet und wie die Teilnehmer ihre Antworten geben werden.",
+      "taskLink": "Aufgabenlink (URL)",
+      "taskLinkHint": "Die Website- oder Anwendungs-URL, unter der die Teilnehmer die Aufgabe ausführen werden",
+      "taskLinkPlaceholder": "https://beispiel.de",
+      "estimatedTime": "Geschätzte Zeit (Minuten)",
+      "estimatedTimeHint": "Die geschätzte Zeit, die die Teilnehmer zum Abschließen dieser Aufgabe benötigen",
+      "estimatedTimePlaceholder": "z.B. 10",
+      "answerTypeHint": "Wählen Sie, wie die Teilnehmer nach Abschluss der Aufgabe Feedback geben werden",
+      "answerTypePreview": "Vorschau des Antworttyps",
+      "postTestHint": "Geben Sie die spezifische Frage ein, die Sie den Teilnehmern nach Abschluss der Aufgabe stellen möchten",
+      "postTestPlaceholder": "z.B., 'Wie einfach war es, die Produktinformationen zu finden?'",
+      "postFormHint": "URL zu einem externen Formular, das die Teilnehmer nach der Aufgabe ausfüllen werden",
+      "postFormPlaceholder": "https://forms.google.com/d/ihre-formular-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "Teilnehmer schließen die Aufgabe ab, ohne Feedback zu geben",
+      "textArea": "Teilnehmer geben schriftliches Feedback nach der Aufgabe",
+      "postTest": "Teilnehmer beantworten spezifische Fragen nach der Aufgabe",
+      "postForm": "Teilnehmer füllen ein externes Formular nach der Aufgabe aus",
+      "nasaTlx": "NASA Task Load Index - misst die Arbeitsbelastung",
+      "sus": "System Usability Scale - misst die Benutzerfreundlichkeit",
+      "tam1": "TAM-1 (Grundakzeptanz) - misst wahrgenommene Nützlichkeit und Benutzerfreundlichkeit",
+      "tam2": "TAM-2 (Erweitert) - fügt externe Einflüsse und Ergebnis-Demonstrierbarkeit hinzu",
+      "tam3": "TAM-3 (Umfassend) - umfasst Angst, Spielfreude und objektive Benutzerfreundlichkeit",
+      "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
+    },
+    "advanced": {
+      "stepTitle": "Schritt 3: Erweiterte Optionen",
+      "stepDescription": "Aktivieren Sie zusätzliche Datenerfassungsmethoden, um tiefere Einblicke zu gewinnen.",
+      "eyeTrackingDesc": "Verfolgen Sie, wohin die Teilnehmer während der Aufgabe schauen.",
+      "screenRecordDesc": "Zeichnen Sie die Bildschirmaktivität des Teilnehmers auf.",
+      "cameraDesc": "Zeichnen Sie Gesichtsausdrücke und Reaktionen des Teilnehmers auf.",
+      "audioDesc": "Zeichnen Sie verbales Feedback des Teilnehmers auf.",
+      "privacyNotice": "Datenschutzhinweis",
+      "privacyText": "Aufnahmefunktionen erfordern die ausdrückliche Zustimmung der Teilnehmer.",
+      "privacyItem1": "Informieren Sie die Teilnehmer klar über die Datenerfassung",
+      "privacyItem2": "Holen Sie vor Beginn des Tests eine ordnungsgemäße Zustimmung ein",
+      "privacyItem3": "Befolgen Sie die Datenschutzbestimmungen (DSGVO usw.)",
+      "privacyItem4": "Sichere Speicherung und Handhabung aufgezeichneter Daten"
+    },
+    "preview": {
+      "taskSummary": "Aufgabenzusammenfassung",
+      "untitledTask": "Unbenannte Aufgabe",
+      "description": "Beschreibung:",
+      "noDescription": "Keine Beschreibung angegeben",
+      "participantTip": "Teilnehmerhinweis:",
+      "taskUrl": "Aufgaben-URL:",
+      "answerType": "Antworttyp:",
+      "recordingFeatures": "Aufnahmefunktionen:",
+      "postTaskQuestion": "Frage nach der Aufgabe:",
+      "postTaskForm": "Formular nach der Aufgabe:",
+      "externalForm": "Externes Formular",
+      "taskReady": "Aufgabe Bereit!",
+      "reviewRequired": "Überprüfung Erforderlich",
+      "taskReadyMessage": "Ihre Aufgabe ist richtig konfiguriert und bereit für die Verwendung in Ihrer Studie.",
+      "reviewRequiredMessage": "Bitte überprüfen Sie die vorherigen Schritte, um sicherzustellen, dass alle erforderlichen Felder ausgefüllt sind.",
+      "noTypeSelected": "Kein Typ Ausgewählt",
+      "answerTypes": {
+        "noAnswer": "Keine Antwort Erforderlich",
+        "textArea": "Textbereich",
+        "postTest": "Fragen nach dem Test",
+        "postForm": "Externes Formular",
+        "nasaTlx": "NASA-TLX",
+        "sus": "System Usability Scale",
+        "tam1": "TAM-1 (Grund)",
+        "tam2": "TAM-2 (Erweitert)",
+        "tam3": "TAM-3 (Umfassend)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Eye-Tracking",
+        "screenRecording": "Bildschirmaufnahme",
+        "camera": "Kamera",
+        "audio": "Audio"
+      }
     }
   },
   "UserTestView": {
