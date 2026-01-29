@@ -78,7 +78,7 @@ export default class StudyController extends Controller {
       await super.update(COLLECTION, payload.id, payload.toFirestore())
       
       // Link study to user if testAdmin is present (for new creation)
-      if (payload.testAdmin && payload.testAdmin.userDocId) {
+      if (payload.testAdmin?.userDocId) {
         const userDoc = await super.readOne('users', payload.testAdmin.userDocId)
         const userData = userDoc.data()
         userData.myTests = userData.myTests || {}
@@ -86,7 +86,7 @@ export default class StudyController extends Controller {
           createdAt: Date.now(),
         }
         await userController.update(payload.testAdmin.userDocId, userData)
-        }
+      }
       
       return payload
     } catch (e) {
