@@ -10,12 +10,12 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      issues: write
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Fetch base branch
         run: git fetch origin ${{ github.event.pull_request.base.ref }}
@@ -32,6 +32,7 @@ jobs:
       - name: Post PR comment on failure
         if: steps.i18n_check.outcome == 'failure'
         uses: actions/github-script@v7
+        continue-on-error: true
         env:
           I18N_REPORT: ${{ steps.i18n_check.outputs.report }}
         with:
@@ -40,58 +41,68 @@ jobs:
             const report = process.env.I18N_REPORT;
             if (!report) return;
 
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const botComment = comments.find(c =>
-              c.user.type === 'Bot' &&
-              c.body.includes('i18n Translation Validation')
-            );
-
-            const body = `${report}\n\n---\n*Updated: ${new Date().toUTCString()}*`;
-
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body
-              });
-            } else {
-              await github.rest.issues.createComment({
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body
               });
+
+              const botComment = comments.find(c =>
+                c.user.type === 'Bot' &&
+                c.body.includes('i18n Translation Validation')
+              );
+
+              const body = `${report}\n\n---\n*Updated: ${new Date().toUTCString()}*`;
+
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body
+                });
+              }
+            } catch (error) {
+              console.log('Unable to post comment (this is expected for PRs from forks):', error.message);
+              console.log('i18n validation report:\n', report);
             }
 
       - name: Remove comment on success
         if: steps.i18n_check.outcome == 'success'
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const botComment = comments.find(c =>
-              c.user.type === 'Bot' &&
-              c.body.includes('i18n Translation Validation')
-            );
-
-            if (botComment) {
-              await github.rest.issues.deleteComment({
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: botComment.id
+                issue_number: context.issue.number,
               });
+
+              const botComment = comments.find(c =>
+                c.user.type === 'Bot' &&
+                c.body.includes('i18n Translation Validation')
+              );
+
+              if (botComment) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id
+                });
+              }
+            } catch (error) {
+              console.log('Unable to remove comment (this is expected for PRs from forks):', error.message);
             }
 
       - name: Fail build if validation failed
