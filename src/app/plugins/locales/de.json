@@ -378,6 +378,15 @@
       "createNewStudy": "Neue Studie Erstellen",
       "emptyStateMessage": "Sie haben noch keine Studien. Erstellen Sie Ihre erste Studie, um wertvolle Benutzererkenntnisse zu sammeln."
     },
+    "studyStatus": {
+      "finished": "Abgeschlossen",
+      "expiredDaysAgo": "Abgelaufen vor {days} Tagen",
+      "endsToday": "Endet heute",
+      "endsTodayStarted": "Endet heute · Gestartet",
+      "readyToSubmit": "Bereit zur Einreichung",
+      "endsTodayReady": "Endet heute · Bereit",
+      "notStarted": "Nicht gestartet"
+    },
     "activeStudiesOverview": "Übersicht über aktive Studien",
     "viewAll": "Alle anzeigen",
     "showMore": "Mehr anzeigen",

@@ -378,6 +378,15 @@
       "createNewStudy": "新しい研究を作成",
       "emptyStateMessage": "まだ研究がありません。最初の研究を作成して、貴重なユーザーインサイトの収集を始めましょう。"
     },
+    "studyStatus": {
+      "finished": "完了",
+      "expiredDaysAgo": "{days}日前に期限切れ",
+      "endsToday": "本日終了",
+      "endsTodayStarted": "本日終了 · 開始済み",
+      "readyToSubmit": "提出準備完了",
+      "endsTodayReady": "本日終了 · 提出準備完了",
+      "notStarted": "未開始"
+    },
     "activeStudiesOverview": "アクティブな研究の概要",
     "viewAll": "すべて表示",
     "showMore": "もっと見る",
@@ -1375,11 +1384,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1647,11 +1652,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",
