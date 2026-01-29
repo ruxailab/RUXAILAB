@@ -118,6 +118,7 @@ const recordScreen = async () => {
         taskIndex: correctTaskIndex,
         mediaType: MEDIA_FIELD_MAP.screen,
         url: videoUrl.value,
+        size: videoBlob.size,
       })
 
       // Add safety check before setting the property
@@ -127,6 +128,8 @@ const recordScreen = async () => {
       ) {
         currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
           videoUrl.value
+        currentUserTestAnswer.value.tasks[correctTaskIndex].screenSize =
+          videoBlob.size
       } else {
         console.error(
           'Task not found at index:',

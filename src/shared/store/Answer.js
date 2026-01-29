@@ -176,9 +176,39 @@ export default {
           value
       }
     },
-    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url }) {
-      if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
-      state.mediaUrls[taskIndex][mediaType] = url
+    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url, size, userId }) {
+      const currentTaskMedia = state.mediaUrls[taskIndex] || {}
+
+      // Update media URL
+      const updatedTaskMedia = {
+        ...currentTaskMedia,
+        [mediaType]: url,
+      }
+
+      if (size) {
+        if (!updatedTaskMedia.sizes) updatedTaskMedia.sizes = {}
+        updatedTaskMedia.sizes[mediaType] = size
+
+        if (
+          userId &&
+          state.testAnswerDocument?.taskAnswers?.[userId]?.tasks?.[taskIndex]
+        ) {
+          const task =
+            state.testAnswerDocument.taskAnswers[userId].tasks[taskIndex]
+
+          if (mediaType === 'screenRecordURL') {
+            task.screenSize = size
+          } else if (mediaType === 'audioRecordURL') {
+            task.audioSize = size
+          } else if (mediaType === 'webcamRecordURL') task.webcamSize = size
+        } else {
+          console.warn(
+            '[Mutation] Could not find task document to update size',
+            { userId, taskIndex },
+          )
+        }
+      }
+      state.mediaUrls[taskIndex] = updatedTaskMedia
     },
   },
   actions: {
@@ -190,9 +220,8 @@ export default {
       const currentAnswersDocId = currentTest.answersDocId
       commit('setLoading', true)
       try {
-        const answerDoc = await answerController.getAnswerById(
-          currentAnswersDocId,
-        )
+        const answerDoc =
+          await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (e) {
         console.error('Error in getCurrentTestAnswerDoc', e)
@@ -317,8 +346,18 @@ export default {
       commit('SET_EVALUATOR_STATISTICS', table)
     },
 
-    async updateTaskMediaUrl({ commit }, { taskIndex, mediaType, url }) {
-      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url })
+    async updateTaskMediaUrl(
+      { commit, rootState },
+      { taskIndex, mediaType, url, size },
+    ) {
+      const userId = rootState.user?.id
+      await commit('SET_TASK_MEDIA_URL', {
+        taskIndex,
+        mediaType,
+        url,
+        size,
+        userId,
+      })
     },
   },
 }
