@@ -809,6 +809,126 @@
       "untitledVariable": "Untitled Variable"
     }
   },
+  "CreateTask": {
+    "dialog": {
+      "title": "Create New Task",
+      "subtitle": "Configure your task step by step"
+    },
+    "stepper": {
+      "basicInfo": "Basic Info",
+      "configuration": "Configuration",
+      "advanced": "Advanced",
+      "preview": "Preview"
+    },
+    "selectItems": {
+      "noAnswer": "No Answer",
+      "shortAnswer": "Short Answer",
+      "paragraphAnswer": "Paragraph Answer",
+      "googleFormsLink": "Google Forms Link",
+      "nasaTlx": "NASA TLX",
+      "sus": "System Usability Scale",
+      "tam1": "TAM-1 – Basic Acceptance",
+      "tam2": "TAM-2 – Extended Acceptance",
+      "tam3": "TAM-3 – Advanced Acceptance",
+      "sart": "Situation Awareness Rating Technique"
+    },
+    "validation": {
+      "fieldRequired": "Field Required",
+      "validUrl": "Must be a valid URL starting with http:// or https://",
+      "positiveNumber": "Must be a positive number"
+    },
+    "basicInfo": {
+      "stepTitle": "Step 1: Task Basic Information",
+      "stepDescription": "Define what participants will do in this task. This is the foundation of your user test - be clear and specific about the goals and expectations.",
+      "taskTitle": "Task title",
+      "taskTitleHint": "Give your task a clear, concise name that describes what participants need to accomplish",
+      "taskTitlePlaceholder": "e.g., 'Find product information', 'Complete checkout process'",
+      "taskDescription": "Task Description",
+      "taskDescriptionHint": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow.",
+      "taskDescriptionPlaceholder": "Describe the task in detail. What should the participant do?",
+      "tipLabel": "Tip",
+      "tipHint": "Optional guidance or hints to help participants during the task",
+      "tipPlaceholder": "e.g., 'Focus on the main navigation', 'Take your time to explore'"
+    },
+    "configuration": {
+      "stepTitle": "Step 2: Task Configuration",
+      "stepDescription": "Configure where the task takes place and how participants will provide their responses. This determines the user experience and data collection method.",
+      "taskLink": "Task Link (URL)",
+      "taskLinkHint": "The website or application URL where participants will perform the task",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "Estimated Time (minutes)",
+      "estimatedTimeHint": "The estimated time participants will need to complete this task",
+      "estimatedTimePlaceholder": "e.g. 10",
+      "answerTypeHint": "Choose how participants will provide feedback after completing the task",
+      "answerTypePreview": "Answer Type Preview",
+      "postTestHint": "Enter the specific question you want to ask participants after they complete the task",
+      "postTestPlaceholder": "e.g., 'How easy was it to find the product information?'",
+      "postFormHint": "URL to an external form that participants will fill out after completing the task",
+      "postFormPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "Participants complete the task without providing feedback",
+      "textArea": "Participants provide written feedback after the task",
+      "postTest": "Participants answer specific questions after the task",
+      "postForm": "Participants fill out an external form after the task",
+      "nasaTlx": "NASA Task Load Index - measures workload",
+      "sus": "System Usability Scale - measures usability",
+      "tam1": "TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use",
+      "tam2": "TAM-2 (Extended) - adds external influences and results demonstrability",
+      "tam3": "TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability",
+      "sart": "Situation Awareness Rating Technique - measures situational awareness"
+    },
+    "advanced": {
+      "stepTitle": "Step 3: Advanced Options",
+      "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
+      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
+      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
+      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
+      "audioDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
+      "privacyNotice": "Privacy Notice",
+      "privacyText": "Recording features require explicit consent from participants. Make sure to:",
+      "privacyItem1": "Clearly inform participants about data collection",
+      "privacyItem2": "Obtain proper consent before starting the test",
+      "privacyItem3": "Follow data protection regulations (GDPR, etc.)",
+      "privacyItem4": "Secure storage and handling of recorded data"
+    },
+    "preview": {
+      "taskSummary": "Task Summary",
+      "untitledTask": "Untitled Task",
+      "description": "Description:",
+      "noDescription": "No description provided",
+      "participantTip": "Participant Tip:",
+      "taskUrl": "Task URL:",
+      "answerType": "Answer Type:",
+      "recordingFeatures": "Recording Features:",
+      "postTaskQuestion": "Post-Task Question:",
+      "postTaskForm": "Post-Task Form:",
+      "externalForm": "External Form",
+      "taskReady": "Task Ready!",
+      "reviewRequired": "Review Required",
+      "taskReadyMessage": "Your task is properly configured and ready to be used in your study.",
+      "reviewRequiredMessage": "Please review the previous steps to ensure all required fields are completed.",
+      "noTypeSelected": "No Type Selected",
+      "answerTypes": {
+        "noAnswer": "No Answer Required",
+        "textArea": "Text Area",
+        "postTest": "Post-Test Questions",
+        "postForm": "External Form",
+        "nasaTlx": "NASA-TLX",
+        "sus": "System Usability Scale",
+        "tam1": "TAM-1 (Basic)",
+        "tam2": "TAM-2 (Extended)",
+        "tam3": "TAM-3 (Comprehensive)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Eye Tracking",
+        "screenRecording": "Screen Recording",
+        "camera": "Camera",
+        "audio": "Audio"
+      }
+    }
+  },
   "UserTestView": {
     "titles": {
       "preTestConsent": "Pre Test - Consent",

@@ -809,6 +809,126 @@
       "untitledVariable": "無題の変数"
     }
   },
+  "CreateTask": {
+    "dialog": {
+      "title": "新しいタスクを作成",
+      "subtitle": "ステップバイステップでタスクを設定"
+    },
+    "stepper": {
+      "basicInfo": "基本情報",
+      "configuration": "設定",
+      "advanced": "詳細",
+      "preview": "プレビュー"
+    },
+    "selectItems": {
+      "noAnswer": "回答なし",
+      "shortAnswer": "短い回答",
+      "paragraphAnswer": "段落回答",
+      "googleFormsLink": "Google フォームリンク",
+      "nasaTlx": "NASA TLX",
+      "sus": "システム使用性尺度",
+      "tam1": "TAM-1 – 基本受容",
+      "tam2": "TAM-2 – 拡張受容",
+      "tam3": "TAM-3 – 高度受容",
+      "sart": "状況認識評価技法"
+    },
+    "validation": {
+      "fieldRequired": "フィールドは必須です",
+      "validUrl": "http:// または https:// で始まる有効なURLである必要があります",
+      "positiveNumber": "正の数である必要があります"
+    },
+    "basicInfo": {
+      "stepTitle": "ステップ1: タスク基本情報",
+      "stepDescription": "参加者がこのタスクで何をするかを定義します。これはユーザーテストの基盤です - 目標と期待について明確かつ具体的にしてください。",
+      "taskTitle": "タスクタイトル",
+      "taskTitleHint": "参加者が達成する必要があることを説明する、明確で簡潔な名前をタスクに付けてください",
+      "taskTitlePlaceholder": "例: '製品情報を見つける'、'チェックアウトプロセスを完了する'",
+      "taskDescription": "タスクの説明",
+      "taskDescriptionHint": "参加者に詳細な指示を提供します。目標、コンテキスト、および特定のステップを含めてください。",
+      "taskDescriptionPlaceholder": "タスクを詳しく説明してください。参加者は何をすべきですか？",
+      "tipLabel": "ヒント",
+      "tipHint": "タスク中に参加者を助けるオプションのガイダンスやヒント",
+      "tipPlaceholder": "例: 'メインナビゲーションに集中してください'、'ゆっくり探索してください'"
+    },
+    "configuration": {
+      "stepTitle": "ステップ2: タスク設定",
+      "stepDescription": "タスクが行われる場所と、参加者がどのように回答を提供するかを設定します。",
+      "taskLink": "タスクリンク (URL)",
+      "taskLinkHint": "参加者がタスクを実行するウェブサイトまたはアプリケーションのURL",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "推定時間（分）",
+      "estimatedTimeHint": "参加者がこのタスクを完了するのに必要な推定時間",
+      "estimatedTimePlaceholder": "例: 10",
+      "answerTypeHint": "タスク完了後に参加者がフィードバックを提供する方法を選択",
+      "answerTypePreview": "回答タイプのプレビュー",
+      "postTestHint": "タスク完了後に参加者に尋ねる具体的な質問を入力してください",
+      "postTestPlaceholder": "例: '製品情報を見つけるのはどのくらい簡単でしたか？'",
+      "postFormHint": "タスク後に参加者が記入する外部フォームのURL",
+      "postFormPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "参加者はフィードバックを提供せずにタスクを完了します",
+      "textArea": "参加者はタスク後に書面でフィードバックを提供します",
+      "postTest": "参加者はタスク後に特定の質問に回答します",
+      "postForm": "参加者はタスク後に外部フォームに記入します",
+      "nasaTlx": "NASAタスクロードインデックス - 作業負荷を測定",
+      "sus": "システム使用性尺度 - 使いやすさを測定",
+      "tam1": "TAM-1（基本受容）- 知覚された有用性と使いやすさを測定",
+      "tam2": "TAM-2（拡張）- 外部影響と結果の実証可能性を追加",
+      "tam3": "TAM-3（包括的）- 不安、楽しさ、客観的な使いやすさを含む",
+      "sart": "状況認識評価技法 - 状況認識を測定"
+    },
+    "advanced": {
+      "stepTitle": "ステップ3: 詳細オプション",
+      "stepDescription": "より深い洞察を得るための追加のデータ収集方法を有効にします。",
+      "eyeTrackingDesc": "タスク中に参加者がどこを見ているかを追跡します。",
+      "screenRecordDesc": "参加者の画面アクティビティを記録します。",
+      "cameraDesc": "参加者の表情と反応を記録します。",
+      "audioDesc": "参加者の口頭フィードバックを記録します。",
+      "privacyNotice": "プライバシーに関する通知",
+      "privacyText": "録画機能には参加者の明示的な同意が必要です。",
+      "privacyItem1": "データ収集について参加者に明確に通知する",
+      "privacyItem2": "テスト開始前に適切な同意を得る",
+      "privacyItem3": "データ保護規制（GDPR等）に従う",
+      "privacyItem4": "記録データの安全な保管と取り扱い"
+    },
+    "preview": {
+      "taskSummary": "タスクの概要",
+      "untitledTask": "無題のタスク",
+      "description": "説明：",
+      "noDescription": "説明がありません",
+      "participantTip": "参加者へのヒント：",
+      "taskUrl": "タスクURL：",
+      "answerType": "回答タイプ：",
+      "recordingFeatures": "録画機能：",
+      "postTaskQuestion": "タスク後の質問：",
+      "postTaskForm": "タスク後のフォーム：",
+      "externalForm": "外部フォーム",
+      "taskReady": "タスク準備完了！",
+      "reviewRequired": "レビューが必要",
+      "taskReadyMessage": "タスクは正しく設定され、研究で使用する準備ができています。",
+      "reviewRequiredMessage": "すべての必須フィールドが入力されていることを確認するため、前のステップを確認してください。",
+      "noTypeSelected": "タイプが選択されていません",
+      "answerTypes": {
+        "noAnswer": "回答不要",
+        "textArea": "テキストエリア",
+        "postTest": "テスト後の質問",
+        "postForm": "外部フォーム",
+        "nasaTlx": "NASA-TLX",
+        "sus": "システム使用性尺度",
+        "tam1": "TAM-1（基本）",
+        "tam2": "TAM-2（拡張）",
+        "tam3": "TAM-3（包括的）",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "アイトラッキング",
+        "screenRecording": "画面録画",
+        "camera": "カメラ",
+        "audio": "オーディオ"
+      }
+    }
+  },
   "UserTestView": {
     "titles": {
       "preTestConsent": "事前テスト - 同意",
