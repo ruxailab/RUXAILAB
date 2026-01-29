@@ -630,7 +630,18 @@
     "messages": {
       "submitTest": "Tem certeza de que deseja enviar este teste?",
       "submitOnce": "Tem certeza de que deseja enviar seu teste? Você só pode enviá-lo uma vez.",
-      "noHeuristics": "Este teste não tem heurísticas"
+      "noHeuristics": "Este teste não tem heurísticas",
+      "noHeuristicsConfigured": "Nenhuma heurística configurada",
+      "answerSaved": "Resposta salva com sucesso"
+    },
+    "unknownHeuristic": "Heurística desconhecida",
+    "unknownQuestion": "Pergunta desconhecida",
+    "selectAnOption": "Por favor, selecione uma opção",
+    "errors": {
+      "questionNotLoaded": "A pergunta não pôde ser carregada",
+      "noAnswerData": "Nenhum dado de resposta encontrado",
+      "failedToSaveAnswer": "Falha ao salvar a resposta. Por favor, tente novamente.",
+      "failedToSubmitAnswer": "Falha ao enviar a resposta. Por favor, tente novamente."
     },
     "actions": {
       "cancel": "Cancelar",
@@ -640,6 +651,9 @@
       "notMail": "Não é {userEmail}?",
       "changeAccount": "Mudar conta",
       "startTest": "Iniciar teste"
+    },
+    "headers": {
+      "heuristics": "Heurísticas"
     }
   },
   "HeuristicsEditTest": {

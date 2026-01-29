@@ -630,7 +630,18 @@
     "messages": {
       "submitTest": "Êtes-vous sûr de vouloir soumettre ce test ?",
       "submitOnce": "Êtes-vous sûr de vouloir soumettre votre test ? Vous ne pouvez le faire qu'une seule fois.",
-      "noHeuristics": "Ce test n'a aucune heuristique"
+      "noHeuristics": "Ce test n'a aucune heuristique",
+      "noHeuristicsConfigured": "Aucune heuristique configurée",
+      "answerSaved": "Réponse enregistrée avec succès"
+    },
+    "unknownHeuristic": "Heuristique inconnue",
+    "unknownQuestion": "Question inconnue",
+    "selectAnOption": "Veuillez sélectionner une option",
+    "errors": {
+      "questionNotLoaded": "La question n'a pas pu être chargée",
+      "noAnswerData": "Aucune donnée de réponse trouvée",
+      "failedToSaveAnswer": "Échec de l'enregistrement de la réponse. Veuillez réessayer.",
+      "failedToSubmitAnswer": "Échec de la soumission de la réponse. Veuillez réessayer."
     },
     "actions": {
       "cancel": "Annuler",
@@ -640,6 +651,9 @@
       "notMail": "Pas {userEmail} ?",
       "changeAccount": "Changer de compte",
       "startTest": "Commencer le test"
+    },
+    "headers": {
+      "heuristics": "Heuristiques"
     }
   },
   "HeuristicsEditTest": {
