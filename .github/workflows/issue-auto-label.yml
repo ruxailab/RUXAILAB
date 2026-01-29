@@ -1,0 +1,115 @@
+name: Issue Auto Labeler
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  issues: write
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-label issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            if (!issue) return;
+
+            // Skip bot issues
+            const BOT_LOGINS = new Set(['dependabot[bot]', 'github-actions[bot]']);
+            const isBot = BOT_LOGINS.has(issue.user?.login) || issue.user?.type === 'Bot';
+            if (isBot) return;
+
+            const title = (issue.title || '').toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const existingLabels = (issue.labels || []).map(l => (typeof l === 'string' ? l : l.name));
+
+            const labelsToAdd = new Set();
+
+            // --- bug ---
+            const looksLikeBugTemplate =
+              body.includes('steps to reproduce') ||
+              body.includes('expected behavior') ||
+              body.includes('actual behavior') ||
+              body.includes('screenshots');
+
+            const looksLikeBugTitle =
+              title.startsWith('[🐞 bug]') ||
+              title.startsWith('[bug]') ||
+              title.includes('bug:') ||
+              title.includes('🐞');
+
+            if (looksLikeBugTemplate || looksLikeBugTitle) {
+              labelsToAdd.add('bug');
+            }
+
+            // --- help ---
+            const asksForHelp =
+              body.includes('help wanted') ||
+              body.includes('need help') ||
+              body.includes('help needed') ||
+              body.includes('looking for help') ||
+              title.includes('help');
+
+            if (asksForHelp) {
+              labelsToAdd.add('help');
+            }
+
+            // --- good for wannabe gsocers ---
+            // Conservative heuristic: only auto-apply for clearly small-scope issues.
+            const gsocPositiveKeywords = [
+              'docs',
+              'documentation',
+              'typo',
+              'readme',
+              'workflow',
+              'github action',
+              'ci',
+              'label',
+              'lint',
+              'eslint',
+              'test',
+              'unit test',
+              'i18n',
+              'translation',
+              'copy',
+              'text',
+            ];
+
+            const gsocNegativeKeywords = [
+              'refactor',
+              'rewrite',
+              'migration',
+              'breaking',
+              'architecture',
+              'performance',
+              'security',
+              'auth',
+              'firebase',
+              'database',
+              'backend',
+              'infrastructure',
+            ];
+
+            const hasPositive = gsocPositiveKeywords.some(k => title.includes(k) || body.includes(k));
+            const hasNegative = gsocNegativeKeywords.some(k => title.includes(k) || body.includes(k));
+
+            if (hasPositive && !hasNegative) {
+              labelsToAdd.add('good for wannabe gsocers');
+            }
+
+            // Remove labels that already exist
+            for (const l of existingLabels) labelsToAdd.delete(l);
+
+            const finalLabels = Array.from(labelsToAdd);
+            if (finalLabels.length === 0) return;
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: finalLabels,
+            });
