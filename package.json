@@ -2,6 +2,7 @@
   "name": "ruxailab",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "prepare": "husky install",
     "serve": "vue-cli-service serve",
