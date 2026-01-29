@@ -1,43 +1,77 @@
 <template>
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToActivity">
-      <v-icon size="24" color="primary" class="header-icon">mdi-timeline-text-outline</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.recentActivity') }}</v-card-title>
+    <div
+      class="d-flex align-center mb-4 clickable-header"
+      @click="navigateToActivity"
+    >
+      <v-icon size="24" color="primary" class="header-icon"
+        >mdi-timeline-text-outline</v-icon
+      >
+      <v-card-title class="text-h6 text-primary clickable-title">{{
+        $t('Dashboard.cards.recentActivity')
+      }}</v-card-title>
     </div>
-    
+
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.activities7Days') }}</div>
-      <div class="metric-value text-h3 font-weight-bold">{{ recentActivitiesCount }}</div>
-      <div class="metric-change text-caption" :class="changeColor">{{ activityChange }}</div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">
+        {{ $t('Dashboard.cards.activities7Days') }}
+      </div>
+      <div class="metric-value text-h3 font-weight-bold">
+        {{ recentActivitiesCount }}
+      </div>
+      <div class="metric-change text-caption" :class="changeColor">
+        {{ activityChange }}
+      </div>
     </div>
-    
+
     <!-- Información adicional -->
     <div class="additional-info">
-      <div class="info-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.lastActivity') }}</div>
-      <div class="info-value text-body-2 font-weight-medium">{{ lastActivityTime }}</div>
+      <div class="info-subtitle text-caption text-grey-darken-1">
+        {{ $t('Dashboard.cards.lastActivity') }}
+      </div>
+      <div class="info-value text-body-2 font-weight-medium">
+        {{ lastActivityTime }}
+      </div>
     </div>
   </v-card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { formatDistanceToNow } from 'date-fns'
-import { es } from 'date-fns/locale' // TODO: Dynamic locale based on i18n
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { formatDistanceToNow } from 'date-fns'
+import { es, enUS, de, fr, hi, ja, ptBR, ru, zhCN, arSA } from 'date-fns/locale'
+
+const localeMap = {
+  en: enUS,
+  es: es,
+  de: de,
+  fr: fr,
+  hi: hi,
+  ja: ja,
+  pt_br: ptBR,
+  ru: ru,
+  zh: zhCN,
+  ar: arSA,
+}
 
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const emit = defineEmits(['view-all'])
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+const currentLocale = computed(() => {
+  return localeMap[locale.value] || enUS
+})
 
 // Navigate to activity section
 const navigateToActivity = () => {
@@ -49,41 +83,41 @@ const navigateToActivity = () => {
 // Computed properties
 const activities = computed(() => {
   const activityList = []
-  
+
   // Actividades basadas en cooperadores
   if (props.test?.cooperators) {
-    props.test.cooperators.forEach(coop => {
+    props.test.cooperators.forEach((coop) => {
       if (coop.updateDate) {
         activityList.push({
           id: `coop-${coop.userDocId}`,
           title: t('Dashboard.cards.evaluationUpdated'),
           description: `${coop.email} ${t('Dashboard.cards.updatedProgress')}`,
-          timeAgo: formatDistanceToNow(new Date(coop.updateDate), { 
-            addSuffix: true, 
-            locale: es 
+          timeAgo: formatDistanceToNow(new Date(coop.updateDate), {
+            addSuffix: true,
+            locale: currentLocale.value,
           }),
           color: coop.progress === 100 ? 'success' : 'warning',
-          timestamp: new Date(coop.updateDate)
+          timestamp: new Date(coop.updateDate),
         })
       }
-      
+
       if (coop.invited && !coop.accepted) {
         activityList.push({
           id: `invite-${coop.userDocId}`,
           title: t('Dashboard.cards.invitationSentTitle'),
-          description: `${t('Dashboard.cards.invitationPendingDesc')} ${coop.email}`,
+          description: `${t('Dashboard.cards.invitationPendingDesc')} ${
+            coop.email
+          }`,
           timeAgo: t('Dashboard.cards.pendingStatus'),
           color: 'info',
-          timestamp: new Date(coop.updateDate || props.test.creationDate)
+          timestamp: new Date(coop.updateDate || props.test.creationDate),
         })
       }
     })
   }
-  
+
   // Ordenar por fecha más reciente
-  return activityList
-    .sort((a, b) => b.timestamp - a.timestamp)
-    .slice(0, 10)
+  return activityList.sort((a, b) => b.timestamp - a.timestamp).slice(0, 10)
 })
 
 // Computed para las nuevas métricas

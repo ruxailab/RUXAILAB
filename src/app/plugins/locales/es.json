@@ -46,6 +46,10 @@
     }
   },
   "common": {
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "hidden": "Oculto",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
