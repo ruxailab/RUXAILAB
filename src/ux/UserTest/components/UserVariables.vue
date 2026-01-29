@@ -182,9 +182,9 @@ const allItemsValid = computed(() => {
 // to get the correct data source dynamically
 const currentVariables = computed(() => {
   if (props.type === 'pre-test') {
-    return store.getters.preTest || []
+    return store.getters['UserStudy/preTest'] || []
   } else {
-    return store.getters.postTest || []
+    return store.getters['UserStudy/postTest'] || []
   }
 })
 
