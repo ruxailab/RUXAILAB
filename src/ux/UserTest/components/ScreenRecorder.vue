@@ -101,47 +101,18 @@ const recordScreen = async () => {
       chunks.value.push(e.data)
     }
 
-    mediaRecorder.value.onstop = async () => {
-      emit('showLoading')
-      const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
-      const storage = getStorage()
-      const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
-      const storageReference = storageRef(storage, storagePath)
+    mediaRecorder.value.onstop = () => {
+      const blob = new Blob(chunks.value, { type: 'video/webm' })
 
-      await uploadBytes(storageReference, videoBlob)
-      videoUrl.value = await getDownloadURL(storageReference)
-
-      // Use the task index from when recording started, not the current one
-      const correctTaskIndex = recordingTaskIndex.value
-
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.screen,
-        url: videoUrl.value,
+      store.commit('mediaRecorder/SET_MEDIA_BLOB', {
+        taskIndex: recordingTaskIndex.value,
+        mediaType: 'screen',
+        blob,
       })
 
-      // Add safety check before setting the property
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[correctTaskIndex]
-      ) {
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
-          videoUrl.value
-      } else {
-        console.error(
-          'Task not found at index:',
-          correctTaskIndex,
-          'Available tasks:',
-          currentUserTestAnswer.value.tasks?.length,
-        )
-      }
-
-      // Stop all tracks
-      videoStream.value.getTracks().forEach((track) => track.stop())
+      videoStream.value.getTracks().forEach((t) => t.stop())
       isRecording.value = false
       isCapturing.value = false
-
-      emit('stopShowLoading')
     }
 
     isRecording.value = true
