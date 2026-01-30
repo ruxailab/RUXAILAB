@@ -520,6 +520,7 @@ const emit = defineEmits([
   'update:nasaTlxAnswers',
   'update:tamAnswers',
   'update:sartAnswers',
+  'startTask',
 ])
 
 onBeforeUnmount(() => {
@@ -688,6 +689,7 @@ function updateElapsedTime() {
 
 async function startTask() {
   emit('show-loading')
+  emit('startTask')
   await startMediaRecorders()
   stage.value = 2
   taskStartTime = Date.now()
