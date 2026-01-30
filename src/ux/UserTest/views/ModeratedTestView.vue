@@ -323,7 +323,7 @@
               @save="saveAnswer"
             />
           </v-navigation-drawer>
-          
+
           <!-- Notes Toggle Button (for Observators) -->
           <v-btn
             v-if="isObservator"
@@ -345,10 +345,11 @@
               :content="localTestAnswer.sessionNotes?.length || 0"
               :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
               color="error"
-              overlap
             >
               <v-icon>
-                {{ notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline' }}
+                {{
+                  notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline'
+                }}
               </v-icon>
             </v-badge>
           </v-btn>
@@ -643,7 +644,7 @@ const isUserTestAdmin = computed(() => {
 const currentUserAccessLevel = computed(() => {
   if (isUserTestAdmin.value) return 0 // Admin implicit
   const cooperator = test.value.cooperators?.find(
-    (c) => c.userDocId === user.value?.id
+    (c) => c.userDocId === user.value?.id,
   )
   return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
 })
@@ -781,7 +782,6 @@ const handleSubmit = async () => {
     await saveAnswer()
     await router.push({ name: 'Admin' })
   } catch (error) {
-    console.error('Error submitting answer:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -806,8 +806,7 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
-  } catch (error) {
-    console.error('Error saving answer:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
@@ -842,7 +841,10 @@ const signOut = async () => {
 
 const startTest = async () => {
   // Check if the test has no tasks
-  if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
+  if (
+    !test.value.testStructure ||
+    Object.keys(test.value.testStructure).length === 0
+  ) {
     store.commit('SET_TOAST', {
       type: 'info',
       message: t('UserTestView.messages.noTasks'),
@@ -864,7 +866,6 @@ const startTest = async () => {
     displayVideoCallComponent.value = true
     return
   }
-  
 
   // First, add the class for the exit animation
   const startScreen = document.querySelector('.start-screen')
@@ -1192,26 +1193,32 @@ watchEffect(() => {
       testDisabledReason.value = 'test-not-active'
       return true
     }
-    if (!test.value.testStructure || Object.keys(test.value.testStructure).length === 0) {
+    if (
+      !test.value.testStructure ||
+      Object.keys(test.value.testStructure).length === 0
+    ) {
       testDisabledReason.value = 'test-no-tasks-configured'
       return true
     }
     testDisabledReason.value = null
-    return false  // Admin can proceed
+    return false // Admin can proceed
   }
   const now = new Date()
   const userSessions = test.value.cooperators.filter(
-    (u) => u.userDocId === route.params.token
+    (u) => u.userDocId === route.params.token,
   )
 
-  const cooperator = userSessions.filter((s) => {
-    const sessionDate = new Date(s.testDate)
-    const diffHours = (sessionDate - now) / (1000 * 60 * 60)
-    return diffHours >= 0 && diffHours <= 24
-  })
-  .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
-  
-  const sessionDate = cooperator?.testDate ? new Date(cooperator.testDate) : null
+  const cooperator = userSessions
+    .filter((s) => {
+      const sessionDate = new Date(s.testDate)
+      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
+      return diffHours >= 0 && diffHours <= 24
+    })
+    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
+
+  const sessionDate = cooperator?.testDate
+    ? new Date(cooperator.testDate)
+    : null
 
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {

@@ -8,11 +8,11 @@
     <v-row class="video-row justify-center" no-gutters>
       <!-- Screen Share Video (visible to everyone including observators) -->
       <v-col
+        v-show="isSharingScreen"
         cols="12"
         class="d-flex justify-center align-center"
-        v-show="isSharingScreen"
       >
-        <div class="video-container" v-show="isSharingScreen">
+        <div v-show="isSharingScreen" class="video-container">
           <video
             ref="screenVideo"
             autoplay
@@ -24,10 +24,10 @@
       </v-col>
 
       <!-- Grid of Participants -->
-      <v-col cols="12" v-if="callStarted">
+      <v-col v-if="callStarted" cols="12">
         <div class="videos-grid">
           <!-- Local Video (not for observators) -->
-          <div class="video-wrapper" v-if="!isObservator">
+          <div v-if="!isObservator" class="video-wrapper">
             <div class="video-container">
               <video
                 ref="localVideo"
@@ -85,7 +85,7 @@
       </v-col>
 
       <!-- Moderator Preview (before opening room) -->
-      <v-col cols="12" v-if="caller && !callStarted && !isObservator && localStream">
+      <v-col v-if="caller && !callStarted && !isObservator && localStream" cols="12">
         <div class="videos-grid">
           <div class="video-wrapper">
             <div class="video-container">
@@ -119,7 +119,7 @@
       </v-col>
 
       <!-- Observator waiting message (before call starts) -->
-      <v-col cols="12" v-if="isObservator && !callStarted" class="d-flex justify-center align-center">
+      <v-col v-if="isObservator && !callStarted" cols="12" class="d-flex justify-center align-center">
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
           <h3 class="text-h5 mb-2">Observator Mode</h3>
@@ -164,7 +164,7 @@
         <div class="control-bar-left"></div>
 
         <!-- Center - main controls -->
-        <div class="control-buttons-container" v-if="!isObservator">
+        <div v-if="!isObservator" class="control-buttons-container">
           <!-- Camera toggle button -->
           <v-tooltip location="top">
             <template #activator="{ props }">
@@ -788,7 +788,6 @@ import {
   set,
   onValue,
   push,
-  off,
   get,
   onDisconnect,
   remove,
@@ -1044,7 +1043,6 @@ const joinRoom = async () => {
   )
   onChildAdded(mySignalsRef, async (snapshot) => {
     const signal = snapshot.val()
-    const pushId = snapshot.key
     // signal structure expected: { senderId: '...', ...payload } from my push logic?
     // Wait, my sendSignal uses `push(..., payload)`.
     // Payload should include `senderId` to know who it is from!
@@ -1066,8 +1064,8 @@ const joinRoom = async () => {
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
         sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
-      } catch (e) {
-        console.error('Error handling offer:', e)
+      } catch {
+        // Error handling offer
       }
     } else if (signal.type === 'answer') {
       // Only set answer if we're waiting for one (have-local-offer state)
@@ -1076,19 +1074,15 @@ const joinRoom = async () => {
           await pc.setRemoteDescription(
             new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }),
           )
-        } catch (e) {
-          console.error('Error setting remote answer:', e)
+        } catch {
+          // Error setting remote answer
         }
-      } else {
-        console.warn(
-          `Received answer in unexpected state: ${pc.signalingState}`,
-        )
       }
     } else if (signal.candidate) {
       try {
         await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
-      } catch (e) {
-        console.warn('Error adding candidate', e)
+      } catch {
+        // Error adding candidate
       }
     }
 
@@ -1133,8 +1127,7 @@ const initLocalMedia = async () => {
     if (localVideo.value) localVideo.value.srcObject = stream
     isCameraEnabled.value = true
     isMicrophoneEnabled.value = true
-  } catch (e) {
-    console.error('Error accessing media', e)
+  } catch {
     isCameraEnabled.value = false
   }
 }
@@ -1183,8 +1176,8 @@ const createPeerConnection = (targetUserId, isInitiator) => {
         const offer = await pc.createOffer()
         await pc.setLocalDescription(offer)
         sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
-      } catch (e) {
-        console.error('Error on negotiation', e)
+      } catch {
+        // Error on negotiation
       }
     }
     
@@ -1196,8 +1189,8 @@ const createPeerConnection = (targetUserId, isInitiator) => {
           const offer = await pc.createOffer()
           await pc.setLocalDescription(offer)
           sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
-        } catch (e) {
-          console.error('Error creating initial offer', e)
+        } catch {
+          // Error creating initial offer
         }
       }
     }, 100)
@@ -1219,7 +1212,6 @@ const closePeerConnection = (userId) => {
 // --- UI & Helper Methods ---
 
 const caller = computed(() => props.isModerator)
-const roomExists = ref(true) // Always true in Mesh model (or we could check participants count)
 
 function toggleCamera() {
   if (!localStream.value) return
@@ -1309,24 +1301,21 @@ const startCall = async () => {
     // Now moderator joins
     roomReady.value = true
     await joinRoom()
-  } catch (err) {
-    console.warn('Failed to open room:', err)
+  } catch {
+    // Failed to open room
   }
-}
-const answerCall = async () => {
-  /* Auto-started in Mesh */
 }
 const endCall = async () => {
   if (caller.value) {
     try {
       await remove(dbRef(database, `calls/${props.roomId}`))
-    } catch (err) {
-      console.warn('Failed to remove calls node:', err)
+    } catch {
+      // Failed to remove calls node
     }
     try {
       await update(dbRef(database, `rooms/${props.roomId}`), { showVideoCall: false })
-    } catch (err) {
-      console.warn('Failed to update rooms showVideoCall:', err)
+    } catch {
+      // Failed to update rooms showVideoCall
     }
     leaveRoom()
   } else {
@@ -1376,8 +1365,7 @@ async function startScreenShare() {
         }
       }
     }
-  } catch (err) {
-    console.error('Error starting screen share:', err)
+  } catch {
     isSharingScreen.value = false
   }
 }
@@ -1410,9 +1398,7 @@ watch(
   (myId) => {
     // Just to be safe if user loads late
     if (!myId || !participants.value) return
-    // Setup listener
-    const myInbox = dbRef(database, `calls/${props.roomId}/signals/${myId}`)
-    // Actually better to just do this in joinRoom or onMounted once user is available
+    // Setup listener - actually better to do this in joinRoom or onMounted once user is available
   },
   { immediate: true },
 )
