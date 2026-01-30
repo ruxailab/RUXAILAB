@@ -15,12 +15,12 @@
       />
     </div>
 
-    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
-      <div class="text-center">
-        <v-progress-circular indeterminate color="#fca326" size="50" />
-        <div style="color: white" class="mt-3">loading...</div>
+    <!-- <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving...
       </div>
-    </v-overlay>
+    </v-overlay> -->
 
     <Snackbar />
 
@@ -568,7 +568,7 @@ const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const mediaUrls = computed(() => store.getters['mediaRecorder/mediaUrls'])
+const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
 const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
@@ -690,7 +690,6 @@ function toggleTracking(value) {
 const saveAnswer = async () => {
   try {
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
-
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
 
@@ -741,16 +740,9 @@ const saveAnswer = async () => {
 
 const submitAnswer = async () => {
   try {
-    isLoading.value = true
     localTestAnswer.submitted = true
-
-    await store.dispatch('mediaRecorder/uploadMedia', {
-      testId: testId.value,
-    })
-
     await saveAnswer()
-  } catch (e) {
-    console.error('[SUBMIT] error', e)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -778,22 +770,15 @@ const handleSubmit = () => {
 }
 
 const attachMediaToTasks = (answer, mediaUrls) => {
-  if (!answer?.tasks?.length) {
-    console.warn('[ATTACH] no tasks found')
-    return
-  }
+  if (!answer?.tasks?.length) return
 
   for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
     const task = answer.tasks[taskIndex]
-    if (!task) {
-      console.warn('[ATTACH] task not found for index', taskIndex)
-      continue
-    }
+    if (!task) continue
 
     for (const type in medias) {
       const field = MEDIA_FIELD_MAP?.[type] || type
       const url = medias[type]
-
       if (url != null) task[field] = url
     }
   }
