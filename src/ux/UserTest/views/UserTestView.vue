@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                          ? 'primary'
-                          : 'grey'
+                            ? 'primary'
+                            : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -687,9 +687,8 @@ function toggleTracking(value) {
   isRecording.value = value
 }
 
-const saveAnswer = async () => {
+const savePartialAnswer = async () => {
   try {
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
 
@@ -728,7 +727,15 @@ const saveAnswer = async () => {
         testType: test.value.testType,
       })
     }
+  } catch (e) {
+    console.error('[SAVE PARTIAL] error', e)
+  }
+}
 
+const saveAnswer = async () => {
+  try {
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
     router.push('/admin')
   } catch {
     store.commit('SET_TOAST', {
@@ -770,7 +777,13 @@ const handleSubmit = () => {
 }
 
 const attachMediaToTasks = (answer, mediaUrls) => {
-  if (!answer?.tasks?.length) return
+  if (!answer?.tasks) return
+
+  const taskEntries = Array.isArray(answer.tasks)
+    ? answer.tasks.map((task, index) => [index, task])
+    : Object.entries(answer.tasks)
+
+  if (!taskEntries.length) return
 
   for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
     const task = answer.tasks[taskIndex]
@@ -822,9 +835,28 @@ const callTimerSave = () => {
   }
 }
 
-function handleTaskFinish(userCompleted) {
-  completeStep(taskIndex.value, 'tasks', userCompleted)
+async function handleTaskFinish(userCompleted) {
   callTimerSave()
+
+  await nextTick()
+
+  if (isLoading.value) {
+    const unwatch = watch(
+      () => isLoading.value,
+      async (val) => {
+        if (!val) {
+          unwatch()
+          completeStep(taskIndex.value, 'tasks', userCompleted)
+          attachMediaToTasks(localTestAnswer, mediaUrls.value)
+          await savePartialAnswer()
+        }
+      },
+    )
+  } else {
+    completeStep(taskIndex.value, 'tasks', userCompleted)
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
+  }
 }
 
 const startTimer = () => {
@@ -866,11 +898,13 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
       globalIndex.value = 2 // PreTest
+      savePartialAnswer()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
       globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      savePartialAnswer()
     }
 
     if (type === 'eyeCalibration') {
@@ -924,6 +958,7 @@ const completeStep = (id, type, userCompleted = true) => {
       localTestAnswer.postTestCompleted = true
       // items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+      savePartialAnswer()
     }
 
     calculateProgress()
@@ -1359,7 +1394,8 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
