@@ -156,10 +156,7 @@ export default class UserController extends Controller {
       userToUpdate.notifications[notificationIndex].readAt = Date.now()
 
       // Save updated user data to Firestore
-      await this.update(
-        userToUpdate.id,
-        userToUpdate.toFirestore(),
-      )
+      await this.update(userToUpdate.id, userToUpdate.toFirestore())
       return userToUpdate
     } else {
       // Notification was not found in the array
@@ -181,10 +178,7 @@ export default class UserController extends Controller {
 
     if (!hasUnread) return userToUpdate
 
-    await this.update(
-      userToUpdate.id,
-      userToUpdate.toFirestore(),
-    )
+    await this.update(userToUpdate.id, userToUpdate.toFirestore())
     // Return the updated user object (in memory) so the store can commit it immediately
     return userToUpdate
   }
@@ -247,6 +241,68 @@ export default class UserController extends Controller {
       return super.update(COLLECTION, uid, { accessLevel })
     } catch (error) {
       throw error
+    }
+  }
+
+  /**
+   * Updates the storageUsageMB field for a specific user based on their current studies.
+   * @param {string} userId - The ID of the user to update.
+   */
+  async updateStorageUsage(userId) {
+    try {
+      const AnswerController = (
+        await import('@/shared/controllers/AnswerController')
+      ).default
+      const answerController = new AnswerController()
+
+      // 1. Fetch user with their studies (but 'myTests' only has test meta, not deep answers)
+      const userWithStudies = await this.getUserWithStudies(userId)
+
+      // 2. We must fetch the actual 'answers' document for each test in 'myTests'
+      // because the media URLs are stored in the 'answers' collection, not the 'tests' collection.
+      const myTests = userWithStudies.myTests || {}
+      const testIds = Object.keys(myTests)
+
+      await Promise.all(
+        testIds.map(async (testId) => {
+          const test = myTests[testId]
+          if (test.answersDocId) {
+            try {
+              // Fetch the answer document
+              // check if we have a direct way or need to use getAnswerById
+              const answerDoc = await answerController.getAnswerById(
+                test.answersDocId,
+              )
+
+              // Attach answers to the test object so calculator can see them
+              if (answerDoc && answerDoc.taskAnswers) {
+                // The answerController returns the model, which puts 'taskAnswers' into 'tasks' property usually or similar structure
+                // Let's check getAnswerById implementation: it calls instantiateStudyAnswerByType
+                // If it's a UserStudyEvaluatorAnswer, it maps 'tasks'
+                // We'll assign it to 'answers' property which the calculator expects
+                test.answers = Object.values(answerDoc.taskAnswers || {})
+              }
+            } catch (err) {
+              console.warn(`Could not fetch answers for test ${testId}`, err)
+            }
+          }
+        }),
+      )
+
+      // 3. Calculate storage usage using the helper
+      const { calculateUserStorageUsage } =
+        await import('@/shared/utils/storageUtils')
+      const totalStorageMB = calculateUserStorageUsage(userWithStudies)
+
+      // 4. Update the user document
+      await super.update(COLLECTION, userId, {
+        storageUsageMB: totalStorageMB,
+      })
+
+      return totalStorageMB
+    } catch (error) {
+      console.error('Error updating storage usage:', error)
+      throw new Error('Failed to update storage usage: ' + error.message)
     }
   }
 }
