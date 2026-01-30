@@ -1,30 +1,42 @@
 <template>
   <div class="observator-notes-container">
-    <div class="header pa-4 bg-grey-lighten-4 d-flex align-center justify-space-between">
+    <div
+      class="header pa-4 bg-grey-lighten-4 d-flex align-center justify-space-between"
+    >
       <h3 class="text-h6 font-weight-bold display-flex align-center">
         <v-icon class="mr-2">mdi-notebook-edit-outline</v-icon>
         Session Notes
       </h3>
-      <v-chip size="small" color="primary" variant="outlined">{{ notes.length }} notes</v-chip>
+      <v-chip size="small" color="primary" variant="outlined"
+        >{{ notes.length }} notes</v-chip
+      >
     </div>
 
-    <div class="notes-list pa-4" ref="notesList">
+    <div ref="notesList" class="notes-list pa-4">
       <div v-if="notes.length === 0" class="text-center text-grey mt-10">
-        <v-icon size="48" class="mb-2 opacity-50">mdi-text-box-plus-outline</v-icon>
+        <v-icon size="48" class="mb-2 opacity-50"
+          >mdi-text-box-plus-outline</v-icon
+        >
         <p>No notes taken yet.</p>
         <p class="text-caption">Start typing below to record observations.</p>
       </div>
 
-      <div v-for="(note, index) in reversedNotes" :key="index" class="note-item mb-3 pa-3 bg-white rounded elevation-1">
+      <div
+        v-for="(note, index) in reversedNotes"
+        :key="index"
+        class="note-item mb-3 pa-3 bg-white rounded elevation-1"
+      >
         <div class="d-flex justify-space-between align-center mb-1">
           <span class="text-caption font-weight-bold text-primary">
             {{ formatTime(note.timestamp) }}
           </span>
-          <span class="text-caption text-grey" v-if="note.taskName">
+          <span v-if="note.taskName" class="text-caption text-grey">
             {{ note.taskName }}
           </span>
         </div>
-        <div class="text-body-2" style="white-space: pre-wrap;">{{ note.text }}</div>
+        <div class="text-body-2" style="white-space: pre-wrap">
+          {{ note.text }}
+        </div>
       </div>
     </div>
 
@@ -47,8 +59,8 @@
             size="small"
             color="primary"
             class="mb-auto"
-            @click="addNote"
             :disabled="!newNote.trim()"
+            @click="addNote"
           ></v-btn>
         </template>
       </v-textarea>
@@ -57,77 +69,87 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
     type: Array, // sessionNotes
-    default: () => []
+    default: () => [],
   },
   currentTaskIndex: Number,
-  test: Object
-});
+  test: Object,
+})
 
-const emit = defineEmits(['update:modelValue', 'save']);
+const emit = defineEmits(['update:modelValue', 'save'])
 
-const newNote = ref('');
-const notesList = ref(null);
+const newNote = ref('')
+const notesList = ref(null)
 
 const notes = computed({
   get: () => props.modelValue || [],
-  set: (val) => emit('update:modelValue', val)
-});
+  set: (val) => emit('update:modelValue', val),
+})
 
-const reversedNotes = computed(() => [...notes.value].reverse());
+const reversedNotes = computed(() => [...notes.value].reverse())
 
 const currentTaskName = computed(() => {
-  if (!props.test?.testStructure?.userTasks) return 'General';
+  if (!props.test?.testStructure?.userTasks) return 'General'
   // Check if we are in a task step
   // This logic depends on parent context, but passed taskIndex is a good proxy
-  if (props.currentTaskIndex != null && props.test.testStructure.userTasks[props.currentTaskIndex]) {
-    return props.test.testStructure.userTasks[props.currentTaskIndex].taskName || `Task ${props.currentTaskIndex + 1}`;
+  if (
+    props.currentTaskIndex != null &&
+    props.test.testStructure.userTasks[props.currentTaskIndex]
+  ) {
+    return (
+      props.test.testStructure.userTasks[props.currentTaskIndex].taskName ||
+      `Task ${props.currentTaskIndex + 1}`
+    )
   }
-  return 'General';
-});
+  return 'General'
+})
 
 const formatTime = (ts) => {
-  if (!ts) return '';
-  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-};
+  if (!ts) return ''
+  return new Date(ts).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
 
 const handleEnter = (e) => {
   if (e.metaKey || e.ctrlKey) {
-    addNote();
+    addNote()
   } else {
     // manual newline
-    newNote.value += '\n';
+    newNote.value += '\n'
   }
-};
+}
 
 const addNote = () => {
-  if (!newNote.value.trim()) return;
+  if (!newNote.value.trim()) return
 
   const note = {
     text: newNote.value.trim(),
     timestamp: Date.now(),
     taskIndex: props.currentTaskIndex,
-    taskName: currentTaskName.value
-  };
+    taskName: currentTaskName.value,
+  }
 
   // Push to local array
-  notes.value.push(note);
-  
-  // Emit update/save
-  emit('update:modelValue', notes.value);
-  emit('save');
+  notes.value.push(note)
 
-  newNote.value = '';
-  
+  // Emit update/save
+  emit('update:modelValue', notes.value)
+  emit('save')
+
+  newNote.value = ''
+
   // Scroll to top of list (since we reverse it for display, new ones are at top? No, reversedNotes puts new ones at top)
   if (notesList.value) {
-    notesList.value.scrollTop = 0;
+    notesList.value.scrollTop = 0
   }
-};
+}
 </script>
 
 <style scoped>
