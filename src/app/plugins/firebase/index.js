@@ -27,7 +27,7 @@ const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 if (process.env.VUE_APP_USE_EMULATORS === 'true') {
   connectFirestoreEmulator(db, 'localhost', 8081)
   connectAuthEmulator(auth, 'http://localhost:9099')
-  connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+  connectFunctionsEmulator(fbFunctions, 'localhost', 5002)
   connectStorageEmulator(storage, '127.0.0.1', 9199)
 }
 
