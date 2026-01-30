@@ -5,13 +5,13 @@ const props = defineProps({
   labels: {
     type: Array,
     required: true,
-    default: () => []
+    default: () => [],
   },
   data: {
     type: Array,
     required: true,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const chartRef = ref(null)
@@ -23,17 +23,17 @@ const chartOptions = {
     ticks: {
       suggestedMin: 0,
       suggestedMax: Math.max(...props.data),
-      display: true
-    }
+      display: true,
+    },
   },
   legend: {
     display: true,
     labels: {
       fontFamily: 'Roboto',
       fontStyle: 'bold',
-      fontSize: 20
-    }
-  }
+      fontSize: 20,
+    },
+  },
 }
 
 const chartData = {
@@ -44,9 +44,9 @@ const chartData = {
       backgroundColor: 'rgba(249, 152, 38, 0.24)',
       borderColor: 'rgba(255, 81, 47, 1)',
       pointBackgroundColor: 'rgba(255, 81, 47, 1)',
-      data: props.data
-    }
-  ]
+      data: props.data,
+    },
+  ],
 }
 
 watch(
@@ -56,7 +56,7 @@ watch(
       chartRef.value.update()
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 onMounted(() => {

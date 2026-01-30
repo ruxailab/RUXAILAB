@@ -28,6 +28,23 @@ export const formatTimeFromMs = (timeInMs) => {
 }
 
 /**
+ * Format time with detailed breakdown
+ * @param {number} timeInSeconds - Time in seconds
+ * @returns {object} Object with formatted time and components
+ */
+export const formatTimeDetailed = (timeInSeconds) => {
+  if (!timeInSeconds || timeInSeconds < 0) {
+    return { formatedTime: '0:00', hours: 0, minutes: 0, seconds: 0 }
+  }
+  return {
+    formatedTime: formatTime(timeInSeconds),
+    hours: Math.floor(timeInSeconds / 3600),
+    minutes: Math.floor((timeInSeconds % 3600) / 60),
+    seconds: Math.floor(timeInSeconds % 60),
+  }
+}
+
+/**
  * Format time from milliseconds with detailed breakdown
  * @param {number} timeInMs - Time in milliseconds
  * @returns {object} Object with formatted time and components

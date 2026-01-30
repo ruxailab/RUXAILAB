@@ -2,16 +2,9 @@
   <div>
     <Snackbar />
     <!-- Submit Alert Dialog -->
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
+    <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 bg-error text-white"
-          primary-title
-        >
+        <v-card-title class="text-h5 bg-error text-white" primary-title>
           {{ $t('HeuristicsTestView.messages.submitTest') }}
         </v-card-title>
 
@@ -41,12 +34,7 @@
       </v-card>
     </v-dialog>
 
-    <v-overlay v-model="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      />
-    </v-overlay>
+    <Loading />
 
     <v-dialog
       :model-value="fromlink && !noExistUser && !logined"
@@ -54,27 +42,17 @@
       persistent
     >
       <v-card v-if="user">
-        <v-row
-          class="ma-0 pa-0 pt-5"
-          justify="center"
-        >
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar
             class="justify-center"
             color="secondary-lighten-2"
             size="150"
           >
-            <v-icon
-              size="120"
-            >
-              mdi-account
-            </v-icon>
+            <v-icon size="120"> mdi-account </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn
-            class="text-white bg-primary"
-            @click="setTest()"
-          >
+          <v-btn class="text-white bg-primary" @click="setTest()">
             {{
               $t('HeuristicsTestView.actions.continueAs', {
                 userMail: user.email,
@@ -89,10 +67,7 @@
                 userEmail: user.email,
               })
             }}
-            <a
-              style="color: #3f51b5"
-              @click="signOut()"
-            >{{
+            <a style="color: #3f51b5" @click="signOut()">{{
               $t('HeuristicsTestView.actions.changeAccount')
             }}</a>
           </p>
@@ -100,16 +75,8 @@
       </v-card>
     </v-dialog>
 
-    <v-container
-      v-if="test && start"
-      class="start-container"
-      fluid
-    >
-      <v-row
-        class="start-row fill-height"
-        align="center"
-        justify="center"
-      >
+    <v-container v-if="test && start" class="start-container" fluid>
+      <v-row class="start-row fill-height" align="center" justify="center">
         <v-col
           cols="12"
           md="6"
@@ -119,9 +86,7 @@
           <h1 class="text-h2 font-weight-light text-white mb-4">
             {{ test.testTitle }}
           </h1>
-          <p
-            class="text-body-1 text-white mb-6"
-          >
+          <p class="text-body-1 text-white mb-6">
             {{ test.testDescription }}
           </p>
           <v-alert
@@ -132,7 +97,7 @@
             density="compact"
             icon="mdi-alert"
           >
-            Configuration Error: This test has no heuristics configured. Please add heuristics to proceed.
+            {{ $t('HeuristicsTestView.messages.noHeuristicsConfigured') }}
           </v-alert>
           <v-btn
             color="white"
@@ -145,11 +110,7 @@
             {{ $t('HeuristicsTestView.actions.startTest') }}
           </v-btn>
         </v-col>
-        <v-col
-          cols="12"
-          md="5"
-          class="d-flex justify-center"
-        >
+        <v-col cols="12" md="5" class="d-flex justify-center">
           <v-img
             :src="require('../../../assets/BackgroundTestView.png')"
             cover
@@ -160,10 +121,7 @@
       </v-row>
     </v-container>
 
-    <v-card
-      v-else
-      height="100vh"
-    >
+    <v-card v-else height="100vh">
       <v-layout class="fill-height">
         <v-navigation-drawer
           v-model="drawer"
@@ -171,29 +129,17 @@
           permanent
           color="testPrimary"
         >
-          <div
-            v-if="!mini"
-            class="pa-4"
-          >
+          <div v-if="!mini" class="pa-4">
             <v-list-item>
-              <v-row
-                dense
-                align="center"
-              >
-                <v-col
-                  cols="8"
-                  class="pa-0 pl-3"
-                >
+              <v-row dense align="center">
+                <v-col cols="8" class="pa-0 pl-3">
                   <text-clamp
                     class="text-h5 text-white text-truncate font-weight-bold"
                     :text="test.testTitle"
                     :max-lines="2"
                   />
                 </v-col>
-                <v-col
-                  cols="4"
-                  class="d-flex justify-end"
-                >
+                <v-col cols="4" class="d-flex justify-end">
                   <v-progress-circular
                     rotate="-90"
                     :model-value="calculatedProgress"
@@ -210,14 +156,8 @@
             </v-list-item>
           </div>
 
-          <v-list
-            class="nav-list"
-            density="compact"
-          >
-            <div
-              v-for="(item, n) in items"
-              :key="n"
-            >
+          <v-list class="nav-list" density="compact">
+            <div v-for="(item, n) in items" :key="n">
               <v-list
                 v-if="item.id == 1"
                 :value="index == 1 ? true : false"
@@ -238,9 +178,17 @@
                       >
                         <template #prepend>
                           <v-progress-circular
-                            v-if="perHeuristicProgress(currentUserTestAnswer.heuristicQuestions[i]) != 100"
+                            v-if="
+                              perHeuristicProgress(
+                                currentUserTestAnswer.heuristicQuestions[i],
+                              ) != 100
+                            "
                             rotate="-90"
-                            :model-value="perHeuristicProgress(currentUserTestAnswer.heuristicQuestions[i])"
+                            :model-value="
+                              perHeuristicProgress(
+                                currentUserTestAnswer.heuristicQuestions[i],
+                              )
+                            "
                             :size="24"
                             :width="3"
                             :color="heurisIndex == i ? 'white' : 'secondary'"
@@ -254,7 +202,9 @@
                         </template>
                       </v-list-item>
                     </template>
-                    <span>{{ heuris.title || 'Unknown Heuristic' }}</span>
+                    <span>{{
+                      heuris.title || $t('HeuristicsTestView.unknownHeuristic')
+                    }}</span>
                   </v-tooltip>
                 </div>
 
@@ -268,9 +218,17 @@
                   >
                     <template #prepend>
                       <v-progress-circular
-                        v-if="perHeuristicProgress(currentUserTestAnswer.heuristicQuestions[i]) != 100"
+                        v-if="
+                          perHeuristicProgress(
+                            currentUserTestAnswer.heuristicQuestions[i],
+                          ) != 100
+                        "
                         rotate="-90"
-                        :model-value="perHeuristicProgress(currentUserTestAnswer.heuristicQuestions[i])"
+                        :model-value="
+                          perHeuristicProgress(
+                            currentUserTestAnswer.heuristicQuestions[i],
+                          )
+                        "
                         :size="24"
                         :width="3"
                         :color="heurisIndex == i ? 'white' : 'forth'"
@@ -286,7 +244,10 @@
                       :class="heurisIndex == i ? 'text-white' : 'text-forth'"
                       class="pl-5"
                     >
-                      {{ heuris.title || 'Unknown Heuristic' }}
+                      {{
+                        heuris.title ||
+                        $t('HeuristicsTestView.unknownHeuristic')
+                      }}
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
@@ -295,21 +256,16 @@
                     @click="review = false"
                   >
                     <template #prepend>
-                      <v-icon color="forth">
-                        mdi-send-circle-outline
-                      </v-icon>
+                      <v-icon color="forth"> mdi-send-circle-outline </v-icon>
                     </template>
                     <v-list-item-title class="text-forth">
-                      Submit
+                      {{ $t('buttons.submit') }}
                     </v-list-item-title>
                   </v-list-item>
                 </div>
               </v-list>
 
-              <v-list-item
-                v-else-if="item.id == 2"
-                @click="index = item.id"
-              >
+              <v-list-item v-else-if="item.id == 2" @click="index = item.id">
                 <template #prepend>
                   <v-icon :color="index == item.id ? 'white' : 'forth'">
                     {{ item.icon }}
@@ -325,28 +281,15 @@
           </v-list>
 
           <template #append>
-            <v-row
-              class="d-flex pb-10 pt-5 px-5"
-              justify="end"
-            >
+            <v-row class="d-flex pb-10 pt-5 px-5" justify="end">
               <v-btn
                 size="small"
                 icon
                 class="bg-secondary"
                 @click.stop="mini = !mini"
               >
-                <v-icon
-                  v-if="mini"
-                  color="white"
-                >
-                  mdi-chevron-right
-                </v-icon>
-                <v-icon
-                  v-else
-                  color="white"
-                >
-                  mdi-chevron-left
-                </v-icon>
+                <v-icon v-if="mini" color="white"> mdi-chevron-right </v-icon>
+                <v-icon v-else color="white"> mdi-chevron-left </v-icon>
               </v-btn>
             </v-row>
           </template>
@@ -359,15 +302,22 @@
         >
           <ShowInfo
             v-if="index == 1 && review == true"
-            :title="heuristics[heurisIndex]?.title || 'Unknown Heuristic'"
+            :title="
+              heuristics[heurisIndex]?.title ||
+              $t('HeuristicsTestView.unknownHeuristic')
+            "
           >
             <template #content>
               <v-card-title class="text-h6 font-weight-regular text-primary">
-                {{ heuristics[heurisIndex]?.title || 'Unknown Heuristic' }}
+                {{
+                  heuristics[heurisIndex]?.title ||
+                  $t('HeuristicsTestView.unknownHeuristic')
+                }}
               </v-card-title>
               <v-divider class="mb-5" />
               <v-row
-                v-for="(question, i) in heuristics[heurisIndex]?.questions || []"
+                v-for="(question, i) in heuristics[heurisIndex]?.questions ||
+                []"
                 :key="i"
                 justify="center"
               >
@@ -376,7 +326,11 @@
                     <v-row class="mb-2">
                       <v-col cols="11">
                         <p class="text-body-1 font-weight-medium">
-                          {{ i + 1 }}) {{ question.title || 'Unknown Question' }}
+                          {{ i + 1 }})
+                          {{
+                            question.title ||
+                            $t('HeuristicsTestView.unknownQuestion')
+                          }}
                         </p>
                       </v-col>
                       <v-col cols="1">
@@ -396,12 +350,24 @@
                     >
                       <template #answer>
                         <v-select
-                          v-if="currentUserTestAnswer?.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[i]"
-                          v-model="currentUserTestAnswer.heuristicQuestions[heurisIndex].heuristicQuestions[i].heuristicAnswer"
+                          v-if="
+                            currentUserTestAnswer?.heuristicQuestions?.[
+                              heurisIndex
+                            ]?.heuristicQuestions?.[i]
+                          "
+                          v-model="
+                            currentUserTestAnswer.heuristicQuestions[
+                              heurisIndex
+                            ].heuristicQuestions[i].heuristicAnswer
+                          "
                           class="optionSelect"
                           return-object
                           :items="test.testOptions"
-                          :item-title="item => item?.text || 'Select an Option'"
+                          :item-title="
+                            (item) =>
+                              item?.text ||
+                              $t('HeuristicsTestView.selectAnOption')
+                          "
                           item-value="value"
                           variant="outlined"
                           density="compact"
@@ -409,7 +375,9 @@
                           @update:model-value="calculateProgress()"
                         />
                         <v-alert v-else type="error" class="mt-4">
-                          {{ $t('HeuristicsTestView.errors.questionNotLoaded') }}
+                          {{
+                            $t('HeuristicsTestView.errors.questionNotLoaded')
+                          }}
                         </v-alert>
                       </template>
                     </AddCommentBtn>
@@ -422,14 +390,8 @@
           <div v-if="calculatedProgress == 100 && review == false">
             <ShowInfo :title="$t('finishTest.title')">
               <template #content>
-                <v-row
-                  justify="center"
-                  class="pa-4"
-                >
-                  <v-col
-                    cols="11"
-                    class="mt-3"
-                  >
+                <v-row justify="center" class="pa-4">
+                  <v-col cols="11" class="mt-3">
                     <v-card class="pa-10">
                       <v-row
                         justify="center"
@@ -443,19 +405,13 @@
                       >
                         {{ $t('finishTest.congratulations') }}
                       </v-row>
-                      <v-row
-                        justify="center"
-                        align="center"
-                        class="mt-6"
-                      >
-                        <v-col
-                          cols="12"
-                          md="6"
-                          class="text-center"
-                        >
+                      <v-row justify="center" align="center" class="mt-6">
+                        <v-col cols="12" md="6" class="text-center">
                           <img
                             draggable="false"
-                            :src="require('../../../../public/finalMessage.svg')"
+                            :src="
+                              require('../../../../public/finalMessage.svg')
+                            "
                             alt="Final test svg"
                             class="img-fluid"
                           />
@@ -474,9 +430,7 @@
                             :disabled="currentUserTestAnswer?.submitted"
                             @click="dialog = true"
                           >
-                            <v-icon start>
-                              mdi-send
-                            </v-icon>
+                            <v-icon start> mdi-send </v-icon>
                             {{ $t('buttons.submit') }}
                           </v-btn>
                         </v-col>
@@ -498,11 +452,7 @@
       icon
       class="mb-10 mr-5"
     >
-      <v-speed-dial
-        v-model="fab"
-        class="mr-3"
-        open-on-hover
-      >
+      <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
         <template #activator="{ props }">
           <v-btn
             v-bind="props"
@@ -511,15 +461,8 @@
             icon
             class="btn-fix"
           >
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon
-              v-else
-              size="large"
-            >
-              mdi-hammer-screwdriver
-            </v-icon>
+            <v-icon v-if="fab"> mdi-close </v-icon>
+            <v-icon v-else size="large"> mdi-hammer-screwdriver </v-icon>
           </v-btn>
         </template>
         <v-tooltip location="left">
@@ -566,14 +509,11 @@ import ShowInfo from '@/shared/components/ShowInfo.vue'
 import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
-import Snackbar from '@/shared/components/Snackbar';
+import Snackbar from '@/shared/components/Snackbar'
+import Loading from '@/shared/components/Loading.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
-import {
-  showSuccess,
-  showError
-} from '@/shared/utils/toast'
-
+import { showSuccess, showError } from '@/shared/utils/toast'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -603,20 +543,20 @@ const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
 
-const test = computed(() => store.getters.test);
+const test = computed(() => store.getters.test)
 
 const heuristics = computed(() => {
   // Prefer heuristics from test.testStructure if available
   if (test.value?.testStructure && Array.isArray(test.value.testStructure)) {
-    return test.value.testStructure;
+    return test.value.testStructure
   }
   // Fallback to heuristics getter
   if (store.getters.heuristics && store.getters.heuristics.length) {
-    return store.getters.heuristics;
+    return store.getters.heuristics
   }
   // Fallback to empty array
-  return [];
-});
+  return []
+})
 
 const user = computed(() => {
   if (store.getters.user) setExistUser()
@@ -632,7 +572,7 @@ const showSaveBtn = computed(() => {
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
-});
+})
 
 const loading = computed(() => store.getters.loading)
 
@@ -641,42 +581,47 @@ const startTest = async () => {
     store.commit('setError', {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
-    });
-    return;
+    })
+    return
   }
 
   if (!isUserTestAdmin.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
-    });
+    })
   }
 
-  start.value = false;
-};
+  start.value = false
+}
 
 const updateComment = (comment, heurisIndex, answerIndex) => {
-  if (!currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[answerIndex]) {
-    return;
+  if (
+    !currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]
+      ?.heuristicQuestions?.[answerIndex]
+  ) {
+    return
   }
-  const question = currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex];
+  const question =
+    currentUserTestAnswer.value.heuristicQuestions[heurisIndex]
+      .heuristicQuestions[answerIndex]
   if (comment !== '' && comment !== undefined) {
-    question.heuristicComment = comment;
+    question.heuristicComment = comment
   }
 
   if (store.state.Heuristic.currentImageUrl) {
-    question.answerImageUrl = store.state.Heuristic.currentImageUrl;
+    question.answerImageUrl = store.state.Heuristic.currentImageUrl
   }
-};
+}
 
 const mappingSteps = () => {
   if (validate(heuristics.value) && heuristics.value.length !== 0) {
     items.value = [
       {
-        title: 'HEURISTICS',
+        title: t('HeuristicsTestView.headers.heuristics'),
         icon: 'mdi-checkbox-marked-circle-outline',
         value: heuristics.value.map((option) => ({
-          title: option.title || 'Unknown Heuristic',
+          title: option.title || t('HeuristicsTestView.unknownHeuristic'),
           icon: 'mdi-checkbox-marked-circle-outline',
           done: false,
           total: option.total || 0,
@@ -684,21 +629,21 @@ const mappingSteps = () => {
         })),
         id: 1,
       },
-    ];
+    ]
   }
-};
+}
 
 const validate = (object) => {
-  return object !== null && object !== undefined && object !== '';
-};
+  return object !== null && object !== undefined && object !== ''
+}
 
 const calculateProgress = () => {
   if (!heuristics.value || !currentUserTestAnswer.value.heuristicQuestions) {
-    calculatedProgress.value = 0;
-    return;
+    calculatedProgress.value = 0
+    return
   }
-  const total = currentUserTestAnswer.value.total || 0;
-  let answered = 0;
+  const total = currentUserTestAnswer.value.total || 0
+  let answered = 0
   currentUserTestAnswer.value.heuristicQuestions.forEach((heuQ) => {
     if (heuQ?.heuristicQuestions) {
       heuQ.heuristicQuestions.forEach((question) => {
@@ -707,66 +652,70 @@ const calculateProgress = () => {
           question.heuristicAnswer !== null &&
           Object.values(question.heuristicAnswer).length > 0
         ) {
-          answered++;
+          answered++
         }
-      });
+      })
     }
-  });
-  const percent = total > 0 ? ((100 * answered) / total).toFixed(1) : 0;
-  calculatedProgress.value = percent;
+  })
+  const percent = total > 0 ? ((100 * answered) / total).toFixed(1) : 0
+  calculatedProgress.value = percent
   if (isNaN(calculatedProgress.value)) {
-    calculatedProgress.value = 0;
+    calculatedProgress.value = 0
   }
-};
+}
 
 const perHeuristicProgress = (item) => {
-  if (!item || !item.heuristicQuestions || !Array.isArray(item.heuristicQuestions)) {
-    return 0;
+  if (
+    !item ||
+    !item.heuristicQuestions ||
+    !Array.isArray(item.heuristicQuestions)
+  ) {
+    return 0
   }
-  const total = item.heuristicTotal || 0;
+  const total = item.heuristicTotal || 0
   const answered = item.heuristicQuestions.filter(
     (q) =>
       q.heuristicAnswer !== '' &&
       q.heuristicAnswer !== null &&
       Object.values(q.heuristicAnswer).length > 0,
-  ).length;
-  return total > 0 ? (answered * 100 / total).toFixed(1) : 0;
-};
+  ).length
+  return total > 0 ? ((answered * 100) / total).toFixed(1) : 0
+}
 
 const saveAnswer = async () => {
   if (!currentUserTestAnswer.value) {
-    showError('HeuristicsTestView.errors.noAnswerData');
-    return;
+    showError('HeuristicsTestView.errors.noAnswerData')
+    return
   }
-  currentUserTestAnswer.value.progress = calculatedProgress.value;
+  currentUserTestAnswer.value.progress = calculatedProgress.value
   try {
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
-    });
-    showSuccess('HeuristicsTestView.messages.answerSaved');
+    })
+    showSuccess('HeuristicsTestView.messages.answerSaved')
   } catch (error) {
-    console.error('Error saving answer:', error);
-    showError('HeuristicsTestView.errors.failedToSaveAnswer');
+    console.error('Error saving answer:', error)
+    showError('HeuristicsTestView.errors.failedToSaveAnswer')
   }
-};
+}
 
 const submitAnswer = async () => {
   if (!currentUserTestAnswer.value) {
-    showError('HeuristicsTestView.errors.noAnswerData');
-    return;
+    showError('HeuristicsTestView.errors.noAnswerData')
+    return
   }
-  currentUserTestAnswer.value.submitted = true;
+  currentUserTestAnswer.value.submitted = true
   try {
-    await saveAnswer();
-    showSuccess('alerts.genericSuccess');
-    router.push('/admin');
+    await saveAnswer()
+    showSuccess('alerts.genericSuccess')
+    router.push('/admin')
   } catch (error) {
-    console.error('Error submitting answer:', error);
-    showError('HeuristicsTestView.errors.failedToSubmitAnswer');
+    console.error('Error submitting answer:', error)
+    showError('HeuristicsTestView.errors.failedToSubmitAnswer')
   }
-};
+}
 
 const setExistUser = () => {
   noExistUser.value = false
@@ -780,30 +729,31 @@ const signOut = () => {
 
 const populateWithHeuristicQuestions = () => {
   if (!heuristics.value || !test.value) {
-    return;
+    return
   }
   if (!currentUserTestAnswer.value.heuristicQuestions?.length) {
-    let totalQuestions = 0;
+    let totalQuestions = 0
     const heuristicQuestions = heuristics.value.map((heu) => {
-      const questions = heu.questions?.map(
-        (h) =>
-          new HeuristicQuestionAnswer({
-            heuristicId: h.id,
-            heuristicAnswer: null,
-            heuristicComment: '',
-            answerImageUrl: '',
-          }),
-      ) || [];
-      totalQuestions += questions.length;
+      const questions =
+        heu.questions?.map(
+          (h) =>
+            new HeuristicQuestionAnswer({
+              heuristicId: h.id,
+              heuristicAnswer: null,
+              heuristicComment: '',
+              answerImageUrl: '',
+            }),
+        ) || []
+      totalQuestions += questions.length
       return new Heuristic({
-        heuristicTitle: heu.title || 'Unknown Heuristic',
+        heuristicTitle: heu.title || t('HeuristicsTestView.unknownHeuristic'),
         heuristicId: heu.id,
         heuristicQuestions: questions,
         heuristicTotal: questions.length,
-      });
-    });
-    currentUserTestAnswer.value.heuristicQuestions = heuristicQuestions;
-    currentUserTestAnswer.value.total = totalQuestions;
+      })
+    })
+    currentUserTestAnswer.value.heuristicQuestions = heuristicQuestions
+    currentUserTestAnswer.value.total = totalQuestions
   }
 }
 
@@ -822,18 +772,26 @@ const handleHeurisClick = (i) => {
   setReviewTrue()
 }
 
-watch(test, async () => {
-  mappingSteps()
-}, { deep: true })
+watch(
+  test,
+  async () => {
+    mappingSteps()
+  },
+  { deep: true },
+)
 
-watch(items, () => {
-  if (items.value.length) {
-    index.value = items.value[0].id
-    if (items.value.find((obj) => obj.id == 0)) {
-      preTestIndex.value = items.value[0].value[0].id
+watch(
+  items,
+  () => {
+    if (items.value.length) {
+      index.value = items.value[0].id
+      if (items.value.find((obj) => obj.id == 0)) {
+        preTestIndex.value = items.value[0].value[0].id
+      }
     }
-  }
-}, { deep: true })
+  },
+  { deep: true },
+)
 
 watch(heurisIndex, () => {
   if (rightView.value) {
@@ -841,12 +799,16 @@ watch(heurisIndex, () => {
   }
 })
 
-watch(user, async () => {
-  if (user.value) {
-    noExistUser.value = false
-    if (logined.value) setTest()
-  }
-}, { deep: true })
+watch(
+  user,
+  async () => {
+    if (user.value) {
+      noExistUser.value = false
+      if (logined.value) setTest()
+    }
+  },
+  { deep: true },
+)
 
 onBeforeMount(async () => {
   if (route.params.token) {
