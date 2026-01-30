@@ -85,7 +85,10 @@
       </v-col>
 
       <!-- Moderator Preview (before opening room) -->
-      <v-col v-if="caller && !callStarted && !isObservator && localStream" cols="12">
+      <v-col
+        v-if="caller && !callStarted && !isObservator && localStream"
+        cols="12"
+      >
         <div class="videos-grid">
           <div class="video-wrapper">
             <div class="video-container">
@@ -119,7 +122,11 @@
       </v-col>
 
       <!-- Observator waiting message (before call starts) -->
-      <v-col v-if="isObservator && !callStarted" cols="12" class="d-flex justify-center align-center">
+      <v-col
+        v-if="isObservator && !callStarted"
+        cols="12"
+        class="d-flex justify-center align-center"
+      >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
           <h3 class="text-h5 mb-2">Observator Mode</h3>
@@ -127,7 +134,8 @@
             Waiting for moderator to start the session...
           </p>
           <p class="text-body-2 text-grey mt-2">
-            You will be able to observe all video feeds without sending your own.
+            You will be able to observe all video feeds without sending your
+            own.
           </p>
         </div>
       </v-col>
@@ -151,7 +159,8 @@
           ></v-progress-circular>
           <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
           <p class="text-body-2 text-grey">
-            The video call will start automatically when the moderator opens the room.
+            The video call will start automatically when the moderator opens the
+            room.
           </p>
         </div>
       </v-col>
@@ -338,10 +347,10 @@
     <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
         <h3>Panel de Herramientas</h3>
-        <v-btn 
-          icon 
-          size="small" 
-          variant="text" 
+        <v-btn
+          icon
+          size="small"
+          variant="text"
           class="close-btn"
           @click="toggleSidePanel"
         >
@@ -404,63 +413,73 @@
 
         <div class="panel-section">
           <h4>Participantes</h4>
-          <div 
-            v-for="participant in participantsList" 
+          <div
+            v-for="participant in participantsList"
             :key="participant.id"
             class="participant-item"
           >
-            <v-avatar 
-              size="32" 
-              :color="participant.role === 'moderator' ? 'blue' : (participant.role === 'observator' ? 'orange' : 'green')"
+            <v-avatar
+              size="32"
+              :color="
+                participant.role === 'moderator'
+                  ? 'blue'
+                  : participant.role === 'observator'
+                  ? 'orange'
+                  : 'green'
+              "
             >
               <v-icon color="white">{{
-                participant.role === 'moderator' ? 'mdi-account-star' : 
-                participant.role === 'observator' ? 'mdi-eye' : 
-                'mdi-account'
+                participant.role === 'moderator'
+                  ? 'mdi-account-star'
+                  : participant.role === 'observator'
+                  ? 'mdi-eye'
+                  : 'mdi-account'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">
                 {{ participant.name }}{{ participant.isSelf ? ' (Tú)' : '' }}
-                <v-chip 
-                  v-if="participant.role === 'observator'" 
-                  size="x-small" 
-                  color="orange" 
+                <v-chip
+                  v-if="participant.role === 'observator'"
+                  size="x-small"
+                  color="orange"
                   class="ml-1"
                 >
                   Observador
                 </v-chip>
-                <v-chip 
-                  v-else-if="participant.role === 'moderator'" 
-                  size="x-small" 
-                  color="blue" 
+                <v-chip
+                  v-else-if="participant.role === 'moderator'"
+                  size="x-small"
+                  color="blue"
                   class="ml-1"
                 >
                   Moderador
                 </v-chip>
               </span>
               <div class="participant-status">
-                <v-chip 
-                  size="x-small" 
+                <v-chip
+                  size="x-small"
                   :color="participant.connected ? 'green' : 'grey'"
                 >
                   {{ participant.connected ? 'Conectado' : 'Desconectado' }}
                 </v-chip>
-                <v-chip 
+                <v-chip
                   v-if="participant.isSelf && !isObservator"
-                  size="x-small" 
+                  size="x-small"
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
                 >
                   {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
                 </v-chip>
-                <v-chip 
+                <v-chip
                   v-if="participant.isSelf && !isObservator"
-                  size="x-small" 
+                  size="x-small"
                   :color="participant.hasMicrophone ? 'green' : 'red'"
                   class="ml-1"
                 >
-                  {{ participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono' }}
+                  {{
+                    participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono'
+                  }}
                 </v-chip>
               </div>
             </div>
@@ -528,10 +547,10 @@
     >
       <div class="stepper-panel-header">
         <h3>Test Progress</h3>
-        <v-btn 
-          icon 
-          size="small" 
-          variant="text" 
+        <v-btn
+          icon
+          size="small"
+          variant="text"
           class="close-btn"
           @click="toggleStepperPanel"
         >
@@ -845,32 +864,37 @@ const remoteStreams = computed(() => {
   return streams
 })
 const callStarted = computed(
-  () => roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
+  () =>
+    roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
 )
 
 // Organize participants by role
 const participantsList = computed(() => {
   const list = []
-  
+
   // Add self first
   list.push({
     id: props.user.id,
     name: props.user.email?.split('@')[0] || 'You',
     email: props.user.email,
     isSelf: true,
-    role: isObservator.value ? 'observator' : (props.isModerator ? 'moderator' : 'participant'),
+    role: isObservator.value
+      ? 'observator'
+      : props.isModerator
+      ? 'moderator'
+      : 'participant',
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
   })
-  
+
   // Add others from participants
-  Object.keys(participants.value).forEach(userId => {
+  Object.keys(participants.value).forEach((userId) => {
     if (userId === props.user.id) return
-    
+
     const p = participants.value[userId]
-    const coop = props.test?.cooperators?.find(c => c.userDocId === userId)
-    
+    const coop = props.test?.cooperators?.find((c) => c.userDocId === userId)
+
     // Determine role
     let role = 'participant'
     if (coop) {
@@ -880,10 +904,14 @@ const participantsList = computed(() => {
         role = 'moderator'
       }
     }
-    
+
     list.push({
       id: userId,
-      name: p.name || p.email?.split('@')[0] || coop?.email?.split('@')[0] || 'Unknown',
+      name:
+        p.name ||
+        p.email?.split('@')[0] ||
+        coop?.email?.split('@')[0] ||
+        'Unknown',
       email: p.email || coop?.email,
       isSelf: false,
       role: role,
@@ -892,7 +920,7 @@ const participantsList = computed(() => {
       hasMicrophone: role !== 'observator',
     })
   })
-  
+
   return list
 })
 
@@ -952,7 +980,7 @@ onMounted(async () => {
   } else {
     // Participants and observators wait for room to be opened by moderator
     const roomRef = dbRef(database, `rooms/${props.roomId}`)
-    
+
     // Check initial value first
     const initialSnapshot = await get(roomRef)
     const initialData = initialSnapshot.val()
@@ -960,7 +988,7 @@ onMounted(async () => {
       roomReady.value = true
       await joinRoom()
     }
-    
+
     // Then listen for changes
     onValue(roomRef, (snapshot) => {
       const roomData = snapshot.val()
@@ -1180,7 +1208,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
         // Error on negotiation
       }
     }
-    
+
     // Manually trigger offer creation for initiator
     // negotiationneeded might not fire immediately
     setTimeout(async () => {
@@ -1313,7 +1341,9 @@ const endCall = async () => {
       // Failed to remove calls node
     }
     try {
-      await update(dbRef(database, `rooms/${props.roomId}`), { showVideoCall: false })
+      await update(dbRef(database, `rooms/${props.roomId}`), {
+        showVideoCall: false,
+      })
     } catch {
       // Failed to update rooms showVideoCall
     }
