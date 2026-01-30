@@ -8,11 +8,7 @@
   >
     <div>{{ snackMessage }}</div>
     <template #actions="{ attrs }">
-      <v-btn
-        v-bind="attrs"
-        variant="text"
-        @click="onClose(false)"
-      >
+      <v-btn v-bind="attrs" variant="text" @click="onClose(false)">
         {{ $t('buttons.close') }}
       </v-btn>
     </template>

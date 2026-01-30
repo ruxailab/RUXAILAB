@@ -1,10 +1,24 @@
 <template>
-  <PageWrapper :title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
+  <PageWrapper
+    :title="
+      currentPage === 'userSelection'
+        ? 'Select User'
+        : 'Accessibility Assessment Results'
+    "
     :loading="isLoading"
-    :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'">
+    :loading-text="
+      currentPage === 'userSelection'
+        ? 'Loading users...'
+        : 'Loading assessment data...'
+    "
+  >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        {{ currentPage === 'userSelection' ? 'Select a user to view their accessibility assessment results' : 'Review the detailed accessibility assessment results for the selected user' }}
+        {{
+          currentPage === 'userSelection'
+            ? 'Select a user to view their accessibility assessment results'
+            : 'Review the detailed accessibility assessment results for the selected user'
+        }}
       </p>
     </template>
     <!-- Page 1: User Selection -->
@@ -19,19 +33,31 @@
           </v-card-title>
           <v-card-text class="pa-6">
             <!-- Debug Information -->
-            <v-alert v-if="!isLoadingUsers && userDetails.length === 0" type="info" variant="outlined" class="mb-4">
-              <div class="text-subtitle-2 mb-2">
-                Information
+            <v-alert
+              v-if="!isLoadingUsers && userDetails.length === 0"
+              type="info"
+              variant="outlined"
+              class="mb-4"
+            >
+              <div class="text-subtitle-2 mb-2">Information</div>
+              <div>
+                <strong>Found User IDs:</strong>
+                {{ userIds.join(', ') || 'None' }}
               </div>
-              <div><strong>Found User IDs:</strong> {{ userIds.join(', ') || 'None' }}</div>
-              <div><strong>User Details:</strong> {{ userDetails.length }} users loaded</div>
+              <div>
+                <strong>User Details:</strong> {{ userDetails.length }} users
+                loaded
+              </div>
             </v-alert>
             <!-- Loading overlay while fetching users -->
             <div v-if="isLoadingUsers" class="text-center py-8">
-              <v-progress-circular indeterminate color="primary" size="48" class="mb-4" />
-              <div class="text-h6 mb-2">
-                Loading Users
-              </div>
+              <v-progress-circular
+                indeterminate
+                color="primary"
+                size="48"
+                class="mb-4"
+              />
+              <div class="text-h6 mb-2">Loading Users</div>
               <div class="text-body-2 text-grey">
                 Fetching assessment participants...
               </div>
@@ -39,16 +65,25 @@
 
             <!-- User table (only show when not loading) -->
             <v-card v-if="!isLoadingUsers" elevation="2">
-              <v-data-table :headers="userHeaders" :items="userDetails" :items-per-page="10" :loading="isLoadingUsers"
-                loading-text="Fetching users..." class="user-table elevation-0" height="50vh" density="compact"
-                @click:row="(event, { item }) => selectUser(item)">
+              <v-data-table
+                :headers="userHeaders"
+                :items="userDetails"
+                :items-per-page="10"
+                :loading="isLoadingUsers"
+                loading-text="Fetching users..."
+                class="user-table elevation-0"
+                height="50vh"
+                density="compact"
+                @click:row="(event, { item }) => selectUser(item)"
+              >
                 <!-- Email/User Info Column -->
                 <template #item.email="{ item }">
-                  <div class="d-flex align-center py-2 cursor-pointer" @click="selectUser(item)">
+                  <div
+                    class="d-flex align-center py-2 cursor-pointer"
+                    @click="selectUser(item)"
+                  >
                     <v-avatar size="40" color="primary" class="me-3">
-                      <v-icon size="20" color="white">
-                        mdi-account
-                      </v-icon>
+                      <v-icon size="20" color="white"> mdi-account </v-icon>
                     </v-avatar>
                     <div>
                       <div class="font-weight-medium text-body-1 mb-0">
@@ -64,9 +99,7 @@
                 <!-- Status Column -->
                 <template #item.status>
                   <v-chip color="success" size="small" variant="tonal">
-                    <v-icon start size="16">
-                      mdi-check-circle
-                    </v-icon>
+                    <v-icon start size="16"> mdi-check-circle </v-icon>
                     Assessment Available
                   </v-chip>
                 </template>
@@ -74,11 +107,22 @@
                 <!-- Actions Column -->
                 <template #item.actions="{ item }">
                   <div class="d-flex ga-2">
-                    <v-btn color="primary" variant="flat" size="small" prepend-icon="mdi-eye" @click="selectUser(item)">
+                    <v-btn
+                      color="primary"
+                      variant="flat"
+                      size="small"
+                      prepend-icon="mdi-eye"
+                      @click="selectUser(item)"
+                    >
                       View Results
                     </v-btn>
-                    <v-btn color="secondary" variant="outlined" size="small" prepend-icon="mdi-test-tube"
-                      @click="viewUserInPreview(item)">
+                    <v-btn
+                      color="secondary"
+                      variant="outlined"
+                      size="small"
+                      prepend-icon="mdi-test-tube"
+                      @click="viewUserInPreview(item)"
+                    >
                       View in Preview
                     </v-btn>
                   </div>
@@ -86,7 +130,11 @@
               </v-data-table>
             </v-card>
 
-            <v-alert v-if="userDetails.length === 0 && !isLoadingUsers" type="info" class="mt-4">
+            <v-alert
+              v-if="userDetails.length === 0 && !isLoadingUsers"
+              type="info"
+              class="mt-4"
+            >
               No users found for this assessment test.
             </v-alert>
           </v-card-text>
@@ -101,8 +149,13 @@
         <v-card class="mb-4">
           <v-card-text class="d-flex align-center justify-space-between pa-4">
             <div class="d-flex align-center">
-              <v-btn color="primary" variant="outlined" prepend-icon="mdi-arrow-left" class="mr-4"
-                @click="goBackToUserSelection">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                prepend-icon="mdi-arrow-left"
+                class="mr-4"
+                @click="goBackToUserSelection"
+              >
                 Back to User Selection
               </v-btn>
               <div>
@@ -115,14 +168,16 @@
               </div>
             </div>
             <div class="d-flex ga-2 align-center">
-              <v-btn color="secondary" variant="outlined" prepend-icon="mdi-test-tube"
-                @click="viewUserInPreview(selectedUser)">
+              <v-btn
+                color="secondary"
+                variant="outlined"
+                prepend-icon="mdi-test-tube"
+                @click="viewUserInPreview(selectedUser)"
+              >
                 View in Preview Mode
               </v-btn>
               <v-avatar color="primary" size="40">
-                <v-icon color="white">
-                  mdi-account
-                </v-icon>
+                <v-icon color="white"> mdi-account </v-icon>
               </v-avatar>
             </div>
           </v-card-text>
@@ -137,24 +192,48 @@
           <v-card-subtitle class="pb-2">
             <v-row align="center" class="ma-0">
               <v-col cols="auto" class="pa-0">
-                <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
+                <span class="text-subtitle-2 font-weight-medium"
+                  >WCAG Level Filter:</span
+                >
               </v-col>
               <v-col cols="auto" class="pa-0 ml-3">
-                <v-btn-toggle v-model="selectedLevel" mandatory color="primary" variant="outlined" divided
-                  density="compact">
-                  <v-btn value="A" size="small" :class="{ 'level-a': selectedLevel === 'A' }">
+                <v-btn-toggle
+                  v-model="selectedLevel"
+                  mandatory
+                  color="primary"
+                  variant="outlined"
+                  divided
+                  density="compact"
+                >
+                  <v-btn
+                    value="A"
+                    size="small"
+                    :class="{ 'level-a': selectedLevel === 'A' }"
+                  >
                     A
                   </v-btn>
-                  <v-btn value="AA" size="small" :class="{ 'level-aa': selectedLevel === 'AA' }">
+                  <v-btn
+                    value="AA"
+                    size="small"
+                    :class="{ 'level-aa': selectedLevel === 'AA' }"
+                  >
                     AA
                   </v-btn>
-                  <v-btn value="AAA" size="small" :class="{ 'level-aaa': selectedLevel === 'AAA' }">
+                  <v-btn
+                    value="AAA"
+                    size="small"
+                    :class="{ 'level-aaa': selectedLevel === 'AAA' }"
+                  >
                     AAA
                   </v-btn>
                 </v-btn-toggle>
               </v-col>
               <v-col cols="auto" class="pa-0 ml-3">
-                <v-chip size="small" :color="getLevelChipColor(selectedLevel)" variant="outlined">
+                <v-chip
+                  size="small"
+                  :color="getLevelChipColor(selectedLevel)"
+                  variant="outlined"
+                >
                   {{ getLevelDescription(selectedLevel) }}
                 </v-chip>
               </v-col>
@@ -163,13 +242,22 @@
 
           <!-- Tabs for Principles -->
           <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
-            <v-tab v-for="(principle, index) in principles" :key="index" :value="index"
-              :class="`principle-tab principle-${index}`">
+            <v-tab
+              v-for="(principle, index) in principles"
+              :key="index"
+              :value="index"
+              :class="`principle-tab principle-${index}`"
+            >
               <v-icon start>
                 {{ getPrincipleIcon(index) }}
               </v-icon>
               {{ principle.title }}
-              <v-chip size="x-small" class="ml-2" color="primary" variant="outlined">
+              <v-chip
+                size="x-small"
+                class="ml-2"
+                color="primary"
+                variant="outlined"
+              >
                 {{ getFilteredRulesCount(index) }}
               </v-chip>
             </v-tab>
@@ -177,33 +265,59 @@
 
           <v-card-text class="pa-0">
             <v-window v-model="activeTab">
-              <v-window-item v-for="(principle, pIndex) in principles" :key="pIndex" :value="pIndex">
-                <v-data-table :headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
-                  :loading="isLoading" class="elevation-1" height="65vh">
+              <v-window-item
+                v-for="(principle, pIndex) in principles"
+                :key="pIndex"
+                :value="pIndex"
+              >
+                <v-data-table
+                  :headers="headers"
+                  :items="getRulesForPrinciple(pIndex)"
+                  :items-per-page="10"
+                  :loading="isLoading"
+                  class="elevation-1"
+                  height="65vh"
+                >
                   <template #item.status="{ item }">
-                    <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
+                    <v-chip
+                      :color="getStatusColor(item.status)"
+                      class="text-uppercase"
+                      size="small"
+                    >
                       {{ item.status || 'Not Set' }}
                     </v-chip>
                   </template>
 
                   <template #item.severity="{ item }">
-                    <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
-                      variant="outlined">
+                    <v-chip
+                      :color="getSeverityColor(item.severity)"
+                      class="text-uppercase"
+                      size="small"
+                      variant="outlined"
+                    >
                       {{ item.severity || 'Not Set' }}
                     </v-chip>
                   </template>
 
                   <template #item.level="{ item }">
-                    <v-chip :color="getLevelChipColor(item.level)" class="text-uppercase" size="small" variant="tonal">
+                    <v-chip
+                      :color="getLevelChipColor(item.level)"
+                      class="text-uppercase"
+                      size="small"
+                      variant="tonal"
+                    >
                       {{ item.level || 'N/A' }}
                     </v-chip>
                   </template>
 
                   <template #item.notes="{ item }">
-                    <v-btn v-if="item.notes && item.notes.length > 0" icon size="small" @click="openNotesDialog(item)">
-                      <v-icon size="small">
-                        mdi-note-text-outline
-                      </v-icon>
+                    <v-btn
+                      v-if="item.notes && item.notes.length > 0"
+                      icon
+                      size="small"
+                      @click="openNotesDialog(item)"
+                    >
+                      <v-icon size="small"> mdi-note-text-outline </v-icon>
                     </v-btn>
                     <span v-else class="text-grey">-</span>
                   </template>
@@ -219,15 +333,21 @@
     <v-dialog v-model="notesDialog.show" max-width="800px">
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
-          <span>Notes for {{ notesDialog.ruleId }} -
-            {{ notesDialog.ruleTitle }}</span>
+          <span
+            >Notes for {{ notesDialog.ruleId }} -
+            {{ notesDialog.ruleTitle }}</span
+          >
           <v-btn icon @click="notesDialog.show = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="pt-4">
           <v-list>
-            <v-list-item v-for="(note, index) in notesDialog.notes" :key="index" class="mb-4">
+            <v-list-item
+              v-for="(note, index) in notesDialog.notes"
+              :key="index"
+              class="mb-4"
+            >
               <template #prepend>
                 <v-avatar color="primary" size="40" class="mr-4">
                   <span class="text-white">{{ index + 1 }}</span>
@@ -239,16 +359,26 @@
               <v-list-item-subtitle class="text-body-1 mb-2">
                 {{ note.text }}
               </v-list-item-subtitle>
-              <v-img v-if="note.imagePreview" :src="note.imagePreview" max-height="300" cover
-                class="mt-2 mb-2 rounded" />
-              <v-chip v-if="note.imageName" size="small" color="grey-lighten-2" class="mt-2">
-                <v-icon size="small" class="mr-1">
-                  mdi-image
-                </v-icon>
+              <v-img
+                v-if="note.imagePreview"
+                :src="note.imagePreview"
+                max-height="300"
+                cover
+                class="mt-2 mb-2 rounded"
+              />
+              <v-chip
+                v-if="note.imageName"
+                size="small"
+                color="grey-lighten-2"
+                class="mt-2"
+              >
+                <v-icon size="small" class="mr-1"> mdi-image </v-icon>
                 {{ note.imageName }}
               </v-chip>
             </v-list-item>
-            <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
+            <v-list-item
+              v-if="!notesDialog.notes || notesDialog.notes.length === 0"
+            >
               <v-list-item-title class="text-grey">
                 No notes available for this rule.
               </v-list-item-title>
@@ -267,28 +397,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
-import {
-  showSuccess,
-  showError,
-  showInfo,
-} from '@/shared/utils/toast'
-
+import { useRoute } from 'vue-router'
+import { showSuccess, showError, showInfo } from '@/shared/utils/toast'
 
 // Icons for principles
-const principleIcons = [
-  'mdi-eye',
-  'mdi-hand-wave',
-  'mdi-brain',
-  'mdi-dumbbell',
-]
+const principleIcons = ['mdi-eye', 'mdi-hand-wave', 'mdi-brain', 'mdi-dumbbell']
 
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
 
 // State
 const isLoading = ref(true)
@@ -327,13 +446,10 @@ onMounted(async () => {
     // Then fetch users (this affects user loading state)
     isLoadingUsers.value = true
 
-    // Debug route parameters
-    console.log('Route params:', route.params)
-    console.log('Test ID from route:', route.params.id)
-    console.log('Full route:', route)
-
     if (!route.params.id) {
-      showError('Test ID is missing from route parameters. Please check the URL.')
+      showError(
+        'Test ID is missing from route parameters. Please check the URL.',
+      )
       isLoadingUsers.value = false
       return
     }
@@ -341,7 +457,6 @@ onMounted(async () => {
     await fetchUserIdsForTest()
     await fetchUserEmails()
   } catch (error) {
-    console.error('Error in onMounted:', error)
     showError('Failed to load data: ' + error.message)
   } finally {
     isLoadingUsers.value = false
@@ -351,7 +466,9 @@ onMounted(async () => {
 // Helper function to get display name from email
 const getDisplayName = (email) => {
   if (!email) return 'Unknown User'
-  return email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1)
+  return (
+    email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1)
+  )
 }
 
 // Navigate to user selection page
@@ -364,11 +481,8 @@ const goBackToUserSelection = () => {
 // Select user and navigate to assessment results
 const selectUser = async (user) => {
   try {
-    console.log('Selecting user:', user)
-
     if (!user || !user.id) {
       showError('Invalid user selection')
-      console.error('Invalid user object:', user)
       return
     }
 
@@ -376,13 +490,9 @@ const selectUser = async (user) => {
     selectedUserId.value = user.email
     currentPage.value = 'assessmentResults'
 
-    console.log('Selected user ID:', user.id)
-    console.log('Selected user email:', user.email)
-
     // Load assessment data for the selected user
     await loadAssessmentData(user.id)
   } catch (error) {
-    console.error('Error selecting user:', error)
     showError('Failed to load user assessment data: ' + error.message)
   }
 }
@@ -405,8 +515,7 @@ const viewUserInPreview = (user) => {
     const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
     window.open(previewUrl, '_blank')
     showSuccess(`Opening preview for ${getDisplayName(user.email)}`)
-  } catch (error) {
-    console.error('Error opening preview for user:', error)
+  } catch {
     showError('Failed to open preview mode')
   }
 }
@@ -425,8 +534,20 @@ const headers = [
 // Headers for user selection table
 const userHeaders = [
   { title: 'User', key: 'email', sortable: true, width: '50%' },
-  { title: 'Status', key: 'status', sortable: false, align: 'center', width: '25%' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'center', width: '25%' },
+  {
+    title: 'Status',
+    key: 'status',
+    sortable: false,
+    align: 'center',
+    width: '25%',
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    sortable: false,
+    align: 'center',
+    width: '25%',
+  },
 ]
 
 // Level filter functions
@@ -480,10 +601,11 @@ const getFilteredRulesCount = (principleIndex) => {
   if (!principle) return 0
 
   const principleRules = allRules.value.filter(
-    (rule) => rule.principleId === principle.id || rule.principle === principle.title
+    (rule) =>
+      rule.principleId === principle.id || rule.principle === principle.title,
   )
 
-  return principleRules.filter(rule => shouldIncludeRule(rule.level)).length
+  return principleRules.filter((rule) => shouldIncludeRule(rule.level)).length
 }
 
 const getStatusColor = (status) => {
@@ -521,68 +643,36 @@ const openNotesDialog = (item) => {
   }
 }
 
-// Helper to find a rule by ID
-const findRuleById = (ruleId) => {
-  for (const principle of wcagData.value?.principles || []) {
-    for (const guideline of principle.guidelines || []) {
-      const rule = (guideline.rules || []).find((r) => r.id === ruleId)
-      if (rule)
-        return {
-          ...rule,
-          principle: principle.title,
-          guideline: guideline.title,
-        }
-    }
-  }
-  return null
-}
-
-// Get all rules from WCAG data
-const getAllRules = () => {
-  const rules = []
-  wcagData.value?.principles?.forEach((principle) => {
-    principle.guidelines?.forEach((guideline) => {
-      guideline.rules?.forEach((rule) => {
-        rules.push({
-          ...rule,
-          principle: principle.title,
-          guideline: guideline.title,
-        })
-      })
-    })
-  })
-  return rules
-}
-
 // Get rules for the current principle (with level filtering)
 const getRulesForPrinciple = (principleIndex) => {
   try {
-    const principle = principles.value?.[principleIndex];
+    const principle = principles.value?.[principleIndex]
     if (!principle) {
-      console.error(`No principle found at index ${principleIndex}`);
-      return [];
+      return []
     }
 
     const principleRules = allRules.value.filter(
       (rule) =>
-        rule.principleId === principle.id || rule.principle === principle.title
-    );
+        rule.principleId === principle.id || rule.principle === principle.title,
+    )
 
     // Apply level filtering
-    const filteredRules = principleRules.filter(rule => shouldIncludeRule(rule.level));
+    const filteredRules = principleRules.filter((rule) =>
+      shouldIncludeRule(rule.level),
+    )
 
     return filteredRules.map((rule) => {
       const assessment = assessmentRules.value[rule.id] || {
         status: 'Not Set',
         severity: 'Not Set',
         notes: [],
-      };
+      }
 
-      let normalizedNotes = [];
+      let normalizedNotes = []
       if (Array.isArray(assessment.notes)) {
-        normalizedNotes = assessment.notes;
+        normalizedNotes = assessment.notes
       } else if (assessment.notes) {
-        normalizedNotes = [assessment.notes];
+        normalizedNotes = [assessment.notes]
       }
 
       return {
@@ -595,13 +685,12 @@ const getRulesForPrinciple = (principleIndex) => {
         severity: assessment.severity,
         notes: normalizedNotes,
         criteria: rule.criteria || [],
-      };
-    });
-  } catch (error) {
-    console.error('Error getting rules for principle:', error);
-    return [];
+      }
+    })
+  } catch {
+    return []
   }
-};
+}
 
 // Get principle icon
 const getPrincipleIcon = (index) => {
@@ -656,7 +745,6 @@ const loadWcagData = async () => {
       showError('Failed to load WCAG principles')
     }
   } catch (error) {
-    console.error('Error loading WCAG data:', error)
     showError(`Failed to load WCAG data: ${error.message}`)
   } finally {
     isLoading.value = false
@@ -666,11 +754,12 @@ const loadWcagData = async () => {
 // Fetch all user IDs for the given testId
 const fetchUserIdsForTest = async () => {
   try {
-    const { query, where, getDocs, collection } = await import('firebase/firestore');
-    const { db } = await import('@/app/plugins/firebase');
+    const { query, where, getDocs, collection } = await import(
+      'firebase/firestore'
+    )
+    const { db } = await import('@/app/plugins/firebase')
 
     const testId = route.params.id
-    console.log('Fetching user IDs for test ID:', testId)
 
     if (!testId) {
       throw new Error('Test ID is required')
@@ -678,67 +767,55 @@ const fetchUserIdsForTest = async () => {
 
     const q = query(
       collection(db, 'assessments'),
-      where('testId', '==', testId)
-    );
+      where('testId', '==', testId),
+    )
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(q)
     const foundUserIds = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      console.log('Assessment document:', doc.id, 'data:', data);
-      return data.userId;
-    });
+      const data = doc.data()
+      return data.userId
+    })
 
-    userIds.value = foundUserIds;
-    console.log('Found user IDs:', userIds.value)
+    userIds.value = foundUserIds
 
     if (userIds.value.length === 0) {
-      console.log('No assessment documents found for test ID:', testId);
-      showInfo('No assessment data found for this test. Users need to complete assessments first.');
+      showInfo(
+        'No assessment data found for this test. Users need to complete assessments first.',
+      )
     }
   } catch (error) {
-    console.error('Error fetching user IDs:', error);
-    showError('Failed to fetch user IDs: ' + error.message);
-    isLoadingUsers.value = false; // Stop loading on error
+    showError('Failed to fetch user IDs: ' + error.message)
+    isLoadingUsers.value = false // Stop loading on error
   }
-};
+}
 
 // Fetch user emails for the given user IDs
 const fetchUserEmails = async () => {
   try {
-    const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@/app/plugins/firebase');
-
-    console.log('Fetching emails for user IDs:', userIds.value)
+    const { getDoc, doc } = await import('firebase/firestore')
+    const { db } = await import('@/app/plugins/firebase')
 
     const userPromises = userIds.value.map(async (userId) => {
-      const userRef = doc(db, 'users', userId);
-      const userSnap = await getDoc(userRef);
+      const userRef = doc(db, 'users', userId)
+      const userSnap = await getDoc(userRef)
       if (userSnap.exists()) {
-        const userData = { id: userId, email: userSnap.data().email };
-        console.log('Found user:', userData);
-        return userData;
-      } else {
-        console.log('User document not found for ID:', userId);
+        const userData = { id: userId, email: userSnap.data().email }
+        return userData
       }
-      return null;
-    });
+      return null
+    })
 
-    userDetails.value = (await Promise.all(userPromises)).filter(Boolean);
-    console.log('Final user details:', userDetails.value);
-  } catch (error) {
-    console.error('Error fetching user emails:', error);
-    showError('Failed to fetch user emails.');
-    isLoadingUsers.value = false; // Stop loading on error
+    userDetails.value = (await Promise.all(userPromises)).filter(Boolean)
+  } catch {
+    showError('Failed to fetch user emails.')
+    isLoadingUsers.value = false // Stop loading on error
   }
-};
-
-
+}
 
 // Update loadAssessmentData to accept userId as a parameter
 const loadAssessmentData = async (userId) => {
   try {
-    isLoading.value = true;
-    console.log('Loading assessment data for user:', userId)
+    isLoading.value = true
 
     // Validate inputs
     if (!userId) {
@@ -746,24 +823,21 @@ const loadAssessmentData = async (userId) => {
     }
 
     // Get the test ID from route
-    const testId = route.params.id;
-    console.log('Using test ID:', testId)
+    const testId = route.params.id
 
     // Get the assessment document from Firestore
-    const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@/app/plugins/firebase');
+    const { getDoc, doc } = await import('firebase/firestore')
+    const { db } = await import('@/app/plugins/firebase')
 
-    const docId = `${userId}_${testId}`;
-    console.log('Looking for assessment document:', docId)
+    const docId = `${userId}_${testId}`
 
-    const docRef = doc(db, 'assessments', docId);
-    const docSnap = await getDoc(docRef);
+    const docRef = doc(db, 'assessments', docId)
+    const docSnap = await getDoc(docRef)
 
-    const assessmentLookup = {};
+    const assessmentLookup = {}
 
     if (docSnap.exists()) {
-      const assessment = docSnap.data();
-      console.log('Found assessment document:', assessment)
+      const assessment = docSnap.data()
 
       if (assessment?.assessmentData) {
         assessment.assessmentData.forEach((item) => {
@@ -771,44 +845,37 @@ const loadAssessmentData = async (userId) => {
             status: item.status || 'Not Set',
             severity: item.severity || 'Not Set',
             notes: item.notes || [],
-          };
-        });
-        console.log('Processed assessment data for', Object.keys(assessmentLookup).length, 'rules')
-      } else {
-        console.log('No assessmentData property found in document')
+          }
+        })
       }
     } else {
-      console.log('No assessment document found for:', docId)
-      showInfo('No assessment data found for the selected user.');
+      showInfo('No assessment data found for the selected user.')
     }
 
     // Validate WCAG rules are loaded
     if (!allRules.value || allRules.value.length === 0) {
-      console.error('WCAG rules not loaded')
       showError('WCAG rules not loaded. Please refresh the page.')
       return
     }
 
     // Merge with all rules
-    const mergedData = {};
+    const mergedData = {}
     allRules.value.forEach((rule) => {
       const assessment = assessmentLookup[rule.id] || {
         status: 'Not Set',
         severity: 'Not Set',
         notes: [],
-      };
+      }
 
       mergedData[rule.id] = {
         ...rule,
         ...assessment,
-      };
-    });
+      }
+    })
 
     assessmentRules.value = assessmentLookup
     assessmentData.value = mergedData
-
   } catch (error) {
-    console.error('Error loading assessment data:', error)
     showError(
       `Failed to load assessment data: ${error.message || 'Unknown error'}`,
     )
@@ -816,8 +883,6 @@ const loadAssessmentData = async (userId) => {
     isLoading.value = false
   }
 }
-
-
 </script>
 
 <style scoped>

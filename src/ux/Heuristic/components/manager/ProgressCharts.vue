@@ -3,54 +3,66 @@
     <div class="d-flex justify-space-between align-center mb-4">
       <h3 class="text-h6">{{ $t('manager.progressCharts') }}</h3>
       <v-btn-toggle v-model="selectedChart" mandatory density="compact">
-        <v-btn size="small" value="completion">{{ $t('manager.completion') }}</v-btn>
-        <v-btn size="small" value="heuristics">{{ $t('manager.heuristics') }}</v-btn>
+        <v-btn size="small" value="completion">{{
+          $t('manager.completion')
+        }}</v-btn>
+        <v-btn size="small" value="heuristics">{{
+          $t('manager.heuristics')
+        }}</v-btn>
       </v-btn-toggle>
     </div>
-    
+
     <!-- Gráfico de Completación -->
     <div v-if="selectedChart === 'completion'" class="chart-container">
-      <h4 class="text-subtitle-1 mb-3">{{ $t('manager.completionProgress') }}</h4>
+      <h4 class="text-subtitle-1 mb-3">
+        {{ $t('manager.completionProgress') }}
+      </h4>
       <div class="progress-chart">
-        <div 
-          v-for="(segment, index) in completionSegments" 
+        <div
+          v-for="(segment, index) in completionSegments"
           :key="index"
           class="progress-segment"
           :style="{
             width: `${segment.percentage}%`,
             backgroundColor: segment.color,
-            opacity: segment.opacity
+            opacity: segment.opacity,
           }"
           :title="segment.tooltip"
         ></div>
       </div>
       <div class="chart-legend mt-3">
-        <div 
-          v-for="(legend, index) in completionLegend" 
+        <div
+          v-for="(legend, index) in completionLegend"
           :key="index"
           class="legend-item"
         >
-          <div 
-            class="legend-color" 
+          <div
+            class="legend-color"
             :style="{ backgroundColor: legend.color }"
           ></div>
-          <span class="legend-text">{{ legend.label }} ({{ legend.count }})</span>
+          <span class="legend-text"
+            >{{ legend.label }} ({{ legend.count }})</span
+          >
         </div>
       </div>
     </div>
-    
+
     <!-- Gráfico de Heurísticas -->
     <div v-if="selectedChart === 'heuristics'" class="chart-container">
-      <h4 class="text-subtitle-1 mb-3">{{ $t('manager.heuristicsProgress') }}</h4>
+      <h4 class="text-subtitle-1 mb-3">
+        {{ $t('manager.heuristicsProgress') }}
+      </h4>
       <div class="heuristics-chart">
-        <div 
-          v-for="heuristic in heuristicProgress" 
+        <div
+          v-for="heuristic in heuristicProgress"
           :key="heuristic.id"
           class="heuristic-bar-container mb-3"
         >
           <div class="d-flex justify-space-between align-center mb-1">
             <span class="heuristic-label">{{ heuristic.name }}</span>
-            <span class="heuristic-percentage">{{ heuristic.percentage }}%</span>
+            <span class="heuristic-percentage"
+              >{{ heuristic.percentage }}%</span
+            >
           </div>
           <v-progress-linear
             :model-value="heuristic.percentage"
@@ -75,8 +87,8 @@ import { ref, computed } from 'vue'
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // State
@@ -84,11 +96,12 @@ const selectedChart = ref('completion')
 
 // Computed properties
 const completionStats = computed(() => {
-  if (!props.test?.cooperators) return { completed: 0, inProgress: 0, notStarted: 0 }
-  
+  if (!props.test?.cooperators)
+    return { completed: 0, inProgress: 0, notStarted: 0 }
+
   const stats = { completed: 0, inProgress: 0, notStarted: 0 }
-  
-  props.test.cooperators.forEach(coop => {
+
+  props.test.cooperators.forEach((coop) => {
     if (coop.progress === 100) {
       stats.completed++
     } else if (coop.progress > 0) {
@@ -97,63 +110,69 @@ const completionStats = computed(() => {
       stats.notStarted++
     }
   })
-  
+
   return stats
 })
 
 const completionSegments = computed(() => {
   const total = props.test?.cooperators?.length || 0
   if (total === 0) return []
-  
+
   const stats = completionStats.value
-  
+
   return [
     {
       percentage: (stats.completed / total) * 100,
       color: '#4CAF50',
       opacity: 1,
-      tooltip: `${stats.completed} completados`
+      tooltip: `${stats.completed} completados`,
     },
     {
       percentage: (stats.inProgress / total) * 100,
       color: '#FF9800',
       opacity: 1,
-      tooltip: `${stats.inProgress} en progreso`
+      tooltip: `${stats.inProgress} en progreso`,
     },
     {
       percentage: (stats.notStarted / total) * 100,
       color: '#E0E0E0',
       opacity: 1,
-      tooltip: `${stats.notStarted} sin empezar`
-    }
-  ].filter(segment => segment.percentage > 0)
+      tooltip: `${stats.notStarted} sin empezar`,
+    },
+  ].filter((segment) => segment.percentage > 0)
 })
 
 const completionLegend = computed(() => {
   const stats = completionStats.value
-  
+
   return [
     { label: 'Completados', count: stats.completed, color: '#4CAF50' },
     { label: 'En Progreso', count: stats.inProgress, color: '#FF9800' },
-    { label: 'Sin Empezar', count: stats.notStarted, color: '#E0E0E0' }
-  ].filter(item => item.count > 0)
+    { label: 'Sin Empezar', count: stats.notStarted, color: '#E0E0E0' },
+  ].filter((item) => item.count > 0)
 })
 
 const heuristicProgress = computed(() => {
   if (!props.test?.heuristics) return []
-  
-  return props.test.heuristics.map(heuristic => {
+
+  return props.test.heuristics.map((heuristic) => {
     const totalEvaluators = props.test?.cooperators?.length || 0
-    const completed = props.test?.cooperators?.filter(coop => 
-      coop.progress === 100 || (coop.heuristicAnswers && coop.heuristicAnswers[heuristic.id])
-    ).length || 0
-    
+    const completed =
+      props.test?.cooperators?.filter(
+        (coop) =>
+          coop.progress === 100 ||
+          (coop.heuristicAnswers && coop.heuristicAnswers[heuristic.id]),
+      ).length || 0
+
     return {
       id: heuristic.id,
       name: heuristic.name || `Heurística ${heuristic.id}`,
       completed,
       total: totalEvaluators,
-      percentage: totalEvaluators > 0 ? Math.round((completed / totalEvaluators) * 100) : 0
+      percentage:
+        totalEvaluators > 0
+          ? Math.round((completed / totalEvaluators) * 100)
+          : 0,
     }
   })
 })

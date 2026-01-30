@@ -1,7 +1,11 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import User from '@/features/auth/models/UserModel'
-import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
-import { documentId } from 'firebase/firestore';
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from 'firebase/auth'
+import { documentId } from 'firebase/firestore'
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -19,60 +23,60 @@ export default class UserController extends Controller {
       myAnswers: {},
       notifications: [],
       storageUsageMB: 0,
-    }).toFirestore();
-    return super.set(COLLECTION, payload.id, user);
+    }).toFirestore()
+    return super.set(COLLECTION, payload.id, user)
   }
 
   async update(docId, payload) {
-    return super.update(COLLECTION, docId, payload);
+    return super.update(COLLECTION, docId, payload)
   }
 
   async readAll() {
-    const docs = await super.readAll(COLLECTION);
-    return docs.map((doc) => new User(doc));
+    const docs = await super.readAll(COLLECTION)
+    return docs.map((doc) => new User(doc))
   }
 
   async getById(docId) {
-    const res = await super.readOne(COLLECTION, docId);
-    return new User(Object.assign({ id: res.id }, res.data()));
+    const res = await super.readOne(COLLECTION, docId)
+    return new User(Object.assign({ id: res.id }, res.data()))
   }
 
   async getUserWithStudies(docId) {
-    const res = await super.readOne(COLLECTION, docId);
-    const user = new User({ id: res.id, ...res.data() });
+    const res = await super.readOne(COLLECTION, docId)
+    const user = new User({ id: res.id, ...res.data() })
 
-    const myTestsIds = Object.keys(user.myTests || {});
-    const myAnswersIds = Object.keys(user.myAnswers || {});
+    const myTestsIds = Object.keys(user.myTests || {})
+    const myAnswersIds = Object.keys(user.myAnswers || {})
 
     const [testsDocs, answersDocs] = await Promise.all([
       this._fetchStudiesByIds(myTestsIds),
       this._fetchStudiesByIds(myAnswersIds),
-    ]);
+    ])
 
-    const myTests = {};
+    const myTests = {}
     testsDocs.forEach((doc) => {
       myTests[doc.id] = {
         ...(user.myTests?.[doc.id] || {}),
         ...doc,
-      };
-    });
+      }
+    })
 
-    const myAnswers = {};
+    const myAnswers = {}
     answersDocs.forEach((doc) => {
       myAnswers[doc.id] = {
         ...(user.myAnswers?.[doc.id] || {}),
         ...doc,
-      };
-    });
+      }
+    })
 
-    user.myTests = myTests;
-    user.myAnswers = myAnswers;
+    user.myTests = myTests
+    user.myAnswers = myAnswers
 
-    return user;
+    return user
   }
 
   async _fetchStudiesByIds(ids) {
-    if (!ids || ids.length === 0) return [];
+    if (!ids || ids.length === 0) return []
 
     try {
       // If there are few (<= 10), use "in" query (faster and more direct)
@@ -81,24 +85,23 @@ export default class UserController extends Controller {
           field: documentId(),
           condition: 'in',
           value: ids,
-        };
-        const res = await super.query('tests', q);
+        }
+        const res = await super.query('tests', q)
         return res.docs.map((doc) => {
-          return Object.assign({ id: doc.id }, doc.data());
-        });
+          return Object.assign({ id: doc.id }, doc.data())
+        })
       }
 
       // If there are many (>10), parallelize individual gets
-      const promises = ids.map((id) => super.readOne('tests', id));
-      const results = await Promise.all(promises);
+      const promises = ids.map((id) => super.readOne('tests', id))
+      const results = await Promise.all(promises)
       return results
         .filter((r) => r.exists())
         .map((r) => {
-          return Object.assign({ id: r.id }, r.data());
-        });
+          return Object.assign({ id: r.id }, r.data())
+        })
     } catch (error) {
-      console.error('Error fetching studies by IDs:', error);
-      throw error;
+      throw error
     }
   }
 
@@ -107,28 +110,30 @@ export default class UserController extends Controller {
       username: payload.username,
       contactNo: payload.contactNo,
       country: payload.country,
-    };
-    return super.update(COLLECTION, docId, userData);
+    }
+    return super.update(COLLECTION, docId, userData)
   }
 
   async deleteUser(docId) {
-    return super.delete(COLLECTION, docId);
+    return super.delete(COLLECTION, docId)
   }
 
   async changePassword(user, currentPassword, newPassword) {
     try {
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, newPassword);
-      console.log('Password updated successfully!');
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword,
+      )
+      await reauthenticateWithCredential(user, credential)
+      await updatePassword(user, newPassword)
     } catch (error) {
-      throw new Error('Failed to change password: ' + error.message);
+      throw new Error('Failed to change password: ' + error.message)
     }
   }
 
   async reauthenticateUser(user, email, password) {
-    const credential = EmailAuthProvider.credential(email, password);
-    await reauthenticateWithCredential(user, credential);
+    const credential = EmailAuthProvider.credential(email, password)
+    await reauthenticateWithCredential(user, credential)
   }
 
   async addNotification(payload) {
@@ -138,28 +143,50 @@ export default class UserController extends Controller {
   }
 
   async markNotificationAsRead(payload) {
-    const userToUpdate = new User(payload.user);
+    const userToUpdate = new User(payload.user)
 
     // Find the notification in the notifications array
     const notificationIndex = userToUpdate.notifications.findIndex(
       (n) => n.createdDate === payload.notification.createdDate,
-    );
+    )
 
     if (notificationIndex !== -1) {
       // Mark notification as read
-      userToUpdate.notifications[notificationIndex].read = true;
-      userToUpdate.notifications[notificationIndex].readAt = Date.now();
+      userToUpdate.notifications[notificationIndex].read = true
+      userToUpdate.notifications[notificationIndex].readAt = Date.now()
 
       // Save updated user data to Firestore
-      const updatedUser = await this.update(
+      await this.update(
         userToUpdate.id,
         userToUpdate.toFirestore(),
-      );
-      return updatedUser;
+      )
+      return userToUpdate
     } else {
       // Notification was not found in the array
-      throw new Error('Notification not found.');
+      throw new Error('Notification not found.')
     }
+  }
+
+  async markAllNotificationsAsRead(user) {
+    const userToUpdate = new User(user)
+
+    let hasUnread = false
+    userToUpdate.notifications.forEach((n) => {
+      if (!n.read) {
+        n.read = true
+        n.readAt = Date.now()
+        hasUnread = true
+      }
+    })
+
+    if (!hasUnread) return userToUpdate
+
+    await this.update(
+      userToUpdate.id,
+      userToUpdate.toFirestore(),
+    )
+    // Return the updated user object (in memory) so the store can commit it immediately
+    return userToUpdate
   }
 
   async removeNotificationsForTest(testId, cooperators) {
@@ -187,13 +214,9 @@ export default class UserController extends Controller {
             })
           }
         } else {
-          console.log(`User document with ID ${userDocID} not found.`)
         }
       }
-
-      console.log(`Notifications for test ${testId} removed from all users.`)
     } catch (error) {
-      console.error('Error removing notifications for the test:', error)
       throw error
     }
   }
@@ -203,11 +226,9 @@ export default class UserController extends Controller {
       const userDoc = await super.readOne('users', userId)
 
       if (!userDoc.exists()) {
-        console.log('User not found.')
         return
       }
       const userData = userDoc.data()
-      console.log(userData)
 
       if (userData.myTests[testIdToRemove]) {
         delete userData.myTests[testIdToRemove]
@@ -217,19 +238,15 @@ export default class UserController extends Controller {
       }
 
       await super.update('users', userId, userData)
-
-      console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
     } catch (error) {
-      console.error('Error removing test from user:', error)
       throw error
     }
   }
   async updateLevel(uid, accessLevel) {
     try {
-      return super.update(COLLECTION, uid, { accessLevel });
+      return super.update(COLLECTION, uid, { accessLevel })
     } catch (error) {
-      console.error('Error updating user access level:', error);
-      throw error;
+      throw error
     }
   }
 }

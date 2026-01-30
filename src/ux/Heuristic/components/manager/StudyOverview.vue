@@ -4,35 +4,49 @@
       <!-- Card 1: Participantes -->
       <v-col cols="12" sm="6" md="3">
         <v-card class="pa-4 text-center" elevation="1">
-          <v-icon size="32" color="primary" class="mb-2">mdi-account-group</v-icon>
+          <v-icon size="32" color="primary" class="mb-2"
+            >mdi-account-group</v-icon
+          >
           <div class="metric-value text-h4 mb-1">{{ participantsCount }}</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('Dashboard.stats.participants') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">
+            {{ $t('Dashboard.stats.participants') }}
+          </div>
         </v-card>
       </v-col>
-      
+
       <!-- Card 2: Completación -->
       <v-col cols="12" sm="6" md="3">
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="success" class="mb-2">mdi-chart-line</v-icon>
           <div class="metric-value text-h4 mb-1">{{ completionRate }}%</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('Dashboard.stats.completion') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">
+            {{ $t('Dashboard.stats.completion') }}
+          </div>
         </v-card>
       </v-col>
-      
+
       <!-- Card 3: Días Activos -->
       <v-col cols="12" sm="6" md="3">
         <v-card class="pa-4 text-center" elevation="1">
-          <v-icon size="32" color="warning" class="mb-2">mdi-calendar-clock</v-icon>
+          <v-icon size="32" color="warning" class="mb-2"
+            >mdi-calendar-clock</v-icon
+          >
           <div class="metric-value text-h4 mb-1">{{ daysActive }}</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('Dashboard.stats.daysActive') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">
+            {{ $t('Dashboard.stats.daysActive') }}
+          </div>
         </v-card>
       </v-col>
       <!-- Card 4: Heurísticas -->
       <v-col cols="12" sm="6" md="3">
         <v-card class="pa-4 text-center" elevation="1">
-          <v-icon size="32" color="info" class="mb-2">mdi-format-list-checks</v-icon>
+          <v-icon size="32" color="info" class="mb-2"
+            >mdi-format-list-checks</v-icon
+          >
           <div class="metric-value text-h4 mb-1">{{ heuristicsCount }}</div>
-          <div class="metric-label text-body-2 text-grey-darken-1">{{ $t('Dashboard.stats.heuristics') }}</div>
+          <div class="metric-label text-body-2 text-grey-darken-1">
+            {{ $t('Dashboard.stats.heuristics') }}
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -46,8 +60,8 @@ import { differenceInDays } from 'date-fns'
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // Computed properties
@@ -55,7 +69,9 @@ const participantsCount = computed(() => props.test?.cooperators?.length || 0)
 
 const completionRate = computed(() => {
   if (!props.test?.cooperators?.length) return 0
-  const completed = props.test.cooperators.filter(c => c?.progress === 100).length
+  const completed = props.test.cooperators.filter(
+    (c) => c?.progress === 100,
+  ).length
   return Math.round((completed / props.test.cooperators.length) * 100)
 })
 

@@ -9,30 +9,32 @@
 import HeuristicQuestionAnswer from './HeuristicQuestionAnswer'
 
 export default class Heuristic {
-    constructor({
-        heuristicId,
-        heuristicTitle,
-        heuristicQuestions,
-        heuristicTotal,
-    } = {}) {
-        this.heuristicId = heuristicId
-        this.heuristicTitle = heuristicTitle
-        this.heuristicQuestions = heuristicQuestions
-        this.heuristicTotal = heuristicTotal
-    }
-    static toHeuristic(data, testOptions) {
-        return new Heuristic({
-            ...data,
-            heuristicQuestions: data.heuristicQuestions.map((h) => HeuristicQuestionAnswer.toHeuristicQuestionAnswer(h, testOptions)),
-        })
-    }
+  constructor({
+    heuristicId,
+    heuristicTitle,
+    heuristicQuestions,
+    heuristicTotal,
+  } = {}) {
+    this.heuristicId = heuristicId
+    this.heuristicTitle = heuristicTitle
+    this.heuristicQuestions = heuristicQuestions
+    this.heuristicTotal = heuristicTotal
+  }
+  static toHeuristic(data, testOptions) {
+    return new Heuristic({
+      ...data,
+      heuristicQuestions: data.heuristicQuestions.map((h) =>
+        HeuristicQuestionAnswer.toHeuristicQuestionAnswer(h, testOptions),
+      ),
+    })
+  }
 
-    toFirestore() {
-        return {
-            heuristicId: this.heuristicId,
-            heuristicTitle: this.heuristicTitle,
-            heuristicQuestions: this.heuristicQuestions.map((h) => h.toFirestore()),
-            heuristicTotal: this.heuristicTotal,
-        }
+  toFirestore() {
+    return {
+      heuristicId: this.heuristicId,
+      heuristicTitle: this.heuristicTitle,
+      heuristicQuestions: this.heuristicQuestions.map((h) => h.toFirestore()),
+      heuristicTotal: this.heuristicTotal,
     }
+  }
 }

@@ -2,11 +2,7 @@
   <Transition name="fade">
     <div v-if="loading" class="loading-overlay">
       <div class="loading-container">
-        <img 
-          :src="redXLogo" 
-          alt="Loading"
-          class="spinning-logo"
-        />
+        <img :src="redXLogo" alt="Loading" class="spinning-logo" />
         <div class="loading-text">
           {{ loadingMessage }}
         </div>
@@ -23,7 +19,9 @@ import redXLogo from '@/assets/logo_small_red.png'
 const store = useStore()
 
 const loading = computed(() => store.getters.loading)
-const loadingMessage = computed(() => store.state.loadingMessage || 'Loading...')
+const loadingMessage = computed(
+  () => store.state.loadingMessage || 'Loading...',
+)
 </script>
 
 <style scoped>
@@ -64,11 +62,11 @@ const loadingMessage = computed(() => store.state.loadingMessage || 'Loading...'
 }
 
 @keyframes spin {
-  0% { 
-    transform: rotate(0deg); 
+  0% {
+    transform: rotate(0deg);
   }
-  100% { 
-    transform: rotate(360deg); 
+  100% {
+    transform: rotate(360deg);
   }
 }
 

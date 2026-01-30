@@ -1,9 +1,16 @@
 <template>
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToEdit">
-      <v-icon size="24" color="primary" class="header-icon">mdi-file-document-edit-outline</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">{{ $t('Dashboard.cards.edit') }}</v-card-title>
+    <div
+      class="d-flex align-center mb-4 clickable-header"
+      @click="navigateToEdit"
+    >
+      <v-icon size="24" color="primary" class="header-icon"
+        >mdi-file-document-edit-outline</v-icon
+      >
+      <v-card-title class="text-h6 text-primary clickable-title">{{
+        $t('Dashboard.cards.edit')
+      }}</v-card-title>
     </div>
 
     <!-- Métricas principales en dos columnas -->
@@ -11,19 +18,31 @@
       <!-- Heurísticas creadas -->
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="primary" class="mr-2">mdi-list-box-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.heuristics') }}</span>
+          <v-icon size="16" color="primary" class="mr-2"
+            >mdi-list-box-outline</v-icon
+          >
+          <span class="metric-label text-caption text-grey-darken-1">{{
+            $t('Dashboard.cards.heuristics')
+          }}</span>
         </div>
-        <div class="metric-value-main text-h5 font-weight-bold text-primary">{{ heuristicsCount }}</div>
+        <div class="metric-value-main text-h5 font-weight-bold text-primary">
+          {{ heuristicsCount }}
+        </div>
       </div>
 
       <!-- Preguntas totales -->
       <div class="metric-item">
         <div class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="info" class="mr-2">mdi-help-circle-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.questions') }}</span>
+          <v-icon size="16" color="info" class="mr-2"
+            >mdi-help-circle-outline</v-icon
+          >
+          <span class="metric-label text-caption text-grey-darken-1">{{
+            $t('Dashboard.cards.questions')
+          }}</span>
         </div>
-        <div class="metric-value-main text-h5 font-weight-bold text-info">{{ questionsCount }}</div>
+        <div class="metric-value-main text-h5 font-weight-bold text-info">
+          {{ questionsCount }}
+        </div>
       </div>
     </div>
 
@@ -31,10 +50,16 @@
     <div class="metrics-grid-bottom">
       <div class="metric-item-bottom">
         <div class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="success" class="mr-2">mdi-checkbox-multiple-outline</v-icon>
-          <span class="metric-label text-caption text-grey-darken-1">{{ $t('Dashboard.cards.totalOptions') }}</span>
+          <v-icon size="16" color="success" class="mr-2"
+            >mdi-checkbox-multiple-outline</v-icon
+          >
+          <span class="metric-label text-caption text-grey-darken-1">{{
+            $t('Dashboard.cards.totalOptions')
+          }}</span>
         </div>
-        <div class="metric-value-main text-h5 font-weight-bold text-success">{{ optionsCount }}</div>
+        <div class="metric-value-main text-h5 font-weight-bold text-success">
+          {{ optionsCount }}
+        </div>
       </div>
 
       <!-- Chips informativos al lado -->
@@ -48,7 +73,11 @@
           <v-icon start size="small">
             {{ isQualitative ? 'mdi-text' : 'mdi-chart-bar' }}
           </v-icon>
-          {{ isQualitative ? $t('Dashboard.cards.qualitative') : $t('Dashboard.cards.quantitative') }}
+          {{
+            isQualitative
+              ? $t('Dashboard.cards.qualitative')
+              : $t('Dashboard.cards.quantitative')
+          }}
         </v-chip>
 
         <v-chip
@@ -59,7 +88,10 @@
           <v-icon start size="small">
             {{ hasWeights ? 'mdi-weight' : 'mdi-weight-off' }}
           </v-icon>
-          {{ $t('Dashboard.cards.weights') }} {{ hasWeights ? $t('Dashboard.cards.on') : $t('Dashboard.cards.off') }}
+          {{ $t('Dashboard.cards.weights') }}
+          {{
+            hasWeights ? $t('Dashboard.cards.on') : $t('Dashboard.cards.off')
+          }}
         </v-chip>
       </div>
     </div>
@@ -73,8 +105,8 @@ import { useRouter } from 'vue-router'
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const router = useRouter()
@@ -101,9 +133,10 @@ const optionsCount = computed(() => {
   if (!props.test?.testStructure) return 0
   if (!props.test.testStructure.length) return 0
   return props.test.testStructure.reduce((total, heuristic) => {
-    const heuristicOptions = heuristic.questions?.reduce((hTotal, question) => {
-      return hTotal + (question.options?.length || 0)
-    }, 0) || 0
+    const heuristicOptions =
+      heuristic.questions?.reduce((hTotal, question) => {
+        return hTotal + (question.options?.length || 0)
+      }, 0) || 0
     return total + heuristicOptions
   }, 0)
 })
@@ -116,10 +149,13 @@ const isQualitative = computed(() => {
   if (!props.test.testStructure.length) return false
 
   // Si tiene alguna pregunta abierta o tipo text, es cualitativo
-  const hasOpenQuestions = props.test.testStructure.some(heuristic =>
-    heuristic.questions?.some(question =>
-      question.type === 'text' || question.type === 'textarea' || !question.options?.length
-    )
+  const hasOpenQuestions = props.test.testStructure.some((heuristic) =>
+    heuristic.questions?.some(
+      (question) =>
+        question.type === 'text' ||
+        question.type === 'textarea' ||
+        !question.options?.length,
+    ),
   )
 
   // Si no hay opciones predefinidas en general, también podría ser cualitativo

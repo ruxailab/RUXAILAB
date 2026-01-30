@@ -13,7 +13,7 @@
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <!--STUDIES WHERE USER IS TESTADMIN -->
               <div class="stats-value">{{ totalStudies }}/50</div>
-              <div class="stats-label">Studies</div>
+              <div class="stats-label">{{ $t('Dashboard.studies') }}</div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -32,10 +32,10 @@
             </v-col>
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <!--STORAGE USED BY USER -->
-              <div class="stats-value">
+              <div class="stats-value storage-text">
                 {{ formattedStorage }}
               </div>
-              <div class="stats-label">Storage</div>
+              <div class="stats-label">{{ $t('Dashboard.storage') }}</div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -53,8 +53,8 @@
               </div>
             </v-col>
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
-              <div class="stats-value">Free</div>
-              <div class="stats-label">Plan</div>
+              <div class="stats-value">{{ $t('Dashboard.free') }}</div>
+              <div class="stats-label">{{ $t('Dashboard.plan') }}</div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -74,7 +74,9 @@
             <!-- COOPERATORS FROM STUDIES WHERE USER IS TESTADMIN -->
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <div class="stats-value">{{ totalParticipants }}/5</div>
-              <div class="stats-label">Participants</div>
+              <div class="stats-label">
+                {{ $t('Dashboard.participantsLabel') }}
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -137,6 +139,11 @@ const formattedStorage = computed(() => {
   font-weight: 700;
   color: rgb(var(--v-theme-on-surface));
   line-height: 1.2;
+}
+
+.storage-text {
+  font-size: 16px;
+  white-space: nowrap;
 }
 
 .stats-label {

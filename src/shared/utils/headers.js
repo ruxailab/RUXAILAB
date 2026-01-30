@@ -6,7 +6,6 @@ const cooperatorsHeaders = [
   { text: 'More', value: 'more', sortable: false },
 ]
 
-
 const evaluatorStatisticsHeaders = [
   { text: 'Evaluator', align: 'start', sortable: false, value: 'evaluator' },
   { text: 'Usability Percentage', value: 'result', align: 'center' },

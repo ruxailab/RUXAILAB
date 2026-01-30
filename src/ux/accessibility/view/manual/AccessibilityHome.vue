@@ -1,75 +1,77 @@
 <template>
-  
-    <!-- Manager-style Header (uses same image as ManagerView) -->
-    <div class="h-64 w-full">
-      <ManagerBanner />
-    </div>
-    <v-container class="card-container pt-6 pb-10">
-      <p class="presentation-text text-center text-md-left mb-4">
-        {{ $t('accessibility.description') }}
-      </p>
-      <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
-    </v-container>
-  
+  <!-- Manager-style Header (uses same image as ManagerView) -->
+  <div class="h-64 w-full">
+    <ManagerBanner />
+  </div>
+  <v-container class="card-container pt-6 pb-10">
+    <p class="presentation-text text-center text-md-left mb-4">
+      {{ $t('accessibility.description') }}
+    </p>
+    <CardsManager
+      :cards="managerCards"
+      :per-row="mdAndUp ? 3 : 1"
+      @click="go"
+    />
+  </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useDisplay } from 'vuetify';
-import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
-import CardsManager from '@/shared/components/CardsManager';
-import ManagerBanner from '@/shared/components/ManagerBanner.vue';
-import { ICONS, createCardConfig } from '@/shared/constants/theme';
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useDisplay } from 'vuetify'
+import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
+import CardsManager from '@/shared/components/CardsManager'
+import ManagerBanner from '@/shared/components/ManagerBanner.vue'
+import { ICONS, createCardConfig } from '@/shared/constants/theme'
 
-const route = useRoute();
-const router = useRouter();
-const store = useStore();
-const { mdAndUp } = useDisplay();
-const { t } = useI18n();
-const testId = ref(route.params.id || '');
-const userRole = ref(null);
+const route = useRoute()
+const router = useRouter()
+const store = useStore()
+const { mdAndUp } = useDisplay()
+const { t } = useI18n()
+const testId = ref(route.params.id || '')
+const userRole = ref(null)
 
 // Get user role from parent component or fetch it
 const getUserRole = async () => {
   try {
-    const currentUser = store.state.Auth.user;
-    if (!currentUser) return 'user';
-    
+    const currentUser = store.state.Auth.user
+    if (!currentUser) return 'user'
+
     // Get study data
-    let studyData = null;
+    let studyData = null
     if (store.getters.test) {
-      studyData = store.getters.test;
+      studyData = store.getters.test
     } else if (store.state.Study && store.state.Study.Test) {
-      studyData = store.state.Study.Test;
+      studyData = store.state.Study.Test
     } else if (store.state.Test) {
-      studyData = store.state.Test;
+      studyData = store.state.Test
     }
-    
-    if (!studyData) return 'user';
-    
-    const currentUserId = currentUser.id;
-    const isTestAdmin = studyData.testAdmin?.userDocId === currentUserId;
-    const isCooperator = studyData.cooperators?.some(coop => coop.userDocId === currentUserId);
-    
+
+    if (!studyData) return 'user'
+
+    const currentUserId = currentUser.id
+    const isTestAdmin = studyData.testAdmin?.userDocId === currentUserId
+    const isCooperator = studyData.cooperators?.some(
+      (coop) => coop.userDocId === currentUserId,
+    )
+
     if (isTestAdmin) {
-      return 'admin';
+      return 'admin'
     } else if (isCooperator) {
-      return 'cooperator';
+      return 'cooperator'
     } else {
-      return 'user';
+      return 'user'
     }
-  } catch (error) {
-    console.error('Error getting user role:', error);
-    return 'user';
+  } catch {
+    return 'user'
   }
-};
+}
 
 onMounted(async () => {
-  userRole.value = await getUserRole();
-  console.log('AccessibilityHome user role:', userRole.value);
-});
+  userRole.value = await getUserRole()
+})
 
 // Direct manual accessibility cards implementation
 const manualAccessibilityCardsConfig = [
@@ -127,7 +129,7 @@ const manualAccessibilityCardsConfig = [
     theme: 'COOPERATORS',
     requiresAdmin: true,
   },
-];
+]
 
 // Path generators
 const createPathGenerators = (testId) => ({
@@ -136,20 +138,22 @@ const createPathGenerators = (testId) => ({
   preview: () => `/accessibility/manual/preview/${testId}`,
   result: () => `/accessibility/manual/result/${testId}`,
   cooperative: () => `/accessibility/manual/cooperative/${testId}`,
-});
+})
 
 const getManualAccessibilityCards = (t, testId, userRole) => {
-  const paths = createPathGenerators(testId);
+  const paths = createPathGenerators(testId)
 
   // Filter cards based on user role
-  let filteredConfigs = manualAccessibilityCardsConfig;
+  let filteredConfigs = manualAccessibilityCardsConfig
   if (userRole !== 'admin') {
     // For cooperators and regular users, only show non-admin cards
-    filteredConfigs = manualAccessibilityCardsConfig.filter(config => !config.requiresAdmin);
+    filteredConfigs = manualAccessibilityCardsConfig.filter(
+      (config) => !config.requiresAdmin,
+    )
   }
 
-  return filteredConfigs.map(config => {
-    const cardTheme = createCardConfig(config.theme);
+  return filteredConfigs.map((config) => {
+    const cardTheme = createCardConfig(config.theme)
 
     return {
       title: t(config.titleKey),
@@ -158,11 +162,13 @@ const getManualAccessibilityCards = (t, testId, userRole) => {
       description: t(config.descriptionKey),
       route: config.routeKey ? paths[config.routeKey]() : config.route,
       ...cardTheme,
-    };
-  });
-};
+    }
+  })
+}
 
-const cards = computed(() => getManualAccessibilityCards(t, testId.value, userRole.value));
+const cards = computed(() =>
+  getManualAccessibilityCards(t, testId.value, userRole.value),
+)
 
 const managerCards = computed(() =>
   cards.value.map((c) => ({
@@ -175,11 +181,10 @@ const managerCards = computed(() =>
     descriptionDirect: (c.subtitle || c.description || '').toString(),
     cardStyle: c.cardStyle || '',
     path: c.route,
-  }))
-);
+  })),
+)
 
 const go = (path) => {
-  router.push(path).catch(() => { });
-};
+  router.push(path).catch(() => {})
+}
 </script>
-

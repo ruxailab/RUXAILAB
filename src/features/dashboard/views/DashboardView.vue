@@ -3,10 +3,10 @@
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
-        Welcome back, {{ userDisplayName }}! 👋
+        {{ $t('Dashboard.welcomeBack', { name: userDisplayName }) }} 👋
       </h1>
       <p class="text-subtitle-1 text-grey-darken-1">
-        Here's what's happening with your research projects today
+        {{ $t('Dashboard.subtitle') }}
       </p>
     </div>
 
@@ -37,7 +37,7 @@
         <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
       </v-col>
       <v-col cols="12" lg="4">
-        <TopMethods :methodsData="topMethodsData" />
+        <TopMethods :methods-data="topMethodsData" />
       </v-col>
       <v-col cols="12" lg="4">
         <NextSession :next-session="nextSession" />
@@ -202,5 +202,8 @@ onMounted(() => {
 .component-height :deep(.v-card-text) {
   flex: 1;
   overflow-y: auto;
+}
+:deep(.v-row) {
+  margin: -14px !important;
 }
 </style>

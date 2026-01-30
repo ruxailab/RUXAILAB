@@ -1,16 +1,9 @@
 <template>
-  <v-container
-    class="pa-0 ma-0"
-    fluid
-  >
+  <v-container class="pa-0 ma-0" fluid>
     <Snackbar />
     <Loading />
 
-    <v-row
-      v-if="test"
-      class="nav pa-0 ma-0"
-      dense
-    >
+    <v-row v-if="test" class="nav pa-0 ma-0" dense>
       <Drawer :items="navigator" />
 
       <!-- View -->
@@ -26,11 +19,7 @@
                   </div>
 
                   <!-- Top Cards -->
-                  <CardsManager
-                    :cards="topCards"
-                    :per-row="2"
-                    @click="go"
-                  />
+                  <CardsManager :cards="topCards" :per-row="2" @click="go" />
                 </div>
 
                 <div v-if="bottomCards.length">
@@ -39,11 +28,7 @@
                   </div>
 
                   <!-- Bottom Cards -->
-                  <CardsManager
-                    :cards="bottomCards"
-                    :per-row="2"
-                    @click="go"
-                  />
+                  <CardsManager :cards="bottomCards" :per-row="2" @click="go" />
                 </div>
               </v-container>
             </div>
@@ -59,29 +44,29 @@
 <script setup>
 import Snackbar from '@/shared/components/Snackbar.vue'
 import Loading from '@/shared/components/Loading.vue'
-import Drawer from '@/shared/components/Drawer.vue';
-import ManagerBanner from '@/shared/components/ManagerBanner.vue';
-import { computed } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import CardsManager from '@/shared/components/CardsManager.vue';
+import Drawer from '@/shared/components/Drawer.vue'
+import ManagerBanner from '@/shared/components/ManagerBanner.vue'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import CardsManager from '@/shared/components/CardsManager.vue'
 
 const props = defineProps({
   navigator: {
     type: Array,
     required: true,
-    default: () => []
+    default: () => [],
   },
   topCards: {
     type: Array,
     required: true,
-    default: () => []
+    default: () => [],
   },
   bottomCards: {
     type: Array,
     required: true,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 // Store
@@ -93,9 +78,9 @@ const test = computed(() => store.getters.test)
 
 // Methods
 const go = (item) => {
-  if (!item.id) return router.push(item).catch(() => { })
+  if (!item.id) return router.push(item).catch(() => {})
   if (item.id === 2) return window.open(item.path)
-  return router.push(item.path).catch(() => { })
+  return router.push(item.path).catch(() => {})
 }
 </script>
 
@@ -131,6 +116,4 @@ const go = (item) => {
   height: 60vh;
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
-
 </style>
-

@@ -250,7 +250,7 @@
                 size="large"
                 @click="startCall"
               >
-                <v-icon left size="20">mdi-video-plus</v-icon>
+                <v-icon start size="20">mdi-video-plus</v-icon>
                 Open Room
               </v-btn>
             </template>
@@ -267,7 +267,7 @@
                 size="large"
                 @click="endCall"
               >
-                <v-icon left size="20">mdi-phone-hangup</v-icon>
+                <v-icon start size="20">mdi-phone-hangup</v-icon>
                 End Call
               </v-btn>
             </template>
@@ -284,7 +284,7 @@
                 size="large"
                 @click="endCall"
               >
-                <v-icon left size="20">mdi-phone-hangup</v-icon>
+                <v-icon start size="20">mdi-phone-hangup</v-icon>
                 Leave Call
               </v-btn>
             </template>
@@ -338,12 +338,12 @@
     <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
         <h3>Panel de Herramientas</h3>
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          @click="toggleSidePanel"
+        <v-btn 
+          icon 
+          size="small" 
+          variant="text" 
           class="close-btn"
+          @click="toggleSidePanel"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -359,7 +359,7 @@
             <!-- Note: Join Room controls moved to main interface for better visibility -->
             <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
-                <v-icon left size="16">mdi-information</v-icon>
+                <v-icon start size="16">mdi-information</v-icon>
                 Join room controls are now in the main interface above
               </p>
             </div>
@@ -376,7 +376,7 @@
               class="mb-3"
               @click="proceedToNextStep"
             >
-              <v-icon left>mdi-arrow-right</v-icon>
+              <v-icon start>mdi-arrow-right</v-icon>
               Proceed to Next Step
             </v-btn>
 
@@ -388,14 +388,14 @@
               variant="outlined"
               @click="endCall"
             >
-              <v-icon left>mdi-phone-hangup</v-icon>
+              <v-icon start>mdi-phone-hangup</v-icon>
               End Call
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
               <v-chip color="green" size="small" class="mb-2">
-                <v-icon left size="16">mdi-phone</v-icon>
+                <v-icon start size="16">mdi-phone</v-icon>
                 Llamada activa
               </v-chip>
             </div>
@@ -528,12 +528,12 @@
     >
       <div class="stepper-panel-header">
         <h3>Test Progress</h3>
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          @click="toggleStepperPanel"
+        <v-btn 
+          icon 
+          size="small" 
+          variant="text" 
           class="close-btn"
+          @click="toggleStepperPanel"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -543,7 +543,7 @@
         <!-- Moderator indicator -->
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
-            <v-icon left size="16">mdi-information</v-icon>
+            <v-icon start size="16">mdi-information</v-icon>
             Solo el moderador puede cambiar los pasos
           </v-chip>
         </div>
@@ -567,7 +567,7 @@
                 >
                 <span v-else>1</span>
               </div>
-              <div class="step-line" v-if="currentStepperValue >= 1"></div>
+              <div v-if="currentStepperValue >= 1" class="step-line"></div>
             </div>
             <div class="step-content">
               <h4 class="step-title">Consent</h4>
@@ -592,7 +592,7 @@
                 >
                 <span v-else>2</span>
               </div>
-              <div class="step-line" v-if="currentStepperValue >= 2"></div>
+              <div v-if="currentStepperValue >= 2" class="step-line"></div>
             </div>
             <div class="step-content">
               <h4 class="step-title">Pre-test</h4>
@@ -617,7 +617,7 @@
                 >
                 <span v-else>3</span>
               </div>
-              <div class="step-line" v-if="currentStepperValue >= 3"></div>
+              <div v-if="currentStepperValue >= 3" class="step-line"></div>
             </div>
             <div class="step-content">
               <h4 class="step-title">Tasks</h4>
@@ -635,7 +635,6 @@
                 <v-select
                   :items="taskDropdownItems"
                   :model-value="currentTaskIndex"
-                  @update:model-value="goToSpecificTask"
                   item-title="title"
                   item-value="index"
                   variant="outlined"
@@ -644,6 +643,7 @@
                   class="task-selector"
                   placeholder="Select a task"
                   prepend-inner-icon="mdi-format-list-bulleted"
+                  @update:model-value="goToSpecificTask"
                 >
                   <template #item="{ props, item }">
                     <v-list-item v-bind="props" :title="item.raw.title">
@@ -691,7 +691,7 @@
                 >
                 <span v-else>4</span>
               </div>
-              <div class="step-line" v-if="currentStepperValue >= 4"></div>
+              <div v-if="currentStepperValue >= 4" class="step-line"></div>
             </div>
             <div class="step-content">
               <h4 class="step-title">Post-test</h4>
@@ -762,7 +762,7 @@
             class="mb-2"
             @click="joinRoomFromDialog"
           >
-            <v-icon left>mdi-video</v-icon>
+            <v-icon start>mdi-video</v-icon>
             Join Video Call
           </v-btn>
 
