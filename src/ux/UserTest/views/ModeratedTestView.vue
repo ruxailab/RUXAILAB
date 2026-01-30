@@ -190,8 +190,8 @@
                       stepperValue == 1
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -204,8 +204,8 @@
                       stepperValue == 2
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -218,8 +218,8 @@
                       stepperValue == 3
                         ? 'warning'
                         : stepperValue < 3
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -232,8 +232,8 @@
                       stepperValue == 4
                         ? 'warning'
                         : stepperValue < 4
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -246,8 +246,8 @@
                       stepperValue == 5
                         ? 'warning'
                         : stepperValue < 5
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -285,8 +285,8 @@
                         taskIndex == index
                           ? 'warning'
                           : taskIndex < index
-                          ? 'primary'
-                          : 'success'
+                            ? 'primary'
+                            : 'success'
                       "
                       complete-icon="mdi-check"
                     />
@@ -302,11 +302,11 @@
           <!-- Observator Notes Drawer -->
           <v-navigation-drawer
             v-if="isObservator"
+            v-model="notesDrawerOpen"
             location="right"
             persistent
             width="400"
             elevation="3"
-            v-model="notesDrawerOpen"
             style="
               position: fixed;
               top: 0;
@@ -332,7 +332,6 @@
             color="primary"
             elevation="4"
             class="notes-toggle-btn"
-            @click="notesDrawerOpen = !notesDrawerOpen"
             :style="{
               position: 'fixed',
               top: '80px',
@@ -340,6 +339,7 @@
               zIndex: 1006,
               transition: 'right 0.3s ease',
             }"
+            @click="notesDrawerOpen = !notesDrawerOpen"
           >
             <v-badge
               :content="localTestAnswer.sessionNotes?.length || 0"
@@ -355,9 +355,9 @@
           </v-btn>
 
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent">
+          <div v-if="displayVideoCallComponent">
             <VideoCall
-              :roomId="roomId"
+              :room-id="roomId"
               :is-moderator="isUserTestAdmin"
               :user="user"
               :access-level="currentUserAccessLevel"
@@ -1201,6 +1201,7 @@ watchEffect(() => {
       return true
     }
     testDisabledReason.value = null
+    isStartTestDisabled.value = false
     return false // Admin can proceed
   }
   const now = new Date()
@@ -1408,7 +1409,8 @@ onBeforeUnmount(async () => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
