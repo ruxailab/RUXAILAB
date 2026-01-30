@@ -1802,5 +1802,11 @@
       "title": "Supprimer l'Option",
       "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action ne peut pas être annulée."
     }
+  },
+  "questionStepper": {
+    "questionOf": "Question {current} sur {total}",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "done": "Terminé"
   }
 }

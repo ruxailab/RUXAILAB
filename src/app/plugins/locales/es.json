@@ -1782,5 +1782,11 @@
       "title": "Eliminar Opción",
       "message": "¿Está seguro de que desea eliminar esta opción? Esta acción no se puede deshacer."
     }
+  },
+  "questionStepper": {
+    "questionOf": "Pregunta {current} de {total}",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "done": "Hecho"
   }
 }

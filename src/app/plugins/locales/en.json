@@ -1781,5 +1781,11 @@
       "title": "Delete Option",
       "message": "Are you sure you want to delete this option? This action cannot be undone."
     }
+  },
+  "questionStepper": {
+    "questionOf": "Question {current} of {total}",
+    "next": "Next",
+    "previous": "Previous",
+    "done": "Done"
   }
 }
