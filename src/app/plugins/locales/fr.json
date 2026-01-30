@@ -1048,14 +1048,19 @@
     },
     "messages": {
       "noTasks": "Ce test n'a aucune tâche.",
-      "answerSaved": "Réponse enregistrée avec succès."
+      "answerSaved": "Réponse enregistrée avec succès.",
+      "useSessionLink": "Utilisez un lien de session pour accéder à votre test modéré !",
+      "noScheduledDate": "Votre session n'a pas de date programmée",
+      "taskCompleted": "Tâche \"{taskName}\" complétée avec succès !"
     },
     "errors": {
       "noAnswerData": "Aucune donnée de réponse trouvée.",
       "failedToSaveAnswer": "Échec de l'enregistrement de la réponse. Veuillez réessayer.",
       "failedToSubmitAnswer": "Échec de la soumission de la réponse. Veuillez réessayer.",
       "noTestData": "Aucune donnée de test",
-      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard."
+      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard.",
+      "completeStepFailed": "Échec de l'étape. Veuillez réessayer.",
+      "initTestFailed": "Échec de l'initialisation des données du test. Veuillez réessayer."
     },
     "CalibrationInProgressModal": {
       "completed": "Calibrage terminé !",
@@ -1117,6 +1122,32 @@
       "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
       "startButton": "Commencer le calibrage",
       "inProgress": "En cours..."
+    },
+    "stepTitles": {
+      "preTest": "Pré-test",
+      "consent": "Consentement",
+      "form": "Formulaire",
+      "tasks": "Tâches",
+      "postTest": "Post-test"
+    },
+    "roles": {
+      "moderator": "Modérateur",
+      "evaluator": "Évaluateur"
+    },
+    "moderatorActions": {
+      "title": "Actions du modérateur",
+      "startSession": "Démarrer la session",
+      "scheduleSession": "Planifier la session",
+      "viewSessions": "Voir les sessions",
+      "editTest": "Modifier le test",
+      "guide": "Guide du modérateur",
+      "pauseTest": "Mettre le test en pause",
+      "resumeTest": "Reprendre le test",
+      "pauseSuccess": "Test mis en pause avec succès",
+      "pauseError": "Échec de la mise en pause du test",
+      "resumeSuccess": "Test repris avec succès",
+      "resumeError": "Échec de la reprise du test",
+      "guideInfo": "Le guide du modérateur sera disponible prochainement !"
     }
   },
   "eyeTracking": {

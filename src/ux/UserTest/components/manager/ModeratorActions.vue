@@ -2,14 +2,14 @@
   <v-card class="h-100">
     <v-card-title class="d-flex align-center pb-2">
       <v-icon class="mr-2" color="primary">mdi-account-supervisor</v-icon>
-      Moderator Actions
+      {{ t('UserTestView.moderatorActions.title') }}
     </v-card-title>
 
     <v-card-text class="pa-4">
       <div class="d-flex flex-column gap-3">
         <v-btn color="primary" variant="outlined" block @click="startSession">
           <v-icon start>mdi-play</v-icon>
-          Start Session
+          {{ t('UserTestView.moderatorActions.startSession') }}
         </v-btn>
 
         <v-btn
@@ -19,22 +19,22 @@
           @click="scheduleSession"
         >
           <v-icon start>mdi-calendar-plus</v-icon>
-          Schedule Session
+          {{ t('UserTestView.moderatorActions.scheduleSession') }}
         </v-btn>
 
         <v-btn color="info" variant="outlined" block @click="viewSessions">
           <v-icon start>mdi-calendar-check</v-icon>
-          View Sessions
+          {{ t('UserTestView.moderatorActions.viewSessions') }}
         </v-btn>
 
         <v-btn color="warning" variant="outlined" block @click="editTest">
           <v-icon start>mdi-pencil</v-icon>
-          Edit Test
+          {{ t('UserTestView.moderatorActions.editTest') }}
         </v-btn>
 
         <v-btn color="orange" variant="outlined" block @click="moderatorGuide">
           <v-icon start>mdi-book-open-variant</v-icon>
-          Moderator Guide
+          {{ t('UserTestView.moderatorActions.guide') }}
         </v-btn>
 
         <v-btn
@@ -45,7 +45,7 @@
           @click="pauseTest"
         >
           <v-icon start>mdi-pause</v-icon>
-          Pause Test
+          {{ t('UserTestView.moderatorActions.pauseTest') }}
         </v-btn>
 
         <v-btn
@@ -56,7 +56,7 @@
           @click="resumeTest"
         >
           <v-icon start>mdi-play</v-icon>
-          Resume Test
+          {{ t('UserTestView.moderatorActions.resumeTest') }}
         </v-btn>
       </div>
     </v-card-text>
@@ -66,6 +66,8 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const props = defineProps({
   test: {
@@ -97,7 +99,7 @@ const moderatorGuide = () => {
   // Open moderator guide or help documentation
   store.commit('SET_TOAST', {
     type: 'info',
-    message: 'Moderator guide will be available soon!',
+    message: t('UserTestView.moderatorActions.guideInfo'),
   })
 }
 
@@ -109,12 +111,12 @@ const pauseTest = async () => {
     })
     store.commit('SET_TOAST', {
       type: 'success',
-      message: 'Test paused successfully',
+      message: t('UserTestView.moderatorActions.pauseSuccess'),
     })
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to pause test',
+      message: t('UserTestView.moderatorActions.pauseError'),
     })
   }
 }
@@ -127,12 +129,12 @@ const resumeTest = async () => {
     })
     store.commit('SET_TOAST', {
       type: 'success',
-      message: 'Test resumed successfully',
+      message: t('UserTestView.moderatorActions.resumeSuccess'),
     })
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to resume test',
+      message: t('UserTestView.moderatorActions.resumeError'),
     })
   }
 }

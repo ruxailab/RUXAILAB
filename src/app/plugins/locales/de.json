@@ -1049,14 +1049,19 @@
     },
     "messages": {
       "noTasks": "Dieser Test hat keine Aufgaben.",
-      "answerSaved": "Antwort erfolgreich gespeichert."
+      "answerSaved": "Antwort erfolgreich gespeichert.",
+      "useSessionLink": "Verwenden Sie einen Sitzungslink, um auf Ihren moderierten Test zuzugreifen!",
+      "noScheduledDate": "Ihre Sitzung hat kein geplantes Datum",
+      "taskCompleted": "Aufgabe \"{taskName}\" erfolgreich abgeschlossen!"
     },
     "errors": {
       "noAnswerData": "Keine Antwortdaten gefunden.",
       "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
       "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut.",
       "noTestData": "Keine Testdaten",
-      "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+      "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+      "completeStepFailed": "Schritt konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+      "initTestFailed": "Testdaten konnten nicht initialisiert werden. Bitte versuchen Sie es erneut."
     },
     "CalibrationInProgressModal": {
       "completed": "Kalibrierung abgeschlossen!",
@@ -1118,6 +1123,32 @@
       "instruction": "Wenn Sie bereit sind, drücken Sie die Taste, um die Kalibrierung zu starten.",
       "startButton": "Kalibrierung starten",
       "inProgress": "In Bearbeitung..."
+    },
+    "stepTitles": {
+      "preTest": "Vortest",
+      "consent": "Einverständnis",
+      "form": "Formular",
+      "tasks": "Aufgaben",
+      "postTest": "Nachtest"
+    },
+    "roles": {
+      "moderator": "Moderator",
+      "evaluator": "Mitarbeiter"
+    },
+    "moderatorActions": {
+      "title": "Moderator-Aktionen",
+      "startSession": "Sitzung starten",
+      "scheduleSession": "Sitzung planen",
+      "viewSessions": "Sitzungen anzeigen",
+      "editTest": "Test bearbeiten",
+      "guide": "Moderator-Handbuch",
+      "pauseTest": "Test pausieren",
+      "resumeTest": "Test fortsetzen",
+      "pauseSuccess": "Test erfolgreich pausiert",
+      "pauseError": "Fehler beim Pausieren des Tests",
+      "resumeSuccess": "Test erfolgreich fortgesetzt",
+      "resumeError": "Fehler beim Fortsetzen des Tests",
+      "guideInfo": "Moderator-Handbuch wird bald verfügbar sein!"
     }
   },
   "eyeTracking": {

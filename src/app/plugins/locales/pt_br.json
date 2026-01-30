@@ -1048,14 +1048,19 @@
     },
     "messages": {
       "noTasks": "Este teste não possui tarefas.",
-      "answerSaved": "Resposta salva com sucesso."
+      "answerSaved": "Resposta salva com sucesso.",
+      "useSessionLink": "Use um link de sessão para acessar seu teste moderado!",
+      "noScheduledDate": "Sua sessão não possui uma data agendada",
+      "taskCompleted": "Tarefa \"{taskName}\" concluída com sucesso!"
     },
     "errors": {
       "noAnswerData": "Nenhum dado de resposta encontrado.",
       "failedToSaveAnswer": "Falha ao salvar resposta. Tente novamente.",
       "failedToSubmitAnswer": "Falha ao enviar resposta. Tente novamente.",
       "noTestData": "Sem dados de teste",
-      "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde."
+      "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde.",
+      "completeStepFailed": "Falha ao completar o passo. Por favor, tente novamente.",
+      "initTestFailed": "Falha ao inicializar os dados do teste. Por favor, tente novamente."
     },
     "CalibrationInProgressModal": {
       "completed": "Calibração concluída!",
@@ -1117,6 +1122,32 @@
       "instruction": "Quando estiver pronto, pressione o botão para iniciar a calibração.",
       "startButton": "Iniciar calibração",
       "inProgress": "Em andamento..."
+    },
+    "stepTitles": {
+      "preTest": "Pré-teste",
+      "consent": "Consentimento",
+      "form": "Formulário",
+      "tasks": "Tarefas",
+      "postTest": "Pós-teste"
+    },
+    "roles": {
+      "moderator": "Moderador",
+      "evaluator": "Avaliador"
+    },
+    "moderatorActions": {
+      "title": "Ações do Moderador",
+      "startSession": "Iniciar sessão",
+      "scheduleSession": "Agendar sessão",
+      "viewSessions": "Visualizar sessões",
+      "editTest": "Editar teste",
+      "guide": "Guia do Moderador",
+      "pauseTest": "Pausar teste",
+      "resumeTest": "Retomar teste",
+      "pauseSuccess": "Teste pausado com sucesso",
+      "pauseError": "Falha ao pausar o teste",
+      "resumeSuccess": "Teste retomado com sucesso",
+      "resumeError": "Falha ao retomar o teste",
+      "guideInfo": "O guia do moderador estará disponível em breve!"
     }
   },
   "eyeTracking": {

@@ -1,11 +1,7 @@
 <template>
   <v-card class="d-flex align-center pa-2 my-2">
     <!-- Moderator -->
-    <v-avatar
-      size="48"
-      color="#FEF4E5"
-      class="text-orange"
-    >
+    <v-avatar size="48" color="#FEF4E5" class="text-orange">
       <span class="text-h5">{{ moderator.name[0] }}</span>
     </v-avatar>
     <v-card-text class="ml-3">
@@ -13,17 +9,13 @@
         {{ moderator.name }}
       </div>
       <div class="text-caption text-grey">
-        Moderator
+        {{ $t('UserTestView.roles.moderator') }}
       </div>
     </v-card-text>
     <v-spacer />
 
     <!-- Evaluator -->
-    <v-avatar
-      size="48"
-      color="#FEF4E5"
-      class="text-orange"
-    >
+    <v-avatar size="48" color="#FEF4E5" class="text-orange">
       <span class="text-h5">{{ evaluator.name[0] }}</span>
     </v-avatar>
     <v-card-text class="ml-3">
@@ -31,12 +23,12 @@
         {{ evaluator.name }}
       </div>
       <div class="text-caption text-grey">
-        Evaluator
+        {{ $t('UserTestView.roles.evaluator') }}
       </div>
     </v-card-text>
   </v-card>
 </template>
-  
+
 <script setup>
 const props = defineProps({
   moderator: {
@@ -46,10 +38,8 @@ const props = defineProps({
   evaluator: {
     type: Object,
     required: true,
-  }
+  },
 })
 </script>
-  
-<style scoped>
 
-</style>
+<style scoped></style>

@@ -1048,14 +1048,19 @@
     },
     "messages": {
       "noTasks": "このテストにはタスクがありません。",
-      "answerSaved": "回答が正常に保存されました。"
+      "answerSaved": "回答が正常に保存されました。",
+      "useSessionLink": "モデレートテストにアクセスするにはセッションリンクを使用してください！",
+      "noScheduledDate": "セッションには予定日が設定されていません",
+      "taskCompleted": "タスク \"{taskName}\" が正常に完了しました！"
     },
     "errors": {
       "noAnswerData": "回答データが見つかりません。",
       "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
       "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。",
       "noTestData": "テストデータなし",
-      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。"
+      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。",
+      "completeStepFailed": "ステップの完了に失敗しました。もう一度お試しください。",
+      "initTestFailed": "テストデータの初期化に失敗しました。もう一度お試しください。"
     },
     "CalibrationInProgressModal": {
       "completed": "キャリブレーション完了！",
@@ -1117,6 +1122,32 @@
       "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
       "startButton": "キャリブレーションを開始",
       "inProgress": "進行中..."
+    },
+    "stepTitles": {
+      "preTest": "事前テスト",
+      "consent": "同意",
+      "form": "フォーム",
+      "tasks": "タスク",
+      "postTest": "事後テスト"
+    },
+    "roles": {
+      "moderator": "モデレーター",
+      "evaluator": "評価者"
+    },
+    "moderatorActions": {
+      "title": "モデレーターの操作",
+      "startSession": "セッション開始",
+      "scheduleSession": "セッションをスケジュール",
+      "viewSessions": "セッションを表示",
+      "editTest": "テストを編集",
+      "guide": "モデレーターガイド",
+      "pauseTest": "テストを一時停止",
+      "resumeTest": "テストを再開",
+      "pauseSuccess": "テストが正常に一時停止されました",
+      "pauseError": "テストの一時停止に失敗しました",
+      "resumeSuccess": "テストが正常に再開されました",
+      "resumeError": "テストの再開に失敗しました",
+      "guideInfo": "モデレーターガイドはまもなく利用可能になります！"
     }
   },
   "eyeTracking": {

@@ -1048,14 +1048,19 @@
     },
     "messages": {
       "noTasks": "Esta prueba no tiene ninguna tarea.",
-      "answerSaved": "Respuesta guardada con éxito."
+      "answerSaved": "Respuesta guardada con éxito.",
+      "useSessionLink": "¡Usa un enlace de sesión para acceder a tu prueba moderada!",
+      "noScheduledDate": "Tu sesión no tiene una fecha programada",
+      "taskCompleted": "Tarea \"{taskName}\" completada con éxito!"
     },
     "errors": {
       "noAnswerData": "No se encontraron datos de respuesta.",
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtalo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtalo de nuevo.",
       "noTestData": "Sin datos de prueba",
-      "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde."
+      "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde.",
+      "completeStepFailed": "Error al completar el paso. Por favor, inténtalo de nuevo.",
+      "initTestFailed": "Error al inicializar los datos de la prueba. Por favor, inténtalo de nuevo."
     },
     "CalibrationInProgressModal": {
       "completed": "¡Calibración completada!",
@@ -1117,6 +1122,32 @@
       "instruction": "Cuando estés listo o lista, pulsa el botón para empezar la calibración.",
       "startButton": "Comenzar calibración",
       "inProgress": "En progreso..."
+    },
+    "stepTitles": {
+      "preTest": "Pre-Prueba",
+      "consent": "Consentimiento",
+      "form": "Formulario",
+      "tasks": "Tareas",
+      "postTest": "Post-Prueba"
+    },
+    "roles": {
+      "moderator": "Moderador",
+      "evaluator": "Evaluador"
+    },
+    "moderatorActions": {
+      "title": "Acciones del Moderador",
+      "startSession": "Iniciar sesión",
+      "scheduleSession": "Programar sesión",
+      "viewSessions": "Ver sesiones",
+      "editTest": "Editar prueba",
+      "guide": "Guía del moderador",
+      "pauseTest": "Pausar prueba",
+      "resumeTest": "Reanudar prueba",
+      "pauseSuccess": "Prueba pausada con éxito",
+      "pauseError": "Error al pausar la prueba",
+      "resumeSuccess": "Prueba reanudada con éxito",
+      "resumeError": "Error al reanudar la prueba",
+      "guideInfo": "¡La guía del moderador estará disponible pronto!"
     }
   },
   "eyeTracking": {

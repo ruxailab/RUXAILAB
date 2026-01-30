@@ -190,8 +190,8 @@
                       stepperValue == 1
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -204,8 +204,8 @@
                       stepperValue == 2
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -218,8 +218,8 @@
                       stepperValue == 3
                         ? 'warning'
                         : stepperValue < 3
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -232,8 +232,8 @@
                       stepperValue == 4
                         ? 'warning'
                         : stepperValue < 4
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -246,8 +246,8 @@
                       stepperValue == 5
                         ? 'warning'
                         : stepperValue < 5
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -285,8 +285,8 @@
                         taskIndex == index
                           ? 'warning'
                           : taskIndex < index
-                          ? 'primary'
-                          : 'success'
+                            ? 'primary'
+                            : 'success'
                       "
                       complete-icon="mdi-check"
                     />
@@ -939,7 +939,9 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompleted', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
         })
       }
@@ -965,7 +967,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to complete step. Please try again.',
+      message: t('UserTestView.errors.completeStepFailed'),
     })
   }
 }
@@ -977,16 +979,16 @@ const mappingSteps = async () => {
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
       items.value.push({
-        title: 'Pre-test',
+        title: t('UserTestView.stepTitles.preTest'),
         icon: 'mdi-check-bold',
         value: [
           {
-            title: 'Consent',
+            title: t('UserTestView.stepTitles.consent'),
             icon: 'mdi-check-bold',
             id: 0,
           },
           {
-            title: 'Form',
+            title: t('UserTestView.stepTitles.form'),
             icon: 'mdi-check-bold',
             id: 1,
           },
@@ -1008,7 +1010,7 @@ const mappingSteps = async () => {
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
       items.value.push({
-        title: 'Tasks',
+        title: t('UserTestView.stepTitles.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
           title: task.taskName,
@@ -1042,7 +1044,7 @@ const mappingSteps = async () => {
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
       items.value.push({
-        title: 'Post Test',
+        title: t('UserTestView.stepTitles.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
         id: 2,
@@ -1062,7 +1064,7 @@ const mappingSteps = async () => {
     console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to initialize test data. Please try again.',
+      message: t('UserTestView.errors.initTestFailed'),
     })
   }
 }
@@ -1173,20 +1175,20 @@ watchEffect(() => {
 // Lifecycle hooks
 onMounted(async () => {
   if (!user.value) {
-    showError('Login to your RUXAILAB account first to access the test!')
+    showError(t('errors.loginRequired'))
     router.push('/signin')
     return
   }
 
   if (route.params.token) {
     if (route.params.token === test.value.id) {
-      showInfo('Use a session link to access your moderated test!')
+      showInfo(t('UserTestView.messages.useSessionLink'))
       router.push('/managerview/' + test.value.id)
       return
     }
 
     if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
-      showError('errors.globalError')
+      showError(t('errors.globalError'))
       router.push('/admin')
       return
     }
@@ -1198,13 +1200,13 @@ onMounted(async () => {
       if (sessionCooperator.value?.testDate) {
         testDate.value = sessionCooperator.value.testDate
       } else {
-        showWarning("Your session doesn't have a scheduled date")
+        showWarning(t('UserTestView.messages.noScheduledDate'))
         router.push('/managerview/' + test.value.id)
         return
       }
     }
   } else {
-    showInfo('Use a session link to access the test')
+    showInfo(t('UserTestView.messages.useSessionLink'))
     router.push('/managerview/' + test.value.id)
     return
   }
@@ -1303,7 +1305,8 @@ onBeforeUnmount(async () => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

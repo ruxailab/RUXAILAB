@@ -1048,14 +1048,19 @@
     },
     "messages": {
       "noTasks": "هذا الاختبار ليس لديه أي مهام.",
-      "answerSaved": "تم حفظ الإجابة بنجاح."
+      "answerSaved": "تم حفظ الإجابة بنجاح.",
+      "useSessionLink": "استخدم رابط الجلسة للوصول إلى الاختبار المُدار!",
+      "noScheduledDate": "لا يوجد تاريخ مجدول لهذه الجلسة",
+      "taskCompleted": "تم إكمال المهمة \"{taskName}\" بنجاح!"
     },
     "errors": {
       "noAnswerData": "لم يتم العثور على بيانات إجابة.",
       "failedToSaveAnswer": "فشل في حفظ الإجابة. يرجى المحاولة مرة أخرى.",
       "failedToSubmitAnswer": "فشل في تقديم الإجابة. يرجى المحاولة مرة أخرى.",
       "noTestData": "لا توجد بيانات اختبار",
-      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا."
+      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا.",
+      "completeStepFailed": "فشل إكمال الخطوة. يرجى المحاولة مرة أخرى.",
+      "initTestFailed": "فشل تهيئة بيانات الاختبار. يرجى المحاولة مرة أخرى."
     },
     "CalibrationInProgressModal": {
       "completed": "اكتملت المعايرة!",
@@ -1117,6 +1122,32 @@
       "instruction": "عندما تكون جاهزًا، اضغط على الزر لبدء المعايرة.",
       "startButton": "بدء المعايرة",
       "inProgress": "جارٍ العمل..."
+    },
+    "moderatorActions": {
+      "title": "إجراءات المشرف",
+      "startSession": "بدء الجلسة",
+      "scheduleSession": "جدولة الجلسة",
+      "viewSessions": "عرض الجلسات",
+      "editTest": "تعديل الاختبار",
+      "guide": "دليل المشرف",
+      "pauseTest": "إيقاف الاختبار مؤقتًا",
+      "resumeTest": "استئناف الاختبار",
+      "pauseSuccess": "تم إيقاف الاختبار مؤقتًا بنجاح",
+      "pauseError": "فشل في إيقاف الاختبار",
+      "resumeSuccess": "تم استئناف الاختبار بنجاح",
+      "resumeError": "فشل في استئناف الاختبار",
+      "guideInfo": "دليل المشرف سيكون متاحًا قريبًا!"
+    },
+    "stepTitles": {
+      "preTest": "الاختبار القبلي",
+      "consent": "الموافقة",
+      "form": "النموذج",
+      "tasks": "المهام",
+      "postTest": "الاختبار البعدي"
+    },
+    "roles": {
+      "moderator": "المشرف",
+      "evaluator": "المقيِّم"
     }
   },
   "eyeTracking": {

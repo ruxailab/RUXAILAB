@@ -356,7 +356,8 @@
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
     "sendError": "Failed to send invitation. Please try again",
-    "missingVariableTitles": "Cannot save: Some variables are missing titles"
+    "missingVariableTitles": "Cannot save: Some variables are missing titles",
+    "loginRequired": "Login to your RUXAILAB account first to access the test!"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -1070,14 +1071,19 @@
     },
     "messages": {
       "noTasks": "This test doesn't have any tasks.",
-      "answerSaved": "Answer saved successfully."
+      "answerSaved": "Answer saved successfully.",
+      "useSessionLink": "Use a session link to access your moderated test!",
+      "noScheduledDate": "Your session doesn't have a scheduled date",
+      "taskCompleted": "Task \"{taskName}\" completed successfully!"
     },
     "errors": {
       "noAnswerData": "No answer data found.",
       "failedToSaveAnswer": "Failed to save the answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
       "noTestData": "No Test Data",
-      "noTestDataMessage": "Test information could not be loaded. Please try again later."
+      "noTestDataMessage": "Test information could not be loaded. Please try again later.",
+      "completeStepFailed": "Failed to complete step. Please try again.",
+      "initTestFailed": "Failed to initialize test data. Please try again."
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -1117,6 +1123,32 @@
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
       "inProgress": "In progress..."
+    },
+    "stepTitles": {
+      "preTest": "Pre-test",
+      "consent": "Consent",
+      "form": "Form",
+      "tasks": "Tasks",
+      "postTest": "Post-test"
+    },
+    "roles": {
+      "moderator": "Moderator",
+      "evaluator": "Evaluator"
+    },
+    "moderatorActions": {
+      "title": "Moderator Actions",
+      "startSession": "Start Session",
+      "scheduleSession": "Schedule Session",
+      "viewSessions": "View Sessions",
+      "editTest": "Edit Test",
+      "guide": "Moderator Guide",
+      "pauseTest": "Pause Test",
+      "resumeTest": "Resume Test",
+      "pauseSuccess": "Test paused successfully",
+      "pauseError": "Failed to pause test",
+      "resumeSuccess": "Test resumed successfully",
+      "resumeError": "Failed to resume test",
+      "guideInfo": "Moderator guide will be available soon!"
     }
   },
   "eyeTracking": {
