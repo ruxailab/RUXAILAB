@@ -41,7 +41,7 @@ export default class Notification {
   }
 
   static toNotification(data) {
-    return new Notification(data);
+    return new Notification(data)
   }
 
   toFirestore() {
@@ -60,6 +60,6 @@ export default class Notification {
       accessLevel: this.accessLevel,
       readAt: this.readAt,
       type: this.type,
-    };
+    }
   }
 }

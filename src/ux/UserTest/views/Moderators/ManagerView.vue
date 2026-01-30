@@ -126,7 +126,7 @@ import {
 } from '@/shared/utils/managerDefault'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { computed, onMounted, watchEffect } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -139,7 +139,6 @@ import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue'
 // Stores
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -183,6 +182,11 @@ const navigator = computed(() => {
     ),
   ]
 
+  for (const item of items) {
+    if (item.title === 'Preview') {
+      item.path = `/testview/${test.value.id}/${user.value.id}`
+    }
+  }
   return items
 })
 
