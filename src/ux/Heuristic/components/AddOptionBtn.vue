@@ -11,16 +11,10 @@
           {{ $t('HeuristicsTable.titles.addOption') }}
         </p>
         <v-divider />
-        <v-row
-          justify="center"
-          class="ma-0"
-        >
+        <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form">
-              <v-row
-                justify="center"
-                align="center"
-              >
+              <v-row justify="center" align="center">
                 <v-col cols="6">
                   <v-text-field
                     v-model="localOption.text"
@@ -46,19 +40,26 @@
                 </v-col>
               </v-row>
 
-              <v-row
-                justify="center"
-                align="center"
-              >
+              <v-row justify="center" align="center">
                 <v-col cols="12">
                   <v-text-field
                     v-model="localOption.description"
                     variant="outlined"
                     maxlength="250"
                     counter="250"
-                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
-                    :error="localOption.description && localOption.description.length >= 250"
-                    :error-messages="localOption.description && localOption.description.length >= 250 ? ['Maximum 250 characters reached'] : []"
+                    :label="
+                      $t('HeuristicsTable.placeholders.optionDescription')
+                    "
+                    :error="
+                      localOption.description &&
+                      localOption.description.length >= 250
+                    "
+                    :error-messages="
+                      localOption.description &&
+                      localOption.description.length >= 250
+                        ? ['Maximum 250 characters reached']
+                        : []
+                    "
                   />
                 </v-col>
               </v-row>
@@ -84,11 +85,7 @@
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
 
-          <v-btn
-            size="small"
-            class="text-white bg-orange"
-            @click="validate"
-          >
+          <v-btn size="small" class="text-white bg-orange" @click="validate">
             {{ $t('common.save') }}
           </v-btn>
         </v-card-actions>
@@ -98,82 +95,91 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   option: { type: Object, required: true },
   dialog: { type: Boolean, default: false },
   hasValue: { type: Boolean, required: true, default: true },
-});
+})
 
-const emit = defineEmits(['update:dialog', 'changeHasValue', 'addOption', 'change']);
+const emit = defineEmits([
+  'update:dialog',
+  'changeHasValue',
+  'addOption',
+  'change',
+])
 
-const { t } = useI18n();
-const store = useStore();
-const form = ref(null);
+const { t } = useI18n()
+const store = useStore()
+const form = ref(null)
 
-const textRequired = [(v) => !!v || t('HeuristicsTable.validation.textRequired')];
-const localOption = ref({ text: '', value: null, description: '' });
-const localHasValue = ref(true);
+const textRequired = [
+  (v) => !!v || t('HeuristicsTable.validation.textRequired'),
+]
+const localOption = ref({ text: '', value: null, description: '' })
+const localHasValue = ref(true)
 
 const testAnswerDocLength = computed(() => {
-  if (!store.getters.testAnswerDocument) return 0;
-  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
-  return Object.keys(heuristicAnswers).length;
-});
+  if (!store.getters.testAnswerDocument) return 0
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers
+  return Object.keys(heuristicAnswers).length
+})
 
 const valueRequired = computed(() => {
-  if (!localHasValue.value) return [];
+  if (!localHasValue.value) return []
   return [
-    (v) => (v !== null && v !== '' && v >= 0) || t('HeuristicsTable.validation.textRequired'),
-  ];
-});
+    (v) =>
+      (v !== null && v !== '' && v >= 0) ||
+      t('HeuristicsTable.validation.textRequired'),
+  ]
+})
 
 watch(
   () => props.option,
   (newOption) => {
-    localOption.value = { ...newOption };
+    localOption.value = { ...newOption }
   },
-  { deep: true, immediate: true }
-);
+  { deep: true, immediate: true },
+)
 
 watch(
   () => props.hasValue,
   (newValue) => {
-    localHasValue.value = newValue;
+    localHasValue.value = newValue
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 watch(localHasValue, (newValue) => {
-  if (!newValue) localOption.value.value = null;
-  emit('changeHasValue', newValue);
-});
+  if (!newValue) localOption.value.value = null
+  emit('changeHasValue', newValue)
+})
 
 const validate = async () => {
-  const { valid } = await form.value.validate();
+  const { valid } = await form.value.validate()
   if (valid) {
-    const optionToSave = { ...localOption.value };
-    if (!localHasValue.value) optionToSave.value = null;
-    emit('addOption', optionToSave);
-    emit('change');
-    emit('update:dialog', false);
-    resetVal();
+    const optionToSave = { ...localOption.value }
+    if (!localHasValue.value) optionToSave.value = null
+    emit('addOption', optionToSave)
+    emit('change')
+    emit('update:dialog', false)
+    resetVal()
   }
-};
+}
 
 const cancel = () => {
-  emit('update:dialog', false);
-  resetVal();
-};
+  emit('update:dialog', false)
+  resetVal()
+}
 
 const resetVal = () => {
-  localOption.value = { text: '', value: null, description: '' };
-  localHasValue.value = true;
-  form.value.resetValidation();
-};
+  localOption.value = { text: '', value: null, description: '' }
+  localHasValue.value = true
+  form.value.resetValidation()
+}
 </script>
 
 <style scoped>
