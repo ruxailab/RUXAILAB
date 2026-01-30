@@ -15,12 +15,12 @@
       />
     </div>
 
-    <!-- <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving...
+    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
+      <div class="text-center">
+        <v-progress-circular indeterminate color="#fca326" size="50" />
+        <div style="color: white" class="mt-3">loading...</div>
       </div>
-    </v-overlay> -->
+    </v-overlay>
 
     <Snackbar />
 
@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                            ? 'primary'
-                            : 'grey'
+                          ? 'primary'
+                          : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -357,7 +357,6 @@
               () => {
                 taskIndex = 0
                 globalIndex = hasEyeTracking ? 5 : 4
-                saveIrisDataIntoTask()
               }
             "
           />
@@ -405,12 +404,24 @@
                 localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
               }
             "
-            @done="() => handleTaskFinish(true)"
+            @done="
+              () => {
+                handleTaskFinish(true)
+                toggleTracking(false)
+              }
+            "
             @could-not-finish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
             @timer-stopped="handleTimerStopped"
+            @start-task="
+              () => {
+                if (test.testStructure.userTasks[taskIndex]?.hasEye) {
+                  toggleTracking(true)
+                }
+              }
+            "
           />
 
           <PostTestStep
@@ -557,7 +568,7 @@ const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
 
-const mediaUrls = computed(() => store.getters.mediaUrls)
+const mediaUrls = computed(() => store.getters['mediaRecorder/mediaUrls'])
 const test = computed(() => store.getters.test)
 const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
@@ -676,19 +687,10 @@ function toggleTracking(value) {
   isRecording.value = value
 }
 
-function saveIrisDataIntoTask() {
-  const task = test.value.testStructure.userTasks[taskIndex.value]
-
-  if (task?.hasEye === true && globalIndex.value >= 5) {
-    toggleTracking(true)
-  } else {
-    toggleTracking(false)
-  }
-}
-
 const saveAnswer = async () => {
   try {
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
+
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
 
@@ -739,9 +741,16 @@ const saveAnswer = async () => {
 
 const submitAnswer = async () => {
   try {
+    isLoading.value = true
     localTestAnswer.submitted = true
+
+    await store.dispatch('mediaRecorder/uploadMedia', {
+      testId: testId.value,
+    })
+
     await saveAnswer()
-  } catch {
+  } catch (e) {
+    console.error('[SUBMIT] error', e)
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -769,15 +778,22 @@ const handleSubmit = () => {
 }
 
 const attachMediaToTasks = (answer, mediaUrls) => {
-  if (!answer?.tasks?.length) return
+  if (!answer?.tasks?.length) {
+    console.warn('[ATTACH] no tasks found')
+    return
+  }
 
   for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
     const task = answer.tasks[taskIndex]
-    if (!task) continue
+    if (!task) {
+      console.warn('[ATTACH] task not found for index', taskIndex)
+      continue
+    }
 
     for (const type in medias) {
       const field = MEDIA_FIELD_MAP?.[type] || type
       const url = medias[type]
+
       if (url != null) task[field] = url
     }
   }
@@ -925,7 +941,6 @@ const completeStep = (id, type, userCompleted = true) => {
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
     }
 
-    saveIrisDataIntoTask()
     calculateProgress()
   } catch {
     store.commit('SET_TOAST', {
@@ -1359,8 +1374,7 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition:
-    background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

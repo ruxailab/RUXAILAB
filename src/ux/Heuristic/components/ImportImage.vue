@@ -5,10 +5,7 @@
       class="ml-2"
       name="my-image"
       accept="image/gif, image/jpeg, image/png"
-      :placeholder="imageUploaded
-        ? $t('common.inputImage')
-        : url
-      "
+      :placeholder="imageUploaded ? $t('common.inputImage') : url"
       :disabled="disable"
       :clearable="false"
       @change="uploadFile"
@@ -42,29 +39,34 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
 
 const props = defineProps({
   heuristicId: {
     type: String,
     default: '',
-    required: true
+    required: true,
   },
   questionId: {
     type: String,
     default: '',
-    required: true
+    required: true,
   },
   testId: {
     type: String,
     default: '',
-    required: true
+    required: true,
   },
   disable: {
     type: Boolean,
     default: false,
-    required: false
-  }
+    required: false,
+  },
 })
 
 const emit = defineEmits(['imageUploaded'])
