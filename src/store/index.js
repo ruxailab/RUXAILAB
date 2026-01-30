@@ -13,7 +13,6 @@ import automaticReport from '@/ux/accessibility/store/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
-import mediaRecorder from '../shared/store/mediaRecorder'
 
 export default createStore({
   state: {
@@ -27,12 +26,12 @@ export default createStore({
   },
   mutations: {
     SET_TOAST(state, { message, type }) {
-      state.toastMessage = message
-      state.toastType = type || 'info'
+      state.toastMessage = message;
+      state.toastType = type || 'info';
     },
     RESET_TOAST(state) {
-      state.toastMessage = ''
-      state.toastType = 'info'
+      state.toastMessage = '';
+      state.toastType = 'info';
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -91,6 +90,5 @@ export default createStore({
     UserStudy,
     CardStudy,
     notification,
-    mediaRecorder,
-  },
+  }
 })
