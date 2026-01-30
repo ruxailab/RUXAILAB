@@ -5,7 +5,7 @@
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
           <div
-            class="rich-text mb-4"
+            class="rich-text mb-4 task-description"
             v-html="task?.taskDescription || taskDescription"
           />
 
@@ -176,7 +176,7 @@
                     </span>
                   </div>
                   <div
-                    class="rich-text text-body-1"
+                    class="rich-text text-body-1 task-description"
                     v-html="task?.taskDescription || taskDescription"
                   />
                 </v-col>
@@ -364,17 +364,51 @@
             <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
           </div>
 
+          <!-- TAM-1 Form -->
+          <div v-else-if="task?.taskType === 'tam-1'">
+            <TamForm1
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
+          <!-- TAM-2 Form -->
+          <div v-else-if="task?.taskType === 'tam-2'">
+            <TamForm2
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
+          <!-- TAM-3 Form -->
+          <div v-else-if="task?.taskType === 'tam-3'">
+            <TamForm3
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
           <!-- Other task types -->
           <div v-else>
             <v-alert type="info" variant="tonal" class="mb-4">
               No post-task questionnaire required for this task type.
             </v-alert>
           </div>
-
           <v-row justify="end">
             <v-col cols="12">
               <p
-                v-if="task?.taskType === 'sus' && doneTaskDisabled"
+                v-if="
+                  (task?.taskType === 'sus' ||
+                    task?.taskType === 'tam-1' ||
+                    task?.taskType === 'tam-2' ||
+                    task?.taskType === 'tam-3' ||
+                    task?.taskType === 'sart' ||
+                    task?.taskType === 'nasa-tlx') &&
+                  doneTaskDisabled
+                "
                 class="text-error mb-4"
               >
                 Please answer all questions before continuing.
@@ -440,6 +474,9 @@ import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
 import Timer from '@/ux/UserTest/components/Timer.vue'
 import SusForm from '@/ux/UserTest/SusForm.vue'
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
+import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
+import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
+import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
 import sartForm from '@/ux/UserTest/components/sartForm.vue'
 
 const props = defineProps({
@@ -454,6 +491,7 @@ const props = defineProps({
   taskObservations: String,
   susAnswers: Array,
   nasaTlxAnswers: Object,
+  tamAnswers: Object,
   sartAnswers: Object,
   testId: String,
   userDocId: String,
@@ -476,7 +514,9 @@ const emit = defineEmits([
   'timer-stopped',
   'update:susAnswers',
   'update:nasaTlxAnswers',
+  'update:tamAnswers',
   'update:sartAnswers',
+  'startTask',
 ])
 
 onBeforeUnmount(() => {
@@ -500,13 +540,71 @@ const localSusAnswers = computed({
   set: (val) => emit('update:susAnswers', val),
 })
 
-const VALIDATION_REQUIRED_TYPES = ['sus'] // Only SUS requires validation for now
+const getTamInitialStructure = () => {
+  const taskType = props.task?.taskType
+
+  if (taskType === 'tam-1') {
+    return {
+      perceivedUsefulness: new Array(10).fill(undefined),
+      perceivedEaseOfUse: new Array(10).fill(undefined),
+      attitudeTowardUsing: new Array(5).fill(undefined),
+      actualSystemUse: new Array(2).fill(undefined),
+    }
+  } else if (taskType === 'tam-2') {
+    return {
+      intentionToUse: new Array(2).fill(undefined),
+      perceivedUsefulness: new Array(4).fill(undefined),
+      perceivedEaseOfUse: new Array(4).fill(undefined),
+      subjectiveNorm: new Array(2).fill(undefined),
+      voluntariness: new Array(3).fill(undefined),
+      image: new Array(3).fill(undefined),
+      jobRelevance: new Array(2).fill(undefined),
+      outputQuality: new Array(2).fill(undefined),
+      resultDemonstrability: new Array(4).fill(undefined),
+    }
+  } else if (taskType === 'tam-3') {
+    return {
+      perceivedUsefulness: new Array(3).fill(undefined),
+      perceivedEaseOfUse: new Array(3).fill(undefined),
+      behavioralIntention: new Array(2).fill(undefined),
+      usePatterns: new Array(2).fill(undefined),
+      subjectiveNorm: new Array(3).fill(undefined),
+      image: new Array(2).fill(undefined),
+      jobRelevance: new Array(3).fill(undefined),
+      outputQuality: new Array(3).fill(undefined),
+      resultDemonstrability: new Array(2).fill(undefined),
+      computerSelfEfficacy: new Array(3).fill(undefined),
+      perceptionsOfExternalControl: new Array(3).fill(undefined),
+      computerAnxiety: new Array(2).fill(undefined),
+      computerPlayfulness: new Array(2).fill(undefined),
+      perceivedEnjoyment: new Array(3).fill(undefined),
+      objectiveUsability: new Array(2).fill(undefined),
+      experience: new Array(2).fill(undefined),
+      voluntariness: new Array(2).fill(undefined),
+    }
+  }
+  return {}
+}
+
+const localTamAnswers = computed({
+  get: () => props.tamAnswers || getTamInitialStructure(),
+  set: (val) => emit('update:tamAnswers', val),
+})
+
+const VALIDATION_REQUIRED_TYPES = new Set([
+  'sus',
+  'tam-1',
+  'tam-2',
+  'tam-3',
+  'sart',
+  'nasa-tlx',
+])
 
 const shouldDisableFinishButton = computed(() => {
   const taskType = props.task?.taskType
 
   // If this task type requires validation, use doneTaskDisabled
-  if (VALIDATION_REQUIRED_TYPES.includes(taskType)) {
+  if (VALIDATION_REQUIRED_TYPES.has(taskType)) {
     return props.doneTaskDisabled
   }
 
@@ -520,12 +618,6 @@ function onUpdateSart(val) {
   localSartAnswers.value = val
   emit('update:sartAnswers', val)
 }
-
-const rawLink = computed(() => props.task?.taskLink || props.taskLink)
-const normalizedLink = computed(() => {
-  const link = rawLink.value || ''
-  return link.match(/^https?:\/\//i) ? link : `https://${link}`
-})
 
 const hasAnyRecording = computed(() => {
   return (
@@ -592,6 +684,8 @@ function updateElapsedTime() {
 }
 
 async function startTask() {
+  emit('show-loading')
+  emit('startTask')
   await startMediaRecorders()
   stage.value = 2
   taskStartTime = Date.now()
@@ -610,6 +704,7 @@ async function startTask() {
       if (timer && timer.startTimer) timer.startTimer()
     }, 100)
   })
+  emit('stop-show-loading')
 }
 
 function reopenTool() {
@@ -647,7 +742,6 @@ function handleShowPostForm(userCompleted) {
   if (isWaitingForUploadToFinish.value) return
 
   forceStopAllMedia()
-  console.log('Stopping media recorders...')
 
   if (timerInterval) {
     clearInterval(timerInterval)
@@ -664,8 +758,8 @@ function handleShowPostForm(userCompleted) {
 
   showPostForm.value.userCompleted = userCompleted
 
-  // Only show post-task form for specific task types
-  if (['sus', 'nasa-tlx', 'sart'].includes(props.task?.taskType)) {
+  // Show post-task form for all validated task types
+  if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 3
   } else {
     attemptFinish()
@@ -749,6 +843,10 @@ function onTimerStopped(elapsedTime) {
 </script>
 
 <style scoped>
+.task-description {
+  white-space: pre-line;
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

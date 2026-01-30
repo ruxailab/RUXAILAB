@@ -1,30 +1,13 @@
 <template>
   <div>
-    <v-row
-      justify="start"
-      align="center"
-    >
-      <v-col
-        cols="10"
-        sm="11"
-        class="py-0"
-      >
+    <v-row justify="start" align="center">
+      <v-col cols="10" sm="11" class="py-0">
         <slot name="answer" />
       </v-col>
-      <v-col
-        cols="1"
-        class="mb-6 py-0"
-      >
-        <v-tooltip
-          v-if="!show"
-          location="bottom"
-        >
+      <v-col cols="1" class="mb-6 py-0">
+        <v-tooltip v-if="!show" location="bottom">
           <template #activator="{ props }">
-            <v-btn
-              icon
-              v-bind="props"
-              @click="show = !show"
-            >
+            <v-btn icon v-bind="props" @click="show = !show">
               <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
@@ -37,16 +20,9 @@
             $t('HeuristicsTable.AddCommentBtn.addComment')
           }}</span>
         </v-tooltip>
-        <v-tooltip
-          v-else
-          location="bottom"
-        >
+        <v-tooltip v-else location="bottom">
           <template #activator="{ props }">
-            <v-btn
-              icon
-              v-bind="props"
-              @click="show = !show"
-            >
+            <v-btn icon v-bind="props" @click="show = !show">
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>
@@ -54,10 +30,7 @@
         </v-tooltip>
       </v-col>
 
-      <v-col
-        cols="12"
-        class="py-0"
-      >
+      <v-col cols="12" class="py-0">
         <v-textarea
           v-if="show"
           v-model="localComment"
@@ -101,8 +74,8 @@ const props = defineProps({
   disable: {
     type: Boolean,
     default: false,
-    required: false
-  }
+    required: false,
+  },
 })
 
 const emit = defineEmits(['updateComment'])
@@ -114,7 +87,7 @@ const localComment = ref('')
 
 const test = computed(() => store.getters.test)
 const hasContent = computed(
-  () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl
+  () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl,
 )
 
 watch(
@@ -122,7 +95,7 @@ watch(
   () => {
     show.value = false
     localComment.value = props.answerHeu.heuristicComment || ''
-  }
+  },
 )
 
 watch(
@@ -132,7 +105,7 @@ watch(
     if (newVal && !show.value) {
       show.value = true
     }
-  }
+  },
 )
 
 watch(
@@ -141,7 +114,7 @@ watch(
     if (newVal && !show.value) {
       show.value = true
     }
-  }
+  },
 )
 
 onMounted(() => {
@@ -155,8 +128,13 @@ const updateComment = (input) => {
 }
 
 const handleImageUploaded = (imageUrl) => {
-  if (imageUrl) { 
-    emit('updateComment', localComment.value, props.heurisIndex, props.answerHeu.heuristicId)
+  if (imageUrl) {
+    emit(
+      'updateComment',
+      localComment.value,
+      props.heurisIndex,
+      props.answerHeu.heuristicId,
+    )
   }
-};
+}
 </script>

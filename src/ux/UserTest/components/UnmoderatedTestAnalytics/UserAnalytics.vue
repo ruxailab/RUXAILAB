@@ -556,17 +556,14 @@ import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
-import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
 import SessionAnalytics from '../SessionAnalytics.vue'
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue'
-import { showSuccess, showError } from '@/shared/utils/toast'
 import { useI18n } from 'vue-i18n'
 import { useFilterDefinitions } from './useFilterDefinitions'
 
 const { t } = useI18n()
 
 const store = useStore()
-const test = computed(() => store.getters.test)
 const testStructure = computed(() => store.state.Tests.Test.testStructure || {})
 const answers = computed(() => store.getters.visibleUserAnswers || {})
 
@@ -605,7 +602,7 @@ const onFilterChange = (idx, val) => {
 }
 
 const hasActiveFilters = computed(() => {
-  const someFilters = Object.entries(selectedFilters.value).some(([k, v]) => {
+  const someFilters = Object.entries(selectedFilters.value).some(([v]) => {
     if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE)
     return !!v // texto
   })
@@ -758,37 +755,6 @@ const showTaskDetails = (session) => {
 const closeTaskDetailsModal = () => {
   showTaskDetailsModal.value = false
   selectedUserSession.value = null
-}
-
-const toggleHideSession = async (item) => {
-  const payload = Object.values(answers.value).find(
-    (s) => s.userDocId === item.userDocId,
-  )
-
-  console.log(payload)
-  if (!payload) {
-    console.error('Session not found for userDocId:', item.userDocId)
-    return
-  }
-
-  try {
-    await store.dispatch('updateTaskAnswer', {
-      payload: new UserStudyEvaluatorAnswer({
-        ...payload,
-        tasks: { ...payload.tasks },
-        hidden: !item.hidden,
-      }),
-      answersDocId: test.value.answersDocId,
-    })
-    showSuccess('User made hidden successfull')
-  } catch (error) {
-    console.error('Error saving answer:', error.message)
-    store.commit('SET_TOAST', {
-      type: 'error',
-      message: 'Failed to save the answer. Please try again.',
-    })
-    showError('Unable to hide user!!')
-  }
 }
 
 const showFilters = ref(true)

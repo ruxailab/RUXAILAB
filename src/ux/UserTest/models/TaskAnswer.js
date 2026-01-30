@@ -1,4 +1,5 @@
 import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
+import { TamAnswer } from "@/ux/UserTest/models/TamAnswer"
 import SartAnswer from "@/ux/UserTest/models/SartAnswer"
 
 export default class TaskAnswer {
@@ -17,6 +18,7 @@ export default class TaskAnswer {
     postAnswer,
     susAnswers,
     nasaTlxAnswers,
+    tamAnswers,
     sartAnswers,
     facialSentimentResults,
   } = {}) {
@@ -34,6 +36,7 @@ export default class TaskAnswer {
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
+    this.tamAnswers = tamAnswers ?? null
     
     if (sartAnswers) {
       this.sartAnswers = sartAnswers instanceof SartAnswer 
@@ -50,6 +53,20 @@ export default class TaskAnswer {
   }
 
   toFirestore() {
+    let nasaTlxData = null
+    if (this.nasaTlxAnswers) {
+      nasaTlxData = (this.nasaTlxAnswers instanceof NasaTlxAnswer) 
+        ? this.nasaTlxAnswers.toFirestore() 
+        : new NasaTlxAnswer(this.nasaTlxAnswers).toFirestore()
+    }
+
+    let tamData = null
+    if (this.tamAnswers) {
+      tamData = (this.tamAnswers instanceof TamAnswer) 
+        ? this.tamAnswers.toFirestore() 
+        : new TamAnswer(this.tamAnswers).toFirestore()
+    }
+
     return {
       taskId: this.taskId,
       taskAnswer: this.taskAnswer,
@@ -64,14 +81,9 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
+      nasaTlxAnswers: nasaTlxData,
+      tamAnswers: tamData,
       sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers,
-      nasaTlxAnswers:
-        this.nasaTlxAnswers != null
-          ? (this.nasaTlxAnswers instanceof NasaTlxAnswer
-              ? this.nasaTlxAnswers
-              : new NasaTlxAnswer(this.nasaTlxAnswers)
-            ).toFirestore()
-          : null,
       facialSentimentResults: this.facialSentimentResults,
     }
   }
