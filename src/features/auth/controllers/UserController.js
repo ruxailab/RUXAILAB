@@ -275,7 +275,7 @@ export default class UserController extends Controller {
               )
 
               // Attach answers to the test object so calculator can see them
-              if (answerDoc && answerDoc.taskAnswers) {
+              if (answerDoc?.taskAnswers) {
                 // The answerController returns the model, which puts 'taskAnswers' into 'tasks' property usually or similar structure
                 // Let's check getAnswerById implementation: it calls instantiateStudyAnswerByType
                 // If it's a UserStudyEvaluatorAnswer, it maps 'tasks'

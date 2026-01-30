@@ -63,5 +63,5 @@ export const calculateUserStorageUsage = (user) => {
     })
   })
 
-  return parseFloat(totalSizeMB.toFixed(2))
+  return Number.parseFloat(totalSizeMB.toFixed(2))
 }
