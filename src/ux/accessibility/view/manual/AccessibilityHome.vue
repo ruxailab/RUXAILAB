@@ -64,15 +64,13 @@ const getUserRole = async () => {
     } else {
       return 'user'
     }
-  } catch (error) {
-    console.error('Error getting user role:', error)
+  } catch {
     return 'user'
   }
 }
 
 onMounted(async () => {
   userRole.value = await getUserRole()
-  console.log('AccessibilityHome user role:', userRole.value)
 })
 
 // Direct manual accessibility cards implementation

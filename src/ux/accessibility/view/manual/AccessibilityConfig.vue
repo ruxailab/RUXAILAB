@@ -398,9 +398,6 @@ const store = useStore()
 const router = useRouter()
 const testId = ref(route.params.testId || route.params.id || '')
 
-console.log('AccessibilityConfig: Route params:', route.params)
-console.log('AccessibilityConfig: Resolved testId:', testId.value)
-
 // Stepper state
 const step = ref(1)
 
@@ -571,17 +568,9 @@ const saveComplianceAndContinue = async () => {
   try {
     isLoading.value = true
 
-    // Debug: Check if we have testId
-    console.log('saveComplianceAndContinue: testId value:', testId.value)
-    console.log('saveComplianceAndContinue: route params:', route.params)
-
     if (!testId.value) {
       // Try to get testId from route params again
       testId.value = route.params.testId || route.params.id || ''
-      console.log(
-        'saveComplianceAndContinue: Updated testId from route:',
-        testId.value,
-      )
     }
 
     if (!testId.value) {
@@ -600,7 +589,6 @@ const saveComplianceAndContinue = async () => {
       enableAutomaticSave: enableAutomaticSave.value,
       updatedAt: new Date().toISOString(),
     }
-    console.log('Saving compliance configuration:', testId.value, configData)
     await store.dispatch('Assessment/updateConfiguration', {
       configData,
       testId: testId.value,
@@ -623,11 +611,9 @@ const saveComplianceAndContinue = async () => {
       `WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`,
     )
     step.value = 2
-  } catch (err) {
-    console.log(err)
+  } catch {
     showError('Failed to save compliance level')
   } finally {
-    console.log('Saving')
     isLoading.value = false
   }
 }
@@ -649,14 +635,9 @@ const saveConfiguration = async () => {
     error.value = ''
     success.value = ''
 
-    // Debug: Check if we have testId
-    console.log('saveConfiguration: testId value:', testId.value)
-    console.log('saveConfiguration: route params:', route.params)
-
     if (!testId.value) {
       // Try to get testId from route params again
       testId.value = route.params.testId || route.params.id || ''
-      console.log('saveConfiguration: Updated testId from route:', testId.value)
     }
 
     if (!testId.value) {
@@ -673,9 +654,6 @@ const saveConfiguration = async () => {
       selectedRulesByGuideline: { ...selectedRulesByGuideline.value },
       updatedAt: new Date().toISOString(),
     }
-
-    // Fetch testId from route params
-    console.log('Saving configuration for testId:', testId)
 
     // Save to Assessment store for immediate use
     await store.dispatch('Assessment/updateConfiguration', {
@@ -696,8 +674,7 @@ const saveConfiguration = async () => {
     setTimeout(() => {
       router.push(`/accessibility/manual/preview/${testId.value}`)
     }, 1000)
-  } catch (err) {
-    console.error('Failed to save configuration:', err)
+  } catch {
     error.value = 'Failed to save configuration. Please try again.'
     showError('Failed to save configuration')
   } finally {
@@ -741,10 +718,6 @@ const preselectGuidelinesForComplianceLevel = () => {
   // Update reactive state
   selectedGuidelines.value = newSelectedGuidelines
   selectedRulesByGuideline.value = newSelectedRulesByGuideline
-
-  console.log(
-    `Pre-selected ${newSelectedGuidelines.length} guidelines for WCAG ${selectedCompliance.value} compliance level`,
-  )
 }
 
 // Watch for compliance level changes on step 2 to re-preselect guidelines
@@ -756,9 +729,6 @@ watch(selectedCompliance, (newLevel, oldLevel) => {
     filteredPrinciples.value.length > 0
   ) {
     preselectGuidelinesForComplianceLevel()
-    console.log(
-      `Compliance level changed from ${oldLevel} to ${newLevel}, reselecting guidelines`,
-    )
   }
 })
 
@@ -768,7 +738,6 @@ watch(
   (newParams) => {
     const newTestId = newParams.testId || newParams.id || ''
     if (newTestId && newTestId !== testId.value) {
-      console.log('Route params changed, updating testId:', newTestId)
       testId.value = newTestId
     }
   },
@@ -800,23 +769,12 @@ const resetToDefaults = () => {
 
 const loadExistingConfiguration = async () => {
   try {
-    // Debug: Check if we have testId
-    console.log('loadExistingConfiguration: testId value:', testId.value)
-    console.log('loadExistingConfiguration: route params:', route.params)
-
     if (!testId.value) {
       // Try to get testId from route params again
       testId.value = route.params.testId || route.params.id || ''
-      console.log(
-        'loadExistingConfiguration: Updated testId from route:',
-        testId.value,
-      )
     }
 
     if (!testId.value) {
-      console.warn(
-        'loadExistingConfiguration: No test ID available, skipping configuration load',
-      )
       return
     }
 
@@ -829,11 +787,9 @@ const loadExistingConfiguration = async () => {
     // Try to get configuration from test data first
     if (testData && testData.configData) {
       config = testData.configData
-      console.log('Loaded configuration from test document:', config)
     } else {
       // Fallback to Assessment store
       config = await store.dispatch('Assessment/getConfiguration')
-      console.log('Loaded configuration from Assessment store:', config)
     }
 
     if (config) {
@@ -851,16 +807,13 @@ const loadExistingConfiguration = async () => {
         step.value = 2
       }
     }
-  } catch (err) {
-    console.error('Failed to load configuration:', err)
+  } catch {
+    // Failed to load configuration
   }
 }
 
 // Lifecycle
 onMounted(async () => {
-  console.log('AccessibilityConfig onMounted: route params:', route.params)
-  console.log('AccessibilityConfig onMounted: testId:', testId.value)
-
   // Always ensure WCAG data is loaded before config UI
   if (!store.state.Assessment.wcagData) {
     await store.dispatch('Assessment/initializeAssessment')

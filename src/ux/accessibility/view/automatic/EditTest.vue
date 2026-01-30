@@ -265,12 +265,11 @@ export default {
           testId: testId,
         })
         if (response) {
-          console.log('Done')
+          // Done
         }
         // Redirect to the report page
         this.$router.push(`/answers/${testId}`)
       } catch (error) {
-        console.error('Error running test:', error)
         this.error =
           error.response?.data?.error || 'Failed to run the accessibility test'
         this.errorType = this.determineErrorType(error)

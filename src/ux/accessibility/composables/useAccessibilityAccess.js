@@ -12,18 +12,10 @@ export function useAccessibilityAccess() {
   const fetchStudyData = async (testId) => {
     try {
       await store.dispatch('getStudy', { id: testId })
-    } catch (firstError) {
-      console.log(
-        'First attempt failed, trying alternative:',
-        firstError.message,
-      )
+    } catch {
       try {
         await store.dispatch('getTest', { id: testId })
-      } catch (secondError) {
-        console.log(
-          'Second attempt failed, trying direct module access:',
-          secondError.message,
-        )
+      } catch {
         const studyModule = store._modules.root._children.Study
         if (studyModule) {
           await store.dispatch('Study/getStudy', { id: testId })
@@ -40,9 +32,6 @@ export function useAccessibilityAccess() {
     } else if (store.state.Test) {
       return store.state.Test
     } else {
-      console.log('Available store state keys:', Object.keys(store.state))
-      console.log('Full store state:')
-      console.log(JSON.stringify(store.state, null, 2))
       return null
     }
   }
@@ -50,59 +39,41 @@ export function useAccessibilityAccess() {
   const determineUserRole = (currentUser, studyData) => {
     const currentUserId = currentUser.id
     const isTestAdmin = studyData.testAdmin?.userDocId === currentUserId
-    console.log('Is Test Admin:', isTestAdmin)
     const isCooperator = studyData.cooperators?.some(
       (coop) => coop.userDocId === currentUserId,
     )
-    console.log('Is Cooperator:', isCooperator)
 
     if (isTestAdmin) {
       userRole.value = 'admin'
       accessLevel.value = 999
-      console.log(
-        'Access granted: User is test admin - full access to all pages',
-      )
     } else if (isCooperator) {
       userRole.value = 'cooperator'
       accessLevel.value = 500
-      console.log('Access granted: User is cooperator - preview page only')
     } else {
       userRole.value = 'user'
       accessLevel.value = 0
-      console.log('Limited access: User gets preview only')
     }
   }
 
   const fetchAccessData = async (testId) => {
     try {
       isLoading.value = true
-      console.log('=== FETCHING STUDY AND USER INFORMATION ===')
       const currentUser = store.state.Auth.user
-      console.log('Current User from Auth Store:')
-      console.log(JSON.stringify(currentUser, null, 2))
 
       if (testId) {
-        console.log('Fetching study with ID:', testId)
         const studyData = await fetchStudyData(testId)
-        console.log('Study Data from Store:')
-        console.log(JSON.stringify(studyData, null, 2))
 
         if (currentUser && studyData) {
           determineUserRole(currentUser, studyData)
         } else {
           userRole.value = 'user'
           accessLevel.value = 0
-          console.log('No user or study data - default to limited access')
         }
       } else {
-        console.log('No testId available')
         userRole.value = 'user'
         accessLevel.value = 0
       }
-
-      console.log('=== END FETCH DATA ===')
     } catch (error) {
-      console.error('Error in fetchAccessData:', error)
       showError(`Failed to load test data: ${error.message}`)
     } finally {
       isLoading.value = false

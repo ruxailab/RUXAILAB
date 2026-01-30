@@ -686,14 +686,13 @@ const testId = computed(() => route.params.testId || route.params.id)
 // Computed properties from store
 const report = computed(() => store.getters['automaticReport/report'])
 const reportLoading = computed(() => store.getters.loading)
-const reportError = computed(() => store.getters.getError)
 
 // Pa11y issues
 const allIssues = computed(() => report.value?.ReportIssues || [])
 
 // Transform the data structure to match the expected format
 const transformWcagData = (data) => {
-  return data.map((item, index) => {
+  return data.map((item) => {
     const principleKey = Object.keys(item)[0]
     const principleData = item[principleKey]
 
@@ -1179,8 +1178,7 @@ onMounted(async () => {
         }
       }
     }
-  } catch (err) {
-    console.error('Failed to load data:', err)
+  } catch {
     error.value = 'Failed to load data. Please try refreshing the page.'
   } finally {
     isLoading.value = false
