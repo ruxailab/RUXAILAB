@@ -12,9 +12,13 @@
             :label="$t('common.title')"
             :rules="titleRequired"
             counter="200"
-             maxlength="200"
+            maxlength="200"
             :error="(test.testTitle || '').length > 200"
-            :error-messages="(test.testTitle || '').length > 200 ? ['Maximum 200 characters'] : []"
+            :error-messages="
+              (test.testTitle || '').length > 200
+                ? ['Maximum 200 characters']
+                : []
+            "
             variant="outlined"
             density="comfortable"
             :placeholder="$t('studyCreation.details.enterTitle')"
