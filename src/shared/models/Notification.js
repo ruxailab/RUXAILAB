@@ -30,11 +30,11 @@ export default class Notification {
     this.description = description ?? null;
     this.descriptionTemplate = descriptionTemplate ?? null;
     this.descriptionParams = descriptionParams ?? null;
-    this.redirectsTo = redirectsTo ?? null;
+    this.redirectsTo = redirectsTo;
     this.createdDate = Date.now();
-    this.author = author ?? null;
-    this.read = read ?? false;
-    this.testId = testId ?? null;
+    this.author = author;
+    this.read = read;
+    this.testId = testId;
     this.accessLevel = accessLevel ?? null;
     this.readAt = readAt ?? null;
     this.type = type ?? null;
