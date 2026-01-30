@@ -47,8 +47,8 @@
               variant="elevated"
               size="large"
               prepend-icon="mdi-plus"
-              @click="createNewStudy"
               class="px-6"
+              @click="createNewStudy"
             >
               {{ $t('Dashboard.activeStudies.createNewStudy') }}
             </v-btn>
@@ -76,8 +76,8 @@
                     study.status === 'active'
                       ? 'success'
                       : study.status === 'finished'
-                      ? 'warning'
-                      : 'info'
+                        ? 'warning'
+                        : 'info'
                   "
                   variant="tonal"
                   size="small"
@@ -137,13 +137,7 @@
                     class="me-1"
                     color="warning"
                   />
-                  <span>{{
-                    `${study.daysLeft} ${
-                      study.daysLeft > 1
-                        ? $t('Dashboard.daysLeft')
-                        : $t('Dashboard.dayLeft')
-                    }`
-                  }}</span>
+                  <span>{{ getDaysLeftLabel(study) }}</span>
                 </div>
               </div>
             </v-card-text>
@@ -213,14 +207,20 @@ async function loadAnswers() {
         testDoc.answersDocId,
       )
       if (answerDoc.type === STUDY_TYPES.USER) {
+        const answers = Object.values(answerDoc.taskAnswers || {})
+        const submitted = answers.some((a) => a.submitted === true)
         last4.push({
           ...testDoc,
-          answers: Object.values({ ...answerDoc.taskAnswers }),
+          answers,
+          submitted,
         })
       } else {
+        const answers = Object.values(answerDoc.heuristicAnswers || {})
+        const submitted = answers.some((a) => a.submitted === true)
         last4.push({
           ...testDoc,
-          answers: Object.values({ ...answerDoc.heuristicAnswers }),
+          answers,
+          submitted,
         })
       }
     }
@@ -244,10 +244,43 @@ const daysLeft = (date) => {
   const futureDate = new Date(date)
   const today = new Date()
 
+  futureDate.setHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+
   const differenceInTime = futureDate.getTime() - today.getTime()
   const differenceInDays = differenceInTime / (1000 * 3600 * 24)
 
   return Math.floor(differenceInDays)
+}
+
+const getDaysLeftLabel = (study) => {
+  const progress = parseFloat(study.progress || 0)
+  const daysLeft = study.daysLeft
+  const submitted = study.submitted
+
+  if (submitted) return t('Dashboard.studyStatus.finished')
+
+  if (daysLeft < 0) {
+    return t('Dashboard.studyStatus.expiredDaysAgo', {
+      days: Math.abs(daysLeft),
+    })
+  }
+
+  if (progress >= 100 && !submitted) {
+    if (daysLeft === 0) {
+      return t('Dashboard.studyStatus.endsTodayReady')
+    }
+    return t('Dashboard.studyStatus.readyToSubmit')
+  }
+
+  if (daysLeft === 0)
+    return progress > 0
+      ? t('Dashboard.studyStatus.endsTodayStarted')
+      : t('Dashboard.studyStatus.endsToday')
+  if (daysLeft === 1) return `1 ${t('Dashboard.dayLeft')}`
+  if (daysLeft > 1) return `${daysLeft} ${t('Dashboard.daysLeft')}`
+  if (progress === 0) return t('Dashboard.studyStatus.notStarted')
+  return t('Dashboard.studyStatus.notStarted')
 }
 
 const finalFour = (studyArr) => {
@@ -270,6 +303,7 @@ const finalFour = (studyArr) => {
       testAdmin: study.testAdmin,
       cooperators: study.cooperators,
       isPublic: study.isPublic,
+      submitted: study.submitted ?? false,
     }))
     .filter(
       (study, index, self) =>
@@ -378,7 +412,9 @@ watch(
 <style scoped>
 .study-card {
   height: 100%;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
 .study-card:hover {
