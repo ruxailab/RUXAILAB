@@ -1772,5 +1772,15 @@
   "taskCreation": {
     "taskDescription": "Descripción de la Tarea",
     "taskDescriptionHelper": "Proporcione pasos específicos que deben seguir."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Eliminar Variable",
+      "message": "¿Está seguro de que desea eliminar esta variable? Esta acción no se puede deshacer."
+    },
+    "deleteOptionConfirm": {
+      "title": "Eliminar Opción",
+      "message": "¿Está seguro de que desea eliminar esta opción? Esta acción no se puede deshacer."
+    }
   }
 }
