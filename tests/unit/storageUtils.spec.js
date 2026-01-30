@@ -12,13 +12,13 @@ describe('storageUtils.js', () => {
         myAnswers: {
           answer1: {
             tasks: [
-              { videoRecordURL: 'http://video' }, // 50MB
-              { audioRecordURL: 'http://audio' }, // 10MB
+              { videoRecordURL: 'https://video' }, // 50MB
+              { audioRecordURL: 'https://audio' }, // 10MB
             ],
           },
           answer2: {
             tasks: {
-              task1: { screenRecordURL: 'http://screen' }, // 100MB
+              task1: { screenRecordURL: 'https://screen' }, // 100MB
             },
           },
         },
@@ -38,7 +38,7 @@ describe('storageUtils.js', () => {
             answers: [
               {
                 tasks: [
-                  { webcamRecordURL: 'http://webcam' }, // 50MB
+                  { webcamRecordURL: 'https://webcam' }, // 50MB
                 ],
               },
             ],
