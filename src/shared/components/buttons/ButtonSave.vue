@@ -6,11 +6,16 @@
     <v-tooltip v-if="visible" location="left">
       <template #activator="{ props }">
         <v-btn
-size="large" icon fixed color="#F9A826" :disabled="disabled" class="save-btn" v-bind="props"
-          @click="$emit('click')">
-          <v-icon size="large">
-            mdi-content-save
-          </v-icon>
+          size="large"
+          icon
+          fixed
+          color="#F9A826"
+          :disabled="disabled"
+          class="save-btn"
+          v-bind="props"
+          @click="$emit('click')"
+        >
+          <v-icon size="large"> mdi-content-save </v-icon>
         </v-btn>
       </template>
 
