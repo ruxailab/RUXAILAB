@@ -74,12 +74,14 @@
         </div>
 
         <v-divider />
-     
+
         <!-- Observer Notes Sectionn -->
         <div v-if="hasObserverNotes" class="pa-6">
           <div class="d-flex align-center justify-space-between mb-4">
             <h3 class="text-h6 font-weight-bold text-grey-800">
-              <v-icon color="primary" class="mr-2">mdi-note-text-outline</v-icon>
+              <v-icon color="primary" class="mr-2"
+                >mdi-note-text-outline</v-icon
+              >
               Observer Notes ({{ sortedNotes.length }})
             </h3>
             <!-- Export button -->
@@ -95,17 +97,13 @@
           </div>
 
           <!-- Notes Timeline -->
-          <v-card 
-           variant="outlined"
-           class="notes-container"
-           :style="{ maxHeight: '400px', overflowY: 'auto' }"
+          <v-card
+            variant="outlined"
+            class="notes-container"
+            :style="{ maxHeight: '400px', overflowY: 'auto' }"
           >
             <v-card-text>
-              <v-timeline
-                side="end"
-                density="compact"
-                truncate-line="both"
-              >
+              <v-timeline side="end" density="compact" truncate-line="both">
                 <v-timeline-item
                   v-for="(note, index) in sortedNotes"
                   :key="index"
@@ -259,38 +257,38 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 
 const mockObserverNotes = [
-  { 
-    text: 'User quickly found the homepage navigation. No issues observed.', 
-    timestamp: 1737100000000,  // 00:00:00
-    taskIndex: 0, 
-    taskName: 'Homepage Navigation' 
+  {
+    text: 'User quickly found the homepage navigation. No issues observed.',
+    timestamp: 1737100000000, // 00:00:00
+    taskIndex: 0,
+    taskName: 'Homepage Navigation',
   },
-  { 
-    text: 'Hesitation when clicking the search icon - took 5 seconds to locate it.', 
-    timestamp: 1737100090000,  // 00:01:30
-    taskIndex: 1, 
-    taskName: 'Product Search' 
+  {
+    text: 'Hesitation when clicking the search icon - took 5 seconds to locate it.',
+    timestamp: 1737100090000, // 00:01:30
+    taskIndex: 1,
+    taskName: 'Product Search',
   },
-  { 
-    text: 'Filter options caused confusion. User tried multiple times.', 
-    timestamp: 1737100180000,  // 00:03:00
-    taskIndex: 1, 
-    taskName: 'Product Search' 
+  {
+    text: 'Filter options caused confusion. User tried multiple times.',
+    timestamp: 1737100180000, // 00:03:00
+    taskIndex: 1,
+    taskName: 'Product Search',
   },
-  { 
-    text: 'Smooth checkout process. Completed in under 2 minutes.', 
-    timestamp: 1737100300000,  // 00:05:00
-    taskIndex: 2, 
-    taskName: 'Checkout Flow' 
+  {
+    text: 'Smooth checkout process. Completed in under 2 minutes.',
+    timestamp: 1737100300000, // 00:05:00
+    taskIndex: 2,
+    taskName: 'Checkout Flow',
   },
-  { 
-    text: 'User went back to homepage after checkout - looking for order confirmation.', 
-    timestamp: 1737100420000,  // 00:07:00
-    taskIndex: 0, 
-    taskName: 'Homepage Navigation' 
+  {
+    text: 'User went back to homepage after checkout - looking for order confirmation.',
+    timestamp: 1737100420000, // 00:07:00
+    taskIndex: 0,
+    taskName: 'Homepage Navigation',
   },
 ]
 
@@ -356,15 +354,24 @@ const sortedNotes = computed(() => {
 
 const formatNoteTime = (timestamp) => {
   const date = new Date(timestamp)
-  return date.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false 
+    hour12: false,
   })
 }
 
-const taskColors = ['blue', 'green', 'orange', 'purple', 'teal', 'pink', 'indigo', 'cyan']
+const taskColors = [
+  'blue',
+  'green',
+  'orange',
+  'purple',
+  'teal',
+  'pink',
+  'indigo',
+  'cyan',
+]
 const getTaskColor = (taskIndex) => {
   return taskColors[taskIndex % taskColors.length]
 }
@@ -411,13 +418,12 @@ const formatDuration = (duration) => {
   return `${minutes}m ${seconds}s`
 }
 
-
 watch(
   () => props.userSession,
   (newValue) => {
     console.log('userSession updated:', newValue)
   },
-  { immediate: true } // also logs on first load
+  { immediate: true }, // also logs on first load
 )
 </script>
 
