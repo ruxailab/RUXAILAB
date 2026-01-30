@@ -1,40 +1,40 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + 'PosTest'">
+  <ShowInfo :title="testTitle + ' - ' + 'PostTest'">
     <template #content>
       <div class="test-content pa-4 rounded-xl">
-        <div
-          v-for="(item, i) in postTest"
-          :key="i"
-          class="mb-6"
-        >
-          <v-col
-            cols="12"
-            class="py-0"
-          >
-            <span class="text-subtitle-1 font-weight-bold text-secondary">{{ item.title }}</span>
-            <br>
-            <span
-              v-if="item.description"
-              class="text-body-2 text-grey-darken-1"
-            >{{ item.description
+        <!-- Step Indicator -->
+        <div class="text-center mb-4 text-grey">
+          Question {{ step + 1 }} / {{ postTest.length }}
+        </div>
+
+        <div class="mb-6">
+          <v-col cols="12" class="py-0">
+            <span class="text-subtitle-1 font-weight-bold text-secondary">{{
+              currentItem.title
             }}</span>
+            <br />
+            <span
+              v-if="currentItem.description"
+              class="text-body-2 text-grey-darken-1"
+              >{{ currentItem.description }}</span
+            >
             <v-text-field
-              v-if="item.textField"
-              v-model="localAnswers[i].answer"
-              :placeholder="item.title"
+              v-if="currentItem.textField"
+              v-model="localAnswers[step].answer"
+              :placeholder="'Type your answer here…'"
               variant="outlined"
               density="comfortable"
               class="mt-2"
-              @update:model-value="updateAnswer(i, $event)"
+              @update:model-value="updateAnswer(step, $event)"
             />
             <v-radio-group
-              v-if="item.selectionField"
-              v-model="localAnswers[i].answer"
+              v-if="currentItem.selectionField"
+              v-model="localAnswers[step].answer"
               class="mt-2"
-              @update:model-value="updateAnswer(i, $event)"
+              @update:model-value="updateAnswer(step, $event)"
             >
               <v-radio
-                v-for="(selection, j) in item.selectionFields"
+                v-for="(selection, j) in currentItem.selectionFields"
                 :key="j"
                 :label="selection"
                 :value="selection"
@@ -43,20 +43,17 @@
             </v-radio-group>
           </v-col>
         </div>
-        <v-row
-          justify="center"
-          class="mt-4"
-        >
-          <v-col
-            cols="12"
-            md="6"
-          >
-            <v-btn
-              block
-              color="primary"
-              variant="flat"
-              @click="$emit('done')"
-            >
+        <v-row justify="space-between" class="mt-4">
+          <v-col cols="auto">
+            <v-btn variant="outlined" :disabled="step === 0" @click="prev">
+              Previous
+            </v-btn>
+          </v-col>
+          <v-col cols="auto">
+            <v-btn v-if="!isLastStep" color="primary" @click="next">
+              Next
+            </v-btn>
+            <v-btn v-else color="primary" variant="flat" @click="$emit('done')">
               Done
             </v-btn>
           </v-col>
@@ -67,8 +64,8 @@
 </template>
 
 <script setup>
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import { ref, watch } from 'vue';
+import ShowInfo from '@/shared/components/ShowInfo.vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   testTitle: String,
@@ -76,20 +73,36 @@ const props = defineProps({
   postTest: Array,
   postTestAnswer: Array,
   postTestCompleted: Boolean,
-});
+})
 
-const emit = defineEmits(['done', 'update:postTestAnswer']);
+const emit = defineEmits(['done', 'update:postTestAnswer'])
 
-const localAnswers = ref([...props.postTestAnswer]);
+const step = ref(0)
+const localAnswers = ref([...props.postTestAnswer])
+
+const currentItem = computed(() => props.postTest[step.value])
+const isLastStep = computed(() => step.value === props.postTest.length - 1)
+
+const next = () => {
+  if (step.value < props.postTest.length - 1) step.value++
+}
+
+const prev = () => {
+  if (step.value > 0) step.value--
+}
 
 const updateAnswer = (index, value) => {
-  localAnswers.value[index].answer = value;
-  emit('update:postTestAnswer', localAnswers.value);
-};
+  localAnswers.value[index].answer = value
+  emit('update:postTestAnswer', localAnswers.value)
+}
 
-watch(() => props.postTestAnswer, (newAnswers) => {
-  if (newAnswers) {
-    localAnswers.value = [...newAnswers];
-  }
-}, { deep: true, immediate: true });
+watch(
+  () => props.postTestAnswer,
+  (newAnswers) => {
+    if (newAnswers) {
+      localAnswers.value = [...newAnswers]
+    }
+  },
+  { deep: true, immediate: true },
+)
 </script>
