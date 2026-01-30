@@ -4,8 +4,8 @@ import EditTest from '@/ux/Heuristic/views/EditTest.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
-import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue';
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue'
+import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue'
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 
 export default [
@@ -57,14 +57,14 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
-      },/*
+      } /*
       {
         path: '/heuristic/analytics/:id/:heuristic?',
         name: 'HeuristicAnalyticsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: HeuristicsAnalytics,
-      },*/
+      },*/,
     ],
   },
 
@@ -74,4 +74,4 @@ export default [
     component: HeuristicAnalyticsView,
     meta: { authorize: [1] },
   },
-];
+]

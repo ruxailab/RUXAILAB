@@ -16,20 +16,20 @@ export default class Notification {
     readAt,
     type,
   } = {}) {
-    this.title = title;
-    this.description = description;
-    this.redirectsTo = redirectsTo;
-    this.createdDate = Date.now();
-    this.author = author;
-    this.read = read;
-    this.testId = testId;
-    this.accessLevel = accessLevel ?? null;
-    this.readAt = readAt ?? null;
-    this.type = type ?? null;
+    this.title = title
+    this.description = description
+    this.redirectsTo = redirectsTo
+    this.createdDate = Date.now()
+    this.author = author
+    this.read = read
+    this.testId = testId
+    this.accessLevel = accessLevel ?? null
+    this.readAt = readAt ?? null
+    this.type = type ?? null
   }
 
   static toNotification(data) {
-    return new Notification(data);
+    return new Notification(data)
   }
 
   toFirestore() {
@@ -44,6 +44,6 @@ export default class Notification {
       accessLevel: this.accessLevel,
       readAt: this.readAt,
       type: this.type,
-    };
+    }
   }
 }

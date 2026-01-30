@@ -2,7 +2,9 @@
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div class="d-flex align-center mb-4 clickable-header" @click.stop.capture>
-      <v-icon size="24" color="primary" class="header-icon">mdi-database</v-icon>
+      <v-icon size="24" color="primary" class="header-icon"
+        >mdi-database</v-icon
+      >
       <v-card-title class="text-h6 text-primary clickable-title">
         {{ $t('Dashboard.cards.storage') }}
       </v-card-title>
@@ -10,16 +12,26 @@
 
     <!-- Métrica principal -->
     <div class="main-metric mb-4">
-      <div class="metric-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.currentStorage') }}</div>
+      <div class="metric-subtitle text-caption text-grey-darken-1">
+        {{ $t('Dashboard.cards.currentStorage') }}
+      </div>
       <div class="metric-value text-h3 font-weight-bold">{{ storageUsed }}</div>
-      <div class="metric-change text-caption" :class="storageGrowth >= 0 ? 'text-success' : 'text-error'">{{
-        storageGrowthFormatted }}</div>
+      <div
+        class="metric-change text-caption"
+        :class="storageGrowth >= 0 ? 'text-success' : 'text-error'"
+      >
+        {{ storageGrowthFormatted }}
+      </div>
     </div>
 
     <!-- Información adicional -->
     <div class="additional-info">
-      <div class="info-subtitle text-caption text-grey-darken-1">{{ $t('Dashboard.cards.limitAvailable') }}</div>
-      <div class="info-value text-body-2 font-weight-medium">{{ storageLimit }}</div>
+      <div class="info-subtitle text-caption text-grey-darken-1">
+        {{ $t('Dashboard.cards.limitAvailable') }}
+      </div>
+      <div class="info-value text-body-2 font-weight-medium">
+        {{ storageLimit }}
+      </div>
     </div>
   </v-card>
 </template>
@@ -27,15 +39,17 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const router = useRouter()
+const { t } = useI18n()
 
 // Navigate to storage/data section
 const navigateToStorage = () => {
@@ -51,22 +65,23 @@ const storageUsed = computed(() => {
   const participantsStorage = (props.test?.participants?.length || 0) * 15 // 15MB por participante
   const heuristicsStorage = (props.test?.heuristics?.length || 0) * 5 // 5MB por heurística
   const totalMB = baseStorage + participantsStorage + heuristicsStorage
-  return `${totalMB}MB`
+  return `${totalMB}${t('common.units.mb')}`
 })
 
 const storageLimit = computed(() => {
   // Límite estándar para estudios
-  return "2GB"
+  return `2${t('common.units.gb')}`
 })
 
 const storageGrowth = computed(() => {
   // Simulamos el crecimiento basado en actividad reciente
-  const recentParticipants = props.test?.participants?.filter(p => {
-    const participationDate = new Date(p.createdAt || p.joinedAt)
-    const weekAgo = new Date()
-    weekAgo.setDate(weekAgo.getDate() - 7)
-    return participationDate > weekAgo
-  }).length || 0
+  const recentParticipants =
+    props.test?.participants?.filter((p) => {
+      const participationDate = new Date(p.createdAt || p.joinedAt)
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 7)
+      return participationDate > weekAgo
+    }).length || 0
 
   // Crecimiento aproximado del 0.1% por participante reciente
   return recentParticipants * 0.1

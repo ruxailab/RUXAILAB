@@ -15,12 +15,7 @@
         :disabled="!localChanges"
         @click="submit()"
       >
-        <v-icon
-          start
-          size="18"
-        >
-          mdi-check
-        </v-icon>
+        <v-icon start size="18"> mdi-check </v-icon>
         {{ $t('buttons.save') }}
       </v-btn>
     </template>
@@ -36,17 +31,10 @@
     <Snackbar />
     <LeaveAlert @submit="onSubmit" />
 
-    <v-dialog
-      v-model="tempDialog"
-      max-width="800"
-    >
+    <v-dialog v-model="tempDialog" max-width="800">
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-center px-6 py-4">
-          <v-icon
-            color="primary"
-            size="28"
-            class="mr-3"
-          >
+          <v-icon color="primary" size="28" class="mr-3">
             mdi-file-document-plus-outline
           </v-icon>
           <h3 class="text-h5 font-weight-bold text-grey-darken-4">
@@ -63,10 +51,7 @@
           </v-btn>
         </v-card-title>
         <v-divider />
-        <v-form
-          ref="tempform"
-          class="pa-6"
-        >
+        <v-form ref="tempform" class="pa-6">
           <v-row>
             <v-col cols="12">
               <v-text-field
@@ -75,6 +60,7 @@
                 :label="$t('common.title')"
                 :rules="titleRequired"
                 counter="200"
+                maxlength="200"
                 variant="outlined"
                 density="comfortable"
                 :placeholder="$t('TestDialog.template.title')"
@@ -128,17 +114,12 @@
     <div class="settings-layout">
       <div class="content-wrapper">
         <div class="left-column">
-          <v-card
-            class="info-card"
-            elevation="0"
-            height="auto"
-          >
+          <v-card class="info-card" elevation="0" height="auto">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="primary"
-                  size="20"
-                >
+              <div
+                class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon color="primary" size="20">
                   mdi-information-outline
                 </v-icon>
               </div>
@@ -165,18 +146,12 @@
         </div>
 
         <div class="right-column">
-          <v-card
-            class="advanced-card"
-            elevation="0"
-          >
+          <v-card class="advanced-card" elevation="0">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="secondary"
-                  size="20"
-                >
-                  mdi-cog-outline
-                </v-icon>
+              <div
+                class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon color="secondary" size="20"> mdi-cog-outline </v-icon>
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
@@ -189,15 +164,15 @@
             </div>
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-5">
-                <div class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative">
+                <div
+                  class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative"
+                >
                   <div class="d-flex align-center ga-2 mb-2">
-                    <v-icon
-                      color="primary"
-                      size="18"
+                    <v-icon color="primary" size="18"> mdi-earth </v-icon>
+                    <span
+                      class="font-weight-semibold text-subtitle-2 text-grey-darken-4"
+                      >{{ $t('pages.settings.public_access') }}</span
                     >
-                      mdi-earth
-                    </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.public_access') }}</span>
                   </div>
                   <p class="text-caption text-grey-darken-1 mb-4">
                     {{ $t('pages.settings.allow_users_view') }}
@@ -208,19 +183,19 @@
                     hide-details
                     inset
                     class="position-absolute"
-                    style="top: 20px; right: 20px;"
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                    style="top: 20px; right: 20px"
+                    @update:model-value="
+                      store.commit('SET_LOCAL_CHANGES', true)
+                    "
                   />
                 </div>
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5">
                   <div class="d-flex align-center ga-2 mb-3">
-                    <v-icon
-                      color="primary"
-                      size="18"
+                    <v-icon color="primary" size="18"> mdi-list-status </v-icon>
+                    <span
+                      class="font-weight-semibold text-subtitle-2 text-grey-darken-4"
+                      >{{ $t('pages.settings.test_status') }}</span
                     >
-                      mdi-list-status
-                    </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.test_status') }}</span>
                   </div>
                   <v-select
                     v-model="object.status"
@@ -229,28 +204,27 @@
                     variant="outlined"
                     density="comfortable"
                     hide-details
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                    @update:model-value="
+                      store.commit('SET_LOCAL_CHANGES', true)
+                    "
                   />
                 </div>
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5">
                   <div class="d-flex align-center ga-2 mb-3">
-                    <v-icon
-                      color="primary"
-                      size="18"
+                    <v-icon color="primary" size="18"> mdi-calendar </v-icon>
+                    <span
+                      class="font-weight-semibold text-subtitle-2 text-grey-darken-4"
+                      >{{ $t('pages.settings.end_date') }}</span
                     >
-                      mdi-calendar
-                    </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">{{ $t('pages.settings.end_date') }}</span>
                   </div>
                   <v-menu
                     v-model="dateMenu"
                     :close-on-content-click="false"
                     transition="scale-transition"
-                    offset-y
                     max-width="290px"
                     min-width="auto"
                   >
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-text-field
                         :model-value="formattedEndDate"
                         :label="$t('pages.settings.select_end_date')"
@@ -277,16 +251,12 @@
       </div>
 
       <!-- Quick Actions Card -->
-      <v-card
-        class="actions-card"
-        elevation="0"
-      >
+      <v-card class="actions-card" elevation="0">
         <div class="d-flex align-start ga-3 pa-6 pb-0">
-          <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon
-              color="amber-darken-2"
-              size="20"
-            >
+          <div
+            class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center"
+          >
+            <v-icon color="amber-darken-2" size="20">
               mdi-lightning-bolt
             </v-icon>
           </div>
@@ -309,12 +279,7 @@
               :disabled="hasTemplate || !object"
               @click="tempDialog = true"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-file-document-plus-outline
-              </v-icon>
+              <v-icon start size="18"> mdi-file-document-plus-outline </v-icon>
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
             <v-btn
@@ -325,12 +290,7 @@
               :disabled="!object"
               @click="duplicateStudy()"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-content-duplicate
-              </v-icon>
+              <v-icon start size="18"> mdi-content-duplicate </v-icon>
               {{ $t('buttons.duplicateTest') }}
             </v-btn>
             <v-btn
@@ -341,12 +301,7 @@
               :disabled="!object"
               @click="dialogDel = true"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-delete-outline
-              </v-icon>
+              <v-icon start size="18"> mdi-delete-outline </v-icon>
               {{ $t('pages.settings.deleteTest') }}
             </v-btn>
           </div>
@@ -354,20 +309,13 @@
       </v-card>
     </div>
 
-    <v-dialog
-      v-model="dialogDel"
-      max-width="500"
-      persistent
-    >
+    <v-dialog v-model="dialogDel" max-width="500" persistent>
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
-          <div class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon
-              color="error"
-              size="28"
-            >
-              mdi-alert-circle-outline
-            </v-icon>
+          <div
+            class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center"
+          >
+            <v-icon color="error" size="28"> mdi-alert-circle-outline </v-icon>
           </div>
           <div>
             <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
@@ -402,12 +350,7 @@
             height="44"
             @click="deleteStudy(object)"
           >
-            <v-icon
-              start
-              size="16"
-            >
-              mdi-delete
-            </v-icon>
+            <v-icon start size="16"> mdi-delete </v-icon>
             {{ $t('pages.settings.delete_forever') }}
           </v-btn>
         </v-card-actions>
@@ -419,41 +362,46 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import FormTestDescription from '@/shared/components/FormTestDescription';
-import Snackbar from '@/shared/components/Snackbar';
-import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
-import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
-import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import TemplateHeader from '@/shared/models/TemplateHeader';
-import TemplateAuthor from '@/shared/models/TemplateAuthor';
-import TemplateBody from '@/shared/models/TemplateBody';
-import Template from '@/shared/models/Template';
-import { useI18n } from 'vue-i18n';
-import { instantiateStudyByType } from '../constants/methodDefinitions';
-import StudyAdmin from '@/shared/models/StudyAdmin';
+import {
+  ref,
+  computed,
+  watch,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+} from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import FormTestDescription from '@/shared/components/FormTestDescription'
+import Snackbar from '@/shared/components/Snackbar'
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert'
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import TemplateHeader from '@/shared/models/TemplateHeader'
+import TemplateAuthor from '@/shared/models/TemplateAuthor'
+import TemplateBody from '@/shared/models/TemplateBody'
+import Template from '@/shared/models/Template'
+import { useI18n } from 'vue-i18n'
+import { instantiateStudyByType } from '../constants/methodDefinitions'
+import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 
-
-const store = useStore();
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
+const store = useStore()
+const router = useRouter()
+const { t } = useI18n()
 
 const props = defineProps({
   id: {
     type: String,
     required: true,
   },
-});
+})
 
 const template = ref({
   templateTitle: '',
   templateDescription: '',
   isTemplatePublic: false,
-});
+})
 const object = ref({
   testTitle: '',
   testDescription: '',
@@ -465,278 +413,247 @@ const object = ref({
   testAdmin: null,
   collaborators: {},
   configData: {},
-  progress: {}
-});
-const valids = ref([false, true, true]);
-const dialogDel = ref(false);
-const loading = ref(false);
-const loadingPage = ref(true);
-const tempDialog = ref(false);
-const dateMenu = ref(false);
-const form1 = ref(null);
-const tempform = ref(null);
+  progress: {},
+})
+const valids = ref([false, true, true])
+const dialogDel = ref(false)
+const loading = ref(false)
+const loadingPage = ref(true)
+const tempDialog = ref(false)
+const dateMenu = ref(false)
+const form1 = ref(null)
+const tempform = ref(null)
 
-const statusOptions = [
+const statusOptions = computed(() => [
   { title: t('studyCreation.details.status.active'), value: 'active' },
   { title: t('studyCreation.details.status.pending'), value: 'pending' },
   { title: t('studyCreation.details.status.finished'), value: 'finished' },
   { title: t('studyCreation.details.status.upcoming'), value: 'upcoming' },
-];
+])
 
 const titleRequired = [
-  v => !!v.trim() || t('errors.fieldRequired'),
-  v => v.length <= 200 || t('studyCreation.details.validation.max200Characters'),
-];
+  (v) => !!v.trim() || t('errors.fieldRequired'),
+  (v) =>
+    v.length <= 200 || t('studyCreation.details.validation.max200Characters'),
+]
 
 const localChanges = computed({
   get: () => store.state.localChanges,
-  set: value => store.commit('SET_LOCAL_CHANGES', value),
-});
+  set: (value) => store.commit('SET_LOCAL_CHANGES', value),
+})
 const test = computed({
   get: () => store.getters.test,
-  set: val => store.commit('SET_TEST', val),
-});
-const user = computed(() => store.getters.user);
-const answers = computed(() => store.getters.answers || []);
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
-const answersNew = computed(() => {
-  if (testAnswerDocument.value) {
-    return Object.values(testAnswerDocument.value.heuristicAnswers);
-  }
-  return [];
-});
-const reports = computed(() => store.getters.reports || []);
-const cooperators = computed(() => store.getters.cooperators || {});
+  set: (val) => store.commit('SET_TEST', val),
+})
+const user = computed(() => store.getters.user)
+// const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+// const reports = computed(() => store.getters.reports || []);
+// const cooperators = computed(() => store.getters.cooperators || {});
 const dialogText = computed(() => {
   if (test.value) {
-    return t('alerts.deleteTest', { testTitle: test.value.testTitle });
+    return t('alerts.deleteTest', { testTitle: test.value.testTitle })
   }
-  return t('alerts.deleteTest');
-});
+  return t('alerts.deleteTest')
+})
 const hasTemplate = computed(() => {
   if (object.value && 'template' in object.value) {
-    return object.value.template !== null;
+    return object.value.template !== null
   }
-  return false;
-});
+  return false
+})
 
 const formattedEndDate = computed(() => {
   if (object.value?.endDate) {
     try {
-      const date = new Date(object.value.endDate);
+      const date = new Date(object.value.endDate)
 
       if (Number.isNaN(date.getTime())) {
-        return '';
+        return ''
       }
-      return date.toLocaleDateString();
+      return date.toLocaleDateString()
     } catch (error) {
-      console.error('Error formatting date:', error);
-      return '';
+      return error
     }
   }
-  return '';
-});
+  return ''
+})
 
 const datePickerModel = computed({
   get() {
     if (object.value?.endDate) {
       if (typeof object.value.endDate === 'number') {
-        const date = new Date(object.value.endDate);
+        const date = new Date(object.value.endDate)
         if (!Number.isNaN(date.getTime())) {
-          return date;
+          return date
         }
       }
-      const date = new Date(object.value.endDate);
+      const date = new Date(object.value.endDate)
       if (!Number.isNaN(date.getTime())) {
-        return date;
+        return date
       }
     }
-    return null;
+    return null
   },
   set(newDate) {
     if (newDate && object.value) {
-      object.value.endDate = newDate.getTime();
-      store.commit('SET_LOCAL_CHANGES', true);
+      object.value.endDate = newDate.getTime()
+      store.commit('SET_LOCAL_CHANGES', true)
     }
-  }
-});
+  },
+})
 
 const createObjectFromTest = (testData) => {
-  if (!testData) return null;
+  if (!testData) return null
 
-  const isAccessibilityTest = testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL';
-  
+  const isAccessibilityTest =
+    testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL'
+
   if (isAccessibilityTest) {
     return {
-      ...testData, 
+      ...testData,
       testTitle: testData.title || testData.testTitle || testData.name || '',
-      testDescription: testData.description || testData.testDescription || testData.desc || '',
+      testDescription:
+        testData.description || testData.testDescription || testData.desc || '',
       testType: testData.testType,
       status: testData.status || 'draft',
       endDate: testData.endDate || testData.end_date || null,
-      isPublic: testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
-      websiteUrl: testData.websiteUrl || testData.website_url || testData.url || '',
+      isPublic:
+        testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
+      websiteUrl:
+        testData.websiteUrl || testData.website_url || testData.url || '',
       testAdmin: testData.testAdmin || testData.admin || null,
       collaborators: testData.collaborators || testData.cooperators || {},
       configData: testData.configData || testData.config || {},
-      progress: testData.progress || testData.progressData || {}
-    };
+      progress: testData.progress || testData.progressData || {},
+    }
   } else {
     return {
       ...testData,
-    };
+    }
   }
-};
+}
 
 watch(
   test,
-  newTest => {
-    if (newTest !== null && newTest !== undefined) {
-      const mappedObject = createObjectFromTest(newTest);
-      object.value = mappedObject;
+  (newTest) => {
+    if (newTest) {
+      const mappedObject = createObjectFromTest(newTest)
+      if (mappedObject) {
+        object.value = mappedObject
+      }
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 onMounted(async () => {
   if (props.id) {
     try {
-      console.log('Fetching test data for ID:', props.id);
-      await store.dispatch('getStudy', { id: props.id });
-      
-      const testData = store.getters.test;
-      console.log('Fetched test data:', testData);
+      await store.dispatch('getStudy', { id: props.id })
+
+      const testData = store.getters.test
       if (!testData) {
-        showError('errors.globalError');
+        showError('errors.globalError')
       }
     } catch (error) {
-      console.error('Error fetching test data:', error);
-      showError('errors.globalError');
+      showError('errors.globalError')
+      return error
     }
   } else {
-    showError('errors.globalError');
+    showError('errors.globalError')
   }
-  
-  loadingPage.value = false;
-});
+
+  loadingPage.value = false
+})
 
 onBeforeMount(() => {
-  store.commit('SET_LOCAL_CHANGES', false);
-  store.commit('SET_DIALOG_LEAVE', false);
-  window.addEventListener('beforeunload', preventNav);
-});
+  store.commit('SET_LOCAL_CHANGES', false)
+  store.commit('SET_DIALOG_LEAVE', false)
+  window.addEventListener('beforeunload', preventNav)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('beforeunload', preventNav);
-});
+  window.removeEventListener('beforeunload', preventNav)
+})
 
-onBeforeRouteLeave((to, from) => {
+onBeforeRouteLeave((to, _from) => {
   if (localChanges.value) {
-    store.commit('SET_DIALOG_LEAVE', true);
-    store.commit('SET_PATH_TO', to.name);
-    return false;
+    store.commit('SET_DIALOG_LEAVE', true)
+    store.commit('SET_PATH_TO', to.name)
+    return false
   }
-  return true;
-});
+  return true
+})
 
 const validate = (valid, index) => {
-  valids.value[index] = valid;
-};
+  valids.value[index] = valid
+}
 
 const onSubmit = async () => {
-  await submit();
-  store.commit('SET_LOCAL_CHANGES', false);
-  store.commit('SET_DIALOG_LEAVE', false);
-  router.push({ name: store.state.pathTo });
-};
+  await submit()
+  store.commit('SET_LOCAL_CHANGES', false)
+  store.commit('SET_DIALOG_LEAVE', false)
+  router.push({ name: store.state.pathTo })
+}
 
 const submit = async () => {
-  const title = object.value.testTitle;
+  const title = object.value.testTitle
   if (title.length > 0 && title.length < 200) {
-    loading.value = true;
+    loading.value = true
     try {
-      console.log('Saving object with endDate:', object.value.endDate);
-      const study = instantiateStudyByType(object.value.testType, object.value);
-      console.log('Study object to save:', study);
-      await store.dispatch('updateStudy', study);
-      await store.dispatch('getStudy', { id: props.id });
-      store.commit('SET_LOCAL_CHANGES', false);
-      showSuccess('alerts.savedChanges');
+      const study = instantiateStudyByType(object.value.testType, object.value)
+      await store.dispatch('updateStudy', study)
+      await store.dispatch('getStudy', { id: props.id })
+      store.commit('SET_LOCAL_CHANGES', false)
+      showSuccess('alerts.savedChanges')
     } catch (error) {
-      showError('errors.globalError');
-      console.error('Error saving test:', error);
+      showError('errors.globalError')
+      console.error('Error saving test:', error)
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   } else if (title.length >= 200) {
-    showWarning('studyCreation.details.validation.max200Characters');
+    showWarning('studyCreation.details.validation.max200Characters')
   } else {
-    showWarning('studyCreation.details.validation.enterTitle');
+    showWarning('studyCreation.details.validation.enterTitle')
   }
-};
+}
 
-const preventNav = event => {
-  if (!localChanges.value) return;
-  event.preventDefault();
-  event.returnValue = '';
-};
+const preventNav = (event) => {
+  if (!localChanges.value) return
+  event.preventDefault()
+  event.returnValue = ''
+}
 
-const fetchTestData = async () => {
-  if (!props.id) {
-    return;
-  }
-  
+// function logCurrentState() {
+//   // This function can be used for debugging if needed
+// }
+
+const deleteStudy = async (item) => {
+  loading.value = true
   try {
-    loading.value = true;
-    
-    await store.dispatch('getStudy', { id: props.id });
-    
-    const testData = store.getters.test;
-    
-    if (testData) {
-      showSuccess('alerts.genericSuccess');
-    } else {
-      showWarning('errors.globalError');
-    }
+    const auxUser = { ...user.value }
+    delete auxUser.myTests[item.id]
+    item.auxUser = auxUser
+    await store.dispatch('deleteStudy', item)
+    showSuccess('alerts.genericSuccess')
+    router.push({ name: 'Admin' })
   } catch (error) {
-    console.error('Error fetching test data:', error);
-    showError('errors.globalError');
+    showError('errors.globalError')
   } finally {
-    loading.value = false;
+    loading.value = false
+    dialogDel.value = false
   }
-};
-
-const logCurrentState = () => {
-  // This function can be used for debugging if needed
-};
-
-const deleteStudy = async item => {
-  loading.value = true;
-  try {
-    const auxUser = { ...user.value };
-    delete auxUser.myTests[item.id];
-    item.auxUser = auxUser;
-    await store.dispatch('deleteStudy', item);
-    showSuccess('alerts.genericSuccess');
-    router.push({ name: 'Admin' });
-  } catch (error) {
-    showError('errors.globalError');
-    console.error('Error deleting test:', error);
-  } finally {
-    loading.value = false;
-    dialogDel.value = false;
-  }
-};
+}
 
 const createTemplate = async () => {
-  const { valid } = await tempform.value.validate();
+  const { valid } = await tempform.value.validate()
   if (!valid) {
-    showWarning('errors.fieldRequired');
-    return;
+    showWarning('errors.fieldRequired')
+    return
   }
 
-  loading.value = true;
+  loading.value = true
   try {
     const tempHeader = new TemplateHeader({
       creationDate: Date.now(),
@@ -751,57 +668,57 @@ const createTemplate = async () => {
         userEmail: test.value.testAdmin.email,
         userDocId: test.value.testAdmin.userDocId,
       }),
-    });
+    })
 
-    const tempBody = new TemplateBody(test.value);
+    const tempBody = new TemplateBody(test.value)
     const templateObj = new Template({
       id: null,
       header: tempHeader,
       body: tempBody,
-    });
+    })
 
-    await store.dispatch('createTemplate', templateObj);
-    showSuccess('alerts.genericSuccess');
-    closeDialog();
+    await store.dispatch('createTemplate', templateObj)
+    showSuccess('alerts.genericSuccess')
+    closeDialog()
   } catch (error) {
-    showError('errors.globalError');
-    console.error('Error creating template:', error);
+    showError('errors.globalError')
+    return error
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const closeDialog = () => {
-  tempDialog.value = false;
+  tempDialog.value = false
   if (tempform.value) {
-    tempform.value.resetValidation();
+    tempform.value.resetValidation()
   }
   template.value = {
     templateTitle: '',
     templateDescription: '',
     isTemplatePublic: false,
-  };
-};
+  }
+}
 
-const updateObject = newObject => {
-  object.value = { ...newObject };
-  store.commit('SET_LOCAL_CHANGES', true);
-};
+const updateObject = (newObject) => {
+  object.value = { ...newObject }
+  store.commit('SET_LOCAL_CHANGES', true)
+}
 
 const onDateChange = (date) => {
-  console.log('Date picker changed to:', date);
-  dateMenu.value = false;
-};
+  // console.log('Date picker changed to:', date);
+  dateMenu.value = false
+}
 
 const clearEndDate = () => {
   if (object.value) {
-    object.value.endDate = null;
-    store.commit('SET_LOCAL_CHANGES', true);
+    object.value.endDate = null
+    store.commit('SET_LOCAL_CHANGES', true)
   }
-};
+}
 
 const duplicateStudy = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const rawData = {
       testTitle: t('buttons.duplicateTest') + ' ' + test.value.testTitle,
@@ -819,23 +736,22 @@ const duplicateStudy = async () => {
       updateDate: Date.now(),
       status: test.value.status,
       endDate: test.value.endDate,
-    };
+    }
 
-    const study = instantiateStudyByType(rawData.testType, rawData);
+    const study = instantiateStudyByType(rawData.testType, rawData)
 
     await store.dispatch('duplicateStudy', {
       test: study,
       answer: testAnswerDocument.value,
-    });
-    showSuccess('alerts.genericSuccess');
-    router.push('/admin');
+    })
+    showSuccess('alerts.genericSuccess')
+    router.push('/admin')
   } catch (error) {
-    showError('errors.globalError');
-    console.error('Error duplicating test:', error);
+    showError('errors.globalError')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style scoped>

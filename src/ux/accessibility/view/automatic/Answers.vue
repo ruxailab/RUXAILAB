@@ -17,16 +17,10 @@
       type="info"
       variant="tonal"
       closable
-      class="mb-2 text-body-2 pa-2 "
+      class="mb-2 text-body-2 pa-2"
     >
       <div class="d-flex flex-column align-center justify-center">
-        <v-icon
-          color="info"
-          size="48"
-          class="mb-2"
-        >
-          mdi-info-circle
-        </v-icon>
+        <v-icon color="info" size="48" class="mb-2"> mdi-info-circle </v-icon>
         <span class="text-h6 font-weight-bold mb-1">Infomation</span>
         <span class="text-body-1">No Assessment Available for this Test</span>
       </div>
@@ -35,29 +29,14 @@
     <!-- Main Report Content -->
     <div v-else-if="report">
       <!-- Report Header -->
-      <v-card
-        class="mb-2"
-        density="compact"
-      >
+      <v-card class="mb-2" density="compact">
         <v-card-title class="text-body-1 py-2">
-          <v-icon
-            icon="mdi-web-check"
-            class="me-2"
-            color="primary"
-            size="20"
-          />
+          <v-icon icon="mdi-web-check" class="me-2" color="primary" size="20" />
           Accessibility Report
         </v-card-title>
         <v-card-text class="py-1">
-          <v-row
-            class="ma-0"
-            dense
-          >
-            <v-col
-              cols="12"
-              md="6"
-              class="py-0"
-            >
+          <v-row class="ma-0" dense>
+            <v-col cols="12" md="6" class="py-0">
               <v-chip
                 prepend-icon="mdi-link"
                 variant="outlined"
@@ -68,11 +47,7 @@
                 {{ report.ReportUrl }}
               </v-chip>
             </v-col>
-            <v-col
-              cols="12"
-              md="6"
-              class="py-0"
-            >
+            <v-col cols="12" md="6" class="py-0">
               <v-chip
                 prepend-icon="mdi-calendar"
                 variant="outlined"
@@ -103,11 +78,7 @@
             :value="index"
             class="text-none px-2"
           >
-            <v-icon
-              :icon="getTabIcon(index)"
-              class="me-1"
-              size="16"
-            />
+            <v-icon :icon="getTabIcon(index)" class="me-1" size="16" />
             {{ tab }}
           </v-tab>
         </v-tabs>
@@ -115,20 +86,10 @@
         <v-window v-model="currentTab">
           <!-- Summary & Issues Tab -->
           <v-window-item :value="0">
-            <v-container
-              fluid
-              class="pa-1"
-            >
+            <v-container fluid class="pa-1">
               <!-- Summary Cards -->
-              <v-row
-                class="mb-2"
-                dense
-              >
-                <v-col
-                  cols="12"
-                  sm="4"
-                  class="py-0"
-                >
+              <v-row class="mb-2" dense>
+                <v-col cols="12" sm="4" class="py-0">
                   <v-card
                     :color="
                       getIssueCounts().errors > 0 ? 'error' : 'grey-lighten-3'
@@ -145,17 +106,11 @@
                       >
                         {{ getIssueCounts().errors }}
                       </div>
-                      <div class="text-caption">
-                        Errors
-                      </div>
+                      <div class="text-caption">Errors</div>
                     </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col
-                  cols="12"
-                  sm="4"
-                  class="py-0"
-                >
+                <v-col cols="12" sm="4" class="py-0">
                   <v-card
                     :color="
                       getIssueCounts().warnings > 0
@@ -174,17 +129,11 @@
                       >
                         {{ getIssueCounts().warnings }}
                       </div>
-                      <div class="text-caption">
-                        Warnings
-                      </div>
+                      <div class="text-caption">Warnings</div>
                     </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col
-                  cols="12"
-                  sm="4"
-                  class="py-0"
-                >
+                <v-col cols="12" sm="4" class="py-0">
                   <v-card
                     :color="
                       getIssueCounts().notices > 0 ? 'info' : 'grey-lighten-3'
@@ -201,9 +150,7 @@
                       >
                         {{ getIssueCounts().notices }}
                       </div>
-                      <div class="text-caption">
-                        Notices
-                      </div>
+                      <div class="text-caption">Notices</div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -212,11 +159,7 @@
               <!-- Issues List -->
               <v-card density="compact">
                 <v-card-title class="py-2 px-3 text-body-2">
-                  <v-icon
-                    icon="mdi-alert-circle"
-                    class="me-1"
-                    size="18"
-                  />
+                  <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
                   Issues
                 </v-card-title>
                 <v-card-text class="py-1 px-2">
@@ -247,11 +190,7 @@
                         >
                           {{ issue.type }}
                         </v-chip>
-                        <v-chip
-                          variant="outlined"
-                          size="x-small"
-                          class="me-1"
-                        >
+                        <v-chip variant="outlined" size="x-small" class="me-1">
                           {{ issue.code }}
                         </v-chip>
                       </v-list-item-title>
@@ -276,21 +215,14 @@
           <!-- Issues & Preview Tab -->
           <v-window-item :value="1">
             <v-row no-gutters>
-              <v-col
-                cols="12"
-                md="5"
-              >
+              <v-col cols="12" md="5">
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
                   density="compact"
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon
-                      icon="mdi-alert-circle"
-                      class="me-1"
-                      size="18"
-                    />
+                    <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
                     Issues
                   </v-card-title>
                   <v-card-text
@@ -339,7 +271,7 @@
                     <div
                       v-if="
                         infiniteIssues.length <
-                          (report?.ReportIssues?.length || 0)
+                        (report?.ReportIssues?.length || 0)
                       "
                       class="text-center py-2 text-caption grey-text"
                     >
@@ -349,21 +281,14 @@
                 </v-card>
               </v-col>
 
-              <v-col
-                cols="12"
-                md="7"
-              >
+              <v-col cols="12" md="7">
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
                   density="compact"
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon
-                      icon="mdi-web"
-                      class="me-1"
-                      size="18"
-                    />
+                    <v-icon icon="mdi-web" class="me-1" size="18" />
                     Webpage Preview
                   </v-card-title>
                   <v-card-text
@@ -401,21 +326,14 @@
           <!-- Issues & Details Tab -->
           <v-window-item :value="2">
             <v-row no-gutters>
-              <v-col
-                cols="12"
-                md="5"
-              >
+              <v-col cols="12" md="5">
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
                   density="compact"
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon
-                      icon="mdi-alert-circle"
-                      class="me-1"
-                      size="18"
-                    />
+                    <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
                     Issues
                   </v-card-title>
                   <v-card-text
@@ -465,7 +383,7 @@
                     <div
                       v-if="
                         infiniteIssues.length <
-                          (report?.ReportIssues?.length || 0)
+                        (report?.ReportIssues?.length || 0)
                       "
                       class="text-center py-2 text-caption grey-text"
                     >
@@ -475,21 +393,14 @@
                 </v-card>
               </v-col>
 
-              <v-col
-                cols="12"
-                md="7"
-              >
+              <v-col cols="12" md="7">
                 <v-card
                   height="100%"
                   class="d-flex flex-column"
                   density="compact"
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon
-                      icon="mdi-information"
-                      class="me-1"
-                      size="18"
-                    />
+                    <v-icon icon="mdi-information" class="me-1" size="18" />
                     Issue Details
                   </v-card-title>
                   <v-card-text class="flex-grow-1 overflow-y-auto py-1 px-2">
@@ -523,9 +434,10 @@
                           <v-list-item-subtitle>
                             <code
                               class="bg-grey-lighten-4 pa-1 rounded text-caption"
-                            >{{
-                              report.ReportIssues[selectedIssue].code
-                            }}</code>
+                              >{{
+                                report.ReportIssues[selectedIssue].code
+                              }}</code
+                            >
                           </v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item>
@@ -549,13 +461,12 @@
                               color="grey-lighten-5"
                               class="pa-1 rounded"
                             >
-                              <pre
-                                class="text-caption"
-                                style="font-size: 11px"
-                              >{{
+                              <pre class="text-caption" style="font-size: 11px"
+                                >{{
                                   report.ReportIssues[selectedIssue].context
                                 }}
-                    </pre>
+                    </pre
+                              >
                             </v-sheet>
                           </v-list-item-subtitle>
                         </v-list-item>
@@ -570,9 +481,10 @@
                           <v-list-item-subtitle>
                             <code
                               class="bg-grey-lighten-4 pa-1 rounded text-caption"
-                            >{{
-                              report.ReportIssues[selectedIssue].selector
-                            }}</code>
+                              >{{
+                                report.ReportIssues[selectedIssue].selector
+                              }}</code
+                            >
                           </v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item
@@ -616,11 +528,7 @@
       </v-card>
     </div>
     <div v-else>
-      <v-alert
-        type="info"
-        variant="tonal"
-        class="mb-2 text-body-2 pa-2"
-      >
+      <v-alert type="info" variant="tonal" class="mb-2 text-body-2 pa-2">
         No report data available.
       </v-alert>
     </div>
@@ -634,7 +542,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 export default {
   name: 'ReportDetail',
   components: {
-    PageWrapper
+    PageWrapper,
   },
   data() {
     const testId = this.$route.params.testId || this.$route.params.id
@@ -651,10 +559,10 @@ export default {
   computed: {
     ...mapState('automaticReport', ['report']),
     loading() {
-      return this.$store.getters.loading;
+      return this.$store.getters.loading
     },
     error() {
-      return this.$store.getters.getError;
+      return this.$store.getters.getError
     },
     paginatedIssues() {
       if (!this.report || !this.report.ReportIssues) return []
@@ -670,11 +578,11 @@ export default {
       return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
     },
   },
-    mounted() {
+  mounted() {
     if (!this.testId) {
       this.$store.commit('setError', {
         errorCode: 'NO_TEST_ID',
-        message: 'No testId provided in route.'
+        message: 'No testId provided in route.',
       })
       return
     }
@@ -738,14 +646,12 @@ export default {
         !this.$refs.previewFrame.parentNode ||
         !this.report?.modifiedHtml
       ) {
-        console.warn('Required data or elements not available')
         return
       }
       try {
         const frame = this.$refs.previewFrame
         frame.addEventListener('load', () => {
           if (!frame.contentWindow || !frame.contentDocument) {
-            console.warn('iframe not ready')
             return
           }
           frame.contentWindow.addEventListener('click', (event) => {
@@ -757,9 +663,7 @@ export default {
             }
           })
         })
-      } catch (error) {
-        console.error('Error setting up iframe:', error)
-      }
+      } catch {}
     },
     scrollToIssue(index) {
       if (
@@ -810,7 +714,6 @@ export default {
       }
     },
   },
-
 }
 </script>
 

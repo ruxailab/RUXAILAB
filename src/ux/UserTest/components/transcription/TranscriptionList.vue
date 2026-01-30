@@ -30,7 +30,10 @@
 </template>
 
 <script setup>
+import { formatTime } from '@/shared/utils/timeUtils'
+
 // JS props (no types)
+
 const props = defineProps({
   transcriptSegments: {
     type: Array,
@@ -38,14 +41,4 @@ const props = defineProps({
     default: () => [],
   },
 })
-
-function formatTime(seconds) {
-  const min = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, '0')
-  const sec = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, '0')
-  return `${min}:${sec}`
-}
 </script>

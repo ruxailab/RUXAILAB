@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper 
+  <PageWrapper
     title="Accessibility Configuration"
     :loading="isLoading"
     loading-text="Loading accessibility configuration..."
@@ -9,241 +9,380 @@
         Set up and customize your accessibility test parameters
       </p>
     </template>
-    
+
     <v-row justify="center">
       <v-col cols="12" lg="10" xl="8">
         <!-- Compact Header -->
         <v-card class="mb-3" elevation="2" rounded="lg">
-          <v-card-title class="text-h6 font-weight-bold pa-4 d-flex align-center">
-            <v-icon color="primary" class="mr-2" size="24">
-              mdi-cog
-            </v-icon>
+          <v-card-title
+            class="text-h6 font-weight-bold pa-4 d-flex align-center"
+          >
+            <v-icon color="primary" class="mr-2" size="24"> mdi-cog </v-icon>
             Accessibility Configuration
             <v-spacer />
-            <v-chip :color="step === 1 ? 'primary' : 'success'" variant="flat" size="small">
+            <v-chip
+              :color="step === 1 ? 'primary' : 'success'"
+              variant="flat"
+              size="small"
+            >
               Step {{ step }}/2
             </v-chip>
           </v-card-title>
         </v-card>
 
-          <!-- Step 1: Compliance Level Selection -->
-          <v-card v-if="step === 1" elevation="2" rounded="lg" class="mb-3">
-            <v-card-title class="text-subtitle-1 font-weight-bold pa-4 pb-2">
-              <v-icon color="primary" class="mr-2" size="18">
-                mdi-shield-check
-              </v-icon>
-              WCAG Compliance Level
-            </v-card-title>
+        <!-- Step 1: Compliance Level Selection -->
+        <v-card v-if="step === 1" elevation="2" rounded="lg" class="mb-3">
+          <v-card-title class="text-subtitle-1 font-weight-bold pa-4 pb-2">
+            <v-icon color="primary" class="mr-2" size="18">
+              mdi-shield-check
+            </v-icon>
+            WCAG Compliance Level
+          </v-card-title>
 
-            <v-card-text class="pa-4 pt-1">
-              <v-alert color="info" variant="tonal" class="mb-4" density="compact">
-                <template #prepend>
-                  <v-icon size="18">
-                    mdi-information
-                  </v-icon>
-                </template>
-                <div class="text-body-2">
-                  Select the WCAG compliance level for your accessibility requirements.
-                </div>
-              </v-alert>
-
-              <v-radio-group v-model="selectedCompliance" class="mb-4">
-                <v-row dense>
-                  <v-col v-for="level in complianceLevels" :key="level.value" cols="12" sm="6" md="4" class="pa-1">
-                    <v-card :class="[
-                      'compliance-card cursor-pointer',
-                      selectedCompliance === level.value ? 'selected-compliance' : ''
-                    ]" :variant="selectedCompliance === level.value ? 'flat' : 'outlined'" elevation="1" hover
-                      @click="selectedCompliance = level.value">
-                      <v-card-text class="pa-3">
-                        <div class="d-flex align-center mb-2">
-                          <v-radio :value="level.value" :color="level.color" hide-details class="mr-2" readonly />
-                          <v-chip :color="level.color"
-                            :variant="selectedCompliance === level.value ? 'flat' : 'outlined'" size="small"
-                            class="font-weight-bold">
-                            {{ level.value }}
-                          </v-chip>
-                        </div>
-
-                        <div class="mb-2">
-                          <h4 class="text-subtitle-2 font-weight-bold mb-1">
-                            {{ level.title }}
-                          </h4>
-                          <p class="text-caption text-medium-emphasis">
-                            {{ level.description }}
-                          </p>
-                        </div>
-
-                        <div class="d-flex align-center">
-                          <v-icon :color="level.color" size="14" class="mr-1">
-                            mdi-check-circle
-                          </v-icon>
-                          <span class="text-caption">{{ level.ruleCount }} rules</span>
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-radio-group>
-
-              <v-alert v-if="selectedLevel" :color="selectedLevel.color" variant="tonal" class="mb-4" density="compact">
-                <template #prepend>
-                  <v-icon size="18">
-                    mdi-information
-                  </v-icon>
-                </template>
-                <div>
-                  <div class="font-weight-bold text-body-2">
-                    Selected: WCAG {{ selectedLevel.value }} - {{ selectedLevel.title }}
-                  </div>
-                  <div class="text-caption">
-                    {{ selectedLevel.ruleCount }} rules for {{ selectedLevel.value }} compliance.
-                  </div>
-                </div>
-              </v-alert>
-            </v-card-text>
-
-            <v-card-actions class="pa-4 pt-2">
-              <v-btn variant="outlined" :disabled="isLoading" prepend-icon="mdi-refresh" size="small"
-                @click="resetToDefaults">
-                Reset
-              </v-btn>
-              <v-spacer />
-              <v-btn color="primary" :loading="isLoading" :disabled="!selectedCompliance" append-icon="mdi-arrow-right"
-                @click="saveComplianceAndContinue">
-                Continue
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-
-          <!-- Step 2: Guidelines Selection -->
-          <v-card v-else-if="step === 2" elevation="2" rounded="lg" class="mb-3">
-            <v-card-title class="text-subtitle-1 font-weight-bold pa-4 pb-2">
-              <v-icon color="primary" class="mr-2" size="18">
-                mdi-format-list-checks
-              </v-icon>
-              Guidelines Selection
-            </v-card-title>
-
-            <v-card-text class="pa-4 pt-1">
-              <v-alert color="info" variant="tonal" class="mb-4" density="compact">
-                <template #prepend>
-                  <v-icon size="18">
-                    mdi-information
-                  </v-icon>
-                </template>
-                <div class="text-body-2">
-                  Select guidelines for your assessment. Filter by principle using tabs.
-                </div>
-              </v-alert>
-
-              <!-- Validation Error Alert -->
-              <v-alert v-if="showValidationErrors && validationErrors.length > 0" color="error" variant="tonal"
-                class="mb-4" density="compact">
-                <template #prepend>
-                  <v-icon size="18">
-                    mdi-alert-circle
-                  </v-icon>
-                </template>
-                <div class="text-body-2 font-weight-bold">
-                  Please fix the following issues:
-                </div>
-                <ul class="text-caption mt-1 ml-4">
-                  <li v-for="error in validationErrors" :key="error">
-                    {{ error }}
-                  </li>
-                </ul>
-              </v-alert>
-
-              <!-- Compact Principle Tabs -->
-              <v-tabs v-model="selectedPrincipleTab" class="mb-3" color="primary" slider-color="primary" show-arrows
-                density="compact">
-                <v-tab v-for="(principle, idx) in filteredPrinciples" :key="principle.id || idx" class="text-capitalize"
-                  size="small">
-                  <v-icon :color="getPrincipleIcon(idx).color" class="mr-1" size="16">
-                    {{ getPrincipleIcon(idx).icon }}
-                  </v-icon>
-                  {{ principle.title || `P${idx + 1}` }}
-                </v-tab>
-              </v-tabs>
-
-              <!-- Scrollable Guidelines Container -->
-              <div class="guidelines-container">
-                <v-window v-model="selectedPrincipleTab">
-                  <v-window-item v-for="(principle, pIdx) in filteredPrinciples" :key="principle.id || pIdx">
-                    <v-card variant="outlined" class="mb-3">
-                      <v-list density="compact">
-                        <v-list-item v-for="(guideline) in principle.Guidelines || []" :key="guideline.id" class="pa-2"
-                          :class="{ 'guideline-error': isGuidelineInvalid(guideline.id) }">
-                          <template #prepend>
-                            <v-checkbox v-model="selectedGuidelines" :value="guideline.id" hide-details
-                              density="compact" color="primary" @update:model-value="onGuidelineCheck(guideline.id)" />
-                          </template>
-
-
-                          <v-list-item-title class="text-body-2 font-weight-bold text-primary">
-                            {{ guideline.id }} {{ guideline.title }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle class="text-caption mb-1">
-                            {{ guideline.description }}
-                          </v-list-item-subtitle>
-
-
-                          <!-- Compact Rules Selection -->
-                          <div
-                            v-if="selectedGuidelines.includes(guideline.id) && guideline.rules && guideline.rules.length > 0"
-                            class="mt-2">
-                            <v-select v-model="selectedRulesByGuideline[guideline.id]"
-                              :items="guideline.rules.map(r => ({ title: r.title, value: r.id }))" item-title="title"
-                              item-value="value" label="Select specific rules (required)" multiple chips clearable
-                              density="compact" variant="outlined" hide-details class="rules-select"
-                              :error="showValidationErrors && isGuidelineInvalid(guideline.id)"
-                              :error-messages="showValidationErrors && isGuidelineInvalid(guideline.id) ? ['At least one rule must be selected'] : []">
-                              <template #chip="{ props, item }">
-                                <v-chip v-bind="props" color="primary" size="x-small" variant="outlined">
-                                  {{ item.title }}
-                                </v-chip>
-                              </template>
-                            </v-select>
-                          </div>
-                        </v-list-item>
-                      </v-list>
-                    </v-card>
-                  </v-window-item>
-                </v-window>
+          <v-card-text class="pa-4 pt-1">
+            <v-alert
+              color="info"
+              variant="tonal"
+              class="mb-4"
+              density="compact"
+            >
+              <template #prepend>
+                <v-icon size="18"> mdi-information </v-icon>
+              </template>
+              <div class="text-body-2">
+                Select the WCAG compliance level for your accessibility
+                requirements.
               </div>
+            </v-alert>
 
-              <!-- Compact Selection Summary -->
-              <v-card v-if="selectedGuidelines.length > 0" color="success" variant="tonal" class="mt-3">
-                <v-card-text class="pa-3">
-                  <div class="d-flex align-center">
-                    <v-icon color="success" class="mr-2" size="18">
-                      mdi-check-circle
-                    </v-icon>
-                    <span class="font-weight-bold text-body-2">
-                      {{ selectedGuidelines.length }} guideline(s) selected
-                    </span>
-                  </div>
-                  <div class="text-caption mt-1">
-                    Total rules: {{ getTotalSelectedRules() }}
-                  </div>
-                </v-card-text>
-              </v-card>
-            </v-card-text>
+            <v-radio-group v-model="selectedCompliance" class="mb-4">
+              <v-row dense>
+                <v-col
+                  v-for="level in complianceLevels"
+                  :key="level.value"
+                  cols="12"
+                  sm="6"
+                  md="4"
+                  class="pa-1"
+                >
+                  <v-card
+                    :class="[
+                      'compliance-card cursor-pointer',
+                      selectedCompliance === level.value
+                        ? 'selected-compliance'
+                        : '',
+                    ]"
+                    :variant="
+                      selectedCompliance === level.value ? 'flat' : 'outlined'
+                    "
+                    elevation="1"
+                    hover
+                    @click="selectedCompliance = level.value"
+                  >
+                    <v-card-text class="pa-3">
+                      <div class="d-flex align-center mb-2">
+                        <v-radio
+                          :value="level.value"
+                          :color="level.color"
+                          hide-details
+                          class="mr-2"
+                          readonly
+                        />
+                        <v-chip
+                          :color="level.color"
+                          :variant="
+                            selectedCompliance === level.value
+                              ? 'flat'
+                              : 'outlined'
+                          "
+                          size="small"
+                          class="font-weight-bold"
+                        >
+                          {{ level.value }}
+                        </v-chip>
+                      </div>
 
-            <v-card-actions class="pa-4 pt-2">
-              <v-btn variant="outlined" prepend-icon="mdi-arrow-left" size="small" @click="step = 1">
-                Back
-              </v-btn>
-              <v-spacer />
-              <v-btn color="primary" :loading="isLoading" :disabled="!isValidConfiguration"
-                append-icon="mdi-content-save" @click="saveConfiguration">
-                Save Config
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
+                      <div class="mb-2">
+                        <h4 class="text-subtitle-2 font-weight-bold mb-1">
+                          {{ level.title }}
+                        </h4>
+                        <p class="text-caption text-medium-emphasis">
+                          {{ level.description }}
+                        </p>
+                      </div>
+
+                      <div class="d-flex align-center">
+                        <v-icon :color="level.color" size="14" class="mr-1">
+                          mdi-check-circle
+                        </v-icon>
+                        <span class="text-caption"
+                          >{{ level.ruleCount }} rules</span
+                        >
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-radio-group>
+
+            <v-alert
+              v-if="selectedLevel"
+              :color="selectedLevel.color"
+              variant="tonal"
+              class="mb-4"
+              density="compact"
+            >
+              <template #prepend>
+                <v-icon size="18"> mdi-information </v-icon>
+              </template>
+              <div>
+                <div class="font-weight-bold text-body-2">
+                  Selected: WCAG {{ selectedLevel.value }} -
+                  {{ selectedLevel.title }}
+                </div>
+                <div class="text-caption">
+                  {{ selectedLevel.ruleCount }} rules for
+                  {{ selectedLevel.value }} compliance.
+                </div>
+              </div>
+            </v-alert>
+          </v-card-text>
+
+          <v-card-actions class="pa-4 pt-2">
+            <v-btn
+              variant="outlined"
+              :disabled="isLoading"
+              prepend-icon="mdi-refresh"
+              size="small"
+              @click="resetToDefaults"
+            >
+              Reset
+            </v-btn>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              :loading="isLoading"
+              :disabled="!selectedCompliance"
+              append-icon="mdi-arrow-right"
+              @click="saveComplianceAndContinue"
+            >
+              Continue
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+
+        <!-- Step 2: Guidelines Selection -->
+        <v-card v-else-if="step === 2" elevation="2" rounded="lg" class="mb-3">
+          <v-card-title class="text-subtitle-1 font-weight-bold pa-4 pb-2">
+            <v-icon color="primary" class="mr-2" size="18">
+              mdi-format-list-checks
+            </v-icon>
+            Guidelines Selection
+          </v-card-title>
+
+          <v-card-text class="pa-4 pt-1">
+            <v-alert
+              color="info"
+              variant="tonal"
+              class="mb-4"
+              density="compact"
+            >
+              <template #prepend>
+                <v-icon size="18"> mdi-information </v-icon>
+              </template>
+              <div class="text-body-2">
+                Select guidelines for your assessment. Filter by principle using
+                tabs.
+              </div>
+            </v-alert>
+
+            <!-- Validation Error Alert -->
+            <v-alert
+              v-if="showValidationErrors && validationErrors.length > 0"
+              color="error"
+              variant="tonal"
+              class="mb-4"
+              density="compact"
+            >
+              <template #prepend>
+                <v-icon size="18"> mdi-alert-circle </v-icon>
+              </template>
+              <div class="text-body-2 font-weight-bold">
+                Please fix the following issues:
+              </div>
+              <ul class="text-caption mt-1 ml-4">
+                <li v-for="error in validationErrors" :key="error">
+                  {{ error }}
+                </li>
+              </ul>
+            </v-alert>
+
+            <!-- Compact Principle Tabs -->
+            <v-tabs
+              v-model="selectedPrincipleTab"
+              class="mb-3"
+              color="primary"
+              slider-color="primary"
+              show-arrows
+              density="compact"
+            >
+              <v-tab
+                v-for="(principle, idx) in filteredPrinciples"
+                :key="principle.id || idx"
+                class="text-capitalize"
+                size="small"
+              >
+                <v-icon
+                  :color="getPrincipleIcon(idx).color"
+                  class="mr-1"
+                  size="16"
+                >
+                  {{ getPrincipleIcon(idx).icon }}
+                </v-icon>
+                {{ principle.title || `P${idx + 1}` }}
+              </v-tab>
+            </v-tabs>
+
+            <!-- Scrollable Guidelines Container -->
+            <div class="guidelines-container">
+              <v-window v-model="selectedPrincipleTab">
+                <v-window-item
+                  v-for="(principle, pIdx) in filteredPrinciples"
+                  :key="principle.id || pIdx"
+                >
+                  <v-card variant="outlined" class="mb-3">
+                    <v-list density="compact">
+                      <v-list-item
+                        v-for="guideline in principle.Guidelines || []"
+                        :key="guideline.id"
+                        class="pa-2"
+                        :class="{
+                          'guideline-error': isGuidelineInvalid(guideline.id),
+                        }"
+                      >
+                        <template #prepend>
+                          <v-checkbox
+                            v-model="selectedGuidelines"
+                            :value="guideline.id"
+                            hide-details
+                            density="compact"
+                            color="primary"
+                            @update:model-value="onGuidelineCheck(guideline.id)"
+                          />
+                        </template>
+
+                        <v-list-item-title
+                          class="text-body-2 font-weight-bold text-primary"
+                        >
+                          {{ guideline.id }} {{ guideline.title }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle class="text-caption mb-1">
+                          {{ guideline.description }}
+                        </v-list-item-subtitle>
+
+                        <!-- Compact Rules Selection -->
+                        <div
+                          v-if="
+                            selectedGuidelines.includes(guideline.id) &&
+                            guideline.rules &&
+                            guideline.rules.length > 0
+                          "
+                          class="mt-2"
+                        >
+                          <v-select
+                            v-model="selectedRulesByGuideline[guideline.id]"
+                            :items="
+                              guideline.rules.map((r) => ({
+                                title: r.title,
+                                value: r.id,
+                              }))
+                            "
+                            item-title="title"
+                            item-value="value"
+                            label="Select specific rules (required)"
+                            multiple
+                            chips
+                            clearable
+                            density="compact"
+                            variant="outlined"
+                            hide-details
+                            class="rules-select"
+                            :error="
+                              showValidationErrors &&
+                              isGuidelineInvalid(guideline.id)
+                            "
+                            :error-messages="
+                              showValidationErrors &&
+                              isGuidelineInvalid(guideline.id)
+                                ? ['At least one rule must be selected']
+                                : []
+                            "
+                          >
+                            <template #chip="{ props, item }">
+                              <v-chip
+                                v-bind="props"
+                                color="primary"
+                                size="x-small"
+                                variant="outlined"
+                              >
+                                {{ item.title }}
+                              </v-chip>
+                            </template>
+                          </v-select>
+                        </div>
+                      </v-list-item>
+                    </v-list>
+                  </v-card>
+                </v-window-item>
+              </v-window>
+            </div>
+
+            <!-- Compact Selection Summary -->
+            <v-card
+              v-if="selectedGuidelines.length > 0"
+              color="success"
+              variant="tonal"
+              class="mt-3"
+            >
+              <v-card-text class="pa-3">
+                <div class="d-flex align-center">
+                  <v-icon color="success" class="mr-2" size="18">
+                    mdi-check-circle
+                  </v-icon>
+                  <span class="font-weight-bold text-body-2">
+                    {{ selectedGuidelines.length }} guideline(s) selected
+                  </span>
+                </div>
+                <div class="text-caption mt-1">
+                  Total rules: {{ getTotalSelectedRules() }}
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-card-text>
+
+          <v-card-actions class="pa-4 pt-2">
+            <v-btn
+              variant="outlined"
+              prepend-icon="mdi-arrow-left"
+              size="small"
+              @click="step = 1"
+            >
+              Back
+            </v-btn>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              :loading="isLoading"
+              :disabled="!isValidConfiguration"
+              append-icon="mdi-content-save"
+              @click="saveConfiguration"
+            >
+              Save Config
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
   </PageWrapper>
 </template>
 
@@ -252,20 +391,12 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
-import {
-  showSuccess,
-  showError,
-  showInfo,
-} from '@/shared/utils/toast'
-
+import { showSuccess, showError, showInfo } from '@/shared/utils/toast'
 
 const route = useRoute()
 const store = useStore()
 const router = useRouter()
-const testId = ref(route.params.testId || route.params.id || '');
-
-console.log('AccessibilityConfig: Route params:', route.params)
-console.log('AccessibilityConfig: Resolved testId:', testId.value)
+const testId = ref(route.params.testId || route.params.id || '')
 
 // Stepper state
 const step = ref(1)
@@ -285,10 +416,10 @@ const showValidationErrors = ref(false) // Only show errors after save attempt
 
 // Principle icons mapping
 const principleIcons = [
-  { icon: 'mdi-eye', color: 'blue-lighten-2' },      // Perceivable
+  { icon: 'mdi-eye', color: 'blue-lighten-2' }, // Perceivable
   { icon: 'mdi-cursor-default', color: 'green-lighten-2' }, // Operable
-  { icon: 'mdi-brain', color: 'purple-lighten-2' },  // Understandable
-  { icon: 'mdi-shield-check', color: 'orange-lighten-2' } // Robust
+  { icon: 'mdi-brain', color: 'purple-lighten-2' }, // Understandable
+  { icon: 'mdi-shield-check', color: 'orange-lighten-2' }, // Robust
 ]
 
 // Get principle icon based on index
@@ -304,13 +435,15 @@ const validationErrors = computed(() => {
     const selectedRules = selectedRulesByGuideline.value[guidelineId]
     if (!selectedRules || selectedRules.length === 0) {
       // Find guideline title for better error message
-      const principle = filteredPrinciples.value.find(p =>
-        p.Guidelines.some(g => g.id === guidelineId)
+      const principle = filteredPrinciples.value.find((p) =>
+        p.Guidelines.some((g) => g.id === guidelineId),
       )
       if (principle) {
-        const guideline = principle.Guidelines.find(g => g.id === guidelineId)
+        const guideline = principle.Guidelines.find((g) => g.id === guidelineId)
         if (guideline) {
-          errors.push(`Guideline "${guideline.id}" requires at least one rule to be selected`)
+          errors.push(
+            `Guideline "${guideline.id}" requires at least one rule to be selected`,
+          )
         }
       }
     }
@@ -350,11 +483,11 @@ function getTotalSelectedRules() {
       total += rules.length
     } else {
       // If no specific rules selected, count all rules for this guideline
-      const principle = filteredPrinciples.value.find(p =>
-        p.Guidelines.some(g => g.id === guidelineId)
+      const principle = filteredPrinciples.value.find((p) =>
+        p.Guidelines.some((g) => g.id === guidelineId),
       )
       if (principle) {
-        const guideline = principle.Guidelines.find(g => g.id === guidelineId)
+        const guideline = principle.Guidelines.find((g) => g.id === guidelineId)
         if (guideline && guideline.rules) {
           total += guideline.rules.length
         }
@@ -369,32 +502,37 @@ const complianceLevels = [
   {
     value: 'A',
     title: 'Minimum',
-    description: 'Basic/Minimum compliance for accessibility features essential for any website.',
+    description:
+      'Basic/Minimum compliance for accessibility features essential for any website.',
     color: 'blue',
     textColor: 'Black',
-    ruleCount: 25
+    ruleCount: 25,
   },
   {
     value: 'AA',
     title: 'Standard',
-    description: 'Recommended/Standard level that most organizations should aim for.',
+    description:
+      'Recommended/Standard level that most organizations should aim for.',
     color: 'orange',
     textColor: 'Black',
-    ruleCount: 50
+    ruleCount: 50,
   },
   {
     value: 'AAA',
     title: 'Enhanced',
-    description: 'Optimum/Highest level of accessibility for specialized applications.',
+    description:
+      'Optimum/Highest level of accessibility for specialized applications.',
     color: 'green',
     textColor: 'black',
-    ruleCount: 78
-  }
+    ruleCount: 78,
+  },
 ]
 
 // Computed properties
 const selectedLevel = computed(() => {
-  return complianceLevels.find(level => level.value === selectedCompliance.value)
+  return complianceLevels.find(
+    (level) => level.value === selectedCompliance.value,
+  )
 })
 
 // Always show all guidelines/rules for the selected compliance level on config page
@@ -405,38 +543,40 @@ const filteredPrinciples = computed(() => {
   let allowedLevels = []
   if (selectedCompliance.value === 'A') allowedLevels = ['A']
   else if (selectedCompliance.value === 'AA') allowedLevels = ['A', 'AA']
-  else if (selectedCompliance.value === 'AAA') allowedLevels = ['A', 'AA', 'AAA']
+  else if (selectedCompliance.value === 'AAA')
+    allowedLevels = ['A', 'AA', 'AAA']
   else allowedLevels = ['A', 'AA', 'AAA']
-  return wcagData.principles.map(principle => {
-    const filteredGuidelines = (principle.Guidelines || []).map(guideline => {
-      const filteredRules = (guideline.rules || []).filter(rule => allowedLevels.includes(rule.level))
-      if (!filteredRules.length) return null
-      return { ...guideline, rules: filteredRules }
-    }).filter(g => g && g.rules && g.rules.length > 0)
-    if (!filteredGuidelines.length) return null
-    return { ...principle, Guidelines: filteredGuidelines }
-  }).filter(p => p && p.Guidelines && p.Guidelines.length > 0)
+  return wcagData.principles
+    .map((principle) => {
+      const filteredGuidelines = (principle.Guidelines || [])
+        .map((guideline) => {
+          const filteredRules = (guideline.rules || []).filter((rule) =>
+            allowedLevels.includes(rule.level),
+          )
+          if (!filteredRules.length) return null
+          return { ...guideline, rules: filteredRules }
+        })
+        .filter((g) => g && g.rules && g.rules.length > 0)
+      if (!filteredGuidelines.length) return null
+      return { ...principle, Guidelines: filteredGuidelines }
+    })
+    .filter((p) => p && p.Guidelines && p.Guidelines.length > 0)
 })
 
 // Methods
 const saveComplianceAndContinue = async () => {
   try {
     isLoading.value = true
-    
-    // Debug: Check if we have testId
-    console.log('saveComplianceAndContinue: testId value:', testId.value)
-    console.log('saveComplianceAndContinue: route params:', route.params)
-    
+
     if (!testId.value) {
       // Try to get testId from route params again
       testId.value = route.params.testId || route.params.id || ''
-      console.log('saveComplianceAndContinue: Updated testId from route:', testId.value)
     }
-    
+
     if (!testId.value) {
       throw new Error('Test ID is missing from route parameters')
     }
-    
+
     // Ensure WCAG data is loaded
     if (!store.state.Assessment.wcagData) {
       await store.dispatch('Assessment/initializeAssessment')
@@ -447,28 +587,33 @@ const saveComplianceAndContinue = async () => {
       includeNonInterference: includeNonInterference.value,
       showExperimentalRules: showExperimentalRules.value,
       enableAutomaticSave: enableAutomaticSave.value,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }
-    console.log("Saving compliance configuration:", testId.value, configData)
-    await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
-    await store.dispatch('Assessment/filterByComplianceLevel', selectedCompliance.value)
-    
+    await store.dispatch('Assessment/updateConfiguration', {
+      configData,
+      testId: testId.value,
+    })
+    await store.dispatch(
+      'Assessment/filterByComplianceLevel',
+      selectedCompliance.value,
+    )
+
     // Also save to the test document
-    await store.dispatch('updateStudy', { 
-      id: testId.value, 
-      configData: configData 
+    await store.dispatch('updateStudy', {
+      id: testId.value,
+      configData: configData,
     })
 
     // Pre-select all guidelines and rules based on compliance level
     preselectGuidelinesForComplianceLevel()
 
-    showSuccess(`WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`)
+    showSuccess(
+      `WCAG ${selectedCompliance.value} compliance level saved! All guidelines pre-selected - deselect what you don't need.`,
+    )
     step.value = 2
-  } catch (err) {
-    console.log(err)
+  } catch {
     showError('Failed to save compliance level')
   } finally {
-    console.log("Saving")
     isLoading.value = false
   }
 }
@@ -478,7 +623,7 @@ const saveConfiguration = async () => {
   showValidationErrors.value = true
 
   // Small delay to ensure validation UI updates
-  await new Promise(resolve => setTimeout(resolve, 100))
+  await new Promise((resolve) => setTimeout(resolve, 100))
 
   if (!isValidConfiguration.value) {
     showError('Please fix validation errors before saving')
@@ -490,16 +635,11 @@ const saveConfiguration = async () => {
     error.value = ''
     success.value = ''
 
-    // Debug: Check if we have testId
-    console.log('saveConfiguration: testId value:', testId.value)
-    console.log('saveConfiguration: route params:', route.params)
-    
     if (!testId.value) {
       // Try to get testId from route params again
       testId.value = route.params.testId || route.params.id || ''
-      console.log('saveConfiguration: Updated testId from route:', testId.value)
     }
-    
+
     if (!testId.value) {
       throw new Error('Test ID is missing from route parameters')
     }
@@ -512,19 +652,19 @@ const saveConfiguration = async () => {
       enableAutomaticSave: enableAutomaticSave.value,
       selectedGuidelines: selectedGuidelines.value,
       selectedRulesByGuideline: { ...selectedRulesByGuideline.value },
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }
 
-    // Fetch testId from route params
-    console.log("Saving configuration for testId:", testId)
-    
     // Save to Assessment store for immediate use
-    await store.dispatch('Assessment/updateConfiguration', { configData, testId: testId.value })
-    
+    await store.dispatch('Assessment/updateConfiguration', {
+      configData,
+      testId: testId.value,
+    })
+
     // Also save to the test document in Firestore so it persists
-    await store.dispatch('updateStudy', { 
-      id: testId.value, 
-      configData: configData 
+    await store.dispatch('updateStudy', {
+      id: testId.value,
+      configData: configData,
     })
 
     success.value = `Configuration saved successfully! WCAG ${selectedCompliance.value} compliance level selected.`
@@ -534,9 +674,7 @@ const saveConfiguration = async () => {
     setTimeout(() => {
       router.push(`/accessibility/manual/preview/${testId.value}`)
     }, 1000)
-
-  } catch (err) {
-    console.error('Failed to save configuration:', err)
+  } catch {
     error.value = 'Failed to save configuration. Please try again.'
     showError('Failed to save configuration')
   } finally {
@@ -550,7 +688,8 @@ const preselectGuidelinesForComplianceLevel = () => {
   let allowedLevels = []
   if (selectedCompliance.value === 'A') allowedLevels = ['A']
   else if (selectedCompliance.value === 'AA') allowedLevels = ['A', 'AA']
-  else if (selectedCompliance.value === 'AAA') allowedLevels = ['A', 'AA', 'AAA']
+  else if (selectedCompliance.value === 'AAA')
+    allowedLevels = ['A', 'AA', 'AAA']
   else allowedLevels = ['A', 'AA', 'AAA']
 
   // Reset selections
@@ -558,16 +697,16 @@ const preselectGuidelinesForComplianceLevel = () => {
   const newSelectedRulesByGuideline = {}
 
   // Iterate through filtered principles to get all applicable guidelines and rules
-  filteredPrinciples.value.forEach(principle => {
-    principle.Guidelines.forEach(guideline => {
+  filteredPrinciples.value.forEach((principle) => {
+    principle.Guidelines.forEach((guideline) => {
       // Select the guideline
       newSelectedGuidelines.push(guideline.id)
 
       // Select all rules for this guideline that match the compliance level
       const applicableRules = guideline.rules
         ? guideline.rules
-          .filter(rule => allowedLevels.includes(rule.level))
-          .map(rule => rule.id)
+            .filter((rule) => allowedLevels.includes(rule.level))
+            .map((rule) => rule.id)
         : []
 
       if (applicableRules.length > 0) {
@@ -579,27 +718,31 @@ const preselectGuidelinesForComplianceLevel = () => {
   // Update reactive state
   selectedGuidelines.value = newSelectedGuidelines
   selectedRulesByGuideline.value = newSelectedRulesByGuideline
-
-  console.log(`Pre-selected ${newSelectedGuidelines.length} guidelines for WCAG ${selectedCompliance.value} compliance level`)
 }
 
 // Watch for compliance level changes on step 2 to re-preselect guidelines
 watch(selectedCompliance, (newLevel, oldLevel) => {
   // Only auto-reselect if we're on step 2 and the level actually changed
-  if (step.value === 2 && newLevel !== oldLevel && filteredPrinciples.value.length > 0) {
+  if (
+    step.value === 2 &&
+    newLevel !== oldLevel &&
+    filteredPrinciples.value.length > 0
+  ) {
     preselectGuidelinesForComplianceLevel()
-    console.log(`Compliance level changed from ${oldLevel} to ${newLevel}, reselecting guidelines`)
   }
 })
 
 // Watch for route parameter changes to update testId
-watch(() => route.params, (newParams) => {
-  const newTestId = newParams.testId || newParams.id || ''
-  if (newTestId && newTestId !== testId.value) {
-    console.log('Route params changed, updating testId:', newTestId)
-    testId.value = newTestId
-  }
-}, { immediate: true })
+watch(
+  () => route.params,
+  (newParams) => {
+    const newTestId = newParams.testId || newParams.id || ''
+    if (newTestId && newTestId !== testId.value) {
+      testId.value = newTestId
+    }
+  },
+  { immediate: true },
+)
 
 const resetToDefaults = () => {
   selectedCompliance.value = 'AA'
@@ -611,7 +754,8 @@ const resetToDefaults = () => {
   if (step.value === 2) {
     // If we're on step 2, pre-select guidelines for the compliance level
     preselectGuidelinesForComplianceLevel()
-    success.value = 'Configuration reset to defaults with pre-selected guidelines'
+    success.value =
+      'Configuration reset to defaults with pre-selected guidelines'
     showInfo('Configuration reset to defaults with pre-selected guidelines')
   } else {
     // If we're on step 1, clear selections and go back to step 1
@@ -625,60 +769,51 @@ const resetToDefaults = () => {
 
 const loadExistingConfiguration = async () => {
   try {
-    // Debug: Check if we have testId
-    console.log('loadExistingConfiguration: testId value:', testId.value)
-    console.log('loadExistingConfiguration: route params:', route.params)
-    
     if (!testId.value) {
       // Try to get testId from route params again
       testId.value = route.params.testId || route.params.id || ''
-      console.log('loadExistingConfiguration: Updated testId from route:', testId.value)
     }
-    
+
     if (!testId.value) {
-      console.warn('loadExistingConfiguration: No test ID available, skipping configuration load')
       return
     }
-    
+
     // First load the test data to get the saved configuration
     await store.dispatch('getStudy', { id: testId.value })
     const testData = store.getters.test
-    
+
     let config = null
-    
+
     // Try to get configuration from test data first
     if (testData && testData.configData) {
       config = testData.configData
-      console.log('Loaded configuration from test document:', config)
     } else {
       // Fallback to Assessment store
       config = await store.dispatch('Assessment/getConfiguration')
-      console.log('Loaded configuration from Assessment store:', config)
     }
-    
+
     if (config) {
       selectedCompliance.value = config.complianceLevel || 'AA'
       includeNonInterference.value = config.includeNonInterference ?? true
       showExperimentalRules.value = config.showExperimentalRules ?? false
       enableAutomaticSave.value = config.enableAutomaticSave ?? true
       selectedGuidelines.value = config.selectedGuidelines || []
-      selectedRulesByGuideline.value = config.selectedRulesByGuideline ? { ...config.selectedRulesByGuideline } : {}
-      
+      selectedRulesByGuideline.value = config.selectedRulesByGuideline
+        ? { ...config.selectedRulesByGuideline }
+        : {}
+
       // If we have selected guidelines, go to step 2
       if (selectedGuidelines.value.length > 0) {
         step.value = 2
       }
     }
-  } catch (err) {
-    console.error('Failed to load configuration:', err)
+  } catch {
+    // Failed to load configuration
   }
 }
 
 // Lifecycle
 onMounted(async () => {
-  console.log('AccessibilityConfig onMounted: route params:', route.params)
-  console.log('AccessibilityConfig onMounted: testId:', testId.value)
-  
   // Always ensure WCAG data is loaded before config UI
   if (!store.state.Assessment.wcagData) {
     await store.dispatch('Assessment/initializeAssessment')

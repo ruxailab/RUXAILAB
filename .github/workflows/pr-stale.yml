@@ -48,7 +48,7 @@ jobs:
               // 30+ days: Close PR
               if (updatedAt < thirtyDaysAgo) {
                 console.log(`PR #${prNumber} is 30+ days old, closing`);
-                
+
                 await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -67,9 +67,9 @@ jobs:
               }
 
               // 14+ days: Add warning comment (if not already warned)
-              if (updatedAt < fourteenDaysAgo && !labels.includes('stale')) {
+              if (updatedAt < fourteenDaysAgo) {
                 console.log(`PR #${prNumber} is 14+ days old, adding warning`);
-                
+
                 const { data: comments } = await github.rest.issues.listComments({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -91,7 +91,7 @@ jobs:
               // 7+ days: Add stale label
               if (updatedAt < sevenDaysAgo && !labels.includes('stale')) {
                 console.log(`PR #${prNumber} is 7+ days old, marking as stale`);
-                
+
                 await github.rest.issues.addLabels({
                   owner: context.repo.owner,
                   repo: context.repo.repo,

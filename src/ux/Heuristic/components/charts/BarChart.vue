@@ -1,9 +1,5 @@
 <template>
-  <Bar
-    :data="chartData"
-    :options="chartOptions"
-    style="height: 400px;"
-  />
+  <Bar :data="chartData" :options="chartOptions" style="height: 400px" />
 </template>
 
 <script setup>
@@ -16,31 +12,24 @@ import {
   Legend,
   BarElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
 } from 'chart.js'
 
-ChartJS.register(
-  Title, 
-  Tooltip, 
-  Legend, 
-  BarElement, 
-  CategoryScale, 
-  LinearScale
-)
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const props = defineProps({
   labels: {
-    type: String,
-    default: 'Data One'
+    type: Array,
+    default: () => [],
   },
   data: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   legend: {
     type: String,
-    default: 'Legend'
-  }
+    default: 'Legend',
+  },
 })
 
 const chartData = computed(() => ({
@@ -49,13 +38,13 @@ const chartData = computed(() => ({
     {
       label: props.legend,
       backgroundColor: '#f87979',
-      data: props.data
-    }
-  ]
+      data: props.data,
+    },
+  ],
 }))
 
 const chartOptions = {
   responsive: true,
-  maintainAspectRatio: false
+  maintainAspectRatio: false,
 }
 </script>
