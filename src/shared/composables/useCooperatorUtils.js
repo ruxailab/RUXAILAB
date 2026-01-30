@@ -12,6 +12,7 @@ export function useCooperatorUtils() {
     { title: 'Admin', value: 0 },
     { title: 'Evaluator', value: 1 },
     { title: 'Guest', value: 2 },
+    { title: 'Observator', value: 3 },
   ])
 
   // Status filter options
@@ -32,6 +33,8 @@ export function useCooperatorUtils() {
         return 'primary'
       case 'evaluator':
         return 'success'
+      case 'observator':
+        return 'info'
       case 'guest':
         return 'warning'
       default:
@@ -47,6 +50,8 @@ export function useCooperatorUtils() {
         return 'mdi-account-check'
       case 'guest':
         return 'mdi-account'
+      case 'observator':
+        return 'info'
       default:
         return 'mdi-account'
     }

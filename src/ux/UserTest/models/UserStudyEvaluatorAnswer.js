@@ -16,7 +16,7 @@ export default class UserStudyEvaluatorAnswer {
     userDocId,
     lastUpdate,
     invited,
-    hidden
+    hidden,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -32,7 +32,9 @@ export default class UserStudyEvaluatorAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
+    this.invited = invited ?? false
     this.hidden = hidden ?? false
+    this.sessionNotes = [] // [{ text, timestamp, taskIndex, authorId }]
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
@@ -57,7 +59,10 @@ export default class UserStudyEvaluatorAnswer {
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [
           key,
-          (value instanceof TaskAnswer ? value : new TaskAnswer(value)).toFirestore(),
+          (value instanceof TaskAnswer
+            ? value
+            : new TaskAnswer(value)
+          ).toFirestore(),
         ]),
       ),
       progress: this.progress,
@@ -67,6 +72,7 @@ export default class UserStudyEvaluatorAnswer {
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
+      sessionNotes: this.sessionNotes,
     }
   }
 }

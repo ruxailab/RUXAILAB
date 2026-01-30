@@ -80,7 +80,8 @@ const router = useRouter()
 const store = useStore()
 
 const startSession = () => {
-  router.push(`/userTest/moderated/session/${props.test.id}`)
+  const currentUser = store.getters.user
+  router.push(`/testview/${props.test.id}/${currentUser.id}`)
 }
 
 const scheduleSession = () => {
