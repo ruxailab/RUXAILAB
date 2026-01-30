@@ -165,6 +165,10 @@ const isLastQuestion = computed(
 
 // Methods
 function updateCurrentAnswer(value) {
+  // Ensure the answer object exists at this index
+  if (!localAnswers.value[currentIndex.value]) {
+    localAnswers.value[currentIndex.value] = { answer: '' }
+  }
   localAnswers.value[currentIndex.value].answer = value
   emit('update:answers', localAnswers.value)
 }
@@ -198,13 +202,12 @@ function previousQuestion() {
 }
 
 .question-content {
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: transparent;
   min-height: 200px;
 }
 
 .question-title {
-  color: #1a1a2e;
+  color: inherit;
 }
 
 .question-description {
@@ -229,17 +232,5 @@ function previousQuestion() {
 
 .navigation-buttons .v-btn {
   min-width: 120px;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .question-content {
-    background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .question-title {
-    color: #ffffff;
-  }
 }
 </style>
