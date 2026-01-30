@@ -304,13 +304,20 @@
                 color="error"
                 block
                 variant="outlined"
+                class="mr-2"
+                :disabled="isWaitingForUploadToFinish"
                 :class="{
                   'mb-3': $vuetify.display.xs,
                   'mr-2': $vuetify.display.smAndUp,
                 }"
                 @click="handleShowPostForm(false)"
               >
-                I can not finish the task
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === false
+                    ? 'Uploading...'
+                    : 'I can not finish the task'
+                }}
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6">
@@ -318,10 +325,17 @@
                 color="primary"
                 block
                 variant="flat"
+                class="ml-2"
+                :disabled="isWaitingForUploadToFinish"
                 :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
-                Task completed
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === true
+                    ? 'Uploading...'
+                    : 'Task completed'
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -404,10 +418,14 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="shouldDisableFinishButton"
-                @click="emitDoneOrCouldNotFinish()"
+                :disabled="
+                  shouldDisableFinishButton || isWaitingForUploadToFinish
+                "
+                @click="attemptFinish()"
               >
-                Finish task
+                {{
+                  isWaitingForUploadToFinish ? 'Uploading...' : 'Finish task'
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -422,8 +440,8 @@
         :task-index="taskIndex"
         :remote-stream="remoteStream"
         :should-record-moderator="shouldRecordModerator"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
         @recording-started="$emit('recording-started', $event)"
       />
 
@@ -432,8 +450,8 @@
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
       />
 
       <VideoRecorder
@@ -442,8 +460,8 @@
         :test-id="testId"
         :user-doc-id="userDocId"
         :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
       />
     </template>
   </ShowInfo>
@@ -509,6 +527,15 @@ onBeforeUnmount(() => {
     clearInterval(timerInterval)
     timerInterval = null
   }
+  if (finishTimeout) {
+    clearTimeout(finishTimeout)
+    finishTimeout = null
+  }
+  forceStopAllMedia()
+
+  uploadingCount.value = 0
+  isWaitingForUploadToFinish.value = false
+  pendingFinalTime.value = null
 })
 
 const localSusAnswers = computed({
@@ -609,8 +636,47 @@ const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
 const elapsedTimeDisplay = ref('0:00')
+const uploadingCount = ref(0)
+const isWaitingForUploadToFinish = ref(false)
+const pendingFinalTime = ref(null)
+
 let taskStartTime = null
 let timerInterval = null
+let finishTimeout = null
+
+function onShowLoading() {
+  uploadingCount.value++
+  emit('show-loading')
+}
+
+function onStopShowLoading() {
+  uploadingCount.value--
+  if (uploadingCount.value < 0) uploadingCount.value = 0
+  emit('stop-show-loading')
+
+  if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
+    emitDoneOrCouldNotFinish(pendingFinalTime.value)
+  }
+}
+
+function attemptFinish() {
+  if (uploadingCount.value > 0) {
+    isWaitingForUploadToFinish.value = true
+  } else {
+    // Check for where uploads have not started yet
+    if (stage.value !== 3 && hasAnyRecording.value) {
+      isWaitingForUploadToFinish.value = true
+      // Short timeout to alllow recorders to emit show-loading
+      finishTimeout = setTimeout(() => {
+        if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
+          emitDoneOrCouldNotFinish(pendingFinalTime.value)
+        }
+      }, 500)
+    } else {
+      emitDoneOrCouldNotFinish(pendingFinalTime.value)
+    }
+  }
+}
 
 function updateElapsedTime() {
   if (!taskStartTime) return
@@ -621,6 +687,7 @@ function updateElapsedTime() {
 }
 
 async function startTask() {
+  emit('show-loading')
   await startMediaRecorders()
   stage.value = 2
   taskStartTime = Date.now()
@@ -639,6 +706,7 @@ async function startTask() {
       if (timer && timer.startTimer) timer.startTimer()
     }, 100)
   })
+  emit('stop-show-loading')
 }
 
 function reopenTool() {
@@ -673,6 +741,8 @@ function forceStopAllMedia() {
 }
 
 function handleShowPostForm(userCompleted) {
+  if (isWaitingForUploadToFinish.value) return
+
   forceStopAllMedia()
 
   if (timerInterval) {
@@ -683,6 +753,8 @@ function handleShowPostForm(userCompleted) {
   let finalTime = null
   if (taskStartTime) {
     finalTime = Math.round(Date.now() - taskStartTime)
+    pendingFinalTime.value = finalTime
+    console.log('Tiempo detenido en:', finalTime, 'segundos')
     emit('timer-stopped', finalTime, props.taskIndex)
   }
 
@@ -692,7 +764,7 @@ function handleShowPostForm(userCompleted) {
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 3
   } else {
-    emitDoneOrCouldNotFinish(finalTime)
+    attemptFinish()
   }
 }
 
@@ -704,6 +776,8 @@ function emitDoneOrCouldNotFinish(savedTime) {
   }
 
   // Reset state for next task
+  isWaitingForUploadToFinish.value = false
+  uploadingCount.value = 0
   showPostForm.value = { userCompleted: undefined }
   taskStartTime = null
   elapsedTimeDisplay.value = '0:00'
@@ -742,6 +816,10 @@ watch(
 watch(
   () => props.taskIndex,
   () => {
+    if (finishTimeout) {
+      clearTimeout(finishTimeout)
+      finishTimeout = null
+    }
     forceStopAllMedia()
     stage.value = 1
     taskStartTime = null
