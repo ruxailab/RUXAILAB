@@ -44,8 +44,7 @@ export const saveAssessment = async (
 
     await setDoc(docRef, assessment, { merge: true })
     return { success: true, id: docRef.id }
-  } catch (error) {
-    console.error('Error saving assessment:', error)
+  } catch {
     throw new Error('Failed to save assessment')
   }
 }
@@ -65,8 +64,7 @@ export const getAssessment = async (userId, testId) => {
       return { id: docSnap.id, ...docSnap.data() }
     }
     return null
-  } catch (error) {
-    console.error('Error getting assessment:', error)
+  } catch {
     throw new Error('Failed to get assessment')
   }
 }
@@ -113,8 +111,7 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment) => {
     })
 
     return { success: true }
-  } catch (error) {
-    console.error('Error updating rule assessment:', error)
+  } catch {
     throw new Error('Failed to update rule assessment: ' + error.message)
   }
 }
@@ -130,8 +127,7 @@ export const deleteAssessment = async (userId, testId) => {
     const docRef = doc(db, ASSESSMENTS_COLLECTION, `${userId}_${testId}`)
     await deleteDoc(docRef)
     return { success: true }
-  } catch (error) {
-    console.error('Error deleting assessment:', error)
+  } catch {
     throw new Error('Failed to delete assessment')
   }
 }
@@ -153,8 +149,7 @@ export const getUserAssessments = async (userId) => {
       id: doc.id,
       ...doc.data(),
     }))
-  } catch (error) {
-    console.error('Error getting user assessments:', error)
+  } catch {
     throw new Error('Failed to get user assessments')
   }
 }
@@ -174,8 +169,7 @@ export const saveConfigData = async (userId, testId, configData) => {
       updatedAt: new Date().toISOString(),
     })
     return { success: true }
-  } catch (error) {
-    console.error('Error saving configuration data:', error)
+  } catch {
     throw new Error('Failed to save configuration data')
   }
 }
@@ -195,8 +189,7 @@ export const getConfigData = async (userId, testId) => {
       return docSnap.data().configData || null
     }
     return null
-  } catch (error) {
-    console.error('Error fetching configuration data:', error)
+  } catch {
     throw new Error('Failed to fetch configuration data')
   }
 }

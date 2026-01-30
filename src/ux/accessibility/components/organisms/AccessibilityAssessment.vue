@@ -208,8 +208,6 @@ import { ref, reactive } from 'vue'
 
 // Reactive data
 const currentView = ref('dashboard')
-const assessmentProgress = ref(0)
-const accessibilityScore = ref(0)
 
 const form = reactive({
   name: '',

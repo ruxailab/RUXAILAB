@@ -646,14 +646,12 @@ export default {
         !this.$refs.previewFrame.parentNode ||
         !this.report?.modifiedHtml
       ) {
-        console.warn('Required data or elements not available')
         return
       }
       try {
         const frame = this.$refs.previewFrame
         frame.addEventListener('load', () => {
           if (!frame.contentWindow || !frame.contentDocument) {
-            console.warn('iframe not ready')
             return
           }
           frame.contentWindow.addEventListener('click', (event) => {
@@ -665,9 +663,7 @@ export default {
             }
           })
         })
-      } catch (error) {
-        console.error('Error setting up iframe:', error)
-      }
+      } catch {}
     },
     scrollToIssue(index) {
       if (

@@ -348,8 +348,8 @@ const actions = {
       if (!userId || !testId) throw new Error('User or Test not authenticated')
 
       await saveConfigData(userId, testId, configData)
-    } catch (error) {
-      console.error('Failed to save configuration to Firestore:', error)
+    } catch {
+      // Failed to save configuration to Firestore
     }
   },
 
@@ -444,7 +444,6 @@ const actions = {
       )
       return transformedData
     } catch (error) {
-      console.error('Error initializing assessment:', error)
       commit(
         'setError',
         { errorCode: 'ASSESSMENT_INIT_ERROR', message: error.message },
@@ -489,7 +488,7 @@ const actions = {
   },
 
   // Navigate to next rule
-  nextRule({ state, commit, dispatch }) {
+  nextRule({ state, commit }) {
     const currentPrinciple =
       state.wcagData?.principles?.[state.selectedPrincipleIdx]
     if (!currentPrinciple) return
@@ -589,7 +588,6 @@ const actions = {
       }
       commit('RESET_ASSESSMENT')
     } catch (error) {
-      console.error('Failed to reset assessment:', error)
       throw error
     }
   },
@@ -622,7 +620,6 @@ const actions = {
       )
       return { success: true }
     } catch (error) {
-      console.error('Failed to save assessment:', error)
       throw error
     }
   },
@@ -653,7 +650,6 @@ const actions = {
 
       return assessment
     } catch (error) {
-      console.error('Failed to load assessment:', error)
       throw error
     }
   },
@@ -683,7 +679,6 @@ const actions = {
 
       return { success: true }
     } catch (error) {
-      console.error('Failed to update rule assessment:', error)
       throw error
     }
   },
@@ -711,7 +706,6 @@ const actions = {
 
       return configData
     } catch (error) {
-      console.error('Failed to fetch configData from Firestore:', error)
       throw error
     }
   },

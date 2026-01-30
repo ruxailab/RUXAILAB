@@ -597,12 +597,6 @@ const test = computed(() => store.getters.test)
 // Computed properties from store
 const isLoading = computed(() => store.getters.loading || false)
 
-// Check if user has access to this test - Proper role-based access control
-const hasAccess = computed(() => {
-  // Always allow access for preview mode
-  return true
-})
-
 // Check if user has admin privileges
 const isAdmin = computed(() => {
   const currentUser = user.value || store.state.Auth.user
@@ -721,12 +715,6 @@ const activeNoteTab = ref(0)
 const severity = ref('')
 const status = ref('')
 
-// Get current assessment data
-const currentAssessment = computed(() => {
-  const ruleId = currentRule.value?.id
-  return ruleId ? store.getters['Assessment/getRuleAssessment'](ruleId) : {}
-})
-
 // Add a computed property to track which user's data we're viewing
 const viewingUserId = computed(() => {
   return (
@@ -808,20 +796,6 @@ function restoreNotesFromAssessment(assessment) {
   activeNoteTab.value = 0
 }
 
-// Helper function to get principle icon
-const getPrincipleIcon = (index) => {
-  switch (index) {
-    case 0:
-      return 'mdi-eye'
-    case 1:
-      return 'mdi-mouse'
-    case 2:
-      return 'mdi-brain'
-    default:
-      return 'mdi-shield-check'
-  }
-}
-
 // Helper functions for initialization
 const getTestId = () => {
   const testId = route.params.testId || route.params.id
@@ -838,9 +812,6 @@ const getTargetUserId = () => {
 const loadTestData = async (testId) => {
   await store.dispatch('getStudy', { id: testId })
   await new Promise((resolve) => setTimeout(resolve, 100))
-  console.log(
-    'AccessibilityPreviewTest: Test data loaded, proceeding with initialization',
-  )
   const testData = store.getters.test
   if (!testData) {
     throw new Error('Failed to load test data')
@@ -860,21 +831,16 @@ const handleAuthentication = async () => {
       await store.dispatch('autoSignIn')
       authUser = store.state.Auth.user
     }
-  } catch (authError) {
-    console.warn(
-      'Authentication not available, proceeding without user context:',
-      authError,
-    )
+  } catch {
+    // Authentication not available, proceeding without user context
   }
   return authUser
 }
 
 const determineUserIdToLoad = (targetUserId, authUser) => {
   if (targetUserId) {
-    console.log('Loading assessment data for target user:', targetUserId)
     return targetUserId
   } else if (authUser && authUser.id) {
-    console.log('Loading assessment data for current user:', authUser.id)
     return authUser.id
   }
   return null
@@ -882,7 +848,6 @@ const determineUserIdToLoad = (targetUserId, authUser) => {
 
 const loadAssessmentData = async (userIdToLoad, testId) => {
   if (!userIdToLoad) {
-    console.log('No user ID available, proceeding with read-only access')
     return
   }
   try {
@@ -890,7 +855,6 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
       userId: userIdToLoad,
       testId,
     })
-    console.log('Loaded assessment data:', loadedAssessment)
     if (loadedAssessment && loadedAssessment.assessmentData) {
       const currentRuleId = currentRule.value?.id
       if (currentRuleId) {
@@ -903,8 +867,8 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
         }
       }
     }
-  } catch (assessmentError) {
-    console.warn('Could not load user assessment data:', assessmentError)
+  } catch {
+    // Could not load user assessment data
   }
 }
 
@@ -918,29 +882,6 @@ const setupConfiguration = async (testData, testId) => {
     selectedRulesByGuideline: {},
   }
   await store.dispatch('Assessment/updateConfiguration', { configData, testId })
-  console.log(
-    'AccessibilityPreviewTest: Configuration applied and WCAG data filtered',
-  )
-  console.log('Current configuration:', configData)
-  console.log(
-    'Available principles after filtering:',
-    store.state.Assessment?.filteredWcagData?.principles?.length || 0,
-  )
-  console.log(
-    'Raw WCAG data available:',
-    store.state.Assessment?.wcagData?.principles?.length || 0,
-  )
-  console.log('Current user role:', currentUserRole.value)
-  console.log('Can save assessments:', canSaveAssessments.value)
-  console.log('Test data:', {
-    id: testData.id,
-    title: testData.title,
-    testAdmin: testData.testAdmin,
-    userId: testData.userId,
-    cooperators: testData.cooperators,
-    collaborators: testData.collaborators,
-    configData: testData.configData,
-  })
 }
 
 // Initialize the assessment when component mounts
@@ -950,15 +891,13 @@ onMounted(async () => {
     error.value = ''
     const testId = getTestId()
     const targetUserId = getTargetUserId()
-    console.log('Target user ID from route:', targetUserId)
     const testData = await loadTestData(testId)
     await initializeAssessment()
     const authUser = await handleAuthentication()
     const userIdToLoad = determineUserIdToLoad(targetUserId, authUser)
     await loadAssessmentData(userIdToLoad, testId)
     await setupConfiguration(testData, testId)
-  } catch (err) {
-    console.error('Failed to initialize assessment:', err)
+  } catch {
     error.value =
       'Failed to load assessment data. Please try refreshing the page.'
   } finally {
@@ -985,16 +924,8 @@ watch(
 // Watch for changes in filtered WCAG data to debug
 watch(
   () => store.state.Assessment?.filteredWcagData?.principles,
-  (newPrinciples) => {
-    console.log('Filtered WCAG data updated:', {
-      principlesCount: newPrinciples?.length || 0,
-      principles:
-        newPrinciples?.map((p) => ({
-          id: p.id,
-          title: p.title,
-          guidelinesCount: p.Guidelines?.length || 0,
-        })) || [],
-    })
+  () => {
+    // Filtered WCAG data updated
   },
   { immediate: true, deep: true },
 )
@@ -1221,8 +1152,7 @@ const downloadAssessmentData = () => {
     linkElement.click()
 
     showSuccess('Assessment data exported successfully')
-  } catch (error) {
-    console.error('Error exporting assessment data:', error)
+  } catch {
     showError('Failed to export assessment data')
   }
 }
@@ -1240,8 +1170,7 @@ const viewAssessmentDocument = () => {
 
     // Show the dialog
     showAssessmentDialog.value = true
-  } catch (error) {
-    console.error('Error fetching assessment data:', error)
+  } catch {
     showError('Failed to load assessment data')
   }
 }
@@ -1317,20 +1246,8 @@ const saveAssessment = async () => {
 
     showSuccess('Assessment saved successfully')
   } catch (err) {
-    console.error('Failed to save assessment:', err)
     error.value = err.message || 'Failed to save assessment. Please try again.'
     showError(error.value)
-  }
-}
-
-// Reset assessment
-const resetAssessment = () => {
-  if (
-    confirm(
-      'Are you sure you want to reset all assessment progress? This cannot be undone.',
-    )
-  ) {
-    store.dispatch('Assessment/resetAssessment')
   }
 }
 </script>

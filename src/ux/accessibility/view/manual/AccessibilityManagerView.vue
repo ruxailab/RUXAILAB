@@ -82,7 +82,6 @@ onMounted(async () => {
     userRole.value !== 'admin' &&
     route.path === `/accessibility/manual/${testId.value}`
   ) {
-    console.log('Non-admin user redirected to preview')
     router.push(`/accessibility/manual/preview/${testId.value}`)
   }
 })

@@ -397,10 +397,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { showSuccess, showError, showInfo } from '@/shared/utils/toast'
 
 // Icons for principles
@@ -408,7 +408,6 @@ const principleIcons = ['mdi-eye', 'mdi-hand-wave', 'mdi-brain', 'mdi-dumbbell']
 
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
 
 // State
 const isLoading = ref(true)
@@ -447,11 +446,6 @@ onMounted(async () => {
     // Then fetch users (this affects user loading state)
     isLoadingUsers.value = true
 
-    // Debug route parameters
-    console.log('Route params:', route.params)
-    console.log('Test ID from route:', route.params.id)
-    console.log('Full route:', route)
-
     if (!route.params.id) {
       showError(
         'Test ID is missing from route parameters. Please check the URL.',
@@ -463,7 +457,6 @@ onMounted(async () => {
     await fetchUserIdsForTest()
     await fetchUserEmails()
   } catch (error) {
-    console.error('Error in onMounted:', error)
     showError('Failed to load data: ' + error.message)
   } finally {
     isLoadingUsers.value = false
@@ -488,11 +481,8 @@ const goBackToUserSelection = () => {
 // Select user and navigate to assessment results
 const selectUser = async (user) => {
   try {
-    console.log('Selecting user:', user)
-
     if (!user || !user.id) {
       showError('Invalid user selection')
-      console.error('Invalid user object:', user)
       return
     }
 
@@ -500,13 +490,9 @@ const selectUser = async (user) => {
     selectedUserId.value = user.email
     currentPage.value = 'assessmentResults'
 
-    console.log('Selected user ID:', user.id)
-    console.log('Selected user email:', user.email)
-
     // Load assessment data for the selected user
     await loadAssessmentData(user.id)
   } catch (error) {
-    console.error('Error selecting user:', error)
     showError('Failed to load user assessment data: ' + error.message)
   }
 }
@@ -529,8 +515,7 @@ const viewUserInPreview = (user) => {
     const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
     window.open(previewUrl, '_blank')
     showSuccess(`Opening preview for ${getDisplayName(user.email)}`)
-  } catch (error) {
-    console.error('Error opening preview for user:', error)
+  } catch {
     showError('Failed to open preview mode')
   }
 }
@@ -658,45 +643,11 @@ const openNotesDialog = (item) => {
   }
 }
 
-// Helper to find a rule by ID
-const findRuleById = (ruleId) => {
-  for (const principle of wcagData.value?.principles || []) {
-    for (const guideline of principle.guidelines || []) {
-      const rule = (guideline.rules || []).find((r) => r.id === ruleId)
-      if (rule)
-        return {
-          ...rule,
-          principle: principle.title,
-          guideline: guideline.title,
-        }
-    }
-  }
-  return null
-}
-
-// Get all rules from WCAG data
-const getAllRules = () => {
-  const rules = []
-  wcagData.value?.principles?.forEach((principle) => {
-    principle.guidelines?.forEach((guideline) => {
-      guideline.rules?.forEach((rule) => {
-        rules.push({
-          ...rule,
-          principle: principle.title,
-          guideline: guideline.title,
-        })
-      })
-    })
-  })
-  return rules
-}
-
 // Get rules for the current principle (with level filtering)
 const getRulesForPrinciple = (principleIndex) => {
   try {
     const principle = principles.value?.[principleIndex]
     if (!principle) {
-      console.error(`No principle found at index ${principleIndex}`)
       return []
     }
 
@@ -736,8 +687,7 @@ const getRulesForPrinciple = (principleIndex) => {
         criteria: rule.criteria || [],
       }
     })
-  } catch (error) {
-    console.error('Error getting rules for principle:', error)
+  } catch {
     return []
   }
 }
@@ -795,7 +745,6 @@ const loadWcagData = async () => {
       showError('Failed to load WCAG principles')
     }
   } catch (error) {
-    console.error('Error loading WCAG data:', error)
     showError(`Failed to load WCAG data: ${error.message}`)
   } finally {
     isLoading.value = false
@@ -811,7 +760,6 @@ const fetchUserIdsForTest = async () => {
     const { db } = await import('@/app/plugins/firebase')
 
     const testId = route.params.id
-    console.log('Fetching user IDs for test ID:', testId)
 
     if (!testId) {
       throw new Error('Test ID is required')
@@ -825,21 +773,17 @@ const fetchUserIdsForTest = async () => {
     const querySnapshot = await getDocs(q)
     const foundUserIds = querySnapshot.docs.map((doc) => {
       const data = doc.data()
-      console.log('Assessment document:', doc.id, 'data:', data)
       return data.userId
     })
 
     userIds.value = foundUserIds
-    console.log('Found user IDs:', userIds.value)
 
     if (userIds.value.length === 0) {
-      console.log('No assessment documents found for test ID:', testId)
       showInfo(
         'No assessment data found for this test. Users need to complete assessments first.',
       )
     }
   } catch (error) {
-    console.error('Error fetching user IDs:', error)
     showError('Failed to fetch user IDs: ' + error.message)
     isLoadingUsers.value = false // Stop loading on error
   }
@@ -851,25 +795,18 @@ const fetchUserEmails = async () => {
     const { getDoc, doc } = await import('firebase/firestore')
     const { db } = await import('@/app/plugins/firebase')
 
-    console.log('Fetching emails for user IDs:', userIds.value)
-
     const userPromises = userIds.value.map(async (userId) => {
       const userRef = doc(db, 'users', userId)
       const userSnap = await getDoc(userRef)
       if (userSnap.exists()) {
         const userData = { id: userId, email: userSnap.data().email }
-        console.log('Found user:', userData)
         return userData
-      } else {
-        console.log('User document not found for ID:', userId)
       }
       return null
     })
 
     userDetails.value = (await Promise.all(userPromises)).filter(Boolean)
-    console.log('Final user details:', userDetails.value)
-  } catch (error) {
-    console.error('Error fetching user emails:', error)
+  } catch {
     showError('Failed to fetch user emails.')
     isLoadingUsers.value = false // Stop loading on error
   }
@@ -879,7 +816,6 @@ const fetchUserEmails = async () => {
 const loadAssessmentData = async (userId) => {
   try {
     isLoading.value = true
-    console.log('Loading assessment data for user:', userId)
 
     // Validate inputs
     if (!userId) {
@@ -888,14 +824,12 @@ const loadAssessmentData = async (userId) => {
 
     // Get the test ID from route
     const testId = route.params.id
-    console.log('Using test ID:', testId)
 
     // Get the assessment document from Firestore
     const { getDoc, doc } = await import('firebase/firestore')
     const { db } = await import('@/app/plugins/firebase')
 
     const docId = `${userId}_${testId}`
-    console.log('Looking for assessment document:', docId)
 
     const docRef = doc(db, 'assessments', docId)
     const docSnap = await getDoc(docRef)
@@ -904,7 +838,6 @@ const loadAssessmentData = async (userId) => {
 
     if (docSnap.exists()) {
       const assessment = docSnap.data()
-      console.log('Found assessment document:', assessment)
 
       if (assessment?.assessmentData) {
         assessment.assessmentData.forEach((item) => {
@@ -914,22 +847,13 @@ const loadAssessmentData = async (userId) => {
             notes: item.notes || [],
           }
         })
-        console.log(
-          'Processed assessment data for',
-          Object.keys(assessmentLookup).length,
-          'rules',
-        )
-      } else {
-        console.log('No assessmentData property found in document')
       }
     } else {
-      console.log('No assessment document found for:', docId)
       showInfo('No assessment data found for the selected user.')
     }
 
     // Validate WCAG rules are loaded
     if (!allRules.value || allRules.value.length === 0) {
-      console.error('WCAG rules not loaded')
       showError('WCAG rules not loaded. Please refresh the page.')
       return
     }
@@ -952,7 +876,6 @@ const loadAssessmentData = async (userId) => {
     assessmentRules.value = assessmentLookup
     assessmentData.value = mergedData
   } catch (error) {
-    console.error('Error loading assessment data:', error)
     showError(
       `Failed to load assessment data: ${error.message || 'Unknown error'}`,
     )
