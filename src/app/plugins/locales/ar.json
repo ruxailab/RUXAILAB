@@ -1788,5 +1788,15 @@
   "taskCreation": {
     "taskDescription": "وصف المهمة",
     "taskDescriptionHelper": "قدم خطوات محددة يجب عليهم اتباعها."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "حذف المتغير",
+      "message": "هل أنت متأكد أنك تريد حذف هذا المتغير؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "deleteOptionConfirm": {
+      "title": "حذف الخيار",
+      "message": "هل أنت متأكد أنك تريد حذف هذا الخيار؟ لا يمكن التراجع عن هذا الإجراء."
+    }
   }
 }

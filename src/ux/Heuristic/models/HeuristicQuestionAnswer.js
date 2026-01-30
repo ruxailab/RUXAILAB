@@ -21,9 +21,15 @@ export default class HeuristicQuestionAnswer {
   static toHeuristicQuestionAnswer(data, testOptions) {
     return new HeuristicQuestionAnswer({
       // TODO: This needs to be changed urgently, just a hotfix for now
-      ...data, heuristicAnswer: data.heuristicAnswer?.text ? data.heuristicAnswer : {
-        text: testOptions.find(op => op.value === data.heuristicAnswer)?.text ?? "", value: data.heuristicAnswer,
-      }
+      ...data,
+      heuristicAnswer: data.heuristicAnswer?.text
+        ? data.heuristicAnswer
+        : {
+            text:
+              testOptions.find((op) => op.value === data.heuristicAnswer)
+                ?.text ?? '',
+            value: data.heuristicAnswer,
+          },
     })
   }
 

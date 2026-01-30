@@ -1771,5 +1771,15 @@
       "analyticsData": "Analytics Data",
       "manageStorage": "Manage Storage"
     }
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Delete Variable",
+      "message": "Are you sure you want to delete this variable? This action cannot be undone."
+    },
+    "deleteOptionConfirm": {
+      "title": "Delete Option",
+      "message": "Are you sure you want to delete this option? This action cannot be undone."
+    }
   }
 }

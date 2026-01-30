@@ -32,7 +32,7 @@ defineProps({
   title: { type: String, default: 'Cooperation Invite' },
   message: { type: String, default: 'Do you want to accept this invitation?' },
   cancelLabel: { type: String, default: 'Reject' },
-  submitLabel: { type: String, default: 'Accept' }
+  submitLabel: { type: String, default: 'Accept' },
 })
 
 const emit = defineEmits(['update:modelValue', 'cancel', 'submit'])

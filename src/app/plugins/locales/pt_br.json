@@ -1772,5 +1772,15 @@
   "taskCreation": {
     "taskDescription": "Descrição da Tarefa",
     "taskDescriptionHelper": "Forneça etapas específicas que eles devem seguir."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Excluir Variável",
+      "message": "Tem certeza de que deseja excluir esta variável? Esta ação não pode ser desfeita."
+    },
+    "deleteOptionConfirm": {
+      "title": "Excluir Opção",
+      "message": "Tem certeza de que deseja excluir esta opção? Esta ação não pode ser desfeita."
+    }
   }
 }
