@@ -911,7 +911,6 @@ const completeStep = async (id, type, userCompleted = true) => {
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
         console.error(
-          // eslint-disable-line no-console
           'localTestAnswer.tasks is not an array:',
           localTestAnswer.tasks,
         )
