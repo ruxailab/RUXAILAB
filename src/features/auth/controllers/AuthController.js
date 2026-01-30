@@ -92,7 +92,12 @@ export default class AuthController {
       )
     })
   }
-  // Reset Password
+  /**
+   * Sends a password reset email via the EmailController (cloud function).
+   * @param {string} email - User email address
+   * @returns {Promise<void>} Resolves when the email is sent
+   * @throws {Error} If sending fails
+   */
   async resetPassword(email) {
     // return sendPasswordResetEmail(auth, email)
     const emailController = new EmailController()
@@ -140,6 +145,12 @@ export default class AuthController {
     }
   }
 
+  /**
+   * Calls the cloud function to delete user data (Firestore, storage, etc.) by userId.
+   * @param {string} userId - Firebase Auth UID
+   * @returns {Promise<void>} Resolves when the backend deletion request completes
+   * @throws {Error} If the request fails
+   */
   async deleteUserData(userId) {
     try {
       await axios.post(

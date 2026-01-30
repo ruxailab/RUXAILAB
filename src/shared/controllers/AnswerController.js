@@ -11,7 +11,19 @@ const userController = new UserController()
 
 import { increment } from 'firebase/firestore'
 
+/**
+ * Controller for managing study answers in Firestore.
+ * Handles CRUD operations for answers, user answer references, and task answers.
+ * @extends Controller
+ */
 export default class AnswerController extends Controller {
+  /**
+   * Fetches an answer document by ID and instantiates the correct answer type.
+   * @param {Object} payload - Query payload
+   * @param {string} payload.id - The answer document ID
+   * @returns {Promise<StudyAnswer>} The instantiated answer (e.g. UserStudyEvaluatorAnswer, HeuristicAnswer)
+   * @throws {Error} If the document does not exist or read fails
+   */
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
     const answer = instantiateStudyAnswerByType(res.data().type, {
@@ -21,10 +33,25 @@ export default class AnswerController extends Controller {
     return answer
   }
 
+  /**
+   * Creates a new answer document in the answers collection.
+   * @param {Object} payload - Answer model instance with toFirestore() method
+   * @returns {Promise<Object>} The created document reference (with id)
+   * @throws {Error} If creation fails
+   */
   async createAnswer(payload) {
     return super.create(COLLECTION, payload.toFirestore())
   }
 
+  /**
+   * Updates a user's answer reference for a specific test (e.g. progress, metadata).
+   * @param {Object} payload - Update payload
+   * @param {string} payload.cooperatorId - The user document ID
+   * @param {string} payload.testDocId - The test document ID (key in myAnswers)
+   * @param {Object} payload.data - The data to merge into the user's answer entry
+   * @returns {Promise<void>} Resolves when the user document is updated
+   * @throws {Error} If user not found or update fails
+   */
   async updateUserAnswer(payload) {
     const userToUpdate = await userController.getById(payload.cooperatorId)
 
@@ -35,6 +62,14 @@ export default class AnswerController extends Controller {
     return userController.update(userToUpdate.id, userToUpdate.toFirestore())
   }
 
+  /**
+   * Removes a user's answer: deletes the answer document and removes the reference from the user.
+   * @param {Object} payload - Removal payload
+   * @param {string} payload.cooperatorId - The user document ID
+   * @param {string} payload.testDocId - The test document ID (key in myAnswers)
+   * @returns {Promise<void>} Resolves when both the answer doc is deleted and user is updated
+   * @throws {Error} If user not found, answer doc missing, or delete/update fails
+   */
   async removeUserAnswer(payload) {
     const userToUpdate = await userController.getById(payload.cooperatorId)
 
@@ -48,6 +83,14 @@ export default class AnswerController extends Controller {
     return userController.update(userToUpdate.id, userToUpdate.toFirestore())
   }
 
+  /**
+   * Saves or updates a test answer (task or heuristic) in the answers document.
+   * @param {Object} payload - Answer payload with toFirestore() and userDocId (optional for anonymous)
+   * @param {string} answersDocId - The answers document ID
+   * @param {string} testType - One of STUDY_TYPES.HEURISTIC or STUDY_TYPES.USER
+   * @returns {Promise<void>} Resolves when the answers document is updated
+   * @throws {Error} If update fails
+   */
   async saveTestAnswer(payload, answersDocId, testType) {
     payload.lastUpdate = Date.now()
 
@@ -74,6 +117,13 @@ export default class AnswerController extends Controller {
     await super.update(COLLECTION, answersDocId, fieldToUpdate)
   }
 
+  /**
+   * Updates an existing task answer (e.g. evaluator answer) for a user in the answers document.
+   * @param {Object} payload - Task answer data (userDocId, etc.) used to build UserStudyEvaluatorAnswer
+   * @param {string} answersDocId - The answers document ID
+   * @returns {Promise<void>} Resolves when the answers document is updated
+   * @throws {Error} If update fails
+   */
   async updateTaskAnswer(payload, answersDocId) {
     const fieldPath = `taskAnswers.${payload.userDocId}`
     const data = new UserStudyEvaluatorAnswer({
@@ -86,6 +136,17 @@ export default class AnswerController extends Controller {
     })
   }
 
+  /**
+   * Updates transcription metadata for a specific task (e.g. latest doc ID and count).
+   * @param {Object} params - Update parameters
+   * @param {string} params.answersDocId - The answers document ID
+   * @param {string} params.userDocId - The user document ID (key in taskAnswers)
+   * @param {string} params.taskId - The task ID within the user's tasks
+   * @param {string} params.latestId - Latest transcription document ID
+   * @param {number} [params.inc=1] - Increment for transcriptionsCount (Firestore increment)
+   * @returns {Promise<void>} Resolves when the answers document is updated
+   * @throws {Error} If update fails
+   */
   async updateTaskTranscriptionMeta({
     answersDocId,
     userDocId,

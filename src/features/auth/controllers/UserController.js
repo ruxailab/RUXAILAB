@@ -8,10 +8,26 @@ import {
 import { documentId } from 'firebase/firestore'
 const COLLECTION = 'users'
 
+/**
+ * Controller for user CRUD, profile, notifications, and study/answer references in Firestore.
+ * @extends Controller
+ */
 export default class UserController extends Controller {
   constructor() {
     super()
   }
+
+  /**
+   * Creates a new user document in Firestore (after auth sign-up).
+   * @param {Object} payload - User data from auth
+   * @param {string} payload.id - Firebase Auth UID
+   * @param {string} [payload.email] - User email
+   * @param {string} [payload.displayName] - Display name (fallback: username)
+   * @param {string} [payload.profileImage] - Profile image URL
+   * @param {string} [payload.country] - Country
+   * @returns {Promise<void>} Resolves when the user document is set
+   * @throws {Error} If set fails
+   */
   async create(payload) {
     const user = new User({
       email: payload.email,
@@ -27,20 +43,44 @@ export default class UserController extends Controller {
     return super.set(COLLECTION, payload.id, user)
   }
 
+  /**
+   * Updates a user document by ID.
+   * @param {string} docId - User document ID
+   * @param {Object} payload - Partial or full user data (e.g. from toFirestore())
+   * @returns {Promise<void>} Resolves when the document is updated
+   * @throws {Error} If update fails
+   */
   async update(docId, payload) {
     return super.update(COLLECTION, docId, payload)
   }
 
+  /**
+   * Reads all user documents and maps them to User model instances.
+   * @returns {Promise<User[]>} Array of User instances
+   * @throws {Error} If read fails
+   */
   async readAll() {
     const docs = await super.readAll(COLLECTION)
     return docs.map((doc) => new User(doc))
   }
 
+  /**
+   * Fetches a single user by document ID.
+   * @param {string} docId - User document ID
+   * @returns {Promise<User>} User instance
+   * @throws {Error} If document does not exist or read fails
+   */
   async getById(docId) {
     const res = await super.readOne(COLLECTION, docId)
     return new User(Object.assign({ id: res.id }, res.data()))
   }
 
+  /**
+   * Fetches a user and populates myTests and myAnswers with full study/answer documents.
+   * @param {string} docId - User document ID
+   * @returns {Promise<User>} User instance with myTests and myAnswers populated
+   * @throws {Error} If read or fetch fails
+   */
   async getUserWithStudies(docId) {
     const res = await super.readOne(COLLECTION, docId)
     const user = new User({ id: res.id, ...res.data() })
@@ -75,6 +115,13 @@ export default class UserController extends Controller {
     return user
   }
 
+  /**
+   * Fetches test documents by IDs (uses 'in' query for ≤10, else parallel get).
+   * @private
+   * @param {string[]} ids - Test document IDs
+   * @returns {Promise<Object[]>} Array of test documents { id, ...data }
+   * @throws {Error} If query fails
+   */
   async _fetchStudiesByIds(ids) {
     if (!ids || ids.length === 0) return []
 
@@ -105,6 +152,16 @@ export default class UserController extends Controller {
     }
   }
 
+  /**
+   * Updates user profile fields (username, contactNo, country).
+   * @param {string} docId - User document ID
+   * @param {Object} payload - Profile fields
+   * @param {string} [payload.username] - Username
+   * @param {string} [payload.contactNo] - Contact number
+   * @param {string} [payload.country] - Country
+   * @returns {Promise<void>} Resolves when the document is updated
+   * @throws {Error} If update fails
+   */
   async updateProfile(docId, payload) {
     const userData = {
       username: payload.username,
@@ -114,10 +171,24 @@ export default class UserController extends Controller {
     return super.update(COLLECTION, docId, userData)
   }
 
+  /**
+   * Deletes a user document from Firestore.
+   * @param {string} docId - User document ID
+   * @returns {Promise<void>} Resolves when the document is deleted
+   * @throws {Error} If delete fails
+   */
   async deleteUser(docId) {
     return super.delete(COLLECTION, docId)
   }
 
+  /**
+   * Changes the current user's password (reauthenticates then updates).
+   * @param {Object} user - Firebase Auth user object
+   * @param {string} currentPassword - Current password for reauthentication
+   * @param {string} newPassword - New password to set
+   * @returns {Promise<void>} Resolves when password is updated
+   * @throws {Error} If reauthentication or update fails
+   */
   async changePassword(user, currentPassword, newPassword) {
     try {
       const credential = EmailAuthProvider.credential(
@@ -131,17 +202,41 @@ export default class UserController extends Controller {
     }
   }
 
+  /**
+   * Reauthenticates the user with email and password (e.g. before sensitive operations).
+   * @param {Object} user - Firebase Auth user object
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @returns {Promise<void>} Resolves when reauthentication succeeds
+   * @throws {Error} If reauthentication fails
+   */
   async reauthenticateUser(user, email, password) {
     const credential = EmailAuthProvider.credential(email, password)
     await reauthenticateWithCredential(user, credential)
   }
 
+  /**
+   * Appends a notification to a user's notifications array.
+   * @param {Object} payload - Notification payload
+   * @param {string} payload.userId - User document ID
+   * @param {Object} payload.notification - Notification object with toFirestore()
+   * @returns {Promise<void>} Resolves when the user document is updated
+   * @throws {Error} If user not found or update fails
+   */
   async addNotification(payload) {
     const userToUpdate = await this.getById(payload.userId)
     userToUpdate.notifications.push(payload.notification.toFirestore())
     return this.update(payload.userId, userToUpdate.toFirestore())
   }
 
+  /**
+   * Marks a single notification as read by createdDate.
+   * @param {Object} payload - Payload
+   * @param {Object} payload.user - User instance
+   * @param {Object} payload.notification - Notification object (must have createdDate)
+   * @returns {Promise<User>} Updated user instance
+   * @throws {Error} If notification not found
+   */
   async markNotificationAsRead(payload) {
     const userToUpdate = new User(payload.user)
 
@@ -167,6 +262,12 @@ export default class UserController extends Controller {
     }
   }
 
+  /**
+   * Marks all notifications for a user as read.
+   * @param {Object} user - User instance with notifications array
+   * @returns {Promise<User>} Updated user instance (in memory)
+   * @throws {Error} If update fails
+   */
   async markAllNotificationsAsRead(user) {
     const userToUpdate = new User(user)
 
@@ -189,6 +290,13 @@ export default class UserController extends Controller {
     return userToUpdate
   }
 
+  /**
+   * Removes all notifications for a given test from all cooperators.
+   * @param {string} testId - Test document ID
+   * @param {Object[]} cooperators - Array of cooperator objects (e.g. with userDocId)
+   * @returns {Promise<void>} Resolves when all user documents are updated
+   * @throws {Error} If any update fails
+   */
   async removeNotificationsForTest(testId, cooperators) {
     try {
       for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
@@ -221,6 +329,13 @@ export default class UserController extends Controller {
     }
   }
 
+  /**
+   * Removes a test from a user's myTests and myAnswers (e.g. on test delete or leave).
+   * @param {string} userId - User document ID
+   * @param {string} testIdToRemove - Test document ID to remove
+   * @returns {Promise<void>} Resolves when the user document is updated
+   * @throws {Error} If read or update fails
+   */
   async removeTestFromUser(userId, testIdToRemove) {
     try {
       const userDoc = await super.readOne('users', userId)
@@ -242,6 +357,14 @@ export default class UserController extends Controller {
       throw error
     }
   }
+
+  /**
+   * Updates a user's access level (e.g. for admin/super admin).
+   * @param {string} uid - User document ID
+   * @param {number} accessLevel - New access level
+   * @returns {Promise<void>} Resolves when the document is updated
+   * @throws {Error} If update fails
+   */
   async updateLevel(uid, accessLevel) {
     try {
       return super.update(COLLECTION, uid, { accessLevel })

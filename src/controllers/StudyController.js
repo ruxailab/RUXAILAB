@@ -12,11 +12,22 @@ const COLLECTION = 'tests'
 const answerController = new AnswerController()
 const userController = new UserController()
 
+/**
+ * Controller for study (test) CRUD, duplication, collaboration, and real-time subscription.
+ * Creates/updates answers documents and user references as needed.
+ * @extends Controller
+ */
 export default class StudyController extends Controller {
   constructor() {
     super()
   }
 
+  /**
+   * Creates a new study: creates an answers document, then the test document.
+   * @param {Object} payload - Study instance with toFirestore() and testType
+   * @returns {Promise<Object>} The created test document reference (with id)
+   * @throws {Error} If creation fails
+   */
   async createStudy(payload) {
     // Create answers doc for test
     const answerDoc = await answerController.createAnswer(
@@ -26,6 +37,13 @@ export default class StudyController extends Controller {
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
+
+  /**
+   * Duplicates a study: creates a new answers document and a new test document from the source.
+   * @param {Object} payload - Payload with test (study to duplicate)
+   * @returns {Promise<Object>} The created test document reference (with id)
+   * @throws {Error} If duplication fails
+   */
   async duplicateStudy(payload) {
     try {
       const answerDoc = await answerController.createAnswer(
@@ -42,6 +60,12 @@ export default class StudyController extends Controller {
     }
   }
 
+  /**
+   * Deletes a study: removes user references, notifications, and the test document.
+   * @param {Object} payload - Deletion payload (id, testAdmin, auxUser, cooperators)
+   * @returns {Promise<null|void>} null if test does not exist; otherwise resolves when done
+   * @throws {Error} If delete or updates fail
+   */
   async deleteStudy(payload) {
     try {
       const testToDelete = await super.readOne(COLLECTION, payload.id)
@@ -72,6 +96,12 @@ export default class StudyController extends Controller {
     }
   }
 
+  /**
+   * Updates a study document with the given payload.
+   * @param {Object} payload - Study instance with id and toFirestore()
+   * @returns {Promise<void>} Resolves when the document is updated
+   * @throws {Error} If update fails
+   */
   async updateStudy(payload) {
     try {
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
@@ -80,7 +110,12 @@ export default class StudyController extends Controller {
     }
   }
 
-  //ToDo: It seems an action from User Testing
+  /**
+   * Accepts a study collaboration: adds the cooperator's answer reference and marks invitation accepted.
+   * @param {Object} payload - Payload with test, cooperator (user to accept)
+   * @returns {Promise<void>} Resolves when the test and user documents are updated
+   * @throws {Error} If update fails
+   */
   async acceptStudyCollaboration(payload) {
     const userAnswer = new UserAnswer({
       answersDocId: payload.test.answersDocId,
@@ -115,6 +150,13 @@ export default class StudyController extends Controller {
     )
   }
 
+  /**
+   * Fetches a single study by ID and instantiates the correct study type.
+   * @param {Object} parameter - Query parameter
+   * @param {string} parameter.id - Test document ID
+   * @returns {Promise<Study|null>} Instantiated study or null if not found
+   * @throws {Error} If read fails
+   */
   async getStudy(parameter) {
     const res = await super.readOne(COLLECTION, parameter.id)
     if (!res.exists()) return null
@@ -123,6 +165,11 @@ export default class StudyController extends Controller {
     return instantiateStudyByType(rawData.testType, rawData)
   }
 
+  /**
+   * Fetches all public studies (isPublic === true) and instantiates by type.
+   * @returns {Promise<Study[]>} Array of study instances
+   * @throws {Error} If query fails
+   */
   async getPublicStudies() {
     const q = {
       field: 'isPublic',
@@ -136,6 +183,11 @@ export default class StudyController extends Controller {
     })
   }
 
+  /**
+   * Fetches all test documents and instantiates them by type.
+   * @returns {Promise<Study[]>} Array of study instances
+   * @throws {Error} If read fails
+   */
   async getAllStudies() {
     try {
       const response = await super.readAll('tests')
@@ -148,6 +200,12 @@ export default class StudyController extends Controller {
     }
   }
 
+  /**
+   * Subscribes to real-time updates for a study document.
+   * @param {string} studyId - Test document ID
+   * @param {Function} callback - Called with the instantiated study on each update
+   * @returns {Function} Unsubscribe function (from onSnapshot)
+   */
   subscribeToStudy(studyId, callback) {
     const docRef = doc(db, COLLECTION, studyId)
     return onSnapshot(docRef, (doc) => {

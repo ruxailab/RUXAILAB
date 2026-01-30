@@ -2,7 +2,12 @@ import { db } from '@/app/plugins/firebase'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 
 /**
- * Fetches the accessibility report from Firestore by testId
+ * @module AccessibilityReportController
+ * Fetches accessibility reports from Firestore by test ID.
+ */
+
+/**
+ * Fetches the accessibility report from Firestore by testId.
  * @param {string} testId
  * @returns {Promise<Object|null>} The report data or null if not found
  */

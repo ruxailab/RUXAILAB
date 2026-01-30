@@ -14,6 +14,11 @@ import {
 const ASSESSMENTS_COLLECTION = 'assessments'
 
 /**
+ * @module assessmentController
+ * Accessibility assessment controller: save/get/update/delete assessments and config in Firestore.
+ */
+
+/**
  * Save or update an assessment in Firestore
  * @param {string} userId - The ID of the user
  * @param {string} testId - The ID of the test
@@ -111,7 +116,7 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment) => {
     })
 
     return { success: true }
-  } catch {
+  } catch (error) {
     throw new Error('Failed to update rule assessment: ' + error.message)
   }
 }
