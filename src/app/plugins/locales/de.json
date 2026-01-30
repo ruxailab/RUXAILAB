@@ -1793,5 +1793,15 @@
   "taskCreation": {
     "taskDescription": "Aufgabenbeschreibung",
     "taskDescriptionHelper": "Geben Sie spezifische Schritte an, die sie befolgen sollen."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Variable löschen",
+      "message": "Sind Sie sicher, dass Sie diese Variable löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "deleteOptionConfirm": {
+      "title": "Option löschen",
+      "message": "Sind Sie sicher, dass Sie diese Option löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    }
   }
 }
