@@ -76,8 +76,8 @@
                     study.status === 'active'
                       ? 'success'
                       : study.status === 'finished'
-                      ? 'warning'
-                      : 'info'
+                        ? 'warning'
+                        : 'info'
                   "
                   variant="tonal"
                   size="small"
@@ -244,6 +244,9 @@ const daysLeft = (date) => {
   const futureDate = new Date(date)
   const today = new Date()
 
+  futureDate.setHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+
   const differenceInTime = futureDate.getTime() - today.getTime()
   const differenceInDays = differenceInTime / (1000 * 3600 * 24)
 
@@ -409,7 +412,9 @@ watch(
 <style scoped>
 .study-card {
   height: 100%;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
 .study-card:hover {

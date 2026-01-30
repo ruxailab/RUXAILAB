@@ -6,8 +6,7 @@
 </template>
 
 <script setup>
-import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
-
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue'
 </script>
 
 <style scoped>
