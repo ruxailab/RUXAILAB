@@ -61,6 +61,12 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
     )
   }
 
+  // Observators only see the Manager view - no additional navigation items
+  if (accessLevel === ACCESS_LEVEL.OBSERVATOR) {
+    // Return only the Manager item, no additional tabs
+    return items
+  }
+
   return items
 }
 

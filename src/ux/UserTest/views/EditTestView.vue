@@ -86,9 +86,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, onUnmounted } from 'vue'
+import { computed, onMounted, ref, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import StudyController from '@/controllers/StudyController'
 import ListTasks from '@/ux/UserTest/components/ListTasks.vue'
 import UserVariables from '@/ux/UserTest/components/UserVariables.vue'
@@ -100,6 +100,7 @@ import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 
 // Controller
 const studyController = new StudyController()
@@ -107,6 +108,7 @@ const studyController = new StudyController()
 // Store
 const store = useStore()
 const { t } = useI18n()
+const router = useRouter()
 
 // Variables
 const change = ref(false)
@@ -118,6 +120,26 @@ const route = useRoute()
 let unsubscribe = null
 // Computed
 const test = computed(() => store.getters.test)
+const user = computed(() => store.getters.user)
+
+// Check access level - prevent observators from accessing this view
+const accessLevel = computed(() => {
+  const currentUser = user.value
+  const currentTest = test.value
+
+  if (!currentUser) return ACCESS_LEVEL.GUEST
+  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
+
+  if (currentTest?.testAdmin?.userDocId === currentUser.id)
+    return ACCESS_LEVEL.ADMIN
+
+  const coop = currentTest?.cooperators?.find(
+    (c) => c.userDocId === currentUser.id,
+  )
+  if (coop) return coop.accessLevel
+
+  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
+})
 
 const getWelcome = () => {
   welcomeMessage.value = test.value.testStructure.welcomeMessage || ''
@@ -209,9 +231,34 @@ const subscribeToTest = () => {
     })
   }
 }
+// Helper function to redirect to manager view
+const redirectToManager = () => {
+  showError('You do not have permission to access the configuration section')
+  // Go back to previous page (manager view)
+  router.back()
+}
+
 // Lifecycle
 onMounted(() => {
   subscribeToTest()
+
+  // Check if user has permission to access this view
+  if (
+    accessLevel.value === ACCESS_LEVEL.OBSERVATOR ||
+    accessLevel.value === ACCESS_LEVEL.GUEST
+  ) {
+    redirectToManager()
+  }
+})
+
+// Watch for access level changes after test data loads
+watch(accessLevel, (newAccessLevel) => {
+  if (
+    newAccessLevel === ACCESS_LEVEL.OBSERVATOR ||
+    newAccessLevel === ACCESS_LEVEL.GUEST
+  ) {
+    redirectToManager()
+  }
 })
 
 onUnmounted(() => {
