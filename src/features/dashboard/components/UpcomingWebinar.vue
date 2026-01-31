@@ -32,19 +32,19 @@
     >
     </v-img>
 
-    <v-card-text class="pa-6">
+    <v-card-text class="pa-4 pa-sm-6">
       <!-- Webinar Title -->
-      <h2 class="webinar-title text-h5 font-weight-bold">
+      <h2 class="webinar-title text-h5 font-weight-bold mb-2">
         {{ webinar.title }}
       </h2>
 
       <!-- Webinar Description -->
-      <p class="webinar-description text-body-1 text-grey-darken-1 mb-4">
+      <p class="webinar-description text-body-2 text-grey-darken-1 mb-3">
         {{ webinar.description }}
       </p>
 
       <!-- Date and Duration Info -->
-      <v-row class="info-row mb-4" no-gutters>
+      <v-row class="info-row mb-6" no-gutters>
         <v-col cols="6" class="pr-2">
           <div class="info-item">
             <div class="info-icon-wrapper">
@@ -291,6 +291,7 @@ const buttonConfig = computed(() => {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  min-height: 56px;
 }
 
 .info-icon-wrapper {
@@ -302,23 +303,31 @@ const buttonConfig = computed(() => {
   justify-content: center;
   min-width: 40px;
   height: 40px;
+  flex-shrink: 0;
 }
 
 .info-content {
   flex: 1;
+  min-width: 0;
 }
 
 .info-value {
   font-size: 1rem;
   font-weight: 600;
   color: rgb(var(--v-theme-on-surface));
-  line-height: 1.2;
+  line-height: 1.3;
+  word-wrap: break-word;
 }
 
 .info-label {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: rgb(var(--v-theme-on-surface-variant));
   margin-top: 2px;
+  line-height: 1.2;
+}
+
+.webinar-description {
+  line-height: 1.5;
 }
 
 .join-button {
@@ -327,6 +336,7 @@ const buttonConfig = computed(() => {
   font-size: 1rem;
   text-transform: none;
   letter-spacing: 0.25px;
+  margin-top: 8px;
 }
 
 /* Responsive adjustments */
@@ -342,7 +352,38 @@ const buttonConfig = computed(() => {
   }
 
   .webinar-title {
-    font-size: 1.25rem;
+    font-size: 1.25rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .webinar-description {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .info-item {
+    gap: 8px;
+    min-height: 48px;
+  }
+
+  .info-icon-wrapper {
+    min-width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+
+  .info-value {
+    font-size: 0.875rem;
+  }
+
+  .info-label {
+    font-size: 0.7rem;
+  }
+
+  .join-button {
+    height: 44px;
+    font-size: 0.9rem;
   }
 }
 </style>
