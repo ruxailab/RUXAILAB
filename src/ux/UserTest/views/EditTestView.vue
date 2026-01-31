@@ -211,7 +211,7 @@ const save = async () => {
     const study = instantiateStudyByType(rawData.testType, rawData)
     await store.dispatch('updateStudy', study)
     showSuccess('pages.editTest.updatedTest')
-  } catch (error) {
+  } catch {
     showError('errors.globalError')
   }
 }
@@ -231,34 +231,26 @@ const subscribeToTest = () => {
     })
   }
 }
-// Helper function to redirect to manager view
-const redirectToManager = () => {
-  showError('You do not have permission to access the configuration section')
-  // Go back to previous page (manager view)
-  router.back()
+// Helper function to check and redirect unauthorized users
+const checkAccessPermission = () => {
+  if (
+    accessLevel.value === ACCESS_LEVEL.OBSERVATOR ||
+    accessLevel.value === ACCESS_LEVEL.GUEST
+  ) {
+    showError('You do not have permission to access the configuration section')
+    router.back()
+  }
 }
 
 // Lifecycle
 onMounted(() => {
   subscribeToTest()
-
-  // Check if user has permission to access this view
-  if (
-    accessLevel.value === ACCESS_LEVEL.OBSERVATOR ||
-    accessLevel.value === ACCESS_LEVEL.GUEST
-  ) {
-    redirectToManager()
-  }
+  checkAccessPermission()
 })
 
 // Watch for access level changes after test data loads
-watch(accessLevel, (newAccessLevel) => {
-  if (
-    newAccessLevel === ACCESS_LEVEL.OBSERVATOR ||
-    newAccessLevel === ACCESS_LEVEL.GUEST
-  ) {
-    redirectToManager()
-  }
+watch(accessLevel, () => {
+  checkAccessPermission()
 })
 
 onUnmounted(() => {
