@@ -121,9 +121,9 @@
         </div>
       </v-col>
 
-      <!-- Observator waiting message (before call starts) -->
+      <!-- Observator waiting message (before room is open) -->
       <v-col
-        v-if="isObservator && !callStarted"
+        v-if="isObservator && !callStarted && !roomIsOpen"
         cols="12"
         class="d-flex justify-center align-center"
       >
@@ -141,9 +141,9 @@
       </v-col>
     </v-row>
 
-    <!-- Participant/Observator Waiting State (only when not started) -->
+    <!-- Participant/Observator Waiting State (only when room not open yet) -->
     <v-row
-      v-if="!caller && !callStarted && !isObservator"
+      v-if="!caller && !callStarted && !roomIsOpen && !isObservator"
       class="participant-controls-row"
       justify="center"
       no-gutters
@@ -162,6 +162,58 @@
             The video call will start automatically when the moderator opens the
             room.
           </p>
+        </div>
+      </v-col>
+    </v-row>
+
+    <!-- Rejoin call (participant: after disconnect while room is still open) -->
+    <v-row
+      v-if="!caller && !callStarted && roomIsOpen && !roomReady && !isObservator"
+      class="participant-controls-row"
+      justify="center"
+      no-gutters
+    >
+      <v-col cols="12" class="participant-controls-container">
+        <div class="participant-controls-content">
+          <v-icon size="48" color="grey" class="mb-4">mdi-phone-hangup</v-icon>
+          <h3 class="text-h6 mb-2">You left the call</h3>
+          <p class="text-body-2 text-grey mb-4">
+            The moderator's call is still active. You can rejoin anytime.
+          </p>
+          <v-btn
+            color="primary"
+            size="large"
+            @click="rejoinRoom"
+          >
+            <v-icon start>mdi-phone-in-talk</v-icon>
+            Rejoin call
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
+
+    <!-- Rejoin (observator: after disconnect while room is still open) -->
+    <v-row
+      v-if="!caller && !callStarted && roomIsOpen && !roomReady && isObservator"
+      class="participant-controls-row"
+      justify="center"
+      no-gutters
+    >
+      <v-col cols="12" class="participant-controls-container">
+        <div class="participant-controls-content">
+          <v-icon size="48" color="grey" class="mb-4">mdi-eye-off</v-icon>
+          <h3 class="text-h6 mb-2">You left the session</h3>
+          <p class="text-body-2 text-grey mb-4">
+            The moderator's call is still active. You can rejoin to observe.
+          </p>
+          <v-btn
+            color="primary"
+            size="large"
+            @click="rejoinRoom"
+          >
+            <v-icon start>mdi-eye</v-icon>
+            Rejoin to observe
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -962,6 +1014,7 @@ const currentStepperValue = computed(() => {
 // --- Initialization ---
 
 const roomReady = ref(false)
+const roomIsOpen = ref(false)
 
 // Watch for localVideo ref and ensure stream is attached
 watch([localVideo, localStream], ([videoEl, stream]) => {
@@ -984,6 +1037,7 @@ onMounted(async () => {
     // Check initial value first
     const initialSnapshot = await get(roomRef)
     const initialData = initialSnapshot.val()
+    roomIsOpen.value = !!initialData?.showVideoCall
     if (initialData?.showVideoCall && !roomReady.value) {
       roomReady.value = true
       await joinRoom()
@@ -992,6 +1046,7 @@ onMounted(async () => {
     // Then listen for changes
     onValue(roomRef, (snapshot) => {
       const roomData = snapshot.val()
+      roomIsOpen.value = !!roomData?.showVideoCall
       if (roomData?.showVideoCall) {
         if (!roomReady.value) {
           roomReady.value = true
@@ -1138,11 +1193,16 @@ const leaveRoom = () => {
   if (localStream.value) {
     localStream.value.getTracks().forEach((t) => t.stop())
   }
-  // Close all connections
+  // Close all connections and clear peers so re-join creates fresh connections
   Object.values(peers).forEach((p) => p.connection.close())
+  Object.keys(peers).forEach((id) => delete peers[id])
   // Remove self
   remove(dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`))
   remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
+  // Allow re-join: participant/observator can join again when room is still open
+  if (!props.isModerator) {
+    roomReady.value = false
+  }
 }
 
 const initLocalMedia = async () => {
@@ -1316,6 +1376,13 @@ function joinRoomFromDialog() {
 
 function dismissJoinDialog() {
   showJoinDialog.value = false
+}
+
+// Rejoin after disconnect: clean stale state then join again
+async function rejoinRoom() {
+  leaveRoom()
+  roomReady.value = true
+  await joinRoom()
 }
 
 // Aliases for Template Compatibility
