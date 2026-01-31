@@ -131,6 +131,7 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { countries } from '@/shared/constants/countries'
+import { showError } from '@/shared/utils/toast'
 
 const props = defineProps({
   modelValue: {
@@ -190,16 +191,19 @@ watch(
 watch(
   localProfileData,
   (newVal) => {
+    // Check if form fields changed (excluding profileImage which is compared separately)
     const hasFormChanges =
       newVal.username !== props.profileData.username ||
       newVal.contactNo !== props.profileData.contactNo ||
-      newVal.country !== props.profileData.country ||
-      newVal.profileImage !== props.profileData.profileImage
+      newVal.country !== props.profileData.country
 
-    hasChanges.value = hasFormChanges || pendingImageFile.value !== null
+    const imageChanged = 
+      pendingImageFile.value !== null || 
+      (newVal.profileImage === '' && props.profileData.profileImage !== '')
+
+    hasChanges.value = hasFormChanges || imageChanged
   },
   { deep: true },
-)
 
 // Validation rules
 const usernameRules = computed(() => [
@@ -226,14 +230,17 @@ const handleImageSelect = async (event) => {
   const file = event.target.files[0]
   if (!file) return
 
-  // Validate file type
+   // Validate file type
   if (!file.type.startsWith('image/')) {
+    showError(t('profile.invalidFileType') || 'Please select a valid image file.')
     return
   }
 
-  // Warn if file is very large (over 5MB)
+   // Warn if file is very large (over 5MB)
   const maxSize = 5 * 1024 * 1024 // 5MB
   if (file.size > maxSize) {
+    showError(t('profile.fileTooLarge') || 'File size exceeds 5MB. Please choose a smaller image.')
+    return
   }
 
   try {
@@ -254,8 +261,9 @@ const handleImageSelect = async (event) => {
     // Update local preview
     localProfileData.value.profileImage = previewUrl
     hasChanges.value = true
-  } catch (error) {
-    return error
+   } catch (error) {
+    console.error('Error processing image:', error)
+    showError(t('profile.imageProcessingError') || 'Failed to process image. Please try again.')
   } finally {
     isProcessingImage.value = false
     // Reset file input
@@ -307,7 +315,8 @@ const handleSave = async () => {
       }
     }
   } catch (error) {
-    return error
+    console.error('Error saving profile:', error)
+    showError(t('profile.saveError') || 'Failed to save profile. Please try again.')
   } finally {
     isSaving.value = false
   }
