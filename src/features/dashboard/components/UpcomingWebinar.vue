@@ -129,11 +129,10 @@ const webinar = computed(() => {
 
   // Default webinar data
   return {
-    title: 'Monthly Office Hours',
-    description:
-      'Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.',
-    date: 'Nov 2025',
-    duration: 'Monthly',
+    title: t('Dashboard.officeHours.title'),
+    description: t('Dashboard.officeHours.description'),
+    date: t('Dashboard.officeHours.nextSessionDate'),
+    duration: t('Dashboard.officeHours.frequency'),
   }
 })
 

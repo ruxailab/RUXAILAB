@@ -430,6 +430,20 @@
       "finished": "完了",
       "unknown": "不明"
     },
+    "officeHours": {
+      "title": "月例オフィスアワー",
+      "description": "11月から、プロジェクトの更新情報の議論、質問への回答、コミュニティとの交流のために、月例オフィスアワーを開催します。",
+      "nextSessionDate": "2025年11月",
+      "frequency": "毎月"
+    },
+    "webinar": {
+      "ended": "終了",
+      "live": "ライブ",
+      "today": "今日",
+      "joinNow": "今すぐ参加",
+      "webinarEnded": "ウェビナー終了",
+      "startingToday": "今日開始"
+    },
     "cards": {
       "recentActivity": "最近のアクティビティ",
       "activities7Days": "アクティビティ（合計7日間）",

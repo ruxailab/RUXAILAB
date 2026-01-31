@@ -430,6 +430,20 @@
       "finished": "已完成",
       "unknown": "未知"
     },
+    "officeHours": {
+      "title": "每月办公时间",
+      "description": "从 11 月开始，我们将举办每月的办公时间，讨论项目更新、回答问题并与我们的社区联系。",
+      "nextSessionDate": "2025年11月",
+      "frequency": "每月"
+    },
+    "webinar": {
+      "ended": "已结束",
+      "live": "直播中",
+      "today": "今天",
+      "joinNow": "立即加入",
+      "webinarEnded": "网络研讨会已结束",
+      "startingToday": "今天开始"
+    },
     "cards": {
       "recentActivity": "近期活动",
       "activities7Days": "活动（共7天）",

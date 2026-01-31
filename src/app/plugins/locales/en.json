@@ -430,6 +430,20 @@
       "finished": "Finished",
       "unknown": "Unknown"
     },
+    "officeHours": {
+      "title": "Monthly Office Hours",
+      "description": "Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monthly"
+    },
+    "webinar": {
+      "ended": "Ended",
+      "live": "Live",
+      "today": "Today",
+      "joinNow": "Join Now",
+      "webinarEnded": "Webinar Ended",
+      "startingToday": "Starting Today"
+    },
     "cards": {
       "recentActivity": "Recent Activity",
       "activities7Days": "Activities (7 days total)",
