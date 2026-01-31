@@ -64,6 +64,13 @@ Follow these steps to set up the development environment and run the application
 npm install
 pip install
 ```
+```bash
+# Install Cloud Functions dependencies
+cd functions/
+npm install
+```
+
+
 
 Open Firebase / Firestore and start a project.
 
