@@ -430,6 +430,20 @@
       "finished": "Finalizado",
       "unknown": "Desconhecido"
     },
+    "officeHours": {
+      "title": "Horário Comercial Mensal",
+      "description": "Começando em novembro, realizaremos horários de atendimento mensais para discutir atualizações do projeto, responder perguntas e conectar com nossa comunidade.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensal"
+    },
+    "webinar": {
+      "ended": "Encerrado",
+      "live": "Ao vivo",
+      "today": "Hoje",
+      "joinNow": "Entrar agora",
+      "webinarEnded": "Webinar encerrado",
+      "startingToday": "Começa hoje"
+    },
     "cards": {
       "recentActivity": "Atividade Recente",
       "activities7Days": "Atividades (total de 7 dias)",

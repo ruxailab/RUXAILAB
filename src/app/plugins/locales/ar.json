@@ -430,6 +430,20 @@
       "finished": "منتهي",
       "unknown": "غير معروف"
     },
+    "officeHours": {
+      "title": "ساعات العمل الإضافية الشهرية",
+      "description": "بدءًا من نوفمبر، سننظم ساعات عمل شهرية لمناقشة تحديثات المشروع والإجابة على الأسئلة والتواصل مع مجتمعنا.",
+      "nextSessionDate": "نوفمبر 2025",
+      "frequency": "شهرياً"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الويبينار",
+      "startingToday": "يبدأ اليوم"
+    },
     "cards": {
       "recentActivity": "النشاط الأخير",
       "activities7Days": "الأنشطة (إجمالي 7 أيام)",

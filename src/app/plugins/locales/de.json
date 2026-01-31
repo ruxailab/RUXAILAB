@@ -430,6 +430,20 @@
       "finished": "Abgeschlossen",
       "unknown": "Unbekannt"
     },
+    "officeHours": {
+      "title": "Monatliche Sprechstunden",
+      "description": "Ab November veranstalten wir monatliche Sprechstunden, um Projektaktualisierungen zu besprechen, Fragen zu beantworten und uns mit unserer Community auszutauschen.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monatlich"
+    },
+    "webinar": {
+      "ended": "Beendet",
+      "live": "Live",
+      "today": "Heute",
+      "joinNow": "Jetzt beitreten",
+      "webinarEnded": "Webinar beendet",
+      "startingToday": "Beginnt heute"
+    },
     "cards": {
       "recentActivity": "Letzte Aktivität",
       "activities7Days": "Aktivitäten (insgesamt 7 Tage)",

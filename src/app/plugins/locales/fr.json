@@ -430,6 +430,20 @@
       "finished": "Terminé",
       "unknown": "Inconnu"
     },
+    "officeHours": {
+      "title": "Heures de Bureau Mensuelles",
+      "description": "À partir de novembre, nous organiserons des heures de bureau mensuelles pour discuter des mises à jour du projet, répondre aux questions et échanger avec notre communauté.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensuel"
+    },
+    "webinar": {
+      "ended": "Terminé",
+      "live": "En direct",
+      "today": "Aujourd'hui",
+      "joinNow": "Rejoindre maintenant",
+      "webinarEnded": "Webinaire terminé",
+      "startingToday": "Commence aujourd'hui"
+    },
     "cards": {
       "recentActivity": "Activité récente",
       "activities7Days": "Activités (7 jours au total)",
