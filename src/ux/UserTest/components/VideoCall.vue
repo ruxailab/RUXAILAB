@@ -266,8 +266,8 @@
             <span>Start the video call session</span>
           </v-tooltip>
 
-          <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip v-if="caller && callStarted" location="top">
+          <!-- End Call button (moderator and observator/participant when call is active) -->
+          <v-tooltip v-if="callStarted" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -281,23 +281,6 @@
               </v-btn>
             </template>
             <span>End the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
-              </v-btn>
-            </template>
-            <span>Leave the video call session</span>
           </v-tooltip>
 
           <!-- Stepper menu button -->
@@ -1334,24 +1317,20 @@ const startCall = async () => {
   }
 }
 const endCall = async () => {
-  if (caller.value) {
-    try {
-      await remove(dbRef(database, `calls/${props.roomId}`))
-    } catch {
-      // Failed to remove calls node
-    }
-    try {
-      await update(dbRef(database, `rooms/${props.roomId}`), {
-        showVideoCall: false,
-      })
-    } catch {
-      // Failed to update rooms showVideoCall
-    }
-    leaveRoom()
-  } else {
-    // Non-moderator: can just leave locally
-    leaveRoom()
+  // Clear the room for everyone (both moderator and participant can end the call)
+  try {
+    await remove(dbRef(database, `calls/${props.roomId}`))
+  } catch {
+    // Failed to remove calls node
   }
+  try {
+    await update(dbRef(database, `rooms/${props.roomId}`), {
+      showVideoCall: false,
+    })
+  } catch {
+    // Failed to update rooms showVideoCall
+  }
+  leaveRoom()
 }
 
 // Screen Sharing (Mesh Compatible)
