@@ -1,7 +1,7 @@
 // imports
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { doc, onSnapshot } from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
+import { db, auth } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
@@ -23,6 +23,8 @@ export default class StudyController extends Controller {
       new StudyAnswer({ type: payload.testType }),
     )
     payload.answersDocId = answerDoc.id
+    payload.createdBy = auth.currentUser ? auth.currentUser.uid : ''
+    payload.lastModifiedBy = auth.currentUser ? auth.currentUser.uid : ''
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
@@ -74,6 +76,7 @@ export default class StudyController extends Controller {
 
   async updateStudy(payload) {
     try {
+      payload.lastModifiedBy = auth.currentUser ? auth.currentUser.uid : ''
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
     } catch (e) {
       throw e

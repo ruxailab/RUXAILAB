@@ -24,6 +24,8 @@ export default class Study {
     status, // transformar em um ENUM
     endDate,
     creationDate,
+    lastModifiedBy,
+    createdBy,
   } = {}) {
     /**
      * Defines the test id.
@@ -143,6 +145,20 @@ export default class Study {
      * @type {number}
      */
     this.endDate = endDate ?? null
+
+    /**
+     * Defines the user who last modified the test.
+     *
+     * @type {string}
+     */
+    this.lastModifiedBy = lastModifiedBy ?? null
+
+    /**
+     * Defines the user who created the test.
+     *
+     * @type {string}
+     */
+    this.createdBy = createdBy ?? null
   }
 
   /**
@@ -168,6 +184,8 @@ export default class Study {
       status: this.status,
       endDate: this.endDate,
       subType: this.subType,
+      lastModifiedBy: this.lastModifiedBy,
+      createdBy: this.createdBy,
     }
   }
 }
