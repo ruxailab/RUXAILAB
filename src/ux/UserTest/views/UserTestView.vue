@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                          ? 'primary'
-                          : 'grey'
+                            ? 'primary'
+                            : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -445,7 +445,7 @@
             v-if="
               globalIndex === (hasEyeTracking ? 7 : 6) &&
               localTestAnswer.postTestCompleted &&
-              !localTestAnswer.submitted
+              (!localTestAnswer.submitted || isUserTestAdmin)
             "
             :final-message="$t('finishTest.finalMessage')"
             :congratulations="test.testStructure.finalMessage"
@@ -585,7 +585,24 @@ const hasEyeTracking = computed(() =>
 )
 
 const isUserTestAdmin = computed(() => {
-  return test.value.testAdmin.userDocId === user.value?.id
+  // Check if user is the original test admin
+  if (test.value.testAdmin.userDocId === user.value?.id) {
+    return true
+  }
+
+  // Check if user is a cooperator with admin or evaluator access level
+  if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
+    const userCooperator = test.value.cooperators.find(
+      (cooperator) =>
+        cooperator.userDocId === user.value?.id &&
+        (cooperator.accessLevel === 0 || cooperator.accessLevel === 1),
+    )
+    if (userCooperator) {
+      return true
+    }
+  }
+
+  return false
 })
 
 const isStartTestDisabled = computed(() => {
@@ -609,8 +626,8 @@ const isStartTestDisabled = computed(() => {
     if (endDate < currentDate) return true
   }
 
-  // Check if user has already submitted the test
-  if (localTestAnswer.submitted) return true
+  // Check if user has already submitted the test or user is admin
+  if (localTestAnswer.submitted && !isUserTestAdmin.value) return true
 
   return false
 })
@@ -1360,7 +1377,8 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
