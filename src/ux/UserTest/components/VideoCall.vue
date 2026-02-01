@@ -69,6 +69,23 @@
                 playsinline
                 class="video-element"
               ></video>
+              <!-- Camera off overlay (synced from Firebase) -->
+              <div
+                v-if="!getPeerHasCamera(userId)"
+                class="camera-disabled-overlay"
+              >
+                <v-icon size="64" color="white" class="mb-2"
+                  >mdi-video-off</v-icon
+                >
+                <p class="text-white">Camera is off</p>
+              </div>
+              <!-- Mic muted indicator (synced from Firebase) -->
+              <div
+                v-if="!getPeerHasMicrophone(userId)"
+                class="mic-muted-indicator"
+              >
+                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+              </div>
               <div class="video-label">{{ getPeerName(userId) }}</div>
             </div>
           </div>
@@ -886,6 +903,7 @@ const participantsList = computed(() => {
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
+    hasScreenShare: isSharingScreen.value,
   })
 
   // Add others from participants
@@ -916,13 +934,32 @@ const participantsList = computed(() => {
       isSelf: false,
       role: role,
       connected: !!peers[userId],
-      hasCamera: role !== 'observator',
-      hasMicrophone: role !== 'observator',
+      hasCamera:
+        role === 'observator'
+          ? false
+          : (p.hasCamera !== undefined ? p.hasCamera : true),
+      hasMicrophone:
+        role === 'observator'
+          ? false
+          : (p.hasMicrophone !== undefined ? p.hasMicrophone : true),
+      hasScreenShare: !!(p.hasScreenShare === true),
     })
   })
 
   return list
 })
+
+// Helpers for remote peer media state (synced via Firebase)
+const getPeerHasCamera = (userId) => {
+  const p = participants.value[userId]
+  if (!p) return true
+  return p.hasCamera !== undefined ? p.hasCamera : true
+}
+const getPeerHasMicrophone = (userId) => {
+  const p = participants.value[userId]
+  if (!p) return true
+  return p.hasMicrophone !== undefined ? p.hasMicrophone : true
+}
 
 // Helper to get name
 const getPeerName = (userId) => {
@@ -1023,6 +1060,9 @@ const joinRoom = async () => {
     email: props.user.email,
     name: props.user.email?.split('@')[0], // Simple name
     joinedAt: Date.now(),
+    hasCamera: isCameraEnabled.value,
+    hasMicrophone: isMicrophoneEnabled.value,
+    hasScreenShare: isSharingScreen.value,
   })
   onDisconnect(myRef).remove() // Auto-remove on closing tab
 
@@ -1247,6 +1287,7 @@ function toggleCamera() {
   if (track) {
     track.enabled = !track.enabled
     isCameraEnabled.value = track.enabled
+    syncMyMediaStateToFirebase()
   }
 }
 
@@ -1256,7 +1297,23 @@ function toggleMicrophone() {
   if (track) {
     track.enabled = !track.enabled
     isMicrophoneEnabled.value = track.enabled
+    syncMyMediaStateToFirebase()
   }
+}
+
+// Sync camera/mic/screen state to Firebase so other participants see it
+function syncMyMediaStateToFirebase() {
+  const myRef = dbRef(
+    database,
+    `calls/${props.roomId}/participants/${props.user.id}`,
+  )
+  update(myRef, {
+    hasCamera: isCameraEnabled.value,
+    hasMicrophone: isMicrophoneEnabled.value,
+    hasScreenShare: isSharingScreen.value,
+  }).catch(() => {
+    // Room may be closed or we left
+  })
 }
 
 function toggleSidePanel() {
@@ -1371,6 +1428,7 @@ async function startScreenShare() {
     })
     screenStream.value = stream
     isSharingScreen.value = true // Update state immediately
+    syncMyMediaStateToFirebase()
 
     if (screenVideo.value) {
       screenVideo.value.srcObject = stream
@@ -1397,6 +1455,7 @@ async function startScreenShare() {
     }
   } catch {
     isSharingScreen.value = false
+    syncMyMediaStateToFirebase()
   }
 }
 
@@ -1406,6 +1465,7 @@ async function stopScreenShare() {
     screenStream.value = null
   }
   isSharingScreen.value = false
+  syncMyMediaStateToFirebase()
 
   // Revert to camera
   if (localStream.value) {
