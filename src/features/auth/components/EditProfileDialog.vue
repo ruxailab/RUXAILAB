@@ -203,7 +203,8 @@ watch(
 
     hasChanges.value = hasFormChanges || imageChanged
   },
-  { deep: true },
+  { deep: true }
+)
 
 // Validation rules
 const usernameRules = computed(() => [
@@ -226,52 +227,52 @@ const selectImage = () => {
   fileInput.value.click()
 }
 
+const resetFileInput = () => {
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
 const handleImageSelect = async (event) => {
-  const file = event.target.files[0]
+  const file = event.target.files?.[0]
+
   if (!file) return
 
-   // Validate file type
-  if (!file.type.startsWith('image/')) {
-    showError(t('profile.invalidFileType') || 'Please select a valid image file.')
-    return
-  }
-
-   // Warn if file is very large (over 5MB)
-  const maxSize = 5 * 1024 * 1024 // 5MB
-  if (file.size > maxSize) {
-    showError(t('profile.fileTooLarge') || 'File size exceeds 5MB. Please choose a smaller image.')
-    return
-  }
-
   try {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      showError('profile.invalidFileType')
+      return
+    }
+
+    // Validate file size
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      showError('profile.fileTooLarge')
+      return
+    }
+
     isProcessingImage.value = true
 
-    // Clean up previous preview if exists
     if (pendingImagePreview.value) {
       URL.revokeObjectURL(pendingImagePreview.value)
     }
 
-    // Create preview URL
     const previewUrl = URL.createObjectURL(file)
     pendingImagePreview.value = previewUrl
-
-    // Store the file for later upload
     pendingImageFile.value = file
-
-    // Update local preview
     localProfileData.value.profileImage = previewUrl
     hasChanges.value = true
-   } catch (error) {
+
+  } catch (error) {
     console.error('Error processing image:', error)
-    showError(t('profile.imageProcessingError') || 'Failed to process image. Please try again.')
+    showError('profile.imageProcessingError')
   } finally {
     isProcessingImage.value = false
-    // Reset file input
-    if (fileInput.value) {
-      fileInput.value.value = ''
-    }
+    resetFileInput()
   }
 }
+
 
 const removeImage = () => {
   if (pendingImagePreview.value) {
@@ -316,7 +317,7 @@ const handleSave = async () => {
     }
   } catch (error) {
     console.error('Error saving profile:', error)
-    showError(t('profile.saveError') || 'Failed to save profile. Please try again.')
+    showError('profile.saveError') 
   } finally {
     isSaving.value = false
   }
