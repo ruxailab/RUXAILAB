@@ -799,7 +799,9 @@
     "messages": {
       "noTasks": "タスクがありません。続行するにはタスクを作成してください。",
       "noVariables": "変数がまだ追加されていません。下をクリックして新しい変数を作成してください。",
-      "noOptions": "オプションが追加されていません。"
+      "noOptions": "オプションが追加されていません。",
+      "confirm_delete_task":"タスク削除の確認",
+      "sure_to_delete_task":"本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
     },
     "inputs": {
       "consent": "同意",

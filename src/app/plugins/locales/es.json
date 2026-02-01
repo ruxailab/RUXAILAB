@@ -799,7 +799,9 @@
     "messages": {
       "noTasks": "No tienes ninguna tarea, crea una para continuar.",
       "noVariables": "No se han añadido variables aún. Haz clic abajo para crear una nueva variable.",
-      "noOptions": "No se han añadido opciones."
+      "noOptions": "No se han añadido opciones.",
+      "confirm_delete_task":"Confirmar Eliminar Tarea",
+      "sure_to_delete_task":"¿Estás seguro de que deseas eliminar la Tarea : {taskName}? Esta acción no se puede deshacer"
     },
     "inputs": {
       "consent": "Consentimiento",
