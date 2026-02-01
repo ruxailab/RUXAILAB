@@ -28,8 +28,22 @@ export default {
     async markAllNotificationsAsRead({ commit }, user) {
       commit('setLoading', true)
       try {
-        const updatedUser = await userController.markAllNotificationsAsRead(user)
+        const updatedUser = await userController.markAllNotificationsAsRead(
+          user,
+        )
         // Update the root Auth store state with the new user object
+        commit('SET_USER', updatedUser, { root: true })
+      } catch (e) {
+        commit('setError', e)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async clearAllNotifications({ commit }, user) {
+      commit('setLoading', true)
+      try {
+        const updatedUser = await userController.clearAllNotifications(user)
         commit('SET_USER', updatedUser, { root: true })
       } catch (e) {
         commit('setError', e)

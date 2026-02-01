@@ -201,7 +201,12 @@
     "minutesAgo": "{count} мин назад",
     "hoursAgo": "{count} ч назад",
     "daysAgo": "{count} д назад",
-    "newNotification": "У вас новое уведомление."
+    "newNotification": "У вас новое уведомление.",
+    "clearAllNotifications": "Очистить все",
+    "reset": "Сброс",
+    "confirmClearTitle": "Очистить все уведомления?",
+    "confirmClearMessage": "Это навсегда удалит все ваши уведомления. Это действие нельзя отменить.",
+    "clear": "Очистить"
   },
   "navigation": {
     "dashboard": "Панель управления",

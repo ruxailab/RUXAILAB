@@ -201,7 +201,12 @@
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "newNotification": "You have a new notification."
+    "newNotification": "You have a new notification.",
+    "clearAllNotifications": "Clear all",
+    "reset": "Reset",
+    "confirmClearTitle": "Clear all notifications?",
+    "confirmClearMessage": "This will permanently remove all your notifications. This action cannot be undone.",
+    "clear": "Clear"
   },
   "navigation": {
     "dashboard": "Dashboard",

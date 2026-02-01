@@ -201,7 +201,12 @@
     "minutesAgo": "{count}分前",
     "hoursAgo": "{count}時間前",
     "daysAgo": "{count}日前",
-    "newNotification": "新しい通知があります。"
+    "newNotification": "新しい通知があります。",
+    "clearAllNotifications": "すべて消去",
+    "reset": "リセット",
+    "confirmClearTitle": "すべての通知を消去しますか？",
+    "confirmClearMessage": "これにより、すべての通知が永久に削除されます。この操作は元に戻せません。",
+    "clear": "消去"
   },
   "navigation": {
     "dashboard": "ダッシュボード",
@@ -1402,7 +1407,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1670,7 +1679,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",

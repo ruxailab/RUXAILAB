@@ -201,7 +201,12 @@
     "minutesAgo": "il y a {count}m",
     "hoursAgo": "il y a {count}h",
     "daysAgo": "il y a {count}j",
-    "newNotification": "Vous avez une nouvelle notification."
+    "newNotification": "Vous avez une nouvelle notification.",
+    "clearAllNotifications": "Tout effacer",
+    "reset": "Réinitialiser",
+    "confirmClearTitle": "Effacer toutes les notifications ?",
+    "confirmClearMessage": "Ceci supprimera définitivement toutes vos notifications. Cette action est irréversible.",
+    "clear": "Effacer"
   },
   "navigation": {
     "dashboard": "Tableau de bord",

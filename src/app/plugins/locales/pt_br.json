@@ -201,7 +201,12 @@
     "minutesAgo": "há {count}m",
     "hoursAgo": "há {count}h",
     "daysAgo": "há {count}d",
-    "newNotification": "Você tem uma nova notificação."
+    "newNotification": "Você tem uma nova notificação.",
+    "clearAllNotifications": "Limpar tudo",
+    "reset": "Redefinir",
+    "confirmClearTitle": "Limpar todas as notificações?",
+    "confirmClearMessage": "Isso removerá permanentemente todas as suas notificações. Esta ação não pode ser desfeita.",
+    "clear": "Limpar"
   },
   "navigation": {
     "dashboard": "Painel",

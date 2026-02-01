@@ -1,22 +1,55 @@
 <template>
   <v-row v-if="user">
     <v-col cols="12" md="10" lg="8" xl="6">
-      <!-- HEADER -->
-      <v-card
-        class="notification-card-clean"
-        flat
-        :class="{ 'pa-3': $vuetify.display.smAndDown }"
-      >
-        <div
-          class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
-        ></div>
+      <!-- 🔹 Search & Actions Card -->
+      <v-card class="mb-4 pa-4 elevation-2 overflow-hidden rounded-lg">
+        <div class="d-flex align-center flex-wrap gap-3 button-bar">
+          <!-- Search -->
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            :placeholder="$t('notificationsPage.searchPlaceholder')"
+            variant="outlined"
+            density="compact"
+            hide-details
+            class="flex-grow-1"
+            clearable
+            @click:clear="search = ''"
+          />
 
-        <!-- TABS FOR DESKTOP -->
+          <!-- Mark All Read -->
+          <v-btn
+            v-if="['unread', 'inbox'].includes(activeTab)"
+            variant="tonal"
+            :color="unreadCount > 0 ? 'primary' : 'grey'"
+            :disabled="unreadCount === 0"
+            :loading="markingAllAsRead"
+            prepend-icon="mdi-email-open-outline"
+            class="action-btn"
+            @click="markAllAsRead"
+          >
+            {{ $t('notificationsPage.markAllRead') }}
+          </v-btn>
+
+          <!-- Clear All -->
+          <v-btn
+            color="error"
+            variant="tonal"
+            prepend-icon="mdi-delete-sweep-outline"
+            class="action-btn"
+            :disabled="totalCount === 0"
+            @click="confirmClearAll"
+          >
+            {{ $t('notificationsPage.clearAllNotifications') }}
+          </v-btn>
+        </div>
+
+        <!-- Tabs (Desktop) -->
         <v-tabs
           v-if="!$vuetify.display.smAndDown"
           v-model="activeTab"
           color="primary"
-          class="mt-4"
+          class="mt-2"
           height="48"
         >
           <v-tab value="all" class="text-capitalize">
@@ -27,6 +60,7 @@
                 :content="totalCount"
                 inline
                 size="small"
+                color="secondary"
               />
             </div>
           </v-tab>
@@ -49,7 +83,7 @@
           </v-tab>
         </v-tabs>
 
-        <!-- SELECT FOR MOBILE -->
+        <!-- Tabs (Mobile Select) -->
         <v-select
           v-else
           v-model="activeTab"
@@ -57,71 +91,31 @@
           variant="outlined"
           density="compact"
           hide-details
-          placeholder="Search notifications..."
-          class="flex-grow-1"
-          clearable
-          @click:clear="search = ''"
+          class="mt-3"
         />
       </v-card>
 
-      <!-- SEARCH BAR -->
-      <v-text-field
-        v-model="search"
-        prepend-inner-icon="mdi-magnify"
-        :placeholder="$t('notificationsPage.searchPlaceholder')"
-        variant="outlined"
-        density="comfortable"
-        hide-details
-        class="mb-4"
-        clearable
-        @click:clear="search = ''"
-      />
-
-      <!-- MARK ALL AS READ BUTTON (New Location) -->
-      <div
-        v-if="['unread', 'inbox'].includes(activeTab)"
-        class="d-flex justify-end mb-4"
-      >
-        <v-btn
-          size="small"
-          variant="flat"
-          :color="unreadCount > 0 ? 'primary' : 'grey-lighten-2'"
-          :class="{ 'text-medium-emphasis': unreadCount === 0 }"
-          :disabled="unreadCount === 0"
-          :loading="markingAllAsRead"
-          prepend-icon="mdi-email-open-outline"
-          class="text-capitalize"
-          @click="markAllAsRead"
-        >
-          {{ $t('notificationsPage.markAllRead') }}
-        </v-btn>
-      </div>
-
-      <!-- NOTIFICATIONS CONTENT -->
-      <v-card
-        flat
-        class="notification-card-clean pa-4"
-        :class="{ 'pa-3': $vuetify.display.smAndDown }"
-      >
+      <!-- 🔹 Notifications List Card -->
+      <v-card class="elevation-2 overflow-hidden rounded-lg pa-0">
         <!-- SKELETON LOADER -->
-        <template v-if="loading">
+        <div v-if="loading" class="pa-4">
           <v-skeleton-loader
             v-for="i in 3"
             :key="i"
             type="list-item-avatar-two-line"
             class="mb-3"
           />
-        </template>
+        </div>
 
         <!-- NOTIFICATIONS LIST -->
-        <template v-else>
+        <div v-else>
           <!-- EMPTY STATES -->
           <v-alert
             v-if="paginatedNotifications.length === 0"
             type="info"
             variant="tonal"
             icon="mdi-bell-off-outline"
-            class="mb-0"
+            class="ma-4"
           >
             <template #title>
               <div class="d-flex align-center gap-2">
@@ -136,141 +130,189 @@
 
           <!-- LIST VIEW -->
           <div v-else>
-            <div
-              v-for="(n, index) in paginatedNotifications"
-              :key="n.id"
-              class="notification-item pa-3 mb-3"
-              :class="{
-                unread: !n.read,
-                active: activeIndex === index,
-              }"
-              @click="handleNotificationClick(n)"
-            >
-              <div class="d-flex align-start gap-3">
-                <!-- AVATAR/ICON -->
-                <div class="position-relative">
-                  <v-avatar
-                    size="44"
-                    :color="getTypeIcon(n.type).color + '-lighten-5'"
-                    class="elevation-1"
-                  >
-                    <v-icon :color="getTypeIcon(n.type).color">
-                      {{ getTypeIcon(n.type).icon }}
-                    </v-icon>
-                  </v-avatar>
-                  <div v-if="!n.read" class="unread-dot" />
-                </div>
-
-                <!-- CONTENT -->
-                <div class="flex-grow-1">
-                  <div
-                    class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1"
-                  >
-                    <div class="d-flex align-center flex-wrap gap-2">
-                      <span class="font-weight-medium text-body-1">{{
-                        n.title || $t('notificationsPage.notification')
-                      }}</span>
-                      <v-chip
-                        v-if="n.type"
-                        size="x-small"
-                        label
-                        :color="getTypeIcon(n.type).color"
-                        variant="flat"
-                        density="compact"
-                        class="text-capitalize"
+            <v-list class="pa-0">
+              <div
+                v-for="(n, index) in paginatedNotifications"
+                :key="n.id"
+                class="notification-item-container"
+              >
+                <div
+                  class="notification-item pa-4"
+                  :class="{
+                    unread: !n.read,
+                    active: activeIndex === index,
+                  }"
+                  @click="handleNotificationClick(n)"
+                >
+                  <div class="d-flex align-start gap-3">
+                    <!-- AVATAR/ICON -->
+                    <div class="position-relative">
+                      <v-avatar
+                        size="40"
+                        :color="getTypeIcon(n.type).color + '-lighten-5'"
+                        class="elevation-1"
                       >
-                        {{ n.type }}
-                      </v-chip>
-                      <v-chip
-                        v-if="n.important"
-                        size="x-small"
-                        label
-                        color="warning"
-                        variant="flat"
-                        density="compact"
-                        prepend-icon="mdi-star"
-                      >
-                        {{ $t('notificationsPage.important') }}
-                      </v-chip>
-                    </div>
-                    <div class="d-flex align-center gap-2">
-                      <span class="text-caption text-grey-darken-2">
-                        {{ relativeTime(n.createdDate) }}
-                      </span>
-                      <v-btn
-                        icon
-                        size="x-small"
-                        variant="text"
-                        :aria-label="
-                          n.read
-                            ? $t('notificationsPage.markAsUnread')
-                            : $t('notificationsPage.markAsRead')
-                        "
-                        @click.stop="toggleRead(n)"
-                      >
-                        <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
-                          {{
-                            n.read
-                              ? 'mdi-email-outline'
-                              : 'mdi-email-open-outline'
-                          }}
+                        <v-icon :color="getTypeIcon(n.type).color" size="20">
+                          {{ getTypeIcon(n.type).icon }}
                         </v-icon>
-                        <v-tooltip activator="parent">
-                          {{
-                            n.read
-                              ? $t('notificationsPage.markAsUnread')
-                              : $t('notificationsPage.markAsRead')
-                          }}
-                        </v-tooltip>
-                      </v-btn>
+                      </v-avatar>
+                      <div v-if="!n.read" class="unread-dot" />
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="flex-grow-1">
+                      <div
+                        class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1"
+                      >
+                        <div class="d-flex align-center flex-wrap gap-2">
+                          <span
+                            class="font-weight-bold text-body-2 text-high-emphasis"
+                            >{{
+                              n.title || $t('notificationsPage.notification')
+                            }}</span
+                          >
+                          <v-chip
+                            v-if="n.type"
+                            size="x-small"
+                            label
+                            :color="getTypeIcon(n.type).color"
+                            variant="flat"
+                            class="text-capitalize font-weight-medium"
+                          >
+                            {{ n.type }}
+                          </v-chip>
+                          <v-chip
+                            v-if="n.important"
+                            size="x-small"
+                            label
+                            color="warning"
+                            variant="flat"
+                            prepend-icon="mdi-star"
+                          >
+                            {{ $t('notificationsPage.important') }}
+                          </v-chip>
+                        </div>
+                        <div class="d-flex align-center gap-2">
+                          <span class="text-caption text-medium-emphasis">
+                            {{ relativeTime(n.createdDate) }}
+                          </span>
+                          <v-btn
+                            icon
+                            size="x-small"
+                            variant="text"
+                            :aria-label="
+                              n.read
+                                ? $t('notificationsPage.markAsUnread')
+                                : $t('notificationsPage.markAsRead')
+                            "
+                            @click.stop="toggleRead(n)"
+                          >
+                            <v-icon
+                              size="18"
+                              :color="n.read ? 'grey-lighten-1' : 'primary'"
+                            >
+                              {{
+                                n.read
+                                  ? 'mdi-email-outline'
+                                  : 'mdi-email-open-outline'
+                              }}
+                            </v-icon>
+                            <v-tooltip activator="parent" location="top">
+                              {{
+                                n.read
+                                  ? $t('notificationsPage.markAsUnread')
+                                  : $t('notificationsPage.markAsRead')
+                              }}
+                            </v-tooltip>
+                          </v-btn>
+                        </div>
+                      </div>
+                      <p
+                        class="text-body-2 text-medium-emphasis mb-1 line-clamp-2"
+                      >
+                        {{
+                          n.message || $t('notificationsPage.newNotification')
+                        }}
+                      </p>
+                      <div
+                        v-if="n.senderName"
+                        class="text-caption text-medium-emphasis d-flex align-center gap-1"
+                      >
+                        <v-icon size="14">mdi-account-outline</v-icon>
+                        {{ n.senderName }}
+                      </div>
                     </div>
                   </div>
-                  <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                    {{ n.message || $t('notificationsPage.newNotification') }}
-                  </p>
-                  <div
-                    v-if="n.senderName"
-                    class="text-caption text-grey-darken-2"
-                  >
-                    <v-icon size="small">mdi-account-outline</v-icon>
-                    {{ n.senderName }}
-                  </div>
                 </div>
+                <v-divider v-if="index < paginatedNotifications.length - 1" />
               </div>
-            </div>
+            </v-list>
           </div>
-        </template>
+        </div>
 
-        <v-btn
-          color="primary"
-          variant="tonal"
-          size="small"
-          prepend-icon="mdi-refresh"
-          :loading="refreshing"
-          class="refresh-btn"
-          @click="refreshNotifications"
+        <v-divider />
+
+        <!-- FOOTER ACTIONS -->
+        <div
+          class="d-flex justify-space-between align-center pa-2 bg-grey-lighten-5"
         >
-          {{ $t('notificationsPage.refresh') }}
-          <template #loader>
-            <v-progress-circular indeterminate size="16" width="2" />
-          </template>
-        </v-btn>
+          <v-btn
+            color="primary"
+            variant="text"
+            size="small"
+            prepend-icon="mdi-refresh"
+            :loading="refreshing"
+            @click="refreshNotifications"
+          >
+            {{ $t('notificationsPage.refresh') }}
+          </v-btn>
 
-        <!-- PAGINATION -->
-        <v-pagination
-          v-if="currentPages > 1"
-          v-model="currentPage"
-          :length="currentPages"
-          :total-visible="$vuetify.display.smAndDown ? 3 : 5"
-          rounded="circle"
-          class="mt-4 justify-center"
-          density="comfortable"
-        />
+          <!-- PAGINATION -->
+          <v-pagination
+            v-if="currentPages > 1"
+            v-model="currentPage"
+            :length="currentPages"
+            :total-visible="4"
+            density="compact"
+            variant="text"
+            class="my-0"
+          />
+        </div>
       </v-card>
     </v-col>
   </v-row>
 
-  <!-- DIALOG -->
+  <!-- CONFIRM DELETE DIALOG -->
+  <v-dialog v-model="clearDialog" max-width="400">
+    <v-card class="rounded-lg">
+      <v-card-title class="text-h6 pt-4 px-4 pb-0">
+        {{ $t('notificationsPage.confirmClearTitle') }}
+      </v-card-title>
+      <v-card-text class="pt-2 pb-4 text-body-2 text-medium-emphasis">
+        {{ $t('notificationsPage.confirmClearMessage') }}
+      </v-card-text>
+      <v-card-actions class="px-4 pb-4 pt-0">
+        <v-spacer />
+        <v-btn
+          variant="plain"
+          color="grey-darken-1"
+          @click="clearDialog = false"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          color="error"
+          variant="flat"
+          :loading="clearingAll"
+          @click="executeClearAll"
+        >
+          {{ $t('notificationsPage.clear') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- INVITATION DIALOG -->
   <AcceptInvitationDialog
     v-model="dialogVisible"
     @cancel="onReject"
@@ -294,7 +336,9 @@ const search = ref('')
 const activeIndex = ref(-1)
 const loading = ref(true)
 const markingAllAsRead = ref(false)
+const clearingAll = ref(false)
 const refreshing = ref(false)
+const clearDialog = ref(false)
 
 // Pagination
 const pageSize = ref(8)
@@ -440,6 +484,23 @@ const getTypeIcon = (type) => {
   return icons[type] || { icon: 'mdi-bell-outline', color: 'grey' }
 }
 
+// Actions
+const confirmClearAll = () => {
+  clearDialog.value = true
+}
+
+const executeClearAll = async () => {
+  clearingAll.value = true
+  try {
+    await store.dispatch('clearAllNotifications', user.value)
+    clearDialog.value = false
+  } catch (e) {
+    // Error
+  } finally {
+    clearingAll.value = false
+  }
+}
+
 // Dialog methods
 const onAccept = () => {
   dialogVisible.value = false
@@ -503,8 +564,7 @@ const goToNotificationRedirect = async (notification) => {
         await markAsRead(notification)
       }
     } catch {
-      // Error handling without console.error for SonarCloud
-      // In production, you might want to log this differently
+      // Error handling
     }
   }
 
@@ -524,7 +584,7 @@ const goToNotificationRedirect = async (notification) => {
   try {
     globalThis.open(url, '_blank')
   } catch {
-    // Error handling without console.error for SonarCloud
+    // Error handling
   }
 }
 
@@ -537,7 +597,7 @@ const markAsRead = async (notification) => {
       user: user.value,
     })
   } catch {
-    // Error handling without console.error for SonarCloud
+    // Error handling
   }
 }
 
@@ -554,7 +614,7 @@ const markAllAsRead = async () => {
   try {
     await store.dispatch('markAllNotificationsAsRead', user.value)
   } catch {
-    // Error handling without console.error for SonarCloud
+    // Error handling
   } finally {
     markingAllAsRead.value = false
   }
@@ -565,7 +625,7 @@ const refreshNotifications = async () => {
   try {
     globalThis.location.reload()
   } catch {
-    // Error handling without console.error for SonarCloud
+    // Error handling
   } finally {
     refreshing.value = false
   }
@@ -638,19 +698,7 @@ onMounted(() => {
 
   globalThis.addEventListener('keydown', handleKeyDown)
 
-  // Expose test function for user to verify in console
   globalThis.testByInjectingNotification = () => {
-    const fakeNotification = {
-      id: 'test-' + Date.now(),
-      title: 'Test Notification',
-      message: 'This is a test notification generated locally.',
-      type: 'System',
-      read: false,
-      createdDate: new Date().toISOString(),
-    }
-    // We can't easily push to the store user without a mutation,
-    // but we can force the button to enable by mocking the unread count check locally if needed.
-    // Actually, let's just log instructions for them.
     console.log(
       'To test, please use the app UI to perform an action that triggers a notification, or ask another user to invite you.',
     )
@@ -663,54 +711,34 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 💅 Basic styles for layout and filters */
-.button-bar {
-  gap: 14px;
+.gap-3 {
+  gap: 12px;
+}
+.gap-2 {
+  gap: 8px;
+}
+.gap-1 {
+  gap: 4px;
 }
 
-.refresh-btn {
-  min-width: 140px;
+.action-btn {
   height: 40px;
-  font-weight: bold;
-  letter-spacing: 0.3px;
-  background-color: #768898 !important; /* Add custom background */
-  color: white !important;
-}
-
-.tab-btn {
-  min-width: 100px;
-  height: 36px;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
 
-.notification-card-clean {
-  border-radius: 12px;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  overflow: hidden;
+.notification-item-container:hover {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .notification-item {
   position: relative;
-  border-radius: 8px;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: white;
-  overflow: hidden;
-}
-
-.notification-item:hover {
-  border-color: rgba(var(--v-theme-primary), 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
 }
 
 .notification-item.unread {
-  background: rgba(var(--v-theme-primary), 0.02);
+  background: rgba(var(--v-theme-primary), 0.04);
 }
 
 .notification-item.unread::before {
@@ -724,21 +752,18 @@ onUnmounted(() => {
 }
 
 .notification-item.active {
-  outline: 2px solid rgba(var(--v-theme-primary), 0.3);
-  outline-offset: 2px;
-  background: rgba(var(--v-theme-primary), 0.02);
+  background: rgba(var(--v-theme-primary), 0.08);
 }
 
 .unread-dot {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 10px;
-  height: 10px;
-  background: #1976d2;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background: rgb(var(--v-theme-error));
   border-radius: 50%;
   border: 2px solid white;
-  animation: pulse 2s infinite;
 }
 
 .line-clamp-2 {
@@ -747,53 +772,16 @@ onUnmounted(() => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-clamp: 2;
-  -moz-box-orient: vertical;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(25, 118, 210, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
-  }
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-  .rounded-xl {
-    border-radius: 12px !important;
-  }
-
-  .notification-item {
-    padding: 12px !important;
-    margin-bottom: 12px;
-  }
-
-  .v-btn {
-    min-width: auto !important;
-  }
-
-  .v-btn--size-small {
-    font-size: 0.75rem;
-    padding: 0 8px;
-  }
-
   .button-bar {
     gap: 8px;
   }
 
-  .refresh-btn {
-    min-width: 80px;
-    font-size: 0.8rem;
-  }
-
-  .tab-btn {
-    min-width: 70px;
-    font-size: 0.75rem;
+  .action-btn {
+    min-width: 0;
     padding: 0 12px;
   }
 }

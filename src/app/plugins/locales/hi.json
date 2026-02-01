@@ -201,7 +201,12 @@
     "minutesAgo": "{count} मिनट पहले",
     "hoursAgo": "{count} घंटे पहले",
     "daysAgo": "{count} दिन पहले",
-    "newNotification": "आपके पास एक नई सूचना है।"
+    "newNotification": "आपके पास एक नई सूचना है।",
+    "clearAllNotifications": "सभी हटाएँ",
+    "reset": "रीसेट",
+    "confirmClearTitle": "क्या सभी सूचनाएं हटा दें?",
+    "confirmClearMessage": "यह आपकी सभी सूचनाओं को स्थायी रूप से हटा देगा। इस कार्रवाई को पूर्ववत नहीं किया जा सकता है।",
+    "clear": "हटाएँ"
   },
   "navigation": {
     "dashboard": "डैशबोर्ड",

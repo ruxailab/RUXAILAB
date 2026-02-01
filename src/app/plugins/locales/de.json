@@ -201,7 +201,12 @@
     "minutesAgo": "vor {count}m",
     "hoursAgo": "vor {count}h",
     "daysAgo": "vor {count}T",
-    "newNotification": "Sie haben eine neue Benachrichtigung."
+    "newNotification": "Sie haben eine neue Benachrichtigung.",
+    "clearAllNotifications": "Alles löschen",
+    "reset": "Zurücksetzen",
+    "confirmClearTitle": "Alle Benachrichtigungen löschen?",
+    "confirmClearMessage": "Dies wird alle Ihre Benachrichtigungen dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "clear": "Löschen"
   },
   "navigation": {
     "dashboard": "Dashboard",
