@@ -25,9 +25,14 @@
         </v-alert>
 
         <!-- Camera Preview / Captured Image Container -->
-        <div class="camera-container bg-grey-darken-3 rounded-lg overflow-hidden">
+        <div
+          class="camera-container bg-grey-darken-3 rounded-lg overflow-hidden"
+        >
           <!-- Loading State -->
-          <div v-if="isLoading" class="camera-placeholder d-flex align-center justify-center">
+          <div
+            v-if="isLoading"
+            class="camera-placeholder d-flex align-center justify-center"
+          >
             <v-progress-circular indeterminate color="primary" size="48" />
           </div>
 
@@ -104,8 +109,8 @@ import { useI18n } from 'vue-i18n'
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'photo-captured'])
@@ -122,14 +127,17 @@ const isStreaming = ref(false)
 const errorMessage = ref('')
 
 // Start camera when dialog opens
-watch(() => props.modelValue, async (isOpen) => {
-  if (isOpen) {
-    await startCamera()
-  } else {
-    stopCamera()
-    resetState()
-  }
-})
+watch(
+  () => props.modelValue,
+  async (isOpen) => {
+    if (isOpen) {
+      await startCamera()
+    } else {
+      stopCamera()
+      resetState()
+    }
+  },
+)
 
 const startCamera = async () => {
   isLoading.value = true
@@ -146,16 +154,16 @@ const startCamera = async () => {
       video: {
         facingMode: 'user',
         width: { ideal: 640 },
-        height: { ideal: 480 }
+        height: { ideal: 480 },
       },
-      audio: false
+      audio: false,
     }
 
     const stream = await navigator.mediaDevices.getUserMedia(constraints)
     mediaStream.value = stream
 
     // Wait for video element to be available
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     if (videoRef.value) {
       videoRef.value.srcObject = stream
@@ -163,11 +171,15 @@ const startCamera = async () => {
       isStreaming.value = true
     }
   } catch (error) {
-    console.error('Camera access error:', error)
-    
-    if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+    if (
+      error.name === 'NotAllowedError' ||
+      error.name === 'PermissionDeniedError'
+    ) {
       errorMessage.value = t('profile.cameraPermissionDenied')
-    } else if (error.message === 'CAMERA_NOT_AVAILABLE' || error.name === 'NotFoundError') {
+    } else if (
+      error.message === 'CAMERA_NOT_AVAILABLE' ||
+      error.name === 'NotFoundError'
+    ) {
       errorMessage.value = t('profile.cameraNotAvailable')
     } else {
       errorMessage.value = t('profile.cameraNotAvailable')
@@ -179,14 +191,14 @@ const startCamera = async () => {
 
 const stopCamera = () => {
   if (mediaStream.value) {
-    mediaStream.value.getTracks().forEach(track => track.stop())
+    mediaStream.value.getTracks().forEach((track) => track.stop())
     mediaStream.value = null
   }
-  
+
   if (videoRef.value) {
     videoRef.value.srcObject = null
   }
-  
+
   isStreaming.value = false
 }
 
@@ -205,15 +217,19 @@ const capturePhoto = () => {
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
   // Convert to blob for upload
-  canvas.toBlob((blob) => {
-    if (blob) {
-      capturedBlob.value = blob
-      capturedImage.value = URL.createObjectURL(blob)
-      
-      // Stop camera stream after capture to save resources
-      stopCamera()
-    }
-  }, 'image/jpeg', 0.9)
+  canvas.toBlob(
+    (blob) => {
+      if (blob) {
+        capturedBlob.value = blob
+        capturedImage.value = URL.createObjectURL(blob)
+
+        // Stop camera stream after capture to save resources
+        stopCamera()
+      }
+    },
+    'image/jpeg',
+    0.9,
+  )
 }
 
 const retakePhoto = async () => {
@@ -233,20 +249,20 @@ const confirmPhoto = () => {
     // Create a File object from the blob
     const file = new File([capturedBlob.value], 'camera-capture.jpg', {
       type: 'image/jpeg',
-      lastModified: Date.now()
+      lastModified: Date.now(),
     })
 
     // Transfer ownership of the preview URL to the parent component
     // The parent is now responsible for revoking it
     const previewUrl = capturedImage.value
-    
+
     // Clear our ref WITHOUT revoking (parent owns it now)
     capturedImage.value = null
     capturedBlob.value = null
 
     emit('photo-captured', {
       file: file,
-      previewUrl: previewUrl
+      previewUrl: previewUrl,
     })
 
     emit('update:modelValue', false)
