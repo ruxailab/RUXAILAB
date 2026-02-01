@@ -98,7 +98,9 @@
       "status": "Statut",
       "sessionDate": "Date de session",
       "participants": "Participants",
-      "created": "Créé"
+      "created": "Créé",
+      "noSearchResults": "Aucun résultat ne correspond à vos critères",
+      "tryAdjustingSearch": "Essayez d'ajuster votre recherche ou vos filtres pour trouver ce que vous cherchez"
     },
     "hidden": "Caché",
     "proceed": "procéder",

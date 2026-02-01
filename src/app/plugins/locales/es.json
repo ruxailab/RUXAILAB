@@ -99,7 +99,9 @@
       "status": "Estado",
       "sessionDate": "Fecha de sesión",
       "participants": "Participantes",
-      "created": "Creado"
+      "created": "Creado",
+      "noSearchResults": "No se encontraron resultados que coincidan con sus criterios",
+      "tryAdjustingSearch": "Intente ajustar su búsqueda o filtros para encontrar lo que busca"
     },
     "proceed": "proceder",
     "all": "Todos",

@@ -99,7 +99,9 @@
       "status": "स्थिति",
       "sessionDate": "सत्र तिथि",
       "participants": "प्रतिभागी",
-      "created": "बनाया गया"
+      "created": "बनाया गया",
+      "noSearchResults": "आपकी कसौटी से मेल खाते कोई परिणाम नहीं मिले",
+      "tryAdjustingSearch": "अपनी खोज या फ़िल्टर को समायोजित करने का प्रयास करें"
     },
     "hidden": "छिपा हुआ",
     "proceed": "आगे बढ़ें",
