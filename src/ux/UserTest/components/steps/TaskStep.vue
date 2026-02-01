@@ -762,6 +762,10 @@ function handleShowPostForm(userCompleted) {
 
   showPostForm.value.userCompleted = userCompleted
 
+  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
+    window.open(props.task.postForm, '_blank')
+  }
+
   // Show post-task form for all validated task types
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 3
