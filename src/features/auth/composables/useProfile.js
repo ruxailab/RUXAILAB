@@ -45,7 +45,6 @@ export function useProfile() {
 
   const updateProfile = async (profileData) => {
     try {
-      console.log('updateProfile: Starting...', profileData)
       const auth = getAuth()
       const user = auth.currentUser
 
@@ -53,7 +52,6 @@ export function useProfile() {
         throw new Error(t('profile.noUserSignedIn'))
       }
 
-      console.log('updateProfile: User authenticated:', user.uid)
       const db = getFirestore()
       const userDocRef = doc(db, 'users', user.uid)
 
@@ -61,11 +59,10 @@ export function useProfile() {
 
       // Handle image upload if there's a pending file
       if (profileData.pendingImageFile) {
-        console.log('updateProfile: Uploading image file...', profileData.pendingImageFile)
         finalProfileImage = await uploadProfileImage(
           profileData.pendingImageFile,
         )
-        console.log('updateProfile: Image uploaded, URL:', finalProfileImage)
+
         if (!finalProfileImage) {
           throw new Error(t('profile.profileImageUploadFailed'))
         }
@@ -115,25 +112,21 @@ export function useProfile() {
 
   const uploadProfileImage = async (file) => {
     try {
-      console.log('uploadProfileImage: Starting...', file.name, file.type, file.size)
       const auth = getAuth()
       const user = auth.currentUser
       if (!user) throw new Error(t('profile.noUserSignedIn'))
 
       // Compress the image first
-      console.log('uploadProfileImage: Starting compression...')
+
       const compressedFile = await compressImage(file, 300, 0.6)
-      console.log('uploadProfileImage: Compression done, file size:', compressedFile.size)
-      
+
       // Convert to Base64 (stores directly in Firestore, no Storage needed!)
-      console.log('uploadProfileImage: Converting to Base64...')
+
       const base64DataUrl = await fileToBase64(compressedFile)
-      console.log('uploadProfileImage: Base64 conversion complete, length:', base64DataUrl.length)
 
       // Return the Base64 data URL (this will be stored in Firestore)
       return base64DataUrl
     } catch (error) {
-      console.error('uploadProfileImage: Error:', error)
       throw error
     }
   }
@@ -141,7 +134,7 @@ export function useProfile() {
   const removeProfileImage = async () => {
     // With Base64 storage in Firestore, we just need to set profileImage to ''
     // The actual removal happens in updateProfile when it saves the empty string
-    console.log('removeProfileImage: Image will be cleared from Firestore on save')
+
     return true
   }
 
@@ -161,7 +154,12 @@ export function useProfile() {
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            resolve(new File([blob], fileName, { type: 'image/jpeg', lastModified: Date.now() }))
+            resolve(
+              new File([blob], fileName, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              }),
+            )
           } else {
             reject(new Error('Canvas to Blob conversion failed'))
           }
@@ -173,8 +171,6 @@ export function useProfile() {
   }
 
   const compressImage = async (file, maxWidth, quality) => {
-    console.log('compressImage: Starting compression for', file.name, file.type, file.size)
-
     // Read file as data URL
     const dataUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -183,11 +179,8 @@ export function useProfile() {
       reader.readAsDataURL(file)
     })
 
-    console.log('compressImage: FileReader loaded, data URL length:', dataUrl.length)
-
     // Load image
     const img = await loadImage(dataUrl)
-    console.log('compressImage: Image loaded, dimensions:', img.width, 'x', img.height)
 
     // Create canvas and resize
     const canvas = document.createElement('canvas')
@@ -209,7 +202,6 @@ export function useProfile() {
 
     // Convert to file
     const compressedFile = await canvasToFile(canvas, file.name, quality)
-    console.log('compressImage: Compression complete, blob size:', compressedFile.size)
 
     return compressedFile
   }
