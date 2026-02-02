@@ -1713,7 +1713,8 @@
       "active": "Activo",
       "draft": "Borrador",
       "completed": "Completado",
-      "archived": "Archivado"
+      "archived": "Archivado",
+      "moderatedDescription": "Gestione su estudio de pruebas de usuario moderado, realice un seguimiento del progreso de los participantes y analice los resultados desde su panel integral."
     },
     "studyOverview": {
       "totalParticipants": "Total de Participantes",
