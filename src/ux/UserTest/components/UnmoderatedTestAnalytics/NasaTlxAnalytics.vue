@@ -37,49 +37,90 @@
         </v-col>
 
         <v-col cols="12" md="4" class="d-flex">
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%"
-          >
-            <div class="d-flex justify-space-between align-center">
-              <div>
-                <div class="text-caption text-grey-darken-1 mb-1">
-                  Most Stressful Dimension
+          <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+              <v-card
+                v-bind="props"
+                class="pa-6 text-left"
+                elevation="2"
+                style="border-radius: 12px; width: 100%"
+              >
+                <div class="d-flex justify-space-between align-center">
+                  <div>
+                    <div class="text-caption text-grey-darken-1 mb-1">
+                      Average Overall Workload
+                    </div>
+                    <div class="text-h2 font-weight-bold text-warning mb-1">
+                      {{ analytics.averageOverallScore || 0 }}
+                    </div>
+                    <div class="text-caption text-grey">out of 100</div>
+                  </div>
+                  <div class="pa-3" style="background: #fff3e0; border-radius: 8px">
+                    <v-icon size="24" color="warning"> mdi-brain </v-icon>
+                  </div>
                 </div>
-                <div class="text-h5 font-weight-bold text-error mb-1">
-                  {{ analytics.mostStressfulDimension || 'N/A' }}
-                </div>
-                <div class="text-caption text-grey">highest average score</div>
-              </div>
-              <div class="pa-3" style="background: #ffebee; border-radius: 8px">
-                <v-icon size="24" color="error"> mdi-alert-circle </v-icon>
-              </div>
-            </div>
-          </v-card>
+              </v-card>
+            </template>
+            <span>{{ $t('analytics.nasa.workloadDescription') }}</span>
+          </v-tooltip>
         </v-col>
 
         <v-col cols="12" md="4" class="d-flex">
-          <v-card
-            class="pa-6 text-left"
-            elevation="2"
-            style="border-radius: 12px; width: 100%"
-          >
-            <div class="d-flex justify-space-between align-center">
-              <div>
-                <div class="text-caption text-grey-darken-1 mb-1">
-                  Least Stressful Dimension
+          <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+              <v-card
+                v-bind="props"
+                class="pa-6 text-left"
+                elevation="2"
+                style="border-radius: 12px; width: 100%"
+              >
+                <div class="d-flex justify-space-between align-center">
+                  <div>
+                    <div class="text-caption text-grey-darken-1 mb-1">
+                      Most Stressful Dimension
+                    </div>
+                    <div class="text-h5 font-weight-bold text-error mb-1">
+                      {{ analytics.mostStressfulDimension || 'N/A' }}
+                    </div>
+                    <div class="text-caption text-grey">highest average score</div>
+                  </div>
+                  <div class="pa-3" style="background: #ffebee; border-radius: 8px">
+                    <v-icon size="24" color="error"> mdi-alert-circle </v-icon>
+                  </div>
                 </div>
-                <div class="text-h5 font-weight-bold text-success mb-1">
-                  {{ analytics.leastStressfulDimension || 'N/A' }}
+              </v-card>
+            </template>
+             <span>{{ $t('analytics.nasa.mostStressfulDescription') }}</span>
+          </v-tooltip>
+        </v-col>
+
+        <v-col cols="12" md="4" class="d-flex">
+          <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+              <v-card
+                v-bind="props"
+                class="pa-6 text-left"
+                elevation="2"
+                style="border-radius: 12px; width: 100%"
+              >
+                <div class="d-flex justify-space-between align-center">
+                  <div>
+                    <div class="text-caption text-grey-darken-1 mb-1">
+                      Least Stressful Dimension
+                    </div>
+                    <div class="text-h5 font-weight-bold text-success mb-1">
+                      {{ analytics.leastStressfulDimension || 'N/A' }}
+                    </div>
+                    <div class="text-caption text-grey">lowest average score</div>
+                  </div>
+                  <div class="pa-3" style="background: #e8f5e8; border-radius: 8px">
+                    <v-icon size="24" color="success"> mdi-check-circle </v-icon>
+                  </div>
                 </div>
-                <div class="text-caption text-grey">lowest average score</div>
-              </div>
-              <div class="pa-3" style="background: #e8f5e8; border-radius: 8px">
-                <v-icon size="24" color="success"> mdi-check-circle </v-icon>
-              </div>
-            </div>
-          </v-card>
+              </v-card>
+            </template>
+            <span>{{ $t('analytics.nasa.leastStressfulDescription') }}</span>
+          </v-tooltip>
         </v-col>
       </v-row>
 

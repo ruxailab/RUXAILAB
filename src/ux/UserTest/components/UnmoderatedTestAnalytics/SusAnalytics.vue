@@ -19,106 +19,124 @@
         cols="12"
         md="4"
       >
-        <v-card
-          class="pa-6 text-left"
-          elevation="2"
-          style="border-radius: 12px;"
-        >
-          <div class="d-flex justify-space-between align-center">
-            <div>
-              <div class="text-caption text-grey-darken-1 mb-1">
-                Average SUS Score
-              </div>
-              <div class="text-h2 font-weight-bold text-warning mb-1">
-                {{ analytics.averageScore }}
-              </div>
-              <div class="text-caption text-grey">
-                out of 100
-              </div>
-            </div>
-            <div
-              class="pa-3"
-              style="background: #e3f2fd; border-radius: 8px;"
-            >
-              <v-icon
-                size="24"
-                color="primary"
-              >
-                mdi-trending-up
-              </v-icon>
-            </div>
-          </div>
-        </v-card>
+        <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+                <v-card
+                  v-bind="props"
+                  class="pa-6 text-left"
+                  elevation="2"
+                  style="border-radius: 12px;"
+                >
+                  <div class="d-flex justify-space-between align-center">
+                    <div>
+                      <div class="text-caption text-grey-darken-1 mb-1">
+                        Average SUS Score
+                      </div>
+                      <div class="text-h2 font-weight-bold text-warning mb-1">
+                        {{ analytics.averageScore }}
+                      </div>
+                      <div class="text-caption text-grey">
+                        out of 100
+                      </div>
+                    </div>
+                    <div
+                      class="pa-3"
+                      style="background: #e3f2fd; border-radius: 8px;"
+                    >
+                      <v-icon
+                        size="24"
+                        color="primary"
+                      >
+                        mdi-trending-up
+                      </v-icon>
+                    </div>
+                  </div>
+                </v-card>
+            </template>
+            <span>{{ $t('analytics.susAverageDescription') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col
         cols="12"
         md="4"
       >
-        <v-card
-          class="pa-6 text-left"
-          elevation="2"
-          style="border-radius: 12px;"
-        >
-          <div class="d-flex justify-space-between align-center">
-            <div>
-              <div class="text-caption text-grey-darken-1 mb-1">
-                Total Respondents
-              </div>
-              <div class="text-h2 font-weight-bold text-green mb-1">
-                {{ analytics.totalRespondents }}
-              </div>
-              <div class="text-caption text-grey">
-                participants
-              </div>
-            </div>
-            <div
-              class="pa-3"
-              style="background: #e8f5e8; border-radius: 8px;"
-            >
-              <v-icon
-                size="24"
-                color="success"
-              >
-                mdi-account-group
-              </v-icon>
-            </div>
-          </div>
-        </v-card>
+        <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+                <v-card
+                  v-bind="props"
+                  class="pa-6 text-left"
+                  elevation="2"
+                  style="border-radius: 12px;"
+                >
+                  <div class="d-flex justify-space-between align-center">
+                    <div>
+                      <div class="text-caption text-grey-darken-1 mb-1">
+                        Total Respondents
+                      </div>
+                      <div class="text-h2 font-weight-bold text-green mb-1">
+                        {{ analytics.totalRespondents }}
+                      </div>
+                      <div class="text-caption text-grey">
+                        participants
+                      </div>
+                    </div>
+                    <div
+                      class="pa-3"
+                      style="background: #e8f5e8; border-radius: 8px;"
+                    >
+                      <v-icon
+                        size="24"
+                        color="success"
+                      >
+                        mdi-account-group
+                      </v-icon>
+                    </div>
+                  </div>
+                </v-card>
+            </template>
+            <span>{{ $t('analytics.susRespondentsDescription') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col
         cols="12"
         md="4"
       >
-        <v-card
-          class="pa-6 text-left"
-          elevation="2"
-          style="border-radius: 12px;"
-        >
-          <div class="d-flex justify-space-between align-center">
-            <div>
-              <div class="text-caption text-grey-darken-1 mb-1">
-                Score Range
-              </div>
-              <div class="text-h2 font-weight-bold text-purple mb-1">
-                {{ analytics.minScore }} - {{ analytics.maxScore }}
-              </div>
-              <div class="text-caption text-grey">
-                min | max
-              </div>
-            </div>
-            <div
-              class="pa-3"
-              style="background: #f3e5f5; border-radius: 8px;"
-            >
-              <v-icon
-                size="24"
-                color="purple"
-              >
-                mdi-chart-bar
-              </v-icon>
-            </div>
-          </div>
-        </v-card>
+        <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+                <v-card
+                  v-bind="props"
+                  class="pa-6 text-left"
+                  elevation="2"
+                  style="border-radius: 12px;"
+                >
+                  <div class="d-flex justify-space-between align-center">
+                    <div>
+                      <div class="text-caption text-grey-darken-1 mb-1">
+                        Score Range
+                      </div>
+                      <div class="text-h2 font-weight-bold text-purple mb-1">
+                        {{ analytics.minScore }} - {{ analytics.maxScore }}
+                      </div>
+                      <div class="text-caption text-grey">
+                        min | max
+                      </div>
+                    </div>
+                    <div
+                      class="pa-3"
+                      style="background: #f3e5f5; border-radius: 8px;"
+                    >
+                      <v-icon
+                        size="24"
+                        color="purple"
+                      >
+                        mdi-chart-bar
+                      </v-icon>
+                    </div>
+                  </div>
+                </v-card>
+            </template>
+            <span>{{ $t('analytics.susScoreRangeDescription') }}</span>
+        </v-tooltip>
       </v-col>
     </v-row>
 
