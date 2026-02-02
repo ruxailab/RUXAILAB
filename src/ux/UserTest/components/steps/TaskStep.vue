@@ -763,7 +763,14 @@ function handleShowPostForm(userCompleted) {
   showPostForm.value.userCompleted = userCompleted
 
   if (props.task?.taskType === 'post-form' && props.task?.postForm) {
-    window.open(props.task.postForm, '_blank')
+    const link = props.task?.postForm
+    if (link) {
+      const url =
+        link.startsWith('http://') || link.startsWith('https://')
+          ? link
+          : `https://${link}`
+      window.open(url, '_blank')
+    }
   }
 
   // Show post-task form for all validated task types
