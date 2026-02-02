@@ -1733,7 +1733,8 @@
       "active": "Actif",
       "draft": "Brouillon",
       "completed": "Terminé",
-      "archived": "Archivé"
+      "archived": "Archivé",
+      "moderatedDescription": "Gérez votre étude de test utilisateur modérée, suivez les progrès des participants et analysez les résultats depuis votre tableau de bord complet."
     },
     "studyOverview": {
       "totalParticipants": "Total des Participants",
