@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "在此输入文本...",
     "units": {
       "mb": "MB",
       "gb": "GB"

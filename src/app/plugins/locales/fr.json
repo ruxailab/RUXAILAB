@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Entrez le texte ici...",
     "units": {
       "mb": "Mo",
       "gb": "Go"

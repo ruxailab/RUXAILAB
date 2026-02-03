@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Text hier eingeben...",
     "units": {
       "mb": "MB",
       "gb": "GB"
