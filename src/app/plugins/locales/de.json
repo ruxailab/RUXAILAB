@@ -1740,7 +1740,8 @@
       "active": "Aktiv",
       "draft": "Entwurf",
       "completed": "Abgeschlossen",
-      "archived": "Archiviert"
+      "archived": "Archiviert",
+      "moderatedDescription": "Verwalten Sie Ihre moderierte Benutzerteststudie, verfolgen Sie den Fortschritt der Teilnehmer und analysieren Sie die Ergebnisse über Ihr umfassendes Dashboard."
     },
     "studyOverview": {
       "totalParticipants": "Gesamtteilnehmer",
