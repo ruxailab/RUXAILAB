@@ -13,8 +13,7 @@ const answerController = new AnswerController()
 const userController = new UserController()
 
 /**
- * Controller for study (test) CRUD, duplication, collaboration, and real-time subscription.
- * Creates/updates answers documents and user references as needed.
+ * @module StudyController
  * @extends Controller
  */
 export default class StudyController extends Controller {
@@ -27,6 +26,10 @@ export default class StudyController extends Controller {
    * @param {Object} payload - Study instance with toFirestore() and testType
    * @returns {Promise<Object>} The created test document reference (with id)
    * @throws {Error} If creation fails
+   * @example
+   * const studyController = new StudyController()
+   * const ref = await studyController.createStudy(studyPayload)
+   * console.log('Created study id:', ref.id)
    */
   async createStudy(payload) {
     // Create answers doc for test

@@ -83,9 +83,9 @@ export default {
       state.studyType = payload
     },
     RESET_STUDY_DETAILS(state) {
-      ;(state.studyCategory = null),
+      ;((state.studyCategory = null),
         (state.studyMethod = null),
-        (state.studyType = null)
+        (state.studyType = null))
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {

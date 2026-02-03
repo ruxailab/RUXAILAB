@@ -17,7 +17,7 @@ import axios from 'axios'
 import EmailController from '@/shared/controllers/EmailController'
 
 /**
- * Controller for authentication operations
+ * @module AuthController
  */
 export default class AuthController {
   /**
@@ -31,10 +31,14 @@ export default class AuthController {
   }
 
   /**
-   * Signs in a user with email and password
+   * Signs in a user with email and password.
    * @param {string} email - User email
    * @param {string} password - User password
+   * @param {boolean} [rememberMe=false] - If true, persists session in local storage
    * @returns {Promise} - Firebase auth user credential
+   * @example
+   * const authController = new AuthController()
+   * const { user } = await authController.signIn('user@example.com', 'password', true)
    */
   async signIn(email, password, rememberMe) {
     await setPersistence(

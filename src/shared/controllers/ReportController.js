@@ -2,7 +2,7 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { STUDY_TYPES } from '../constants/methodDefinitions'
 
 /**
- * Controller for managing reports and removing report references from users and answer documents.
+ * @module ReportController
  * @extends Controller
  */
 export default class ReportController extends Controller {
@@ -13,7 +13,7 @@ export default class ReportController extends Controller {
    * @param {Object} params - Removal parameters
    * @param {Object} params.report - The report to remove (must include userDocId)
    * @param {Object} params.test - The test object (id, answersDocId, testType)
-   * @returns {Promise<{success: boolean, error?: Error}>} Result; success true or { success: false, error }
+   * @returns {Promise<{success: boolean, error: Error}>} Result; success true or { success: false, error }
    */
   async removeReport({ report, test }) {
     const answerId = test.answersDocId

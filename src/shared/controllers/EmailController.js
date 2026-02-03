@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 /**
- * Controller for sending emails via the cloud functions sendEmail endpoint.
- * Supports templates (e.g. invitation, passwordReset) and optional attachments.
+ * @module EmailController
  */
 export default class EmailController {
   /**
