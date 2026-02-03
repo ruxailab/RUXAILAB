@@ -1,5 +1,8 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + $t('UserTestView.titles.postTest')">
+  <ShowInfo
+    v-if="postTest && postTest.length > 0"
+    :title="testTitle + ' - ' + $t('UserTestView.titles.postTest')"
+  >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
         <QuestionStepper
@@ -12,6 +15,7 @@
       </div>
     </template>
   </ShowInfo>
+  <div v-else @vue:mounted="$emit('done')" />
 </template>
 
 <script setup>

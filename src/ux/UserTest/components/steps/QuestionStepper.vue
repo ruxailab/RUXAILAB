@@ -69,19 +69,7 @@
 
     <!-- Navigation Buttons -->
     <v-row justify="center" class="mt-6 navigation-buttons">
-      <v-col cols="12" md="8" class="d-flex justify-space-between">
-        <v-btn
-          v-if="!isFirstQuestion"
-          variant="outlined"
-          color="secondary"
-          size="large"
-          @click="previousQuestion"
-        >
-          <v-icon start>mdi-chevron-left</v-icon>
-          {{ $t('questionStepper.previous') }}
-        </v-btn>
-        <div v-else />
-
+      <v-col cols="12" md="8" class="d-flex justify-center">
         <v-btn
           v-if="!isLastQuestion"
           color="primary"
