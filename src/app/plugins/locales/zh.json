@@ -285,8 +285,6 @@
     "back": "返回",
     "deleteForever": "永久删除",
     "superAdmin": "超级管理员",
-    "uploadProfilePicture": "上传头像",
-    "removeProfilePicture": "删除头像",
     "currentPassword": "当前密码",
     "currentPasswordRequired": "当前密码为必填项",
     "wrongCurrentPassword": "当前密码错误",
@@ -1810,7 +1808,38 @@
     },
     "deleteOptionConfirm": {
       "title": "删除选项",
-      "message": "您确定要删除此选项吗？此操作无法撤消。"
+      "message": "您确定要删除此选项吗？此操作无法撤销。"
+    }
+  },
+  "tags": {
+    "active": "有效",
+    "draft": "草稿",
+    "completed": "已完成",
+    "archived": "已存档",
+    "public": "公开",
+    "private": "私人",
+    "fromTemplate": "从模板",
+    "withCollaborators": "与协作者"
+  },
+  "methods": {
+    "categories": {
+      "test": "用户测试",
+      "inquiry": "用户研究",
+      "inspection": "专家检查",
+      "accessibility": "无障碍",
+      "other": "其他"
+    },
+    "definitions": {
+      "HEURISTICS": "启发式评估",
+      "USER_MODERATED": "有主持人的可用性测试",
+      "USER_UNMODERATED": "无主持人的可用性测试",
+      "SURVEY": "调查",
+      "INTERVIEW": "访谈",
+      "CARD_SORTING": "卡片分类",
+      "COGNITIVE_WALKTHROUGH": "认知走查",
+      "ACCESSIBILITY_MANUAL": "手动评估",
+      "ACCESSIBILITY_AUTOMATIC": "自动评估",
+      "WCAG_AUDIT": "WCAG 审核"
     }
   }
 }
