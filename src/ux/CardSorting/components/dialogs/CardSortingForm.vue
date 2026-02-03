@@ -9,7 +9,8 @@
         <VForm ref="form">
           <VRow justify="space-around">
             <VCol class="mt-4" cols="5">
-              <v-text-field v-model="localTask.title" :label="$t('common.name')" :rules="requiredRule"
+              <v-text-field
+v-model="localTask.title" :label="$t('common.name')" :rules="requiredRule"
                 variant="outlined" density="compact" />
               <quill-editor v-if="options.category_description || options.card_description" v-model:value="localTask.description" class="mb-5" style="height: 40%;" />
             </VCol>

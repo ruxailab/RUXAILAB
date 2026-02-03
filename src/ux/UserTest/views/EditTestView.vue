@@ -34,20 +34,33 @@
         <v-col cols="12">
           <!-- TEST -->
           <div v-if="index === 0">
-            <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
-              @update:welcome-message="welcomeMessage = $event; change = true"
-              @update:final-message="finalMessage = $event; change = true" />
+            <TestConfigForm
+              :welcome="welcomeMessage"
+              :final-message="finalMessage"
+              @update:welcome-message="
+                ;(welcomeMessage = $event), (change = true)
+              "
+              @update:final-message=";(finalMessage = $event), (change = true)"
+            />
           </div>
 
           <!-- CONSENT FORM -->
           <div v-if="index === 1" rounded="xxl">
-            <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
-              :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="consent = $event" />
+            <TextareaForm
+              v-model="consent"
+              :title="$t('ModeratedTest.consentForm')"
+              :subtitle="$t('ModeratedTest.consentFormSubtitle')"
+              @update:value="consent = $event"
+            />
           </div>
 
           <!-- PRE-TEST -->
           <div v-if="index === 2">
-            <UserVariables type="pre-test" @change="change = true" @update="store.dispatch('setPreTest', $event)" />
+            <UserVariables
+              type="pre-test"
+              @change="change = true"
+              @update="store.dispatch('UserStudy/setPreTest', $event)"
+            />
           </div>
 
           <!-- TASKS -->
@@ -56,7 +69,11 @@
           </div>
           <!-- POST-TEST -->
           <div v-if="index === 4">
-            <UserVariables type="post-test" @change="change = true" @update="store.dispatch('setPostTest', $event)" />
+            <UserVariables
+              type="post-test"
+              @change="change = true"
+              @update="store.dispatch('UserStudy/setPostTest', $event)"
+            />
           </div>
 
           <v-card v-if="index === 5 && hasEyeTracking" rounded="xxl">
@@ -80,11 +97,9 @@ import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import EyeTrackingConfig from '../components/EyeTrackingConfig.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
-
-
 
 // Controller
 const studyController = new StudyController()
@@ -117,27 +132,33 @@ const getConsent = () => {
 }
 
 const getTasks = () => {
-  store.dispatch('UserStudy/setTasks', test.value.testStructure.userTasks || [])
+  const tasksData = test.value.testStructure.userTasks || []
+  store.dispatch('UserStudy/setTasks', structuredClone(tasksData))
 }
 
 const getPreTest = () => {
-  store.dispatch('UserStudy/setPreTest', test.value.testStructure.preTest || [])
+  const preTestData = test.value.testStructure.preTest || []
+  store.dispatch('UserStudy/setPreTest', structuredClone(preTestData))
 }
 
 const getPostTest = () => {
-  store.dispatch('UserStudy/setPostTest', test.value.testStructure.postTest || [])
+  const postTestData = test.value.testStructure.postTest || []
+  store.dispatch('UserStudy/setPostTest', structuredClone(postTestData))
 }
 
 const hasEyeTracking = computed(() => {
-  return (test.value.testStructure.userTasks || []).some(task => task.hasEye === true)
+  return (test.value.testStructure.userTasks || []).some(
+    (task) => task.hasEye === true,
+  )
 })
-
 
 const save = async () => {
   try {
     // Validate pre-test variables
     const preTestVariables = store.getters['UserStudy/preTest'] || []
-    const invalidPreTest = preTestVariables.filter(item => !item.title || !item.title.trim())
+    const invalidPreTest = preTestVariables.filter(
+      (item) => !item.title || !item.title.trim(),
+    )
     if (invalidPreTest.length > 0) {
       showError('Cannot save: Some pre-test variables are missing titles')
       return
@@ -145,30 +166,31 @@ const save = async () => {
 
     // Validate post-test variables
     const postTestVariables = store.getters['UserStudy/postTest'] || []
-    const invalidPostTest = postTestVariables.filter(item => !item.title || !item.title.trim())
+    const invalidPostTest = postTestVariables.filter(
+      (item) => !item.title || !item.title.trim(),
+    )
     if (invalidPostTest.length > 0) {
       showError('Cannot save: Some post-test variables are missing titles')
       return
     }
 
-    change.value = false;
+    change.value = false
 
     const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: store.getters['UserStudy/preTest'],
-      userTasks: store.getters['UserStudy/tasks'],
-      postTest: store.getters['UserStudy/postTest'],
+      preTest: structuredClone(store.getters['UserStudy/preTest']),
+      userTasks: structuredClone(store.getters['UserStudy/tasks']),
+      postTest: structuredClone(store.getters['UserStudy/postTest']),
       consent: consent.value,
     }
 
-    const rawData = { ...test.value, testStructure: testStructure };
-    const study = instantiateStudyByType(rawData.testType, rawData);
-    await store.dispatch('updateStudy', study);
-    showSuccess('pages.editTest.updatedTest');
+    const rawData = { ...test.value, testStructure: testStructure }
+    const study = instantiateStudyByType(rawData.testType, rawData)
+    await store.dispatch('updateStudy', study)
+    showSuccess('pages.editTest.updatedTest')
   } catch (error) {
-    console.error('Error saving test:', error);
-    showError('errors.globalError');
+    showError('errors.globalError')
   }
 }
 
@@ -177,7 +199,7 @@ const subscribeToTest = () => {
   const testId = route.params.id
   if (testId) {
     unsubscribe = studyController.subscribeToStudy(testId, (test) => {
-      store.commit("SET_TEST", test)
+      store.commit('SET_TEST', test)
       getWelcome()
       getFinalMessage()
       getConsent()
@@ -189,12 +211,12 @@ const subscribeToTest = () => {
 }
 // Lifecycle
 onMounted(() => {
-  subscribeToTest();
+  subscribeToTest()
 })
 
 onUnmounted(() => {
   if (unsubscribe) {
-    unsubscribe();
+    unsubscribe()
   }
 })
 </script>

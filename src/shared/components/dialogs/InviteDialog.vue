@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     :model-value="show"
-    @update:model-value="$emit('update:show', $event)"
     max-width="500"
+    @update:model-value="$emit('update:show', $event)"
   >
     <v-card class="rounded-lg">
       <v-card-title style="color: white" class="bg-primary rounded-top-lg">
@@ -35,8 +35,8 @@
             v-for="(coop, i) in selectedCoops"
             :key="i"
             closable
-            @click:close="removeSelectedCoop(i)"
             class="ml-2 mt-2"
+            @click:close="removeSelectedCoop(i)"
           >
             {{ typeof coop == 'object' ? coop.email : coop }}
           </v-chip>

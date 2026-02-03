@@ -107,7 +107,7 @@
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
-                  :latestTranscriptionId="
+                  :latest-transcription-id="
                     selectedTask?.latestTranscriptionDocId
                   "
                 />
@@ -168,15 +168,6 @@
     </div> -->
   </div>
 </template>
-
-<style scoped>
-.panel-shell {
-  background: #e8eaf2;
-  width: 100%; /* ✅ full width */
-  padding: 0;
-  border-radius: 0;
-}
-</style>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
@@ -304,3 +295,12 @@ function getCooperatorEmail(userDocId) {
   return cooperatorEmail
 }
 </script>
+
+<style scoped>
+.panel-shell {
+  background: #e8eaf2;
+  width: 100%; /* ✅ full width */
+  padding: 0;
+  border-radius: 0;
+}
+</style>

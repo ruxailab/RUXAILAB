@@ -41,17 +41,17 @@
         <!-- Provider -->
         <v-col cols="12" md="4" lg="4">
           <v-select
+            v-model="selectedProvider"
             label="Provider"
             :items="providers"
             item-title="label"
             item-value="value"
-            v-model="selectedProvider"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-robot-outline"
             hide-details
             :menu-props="{ maxHeight: 260 }"
-            @update:modelValue="
+            @update:model-value="
               (val) => {
                 selectedProvider = val
                 selectedModel = modelsByProvider[val]?.[0] || ''
@@ -63,11 +63,11 @@
         <!-- Model -->
         <v-col cols="12" md="4" lg="4">
           <v-select
+            v-model="selectedModel"
             label="Model"
             :items="modelOptions"
             item-title="label"
             item-value="value"
-            v-model="selectedModel"
             variant="outlined"
             density="comfortable"
             prepend-inner-icon="mdi-cube-outline"
@@ -100,7 +100,7 @@
     <!-- Runs list -->
     <TranscriptionList
       v-if="transcriptSegments.length"
-      :transcriptSegments="transcriptSegments"
+      :transcript-segments="transcriptSegments"
     />
 
     <!-- Empty state -->
@@ -185,7 +185,6 @@ const answerController = new AnswerController()
 
 async function transcribeSession() {
   if (!props.audioUrlEvaluator && !props.audioUrlModerator) {
-    console.warn('⚠️ No audio URLs provided for transcription.')
     return
   }
   isTranscribing.value = true
@@ -208,15 +207,10 @@ async function transcribeSession() {
     // Clear previous segments
     transcriptSegments.value = []
 
-    // console.log('🔊 Starting transcription', props.audioUrlEvaluator)
-    // console.log('🔊 Starting transcription', props.audioUrlModerator)
-
     const [evaluator, moderator] = await Promise.all([
       transcribeAudio(provider, model, props.audioUrlEvaluator, 'evaluator'),
       transcribeAudio(provider, model, props.audioUrlModerator, 'moderator'),
     ])
-    // console.log('Evaluator Segments:', evaluator)
-    // console.log('Moderator Segments:', moderator)
     const evaluatorSegs = evaluator.segments
     const moderatorSegs = moderator.segments
 
@@ -470,7 +464,6 @@ async function transcribeSession() {
         })),
       },
     })
-    console.log('✅ Transcription saved:', result)
 
     // result.id should be the new transcription id
     await answerController.updateTaskTranscriptionMeta({
@@ -486,13 +479,14 @@ async function transcribeSession() {
       text: 'Transcription saved successfully!',
       color: 'green',
     }
-  } catch (error) {
+
+    // TODO: Add Snackbar or notification to inform user of success
+  } catch {
     snackbar.value = {
       visible: true,
       text: 'Error during transcription. Please try again.',
       color: 'red',
     }
-    console.error('❌ Error during session transcription:', error)
   } finally {
     isTranscribing.value = false
   }
@@ -501,9 +495,6 @@ async function transcribeSession() {
 async function transcribeAudio(provider, model, audioUrl, role) {
   try {
     if (!audioUrl) {
-      console.warn(
-        `⚠️ No audio URL provided for ${role}. Skipping transcription.`,
-      )
       return []
     }
 
@@ -539,8 +530,7 @@ async function transcribeAudio(provider, model, audioUrl, role) {
     }))
 
     return { language: data.language, segments, transcript: data.transcript }
-  } catch (error) {
-    console.error(`❌ Error during ${role} transcription:`, error)
+  } catch {
     return []
   }
 }

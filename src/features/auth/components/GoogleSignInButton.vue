@@ -43,7 +43,6 @@ export default {
         })
         this.$emit('google-sign-in-success')
       } catch (error) {
-        console.error('Google authentication failed:', error)
         this.$emit('google-sign-in-error', error)
       }
     },

@@ -1,0 +1,140 @@
+name: Issue Auto Labeler
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-label issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            if (!issue) return;
+
+            // Skip bot issues
+            const BOT_LOGINS = new Set(['dependabot[bot]', 'github-actions[bot]']);
+            const isBot = BOT_LOGINS.has(issue.user?.login) || issue.user?.type === 'Bot';
+            if (isBot) return;
+
+            const rawTitle = issue.title || '';
+            const rawBody = issue.body || '';
+            const title = rawTitle.toLowerCase();
+            const body = rawBody.toLowerCase();
+            const existingLabels = (issue.labels || []).map(l => (typeof l === 'string' ? l : l.name));
+
+            const labelsToAdd = new Set();
+
+            // --- maintainer vs community ---
+            const { owner, repo } = context.repo;
+            let isMaintainer = false;
+            try {
+              const perm = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner,
+                repo,
+                username: issue.user.login,
+              });
+              const level = perm.data.permission;
+              isMaintainer = ['admin', 'maintain', 'write', 'triage'].includes(level);
+            } catch (e) {
+              // Non-collaborators (or API error) are treated as community by default
+            }
+
+            if (isMaintainer) {
+              labelsToAdd.add('maintainer-issue');
+            } else {
+              labelsToAdd.add('community-issue');
+            }
+
+            // --- conventional commits-style keywords ---
+            const ccMatch = rawTitle.match(/^(\w+)(\(.+\))?:/);
+            const ccType = ccMatch ? ccMatch[1].toLowerCase() : null;
+
+            switch (ccType) {
+              case 'feat':
+                labelsToAdd.add('feature');
+                break;
+              case 'fix':
+                labelsToAdd.add('bug');
+                break;
+              case 'docs':
+                labelsToAdd.add('documentation');
+                break;
+              case 'chore':
+                labelsToAdd.add('chore');
+                break;
+              case 'refactor':
+                labelsToAdd.add('refactor');
+                break;
+              case 'test':
+                labelsToAdd.add('tests');
+                break;
+              case 'perf':
+                labelsToAdd.add('performance');
+                break;
+              case 'ci':
+                labelsToAdd.add('ci');
+                break;
+              case 'build':
+                labelsToAdd.add('build');
+                break;
+              case 'style':
+                labelsToAdd.add('style');
+                break;
+              default:
+                break;
+            }
+
+            // --- bug ---
+            const looksLikeBugTemplate =
+              body.includes('steps to reproduce') ||
+              body.includes('expected behavior') ||
+              body.includes('actual behavior') ||
+              body.includes('screenshots');
+
+            const looksLikeBugTitle =
+              title.startsWith('[🐞 bug]') ||
+              title.startsWith('[bug]') ||
+              title.includes('bug:') ||
+              title.includes('🐞') ||
+              (ccType === 'fix');
+
+            if (looksLikeBugTemplate || looksLikeBugTitle) {
+              labelsToAdd.add('bug');
+            }
+
+            // --- help ---
+            const asksForHelp =
+              body.includes('help wanted') ||
+              body.includes('need help') ||
+              body.includes('help needed') ||
+              body.includes('looking for help') ||
+              title.includes('help');
+
+            if (asksForHelp) {
+              labelsToAdd.add('help');
+            }
+
+            // Note: per maintainer feedback, we no longer auto-apply
+            // "good for wannabe gsocers" because maintainers prefer
+            // to decide that label manually on a case-by-case basis.
+
+            // Remove labels that already exist
+            for (const l of existingLabels) labelsToAdd.delete(l);
+
+            const finalLabels = Array.from(labelsToAdd);
+            if (finalLabels.length === 0) return;
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: issue.number,
+              labels: finalLabels,
+            });

@@ -5,7 +5,7 @@
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
           <div
-            class="rich-text mb-4"
+            class="rich-text mb-4 task-description"
             v-html="task?.taskDescription || taskDescription"
           />
 
@@ -16,13 +16,9 @@
             class="my-6 mx-auto"
             max-width="1000"
           >
-            <v-card-text class="pa-4">
+            <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
               <div class="d-flex align-center mb-3">
-                <v-icon
-                  color="secondary"
-                  size="24"
-                  class="mr-2"
-                >
+                <v-icon color="secondary" size="24" class="mr-2">
                   mdi-play-circle-outline
                 </v-icon>
                 <h3 class="text-h6 font-weight-bold text-secondary">
@@ -33,7 +29,8 @@
               <!-- Recording Information -->
               <template v-if="hasAnyRecording">
                 <p class="text-body-1 text-left mb-4 text-grey-darken-3">
-                  This task will record the following data during your interaction:
+                  This task will record the following data during your
+                  interaction:
                 </p>
 
                 <!-- Recording Features Grid -->
@@ -44,42 +41,37 @@
                     class="recording-feature-card"
                   >
                     <div class="feature-icon-container">
-                      <v-icon
-                        size="48"
-                        color="secondary"
-                      >
+                      <v-icon size="48" color="secondary">
                         mdi-monitor-screenshot
                       </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
                         Screen Record
                       </h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Captures clicks, scrolling, and interactions to analyze user behavior.
+                        Captures clicks, scrolling, and interactions to analyze
+                        user behavior.
                       </p>
                     </div>
                   </div>
 
                   <!-- Camera Recording -->
-                  <div
-                    v-if="task?.hasCamRecord"
-                    class="recording-feature-card"
-                  >
+                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
                     <div class="feature-icon-container">
-                      <v-icon
-                        size="48"
-                        color="secondary"
-                      >
-                        mdi-camera
-                      </v-icon>
+                      <v-icon size="48" color="secondary"> mdi-camera </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
                         Camera
                       </h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Records facial expressions and reactions to understand user emotions.
+                        Records facial expressions and reactions to understand
+                        user emotions.
                       </p>
                     </div>
                   </div>
@@ -90,42 +82,37 @@
                     class="recording-feature-card"
                   >
                     <div class="feature-icon-container">
-                      <v-icon
-                        size="48"
-                        color="secondary"
-                      >
+                      <v-icon size="48" color="secondary">
                         mdi-microphone
                       </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
                         Audio Record
                       </h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Captures verbal feedback and think-aloud protocols during the task.
+                        Captures verbal feedback and think-aloud protocols
+                        during the task.
                       </p>
                     </div>
                   </div>
 
                   <!-- Eye Tracking -->
-                  <div
-                    v-if="task?.hasEye"
-                    class="recording-feature-card"
-                  >
+                  <div v-if="task?.hasEye" class="recording-feature-card">
                     <div class="feature-icon-container">
-                      <v-icon
-                        size="48"
-                        color="secondary"
-                      >
-                        mdi-eye
-                      </v-icon>
+                      <v-icon size="48" color="secondary"> mdi-eye </v-icon>
                     </div>
                     <div class="feature-content">
-                      <h4 class="text-h6 font-weight-bold text-grey-darken-3 mb-1">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
                         Eye Tracker
                       </h4>
                       <p class="text-body-2 text-grey-darken-3">
-                        Tracks visual attention patterns and gaze behavior during the task.
+                        Tracks visual attention patterns and gaze behavior
+                        during the task.
                       </p>
                     </div>
                   </div>
@@ -136,11 +123,7 @@
               <template v-if="task?.taskLink || taskLink">
                 <v-divider class="my-3" />
                 <div class="d-flex align-start mb-2">
-                  <v-icon
-                    color="secondary"
-                    size="20"
-                    class="mr-2 mt-1"
-                  >
+                  <v-icon color="secondary" size="20" class="mr-2 mt-1">
                     mdi-open-in-new
                   </v-icon>
                   <div>
@@ -148,12 +131,14 @@
                       New Window Will Open
                     </p>
                     <p class="text-body-1 text-grey-darken-3 mb-4">
-                      When you start the task, a new window will open with the tool you need to use.
+                      When you start the task, a new window will open with the
+                      tool you need to use.
                     </p>
 
                     <p class="text-body-1 text-grey-darken-3">
-                      💡 <strong>Tip:</strong> You can switch between tabs or close the new window at any time.
-                      The recording will continue until you complete the task.
+                      💡 <strong>Tip:</strong> You can switch between tabs or
+                      close the new window at any time. The recording will
+                      continue until you complete the task.
                     </p>
                   </div>
                 </div>
@@ -167,39 +152,23 @@
             </v-card-text>
           </v-card>
 
-          <v-row
-            justify="center"
-            class="mt-6"
-          >
+          <v-row justify="center" class="mt-6">
             <v-col cols="auto">
-              <v-btn
-                color="primary"
-                @click="startTask"
-              >
-                Start task
-              </v-btn>
+              <v-btn color="primary" @click="startTask"> Start task </v-btn>
             </v-col>
           </v-row>
         </template>
         <!-- STAGE 2: Task answer -->
         <template v-else-if="stage === 2">
           <!-- Task Description During Execution -->
-          <v-card
-            variant="outlined"
-            color="primary"
-            class="mb-4"
-          >
-            <v-card-text class="pa-3">
+          <v-card variant="outlined" color="primary" class="mb-4">
+            <v-card-text :class="$vuetify.display.xs ? 'pa-2' : 'pa-3'">
               <!-- Two Column Layout -->
               <v-row>
                 <!-- Left Column: Task Description -->
-                <v-col cols="8">
+                <v-col cols="12" md="8">
                   <div class="d-flex align-center mb-3">
-                    <v-icon
-                      color="primary"
-                      size="20"
-                      class="mr-2"
-                    >
+                    <v-icon color="primary" size="20" class="mr-2">
                       mdi-clipboard-text-outline
                     </v-icon>
                     <span class="text-subtitle-2 font-weight-bold text-primary">
@@ -207,40 +176,43 @@
                     </span>
                   </div>
                   <div
-                    class="rich-text text-body-1"
+                    class="rich-text text-body-1 task-description"
                     v-html="task?.taskDescription || taskDescription"
                   />
                 </v-col>
 
                 <!-- Right Column: Help & Actions -->
-                <v-col cols="4">
+                <v-col cols="12" md="4">
                   <v-row>
                     <!-- Help Section -->
-                    <v-col
-                      v-if="task?.taskTip"
-                      cols="6"
-                    >
+                    <v-col v-if="task?.taskTip" cols="12" sm="6">
                       <div
                         class="help-section pa-2 text-center rounded h-100"
-                        style="background-color: rgba(76, 175, 80, 0.05); border: 1px solid rgba(76, 175, 80, 0.2);"
+                        style="
+                          background-color: rgba(76, 175, 80, 0.05);
+                          border: 1px solid rgba(76, 175, 80, 0.2);
+                        "
                       >
                         <div class="d-flex align-center mb-1">
-                          <v-icon
-                            color="success"
-                            size="16"
-                            class="mr-1"
-                          >
+                          <v-icon color="success" size="16" class="mr-1">
                             mdi-help-circle-outline
                           </v-icon>
-                          <span class="text-caption font-weight-medium text-success">
+                          <span
+                            class="text-caption font-weight-medium text-success"
+                          >
                             Need Help?
                           </span>
                         </div>
                         <p
                           class="text-caption text-grey-darken-3 mb-2"
-                          style="font-size: 11px; line-height: 1.3;"
+                          :style="
+                            $vuetify.display.xs
+                              ? 'font-size: 12px; line-height: 1.4'
+                              : 'font-size: 11px; line-height: 1.3'
+                          "
                         >
-                          Having trouble? Get helpful guidance to complete this task.
+                          Having trouble? Get helpful guidance to complete this
+                          task.
                         </p>
                         <TipButton :task="task" />
                       </div>
@@ -249,27 +221,29 @@
                     <!-- Reopen Tool Section -->
                     <v-col
                       v-if="task?.taskLink || taskLink"
-                      :cols="task?.taskTip ? 6 : 12"
+                      cols="12"
+                      :sm="task?.taskTip ? 6 : 12"
                     >
                       <div
                         class="tool-section pa-2 rounded text-center h-100"
-                        style="background-color: rgba(121, 85, 72, 0.05); border: 1px solid rgba(121, 85, 72, 0.2);"
+                        style="
+                          background-color: rgba(121, 85, 72, 0.05);
+                          border: 1px solid rgba(121, 85, 72, 0.2);
+                        "
                       >
                         <div class="d-flex align-center mb-1">
-                          <v-icon
-                            color="secondary"
-                            size="16"
-                            class="mr-1"
-                          >
+                          <v-icon color="secondary" size="16" class="mr-1">
                             mdi-open-in-new
                           </v-icon>
-                          <span class="text-caption font-weight-medium text-secondary">
+                          <span
+                            class="text-caption font-weight-medium text-secondary"
+                          >
                             External Tool
                           </span>
                         </div>
                         <p
                           class="text-caption text-grey-darken-3 mb-2"
-                          style=" line-height: 1.3;"
+                          style="line-height: 1.3"
                         >
                           Accidentally closed the tool window? Reopen it here.
                         </p>
@@ -292,10 +266,7 @@
           </v-card>
 
           <v-row class="mb-4 d-flex align-center">
-            <v-col
-              v-if="isVisualizerVisible"
-              cols="auto"
-            >
+            <v-col v-if="isVisualizerVisible" cols="auto">
               <AudioVisualizer />
             </v-col>
             <v-spacer />
@@ -328,26 +299,43 @@
             />
           </div>
           <v-row justify="space-between">
-            <v-col>
+            <v-col cols="12" sm="6">
               <v-btn
                 color="error"
                 block
                 variant="outlined"
                 class="mr-2"
+                :disabled="isWaitingForUploadToFinish"
+                :class="{
+                  'mb-3': $vuetify.display.xs,
+                  'mr-2': $vuetify.display.smAndUp,
+                }"
                 @click="handleShowPostForm(false)"
               >
-                I can not finish the task
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === false
+                    ? 'Uploading...'
+                    : 'I can not finish the task'
+                }}
               </v-btn>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="6">
               <v-btn
                 color="primary"
                 block
                 variant="flat"
                 class="ml-2"
+                :disabled="isWaitingForUploadToFinish"
+                :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
-                Task completed
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === true
+                    ? 'Uploading...'
+                    : 'Task completed'
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -359,10 +347,10 @@
             <SusForm
               v-model="localSusAnswers"
               :task-index="taskIndex"
-              @update:model-value="val => emit('update:susAnswers', val)"
+              @update:model-value="(val) => emit('update:susAnswers', val)"
             />
           </div>
-          
+
           <!-- NASA-TLX Form -->
           <div v-else-if="task?.taskType === 'nasa-tlx'">
             <nasaTlxForm
@@ -370,30 +358,57 @@
               @update:nasa-tlx="onUpdateNasaTlx"
             />
           </div>
-          
+
           <!-- SART Form -->
           <div v-else-if="task?.taskType === 'sart'">
-            <sartForm
-              :sart="sartAnswers"
-              @update:sart="onUpdateSart"
+            <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
+          </div>
+
+          <!-- TAM-1 Form -->
+          <div v-else-if="task?.taskType === 'tam-1'">
+            <TamForm1
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
             />
           </div>
-          
+
+          <!-- TAM-2 Form -->
+          <div v-else-if="task?.taskType === 'tam-2'">
+            <TamForm2
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
+          <!-- TAM-3 Form -->
+          <div v-else-if="task?.taskType === 'tam-3'">
+            <TamForm3
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
           <!-- Other task types -->
           <div v-else>
-            <v-alert
-              type="info"
-              variant="tonal"
-              class="mb-4"
-            >
+            <v-alert type="info" variant="tonal" class="mb-4">
               No post-task questionnaire required for this task type.
             </v-alert>
           </div>
-          
           <v-row justify="end">
             <v-col cols="12">
               <p
-                v-if="task?.taskType === 'sus' && doneTaskDisabled"
+                v-if="
+                  (task?.taskType === 'sus' ||
+                    task?.taskType === 'tam-1' ||
+                    task?.taskType === 'tam-2' ||
+                    task?.taskType === 'tam-3' ||
+                    task?.taskType === 'sart' ||
+                    task?.taskType === 'nasa-tlx') &&
+                  doneTaskDisabled
+                "
                 class="text-error mb-4"
               >
                 Please answer all questions before continuing.
@@ -402,21 +417,20 @@
                 color="primary"
                 block
                 variant="flat"
-                class="ml-2" 
-                :disabled="shouldDisableFinishButton"
-                @click="emitDoneOrCouldNotFinish()"
+                class="ml-2"
+                :disabled="
+                  shouldDisableFinishButton || isWaitingForUploadToFinish
+                "
+                @click="attemptFinish()"
               >
-                Finish task
+                {{
+                  isWaitingForUploadToFinish ? 'Uploading...' : 'Finish task'
+                }}
               </v-btn>
             </v-col>
           </v-row>
         </template>
-        <video
-          v-if="videoUrl === ''"
-          id="vpreview"
-          class="d-none"
-          autoplay
-        />
+        <video v-if="videoUrl === ''" id="vpreview" class="d-none" autoplay />
       </div>
 
       <AudioRecorder
@@ -426,8 +440,8 @@
         :task-index="taskIndex"
         :remote-stream="remoteStream"
         :should-record-moderator="shouldRecordModerator"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
         @recording-started="$emit('recording-started', $event)"
       />
 
@@ -436,8 +450,8 @@
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
       />
 
       <VideoRecorder
@@ -446,26 +460,28 @@
         :test-id="testId"
         :user-doc-id="userDocId"
         :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
       />
     </template>
   </ShowInfo>
 </template>
 
 <script setup>
-import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
-import { useStore } from 'vuex';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import TipButton from '@/ux/UserTest/components/TipButton.vue';
-import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue';
-import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue';
-import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue';
-import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue';
-import Timer from '@/ux/UserTest/components/Timer.vue';
-import SusForm from '@/ux/UserTest/SusForm.vue';
-import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue';
-import sartForm from '@/ux/UserTest/components/sartForm.vue';
+import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
+import ShowInfo from '@/shared/components/ShowInfo.vue'
+import TipButton from '@/ux/UserTest/components/TipButton.vue'
+import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
+import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue'
+import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
+import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
+import Timer from '@/ux/UserTest/components/Timer.vue'
+import SusForm from '@/ux/UserTest/SusForm.vue'
+import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
+import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
+import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
+import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
+import sartForm from '@/ux/UserTest/components/sartForm.vue'
 
 const props = defineProps({
   task: Object,
@@ -479,6 +495,7 @@ const props = defineProps({
   taskObservations: String,
   susAnswers: Array,
   nasaTlxAnswers: Object,
+  tamAnswers: Object,
   sartAnswers: Object,
   testId: String,
   userDocId: String,
@@ -487,8 +504,8 @@ const props = defineProps({
   doneTaskDisabled: Boolean,
   videoUrl: String,
   remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
-  shouldRecordModerator: Boolean // props that indicate whether to record the moderator's video
-});
+  shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
+})
 const emit = defineEmits([
   'done',
   'couldNotFinish',
@@ -501,215 +518,350 @@ const emit = defineEmits([
   'timer-stopped',
   'update:susAnswers',
   'update:nasaTlxAnswers',
-  'update:sartAnswers'
-]);
+  'update:tamAnswers',
+  'update:sartAnswers',
+  'startTask',
+])
 
 onBeforeUnmount(() => {
   if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
+    clearInterval(timerInterval)
+    timerInterval = null
   }
-});
-const store = useStore();
+  if (finishTimeout) {
+    clearTimeout(finishTimeout)
+    finishTimeout = null
+  }
+  forceStopAllMedia()
 
-const susAnswersFromStore = computed(() => {
-  return store.state.tasks?.[props.taskIndex]?.susAnswers || [];
-});
+  uploadingCount.value = 0
+  isWaitingForUploadToFinish.value = false
+  pendingFinalTime.value = null
+})
 
 const localSusAnswers = computed({
   get: () => props.susAnswers || [],
-  set: (val) => emit('update:susAnswers', val)
-});
+  set: (val) => emit('update:susAnswers', val),
+})
 
-const VALIDATION_REQUIRED_TYPES = ['sus']; // Only SUS requires validation for now
+const getTamInitialStructure = () => {
+  const taskType = props.task?.taskType
 
-const shouldDisableFinishButton = computed(() => {
-  const taskType = props.task?.taskType;
-  
-  // If this task type requires validation, use doneTaskDisabled
-  if (VALIDATION_REQUIRED_TYPES.includes(taskType)) {
-    return props.doneTaskDisabled;
+  if (taskType === 'tam-1') {
+    return {
+      perceivedUsefulness: new Array(10).fill(undefined),
+      perceivedEaseOfUse: new Array(10).fill(undefined),
+      attitudeTowardUsing: new Array(5).fill(undefined),
+      actualSystemUse: new Array(2).fill(undefined),
+    }
+  } else if (taskType === 'tam-2') {
+    return {
+      intentionToUse: new Array(2).fill(undefined),
+      perceivedUsefulness: new Array(4).fill(undefined),
+      perceivedEaseOfUse: new Array(4).fill(undefined),
+      subjectiveNorm: new Array(2).fill(undefined),
+      voluntariness: new Array(3).fill(undefined),
+      image: new Array(3).fill(undefined),
+      jobRelevance: new Array(2).fill(undefined),
+      outputQuality: new Array(2).fill(undefined),
+      resultDemonstrability: new Array(4).fill(undefined),
+    }
+  } else if (taskType === 'tam-3') {
+    return {
+      perceivedUsefulness: new Array(3).fill(undefined),
+      perceivedEaseOfUse: new Array(3).fill(undefined),
+      behavioralIntention: new Array(2).fill(undefined),
+      usePatterns: new Array(2).fill(undefined),
+      subjectiveNorm: new Array(3).fill(undefined),
+      image: new Array(2).fill(undefined),
+      jobRelevance: new Array(3).fill(undefined),
+      outputQuality: new Array(3).fill(undefined),
+      resultDemonstrability: new Array(2).fill(undefined),
+      computerSelfEfficacy: new Array(3).fill(undefined),
+      perceptionsOfExternalControl: new Array(3).fill(undefined),
+      computerAnxiety: new Array(2).fill(undefined),
+      computerPlayfulness: new Array(2).fill(undefined),
+      perceivedEnjoyment: new Array(3).fill(undefined),
+      objectiveUsability: new Array(2).fill(undefined),
+      experience: new Array(2).fill(undefined),
+      voluntariness: new Array(2).fill(undefined),
+    }
   }
-  
-  // For all other task types, no validation needed
-  return false;
-});
-
-const localSartAnswers = ref(props.sartAnswers || {});
-
-function onUpdateSart(val) {
-  localSartAnswers.value = val;
-  emit('update:sartAnswers', val);
+  return {}
 }
 
-const rawLink = computed(() => props.task?.taskLink || props.taskLink);
-const normalizedLink = computed(() => {
-  const link = rawLink.value || '';
-  return link.match(/^https?:\/\//i) ? link : `https://${link}`;
-});
+const localTamAnswers = computed({
+  get: () => props.tamAnswers || getTamInitialStructure(),
+  set: (val) => emit('update:tamAnswers', val),
+})
+
+const VALIDATION_REQUIRED_TYPES = new Set([
+  'sus',
+  'tam-1',
+  'tam-2',
+  'tam-3',
+  'sart',
+  'nasa-tlx',
+])
+
+const shouldDisableFinishButton = computed(() => {
+  const taskType = props.task?.taskType
+
+  // If this task type requires validation, use doneTaskDisabled
+  if (VALIDATION_REQUIRED_TYPES.has(taskType)) {
+    return props.doneTaskDisabled
+  }
+
+  // For all other task types, no validation needed
+  return false
+})
+
+const localSartAnswers = ref(props.sartAnswers || {})
+
+function onUpdateSart(val) {
+  localSartAnswers.value = val
+  emit('update:sartAnswers', val)
+}
 
 const hasAnyRecording = computed(() => {
-  return props.task?.hasScreenRecord ||
+  return (
+    props.task?.hasScreenRecord ||
     props.task?.hasCamRecord ||
     props.task?.hasAudioRecord ||
-    props.task?.hasEye;
-});
+    props.task?.hasEye
+  )
+})
 
-const stage = ref(1);
-const audioRecorder = ref(null);
-const videoRecorder = ref(null);
-const screenRecorder = ref(null);
-const elapsedTimeDisplay = ref('0:00');
-let taskStartTime = null;
-let timerInterval = null;
+const stage = ref(1)
+const audioRecorder = ref(null)
+const videoRecorder = ref(null)
+const screenRecorder = ref(null)
+const elapsedTimeDisplay = ref('0:00')
+const uploadingCount = ref(0)
+const isWaitingForUploadToFinish = ref(false)
+const pendingFinalTime = ref(null)
+
+let taskStartTime = null
+let timerInterval = null
+let finishTimeout = null
+
+function onShowLoading() {
+  uploadingCount.value++
+  emit('show-loading')
+}
+
+function onStopShowLoading() {
+  uploadingCount.value--
+  if (uploadingCount.value < 0) uploadingCount.value = 0
+  emit('stop-show-loading')
+
+  if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
+    emitDoneOrCouldNotFinish(pendingFinalTime.value)
+  }
+}
+
+function attemptFinish() {
+  if (uploadingCount.value > 0) {
+    isWaitingForUploadToFinish.value = true
+  } else {
+    // Check for where uploads have not started yet
+    if (stage.value !== 3 && hasAnyRecording.value) {
+      isWaitingForUploadToFinish.value = true
+      // Short timeout to alllow recorders to emit show-loading
+      finishTimeout = setTimeout(() => {
+        if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
+          emitDoneOrCouldNotFinish(pendingFinalTime.value)
+        }
+      }, 500)
+    } else {
+      emitDoneOrCouldNotFinish(pendingFinalTime.value)
+    }
+  }
+}
 
 function updateElapsedTime() {
-  if (!taskStartTime) return;
-  const elapsed = Math.floor((Date.now() - taskStartTime) / 1000);
-  const minutes = Math.floor(elapsed / 60);
-  const seconds = elapsed % 60;
-  elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  if (!taskStartTime) return
+  const elapsed = Math.floor((Date.now() - taskStartTime) / 1000)
+  const minutes = Math.floor(elapsed / 60)
+  const seconds = elapsed % 60
+  elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
 async function startTask() {
-
-  await startMediaRecorders();
-  stage.value = 2;
-  taskStartTime = Date.now();
-  timerInterval = setInterval(updateElapsedTime, 1000);
+  emit('show-loading')
+  emit('startTask')
+  await startMediaRecorders()
+  stage.value = 2
+  taskStartTime = Date.now()
+  timerInterval = setInterval(updateElapsedTime, 1000)
   nextTick(() => {
-    const link = props.task?.taskLink || props.taskLink;
+    const link = props.task?.taskLink || props.taskLink
     if (link) {
-      const url = link.startsWith('http://') || link.startsWith('https://')
-        ? link
-        : `https://${link}`;
-      window.open(url, '_blank');
+      const url =
+        link.startsWith('http://') || link.startsWith('https://')
+          ? link
+          : `https://${link}`
+      window.open(url, '_blank')
     }
     setTimeout(() => {
-      const timer = document.querySelector('[ref=timerComponent]');
-      if (timer && timer.startTimer) timer.startTimer();
-    }, 100);
-  });
+      const timer = document.querySelector('[ref=timerComponent]')
+      if (timer && timer.startTimer) timer.startTimer()
+    }, 100)
+  })
+  emit('stop-show-loading')
 }
 
 function reopenTool() {
-  const link = props.task?.taskLink || props.taskLink;
+  const link = props.task?.taskLink || props.taskLink
   if (link) {
-    const url = link.startsWith('http://') || link.startsWith('https://')
-      ? link
-      : `https://${link}`;
-    window.open(url, '_blank');
+    const url =
+      link.startsWith('http://') || link.startsWith('https://')
+        ? link
+        : `https://${link}`
+    window.open(url, '_blank')
   }
 }
 
-const showPostForm = ref({ userCompleted: undefined });
-
-function stopMediaRecorders() {
-  if (props.task?.hasAudioRecord && audioRecorder.value) {
-    audioRecorder.value.stopAudioRecording();
-  }
-  if (props.task?.hasCamRecord && videoRecorder.value) {
-    videoRecorder.value.stopRecording();
-  }
-  if (props.task?.hasScreenRecord && screenRecorder.value) {
-    screenRecorder.value.stopRecording();
-  }
-}
+const showPostForm = ref({ userCompleted: undefined })
 
 async function startMediaRecorders() {
   if (props.task?.hasAudioRecord && audioRecorder.value) {
-    await audioRecorder.value.startAudioRecording();
+    await audioRecorder.value.startAudioRecording()
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
-    await videoRecorder.value.startRecording();
+    await videoRecorder.value.startRecording()
   }
   if (props.task?.hasScreenRecord && screenRecorder.value) {
-    await screenRecorder.value.captureScreen();
+    await screenRecorder.value.captureScreen()
   }
 }
 
+function forceStopAllMedia() {
+  audioRecorder.value?.stopAudioRecording?.()
+  videoRecorder.value?.stopRecording?.()
+  screenRecorder.value?.stopRecording?.()
+}
+
 function handleShowPostForm(userCompleted) {
-  stopMediaRecorders();
-  console.log('Stopping media recorders...');
+  if (isWaitingForUploadToFinish.value) return
+
+  forceStopAllMedia()
 
   if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
+    clearInterval(timerInterval)
+    timerInterval = null
   }
 
-  let finalTime = null;
+  let finalTime = null
   if (taskStartTime) {
-    finalTime = Math.round((Date.now() - taskStartTime));
-    console.log('Tiempo detenido en:', finalTime, 'segundos');
-    emit('timer-stopped', finalTime, props.taskIndex);
+    finalTime = Math.round(Date.now() - taskStartTime)
+    pendingFinalTime.value = finalTime
+    console.log('Tiempo detenido en:', finalTime, 'segundos')
+    emit('timer-stopped', finalTime, props.taskIndex)
   }
 
-  showPostForm.value.userCompleted = userCompleted;
+  showPostForm.value.userCompleted = userCompleted
 
-  // Only show post-task form for specific task types
-  if (['sus', 'nasa-tlx', 'sart'].includes(props.task?.taskType)) {
-    stage.value = 3;
+  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
+    const link = props.task?.postForm
+    if (link) {
+      const url =
+        link.startsWith('http://') || link.startsWith('https://')
+          ? link
+          : `https://${link}`
+      window.open(url, '_blank')
+    }
+  }
+
+  // Show post-task form for all validated task types
+  if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
+    stage.value = 3
   } else {
-    emitDoneOrCouldNotFinish(finalTime);
+    attemptFinish()
   }
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {
-  console.log('--------')
-  console.log(showPostForm.value)
-  console.log('--------')
-
   if (showPostForm.value.userCompleted) {
-    emit('done', savedTime, props.taskIndex);
+    emit('done', savedTime, props.taskIndex)
   } else {
-    emit('couldNotFinish', savedTime, props.taskIndex);
+    emit('couldNotFinish', savedTime, props.taskIndex)
   }
 
   // Reset state for next task
-  showPostForm.value = { userCompleted: undefined };
-  taskStartTime = null;
-  elapsedTimeDisplay.value = '0:00';
+  isWaitingForUploadToFinish.value = false
+  uploadingCount.value = 0
+  showPostForm.value = { userCompleted: undefined }
+  taskStartTime = null
+  elapsedTimeDisplay.value = '0:00'
 
   // Reset stage after a small delay to allow parent to handle the transition
   nextTick(() => {
-    stage.value = 1;
-  });
+    stage.value = 1
+  })
 }
 
-const localPostAnswer = ref(props.postAnswer);
-const localTaskAnswer = ref(props.taskAnswer);
-const localTaskObservations = ref(props.taskObservations);
-const isVisualizerVisible = ref(false);
+const localPostAnswer = ref(props.postAnswer)
+const localTaskAnswer = ref(props.taskAnswer)
+const localTaskObservations = ref(props.taskObservations)
+const isVisualizerVisible = ref(false)
 
-watch(() => props.postAnswer, val => { localPostAnswer.value = val; });
-watch(() => props.taskAnswer, val => { localTaskAnswer.value = val; });
-watch(() => props.taskObservations, val => { localTaskObservations.value = val; });
+watch(
+  () => props.postAnswer,
+  (val) => {
+    localPostAnswer.value = val
+  },
+)
+watch(
+  () => props.taskAnswer,
+  (val) => {
+    localTaskAnswer.value = val
+  },
+)
+watch(
+  () => props.taskObservations,
+  (val) => {
+    localTaskObservations.value = val
+  },
+)
 
 // Reset stage when taskIndex changes (new task loaded)
-watch(() => props.taskIndex, () => {
-  stage.value = 1;
-  taskStartTime = null;
-  elapsedTimeDisplay.value = '0:00';
-  showPostForm.value = { userCompleted: undefined };
-});
+watch(
+  () => props.taskIndex,
+  () => {
+    if (finishTimeout) {
+      clearTimeout(finishTimeout)
+      finishTimeout = null
+    }
+    forceStopAllMedia()
+    stage.value = 1
+    taskStartTime = null
+    elapsedTimeDisplay.value = '0:00'
+    showPostForm.value = { userCompleted: undefined }
+  },
+)
 
 function onUpdateTaskAnswer(val) {
-  localTaskAnswer.value = val;
-  emit('update:taskAnswer', val);
+  localTaskAnswer.value = val
+  emit('update:taskAnswer', val)
 }
 function onUpdateTaskObservations(val) {
-  localTaskObservations.value = val;
-  emit('update:taskObservations', val);
+  localTaskObservations.value = val
+  emit('update:taskObservations', val)
 }
 function onUpdateNasaTlx(val) {
-  emit('update:nasaTlxAnswers', val);
+  emit('update:nasaTlxAnswers', val)
 }
 function onTimerStopped(elapsedTime) {
-  emit('timer-stopped', elapsedTime, props.taskIndex);
+  emit('timer-stopped', elapsedTime, props.taskIndex)
 }
 </script>
 
 <style scoped>
+.task-description {
+  white-space: pre-line;
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

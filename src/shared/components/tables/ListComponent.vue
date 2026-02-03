@@ -8,8 +8,9 @@
     class="rounded-lg"
     elevation="2"
     hover
-    @click:row="emitClick"
     :loading="loadingStudy"
+    :items-per-page-text="t('common.table.itemsPerPage')"
+    @click:row="emitClick"
   >
     <!-- Type Column -->
     <template #item.type="{ item }">
@@ -34,10 +35,7 @@
 
     <!-- Name Column -->
     <template #item.name="{ item }">
-      <div
-        class="d-flex flex-column"
-        style="line-height: 1;"
-      >
+      <div class="d-flex flex-column" style="line-height: 1">
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
@@ -77,8 +75,8 @@
       {{ formatItemDate(item) }}
     </template>
 
-     <template #item.testDate="{ item }">
-      {{formatDateTime(item.testDate, 'es')}}
+    <template #item.testDate="{ item }">
+      {{ formatDateTime(item.testDate, 'es') }}
     </template>
 
     <!-- Owner Column -->
@@ -87,7 +85,7 @@
     </template>
 
     <template #item.evaluator="{ item }">
-        {{ item.email }}
+      {{ item.email }}
     </template>
 
     <!-- Participants Column -->
@@ -102,7 +100,7 @@
       </v-chip>
     </template>
 
-     <!-- Status Column -->
+    <!-- Status Column -->
     <template #item.status="{ item }">
       <v-chip
         label
@@ -157,8 +155,14 @@ const { t } = useI18n()
 
 // Composables
 const typeRef = toRef(props, 'type')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
-const { getItemTitle, getOwnerName, getTags, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t)
+const {
+  getItemTitle,
+  getOwnerName,
+  getTags,
+  getParticipantCount,
+  formatItemDate,
+} = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
 
 const loadingStudy = computed(() => {
@@ -191,7 +195,7 @@ const emitClick = (event, { item }) => {
 /* Header styling */
 :deep(.v-data-table-header__content) {
   font-weight: 700 !important;
-  color: #1F2937 !important;
+  color: #1f2937 !important;
 }
 
 /* Optional: Add a subtle border between rows for better separation */

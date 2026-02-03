@@ -169,7 +169,8 @@
                                 </div>
                                 <div class="flex-grow-1 mx-4">
                                   <div class="progress-container">
-                                    <div class="progress-bar" :style="{
+                                    <div
+class="progress-bar" :style="{
                                       width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
                                       backgroundColor: getGroupColor('demand'),
                                       borderRadius: '20px',
@@ -177,7 +178,8 @@
                                       position: 'relative',
                                       minWidth: '40px'
                                     }">
-                                      <span class="progress-text" style="
+                                      <span
+class="progress-text" style="
                                           position: absolute;
                                           left: 50%;
                                           top: 50%;
@@ -193,7 +195,8 @@
                                     </div>
                                   </div>
                                 </div>
-                                <div class="score-display text-body-1 font-weight-bold text-right"
+                                <div
+class="score-display text-body-1 font-weight-bold text-right"
                                   style="min-width: 50px;">
                                   {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
                                 </div>
@@ -235,7 +238,8 @@
                                 </div>
                                 <div class="flex-grow-1 mx-4">
                                   <div class="progress-container">
-                                    <div class="progress-bar" :style="{
+                                    <div
+class="progress-bar" :style="{
                                       width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
                                       backgroundColor: getGroupColor('supply'),
                                       borderRadius: '20px',
@@ -243,7 +247,8 @@
                                       position: 'relative',
                                       minWidth: '40px'
                                     }">
-                                      <span class="progress-text" style="
+                                      <span
+class="progress-text" style="
                                           position: absolute;
                                           left: 50%;
                                           top: 50%;
@@ -259,7 +264,8 @@
                                     </div>
                                   </div>
                                 </div>
-                                <div class="score-display text-body-1 font-weight-bold text-right"
+                                <div
+class="score-display text-body-1 font-weight-bold text-right"
                                   style="min-width: 50px;">
                                   {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
                                 </div>
@@ -289,7 +295,8 @@
                         </v-expansion-panel-title>
                         <v-expansion-panel-text>
                           <div class="dimension-bars pt-3">
-                            <div v-for="dimension in understandingDimensions" :key="dimension.key"
+                            <div
+v-for="dimension in understandingDimensions" :key="dimension.key"
                               class="dimension-row mb-3">
                               <div class="d-flex align-center">
                                 <div class="dimension-label" style="min-width: 180px; max-width: 180px;">
@@ -302,7 +309,8 @@
                                 </div>
                                 <div class="flex-grow-1 mx-4">
                                   <div class="progress-container">
-                                    <div class="progress-bar" :style="{
+                                    <div
+class="progress-bar" :style="{
                                       width: `${(analytics.dimensionAverages[dimension.key] / 7) * 100}%`,
                                       backgroundColor: getGroupColor('understanding'),
                                       borderRadius: '20px',
@@ -310,7 +318,8 @@
                                       position: 'relative',
                                       minWidth: '40px'
                                     }">
-                                      <span class="progress-text" style="
+                                      <span
+class="progress-text" style="
                                           position: absolute;
                                           left: 50%;
                                           top: 50%;
@@ -326,7 +335,8 @@
                                     </div>
                                   </div>
                                 </div>
-                                <div class="score-display text-body-1 font-weight-bold text-right"
+                                <div
+class="score-display text-body-1 font-weight-bold text-right"
                                   style="min-width: 50px;">
                                   {{ analytics.dimensionAverages[dimension.key].toFixed(1) }}
                                 </div>
@@ -491,7 +501,8 @@
               </h3>
               <v-row>
                 <v-col v-for="dimension in sartDimensions" :key="dimension.key" cols="12" md="6">
-                  <div class="dimension-detail pa-4"
+                  <div
+class="dimension-detail pa-4"
                     style="border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa;">
                     <div class="d-flex justify-space-between align-center mb-2">
                       <div class="font-weight-medium">
@@ -504,7 +515,8 @@
                     <div class="text-caption text-grey mb-2">
                       {{ dimension.description }}
                     </div>
-                    <v-progress-linear :model-value="(selectedResponse.sartAnswers[dimension.key] / 7) * 100"
+                    <v-progress-linear
+:model-value="(selectedResponse.sartAnswers[dimension.key] / 7) * 100"
                       :color="getGroupColor(getDimensionCategory(dimension.key))" height="8" rounded />
                   </div>
                 </v-col>

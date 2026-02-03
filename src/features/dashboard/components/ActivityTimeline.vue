@@ -4,7 +4,7 @@
 
     <v-card-title class="d-flex align-center py-4 no-whitespace">
       <v-icon icon="mdi-clock-time-eight" class="me-2" color="primary" />
-      Recent Activity
+      {{ $t('Dashboard.recentActivity') }}
       <v-spacer />
       <v-chip
         color="primary"
@@ -17,7 +17,7 @@
           size="small"
           class="d-none d-sm-inline me-1"
         />
-        Coming Soon
+        {{ $t('Dashboard.comingSoon') }}
       </v-chip>
     </v-card-title>
     <v-card-text class="pa-0 coming-soon-overlay">

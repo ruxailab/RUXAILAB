@@ -1,193 +1,215 @@
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import {
-    getAuth,
-} from 'firebase/auth';
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    updateDoc,
-} from 'firebase/firestore';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { showError, showSuccess } from '../../../shared/utils/toast';
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { getAuth } from 'firebase/auth'
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { showError, showSuccess } from '../../../shared/utils/toast'
 
 export function useProfile() {
-    const { t } = useI18n();
+  const { t } = useI18n()
 
-    const userprofile = ref({
-        profileImage: null,
-        username: null,
-        contactNo: null,
-        country: null,
-    });
+  const userprofile = ref({
+    profileImage: null,
+    username: null,
+    contactNo: null,
+    country: null,
+  })
 
-    const loading = ref(true);
+  const loading = ref(true)
 
-    const fetchUserProfile = async () => {
-        try {
-            const auth = getAuth();
-            const user = auth.currentUser;
+  const fetchUserProfile = async () => {
+    try {
+      const auth = getAuth()
+      const user = auth.currentUser
 
-            if (user) {
-                const db = getFirestore();
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (user) {
+        const db = getFirestore()
+        const userDoc = await getDoc(doc(db, 'users', user.uid))
 
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    userprofile.value = {
-                        profileImage: data.profileImage || '',
-                        username: data.username || null,
-                        contactNo: data.contactNo || null,
-                        country: data.country || null,
-                    };
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-            showError(t('profile.profileLoadFailed'));
-        } finally {
-            loading.value = false;
+        if (userDoc.exists()) {
+          const data = userDoc.data()
+          userprofile.value = {
+            profileImage: data.profileImage || '',
+            username: data.username || null,
+            contactNo: data.contactNo || null,
+            country: data.country || null,
+          }
         }
-    };
+      }
+    } catch (error) {
+      showError(t('profile.profileLoadFailed'))
+      return error
+    } finally {
+      loading.value = false
+    }
+  }
 
-    const updateProfile = async (profileData) => {
-        try {
-            const auth = getAuth();
-            const user = auth.currentUser;
+  const updateProfile = async (profileData) => {
+    try {
+      const auth = getAuth()
+      const user = auth.currentUser
 
-            if (user) {
-                const db = getFirestore();
-                const userDocRef = doc(db, 'users', user.uid);
+      if (!user) {
+        throw new Error(t('profile.noUserSignedIn'))
+      }
 
-                await updateDoc(userDocRef, {
-                    username: profileData.username,
-                    contactNo: profileData.contactNo,
-                    country: profileData.country,
-                    profileImage: profileData.profileImage,
-                });
+      const db = getFirestore()
+      const userDocRef = doc(db, 'users', user.uid)
 
-                userprofile.value = {
-                    ...userprofile.value,
-                    username: profileData.username,
-                    contactNo: profileData.contactNo,
-                    country: profileData.country,
-                    profileImage: profileData.profileImage,
-                };
+      let finalProfileImage = profileData.profileImage
 
-                showSuccess('profile.profileUpdatedSuccess');
-                return true;
-            }
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            showError('profile.profileUpdateFailed');
-            return false;
+      // Handle image upload if there's a pending file
+      if (profileData.pendingImageFile) {
+        finalProfileImage = await uploadProfileImage(
+          profileData.pendingImageFile,
+        )
+
+        if (!finalProfileImage) {
+          throw new Error(t('profile.profileImageUploadFailed'))
         }
-    };
+      } else if (
+        profileData.profileImage === '' &&
+        userprofile.value.profileImage
+      ) {
+        // User wants to remove the image
+        await removeProfileImage()
+        finalProfileImage = ''
+      }
 
-    const uploadProfileImage = async (file, onPreviewReady = null) => {
-        try {
-            const auth = getAuth();
-            const user = auth.currentUser;
-            if (!user) throw new Error(t('profile.noUserSignedIn'));
+      // Update Firestore with all profile data
+      await updateDoc(userDocRef, {
+        username: profileData.username,
+        contactNo: profileData.contactNo,
+        country: profileData.country,
+        profileImage: finalProfileImage,
+      })
 
-            // Create immediate preview URL
-            const previewUrl = URL.createObjectURL(file);
+      // Update local state
+      userprofile.value = {
+        ...userprofile.value,
+        username: profileData.username,
+        contactNo: profileData.contactNo,
+        country: profileData.country,
+        profileImage: finalProfileImage,
+      }
 
-            // Call preview callback immediately if provided
-            if (onPreviewReady) {
-                onPreviewReady(previewUrl);
-            }
+      showSuccess(t('profile.profileUpdatedSuccess'))
+      return true
+    } catch {
+      showError(t('profile.profileUpdateFailed'))
+      return false
+    }
+  }
 
-            // Update UI immediately with preview
-            userprofile.value.profileImage = previewUrl;
+  // Convert file to Base64 data URL (bypasses Firebase Storage - works on free plan)
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(new Error('Failed to read file'))
+      reader.readAsDataURL(file)
+    })
+  }
 
-            // Compress image for upload (smaller size for faster upload)
-            // Use more aggressive compression for faster upload
-            const compressedFile = await compressImage(file, 300, 0.6);
+  const uploadProfileImage = async (file) => {
+    try {
+      const auth = getAuth()
+      const user = auth.currentUser
+      if (!user) throw new Error(t('profile.noUserSignedIn'))
 
-            const storage = getStorage();
-            const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+      // Compress the image first
 
-            // Upload in background
-            const snapshot = await uploadBytes(storageReference, compressedFile);
-            const downloadURL = await getDownloadURL(snapshot.ref);
+      const compressedFile = await compressImage(file, 300, 0.6)
 
-            // Update database
-            const db = getFirestore();
-            const userDocRef = doc(db, 'users', user.uid);
-            await updateDoc(userDocRef, { profileImage: downloadURL });
+      // Convert to Base64 (stores directly in Firestore, no Storage needed!)
 
-            // Clean up preview URL and update with final URL
-            URL.revokeObjectURL(previewUrl);
-            userprofile.value.profileImage = downloadURL;
+      const base64DataUrl = await fileToBase64(compressedFile)
 
-            showSuccess('profile.profileImageUpdatedSuccess');
-            return downloadURL;
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            showError('profile.profileImageUploadFailed');
-            return null;
-        }
-    };
+      // Return the Base64 data URL (this will be stored in Firestore)
+      return base64DataUrl
+    } catch (error) {
+      throw error
+    }
+  }
 
-    const compressImage = (file, maxWidth, quality) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+  const removeProfileImage = async () => {
+    // With Base64 storage in Firestore, we just need to set profileImage to ''
+    // The actual removal happens in updateProfile when it saves the empty string
 
-            reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target.result;
+    return true
+  }
 
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
+  // Helper function to load image from data URL
+  const loadImage = (dataUrl) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => resolve(img)
+      img.onerror = () => reject(new Error('Image load failed'))
+      img.src = dataUrl
+    })
+  }
 
-                    // Resize if image is larger than maxWidth
-                    if (width > maxWidth) {
-                        height = (height * maxWidth) / width;
-                        width = maxWidth;
-                    }
+  // Helper function to convert canvas to File
+  const canvasToFile = (canvas, fileName, quality) => {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(
+              new File([blob], fileName, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              }),
+            )
+          } else {
+            reject(new Error('Canvas to Blob conversion failed'))
+          }
+        },
+        'image/jpeg',
+        quality,
+      )
+    })
+  }
 
-                    canvas.width = width;
-                    canvas.height = height;
+  const compressImage = async (file, maxWidth, quality) => {
+    // Read file as data URL
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target.result)
+      reader.onerror = () => reject(new Error('FileReader error'))
+      reader.readAsDataURL(file)
+    })
 
-                    const ctx = canvas.getContext('2d');
-                    // Use better image rendering for quality
-                    ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
-                    ctx.drawImage(img, 0, 0, width, height);
+    // Load image
+    const img = await loadImage(dataUrl)
 
-                    canvas.toBlob(
-                        (blob) => {
-                            if (blob) {
-                                resolve(new File([blob], file.name, {
-                                    type: 'image/jpeg',
-                                    lastModified: Date.now(),
-                                }));
-                            } else {
-                                reject(new Error('Canvas to Blob conversion failed'));
-                            }
-                        },
-                        'image/jpeg',
-                        quality
-                    );
-                };
+    // Create canvas and resize
+    const canvas = document.createElement('canvas')
+    let width = img.width
+    let height = img.height
 
-                img.onerror = () => reject(new Error('Image load failed'));
-            };
+    if (width > maxWidth) {
+      height = (height * maxWidth) / width
+      width = maxWidth
+    }
 
-            reader.onerror = () => reject(new Error('FileReader error'));
-        });
-    };
+    canvas.width = width
+    canvas.height = height
 
-    return {
-        userprofile,
-        loading,
-        fetchUserProfile,
-        updateProfile,
-        uploadProfileImage,
-    };
+    const ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+    ctx.drawImage(img, 0, 0, width, height)
+
+    // Convert to file
+    const compressedFile = await canvasToFile(canvas, file.name, quality)
+
+    return compressedFile
+  }
+
+  return {
+    userprofile,
+    loading,
+    fetchUserProfile,
+    updateProfile,
+  }
 }

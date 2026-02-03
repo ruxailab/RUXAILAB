@@ -53,7 +53,8 @@
 
         <!-- Test Navigation Items -->
         <v-list class="test-nav-list" nav>
-          <v-list-item v-for="item in filteredTestItems" :key="item.id" :title="item.title" :prepend-icon="item.icon"
+          <v-list-item
+v-for="item in filteredTestItems" :key="item.id" :title="item.title" :prepend-icon="item.icon"
             :active="activeStep === item.id" :disabled="item.disabled" class="nav-item" rounded="lg"
             @click="navigateToStep(item)">
             <template v-if="item.status" #append>
@@ -80,7 +81,8 @@
             </div>
 
             <!-- Navigation Items -->
-            <v-list-item v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
+            <v-list-item
+v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
               :active="activeSection === item.id" class="nav-item" rounded="lg" @click="navigateToSection(item)">
               <template v-if="item.badge" #append>
                 <v-chip :color="item.badge.color" size="x-small" variant="flat">
@@ -94,12 +96,14 @@
 
       <!-- Action Buttons -->
       <div class="action-section pa-4 mt-auto">
-        <v-btn v-if="!isInTest" color="primary" block size="large" prepend-icon="mdi-plus" rounded="lg"
+        <v-btn
+v-if="!isInTest" color="primary" block size="large" prepend-icon="mdi-plus" rounded="lg"
           class="create-button mb-3" @click="createStudy">
           Create New Study
         </v-btn>
 
-        <v-btn v-if="isInTest" variant="outlined" color="primary" block prepend-icon="mdi-arrow-left" rounded="lg"
+        <v-btn
+v-if="isInTest" variant="outlined" color="primary" block prepend-icon="mdi-arrow-left" rounded="lg"
           class="mb-3" @click="exitTest">
           Exit Test
         </v-btn>

@@ -1,5 +1,5 @@
 <template>
-  <div class="password-strength mb-4" v-if="password">
+  <div v-if="password" class="password-strength mb-4">
     <div class="d-flex justify-space-between align-center mb-1">
       <span class="text-caption text-medium-emphasis">{{ $t('auth.passwordStrength') }}</span>
       <span class="text-caption font-weight-bold" :class="colorTextClass">{{ strengthLabel }}</span>

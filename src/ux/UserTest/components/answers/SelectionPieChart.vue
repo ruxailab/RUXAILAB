@@ -20,6 +20,12 @@
             </template>
             <v-list-item-title>Download as PNG</v-list-item-title>
           </v-list-item>
+          <v-list-item @click="openLatexModal">
+            <template #prepend>
+              <v-icon>mdi-code-braces</v-icon>
+            </template>
+            <v-list-item-title>Copy LaTeX</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </div>
@@ -44,11 +50,19 @@
         <span>{{ option }} ({{ counts[option] || 0 }})</span>
       </div>
     </div>
+    <LaTeXExportModal 
+      v-model="showLatexModal" 
+      :question-title="questionTitle" 
+      :options="options" 
+      :counts="counts" 
+      :colors="chartColors" 
+    />
   </v-card>
 </template>
 
 <script setup>
 import { onMounted, watch, nextTick, ref } from 'vue'
+import LaTeXExportModal from '../modals/LaTeXExportModal.vue'
 
 const props = defineProps({
   questionTitle: String,
@@ -69,6 +83,12 @@ const props = defineProps({
     ],
   },
 })
+
+const showLatexModal = ref(false)
+
+const openLatexModal = () => {
+  showLatexModal.value = true
+}
 
 const drawChart = () => {
   nextTick(() => {

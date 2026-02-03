@@ -1,11 +1,11 @@
 <template>
   <div class="task-advanced-options">
     <div class="step-header mb-6">
-      <h3 class="text-h6 font-weight-bold mb-2">Step 3: Advanced Options</h3>
+      <h3 class="text-h6 font-weight-bold mb-2">
+        {{ $t('CreateTask.advanced.stepTitle') }}
+      </h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
-        Enable additional data collection methods to gather deeper insights. All
-        options are optional but can provide valuable behavioral data and user
-        feedback.
+        {{ $t('CreateTask.advanced.stepDescription') }}
       </p>
     </div>
 
@@ -33,9 +33,7 @@
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Track where participants look during the task. Provides
-                    heatmaps and gaze patterns to understand visual attention
-                    and navigation behavior.
+                    {{ $t('CreateTask.advanced.eyeTrackingDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -45,7 +43,7 @@
                 v-model="localTask.hasEye"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -77,9 +75,7 @@
                 </v-col>
                 <v-col cols="12">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record the participant's screen activity. Captures clicks,
-                    scrolling, and interactions to analyze user behavior and
-                    identify pain points.
+                    {{ $t('CreateTask.advanced.screenRecordDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -89,7 +85,7 @@
                 v-model="localTask.hasScreenRecord"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -119,9 +115,7 @@
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record participant's facial expressions and reactions.
-                    Captures emotions, confusion, and satisfaction to understand
-                    user experience beyond interactions.
+                    {{ $t('CreateTask.advanced.cameraDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -131,7 +125,7 @@
                 v-model="localTask.hasCamRecord"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -163,9 +157,7 @@
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <p class="text-caption text-grey-darken-1 mb-0">
-                    Record participant's verbal feedback and comments. Captures
-                    think-aloud protocols, frustrations, and insights that
-                    reveal thought processes.
+                    {{ $t('CreateTask.advanced.audioDesc') }}
                   </p>
                 </v-col>
               </v-row>
@@ -175,7 +167,7 @@
                 v-model="localTask.hasAudioRecord"
                 color="primary"
                 hide-details
-                @change="validateStep"
+                @update:model-value="validateStep"
               />
             </v-col>
           </v-row>
@@ -191,15 +183,16 @@
       class="mt-6"
       icon="mdi-shield-account-outline"
     >
-      <v-alert-title>Privacy Notice</v-alert-title>
+      <v-alert-title>{{
+        $t('CreateTask.advanced.privacyNotice')
+      }}</v-alert-title>
       <div class="text-body-2 mt-2">
-        Recording features require explicit consent from participants. Make sure
-        to:
+        {{ $t('CreateTask.advanced.privacyText') }}
         <ul class="mt-2">
-          <li>Clearly inform participants about data collection</li>
-          <li>Obtain proper consent before starting the test</li>
-          <li>Follow data protection regulations (GDPR, etc.)</li>
-          <li>Secure storage and handling of recorded data</li>
+          <li>{{ $t('CreateTask.advanced.privacyItem1') }}</li>
+          <li>{{ $t('CreateTask.advanced.privacyItem2') }}</li>
+          <li>{{ $t('CreateTask.advanced.privacyItem3') }}</li>
+          <li>{{ $t('CreateTask.advanced.privacyItem4') }}</li>
         </ul>
       </div>
     </v-alert>

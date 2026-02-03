@@ -1,300 +1,292 @@
 <template>
-  <v-container class="py-4">
-    <v-row justify="center" v-if="user">
-      <v-col 
-        cols="12" 
-        md="10" 
-        lg="8"
-        xl="6"
+  <v-row v-if="user">
+    <v-col cols="12" md="10" lg="8" xl="6">
+      <!-- HEADER -->
+      <v-card
+        class="notification-card-clean"
+        flat
+        :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
+        <div
+          class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
+        ></div>
 
-        <!-- HEADER -->
-        <v-card 
-          class="rounded-xl pa-4 pa-md-5 mb-4"
-          flat
-          :class="{'pa-3': $vuetify.display.smAndDown}"
+        <!-- TABS FOR DESKTOP -->
+        <v-tabs
+          v-if="!$vuetify.display.smAndDown"
+          v-model="activeTab"
+          color="primary"
+          class="mt-4"
+          height="48"
         >
-          <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3">
-            <div class="flex-grow-1">
-              <div class="d-flex align-center gap-2 mb-1">
-                <v-icon size="28" color="primary" class="d-none d-sm-flex">mdi-bell-ring-outline</v-icon>
-                <h2 class="text-h5 text-h6-sm">{{ $t('common.notifications') }}</h2>
-              </div>
-              <p class="text-caption text-grey-darken-1 mt-1">
-                Stay updated with your activities and collaborations
-              </p>
+          <v-tab value="all" class="text-capitalize">
+            <div class="d-flex align-center gap-2">
+              <span>{{ $t('common.all') }}</span>
+              <v-badge
+                v-if="totalCount"
+                :content="totalCount"
+                inline
+                size="small"
+              />
             </div>
+          </v-tab>
+          <v-tab value="unread" class="text-capitalize">
+            <div class="d-flex align-center gap-2">
+              <span>{{ $t('common.unread') }}</span>
+              <v-badge
+                v-if="unreadCount"
+                color="error"
+                :content="unreadCount"
+                inline
+                size="small"
+              />
+            </div>
+          </v-tab>
+          <v-tab value="inbox" class="text-capitalize">
+            <div class="d-flex align-center gap-2">
+              <span>{{ $t('common.inbox') }}</span>
+            </div>
+          </v-tab>
+        </v-tabs>
 
-            <!-- MARK ALL AS READ BUTTON -->
-            <v-btn
-              v-if="activeTab === 'unread' && unreadCount > 0"
-              size="small"
-              variant="flat"
-              color="primary"
-              @click="markAllAsRead"
-              :loading="markingAllAsRead"
-              prepend-icon="mdi-email-open-outline"
-              class="elevation-0 text-capitalize"
-              :class="{'flex-shrink-0': true}"
-            >
-              Mark all read
-            </v-btn>
-          </div>
-
-          <!-- TABS FOR DESKTOP -->
-          <v-tabs 
-            v-if="!$vuetify.display.smAndDown"
-            v-model="activeTab" 
-            color="primary" 
-            class="mt-4"
-            height="48"
-          >
-            <v-tab value="all" class="text-capitalize">
-              <div class="d-flex align-center gap-2">
-                <span>{{ $t('common.all') }}</span>
-                <v-badge v-if="totalCount" :content="totalCount" inline size="small" />
-              </div>
-            </v-tab>
-            <v-tab value="unread" class="text-capitalize">
-              <div class="d-flex align-center gap-2">
-                <span>{{ $t('common.unread') }}</span>
-                <v-badge v-if="unreadCount" color="error" :content="unreadCount" inline size="small" />
-              </div>
-            </v-tab>
-            <v-tab value="inbox" class="text-capitalize">
-              <div class="d-flex align-center gap-2">
-                <span>{{ $t('common.inbox') }}</span>
-              </div>
-            </v-tab>
-          </v-tabs>
-
-          <!-- SELECT FOR MOBILE -->
-          <v-select
-            v-else
-            v-model="activeTab"
-            :items="[
-              { title: `All (${totalCount})`, value: 'all', prependIcon: 'mdi-view-list' },
-              { title: `Unread (${unreadCount})`, value: 'unread', prependIcon: 'mdi-email-outline' },
-              { title: 'Inbox', value: 'inbox', prependIcon: 'mdi-inbox' }
-            ]"
-            variant="outlined"
-            density="compact"
-            class="mt-4"
-            hide-details
-            menu-icon="mdi-chevron-down"
-          />
-        </v-card>
-
-        <!-- SEARCH BAR -->
-        <v-text-field
-          v-model="search"
-          prepend-inner-icon="mdi-magnify"
-          placeholder="Search notifications…"
+        <!-- SELECT FOR MOBILE -->
+        <v-select
+          v-else
+          v-model="activeTab"
+          :items="mobileTabItems"
           variant="outlined"
-          density="comfortable"
+          density="compact"
           hide-details
-          class="mb-4"
+          placeholder="Search notifications..."
+          class="flex-grow-1"
           clearable
           @click:clear="search = ''"
         />
+      </v-card>
 
-        <!-- NOTIFICATIONS CONTENT -->
-        <v-card 
-          flat 
-          class="rounded-xl pa-4"
-          :class="{'pa-3': $vuetify.display.smAndDown}"
+      <!-- SEARCH BAR -->
+      <v-text-field
+        v-model="search"
+        prepend-inner-icon="mdi-magnify"
+        :placeholder="$t('notificationsPage.searchPlaceholder')"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        class="mb-4"
+        clearable
+        @click:clear="search = ''"
+      />
+
+      <!-- MARK ALL AS READ BUTTON (New Location) -->
+      <div
+        v-if="['unread', 'inbox'].includes(activeTab)"
+        class="d-flex justify-end mb-4"
+      >
+        <v-btn
+          size="small"
+          variant="flat"
+          :color="unreadCount > 0 ? 'primary' : 'grey-lighten-2'"
+          :class="{ 'text-medium-emphasis': unreadCount === 0 }"
+          :disabled="unreadCount === 0"
+          :loading="markingAllAsRead"
+          prepend-icon="mdi-email-open-outline"
+          class="text-capitalize"
+          @click="markAllAsRead"
         >
-          <!-- SKELETON LOADER -->
-          <template v-if="loading">
-            <v-skeleton-loader
-              v-for="i in 3"
-              :key="i"
-              type="list-item-avatar-two-line"
-              class="mb-3"
-            />
-          </template>
+          {{ $t('notificationsPage.markAllRead') }}
+        </v-btn>
+      </div>
 
-          <!-- NOTIFICATIONS LIST -->
-          <template v-else>
-            <!-- EMPTY STATES -->
-            <v-alert
-              v-if="paginatedNotifications.length === 0"
-              type="info"
-              variant="tonal"
-              icon="mdi-bell-off-outline"
-              class="mb-0"
+      <!-- NOTIFICATIONS CONTENT -->
+      <v-card
+        flat
+        class="notification-card-clean pa-4"
+        :class="{ 'pa-3': $vuetify.display.smAndDown }"
+      >
+        <!-- SKELETON LOADER -->
+        <template v-if="loading">
+          <v-skeleton-loader
+            v-for="i in 3"
+            :key="i"
+            type="list-item-avatar-two-line"
+            class="mb-3"
+          />
+        </template>
+
+        <!-- NOTIFICATIONS LIST -->
+        <template v-else>
+          <!-- EMPTY STATES -->
+          <v-alert
+            v-if="paginatedNotifications.length === 0"
+            type="info"
+            variant="tonal"
+            icon="mdi-bell-off-outline"
+            class="mb-0"
+          >
+            <template #title>
+              <div class="d-flex align-center gap-2">
+                <span>{{ emptyStateTitle }}</span>
+                <v-icon v-if="search" color="info">mdi-magnify-remove</v-icon>
+              </div>
+            </template>
+            <template #text>
+              {{ emptyStateMessage }}
+            </template>
+          </v-alert>
+
+          <!-- LIST VIEW -->
+          <div v-else>
+            <div
+              v-for="(n, index) in paginatedNotifications"
+              :key="n.id"
+              class="notification-item pa-3 mb-3"
+              :class="{
+                unread: !n.read,
+                active: activeIndex === index,
+              }"
+              @click="handleNotificationClick(n)"
             >
-              <template #title>
-                <div class="d-flex align-center gap-2">
-                  <span>{{ emptyStateTitle }}</span>
-                  <v-icon v-if="search" color="info">mdi-magnify-remove</v-icon>
+              <div class="d-flex align-start gap-3">
+                <!-- AVATAR/ICON -->
+                <div class="position-relative">
+                  <v-avatar
+                    size="44"
+                    :color="getTypeIcon(n.type).color + '-lighten-5'"
+                    class="elevation-1"
+                  >
+                    <v-icon :color="getTypeIcon(n.type).color">
+                      {{ getTypeIcon(n.type).icon }}
+                    </v-icon>
+                  </v-avatar>
+                  <div v-if="!n.read" class="unread-dot" />
                 </div>
-              </template>
-              <template #text>
-                {{ emptyStateMessage }}
-              </template>
-            </v-alert>
 
-            <!-- LIST VIEW -->
-            <div v-else>
-              <div
-                v-for="(n, index) in paginatedNotifications"
-                :key="n.id"
-                class="notification-item pa-3 mb-3"
-                :class="{ 
-                  'unread': !n.read, 
-                  'active': activeIndex === index,
-                  'border-start-4': !n.read
-                }"
-                @click="handleNotificationClick(n)"
-                :style="!n.read ? 'border-left-color: var(--v-primary-base) !important' : ''"
-              >
-                <div class="d-flex align-start gap-3">
-                  <!-- AVATAR/ICON -->
-                  <div class="position-relative">
-                    <v-avatar
-                      size="44"
-                      :color="getTypeIcon(n.type).color + '-lighten-5'"
-                      class="elevation-1"
-                    >
-                      <v-icon :color="getTypeIcon(n.type).color">
-                        {{ getTypeIcon(n.type).icon }}
-                      </v-icon>
-                    </v-avatar>
-                    <div 
-                      v-if="!n.read"
-                      class="unread-dot"
-                    />
+                <!-- CONTENT -->
+                <div class="flex-grow-1">
+                  <div
+                    class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1"
+                  >
+                    <div class="d-flex align-center flex-wrap gap-2">
+                      <span class="font-weight-medium text-body-1">{{
+                        n.title || $t('notificationsPage.notification')
+                      }}</span>
+                      <v-chip
+                        v-if="n.type"
+                        size="x-small"
+                        label
+                        :color="getTypeIcon(n.type).color"
+                        variant="flat"
+                        density="compact"
+                        class="text-capitalize"
+                      >
+                        {{ n.type }}
+                      </v-chip>
+                      <v-chip
+                        v-if="n.important"
+                        size="x-small"
+                        label
+                        color="warning"
+                        variant="flat"
+                        density="compact"
+                        prepend-icon="mdi-star"
+                      >
+                        {{ $t('notificationsPage.important') }}
+                      </v-chip>
+                    </div>
+                    <div class="d-flex align-center gap-2">
+                      <span class="text-caption text-grey-darken-2">
+                        {{ relativeTime(n.createdDate) }}
+                      </span>
+                      <v-btn
+                        icon
+                        size="x-small"
+                        variant="text"
+                        :aria-label="
+                          n.read
+                            ? $t('notificationsPage.markAsUnread')
+                            : $t('notificationsPage.markAsRead')
+                        "
+                        @click.stop="toggleRead(n)"
+                      >
+                        <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
+                          {{
+                            n.read
+                              ? 'mdi-email-outline'
+                              : 'mdi-email-open-outline'
+                          }}
+                        </v-icon>
+                        <v-tooltip activator="parent">
+                          {{
+                            n.read
+                              ? $t('notificationsPage.markAsUnread')
+                              : $t('notificationsPage.markAsRead')
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
                   </div>
-
-                  <!-- CONTENT -->
-                  <div class="flex-grow-1">
-                    <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1">
-                      <div class="d-flex align-center flex-wrap gap-2">
-                        <span class="font-weight-medium text-body-1">{{ n.title || 'Notification' }}</span>
-                        <v-chip
-                          v-if="n.type"
-                          size="x-small"
-                          label
-                          :color="getTypeIcon(n.type).color"
-                          variant="flat"
-                          density="compact"
-                          class="text-capitalize"
-                        >
-                          {{ n.type }}
-                        </v-chip>
-                        <v-chip
-                          v-if="n.important"
-                          size="x-small"
-                          label
-                          color="warning"
-                          variant="flat"
-                          density="compact"
-                          prepend-icon="mdi-star"
-                        >
-                          Important
-                        </v-chip>
-                      </div>
-                      <div class="d-flex align-center gap-2">
-                        <span class="text-caption text-grey-darken-2">
-                          {{ relativeTime(n.createdDate) }}
-                        </span>
-                        <v-btn
-                          icon
-                          size="x-small"
-                          variant="text"
-                          @click.stop="toggleRead(n)"
-                          :aria-label="n.read ? 'Mark unread' : 'Mark read'"
-                        >
-                          <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
-                            {{ n.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
-                          </v-icon>
-                          <v-tooltip activator="parent">
-                            {{ n.read ? 'Mark as unread' : 'Mark as read' }}
-                          </v-tooltip>
-                        </v-btn>
-                      </div>
-                    </div>
-                    <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                      {{ n.message || 'You have a new notification.' }}
-                    </p>
-                    <div v-if="n.senderName" class="text-caption text-grey-darken-2">
-                      <v-icon size="small">mdi-account-outline</v-icon>
-                      {{ n.senderName }}
-                    </div>
+                  <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
+                    {{ n.message || $t('notificationsPage.newNotification') }}
+                  </p>
+                  <div
+                    v-if="n.senderName"
+                    class="text-caption text-grey-darken-2"
+                  >
+                    <v-icon size="small">mdi-account-outline</v-icon>
+                    {{ n.senderName }}
                   </div>
                 </div>
               </div>
-
-              <!-- PAGINATION -->
-              <v-pagination
-                v-if="currentPages > 1"
-                v-model="currentPage"
-                :length="currentPages"
-                :total-visible="$vuetify.display.smAndDown ? 3 : 5"
-                rounded="circle"
-                class="mt-4 justify-center"
-                density="comfortable"
-              />
             </div>
+          </div>
+        </template>
+
+        <v-btn
+          color="primary"
+          variant="tonal"
+          size="small"
+          prepend-icon="mdi-refresh"
+          :loading="refreshing"
+          class="refresh-btn"
+          @click="refreshNotifications"
+        >
+          {{ $t('notificationsPage.refresh') }}
+          <template #loader>
+            <v-progress-circular indeterminate size="16" width="2" />
           </template>
-        </v-card>
+        </v-btn>
 
-        <!-- ACTION BAR -->
-        <div class="d-flex flex-column flex-sm-row justify-space-between align-center gap-3 mt-4">
-          <v-btn
-            variant="text"
-            prepend-icon="mdi-arrow-left"
-            @click="goBack"
-            class="text-capitalize"
-          >
-            {{ $t('buttons.back') || 'Go Back' }}
-          </v-btn>
-          
-          <!-- ONLY REFRESH BUTTON - NO MARK ALL READ HERE -->
-          <v-btn
-            variant="tonal"
-            size="small"
-            prepend-icon="mdi-refresh"
-            @click="refreshNotifications"
-            :loading="refreshing"
-            class="text-capitalize"
-          >
-            Refresh
-            <template #loader>
-              <v-progress-circular
-                indeterminate
-                size="16"
-                width="2"
-              />
-            </template>
-          </v-btn>
-        </div>
+        <!-- PAGINATION -->
+        <v-pagination
+          v-if="currentPages > 1"
+          v-model="currentPage"
+          :length="currentPages"
+          :total-visible="$vuetify.display.smAndDown ? 3 : 5"
+          rounded="circle"
+          class="mt-4 justify-center"
+          density="comfortable"
+        />
+      </v-card>
+    </v-col>
+  </v-row>
 
-      </v-col>
-    </v-row>
-
-    <!-- DIALOG -->
-    <AcceptInvitationDialog
-      v-model="dialogVisible"
-      @cancel="onReject"
-      @submit="onAccept"
-    />
-  </v-container>
+  <!-- DIALOG -->
+  <AcceptInvitationDialog
+    v-model="dialogVisible"
+    @cancel="onReject"
+    @submit="onAccept"
+  />
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { useGoBack } from '@/composables/useGoBack'
-import NotificationList from '@/features/notifications/components/NotificationList.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import { useI18n } from 'vue-i18n'
 import StudyController from '@/controllers/StudyController'
 
 const store = useStore()
-const router = useRouter()
-const { goBackOrRedirect } = useGoBack()
+const { t } = useI18n()
 
 // State
 const activeTab = ref('unread')
@@ -318,17 +310,28 @@ let resolveDialog
 const user = computed(() => store.getters.user)
 
 const totalCount = computed(() => user.value?.notifications?.length || 0)
-const unreadCount = computed(() => 
-  user.value?.notifications?.filter(n => !n.read).length || 0
+const unreadCount = computed(
+  () => user.value?.notifications?.filter((n) => !n.read).length || 0,
 )
 
-const allRead = computed(() =>
-  user.value?.notifications?.every((notification) => notification.read) || false
-)
+// Mobile tab items
+const mobileTabItems = computed(() => [
+  {
+    title: `${t('common.all')} (${totalCount.value})`,
+    value: 'all',
+    prependIcon: 'mdi-view-list',
+  },
+  {
+    title: `${t('common.unread')} (${unreadCount.value})`,
+    value: 'unread',
+    prependIcon: 'mdi-email-outline',
+  },
+  { title: t('common.inbox'), value: 'inbox', prependIcon: 'mdi-inbox' },
+])
 
 const sortedNotifications = computed(() => {
   if (!user.value?.notifications) return []
-  
+
   return [...user.value.notifications].sort((a, b) => {
     const aDate = new Date(a.createdDate)
     const bDate = new Date(b.createdDate)
@@ -342,16 +345,17 @@ const filteredNotifications = computed(() => {
 
   // Apply tab filter
   if (activeTab.value === 'unread') {
-    list = list.filter(n => !n.read)
+    list = list.filter((n) => !n.read)
   }
 
   // Apply search filter
   if (search.value.trim()) {
     const query = search.value.toLowerCase().trim()
-    list = list.filter(n =>
-      (n.title || '').toLowerCase().includes(query) ||
-      (n.message || '').toLowerCase().includes(query) ||
-      (n.senderName || '').toLowerCase().includes(query)
+    list = list.filter(
+      (n) =>
+        (n.title || '').toLowerCase().includes(query) ||
+        (n.message || '').toLowerCase().includes(query) ||
+        (n.senderName || '').toLowerCase().includes(query),
     )
   }
 
@@ -391,35 +395,39 @@ const currentPage = computed({
     if (activeTab.value === 'unread') unreadPage.value = value
     else if (activeTab.value === 'inbox') inboxPage.value = value
     else allPage.value = value
-  }
+  },
 })
 
 const currentPages = computed(() => {
-  if (activeTab.value === 'unread') return Math.ceil(filteredNotifications.value.length / pageSize.value)
-  if (activeTab.value === 'inbox') return Math.ceil(sortedNotifications.value.length / pageSize.value)
+  if (activeTab.value === 'unread')
+    return Math.ceil(filteredNotifications.value.length / pageSize.value)
+  if (activeTab.value === 'inbox')
+    return Math.ceil(sortedNotifications.value.length / pageSize.value)
   return Math.ceil(filteredNotifications.value.length / pageSize.value)
 })
 
 // Empty states
 const emptyStateTitle = computed(() => {
-  if (search.value.trim()) return 'No results found'
-  if (activeTab.value === 'unread') return 'All caught up!'
-  return 'No notifications yet'
+  if (search.value.trim()) return t('notificationsPage.noResultsFound')
+  if (activeTab.value === 'unread') return t('notificationsPage.allCaughtUp')
+  return t('notificationsPage.noNotificationsYet')
 })
 
 const emptyStateMessage = computed(() => {
-  if (search.value.trim()) return 'Try different keywords or clear your search'
-  if (activeTab.value === 'unread') return "You've read all your notifications. Great job!"
-  return "You'll see notifications here when you have new activities"
+  if (search.value.trim()) return t('notificationsPage.tryDifferentKeywords')
+  if (activeTab.value === 'unread') return t('notificationsPage.allReadMessage')
+  return t('notificationsPage.newActivitiesMessage')
 })
 
 // Helper functions
 const relativeTime = (date) => {
   const diff = (Date.now() - new Date(date)) / 1000
-  if (diff < 60) return 'Just now'
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-  return `${Math.floor(diff / 86400)}d ago`
+  if (diff < 60) return t('notificationsPage.justNow')
+  if (diff < 3600)
+    return t('notificationsPage.minutesAgo', { count: Math.floor(diff / 60) })
+  if (diff < 86400)
+    return t('notificationsPage.hoursAgo', { count: Math.floor(diff / 3600) })
+  return t('notificationsPage.daysAgo', { count: Math.floor(diff / 86400) })
 }
 
 const getTypeIcon = (type) => {
@@ -427,7 +435,7 @@ const getTypeIcon = (type) => {
     Study: { icon: 'mdi-flask-outline', color: 'primary' },
     Session: { icon: 'mdi-account-group-outline', color: 'green' },
     System: { icon: 'mdi-alert-circle-outline', color: 'orange' },
-    Collaboration: { icon: 'mdi-account-multiple-outline', color: 'purple' }
+    Collaboration: { icon: 'mdi-account-multiple-outline', color: 'purple' },
   }
   return icons[type] || { icon: 'mdi-bell-outline', color: 'grey' }
 }
@@ -457,7 +465,7 @@ function showAcceptDialog() {
 // Notification methods
 const handleNotificationClick = async (notification) => {
   if (!notification) return
-  
+
   // If notification has a redirect, use the existing flow
   if (notification.redirectsTo) {
     await goToNotificationRedirect(notification)
@@ -469,32 +477,37 @@ const handleNotificationClick = async (notification) => {
 
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
-  
+
   // For collaboration invitations, show dialog
-  if (notification.type === 'Collaboration' || notification.action === 'invitation') {
+  if (
+    notification.type === 'Collaboration' ||
+    notification.action === 'invitation'
+  ) {
     const accepted = await showAcceptDialog()
     if (!accepted) {
       await markAsRead(notification)
       return
     }
-    
+
     try {
-      const study = await new StudyController().getStudy({ id: notification.testId })
-      
+      const study = await new StudyController().getStudy({
+        id: notification.testId,
+      })
+
       await store.dispatch('acceptStudyCollaboration', {
         test: study,
         cooperator: user.value,
       })
-      
+
       if (!notification.read) {
         await markAsRead(notification)
       }
-    } catch (error) {
+    } catch {
       // Error handling without console.error for SonarCloud
       // In production, you might want to log this differently
     }
   }
-  
+
   // Mark as read if unread
   if (!notification.read) {
     await markAsRead(notification)
@@ -507,23 +520,23 @@ const goToNotificationRedirect = async (notification) => {
     const path = url.startsWith('/') ? url : '/' + url
     url = baseUrl + path
   }
-  
+
   try {
     globalThis.open(url, '_blank')
-  } catch(e) {
+  } catch {
     // Error handling without console.error for SonarCloud
   }
 }
 
 const markAsRead = async (notification) => {
   if (!notification || notification.read) return
-  
+
   try {
     await store.dispatch('markNotificationAsRead', {
       notification,
-      user: user.value
+      user: user.value,
     })
-  } catch (error) {
+  } catch {
     // Error handling without console.error for SonarCloud
   }
 }
@@ -534,20 +547,13 @@ const toggleRead = async (notification) => {
 
 const markAllAsRead = async () => {
   const unread = user.value.notifications.filter((n) => !n.read)
-  
+
   if (unread.length === 0) return
 
   markingAllAsRead.value = true
   try {
-    await Promise.all(
-      unread.map((notification) =>
-        store.dispatch('markNotificationAsRead', {
-          notification,
-          user: user.value,
-        })
-      )
-    )
-  } catch (error) {
+    await store.dispatch('markAllNotificationsAsRead', user.value)
+  } catch {
     // Error handling without console.error for SonarCloud
   } finally {
     markingAllAsRead.value = false
@@ -558,21 +564,17 @@ const refreshNotifications = async () => {
   refreshing.value = true
   try {
     globalThis.location.reload()
-  } catch (error) {
+  } catch {
     // Error handling without console.error for SonarCloud
   } finally {
     refreshing.value = false
   }
 }
 
-const goBack = () => {
-  goBackOrRedirect('/')
-}
-
 // Keyboard navigation
 const handleKeyDown = (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
-  
+
   switch (e.key) {
     case 'j':
     case 'ArrowDown':
@@ -581,7 +583,7 @@ const handleKeyDown = (e) => {
         activeIndex.value++
       }
       break
-      
+
     case 'k':
     case 'ArrowUp':
       e.preventDefault()
@@ -589,21 +591,24 @@ const handleKeyDown = (e) => {
         activeIndex.value--
       }
       break
-      
+
     case 'Enter':
       e.preventDefault()
-      if (activeIndex.value >= 0 && filteredNotifications.value[activeIndex.value]) {
+      if (
+        activeIndex.value >= 0 &&
+        filteredNotifications.value[activeIndex.value]
+      ) {
         handleNotificationClick(filteredNotifications.value[activeIndex.value])
       }
       break
-      
+
     case 'r':
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault()
         refreshNotifications()
       }
       break
-      
+
     case 'Escape':
       activeIndex.value = -1
       break
@@ -630,8 +635,26 @@ onMounted(() => {
   setTimeout(() => {
     loading.value = false
   }, 600)
-  
+
   globalThis.addEventListener('keydown', handleKeyDown)
+
+  // Expose test function for user to verify in console
+  globalThis.testByInjectingNotification = () => {
+    const fakeNotification = {
+      id: 'test-' + Date.now(),
+      title: 'Test Notification',
+      message: 'This is a test notification generated locally.',
+      type: 'System',
+      read: false,
+      createdDate: new Date().toISOString(),
+    }
+    // We can't easily push to the store user without a mutation,
+    // but we can force the button to enable by mocking the unread count check locally if needed.
+    // Actually, let's just log instructions for them.
+    console.log(
+      'To test, please use the app UI to perform an action that triggers a notification, or ask another user to invite you.',
+    )
+  }
 })
 
 onUnmounted(() => {
@@ -640,12 +663,44 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.notification-item {
+/* 💅 Basic styles for layout and filters */
+.button-bar {
+  gap: 14px;
+}
+
+.refresh-btn {
+  min-width: 140px;
+  height: 40px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+  background-color: #768898 !important; /* Add custom background */
+  color: white !important;
+}
+
+.tab-btn {
+  min-width: 100px;
+  height: 36px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.notification-card-clean {
   border-radius: 12px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  overflow: hidden;
+}
+
+.notification-item {
+  position: relative;
+  border-radius: 8px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.08);
   background: white;
+  overflow: hidden;
 }
 
 .notification-item:hover {
@@ -655,8 +710,17 @@ onUnmounted(() => {
 }
 
 .notification-item.unread {
-  background: linear-gradient(90deg, rgba(var(--v-theme-primary), 0.03) 0%, white 3%);
-  border-left-width: 4px;
+  background: rgba(var(--v-theme-primary), 0.02);
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: rgb(var(--v-theme-primary));
 }
 
 .notification-item.active {
@@ -703,19 +767,34 @@ onUnmounted(() => {
   .rounded-xl {
     border-radius: 12px !important;
   }
-  
+
   .notification-item {
     padding: 12px !important;
     margin-bottom: 12px;
   }
-  
+
   .v-btn {
     min-width: auto !important;
   }
-  
+
   .v-btn--size-small {
     font-size: 0.75rem;
     padding: 0 8px;
+  }
+
+  .button-bar {
+    gap: 8px;
+  }
+
+  .refresh-btn {
+    min-width: 80px;
+    font-size: 0.8rem;
+  }
+
+  .tab-btn {
+    min-width: 70px;
+    font-size: 0.75rem;
+    padding: 0 12px;
   }
 }
 

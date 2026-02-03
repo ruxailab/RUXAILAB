@@ -23,10 +23,15 @@
                   </div>
                   <div class="flex-grow-1">
                     <h1 class="dashboard-title text-white mb-0">
-                      {{ test.testTitle || 'User Test Study' }}
+                      {{
+                        test.testTitle || t('manager.dashboard.defaultTitle')
+                      }}
                     </h1>
                     <p class="dashboard-subtitle text-white opacity-90 mb-0">
-                      {{ test.testDescription || 'User Test Study' }}
+                      {{
+                        test.testDescription ||
+                        t('manager.dashboard.defaultTitle')
+                      }}
                     </p>
                   </div>
                 </div>
@@ -40,7 +45,9 @@
                     <v-icon start size="16" color="white">
                       mdi-account-check-outline
                     </v-icon>
-                    <span class="text-white">Unmoderated Study</span>
+                    <span class="text-white">{{
+                      t('manager.dashboard.unmoderatedStudy')
+                    }}</span>
                   </v-chip>
                   <v-chip
                     class="status-chip"
@@ -52,7 +59,7 @@
                       {{ getStatusIcon(test.testStatus) }}
                     </v-icon>
                     <span class="text-white">{{
-                      test.testStatus || 'Active'
+                      test.testStatus || t('manager.dashboard.active')
                     }}</span>
                   </v-chip>
                 </div>
@@ -73,11 +80,10 @@
         <div class="section-header">
           <h2 class="section-title">
             <v-icon class="section-icon">mdi-view-dashboard</v-icon>
-            Management Modules
+            {{ t('manager.managementModules.title') }}
           </h2>
           <p class="section-description">
-            Comprehensive tools to manage participants, tasks, settings, and
-            analyze your study data
+            {{ t('manager.managementModules.description') }}
           </p>
         </div>
 
@@ -106,7 +112,9 @@
                 <v-icon size="48" class="mb-2">
                   mdi-plus-circle-outline
                 </v-icon>
-                <p class="text-body-2">Space for additional modules</p>
+                <p class="text-body-2">
+                  {{ t('manager.managementModules.additionalModules') }}
+                </p>
               </div>
             </v-card>
           </v-col>
@@ -122,6 +130,8 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { getStatusColor, getStatusIcon } from '@/shared/utils/statusUtils'
+import { useI18n } from 'vue-i18n'
 import {
   getBottomCardsDefualt,
   getNavigatorDefault,
@@ -138,6 +148,7 @@ import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue'
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -201,27 +212,6 @@ const navigator = computed(() => {
 
   return items
 })
-
-// Methods para los componentes adicionales
-const getStatusColor = (status) => {
-  const statusMap = {
-    Active: 'success',
-    Draft: 'warning',
-    Completed: 'info',
-    Archived: 'error',
-  }
-  return statusMap[status] || 'primary'
-}
-
-const getStatusIcon = (status) => {
-  const iconMap = {
-    Active: 'mdi-play-circle',
-    Draft: 'mdi-pencil-circle',
-    Completed: 'mdi-check-circle',
-    Archived: 'mdi-archive',
-  }
-  return iconMap[status] || 'mdi-information'
-}
 
 // Lifecycle
 onMounted(async () => {

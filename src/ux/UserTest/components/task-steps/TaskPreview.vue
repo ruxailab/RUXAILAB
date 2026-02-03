@@ -1,44 +1,34 @@
 <template>
   <div class="task-preview">
     <!-- Task Summary Card -->
-    <v-card
-      class="task-summary-card mb-6"
-      elevation="2"
-    >
+    <v-card class="task-summary-card mb-6" elevation="2">
       <v-card-title class="d-flex align-center bg-primary text-white">
-        <v-icon class="mr-2">
-          mdi-clipboard-check-outline
-        </v-icon>
-        Task Summary
+        <v-icon class="mr-2"> mdi-clipboard-check-outline </v-icon>
+        {{ $t('CreateTask.preview.taskSummary') }}
       </v-card-title>
-      
+
       <v-card-text class="pa-6">
         <v-row>
-          <v-col
-            cols="12"
-            md="8"
-          >
+          <v-col cols="12" md="8">
             <div class="task-details">
               <h4 class="text-h6 font-weight-bold mb-3">
-                {{ (task && task.taskName) || 'Untitled Task' }}
+                {{
+                  (task && task.taskName) ||
+                  $t('CreateTask.preview.untitledTask')
+                }}
               </h4>
-              
+
               <div class="task-description mb-4">
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Description:
+                  {{ $t('CreateTask.preview.description') }}
                 </div>
-                <div 
-                  class="description-content"
-                  v-html="(task && task.taskDescription) || 'No description provided'"
-                />
+                <div class="description-content" v-html="(task && task.taskDescription) || $t('CreateTask.preview.noDescription')">
+                </div>
               </div>
 
-              <div
-                v-if="task && task.taskTip"
-                class="task-tip mb-4"
-              >
+              <div v-if="task && task.taskTip" class="task-tip mb-4">
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Participant Tip:
+                  {{ $t('CreateTask.preview.participantTip') }}
                 </div>
                 <v-alert
                   type="info"
@@ -50,12 +40,9 @@
                 </v-alert>
               </div>
 
-              <div
-                v-if="task && task.taskLink"
-                class="task-link mb-4"
-              >
+              <div v-if="task && task.taskLink" class="task-link mb-4">
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Task URL:
+                  {{ $t('CreateTask.preview.taskUrl') }}
                 </div>
                 <v-chip
                   :href="task.taskLink"
@@ -71,19 +58,20 @@
             </div>
           </v-col>
 
-          <v-col
-            cols="12"
-            md="4"
-          >
+          <v-col cols="12" md="4">
             <div class="task-config">
               <!-- Answer Type -->
               <div class="config-section mb-4">
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Answer Type:
+                  {{ $t('CreateTask.preview.answerType') }}
                 </div>
                 <v-chip
                   :prepend-icon="getAnswerTypeIcon(task && task.taskType)"
-                  :color="isSystemChoice(task && task.taskType) ? 'secondary' : 'grey-lighten-1'"
+                  :color="
+                    isSystemChoice(task && task.taskType)
+                      ? 'secondary'
+                      : 'grey-lighten-1'
+                  "
                   variant="tonal"
                 >
                   {{ getAnswerTypeLabel(task && task.taskType) }}
@@ -96,7 +84,7 @@
                 class="config-section mb-4"
               >
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Recording Features:
+                  {{ $t('CreateTask.preview.recordingFeatures') }}
                 </div>
                 <div class="feature-chips">
                   <v-chip
@@ -114,24 +102,18 @@
               </div>
 
               <!-- Additional Fields -->
-              <div
-                v-if="task && task.postQuestion"
-                class="config-section mb-4"
-              >
+              <div v-if="task && task.postQuestion" class="config-section mb-4">
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Post-Task Question:
+                  {{ $t('CreateTask.preview.postTaskQuestion') }}
                 </div>
                 <div class="text-body-2">
                   {{ task.postQuestion }}
                 </div>
               </div>
 
-              <div
-                v-if="task && task.postForm"
-                class="config-section mb-4"
-              >
+              <div v-if="task && task.postForm" class="config-section mb-4">
                 <div class="text-body-2 text-grey-darken-1 mb-2">
-                  Post-Task Form:
+                  {{ $t('CreateTask.preview.postTaskForm') }}
                 </div>
                 <v-chip
                   :href="task.postForm"
@@ -142,7 +124,7 @@
                   size="small"
                   class="text-decoration-none"
                 >
-                  External Form
+                  {{ $t('CreateTask.preview.externalForm') }}
                 </v-chip>
               </div>
             </div>
@@ -159,12 +141,17 @@
       :icon="isTaskComplete ? 'mdi-check-circle' : 'mdi-alert-circle-outline'"
     >
       <v-alert-title>
-        {{ isTaskComplete ? 'Task Ready!' : 'Review Required' }}
+        {{
+          isTaskComplete
+            ? $t('CreateTask.preview.taskReady')
+            : $t('CreateTask.preview.reviewRequired')
+        }}
       </v-alert-title>
       <div class="text-body-2 mt-2">
-        {{ isTaskComplete 
-          ? 'Your task is properly configured and ready to be used in your study.' 
-          : 'Please review the previous steps to ensure all required fields are completed.' 
+        {{
+          isTaskComplete
+            ? $t('CreateTask.preview.taskReadyMessage')
+            : $t('CreateTask.preview.reviewRequiredMessage')
         }}
       </div>
     </v-alert>
@@ -172,90 +159,117 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   task: {
     type: Object,
     required: true,
-    default: () => ({})
-  }
-});
+    default: () => ({}),
+  },
+})
 
-const emit = defineEmits(['validate']);
+const emit = defineEmits(['validate'])
 
 const recordingFeatures = computed(() => {
-  if (!props.task) return [];
-  
-  const features = [];
-  
+  if (!props.task) return []
+
+  const features = []
+
   if (props.task.hasEye) {
-    features.push({ key: 'eye', label: 'Eye Tracking', icon: 'mdi-eye-outline' });
+    features.push({
+      key: 'eye',
+      label: t('CreateTask.preview.recordingLabels.eyeTracking'),
+      icon: 'mdi-eye-outline',
+    })
   }
   if (props.task.hasScreenRecord) {
-    features.push({ key: 'screen', label: 'Screen Recording', icon: 'mdi-monitor-screenshot' });
+    features.push({
+      key: 'screen',
+      label: t('CreateTask.preview.recordingLabels.screenRecording'),
+      icon: 'mdi-monitor-screenshot',
+    })
   }
   if (props.task.hasCamRecord) {
-    features.push({ key: 'camera', label: 'Camera', icon: 'mdi-video-outline' });
+    features.push({
+      key: 'camera',
+      label: t('CreateTask.preview.recordingLabels.camera'),
+      icon: 'mdi-video-outline',
+    })
   }
   if (props.task.hasAudioRecord) {
-    features.push({ key: 'audio', label: 'Audio', icon: 'mdi-microphone-outline' });
+    features.push({
+      key: 'audio',
+      label: t('CreateTask.preview.recordingLabels.audio'),
+      icon: 'mdi-microphone-outline',
+    })
   }
-  
-  return features;
-});
+
+  return features
+})
 
 const isTaskComplete = computed(() => {
-  if (!props.task) return false;
-  return !!(props.task.taskName?.trim() && 
-           props.task.taskDescription?.trim() && 
-           props.task.taskType);
-});
+  if (!props.task) return false
+  return !!(
+    props.task.taskName?.trim() &&
+    props.task.taskDescription?.trim() &&
+    props.task.taskType
+  )
+})
 
 const getAnswerTypeIcon = (type) => {
-  if (!type) return 'mdi-help-circle-outline';
+  if (!type) return 'mdi-help-circle-outline'
   const icons = {
     'no-answer': 'mdi-close-circle-outline',
     'text-area': 'mdi-text-box-outline',
     'post-test': 'mdi-comment-question-outline',
     'post-form': 'mdi-form-select',
     'nasa-tlx': 'mdi-rocket-launch-outline',
-    'sus': 'mdi-chart-line',
-    'sart': 'mdi-eye-areaspline'
-  };
-  return icons[type] || 'mdi-help-circle-outline';
-};
+    sus: 'mdi-chart-line',
+    'tam-1': 'mdi-chart-line',
+    'tam-2': 'mdi-chart-box',
+    'tam-3': 'mdi-chart-donut',
+    sart: 'mdi-eye-areaspline',
+  }
+  return icons[type] || 'mdi-help-circle-outline'
+}
 
 const getAnswerTypeLabel = (type) => {
-  if (!type) return 'No Type Selected';
+  if (!type) return t('CreateTask.preview.noTypeSelected')
   const labels = {
-    'no-answer': 'No Answer Required',
-    'text-area': 'Text Area',
-    'post-test': 'Post-Test Questions',
-    'post-form': 'External Form',
-    'nasa-tlx': 'NASA-TLX',
-    'sus': 'System Usability Scale',
-    'sart': 'SART'
-  };
-  return labels[type] || 'Unknown';
-};
+    'no-answer': t('CreateTask.preview.answerTypes.noAnswer'),
+    'text-area': t('CreateTask.preview.answerTypes.textArea'),
+    'post-test': t('CreateTask.preview.answerTypes.postTest'),
+    'post-form': t('CreateTask.preview.answerTypes.postForm'),
+    'nasa-tlx': t('CreateTask.preview.answerTypes.nasaTlx'),
+    sus: t('CreateTask.preview.answerTypes.sus'),
+    'tam-1': t('CreateTask.preview.answerTypes.tam1'),
+    'tam-2': t('CreateTask.preview.answerTypes.tam2'),
+    'tam-3': t('CreateTask.preview.answerTypes.tam3'),
+    sart: t('CreateTask.preview.answerTypes.sart'),
+  }
+  return labels[type] || 'Unknown'
+}
 
 const isSystemChoice = (type) => {
-  if (!type) return false;
+  if (!type) return false
   // System choices are standardized questionnaires/scales
-  return ['nasa-tlx', 'sus', 'sart'].includes(type);
-};
+  return ['nasa-tlx', 'sus', 'tam-1', 'tam-2', 'tam-3', 'sart'].includes(type)
+}
 
 // Always emit validation as true since this is just a preview
 watch(
   () => props.task,
   (newTask) => {
     if (newTask) {
-      emit('validate', true);
+      emit('validate', true)
     }
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 </script>
 
 <style scoped>
@@ -300,6 +314,7 @@ watch(
   padding: 12px;
   border-radius: 8px;
   border-left: 4px solid rgb(var(--v-theme-primary));
+  white-space: pre-line;
 }
 
 .preview-mockup {
@@ -349,7 +364,7 @@ watch(
   .step-header {
     padding: 16px;
   }
-  
+
   .mockup-content {
     padding: 16px;
   }

@@ -19,8 +19,8 @@
         <v-row class="mb-4">
           <v-col cols="12" md="6" class="mt-16">
             <div
-              class="video-box mb-2 video-rect-box"
               v-if="rightTab !== 'eye'"
+              class="video-box mb-2 video-rect-box"
             >
               <video
                 ref="mainVideo1"
@@ -34,9 +34,9 @@
             </div>
 
             <div
+              v-if="rightTab !== 'sentimental'"
               class="video-box screen-video-box video-rect-box"
               style="position: relative"
-              v-if="rightTab !== 'sentimental'"
             >
               <video
                 ref="mainVideo2"
@@ -50,7 +50,7 @@
               <EyeTrackingOverlay
                 v-show="rightTab === 'eye' && predictedData"
                 :video-ref="mainVideo2"
-                :predictedData="predictedData"
+                :predicted-data="predictedData"
                 :current-time="videoCurrentTime"
                 :is-playing="isPlaying"
                 :view-mode="selectedView"
@@ -59,12 +59,12 @@
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-tabs v-model="rightTab" background-color="grey-lighten-4" grow>
+            <v-tabs v-model="rightTab" bg-color="grey-lighten-4" grow>
               <!-- <v-tab value="general">General</v-tab> -->
-              <v-tab value="eye" v-if="taskAnswer?.irisTrackingData.length > 0"
+              <v-tab v-if="taskAnswer?.irisTrackingData.length > 0" value="eye"
                 >Eye Tracker</v-tab
               >
-              <v-tab value="sentimental" v-if="taskAnswer?.webcamRecordURL"
+              <v-tab v-if="taskAnswer?.webcamRecordURL" value="sentimental"
                 >Sentimental</v-tab
               >
               <!-- <v-tab value="transcript">Transcripción</v-tab>
@@ -80,12 +80,12 @@
                             </v-window-item> -->
 
               <v-window-item
-                value="eye"
                 v-if="taskAnswer?.irisTrackingData.length > 0"
+                value="eye"
               >
                 <EyeTrackingStats
                   :iris-data="taskAnswer?.irisTrackingData"
-                  :userId="userId"
+                  :user-id="userId"
                   :accuracy="
                     taskAnswer?.eyeTracking?.accuracy ??
                     mockEyeTracking.accuracy
@@ -94,15 +94,15 @@
                     taskAnswer?.eyeTracking?.fixations ??
                     mockEyeTracking.fixations
                   "
+                  class="mb-4"
                   @predictions-ready="predictedData = $event"
                   @view-changed="selectedView = $event"
-                  class="mb-4"
                 />
               </v-window-item>
 
               <v-window-item
-                value="sentimental"
                 v-if="taskAnswer?.webcamRecordURL"
+                value="sentimental"
               >
                 <FacialSentimentPanel
                   :video-element="mainVideo1"
@@ -131,10 +131,10 @@
 
         <SessionTimeline
           :duration="videoDuration"
-          :currentTime="videoCurrentTime"
-          :isPlaying="isPlaying"
+          :current-time="videoCurrentTime"
+          :is-playing="isPlaying"
           @seek="onSeek"
-          @togglePlay="togglePlay"
+          @toggle-play="togglePlay"
         />
       </v-card-text>
     </v-card>
@@ -176,6 +176,8 @@ const videoCurrentTime = ref(0)
 let rafId = null
 const predictedData = ref(null)
 const selectedView = ref('precision')
+
+const mockEyeTracking = { accuracy: 92, fixations: 34 }
 
 function updateLoop() {
   if (!isPlaying.value) return

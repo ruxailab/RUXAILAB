@@ -10,14 +10,16 @@
   <v-col cols="12">
     <!-- TEST -->
     <div v-if="index === 0">
-      <TestConfigForm :welcome="welcomeMessage" :final-message="finalMessage"
+      <TestConfigForm
+:welcome="welcomeMessage" :final-message="finalMessage"
         @update:welcome-message="saveState('welcomeMessage', $event)"
         @update:final-message="saveState('finalMessage', $event)" />
     </div>
 
     <!-- COSENT FORM -->
     <v-card v-if="index === 1" rounded="xxl">
-      <TextareaForm v-model="consent" :title="$t('ModeratedTest.consentForm')"
+      <TextareaForm
+v-model="consent" :title="$t('ModeratedTest.consentForm')"
         :subtitle="$t('ModeratedTest.consentFormSubtitle')" @update:value="saveState('consent', $event)" />
     </v-card>
 

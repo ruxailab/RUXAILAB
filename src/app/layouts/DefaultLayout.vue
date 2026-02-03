@@ -4,6 +4,7 @@
     <GlobalErrorHandler />
 
     <GlobalToastHandler />
+    <Loading />
     <v-main>
       <v-container
         fluid
@@ -19,12 +20,14 @@
 import { GlobalToolbar } from '@/features/navigation/utils'
 import GlobalErrorHandler from '@/app/layouts/components/GlobalErrorHandler.vue'
 import GlobalToastHandler from '@/app/layouts/components/GlobalToastHandler.vue'
+import Loading from '@/shared/components/Loading.vue'
 
 export default {
   components: {
     GlobalToolbar,
     GlobalErrorHandler,
     GlobalToastHandler,
+    Loading,
   },
 }
 </script>

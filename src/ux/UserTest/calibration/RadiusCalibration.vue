@@ -1,7 +1,8 @@
 <template>
     <v-row class="d-flex align-center" no-gutters>
         <v-col cols="10">
-            <v-tooltip text="Adjust the radius of the calibration point. Larger values make the point bigger."
+            <v-tooltip
+text="Adjust the radius of the calibration point. Larger values make the point bigger."
                 location="bottom">
                 <template #activator="{ props }">
                     <v-slider v-bind="props" v-model="radius" :min="10" :max="35" step="1" label="Radius" thumb-label />

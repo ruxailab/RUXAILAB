@@ -12,7 +12,10 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
     },
   ]
 
-  if (accessLevel === ACCESS_LEVEL.ADMIN) {
+  if (
+    accessLevel === ACCESS_LEVEL.ADMIN ||
+    accessLevel === ACCESS_LEVEL.SUPER_ADMIN
+  ) {
     items.push(
       {
         title: 'Test',
