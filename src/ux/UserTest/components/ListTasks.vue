@@ -35,6 +35,7 @@
             :headers="headers"
             :items="allTasks"
             :items-per-page="5"
+            :items-per-page-text="$t('common.table.itemsPerPage')"
             class="elevation-0 rounded-lg"
             style="background: #ffffff; border: 1px solid #e5e7eb"
             :no-data-text="$t('UserTestTable.messages.noTasks')"

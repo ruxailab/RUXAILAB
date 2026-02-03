@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "यहाँ टेक्स्ट दर्ज करें...",
     "units": {
       "mb": "MB",
       "gb": "GB"
