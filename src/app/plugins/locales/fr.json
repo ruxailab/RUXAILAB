@@ -805,7 +805,9 @@
     "messages": {
       "noTasks": "Vous n'avez aucune tâche, créez-en une pour continuer.",
       "noVariables": "Aucune variable ajoutée. Cliquez ci-dessous pour créer une nouvelle variable.",
-      "noOptions": "Aucune option ajoutée."
+      "noOptions": "Aucune option ajoutée.",
+      "confirm_delete_task":"Confirmer la suppression de la tâche",
+      "sure_to_delete_task":"Êtes-vous sûr de vouloir supprimer la tâche : {taskName} ? Cette action ne peut pas être annulée"
     },
     "inputs": {
       "consent": "Consentement",
