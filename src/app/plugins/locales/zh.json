@@ -104,6 +104,8 @@
     "proceed": "继续",
     "all": "全部",
     "actions": "操作",
+    "confirm_deletion": "确认删除",
+    "action_cannot_be_undone": "此操作无法撤销",
     "user": "用户",
     "id": "ID"
   },
@@ -284,8 +286,6 @@
     "back": "返回",
     "deleteForever": "永久删除",
     "superAdmin": "超级管理员",
-    "uploadProfilePicture": "上传头像",
-    "removeProfilePicture": "删除头像",
     "currentPassword": "当前密码",
     "currentPasswordRequired": "当前密码为必填项",
     "wrongCurrentPassword": "当前密码错误",
@@ -1309,10 +1309,8 @@
       "select_status": "选择状态",
       "end_date": "结束日期",
       "select_end_date": "选择结束日期",
-      "quick_actions": "快速操作",
+      "quick_actions": "快捷操作",
       "perform_common_tasks": "立即执行常见任务",
-      "confirm_deletion": "确认删除",
-      "action_cannot_be_undone": "此操作无法撤销",
       "delete_warning": "所有相关数据、结果和配置将永久丢失。",
       "delete_forever": "永久删除"
     },
@@ -1330,12 +1328,14 @@
     "noCopy": "复制失败",
     "deleteTemplate": "您确定要删除此模板吗？此操作无法撤销！",
     "deleteTest": "您确定要删除此测试吗？",
+    "deleteQuestion": "您确定要删除此问题吗：",
+    "deleteDescription": "您确定要删除此描述吗：",
     "addDescription": "请添加描述",
     "errorOccurred": "发生错误",
     "leave": "您确定要离开吗？",
     "sureLeave": "您确定要离开吗？所有更改将被丢弃。",
     "imageURL": "输入图片URL：",
-    "deleteHeuristic": "您确定要删除启发式",
+    "deleteHeuristic": "您确定要删除此启发式吗：",
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功",
@@ -1390,7 +1390,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1404,12 +1408,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1668,12 +1680,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {

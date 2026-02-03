@@ -104,6 +104,8 @@
     "proceed": "続行",
     "all": "すべて",
     "actions": "アクション",
+    "confirm_deletion": "削除を確定する",
+    "action_cannot_be_undone": "この操作は元に戻せません",
     "user": "ユーザー",
     "id": "ID"
   },
@@ -1309,8 +1311,6 @@
       "select_end_date": "終了日を選択",
       "quick_actions": "クイックアクション",
       "perform_common_tasks": "一般的なタスクを即時に実行",
-      "confirm_deletion": "削除を確認",
-      "action_cannot_be_undone": "この操作は元に戻せません",
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
       "delete_forever": "完全に削除"
     },
@@ -1328,12 +1328,14 @@
     "noCopy": "コピーに失敗しました",
     "deleteTemplate": "このテンプレートを削除してもよろしいですか？この操作は元に戻せません！",
     "deleteTest": "このテストを削除してもよろしいですか？",
+    "deleteQuestion": "この質問を削除してもよろしいですか: ",
+    "deleteDescription": "この説明を削除してもよろしいですか: ",
     "addDescription": "説明を追加してください",
     "errorOccurred": "エラーが発生しました",
     "leave": "本当に離れますか？",
     "sureLeave": "本当に離れますか？すべての変更が破棄されます。",
     "imageURL": "画像のURLを入力してください：",
-    "deleteHeuristic": "ヒューリスティックを削除してもよろしいですか？",
+    "deleteHeuristic": "このヒューリスティックを削除してもよろしいですか: ",
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
     "savedChanges": "変更が保存されました",
@@ -1406,7 +1408,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1674,7 +1680,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
