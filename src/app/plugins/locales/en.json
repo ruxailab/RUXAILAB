@@ -803,7 +803,9 @@
     "messages": {
       "noTasks": "You don't have any task, create one to proceed.",
       "noVariables": "No variables added yet. Click below to create a new variable.",
-      "noOptions": "No options added."
+      "noOptions": "No options added.",
+      "confirm_delete_task":"Confirm Delete Task",
+      "sure_to_delete_task":"Are you sure you want to delete Task : {taskName}? This action cannot be undone"
     },
     "inputs": {
       "consent": "Consent",

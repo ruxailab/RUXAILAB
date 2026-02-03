@@ -805,7 +805,9 @@
     "messages": {
       "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar.",
       "noVariables": "Nenhuma variável adicionada ainda. Clique abaixo para criar uma nova variável.",
-      "noOptions": "Nenhuma opção adicionada."
+      "noOptions": "Nenhuma opção adicionada.",
+      "confirm_delete_task":"Confirmar Exclusão de Tarefa",
+      "sure_to_delete_task":"Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
     },
     "inputs": {
       "consent": "Consentimento",
