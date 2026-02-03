@@ -1,6 +1,11 @@
 <div align="center">
   <h1>Welcome to UX Remote LAB</h1>
   <p><strong>UX Remote LAB</strong> is a user-friendly platform for usability testing and heuristic evaluation. Designed and provided by UX Remote LAB, it is a web application developed to assist project creators in gathering valuable insights from their users.</p>
+  <p>
+    <a href="https://codecov.io/gh/uramakilab/ruxailab">
+      <img src="https://codecov.io/gh/uramakilab/ruxailab/branch/develop/graph/badge.svg" alt="codecov" />
+    </a>
+  </p>
 </div>
 
 <hr />

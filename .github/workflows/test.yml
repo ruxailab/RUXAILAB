@@ -29,14 +29,23 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Test
-        run: npm test
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-ruxailab
+          fail_ci_if_error: false
 
       - name: Comment to PR
         if: failure() && github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: "⚠️ The tests have failed, @${{ github.actor }} Please review the proposed changes."
+          message: '⚠️ The tests have failed, @${{ github.actor }} Please review the proposed changes.'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Send message to Discord
@@ -53,4 +62,3 @@ jobs:
             **Pull Request**: [Link](${{ github.event.pull_request.html_url }})
             **Action URL**: [View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             Please review the proposed changes.
-

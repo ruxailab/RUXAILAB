@@ -40,3 +40,6 @@ ui-debug.log
 # Ignore the playwright test screenshots and video
 /playwright/output
 debug-screenshot.png
+
+# Coverage reports
+coverage/
