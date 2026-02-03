@@ -1813,5 +1813,36 @@
       "title": "Option löschen",
       "message": "Sind Sie sicher, dass Sie diese Option löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     }
+  },
+  "tags": {
+    "active": "Aktiv",
+    "draft": "Entwurf",
+    "completed": "Abgeschlossen",
+    "archived": "Archiviert",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "fromTemplate": "Aus Vorlage",
+    "withCollaborators": "Mit Mitwirkenden"
+  },
+  "methods": {
+    "categories": {
+      "test": "Benutzertests",
+      "inquiry": "Benutzerforschung",
+      "inspection": "Expertenprüfung",
+      "accessibility": "Barrierefreiheit",
+      "other": "Sonstiges"
+    },
+    "definitions": {
+      "HEURISTICS": "Heuristische Bewertung",
+      "USER_MODERATED": "Moderierter Usability-Test",
+      "USER_UNMODERATED": "Unmoderierter Usability-Test",
+      "SURVEY": "Umfrage",
+      "INTERVIEW": "Interview",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Cognitive Walkthrough",
+      "ACCESSIBILITY_MANUAL": "Manuelle Bewertung",
+      "ACCESSIBILITY_AUTOMATIC": "Automatische Bewertung",
+      "WCAG_AUDIT": "WCAG-Audit"
+    }
   }
 }

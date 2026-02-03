@@ -285,8 +285,6 @@
     "back": "Назад",
     "deleteForever": "Удалить навсегда",
     "superAdmin": "Суперадмин",
-    "uploadProfilePicture": "Загрузить фото профиля",
-    "removeProfilePicture": "Удалить фото профиля",
     "currentPassword": "Текущий пароль",
     "currentPasswordRequired": "Требуется текущий пароль",
     "wrongCurrentPassword": "Текущий пароль неверен",
@@ -1811,6 +1809,37 @@
     "deleteOptionConfirm": {
       "title": "Удалить опцию",
       "message": "Вы уверены, что хотите удалить эту опцию? Это действие нельзя отменить."
+    }
+  },
+  "tags": {
+    "active": "Активный",
+    "draft": "Черновик",
+    "completed": "Завершено",
+    "archived": "Архивировано",
+    "public": "Публичный",
+    "private": "Приватный",
+    "fromTemplate": "Из шаблона",
+    "withCollaborators": "С соавторами"
+  },
+  "methods": {
+    "categories": {
+      "test": "Тестирование пользователей",
+      "inquiry": "Исследование пользователей",
+      "inspection": "Экспертная оценка",
+      "accessibility": "Доступность",
+      "other": "Другое"
+    },
+    "definitions": {
+      "HEURISTICS": "Эвристическая оценка",
+      "USER_MODERATED": "Модерируемое юзабилити-тестирование",
+      "USER_UNMODERATED": "Немодерируемое юзабилити-тестирование",
+      "SURVEY": "Опрос",
+      "INTERVIEW": "Интервью",
+      "CARD_SORTING": "Карточная сортировка",
+      "COGNITIVE_WALKTHROUGH": "Когнитивный проход",
+      "ACCESSIBILITY_MANUAL": "Ручная оценка",
+      "ACCESSIBILITY_AUTOMATIC": "Автоматическая оценка",
+      "WCAG_AUDIT": "Аудит WCAG"
     }
   }
 }
