@@ -1785,5 +1785,36 @@
       "title": "Delete Option",
       "message": "Are you sure you want to delete this option? This action cannot be undone."
     }
+  },
+  "tags": {
+    "active": "Active",
+    "draft": "Draft",
+    "completed": "Completed",
+    "archived": "Archived",
+    "public": "Public",
+    "private": "Private",
+    "fromTemplate": "From Template",
+    "withCollaborators": "With Collaborators"
+  },
+  "methods": {
+    "categories": {
+      "test": "User Testing",
+      "inquiry": "User Research",
+      "inspection": "Expert Inspection",
+      "accessibility": "Accessibility",
+      "other": "Other"
+    },
+    "definitions": {
+      "HEURISTICS": "Heuristic Evaluation",
+      "USER_MODERATED": "Moderated Usability Test",
+      "USER_UNMODERATED": "Unmoderated Usability Test",
+      "SURVEY": "Survey",
+      "INTERVIEW": "Interview",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Cognitive Walkthrough",
+      "ACCESSIBILITY_MANUAL": "Manual Evaluation",
+      "ACCESSIBILITY_AUTOMATIC": "Automatic Evaluation",
+      "WCAG_AUDIT": "WCAG Audit"
+    }
   }
 }

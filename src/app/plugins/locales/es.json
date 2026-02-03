@@ -1788,5 +1788,36 @@
       "title": "Eliminar Opción",
       "message": "¿Está seguro de que desea eliminar esta opción? Esta acción no se puede deshacer."
     }
+  },
+  "tags": {
+    "active": "Activo",
+    "draft": "Borrador",
+    "completed": "Completado",
+    "archived": "Archivado",
+    "public": "Público",
+    "private": "Privado",
+    "fromTemplate": "Desde plantilla",
+    "withCollaborators": "Con colaboradores"
+  },
+  "methods": {
+    "categories": {
+      "test": "Pruebas con Usuarios",
+      "inquiry": "Investigación de Usuarios",
+      "inspection": "Inspección de Expertos",
+      "accessibility": "Accesibilidad",
+      "other": "Otro"
+    },
+    "definitions": {
+      "HEURISTICS": "Evaluación Heurística",
+      "USER_MODERATED": "Prueba de Usabilidad Moderada",
+      "USER_UNMODERATED": "Prueba de Usabilidad No Moderada",
+      "SURVEY": "Encuesta",
+      "INTERVIEW": "Entrevista",
+      "CARD_SORTING": "Clasificación de Tarjetas",
+      "COGNITIVE_WALKTHROUGH": "Recorrido Cognitivo",
+      "ACCESSIBILITY_MANUAL": "Evaluación Manual",
+      "ACCESSIBILITY_AUTOMATIC": "Evaluación Automática",
+      "WCAG_AUDIT": "Auditoría WCAG"
+    }
   }
 }

@@ -284,8 +284,6 @@
     "back": "返回",
     "deleteForever": "永久删除",
     "superAdmin": "超级管理员",
-    "uploadProfilePicture": "上传头像",
-    "removeProfilePicture": "删除头像",
     "currentPassword": "当前密码",
     "currentPasswordRequired": "当前密码为必填项",
     "wrongCurrentPassword": "当前密码错误",
@@ -1390,7 +1388,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1404,12 +1406,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1668,12 +1678,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {
@@ -1786,7 +1804,38 @@
     },
     "deleteOptionConfirm": {
       "title": "删除选项",
-      "message": "您确定要删除此选项吗？此操作无法撤消。"
+      "message": "您确定要删除此选项吗？此操作无法撤销。"
+    }
+  },
+  "tags": {
+    "active": "有效",
+    "draft": "草稿",
+    "completed": "已完成",
+    "archived": "已存档",
+    "public": "公开",
+    "private": "私人",
+    "fromTemplate": "从模板",
+    "withCollaborators": "与协作者"
+  },
+  "methods": {
+    "categories": {
+      "test": "用户测试",
+      "inquiry": "用户研究",
+      "inspection": "专家检查",
+      "accessibility": "无障碍",
+      "other": "其他"
+    },
+    "definitions": {
+      "HEURISTICS": "启发式评估",
+      "USER_MODERATED": "有主持人的可用性测试",
+      "USER_UNMODERATED": "无主持人的可用性测试",
+      "SURVEY": "调查",
+      "INTERVIEW": "访谈",
+      "CARD_SORTING": "卡片分类",
+      "COGNITIVE_WALKTHROUGH": "认知走查",
+      "ACCESSIBILITY_MANUAL": "手动评估",
+      "ACCESSIBILITY_AUTOMATIC": "自动评估",
+      "WCAG_AUDIT": "WCAG 审核"
     }
   }
 }

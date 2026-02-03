@@ -284,8 +284,6 @@
     "back": "Retour",
     "deleteForever": "Supprimer définitivement",
     "superAdmin": "Super Admin",
-    "uploadProfilePicture": "Télécharger une photo de profil",
-    "removeProfilePicture": "Supprimer la photo de profil",
     "currentPassword": "Mot de passe actuel",
     "currentPasswordRequired": "Le mot de passe actuel est requis",
     "wrongCurrentPassword": "Le mot de passe actuel est incorrect",
@@ -1805,8 +1803,39 @@
       "message": "Êtes-vous sûr de vouloir supprimer cette variable ? Cette action ne peut pas être annulée."
     },
     "deleteOptionConfirm": {
-      "title": "Supprimer l'Option",
-      "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action ne peut pas être annulée."
+      "title": "Supprimer l'option",
+      "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action est irréversible."
+    }
+  },
+  "tags": {
+    "active": "Actif",
+    "draft": "Brouillon",
+    "completed": "Terminé",
+    "archived": "Archivé",
+    "public": "Public",
+    "private": "Privé",
+    "fromTemplate": "À partir d'un modèle",
+    "withCollaborators": "Avec des collaborateurs"
+  },
+  "methods": {
+    "categories": {
+      "test": "Tests utilisateur",
+      "inquiry": "Recherche utilisateur",
+      "inspection": "Inspection experte",
+      "accessibility": "Accessibilité",
+      "other": "Autre"
+    },
+    "definitions": {
+      "HEURISTICS": "Évaluation heuristique",
+      "USER_MODERATED": "Test d'utilisabilité modéré",
+      "USER_UNMODERATED": "Test d'utilisabilité non modéré",
+      "SURVEY": "Sondage",
+      "INTERVIEW": "Entretien",
+      "CARD_SORTING": "Tri par cartes",
+      "COGNITIVE_WALKTHROUGH": "Parcours cognitif",
+      "ACCESSIBILITY_MANUAL": "Évaluation manuelle",
+      "ACCESSIBILITY_AUTOMATIC": "Évaluation automatique",
+      "WCAG_AUDIT": "Audit WCAG"
     }
   }
 }

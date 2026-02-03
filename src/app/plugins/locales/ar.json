@@ -1408,7 +1408,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1803,6 +1807,37 @@
     "deleteOptionConfirm": {
       "title": "حذف الخيار",
       "message": "هل أنت متأكد أنك تريد حذف هذا الخيار؟ لا يمكن التراجع عن هذا الإجراء."
+    }
+  },
+  "tags": {
+    "active": "نشط",
+    "draft": "مسودة",
+    "completed": "مكتمل",
+    "archived": "مؤرشف",
+    "public": "عام",
+    "private": "خاص",
+    "fromTemplate": "من قالب",
+    "withCollaborators": "مع المتعاونين"
+  },
+  "methods": {
+    "categories": {
+      "test": "اختبار المستخدم",
+      "inquiry": "بحث المستخدم",
+      "inspection": "فحص الخبراء",
+      "accessibility": "إمكانية الوصول",
+      "other": "آخر"
+    },
+    "definitions": {
+      "HEURISTICS": "التقييم الاستكشافي",
+      "USER_MODERATED": "اختبار قابلية الاستخدام المدار",
+      "USER_UNMODERATED": "اختبار قابلية الاستخدام غير المدار",
+      "SURVEY": "استطلاع",
+      "INTERVIEW": "مقابلة",
+      "CARD_SORTING": "تصنيف البطاقات",
+      "COGNITIVE_WALKTHROUGH": "التنفيذ المعرفي",
+      "ACCESSIBILITY_MANUAL": "تقييم يدوي",
+      "ACCESSIBILITY_AUTOMATIC": "تقييم آلي",
+      "WCAG_AUDIT": "تدقيق WCAG"
     }
   }
 }

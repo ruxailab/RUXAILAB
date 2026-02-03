@@ -1406,7 +1406,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1674,7 +1678,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -1796,7 +1804,38 @@
     },
     "deleteOptionConfirm": {
       "title": "オプションを削除",
-      "message": "このオプションを削除してもよろしいですか？この操作は元に戻せません。"
+      "message": "このオプションを削除してもよろしいですか？この操作は取り消せません。"
+    }
+  },
+  "tags": {
+    "active": "アクティブ",
+    "draft": "下書き",
+    "completed": "完了",
+    "archived": "アーカイブ済み",
+    "public": "公開",
+    "private": "非公開",
+    "fromTemplate": "テンプレートから",
+    "withCollaborators": "共同作業者あり"
+  },
+  "methods": {
+    "categories": {
+      "test": "ユーザーテスト",
+      "inquiry": "ユーザー調査",
+      "inspection": "専門家評価",
+      "accessibility": "アクセシビリティ",
+      "other": "その他"
+    },
+    "definitions": {
+      "HEURISTICS": "ヒューリスティック評価",
+      "USER_MODERATED": "モデレートありのユーザビリティテスト",
+      "USER_UNMODERATED": "モデレートなしのユーザビリティテスト",
+      "SURVEY": "アンケート",
+      "INTERVIEW": "インタビュー",
+      "CARD_SORTING": "カードソーティング",
+      "COGNITIVE_WALKTHROUGH": "認知的ウォークスルー",
+      "ACCESSIBILITY_MANUAL": "マニュアル評価",
+      "ACCESSIBILITY_AUTOMATIC": "自動評価",
+      "WCAG_AUDIT": "WCAG監査"
     }
   }
 }

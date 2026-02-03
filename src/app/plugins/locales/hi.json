@@ -1782,8 +1782,39 @@
       "message": "क्या आप वाकई इस वेरिएबल को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
     },
     "deleteOptionConfirm": {
-      "title": "विकल्प हटाएं",
+      "title": "कल्प हटाएं",
       "message": "क्या आप वाकई इस विकल्प को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
+    }
+  },
+  "tags": {
+    "active": "सक्रिय",
+    "draft": "ड्राफ्ट",
+    "completed": "पूर्ण",
+    "archived": "अभिलेखागार",
+    "public": "सार्वजनिक",
+    "private": "निजी",
+    "fromTemplate": "टेम्पलेट से",
+    "withCollaborators": "सहयोगियों के साथ"
+  },
+  "methods": {
+    "categories": {
+      "test": "उपयोगकर्ता परीक्षण",
+      "inquiry": "उपयोगकर्ता अनुसंधान",
+      "inspection": "विशेषज्ञ निरीक्षण",
+      "accessibility": "पहुंच",
+      "other": "अन्य"
+    },
+    "definitions": {
+      "HEURISTICS": "हेयुरिस्टिक मूल्यांकन",
+      "USER_MODERATED": "मोडरेटेड उपयोगकर्ता परीक्षण",
+      "USER_UNMODERATED": "अनमोडरेटेड उपयोगकर्ता परीक्षण",
+      "SURVEY": "सर्वेक्षण",
+      "INTERVIEW": "साक्षात्कार",
+      "CARD_SORTING": "कार्ड सॉर्टिंग",
+      "COGNITIVE_WALKTHROUGH": "संज्ञानात्मक पूर्वाभ्यास",
+      "ACCESSIBILITY_MANUAL": "मैन्युअल मूल्यांकन",
+      "ACCESSIBILITY_AUTOMATIC": "स्वचालित मूल्यांकन",
+      "WCAG_AUDIT": "WCAG ऑडिट"
     }
   }
 }

@@ -284,8 +284,6 @@
     "yourPassword": "Sua senha",
     "back": "Voltar",
     "deleteForever": "Excluir permanentemente",
-    "uploadProfilePicture": "Enviar foto de perfil",
-    "removeProfilePicture": "Remover foto de perfil",
     "currentPassword": "Senha atual",
     "currentPasswordRequired": "A senha atual é obrigatória",
     "wrongCurrentPassword": "A senha atual está incorreta",
@@ -1785,8 +1783,39 @@
       "message": "Tem certeza de que deseja excluir esta variável? Esta ação não pode ser desfeita."
     },
     "deleteOptionConfirm": {
-      "title": "Excluir Opção",
+      "title": "Excluir opção",
       "message": "Tem certeza de que deseja excluir esta opção? Esta ação não pode ser desfeita."
+    }
+  },
+  "tags": {
+    "active": "Ativo",
+    "draft": "Rascunho",
+    "completed": "Concluído",
+    "archived": "Arquivado",
+    "public": "Público",
+    "private": "Privado",
+    "fromTemplate": "A partir de modelo",
+    "withCollaborators": "Com colaboradores"
+  },
+  "methods": {
+    "categories": {
+      "test": "Testes de usuário",
+      "inquiry": "Pesquisa de usuário",
+      "inspection": "Inspeção de especialistas",
+      "accessibility": "Acessibilidade",
+      "other": "Outros"
+    },
+    "definitions": {
+      "HEURISTICS": "Avaliação Heurística",
+      "USER_MODERATED": "Teste de Usabilidade Moderado",
+      "USER_UNMODERATED": "Teste de Usabilidade Não Moderado",
+      "SURVEY": "Pesquisa",
+      "INTERVIEW": "Entrevista",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Percurso Cognitivo",
+      "ACCESSIBILITY_MANUAL": "Avaliação Manual",
+      "ACCESSIBILITY_AUTOMATIC": "Avaliação Automática",
+      "WCAG_AUDIT": "Auditoria WCAG"
     }
   }
 }
