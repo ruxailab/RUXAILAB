@@ -33,7 +33,8 @@ jobs:
         run: npm test -- --coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        # Pinned to v5.1.2 for security (SonarQube requirement)
+        uses: codecov/codecov-action@cb6530fbecd68d5f1ee7a3dcd113450ea8d5d6d4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
