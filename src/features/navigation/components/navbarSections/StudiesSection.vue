@@ -262,7 +262,7 @@ const getMethodKey = (methodId) => {
 
 // ===== Method options =====
 const methodOptions = computed(() => {
-  const options = getMethodOptions(locale.value, METHOD_STATUSES.AVAILABLE.id)
+  const options = getMethodOptions(t.value, METHOD_STATUSES.AVAILABLE.id)
   return [
     { value: 'all', text: t('Dashboard.studiesPage.filters.allMethods') },
     ...options.map((opt) => ({
