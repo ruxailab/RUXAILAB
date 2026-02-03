@@ -1,45 +1,21 @@
-const MONTHS_ES = {
-  0: 'January',
-  1: 'February',
-  2: 'March',
-  3: 'April',
-  4: 'May',
-  5: 'June',
-  6: 'July',
-  7: 'August',
-  8: 'September',
-  9: 'October',
-  10: 'November',
-  11: 'December',
-}
-
 /**
- * Formatea una fecha al formato "10 Enero 2024"
- * @param {string|Date} date - La fecha a formatear
- * @param {string} locale - El idioma ('es' para español, 'en' para inglés)
- * @returns {string} - Fecha formateada o '-' si no hay fecha
+ * Formatted date to long format (e.g., "10 January 2024")
+ * @param {string|Date} date - The date to format
+ * @param {string} locale - The language locale (e.g., 'es', 'en', 'zh')
+ * @returns {string} - Formatted date or '-' if invalid
  */
-export const formatDateLong = (date, locale = 'es') => {
+export const formatDateLong = (date, locale = 'en') => {
   if (!date) return '-'
 
   try {
     const d = new Date(date)
     if (isNaN(d.getTime())) return '-'
 
-    const day = d.getDate()
-    const month = d.getMonth()
-    const year = d.getFullYear()
-
-    if (locale === 'es') {
-      return `${day} ${MONTHS_ES[month]} ${year}`
-    } else {
-      // Inglés por defecto
-      return d.toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
-    }
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(d)
   } catch (error) {
     console.warn('Error formatting date:', error)
     return '-'
