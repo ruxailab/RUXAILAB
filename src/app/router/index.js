@@ -46,11 +46,6 @@ router.beforeEach(async (to, from, next) => {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
-    
-    // Check if user email is verified for protected routes
-    if (user && !user.emailVerified && to.path !== '/verify-email') {
-      return next('/verify-email')
-    }
   }
 
   if (user && ['/signin', '/signup'].includes(to.path)) {
