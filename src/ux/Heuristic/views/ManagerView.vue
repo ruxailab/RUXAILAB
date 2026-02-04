@@ -6,7 +6,7 @@
       :top-cards="topCards"
       :bottom-cards="bottomCards"
     >
-      <!-- Loading state -->
+      <!-- Loading state  -->
       <div
         v-if="!test"
         class="d-flex justify-center align-center"
