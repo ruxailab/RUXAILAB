@@ -106,7 +106,8 @@
     "all": "Todos",
     "actions": "Ações",
     "user": "Usuário",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Itens por página:"
   },
   "storage": {
     "pageTitle": "Armazenamento",
@@ -805,8 +806,8 @@
       "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar.",
       "noVariables": "Nenhuma variável adicionada ainda. Clique abaixo para criar uma nova variável.",
       "noOptions": "Nenhuma opção adicionada.",
-      "confirm_delete_task":"Confirmar Exclusão de Tarefa",
-      "sure_to_delete_task":"Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
+      "confirm_delete_task": "Confirmar Exclusão de Tarefa",
+      "sure_to_delete_task": "Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
     },
     "inputs": {
       "consent": "Consentimento",
@@ -1225,6 +1226,7 @@
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
         "whereICollaborate": "Onde eu colaboro",
+        "allMethods": "Todos os métodos",
         "lessThan10": "< 10 participantes",
         "between10And50": "10 – 50 participantes",
         "moreThan50": "> 50 participantes"

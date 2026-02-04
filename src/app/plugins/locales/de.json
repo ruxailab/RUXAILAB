@@ -106,7 +106,8 @@
     "all": "Alle",
     "actions": "Aktionen",
     "user": "Benutzer",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elemente pro Seite:"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -808,8 +809,8 @@
       "noTasks": "Sie haben keine Aufgabe, erstellen Sie eine, um fortzufahren.",
       "noVariables": "Noch keine Variablen hinzugefügt. Klicken Sie unten, um eine neue Variable zu erstellen.",
       "noOptions": "Keine Optionen hinzugefügt.",
-      "confirm_delete_task":"Aufgabe löschen bestätigen",
-      "sure_to_delete_task":"Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
+      "confirm_delete_task": "Aufgabe löschen bestätigen",
+      "sure_to_delete_task": "Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
     },
     "inputs": {
       "consent": "Einverständnis",
@@ -1228,6 +1229,7 @@
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",
         "whereICollaborate": "Wo ich mitarbeite",
+        "allMethods": "Alle Methoden",
         "lessThan10": "< 10 Teilnehmer",
         "between10And50": "10 – 50 Teilnehmer",
         "moreThan50": "> 50 Teilnehmer"
