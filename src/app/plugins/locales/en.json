@@ -786,8 +786,9 @@
       "cooperators_loading": "Loading Cooperators",
       "no_users": "There are no users registered with that email, press enter to select anyways.",
       "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
-      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email}'s invitation?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "change_role_title": "Change Role",
       "message_title_hint": "Type a title for your message",
       "message_content_hint": "Type the content of your message"
     }
@@ -805,8 +806,8 @@
       "noTasks": "You don't have any task, create one to proceed.",
       "noVariables": "No variables added yet. Click below to create a new variable.",
       "noOptions": "No options added.",
-      "confirm_delete_task":"Confirm Delete Task",
-      "sure_to_delete_task":"Are you sure you want to delete Task : {taskName}? This action cannot be undone"
+      "confirm_delete_task": "Confirm Delete Task",
+      "sure_to_delete_task": "Are you sure you want to delete Task : {taskName}? This action cannot be undone"
     },
     "inputs": {
       "consent": "Consent",

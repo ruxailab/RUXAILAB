@@ -788,6 +788,7 @@
       "remove_cooperator": "您确定要删除 {email} 的合作者吗？",
       "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
+      "change_role_title": "更改角色",
       "message_title_hint": "输入您的消息标题",
       "message_content_hint": "输入您的消息内容"
     }
@@ -805,8 +806,8 @@
       "noTasks": "您没有任何任务，请创建一个以继续。",
       "noVariables": "尚未添加任何变量。点击下方创建新变量。",
       "noOptions": "没有添加选项。",
-      "confirm_delete_task":"确认删除任务",
-      "sure_to_delete_task":"您确定要删除任务 : {taskName} 吗？此操作无法撤消"
+      "confirm_delete_task": "确认删除任务",
+      "sure_to_delete_task": "您确定要删除任务 : {taskName} 吗？此操作无法撤消"
     },
     "inputs": {
       "consent": "同意",
