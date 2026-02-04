@@ -106,7 +106,8 @@
     "all": "全部",
     "actions": "操作",
     "user": "用户",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "每页项目数："
   },
   "storage": {
     "pageTitle": "存储",
@@ -805,8 +806,8 @@
       "noTasks": "您没有任何任务，请创建一个以继续。",
       "noVariables": "尚未添加任何变量。点击下方创建新变量。",
       "noOptions": "没有添加选项。",
-      "confirm_delete_task":"确认删除任务",
-      "sure_to_delete_task":"您确定要删除任务 : {taskName} 吗？此操作无法撤消"
+      "confirm_delete_task": "确认删除任务",
+      "sure_to_delete_task": "您确定要删除任务 : {taskName} 吗？此操作无法撤消"
     },
     "inputs": {
       "consent": "同意",
@@ -1225,6 +1226,7 @@
         "allStudies": "所有研究",
         "myStudies": "我的研究",
         "whereICollaborate": "我参与协作的",
+        "allMethods": "所有方法",
         "lessThan10": "< 10名参与者",
         "between10And50": "10 – 50名参与者",
         "moreThan50": "> 50名参与者"

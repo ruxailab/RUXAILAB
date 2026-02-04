@@ -106,7 +106,8 @@
     "all": "Todos",
     "actions": "Acciones",
     "user": "Usuario",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elementos por página:"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -807,8 +808,8 @@
       "noTasks": "No tienes ninguna tarea, crea una para continuar.",
       "noVariables": "No se han añadido variables aún. Haz clic abajo para crear una nueva variable.",
       "noOptions": "No se han añadido opciones.",
-      "confirm_delete_task":"Confirmar Eliminar Tarea",
-      "sure_to_delete_task":"¿Estás seguro de que deseas eliminar la Tarea : {taskName}? Esta acción no se puede deshacer"
+      "confirm_delete_task": "Confirmar Eliminar Tarea",
+      "sure_to_delete_task": "¿Estás seguro de que deseas eliminar la Tarea : {taskName}? Esta acción no se puede deshacer"
     },
     "inputs": {
       "consent": "Consentimiento",
@@ -1227,6 +1228,7 @@
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
         "whereICollaborate": "Donde colaboro",
+        "allMethods": "Todos los métodos",
         "lessThan10": "< 10 participantes",
         "between10And50": "10 – 50 participantes",
         "moreThan50": "> 50 participantes"
