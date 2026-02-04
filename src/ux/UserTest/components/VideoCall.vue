@@ -42,7 +42,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">{{ $t('videoCall.cameraOffOverlay') }}</p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -69,6 +69,34 @@
                 playsinline
                 class="video-element"
               ></video>
+
+              <!-- Remote camera disabled overlay -->
+              <div
+                v-if="getParticipantState(userId).hasCamera === false"
+                class="camera-disabled-overlay"
+              >
+                <v-icon size="64" color="white" class="mb-2"
+                  >mdi-video-off</v-icon
+                >
+                <p class="text-white">{{ $t('videoCall.cameraOffOverlay') }}</p>
+              </div>
+
+              <!-- Remote mic muted indicator -->
+              <div
+                v-if="getParticipantState(userId).hasMicrophone === false"
+                class="mic-muted-indicator"
+              >
+                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+              </div>
+              <!-- Remote screen share badge -->
+              <div
+                v-if="getParticipantState(userId).isSharingScreen"
+                class="video-label"
+                style="top: 12px; right: 12px; left: auto"
+              >
+                {{ $t('videoCall.sharingScreen') }}
+              </div>
+
               <div class="video-label">{{ getPeerName(userId) }}</div>
             </div>
           </div>
@@ -105,7 +133,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">{{ $t('videoCall.cameraOffOverlay') }}</p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -424,16 +452,16 @@
                 participant.role === 'moderator'
                   ? 'blue'
                   : participant.role === 'observator'
-                  ? 'orange'
-                  : 'green'
+                    ? 'orange'
+                    : 'green'
               "
             >
               <v-icon color="white">{{
                 participant.role === 'moderator'
                   ? 'mdi-account-star'
                   : participant.role === 'observator'
-                  ? 'mdi-eye'
-                  : 'mdi-account'
+                    ? 'mdi-eye'
+                    : 'mdi-account'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
@@ -464,21 +492,27 @@
                   {{ participant.connected ? 'Conectado' : 'Desconectado' }}
                 </v-chip>
                 <v-chip
-                  v-if="participant.isSelf && !isObservator"
+                  v-if="!isObservator"
                   size="x-small"
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
                 >
-                  {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
+                  {{
+                    participant.hasCamera
+                      ? $t('videoCall.cameraOnLabel')
+                      : $t('videoCall.cameraOffLabel')
+                  }}
                 </v-chip>
                 <v-chip
-                  v-if="participant.isSelf && !isObservator"
+                  v-if="!isObservator"
                   size="x-small"
                   :color="participant.hasMicrophone ? 'green' : 'red'"
                   class="ml-1"
                 >
                   {{
-                    participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono'
+                    participant.hasMicrophone
+                      ? $t('videoCall.micOnLabel')
+                      : $t('videoCall.micOffLabel')
                   }}
                 </v-chip>
               </div>
@@ -486,7 +520,7 @@
           </div>
         </div>
 
-        <div class="panel-section">
+        <div v-if="!isObservator" class="panel-section">
           <h4>Configuración</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
@@ -673,16 +707,16 @@
                             item.raw.index < currentTaskIndex
                               ? 'success'
                               : item.raw.index === currentTaskIndex
-                              ? 'primary'
-                              : 'grey'
+                                ? 'primary'
+                                : 'grey'
                           "
                         >
                           {{
                             item.raw.index < currentTaskIndex
                               ? 'mdi-check-circle'
                               : item.raw.index === currentTaskIndex
-                              ? 'mdi-play-circle'
-                              : 'mdi-circle-outline'
+                                ? 'mdi-play-circle'
+                                : 'mdi-circle-outline'
                           }}
                         </v-icon>
                       </template>
@@ -800,7 +834,15 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import {
+  ref,
+  computed,
+  reactive,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  shallowRef,
+} from 'vue'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
@@ -843,6 +885,18 @@ const isSharingScreen = ref(false)
 const isCameraEnabled = ref(true)
 const isMicrophoneEnabled = ref(true)
 
+// my RTDB partcipant ref node
+const myParticipantRef = shallowRef(null)
+
+const updateMyParticipantState = async (patch) => {
+  if (!myParticipantRef.value || !patch || typeof patch !== 'object') return
+  try {
+    await update(myParticipantRef.value, patch)
+  } catch (error) {
+    console.error('RTDb update failed:', error.code, error.message)
+  }
+}
+
 // Side panel control
 const showSidePanel = ref(false)
 const showStepperPanel = ref(false)
@@ -881,11 +935,12 @@ const participantsList = computed(() => {
     role: isObservator.value
       ? 'observator'
       : props.isModerator
-      ? 'moderator'
-      : 'participant',
+        ? 'moderator'
+        : 'participant',
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
+    isSharingScreen: !isObservator.value && isSharingScreen.value,
   })
 
   // Add others from participants
@@ -916,8 +971,9 @@ const participantsList = computed(() => {
       isSelf: false,
       role: role,
       connected: !!peers[userId],
-      hasCamera: role !== 'observator',
-      hasMicrophone: role !== 'observator',
+      hasCamera: p?.hasCamera ?? role !== 'observator',
+      hasMicrophone: p?.hasMicrophone ?? role !== 'observator',
+      isSharingScreen: p?.isSharingScreen ?? false,
     })
   })
 
@@ -932,6 +988,9 @@ const getPeerName = (userId) => {
   const coop = props.test?.cooperators?.find((c) => c.userDocId === userId)
   return coop?.email || 'Participant'
 }
+
+// Helper to get participant data
+const getParticipantState = (userId) => participants.value?.[userId] || {}
 
 // Computed property for task dropdown items
 const taskDropdownItems = computed(() => {
@@ -1019,10 +1078,15 @@ const joinRoom = async () => {
     database,
     `calls/${props.roomId}/participants/${props.user.id}`,
   )
+  myParticipantRef.value = myRef
+
   await set(myRef, {
     email: props.user.email,
     name: props.user.email?.split('@')[0], // Simple name
     joinedAt: Date.now(),
+    hasCamera: !isObservator.value && isCameraEnabled.value,
+    hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
+    isSharingScreen: false,
   })
   onDisconnect(myRef).remove() // Auto-remove on closing tab
 
@@ -1247,6 +1311,7 @@ function toggleCamera() {
   if (track) {
     track.enabled = !track.enabled
     isCameraEnabled.value = track.enabled
+    updateMyParticipantState({ hasCamera: isCameraEnabled.value })
   }
 }
 
@@ -1256,6 +1321,7 @@ function toggleMicrophone() {
   if (track) {
     track.enabled = !track.enabled
     isMicrophoneEnabled.value = track.enabled
+    updateMyParticipantState({ hasMicrophone: isMicrophoneEnabled.value })
   }
 }
 
@@ -1371,7 +1437,7 @@ async function startScreenShare() {
     })
     screenStream.value = stream
     isSharingScreen.value = true // Update state immediately
-
+    updateMyParticipantState({ isSharingScreen: true })
     if (screenVideo.value) {
       screenVideo.value.srcObject = stream
     }
@@ -1406,7 +1472,7 @@ async function stopScreenShare() {
     screenStream.value = null
   }
   isSharingScreen.value = false
-
+  updateMyParticipantState({ isSharingScreen: false })
   // Revert to camera
   if (localStream.value) {
     const videoTrack = localStream.value.getVideoTracks()[0]

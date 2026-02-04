@@ -1820,5 +1820,13 @@
       "ACCESSIBILITY_AUTOMATIC": "Automatic Evaluation",
       "WCAG_AUDIT": "WCAG Audit"
     }
+  },
+  "videoCall": {
+    "cameraOnLabel": "Camera",
+    "cameraOffLabel": "No camera",
+    "micOnLabel": "Microphone",
+    "micOffLabel": "No microphone",
+    "cameraOffOverlay": "Camera is off",
+    "sharingScreen": "Sharing screen"
   }
 }
