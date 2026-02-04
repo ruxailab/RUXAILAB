@@ -95,6 +95,12 @@ onMounted(() => {
   // Get email from route params or session storage
   email.value = route.params.email || sessionStorage.getItem('signupEmail') || 'your email'
   
+  // Prevent back button/touchpad back navigation
+  // Push multiple states to prevent going back
+  window.history.pushState({ blocked: true }, null)
+  window.history.pushState({ blocked: true }, null)
+  window.addEventListener('popstate', handleBackButton)
+  
   // Start checking for email verification every 2 seconds
   startAutoVerificationCheck()
 })
@@ -104,7 +110,19 @@ onUnmounted(() => {
   if (verificationCheckInterval) {
     clearInterval(verificationCheckInterval)
   }
+  
+  // Remove popstate listener
+  window.removeEventListener('popstate', handleBackButton)
 })
+
+const handleBackButton = (event) => {
+  // Prevent the default back behavior
+  event.preventDefault()
+  // Push state back to prevent going back
+  window.history.pushState({ blocked: true }, null)
+  // Redirect to signup
+  router.push('/signup').catch(() => {})
+}
 
 const startAutoVerificationCheck = () => {
   const MAX_ATTEMPTS = 30 // 30 attempts × 2 seconds = 60 seconds max
@@ -132,10 +150,18 @@ const startAutoVerificationCheck = () => {
     try {
       // Reload user data to check verification status
       await authController.reloadCurrentUser()
+      await currentUser.reload()
 
       // Check if email is verified
       if (currentUser.emailVerified) {
         clearInterval(verificationCheckInterval)
+
+        // Update Vuex store with verified user
+        const storeUser = store.state.Auth.user
+        if (storeUser) {
+          storeUser.emailVerified = true
+          store.commit('SET_USER', storeUser)
+        }
 
         store.commit('SET_TOAST', {
           message: 'Email verified successfully!',
@@ -145,7 +171,9 @@ const startAutoVerificationCheck = () => {
         // Redirect to dashboard after brief delay
         setTimeout(() => {
           sessionStorage.removeItem('signupEmail')
-          router.push('/admin')
+          router.push('/admin').catch(err => {
+            console.error('Navigation to admin failed:', err)
+          })
         }, 1500)
       }
     } catch (error) {
@@ -161,16 +189,27 @@ const checkVerification = async () => {
     const currentUser = auth.currentUser
     if (currentUser) {
       await authController.reloadCurrentUser()
+      await currentUser.reload()
       
       if (currentUser.emailVerified) {
         clearInterval(verificationCheckInterval)
+        
+        // Update Vuex store with verified user
+        const storeUser = store.state.Auth.user
+        if (storeUser) {
+          storeUser.emailVerified = true
+          store.commit('SET_USER', storeUser)
+        }
+        
         store.commit('SET_TOAST', {
           message: 'Email verified successfully!',
           type: 'success',
         })
         setTimeout(() => {
           sessionStorage.removeItem('signupEmail')
-          router.push('/admin')
+          router.push('/admin').catch(err => {
+            console.error('Navigation error:', err)
+          })
         }, 1500)
       } else {
         store.commit('SET_TOAST', {
@@ -178,7 +217,18 @@ const checkVerification = async () => {
           type: 'warning',
         })
       }
+    } else {
+      store.commit('SET_TOAST', {
+        message: 'No user found. Please sign up again.',
+        type: 'error',
+      })
     }
+  } catch (error) {
+    console.error('Verification check error:', error)
+    store.commit('SET_TOAST', {
+      message: 'Error checking verification status. Please try again.',
+      type: 'error',
+    })
   } finally {
     isChecking.value = false
   }
@@ -194,7 +244,17 @@ const resendVerificationEmail = async () => {
         message: 'Verification email has been sent',
         type: 'success',
       })
+    } else {
+      store.commit('SET_TOAST', {
+        message: 'No user found. Please sign up again.',
+        type: 'error',
+      })
     }
+  } catch (error) {
+    console.error('Resend verification email error:', error)
+    store.commit('SET_TOAST', {
+      type: 'error',
+    })
   } finally {
     isResending.value = false
   }
@@ -202,12 +262,13 @@ const resendVerificationEmail = async () => {
 
 const logout = async () => {
   clearInterval(verificationCheckInterval)
+  window.removeEventListener('popstate', handleBackButton)
   sessionStorage.removeItem('signupEmail')
   
   try {
     await store.dispatch('logout', { silent: true })
   } finally {
-    router.push('/signin')
+    router.push('/signup')
   }
 }
 </script>

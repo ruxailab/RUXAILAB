@@ -7,6 +7,7 @@ import HeuristicRoutes from '@/ux/Heuristic/router.js'
 import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
 import store from '@/store'
+import { auth } from '@/app/plugins/firebase'
 
 const routes = [
   ...Public,
@@ -46,6 +47,15 @@ router.beforeEach(async (to, from, next) => {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
+    
+    // Check if user email is verified for protected routes
+    // Check both Vuex store and Firebase auth state
+    const firebaseUser = auth.currentUser
+    const isEmailVerified = user?.emailVerified || (firebaseUser && firebaseUser.emailVerified)
+    
+    if (!isEmailVerified && to.path !== '/verify-email') {
+      return next('/verify-email')
+    }
   }
 
   if (user && ['/signin', '/signup'].includes(to.path)) {
@@ -56,8 +66,15 @@ router.beforeEach(async (to, from, next) => {
 })
 
 function redirect() {
-  if (!store.state.Auth.user) return '/signin'
-  const level = store.state.Auth.user.accessLevel
+  const user = store.state.Auth.user
+  const firebaseUser = auth.currentUser
+
+  if (!user) return '/signin'
+  
+  const isEmailVerified = user?.emailVerified || (firebaseUser && firebaseUser.emailVerified)
+  if (!isEmailVerified) return '/verify-email'
+  
+  const level = user.accessLevel
   if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
   return '/signin'
