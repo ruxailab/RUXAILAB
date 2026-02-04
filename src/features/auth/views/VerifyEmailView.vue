@@ -58,8 +58,11 @@
         <v-divider class="my-4" />
 
         <div class="text-center">
+          <p class="text-body-2 text-medium-emphasis mb-3">
+            Need to use a different email?
+          </p>
           <v-btn
-            variant="text"
+            variant="tonal"
             color="secondary"
             size="small"
             @click="logout"
@@ -95,6 +98,11 @@ onMounted(() => {
   // Get email from route params or session storage
   email.value = route.params.email || sessionStorage.getItem('signupEmail') || 'your email'
   
+  // Prevent back button navigation on verify-email page
+  // Add entry to history to prevent going back without verification
+  window.history.pushState(null, null, window.location.href)
+  window.addEventListener('popstate', handlePopState)
+  
   // Start checking for email verification every 2 seconds
   startAutoVerificationCheck()
 })
@@ -104,7 +112,15 @@ onUnmounted(() => {
   if (verificationCheckInterval) {
     clearInterval(verificationCheckInterval)
   }
+  
+  // Remove popstate listener
+  window.removeEventListener('popstate', handlePopState)
 })
+
+const handlePopState = () => {
+  // Prevent going back by pushing state again
+  window.history.pushState(null, null, window.location.href)
+}
 
 const startAutoVerificationCheck = () => {
   const MAX_ATTEMPTS = 30 // 30 attempts × 2 seconds = 60 seconds max
