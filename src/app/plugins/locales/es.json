@@ -760,11 +760,21 @@
     "subtitles": {
       "manage_participants": "Gestiona a las personas que participan en tu estudio"
     },
+    "filters": {
+      "search_placeholder": "Buscar colaboradores",
+      "role_label": "Filtrar por rol",
+      "status_label": "Filtrar por estado"
+    },
     "headers": {
+      "id": "ID",
       "email": "Correo electrónico",
       "role": "Rol",
+      "test_date": "Fecha de prueba",
+      "starts_at": "Inicia a las",
+      "session": "Sesión",
       "invited": "Invitado",
-      "accepted": "Aceptado",
+      "status": "Estado",
+      "actions": "Acciones",
       "more": "Más",
       "title": "Título",
       "content": "Contenido"
@@ -782,7 +792,13 @@
     "roles": {
       "administrator": "Administrador",
       "evaluator": "Evaluador",
-      "guest": "Invitado"
+      "guest": "Invitado",
+      "observator": "Observador"
+    },
+    "status": {
+      "invited": "Invitado",
+      "accepted": "Aceptado",
+      "pending": "Pendiente"
     },
     "messages": {
       "cooperators_loading": "Cargando colaboradores",
@@ -791,7 +807,9 @@
       "cancel_invitation": "¿Estás seguro de que deseas cancelar la invitación de {email}?",
       "change_role": "¿Estás seguro de que deseas cambiar el rol de {email} de {old} a {new}?",
       "message_title_hint": "Escribe un título para tu mensaje",
-      "message_content_hint": "Escribe el contenido de tu mensaje"
+      "message_content_hint": "Escribe el contenido de tu mensaje",
+      "go_to_session": "Ir a la sesión",
+      "invite_message": "Has sido invitado a colaborar en la prueba: {testTitle}"
     }
   },
   "UserTestTable": {
@@ -807,8 +825,8 @@
       "noTasks": "No tienes ninguna tarea, crea una para continuar.",
       "noVariables": "No se han añadido variables aún. Haz clic abajo para crear una nueva variable.",
       "noOptions": "No se han añadido opciones.",
-      "confirm_delete_task":"Confirmar Eliminar Tarea",
-      "sure_to_delete_task":"¿Estás seguro de que deseas eliminar la Tarea : {taskName}? Esta acción no se puede deshacer"
+      "confirm_delete_task": "Confirmar Eliminar Tarea",
+      "sure_to_delete_task": "¿Estás seguro de que deseas eliminar la Tarea : {taskName}? Esta acción no se puede deshacer"
     },
     "inputs": {
       "consent": "Consentimiento",

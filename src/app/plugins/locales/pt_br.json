@@ -758,11 +758,21 @@
     "subtitles": {
       "manage_participants": "Gerencie as pessoas que participam do seu estudo"
     },
+    "filters": {
+      "search_placeholder": "Pesquisar colaboradores",
+      "role_label": "Filtrar por função",
+      "status_label": "Filtrar por status"
+    },
     "headers": {
+      "id": "ID",
       "email": "E-mail",
       "role": "Função",
+      "test_date": "Data do teste",
+      "starts_at": "Começa em",
+      "session": "Sessão",
       "invited": "Convidado",
-      "accepted": "Aceito",
+      "status": "Status",
+      "actions": "Ações",
       "more": "Mais",
       "title": "Título",
       "content": "Conteúdo"
@@ -780,7 +790,13 @@
     "roles": {
       "administrator": "Administrador",
       "evaluator": "Avaliador",
-      "guest": "Convidado"
+      "guest": "Convidado",
+      "observator": "Observador"
+    },
+    "status": {
+      "invited": "Convidado",
+      "accepted": "Aceito",
+      "pending": "Pendente"
     },
     "messages": {
       "cooperators_loading": "Carregando colaboradores",
@@ -789,7 +805,9 @@
       "cancel_invitation": "Tem certeza de que deseja cancelar o convite de {email}?",
       "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
       "message_title_hint": "Digite um título para sua mensagem",
-      "message_content_hint": "Digite o conteúdo da sua mensagem"
+      "message_content_hint": "Digite o conteúdo da sua mensagem",
+      "go_to_session": "Ir para a sessão",
+      "invite_message": "Você foi convidado a colaborar no teste: {testTitle}"
     }
   },
   "UserTestTable": {
@@ -805,8 +823,8 @@
       "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar.",
       "noVariables": "Nenhuma variável adicionada ainda. Clique abaixo para criar uma nova variável.",
       "noOptions": "Nenhuma opção adicionada.",
-      "confirm_delete_task":"Confirmar Exclusão de Tarefa",
-      "sure_to_delete_task":"Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
+      "confirm_delete_task": "Confirmar Exclusão de Tarefa",
+      "sure_to_delete_task": "Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
     },
     "inputs": {
       "consent": "Consentimento",

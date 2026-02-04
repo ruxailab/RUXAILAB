@@ -5,7 +5,7 @@
       <v-col cols="12" md="5">
         <v-text-field
           v-model="filters.search"
-          label="Search cooperators"
+          :label="$t('HeuristicsCooperators.filters.search_placeholder')"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="comfortable"
@@ -19,7 +19,7 @@
           :items="roleOptions"
           item-title="title"
           item-value="title"
-          label="Filter by Role"
+          :label="$t('HeuristicsCooperators.filters.role_label')"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -32,7 +32,7 @@
           :items="statusFilterOptions"
           item-title="title"
           item-value="value"
-          label="Filter by Status"
+          :label="$t('HeuristicsCooperators.filters.status_label')"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -48,6 +48,8 @@
         :headers="computedHeaders"
         :items="filteredCooperators"
         :items-per-page="itemsPerPage"
+        :items-per-page-text="$t('common.table.itemsPerPage')"
+        :no-data-text="$t('Dashboard.noDataAvailable')"
         class="cooperators-table"
         item-key="email"
         item-value="email"
@@ -91,12 +93,12 @@
           >
             <template #selection="{ item: selectedItem }">
               <v-chip
-                :color="getRoleColor(selectedItem.title)"
+                :color="getRoleColor(selectedItem.value)"
                 size="small"
                 variant="flat"
               >
                 <v-icon start size="16">
-                  {{ getRoleIcon(selectedItem.title) }}
+                  {{ getRoleIcon(selectedItem.value) }}
                 </v-icon>
                 {{ selectedItem.title }}
               </v-chip>
@@ -151,7 +153,9 @@
                 <v-icon>mdi-file-document-arrow-right</v-icon>
               </v-btn>
             </template>
-            <span>Go to session</span>
+            <span>{{
+              $t('HeuristicsCooperators.messages.go_to_session')
+            }}</span>
           </v-tooltip>
         </template>
 
@@ -205,9 +209,11 @@ import { ref, computed, watch } from 'vue'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const store = useStore()
+const { t } = useI18n()
 
 const props = defineProps({
   cooperators: {
@@ -233,19 +239,19 @@ const props = defineProps({
   // Text customization props
   messageText: {
     type: String,
-    default: 'Send a message',
+    default: '',
   },
   reinviteText: {
     type: String,
-    default: 'Re-invite',
+    default: '',
   },
   removeText: {
     type: String,
-    default: 'Remove cooperator',
+    default: '',
   },
   cancelText: {
     type: String,
-    default: 'Cancel invitation',
+    default: '',
   },
   hasRoleColumn: {
     type: Boolean,
@@ -290,27 +296,61 @@ const filters = ref({
 const study = computed(() => store.getters.test)
 
 const computedHeaders = computed(() => {
-  const defaultHeaders = [{ title: 'Email', key: 'email', sortable: true }]
+  const defaultHeaders = [
+    {
+      title: t('HeuristicsCooperators.headers.email'),
+      key: 'email',
+      sortable: true,
+    },
+  ]
 
   if (props.hasRoleColumn) {
-    defaultHeaders.push({ title: 'Role', key: 'accessLevel', sortable: true })
+    defaultHeaders.push({
+      title: t('HeuristicsCooperators.headers.role'),
+      key: 'accessLevel',
+      sortable: true,
+    })
   }
 
   if (props.showDateColumns) {
     defaultHeaders.push(
-      { title: 'Test Date', key: 'testDate', sortable: true },
-      { title: 'Starts at', key: 'testHour', sortable: true },
+      {
+        title: t('HeuristicsCooperators.headers.test_date'),
+        key: 'testDate',
+        sortable: true,
+      },
+      {
+        title: t('HeuristicsCooperators.headers.starts_at'),
+        key: 'testHour',
+        sortable: true,
+      },
     )
   }
 
   if (props.showSessionColumn) {
-    defaultHeaders.push({ title: 'Session', key: 'session', sortable: false })
+    defaultHeaders.push({
+      title: t('HeuristicsCooperators.headers.session'),
+      key: 'session',
+      sortable: false,
+    })
   }
 
   defaultHeaders.push(
-    { title: 'Invited', key: 'invited', sortable: true },
-    { title: 'Status', key: 'accepted', sortable: true },
-    { title: 'Actions', key: 'actions', sortable: false },
+    {
+      title: t('HeuristicsCooperators.headers.invited'),
+      key: 'invited',
+      sortable: true,
+    },
+    {
+      title: t('HeuristicsCooperators.headers.status'),
+      key: 'accepted',
+      sortable: true,
+    },
+    {
+      title: t('HeuristicsCooperators.headers.actions'),
+      key: 'actions',
+      sortable: false,
+    },
   )
 
   return props.baseHeaders.length > 0 ? props.baseHeaders : defaultHeaders

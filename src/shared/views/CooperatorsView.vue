@@ -70,6 +70,8 @@
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
       :no-data-text="$t('HeuristicsCooperators.messages.no_users')"
       :role-label="$t('HeuristicsCooperators.headers.role')"
+      :message-label="$t('UsabilityCooperators.inviteMessage')"
+      :message-placeholder="$t('UsabilityCooperators.placeholderMessage')"
       :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
       :send-text="$t('HeuristicsCooperators.actions.send')"
       @send-invitations="handleSendInvitations"

@@ -760,11 +760,21 @@
     "subtitles": {
       "manage_participants": "إدارة الأشخاص الذين يشاركون في دراستك"
     },
+    "filters": {
+      "search_placeholder": "البحث عن المتعاونين",
+      "role_label": "تصفية حسب الدور",
+      "status_label": "تصفية حسب الحالة"
+    },
     "headers": {
+      "id": "المعرف",
       "email": "البريد الإلكتروني",
       "role": "الدور",
+      "test_date": "تاريخ الاختبار",
+      "starts_at": "يبدأ في",
+      "session": "الجلسة",
       "invited": "تمت الدعوة",
-      "accepted": "تم القبول",
+      "status": "الحالة",
+      "actions": "الإجراءات",
       "more": "المزيد",
       "title": "العنوان",
       "content": "المحتوى"
@@ -782,7 +792,13 @@
     "roles": {
       "administrator": "المدير",
       "evaluator": "المقيم",
-      "guest": "الضيف"
+      "guest": "الضيف",
+      "observator": "مراقب"
+    },
+    "status": {
+      "invited": "تمت الدعوة",
+      "accepted": "تم القبول",
+      "pending": "قيد الانتظار"
     },
     "messages": {
       "cooperators_loading": "جارٍ تحميل المتعاونين",
@@ -791,7 +807,9 @@
       "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
-      "message_content_hint": "اكتب محتوى رسالتك"
+      "message_content_hint": "اكتب محتوى رسالتك",
+      "go_to_session": "الذهاب إلى الجلسة",
+      "invite_message": "لقد تمت دعوتك للتعاون في الاختبار: {testTitle}"
     }
   },
   "UserTestTable": {
@@ -807,8 +825,8 @@
       "noTasks": "ليس لديك أي مهمة، قم بإنشاء واحدة للمتابعة.",
       "noVariables": "لم تتم إضافة متغيرات بعد. انقر أدناه لإنشاء متغير جديد.",
       "noOptions": "لم تتم إضافة خيارات.",
-      "confirm_delete_task":"تأكيد حذف المهمة",
-      "sure_to_delete_task":"هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
+      "confirm_delete_task": "تأكيد حذف المهمة",
+      "sure_to_delete_task": "هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
     },
     "inputs": {
       "consent": "الموافقة",

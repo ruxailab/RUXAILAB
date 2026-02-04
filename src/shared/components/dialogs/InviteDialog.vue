@@ -45,6 +45,8 @@
         <v-select
           v-model="selectedRole"
           :items="roleOptions"
+          item-title="title"
+          item-value="value"
           :label="roleLabel || 'Role'"
           variant="outlined"
           density="comfortable"

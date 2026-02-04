@@ -758,11 +758,21 @@
     "subtitles": {
       "manage_participants": "Manage people who participate in your study"
     },
+    "filters": {
+      "search_placeholder": "Search cooperators",
+      "role_label": "Filter by Role",
+      "status_label": "Filter by Status"
+    },
     "headers": {
+      "id": "ID",
       "email": "Email",
       "role": "Role",
+      "test_date": "Test Date",
+      "starts_at": "Starts at",
+      "session": "Session",
       "invited": "Invited",
-      "accepted": "Accepted",
+      "status": "Status",
+      "actions": "Actions",
       "more": "More",
       "title": "Title",
       "content": "Content"
@@ -780,7 +790,13 @@
     "roles": {
       "administrator": "Administrator",
       "evaluator": "Evaluator",
-      "guest": "Guest"
+      "guest": "Guest",
+      "observator": "Observator"
+    },
+    "status": {
+      "invited": "Invited",
+      "accepted": "Accepted",
+      "pending": "Pending"
     },
     "messages": {
       "cooperators_loading": "Loading Cooperators",
@@ -789,7 +805,9 @@
       "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
       "message_title_hint": "Type a title for your message",
-      "message_content_hint": "Type the content of your message"
+      "message_content_hint": "Type the content of your message",
+      "go_to_session": "Go to session",
+      "invite_message": "You have been invited to collaborate in the test: {testTitle}"
     }
   },
   "UserTestTable": {
@@ -805,8 +823,8 @@
       "noTasks": "You don't have any task, create one to proceed.",
       "noVariables": "No variables added yet. Click below to create a new variable.",
       "noOptions": "No options added.",
-      "confirm_delete_task":"Confirm Delete Task",
-      "sure_to_delete_task":"Are you sure you want to delete Task : {taskName}? This action cannot be undone"
+      "confirm_delete_task": "Confirm Delete Task",
+      "sure_to_delete_task": "Are you sure you want to delete Task : {taskName}? This action cannot be undone"
     },
     "inputs": {
       "consent": "Consent",

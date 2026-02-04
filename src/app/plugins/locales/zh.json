@@ -758,11 +758,21 @@
     "subtitles": {
       "manage_participants": "管理参与您研究的人员"
     },
+    "filters": {
+      "search_placeholder": "搜索合作者",
+      "role_label": "按角色筛选",
+      "status_label": "按状态筛选"
+    },
     "headers": {
+      "id": "ID",
       "email": "电子邮箱",
       "role": "角色",
+      "test_date": "测试日期",
+      "starts_at": "开始时间",
+      "session": "会话",
       "invited": "已邀请",
-      "accepted": "已接受",
+      "status": "状态",
+      "actions": "操作",
       "more": "更多",
       "title": "标题",
       "content": "内容"
@@ -780,7 +790,13 @@
     "roles": {
       "administrator": "管理员",
       "evaluator": "评估者",
-      "guest": "访客"
+      "guest": "访客",
+      "observator": "观察员"
+    },
+    "status": {
+      "invited": "已邀请",
+      "accepted": "已接受",
+      "pending": "待处理"
     },
     "messages": {
       "cooperators_loading": "加载合作者中",
@@ -789,7 +805,9 @@
       "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
       "message_title_hint": "输入您的消息标题",
-      "message_content_hint": "输入您的消息内容"
+      "message_content_hint": "输入您的消息内容",
+      "go_to_session": "前往会话",
+      "invite_message": "您已被邀请参与测试：{testTitle} 的合作"
     }
   },
   "UserTestTable": {
@@ -805,8 +823,8 @@
       "noTasks": "您没有任何任务，请创建一个以继续。",
       "noVariables": "尚未添加任何变量。点击下方创建新变量。",
       "noOptions": "没有添加选项。",
-      "confirm_delete_task":"确认删除任务",
-      "sure_to_delete_task":"您确定要删除任务 : {taskName} 吗？此操作无法撤消"
+      "confirm_delete_task": "确认删除任务",
+      "sure_to_delete_task": "您确定要删除任务 : {taskName} 吗？此操作无法撤消"
     },
     "inputs": {
       "consent": "同意",
