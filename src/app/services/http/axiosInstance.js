@@ -87,7 +87,7 @@ axiosInstance.interceptors.request.use(
     return config
   },
   (error) => {
-    return Promise.reject(error)
+    throw error
   },
 )
 
@@ -104,7 +104,7 @@ axiosInstance.interceptors.response.use(
 
     // If config doesn't exist or retry is disabled, reject immediately
     if (!config || config._noRetry) {
-      return Promise.reject(standardizeError(error))
+      throw standardizeError(error)
     }
 
     // Check if we should retry
@@ -130,7 +130,7 @@ axiosInstance.interceptors.response.use(
     }
 
     // Max retries reached or not retryable, reject with standardized error
-    return Promise.reject(standardizeError(error))
+    throw standardizeError(error)
   },
 )
 
