@@ -429,28 +429,19 @@
     <!-- Empty State for No Heuristics -->
     <v-row v-if="filteredHeuristics.length === 0">
       <v-col cols="12">
-        <v-card class="text-center pa-8 empty-heuristics" variant="outlined">
+        <v-card class="text-center py-16 empty-heuristics" variant="outlined">
           <v-icon
-            icon="mdi-file-remove"
+            icon="mdi-clipboard-text-outline"
             size="64"
-            color="primary"
+            color="grey-darken-1"
             class="mb-4"
           />
-          <h3 class="text-h5 text-ternary mb-2">
+          <h3 class="text-h5 font-weight-bold text-grey-darken-3 mb-2">
             {{ $t('HeuristicsTable.titles.noHeuristicsFound') }}
           </h3>
-          <p class="text-body-1 text-ternary empty-state-text">
+          <p class="text-body-1 text-grey-darken-1">
             {{ $t('HeuristicsTable.messages.noHeuristics') }}
           </p>
-          <v-btn
-            color="primary"
-            variant="outlined"
-            prepend-icon="mdi-plus"
-            :disabled="testAnswerDocLength > 0"
-            @click="dialogHeuris = true"
-          >
-            {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
-          </v-btn>
         </v-card>
       </v-col>
     </v-row>
