@@ -790,6 +790,7 @@
       "remove_cooperator": "هل أنت متأكد أنك تريد إزالة {email} من المتعاونين؟",
       "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
+      "change_role_title": "تغيير الدور",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
       "message_content_hint": "اكتب محتوى رسالتك"
     }
@@ -807,8 +808,8 @@
       "noTasks": "ليس لديك أي مهمة، قم بإنشاء واحدة للمتابعة.",
       "noVariables": "لم تتم إضافة متغيرات بعد. انقر أدناه لإنشاء متغير جديد.",
       "noOptions": "لم تتم إضافة خيارات.",
-      "confirm_delete_task":"تأكيد حذف المهمة",
-      "sure_to_delete_task":"هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
+      "confirm_delete_task": "تأكيد حذف المهمة",
+      "sure_to_delete_task": "هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
     },
     "inputs": {
       "consent": "الموافقة",
