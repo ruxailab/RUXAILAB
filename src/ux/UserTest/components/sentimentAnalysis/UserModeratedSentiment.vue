@@ -141,7 +141,7 @@
 
 <script>
 // External Libraries
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 
 // Components
 import ModeratedTestCard from '@/ux/UserTest/components/ModeratedTestCard.vue'
@@ -289,7 +289,7 @@ export default {
       this.overlay = { visible: true, text: 'Analyzing...' }
 
       try {
-        const response = await axios.post(
+        const response = await httpClient.post(
           process.env.VUE_APP_TRANSCRIPTION_SENTIMENT_API_BASE_URL + '/process',
           {
             url: task.audioRecordURL,

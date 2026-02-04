@@ -13,7 +13,7 @@ import {
   EmailAuthProvider,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import EmailController from '@/shared/controllers/EmailController'
 
 /**
@@ -142,7 +142,7 @@ export default class AuthController {
 
   async deleteUserData(userId) {
     try {
-      await axios.post(
+      await httpClient.post(
         process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth',
         { data: { userId } },
       )

@@ -48,7 +48,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import {
   buildHeuristicsEvaluator,
   buildHeuristicsStatistics,
@@ -129,7 +129,7 @@ const submitPdf = async () => {
       ],
     }
 
-    const response = await axios.post(
+    const response = await httpClient.post(
       `${process.env.VUE_APP_LARAVEL_PDF}/generate-pdf`,
       payload,
       { responseType: 'blob' },

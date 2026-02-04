@@ -473,7 +473,7 @@ import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer.vue'
 import RadarWeight from '@/ux/Heuristic/components/weights_evaluation/RadarWeight.vue'
 import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue'
 
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import {
   standardDeviation,
   finalResult,
@@ -737,7 +737,7 @@ const pythonFunction = async () => {
   const caminhoTestScore = store.state.Tests.scoresPercentage || []
 
   try {
-    const response = await axios.post(
+    const response = await httpClient.post(
       process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/say_hello',
       {
         caminhoTestStructure,

@@ -190,7 +190,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import { useStore } from 'vuex'
 
 const props = defineProps({
@@ -219,7 +219,7 @@ onMounted(async () => {
   try {
     console.log(calibrationConfig)
 
-    const res = await axios.post(
+    const res = await httpClient.post(
       process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
       {
         k: calibrationConfig.value.pointNumber,

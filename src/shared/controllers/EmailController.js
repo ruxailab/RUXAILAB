@@ -1,4 +1,4 @@
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 
 export default class EmailController {
   /**
@@ -14,12 +14,20 @@ export default class EmailController {
    */
   async send(payload) {
     try {
-      await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/sendEmail', {
-        data: payload,
-      })
+      await httpClient.post(
+        process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/sendEmail',
+        {
+          data: payload,
+        },
+      )
       return { success: true, message: 'Email sent successfully.' }
     } catch (error) {
-      return { success: false, message: error.message }
+      // Error is already standardized by interceptor
+      return {
+        success: false,
+        message: error.message || 'Failed to send email',
+        code: error.code,
+      }
     }
   }
 }

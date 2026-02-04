@@ -498,7 +498,7 @@ import UxMetricCard from '../answers/UxMetricCard.vue'
 import CommentListCard from '../answers/CommentListCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
 import AnswersTimeline from '../answers/AnswersTimeline.vue'
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import { calculateSUSScore } from '../../utils/susCalculator'
 import { getNASATLXData } from '../../utils/nasaTlxData'
 import { useFilterDefinitions } from './useFilterDefinitions'
@@ -669,7 +669,7 @@ const averageTimePerTask = computed(() => {
 
 const downloadPdfResume = async () => {
   try {
-    const response = await axios.post(
+    const response = await httpClient.post(
       process.env.VUE_APP_LARAVEL_PDF + '/generate-pdf',
       {
         payload: {
@@ -949,7 +949,7 @@ const calculateEfficiency = () => {
   }
 }
 
-() => {
+;() => {
   if (!filteredSessions.value.length) return 0
 
   let totalSatisfaction = 0

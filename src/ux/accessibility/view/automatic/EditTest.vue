@@ -206,7 +206,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 
 export default {
@@ -260,7 +260,7 @@ export default {
 
         // Use env variable for API endpoint
         const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API
-        const response = await axios.post(apiUrl, {
+        const response = await httpClient.post(apiUrl, {
           url: this.url,
           testId: testId,
         })

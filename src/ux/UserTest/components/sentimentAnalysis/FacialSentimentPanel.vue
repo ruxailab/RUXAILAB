@@ -116,7 +116,7 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js'
-import axios from 'axios'
+import httpClient from '@/app/services/http/axiosInstance'
 import { useStore } from 'vuex'
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
 
@@ -218,7 +218,7 @@ function extractVideoNameFromUrl(url) {
 const analyzeVideo = async (videoPath) => {
   try {
     isAnalyzing.value = true
-    const res = await axios.post(
+    const res = await httpClient.post(
       process.env.VUE_APP_FACIAL_SENTIMENT_API_BASE_URL + '/process_video',
       {
         video_name: videoPath,
@@ -242,7 +242,7 @@ const analyzeVideo = async (videoPath) => {
     })
     await store.dispatch('getCurrentTestAnswerDoc')
   } catch (err) {
-    console.error('❌ Erro ao enviar caminho do vídeo:', err.message || err)
+    console.error('❌ Error analyzing video:', err.message || err)
   } finally {
     isAnalyzing.value = false
   }
