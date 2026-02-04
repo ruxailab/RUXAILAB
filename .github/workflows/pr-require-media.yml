@@ -1,0 +1,35 @@
+name: PR Require Video or Image
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  require-media:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate PR has video or image
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || "";
+
+            const mediaRegex = /(https?:\/\/.*\.(png|jpg|jpeg|gif|mp4|mov|webm))/i;
+            const hasMedia = mediaRegex.test(body);
+
+            if (!hasMedia) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: "Please add a screenshot or short video demonstrating the change."
+              });
+
+              core.setFailed("PR must include at least one image or video.");
+            }

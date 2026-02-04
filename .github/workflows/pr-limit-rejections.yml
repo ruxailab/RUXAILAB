@@ -1,0 +1,46 @@
+name: PR Reject Limit
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  reject-limit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check rejected PR count
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const author = pr.user.login;
+
+            const pulls = await github.paginate(
+              github.rest.pulls.list,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: "closed",
+                per_page: 100
+              }
+            );
+
+            const rejectedPRs = pulls.filter(p =>
+              p.user.login === author && !p.merged_at
+            );
+
+            if (rejectedPRs.length >= 2) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `This PR was blocked because you already have ${rejectedPRs.length} previously rejected PRs. Please address feedback before opening new ones.`
+              });
+
+              core.setFailed("Author exceeded rejected PR limit.");
+            }
