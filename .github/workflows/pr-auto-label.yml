@@ -279,3 +279,116 @@ jobs:
             } else {
               console.log("No new labels to add");
             }
+            // 6. Limit open PRs per author (anti-spam)
+            const MAX_OPEN_PRS = 2;
+
+            // Skip for bots
+            if (!isBot) {
+              const { data: openPRs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: "open",
+                per_page: 100,
+              });
+
+              const userOpenPRs = openPRs.filter(p =>
+                p.user.login === pr.user.login && p.number !== prNumber
+              );
+
+              if (userOpenPRs.length >= MAX_OPEN_PRS) {
+                const spamWarning = `
+            🚫 **Too many open Pull Requests**
+
+            You already have **${userOpenPRs.length + 1} open PRs** in this repository.
+
+            Please finish or close existing PRs before opening new ones.
+            `;
+
+                // Avoid duplicate comments
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                });
+
+                const alreadyWarned = comments.some(c =>
+                  c.body && c.body.includes("Too many open Pull Requests")
+                );
+
+                if (!alreadyWarned) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: spamWarning,
+                  });
+                }
+
+                labelsToAdd.push("pr-limit-exceeded");
+
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  state: "closed",
+                });
+
+                // Hard fail to block merge
+                throw new Error("Author exceeded max number of open PRs");
+              }
+            }
+            // 7. Media requirement: at least one image or video
+            if (!isBot) {
+              const mediaFileRegex = /\.(png|jpe?g|gif|webp|mp4|mov|webm)$/i;
+
+              const hasMediaFile = changedPaths.some(p => mediaFileRegex.test(p));
+              const markdownMediaRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\.(png|jpe?g|gif|webp|mp4|mov|webm))\)/i;
+
+              const directLinkMediaRegex = /(https?:\/\/[^\s]+\.(png|jpe?g|gif|webp|mp4|mov|webm))/i;
+
+              const hasMediaLink =
+                markdownMediaRegex.test(prBody) || directLinkMediaRegex.test(prBody);
+
+
+              if (!hasMediaFile && !hasMediaLink) {
+                const mediaWarning = `
+            📸 **Media required**
+
+            This PR must include **at least one image or video**:
+            - as a changed file (png, jpg, gif, mp4, etc), or
+            - as a link in the PR description.
+
+            Please add media to help reviewers understand the change.
+            `;
+
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                });
+
+                const alreadyWarned = comments.some(c =>
+                  c.body && c.body.includes("Media required")
+                );
+
+                if (!alreadyWarned) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: mediaWarning,
+                  });
+                }
+
+                labelsToAdd.push("needs-media");
+
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  state: "closed",
+                });
+
+                throw new Error("PR closed due to missing required media");
+              }
+            }
