@@ -342,12 +342,13 @@ jobs:
               const mediaFileRegex = /\.(png|jpe?g|gif|webp|mp4|mov|webm)$/i;
 
               const hasMediaFile = changedPaths.some(p => mediaFileRegex.test(p));
-              const markdownMediaRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\.(png|jpe?g|gif|webp|mp4|mov|webm))\)/i;
-
-              const directLinkMediaRegex = /(https?:\/\/[^\s]+\.(png|jpe?g|gif|webp|mp4|mov|webm))/i;
-
-              const hasMediaLink =
-                markdownMediaRegex.test(prBody) || directLinkMediaRegex.test(prBody);
+              
+              // Match media URLs with optional query strings (e.g., .png?jwt=...)
+              const mediaUrlRegex = /\.(png|jpe?g|gif|webp|mp4|mov|webm)(\?[^\s)]*)?/i;
+              // Match GitHub's user-content CDN URLs (private images/videos, user-attachments, etc.)
+              const githubAssetRegex = /https?:\/\/(user-images\.githubusercontent\.com|private-user-images\.githubusercontent\.com|github\.com\/(user-attachments\/assets|[^/]+\/[^/]+\/assets))\//i;
+              
+              const hasMediaLink = mediaUrlRegex.test(prBody) || githubAssetRegex.test(prBody);
 
 
               if (!hasMediaFile && !hasMediaLink) {
