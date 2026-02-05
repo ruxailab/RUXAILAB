@@ -63,7 +63,7 @@ class TestCalculateEigen(unittest.TestCase):
             [0.5, 1.0]
         ])
         
-        _, weights, cr, interpretation = calculate_eigen(matrix)
+        _, weights, _, _ = calculate_eigen(matrix)
         
         # Weights should sum to 1
         self.assertAlmostEqual(np.sum(weights), 1.0, places=5)
@@ -74,7 +74,7 @@ class TestCalculateEigen(unittest.TestCase):
         # Consistent matrix (identity-like)
         matrix = np.eye(3)
         
-        _, weights, cr, interpretation = calculate_eigen(matrix)
+        _, _, _, interpretation = calculate_eigen(matrix)
         
         # Should be consistent (CR <= 0.1)
         self.assertIn("Consistent", interpretation)
