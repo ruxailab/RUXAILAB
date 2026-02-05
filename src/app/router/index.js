@@ -7,6 +7,7 @@ import HeuristicRoutes from '@/ux/Heuristic/router.js'
 import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
 import store from '@/store'
+import { getAccessibilityPreviewAccess } from '@/app/router/accessibilityPreviewGuard.js'
 
 const routes = [
   ...Public,
@@ -27,13 +28,9 @@ router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
   let user = store.state.Auth.user
 
-  // Special handling for accessibility preview routes - allow complete public access
-  const isAccessibilityPreview =
-    to.path.includes('/accessibility/') && to.path.includes('/preview/')
-
-  if (isAccessibilityPreview) {
-    return next() // Allow immediate access without any checks
-  }
+  const accessibilityPreviewAccess = getAccessibilityPreviewAccess(to)
+  if (accessibilityPreviewAccess === 'allow') return next()
+  if (accessibilityPreviewAccess === 'redirect') return next(redirect())
 
   if (!user) {
     await store.dispatch('autoSignIn')
