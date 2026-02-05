@@ -36,6 +36,9 @@ class TestCalculateEigen(unittest.TestCase):
         
         # Check that weights are positive
         self.assertTrue(np.all(weights > 0))
+        
+        # Verify interpretation is a string
+        self.assertIsInstance(interpretation, str)
 
     def test_calculate_eigen_output_shape(self):
         """Test that calculate_eigen returns correct output shape for weights"""

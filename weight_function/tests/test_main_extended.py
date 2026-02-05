@@ -85,7 +85,7 @@ class TestFillAhpMatrix(unittest.TestCase):
         ahp_df = fill_ahp_matrix(self.ahp_df.copy(), 'A', ['B', 'C'], 'Moderate Importance')
         
         # Check that values were filled correctly
-        self.assertEqual(ahp_df.loc['A', 'B'], 2)  # Moderate = 2
+        self.assertEqual(ahp_df.loc['A', 'B'], 2)  
         self.assertEqual(ahp_df.loc['B', 'A'], 0.5)  # Reciprocal
         self.assertEqual(ahp_df.loc['A', 'C'], 2)
         self.assertEqual(ahp_df.loc['C', 'A'], 0.5)
