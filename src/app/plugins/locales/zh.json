@@ -110,7 +110,8 @@
     "confirm_deletion": "确认删除",
     "action_cannot_be_undone": "此操作无法撤销",
     "user": "用户",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "每页项目数："
   },
   "storage": {
     "pageTitle": "存储",
@@ -1273,6 +1274,7 @@
         "allStudies": "所有研究",
         "myStudies": "我的研究",
         "whereICollaborate": "我参与协作的",
+        "allMethods": "所有方法",
         "lessThan10": "< 10名参与者",
         "between10And50": "10 – 50名参与者",
         "moreThan50": "> 50名参与者"

@@ -97,6 +97,7 @@
     "action_cannot_be_undone": "This action cannot be undone",
     "user": "User",
     "id": "ID",
+    "itemsPerPage": "Items per page:",
     "table": {
       "itemsPerPage": "Items per page:",
       "type": "Type",
@@ -1273,6 +1274,7 @@
         "allStudies": "All Studies",
         "myStudies": "My Studies",
         "whereICollaborate": "Where I Collaborate",
+        "allMethods": "All Methods",
         "lessThan10": "< 10 participants",
         "between10And50": "10 – 50 participants",
         "moreThan50": "> 50 participants"
@@ -1321,6 +1323,7 @@
       "method": "Method",
       "filters": {
         "allMethods": "All Methods",
+        "all": "All",
         "heuristicEvaluation": "Heuristic Evaluation",
         "userUnmoderated": "User Unmoderated",
         "userModerated": "User Moderated",

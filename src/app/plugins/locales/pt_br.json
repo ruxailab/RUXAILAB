@@ -110,7 +110,8 @@
     "confirm_deletion": "Confirmar exclusão",
     "action_cannot_be_undone": "Esta ação não pode ser desfeita",
     "user": "Usuário",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Itens por página:"
   },
   "storage": {
     "pageTitle": "Armazenamento",
@@ -1273,6 +1274,7 @@
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
         "whereICollaborate": "Onde eu colaboro",
+        "allMethods": "Todos os métodos",
         "lessThan10": "< 10 participantes",
         "between10And50": "10 – 50 participantes",
         "moreThan50": "> 50 participantes"

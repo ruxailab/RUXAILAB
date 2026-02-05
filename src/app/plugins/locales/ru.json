@@ -110,7 +110,8 @@
     "confirm_deletion": "Подтвердите удаление",
     "action_cannot_be_undone": "Это действие нельзя отменить",
     "user": "Пользователь",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Элементов на странице:"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -1273,6 +1274,7 @@
         "allStudies": "Все исследования",
         "myStudies": "Мои исследования",
         "whereICollaborate": "Где я сотрудничаю",
+        "allMethods": "Все методы",
         "lessThan10": "< 10 участников",
         "between10And50": "10 – 50 участников",
         "moreThan50": "> 50 участников"

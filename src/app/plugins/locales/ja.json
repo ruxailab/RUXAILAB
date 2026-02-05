@@ -110,7 +110,8 @@
     "confirm_deletion": "削除を確定する",
     "action_cannot_be_undone": "この操作は元に戻せません",
     "user": "ユーザー",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "ページごとの項目数："
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -1273,6 +1274,7 @@
         "allStudies": "すべての研究",
         "myStudies": "私の研究",
         "whereICollaborate": "コラボレーション中",
+        "allMethods": "すべての方法",
         "lessThan10": "< 10名の参加者",
         "between10And50": "10 – 50名の参加者",
         "moreThan50": "> 50名の参加者"
