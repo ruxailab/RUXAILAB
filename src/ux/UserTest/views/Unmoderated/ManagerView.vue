@@ -186,8 +186,11 @@ const navigator = computed(() => {
 onMounted(async () => {
   await store.dispatch('getStudy', { id: route.params.id })
   await store.dispatch('getCurrentTestAnswerDoc')
-  // Enable access control after study is loaded
-  watchAccessAndRedirect()
+  // Only check access for the manager route itself, not child routes
+  // Child routes (edit, report, settings, etc.) have their own access checks
+  if (route.name === 'UserUnmoderatedManagerView') {
+    watchAccessAndRedirect()
+  }
 })
 </script>
 
