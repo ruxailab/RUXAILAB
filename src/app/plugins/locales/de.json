@@ -798,7 +798,8 @@
       "cancel_invitation": "Sind Sie sicher, dass Sie {email} aus den Mitarbeitern stornieren möchten?",
       "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
       "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
-      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein"
+      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein",
+      "invite_message": "Sie wurden eingeladen, am Test {testTitle} teilzunehmen"
     }
   },
   "UserTestTable": {

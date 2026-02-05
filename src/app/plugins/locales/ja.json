@@ -795,7 +795,8 @@
       "cancel_invitation": "{email}の招待を取り消してもよろしいですか？",
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
       "message_title_hint": "メッセージのタイトルを入力",
-      "message_content_hint": "メッセージの内容を入力"
+      "message_content_hint": "メッセージの内容を入力",
+      "invite_message": "テスト {testTitle} への参加に招待されました"
     }
   },
   "UserTestTable": {

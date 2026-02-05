@@ -797,7 +797,8 @@
       "cancel_invitation": "¿Estás seguro de que deseas cancelar la invitación de {email}?",
       "change_role": "¿Estás seguro de que deseas cambiar el rol de {email} de {old} a {new}?",
       "message_title_hint": "Escribe un título para tu mensaje",
-      "message_content_hint": "Escribe el contenido de tu mensaje"
+      "message_content_hint": "Escribe el contenido de tu mensaje",
+      "invite_message": "Has sido invitado a participar en la prueba {testTitle}"
     }
   },
   "UserTestTable": {

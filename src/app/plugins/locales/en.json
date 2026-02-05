@@ -795,7 +795,8 @@
       "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
       "message_title_hint": "Type a title for your message",
-      "message_content_hint": "Type the content of your message"
+      "message_content_hint": "Type the content of your message",
+      "invite_message": "You have been invited to participate in the test {testTitle}"
     }
   },
   "UserTestTable": {
