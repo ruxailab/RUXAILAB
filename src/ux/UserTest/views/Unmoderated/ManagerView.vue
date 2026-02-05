@@ -151,7 +151,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 // Access control - blocks Observer, allows Admin/Evaluator/Guest
-const { user, test, accessLevel, watchAccessAndRedirect } = useStudyAccess({
+const { test, accessLevel, watchAccessAndRedirect } = useStudyAccess({
   routeType: 'manager',
   redirectPath: '/',
 })

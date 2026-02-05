@@ -3,13 +3,10 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { showError } from '@/shared/utils/toast'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 
-export const ACCESS_LEVEL = {
-  ADMIN: 0,
-  EVALUATOR: 1,
-  GUEST: 2,
-  OBSERVATOR: 3,
-}
+// Re-export ACCESS_LEVEL for convenience
+export { ACCESS_LEVEL }
 
 /**
  * Route access permissions matrix
@@ -41,8 +38,8 @@ export function getStudyAccessLevel(user, test) {
   if (!user) return null
   if (!test) return null
 
-  // Super admin has full access
-  if (user.accessLevel === 0) return ACCESS_LEVEL.ADMIN
+  // Super admin or admin has full access
+  if (user.accessLevel <= 0) return ACCESS_LEVEL.ADMIN
 
   // Test owner has full access
   if (test.testAdmin?.userDocId === user.id) return ACCESS_LEVEL.ADMIN
@@ -68,7 +65,8 @@ export function canAccessRoute(accessLevel, routeType) {
   if (accessLevel === null) return false
 
   const allowed = ROUTE_PERMISSIONS[routeType]
-  if (!allowed) return true // Unknown route, allow by default
+  // Deny-by-default: unknown routes are not allowed
+  if (!allowed) return false
 
   return allowed.includes(accessLevel)
 }
@@ -138,13 +136,15 @@ export function useStudyAccess(options = {}) {
    * Call this in onMounted or setup to enable auto-redirect
    */
   function watchAccessAndRedirect() {
-    watchEffect(() => {
-      if (user.value != null && test.value != null) {
+    const stop = watchEffect(() => {
+      if (user.value !== null && test.value !== null) {
         if (!hasAccess.value) {
           const isPrivate = isPrivateStudyWithNoAccess.value
           const messageKey = getAccessDeniedMessage(routeType, isPrivate)
           showError(t(messageKey))
           router.push(redirectPath)
+          // Stop watching after redirect to avoid repeated triggers
+          stop()
         }
       }
     })
