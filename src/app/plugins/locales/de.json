@@ -203,6 +203,16 @@
     "daysAgo": "vor {count}T",
     "newNotification": "Sie haben eine neue Benachrichtigung."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Zusammenarbeit konnte nicht akzeptiert werden. Bitte versuchen Sie es erneut.",
+      "invalidCollaboration": "Diese Einladung zur Zusammenarbeit ist ungültig oder abgelaufen."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Rolle auf {role} aktualisiert für: {users}",
+    "inviteSent": "Einladung gesendet an: {users}"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "studies": "Studien",

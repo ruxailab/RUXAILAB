@@ -203,6 +203,16 @@
     "daysAgo": "{count} दिन पहले",
     "newNotification": "आपके पास एक नई सूचना है।"
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "सहयोग स्वीकार करने में विफल। कृपया पुनः प्रयास करें।",
+      "invalidCollaboration": "यह सहयोग निमंत्रण अमान्य है या समाप्त हो गया है।"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "{users} के लिए भूमिका को {role} में अपडेट किया गया",
+    "inviteSent": "निमंत्रण भेजा गया: {users}"
+  },
   "navigation": {
     "dashboard": "डैशबोर्ड",
     "studies": "अध्ययन",

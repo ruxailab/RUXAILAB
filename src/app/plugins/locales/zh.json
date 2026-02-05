@@ -203,6 +203,16 @@
     "daysAgo": "{count}天前",
     "newNotification": "您有一条新通知。"
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "接受协作失败。请重试。",
+      "invalidCollaboration": "此协作邀请无效或已过期。"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "已将 {users} 的角色更新为 {role}",
+    "inviteSent": "邀请已发送至：{users}"
+  },
   "navigation": {
     "dashboard": "仪表盘",
     "studies": "研究",

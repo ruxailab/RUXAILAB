@@ -203,6 +203,16 @@
     "daysAgo": "il y a {count}j",
     "newNotification": "Vous avez une nouvelle notification."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Échec de l'acceptation de la collaboration. Veuillez réessayer.",
+      "invalidCollaboration": "Cette invitation de collaboration est invalide ou a expiré."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Rôle mis à jour en {role} pour : {users}",
+    "inviteSent": "Invitation envoyée à : {users}"
+  },
   "navigation": {
     "dashboard": "Tableau de bord",
     "studies": "Études",
