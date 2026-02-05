@@ -8,6 +8,9 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 // Re-export ACCESS_LEVEL for convenience
 export { ACCESS_LEVEL }
 
+// Module-level tracking to prevent double redirects across components
+let globalRedirectInProgress = false
+
 /**
  * Route access permissions matrix
  * Key: route name suffix (e.g., 'edit', 'report')
@@ -141,15 +144,26 @@ export function useStudyAccess(options = {}) {
    * Call this in onMounted or setup to enable auto-redirect
    */
   function watchAccessAndRedirect() {
+    let hasRedirected = false
     const stop = watchEffect(() => {
+      // Prevent double redirects within this watcher and globally
+      if (hasRedirected || globalRedirectInProgress) return
       if (user.value !== null && test.value !== null) {
         if (!hasAccess.value) {
+          hasRedirected = true
+          globalRedirectInProgress = true
           const isPrivate = isPrivateStudyWithNoAccess.value
           const messageKey = getAccessDeniedMessage(routeType, isPrivate)
           showError(t(messageKey))
           router.push(redirectPath)
-          // Stop watching after redirect to avoid repeated triggers
-          stop()
+          // Stop watching after redirect - use nextTick to ensure stop is assigned
+          Promise.resolve().then(() => {
+            stop()
+            // Reset global flag after navigation completes
+            setTimeout(() => {
+              globalRedirectInProgress = false
+            }, 100)
+          })
         }
       }
     })
