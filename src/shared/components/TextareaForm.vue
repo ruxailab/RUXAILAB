@@ -30,7 +30,10 @@
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   title: {
@@ -50,9 +53,9 @@ watch(value, (newValue) => {
   emit('update:value', newValue)
 })
 
-const editorOptions = {
+const editorOptions = computed(() => ({
   theme: 'snow',
-  placeholder: 'Enter text here...',
+  placeholder: t('common.enterTextHere'),
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline'],
@@ -61,7 +64,7 @@ const editorOptions = {
       ['clean'],
     ],
   },
-}
+}))
 </script>
 
 <style scoped>

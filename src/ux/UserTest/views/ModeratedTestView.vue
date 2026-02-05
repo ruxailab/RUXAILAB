@@ -994,16 +994,18 @@ const completeStep = async (id, type, userCompleted = true) => {
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
-      items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      if (items.value[1]?.value?.[id]) {
+        items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      }
       allTasksCompleted.value = true
 
-      for (let i = 0; i < items.value[1].value.length; i++) {
+      for (let i = 0; i < items.value[1]?.value?.length || 0; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false
           break
         }
       }
-      if (allTasksCompleted.value) {
+      if (allTasksCompleted.value && items.value[1]) {
         items.value[1].icon = 'mdi-check-circle-outline'
       }
       if (id < localTestAnswer.tasks.length - 1) {
