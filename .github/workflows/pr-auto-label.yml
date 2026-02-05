@@ -342,7 +342,13 @@ jobs:
               const mediaFileRegex = /\.(png|jpe?g|gif|webp|mp4|mov|webm)$/i;
 
               const hasMediaFile = changedPaths.some(p => mediaFileRegex.test(p));
-              const hasMediaLink = mediaFileRegex.test(prBody);
+              const markdownMediaRegex = /!\[.*?\]\((https?:\/\/[^\s)]+\.(png|jpe?g|gif|webp|mp4|mov|webm))\)/i;
+
+              const directLinkMediaRegex = /(https?:\/\/[^\s]+\.(png|jpe?g|gif|webp|mp4|mov|webm))/i;
+
+              const hasMediaLink =
+                markdownMediaRegex.test(prBody) || directLinkMediaRegex.test(prBody);
+
 
               if (!hasMediaFile && !hasMediaLink) {
                 const mediaWarning = `
