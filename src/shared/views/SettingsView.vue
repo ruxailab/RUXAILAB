@@ -385,10 +385,17 @@ import { useI18n } from 'vue-i18n'
 import { instantiateStudyByType } from '../constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
+
+// Access control - only Admin can access settings
+const { watchAccessAndRedirect } = useStudyAccess({
+  routeType: 'settings',
+  redirectPath: '/',
+})
 
 const props = defineProps({
   id: {
@@ -547,6 +554,7 @@ watch(
 )
 
 onMounted(async () => {
+  watchAccessAndRedirect()
   if (props.id) {
     try {
       await store.dispatch('getStudy', { id: props.id })

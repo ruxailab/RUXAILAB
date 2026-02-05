@@ -13,12 +13,21 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import UserTestAnswer from '../components/UserTestAnswer.vue'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const store = useStore()
+const route = useRoute()
+
+// Access control - only Admin and Evaluator can access answers
+const { watchAccessAndRedirect } = useStudyAccess({
+  routeType: 'answer',
+  redirectPath: '/',
+})
 
 const testAnswerDocument = computed(
   () => store.state.Answer.testAnswerDocument || {},
@@ -34,6 +43,11 @@ const hasAnswers = computed(() => {
       : Object.keys(testAnswerDocument.value.taskAnswers).length > 0)
   )
 })
+
+onMounted(() => {
+  watchAccessAndRedirect()
+})
 </script>
 
 <style></style>
+
