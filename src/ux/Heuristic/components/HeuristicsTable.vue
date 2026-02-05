@@ -583,6 +583,43 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Custom confirmation dialog -->
+    <v-dialog v-model="dialogDelete" max-width="500px" persistent>
+      <v-card class="pa-4 rounded-lg">
+        <v-card-title class="text-h5 d-flex align-center">
+          <v-icon color="warning" class="me-3" size="32"
+            >mdi-alert-circle</v-icon
+          >
+          {{ $t('common.confirm_deletion') }}
+        </v-card-title>
+        <v-card-text class="text-body-1 pt-4 pb-6">
+          {{ deleteMessage }}
+          <div class="mt-4 text-body-2 text-ternary" style="opacity: 0.8">
+            {{ $t('common.action_cannot_be_undone') }}
+          </div>
+        </v-card-text>
+        <v-card-actions class="pa-4 pt-0">
+          <v-spacer />
+          <v-btn
+            variant="text"
+            rounded="lg"
+            class="text-none px-6"
+            @click="dialogDelete = false"
+          >
+            {{ $t('HeuristicsTable.titles.cancel') }}
+          </v-btn>
+          <v-btn
+            color="error"
+            variant="elevated"
+            rounded="lg"
+            class="text-none px-6 shadow-sm"
+            @click="confirmDeleteAction"
+          >
+            {{ $t('HeuristicsTable.titles.ok') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -614,6 +651,11 @@ const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
 const isDialogClosing = ref(false)
+
+// Delete confirmation dialog state
+const dialogDelete = ref(false)
+const deleteAction = ref(null)
+const deleteMessage = ref('')
 
 const headers = ref([
   {
@@ -763,25 +805,24 @@ const moveItemDown = (index) => {
 }
 
 const deleteHeuristic = (index) => {
-  const config = confirm(
-    `${t('alerts.deleteHeuristic')} ${heuristics.value[index].title}?`,
-  )
-  if (config) {
+  deleteMessage.value = `${t('alerts.deleteHeuristic')} "${
+    heuristics.value[index].title
+  }"?`
+  deleteAction.value = () => {
     store.commit('REMOVE_HEURISTIC', index)
     itemSelect.value = null
     questionSelect.value = null
     emit('change')
   }
+  dialogDelete.value = true
 }
 
 const deleteQuestion = (qIndex) => {
   if (heuristics.value[itemSelect.value].questions.length > 1) {
-    const config = confirm(
-      `${t('alerts.deleteQuestion')} ${
-        heuristics.value[itemSelect.value].questions[qIndex].title
-      }?`,
-    )
-    if (config) {
+    deleteMessage.value = `${t('alerts.deleteQuestion')} "${
+      heuristics.value[itemSelect.value].questions[qIndex].title
+    }"?`
+    deleteAction.value = () => {
       const newHeuristics = [...heuristics.value]
       newHeuristics[itemSelect.value].questions.splice(qIndex, 1)
       newHeuristics[itemSelect.value].total =
@@ -790,9 +831,18 @@ const deleteQuestion = (qIndex) => {
       questionSelect.value = null
       emit('change')
     }
+    dialogDelete.value = true
   } else {
     showWarning('HeuristicsTable.messages.cantDeleteAllQuestions')
   }
+}
+
+const confirmDeleteAction = () => {
+  if (deleteAction.value) {
+    deleteAction.value()
+  }
+  dialogDelete.value = false
+  deleteAction.value = null
 }
 
 const editHeuris = (item) => {
@@ -862,17 +912,21 @@ const setupQuestion = (heuristicIndex) => {
 }
 
 const deleteItem = (item) => {
-  const newHeuristics = [...heuristics.value]
-  newHeuristics[itemSelect.value].questions[
-    questionSelect.value
-  ].descriptions.splice(
-    newHeuristics[itemSelect.value].questions[
-      questionSelect.value
-    ].descriptions.indexOf(item),
-    1,
-  )
-  store.dispatch('setHeuristics', newHeuristics)
-  emit('change')
+  deleteMessage.value = `${t('alerts.deleteDescription')} "${
+    item.title || 'this description'
+  }"?`
+  deleteAction.value = () => {
+    const newHeuristics = [...heuristics.value]
+    const questions =
+      newHeuristics[itemSelect.value].questions[questionSelect.value]
+    const index = questions.descriptions.indexOf(item)
+    if (index !== -1) {
+      questions.descriptions.splice(index, 1)
+      store.dispatch('setHeuristics', newHeuristics)
+      emit('change')
+    }
+  }
+  dialogDelete.value = true
 }
 
 const addHeuris = () => {
