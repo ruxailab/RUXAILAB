@@ -203,6 +203,16 @@
     "daysAgo": "{count}日前",
     "newNotification": "新しい通知があります。"
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "コラボレーションの承諾に失敗しました。もう一度お試しください。",
+      "invalidCollaboration": "このコラボレーション招待は無効または期限切れです。"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "{users} の役割を {role} に更新しました",
+    "inviteSent": "{users} に招待を送信しました"
+  },
   "navigation": {
     "dashboard": "ダッシュボード",
     "studies": "研究",

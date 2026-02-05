@@ -203,6 +203,16 @@
     "daysAgo": "{count} д назад",
     "newNotification": "У вас новое уведомление."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Не удалось принять сотрудничество. Пожалуйста, попробуйте снова.",
+      "invalidCollaboration": "Это приглашение к сотрудничеству недействительно или истекло."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Роль обновлена на {role} для: {users}",
+    "inviteSent": "Приглашение отправлено: {users}"
+  },
   "navigation": {
     "dashboard": "Панель управления",
     "studies": "Исследования",

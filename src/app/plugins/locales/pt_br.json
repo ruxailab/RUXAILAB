@@ -203,6 +203,16 @@
     "daysAgo": "há {count}d",
     "newNotification": "Você tem uma nova notificação."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Falha ao aceitar colaboração. Por favor, tente novamente.",
+      "invalidCollaboration": "Este convite de colaboração é inválido ou expirou."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Função atualizada para {role} para: {users}",
+    "inviteSent": "Convite enviado para: {users}"
+  },
   "navigation": {
     "dashboard": "Painel",
     "studies": "Estudos",
