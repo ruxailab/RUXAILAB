@@ -808,8 +808,8 @@
       "noTasks": "Sie haben keine Aufgabe, erstellen Sie eine, um fortzufahren.",
       "noVariables": "Noch keine Variablen hinzugefügt. Klicken Sie unten, um eine neue Variable zu erstellen.",
       "noOptions": "Keine Optionen hinzugefügt.",
-      "confirm_delete_task":"Aufgabe löschen bestätigen",
-      "sure_to_delete_task":"Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
+      "confirm_delete_task": "Aufgabe löschen bestätigen",
+      "sure_to_delete_task": "Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
     },
     "inputs": {
       "consent": "Einverständnis",
@@ -914,6 +914,75 @@
       "tam2": "TAM-2 (Erweitert) - fügt externe Einflüsse und Ergebnis-Demonstrierbarkeit hinzu",
       "tam3": "TAM-3 (Umfassend) - umfasst Angst, Spielfreude und objektive Benutzerfreundlichkeit",
       "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
+    },
+    "previews": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "Perceived Usefulness",
+        "eu": "Perceived Ease of Use",
+        "sn": "Subjective Norm",
+        "image": "Image",
+        "jr": "Job Relevance",
+        "oq": "Output Quality",
+        "rd": "Result Demonstrability",
+        "se": "Computer Self-Efficacy",
+        "ec": "External Control",
+        "anxiety": "Anxiety",
+        "play": "Playfulness",
+        "enjoy": "Enjoyment",
+        "ou": "Objective Usability",
+        "q1": "1. Die Nutzung des Systems verbessert meine Arbeitsleistung.",
+        "q6": "6. Das System ist einfach zu bedienen.",
+        "likertNote": "Teilnehmer bewerten {count} Aussagen auf einer 5-Punkte-Likert-Skala"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
     },
     "advanced": {
       "stepTitle": "Schritt 3: Erweiterte Optionen",

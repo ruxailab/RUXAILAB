@@ -146,6 +146,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AnswerTypePreview from './AnswerTypePreview.vue'
 
 const props = defineProps({
@@ -167,23 +168,20 @@ const emit = defineEmits(['update:modelValue', 'validate'])
 
 const localTask = ref({ ...props.modelValue })
 
+const { t } = useI18n()
+
 const linkRules = [
-  (v) =>
-    !v ||
-    /^https?:\/\/.+/.test(v) ||
-    'Must be a valid URL starting with http:// or https://',
+  (v) => !v || /^https?:\/\/.+/.test(v) || t('CreateTask.validation.validUrl'),
 ]
 
 const urlRules = [
-  (v) => !!v || 'Field Required',
-  (v) =>
-    /^https?:\/\/.+/.test(v) ||
-    'Must be a valid URL starting with http:// or https://',
+  (v) => !!v || t('CreateTask.validation.fieldRequired'),
+  (v) => /^https?:\/\/.+/.test(v) || t('CreateTask.validation.validUrl'),
 ]
 
 const timeRules = [
-  (v) => !!v || 'Field Required',
-  (v) => (v && v > 0) || 'Must be a positive number',
+  (v) => !!v || t('CreateTask.validation.fieldRequired'),
+  (v) => (v && v > 0) || t('CreateTask.validation.positiveNumber'),
 ]
 
 const isValid = computed(() => {
@@ -216,19 +214,16 @@ const getAnswerTypeIcon = (type) => {
 
 const getAnswerTypeDescription = (type) => {
   const descriptions = {
-    'no-answer': 'Participants complete the task without providing feedback',
-    'text-area': 'Participants provide written feedback after the task',
-    'post-test': 'Participants answer specific questions after the task',
-    'post-form': 'Participants fill out an external form after the task',
-    'nasa-tlx': 'NASA Task Load Index - measures workload',
-    sus: 'System Usability Scale - measures usability',
-    'tam-1':
-      'TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use',
-    'tam-2':
-      'TAM-2 (Extended) - adds external influences and results demonstrability',
-    'tam-3':
-      'TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability',
-    sart: 'Situation Awareness Rating Technique - measures situational awareness',
+    'no-answer': t('CreateTask.configurationDescriptions.noAnswer'),
+    'text-area': t('CreateTask.configurationDescriptions.textArea'),
+    'post-test': t('CreateTask.configurationDescriptions.postTest'),
+    'post-form': t('CreateTask.configurationDescriptions.postForm'),
+    'nasa-tlx': t('CreateTask.configurationDescriptions.nasaTlx'),
+    sus: t('CreateTask.configurationDescriptions.sus'),
+    'tam-1': t('CreateTask.configurationDescriptions.tam1'),
+    'tam-2': t('CreateTask.configurationDescriptions.tam2'),
+    'tam-3': t('CreateTask.configurationDescriptions.tam3'),
+    sart: t('CreateTask.configurationDescriptions.sart'),
   }
   return descriptions[type] || ''
 }

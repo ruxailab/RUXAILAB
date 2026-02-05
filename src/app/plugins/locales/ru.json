@@ -805,8 +805,8 @@
       "noTasks": "У вас нет задач, создайте одну, чтобы продолжить.",
       "noVariables": "Переменные еще не добавлены. Нажмите ниже, чтобы создать новую переменную.",
       "noOptions": "Варианты не добавлены.",
-      "confirm_delete_task":"Подтвердить удаление задачи",
-      "sure_to_delete_task":"Вы уверены, что хотите удалить задачу : {taskName}? Это действие нельзя отменить"
+      "confirm_delete_task": "Подтвердить удаление задачи",
+      "sure_to_delete_task": "Вы уверены, что хотите удалить задачу : {taskName}? Это действие нельзя отменить"
     },
     "inputs": {
       "consent": "Согласие",
@@ -911,6 +911,75 @@
       "tam2": "TAM-2 (Расширенный) - добавляет внешние влияния и демонстрируемость результатов",
       "tam3": "TAM-3 (Всеобъемлющий) - включает тревожность, игривость и объективное юзабилити",
       "sart": "Техника оценки ситуационной осведомлённости - измеряет ситуационную осведомлённость"
+    },
+    "previews": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "Воспринимаемая Полезность",
+        "eu": "Воспринимаемая Легкость Использования",
+        "sn": "Субъективная Норма",
+        "image": "Изображение",
+        "jr": "Актуальность для Работы",
+        "oq": "Качество Результата",
+        "rd": "Демонстрируемость Результата",
+        "se": "Компьютерная Самоэффективность",
+        "ec": "Внешний Контроль",
+        "anxiety": "Тревожность",
+        "play": "Игривость",
+        "enjoy": "Удовольствие",
+        "ou": "Объективное Юзабилити",
+        "q1": "1. Использование системы повышает мою производительность труда.",
+        "q6": "6. Системой легко пользоваться.",
+        "likertNote": "Участники оценивают {count} утверждений по 5-балльной шкале Лайкерта"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
     },
     "advanced": {
       "stepTitle": "Шаг 3: Расширенные опции",

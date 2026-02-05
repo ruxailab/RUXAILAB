@@ -807,8 +807,8 @@
       "noTasks": "ليس لديك أي مهمة، قم بإنشاء واحدة للمتابعة.",
       "noVariables": "لم تتم إضافة متغيرات بعد. انقر أدناه لإنشاء متغير جديد.",
       "noOptions": "لم تتم إضافة خيارات.",
-      "confirm_delete_task":"تأكيد حذف المهمة",
-      "sure_to_delete_task":"هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
+      "confirm_delete_task": "تأكيد حذف المهمة",
+      "sure_to_delete_task": "هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
     },
     "inputs": {
       "consent": "الموافقة",
@@ -913,6 +913,75 @@
       "tam2": "TAM-2 (الموسع) - يضيف التأثيرات الخارجية وإثبات النتائج",
       "tam3": "TAM-3 (الشامل) - يشمل القلق والمرح وقابلية الاستخدام الموضوعية",
       "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
+    },
+    "previews": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "Perceived Usefulness",
+        "eu": "Perceived Ease of Use",
+        "sn": "Subjective Norm",
+        "image": "Image",
+        "jr": "Job Relevance",
+        "oq": "Output Quality",
+        "rd": "Result Demonstrability",
+        "se": "Computer Self-Efficacy",
+        "ec": "External Control",
+        "anxiety": "Anxiety",
+        "play": "Playfulness",
+        "enjoy": "Enjoyment",
+        "ou": "Objective Usability",
+        "q1": "1. يؤدي استخدام النظام إلى تحسين أداء عملي.",
+        "q6": "6. النظام سهل الاستخدام.",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
     },
     "advanced": {
       "stepTitle": "الخطوة 3: الخيارات المتقدمة",
