@@ -99,14 +99,19 @@
       "status": "状态",
       "sessionDate": "会话日期",
       "participants": "参与者",
-      "created": "创建时间"
+      "created": "创建时间",
+      "noSearchResults": "未找到符合您条件的结果",
+      "tryAdjustingSearch": "请尝试调整您的搜索或过滤条件"
     },
     "hidden": "隐藏",
     "proceed": "继续",
     "all": "全部",
     "actions": "操作",
+    "confirm_deletion": "确认删除",
+    "action_cannot_be_undone": "此操作无法撤销",
     "user": "用户",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "每页项目数："
   },
   "storage": {
     "pageTitle": "存储",
@@ -182,6 +187,12 @@
       "accessibilityManual": "手动无障碍评估",
       "accessibilityAutomatic": "自动无障碍评估"
     }
+  },
+  "acceptInvitation": {
+    "title": "协作邀请",
+    "message": "您要接受此邀请吗？",
+    "reject": "拒绝",
+    "accept": "接受"
   },
   "notificationsPage": {
     "subtitle": "随时了解您的活动和协作",
@@ -456,6 +467,20 @@
       "paused": "已暂停",
       "finished": "已完成",
       "unknown": "未知"
+    },
+    "officeHours": {
+      "title": "每月办公时间",
+      "description": "从 11 月开始，我们将举办每月的办公时间，讨论项目更新、回答问题并与我们的社区联系。",
+      "nextSessionDate": "2025年11月",
+      "frequency": "每月"
+    },
+    "webinar": {
+      "ended": "已结束",
+      "live": "直播中",
+      "today": "今天",
+      "joinNow": "立即加入",
+      "webinarEnded": "网络研讨会已结束",
+      "startingToday": "今天开始"
     },
     "cards": {
       "recentActivity": "最近活动",
@@ -979,6 +1004,29 @@
         "camera": "摄像头",
         "audio": "音频"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "任务完成！无需额外反馈。",
+      "participantsFeedbackHere": "参与者将在此处提供反馈...",
+      "submitFeedback": "提交反馈",
+      "postTaskQuestions": "任务后问题",
+      "rateTaskDifficulty": "1. 您如何评价此任务的难度？",
+      "additionalComments": "2. 有其他评论吗？",
+      "optionalFeedback": "可选反馈...",
+      "externalFormTitle": "外部表单",
+      "externalFormDescription": "参与者将在任务后被重定向填写外部表单。",
+      "openExternalForm": "打开外部表单",
+      "nasaTlxTitle": "NASA任务负荷指数",
+      "mentalDemand": "心理需求",
+      "physicalDemand": "体力需求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 另外4个维度",
+      "susTitle": "系统可用性量表",
+      "susStatement1": "1. 我认为我会经常使用这个系统。",
+      "stronglyDisagree": "强烈不同意",
+      "stronglyAgree": "强烈同意",
+      "moreStatements": "+ 另外9条陈述",
+      "sartTitle": "情境意识评估技术"
     }
   },
   "UserTestView": {
@@ -1243,6 +1291,7 @@
         "allStudies": "所有研究",
         "myStudies": "我的研究",
         "whereICollaborate": "我参与协作的",
+        "allMethods": "所有方法",
         "lessThan10": "< 10名参与者",
         "between10And50": "10 – 50名参与者",
         "moreThan50": "> 50名参与者"
@@ -1328,10 +1377,8 @@
       "select_status": "选择状态",
       "end_date": "结束日期",
       "select_end_date": "选择结束日期",
-      "quick_actions": "快速操作",
+      "quick_actions": "快捷操作",
       "perform_common_tasks": "立即执行常见任务",
-      "confirm_deletion": "确认删除",
-      "action_cannot_be_undone": "此操作无法撤销",
       "delete_warning": "所有相关数据、结果和配置将永久丢失。",
       "delete_forever": "永久删除"
     },
@@ -1349,12 +1396,14 @@
     "noCopy": "复制失败",
     "deleteTemplate": "您确定要删除此模板吗？此操作无法撤销！",
     "deleteTest": "您确定要删除此测试吗？",
+    "deleteQuestion": "您确定要删除此问题吗：",
+    "deleteDescription": "您确定要删除此描述吗：",
     "addDescription": "请添加描述",
     "errorOccurred": "发生错误",
     "leave": "您确定要离开吗？",
     "sureLeave": "您确定要离开吗？所有更改将被丢弃。",
     "imageURL": "输入图片URL：",
-    "deleteHeuristic": "您确定要删除启发式",
+    "deleteHeuristic": "您确定要删除此启发式吗：",
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功",

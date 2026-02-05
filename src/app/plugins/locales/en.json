@@ -93,8 +93,11 @@
     "new": "NEW",
     "test": "a Study",
     "actions": "Actions",
+    "confirm_deletion": "Confirm Deletion",
+    "action_cannot_be_undone": "This action cannot be undone",
     "user": "User",
     "id": "ID",
+    "itemsPerPage": "Items per page:",
     "table": {
       "itemsPerPage": "Items per page:",
       "type": "Type",
@@ -105,7 +108,9 @@
       "status": "Status",
       "sessionDate": "Session Date",
       "participants": "Participants",
-      "created": "Created"
+      "created": "Created",
+      "noSearchResults": "No results found matching your criteria",
+      "tryAdjustingSearch": "Try adjusting your search or filters to find what you're looking for"
     }
   },
   "storage": {
@@ -182,6 +187,12 @@
       "accessibilityManual": "Accessibility Manual Evaluation",
       "accessibilityAutomatic": "Accessibility Automatic Evaluation"
     }
+  },
+  "acceptInvitation": {
+    "title": "Cooperation Invite",
+    "message": "Do you want to accept this invitation?",
+    "reject": "Reject",
+    "accept": "Accept"
   },
   "notificationsPage": {
     "subtitle": "Stay updated with your activities and collaborations",
@@ -456,6 +467,20 @@
       "paused": "Paused",
       "finished": "Finished",
       "unknown": "Unknown"
+    },
+    "officeHours": {
+      "title": "Monthly Office Hours",
+      "description": "Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monthly"
+    },
+    "webinar": {
+      "ended": "Ended",
+      "live": "Live",
+      "today": "Today",
+      "joinNow": "Join Now",
+      "webinarEnded": "Webinar Ended",
+      "startingToday": "Starting Today"
     },
     "cards": {
       "recentActivity": "Recent Activity",
@@ -979,6 +1004,29 @@
         "camera": "Camera",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Task completed! No additional feedback required.",
+      "participantsFeedbackHere": "Participants will provide their feedback here...",
+      "submitFeedback": "Submit Feedback",
+      "postTaskQuestions": "Post-Task Questions",
+      "rateTaskDifficulty": "1. How would you rate the difficulty of this task?",
+      "additionalComments": "2. Any additional comments?",
+      "optionalFeedback": "Optional feedback...",
+      "externalFormTitle": "External Form",
+      "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
+      "openExternalForm": "Open External Form",
+      "nasaTlxTitle": "NASA Task Load Index",
+      "mentalDemand": "Mental Demand",
+      "physicalDemand": "Physical Demand",
+      "lowHigh": "Low - High",
+      "moreDimensions": "+ 4 more dimensions",
+      "susTitle": "System Usability Scale",
+      "susStatement1": "1. I think that I would like to use this system frequently.",
+      "stronglyDisagree": "Strongly Disagree",
+      "stronglyAgree": "Strongly Agree",
+      "moreStatements": "+ 9 more statements",
+      "sartTitle": "Situation Awareness Rating Technique"
     }
   },
   "UserTestView": {
@@ -1243,6 +1291,7 @@
         "allStudies": "All Studies",
         "myStudies": "My Studies",
         "whereICollaborate": "Where I Collaborate",
+        "allMethods": "All Methods",
         "lessThan10": "< 10 participants",
         "between10And50": "10 – 50 participants",
         "moreThan50": "> 50 participants"
@@ -1291,6 +1340,7 @@
       "method": "Method",
       "filters": {
         "allMethods": "All Methods",
+        "all": "All",
         "heuristicEvaluation": "Heuristic Evaluation",
         "userUnmoderated": "User Unmoderated",
         "userModerated": "User Moderated",
@@ -1330,8 +1380,6 @@
       "select_end_date": "Select End Date",
       "quick_actions": "Quick Actions",
       "perform_common_tasks": "Perform common tasks instantly",
-      "confirm_deletion": "Confirm Deletion",
-      "action_cannot_be_undone": "This action cannot be undone",
       "delete_warning": "All associated data, results, and configurations will be lost forever.",
       "delete_forever": "Delete Forever"
     },
@@ -1347,14 +1395,16 @@
   "alerts": {
     "copy": "Copy successful",
     "noCopy": "Copy unsuccessful",
-    "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
+    "deleteTemplate": "Are you sure you want to delete this template? This action cannot be undone!",
     "deleteTest": "Are you sure you want to delete this test?",
+    "deleteQuestion": "Are you sure you want to delete the question: ",
+    "deleteDescription": "Are you sure you want to delete the description: ",
     "addDescription": "Please add a descritpion",
     "errorOccurred": "An error has occurred",
     "leave": "Are you sure you want to leave?",
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
-    "deleteHeuristic": "Are you sure delete the heuristic ",
+    "deleteHeuristic": "Are you sure you want to delete the heuristic: ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
     "genericSuccess": "Operation successful",
     "savedChanges": "Changes saved successfully",

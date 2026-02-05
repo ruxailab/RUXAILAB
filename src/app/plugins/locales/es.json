@@ -100,13 +100,18 @@
       "status": "Estado",
       "sessionDate": "Fecha de sesión",
       "participants": "Participantes",
-      "created": "Creado"
+      "created": "Creado",
+      "noSearchResults": "No se encontraron resultados que coincidan con sus criterios",
+      "tryAdjustingSearch": "Intente ajustar su búsqueda o filtros para encontrar lo que busca"
     },
     "proceed": "proceder",
     "all": "Todos",
     "actions": "Acciones",
+    "confirm_deletion": "Confirmar eliminación",
+    "action_cannot_be_undone": "Esta acción no se puede deshacer",
     "user": "Usuario",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elementos por página:"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -182,6 +187,12 @@
       "accessibilityManual": "Evaluación de accesibilidad manual",
       "accessibilityAutomatic": "Evaluación de accesibilidad automática"
     }
+  },
+  "acceptInvitation": {
+    "title": "Invitación de cooperación",
+    "message": "¿Quieres aceptar esta invitación?",
+    "reject": "Rechazar",
+    "accept": "Aceptar"
   },
   "notificationsPage": {
     "subtitle": "Mantente actualizado con tus actividades y colaboraciones",
@@ -458,6 +469,20 @@
       "paused": "Pausado",
       "finished": "Finalizado",
       "unknown": "Desconocido"
+    },
+    "officeHours": {
+      "title": "Horario de Oficina Mensual",
+      "description": "A partir de noviembre, organizaremos horarios de oficina mensuales para discutir actualizaciones del proyecto, responder preguntas y conectar con nuestra comunidad.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensual"
+    },
+    "webinar": {
+      "ended": "Finalizado",
+      "live": "En vivo",
+      "today": "Hoy",
+      "joinNow": "Únete ahora",
+      "webinarEnded": "Webinar finalizado",
+      "startingToday": "Empieza hoy"
     },
     "cards": {
       "recentActivity": "Actividad Reciente",
@@ -981,6 +1006,29 @@
         "camera": "Cámara",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "¡Tarea completada! No se requiere retroalimentación adicional.",
+      "participantsFeedbackHere": "Los participantes proporcionarán su retroalimentación aquí...",
+      "submitFeedback": "Enviar Retroalimentación",
+      "postTaskQuestions": "Preguntas Post-Tarea",
+      "rateTaskDifficulty": "1. ¿Cómo calificaría la dificultad de esta tarea?",
+      "additionalComments": "2. ¿Algún comentario adicional?",
+      "optionalFeedback": "Retroalimentación opcional...",
+      "externalFormTitle": "Formulario Externo",
+      "externalFormDescription": "Los participantes serán redirigidos para completar un formulario externo después de la tarea.",
+      "openExternalForm": "Abrir Formulario Externo",
+      "nasaTlxTitle": "Índice de Carga de Tareas NASA",
+      "mentalDemand": "Demanda Mental",
+      "physicalDemand": "Demanda Física",
+      "lowHigh": "Bajo - Alto",
+      "moreDimensions": "+ 4 dimensiones más",
+      "susTitle": "Escala de Usabilidad del Sistema",
+      "susStatement1": "1. Creo que me gustaría usar este sistema con frecuencia.",
+      "stronglyDisagree": "Muy en Desacuerdo",
+      "stronglyAgree": "Muy de Acuerdo",
+      "moreStatements": "+ 9 declaraciones más",
+      "sartTitle": "Técnica de Calificación de Conciencia Situacional"
     }
   },
   "UserTestView": {
@@ -1245,6 +1293,7 @@
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
         "whereICollaborate": "Donde colaboro",
+        "allMethods": "Todos los métodos",
         "lessThan10": "< 10 participantes",
         "between10And50": "10 – 50 participantes",
         "moreThan50": "> 50 participantes"
@@ -1332,8 +1381,6 @@
       "select_end_date": "Seleccionar Fecha de Finalización",
       "quick_actions": "Acciones Rápidas",
       "perform_common_tasks": "Realiza tareas comunes al instante",
-      "confirm_deletion": "Confirmar Eliminación",
-      "action_cannot_be_undone": "Esta acción no se puede deshacer",
       "delete_warning": "Todos los datos asociados, resultados y configuraciones se perderán para siempre.",
       "delete_forever": "Eliminar para Siempre"
     },
@@ -1351,12 +1398,14 @@
     "noCopy": "Copia fallida",
     "deleteTemplate": "¿Estás seguro de que deseas eliminar esta plantilla? ¡Esta acción no se puede deshacer!",
     "deleteTest": "¿Estás seguro de que deseas eliminar esta prueba?",
+    "deleteQuestion": "¿Estás seguro de que deseas eliminar la pregunta: ",
+    "deleteDescription": "¿Estás seguro de que deseas eliminar la descripción: ",
     "addDescription": "Por favor, agrega una descripción",
     "errorOccurred": "Ha ocurrido un error",
     "leave": "¿Estás seguro de que deseas salir?",
     "sureLeave": "¿Estás seguro de que deseas salir? Todos tus cambios serán descartados",
     "imageURL": "Ingresa la URL de la imagen:",
-    "deleteHeuristic": "¿Estás seguro de que deseas eliminar la heurística ",
+    "deleteHeuristic": "¿Estás seguro de que deseas eliminar la heurística: ",
     "deleteAccount": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
     "genericSuccess": "Operación exitosa",
     "savedChanges": "Cambios guardados con éxito",
