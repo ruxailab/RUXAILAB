@@ -1,4 +1,5 @@
 export const ACCESS_LEVEL = {
+  SUPER_ADMIN: -1,
   ADMIN: 0,
   EVALUATOR: 1,
   GUEST: 2,
