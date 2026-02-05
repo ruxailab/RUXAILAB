@@ -29,7 +29,11 @@ def calculate_eigen(matrix):
     RI = RI_dict.get(n, 1.49)  # 1.49 is an average fallback value
 
     # Calculate the Consistency Ratio (CR)
-    CR = CI / RI
+    # Handle division by zero for small matrices where RI is 0
+    if RI == 0:
+        CR = 0.0
+    else:
+        CR = CI / RI
 
     consistency_interpretation = ("Consistent because CR is lower than 0.1") if CR <= 0.1 else "Inconsistent because CR is greater than CR"
 
