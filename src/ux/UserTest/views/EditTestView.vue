@@ -10,24 +10,29 @@
       <ButtonSave :visible="true" @click="save" />
 
       <div>
-        <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
-          <v-tab @click="index = 0">
+        <v-tabs 
+          bg-color="transparent" 
+          color="#FCA326" 
+          class="pb-0 mb-0 scrollable-tabs"
+          show-arrows
+        >
+          <v-tab @click="index = 0" class="uppercase-tab">
             {{ $t('UserTestTable.titles.testConfiguration') }}
           </v-tab>
-          <v-tab @click="index = 1">
+          <v-tab @click="index = 1" class="uppercase-tab">
             {{ $t('ModeratedTest.consentForm') }}
           </v-tab>
-          <v-tab @click="index = 2">
+          <v-tab @click="index = 2" class="uppercase-tab">
             {{ $t('ModeratedTest.preTest') }}
           </v-tab>
-          <v-tab @click="index = 3">
+          <v-tab @click="index = 3" class="uppercase-tab">
             {{ $t('ModeratedTest.tasks') }}
           </v-tab>
-          <v-tab @click="index = 4">
+          <v-tab @click="index = 4" class="uppercase-tab">
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
-          <v-tab v-if="hasEyeTracking" @click="index = 5">
-            Eye Tracking Configurations
+          <v-tab v-if="hasEyeTracking" @click="index = 5" class="uppercase-tab">
+            EYE TRACKING CONFIGURATIONS
           </v-tab>
         </v-tabs>
 
@@ -235,5 +240,47 @@ onUnmounted(() => {
 .v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
+}
+
+.scrollable-tabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollable-tabs :deep(.v-tabs-bar) {
+  min-width: max-content;
+}
+
+.scrollable-tabs :deep(.v-slide-group__content) {
+  flex-wrap: nowrap;
+}
+
+.uppercase-tab {
+  text-transform: uppercase !important;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.scrollable-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollable-tabs {
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+@media (max-width: 960px) {
+  .scrollable-tabs {
+    padding-bottom: 8px;
+  }
+  
+  .scrollable-tabs :deep(.v-tab) {
+    padding: 0 16px;
+    font-size: 14px;
+  }
 }
 </style>
