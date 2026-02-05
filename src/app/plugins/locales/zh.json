@@ -805,8 +805,8 @@
       "noTasks": "您没有任何任务，请创建一个以继续。",
       "noVariables": "尚未添加任何变量。点击下方创建新变量。",
       "noOptions": "没有添加选项。",
-      "confirm_delete_task":"确认删除任务",
-      "sure_to_delete_task":"您确定要删除任务 : {taskName} 吗？此操作无法撤消"
+      "confirm_delete_task": "确认删除任务",
+      "sure_to_delete_task": "您确定要删除任务 : {taskName} 吗？此操作无法撤消"
     },
     "inputs": {
       "consent": "同意",
@@ -911,6 +911,75 @@
       "tam2": "TAM-2（扩展）- 添加外部影响和结果可演示性",
       "tam3": "TAM-3（综合）- 包括焦虑、趣味性和客观可用性",
       "sart": "情境意识评估技术 - 测量情境意识"
+    },
+    "previews": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "感知有用性",
+        "eu": "感知易用性",
+        "sn": "主观规范",
+        "image": "形象",
+        "jr": "工作相关性",
+        "oq": "产出质量",
+        "rd": "结果可演示性",
+        "se": "计算机自我效能感",
+        "ec": "外部控制",
+        "anxiety": "焦虑",
+        "play": "趣味性",
+        "enjoy": "愉悦感",
+        "ou": "客观可用性",
+        "q1": "1. 使用该系统能提高我的工作绩效。",
+        "q6": "6. 该系统易于使用。",
+        "likertNote": "参与者在 5 点李克特量表上对 {count} 个陈述进行评分"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
     },
     "advanced": {
       "stepTitle": "步骤 3：高级选项",

@@ -805,8 +805,8 @@
       "noTasks": "タスクがありません。続行するにはタスクを作成してください。",
       "noVariables": "変数がまだ追加されていません。下をクリックして新しい変数を作成してください。",
       "noOptions": "オプションが追加されていません。",
-      "confirm_delete_task":"タスク削除の確認",
-      "sure_to_delete_task":"本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
+      "confirm_delete_task": "タスク削除の確認",
+      "sure_to_delete_task": "本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
     },
     "inputs": {
       "consent": "同意",
@@ -911,6 +911,75 @@
       "tam2": "TAM-2（拡張）- 外部影響と結果の実証可能性を追加",
       "tam3": "TAM-3（包括的）- 不安、楽しさ、客観的な使いやすさを含む",
       "sart": "状況認識評価技法 - 状況認識を測定"
+    },
+    "previews": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "知覚された有用性",
+        "eu": "知覚された使いやすさ",
+        "sn": "主観的規範",
+        "image": "イメージ",
+        "jr": "仕事への関連性",
+        "oq": "出力の質",
+        "rd": "結果の実証可能性",
+        "se": "コンピュータ自己効力感",
+        "ec": "外部制御",
+        "anxiety": "不安",
+        "play": "遊び心",
+        "enjoy": "楽しさ",
+        "ou": "客観的な使いやすさ",
+        "q1": "1. システムを使用することで、仕事のパフォーマンスが向上する。",
+        "q6": "6. システムは使いやすい。",
+        "likertNote": "参加者は5段階のリッカート尺度で{count}個の記述を評価します"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
     },
     "advanced": {
       "stepTitle": "ステップ3: 詳細オプション",
