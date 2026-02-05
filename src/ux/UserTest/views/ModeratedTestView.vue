@@ -601,6 +601,7 @@ import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAns
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
+import { calculateProgress } from '../utils/testProgress'
 
 const store = useStore()
 const router = useRouter()
@@ -1038,7 +1039,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       showVideoCall: true,
     })
 
-    calculateProgress()
+    calculateProgress(localTestAnswer)
     await saveAnswer()
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
@@ -1156,42 +1157,6 @@ const validate = (object) => {
   )
 }
 
-const calculateProgress = () => {
-  try {
-    if (!localTestAnswer) return 0
-    const totalSteps = 4
-    let completedSteps = 0
-
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
-
-    let tasksCompleted = 0
-    if (
-      Array.isArray(localTestAnswer.tasks) &&
-      localTestAnswer.tasks.length > 0
-    ) {
-      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (
-          localTestAnswer.tasks[i]?.completed ||
-          localTestAnswer.tasks[i]?.attempted
-        ) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === localTestAnswer.tasks.length) {
-        completedSteps++
-      }
-    }
-
-    if (localTestAnswer.postTestCompleted) completedSteps++
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
-  } catch {
-    return 0
-  }
-}
 // testDisabledReason is already declared at line 544
 
 watchEffect(() => {
