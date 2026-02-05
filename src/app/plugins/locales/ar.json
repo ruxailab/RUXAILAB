@@ -459,6 +459,20 @@
       "finished": "منتهي",
       "unknown": "غير معروف"
     },
+    "officeHours": {
+      "title": "ساعات العمل الإضافية الشهرية",
+      "description": "بدءًا من نوفمبر، سننظم ساعات عمل شهرية لمناقشة تحديثات المشروع والإجابة على الأسئلة والتواصل مع مجتمعنا.",
+      "nextSessionDate": "نوفمبر 2025",
+      "frequency": "شهرياً"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الويبينار",
+      "startingToday": "يبدأ اليوم"
+    },
     "cards": {
       "recentActivity": "النشاط الأخير",
       "activities7Days": "الأنشطة (إجمالي 7 أيام)",
@@ -963,6 +977,29 @@
         "camera": "الكاميرا",
         "audio": "الصوت"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
+      "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
+      "submitFeedback": "إرسال الملاحظات",
+      "postTaskQuestions": "أسئلة ما بعد المهمة",
+      "rateTaskDifficulty": "1. كيف تقيم صعوبة هذه المهمة؟",
+      "additionalComments": "2. أي تعليقات إضافية؟",
+      "optionalFeedback": "ملاحظات اختيارية...",
+      "externalFormTitle": "نموذج خارجي",
+      "externalFormDescription": "سيتم توجيه المشاركين لملء نموذج خارجي بعد المهمة.",
+      "openExternalForm": "فتح النموذج الخارجي",
+      "nasaTlxTitle": "مؤشر حمل المهام ناسا",
+      "mentalDemand": "المتطلبات الذهنية",
+      "physicalDemand": "المتطلبات الجسدية",
+      "lowHigh": "منخفض - مرتفع",
+      "moreDimensions": "+ 4 أبعاد أخرى",
+      "susTitle": "مقياس قابلية استخدام النظام",
+      "susStatement1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
+      "stronglyDisagree": "أعارض بشدة",
+      "stronglyAgree": "أوافق بشدة",
+      "moreStatements": "+ 9 عبارات أخرى",
+      "sartTitle": "تقنية تقييم الوعي الظرفي"
     }
   },
   "UserTestView": {

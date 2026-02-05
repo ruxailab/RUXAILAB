@@ -459,6 +459,20 @@
       "finished": "Finalizado",
       "unknown": "Desconocido"
     },
+    "officeHours": {
+      "title": "Horario de Oficina Mensual",
+      "description": "A partir de noviembre, organizaremos horarios de oficina mensuales para discutir actualizaciones del proyecto, responder preguntas y conectar con nuestra comunidad.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensual"
+    },
+    "webinar": {
+      "ended": "Finalizado",
+      "live": "En vivo",
+      "today": "Hoy",
+      "joinNow": "Únete ahora",
+      "webinarEnded": "Webinar finalizado",
+      "startingToday": "Empieza hoy"
+    },
     "cards": {
       "recentActivity": "Actividad Reciente",
       "activities7Days": "Actividades (7 días en total)",
@@ -963,6 +977,29 @@
         "camera": "Cámara",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "¡Tarea completada! No se requiere retroalimentación adicional.",
+      "participantsFeedbackHere": "Los participantes proporcionarán su retroalimentación aquí...",
+      "submitFeedback": "Enviar Retroalimentación",
+      "postTaskQuestions": "Preguntas Post-Tarea",
+      "rateTaskDifficulty": "1. ¿Cómo calificaría la dificultad de esta tarea?",
+      "additionalComments": "2. ¿Algún comentario adicional?",
+      "optionalFeedback": "Retroalimentación opcional...",
+      "externalFormTitle": "Formulario Externo",
+      "externalFormDescription": "Los participantes serán redirigidos para completar un formulario externo después de la tarea.",
+      "openExternalForm": "Abrir Formulario Externo",
+      "nasaTlxTitle": "Índice de Carga de Tareas NASA",
+      "mentalDemand": "Demanda Mental",
+      "physicalDemand": "Demanda Física",
+      "lowHigh": "Bajo - Alto",
+      "moreDimensions": "+ 4 dimensiones más",
+      "susTitle": "Escala de Usabilidad del Sistema",
+      "susStatement1": "1. Creo que me gustaría usar este sistema con frecuencia.",
+      "stronglyDisagree": "Muy en Desacuerdo",
+      "stronglyAgree": "Muy de Acuerdo",
+      "moreStatements": "+ 9 declaraciones más",
+      "sartTitle": "Técnica de Calificación de Conciencia Situacional"
     }
   },
   "UserTestView": {

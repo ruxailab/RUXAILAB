@@ -459,6 +459,20 @@
       "finished": "Abgeschlossen",
       "unknown": "Unbekannt"
     },
+    "officeHours": {
+      "title": "Monatliche Sprechstunden",
+      "description": "Ab November veranstalten wir monatliche Sprechstunden, um Projektaktualisierungen zu besprechen, Fragen zu beantworten und uns mit unserer Community auszutauschen.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monatlich"
+    },
+    "webinar": {
+      "ended": "Beendet",
+      "live": "Live",
+      "today": "Heute",
+      "joinNow": "Jetzt beitreten",
+      "webinarEnded": "Webinar beendet",
+      "startingToday": "Beginnt heute"
+    },
     "cards": {
       "recentActivity": "Letzte Aktivitäten",
       "activities7Days": "Aktivitäten (insgesamt 7 Tage)",
@@ -964,6 +978,29 @@
         "camera": "Kamera",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
+      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
+      "submitFeedback": "Feedback Absenden",
+      "postTaskQuestions": "Post-Aufgaben-Fragen",
+      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
+      "additionalComments": "2. Zusätzliche Kommentare?",
+      "optionalFeedback": "Optionales Feedback...",
+      "externalFormTitle": "Externes Formular",
+      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
+      "openExternalForm": "Externes Formular Öffnen",
+      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
+      "mentalDemand": "Mentale Anforderung",
+      "physicalDemand": "Physische Anforderung",
+      "lowHigh": "Niedrig - Hoch",
+      "moreDimensions": "+ 4 weitere Dimensionen",
+      "susTitle": "System-Usability-Skala",
+      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
+      "stronglyAgree": "Stimme Voll Zu",
+      "moreStatements": "+ 9 weitere Aussagen",
+      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
     }
   },
   "UserTestView": {

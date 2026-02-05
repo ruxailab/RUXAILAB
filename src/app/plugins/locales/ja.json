@@ -457,6 +457,20 @@
       "finished": "完了",
       "unknown": "不明"
     },
+    "officeHours": {
+      "title": "月例オフィスアワー",
+      "description": "11月から、プロジェクトの更新情報の議論、質問への回答、コミュニティとの交流のために、月例オフィスアワーを開催します。",
+      "nextSessionDate": "2025年11月",
+      "frequency": "毎月"
+    },
+    "webinar": {
+      "ended": "終了",
+      "live": "ライブ",
+      "today": "今日",
+      "joinNow": "今すぐ参加",
+      "webinarEnded": "ウェビナー終了",
+      "startingToday": "今日開始"
+    },
     "cards": {
       "recentActivity": "最近の活動",
       "activities7Days": "アクティビティ（合計7日間）",
@@ -961,6 +975,29 @@
         "camera": "カメラ",
         "audio": "オーディオ"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
+      "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
+      "submitFeedback": "フィードバックを送信",
+      "postTaskQuestions": "タスク後の質問",
+      "rateTaskDifficulty": "1. このタスクの難易度をどう評価しますか？",
+      "additionalComments": "2. 追加のコメントはありますか？",
+      "optionalFeedback": "オプションのフィードバック...",
+      "externalFormTitle": "外部フォーム",
+      "externalFormDescription": "参加者はタスク後に外部フォームに入力するようリダイレクトされます。",
+      "openExternalForm": "外部フォームを開く",
+      "nasaTlxTitle": "NASAタスク負荷指数",
+      "mentalDemand": "精神的要求",
+      "physicalDemand": "身体的要求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 4つの追加次元",
+      "susTitle": "システム使用性尺度",
+      "susStatement1": "1. このシステムを頻繁に使いたいと思います。",
+      "stronglyDisagree": "強く反対",
+      "stronglyAgree": "強く賛成",
+      "moreStatements": "+ 9つの追加ステートメント",
+      "sartTitle": "状況認識評価技法"
     }
   },
   "UserTestView": {

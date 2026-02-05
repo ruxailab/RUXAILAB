@@ -457,6 +457,20 @@
       "finished": "Terminé",
       "unknown": "Inconnu"
     },
+    "officeHours": {
+      "title": "Heures de Bureau Mensuelles",
+      "description": "À partir de novembre, nous organiserons des heures de bureau mensuelles pour discuter des mises à jour du projet, répondre aux questions et échanger avec notre communauté.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensuel"
+    },
+    "webinar": {
+      "ended": "Terminé",
+      "live": "En direct",
+      "today": "Aujourd'hui",
+      "joinNow": "Rejoindre maintenant",
+      "webinarEnded": "Webinaire terminé",
+      "startingToday": "Commence aujourd'hui"
+    },
     "cards": {
       "recentActivity": "Activité récente",
       "activities7Days": "Activités (total 7 jours)",
@@ -961,6 +975,29 @@
         "camera": "Caméra",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
+      "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
+      "submitFeedback": "Soumettre les Commentaires",
+      "postTaskQuestions": "Questions Post-Tâche",
+      "rateTaskDifficulty": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
+      "additionalComments": "2. Des commentaires supplémentaires ?",
+      "optionalFeedback": "Commentaires optionnels...",
+      "externalFormTitle": "Formulaire Externe",
+      "externalFormDescription": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
+      "openExternalForm": "Ouvrir le Formulaire Externe",
+      "nasaTlxTitle": "Indice de Charge de Travail NASA",
+      "mentalDemand": "Demande Mentale",
+      "physicalDemand": "Demande Physique",
+      "lowHigh": "Faible - Élevé",
+      "moreDimensions": "+ 4 dimensions supplémentaires",
+      "susTitle": "Échelle d'Utilisabilité du Système",
+      "susStatement1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
+      "stronglyDisagree": "Fortement en Désaccord",
+      "stronglyAgree": "Fortement d'Accord",
+      "moreStatements": "+ 9 déclarations supplémentaires",
+      "sartTitle": "Technique d'Évaluation de la Conscience Situationnelle"
     }
   },
   "UserTestView": {
