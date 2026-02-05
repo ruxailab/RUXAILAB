@@ -187,6 +187,12 @@
       "accessibilityAutomatic": "自動アクセシビリティ評価"
     }
   },
+  "acceptInvitation": {
+    "title": "協力の招待",
+    "message": "この招待を承認しますか？",
+    "reject": "拒否",
+    "accept": "承認"
+  },
   "notificationsPage": {
     "subtitle": "活動とコラボレーションの最新情報を確認",
     "markAllRead": "すべて既読にする",
@@ -807,7 +813,8 @@
       "cancel_invitation": "{email}の招待を取り消してもよろしいですか？",
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
       "message_title_hint": "メッセージのタイトルを入力",
-      "message_content_hint": "メッセージの内容を入力"
+      "message_content_hint": "メッセージの内容を入力",
+      "invite_message": "テスト {testTitle} への参加に招待されました"
     }
   },
   "UserTestTable": {
@@ -823,8 +830,8 @@
       "noTasks": "タスクがありません。続行するにはタスクを作成してください。",
       "noVariables": "変数がまだ追加されていません。下をクリックして新しい変数を作成してください。",
       "noOptions": "オプションが追加されていません。",
-      "confirm_delete_task":"タスク削除の確認",
-      "sure_to_delete_task":"本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
+      "confirm_delete_task": "タスク削除の確認",
+      "sure_to_delete_task": "本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
     },
     "inputs": {
       "consent": "同意",
