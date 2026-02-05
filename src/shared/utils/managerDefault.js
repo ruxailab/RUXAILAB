@@ -22,7 +22,7 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
         icon: ICONS.DOCUMENT_EDIT,
         path: `/${type}/edit/${test.id}`,
       },
-      { title: 'Preview', icon: ICONS.PREVIEW, path: `/testview/${test.id}` },
+      { title: 'Answer Test', icon: ICONS.PREVIEW, path: `/testview/${test.id}` },
       {
         title: 'Reports',
         icon: ICONS.BOOK,
@@ -59,6 +59,14 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
         path: `/${type}/answer/${test.id}`,
       },
     )
+  }
+
+  if (accessLevel === ACCESS_LEVEL.GUEST) {
+    items.push({
+      title: 'Answer Test',
+      icon: ICONS.DOCUMENT,
+      path: `/testview/${test.id}`,
+    })
   }
 
   return items
