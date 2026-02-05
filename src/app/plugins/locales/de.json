@@ -183,6 +183,12 @@
       "accessibilityAutomatic": "Automatische Barrierefreiheitsprüfung"
     }
   },
+  "acceptInvitation": {
+    "title": "Kooperationseinladung",
+    "message": "Möchten Sie diese Einladung annehmen?",
+    "reject": "Ablehnen",
+    "accept": "Annehmen"
+  },
   "notificationsPage": {
     "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
     "markAllRead": "Alle als gelesen markieren",
@@ -808,8 +814,8 @@
       "noTasks": "Sie haben keine Aufgabe, erstellen Sie eine, um fortzufahren.",
       "noVariables": "Noch keine Variablen hinzugefügt. Klicken Sie unten, um eine neue Variable zu erstellen.",
       "noOptions": "Keine Optionen hinzugefügt.",
-      "confirm_delete_task":"Aufgabe löschen bestätigen",
-      "sure_to_delete_task":"Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
+      "confirm_delete_task": "Aufgabe löschen bestätigen",
+      "sure_to_delete_task": "Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
     },
     "inputs": {
       "consent": "Einverständnis",
