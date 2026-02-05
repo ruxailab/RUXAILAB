@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import  MagicMock
 
 # Add parent directory to path so we can import main
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -13,7 +13,6 @@ sys.modules['firebase_functions'] = MagicMock()
 sys.modules['firebase_admin'] = MagicMock()
 
 from main import (
-    calculate_eigen, 
     initialize_ahp_matrix,
     generate_saaty_scale_with_explanations,
     fill_ahp_matrix,

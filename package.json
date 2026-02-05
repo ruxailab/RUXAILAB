@@ -10,7 +10,7 @@
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "doc": "jsdoc -c conf.json",
     "test": "vue-cli-service test:unit && npm run test:weights",
-    "test:weights": "PYTHONDONTWRITEBYTECODE=1 python3 -m pip install pytest && PYTHONDONTWRITEBYTECODE=1 python3 -m pytest weight_function/tests/ -v -p no:cacheprovider",
+    "test:weights": "cross-env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest weight_function/tests/ -v -p no:cacheprovider",
     "build-dev": "vue-cli-service build --mode development",
     "build-prod": "vue-cli-service build --mode production",
     "cypress:open": "cypress open",
@@ -20,7 +20,7 @@
     "test-playwright": "playwright test",
     "test-playwright-ui": "playwright test --ui",
     "test-html-report": "playwright test --reporter=html",
-    "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
+    "test-json-report": "cross-env PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
   },
   "dependencies": {
     "@mediapipe/face_mesh": "^0.4.1633559619",
@@ -87,6 +87,7 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/vue3-jest": "^27.0.0",
     "babel-plugin-transform-require-context": "^0.1.1",
+    "cross-env": "^7.0.3",
     "cypress": "^13.8.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",

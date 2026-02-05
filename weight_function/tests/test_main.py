@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import  MagicMock
 
 # Add parent directory to path so we can import main
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -63,11 +63,13 @@ class TestCalculateEigen(unittest.TestCase):
             [0.5, 1.0]
         ])
         
-        _, weights, _, _ = calculate_eigen(matrix)
+        _, weights, cr, _ = calculate_eigen(matrix)
         
         # Weights should sum to 1
         self.assertAlmostEqual(np.sum(weights), 1.0, places=5)
         self.assertEqual(len(weights), 2)
+        # For 2x2 matrix, RI=0, so CR should be 0.0 (division by zero fix)
+        self.assertAlmostEqual(float(cr.real) if hasattr(cr, 'real') else cr, 0.0, places=5)
 
     def test_consistency_interpretation_message(self):
         """Test that consistency interpretation returns expected message"""
