@@ -795,7 +795,8 @@
       "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
       "message_title_hint": "输入您的消息标题",
-      "message_content_hint": "输入您的消息内容"
+      "message_content_hint": "输入您的消息内容",
+      "invite_message": "您已被邀请参加测试 {testTitle}"
     }
   },
   "UserTestTable": {

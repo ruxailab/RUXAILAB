@@ -797,7 +797,8 @@
       "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
-      "message_content_hint": "اكتب محتوى رسالتك"
+      "message_content_hint": "اكتب محتوى رسالتك",
+      "invite_message": "لقد تم دعوتك للمشاركة في الاختبار {testTitle}"
     }
   },
   "UserTestTable": {

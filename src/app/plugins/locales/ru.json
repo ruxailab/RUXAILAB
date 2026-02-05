@@ -795,7 +795,8 @@
       "cancel_invitation": "Вы уверены, что хотите отменить {email} из сотрудников?",
       "change_role": "Вы уверены, что хотите изменить роль {email} с {old} на {new}?",
       "message_title_hint": "Введите заголовок для вашего сообщения",
-      "message_content_hint": "Введите содержание вашего сообщения"
+      "message_content_hint": "Введите содержание вашего сообщения",
+      "invite_message": "Вы были приглашены к участию в тесте {testTitle}"
     }
   },
   "UserTestTable": {
