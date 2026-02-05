@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Text hier eingeben...",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -98,14 +99,19 @@
       "status": "Status",
       "sessionDate": "Sitzungsdatum",
       "participants": "Teilnehmer",
-      "created": "Erstellt"
+      "created": "Erstellt",
+      "noSearchResults": "Keine Ergebnisse gefunden, die Ihren Kriterien entsprechen",
+      "tryAdjustingSearch": "Versuchen Sie, Ihre Suche oder Filter anzupassen, um das Gewünschte zu finden"
     },
     "hidden": "Versteckt",
     "proceed": "fortfahren",
     "all": "Alle",
     "actions": "Aktionen",
+    "confirm_deletion": "Löschung bestätigen",
+    "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
     "user": "Benutzer",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elemente pro Seite:"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -181,6 +187,12 @@
       "accessibilityManual": "Manuelle Barrierefreiheitsprüfung",
       "accessibilityAutomatic": "Automatische Barrierefreiheitsprüfung"
     }
+  },
+  "acceptInvitation": {
+    "title": "Kooperationseinladung",
+    "message": "Möchten Sie diese Einladung annehmen?",
+    "reject": "Ablehnen",
+    "accept": "Annehmen"
   },
   "notificationsPage": {
     "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
@@ -276,6 +288,12 @@
     "enterValidPhoneNumber": "Bitte geben Sie eine gültige Telefonnummer ein (nur 9-15 Ziffern)",
     "profileImageUpdatedSuccess": "Profilbild erfolgreich aktualisiert",
     "profileImageUploadFailed": "Profilbild-Upload fehlgeschlagen",
+    "uploadProfilePicture": "Profilbild hochladen",
+    "removeProfilePicture": "Profilbild entfernen",
+    "takePhoto": "Foto aufnehmen",
+    "cameraCaptureTitle": "Profilbild aufnehmen",
+    "cameraNotAvailable": "Kamera ist auf diesem Gerät nicht verfügbar",
+    "cameraPermissionDenied": "Kamerazugriff verweigert. Bitte erlauben Sie den Kamerazugriff in Ihren Browsereinstellungen.",
     "noUserSignedIn": "Kein Benutzer angemeldet",
     "profileLoadFailed": "Profil konnte nicht geladen werden",
     "profileUpdatedSuccess": "Profil erfolgreich aktualisiert",
@@ -461,6 +479,20 @@
       "paused": "Pausiert",
       "finished": "Abgeschlossen",
       "unknown": "Unbekannt"
+    },
+    "officeHours": {
+      "title": "Monatliche Sprechstunden",
+      "description": "Ab November veranstalten wir monatliche Sprechstunden, um Projektaktualisierungen zu besprechen, Fragen zu beantworten und uns mit unserer Community auszutauschen.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monatlich"
+    },
+    "webinar": {
+      "ended": "Beendet",
+      "live": "Live",
+      "today": "Heute",
+      "joinNow": "Jetzt beitreten",
+      "webinarEnded": "Webinar beendet",
+      "startingToday": "Beginnt heute"
     },
     "cards": {
       "recentActivity": "Letzte Aktivitäten",
@@ -814,7 +846,9 @@
     "messages": {
       "noTasks": "Sie haben keine Aufgabe, erstellen Sie eine, um fortzufahren.",
       "noVariables": "Noch keine Variablen hinzugefügt. Klicken Sie unten, um eine neue Variable zu erstellen.",
-      "noOptions": "Keine Optionen hinzugefügt."
+      "noOptions": "Keine Optionen hinzugefügt.",
+      "confirm_delete_task": "Aufgabe löschen bestätigen",
+      "sure_to_delete_task": "Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
     },
     "inputs": {
       "consent": "Einverständnis",
@@ -969,6 +1003,29 @@
         "camera": "Kamera",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
+      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
+      "submitFeedback": "Feedback Absenden",
+      "postTaskQuestions": "Post-Aufgaben-Fragen",
+      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
+      "additionalComments": "2. Zusätzliche Kommentare?",
+      "optionalFeedback": "Optionales Feedback...",
+      "externalFormTitle": "Externes Formular",
+      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
+      "openExternalForm": "Externes Formular Öffnen",
+      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
+      "mentalDemand": "Mentale Anforderung",
+      "physicalDemand": "Physische Anforderung",
+      "lowHigh": "Niedrig - Hoch",
+      "moreDimensions": "+ 4 weitere Dimensionen",
+      "susTitle": "System-Usability-Skala",
+      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
+      "stronglyAgree": "Stimme Voll Zu",
+      "moreStatements": "+ 9 weitere Aussagen",
+      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
     }
   },
   "UserTestView": {
@@ -1233,6 +1290,7 @@
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",
         "whereICollaborate": "Wo ich mitarbeite",
+        "allMethods": "Alle Methoden",
         "lessThan10": "< 10 Teilnehmer",
         "between10And50": "10 – 50 Teilnehmer",
         "moreThan50": "> 50 Teilnehmer"
@@ -1320,8 +1378,6 @@
       "select_end_date": "Enddatum auswählen",
       "quick_actions": "Schnelle Aktionen",
       "perform_common_tasks": "Führen Sie häufige Aufgaben sofort aus",
-      "confirm_deletion": "Löschung bestätigen",
-      "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
       "delete_warning": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen für immer verloren.",
       "delete_forever": "Endgültig löschen"
     },
@@ -1339,12 +1395,14 @@
     "noCopy": "Kopieren nicht erfolgreich",
     "deleteTemplate": "Sind Sie sicher, dass Sie diese Vorlage löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden!",
     "deleteTest": "Sind Sie sicher, dass Sie diesen Test löschen möchten?",
+    "deleteQuestion": "Sind Sie sicher, dass Sie die Frage löschen möchten: ",
+    "deleteDescription": "Sind Sie sicher, dass Sie die Beschreibung löschen möchten: ",
     "addDescription": "Bitte fügen Sie eine Beschreibung hinzu",
     "errorOccurred": "Ein Fehler ist aufgetreten",
     "leave": "Sind Sie sicher, dass Sie gehen möchten?",
     "sureLeave": "Sind Sie sicher, dass Sie gehen möchten? Alle Ihre Änderungen werden verworfen.",
     "imageURL": "Geben Sie die Bild-URL ein:",
-    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten ",
+    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten: ",
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert",
@@ -1748,7 +1806,8 @@
       "active": "Aktiv",
       "draft": "Entwurf",
       "completed": "Abgeschlossen",
-      "archived": "Archiviert"
+      "archived": "Archiviert",
+      "moderatedDescription": "Verwalten Sie Ihre moderierte Benutzerteststudie, verfolgen Sie den Fortschritt der Teilnehmer und analysieren Sie die Ergebnisse über Ihr umfassendes Dashboard."
     },
     "studyOverview": {
       "totalParticipants": "Gesamtteilnehmer",
@@ -1816,6 +1875,37 @@
     "deleteOptionConfirm": {
       "title": "Option löschen",
       "message": "Sind Sie sicher, dass Sie diese Option löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    }
+  },
+  "tags": {
+    "active": "Aktiv",
+    "draft": "Entwurf",
+    "completed": "Abgeschlossen",
+    "archived": "Archiviert",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "fromTemplate": "Aus Vorlage",
+    "withCollaborators": "Mit Mitwirkenden"
+  },
+  "methods": {
+    "categories": {
+      "test": "Benutzertests",
+      "inquiry": "Benutzerforschung",
+      "inspection": "Expertenprüfung",
+      "accessibility": "Barrierefreiheit",
+      "other": "Sonstiges"
+    },
+    "definitions": {
+      "HEURISTICS": "Heuristische Bewertung",
+      "USER_MODERATED": "Moderierter Usability-Test",
+      "USER_UNMODERATED": "Unmoderierter Usability-Test",
+      "SURVEY": "Umfrage",
+      "INTERVIEW": "Interview",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Cognitive Walkthrough",
+      "ACCESSIBILITY_MANUAL": "Manuelle Bewertung",
+      "ACCESSIBILITY_AUTOMATIC": "Automatische Bewertung",
+      "WCAG_AUDIT": "WCAG-Audit"
     }
   }
 }

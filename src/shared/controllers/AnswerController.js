@@ -101,4 +101,20 @@ export default class AnswerController extends Controller {
     }
     return super.update(COLLECTION, answersDocId, update)
   }
+
+  async setTaskTranscriptionMeta({
+    answersDocId,
+    userDocId,
+    taskId,
+    latestTranscriptionDocId,
+    transcriptionsCount,
+  }) {
+    const base = `taskAnswers.${userDocId}.tasks.${taskId}`
+
+    const update = {
+      [`${base}.latestTranscriptionDocId`]: latestTranscriptionDocId,
+      [`${base}.transcriptionsCount`]: transcriptionsCount,
+    }
+    return super.update(COLLECTION, answersDocId, update)
+  }
 }

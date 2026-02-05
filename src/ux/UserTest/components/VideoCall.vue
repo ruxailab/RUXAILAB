@@ -64,11 +64,26 @@
           >
             <div class="video-container">
               <video
+                v-if="isRemoteCameraEnabled(userId)"
                 :srcObject="stream"
                 autoplay
                 playsinline
                 class="video-element"
               ></video>
+
+              <!-- Camera disabled overlay for remote peer -->
+              <div v-if="!isRemoteCameraEnabled(userId)" class="camera-disabled-overlay">
+                <v-icon size="64" color="white" class="mb-2"
+                  >mdi-video-off</v-icon
+                >
+                <p class="text-white">Camera is off</p>
+              </div>
+
+              <!-- Microphone muted indicator for remote peer -->
+              <div v-if="!isRemoteMicrophoneEnabled(userId)" class="mic-muted-indicator">
+                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+              </div>
+
               <div class="video-label">{{ getPeerName(userId) }}</div>
             </div>
           </div>
@@ -1023,6 +1038,8 @@ const joinRoom = async () => {
     email: props.user.email,
     name: props.user.email?.split('@')[0], // Simple name
     joinedAt: Date.now(),
+    cameraEnabled: isCameraEnabled.value,
+    microphoneEnabled: isMicrophoneEnabled.value,
   })
   onDisconnect(myRef).remove() // Auto-remove on closing tab
 
@@ -1247,6 +1264,8 @@ function toggleCamera() {
   if (track) {
     track.enabled = !track.enabled
     isCameraEnabled.value = track.enabled
+    // Share camera state with other peers
+    updateParticipantStatus()
   }
 }
 
@@ -1256,7 +1275,34 @@ function toggleMicrophone() {
   if (track) {
     track.enabled = !track.enabled
     isMicrophoneEnabled.value = track.enabled
+    // Share mic state with other peers
+    updateParticipantStatus()
   }
+}
+
+async function updateParticipantStatus() {
+  if (!props.user?.id || !props.roomId) return
+  try {
+    const participantRef = dbRef(
+      database,
+      `calls/${props.roomId}/participants/${props.user.id}`,
+    )
+    await update(participantRef, {
+      cameraEnabled: isCameraEnabled.value,
+      microphoneEnabled: isMicrophoneEnabled.value,
+      updatedAt: Date.now(),
+    })
+  } catch (error) {
+    console.error('Error updating participant status:', error) // eslint-disable-line no-console
+  }
+}
+
+function isRemoteCameraEnabled(userId) {
+  return participants.value[userId]?.cameraEnabled !== false
+}
+
+function isRemoteMicrophoneEnabled(userId) {
+  return participants.value[userId]?.microphoneEnabled !== false
 }
 
 function toggleSidePanel() {
