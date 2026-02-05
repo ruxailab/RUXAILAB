@@ -104,6 +104,7 @@ import { useRouter } from 'vue-router'
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import StudyController from '@/controllers/StudyController'
+import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const router = useRouter()
@@ -158,13 +159,22 @@ const goToNotificationRedirect = async (notification) => {
     }
 
     if (notification.testId) {
-      const study = await new StudyController().getStudy({
-        id: notification.testId,
-      })
-      await store.dispatch('acceptStudyCollaboration', {
-        test: study,
-        cooperator: user.value,
-      })
+      try {
+        const study = await new StudyController().getStudy({
+          id: notification.testId,
+        })
+        await store.dispatch('acceptStudyCollaboration', {
+          test: study,
+          cooperator: user.value,
+        })
+      } catch {
+        showError('notifications.errors.acceptCollaborationFailed')
+        return
+      }
+    } else {
+      // Missing testId - cannot process collaboration
+      showError('notifications.errors.invalidCollaboration')
+      return
     }
   }
 

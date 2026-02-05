@@ -104,7 +104,7 @@ import { useRouter, useRoute } from 'vue-router'
 import Notification from '@/shared/models/Notification'
 import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
-import { showSuccess, showError } from '@/shared/utils/toast'
+import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -309,7 +309,7 @@ const handleSendInvitations = async (invitationData) => {
         cooperatorsEdit.value[existingIndex] = {
           ...existing,
           accessLevel: newRole,
-          updateDate: Date.now(),
+          updateDate: new Date().toISOString(),
         }
         updatedRoles.push(coopEmail)
       }
@@ -323,11 +323,13 @@ const handleSendInvitations = async (invitationData) => {
 
   // Show appropriate feedback
   if (updatedRoles.length > 0) {
-    const roleName = roleOptions.value[selectedRole].title
-    showSuccess(`Updated role to ${roleName} for: ${updatedRoles.join(', ')}`)
+    showSuccess(t('cooperators.updatedRole', { 
+      role: roleOptions.value[selectedRole].title, 
+      users: updatedRoles.join(', ') 
+    }))
   }
   if (newInvites.length > 0) {
-    showSuccess(`Invitation sent to: ${newInvites.join(', ')}`)
+    showSuccess(t('cooperators.inviteSent', { users: newInvites.join(', ') }))
   }
 }
 
