@@ -805,8 +805,8 @@
       "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar.",
       "noVariables": "Nenhuma variável adicionada ainda. Clique abaixo para criar uma nova variável.",
       "noOptions": "Nenhuma opção adicionada.",
-      "confirm_delete_task":"Confirmar Exclusão de Tarefa",
-      "sure_to_delete_task":"Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
+      "confirm_delete_task": "Confirmar Exclusão de Tarefa",
+      "sure_to_delete_task": "Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
     },
     "inputs": {
       "consent": "Consentimento",
@@ -1135,6 +1135,46 @@
     "inProgress": "Calibração em andamento...",
     "completed": "Calibração concluída!",
     "continue": "Continuar para o teste"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Configurações de Rastreamento Ocular",
+      "general": "Configurações Gerais",
+      "miscellaneous": "Configurações Diversas"
+    },
+    "labels": {
+      "pointNumber": "Número de Pontos",
+      "samplesPerPoint": "Amostras por Ponto",
+      "msPerPoint": "Milissegundos por Captura de Ponto",
+      "threshold": "Limiar de Distância de Pontos",
+      "radius": "Raio",
+      "offset": "Deslocamento",
+      "control": "Controle:",
+      "useCustomColors": "Usar Cores Personalizadas",
+      "backgroundColor": "Cor de Fundo:",
+      "pointColor": "Cor do Ponto:",
+      "modelSelection": "Seleção de Modelo:",
+      "selectModel": "Selecionar Modelo",
+      "note": "Nota:",
+      "noteText": "O modelo selecionado será usado para o processo de calibração. O modelo padrão é a Regressão Linear. Alguns modelos podem demorar mais para treinar do que outros. Por favor, seja paciente."
+    },
+    "tooltips": {
+      "pointNumber": "Número de pontos de calibração mostrados na tela (mais pontos = maior precisão).",
+      "samplesPerPoint": "Quantas amostras de olhar são coletadas por ponto de calibração. Valores mais altos melhoram a precisão, mas aumentam a duração.",
+      "msPerPoint": "Duração (em milissegundos) para capturar dados por ponto. Define quanto tempo o usuário deve olhar para cada alvo.",
+      "threshold": "Distância máxima (em pixels) permitida entre as amostras de calibração antes de serem descartadas. Controla a tolerância espacial.",
+      "radius": "Ajusta o raio do ponto de calibração. Valores maiores tornam o ponto maior.",
+      "offset": "Deslocamento (em pixels) para ajustar a posição da área de calibração."
+    },
+    "models": {
+      "linear": "Regressão Linear",
+      "ridge": "Regressão Ridge",
+      "lasso": "Regressão Lasso",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "Regressor SGD",
+      "svr": "Regressor de Vetor de Suporte"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Acesso não permitido",

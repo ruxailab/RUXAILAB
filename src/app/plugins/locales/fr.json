@@ -805,8 +805,8 @@
       "noTasks": "Vous n'avez aucune tâche, créez-en une pour continuer.",
       "noVariables": "Aucune variable ajoutée. Cliquez ci-dessous pour créer une nouvelle variable.",
       "noOptions": "Aucune option ajoutée.",
-      "confirm_delete_task":"Confirmer la suppression de la tâche",
-      "sure_to_delete_task":"Êtes-vous sûr de vouloir supprimer la tâche : {taskName} ? Cette action ne peut pas être annulée"
+      "confirm_delete_task": "Confirmer la suppression de la tâche",
+      "sure_to_delete_task": "Êtes-vous sûr de vouloir supprimer la tâche : {taskName} ? Cette action ne peut pas être annulée"
     },
     "inputs": {
       "consent": "Consentement",
@@ -1135,6 +1135,46 @@
     "inProgress": "Calibration en cours...",
     "completed": "Calibration terminée !",
     "continue": "Continuer vers le test"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Configurations de suivi oculaire",
+      "general": "Configuration générale",
+      "miscellaneous": "Configuration diverses"
+    },
+    "labels": {
+      "pointNumber": "Nombre de points",
+      "samplesPerPoint": "Échantillons par point",
+      "msPerPoint": "Millisecondes par capture de point",
+      "threshold": "Seuil de distance des points",
+      "radius": "Rayon",
+      "offset": "Décalage",
+      "control": "Contrôle :",
+      "useCustomColors": "Utiliser des couleurs personnalisées",
+      "backgroundColor": "Couleur de fond :",
+      "pointColor": "Couleur du point :",
+      "modelSelection": "Sélection du modèle :",
+      "selectModel": "Sélectionner le modèle",
+      "note": "Note :",
+      "noteText": "Le modèle sélectionné sera utilisé pour le processus de calibration. Le modèle par défaut est la régression linéaire. Certains modèles peuvent prendre plus de temps à s'entraîner que d'autres. Veuillez être patient."
+    },
+    "tooltips": {
+      "pointNumber": "Nombre de points de calibration affichés à l'écran (plus de points = plus de précision).",
+      "samplesPerPoint": "Nombre d'échantillons de regard collectés par point de calibration. Des valeurs plus élevées améliorent la précision mais augmentent la durée.",
+      "msPerPoint": "Durée (en millisecondes) pour capturer les données par point. Définit combien de temps l'utilisateur doit regarder chaque cible.",
+      "threshold": "Distance maximale (en pixels) autorisée entre les échantillons de calibration avant qu'ils ne soient ignorés. Contrôle la tolérance spatiale.",
+      "radius": "Ajuste le rayon du point de calibration. Des valeurs plus grandes augmentent la taille du point.",
+      "offset": "Décalage (en pixels) pour ajuster la position de la zone de calibration."
+    },
+    "models": {
+      "linear": "Régression linéaire",
+      "ridge": "Régression Ridge",
+      "lasso": "Régression Lasso",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "Régresseur SGD",
+      "svr": "Régresseur à vecteurs de support"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Accès non autorisé",

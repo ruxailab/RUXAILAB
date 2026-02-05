@@ -2,7 +2,7 @@
   <v-row class="d-flex align-center">
     <v-col cols="8">
       <v-tooltip
-        text="Offset (in pixels) to adjust the calibration area position."
+        :text="$t('EyeTrackingConfig.tooltips.offset')"
         location="bottom"
       >
         <template #activator="{ props }">
@@ -12,7 +12,7 @@
             :min="100"
             :max="300"
             step="5"
-            label="Offset"
+            :label="$t('EyeTrackingConfig.labels.offset')"
             thumb-label
           />
         </template>
