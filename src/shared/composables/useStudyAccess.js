@@ -39,7 +39,12 @@ export function getStudyAccessLevel(user, test) {
   if (!test) return null
 
   // Super admin or admin has full access
-  if (user.accessLevel <= 0) return ACCESS_LEVEL.ADMIN
+  if (
+    typeof user.accessLevel === 'number' &&
+    user.accessLevel <= ACCESS_LEVEL.ADMIN
+  ) {
+    return ACCESS_LEVEL.ADMIN
+  }
 
   // Test owner has full access
   if (test.testAdmin?.userDocId === user.id) return ACCESS_LEVEL.ADMIN
