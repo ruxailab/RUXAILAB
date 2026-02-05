@@ -35,7 +35,7 @@ def calculate_eigen(matrix):
     else:
         CR = CI / RI
 
-    consistency_interpretation = ("Consistent because CR is lower than 0.1") if CR <= 0.1 else "Inconsistent because CR is greater than CR"
+    consistency_interpretation = ("Consistent because CR is lower than 0.1") if CR <= 0.1 else "Inconsistent because CR is greater than 0.1"
 
     return max_eigenvalue, normalized_weights.real, CR, consistency_interpretation
 
