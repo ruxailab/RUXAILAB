@@ -99,7 +99,9 @@
       "status": "Статус",
       "sessionDate": "Дата сессии",
       "participants": "Участники",
-      "created": "Создано"
+      "created": "Создано",
+      "noSearchResults": "По вашему запросу ничего не найдено",
+      "tryAdjustingSearch": "Попробуйте изменить параметры поиска или фильтры"
     },
     "hidden": "Скрыто",
     "proceed": "продолжить",

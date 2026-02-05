@@ -99,7 +99,9 @@
       "status": "Status",
       "sessionDate": "Sitzungsdatum",
       "participants": "Teilnehmer",
-      "created": "Erstellt"
+      "created": "Erstellt",
+      "noSearchResults": "Keine Ergebnisse gefunden, die Ihren Kriterien entsprechen",
+      "tryAdjustingSearch": "Versuchen Sie, Ihre Suche oder Filter anzupassen, um das Gewünschte zu finden"
     },
     "hidden": "Versteckt",
     "proceed": "fortfahren",

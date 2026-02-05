@@ -64,13 +64,21 @@
                   hide-details
                   :placeholder="
                     creationDateRange.length > 1
-                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
                       : $t('pages.studies.selectRange')
                   "
                   prepend-inner-icon="mdi-calendar"
                   :model-value="
                     creationDateRange.length > 1
-                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
                       : ''
                   "
                 />
@@ -160,7 +168,12 @@
   </v-card>
 
   <!-- 📋 Study list -->
-  <List :items="filteredTests" type="myTests" @clicked="goTo" />
+  <List
+    :items="filteredTests"
+    type="myTests"
+    :is-filtered="hasActiveFilters"
+    @clicked="goTo"
+  />
 </template>
 
 <script setup>

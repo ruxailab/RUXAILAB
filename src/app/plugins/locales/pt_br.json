@@ -100,7 +100,9 @@
       "status": "Status",
       "sessionDate": "Data da sessão",
       "participants": "Participantes",
-      "created": "Criado"
+      "created": "Criado",
+      "noSearchResults": "Nenhum resultado encontrado para os seus critérios",
+      "tryAdjustingSearch": "Tente ajustar sua pesquisa ou filtros"
     },
     "proceed": "prosseguir",
     "all": "Todos",
