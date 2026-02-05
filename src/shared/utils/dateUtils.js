@@ -16,8 +16,7 @@ export const formatDateLong = (date, locale = 'en') => {
       month: 'long',
       year: 'numeric',
     }).format(d)
-  } catch (error) {
-    console.warn('Error formatting date:', error)
+  } catch {
     return '-'
   }
 }
@@ -61,8 +60,7 @@ export const formatDateTime = (date, locale = 'es-ES') => {
       hour: '2-digit',
       minute: '2-digit',
     })
-  } catch (error) {
-    console.warn('Error formatting datetime:', error)
+  } catch {
     return '-'
   }
 }
@@ -90,8 +88,7 @@ export const formatRelativeTime = (date) => {
     if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} meses`
 
     return `Hace ${Math.floor(diffDays / 365)} años`
-  } catch (error) {
-    console.warn('Error formatting relative time:', error)
+  } catch {
     return '-'
   }
 }
@@ -120,8 +117,7 @@ export const formatDate = (timestamp) => {
     const month = date.getMonth() + 1
     const year = date.getFullYear()
     return `${day}/${month}/${year}`
-  } catch (error) {
-    console.warn('Error formatting date:', error)
+  } catch {
     return ''
   }
 }
@@ -149,8 +145,7 @@ export const formatTime = (timestamp) => {
     const hours = date.getHours()
     const minutes = date.getMinutes()
     return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
-  } catch (error) {
-    console.warn('Error formatting time:', error)
+  } catch {
     return ''
   }
 }
