@@ -326,6 +326,13 @@ jobs:
 
                 labelsToAdd.push("pr-limit-exceeded");
 
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  state: "closed",
+                });
+
                 // Hard fail to block merge
                 throw new Error("Author exceeded max number of open PRs");
               }
@@ -369,7 +376,13 @@ jobs:
 
                 labelsToAdd.push("needs-media");
 
-                // Block merge
-                throw new Error("PR is missing required image or video");
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  state: "closed",
+                });
+
+                throw new Error("PR closed due to missing required media");
               }
             }
