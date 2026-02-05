@@ -384,9 +384,16 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import { showSuccess } from '../utils/toast'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const store = useStore()
 const { t } = useI18n()
+
+// Access control - only Admin can view reports
+const { watchAccessAndRedirect } = useStudyAccess({
+  routeType: 'report',
+  redirectPath: '/',
+})
 
 const props = defineProps({ id: { type: String, default: '' } })
 const emit = defineEmits(['goToCoops'])
@@ -563,6 +570,7 @@ const getStatusIcon = (status) =>
     : 'mdi-progress-clock'
 
 onMounted(async () => {
+  watchAccessAndRedirect()
   store.commit('setLoading', true)
   try {
     await store.dispatch('getCurrentTestAnswerDoc')

@@ -100,6 +100,7 @@ import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 // Controller
 const studyController = new StudyController()
@@ -107,6 +108,12 @@ const studyController = new StudyController()
 // Store
 const store = useStore()
 const { t } = useI18n()
+
+// Access control - only Admin can edit studies
+const { watchAccessAndRedirect } = useStudyAccess({
+  routeType: 'edit',
+  redirectPath: '/',
+})
 
 // Variables
 const change = ref(false)
@@ -212,6 +219,7 @@ const subscribeToTest = () => {
 // Lifecycle
 onMounted(() => {
   subscribeToTest()
+  watchAccessAndRedirect()
 })
 
 onUnmounted(() => {

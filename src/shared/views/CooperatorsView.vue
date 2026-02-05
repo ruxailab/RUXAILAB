@@ -105,6 +105,7 @@ import Notification from '@/shared/models/Notification'
 import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -134,6 +135,12 @@ const store = useStore()
 const route = useRoute()
 const slots = useSlots()
 const { t } = useI18n()
+
+// Access control - only Admin can manage cooperators
+const { watchAccessAndRedirect } = useStudyAccess({
+  routeType: 'cooperators',
+  redirectPath: '/',
+})
 
 const { roleOptions } = useCooperatorUtils()
 
@@ -446,6 +453,7 @@ watch(loading, (newVal) => {
 })
 
 onMounted(async () => {
+  watchAccessAndRedirect()
   store.dispatch('getAllUsers')
 
   const testId = props.id || route.params.id
