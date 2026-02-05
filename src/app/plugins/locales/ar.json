@@ -110,7 +110,8 @@
     "confirm_deletion": "تأكيد الحذف",
     "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
     "user": "مستخدم",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "عدد العناصر في الصفحة:"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -1275,6 +1276,7 @@
         "allStudies": "جميع الدراسات",
         "myStudies": "دراساتي",
         "whereICollaborate": "حيث أتعاون",
+        "allMethods": "جميع الطرق",
         "lessThan10": "< 10 مشاركين",
         "between10And50": "10 – 50 مشارك",
         "moreThan50": "> 50 مشارك"

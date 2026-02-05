@@ -110,7 +110,8 @@
     "confirm_deletion": "हटाने की पुष्टि करें",
     "action_cannot_be_undone": "यह क्रिया पूर्ववत नहीं की जा सकती",
     "user": "उपयोगकर्ता",
-    "id": "आईडी"
+    "id": "आईडी",
+    "itemsPerPage": "प्रति पृष्ठ आइटम:"
   },
   "storage": {
     "pageTitle": "संग्रहण",
@@ -1273,6 +1274,7 @@
         "allStudies": "सभी अध्ययन",
         "myStudies": "मेरे अध्ययन",
         "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+        "allMethods": "सभी विधियाँ",
         "lessThan10": "< 10 प्रतिभागी",
         "between10And50": "10 – 50 प्रतिभागी",
         "moreThan50": "> 50 प्रतिभागी"

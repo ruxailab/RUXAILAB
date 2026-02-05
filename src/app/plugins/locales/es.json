@@ -110,7 +110,8 @@
     "confirm_deletion": "Confirmar eliminación",
     "action_cannot_be_undone": "Esta acción no se puede deshacer",
     "user": "Usuario",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elementos por página:"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -1275,6 +1276,7 @@
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
         "whereICollaborate": "Donde colaboro",
+        "allMethods": "Todos los métodos",
         "lessThan10": "< 10 participantes",
         "between10And50": "10 – 50 participantes",
         "moreThan50": "> 50 participantes"

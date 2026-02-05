@@ -110,7 +110,8 @@
     "confirm_deletion": "Löschung bestätigen",
     "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
     "user": "Benutzer",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elemente pro Seite:"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -1276,6 +1277,7 @@
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",
         "whereICollaborate": "Wo ich mitarbeite",
+        "allMethods": "Alle Methoden",
         "lessThan10": "< 10 Teilnehmer",
         "between10And50": "10 – 50 Teilnehmer",
         "moreThan50": "> 50 Teilnehmer"

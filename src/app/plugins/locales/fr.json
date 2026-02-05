@@ -110,7 +110,8 @@
     "confirm_deletion": "Confirmer la suppression",
     "action_cannot_be_undone": "Cette action ne peut pas être annulée",
     "user": "Utilisateur",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Éléments par page :"
   },
   "storage": {
     "pageTitle": "Stockage",
@@ -1273,6 +1274,7 @@
         "allStudies": "Toutes les études",
         "myStudies": "Mes études",
         "whereICollaborate": "Où je collabore",
+        "allMethods": "Toutes les méthodes",
         "lessThan10": "< 10 participants",
         "between10And50": "10 – 50 participants",
         "moreThan50": "> 50 participants"
