@@ -105,7 +105,7 @@ import Notification from '@/shared/models/Notification'
 import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
-import { useStudyAccess } from '@/shared/composables/useStudyAccess'
+import { useStudyAccess, ACCESS_LEVEL } from '@/shared/composables/useStudyAccess'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -385,18 +385,23 @@ const notifyCooperator = (guest) => {
     //  return;
     //}
 
-    // admin - 0, evaluator -1, guest - 2
-    const managerViewByMethod = getMethodManagerView(
-      test.value.testType,
-      test.value.subType,
-    )
-    const managerRoute = router.resolve({
-      name: managerViewByMethod,
-      params: { id: test.value.id },
-    })
+    let path
 
-    // All roles (Admin, Evaluator, Guest) redirect to manager
-    const path = managerRoute.href
+    // Observers are redirected to /testview since they cannot access manager
+    if (guest.accessLevel === ACCESS_LEVEL.OBSERVATOR) {
+      path = `/testview/${test.value.id}`
+    } else {
+      // Admin, Evaluator, Guest redirect to manager
+      const managerViewByMethod = getMethodManagerView(
+        test.value.testType,
+        test.value.subType,
+      )
+      const managerRoute = router.resolve({
+        name: managerViewByMethod,
+        params: { id: test.value.id },
+      })
+      path = managerRoute.href
+    }
 
     sendNotification({
       userId: guest.userDocId,
