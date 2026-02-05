@@ -66,7 +66,7 @@ class TestGenerateSaatyScale(unittest.TestCase):
         scale = generate_saaty_scale_with_explanations()
         
         for value in scale.values():
-            self.assertTrue(isinstance(value, (int, float)))
+            self.assertIsInstance(value, (int, float))
 
 
 class TestFillAhpMatrix(unittest.TestCase):

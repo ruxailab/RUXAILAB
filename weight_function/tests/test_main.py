@@ -26,7 +26,7 @@ class TestCalculateEigen(unittest.TestCase):
             [4.0, 2.0, 1.0]
         ])
         
-        max_eigenvalue, weights, cr, interpretation = calculate_eigen(matrix)
+        _, weights, cr, interpretation = calculate_eigen(matrix)
         
         # Check that weights sum to 1
         self.assertAlmostEqual(np.sum(weights), 1.0, places=5)
@@ -36,7 +36,7 @@ class TestCalculateEigen(unittest.TestCase):
         
         # Check that weights are positive
         self.assertTrue(np.all(weights > 0))
-        
+
         # Verify interpretation is a string
         self.assertIsInstance(interpretation, str)
 
@@ -48,12 +48,12 @@ class TestCalculateEigen(unittest.TestCase):
             [0.33, 0.5, 1.0]
         ])
         
-        max_eigenvalue, weights, cr, interpretation = calculate_eigen(matrix)
+        _, weights, cr, interpretation = calculate_eigen(matrix)
         
         # Check dimensions
         self.assertEqual(len(weights), 3)
         # CR might be complex, so check if it's numeric
-        self.assertTrue(isinstance(cr, (float, np.floating, complex, np.complexfloating)))
+        self.assertIsInstance(cr, (float, np.floating, complex, np.complexfloating))
         self.assertIsInstance(interpretation, str)
 
     def test_calculate_eigen_small_matrix(self):
@@ -63,7 +63,7 @@ class TestCalculateEigen(unittest.TestCase):
             [0.5, 1.0]
         ])
         
-        max_eigenvalue, weights, cr, interpretation = calculate_eigen(matrix)
+        _, weights, cr, interpretation = calculate_eigen(matrix)
         
         # Weights should sum to 1
         self.assertAlmostEqual(np.sum(weights), 1.0, places=5)
@@ -74,7 +74,7 @@ class TestCalculateEigen(unittest.TestCase):
         # Consistent matrix (identity-like)
         matrix = np.eye(3)
         
-        max_eigenvalue, weights, cr, interpretation = calculate_eigen(matrix)
+        _, weights, cr, interpretation = calculate_eigen(matrix)
         
         # Should be consistent (CR <= 0.1)
         self.assertIn("Consistent", interpretation)
@@ -88,8 +88,7 @@ class TestInitializeAhpMatrix(unittest.TestCase):
         import pandas as pd
         
         df = pd.DataFrame({
-            'criteria': ['Cost', 'Quality', 'Time'],
-            'value': [1, 2, 3]
+            'criteria': ['Cost', 'Quality', 'Time']
         })
         
         ahp_df = initialize_ahp_matrix(df, 'criteria')
@@ -102,8 +101,7 @@ class TestInitializeAhpMatrix(unittest.TestCase):
         import pandas as pd
         
         df = pd.DataFrame({
-            'criteria': ['A', 'B'],
-            'value': [1, 2]
+            'criteria': ['A', 'B']
         })
         
         ahp_df = initialize_ahp_matrix(df, 'criteria')
@@ -117,8 +115,7 @@ class TestInitializeAhpMatrix(unittest.TestCase):
         
         categories = ['Cost', 'Quality', 'Time']
         df = pd.DataFrame({
-            'criteria': categories,
-            'value': [1, 2, 3]
+            'criteria': categories
         })
         
         ahp_df = initialize_ahp_matrix(df, 'criteria')
