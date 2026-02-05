@@ -388,10 +388,8 @@ const notifyCooperator = (guest) => {
       params: { id: test.value.id },
     })
 
-    const path =
-      guest.accessLevel == 0
-        ? managerRoute.href
-        : `/testview/${test.value.id}/${guest.userDocId}`
+    // All roles (Admin, Evaluator, Guest) redirect to manager
+    const path = managerRoute.href
 
     sendNotification({
       userId: guest.userDocId,
