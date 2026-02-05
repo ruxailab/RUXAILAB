@@ -183,6 +183,12 @@
       "accessibilityAutomatic": "Avaliação de acessibilidade automática"
     }
   },
+  "acceptInvitation": {
+    "title": "Convite de cooperação",
+    "message": "Deseja aceitar este convite?",
+    "reject": "Rejeitar",
+    "accept": "Aceitar"
+  },
   "notificationsPage": {
     "subtitle": "Mantenha-se atualizado com suas atividades e colaborações",
     "markAllRead": "Marcar tudo como lido",
@@ -805,8 +811,8 @@
       "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar.",
       "noVariables": "Nenhuma variável adicionada ainda. Clique abaixo para criar uma nova variável.",
       "noOptions": "Nenhuma opção adicionada.",
-      "confirm_delete_task":"Confirmar Exclusão de Tarefa",
-      "sure_to_delete_task":"Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
+      "confirm_delete_task": "Confirmar Exclusão de Tarefa",
+      "sure_to_delete_task": "Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
     },
     "inputs": {
       "consent": "Consentimento",

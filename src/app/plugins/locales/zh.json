@@ -183,6 +183,12 @@
       "accessibilityAutomatic": "自动无障碍评估"
     }
   },
+  "acceptInvitation": {
+    "title": "协作邀请",
+    "message": "您要接受此邀请吗？",
+    "reject": "拒绝",
+    "accept": "接受"
+  },
   "notificationsPage": {
     "subtitle": "随时了解您的活动和协作",
     "markAllRead": "全部标为已读",
@@ -805,8 +811,8 @@
       "noTasks": "您没有任何任务，请创建一个以继续。",
       "noVariables": "尚未添加任何变量。点击下方创建新变量。",
       "noOptions": "没有添加选项。",
-      "confirm_delete_task":"确认删除任务",
-      "sure_to_delete_task":"您确定要删除任务 : {taskName} 吗？此操作无法撤消"
+      "confirm_delete_task": "确认删除任务",
+      "sure_to_delete_task": "您确定要删除任务 : {taskName} 吗？此操作无法撤消"
     },
     "inputs": {
       "consent": "同意",
