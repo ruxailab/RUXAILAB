@@ -374,6 +374,19 @@
     "sendError": "Failed to send invitation. Please try again",
     "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "You don't have access to this private study. Please request an invitation.",
+      "editNotAllowed": "Only administrators can edit this study.",
+      "reportNotAllowed": "You don't have permission to view reports.",
+      "answerNotAllowed": "You don't have permission to manage answers.",
+      "cooperatorsNotAllowed": "Only administrators can manage cooperators.",
+      "settingsNotAllowed": "Only administrators can access settings.",
+      "managerNotAllowed": "Observers cannot access the manager dashboard.",
+      "genericNotAllowed": "You don't have permission to access this page.",
+      "cannotInvite": "Only administrators can invite cooperators."
+    }
+  },
   "Introduction": {
     "title": "UX Remote LAB",
     "subtitle": "What about doing Usability Tests in remote?",
