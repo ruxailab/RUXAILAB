@@ -367,11 +367,11 @@
     "errors": {
       "privateStudyNoAccess": "You don't have access to this private study. Please request an invitation.",
       "editNotAllowed": "Only administrators can edit this study.",
-      "reportNotAllowed": "You don't have permission to view reports.",
-      "answerNotAllowed": "You don't have permission to manage answers.",
+      "reportNotAllowed": "Only administrators can view reports.",
+      "answerNotAllowed": "Only evaluators and above can access answers.",
       "cooperatorsNotAllowed": "Only administrators can manage cooperators.",
       "settingsNotAllowed": "Only administrators can access settings.",
-      "managerNotAllowed": "Observers cannot access the manager dashboard.",
+      "managerNotAllowed": "Only evaluators and above can access the manager dashboard.",
       "genericNotAllowed": "You don't have permission to access this page.",
       "cannotInvite": "Only administrators can invite cooperators."
     }
