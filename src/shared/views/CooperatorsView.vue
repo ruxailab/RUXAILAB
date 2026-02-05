@@ -2,8 +2,8 @@
   <PageWrapper
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
-    <!-- Actions Slot -->
-    <template v-if="!showIntroView" #actions>
+    <!-- Actions Slot - Only Admin can invite -->
+    <template v-if="!showIntroView && isAdmin" #actions>
       <v-btn
         color="primary"
         size="large"
@@ -137,7 +137,7 @@ const slots = useSlots()
 const { t } = useI18n()
 
 // Access control - only Admin can manage cooperators
-const { watchAccessAndRedirect } = useStudyAccess({
+const { watchAccessAndRedirect, isAdmin } = useStudyAccess({
   routeType: 'cooperators',
   redirectPath: '/',
 })
