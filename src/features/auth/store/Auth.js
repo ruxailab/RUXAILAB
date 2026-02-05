@@ -160,6 +160,8 @@ export default {
       try {
         await authController.signOut()
         commit('SET_USER', null)
+        // Clear study state to prevent stale access checks on account switch
+        commit('CLEAN_TEST')
 
         if (!silent) {
           commit('SET_TOAST', {
