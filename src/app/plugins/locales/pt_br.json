@@ -457,6 +457,20 @@
       "finished": "Finalizado",
       "unknown": "Desconhecido"
     },
+    "officeHours": {
+      "title": "Horário Comercial Mensal",
+      "description": "Começando em novembro, realizaremos horários de atendimento mensais para discutir atualizações do projeto, responder perguntas e conectar com nossa comunidade.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensal"
+    },
+    "webinar": {
+      "ended": "Encerrado",
+      "live": "Ao vivo",
+      "today": "Hoje",
+      "joinNow": "Entrar agora",
+      "webinarEnded": "Webinar encerrado",
+      "startingToday": "Começa hoje"
+    },
     "cards": {
       "recentActivity": "Atividade Recente",
       "activities7Days": "Atividades (7 dias no total)",
@@ -961,6 +975,29 @@
         "camera": "Câmera",
         "audio": "Áudio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
+      "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
+      "submitFeedback": "Enviar Feedback",
+      "postTaskQuestions": "Perguntas Pós-Tarefa",
+      "rateTaskDifficulty": "1. Como você avaliaria a dificuldade desta tarefa?",
+      "additionalComments": "2. Comentários adicionais?",
+      "optionalFeedback": "Feedback opcional...",
+      "externalFormTitle": "Formulário Externo",
+      "externalFormDescription": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
+      "openExternalForm": "Abrir Formulário Externo",
+      "nasaTlxTitle": "Índice de Carga de Tarefas NASA",
+      "mentalDemand": "Demanda Mental",
+      "physicalDemand": "Demanda Física",
+      "lowHigh": "Baixo - Alto",
+      "moreDimensions": "+ 4 dimensões adicionais",
+      "susTitle": "Escala de Usabilidade do Sistema",
+      "susStatement1": "1. Acho que gostaria de usar este sistema com frequência.",
+      "stronglyDisagree": "Discordo Totalmente",
+      "stronglyAgree": "Concordo Totalmente",
+      "moreStatements": "+ 9 declarações adicionais",
+      "sartTitle": "Técnica de Avaliação de Consciência Situacional"
     }
   },
   "UserTestView": {
