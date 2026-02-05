@@ -99,14 +99,19 @@
       "status": "Status",
       "sessionDate": "Sitzungsdatum",
       "participants": "Teilnehmer",
-      "created": "Erstellt"
+      "created": "Erstellt",
+      "noSearchResults": "Keine Ergebnisse gefunden, die Ihren Kriterien entsprechen",
+      "tryAdjustingSearch": "Versuchen Sie, Ihre Suche oder Filter anzupassen, um das Gewünschte zu finden"
     },
     "hidden": "Versteckt",
     "proceed": "fortfahren",
     "all": "Alle",
     "actions": "Aktionen",
+    "confirm_deletion": "Löschung bestätigen",
+    "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
     "user": "Benutzer",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Elemente pro Seite:"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -182,6 +187,12 @@
       "accessibilityManual": "Manuelle Barrierefreiheitsprüfung",
       "accessibilityAutomatic": "Automatische Barrierefreiheitsprüfung"
     }
+  },
+  "acceptInvitation": {
+    "title": "Kooperationseinladung",
+    "message": "Möchten Sie diese Einladung annehmen?",
+    "reject": "Ablehnen",
+    "accept": "Annehmen"
   },
   "notificationsPage": {
     "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
@@ -458,6 +469,20 @@
       "paused": "Pausiert",
       "finished": "Abgeschlossen",
       "unknown": "Unbekannt"
+    },
+    "officeHours": {
+      "title": "Monatliche Sprechstunden",
+      "description": "Ab November veranstalten wir monatliche Sprechstunden, um Projektaktualisierungen zu besprechen, Fragen zu beantworten und uns mit unserer Community auszutauschen.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monatlich"
+    },
+    "webinar": {
+      "ended": "Beendet",
+      "live": "Live",
+      "today": "Heute",
+      "joinNow": "Jetzt beitreten",
+      "webinarEnded": "Webinar beendet",
+      "startingToday": "Beginnt heute"
     },
     "cards": {
       "recentActivity": "Letzte Aktivitäten",
@@ -793,7 +818,8 @@
       "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
       "change_role_title": "Rolle ändern",
       "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
-      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein"
+      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein",
+      "invite_message": "Sie wurden eingeladen, am Test {testTitle} teilzunehmen"
     }
   },
   "UserTestTable": {
@@ -965,6 +991,29 @@
         "camera": "Kamera",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
+      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
+      "submitFeedback": "Feedback Absenden",
+      "postTaskQuestions": "Post-Aufgaben-Fragen",
+      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
+      "additionalComments": "2. Zusätzliche Kommentare?",
+      "optionalFeedback": "Optionales Feedback...",
+      "externalFormTitle": "Externes Formular",
+      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
+      "openExternalForm": "Externes Formular Öffnen",
+      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
+      "mentalDemand": "Mentale Anforderung",
+      "physicalDemand": "Physische Anforderung",
+      "lowHigh": "Niedrig - Hoch",
+      "moreDimensions": "+ 4 weitere Dimensionen",
+      "susTitle": "System-Usability-Skala",
+      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
+      "stronglyAgree": "Stimme Voll Zu",
+      "moreStatements": "+ 9 weitere Aussagen",
+      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
     }
   },
   "UserTestView": {
@@ -1229,6 +1278,7 @@
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",
         "whereICollaborate": "Wo ich mitarbeite",
+        "allMethods": "Alle Methoden",
         "lessThan10": "< 10 Teilnehmer",
         "between10And50": "10 – 50 Teilnehmer",
         "moreThan50": "> 50 Teilnehmer"
@@ -1316,8 +1366,6 @@
       "select_end_date": "Enddatum auswählen",
       "quick_actions": "Schnelle Aktionen",
       "perform_common_tasks": "Führen Sie häufige Aufgaben sofort aus",
-      "confirm_deletion": "Löschung bestätigen",
-      "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
       "delete_warning": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen für immer verloren.",
       "delete_forever": "Endgültig löschen"
     },
@@ -1335,12 +1383,14 @@
     "noCopy": "Kopieren nicht erfolgreich",
     "deleteTemplate": "Sind Sie sicher, dass Sie diese Vorlage löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden!",
     "deleteTest": "Sind Sie sicher, dass Sie diesen Test löschen möchten?",
+    "deleteQuestion": "Sind Sie sicher, dass Sie die Frage löschen möchten: ",
+    "deleteDescription": "Sind Sie sicher, dass Sie die Beschreibung löschen möchten: ",
     "addDescription": "Bitte fügen Sie eine Beschreibung hinzu",
     "errorOccurred": "Ein Fehler ist aufgetreten",
     "leave": "Sind Sie sicher, dass Sie gehen möchten?",
     "sureLeave": "Sind Sie sicher, dass Sie gehen möchten? Alle Ihre Änderungen werden verworfen.",
     "imageURL": "Geben Sie die Bild-URL ein:",
-    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten ",
+    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten: ",
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert",
