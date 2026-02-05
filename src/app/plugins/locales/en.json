@@ -284,7 +284,12 @@
     "accountDeletedSuccess": "Account deleted successfully",
     "yourPassword": "Your Password",
     "back": "Back",
-    "deleteForever": "Delete Forever"
+    "deleteForever": "Delete Forever",
+    "invalidFileType": "Please select a valid image file.",
+    "fileTooLarge": "File size exceeds 5MB. Please choose a smaller image.",
+    "imageProcessingError": "Failed to process image. Please try again.",
+    "saveError": "Failed to save profile. Please try again.",
+    "formNotReady": "Form is not ready. Please try again."
   },
   "titles": {
     "manager": "Manager",
