@@ -99,7 +99,9 @@
       "status": "ステータス",
       "sessionDate": "セッション日",
       "participants": "参加者",
-      "created": "作成日"
+      "created": "作成日",
+      "noSearchResults": "条件に一致する結果が見つかりませんでした",
+      "tryAdjustingSearch": "検索条件またはフィルターを調整してみてください"
     },
     "hidden": "非表示",
     "proceed": "続行",

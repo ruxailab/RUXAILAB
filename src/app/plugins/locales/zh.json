@@ -99,7 +99,9 @@
       "status": "状态",
       "sessionDate": "会话日期",
       "participants": "参与者",
-      "created": "创建时间"
+      "created": "创建时间",
+      "noSearchResults": "未找到符合您条件的结果",
+      "tryAdjustingSearch": "请尝试调整您的搜索或过滤条件"
     },
     "hidden": "隐藏",
     "proceed": "继续",
