@@ -2,8 +2,8 @@ import { db } from '@/app/plugins/firebase'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 
 /**
- * Controller for fetching accessibility reports from Firestore by test ID.
- * @module AccessibilityReportController
+ * Controller for fetching accessibility reports from Firestore by test ID
+ * @class AccessibilityReportController
  */
 export default class AccessibilityReportController {
   /**

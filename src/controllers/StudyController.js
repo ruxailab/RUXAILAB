@@ -13,7 +13,8 @@ const answerController = new AnswerController()
 const userController = new UserController()
 
 /**
- * @module StudyController
+ * Controller for managing study operations
+ * @class StudyController
  * @extends Controller
  */
 export default class StudyController extends Controller {

@@ -9,7 +9,8 @@ import { documentId } from 'firebase/firestore'
 const COLLECTION = 'users'
 
 /**
- * @module UserController
+ * Controller for user profile and data management
+ * @class UserController
  * @extends Controller
  */
 export default class UserController extends Controller {

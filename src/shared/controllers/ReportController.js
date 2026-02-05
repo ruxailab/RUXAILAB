@@ -2,7 +2,8 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { STUDY_TYPES } from '../constants/methodDefinitions'
 
 /**
- * @module ReportController
+ * Controller for managing study reports and report removal operations
+ * @class ReportController
  * @extends Controller
  */
 export default class ReportController extends Controller {

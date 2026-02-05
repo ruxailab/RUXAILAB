@@ -17,7 +17,8 @@ import axios from 'axios'
 import EmailController from '@/shared/controllers/EmailController'
 
 /**
- * @module AuthController
+ * Controller for user authentication operations
+ * @class AuthController
  */
 export default class AuthController {
   /**

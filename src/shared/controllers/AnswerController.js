@@ -12,7 +12,8 @@ const userController = new UserController()
 import { increment } from 'firebase/firestore'
 
 /**
- * @module AnswerController
+ * Controller for managing user study answers and answer documents
+ * @class AnswerController
  * @extends Controller
  */
 export default class AnswerController extends Controller {

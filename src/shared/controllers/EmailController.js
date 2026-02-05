@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 /**
- * @module EmailController
+ * Controller for managing email operations via cloud functions
+ * @class EmailController
  */
 export default class EmailController {
   /**

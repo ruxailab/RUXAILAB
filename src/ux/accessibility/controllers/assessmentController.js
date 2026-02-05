@@ -14,8 +14,8 @@ import {
 const ASSESSMENTS_COLLECTION = 'assessments'
 
 /**
- * Accessibility assessment controller: save/get/update/delete assessments and config in Firestore.
- * @module AssessmentController
+ * Accessibility assessment controller: save/get/update/delete assessments and config in Firestore
+ * @class AssessmentController
  */
 export default class AssessmentController {
   /**
