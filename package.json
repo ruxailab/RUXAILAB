@@ -10,7 +10,7 @@
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "doc": "jsdoc -c conf.json",
     "test": "vue-cli-service test:unit && npm run test:weights",
-    "test:weights": "cross-env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest weight_function/tests/ -v -p no:cacheprovider",
+    "test:weights": "cross-env PYTHONDONTWRITEBYTECODE=1 python3 -m pip install pytest && PYTHONDONTWRITEBYTECODE=1 python3 -m pytest weight_function/tests/ -v -p no:cacheprovider",
     "build-dev": "vue-cli-service build --mode development",
     "build-prod": "vue-cli-service build --mode production",
     "cypress:open": "cypress open",
