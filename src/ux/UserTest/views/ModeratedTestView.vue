@@ -190,8 +190,8 @@
                       stepperValue == 1
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -204,8 +204,8 @@
                       stepperValue == 2
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -218,8 +218,8 @@
                       stepperValue == 3
                         ? 'warning'
                         : stepperValue < 3
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -232,8 +232,8 @@
                       stepperValue == 4
                         ? 'warning'
                         : stepperValue < 4
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -246,8 +246,8 @@
                       stepperValue == 5
                         ? 'warning'
                         : stepperValue < 5
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -285,8 +285,8 @@
                         taskIndex == index
                           ? 'warning'
                           : taskIndex < index
-                          ? 'primary'
-                          : 'success'
+                            ? 'primary'
+                            : 'success'
                       "
                       complete-icon="mdi-check"
                     />
@@ -302,11 +302,11 @@
           <!-- Observator Notes Drawer -->
           <v-navigation-drawer
             v-if="isObservator"
+            v-model="notesDrawerOpen"
             location="right"
             persistent
             width="400"
             elevation="3"
-            v-model="notesDrawerOpen"
             style="
               position: fixed;
               top: 0;
@@ -332,7 +332,6 @@
             color="primary"
             elevation="4"
             class="notes-toggle-btn"
-            @click="notesDrawerOpen = !notesDrawerOpen"
             :style="{
               position: 'fixed',
               top: '80px',
@@ -340,6 +339,7 @@
               zIndex: 1006,
               transition: 'right 0.3s ease',
             }"
+            @click="notesDrawerOpen = !notesDrawerOpen"
           >
             <v-badge
               :content="localTestAnswer.sessionNotes?.length || 0"
@@ -357,7 +357,7 @@
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <VideoCall
-              :roomId="roomId"
+              :room-id="roomId"
               :is-moderator="isUserTestAdmin"
               :user="user"
               :access-level="currentUserAccessLevel"
@@ -601,6 +601,7 @@ import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAns
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
+import { calculateProgress } from '../utils/testProgress'
 
 const store = useStore()
 const router = useRouter()
@@ -1038,7 +1039,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       showVideoCall: true,
     })
 
-    calculateProgress()
+    calculateProgress(localTestAnswer)
     await saveAnswer()
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
@@ -1156,28 +1157,6 @@ const validate = (object) => {
   )
 }
 
-const calculateProgress = () => {
-  try {
-    const totalSteps = test.value?.testStructure?.userTasks?.length || 0
-    if (totalSteps === 0) return 0
-
-    let completedSteps = 0
-    if (localTestAnswer.consentCompleted) completedSteps += 1
-    if (localTestAnswer.preTestCompleted) completedSteps += 1
-    if (localTestAnswer.postTestCompleted) completedSteps += 1
-
-    if (Array.isArray(localTestAnswer.tasks)) {
-      completedSteps += localTestAnswer.tasks.filter((t) => t.completed).length
-    }
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error) // eslint-disable-line no-console
-    return 0
-  }
-}
 // testDisabledReason is already declared at line 544
 
 watchEffect(() => {
@@ -1411,7 +1390,8 @@ onBeforeUnmount(async () => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

@@ -526,6 +526,7 @@ import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCal
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import { calculateProgress } from '../utils/testProgress'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -689,7 +690,7 @@ function toggleTracking(value) {
 
 const savePartialAnswer = async () => {
   try {
-    localTestAnswer.progress = calculateProgress()
+    calculateProgress(localTestAnswer)
     localTestAnswer.fullName = fullName.value
 
     if (user.value && user.value?.email) {
@@ -791,6 +792,23 @@ const attachMediaToTasks = (answer, mediaUrls) => {
     if (!task) continue
 
     for (const type in medias) {
+      if (type === 'sizes') {
+        const sizes = medias[type]
+        console.log(`Found sizes for Task ${taskIndex}:`, sizes)
+        if (sizes.screenRecordURL) {
+          task.screenSize = sizes.screenRecordURL
+          console.log('Set screenSize:', task.screenSize)
+        }
+        if (sizes.audioRecordURL) {
+          task.audioSize = sizes.audioRecordURL
+          console.log('Set audioSize:', task.audioSize)
+        }
+        if (sizes.webcamRecordURL) {
+          task.webcamSize = sizes.webcamRecordURL
+          console.log('Set webcamSize:', task.webcamSize)
+        }
+        continue
+      }
       const field = MEDIA_FIELD_MAP?.[type] || type
       const url = medias[type]
       if (url != null) task[field] = url
@@ -962,7 +980,7 @@ const completeStep = (id, type, userCompleted = true) => {
       savePartialAnswer()
     }
 
-    calculateProgress()
+    calculateProgress(localTestAnswer)
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1023,42 +1041,6 @@ const autoComplete = async () => {
   }
 }
 
-const calculateProgress = () => {
-  try {
-    if (!localTestAnswer) return 0
-    const totalSteps = 4
-    let completedSteps = 0
-
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
-
-    let tasksCompleted = 0
-    if (
-      Array.isArray(localTestAnswer.tasks) &&
-      localTestAnswer.tasks.length > 0
-    ) {
-      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (
-          localTestAnswer.tasks[i]?.completed ||
-          localTestAnswer.tasks[i]?.attempted
-        ) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === localTestAnswer.tasks.length) {
-        completedSteps++
-      }
-    }
-
-    if (localTestAnswer.postTestCompleted) completedSteps++
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
-  } catch {
-    return 0
-  }
-}
 
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
@@ -1102,7 +1084,7 @@ const setTest = async () => {
     fullName.value = localTestAnswer.fullName
     await mappingSteps()
     await autoComplete()
-    localTestAnswer.progress = calculateProgress()
+    calculateProgress(localTestAnswer)
     initializeAnonymousUser()
   } catch {
     store.commit('SET_TOAST', {
@@ -1286,7 +1268,7 @@ onMounted(async () => {
   await nextTick()
   await setTest()
   await autoComplete()
-  calculateProgress()
+  calculateProgress(localTestAnswer)
   if (!user.value?.id) return
 
   let firstSnapshot = true

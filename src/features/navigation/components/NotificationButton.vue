@@ -104,6 +104,7 @@ import { useRouter } from 'vue-router'
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import StudyController from '@/controllers/StudyController'
+import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const router = useRouter()
@@ -145,24 +146,36 @@ const showAcceptDialog = () => {
 
 /* actions */
 const goToNotificationRedirect = async (notification) => {
-  const accepted = await showAcceptDialog()
+  // Only show dialog for Collaboration type invitations
+  if (notification.type === 'Collaboration') {
+    const accepted = await showAcceptDialog()
 
-  if (!accepted) {
-    await store.dispatch('markNotificationAsRead', {
-      notification,
-      user: user.value,
-    })
-    return
-  }
+    if (!accepted) {
+      await store.dispatch('markNotificationAsRead', {
+        notification,
+        user: user.value,
+      })
+      return
+    }
 
-  if (notification.testId) {
-    const study = await new StudyController().getStudy({
-      id: notification.testId,
-    })
-    await store.dispatch('acceptStudyCollaboration', {
-      test: study,
-      cooperator: user.value,
-    })
+    if (notification.testId) {
+      try {
+        const study = await new StudyController().getStudy({
+          id: notification.testId,
+        })
+        await store.dispatch('acceptStudyCollaboration', {
+          test: study,
+          cooperator: user.value,
+        })
+      } catch {
+        showError('notifications.errors.acceptCollaborationFailed')
+        return
+      }
+    } else {
+      // Missing testId - cannot process collaboration
+      showError('notifications.errors.invalidCollaboration')
+      return
+    }
   }
 
   await store.dispatch('markNotificationAsRead', {
@@ -170,13 +183,11 @@ const goToNotificationRedirect = async (notification) => {
     user: user.value,
   })
 
-  if (notification.redirectsTo) {
+  if (notification.redirectsTo && notification.redirectsTo !== '/') {
     globalThis.open(
       globalThis.location.origin + notification.redirectsTo,
       '_blank',
     )
-  } else {
-    goToNotificationPage()
   }
 
   menuOpen.value = false

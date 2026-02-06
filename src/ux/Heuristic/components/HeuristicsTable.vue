@@ -848,7 +848,6 @@ const confirmDeleteAction = () => {
 const editHeuris = (item) => {
   const heuristicIndex = heuristics.value.findIndex((h) => h.id === item.id)
   if (heuristicIndex === -1) {
-    console.warn('Heuristic not found:', item)
     showError(t('HeuristicsTable.errors.invalidHeuristic'))
     return
   }
@@ -864,10 +863,6 @@ const editHeuris = (item) => {
 
 const editQuestions = (item) => {
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
-    console.warn(
-      'Invalid heuristic for question edit, itemSelect:',
-      itemSelect.value,
-    )
     showError('HeuristicsTable.errors.invalidHeuristic')
     return
   }
@@ -889,7 +884,6 @@ const editDescription = (desc) => {
   if (btn && typeof btn.editSetup === 'function') {
     btn.editSetup(ind)
   } else {
-    console.warn('AddDescBtn ref not ready or missing editSetup method')
   }
 }
 
@@ -988,8 +982,7 @@ const addQuestion = () => {
       store.dispatch('setHeuristics', newHeuristics)
       closeDialog('dialogQuestion')
       emit('change')
-    } catch (error) {
-      console.error('Error adding question:', error)
+    } catch {
       showError('HeuristicsTable.errors.failedToLoadQuestionForm')
     }
   }
@@ -997,16 +990,13 @@ const addQuestion = () => {
 
 const validateEdit = () => {
   if (isProcessing.value) {
-    console.warn('Validation in progress, aborting')
     return
   }
   if (!itemEdit.value) {
-    console.warn('itemEdit is null, aborting validation')
     dialogEdit.value = false
     return
   }
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
-    console.warn('Invalid itemSelect or heuristic not found:', itemSelect.value)
     dialogEdit.value = false
     showError('HeuristicsTable.errors.invalidHeuristic')
     return
@@ -1025,7 +1015,6 @@ const validateEdit = () => {
         newHeuristics[itemSelect.value].questions[questionIndex].title =
           itemEdit.value.titleEdit
       } else {
-        console.warn('Question not found for id:', itemEdit.value.id)
         showError('HeuristicsTable.errors.invalidQuestion')
       }
     }

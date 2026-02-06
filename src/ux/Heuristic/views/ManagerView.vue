@@ -135,7 +135,6 @@ import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStat
 // Stores
 const store = useStore()
 const route = useRoute()
-const { t } = useI18n()
 
 // Access control - blocks Observer, allows Admin/Evaluator/Guest
 const { test, accessLevel, watchAccessAndRedirect, isLoading } = useStudyAccess({
@@ -174,9 +173,7 @@ const navigator = computed(() => {
 })
 
 // Methods para los componentes adicionales
-const viewAllActivity = () => {
-  console.log('View all activity')
-}
+const viewAllActivity = () => {}
 
 // Lifecycle
 onMounted(async () => {

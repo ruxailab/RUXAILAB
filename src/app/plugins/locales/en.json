@@ -215,6 +215,16 @@
     "daysAgo": "{count}d ago",
     "newNotification": "You have a new notification."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Failed to accept collaboration. Please try again.",
+      "invalidCollaboration": "This collaboration invitation is invalid or has expired."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Updated role to {role} for: {users}",
+    "inviteSent": "Invitation sent to: {users}"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "studies": "Studies",
@@ -829,7 +839,10 @@
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
       "message_title_hint": "Type a title for your message",
       "message_content_hint": "Type the content of your message",
-      "invite_message": "You have been invited to participate in the test {testTitle}"
+      "invite_message": "You have been invited to collaborate on '{testTitle}'",
+      "message_sent_success": "Message sent successfully",
+      "message_sent_error": "Failed to send message",
+      "user_not_registered": "This user has not accepted the invitation yet or is not registered."
     }
   },
   "UserTestTable": {
