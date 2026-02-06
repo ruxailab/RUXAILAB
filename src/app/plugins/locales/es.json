@@ -1564,7 +1564,21 @@
   },
   "CardSorting": {
     "noCategory": "Sin categoría",
-    "noCards": "No se encontraron tarjetas"
+    "noCards": "No se encontraron tarjetas",
+    "editTest": "Editar prueba",
+    "customizeSettings": "Personaliza los ajustes y preferencias de tu prueba",
+    "test": "Prueba",
+    "categories": "Categorías",
+    "cardsTitle": "Tarjetas",
+    "taskProgress": "{count} de {total} tarjetas",
+    "currentCards": "Tarjetas actuales",
+    "addNewCard": "Agregar nueva tarjeta",
+    "settings": "Ajustes",
+    "configureCardsDisplay": "Configura cómo se mostrarán las tarjetas",
+    "currentCategories": "Categorías actuales",
+    "addNewTask": "Agregar nueva tarea",
+    "configureCategoriesDisplay": "Configura cómo se mostrarán las categorías",
+    "newTask": "Nueva tarea"
   },
   "analytics": {
     "searchByName": "Buscar por nombre",

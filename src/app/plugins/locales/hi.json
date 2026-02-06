@@ -1561,7 +1561,21 @@
   },
   "CardSorting": {
     "noCategory": "कोई श्रेणी नहीं",
-    "noCards": "कोई कार्ड नहीं मिला"
+    "noCards": "कोई कार्ड नहीं मिला",
+    "editTest": "परीक्षण संपादित करें",
+    "customizeSettings": "अपने परीक्षण की सेटिंग्स और वरीयताओं को अनुकूलित करें",
+    "test": "परीक्षण",
+    "categories": "श्रेणियाँ",
+    "cardsTitle": "कार्ड",
+    "taskProgress": "{total} कार्ड में से {count}",
+    "currentCards": "वर्तमान कार्ड",
+    "addNewCard": "नया कार्ड जोड़ें",
+    "settings": "सेटिंग्स",
+    "configureCardsDisplay": "कॉन्फ़िगर करें कि कार्ड कैसे प्रदर्शित किए जाएंगे",
+    "currentCategories": "वर्तमान श्रेणियाँ",
+    "addNewTask": "नया कार्य जोड़ें",
+    "configureCategoriesDisplay": "कॉन्फ़िगर करें कि श्रेणियाँ कैसे प्रदर्शित की जाएंगी",
+    "newTask": "नया कार्य"
   },
   "analytics": {
     "searchByName": "नाम से खोजें",

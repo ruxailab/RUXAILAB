@@ -1582,7 +1582,21 @@
   },
   "CardSorting": {
     "noCategory": "Нет категории",
-    "noCards": "Карточки не найдены"
+    "noCards": "Карточки не найдены",
+    "editTest": "Редактировать тест",
+    "customizeSettings": "Настройте параметры и предпочтения вашего теста",
+    "test": "Тест",
+    "categories": "Категории",
+    "cardsTitle": "Карточки",
+    "taskProgress": "{count} из {total} карточек",
+    "currentCards": "Текущие карточки",
+    "addNewCard": "Добавить новую карточку",
+    "settings": "Настройки",
+    "configureCardsDisplay": "Настройте отображение карточек",
+    "currentCategories": "Текущие категории",
+    "addNewTask": "Добавить новую задачу",
+    "configureCategoriesDisplay": "Настройте отображение категорий",
+    "newTask": "Новая задача"
   },
   "analytics": {
     "searchByName": "Поиск по имени",

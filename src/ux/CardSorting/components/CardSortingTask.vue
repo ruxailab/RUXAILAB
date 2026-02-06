@@ -11,16 +11,35 @@
               <VCard class="card-category">
                 <VCardTitle class="d-flex justify-center align-center">
                   <VCol class="text-center">
-                    <p>{{ pendingAllocationCount }} of {{ props.test.testStructure.cardSorting.cards.length }} cards</p>
+                    <p>
+                      {{
+                        $t('CardSorting.taskProgress', {
+                          count: pendingAllocationCount,
+                          total:
+                            props.test.testStructure.cardSorting.cards.length,
+                        })
+                      }}
+                    </p>
                     <v-progress-linear
-v-model="pendingAllocationCount" color="primary" height="12"
-                      :max="props.test.testStructure.cardSorting.cards.length" />
+                      v-model="pendingAllocationCount"
+                      color="primary"
+                      height="12"
+                      :max="props.test.testStructure.cardSorting.cards.length"
+                    />
                   </VCol>
                 </VCardTitle>
 
-                <Draggable :list="cards" item-key="title" class="list-group" group="cards">
+                <Draggable
+                  :list="cards"
+                  item-key="title"
+                  class="list-group"
+                  group="cards"
+                >
                   <template #item="{ element }">
-                    <CardSortingCard :element="element" :options="props.test.testStructure.cardSorting.options" />
+                    <CardSortingCard
+                      :element="element"
+                      :options="props.test.testStructure.cardSorting.options"
+                    />
                   </template>
                 </Draggable>
               </VCard>
@@ -28,23 +47,38 @@ v-model="pendingAllocationCount" color="primary" height="12"
 
             <!-- Categories -->
             <VCol
-v-for="(category, index) in categories" :key="index" :cols="12 / (categories.length + 1)"
-              class="mb-0 pb-0">
+              v-for="(category, index) in categories"
+              :key="index"
+              :cols="12 / (categories.length + 1)"
+              class="mb-0 pb-0"
+            >
               <VCard class="card-category category">
                 <VCardTitle class="d-flex justify-center align-center">
                   <VCol class="text-center">
                     <h3>{{ category.title }}</h3>
-                    <p v-if="category.description && props.test.testStructure.cardSorting.options.category_description">
-                      {{
-                        category.description }}</p>
+                    <p
+                      v-if="
+                        category.description &&
+                        props.test.testStructure.cardSorting.options
+                          .category_description
+                      "
+                    >
+                      {{ category.description }}
+                    </p>
                   </VCol>
                 </VCardTitle>
 
                 <Draggable
-:list="localTestAnswer.tasks[category.title]" item-key="title" class="list-group"
-                  group="cards">
+                  :list="localTestAnswer.tasks[category.title]"
+                  item-key="title"
+                  class="list-group"
+                  group="cards"
+                >
                   <template #item="{ element }">
-                    <CardSortingCard :element="element" :options="props.test.testStructure.cardSorting.options" />
+                    <CardSortingCard
+                      :element="element"
+                      :options="props.test.testStructure.cardSorting.options"
+                    />
                   </template>
                 </Draggable>
               </VCard>
@@ -66,15 +100,15 @@ import CardSortingCard from '../components/CardSortingCard.vue'
 const props = defineProps({
   test: {
     type: Object,
-    required: false
-  }
+    required: false,
+  },
 })
 
 // Variables
 const categories = ref([])
 const cards = ref([])
 const localTestAnswer = ref({
-  tasks: {}
+  tasks: {},
 })
 
 // Computed

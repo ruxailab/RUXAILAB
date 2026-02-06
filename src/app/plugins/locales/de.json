@@ -1585,7 +1585,21 @@
   },
   "CardSorting": {
     "noCategory": "Keine Kategorie",
-    "noCards": "Keine Karten gefunden"
+    "noCards": "Keine Karten gefunden",
+    "editTest": "Test bearbeiten",
+    "customizeSettings": "Passen Sie die Einstellungen und Präferenzen Ihres Tests an",
+    "test": "Test",
+    "categories": "Kategorien",
+    "cardsTitle": "Karten",
+    "taskProgress": "{count} von {total} Karten",
+    "currentCards": "Aktuelle Karten",
+    "addNewCard": "Neue Karte hinzufügen",
+    "settings": "Einstellungen",
+    "configureCardsDisplay": "Konfigurieren Sie, wie Karten angezeigt werden",
+    "currentCategories": "Aktuelle Kategorien",
+    "addNewTask": "Neue Aufgabe hinzufügen",
+    "configureCategoriesDisplay": "Konfigurieren Sie, wie Kategorien angezeigt werden",
+    "newTask": "Neue Aufgabe"
   },
   "analytics": {
     "searchByName": "Nach Namen suchen",

@@ -296,8 +296,6 @@
     "back": "عودة",
     "deleteForever": "حذف نهائي",
     "superAdmin": "مشرف فائق",
-    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
-    "removeProfilePicture": "إزالة صورة الملف الشخصي",
     "currentPassword": "كلمة المرور الحالية",
     "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
     "wrongCurrentPassword": "كلمة المرور الحالية غير صحيحة",
@@ -1584,7 +1582,21 @@
   },
   "CardSorting": {
     "noCategory": "لا توجد فئة",
-    "noCards": "لم يتم العثور على بطاقات"
+    "noCards": "لم يتم العثور على بطاقات",
+    "editTest": "تعديل الاختبار",
+    "customizeSettings": "تخصيص الإعدادات وتفضيلات الاختبار الخاص بك",
+    "test": "اختبار",
+    "categories": "فئات",
+    "cardsTitle": "بطاقات",
+    "taskProgress": "{count} من {total} بطاقات",
+    "currentCards": "البطاقات الحالية",
+    "addNewCard": "إضافة بطاقة جديدة",
+    "settings": "إعدادات",
+    "configureCardsDisplay": "تكوين كيفية عرض البطاقات",
+    "currentCategories": "الفئات الحالية",
+    "addNewTask": "إضافة مهمة جديدة",
+    "configureCategoriesDisplay": "تكوين كيفية عرض الفئات",
+    "newTask": "مهمة جديدة"
   },
   "analytics": {
     "searchByName": "البحث بالاسم",
