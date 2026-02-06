@@ -237,7 +237,16 @@
       "viewEditProfile": "View and edit your profile information",
       "exploreCommunityStudies": "Explore studies shared by the RUXAI community",
       "browseCommunityTemplates": "Browse templates contributed by the RUXAI community"
-    }
+    },
+    "appName": "RUXAILAB",
+    "tagline": "UX Research Platform",
+    "appNavigation": "App Navigation",
+    "createNewStudy": "Create New Study",
+    "exitTest": "Exit Test",
+    "signOut": "Sign Out",
+    "previousStep": "Previous Step",
+    "nextStep": "Next Step",
+    "finishTest": "Finish Test"
   },
   "profile": {
     "title": "Profile",
@@ -480,8 +489,12 @@
       "today": "Today",
       "joinNow": "Join Now",
       "webinarEnded": "Webinar Ended",
-      "startingToday": "Starting Today"
+      "startingToday": "Starting Today",
+      "startSession": "Start Session"
     },
+    "studyType": "Study Type",
+    "noRecentActivity": "No recent activity",
+    "viewAllActivity": "View All Activity",
     "cards": {
       "recentActivity": "Recent Activity",
       "activities7Days": "Activities (7 days total)",
