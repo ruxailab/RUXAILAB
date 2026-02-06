@@ -110,7 +110,8 @@
     "confirm_deletion": "تأكيد الحذف",
     "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
     "user": "مستخدم",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "عدد العناصر في الصفحة:"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -186,6 +187,12 @@
       "accessibilityManual": "تقييم إمكانية الوصول اليدوي",
       "accessibilityAutomatic": "تقييم إمكانية الوصول التلقائي"
     }
+  },
+  "acceptInvitation": {
+    "title": "دعوة تعاون",
+    "message": "هل تريد قبول هذه الدعوة؟",
+    "reject": "رفض",
+    "accept": "قبول"
   },
   "notificationsPage": {
     "subtitle": "ابق على اطلاع بأنشطتك وتعاوناتك",
@@ -809,7 +816,8 @@
       "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
-      "message_content_hint": "اكتب محتوى رسالتك"
+      "message_content_hint": "اكتب محتوى رسالتك",
+      "invite_message": "لقد تم دعوتك للمشاركة في الاختبار {testTitle}"
     }
   },
   "UserTestTable": {
@@ -825,8 +833,8 @@
       "noTasks": "ليس لديك أي مهمة، قم بإنشاء واحدة للمتابعة.",
       "noVariables": "لم تتم إضافة متغيرات بعد. انقر أدناه لإنشاء متغير جديد.",
       "noOptions": "لم تتم إضافة خيارات.",
-      "confirm_delete_task":"تأكيد حذف المهمة",
-      "sure_to_delete_task":"هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
+      "confirm_delete_task": "تأكيد حذف المهمة",
+      "sure_to_delete_task": "هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
     },
     "inputs": {
       "consent": "الموافقة",
@@ -1268,6 +1276,7 @@
         "allStudies": "جميع الدراسات",
         "myStudies": "دراساتي",
         "whereICollaborate": "حيث أتعاون",
+        "allMethods": "جميع الطرق",
         "lessThan10": "< 10 مشاركين",
         "between10And50": "10 – 50 مشارك",
         "moreThan50": "> 50 مشارك"
