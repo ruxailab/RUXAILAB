@@ -6,7 +6,7 @@
   >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Set up and customize your accessibility test parameters
+        {{ $t('Accessibility.setupTestParameters') }}
       </p>
     </template>
 
@@ -18,14 +18,14 @@
             class="text-h6 font-weight-bold pa-4 d-flex align-center"
           >
             <v-icon color="primary" class="mr-2" size="24"> mdi-cog </v-icon>
-            Accessibility Configuration
+            {{ $t('Accessibility.accessibilityConfiguration') }}
             <v-spacer />
             <v-chip
               :color="step === 1 ? 'primary' : 'success'"
               variant="flat"
               size="small"
             >
-              Step {{ step }}/2
+              {{ $t('Accessibility.step') }} {{ step }}/2
             </v-chip>
           </v-card-title>
         </v-card>
@@ -36,7 +36,7 @@
             <v-icon color="primary" class="mr-2" size="18">
               mdi-shield-check
             </v-icon>
-            WCAG Compliance Level
+            {{ $t('Accessibility.wcagComplianceLevel') }}
           </v-card-title>
 
           <v-card-text class="pa-4 pt-1">
@@ -50,8 +50,7 @@
                 <v-icon size="18"> mdi-information </v-icon>
               </template>
               <div class="text-body-2">
-                Select the WCAG compliance level for your accessibility
-                requirements.
+                {{ $t('Accessibility.selectComplianceLevel') }}
               </div>
             </v-alert>
 
@@ -116,7 +115,8 @@
                           mdi-check-circle
                         </v-icon>
                         <span class="text-caption"
-                          >{{ level.ruleCount }} rules</span
+                          >{{ level.ruleCount }}
+                          {{ $t('Accessibility.rules') }}</span
                         >
                       </div>
                     </v-card-text>
@@ -137,12 +137,14 @@
               </template>
               <div>
                 <div class="font-weight-bold text-body-2">
-                  Selected: WCAG {{ selectedLevel.value }} -
+                  {{ $t('Accessibility.selected') }}:
+                  {{ $t('Accessibility.wcag') }} {{ selectedLevel.value }} -
                   {{ selectedLevel.title }}
                 </div>
                 <div class="text-caption">
-                  {{ selectedLevel.ruleCount }} rules for
-                  {{ selectedLevel.value }} compliance.
+                  {{ selectedLevel.ruleCount }}
+                  {{ $t('Accessibility.rulesFor') }} {{ selectedLevel.value }}
+                  {{ $t('Accessibility.compliance') }}.
                 </div>
               </div>
             </v-alert>
@@ -156,7 +158,7 @@
               size="small"
               @click="resetToDefaults"
             >
-              Reset
+              {{ $t('Accessibility.reset') }}
             </v-btn>
             <v-spacer />
             <v-btn
@@ -166,7 +168,7 @@
               append-icon="mdi-arrow-right"
               @click="saveComplianceAndContinue"
             >
-              Continue
+              {{ $t('Accessibility.continue') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -177,7 +179,7 @@
             <v-icon color="primary" class="mr-2" size="18">
               mdi-format-list-checks
             </v-icon>
-            Guidelines Selection
+            {{ $t('Accessibility.guidelinesSelection') }}
           </v-card-title>
 
           <v-card-text class="pa-4 pt-1">
@@ -191,8 +193,7 @@
                 <v-icon size="18"> mdi-information </v-icon>
               </template>
               <div class="text-body-2">
-                Select guidelines for your assessment. Filter by principle using
-                tabs.
+                {{ $t('Accessibility.selectGuidelinesByPrinciple') }}
               </div>
             </v-alert>
 
@@ -208,7 +209,7 @@
                 <v-icon size="18"> mdi-alert-circle </v-icon>
               </template>
               <div class="text-body-2 font-weight-bold">
-                Please fix the following issues:
+                {{ $t('Accessibility.pleaseFixFollowing') }}
               </div>
               <ul class="text-caption mt-1 ml-4">
                 <li v-for="error in validationErrors" :key="error">
@@ -299,7 +300,7 @@
                             "
                             item-title="title"
                             item-value="value"
-                            label="Select specific rules (required)"
+                            label="$t('Accessibility.selectSpecificRules')"
                             multiple
                             chips
                             clearable
@@ -350,11 +351,13 @@
                     mdi-check-circle
                   </v-icon>
                   <span class="font-weight-bold text-body-2">
-                    {{ selectedGuidelines.length }} guideline(s) selected
+                    {{ selectedGuidelines.length }}
+                    {{ $t('Accessibility.guidelinesSelected') }}
                   </span>
                 </div>
                 <div class="text-caption mt-1">
-                  Total rules: {{ getTotalSelectedRules() }}
+                  {{ $t('Accessibility.totalRules') }}:
+                  {{ getTotalSelectedRules() }}
                 </div>
               </v-card-text>
             </v-card>
@@ -367,7 +370,7 @@
               size="small"
               @click="step = 1"
             >
-              Back
+              {{ $t('Accessibility.back') }}
             </v-btn>
             <v-spacer />
             <v-btn
@@ -377,7 +380,7 @@
               append-icon="mdi-content-save"
               @click="saveConfiguration"
             >
-              Save Config
+              {{ $t('Accessibility.saveConfig') }}
             </v-btn>
           </v-card-actions>
         </v-card>
