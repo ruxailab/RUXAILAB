@@ -134,6 +134,17 @@ export function useStudyAccess(options = {}) {
     return canAccessRoute(accessLevel.value, routeType)
   })
 
+  // Loading state to prevent FOUC - true until we confirm user HAS access
+  // This prevents content from rendering during redirect
+  const isLoading = computed(() => {
+    // Still loading data
+    if (user.value === null || test.value === null) return true
+    // Data loaded but no access → keep loading while redirect happens
+    if (!hasAccess.value) return true
+    // Data loaded AND has access → show content
+    return false
+  })
+
   const isAdmin = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
   const isEvaluator = computed(() => accessLevel.value === ACCESS_LEVEL.EVALUATOR)
   const isGuest = computed(() => accessLevel.value === ACCESS_LEVEL.GUEST)
@@ -175,6 +186,7 @@ export function useStudyAccess(options = {}) {
     test,
     accessLevel,
     hasAccess,
+    isLoading,
     isPrivateStudyWithNoAccess,
     isAdmin,
     isEvaluator,

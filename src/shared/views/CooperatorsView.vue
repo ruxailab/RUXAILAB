@@ -1,5 +1,11 @@
 <template>
+  <!-- Loading overlay to prevent FOUC -->
+  <v-overlay v-if="isLoading" :model-value="true" class="d-flex align-center justify-center">
+    <v-progress-circular indeterminate color="primary" size="64" />
+  </v-overlay>
+
   <PageWrapper
+    v-else
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
     <!-- Actions Slot - Only Admin can invite -->
@@ -137,7 +143,7 @@ const slots = useSlots()
 const { t } = useI18n()
 
 // Access control - only Admin can manage cooperators
-const { watchAccessAndRedirect, isAdmin } = useStudyAccess({
+const { watchAccessAndRedirect, isAdmin, isLoading } = useStudyAccess({
   routeType: 'cooperators',
   redirectPath: '/',
 })

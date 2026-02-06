@@ -1,5 +1,11 @@
 <template>
+  <!-- Loading overlay to prevent FOUC -->
+  <v-overlay v-if="isLoading" :model-value="true" class="d-flex align-center justify-center">
+    <v-progress-circular indeterminate color="primary" size="64" />
+  </v-overlay>
+
   <PageWrapper
+    v-else
     :title="$t('pages.settings.study_configuration')"
     :loading="loadingPage"
     :loading-text="$t('pages.settings.loading_settings')"
@@ -392,7 +398,7 @@ const router = useRouter()
 const { t } = useI18n()
 
 // Access control - only Admin can access settings
-const { watchAccessAndRedirect } = useStudyAccess({
+const { watchAccessAndRedirect, isLoading } = useStudyAccess({
   routeType: 'settings',
   redirectPath: '/',
 })
