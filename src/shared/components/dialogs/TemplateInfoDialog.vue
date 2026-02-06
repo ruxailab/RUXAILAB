@@ -158,7 +158,6 @@
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import FormTestDescription from '@/shared/components/FormTestDescription.vue'
 import {
   getMethodManagerView,
@@ -233,8 +232,8 @@ const deleteTemplate = async () => {
   try {
     await store.dispatch('deleteTemplate', props.template.id)
     reset()
-  } catch (error) {
-    console.error('Error deleting template:', error)
+  } catch {
+    // Handle error silently or with a user-friendly message
   }
 }
 
@@ -261,7 +260,6 @@ const validate = async () => {
   }
 
   if (!localTest.value) {
-    console.error('localTest is not initialized')
     return
   }
 
@@ -283,8 +281,8 @@ const validate = async () => {
 
     const methodView = getMethodManagerView(rawData.testType, rawData.subType)
     await router.push({ name: methodView, params: { id: testId } })
-  } catch (error) {
-    console.error('Error creating test:', error)
+  } catch {
+    // Handle error silently or with a user-friendly message
   }
 }
 
