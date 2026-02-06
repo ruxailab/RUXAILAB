@@ -184,7 +184,7 @@ const updateCalibrationConfig = () => {
   store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
 }
 
-// Validation methods to ensure values stay within bounds
+// Validation functions to maintain colleague's requirements
 const validatePointNumber = () => {
   if (
     isNaN(pointNumber.value) ||
@@ -279,6 +279,7 @@ onMounted(() => {
 .config-item:last-child {
   margin-bottom: 0;
 }
+</style>
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

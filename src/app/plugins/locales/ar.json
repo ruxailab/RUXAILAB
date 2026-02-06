@@ -99,14 +99,19 @@
       "status": "الحالة",
       "sessionDate": "تاريخ الجلسة",
       "participants": "المشاركون",
-      "created": "تم الإنشاء"
+      "created": "تم الإنشاء",
+      "noSearchResults": "لا توجد نتائج تطابق معايير البحث الخاصة بك",
+      "tryAdjustingSearch": "حاول تعديل البحث أو الفلاتر للعثور على ما تبحث عنه"
     },
     "hidden": "مخفي",
     "proceed": "متابعة",
     "all": "الكل",
     "actions": "إجراءات",
+    "confirm_deletion": "تأكيد الحذف",
+    "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
     "user": "مستخدم",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "عدد العناصر في الصفحة:"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -182,6 +187,12 @@
       "accessibilityManual": "تقييم إمكانية الوصول اليدوي",
       "accessibilityAutomatic": "تقييم إمكانية الوصول التلقائي"
     }
+  },
+  "acceptInvitation": {
+    "title": "دعوة تعاون",
+    "message": "هل تريد قبول هذه الدعوة؟",
+    "reject": "رفض",
+    "accept": "قبول"
   },
   "notificationsPage": {
     "subtitle": "ابق على اطلاع بأنشطتك وتعاوناتك",
@@ -458,6 +469,20 @@
       "paused": "متوقف",
       "finished": "منتهي",
       "unknown": "غير معروف"
+    },
+    "officeHours": {
+      "title": "ساعات العمل الإضافية الشهرية",
+      "description": "بدءًا من نوفمبر، سننظم ساعات عمل شهرية لمناقشة تحديثات المشروع والإجابة على الأسئلة والتواصل مع مجتمعنا.",
+      "nextSessionDate": "نوفمبر 2025",
+      "frequency": "شهرياً"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الويبينار",
+      "startingToday": "يبدأ اليوم"
     },
     "cards": {
       "recentActivity": "النشاط الأخير",
@@ -791,7 +816,8 @@
       "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
-      "message_content_hint": "اكتب محتوى رسالتك"
+      "message_content_hint": "اكتب محتوى رسالتك",
+      "invite_message": "لقد تم دعوتك للمشاركة في الاختبار {testTitle}"
     }
   },
   "UserTestTable": {
@@ -963,6 +989,29 @@
         "camera": "الكاميرا",
         "audio": "الصوت"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
+      "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
+      "submitFeedback": "إرسال الملاحظات",
+      "postTaskQuestions": "أسئلة ما بعد المهمة",
+      "rateTaskDifficulty": "1. كيف تقيم صعوبة هذه المهمة؟",
+      "additionalComments": "2. أي تعليقات إضافية؟",
+      "optionalFeedback": "ملاحظات اختيارية...",
+      "externalFormTitle": "نموذج خارجي",
+      "externalFormDescription": "سيتم توجيه المشاركين لملء نموذج خارجي بعد المهمة.",
+      "openExternalForm": "فتح النموذج الخارجي",
+      "nasaTlxTitle": "مؤشر حمل المهام ناسا",
+      "mentalDemand": "المتطلبات الذهنية",
+      "physicalDemand": "المتطلبات الجسدية",
+      "lowHigh": "منخفض - مرتفع",
+      "moreDimensions": "+ 4 أبعاد أخرى",
+      "susTitle": "مقياس قابلية استخدام النظام",
+      "susStatement1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
+      "stronglyDisagree": "أعارض بشدة",
+      "stronglyAgree": "أوافق بشدة",
+      "moreStatements": "+ 9 عبارات أخرى",
+      "sartTitle": "تقنية تقييم الوعي الظرفي"
     }
   },
   "UserTestView": {
@@ -1267,6 +1316,7 @@
         "allStudies": "جميع الدراسات",
         "myStudies": "دراساتي",
         "whereICollaborate": "حيث أتعاون",
+        "allMethods": "جميع الطرق",
         "lessThan10": "< 10 مشاركين",
         "between10And50": "10 – 50 مشارك",
         "moreThan50": "> 50 مشارك"
@@ -1354,8 +1404,6 @@
       "select_end_date": "اختر تاريخ الانتهاء",
       "quick_actions": "إجراءات سريعة",
       "perform_common_tasks": "قم بإجراء المهام الشائعة على الفور",
-      "confirm_deletion": "تأكيد الحذف",
-      "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
       "delete_warning": "سيتم فقدان جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد.",
       "delete_forever": "حذف إلى الأبد"
     },
@@ -1373,12 +1421,14 @@
     "noCopy": "فشل النسخ",
     "deleteTemplate": "هل أنت متأكد أنك تريد حذف هذا النموذج؟ لا يمكن التراجع عن هذا الإجراء!",
     "deleteTest": "هل أنت متأكد أنك تريد حذف هذا الاختبار؟",
+    "deleteQuestion": "هل أنت متأكد من أنك تريد حذف السؤال: ",
+    "deleteDescription": "هل أنت متأكد من أنك تريد حذف الوصف: ",
     "addDescription": "يرجى إضافة وصف",
     "errorOccurred": "حدث خطأ",
     "leave": "هل أنت متأكد أنك تريد المغادرة؟",
     "sureLeave": "هل أنت متأكد أنك تريد المغادرة؟ سيتم تجاهل جميع التغييرات.",
     "imageURL": "أدخل رابط الصورة:",
-    "deleteHeuristic": "هل أنت متأكد أنك تريد حذف الاستدلال؟",
+    "deleteHeuristic": "هل أنت متأكد من أنك تريد حذف الاستدلال: ",
     "deleteAccount": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
     "genericSuccess": "تمت العملية بنجاح",
     "savedChanges": "تم حفظ التغييرات بنجاح",

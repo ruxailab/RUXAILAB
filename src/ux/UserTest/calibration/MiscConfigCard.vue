@@ -49,6 +49,50 @@
   </v-container>
 </template>
 
+        <div class="custom-outline">
+          <div class="d-flex align-center mb-2">
+            <span class="mr-2">Model Selection:</span>
+            <v-tooltip
+              location="top"
+              max-width="300"
+              text="Select the mathematical regression model used to map raw eye-tracking data to screen coordinates."
+            >
+              <template #activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-small"
+                  color="primary"
+                  icon="mdi-information-outline"
+                ></v-icon>
+              </template>
+            </v-tooltip>
+          </div>
+          <v-select
+            v-model="selectedModel"
+            :items="availableModels"
+            variant="outlined"
+            density="compact"
+            placeholder="Select Regression Model"
+          ></v-select>
+        </div>
+
+        <div class="custom-outline bg-grey-lighten-4">
+          <v-icon
+            icon="mdi-alert-circle-outline"
+            size="small"
+            class="mr-1"
+          ></v-icon>
+          <span class="text-caption">
+            <strong>Note:</strong> The selected regression model directly
+            impacts the computational overhead during calibration. Default is
+            <strong>Linear Regression</strong>. High-complexity models may
+            increase training latency.
+          </span>
+        </div>
+      </v-card>
+    </v-col>
+  </v-container>
+</template>
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
@@ -78,6 +122,9 @@ const availableModels = computed(() => [
   },
 ])
 
+/**
+ * Data Ingestion: Loads configuration from Vuex store.
+ */
 const getCalibrationConfig = () => {
   const calibrationConfig =
     store.getters.test.calibrationConfig instanceof EyeCalibrationSettings
@@ -92,6 +139,9 @@ const getCalibrationConfig = () => {
   selectedModel.value = calibrationConfig.models || 'Linear Regression'
 }
 
+/**
+ * State Synchronization: Persists UI changes back to the global store.
+ */
 const updateCalibrationConfig = () => {
   const calibrationConfig = new EyeCalibrationSettings({
     ...store.getters.test.calibrationConfig,
